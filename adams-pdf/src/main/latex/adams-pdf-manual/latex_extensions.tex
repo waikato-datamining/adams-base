@@ -1,0 +1,29 @@
+% Copyright (c) 2009 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\newenvironment{tight_itemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}{\end{itemize}
+}
+
+\newenvironment{tight_enumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}{\end{enumerate}
+}
+
+% if you just need a simple heading
+% Usage:
+%   \heading{the text of the heading}
+\newcommand{\heading}[1]{
+  \vspace{0.3cm} \noindent \textbf{#1} \newline
+}
+
+\newcommand{\icon}[1]{\tikz[baseline=-3pt]\node[inner sep=0pt,outer sep=0pt]{\includegraphics[height=1.1em]{#1}};}

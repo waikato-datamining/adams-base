@@ -1,0 +1,44 @@
+# Properties file for customizing the memory monitor panel.
+#
+# author:  FracPete (fracpete at waikato dot ac dot nz)
+# version: $Revision$
+
+# The refresh interval in milliseconds
+Interval=1000
+
+# The maximum number of values to show
+Max=200
+
+# The factor to divide the raw number of bytes with
+Divisor=1048576
+
+# Available values for an axis (suffixes listed):
+# - .Visibility=VISIBLE|INVISIBLE|HIDDEN
+# - .Name=string
+# - .NameCentered=bool
+# - .Width=int
+# - .ToolTip=bool
+# - .TickGenerator=classname+options
+# - .NthValueToShow=int
+# - .LengthTicks=int
+# - .TopMargin=double (0-1)
+# - .BottomMargin=0.0
+# - .ShowGridLines=bool
+# - .Type=ABSOLUTE|PERCENTAGE|LOG10_ABSOLUTE|LOG10_PERCENTAGE|LOG_ABSOLUTE|LOG_PERCENTAGE|DATE|TIME|DATETIME
+# - .NumberFormat=<positive>;<negative>  see java.text.DecimalFormat/java.text.SimpleDateFormat
+
+# the left axis
+Axis.Left.Title=MB
+Axis.Left.Width=80
+Axis.Left.Format=0
+Axis.Left.Type=Absolute
+Axis.Left.TickGenerator=adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 10
+Axis.Left.NthValueToShow=2
+
+# the bottom axis
+Axis.Bottom.Title=Time
+Axis.Bottom.Width=40
+Axis.Bottom.Type=Time
+Axis.Bottom.Format=HH:mm
+Axis.Bottom.TickGenerator=adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 10
+Axis.Bottom.NthValueToShow=2

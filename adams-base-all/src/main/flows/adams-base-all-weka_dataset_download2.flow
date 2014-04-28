@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2014-02-21 00:18:28
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	In this example we download a ZIP file with ARFF files\nfrom the WEKA sourceforge.net website, extract all\nARFF files that match a particular regular expression\nand then display the content of them.
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			remote file
+			-var-name
+			remotefile
+			-var-value
+			http://sourceforge.net/projects/weka/files/datasets/datasets-UCI/datasets-UCI_20051003.jar/download
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			local file
+			-var-name
+			zipfile
+			-var-value
+			${TMP}/out.zip
+	-actor
+		adams.flow.standalone.DeleteFile
+			-dir
+			${TMP}
+			-regexp
+			out.zip
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			Trigger (download zip)
+			-tee
+				adams.flow.source.URLSupplier
+					-url
+					@{remotefile}
+			-tee
+				adams.flow.sink.DownloadFile
+					-output
+					@{zipfile}
+	-actor
+		adams.flow.control.Trigger
+			-name
+			Trigger (extract file)
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					@{zipfile}
+			-tee
+				adams.flow.transformer.UnZIP
+					-out-dir
+					${TMP}
+					-reg-exp
+					.*ecoli.*
+			-tee
+				adams.flow.transformer.ArrayToSequence
+			-tee
+				adams.flow.transformer.TextFileReader
+					-reader
+						adams.data.io.input.SingleStringTextReader
+			-tee
+				adams.flow.sink.HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

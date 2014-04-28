@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-01-23 15:41:04
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Iterates over all columns in the spreadsheet and outputs the name.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetColumnIterator
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,11 @@
+# Date: 2010-03-22 11:08:01
+# User: fracpete
+# Revision/weka: 6315:6317
+# Revision/adams: 950:1052MP
+#
+adams.flow.sink.InstantiatableSink
+	-actor
+		adams.flow.sink.DumpFile
+			-output
+			${TMP}/dumpfile.txt
+			-append

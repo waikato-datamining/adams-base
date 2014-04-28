@@ -1,0 +1,7 @@
+# Properties file for log entry related stuff.
+#
+# author: FracPete (fracpete at waikato dot ac dot nz)
+# version: $Revision$
+
+# the status labels
+Status=New,Open,Fixed,Updated,Archived

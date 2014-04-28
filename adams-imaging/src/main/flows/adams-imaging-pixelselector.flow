@@ -1,0 +1,60 @@
+# Project: adams
+# Date: 2014-01-23 15:31:44
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flows generates an ARFF file from the JPG pictures\nin the \"data\" directory, which the user manually labels.\nThe labelling consists of selecting pixels on the image\nand labelling them using the right-click menu for selecting\na classification label for this pixel. A region around these\nselected pixels is then cropped and turned into a \nweka.core.Instance object which gets output in an ARFF file.
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*.jpg
+			-sorting
+			SORT_BY_NAME
+	-actor
+		adams.flow.transformer.ImageMagickReader
+	-actor
+		adams.flow.transformer.ImageMagickTransformer
+			-commands
+			-scale 75%
+	-actor
+		adams.flow.transformer.PixelSelector
+			-action
+				adams.flow.transformer.pixelselector.AddClassification
+					-label
+					Object
+					-label
+					Background
+					-remember-last-selection
+					true
+			-overlay
+				adams.flow.transformer.pixelselector.ClassificationOverlay
+					-color
+					#ffffff
+	-actor
+		adams.flow.control.Cast
+			-classname
+			adams.data.image.BufferedImageContainer
+	-actor
+		adams.flow.transformer.JAIFlattener
+			-flattener
+				adams.data.jai.flattener.PixelClassifications
+					-width
+					5
+					-height
+					5
+					-anchor
+					CENTER
+					-pixel-type
+					RGB_SEPARATE
+	-actor
+		adams.flow.transformer.WekaInstanceDumper
+			-prefix
+			${EXAMPLE_FLOWS}/output/pixelselector
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

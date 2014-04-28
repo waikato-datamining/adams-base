@@ -1,0 +1,16 @@
+# Configuration for file related stuff.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Characters that are considered valid in filenames
+FileNameChars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.,;()#@
+
+# The maximum length for an extension
+MaxExtensionLength=6
+
+# The extension suffixes to ignore (comma-separated list; extensions without dot)
+IgnoredExtensionSuffixes=\
+  7z,\
+  bz2,\
+  gz

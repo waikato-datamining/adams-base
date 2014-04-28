@@ -1,0 +1,3 @@
+--> dumpfile.txt
+adams.flow.control.Flow -actor adams.flow.source.Start -actor "adams.flow.control.Trigger -name Trigger-1 -tee \"adams.flow.source.StringConstants -string 1 -string 2 -string 3\" -tee adams.flow.sink.Null" -actor "adams.flow.control.Trigger -tee \"adams.flow.source.OptionProducer -producer adams.core.option.ArrayProducer\" -tee \"adams.flow.sink.DumpFile -output ${TMP}/dumpfile.txt\"" -flow-execution-listener adams.flow.execution.NullListener
+

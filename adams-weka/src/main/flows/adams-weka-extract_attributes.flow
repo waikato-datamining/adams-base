@@ -1,0 +1,103 @@
+# Project: adams
+# Date: 2014-01-23 15:49:58
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The flow generates subsets from a dataset. Each subset contains\nthe attributes 1-10 and another one of interest, 12, 14, or 16.\nThe subsets are stored in the temp directory with pattern \n\"out-[att-index].arff\".
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.transformer.WekaFilter
+					-filter
+						weka.filters.unsupervised.attribute.Remove
+							-V
+							
+							
+	-actor
+		adams.flow.source.StringConstants
+			-annotation
+			contains the attributes of interest apart from 1-10, i.e., 12, 14 and 16
+			-string
+			12
+			-string
+			14
+			-string
+			16
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			att_index
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create output filename
+			-tee
+				adams.flow.source.StringConstants
+					-string
+					${TMP}/out-
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					$
+					-replace
+					@{att_index}
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace-1
+					-find
+					$
+					-replace
+					.arff
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					output_file
+	-actor
+		adams.flow.control.Trigger
+			-name
+			assemble attribute indices
+			-tee
+				adams.flow.source.StringConstants
+					-string
+					1-10,
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					$
+					-replace
+					@{att_index}
+			-tee
+				adams.flow.transformer.SetProperty
+					-actor-name
+					WekaFilter
+					-property
+					filter.attributeIndices
+	-actor
+		adams.flow.control.Trigger
+			-name
+			extract attributes
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/anneal.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+			-tee
+				adams.flow.transformer.CallableTransformer
+					-callable
+					WekaFilter
+			-tee
+				adams.flow.sink.WekaFileWriter
+					-output
+					@{output_file}
+					-saver
+						weka.core.converters.ArffSaver
+							-decimal
+							6
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

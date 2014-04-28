@@ -1,0 +1,86 @@
+# Project: adams
+# Date: 2014-01-23 15:48:48
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Outputs the chosen cluster for each instance read from a dataset.\nThe clusterer used for performing the clustering is generated from\nanother dataset in the global actor \"clusterer\".\nIn both cases, the class attribute is removed first.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.SequenceSource
+					-name
+					clusterer
+					-actor
+						adams.flow.source.FileSupplier
+							-file
+							${EXAMPLE_FLOWS}/data/anneal.arff
+					-actor
+						adams.flow.transformer.WekaFileReader
+							-loader
+								weka.core.converters.ArffLoader
+					-actor
+						adams.flow.transformer.WekaFilter
+							-filter
+								weka.filters.unsupervised.attribute.Remove
+									
+									
+									
+					-actor
+						adams.flow.transformer.WekaTrainClusterer
+							-post-processor
+								adams.flow.transformer.wekaclusterer.PassThrough
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-value
+							Model
+							-switch-outputs
+							true
+			-actor
+				adams.flow.source.WekaClustererSetup
+					-clusterer
+						weka.clusterers.SimpleKMeans
+							-N
+							2
+							-A
+							weka.core.EuclideanDistance -R first-last
+							-I
+							500
+							-num-slots
+							1
+							-S
+							10
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal_test.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+			-output-type
+			INCREMENTAL
+	-actor
+		adams.flow.transformer.WekaFilter
+			-filter
+				weka.filters.unsupervised.attribute.Remove
+					
+					
+					
+	-actor
+		adams.flow.transformer.WekaClustering
+			-model-actor
+			clusterer
+	-actor
+		adams.flow.control.ContainerValuePicker
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.sink.Display
+			-value
+			Distribution
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

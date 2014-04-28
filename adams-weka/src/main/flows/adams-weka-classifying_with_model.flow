@@ -1,0 +1,100 @@
+# Project: adams
+# Date: 2014-01-23 15:48:44
+# User: fracpete
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.SequenceSource
+					-name
+					model
+					-actor
+						adams.flow.source.FileSupplier
+							-file
+							${EXAMPLE_FLOWS}/data/j48.model
+					-actor
+						adams.flow.transformer.WekaModelReader
+							-output-only-model
+							true
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			serialized model
+			-annotation
+			This flow uses a serialized model to make predictions on a \ntest set (anneal_test.arff) and output the generated class \ndistributions.
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/anneal_test.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+					-output-type
+					INCREMENTAL
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.transformer.WekaClassifying
+					-model
+					${EXAMPLE_FLOWS}/data/j48.model
+					-on-the-fly
+					true
+			-tee
+				adams.flow.control.ContainerValuePicker
+					-tee
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.AnyToString
+					-tee
+						adams.flow.sink.Display
+							-name
+							Display class distribution (serialized)
+					-value
+					Distribution
+	-actor
+		adams.flow.control.Trigger
+			-name
+			global actor
+			-annotation
+			This flow uses a model obtained from a global actor to make \npredictions on a  test set (anneal_test.arff) and output the \ngenerated class distributions (the global actor merely loads a\nserialized model in this example).
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/anneal_test.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+					-output-type
+					INCREMENTAL
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.transformer.WekaClassifying
+					-model
+					${EXAMPLE_FLOWS}
+					-model-actor
+					model
+					-on-the-fly
+					true
+			-tee
+				adams.flow.control.ContainerValuePicker
+					-tee
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.AnyToString
+					-tee
+						adams.flow.sink.Display
+							-name
+							Display class distribution (model)
+							-x
+							-3
+					-value
+					Distribution
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

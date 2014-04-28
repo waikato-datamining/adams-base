@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-01-23 15:36:48
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow simply loads the first sheet from\nthe ODF workbook and displays it.\nNB: you will have to adapt the path to the sample file.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/sample.ods
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.ODFSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

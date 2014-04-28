@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.IsNumeric-out0.txt
+false
+
+--> adams.flow.condition.bool.IsNumeric-out1.txt
+true
+
+--> adams.flow.condition.bool.IsNumeric-out2.txt
+true
+
+--> adams.flow.condition.bool.IsNumeric-out3.txt
+true
+
+--> adams.flow.condition.bool.IsNumeric-out4.txt
+true
+

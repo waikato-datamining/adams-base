@@ -1,0 +1,15 @@
+--> labor-out0.csv
+Key,Value
+Min,1
+
+
+--> labor-out1.csv
+Key,Value
+Min,2
+
+
+--> labor-out2.csv
+Key,Value
+Min,-1.7976931348623157E308
+
+

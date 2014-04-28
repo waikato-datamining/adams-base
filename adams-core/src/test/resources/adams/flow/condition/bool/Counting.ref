@@ -1,0 +1,12 @@
+--> adams.flow.condition.bool.Counting-out0.txt
+true
+
+--> adams.flow.condition.bool.Counting-out1.txt
+false
+
+--> adams.flow.condition.bool.Counting-out2.txt
+true
+
+--> adams.flow.condition.bool.Counting-out3.txt
+false
+

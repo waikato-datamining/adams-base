@@ -1,0 +1,19 @@
+# Properties file with performance tuning parameters.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The maximum number of processors/cores to use. Use -1 for available ones.
+maxNumProcessors=-1
+
+# The minimum number of job events to keep in the JobCompleteManager
+minKeepJobComplete=50
+
+# The maximum number of job events to keep in the JobCompleteManager
+maxKeepJobComplete=100
+
+# Whether to keep only failed jobs in the JobCompleteManager [true|false]
+keepOnlyFailedJobComplete=true
+
+# whether multiprocessing is enabled
+multiProcessingEnabled=true

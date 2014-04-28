@@ -1,0 +1,83 @@
+# Project: adams
+# Date: 2012-10-24 14:46:41
+# User: fracpete
+# Class-Path: /research/fracpete/development/projects/adamsfamily.releases/adams/adams-all/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-core/target/classes:mysql-connector-java-5.1.18.jar:mail-1.4.4.jar:activation-1.1.jar:vfsjfilechooser2-0.2.3.jar:commons-io-2.1.jar:commons-codec-1.6.jar:l2fprod-common-directorychooser-6.9.1.jar:l2fprod-common-shared-6.9.1.jar:jdatepicker-1.3.2.jar:jsci-1.2.jar:lpsolve-2003-11-03.jar:mathml-dom-java-2.0.jar:xercesImpl-2.8.1.jar:xml-apis-1.3.03.jar:jama-1.0.2.jar:commons-math-2.2.jar:sizeofag-1.0.0.jar:java-cup-0.11a.jar:jflex-1.4.2.jar:json-simple-1.1.jar:commons-vfs2-2.0.jar:maven-scm-api-1.4.jar:plexus-utils-1.5.6.jar:maven-scm-provider-svnexe-1.4.jar:maven-scm-provider-svn-commons-1.4.jar:regexp-1.3.jar:diffutils-1.2.1.jar:pegdown-1.1.0.jar:parboiled-core-1.0.2.jar:parboiled-java-1.0.2.jar:asm-util-3.3.1.jar:asm-tree-3.3.1.jar:asm-analysis-3.3.1.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-compress/target/classes:commons-compress-1.3.jar:lzma-java-1.2.jar:compress-lzf-0.9.5.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-cron/target/classes:quartz-1.8.4.jar:jta-1.1.jar:slf4j-api-1.6.0.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-excel/target/classes:poi-3.8.jar:poi-ooxml-3.8.jar:poi-ooxml-schemas-3.8.jar:xmlbeans-2.3.0.jar:stax-api-1.0.1.jar:dom4j-1.6.1.jar:WekaExcel-1.0.4.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-groovy/target/classes:groovy-all-1.8.5.jar:scriptingClassifiers-1.0.2.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-gnuplot/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-hadoop/target/classes:hadoop-core-1.0.2.jar:commons-cli-1.2.jar:xmlenc-0.52.jar:commons-httpclient-3.0.1.jar:commons-configuration-1.6.jar:commons-collections-3.2.1.jar:commons-lang-2.4.jar:commons-digester-1.8.jar:commons-beanutils-1.7.0.jar:commons-beanutils-core-1.8.0.jar:jetty-6.1.26.jar:servlet-api-2.5-20081211.jar:jetty-util-6.1.26.jar:jasper-runtime-5.5.12.jar:jasper-compiler-5.5.12.jar:jsp-api-2.1-6.1.14.jar:servlet-api-2.5-6.1.14.jar:jsp-2.1-6.1.14.jar:ant-1.6.5.jar:commons-el-1.0.jar:jets3t-0.7.1.jar:kfs-0.3.jar:oro-2.0.8.jar:jackson-mapper-asl-1.0.1.jar:jackson-core-asl-1.0.1.jar:commons-logging-1.1.1.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-imaging/target/classes:imagej-1.46.jar:im4java-1.2.0.jar:sanselan-0.97-incubator.jar:jai-core-1.1.3.jar:jai-codec-1.1.3.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-jython/target/classes:jython-standalone-2.5.2.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-latex/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-meta/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-ml/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-moa/target/classes:moa-2012.08.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-net/target/classes:commons-net-3.0.1.jar:jsch-0.1.45.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-odf/target/classes:jOpenDocument-1.3b1.jar:WekaODF-1.0.4.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-pdf/target/classes:itextpdf-5.1.2.jar:xmlworker-1.1.0.jar:jPodRenderer-5.3.jar:jPod-5.3.jar:jbig2-5.3.jar:iscwt-5.3.jar:isfreetype-5.3.jar:isnativec-5.3.jar:jna-3.2.4.jar:isrt-4.8.jar:jPodFonts-5.3.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-phmm4weka/target/classes:phmm4weka-1.1.3.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-random/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-spreadsheet/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-twitter/target/classes:twitter4j-core-2.1.12.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-visualstats/target/classes:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-webservice/target/classes:cxf-rt-frontend-jaxws-2.6.1.jar:xml-resolver-1.2.jar:asm-3.3.1.jar:cxf-api-2.6.1.jar:woodstox-core-asl-4.1.2.jar:stax2-api-3.1.1.jar:xmlschema-core-2.0.2.jar:geronimo-javamail_1.4_spec-1.7.1.jar:wsdl4j-1.6.2.jar:cxf-rt-core-2.6.1.jar:jaxb-impl-2.1.13.jar:cxf-rt-bindings-soap-2.6.1.jar:cxf-rt-databinding-jaxb-2.6.1.jar:cxf-rt-bindings-xml-2.6.1.jar:cxf-rt-frontend-simple-2.6.1.jar:cxf-rt-ws-addr-2.6.1.jar:cxf-rt-ws-policy-2.6.1.jar:neethi-3.0.2.jar:cxf-rt-transports-http-2.6.1.jar:cxf-rt-transports-http-jetty-2.6.1.jar:jetty-server-7.5.4.v20111024.jar:jetty-continuation-7.5.4.v20111024.jar:jetty-http-7.5.4.v20111024.jar:jetty-io-7.5.4.v20111024.jar:jetty-util-7.5.4.v20111024.jar:jetty-security-7.5.4.v20111024.jar:geronimo-servlet_2.5_spec-1.1.2.jar:cxf-xjc-runtime-2.6.0.jar:jaxb-api-2.1.jar:stax-api-1.0-2.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-weka/target/classes:/home/fracpete/development/projects/weka-HEAD/build/classes:/home/fracpete/development/projects/weka-HEAD/lib/koml.zip:pg74.213.jdbc3.jar:sqlitejdbc-v042-nested.jar:jmathplot.jar:mysql-connector-java-5.1.6-bin.jar:snowball.jar:java-cup.jar:JFlex.jar:prefuse.jar:libsvm.jar:jython.jar:junit.jar:json.jar:ptstemmer.jar:groovy-all-1.5.8.jar:packageManager.jar:pentaho-package-manager-1.0.3.jar:gridSearch-1.0.6.jar:partialLeastSquares-1.0.2.jar:hsqldb-1.8.0.10.jar:sqlite-jdbc-3.7.2.jar:postgresql-9.0-801.jdbc4.jar:/research/fracpete/development/projects/adamsfamily.releases/adams/adams-weka-hadoop/target/classes
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier and outputs\nthe predictions in two different ways: \n(1) as a spreadsheet display, \n(2) as an Instances display.
+	-actor
+		adams.flow.standalone.GlobalActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+			-classifier
+			WekaClassifier
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					SpreadSheet
+					-actor
+						adams.flow.transformer.WekaPredictionsToInstances
+							-add-index
+							-error
+							-probability
+							-distribution
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.WekaInstancesToSpreadSheet
+					-actor
+						adams.flow.sink.SpreadSheetDisplay
+			-branch
+				adams.flow.control.Sequence
+					-name
+					Instances
+					-actor
+						adams.flow.transformer.WekaPredictionsToInstances
+							-add-index
+							-error
+							-probability
+							-distribution
+					-actor
+						adams.flow.sink.WekaInstancesDisplay
+							-x
+							-3
+							-writer
+								adams.gui.print.NullWriter
+

@@ -1,0 +1,8 @@
+Field,Type,Value,Hyphen-ated,"Com,ma",Under_score
+'Parent ID',N,1,1,A,a
+A1,N,266.226623,2,B,b
+A2,N,2.728273,3,C,c
+B2,N,61.166117,4,D,d
+C2,N,5.97,5,E,e
+D2,N,100.110011,6,F,f
+'Dummy report',B,false,7,G,g

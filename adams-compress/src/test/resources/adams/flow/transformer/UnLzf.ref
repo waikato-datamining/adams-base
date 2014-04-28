@@ -1,0 +1,12 @@
+--> dumpfile.flow
+# Date: 2010-03-19 15:41:25
+# User: fracpete
+# Revision/weka: 6315:6317
+# Revision/adams: 950:1052MP
+#
+adams.flow.standalone.InstantiatableStandalone
+	-actor
+		adams.flow.standalone.DatabaseCheck
+			-regexp
+			.*test.*
+

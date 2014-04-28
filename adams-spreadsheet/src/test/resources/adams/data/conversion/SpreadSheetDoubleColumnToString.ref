@@ -1,0 +1,18 @@
+--> out-0.txt
+C1,simple,separator
+A,1234.78,"1,234.78"
+D,1200.0,"1,200"
+
+
+--> out-1.txt
+C1,simple,separator
+A,1234.78,"1,234.78"
+D,1200,"1,200"
+
+
+--> out-2.txt
+C1,simple,separator
+A,1234.780,"1,234.78"
+D,1200.000,"1,200"
+
+

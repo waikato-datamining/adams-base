@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 15:22:19
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow that merely outputs the following string:\n  Hello World!
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			Hello World!
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.UpperCase
+	-actor
+		adams.flow.transformer.StringReplace
+			-find
+			$
+			-replace
+			 How are you today?
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

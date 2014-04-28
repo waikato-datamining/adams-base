@@ -1,0 +1,77 @@
+--> dumpfile.txt
+Relation: vote-weka.filters.unsupervised.attribute.Remove-R1
+
+=== Summary ===
+
+Correctly Classified Instances         419               96.3218 %
+Incorrectly Classified Instances        16                3.6782 %
+Kappa statistic                          0.9224
+Mean absolute error                      0.0611
+Root mean squared error                  0.1748
+Relative absolute error                 12.887  %
+Root relative squared error             35.9085 %
+Coverage of cases (0.95 level)          98.6207 %
+Mean rel. region size (0.95 level)      54.8276 %
+Total Number of Instances              435     
+
+Relation: vote-weka.filters.unsupervised.attribute.Remove-R2
+
+=== Summary ===
+
+Correctly Classified Instances         419               96.3218 %
+Incorrectly Classified Instances        16                3.6782 %
+Kappa statistic                          0.9224
+Mean absolute error                      0.0607
+Root mean squared error                  0.1745
+Relative absolute error                 12.7967 %
+Root relative squared error             35.8494 %
+Coverage of cases (0.95 level)          98.6207 %
+Mean rel. region size (0.95 level)      54.7126 %
+Total Number of Instances              435     
+
+Relation: vote-weka.filters.unsupervised.attribute.Remove-R3
+
+=== Summary ===
+
+Correctly Classified Instances         415               95.4023 %
+Incorrectly Classified Instances        20                4.5977 %
+Kappa statistic                          0.9034
+Mean absolute error                      0.0754
+Root mean squared error                  0.1938
+Relative absolute error                 15.9072 %
+Root relative squared error             39.812  %
+Coverage of cases (0.95 level)          98.8506 %
+Mean rel. region size (0.95 level)      57.4713 %
+Total Number of Instances              435     
+
+Relation: vote-weka.filters.unsupervised.attribute.Remove-R4
+
+=== Summary ===
+
+Correctly Classified Instances         395               90.8046 %
+Incorrectly Classified Instances        40                9.1954 %
+Kappa statistic                          0.806 
+Mean absolute error                      0.1374
+Root mean squared error                  0.2804
+Relative absolute error                 28.9738 %
+Root relative squared error             57.5982 %
+Coverage of cases (0.95 level)          96.3218 %
+Mean rel. region size (0.95 level)      66.092  %
+Total Number of Instances              435     
+
+Relation: vote-weka.filters.unsupervised.attribute.Remove-R5
+
+=== Summary ===
+
+Correctly Classified Instances         419               96.3218 %
+Incorrectly Classified Instances        16                3.6782 %
+Kappa statistic                          0.9224
+Mean absolute error                      0.0611
+Root mean squared error                  0.1748
+Relative absolute error                 12.887  %
+Root relative squared error             35.9085 %
+Coverage of cases (0.95 level)          98.6207 %
+Mean rel. region size (0.95 level)      54.8276 %
+Total Number of Instances              435     
+
+

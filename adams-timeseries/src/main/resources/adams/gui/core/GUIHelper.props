@@ -1,0 +1,8 @@
+# Parameters for the GUI.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+
+# default values for paintlets
+adams.gui.visualization.temperature.TimeseriesPaintlet.markersEnabled=false

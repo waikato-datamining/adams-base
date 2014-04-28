@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 16:46:21
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to convert header cells, turning\nthem all into lower-case strings.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetConvertHeaderCells
+			-conversion
+				adams.data.conversion.LowerCase
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

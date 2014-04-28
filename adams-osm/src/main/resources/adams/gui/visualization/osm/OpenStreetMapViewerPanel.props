@@ -1,0 +1,31 @@
+# Setup for the OpenStreetMapViewer visualization panel.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The name for the root of the layer tree (string)
+LayerRoot=Layers
+
+# Whether the the layer tree is visible (true|false)
+LayerTreeVisible=false
+
+# The location of the divider between layer tree and map
+DividerLocation=150
+
+# The initial coordinates (decimal, decimal)
+Coordinates=0, 0
+
+# The initial zoom (integer starting at 0)
+Zoom=1
+
+# Whether the zoom controls are visible (true|false)
+ZoomControlsVisible=true
+
+# Whether to show the tile grid (true|false)
+TileGridVisible=false
+
+# Where to get the map data from (classname + options)
+TileSourceProvider=adams.flow.sink.openstreetmapviewer.OpenStreetMapSource
+
+# How to load the tiles
+TileLoaderProvider=adams.flow.sink.openstreetmapviewer.OpenStreetMapCachedLoader -cache-dir ${TMP}

@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-04-10 11:26:27
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The Cronjob fills the queue every 5seconds and the DeQueue\nsource actor empties it.\nSince the DeQueue actor never stops (it always assumes that \nthere will be more data coming through), the user needs to stop\nthe flow.
+	-actor
+		adams.flow.standalone.QueueInit
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			count
+			-var-value
+			0
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.Cron
+					-cron-actor
+						adams.flow.source.Variable
+							-var-name
+							count
+					-cron-actor
+						adams.flow.transformer.IncVariable
+							-var-name
+							count
+					-cron-actor
+						adams.flow.sink.EnQueue
+					-schedule
+					0/5 * * * * ?
+	-actor
+		adams.flow.source.DeQueue
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

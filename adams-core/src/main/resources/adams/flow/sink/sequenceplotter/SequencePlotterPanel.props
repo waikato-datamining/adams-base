@@ -1,0 +1,92 @@
+# Setup for the XYSequencePanel visualization panel.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+###########
+# General #
+###########
+
+Title=Sequence plotter
+
+################
+# Axis-related #
+################
+
+# Axis prefixes:
+# - Axis.Top
+# - Axis.Left
+# - Axis.Bottom
+# - Axis.Right
+#
+# Available values for an axis (suffixes listed):
+# - .Visibility=VISIBLE|INVISIBLE|HIDDEN
+# - .Name=string
+# - .NameCentered=bool
+# - .Width=int
+# - .ToolTip=bool
+# - .TickGenerator=classname+options
+# - .NthValueToShow=int
+# - .LengthTicks=int
+# - .TopMargin=double (0-1)
+# - .BottomMargin=0.0
+# - .ShowGridLines=bool
+# - .Type=ABSOLUTE|PERCENTAGE|LOG10_ABSOLUTE|LOG10_PERCENTAGE|LOG_ABSOLUTE|LOG_PERCENTAGE|DATE|TIME|DATETIME
+# - .NumberFormat=<positive>;<negative>  see java.text.DecimalFormat/java.text.SimpleDateFormat
+
+# Top axis
+Axis.Top.Visibility=INVISIBLE
+
+# Right axis
+Axis.Right.Visibility=INVISIBLE
+
+# Left axis
+Axis.Left.Visibility=VISIBLE
+Axis.Left.Name=Y
+Axis.Left.NameCentered=false
+Axis.Left.Width=80
+Axis.Left.ToolTip=true
+Axis.Left.TickGenerator=adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20
+Axis.Left.NthValueToShow=3
+Axis.Left.LengthTicks=6
+Axis.Left.TopMargin=0.0
+Axis.Left.BottomMargin=0.0
+Axis.Left.ShowGridLines=true
+Axis.Left.Type=ABSOLUTE
+Axis.Left.NumberFormat=0.00E0;-0.00E0
+
+# Bottom axis
+Axis.Bottom.Visibility=VISIBLE
+Axis.Bottom.Name=X
+Axis.Bottom.NameCentered=false
+Axis.Bottom.Width=40
+Axis.Bottom.ToolTip=true
+Axis.Bottom.TickGenerator=adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40
+Axis.Bottom.NthValueToShow=5
+Axis.Bottom.LengthTicks=6
+Axis.Bottom.TopMargin=0.0
+Axis.Bottom.BottomMargin=0.0
+Axis.Bottom.ShowGridLines=true
+Axis.Bottom.Type=ABSOLUTE
+Axis.Bottom.NumberFormat=0.00E0;-0.00E0
+
+##############
+# Plot panel #
+##############
+
+Plot.BackgroundColor=white
+Plot.ForegroundColor=black
+Plot.GridColor=235,235,235
+Plot.CoordinatesColor.X=darkgrey
+Plot.CoordinatesColor.Y=darkgrey
+Plot.AdjustToVisibleData=true
+Plot.Paintlet=adams.gui.visualization.sequence.CirclePaintlet
+Plot.SidePanelWidth=200
+Plot.ColorProvider=adams.gui.visualization.core.DefaultColorProvider
+Plot.AntiAliasing=true
+
+##################
+# Container list #
+##################
+
+ContainerList.AllowSearch=true

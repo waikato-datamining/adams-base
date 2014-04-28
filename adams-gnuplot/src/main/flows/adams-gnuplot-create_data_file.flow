@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 15:29:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads the \"bolts.csv\" file and saves it as a Gnuplot data file.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/bolts.data
+			-writer
+				adams.data.io.output.GnuplotSpreadSheetWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

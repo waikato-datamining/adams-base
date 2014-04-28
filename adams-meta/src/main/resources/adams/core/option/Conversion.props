@@ -1,0 +1,48 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-sink_copyglobalsink,\
+  Rename-source_copyglobalsource,\
+  Rename-standalone_copyglobalstandalone,\
+  Rename-transformer_copyglobaltransformer
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-sink_copyglobalsink=adams.flow.sink.CopyGlobalSink-adams.flow.sink.CopyCallableSink
+Rename-source_copyglobalsource=adams.flow.source.CopyGlobalSource-adams.flow.source.CopyCallableSource
+Rename-standalone_copyglobalstandalone=adams.flow.standalone.CopyGlobalStandalone-adams.flow.standalone.CopyCallableStandalone
+Rename-transformer_copyglobaltransformer=adams.flow.transformer.CopyGlobalTransformer-adams.flow.transformer.CopyCallableTransformer
+
+# List the keys that contain renaming of options (ie "-blah" into "-bloerk")
+RenameOption=\
+  RenameOption-standalone_copycallablestandalone_global,\
+  RenameOption-source_copycallablesource_global,\
+  RenameOption-transformer_copycallabletransformer_global,\
+  RenameOption-sink_copycallablesink_global
+  
+# general format for renaming options
+# <key>=<classname>#<old>#<new>
+RenameOption-standalone_copycallablestandalone_global=adams.flow.standalone.CopyCallableStandalone#global#callable
+RenameOption-source_copycallablesource_global=adams.flow.source.CopyCallableSource#global#callable
+RenameOption-transformer_copycallabletransformer_global=adams.flow.transformer.CopyCallableTransformer#global#callable
+RenameOption-sink_copycallablesink_global=adams.flow.sink.CopyCallableSink#global#callable
+
+# List the keys that contain renaming of properties (ie "blahProp" into "bloerkProp")
+RenameProperty=\
+  RenameProperty-standalone_copycallablestandalone_global,\
+  RenameProperty-source_copycallablesource_global,\
+  RenameProperty-transformer_copycallabletransformer_global,\
+  RenameProperty-sink_copycallablesink_global
+  
+# general format for renaming options
+# <key>=<classname>#<oldProp>#<newProp>
+RenameProperty-standalone_copycallablestandalone_global=adams.flow.standalone.CopyCallableStandalone#globalName#callableName
+RenameProperty-source_copycallablesource_global=adams.flow.source.CopyCallableSource#globalName#callableName
+RenameProperty-transformer_copycallabletransformer_global=adams.flow.transformer.CopyCallableTransformer#globalName#callableName
+RenameProperty-sink_copycallablesink_global=adams.flow.sink.CopyCallableSink#globalName#callableName

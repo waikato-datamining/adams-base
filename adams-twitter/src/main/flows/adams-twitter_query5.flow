@@ -1,0 +1,82 @@
+# Project: adams
+# Date: 2014-01-23 15:44:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow for querying and filtering Twitter tweets.\nDisplays \"happy\" and \"sad\" comments that have the keyword \"work\".\nFor query examples, see the following web page:\nhttp://search.twitter.com/operators
+	-actor
+		adams.flow.standalone.TwitterConnection
+	-actor
+		adams.flow.source.TwitterQuery
+			-query
+			work
+			-max-tweets
+			1000
+	-actor
+		adams.flow.control.Switch
+			-condition
+				adams.flow.condition.bool.TwitterFilterExpression
+					-expression
+					text:":)"
+			-condition
+				adams.flow.condition.bool.TwitterFilterExpression
+					-expression
+					text:":("
+			-condition
+				adams.flow.condition.bool.True
+			-case
+				adams.flow.control.Sequence
+					-name
+					happy
+					-actor
+						adams.flow.transformer.TwitterConverter
+							-converter
+								adams.data.twitter.TextConverter
+									-field
+									CREATED
+									-field
+									USER_NAME
+									-field
+									TEXT
+									-separator
+									\t
+									-quote
+									true
+					-actor
+						adams.flow.sink.Display
+							-name
+							happy
+							-short-title
+							true
+			-case
+				adams.flow.control.Sequence
+					-name
+					sad
+					-actor
+						adams.flow.transformer.TwitterConverter
+							-converter
+								adams.data.twitter.TextConverter
+									-field
+									CREATED
+									-field
+									USER_NAME
+									-field
+									TEXT
+									-separator
+									\t
+									-quote
+									true
+					-actor
+						adams.flow.sink.Display
+							-name
+							sad
+							-short-title
+							true
+							-x
+							-3
+			-case
+				adams.flow.sink.Null
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

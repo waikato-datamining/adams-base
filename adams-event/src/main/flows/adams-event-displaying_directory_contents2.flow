@@ -1,0 +1,74 @@
+# Project: adams
+# Date: 2014-02-21 00:25:02
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to use the Cron and TriggerEvent actors.\nThe example dumps the content of the TMP directory every 5 seconds \ninto the file \"dumpfile.txt\". After that, the event \"Display dumpfile\" is \ntriggered using the TriggerEvent control actor, which then displays the\ncontent of the \"dumpfile.txt\" file in the HistoryDisplay actor.\nThe Start and WhileLoop actors are only used in order \nto keep the flow running till the user stops it.
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.Cron
+					-name
+					List files
+					-cron-actor
+						adams.flow.source.Start
+					-cron-actor
+						adams.flow.control.Trigger
+							-name
+							generate output file
+							-tee
+								adams.flow.standalone.DeleteFile
+									-dir
+									${TMP}
+									-regexp
+									dumpfile.txt
+							-tee
+								adams.flow.source.DirectoryLister
+									-dir
+									${TMP}
+									-list-files
+									true
+									-sorting
+									SORT_BY_NAME
+							-tee
+								adams.flow.sink.DumpFile
+									-output
+									${TMP}/dumpfile.txt
+									-append
+									true
+					-cron-actor
+						adams.flow.control.TriggerEvent
+							-event
+							Display dumpfile
+					-schedule
+					0/5 * * * * ?
+			-actor
+				adams.flow.control.Flow
+					-name
+					Display dumpfile
+					-actor
+						adams.flow.source.FileSupplier
+							-file
+							${TMP}/dumpfile.txt
+					-actor
+						adams.flow.transformer.TextFileReader
+							-reader
+								adams.data.io.input.SingleStringTextReader
+					-actor
+						adams.flow.sink.HistoryDisplay
+					-flow-execution-listener
+						adams.flow.execution.NullListener
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.WhileLoop
+			-condition
+				adams.flow.condition.bool.Expression
+			-loop
+				adams.flow.source.Start
+			-loop
+				adams.flow.control.Sleep
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

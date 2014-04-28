@@ -1,0 +1,14 @@
+# File for listing rules for suggesting actor templates in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorTemplateSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Default=adams.flow.template.UpdateVariable

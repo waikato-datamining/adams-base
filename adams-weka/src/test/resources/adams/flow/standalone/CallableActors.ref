@@ -1,0 +1,23 @@
+--> dumpfile.txt
+=== Summary ===
+
+Correctly Classified Instances         419               96.3218 %
+Incorrectly Classified Instances        16                3.6782 %
+Kappa statistic                          0.9224
+Mean absolute error                      0.0611
+Root mean squared error                  0.1748
+Relative absolute error                 12.887  %
+Root relative squared error             35.9085 %
+Coverage of cases (0.95 level)          98.6207 %
+Mean rel. region size (0.95 level)      54.8276 %
+Total Number of Instances              435     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.970    0.048    0.970      0.970    0.970      0.922    0.971     0.965     democrat
+                 0.952    0.030    0.952      0.952    0.952      0.922    0.971     0.947     republican
+Weighted Avg.    0.963    0.041    0.963      0.963    0.963      0.922    0.971     0.958     
+
+

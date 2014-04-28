@@ -1,0 +1,56 @@
+# Project: adams
+# Date: 2014-01-23 15:39:21
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to load a double matrix from\na spreadsheet and transform it with an R script (applying log2 to matrix). \nThe result of the transformation is displayed.
+	-actor
+		adams.flow.standalone.Rserve
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					original
+					-short-title
+					true
+					-x
+					-3
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.SpreadSheetToDoubleMatrix
+	-actor
+		adams.flow.transformer.RTransformer
+			-script
+			matrix<-log2(X)
+			-return-type
+			DoubleMatrix
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-1
+			-conversion
+				adams.data.conversion.DoubleMatrixToSpreadSheet
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-name
+			log2
+			-short-title
+			true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

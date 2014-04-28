@@ -1,0 +1,37 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+#########
+# hooks #
+#########
+
+# GPSDecimalDegrees objects
+adams.data.gps.GPSDecimalDegrees=true
+adams.data.gps.GPSDecimalDegrees#toString=adams.gui.goe.GPSEditor#toString
+adams.data.gps.GPSDecimalDegrees#valueOf=adams.gui.goe.GPSEditor#valueOf
+
+# GPSDecimalMinutes objects
+adams.data.gps.GPSDecimalMinutes=true
+adams.data.gps.GPSDecimalMinutes#toString=adams.gui.goe.GPSEditor#toString
+adams.data.gps.GPSDecimalMinutes#valueOf=adams.gui.goe.GPSEditor#valueOf
+
+# GPSDecimalSeconds objects
+adams.data.gps.GPSDecimalSeconds=true
+adams.data.gps.GPSDecimalSeconds#toString=adams.gui.goe.GPSEditor#toString
+adams.data.gps.GPSDecimalSeconds#valueOf=adams.gui.goe.GPSEditor#valueOf

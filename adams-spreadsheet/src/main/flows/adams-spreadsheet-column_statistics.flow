@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2014-01-23 15:40:17
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates various statistic for a column in a spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetColumnStatistic
+			-column
+			last
+			-statistic
+				adams.data.spreadsheet.statistic.MultiColumnStatistic
+					-statistic
+						adams.data.spreadsheet.statistic.Min
+					-statistic
+						adams.data.spreadsheet.statistic.Max
+					-statistic
+						adams.data.spreadsheet.statistic.Mean
+					-statistic
+						adams.data.spreadsheet.statistic.StandardDeviation
+					-statistic
+						adams.data.spreadsheet.statistic.Median
+					-statistic
+						adams.data.spreadsheet.statistic.IQR
+					-statistic
+						adams.data.spreadsheet.statistic.Distinct
+					-statistic
+						adams.data.spreadsheet.statistic.Unique
+					-statistic
+						adams.data.spreadsheet.statistic.Missing
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

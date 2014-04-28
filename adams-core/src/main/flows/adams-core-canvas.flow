@@ -1,0 +1,60 @@
+# Project: adams
+# Date: 2014-02-21 00:21:36
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots data points obtained from a CSV file \nusing the general purpose draw actor \"Canvas\".\nA background image is used as well.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Canvas
+					-writer
+						adams.gui.print.NullWriter
+					-background-paintlet
+						adams.gui.visualization.core.BackgroundImagePaintlet
+							-image-file
+							${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+					-paintlet
+						adams.flow.sink.canvas.XYPaintlet
+					-post-processor
+						adams.flow.sink.canvas.PassThrough
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.TextFileReader
+			-reader
+				adams.data.io.input.LineByLineTextReader
+	-actor
+		adams.flow.control.ConditionalTee
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					([0-9.]*),([0-9.]*),.*
+					-replace
+					$1,$2
+			-tee
+				adams.flow.transformer.StringSplit
+					-expression
+					,
+			-tee
+				adams.flow.control.ArrayProcess
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.StringToDouble
+					-array-class
+					java.lang.Double
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Canvas
+			-condition
+				adams.flow.condition.bool.Counting
+					-min
+					2
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

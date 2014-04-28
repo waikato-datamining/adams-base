@@ -1,0 +1,177 @@
+# Project: adams
+# Date: 2014-02-02 09:48:26
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to continue training an incremental classifier \nafter the initial batch-training phase.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					setup
+					-classifier
+						weka.classifiers.bayes.NaiveBayesUpdateable
+							
+							
+							
+			-actor
+				adams.flow.source.SequenceSource
+					-name
+					model
+					-actor
+						adams.flow.source.StorageValue
+							-storage-name
+							model
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-value
+							Model
+							-switch-outputs
+							true
+			-actor
+				adams.flow.sink.HistoryDisplay
+					-entry-name-variable
+					name
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			setup training data
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/labor.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.control.Tee
+					-name
+					initial training data
+					-tee
+						adams.flow.transformer.WekaFilter
+							-filter
+								weka.filters.unsupervised.instance.RemoveRange
+									-V
+									-R
+									1-20
+									
+									
+									
+									
+									
+					-tee
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							initial
+			-tee
+				adams.flow.control.Tee
+					-name
+					further training data
+					-tee
+						adams.flow.transformer.WekaFilter
+							-filter
+								weka.filters.unsupervised.instance.RemoveRange
+									-R
+									1-20
+									
+									
+									
+									
+									
+									
+					-tee
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							further
+	-actor
+		adams.flow.control.Trigger
+			-name
+			initial training
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					initial
+			-tee
+				adams.flow.transformer.WekaTrainClassifier
+					-classifier
+					setup
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					model
+			-tee
+				adams.flow.control.ContainerValuePicker
+					-value
+					Model
+					-switch-outputs
+					true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					initial
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					HistoryDisplay
+	-actor
+		adams.flow.control.Trigger
+			-name
+			further training
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					further
+			-tee
+				adams.flow.control.Tee
+					-name
+					update model
+					-tee
+						adams.flow.transformer.WekaInstanceBuffer
+							-operation
+							INSTANCES_TO_INSTANCE
+					-tee
+						adams.flow.transformer.WekaTrainClassifier
+							-classifier
+							model
+							-skip-build
+							true
+					-tee
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							model
+			-tee
+				adams.flow.control.Trigger
+					-name
+					output final model
+					-tee
+						adams.flow.source.StorageValue
+							-storage-name
+							model
+					-tee
+						adams.flow.control.ContainerValuePicker
+							-value
+							Model
+							-switch-outputs
+							true
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							name
+							-var-value
+							final
+					-tee
+						adams.flow.sink.CallableSink
+							-callable
+							HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

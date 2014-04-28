@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2014-01-23 15:44:13
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow for listening to the sample stream\nof Twitter status updates and filtering them\naccording to a filter expression.\nRequires actual twitter user credentials to work.
+	-actor
+		adams.flow.standalone.TwitterConnection
+	-actor
+		adams.flow.source.TwitterListener
+			-max-updates
+			1000
+	-actor
+		adams.flow.transformer.TwitterFilter
+			-expression
+			text:":)" or text:":("
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					display
+					-actor
+						adams.flow.transformer.TwitterConverter
+							-converter
+								adams.data.twitter.TextConverter
+									-field
+									CREATED
+									-field
+									USER_NAME
+									-field
+									TEXT
+									-separator
+									\t
+					-actor
+						adams.flow.sink.Display
+			-branch
+				adams.flow.control.Sequence
+					-name
+					file
+					-actor
+						adams.flow.transformer.TwitterConverter
+							-converter
+								adams.data.twitter.SpreadSheetConverter
+									-field
+									ID
+									-field
+									CREATED
+									-field
+									USER_NAME
+									-field
+									TEXT
+									-spreadsheet-type
+										adams.data.spreadsheet.SpreadSheet
+					-actor
+						adams.flow.sink.SpreadSheetFileWriter
+							-output
+							${EXAMPLE_FLOWS}/output/twitter_updates_filtered.csv
+							-writer
+								adams.data.io.output.CsvSpreadSheetWriter
+									-appending
+									true
+									-always-quote-text
+									true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

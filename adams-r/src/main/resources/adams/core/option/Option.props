@@ -1,0 +1,4 @@
+# R script objects
+adams.core.scripting.RScript=true
+adams.core.scripting.RScript#toString=adams.gui.goe.AbstractScriptEditor#toString
+adams.core.scripting.RScript#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf

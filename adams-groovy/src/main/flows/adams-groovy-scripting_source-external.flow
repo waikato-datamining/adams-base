@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2014-01-23 15:30:01
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow that uses an external Groovy source\nscript to generate some random integers.
+	-actor
+		adams.flow.source.Groovy
+			-script
+			${EXAMPLE_FLOWS}/scripts/SimpleSource.groovy
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

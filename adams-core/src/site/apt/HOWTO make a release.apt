@@ -1,0 +1,73 @@
+HOWTO make a release
+
+* Requirements
+  
+  * update the versions in archetype HOWTO:
++---
+  adams-archetype-module/src/site/apt/HOWTO create a new sub-module.apt
++---
+
+  * update the versions in the manual for making a release:
+
++---
+  file......: adams-core/src/main/latex/adams-core-manual/developing_with_adams.tex
+  section...: Creating a new module or project
+  subsection: Module
++---
+
+  * all files need to be up-to-date and committed
+
+
+* Commands
+
++---
+  mvn --batch-mode release:prepare release:perform
++---
+
+  Note: use the following option to avoid tests being run, though this is not encouraged:
+
++---
+   -Darguments="-DskipTests=true"
++---
+
+* Uploads/updates
+  
+  * generate comparison of actors/conversions between current and previous
+    version:
+    
++--
+  bin/run -main adams.core.ClassLister -super adams.flow.core.AbstractActor > actors.txt
+  bin/run -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
++--
+
+  * create a new directory on sf.net and upload the following files:
+    * -bin.zip
+    * -app.zip
+    * -doc.zip
+    * -flows.jar
+
+  * create a README.md (markdown style) and upload this to the sf.net directory
+    as well
+    
+  * copy same files onto adams.cms:
+
++--
+  adams.cms.waikato.ac.nz:/var/www/html/releases/adams
++--
+    
+  * add new section on Elgg with updated links (dir + file)
+  
++--
+  https://adams.cms.waikato.ac.nz/elgg/pages/view/198/downloads
++--
+
+  * publish update on The Wire (Elgg)
+
+  * update entry on mloss.org
+
++--
+  https://mloss.org/software/view/425/
++--
+
+
+  $Revision$

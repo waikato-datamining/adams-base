@@ -1,0 +1,15 @@
+--> out-0
+median
+2.5
+
+
+--> out-1
+median-1,median-2,mean-1,mean-2
+2.5,2.5,2.5,2.5
+
+
+--> out-2
+"correlation coefficient 1-2","RMSE 1-2","MAE 1-2"
+0.348155311911,6.442049363363,5
+
+

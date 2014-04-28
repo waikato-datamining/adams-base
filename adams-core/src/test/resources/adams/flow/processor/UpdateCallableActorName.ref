@@ -1,0 +1,64 @@
+--> processed-1
+adams.flow.control.Flow
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
+			-actor
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.tmp
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			blah
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayNew
+			-branch
+				adams.flow.sink.CallableSink
+					-name
+					CallableSink-1
+					-callable
+					DumpFile
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
+
+--> processed-2
+adams.flow.control.Flow
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
+			-actor
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.tmp
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			blah
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.CallableSink
+					-callable
+					Display
+			-branch
+				adams.flow.sink.CallableSink
+					-name
+					CallableSink-1
+					-callable
+					DumpFileNew
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
+

@@ -1,0 +1,36 @@
+# Project: adams
+# Date: 2014-01-23 15:23:21
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow lists all currently set environment variables.
+	-actor
+		adams.flow.source.ListEnvironmentVariables
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			var
+	-actor
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.GetEnvironmentVariable
+					-variable
+					@{var}
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.BackQuote
+			-tee
+				adams.flow.transformer.StringInsert
+					-position
+					first
+					-value
+					@{var}=
+					-variable
+					true
+			-tee
+				adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,80 @@
+# Project: adams
+# Date: 2014-01-23 15:47:26
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Builds a classifier in batch mode and outputs generated tree model (as graphic and DOT format).
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaTrainClassifier
+			-name
+			WekaClassifier
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.WekaTreeVisualizer
+					-short-title
+					true
+					-width
+					900
+					-height
+					650
+					-writer
+						adams.gui.print.NullWriter
+			-branch
+				adams.flow.control.Sequence
+					-name
+					DOT format
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-value
+							Model
+							-switch-outputs
+							true
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.WekaDrawableToString
+					-actor
+						adams.flow.sink.Display
+							-name
+							DOT
+							-short-title
+							true
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,16 @@
+# Properties file listing twitter related parameters.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The consumer secret of the twitter application to use for connecting.
+ConsumerKey=
+
+# The consumer secret of the twitter application to use for connecting.
+ConsumerSecret=
+
+# The twitter access token to use for connecting.
+AccessToken=
+
+# The access token secret of the twitter application to use for connecting.
+AccessTokenSecret=

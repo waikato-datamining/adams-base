@@ -1,0 +1,52 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The cell locators
+adams.data.spreadsheet.cellfinder.AbstractCellFinder=\
+  adams.data.spreadsheet.cellfinder
+
+# The RowFinder algorithms
+adams.data.spreadsheet.rowfinder.RowFinder=\
+  adams.data.spreadsheet.rowfinder
+
+# The ColumnFinder algorithms
+adams.data.spreadsheet.columnfinder.ColumnFinder=\
+  adams.data.spreadsheet.columnfinder
+
+# The column statistic generators
+adams.data.spreadsheet.statistic.AbstractColumnStatistic=\
+  adams.data.spreadsheet.statistic
+
+# data conversion schemes for spreadsheets
+adams.data.conversion.AbstractSpreadSheetConversion=\
+  adams.data.conversion
+
+# transformers for spreadsheets
+adams.flow.transformer.AbstractSpreadSheetTransformer=\
+  adams.flow.transformer
+
+# plot generators
+adams.flow.transformer.plotgenerator.AbstractPlotGenerator=\
+  adams.flow.transformer.plotgenerator
+
+# the processing plugins for the spreadsheet viewer
+adams.gui.tools.spreadsheetviewer.AbstractDataPlugin=\
+  adams.gui.tools.spreadsheetviewer
+
+# the information plugins for the spreadsheet viewer
+adams.gui.tools.spreadsheetviewer.AbstractViewPlugin=\
+  adams.gui.tools.spreadsheetviewer
+
+# the viewer tab components of the spreadsheet viewer
+adams.gui.tools.spreadsheetviewer.tab.AbstractViewerTab=\
+  adams.gui.tools.spreadsheetviewer.tab
+  
+# the chart generators
+adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator=\
+  adams.gui.tools.spreadsheetviewer.chart

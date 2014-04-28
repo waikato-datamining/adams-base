@@ -1,0 +1,20 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the timeseries readers
+adams.data.io.input.AbstractTimeseriesReader=\
+  adams.data.io.input
+
+# the timeseries writers
+adams.data.io.output.AbstractTimeseriesWriter=\
+  adams.data.io.output
+
+# the forecaster generators
+adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
+  adams.flow.source.wekaforecastersetup

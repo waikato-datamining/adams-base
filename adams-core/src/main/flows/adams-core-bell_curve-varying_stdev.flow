@@ -1,0 +1,126 @@
+# Project: adams
+# Date: 2014-01-23 15:20:57
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots the gaussian bell curve with mean of 0.0 and the \nstandard deviation ranging from 1.0 to 5.0.
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			mean
+			-var-name
+			mean
+			-var-value
+			0
+	-actor
+		adams.flow.source.ForLoop
+			-name
+			ForLoop (stdev)
+			-upper
+			5
+	-actor
+		adams.flow.transformer.SetVariable
+			-name
+			stdev
+			-var-name
+			stdev
+	-actor
+		adams.flow.control.Tee
+			-name
+			plot name
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.IntToString
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					^
+					-replace
+					stdev = 
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					plot name
+					-var-name
+					plotname
+	-actor
+		adams.flow.control.Trigger
+			-name
+			generate plot
+			-tee
+				adams.flow.source.ForLoop
+					-name
+					ForLoop (graph)
+					-lower
+					-200
+					-upper
+					200
+			-tee
+				adams.flow.transformer.MathExpression
+					-expression
+					X/33
+			-tee
+				adams.flow.transformer.MathExpression
+					-name
+					MathExpression-1
+					-expression
+					1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
+					-output-value-pair
+					true
+			-tee
+				adams.flow.transformer.MakePlotContainer
+					-plot-name
+					@{plotname}
+			-tee
+				adams.flow.sink.SequencePlotter
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Bell curves
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							x
+							-tick-generator
+								adams.gui.visualization.core.axis.SimpleTickGenerator
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0.000
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							y
+							-tick-generator
+								adams.gui.visualization.core.axis.SimpleTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.00
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+							-update-interval
+							20
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,317 @@
+# Project: adams
+# Date: 2014-01-10 14:51:04
+# User: fracpete
+# Class-Path: /home/fracpete/development/projects/adamsfamily/adams/adams-base-all/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-core/target/classes:mysql-connector-java-5.1.18.jar:mail-1.4.4.jar:activation-1.1.jar:commons-codec-1.6.jar:jide-oss-3.5.6.jar:jdatepicker-1.3.2.jar:jsci-1.2.jar:lpsolve-2003-11-03.jar:mathml-dom-java-2.0.jar:xercesImpl-2.8.1.jar:xml-apis-1.3.03.jar:jama-1.0.3.jar:commons-math-2.2.jar:commons-io-2.1.jar:sqlite-jdbc-3.7.2.jar:sizeofag-1.0.0.jar:java-cup-0.11a.jar:jflex-1.4.2.jar:json-path-0.8.1.jar:json-smart-1.1.1.jar:commons-lang-2.6.jar:commons-vfs2-2.0.jar:commons-logging-1.1.1.jar:maven-scm-api-1.4.jar:plexus-utils-1.5.6.jar:maven-scm-provider-svnexe-1.4.jar:maven-scm-provider-svn-commons-1.4.jar:regexp-1.3.jar:diffutils-1.2.1.jar:joda-time-2.1.jar:trove4j-3.0.3.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-compress/target/classes:commons-compress-1.3.jar:lzma-java-1.2.jar:compress-lzf-0.9.5.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-event/target/classes:quartz-1.8.4.jar:jta-1.1.jar:slf4j-api-1.6.0.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-excel/target/classes:poi-3.8.jar:poi-ooxml-3.8.jar:poi-ooxml-schemas-3.8.jar:xmlbeans-2.3.0.jar:stax-api-1.0.1.jar:dom4j-1.6.1.jar:openxml4j-1.0-beta.jar:log4j-1.2.8.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-groovy/target/classes:groovy-all-2.1.1.jar:scriptingClassifiers-1.0.2.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-gnuplot/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-imaging/target/classes:imagej-1.47.jar:im4java-1.2.0.jar:sanselan-0.97-incubator.jar:jai-core-1.1.3.jar:jai-codec-1.1.3.jar:boofcv-0.15.jar:ejml-0.23.jar:georegression-0.4.jar:ddogleg-0.3.jar:xstream-1.4.4.jar:xmlpull-1.1.3.1.jar:xpp3_min-1.1.4c.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-jython/target/classes:jython-standalone-2.5.3.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-latex/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-meta/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-ml/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-moa/target/classes:moa-2013.11.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-net/target/classes:commons-net-3.2.jar:jsch-0.1.50.jar:tika-core-1.3.jar:jetty-server-8.1.7.v20120910.jar:jetty-http-8.1.7.v20120910.jar:jetty-io-8.1.7.v20120910.jar:jetty-util-8.1.7.v20120910.jar:javax.servlet-3.0.0.v201112011016.jar:nekohtml-1.9.12.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-odf/target/classes:jOpenDocument-1.3.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-pdf/target/classes:itextpdf-5.4.3.jar:xmlworker-1.1.0.jar:jPodRenderer-5.5.1.jar:jPod-5.5.1.jar:jbig2-5.5.1.jar:iscwt-5.5.jar:isfreetype-5.5.jar:isnativec-5.5.jar:jna-3.2.7.jar:isrt-4.10.jar:jPodFonts-5.5.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-r/target/classes:Rserve-0.6-8.1.jar:REngine-0.6-8.1.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-random/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-spreadsheet/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-timeseries/target/classes:pdm-timeseriesforecasting-ce-2013.10.22.jar:jfreechart-1.0.13.jar:jcommon-1.0.14.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-twitter/target/classes:twitter4j-core-3.0.3.jar:twitter4j-stream-3.0.3.jar:/home/fracpete/development/projects/adamsfamily/adams/adams-visualstats/target/classes:/home/fracpete/development/projects/adamsfamily/adams/adams-weka/target/classes:junit.jar:weka-dev-3.7.10.jar:pentaho-package-manager-1.0.8.jar:gridSearch-1.0.7.jar:partialLeastSquares-1.0.2.jar:WekaExcel-1.0.4.jar:WekaODF-1.0.4.jar:hsqldb-1.8.0.10.jar:postgresql-9.0-801.jdbc4.jar
+#
+adams.flow.control.Flow
+	-annotation
+	Traverses a directory with .csv.gz files containing tweets,\nlooking for :) :-) and :( :-( , visualizing the counts per hours.
+	-actor
+		adams.flow.standalone.GlobalActors
+			-actor
+				adams.flow.sink.SequencePlotter
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Twitter mood
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							time
+							-type
+							DATETIME
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+									-num-ticks
+									20
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							M/d-HH
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							counts
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			select directory
+			-tee
+				adams.flow.source.SelectDirectory
+					-stop-if-canceled
+					true
+					-custom-stop-message
+					User canceled selection of tweet directory!
+					-dir-chooser-title
+					Select dir with tweet archives
+					-initial-dir
+					${TMP}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					dir
+	-actor
+		adams.flow.control.Trigger
+			-name
+			read files
+			-tee
+				adams.flow.standalone.SetVariable
+					-name
+					reset happy
+					-var-name
+					happy
+					-var-value
+					0
+			-tee
+				adams.flow.standalone.SetVariable
+					-name
+					reset sad
+					-var-name
+					sad
+					-var-value
+					0
+			-tee
+				adams.flow.standalone.SetVariable
+					-name
+					reset timestamp
+					-var-name
+					timestamp_old
+					-var-value
+					
+			-tee
+				adams.flow.source.DirectoryLister
+					-dir
+					@{dir}
+					-list-files
+					true
+					-regexp
+					.*.gz
+					-sorting
+					SORT_BY_NAME
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					file
+			-tee
+				adams.flow.control.Trigger
+					-name
+					replay
+					-tee
+						adams.flow.source.TweetReplay
+							-replay
+								adams.data.io.input.SpreadSheetConverterArchive
+									-archive
+									@{file}
+					-tee
+						adams.flow.control.Count
+							-tee
+								adams.flow.sink.Console
+									-prefix
+									#tweets: 
+							-condition
+								adams.flow.condition.bool.Counting
+									-interval
+									10000
+					-tee
+						adams.flow.control.Tee
+							-name
+							get timestamp
+							-tee
+								adams.flow.transformer.TwitterConverter
+									-converter
+										adams.data.twitter.TextConverter
+											-field
+											CREATED
+											-separator
+											\t
+											-date-format
+											yyyy-MM-dd HH
+							-tee
+								adams.flow.transformer.SetVariable
+									-var-name
+									timestamp
+					-tee
+						adams.flow.control.Continue
+							-condition
+								adams.flow.condition.bool.Expression
+									-expression
+									\"@{timestamp}\" = \"?\"
+					-tee
+						adams.flow.control.ConditionalTee
+							-name
+							happy?
+							-tee
+								adams.flow.transformer.IncVariable
+									-var-name
+									happy
+							-condition
+								adams.flow.condition.bool.TwitterFilterExpression
+									-expression
+									text:":)" or text:":-)"
+					-tee
+						adams.flow.control.ConditionalTee
+							-name
+							sad?
+							-tee
+								adams.flow.transformer.IncVariable
+									-var-name
+									sad
+							-condition
+								adams.flow.condition.bool.TwitterFilterExpression
+									-expression
+									text:":(" or text:":-("
+					-tee
+						adams.flow.control.ConditionalTrigger
+							-name
+							timestamp changed?
+							-tee
+								adams.flow.source.Start
+							-tee
+								adams.flow.control.Trigger
+									-name
+									timestamp in msec
+									-tee
+										adams.flow.source.Variable
+											-var-name
+											timestamp
+									-tee
+										adams.flow.transformer.Convert
+											-conversion
+												adams.data.conversion.StringToDateTimeType
+													-format
+													yyyy-MM-dd HH
+													-datetime-type
+													MSECS
+									-tee
+										adams.flow.transformer.SetVariable
+											-var-name
+											timestamp_msec
+							-tee
+								adams.flow.control.Trigger
+									-name
+									happy
+									-tee
+										adams.flow.source.VariablesArray
+											-var-name
+											timestamp_msec
+											-var-name
+											happy
+									-tee
+										adams.flow.control.ArrayProcess
+											-actor
+												adams.flow.transformer.Convert
+													-conversion
+														adams.data.conversion.StringToDouble
+									-tee
+										adams.flow.transformer.MakePlotContainer
+											-plot-name
+											happy
+									-tee
+										adams.flow.sink.GlobalSink
+											-global
+											SequencePlotter
+							-tee
+								adams.flow.control.Trigger
+									-name
+									sad
+									-tee
+										adams.flow.source.VariablesArray
+											-var-name
+											timestamp_msec
+											-var-name
+											sad
+									-tee
+										adams.flow.control.ArrayProcess
+											-actor
+												adams.flow.transformer.Convert
+													-conversion
+														adams.data.conversion.StringToDouble
+									-tee
+										adams.flow.transformer.MakePlotContainer
+											-plot-name
+											sad
+									-tee
+										adams.flow.sink.GlobalSink
+											-global
+											SequencePlotter
+							-tee
+								adams.flow.control.Trigger
+									-name
+									textual output
+									-skip
+									true
+									-tee
+										adams.flow.source.CombineVariables
+											-expression
+											@{timestamp}: happy=@{happy} sad=@{sad}
+									-tee
+										adams.flow.sink.Display
+							-tee
+								adams.flow.control.Trigger
+									-name
+									reset counters
+									-tee
+										adams.flow.standalone.SetVariable
+											-name
+											reset happy
+											-var-name
+											happy
+											-var-value
+											0
+									-tee
+										adams.flow.standalone.SetVariable
+											-name
+											reset sad
+											-var-name
+											sad
+											-var-value
+											0
+							-condition
+								adams.flow.condition.bool.And
+									-condition
+										adams.flow.condition.bool.Counting
+											-min
+											2
+									-condition
+										adams.flow.condition.bool.Expression
+											-expression
+											\"@{timestamp}\" != \"@{timestamp_old}\"
+					-tee
+						adams.flow.transformer.SetVariable
+							-name
+							save timestamp
+							-var-name
+							timestamp_old
+							-var-value
+							@{timestamp}
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

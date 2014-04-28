@@ -1,0 +1,60 @@
+# Project: adams
+# Date: 2014-01-23 15:24:11
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This example demonstrates how to use \"recursive\" variables.\nAn example of a recursive variable is as follows:\n   @{@{blah}}\nIf the variable value of \"blah\" is \"hello\" and the variable value \nof \"hello\" is \"7\", then this expression will evaluate as follows:\n   @{@{blah}} -> @{hello} -> 7\nRecursive variables can be set when attaching a variable to \nthe variable name of a SetVariable actor.
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			1
+			-string
+			2
+			-string
+			3
+			-string
+			4
+			-string
+			5
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			num_var
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.StringToDouble
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X^2
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-1
+			-conversion
+				adams.data.conversion.MultiConversion
+					-conversion
+						adams.data.conversion.DoubleToInt
+					-conversion
+						adams.data.conversion.IntToString
+	-actor
+		adams.flow.transformer.SetVariable
+			-name
+			SetVariable-1
+			-var-name
+			@{num_var}
+	-actor
+		adams.flow.transformer.StringReplace
+			-find
+			.*
+			-replace
+			@{num_var},@{@{num_var}}
+			-variable
+			true
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

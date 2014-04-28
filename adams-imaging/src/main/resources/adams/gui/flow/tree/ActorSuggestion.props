@@ -1,0 +1,81 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams-imaging.ImageJReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.JAIReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.JAIReader
+
+adams-imaging.JAIReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.JAIReader
+
+adams-imaging.JAIReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.JAIReader
+
+adams-imaging.JAIReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.JAIReader
+
+adams-imaging.ImageMagickReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickReader
+
+adams-imaging.ImageMagickReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickReader
+
+adams-imaging.ImageMagickReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageMagickReader
+
+adams-imaging.ImageMagickReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickReader
+
+adams-imaging.ImageJTransformer=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
+
+adams-imaging.JAITransformer1=\
+  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.JAITransformer
+
+adams-imaging.JAITransformer2=\
+  IF AFTER adams.flow.transformer.JAIReader THEN adams.flow.transformer.JAITransformer
+
+adams-imaging.ImageMagickTransformer=\
+  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.ImageMagickTransformer
+
+adams-imaging.ImageJFlattener=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFlattener
+
+adams-imaging.JAIFlattener=\
+  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.JAIFlattener
+
+adams-imaging.WekaInstanceDumper1=\
+  IF AFTER adams.flow.transformer.JAIFlattener THEN adams.flow.transformer.WekaInstanceDumper
+
+adams-imaging.WekaInstanceDumper2=\
+  IF AFTER adams.flow.transformer.ImageJFlattener THEN adams.flow.transformer.WekaInstanceDumper
+
+adams-imaging.Convert=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
+
+adams-imaging.ImageViewer1=\
+  IF AFTER adams.flow.transformer.JAITransformer THEN adams.flow.sink.ImageViewer
+
+adams-imaging.ImageViewer2=\
+  IF AFTER adams.flow.transformer.Convert THEN adams.flow.sink.ImageViewer

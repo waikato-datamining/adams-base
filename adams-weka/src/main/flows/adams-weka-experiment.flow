@@ -1,0 +1,63 @@
+# Project: adams
+# Date: 2014-01-23 15:49:50
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Runs a predefined experiment on three datasets \nlocated in a directory: anneal, iris, labor
+	-actor
+		adams.flow.source.DirectoryLister
+			-output-array
+			true
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			(anneal|iris|labor).arff
+	-actor
+		adams.flow.transformer.WekaExperiment
+			-file
+			${EXAMPLE_FLOWS}/data/wekaexperiment.xml
+	-actor
+		adams.flow.transformer.WekaExperimentEvaluation
+			-tester
+				weka.experiment.PairedCorrectedTTester
+					-R
+					0
+					-S
+					0.05
+					
+					
+					
+					
+					
+					
+					
+			-format
+				weka.experiment.ResultMatrixPlainText
+					-mean-prec
+					2
+					-stddev-prec
+					5
+					-col-name-width
+					0
+					-row-name-width
+					25
+					-mean-width
+					0
+					-stddev-width
+					0
+					-sig-width
+					0
+					-count-width
+					5
+					-remove-filter
+					-print-col-names
+					-print-row-names
+					-enum-col-names
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

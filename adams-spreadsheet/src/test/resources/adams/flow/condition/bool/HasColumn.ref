@@ -1,0 +1,9 @@
+--> adams.flow.condition.bool.HasColumn-out0.txt
+false
+
+--> adams.flow.condition.bool.HasColumn-out1.txt
+true
+
+--> adams.flow.condition.bool.HasColumn-out2.txt
+false
+

@@ -1,0 +1,127 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams-weka.WekaClassifierSetup=\
+  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.WekaClassifierSetup
+
+adams-weka.WekaClustererSetup=\
+  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.WekaClustererSetup
+
+adams-weka.WekaFileReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.WekaFileReader
+
+adams-weka.WekaFileReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.WekaFileReader
+
+adams-weka.WekaFileReader3=\
+  IF AFTER adams.flow.source.URLSupplier THEN adams.flow.transformer.WekaFileReader
+
+adams-weka.WekaFileReader5=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.WekaFileReader
+
+adams-weka.WekaFileReader6=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.WekaFileReader
+
+adams-weka.WekaClassSelector=\
+  IF AFTER adams.flow.transformer.WekaFileReader THEN adams.flow.transformer.WekaClassSelector
+
+adams-weka.WekaTrainClusterer=\
+  IF AFTER adams.flow.transformer.WekaFileReader THEN adams.flow.transformer.WekaTrainClusterer
+
+adams-weka.WekaFilter1=\
+  IF AFTER adams.flow.transformer.WekaClassSelector THEN adams.flow.transformer.WekaFilter
+
+adams-weka.WekaFilter2=\
+  IF AFTER adams.flow.transformer.WekaFilter THEN adams.flow.transformer.WekaFilter
+
+adams-weka.WekaCrossValidationEvaluator1=\
+  IF AFTER adams.flow.transformer.WekaClassSelector THEN adams.flow.transformer.WekaCrossValidationEvaluator
+
+adams-weka.WekaCrossValidationEvaluator2=\
+  IF AFTER adams.flow.transformer.WekaFilter THEN adams.flow.transformer.WekaCrossValidationEvaluator
+
+adams-weka.WekaEvaluationSummary1=\
+  IF AFTER adams.flow.transformer.WekaCrossValidationEvaluator THEN adams.flow.transformer.WekaEvaluationSummary
+
+adams-weka.WekaEvaluationSummary2=\
+  IF AFTER adams.flow.transformer.WekaTrainTestSetEvaluator THEN adams.flow.transformer.WekaEvaluationSummary
+
+adams-weka.WekaEvaluationSummary3=\
+  IF AFTER adams.flow.transformer.WekaTestSetEvaluator THEN adams.flow.transformer.WekaEvaluationSummary
+
+adams-weka.WekaTrainTestSetEvaluator1=\
+  IF AFTER adams.flow.transformer.WekaCrossValidationSplit THEN adams.flow.transformer.WekaTrainTestSetEvaluator
+
+adams-weka.WekaTrainTestSetEvaluator2=\
+  IF AFTER adams.flow.transformer.WekaRandomSplit THEN adams.flow.transformer.WekaTrainTestSetEvaluator
+
+adams-weka.WekaTestSetEvaluator1=\
+  IF AFTER adams.flow.transformer.WekaTrainClassifier THEN adams.flow.transformer.WekaTestSetEvaluator
+
+adams-weka.WekaClusterEvaluationSummary1=\
+  IF AFTER adams.flow.transformer.WekaCrossValidationClustererEvaluator THEN adams.flow.transformer.WekaClusterEvaluationSummary
+
+adams-weka.WekaClusterEvaluationSummary2=\
+  IF AFTER adams.flow.transformer.WekaTrainTestSetClustererEvaluator THEN adams.flow.transformer.WekaClusterEvaluationSummary
+
+adams-weka.WekaClusterEvaluationSummary3=\
+  IF AFTER adams.flow.transformer.WekaTestSetClustererEvaluator THEN adams.flow.transformer.WekaClusterEvaluationSummary
+
+adams-weka.WekaTrainTestSetClustererEvaluator1=\
+  IF AFTER adams.flow.transformer.WekaCrossValidationSplit THEN adams.flow.transformer.WekaTrainTestSetClustererEvaluator
+
+adams-weka.WekaTrainTestSetClustererEvaluator2=\
+  IF AFTER adams.flow.transformer.WekaRandomSplit THEN adams.flow.transformer.WekaTrainTestSetClustererEvaluator
+
+adams-weka.WekaTestSetClustererEvaluator1=\
+  IF AFTER adams.flow.transformer.WekaTrainClusterer THEN adams.flow.transformer.WekaTestSetClustererEvaluator
+
+adams-weka.Display1=\
+  IF AFTER adams.flow.transformer.WekaEvaluationSummary THEN adams.flow.sink.Display
+
+adams-weka.Display2=\
+  IF AFTER adams.flow.transformer.WekaExperimentEvaluation THEN adams.flow.sink.Display
+
+adams-weka.Display3=\
+  IF AFTER adams.flow.transformer.WekaInstancesInfo THEN adams.flow.sink.Display
+
+adams-weka.Display4=\
+  IF AFTER adams.flow.transformer.WekaTrainClusterer THEN adams.flow.sink.Display
+
+adams-weka.Display5=\
+  IF AFTER adams.flow.transformer.WekaClusterEvaluationSummary THEN adams.flow.sink.Display
+
+adams-weka.WekaModelWriter1=\
+  IF AFTER adams.flow.transformer.WekaTrainClusterer THEN adams.flow.sink.WekaModelWriter
+
+adams-weka.WekaModelWriter2=\
+  IF AFTER adams.flow.transformer.WekaTrainClassifier THEN adams.flow.sink.WekaModelWriter
+
+adams-weka.SequencePlotter1=\
+  IF AFTER adams.flow.transformer.WekaAccumulatedError THEN adams.flow.sink.SequencePlotter
+
+adams-weka.SequencePlotter2=\
+  IF AFTER adams.flow.transformer.WekaInstanceStreamPlotGenerator THEN adams.flow.sink.SequencePlotter
+
+adams-weka.WekaExperimentGenerator1=\
+  IF AFTER adams.flow.transformer.WekaClassifierRanker THEN adams.flow.sink.WekaExperimentGenerator
+
+adams-weka.WekaExperimentGenerator2=\
+  IF AFTER adams.flow.transformer.WekaClassifierGenerator THEN adams.flow.sink.WekaExperimentGenerator
+
+adams-weka.ArrayStatistic=\
+  IF AFTER adams.flow.transformer.WekaExtractArray THEN adams.flow.transformer.ArrayStatistic
+
+adams-weka.WekaAttributeSelectionSummary=\
+  IF AFTER adams.flow.transformer.WekaAttributeSelection THEN adams.flow.transformer.WekaAttributeSelectionSummary
+  

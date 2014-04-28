@@ -1,0 +1,68 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the ImageJ flatteners
+adams.data.imagej.flattener.AbstractImageJFlattener=\
+  adams.data.imagej.flattener
+
+# the JAI flatteners
+adams.data.jai.flattener.AbstractJAIFlattener=\
+  adams.data.jai.flattener
+
+# the BoofCV flatteners
+adams.data.boofcv.flattener.AbstractBoofCVFlattener=\
+  adams.data.boofcv.flattener
+
+# the ImageJ transformers
+adams.data.imagej.transformer.AbstractImageJTransformer=\
+  adams.data.imagej.transformer
+
+# the ImageJ crop algorithms
+adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.imagej.transformer.crop
+
+# the JAI transformers
+adams.data.jai.transformer.AbstractJAITransformer=\
+  adams.data.jai.transformer
+
+# the JAI crop algorithms
+adams.data.jai.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.jai.transformer.crop
+
+# the subimage generators
+adams.data.jai.transformer.subimages.AbstractSubImagesGenerator=\
+  adams.data.jai.transformer.subimages
+
+# the BoofCV transformers
+adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
+  adams.data.boofcv.transformer
+  
+# the ffmpeg plugins
+adams.flow.sink.ffmpeg.AbstractFFmpegPlugin=\
+  adams.flow.sink.ffmpeg
+
+# the draw operations
+adams.flow.transformer.draw.AbstractDrawOperation=\
+  adams.flow.transformer.draw
+  
+# the actions for the PixelSelector transformer
+adams.flow.transformer.pixelselector.AbstractPixelSelectorAction=\
+  adams.flow.transformer.pixelselector
+  
+# the actions for the PixelSelector overlays
+adams.flow.transformer.pixelselector.AbstractPixelSelectorOverlay=\
+  adams.flow.transformer.pixelselector
+
+# the algorithms for preparing images
+adams.flow.transformer.imagepreparation.AbstractImagePreparation=\
+  adams.flow.transformer.imagepreparation
+
+# image filters
+adams.data.imagefilter.AbstractImageFilterProvider=\
+  adams.data.imagefilter

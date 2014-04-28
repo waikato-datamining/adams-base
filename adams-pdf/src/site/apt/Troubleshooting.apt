@@ -1,0 +1,17 @@
+Troubleshooting
+
+
+* 64bit Linux shows error message when viewing PDF that 'libfreetype.so' library was not found ("UnsatisfiedLinkError").
+
+  Make sure that /usr/lib/libfreetype.so exists. If not, add a symbolic link to
+  the 64bit library, using a similar command as follows (for Kubuntu 11.10 or 
+  LinuxMint 11):
+
++---
+  sudo ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so.6 /usr/lib/libfreetype.so
++---
+
+  And restart the application.
+
+
+  $Revision$

@@ -1,0 +1,104 @@
+# Project: adams
+# Date: 2014-01-23 15:34:43
+# User: fracpete
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.SequenceSource
+					-name
+					model
+					-actor
+						adams.flow.source.FileSupplier
+							-file
+							${EXAMPLE_FLOWS}/data/naivebayes.model
+					-actor
+						adams.flow.transformer.MOAModelReader
+							-output-only-model
+							true
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			serialized model
+			-annotation
+			This flow uses a serialized model to make predictions on a \ndata set (iris.arff) and output the generated class \ndistributions.
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/iris.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+					-output-type
+					INCREMENTAL
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.transformer.MOAClassifying
+					-model
+					${EXAMPLE_FLOWS}/data/naivebayes.model
+					-on-the-fly
+					true
+			-tee
+				adams.flow.control.ContainerValuePicker
+					-tee
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.AnyToString
+					-tee
+						adams.flow.sink.Display
+							-name
+							Display class distribution (serialized)
+							-short-title
+							true
+					-value
+					Distribution
+	-actor
+		adams.flow.control.Trigger
+			-name
+			global actor
+			-annotation
+			This flow uses a model obtained from a global actor to make \npredictions on a data set (iris.arff) and output the \ngenerated class distributions (the global actor merely loads a\nserialized model in this example).
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/iris.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+					-output-type
+					INCREMENTAL
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.transformer.MOAClassifying
+					-model
+					${EXAMPLE_FLOWS}
+					-model-actor
+					model
+					-on-the-fly
+					true
+			-tee
+				adams.flow.control.ContainerValuePicker
+					-tee
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.AnyToString
+					-tee
+						adams.flow.sink.Display
+							-name
+							Display class distribution (model)
+							-short-title
+							true
+							-x
+							-3
+					-value
+					Distribution
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

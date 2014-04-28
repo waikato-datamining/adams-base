@@ -1,0 +1,25 @@
+# Default named setups can be stored in here.
+#
+# Format:
+#   <key>=<classname + options>
+#
+# Note:
+# These setups are also used in the JUnit tests. Whenever modifying the setups
+# here, make sure that all the tests still succeed.
+#
+#
+# Author: FracPete (fracpet at waikato dot ac dot nz)
+# Version: $Revision$
+
+# data
+baseline_passthrough=adams.data.baseline.PassThrough
+filter_passthrough=adams.data.filter.PassThrough
+id_simple=adams.data.id.SimpleIDGenerator
+noise_passthrough=adams.data.noise.PassThrough
+outlier_passthrough=adams.data.outlier.PassThrough
+reportfilter_passthrough=adams.data.report.PassThrough
+smoothing_passthrough=adams.data.smoothing.PassThrough
+
+# flow
+singleton_tool_inittables=adams.flow.standalone.Tool -tool adams.tools.InitializeTables
+sink_dumpfile=adams.flow.sink.DumpFile -output ${TMP}/dumpfile.txt -append

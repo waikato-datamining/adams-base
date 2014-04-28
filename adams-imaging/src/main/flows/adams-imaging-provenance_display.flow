@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-01-23 15:31:52
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads an image from disk, processes it and displays \nthe provenance information.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+	-actor
+		adams.flow.transformer.ImageJReader
+	-actor
+		adams.flow.transformer.ImageJTransformer
+			-transformer
+				adams.data.imagej.transformer.Gray8
+	-actor
+		adams.flow.transformer.ImageJTransformer
+			-name
+			ImageJTransformer-1
+			-transformer
+				adams.data.imagej.transformer.Resize
+					-width
+					50
+					-height
+					50
+	-actor
+		adams.flow.transformer.ImageJFlattener
+			-flattener
+				adams.data.imagej.flattener.Pixels
+	-actor
+		adams.flow.sink.ProvenanceDisplay
+			-writer
+				adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

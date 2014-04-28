@@ -1,0 +1,28 @@
+# Configuration file for the File content browser.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial divider location
+DividerLocation=200
+
+# The initial directory for browsing.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=%h
+
+# The number of directories to remember
+MaxRecentDirs=5
+
+# Whether to show hidden files by default (true|false)
+ShowHiddenFiles=false
+
+# regular expressions for temp files separated by "|"
+TempFiles=.*\\.bak|.*\\.backup|.*~
+
+# Whether to show temp files by default (true|false)
+ShowTempFiles=false

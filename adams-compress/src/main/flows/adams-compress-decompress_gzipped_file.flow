@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-02-21 00:20:37
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Here a gzip-compressed file is decompressed in a\ncustom output directory and the content of this file \nis then being displayed.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.arff.gz
+	-actor
+		adams.flow.transformer.GUNZIP
+			-use-out-dir
+			true
+			-out-dir
+			${EXAMPLE_FLOWS}/output
+	-actor
+		adams.flow.transformer.TextFileReader
+			-reader
+				adams.data.io.input.SingleStringTextReader
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,122 @@
+# Project: adams
+# Date: 2014-02-21 00:19:49
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow either loads an RSS XML file as string or grabs a fresh copy from the internet.\nThe it performs some preprocessing steps and parses it as as DOM document before \ncreating CSV output (tab-delimited), which in turn gets turned into a spreadsheet and \ndisplayed.\n\nRSS feed is retrieved using the following URL:\n  http://alerts.weather.gov/cap/us.php?x=1
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			obtain xml
+			-tee
+				adams.flow.source.EnterValue
+					-stop-if-canceled
+					true
+					-custom-stop-message
+					User canceled flow!
+					-message
+					Download a fresh RSS feed or use the existing XML file?
+					-selection-values
+					download
+					-selection-values
+					use existing file
+			-tee
+				adams.flow.control.IfThenElse
+					-condition
+						adams.flow.condition.bool.Expression
+							-expression
+							\"X\" = \"download\"
+					-then
+						adams.flow.control.Trigger
+							-name
+							then
+							-tee
+								adams.flow.source.URLSupplier
+									-url
+									http://alerts.weather.gov/cap/us.php?x=1
+							-tee
+								adams.flow.transformer.DownloadContent
+							-tee
+								adams.flow.transformer.SetStorageValue
+									-storage-name
+									xml
+					-else
+						adams.flow.control.Trigger
+							-name
+							else
+							-tee
+								adams.flow.source.FileSupplier
+									-file
+									${EXAMPLE_FLOWS}/data/USNationalWeatherService-20130718-1050.xml
+							-tee
+								adams.flow.transformer.TextFileReader
+									-reader
+										adams.data.io.input.SingleStringTextReader
+							-tee
+								adams.flow.transformer.SetStorageValue
+									-storage-name
+									xml
+	-actor
+		adams.flow.control.Trigger
+			-name
+			process xml
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					xml
+			-tee
+				adams.flow.transformer.StringReplace
+					-annotation
+					The XSLT transformer cannot handle namespaces that are referenced other than \"http\".\nThe \"cap\" namespace is referenced using a URI rather than URL (\"urn:...\").\nHence we create non-namespace tags by replacing the colon with an underscore.
+					-find
+					cap:
+					-replace
+					cap_
+					-type
+					SIMPLE
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace-1
+					-annotation
+					Single quotes get interpreted as text cells, hence we change them to `
+					-find
+					\'
+					-replace
+					`
+					-type
+					SIMPLE
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.XMLToDOM
+			-tee
+				adams.flow.transformer.XSLT
+					-stylesheet
+					${EXAMPLE_FLOWS}/data/USNationalWeatherService.xsl
+			-tee
+				adams.flow.transformer.Convert
+					-name
+					Convert-1
+					-conversion
+						adams.data.conversion.StringToSpreadSheet
+							-reader
+								adams.data.io.input.CsvSpreadSheetReader
+									-spreadsheet-type
+										adams.data.spreadsheet.SpreadSheet
+									-missing
+									
+									-separator
+									\t
+									-datetime-columns
+									4,5
+									-datetime-format
+									yyyy-MM-dd'T'HH:mm:ss
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

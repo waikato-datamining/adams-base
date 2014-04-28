@@ -1,0 +1,268 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * SpreadSheetSubset.java
+ * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ */
+
+package adams.flow.transformer;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Range;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.flow.core.Token;
+
+/**
+ <!-- globalinfo-start -->
+ * Extracts a subset of rows&#47;columns from a spreadsheet.
+ * <p/>
+ <!-- globalinfo-end -->
+ *
+ <!-- flow-summary-start -->
+ * Input&#47;output:<br/>
+ * - accepts:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
+ * - generates:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
+ * <p/>
+ <!-- flow-summary-end -->
+ *
+ <!-- options-start -->
+ * Valid options are: <p/>
+ *
+ * <pre>-D &lt;int&gt; (property: debugLevel)
+ * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
+ * &nbsp;&nbsp;&nbsp;the console (0 = off).
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: SpreadSheetSubset
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * </pre>
+ *
+ * <pre>-row &lt;java.lang.String&gt; (property: rows)
+ * &nbsp;&nbsp;&nbsp;The rows of the subset to retrieve; A range is a comma-separated list of
+ * &nbsp;&nbsp;&nbsp;single 1-based indices or sub-ranges of indices ('start-end'); the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used as well: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp;last
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * </pre>
+ *
+ * <pre>-col &lt;java.lang.String&gt; (property: columns)
+ * &nbsp;&nbsp;&nbsp;The columns of the subset to retrieve; A range is a comma-separated list
+ * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used as well: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp;last
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * </pre>
+ *
+ <!-- options-end -->
+ *
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+public class SpreadSheetSubset
+  extends AbstractSpreadSheetTransformer {
+
+  /** for serialization. */
+  private static final long serialVersionUID = -253714973019682939L;
+
+  /** the rows of the subset to obtain. */
+  protected Range m_Rows;
+
+  /** the columns of the subset to obtain. */
+  protected SpreadSheetColumnRange m_Columns;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Extracts a subset of rows/columns from a spreadsheet.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "row", "rows",
+	    new Range(Range.ALL));
+
+    m_OptionManager.add(
+	    "col", "columns",
+	    new SpreadSheetColumnRange(Range.ALL));
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Rows    = new Range();
+    m_Columns = new SpreadSheetColumnRange();
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "rows", m_Rows, "rows: ");
+    result += QuickInfoHelper.toString(this, "columns", m_Columns, "/cols: ");
+
+    return result;
+  }
+
+  /**
+   * Sets the rows of the subset.
+   *
+   * @param value	the rows
+   */
+  public void setRows(Range value) {
+    m_Rows = value;
+    reset();
+  }
+
+  /**
+   * Returns the rows of the subset.
+   *
+   * @return		the rows
+   */
+  public Range getRows() {
+    return m_Rows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String rowsTipText() {
+    return "The rows of the subset to retrieve.";
+  }
+
+  /**
+   * Sets the columns of the subset.
+   *
+   * @param value	the columns
+   */
+  public void setColumns(SpreadSheetColumnRange value) {
+    m_Columns = value;
+    reset();
+  }
+
+  /**
+   * Returns the columns of the subset.
+   *
+   * @return		the columns
+   */
+  public SpreadSheetColumnRange getColumns() {
+    return m_Columns;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String columnsTipText() {
+    return "The columns of the subset to retrieve; " + m_Columns.getExample();
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String	result;
+    SpreadSheet	sheet;
+    SpreadSheet	subset;
+    Row		row;
+    Row		subrow;
+    int[]	rows;
+    int[]	cols;
+    int		i;
+    int		n;
+
+    result = null;
+
+    sheet = (SpreadSheet) m_InputToken.getPayload();
+    m_Rows.setMax(sheet.getRowCount());
+    m_Columns.setSpreadSheet(sheet);
+
+    rows = m_Rows.getIntIndices();
+    cols = m_Columns.getIntIndices();
+    if (cols.length == 0) {
+      result = "No columns selected!";
+    }
+    else {
+      subset = sheet.newInstance();
+      // header
+      for (i = 0; i < cols.length; i++) {
+	subset.getHeaderRow().addCell("" + (i+1)).setContent(
+	    sheet.getHeaderRow().getCell(cols[i]).getContent());
+      }
+      // data
+      for (n = 0; n < rows.length; n++) {
+	row    = sheet.getRow(rows[n]);
+	subrow = subset.addRow("" + (subset.getRowCount()));
+	for (i = 0; i < cols.length; i++) {
+	  subrow.addCell("" + (i+1)).setContent(
+	      row.getCell(cols[i]).getContent());
+	}
+      }
+
+      m_OutputToken = new Token(subset);
+    }
+
+    return result;
+  }
+}

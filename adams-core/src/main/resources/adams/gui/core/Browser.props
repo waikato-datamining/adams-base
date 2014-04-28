@@ -1,0 +1,27 @@
+# Customizing the browser support.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The default browser to use (empty string = default, otherwise absolute path).
+# The following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+DefaultBrowser=
+
+# The Linux browsers to look for (in this order)
+LinuxBrowsers=\
+  firefox,\
+  chromium-browser,\
+  google-chrome,\
+  epiphany,\
+  rekonq,\
+  konqueror,\
+  midori,\
+  iceweasel,\
+  mozilla,\
+  netscape,\
+  opera

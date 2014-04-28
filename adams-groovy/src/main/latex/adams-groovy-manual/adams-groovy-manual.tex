@@ -1,0 +1,259 @@
+% Copyright (c) 2009-2012 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-groovy} \\
+  \vspace{1cm}
+  \includegraphics[width=4cm]{images/groovy_logo.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+Developing a new actor for ADAMS is not hard. But it can take too long, if you
+simply want to test something: writing the code, compiling, packaging and,
+finally, executing it. Dynamic languages that run in the Java Virtual Machine
+(JVM), like Groovy (\cite{groovy}), come in handy. Here, you simply have to
+write the code and then execute it. There is no need to compile or package anything.
+
+Groovy's syntax is similar to the Java one. Here is an example, taking a Java
+class:
+\begin{verbatim}
+import java.util.Vector;
+public class FunkyVector extends Vector {
+  public String toString() {
+    String result = "Funky output: ";
+    result += super.toString();
+    return result;
+  }
+}
+\end{verbatim}
+And turning it into a Groovy script:
+\begin{verbatim}
+import java.util.Vector
+class FunkyVector extends Vector {
+  public String toString() {
+    def result = "Funky output: "
+    result += super.toString()
+    return result
+  }
+}
+\end{verbatim}
+Apart from the missing semi-colons and the missing data type when defining a
+local variable, the code looks pretty much the same. But Groovy also comes
+with other features, like Closures
+\footnote{\url{http://groovy.codehaus.org/Closures}{}}
+or lazy transformation
+\footnote{\url{http://groovy.codehaus.org/Lazy+transformation}{}}.
+For more details, you might want to check out the Groovy documentation
+\footnote{\url{http://groovy.codehaus.org/User+Guide}{}}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Writing actors}
+Writing a Groovy actor works just like writing a regular ADAMS actor in Java.
+
+\section{Superclass and wrapper}
+First, you create an empty text file for you new 
+actor\footnote{You can also simply use the \textit{inlineScript} option if you don't 
+want to use a file.}. Second, you choose what superclass you want to derive it from:
+\begin{tight_itemize}
+	\item \textbf{Standalone} -- \texttt{adams.flow.standalone.AbstractScript}
+	\item \textbf{Source} -- \texttt{adams.flow.source.AbstractScript}
+	\item \textbf{Transformer} -- \texttt{adams.flow.transformer.AbstractScript}
+	\item \textbf{Sink} -- \texttt{adams.flow.sink.AbstractScript}
+\end{tight_itemize}
+This also determines, which ADAMS wrapper actor you need to use for executing
+your external script:
+\begin{tight_itemize}
+	\item \textbf{Standalone} -- \texttt{adams.flow.standalone.Groovy}
+	\item \textbf{Source} -- \texttt{adams.flow.source.Groovy}
+	\item \textbf{Transformer} -- \texttt{adams.flow.transformer.Groovy}
+	\item \textbf{Sink} -- \texttt{adams.flow.sink.Groovy}
+\end{tight_itemize}
+You simply use your script file as the \texttt{scriptFile} property and now you
+only have to write the actual code.
+
+\newpage
+\section{Implementation}
+As for writing your code, you merely have to implement all the abstract methods
+from your \texttt{AbstractScript} superclass. The following code shows a
+minimalistic \textit{transformer}, which accepts and generates \texttt{Integer}
+objects. In the \texttt{doExecute()} method, as it stands, it does not do anything with
+the incoming data, it merely forwards a new \texttt{Token} with the data
+it received.
+\begin{verbatim}
+import adams.flow.core.Token
+import adams.flow.transformer.AbstractScript
+
+class SimpleTransformer extends AbstractScript {
+  public String globalInfo() {
+    return "My simple transformer"
+  }
+  public Class[] accepts() {
+    return [Integer.class] as Object[]
+  }
+  public Class[] generates() {
+    return [Integer.class] as Object[]
+  }
+  protected String doExecute() {
+    m_OutputToken = new Token(m_InputToken.getPayload())
+    return null
+  }
+}
+\end{verbatim}
+A slightly more complex version computes the square of the incoming integer:
+\begin{verbatim}
+  ...
+  protected String doExecute() {
+    Integer input = (Integer) m_InputToken.getPayload()
+    m_OutputToken = new Token(input * input)
+    return null
+  }
+  ...
+\end{verbatim}
+
+\newpage
+\section{Parameters}
+\label{parameters}
+Of course, most of the actors that you will write, will require some form of
+parametrization. Instead of defining options in the script itself, the ADAMS
+wrapper actor takes on the role of providing parameters. Each of the
+\texttt{Groovy} wrapper actors has a property called \texttt{scriptOptions}
+which takes a blank-separated list of key-value pairs (``key=value'').
+
+These options are available in the Groovy script via the
+\texttt{getAdditionalOptions()} method, returning an
+\texttt{adams.flow.core.AdditionalOptions} container object. This container
+object offers retrieval of the options via their key:
+\begin{tight_itemize}
+	\item \texttt{getBoolean(String)} and \texttt{getBoolean(String,Boolean)}
+	\item \texttt{getInteger(String)} and \texttt{getInteger(String,Integer)}
+	\item \texttt{getDouble(String)} and \texttt{getDouble(String,Double)}
+	\item \texttt{getString(String)} and \texttt{getString(String,String)}
+\end{tight_itemize}
+The second method listed allows you to specify a default value, in case the
+option was not supplied.
+
+Assuming that we require an additional option called \texttt{add}, we can use
+this parameter to add to our incoming integer value in order to generate output:
+{\small
+\begin{verbatim}
+  ..
+  protected String doExecute() {
+    Integer input = (Integer) m_InputToken.getPayload()
+    m_OutputToken = new Token(new Integer(input + getAdditionalOptions().getInteger("add", 1)))
+    return null
+  }
+  ..
+\end{verbatim}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Writing conversions}
+Just like with Groovy actors, Groovy conversions have follow the same principle,
+by being implemented as regular conversion schemes in ADAMS.
+
+\section{Superclass and wrapper}
+First, you create an empty text file for you new 
+conversion\footnote{You can also simply use the \textit{inlineScript} option if you don't 
+want to use a file.}. Second, you use the following superclass to derive your 
+Groovy conversion from:
+\begin{verbatim}
+  adams.data.conversion.AbstractScript
+\end{verbatim}
+The external script is executed using the following wrapper conversion:
+\begin{verbatim}
+  adams.data.conversion.Groovy
+\end{verbatim}
+You simply use your script file as the \texttt{scriptFile} property and now you
+only have to write the actual code.
+
+\newpage
+\section{Implementation}
+As for writing your code, you merely have to implement all the abstract methods
+from your \texttt{AbstractScript} superclass. The following code shows a
+minimalistic conversion, which accepts and generates \texttt{Double}
+objects. In the \texttt{doConvert()} method, it merely divides the incoming
+doubles by 100.
+\begin{verbatim}
+import adams.data.conversion.AbstractScript
+
+class SimpleConversion
+  extends AbstractScript {
+
+  public String globalInfo() {
+    return "Just divides the incoming numbers by 100."
+  }
+
+  public Class accepts() {
+    return Double.class
+  }
+
+  public Class generates() {
+    return Double.class
+  }
+
+  protected Object doConvert() throws Exception {
+    return m_Input / 100
+  }
+}
+\end{verbatim}
+\section{Parameters}
+As in how to use parameters, see section \ref{parameters} as it works the
+same way as for actors.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

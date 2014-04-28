@@ -1,0 +1,82 @@
+# Project: adams
+# Date: 2014-01-23 15:40:46
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots data points from a spreadsheet in CSV format.\nWith each data point there is an error-delta attached\nfor the y-value and x-value, represented by the error \nbars in the plot.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/errors3.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetPlotGenerator
+			-generator
+				adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator
+					-y-column
+					2
+					-x-column
+					1
+					-y-error-columns
+					4
+					-x-error-columns
+					3
+	-actor
+		adams.flow.sink.SequencePlotter
+			-writer
+				adams.gui.print.NullWriter
+			-paintlet
+				adams.gui.visualization.sequence.PaintletWithFixedXYRange
+					-max-y
+					3.0
+					-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-max-x
+					4.0
+			-overlay-paintlet
+				adams.gui.visualization.sequence.CirclePaintlet
+			-marker-paintlet
+				adams.flow.sink.sequenceplotter.NoMarkers
+			-error-paintlet
+				adams.flow.sink.sequenceplotter.SimpleErrorPaintlet
+					-plot-type
+					BOX
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-overlay-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-title
+			Y Error plot
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					x
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-width
+					40
+					-custom-format
+					0.0
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					y
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-width
+					60
+					-custom-format
+					0.0
+			-plot-updater
+				adams.flow.sink.sequenceplotter.SimplePlotUpdater
+			-post-processor
+				adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2014-01-23 15:32:55
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow that uses an external Jython source\nscript to generate some random integers.\nNB: If you experience problems executing the flow,\nsee src/main/resources/documentation/Troubleshooting.txt
+	-actor
+		adams.flow.source.Jython
+			-script
+			${EXAMPLE_FLOWS}/scripts/SimpleSource.py
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

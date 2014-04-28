@@ -1,0 +1,16 @@
+--> simple-out0.report
+A1=266.226623
+A1\tDataType=N
+A2=2.728273
+A2\tDataType=N
+B2=61.166117
+B2\tDataType=N
+C2=5.97
+C2\tDataType=N
+D2=100.110011
+D2\tDataType=N
+Dummy\ report=false
+Dummy\ report\tDataType=B
+Parent\ ID=1
+Parent\ ID\tDataType=U
+

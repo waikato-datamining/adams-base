@@ -1,0 +1,13 @@
+--> dumpfile.txt
+Content type=PLOT, PlotName=Plot, X=0.0, Y=0
+Content type=PLOT, PlotName=Plot, X=1.0, Y=1
+Content type=PLOT, PlotName=Plot, X=4.0, Y=2
+Content type=PLOT, PlotName=Plot, X=9.0, Y=3
+Content type=PLOT, PlotName=Plot, X=16.0, Y=4
+Content type=PLOT, PlotName=Plot, X=25.0, Y=5
+Content type=PLOT, PlotName=Plot, X=36.0, Y=6
+Content type=PLOT, PlotName=Plot, X=49.0, Y=7
+Content type=PLOT, PlotName=Plot, X=64.0, Y=8
+Content type=PLOT, PlotName=Plot, X=81.0, Y=9
+Content type=PLOT, PlotName=Plot, X=100.0, Y=10
+

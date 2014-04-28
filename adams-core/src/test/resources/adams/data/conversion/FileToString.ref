@@ -1,0 +1,10 @@
+--> out-0.txt
+/home/sweet/home.txt
+C:\Microsoft is not the answer\it is the question\and the answer is no.odt
+./some/place.txt
+
+--> out-1.txt
+/home/sweet/home.txt
+C:/Microsoft is not the answer/it is the question/and the answer is no.odt
+./some/place.txt
+

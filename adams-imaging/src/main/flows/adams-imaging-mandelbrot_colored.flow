@@ -1,0 +1,482 @@
+# Project: adams
+# Date: 2014-01-23 15:31:32
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Flow for generating the Mandelbrot set (colored version):\nhttp://en.wikipedia.org/wiki/Mandelbrot_set\nA tribute to the late Benoit B. Mandelbrot (1924-2010)
+	-actor
+		adams.flow.standalone.Standalones
+			-name
+			Initialization
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set num_x
+					-annotation
+					the X resolution
+					-var-name
+					num_x
+					-var-value
+					160
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set num_y
+					-annotation
+					the Y resolution
+					-var-name
+					num_y
+					-var-value
+					120
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set num_iter
+					-annotation
+					the maximum number of iterations for each point
+					-var-name
+					num_iter
+					-var-value
+					100
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set limit
+					-annotation
+					the square of the escape radius
+					-var-name
+					limit
+					-var-value
+					256
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set min_x
+					-annotation
+					minimum x on the z plane
+					-var-name
+					min_x
+					-var-value
+					-2.5
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set max_x
+					-annotation
+					maximum x on the z plane
+					-var-name
+					max_x
+					-var-value
+					1.5
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set min_y
+					-annotation
+					minimum y on the z plane
+					-var-name
+					min_y
+					-var-value
+					-1.5
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					set max_y
+					-annotation
+					maximum y on the z plane
+					-var-name
+					max_y
+					-var-value
+					1.5
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.SequencePlotter
+					-width
+					368
+					-height
+					221
+					-writer
+						adams.gui.print.NullWriter
+					-comparison
+					X_AND_Y
+					-paintlet
+						adams.gui.visualization.sequence.PaintletWithFixedXYRange
+							-min-y
+							@{min_y}
+							-max-y
+							@{max_y}
+							-paintlet
+								adams.gui.visualization.sequence.DotPaintlet
+							-min-x
+							@{min_x}
+							-max-x
+							@{max_x}
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Mandelbrot set
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							real
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-width
+							40
+							-custom-format
+							0.0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							imag
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-width
+							60
+							-custom-format
+							0.0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-actor
+		adams.flow.standalone.Stopwatch
+			-width
+			250
+			-prefix
+			Execution time 
+			-show-seconds
+			true
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create image
+			-tee
+				adams.flow.source.JAICreateImage
+					-width
+					@{num_x}
+					-height
+					@{num_y}
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					image
+	-actor
+		adams.flow.control.Trigger
+			-name
+			loop x
+			-tee
+				adams.flow.source.ForLoop
+					-name
+					ForLoop X
+					-upper
+					@{num_x}
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					set x
+					-var-name
+					x
+			-tee
+				adams.flow.transformer.MathExpression
+					-name
+					calc cx
+					-expression
+					(@{min_x} + (@{max_x} - @{min_x}) / (@{num_x} - 1) * (X - 1))
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					set cx
+					-var-name
+					cx
+			-tee
+				adams.flow.control.Tee
+					-name
+					output cx
+					-skip
+					true
+					-tee
+						adams.flow.sink.Console
+							-prefix
+							cx:
+			-tee
+				adams.flow.control.Trigger
+					-name
+					loop y
+					-tee
+						adams.flow.source.ForLoop
+							-upper
+							@{num_y}
+					-tee
+						adams.flow.transformer.SetVariable
+							-name
+							set y
+							-var-name
+							y
+					-tee
+						adams.flow.control.Trigger
+							-name
+							reset
+							-tee
+								adams.flow.standalone.Standalones
+									-actor
+										adams.flow.standalone.SetVariable
+											-name
+											set zx
+											-var-name
+											zx
+											-var-value
+											0
+									-actor
+										adams.flow.standalone.SetVariable
+											-name
+											set zy
+											-var-name
+											zy
+											-var-value
+											0
+									-actor
+										adams.flow.standalone.SetVariable
+											-name
+											set iter
+											-var-name
+											iter
+											-var-value
+											0
+					-tee
+						adams.flow.transformer.MathExpression
+							-name
+							calc cy
+							-expression
+							(@{min_y} + (@{max_y} - @{min_y}) / (@{num_y} - 1) * (X - 1))
+					-tee
+						adams.flow.transformer.SetVariable
+							-name
+							set cy
+							-var-name
+							cy
+					-tee
+						adams.flow.control.Tee
+							-name
+							output cy
+							-skip
+							true
+							-tee
+								adams.flow.sink.Console
+									-prefix
+									cy:
+					-tee
+						adams.flow.control.Trigger
+							-name
+							Calc
+							-tee
+								adams.flow.source.Start
+							-tee
+								adams.flow.control.WhileLoop
+									-annotation
+									Calculates the following formula:\n  zn+1 = zn^2 + c\nwith\n  z0 = 0+0i\n  c is calculated from the current x and yi positions\nChecks whether the distance of zn+1 is greater than \na certain value or whether the number of iterations\nhas been exceeded.
+									-condition
+										adams.flow.condition.bool.Expression
+											-expression
+											(((@{zx}^2 + @{zy}^2) < @{limit}) & (@{iter} < @{num_iter}))
+									-loop
+										adams.flow.source.StringConstants
+											-name
+											dummy token
+											-string
+											0
+									-loop
+										adams.flow.transformer.Convert
+											-conversion
+												adams.data.conversion.StringToDouble
+									-loop
+										adams.flow.transformer.IncVariable
+											-name
+											inc iter
+											-var-name
+											iter
+									-loop
+										adams.flow.control.Tee
+											-tee
+												adams.flow.control.Branch
+													-branch
+														adams.flow.control.Sequence
+															-name
+															zx_new
+															-actor
+																adams.flow.transformer.MathExpression
+																	-name
+																	calc zx_new
+																	-expression
+																	(@{zx}^2 - @{zy}^2 + @{cx})
+															-actor
+																adams.flow.transformer.SetVariable
+																	-name
+																	set zx_new
+																	-var-name
+																	zx_new
+													-branch
+														adams.flow.control.Sequence
+															-name
+															zy_new
+															-actor
+																adams.flow.transformer.MathExpression
+																	-name
+																	calc zy_new
+																	-expression
+																	(2*@{zx}*@{zy} + @{cy})
+															-actor
+																adams.flow.transformer.SetVariable
+																	-name
+																	set zy_new
+																	-var-name
+																	zy_new
+									-loop
+										adams.flow.control.Trigger
+											-name
+											zx
+											-tee
+												adams.flow.source.Variable
+													-var-name
+													zx_new
+											-tee
+												adams.flow.transformer.SetVariable
+													-name
+													set zx
+													-var-name
+													zx
+											-tee
+												adams.flow.sink.Console
+													-skip
+													true
+													-prefix
+													zx:
+									-loop
+										adams.flow.control.Trigger
+											-name
+											zy
+											-tee
+												adams.flow.source.Variable
+													-var-name
+													zy_new
+											-tee
+												adams.flow.transformer.SetVariable
+													-name
+													set zx
+													-var-name
+													zy
+											-tee
+												adams.flow.sink.Console
+													-skip
+													true
+													-prefix
+													zy:
+					-tee
+						adams.flow.control.IfThenElse
+							-annotation
+							Determines whether to plot the point or not
+							-condition
+								adams.flow.condition.bool.Expression
+									-expression
+									((@{zx}^2 + @{zy}^2) < @{limit})
+							-then
+								adams.flow.control.Sequence
+									-name
+									then
+									-actor
+										adams.flow.source.StorageValue
+											-storage-name
+											image
+									-actor
+										adams.flow.transformer.Draw
+											-operation
+												adams.flow.transformer.draw.Pixel
+													-color
+													#ffffff
+													-x
+													@{x}
+													-y
+													@{y}
+													-type
+													COLOR
+											-no-copy
+											true
+							-else
+								adams.flow.control.Sequence
+									-name
+									else
+									-actor
+										adams.flow.source.StorageValue
+											-storage-name
+											image
+									-actor
+										adams.flow.control.Trigger
+											-name
+											calculate color
+											-tee
+												adams.flow.source.Variable
+													-var-name
+													iter
+											-tee
+												adams.flow.transformer.Convert
+													-conversion
+														adams.data.conversion.StringToDouble
+											-tee
+												adams.flow.transformer.MathExpression
+													-expression
+													X*100
+											-tee
+												adams.flow.transformer.Convert
+													-name
+													Convert-1
+													-conversion
+														adams.data.conversion.DoubleToInt
+											-tee
+												adams.flow.transformer.SetVariable
+													-var-name
+													color
+									-actor
+										adams.flow.transformer.Draw
+											-operation
+												adams.flow.transformer.draw.Pixel
+													-color
+													#ffffff
+													-x
+													@{x}
+													-y
+													@{y}
+													-rgba
+													@{color}
+											-no-copy
+											true
+			-tee
+				adams.flow.control.Trigger
+					-name
+					display image
+					-tee
+						adams.flow.source.StorageValue
+							-storage-name
+							image
+					-tee
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

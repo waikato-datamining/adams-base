@@ -1,0 +1,11 @@
+# Configuration file for the Log entry viewer.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial divider location
+DividerLocation=300
+
+# The width and height of the text dialog for viewing message details
+DetailsDialog.Width=400
+DetailsDialog.Height=300

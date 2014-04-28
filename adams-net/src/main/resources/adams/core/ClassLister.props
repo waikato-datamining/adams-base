@@ -1,0 +1,33 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# classes for sending emails
+adams.core.net.AbstractSendEmail=\
+  adams.core.net
+
+# classes for email readers
+adams.data.io.input.EmailReader=\
+  adams.data.io.input
+
+# classes for email file readers
+adams.data.io.input.EmailFileReader=\
+  adams.data.io.input
+
+# classes for email writers
+adams.data.io.output.EmailWriter=\
+  adams.data.io.output
+
+# classes for email file writers
+adams.data.io.output.EmailFileWriter=\
+  adams.data.io.output
+ 
+# the webserver handlers
+adams.flow.standalone.webserver.Handler=\
+  adams.flow.standalone.webserver
+ 

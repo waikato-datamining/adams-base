@@ -1,0 +1,58 @@
+# Project: adams
+# Date: 2014-01-23 15:39:16
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow creates a (square) double matrix from a spreadsheet \nin string format and then calculates the determinant of it.\nThe result of the calculation is displayed.
+	-actor
+		adams.flow.standalone.Rserve
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			A,B,C\n1,2,3\n4,5,1\n7,8,3
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-1
+			-conversion
+				adams.data.conversion.UnBackQuote
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-2
+			-conversion
+				adams.data.conversion.StringToSpreadSheet
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					Matrix
+					-short-title
+					true
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.SpreadSheetToDoubleMatrix
+	-actor
+		adams.flow.transformer.RTransformer
+			-script
+			det(X)
+			-return-type
+			Double
+	-actor
+		adams.flow.sink.Display
+			-name
+			Determinant of matrix
+			-short-title
+			true
+			-x
+			-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

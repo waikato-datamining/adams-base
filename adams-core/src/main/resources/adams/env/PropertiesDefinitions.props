@@ -1,0 +1,45 @@
+# Stores the classnames of the properties definition files.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Definitions=\
+  adams.env.ActorSuggestionDefinition,\
+  adams.env.BrowserDefinition,\
+  adams.env.CharsetDefinition,\
+  adams.env.ClassListerBlacklistDefinition,\
+  adams.env.ClassListerDefinition,\
+  adams.env.ConditionsDefinition,\
+  adams.env.ConversionDefinition,\
+  adams.env.DatabaseConnectionDefinition,\
+  adams.env.DriversDefinition,\
+  adams.env.FlowControlCenterPanelDefinition,\
+  adams.env.FlowEditorPanelDefinition,\
+  adams.env.FlowEditorPanelShortcutsDefinition,\
+  adams.env.FlowRunnerPanelDefinition,\
+  adams.env.GOEBlacklistDefinition,\
+  adams.env.GOEEditorsDefinition,\
+  adams.env.GUIHelperDefinition,\
+  adams.env.ImageViewerPanelDefinition,\
+  adams.env.LocaleDefinition,\
+  adams.env.LogEntryDBViewerPanelDefinition,\
+  adams.env.LogEntryDefinition,\
+  adams.env.LogEntryViewerPanelDefinition,\
+  adams.env.ModuleDefinition,\
+  adams.env.MemoryMonitorDefinition,\
+  adams.env.NamedSetupsDefinition,\
+  adams.env.OptionsDefinition,\
+  adams.env.PerformanceDefinition,\
+  adams.env.PlaceholdersDefinition,\
+  adams.env.PreviewBrowserPanelDefinition,\
+  adams.env.ProvenanceDefinition,\
+  adams.env.ProvenanceTreeDefinition,\
+  adams.env.ProxyDefinition,\
+  adams.env.ScriptEditorTemplatesDefinition,\
+  adams.env.ScriptingDialogDefinition,\
+  adams.env.ScriptingEngineDefinition,\
+  adams.env.ScriptingLoggerDefinition,\
+  adams.env.SequenceViewerDefinition,\
+  adams.env.TimeZoneDefinition,\
+  adams.env.TableDefinition,\
+  adams.env.WineDefinition

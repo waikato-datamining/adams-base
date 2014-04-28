@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-01-23 15:43:06
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads a timeseries from a file and displays it.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/dummy.sts
+	-actor
+		adams.flow.transformer.TimeseriesFileReader
+			-reader
+				adams.data.io.input.SimpleTimeseriesReader
+	-actor
+		adams.flow.sink.TimeseriesDisplay
+			-writer
+				adams.gui.print.NullWriter
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					time
+					-tick-generator
+						adams.gui.visualization.core.axis.PeriodicityTickGenerator
+					-width
+					40
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					value
+					-tick-generator
+						adams.gui.visualization.core.axis.SimpleTickGenerator
+					-width
+					60
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

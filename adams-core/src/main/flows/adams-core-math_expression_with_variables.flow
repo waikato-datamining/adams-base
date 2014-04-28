@@ -1,0 +1,94 @@
+# Project: adams
+# Date: 2014-01-23 15:23:46
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to make use of variables\nin the mathematical expressions. The plot\nwill display three curves: x^2, x^3 and x^4.
+	-actor
+		adams.flow.source.ForLoop
+			-name
+			ForLoopExp
+			-lower
+			2
+			-upper
+			4
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			exponent
+	-actor
+		adams.flow.control.Trigger
+			-name
+			loop for Y
+			-tee
+				adams.flow.source.ForLoop
+					-upper
+					100
+			-tee
+				adams.flow.transformer.MathExpression
+					-name
+					MathExpressionX
+					-expression
+					X/10
+			-tee
+				adams.flow.transformer.MathExpression
+					-name
+					MathExpressionY
+					-expression
+					pow(X,@{exponent})
+					-output-value-pair
+					true
+			-tee
+				adams.flow.transformer.MakePlotContainer
+					-plot-name
+					@{exponent}
+			-tee
+				adams.flow.sink.SequencePlotter
+					-width
+					600
+					-height
+					600
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.PaintletWithFixedYRange
+							-max-y
+							10000.0
+							-paintlet
+								adams.gui.visualization.sequence.LinePaintlet
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							x
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-width
+							40
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							y
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-width
+							60
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+							-update-interval
+							10
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

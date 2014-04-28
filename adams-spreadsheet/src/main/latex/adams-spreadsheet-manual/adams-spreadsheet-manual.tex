@@ -1,0 +1,419 @@
+% Copyright (c) 2012-2014 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+\usepackage{varwidth}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-spreadsheet} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/spreadsheet-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2012-2014} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+Tabular data is a very common data format, not only for machine learning.
+The \textit{spreadsheet} module offers some basic spreadsheet support for
+reading/writing and some generic actors. Other modules, like the \textit{odf}
+or \textit{excel} one, offer other native readers and writers. The data
+read by these readers can be processed with the same actors.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+A lot of the following actors and conversion schemes offer either an index of
+a column or a range of columns as a parameter. In addition to the usual
+\textit{first/last/\ldots} placeholders, you can use the actual column names
+(case-insensitive). This makes an actor less error-prone, in case the order 
+of the columns may change.
+
+The following sources are available:
+\begin{tight_itemize}
+	\item \textit{NewSpreadSheet} -- for creating an empty spreadsheet with
+	pre-defined columns.
+	\item \textit{SpreadSheetDbReader} -- turns results from SQL queries into
+	spreadsheet objects.\footnote{adams-spreadsheet-database\_access.flow}
+	\item \textit{LookUp} -- Outputs a value from a stored lookup table, 
+	identified by a user-supplied key.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{LookUpTable} -- Outputs a stored lookup table as 
+	spreadsheet.\footnote{adams-spreadsheet-lookup.flow}
+\end{tight_itemize}
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{LookUp} -- obtains the value associated with the string 
+	received as input from an internally stored lookup 
+	table.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{LookUpAdd} -- adds a key/value pair to a lookup 
+	table.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{LookUpInit} -- initializes a lookup table by using two columns
+	from a spreadsheet, one acting as key, the other as 
+	value.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{LookUpRemove} -- removes a key/value pair from a lookup 
+	table.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{SpreadSheetAnonymize} -- for anonymizing 
+	columns.\footnote{adams-spreadsheet-anonymize\_columns.flow}
+	\item \textit{SpreadSheetColumnFilter} -- filters columns using a column 
+	finder scheme.\footnote{adams-spreadsheet-filter\_columns.flow}
+	\item \textit{SpreadSheetColumnIterator} -- iterates over all the columns
+	in the spreadsheet and outputs the names.\footnote{adams-spreadsheet-iterate\_cols.flow}
+	\item \textit{SpreadSheetColumnsByName} -- generates a new spreadsheet with
+	only the columns that match a regular expression (inverting is possible as well).
+	\item \textit{SpreadSheetConvertCells} -- applies arbitrary conversion 
+	schemes to individual cells.
+	\item \textit{SpreadSheetConvertHeaderCells} -- applies arbitrary conversion 
+	schemes to the header cells.
+	\item \textit{SpreadSheetCopyColumns} -- copies the content of a range of
+	columns into new columns.
+	\item \textit{SpreadSheetCopyRows} -- duplicates the content of a range of
+	rows at another location in the spreadsheet.\footnote{adams-spreadsheet-copy\_rows.flow}
+	\item \textit{SpreadSheetDifference} -- computes the difference between two
+	spreadsheets.
+	\item \textit{SpreadSheetFileReader} -- for reading spreadsheet 
+	files; depending on the reader, multiple sheets can get read at 
+	once.\footnote{adams-spreadsheet-output\_cells.flow}
+	\item \textit{SpreadSheetGetCell} -- retrieves the value of a specific cell
+	in the spreadsheet.\footnote{adams-spreadsheet-output\_cells.flow}
+	\item \textit{SpreadSheetGetColumnIndex} -- retrieves the 1-based index columns
+	which name matches a regular expression.\footnote{adams-spreadsheet-get\_column\_index.flow}
+	\item \textit{SpreadSheetGetHeaderCell} -- retrieves the value of a specific cell
+	in the header row of a spreadsheet.
+	\item \textit{SpreadSheetInfo} -- generates basic information on the 
+	spreadsheet object.
+	\item \textit{SpreadSheetInsertColumn} -- inserts a column in the spreadsheet,
+	initializes the cells with a user-defined value.
+	\item \textit{SpreadSheetInsertRow} -- inserts a row in the spreadsheet,
+	initializes the cells with a user-defined value.
+	\item \textit{SpreadSheetMerge} -- merges multiple spreadsheets into a single
+	one.\footnote{adams-spreadsheet-simple\_merge.flow, adams-spreadsheet-merge\_using\_id.flow}
+	\item \textit{SpreadSheetPlotGenerator} -- turns a spreadsheet into plot
+	containers to be displayed in the \textit{SequencePlotter} 
+	sink.\footnote{adams-spreadsheet-spreadsheet\_plot1.flow, 
+	adams-spreadsheet-spreadsheet\_plot2.flow, adams-spreadsheet-statistic.flow}
+	\item \textit{SpreadSheetQuery} -- allows to run an SQL-like query on a 
+	spreadsheet to select a subset of rows/columns, delete rows, update 
+	cells.\footnote{adams-spreadsheet-query.flow}
+	\item \textit{SpreadSheetRemoveColumn} -- removes columns from a spreadsheet.
+	\item \textit{SpreadSheetRemoveRow} -- removes rows from a spreadsheet.
+	\item \textit{SpreadSheetReorderColumns} -- reorders columns in a spreadsheet, 
+	also allows duplicating/dropping of columns.
+	\item \textit{SpreadSheetReplaceCellValue} -- replaces cell values that
+	match a regular expression.
+	\item \textit{SpreadSheetRowFilter} -- filters rows using a row
+	finder scheme.\footnote{adams-spreadsheet-filter\_rows.flow}
+	\item \textit{SpreadSheetSetCell} -- sets the value of a specific cell
+	in the spreadsheet.\footnote{adams-spreadsheet-set\_cells.flow}
+	\item \textit{SpreadSheetSetHeaderCell} -- sets the value of a specific cell
+	in the header row of a spreadsheet.
+	\item \textit{SpreadSheetSort} -- sorts a spreadsheet using an arbitrary
+	number of columns (ascending or descending).
+	\item \textit{SpreadSheetStatistic} -- calculates statistics using the
+	data stored in the spreadsheet.\footnote{adams-spreadsheet-statistic.flow}
+	\item \textit{SpreadSheetSubset} -- for obtaining a subset of the 
+	spreadsheet object (subset of columns and/or rows).
+	\item \textit{SpreadSheetSubsetByValue} -- splits a spreadsheet into 
+	subsets using the unique (string) values in a column for grouping.
+	\item \textit{SpreadSheetStorageRowIterator} -- iterates over a range of 
+	rows/columns and stores the cell values in internal storage.
+	\item \textit{SpreadSheetTransformCells} -- applies an arbitrary callable
+	transformer to individual cells.
+	\item \textit{SpreadSheetTransformHeaderCells} -- applies an arbitrary callable
+	transformer to the header cells.
+	\item \textit{SpreadSheetVariableRowIterator} -- iterates over a range of 
+	rows/columns and stores the cell values in 
+	variables.\footnote{adams-spreadsheet-variable\_row\_iterator.flow}
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{SpreadSheetDbWriter} -- for storing a spreadsheet in a 
+	database.\footnote{adams-spreadsheet-database\_access.flow}
+	\item \textit{SpreadSheetDisplay} -- for displaying spreadsheet objects
+	in tabular form.\footnote{adams-spreadsheet-display.flow}
+	\item \textit{SpreadSheetFileWriter} -- writes spreadsheet objects to a file
+	with the chosen writer class; depending on the writer either a single or
+	multiple sheets can get written at once.
+\end{tight_itemize}
+The following boolean conditions are available:
+\begin{tight_itemize}
+	\item \textit{HasColumn} -- checks whether the spreadsheet passing through
+	has a column with that name.
+\end{tight_itemize}
+The following conversion schemes are available:
+\begin{tight_itemize}
+	\item \textit{AggregateSpreadSheet} -- aggregates rows in a spreadsheet
+	(min, max, average, standard deviation, etc).
+	\item \textit{ContainerToSpreadSheet} -- for converting any flow container 
+	(e.g., a prediction container) into a spreadsheet for better visualization.
+	\item \textit{ConvertSpreadSheetRows} -- converts the data rows in a spreadsheet
+	into a different format, e.g., into sparse representation.
+	\item \textit{DoubleMatrixToSpreadSheet} -- converts a two-dimensional double
+	array (i.e., matrix) into a spreadsheet object.
+	\item \textit{NotesToSpreadSheet} -- generates a spreadsheet from a Notes
+	object.
+	\item \textit{PropertiesToSpreadSheet} -- generates a spreadsheet from a 
+	Properties object.
+	\item \textit{RenameSpreadSheet} -- renames a spreadsheet.
+	\item \textit{RenameSpreadSheetColumn} -- renames a single column in a 
+	spreadsheet.
+	\item \textit{SpreadSheetAddFormulaColumn} -- adds a column with a row-wise,  
+	user-supplied formula.
+	\item \textit{SpreadSheetAddFormulaRow} -- adds a row with a column-wise,  
+	user-supplied formula.
+	\item \textit{SpreadSheetAddRowID} -- adds an ID column to the spreadsheet
+	that contains the row index as value
+	\item \textit{SpreadSheetAddSumColumn} -- adds a column with a row-wise sum 
+	formula.
+	\item \textit{SpreadSheetAddSumRow} -- adds a row with a column-wise sum 
+	formula.
+	\item \textit{SpreadSheetAnyColumnToString} -- converts any data types in 
+	a column to strings.
+	\item \textit{SpreadSheetDoubleColumnToLong} -- converts any floating values
+	to integer (= long) values.
+	\item \textit{SpreadSheetDoubleColumnToString} -- converts any floating values
+	to strings.
+	\item \textit{SpreadSheetEscapeColumnName} -- ensures that a column is escaped
+	correctly in order to be used in column range expressions.
+	\item \textit{SpreadSheetInsertCellLocation} -- replaces a placeholder in 
+	a string with a cell location (e.g., ``A1'').
+	\item \textit{SpreadSheetJoinColumns} -- joins two or more columns in 
+	a spreadsheet into a single one.
+	\item \textit{SpreadSheetLongColumnToDouble} -- converts long values in a
+	column to double objects.
+	\item \textit{SpreadSheetMaterializeFormulas} -- replaces formulas in cells
+	with the current value of the formula.
+	\item \textit{SpreadSheetStringSplitColumn} -- splits the string representation 
+	of a column into multiple columns using a regular expression.
+	\item \textit{SpreadSheetStringColumnToBoolean} -- converts strings values in a 
+	column to boolean objects.
+	\item \textit{SpreadSheetStringColumnToDate} -- converts strings values in a 
+	column to date objects.
+	\item \textit{SpreadSheetStringColumnToDateTime} -- converts strings values in a 
+	column to date/time objects.
+	\item \textit{SpreadSheetStringColumnToDouble} -- converts strings values in a 
+	column to floating values.
+	\item \textit{SpreadSheetStringColumnToLong} -- converts strings values in a 
+	column to integer (= long) values.
+	\item \textit{SpreadSheetStringColumnToTime} -- converts strings values in a 
+	column to time objects.
+	\item \textit{SpreadSheetToDoubleMatrix} -- turns all the numeric columns of
+	a spreadsheet into a two-dimensional double matrix.
+	\item \textit{SpreadSheetUnescapeColumnName} -- reverses the escaping for
+	a column name.
+	\item \textit{SpreadSheetUniqueColumnNames} -- ensures that the column
+	names uniquely identify a column.
+	\item \textit{StringToSpreadSheet} -- parses a string in CSV format and
+	turns it into a spreadsheet object.
+	\item \textit{TransposeSpreadSheet} -- swaps columns with rows.
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Tools}
+The \textit{Spreadsheet file viewer} is a simple tool for viewing all spreadsheet
+file formats that ADAMS supports. Figure \ref{spreadsheet-viewer} shows a
+dataset that was loaded from a CSV (comma-separated values) file.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/spreadsheet-viewer.png}
+  \caption{Viewer for spreadsheet files.}
+  \label{spreadsheet-viewer}
+\end{figure}
+
+If there are more spreadsheet file formats registered, you can save the
+currently displayed spreadsheet in another format. Printing, of course, is
+available throught the \textit{Send to} menu. By default, the viewer displays
+each cell with as many digits after the decimal point as necessary. But you can
+also unify this and specify how many digits should be used for all floating
+point cells.
+
+\clearpage
+\section{Filtering and processing}
+The viewer supports some basic filtering and processing:
+\begin{tight_itemize}
+	\item \textit{columns} -- creates a subset of the spreadsheet by selecting
+	a subset of columns, e.g., all columns which name starts with a certain string.
+	\item \textit{rows} -- creates a subset of the spreadsheet by selecting
+	a subset of rows, e.g., rows with a certain value in a column.
+	\item \textit{convert} -- applies a conversion scheme specific to 
+	spreadsheets, e.g., transposing a spreadsheet.
+	\item \textit{transform} -- applies a flow transformer specific to 
+	spreadsheets, e.g., inserting a column or creating a subset.
+\end{tight_itemize}
+Figures \ref{spreadsheet-viewer-rowfilter_setup} and \ref{spreadsheet-viewer-rowfilter_result}
+show the setup for a row finder filter and the resulting new spreadsheet.
+
+\begin{figure}[ht]
+  \begin{minipage}[t]{0.4\linewidth}
+    \centering
+    \includegraphics[width=4.0cm]{images/spreadsheet-viewer-rowfilter_setup.png}
+    \caption{Row finder setup.}
+    \label{spreadsheet-viewer-rowfilter_setup}
+  \end{minipage}
+  \hspace{0.5cm}
+  \begin{minipage}[t]{0.6\linewidth}
+    \centering
+    \includegraphics[width=7.0cm]{images/spreadsheet-viewer-rowfilter_result.png}
+    \caption{The filtered spreadsheet.}
+    \label{spreadsheet-viewer-rowfilter_result}
+  \end{minipage}
+\end{figure}
+
+\section{Plug-ins}
+The viewer can be extended with two sorts of plug-ins:
+\begin{tight_itemize}
+	\item ones that generate a view based on the current sheet (``view'')
+	\item ones that process the current sheet (``data'')
+\end{tight_itemize}
+
+\subsection{View plug-ins}
+A view plug-in is derived from the following super-class:
+\begin{verbatim}
+  adams.gui.tools.spreadsheetviewer.AbstractViewPlugin
+\end{verbatim}
+There are three methods that need implementing:
+\begin{tight_itemize}
+	\item \textit{getMenuText()} -- returns the text used for the menu item 
+	and the title of the dialog displaying the generated view.
+	\item \textit{getMenuIcon()} -- returns the name of the icon (no path)
+	that should be displayed in the menu (use null to display no icon). 
+	\item \textit{doGenerate(SpreadSheet)} -- this method generates the
+	actual view in form of a \textit{adams.gui.core.BasePanel}.
+\end{tight_itemize}
+An example is the \textit{Statistics} plug-in, which shows simple statistics
+for a spreadsheet, number of rows and colums and what types of columns
+are present:
+\begin{verbatim}
+  adams.gui.tools.spreadsheetviewer.Statistics
+\end{verbatim}
+
+\subsection{Data plug-ins}
+A view plug-in is derived from the following super-class:
+\begin{verbatim}
+  adams.gui.tools.spreadsheetviewer.AbstractDataPlugin
+\end{verbatim}
+There are four methods that need implementing:
+\begin{tight_itemize}
+	\item \textit{getMenuText()} -- returns the text used for the menu item 
+	and the title of the dialog displaying the generated view.
+	\item \textit{getMenuIcon()} -- returns the name of the icon (no path)
+	that should be displayed in the menu (use null to display no icon). 
+	\item \textit{doProcess(SpreadSheet)} -- this method processes the
+	current spreadsheet and returns a new spreadsheet object.
+	\item \textit{isInPlace()} -- returns whether the generated spreadsheet
+	object should simply replace the current one (``in-place'') or added as
+	new tab.
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\chapter{Formulas}
+ADAMS supports formulas with a range of basic functions. The following lists
+describe briefly what functionality is available. A full list is available 
+through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewer}. \\
+
+\noindent Operands:
+\begin{tight_itemize}
+	\item \textit{$NUM + NUM$} -- addition
+	\item \textit{$NUM - NUM$} -- subtraction
+	\item \textit{$NUM * NUM$} -- multiplication
+	\item \textit{$NUM / NUM$} -- division
+	\item \textit{$NUM \wedge NUM$} -- exponential
+	\item \textit{$NUM \% NUM$} -- modulo
+\end{tight_itemize}
+
+\noindent Boolean operations:
+\begin{tight_itemize}
+	\item \textit{$<$} -- less than
+	\item \textit{$<=$} -- less than or equal
+	\item \textit{$>$} -- greater than
+	\item \textit{$>=$} -- greated than or equal
+	\item \textit{$=$} -- equals
+	\item \textit{$!=$} -- does not equal
+	\item \textit{$!$} -- negation
+	\item \textit{$\&$} -- and
+	\item \textit{$|$} -- or
+\end{tight_itemize}
+
+\noindent Numeric functions:
+\begin{tight_itemize}
+	\item \textit{abs} -- absolute value of a cell/number.
+	\item \textit{average} -- average computed from a range of cells.
+	\item \textit{ceil} -- smallest value that is greater than or equal to the cell/number and is equal to a mathematical integer.
+	\item \textit{cos} -- the trigonometric cosine of a number/cell.
+	\item \textit{exp} -- Euler's number e raised to the power of a number/cell.
+	\item \textit{floor} -- largest value that is less than or equal to the cell/number and is equal to a mathematical integer.
+	\item \textit{if[else]} -- if-then-else construct.
+	\item \textit{log} -- natural logarithm (base e) of a number/cell.
+	\item \textit{max} -- largest value from range of cells.
+	\item \textit{min} -- smallest value from range of cells.
+	\item \textit{pow[er]} -- the first number/cell raised to the power of the second number/cell.
+	\item \textit{rint} -- returns number that is closest in value to the number/cell and is equal to a mathematical integer.
+	\item \textit{sin} -- trigonometric sine of a number/cell.
+	\item \textit{sqrt} -- the correctly rounded positive square root of a number/cell.
+	\item \textit{stdev} -- the sample standard deviation from a range of cells.
+	\item \textit{stdevp} -- the population standard deviation from a range of cells.
+	\item \textit{sum} -- the sum over a range of cells.
+	\item \textit{tan} -- trigonometric tangent of a number/cell.
+\end{tight_itemize}
+
+\noindent String functions:
+\begin{tight_itemize}
+	\item \textit{length} -- the length of a string.
+	\item \textit{lowercase} -- converts string to a lowercase one.
+	\item \textit{matches} -- matches a string against a regular expression.
+	\item \textit{substr} -- creates a substring from a string, given start/end position.
+	\item \textit{uppercase} -- converts string to an uppercase one.
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

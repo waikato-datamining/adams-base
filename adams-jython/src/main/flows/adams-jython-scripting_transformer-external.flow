@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2014-01-23 15:33:10
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow with a Jython script that just adds\na user-supplied integer value to the (integer) tokens\nbeing passed through.\nNB: If you experience problems executing the flow,\nsee src/main/resources/documentation/Troubleshooting.txt
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.Jython
+			-script
+			${EXAMPLE_FLOWS}/scripts/SimpleTransformer.py
+			-options
+			add=10
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

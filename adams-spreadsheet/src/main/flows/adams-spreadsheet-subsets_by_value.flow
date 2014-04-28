@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2014-01-23 15:42:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	In this flow we are splitting a dataset into subsets, based on\nthe string value in a specified column. Using the iris UCI dataset,\nwe split on the \"last\" attribute, the class attribute, and will\nobtain three subsets, one for each class label.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetSubsetByValue
+			-col
+			last
+	-actor
+		adams.flow.control.Tee
+			-name
+			determine label
+			-tee
+				adams.flow.transformer.SpreadSheetGetCell
+					-col
+					last
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					subset
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-provider
+				adams.flow.sink.SpreadSheetDisplay
+			-entry-name-variable
+			subset
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

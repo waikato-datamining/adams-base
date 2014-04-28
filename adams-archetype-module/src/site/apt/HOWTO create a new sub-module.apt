@@ -1,0 +1,46 @@
+Creating a new sub-module
+
+  Here is a short example of how to create a new sub-module within ADAMS.
+
+  [[1]] Change into the "adams" directory and run the following command to update your local archetype catalog:
+
++---
+   mvn archetype:update-local-catalog
++---
+
+  [[2]] For creating a new sub-module called "adams-funky" with a version of "0.0.1-SNAPSHOT", run the following command:
+
++---
+   mvn archetype:generate \
+     -DarchetypeCatalog=local \
+     -DinteractiveMode=false \
+     -DarchetypeGroupId=nz.ac.waikato.cms.adams \
+     -DarchetypeArtifactId=adams-archetype-module \
+     -DarchetypeVersion=0.4.4 \
+     -DgroupId=nz.ac.waikato.cms.adams \
+     -DartifactId=adams-funky \
+     -Dversion=0.0.1-SNAPSHOT
++---
+
+   This will create a new sub-directory "adams-funky" containing a skeleton directory structure and a pom.xml file. This module is automatically added to ADAMS' super-pom.xml.
+
+   Note: If this command is run outside the adams project, it is basically a new project.
+
+  [[3]] Updating versions
+
+   If you want to use the latest RELEASES, use the following commands inside the newly created module folder:
+
++---
+   mvn versions:update-parent -DgenerateBackupPoms=false
+   mvn versions:use-latest-releases -Dincludes=adams:* -DgenerateBackupPoms=false
++---
+
+   If you want to use latest SNAPSHOTS instead, use these commands:
+
++---
+   mvn versions:update-parent -DgenerateBackupPoms=false
+   mvn versions:use-latest-snapshots -Dincludes=adams:* -DgenerateBackupPoms=false
++---
+
+
+   $Revision$

@@ -1,0 +1,12 @@
+--> out-0.txt
+numeric
+boolean
+string
+unknown
+
+--> out-1.txt
+numeric[N]
+boolean[B]
+string[S]
+unknown[U]
+

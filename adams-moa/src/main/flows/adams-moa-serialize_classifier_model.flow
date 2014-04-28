@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-01-23 15:35:14
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow trains a NaiveBayes classifier on the UCI \"iris\" dataset\nand stores the generated model in \"output/naivebayes.model\".
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOAClassifierSetup
+					-classifier
+					moa.classifiers.bayes.NaiveBayes
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+			-output-type
+			INCREMENTAL
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.MOATrainClassifier
+			-name
+			MOAClassifier
+			-output-interval
+			150
+	-actor
+		adams.flow.sink.MOAModelWriter
+			-output
+			${EXAMPLE_FLOWS}/output/naivebayes.model
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

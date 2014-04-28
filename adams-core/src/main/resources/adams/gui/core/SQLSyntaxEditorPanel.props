@@ -1,0 +1,350 @@
+# Defines the syntax highlighting for the SQL Statement editor
+#
+# Multiple sets of keywords can be defined within this file, each with 
+# different colors. The first set of keywords is listed under the heading
+# 'Keywords', with the corresponding color 'KeywordColor'. All subsequent
+# sets use the same headings as the first but with their number attached:
+# 'Keywords2', 'KeywordColor2'; 'Keywords3', KeywordColor3'; etc.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+########
+# Font #
+########
+
+# the font name
+FontName=monospaced
+
+# the font size
+FontSize=12
+
+#############################################
+# Colors (R,G,B format can be used as well) #
+#############################################
+
+# the font color
+ForegroundColor=black
+
+# the background color
+BackgroundColor=white
+
+# the color for keywords
+KeywordColor=blue
+
+# the color for comments
+CommentColor=gray
+
+# the color for strings
+StringColor=red
+
+##########
+# Syntax #
+##########
+
+# whether the syntax highlighting etc is on or not (true|false)
+Syntax=true
+
+# the number of spaces to use for indentation
+Indentation=2
+
+# the number of characters that a single tab represents
+Tabs=2
+
+# whether to use blanks instead of tabs (true|false)
+UseBlanks=true
+
+# word delimiters
+Delimiters=;:{}()[]+/%<=>!&|^~*
+
+# delimiter for quoted strings/characters
+QuoteDelimiters="'
+
+# the character to escape quotes
+QuoteEscape=\\
+
+# whether multi-line comments are enabled (true|false)
+MultiLineComment=false
+
+# the start delimiter of a multi-line comment
+MultiLineCommentStart=
+
+# the end delimiter of a multi-line comment
+MultiLineCommentEnd=
+
+# whether single-line comments are enabled (true|false)
+SingleLineComment=true
+
+# the start delimiter of a single-line comment
+SingleLineCommentStart=--
+
+# whether to add matching block ends (true|false)
+AddMatchingBlockEnd=false
+
+# the start of a block (e.g., "opening bracket")
+BlockStart=
+
+# the end of a block (e.g., "closing bracket")
+BlockEnd=
+
+# whether the keywords are case-sensitive (true|false)
+CaseSensitive=false
+
+# the keywords
+Keywords=\
+	ADD,\
+	ALL,\
+	ALTER,\
+	ANALYZE,\
+	AND,\
+	AS,\
+	ASC,\
+	ASENSITIVE,\
+	ASENSITIVE,\
+	BEFORE,\
+	BETWEEN,\
+	BIGINT,\
+	BINARY,\
+	BLOB,\
+	BOTH,\
+	BY,\
+	CALL,\
+	CALL,\
+	CASCADE,\
+	CASE,\
+	CHANGE,\
+	CHAR,\
+	CHARACTER,\
+	CHECK,\
+	COLLATE,\
+	COLUMN,\
+	CONDITION,\
+	CONDITION,\
+	CONNECTION,\
+	CONSTRAINT,\
+	CONTINUE,\
+	CONTINUE,\
+	CONVERT,\
+	CREATE,\
+	CROSS,\
+	CURRENT_DATE,\
+	CURRENT_TIME,\
+	CURRENT_TIMESTAMP,\
+	CURRENT_USER,\
+	CURSOR,\
+	CURSOR,\
+	DATABASE,\
+	DATABASES,\
+	DAY_HOUR,\
+	DAY_MICROSECOND,\
+	DAY_MINUTE,\
+	DAY_SECOND,\
+	DEC,\
+	DECIMAL,\
+	DECLARE,\
+	DECLARE,\
+	DEFAULT,\
+	DELAYED,\
+	DELETE,\
+	DESC,\
+	DESCRIBE,\
+	DETERMINISTIC,\
+	DETERMINISTIC,\
+	DISTINCT,\
+	DISTINCTROW,\
+	DIV,\
+	DOUBLE,\
+	DROP,\
+	DUAL,\
+	EACH,\
+	EACH,\
+	ELSE,\
+	ELSEIF,\
+	ELSEIF,\
+	ENCLOSED,\
+	ESCAPED,\
+	EXISTS,\
+	EXIT,\
+	EXIT,\
+	EXPLAIN,\
+	FALSE,\
+	FETCH,\
+	FETCH,\
+	FLOAT,\
+	FLOAT4,\
+	FLOAT8,\
+	FOR,\
+	FORCE,\
+	FOREIGN,\
+	FROM,\
+	FULLTEXT,\
+	GOTO,\
+	GRANT,\
+	GROUP,\
+	HAVING,\
+	HIGH_PRIORITY,\
+	HOUR_MICROSECOND,\
+	HOUR_MINUTE,\
+	HOUR_SECOND,\
+	IF,\
+	IGNORE,\
+	IN,\
+	INDEX,\
+	INFILE,\
+	INNER,\
+	INOUT,\
+	INOUT,\
+	INSENSITIVE,\
+	INSENSITIVE,\
+	INSERT,\
+	INT,\
+	INT1,\
+	INT2,\
+	INT3,\
+	INT4,\
+	INT8,\
+	INTEGER,\
+	INTERVAL,\
+	INTO,\
+	IS,\
+	ITERATE,\
+	ITERATE,\
+	JOIN,\
+	KEY,\
+	KEYS,\
+	KILL,\
+	LABEL,\
+	LEADING,\
+	LEAVE,\
+	LEAVE,\
+	LEFT,\
+	LIKE,\
+	LIMIT,\
+	LINES,\
+	LOAD,\
+	LOCALTIME,\
+	LOCALTIMESTAMP,\
+	LOCK,\
+	LONG,\
+	LONGBLOB,\
+	LONGTEXT,\
+	LOOP,\
+	LOOP,\
+	LOW_PRIORITY,\
+	MATCH,\
+	MEDIUMBLOB,\
+	MEDIUMINT,\
+	MEDIUMTEXT,\
+	MIDDLEINT,\
+	MINUTE_MICROSECOND,\
+	MINUTE_SECOND,\
+	MOD,\
+	MODIFIES,\
+	MODIFIES,\
+	NATURAL,\
+	NOT,\
+	NO_WRITE_TO_BINLOG,\
+	NULL,\
+	NUMERIC,\
+	ON,\
+	OPTIMIZE,\
+	OPTION,\
+	OPTIONALLY,\
+	OR,\
+	ORDER,\
+	OUT,\
+	OUT,\
+	OUTER,\
+	OUTFILE,\
+	PRECISION,\
+	PRIMARY,\
+	PROCEDURE,\
+	PURGE,\
+	READ,\
+	READS,\
+	READS,\
+	REAL,\
+	REFERENCES,\
+	REGEXP,\
+	RELEASE,\
+	RELEASE,\
+	RENAME,\
+	REPEAT,\
+	REPEAT,\
+	REPLACE,\
+	REQUIRE,\
+	RESTRICT,\
+	RETURN,\
+	RETURN,\
+	REVOKE,\
+	RIGHT,\
+	RLIKE,\
+	SCHEMA,\
+	SCHEMA,\
+	SCHEMAS,\
+	SCHEMAS,\
+	SECOND_MICROSECOND,\
+	SELECT,\
+	SENSITIVE,\
+	SENSITIVE,\
+	SEPARATOR,\
+	SET,\
+	SHOW,\
+	SMALLINT,\
+	SONAME,\
+	SPATIAL,\
+	SPECIFIC,\
+	SPECIFIC,\
+	SQL,\
+	SQL,\
+	SQLEXCEPTION,\
+	SQLEXCEPTION,\
+	SQLSTATE,\
+	SQLSTATE,\
+	SQLWARNING,\
+	SQLWARNING,\
+	SQL_BIG_RESULT,\
+	SQL_CALC_FOUND_ROWS,\
+	SQL_SMALL_RESULT,\
+	SSL,\
+	STARTING,\
+	STRAIGHT_JOIN,\
+	TABLE,\
+	TERMINATED,\
+	THEN,\
+	TINYBLOB,\
+	TINYINT,\
+	TINYTEXT,\
+	TO,\
+	TRAILING,\
+	TRIGGER,\
+	TRIGGER,\
+	TRUE,\
+	UNDO,\
+	UNDO,\
+	UNION,\
+	UNIQUE,\
+	UNLOCK,\
+	UNSIGNED,\
+	UPDATE,\
+	UPGRADE,\
+	USAGE,\
+	USE,\
+	USING,\
+	UTC_DATE,\
+	UTC_TIME,\
+	UTC_TIMESTAMP,\
+	VALUES,\
+	VARBINARY,\
+	VARCHAR,\
+	VARCHARACTER,\
+	VARYING,\
+	WHEN,\
+	WHERE,\
+	WHILE,\
+	WHILE,\
+	WITH,\
+	WRITE,\
+	XOR,\
+	YEAR_MONTH,\
+	ZEROFILL

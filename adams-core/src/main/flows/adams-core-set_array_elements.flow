@@ -1,0 +1,84 @@
+# Project: adams
+# Date: 2014-01-23 15:24:19
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	In this flow, the internal storage is initialized with 10 random\ninteger values which then get transferred into a newly created\narray. This array is displayed at the end.
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			init storage
+			-tee
+				adams.flow.source.ForLoop
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					index
+			-tee
+				adams.flow.control.Trigger
+					-name
+					generate random number
+					-tee
+						adams.flow.source.RandomNumberGenerator
+							-generator
+								adams.data.random.JavaRandomInt
+									-seed
+									@{index}
+							-max-num
+							1
+					-tee
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							@{index}
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create array
+			-tee
+				adams.flow.source.NewArray
+					-array-class
+					java.lang.Double
+					-dimensions
+					[10]
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					array
+	-actor
+		adams.flow.control.Trigger
+			-name
+			fill array
+			-tee
+				adams.flow.source.StorageForLoop
+					-variable
+					i
+					-storage
+					array
+			-tee
+				adams.flow.transformer.SetArrayElement
+					-index
+					@{i}
+					-origin
+					STORAGE
+					-storage-name
+					@{i}
+	-actor
+		adams.flow.control.Trigger
+			-name
+			display array
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					array
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

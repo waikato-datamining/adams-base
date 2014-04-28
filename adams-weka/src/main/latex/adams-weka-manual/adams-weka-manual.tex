@@ -1,0 +1,96 @@
+% Copyright (c) 2009-2012 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-weka} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/weka-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+The \textit{adams-weka} module offers most of the functionality found in WEKA
+\cite{weka}: pre-processing, classification and regression, clustering,
+attribute selection, data visualization and visualization of results/models.
+But it does not stop there: the module also contains other features for
+optimization, experiment generation that are not available from WEKA, be it
+Explorer or KnowledgeFlow. It is assumed that you are familiar with
+WEKA\footnote{If you haven't used WEKA before, check out the Data Mining book
+\cite{wekabook}, which gives you a good introduction to machine learning, data
+mining and WEKA.} and machine learning in general, as common terms are not
+explained again.
+
+If you have used WEKA's KnowledgeFlow before, then you will have to forget
+(mostly) everything that you know about setting up workflows. ADAMS does things
+quite differently in comparison to the WEKA. Additionally, ADAMS offers a range
+of general purpose actors that allow you to go further.
+
+The manual is split into several sections, with: \textit{classification and regression}
+and \textit{clustering} comprising the most important sections.
+
+\include{flow}
+
+\include{classification_and_regression}
+
+\include{clustering}
+
+\include{attribute_selection}
+
+\include{visualization}
+
+\include{tools}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

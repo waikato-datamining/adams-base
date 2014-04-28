@@ -1,0 +1,58 @@
+--> sample-out.csv
+\begin{tabular}{|l|r|l|}
+  \hline
+  Compound & Concentration & Flags \\
+  \hline
+  acenaphthene & 122.02 &  \\
+  \hline
+  acenaphthylene & -0.27 &  \\
+  \hline
+  anthracene & -0.36 &  \\
+  \hline
+  benzo.a.anthracene & 162.1 &  \\
+  \hline
+  benzo.a.pyrene & 21.36 &  \\
+  \hline
+  benzo.b.benzo.j & 911.15 &  \\
+  \hline
+  benzo.k & 274.41 &  \\
+  \hline
+  benzo.perylene & 2852.74 &  \\
+  \hline
+  chrysene & 19.34 &  \\
+  \hline
+  dibenzo.anthracene & 576558.41 &  \\
+  \hline
+  fluoranthene & 125.27 &  \\
+  \hline
+  fluorene & 285.37 &  \\
+  \hline
+  indeno & 1560.23 &  \\
+  \hline
+  naphthalene & 17.39 &  \\
+  \hline
+  phenanthrene & 26.41 &  \\
+  \hline
+  pyrene & 154.96 &  \\
+  \hline
+\end{tabular}
+
+
+--> sample2-out.csv
+\begin{tabular}{|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|}
+  \hline
+  a & b & c & d & e & f & g & h & i & j & k & l & m & n & o & p & q & r & s & t & u & v & w & x & y & z & aa & ab & ac & ad & ae & af & ag & ah & ai & aj & ak & al & am & an & ao & ap & aq & ar & as & at & au & av & aw & ax & ay & az & ba & bb \\
+  \hline
+  1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+  \hline
+  2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 \\
+  \hline
+  3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 & 3 \\
+  \hline
+  1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 0 & 1 & 2 & 3 & 4 \\
+  \hline
+  4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 \\
+  \hline
+\end{tabular}
+
+

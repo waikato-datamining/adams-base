@@ -1,0 +1,385 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ */
+
+package adams.parser.spreadsheetquery;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.*;
+
+import adams.core.*;
+import adams.core.base.*;
+import adams.core.logging.*;
+import adams.data.conversion.*;
+import adams.data.spreadsheet.*;
+import adams.data.spreadsheet.columnfinder.*;
+import adams.data.spreadsheet.rowfinder.*;
+import adams.flow.core.*;
+import adams.flow.control.*;
+import adams.flow.transformer.*;
+import adams.parser.spreadsheetquery.ParserHelper;
+
+/**
+ * A parser for spreadsheet queries.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+
+parser code {:
+  /** the logger. */
+  private final static Logger LOGGER = LoggingHelper.getConsoleLogger(Parser.class);
+  
+  /** variable - value relation. */
+  protected HashMap m_Symbols = new HashMap();
+
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
+  /**
+   * Returns the logger.
+   *
+   * @return the variable-value relation
+   */
+  public Logger getLogger() {
+    return LOGGER;
+  }
+
+  /**
+   * Sets the variable - value relation to use.
+   *
+   * @param value the variable-value relation
+   */
+  public void setSymbols(HashMap value) {
+    m_Symbols = value;
+    m_Helper.setSymbols(value);
+  }
+
+  /**
+   * Returns the current variable - value relation in use.
+   *
+   * @return the variable-value relation
+   */
+  public HashMap getSymbols() {
+    return m_Symbols;
+  }
+
+  /**
+   * Sets the spreadsheet to use.
+   *
+   * @param value the spreadsheet
+   */
+  public void setSheet(SpreadSheet value) {
+    m_Helper.setSheet(value);
+  }
+
+  /**
+   * Returns the current spreadsheet in use.
+   *
+   * @return the spreadsheet
+   */
+  public SpreadSheet getSheet() {
+    return m_Helper.getSheet();
+  }
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
+
+  /**
+   * Returns the partial flow that was generated to process the spreadsheet.
+   *
+   * @return the partial flow, null if none available
+   */
+  public SubProcess getSubProcess() {
+    return m_Helper.getSubProcess();
+  }
+
+  /**
+   * Returns the result of the evaluation.
+   *
+   * @return the result
+   */
+  public SpreadSheet getResult() {
+    return m_Helper.getResult();
+  }
+:}
+
+terminal SELECT, UPDATE, DELETE, WHERE, SET, ORDER, BY, IS, NULL, REGEXP, AS, LIMIT;
+terminal COMMA, LPAREN, RPAREN;
+terminal ALL;
+terminal LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
+terminal ASC, DESC;
+terminal Double NUMBER;
+terminal String COLUMN;
+terminal String STRING;
+
+non terminal expr_list, expr_part;
+non terminal select, update, delete;
+non terminal col_list, col;
+non terminal order_list, order;
+non terminal upd_list, upd;
+non terminal cond_list;
+non terminal int[] cond;
+non terminal Object value;
+non terminal limit;
+
+precedence left AND, OR;
+precedence left LT, LE, GT, GE, EQ, NOT_EQ;
+precedence left LPAREN, RPAREN;
+precedence left NOT;
+
+expr_list ::= expr_list expr_part | expr_part;
+
+expr_part ::= select | update | delete;
+
+select    ::=   SELECT col_list
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list limit
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list WHERE cond_list
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list WHERE cond_list limit
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list ORDER BY order_list
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list ORDER BY order_list limit
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list WHERE cond_list ORDER BY order_list
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              | SELECT col_list WHERE cond_list ORDER BY order_list limit
+                {: 
+                  parser.getHelper().select(); 
+                :}
+              ;
+
+update    ::=   UPDATE SET upd_list
+                {: 
+                  parser.getHelper().update(); 
+                :}
+              | UPDATE SET upd_list WHERE cond_list
+                {: 
+                  parser.getHelper().update(); 
+                :}
+              ;
+
+delete    ::=   DELETE WHERE cond_list
+                {: 
+                  parser.getHelper().delete(); 
+                :}
+              ;
+
+col_list  ::= col_list COMMA col | col;
+
+col       ::=   ALL 
+                {: 
+                  parser.getHelper().useAllColumns(); 
+                :}
+              | COLUMN:c
+                {: 
+                  parser.getHelper().addColumn(c); 
+                :}
+              | COLUMN:c AS COLUMN:newc
+                {: 
+                  parser.getHelper().addColumn(c); 
+                  parser.getHelper().renameColumn(c, newc); 
+                :}
+              ;
+
+upd_list  ::= upd_list COMMA upd | upd;
+
+upd       ::=   COLUMN:c EQ value:v
+                {:
+                  parser.getHelper().addUpdateColumn(c, v);
+                :}
+              ;
+
+order_list::= order_list COMMA order | order;
+
+order     ::=   COLUMN:c
+                {: 
+                  parser.getHelper().addSortColumn(c, true); 
+                :}
+              | COLUMN:c ASC
+                {: 
+                  parser.getHelper().addSortColumn(c, true); 
+                :}
+              | COLUMN:c DESC
+                {: 
+                  parser.getHelper().addSortColumn(c, false); 
+                :}
+              ;
+              
+cond_list ::=   cond_list cond 
+              | cond:c
+                {:
+                  parser.getHelper().setRows(c);
+                :}
+              ;
+
+cond      ::=   COLUMN:c LT NUMBER:n
+                {: 
+                  ByNumericValue rf = new ByNumericValue();
+                  rf.setMaximum(n);
+                  rf.setMaximumIncluded(false);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " < " + n);
+                :}
+              | COLUMN:c LE NUMBER:n
+                {: 
+                  ByNumericValue rf = new ByNumericValue();
+                  rf.setMaximum(n);
+                  rf.setMaximumIncluded(true);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " <= " + n);
+                :}
+              | COLUMN:c EQ NUMBER:n
+                {: 
+                  ByNumericValue rf = new ByNumericValue();
+                  rf.setMinimum(n);
+                  rf.setMinimumIncluded(true);
+                  rf.setMaximum(n);
+                  rf.setMaximumIncluded(true);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " = " + n);
+                :}
+              | COLUMN:c NOT_EQ NUMBER:n
+                {: 
+                  ByNumericValue rf1 = new ByNumericValue();
+                  rf1.setMinimum(n);
+                  rf1.setMinimumIncluded(false);
+                  rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  ByNumericValue rf2 = new ByNumericValue();
+                  rf2.setMaximum(n);
+                  rf2.setMaximumIncluded(false);
+                  rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  MultiRowFinder multi = new MultiRowFinder();
+                  multi.setFinders(new RowFinder[]{rf1, rf2});
+                  multi.setCombination(MultiRowFinder.Combination.INTERSECT);
+                  RESULT = parser.getHelper().applyRowFinder(multi, c + " <> " + n);
+                :}
+              | COLUMN:c GE NUMBER:n
+                {: 
+                  ByNumericValue rf = new ByNumericValue();
+                  rf.setMinimum(n);
+                  rf.setMinimumIncluded(true);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " >= " + n);
+                :}
+              | COLUMN:c GT NUMBER:n
+                {: 
+                  ByNumericValue rf = new ByNumericValue();
+                  rf.setMinimum(n);
+                  rf.setMinimumIncluded(false);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " > " + n);
+                :}
+              | COLUMN:c REGEXP STRING:s
+                {: 
+                  ByValue rf = new ByValue();
+                  rf.setRegExp(new BaseRegExp(s));
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " regexp " + s);
+                :}
+              | COLUMN:c EQ STRING:s
+                {: 
+                  ByValue rf = new ByValue();
+                  rf.setRegExp(new BaseRegExp(s));
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " = " + s);
+                :}
+              | COLUMN:c IS NULL
+                {: 
+                  MissingValue rf = new MissingValue();
+                  rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeColumnName(c)));
+                  RESULT = parser.getHelper().applyRowFinder(rf, "is null");
+                :}
+              | LPAREN cond:c RPAREN
+                {: 
+                  RESULT = c; 
+                :}
+              | cond:c1 AND cond:c2
+                {: 
+                  RESULT = parser.getHelper().combineWithAnd(c1, c2); 
+                :}
+              | cond:c1 OR cond:c2
+                {: 
+                  RESULT = parser.getHelper().combineWithOr(c1, c2); 
+                :}
+              | NOT cond:c
+                {: 
+                  RESULT = parser.getHelper().invert(c); 
+                :}
+              ;
+              
+value     ::=   NUMBER:n
+                {: 
+                  parser.getHelper().getLogger().fine("number: " + n); 
+                  RESULT = n; 
+                :}
+              | STRING:s
+                {: 
+                  parser.getHelper().getLogger().fine("string: " + s); RESULT = s; 
+                :}
+              ;
+              
+limit     ::=   LIMIT NUMBER:max
+                {:
+                  parser.getHelper().setLimit(0, max.intValue());
+                :}
+              | LIMIT NUMBER:offset COMMA NUMBER:max
+                {:
+                  parser.getHelper().setLimit(offset.intValue(), max.intValue());
+                :}
+                ;
+                

@@ -1,0 +1,87 @@
+# Project: adams
+# Date: 2014-01-23 15:48:36
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates multiple classifier set ups (LinearRegression + PLS filter\ninside a FilteredClassifier), ranks them using 2-fold cross-validation\nand outputs the 3 best set ups.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.SequenceSource
+					-name
+					train
+					-actor
+						adams.flow.source.FileSupplier
+							-file
+							${EXAMPLE_FLOWS}/data/bodyfat.arff
+					-actor
+						adams.flow.transformer.WekaFileReader
+							-loader
+								weka.core.converters.ArffLoader
+					-actor
+						adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.source.WekaClassifierGenerator
+			-setup
+				weka.classifiers.meta.FilteredClassifier
+					-F
+					weka.filters.supervised.attribute.PLSFilter -C 20 -M -A PLS1 -P center
+					-W
+					weka.classifiers.functions.LinearRegression
+					--
+					-S
+					0
+					-R
+					1.0E-8
+			-parameter
+				weka.core.setupgenerator.MathParameter
+					-property
+					classifier.ridge
+					-min
+					-5.0
+					-max
+					3.0
+					-step
+					1.0
+					-base
+					10.0
+					-expression
+					pow(BASE,I)
+			-parameter
+				weka.core.setupgenerator.MathParameter
+					-property
+					filter.numComponents
+					-min
+					5.0
+					-max
+					8.0
+					-step
+					1.0
+					-base
+					10.0
+					-expression
+					I
+			-parameter
+				weka.core.setupgenerator.ListParameter
+					-property
+					filter.algorithm
+					-list
+					PLS1 SIMPLS
+			-array
+			true
+	-actor
+		adams.flow.transformer.WekaClassifierRanker
+			-folds
+			2
+	-actor
+		adams.flow.transformer.ArrayToSequence
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.AnyToCommandline
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

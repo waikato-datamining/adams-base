@@ -1,0 +1,19 @@
+# Configuration file for registering custom editors used in conjunction with the
+# GenericObjectEditor.
+#
+# Format:
+#   class=editor-class
+# For instance:
+#   java.io.File=adams.gui.goe.FileEditor
+#
+# Arrays can be defined as follows:
+#   class[]=editor-class
+# For instance:
+#   java.lang.String[]=adams.gui.goe.GenericArrayEditor
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams.core.base.HtmlCode=adams.gui.goe.BaseObjectEditor
+adams.core.net.EmailAddress=adams.gui.goe.EmailAddressEditor

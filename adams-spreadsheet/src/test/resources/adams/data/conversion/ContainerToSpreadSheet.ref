@@ -1,0 +1,19 @@
+--> out-0.txt
+Key,Value
+"Content type",PLOT
+PlotName,Plot
+Y,0
+
+Key,Value
+"Content type",PLOT
+PlotName,Plot
+X,1
+Y,2
+
+Key,Value
+"Content type",PLOT
+PlotName,blah
+X,2
+Y,3
+
+

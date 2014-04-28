@@ -1,0 +1,5 @@
+--> out-0.txt
+{}
+{"blah":"0.9"}
+{"menu":{"id":"file","popup":{"menuitem":[{"value":"New","onclick":"CreateNewDoc()"},{"value":"Open","onclick":"OpenDoc()"},{"value":"Close","onclick":"CloseDoc()"}]},"value":"File"}}
+

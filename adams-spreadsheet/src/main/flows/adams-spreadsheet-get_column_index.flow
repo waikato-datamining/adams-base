@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 15:40:56
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to determine the column index of\ncolumns which name matches a user-specified reguarl\nexpression.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetGetColumnIndex
+			-column-name
+			sepal.*
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

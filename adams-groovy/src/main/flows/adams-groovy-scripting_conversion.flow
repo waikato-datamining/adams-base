@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-01-23 15:29:58
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Demonstrates how to use a Groovy script for \nconverting data using the Convert transformer.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-1
+			-conversion
+				adams.data.conversion.IntToDouble
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Display
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.Groovy
+					-script
+					${EXAMPLE_FLOWS}/scripts/SimpleConversion.groovy
+	-actor
+		adams.flow.sink.CallableSink
+			-callable
+			Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

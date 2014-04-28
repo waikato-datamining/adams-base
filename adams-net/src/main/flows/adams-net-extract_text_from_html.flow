@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-02-21 21:09:43
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Downloads an HTML page and extracts the text.
+	-actor
+		adams.flow.source.URLSupplier
+			-url
+			https://adams.cms.waikato.ac.nz/index.html
+	-actor
+		adams.flow.transformer.DownloadContent
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.HTMLToText
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

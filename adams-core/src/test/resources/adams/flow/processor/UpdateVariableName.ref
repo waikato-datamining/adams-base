@@ -1,0 +1,56 @@
+--> processed-1
+adams.flow.control.Flow
+	-annotation
+	Simple example for using variables:\n1. The ForLoop generates the index for the file to load\n2. The Tee assembles the full path of the file to load\nand sets the variable \"filename\"\n3. The Trigger loads the file, the variable \"filename\"\nis attached to the \"file\" option of the FileSupplier\nactor.
+	-actor
+		adams.flow.source.ForLoop
+			-upper
+			2
+	-actor
+		adams.flow.control.Tee
+			-name
+			Tee (set filename variable)
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace (path)
+					-find
+					^
+					-replace
+					${EXAMPLE_FLOWS}/data/variable
+					-placeholder
+					true
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace (extension)
+					-find
+					$
+					-replace
+					.txt
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					funky
+	-actor
+		adams.flow.control.Trigger
+			-name
+			Trigger (load and display file)
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					@{funky}
+			-tee
+				adams.flow.transformer.TextFileReader
+					-reader
+						adams.data.io.input.SingleStringTextReader
+			-tee
+				adams.flow.sink.HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
+

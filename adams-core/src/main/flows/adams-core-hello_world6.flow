@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2014-01-23 15:22:32
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow that preprocesses the following string before displaying it:\n  Hello World!\nThe string gets processed in parallel and displayed in two separate\nDisplay actors.
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			Hello World!
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.Display
+			-branch
+				adams.flow.control.Sequence
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.UpperCase
+					-actor
+						adams.flow.sink.Display
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

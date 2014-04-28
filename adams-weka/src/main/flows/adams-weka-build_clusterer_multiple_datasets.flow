@@ -1,0 +1,69 @@
+# Project: adams
+# Date: 2014-01-23 15:48:06
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Builds SimpleKMeans models on several datasets.\nOnly datasets with only letters in their filename \n(apart from the extension) are considered. This\navoids using the train/test splits also present in \nthat directory.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClustererSetup
+					-clusterer
+						weka.clusterers.SimpleKMeans
+							-N
+							2
+							-A
+							weka.core.EuclideanDistance -R first-last
+							-I
+							500
+							-num-slots
+							1
+							-S
+							10
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			[a-zA-Z]*\\.arff
+	-actor
+		adams.flow.control.Tee
+			-name
+			get dataset name
+			-tee
+				adams.flow.transformer.BaseName
+					-remove-extensions
+					true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					dataset
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaFilter
+			-filter
+				weka.filters.unsupervised.attribute.Remove
+					
+					
+					
+	-actor
+		adams.flow.transformer.WekaTrainClusterer
+			-name
+			WekaClusterer
+			-post-processor
+				adams.flow.transformer.wekaclusterer.PassThrough
+	-actor
+		adams.flow.sink.HistoryDisplay
+			-caret-at-start
+			true
+			-entry-name-variable
+			dataset
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

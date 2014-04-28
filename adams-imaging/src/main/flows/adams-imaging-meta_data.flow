@@ -1,0 +1,18 @@
+# Project: adams
+# Date: 2014-01-23 15:31:35
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Extracts meta-data, such as EXIF or IPTC from\nthe image and displays the generated spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
+	-actor
+		adams.flow.transformer.ImageMetaData
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

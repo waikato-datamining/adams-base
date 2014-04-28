@@ -1,0 +1,21 @@
+# Configuration file for registering custom editors used in conjunction with the
+# GenericObjectEditor.
+#
+# Format:
+#   class=editor-class
+# For instance:
+#   java.io.File=adams.gui.goe.FileEditor
+#
+# Arrays can be defined as follows:
+#   class[]=editor-class
+# For instance:
+#   java.lang.String[]=adams.gui.goe.GenericArrayEditor
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams.data.WekaExperimentFile=adams.gui.goe.WekaExperimentFileEditor
+adams.core.base.AttributeTypeList=adams.gui.goe.BaseObjectEditor
+adams.data.weka.WekaAttributeIndex=adams.gui.goe.WekaAttributeIndexEditor
+adams.data.weka.WekaAttributeRange=adams.gui.goe.WekaAttributeRangeEditor

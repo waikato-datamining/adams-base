@@ -1,0 +1,30 @@
+# Configuration file for Provenance display.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The font color of the actor type in the tree
+Tree.ActorType.Color=blue
+
+# The font size of the actor type in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.ActorType.Size=2
+
+# The font color of the options in the tree
+Tree.Options.Color=black
+
+# The font size of the actor type in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.Options.Size=3
+
+# The font color of the input/output information in the tree
+Tree.InputOutput.Color=#008800
+
+# The font size of the input/output information in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.InputOutput.Size=-2
+
+# The comma-separated list of prefixes to remove from the input/output information
+Tree.InputOutput.Prefixes=\
+  java.lang.,\
+  java.io.,\
+  adams.core.io.,\
+  adams.flow.core.,\
+  adams.flow.container.

@@ -1,0 +1,29 @@
+--> dumpfile.txt
+
+
+=== Attribute Selection on all input data ===
+
+Search Method:
+	Best first.
+	Start set: no attributes
+	Search direction: forward
+	Stale search after 5 node expansions
+	Total number of subsets evaluated: 393
+	Merit of best subset found:    0.521
+
+Attribute Subset Evaluator (supervised, Class (nominal): 39 class):
+	CFS Subset Evaluator
+	Including locally predictive attributes
+
+Selected attributes: 1,5,9,12,13,20,25,33,34 : 9
+                     family
+                     hardness
+                     strength
+                     surface-quality
+                     enamelability
+                     chrom
+                     ferro
+                     thick
+                     width
+
+

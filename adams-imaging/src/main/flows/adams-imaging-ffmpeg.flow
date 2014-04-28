@@ -1,0 +1,76 @@
+# Project: adams
+# Date: 2014-01-23 15:31:19
+# User: fracpete
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			images pattern
+			-annotation
+			Defines where what images to use for the movie.\n\"day%03d.png\" matches file names that have 3 digits in their name, with leading zeroes.\nFor instance: day001.png, day002.png.
+			-var-name
+			images
+			-var-value
+			${EXAMPLE_FLOWS}/data/day%03d.png
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			movie file
+			-annotation
+			Defines where the movie is generated.
+			-var-name
+			movie
+			-var-value
+			${EXAMPLE_FLOWS}/output/days.mp4
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create movie
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					images
+			-tee
+				adams.flow.sink.FFmpeg
+					-output
+					@{movie}
+					-plugin
+						adams.flow.sink.ffmpeg.MovieFromImages
+							-fps
+							5
+							-additional-output-options
+							-s vga
+	-actor
+		adams.flow.control.Trigger
+			-name
+			notify user
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					movie
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.StringToFile
+							-placeholderfile
+							true
+			-tee
+				adams.flow.transformer.Convert
+					-name
+					Convert-1
+					-conversion
+						adams.data.conversion.FileToString
+							-absolute
+							true
+			-tee
+				adams.flow.sink.Display
+					-name
+					Movie generated
+					-short-title
+					true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

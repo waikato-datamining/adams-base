@@ -1,0 +1,91 @@
+--> out-0
+'false: false
+'true: true
+'1 + 1 > 2: false
+'1 + 1 >= 2: true
+'X = 2' using X=1.0: false
+'X = 1' using X=1.0: true
+'X >= 1' using X=1.0: true
+'X > 1' using X=1.0: false
+'X <= 1' using X=1.0: true
+'X < 1' using X=1.0: false
+'X*100 > 1' using X=1.0: true
+'X/100 > 1' using X=1.0: false
+'X - 1 > 0' using X=1.0: false
+'X - 1 > 0' using X=2.0: true
+'(ifelse(X >= 0; X; -X) > 0)' using X=1.0: true
+'abs(X) > 0' using X=0.0: false
+'abs(X) > 0' using X=-10.0: true
+'sqrt(X) = 2' using X=4.0: true
+'log(X) > 0' using X=0.5: false
+'floor(exp(log(X))) = floor(X)' using X=10.0: true
+'sin(X) > 0' using X=1.0: true
+'cos(X) < 0' using X=1.0: false
+'tan(X) > 0' using X=1.0: true
+'rint(X) = 10' using X=-10.234: false
+'floor(X) = 10' using X=-10.3: false
+'pow(X,2) = 4' using X=2: true
+'ceil(X) = 11' using X=-10.3: false
+'(1/sqrt(2*PI*pow(0.5,2))*exp(-pow(X-10;2)/(2*0.5))) > 0' using X=9.0: true
+'"hello" = "hello": true
+'"hello" <= "hello": true
+'"hello" >= "hello": true
+'"hello" < "hello": false
+'"hello" > "hello": false
+'length("hello") = 5: true
+'length("hello") > 0: true
+'length("hello") >= 0: true
+'length("hello") < 5: false
+'length("hello") <= 5: true
+'(false): false
+'(length("hello") = 5): true
+'"hello" = "hell": false
+'10 % 3 > 1: false
+'-2^2 > 0: true
+'"hello" != "hell": true
+'"hello" != "hello": false
+'1 != 1: false
+'2 != 1: true
+'.025 = 0.025: true
+'.025 != 0.024: true
+'(.025 <> 0.024) and (not false) or (1 <> 1): true
+'trim("blah") = "blah": true
+'trim(" blah") = "blah": true
+'trim("blah ") = "blah": true
+'trim(" blah ") = "blah": true
+'year("2013-09-04") = 2013: true
+'year("2013-09-04 01:45:01") = 2013: true
+'month("2013-09-04") = 9: true
+'month("2013-09-04 02:45:01") = 9: true
+'day("2013-09-04") = 4: true
+'day("2013-09-04 03:45:01") = 4: true
+'hour("2013-09-04 04:45:01") = 4: true
+'hour("01:45:01") = 1: true
+'minute("2013-09-04 05:45:01") = 45: true
+'minute("01:45:01") = 45: true
+'second("2013-09-04 06:45:01") = 1: true
+'second("01:45:01") = 1: true
+'weekday("2013-09-04") = 4: true
+'weekday("2013-09-04 07:45:01") = 4: true
+'weeknum("2013-09-04") = 36: true
+'weeknum("2013-09-04 08:45:01") = 36: true
+'left("abcdef"; 3) = "abc": true
+'mid("abcdef"; 2; 3) = "bcd": true
+'right("abcdef"; 2) = "ef": true
+'rept("abc"; 3) = "abcabcabc": true
+'concatenate("ab"; "cd") = "abcd": true
+'concatenate("ab"; "cd"; "ef") = "abcdef": true
+'concatenate("ab"; "cd"; "ef"; "gh") = "abcdefgh": true
+'concatenate("ab"; "cd"; "ef"; "gh"; "ij") = "abcdefghij": true
+'find("76"; "998877665544") = 6: true
+'find("76"; "998877665544"; 7) = 0: true
+'replace("1234567"; 1; 1; "444") = "444234567": true
+'SUBSTITUTE("123123123";"3";"abc") = "12abc12abc12abc": true
+'SUBSTITUTE("123123123";"3";"abc";2) = "12abc12abc123": true
+'"12345" != "NONE" & "018" != "NONE": true
+'("12345" != "NONE") & ("018" != "NONE"): true
+'isNaN(nan): true
+'isnan(NaN): true
+'isnan(1.0): false
+'isnan(0.0 / 0.0): true
+

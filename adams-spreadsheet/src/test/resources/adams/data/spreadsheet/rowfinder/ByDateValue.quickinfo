@@ -1,0 +1,1 @@
+col: last, format: yyyy-MM-dd, min: -INF [excl], max: +INF [excl]

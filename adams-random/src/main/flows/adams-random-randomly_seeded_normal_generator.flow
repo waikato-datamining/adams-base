@@ -1,0 +1,78 @@
+# Project: adams
+# Date: 2014-01-23 15:39:56
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	25 random numbers are generated using a normal distribution.\nThis is done four times with four different seed values, each \ngenerated with a random number generator as well.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+	-actor
+		adams.flow.source.RandomNumberGenerator
+			-generator
+				adams.data.random.JavaRandomInt
+			-max-num
+			4
+	-actor
+		adams.flow.control.Tee
+			-name
+			variable + header
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.MultiConversion
+							-conversion
+								adams.data.conversion.DoubleToInt
+							-conversion
+								adams.data.conversion.IntToString
+			-tee
+				adams.flow.control.Tee
+					-name
+					set seed variable
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							seed
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					^
+					-replace
+					seed: 
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Display
+	-actor
+		adams.flow.control.Trigger
+			-name
+			generate random numbers
+			-tee
+				adams.flow.source.RandomNumberGenerator
+					-generator
+						adams.data.random.Normal
+							-seed
+							@{seed}
+					-max-num
+					50
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Display
+	-actor
+		adams.flow.control.Trigger
+			-name
+			separator
+			-tee
+				adams.flow.source.StringConstants
+					-string
+					
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

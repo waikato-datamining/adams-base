@@ -1,0 +1,28 @@
+--> labor-out0.csv
+Key,Value
+
+
+--> labor-out1.csv
+Key,Value
+Mean,2.160714285714
+StdDev,0.707795186459
+Min,1
+Max,3
+Median,2
+IQR,1
+Sum,121
+SNR,3.052739446456
+"Unique numbers",0
+"Distinct numbers",3
+
+
+--> labor-out2.csv
+Key,Value
+Missing,6
+"Label: average",17
+"Label: below_average",18
+"Label: generous",16
+"Unique labels",0
+"Distinct labels",3
+
+

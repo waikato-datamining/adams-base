@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2014-01-23 15:50:12
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Here, the  dataset is split into subsets based on the class value.\nEach subset contains all rows of a unique class value.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaSubsets
+			-index
+			last
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-provider
+				adams.flow.sink.WekaInstancesDisplay
+					-writer
+						adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

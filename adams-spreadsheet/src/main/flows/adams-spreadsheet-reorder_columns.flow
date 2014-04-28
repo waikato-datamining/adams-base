@@ -1,0 +1,48 @@
+# Project: adams
+# Date: 2014-01-23 15:41:35
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Demonstrates how to reorder, duplicate and drop columns\nusing the SpreadSheetReorder transformer.
+	-actor
+		adams.flow.standalone.GridView
+			-width
+			1000
+			-actor
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					original
+			-actor
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					reordered
+			-num-cols
+			2
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					original
+	-actor
+		adams.flow.transformer.SpreadSheetReorderColumns
+			-order
+			last,2,RUN,SENS,4,3,TIME,last
+	-actor
+		adams.flow.sink.CallableSink
+			-callable
+			reordered
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

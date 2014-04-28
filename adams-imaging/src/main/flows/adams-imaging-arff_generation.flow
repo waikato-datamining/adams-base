@@ -1,0 +1,62 @@
+# Project: adams
+# Date: 2014-01-23 15:31:02
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads images from disk, processes them and \nturns them into an ARFF file.\nThe final images are displayed as well.
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*.jpg
+	-actor
+		adams.flow.transformer.ImageJReader
+	-actor
+		adams.flow.transformer.ImageJTransformer
+			-transformer
+				adams.data.imagej.transformer.Gray8
+	-actor
+		adams.flow.transformer.ImageJTransformer
+			-name
+			ImageJTransformer-1
+			-transformer
+				adams.data.imagej.transformer.Resize
+					-width
+					50
+					-height
+					50
+	-actor
+		adams.flow.control.Tee
+			-name
+			display image
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.ImageJToBufferedImage
+			-tee
+				adams.flow.sink.DisplayPanelManager
+					-x
+					-3
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+	-actor
+		adams.flow.transformer.ImageJFlattener
+			-flattener
+				adams.data.imagej.flattener.Pixels
+	-actor
+		adams.flow.transformer.WekaInstanceDumper
+			-prefix
+			${EXAMPLE_FLOWS}/output/flattened
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

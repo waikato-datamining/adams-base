@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2014-01-23 15:35:56
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Runs a simple file server on port 8081, \nserving information about running flows.
+	-actor
+		adams.flow.standalone.RegisterFlow
+	-actor
+		adams.flow.standalone.WebServer
+			-port
+			8081
+			-handler
+				adams.flow.standalone.webserver.RunningFlowsHandler
+			-handler
+				adams.flow.standalone.webserver.DefaultHandler
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.WhileLoop
+			-name
+			Running file server
+			-condition
+				adams.flow.condition.bool.True
+			-loop
+				adams.flow.source.Start
+			-loop
+				adams.flow.control.Sleep
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

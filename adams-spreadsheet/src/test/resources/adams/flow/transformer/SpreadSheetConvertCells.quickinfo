@@ -1,0 +1,1 @@
+finder: CellRange (rows: first-last, cols: first-last), conversion: ObjectToObject, skip missing

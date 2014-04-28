@@ -1,0 +1,13 @@
+# Date: 2010-03-23 14:27:27
+# User: fracpete
+# Revision/weka: 6315:6317
+# Revision/adams: 950:1052MP
+#
+adams.flow.transformer.InstantiatableTransformer
+	-actor
+		adams.flow.transformer.WekaFilter
+			-filter
+				weka.filters.unsupervised.attribute.Remove
+					-R
+					1-10
+					

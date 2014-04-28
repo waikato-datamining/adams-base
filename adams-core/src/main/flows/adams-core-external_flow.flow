@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2014-01-23 15:21:32
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	In this example, external flows (sources) are used to \ngenerate data. The data itself is displayed in the global\nDisplay actor (\"output\").\nThe SequenceSource actors in the external flows are \nwrapped in \"InstantiatableSource\" actors to allow them\nto be saved to disk.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+					-name
+					output
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			execute external flow (1)
+			-tee
+				adams.flow.source.ExternalSource
+					-file
+					${EXAMPLE_FLOWS}/adams-core-external_flow_sub-1.flow
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					output
+	-actor
+		adams.flow.control.Trigger
+			-name
+			execute external flow (2)
+			-tee
+				adams.flow.source.ExternalSource
+					-file
+					${EXAMPLE_FLOWS}/adams-core-external_flow_sub-2.flow
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					output
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

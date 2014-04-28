@@ -1,0 +1,18 @@
+# Project: adams
+# Date: 2014-01-23 15:38:12
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow simply outputs the number of pages\nof a PDF document.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+	-actor
+		adams.flow.transformer.PDFPageCount
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,52 @@
+# Project: adams
+# Date: 2014-01-23 15:22:23
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow that preprocesses the following string before outputting it:\n  Hello World!\nThe various processing stages are logged to ${TMP}/out.txt
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			Hello World!
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.txt
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.UpperCase
+	-actor
+		adams.flow.control.Tee
+			-name
+			Tee-1
+			-tee
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.txt
+					-append
+					true
+	-actor
+		adams.flow.transformer.StringReplace
+			-find
+			$
+			-replace
+			 How are you today?
+	-actor
+		adams.flow.control.Tee
+			-name
+			Tee-2
+			-tee
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.txt
+					-append
+					true
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

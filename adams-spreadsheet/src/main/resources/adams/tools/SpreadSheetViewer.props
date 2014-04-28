@@ -1,0 +1,16 @@
+# Configuration file for the SpreadSheet File Viewer.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial directory for loading CSV files.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=%h
+
+# The number of recent CSV files to display in the menu.
+MaxRecentFiles=5

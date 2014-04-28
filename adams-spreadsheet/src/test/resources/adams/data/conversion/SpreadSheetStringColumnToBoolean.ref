@@ -1,0 +1,14 @@
+--> out-0.txt
+C1,simple,separator
+A,true,T
+D,false,t
+D,true,blah
+
+
+--> out-1.txt
+C1,simple,separator
+A,true,true
+D,false,false
+D,True,false
+
+

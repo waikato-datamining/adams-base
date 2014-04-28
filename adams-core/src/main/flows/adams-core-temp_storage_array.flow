@@ -1,0 +1,86 @@
+# Project: adams
+# Date: 2014-01-23 15:24:42
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flows shows how to load data sequentially into storage and then output it as single array.\nThe data that is added to storage is simply file names from the temp directory.
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			items
+			-var-value
+			
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			load into storage
+			-tee
+				adams.flow.source.DirectoryLister
+					-dir
+					${TMP}
+					-list-files
+					true
+					-sorting
+					SORT_BY_NAME
+			-tee
+				adams.flow.control.Count
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							name
+					-tee
+						adams.flow.control.Trigger
+							-name
+							append list
+							-tee
+								adams.flow.source.Variable
+									-var-name
+									items
+							-tee
+								adams.flow.transformer.StringInsert
+									-after
+									true
+									-value
+									 @{name}
+									-variable
+									true
+							-tee
+								adams.flow.transformer.StringTrim
+							-tee
+								adams.flow.transformer.SetVariable
+									-var-name
+									items
+					-condition
+						adams.flow.condition.bool.Counting
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					@{name}
+	-actor
+		adams.flow.control.Trigger
+			-name
+			output array
+			-tee
+				adams.flow.source.StorageValuesArray
+					-storage-name
+					@{items}
+			-tee
+				adams.flow.transformer.ArrayToSequence
+			-tee
+				adams.flow.control.Count
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							index
+					-condition
+						adams.flow.condition.bool.Counting
+			-tee
+				adams.flow.sink.HistoryDisplay
+					-entry-name-variable
+					index
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,21 @@
+# Project: adams
+# Date: 2011-03-10 16:30:07
+# User: fracpete
+# Revision/adams: 2826
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to load an ARFF file from\nthe internet. It loads the UCI dataset hosted by TunedIT.
+	-actor
+		adams.flow.source.SingleURLSupplier
+			-url
+			http://tunedit.org/download/UCI/iris.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.sink.WekaInstancesDisplay
+			-writer
+				adams.gui.print.NullWriter
+

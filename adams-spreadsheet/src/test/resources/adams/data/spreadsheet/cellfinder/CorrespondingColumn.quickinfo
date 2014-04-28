@@ -1,0 +1,1 @@
+finder: ColumnFinderRange (rows: first-last, col finder: ByIndex (cols: first-last)), type: RELATIVE, col: 0

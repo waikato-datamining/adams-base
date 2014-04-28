@@ -1,0 +1,116 @@
+# Project: adams
+# Date: 2014-02-05 15:32:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Shows how to apply image filters.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+					-entry-name-variable
+					name
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/adams_logo.jpg
+	-actor
+		adams.flow.transformer.JAIReader
+	-actor
+		adams.flow.control.Tee
+			-name
+			original
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					original
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-actor
+		adams.flow.control.Tee
+			-name
+			gray filter
+			-tee
+				adams.flow.transformer.JAITransformer
+					-transformer
+						adams.data.jai.transformer.ImageFilter
+							-filter
+								adams.data.imagefilter.GrayFilterProvider
+							-copy
+							true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					gray
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-actor
+		adams.flow.control.Tee
+			-name
+			transparent background
+			-tee
+				adams.flow.transformer.JAITransformer
+					-transformer
+						adams.data.jai.transformer.ImageFilter
+							-filter
+								adams.data.imagefilter.TransparentBackground
+							-copy
+							true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					transparent bg
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-actor
+		adams.flow.control.Tee
+			-name
+			keep only colors
+			-tee
+				adams.flow.transformer.JAITransformer
+					-transformer
+						adams.data.jai.transformer.ImageFilter
+							-filter
+								adams.data.imagefilter.KeepOnlyColors
+									-color
+									#000000
+									-color
+									#0000fe
+									-replacement
+									#00ffffff
+							-copy
+							true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					keep only
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

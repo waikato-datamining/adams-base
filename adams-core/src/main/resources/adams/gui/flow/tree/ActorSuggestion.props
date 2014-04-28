@@ -1,0 +1,126 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Default=adams.flow.transformer.PassThrough
+
+adams-core.CallableActors=\
+  IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors
+
+adams-core.SequenceSource=\
+  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.SequenceSource
+
+adams-core.DisplayCallable=\
+  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.sink.Display
+
+adams-core.SequencePlotterCallable=\
+  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.sink.SequencePlotter
+
+adams-core.Standalones=\
+  IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors
+
+adams-core.TabView=\
+  IF PARENT IS adams.flow.standalone.TabView THEN adams.flow.sink.SequencePlotter
+
+adams-core.GridView=\
+  IF PARENT IS adams.flow.standalone.GridView THEN adams.flow.sink.SequencePlotter
+
+adams-core.Start1=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.Start
+
+adams-core.Start2=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.Start
+
+adams-core.FileSupplier1=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.FileSupplier
+
+adams-core.FileSupplier2=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.FileSupplier
+
+adams-core.SelectFile1=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.SelectFile
+
+adams-core.SelectFile2=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.SelectFile
+
+adams-core.FileSystemSearch1=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.FileSystemSearch
+
+adams-core.FileSystemSearch2=\
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.FileSystemSearch
+
+adams-core.StorageValue1=\
+  IF (PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.StorageValue
+
+adams-core.StorageValue2=\
+  IF (PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.StorageValue
+
+adams-core.Variable1=\
+  IF (PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND ISFIRST THEN adams.flow.source.Variable
+
+adams-core.Variable2=\
+  IF (PARENT IS adams.flow.control.Trigger OR PARENT IS adams.flow.control.WhileLoop) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.Variable
+
+adams-core.Sequence=\
+  IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence
+
+adams-core.Trigger3=\
+  IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Trigger
+
+adams-core.Tee1=\
+  IF AFTER SOURCE THEN adams.flow.control.Tee
+
+adams-core.Tee2=\
+  IF AFTER TRANSFORMER THEN adams.flow.control.Tee
+
+adams-core.Trigger1=\
+  IF AFTER SOURCE THEN adams.flow.control.Trigger
+
+adams-core.Trigger2=\
+  IF AFTER TRANSFORMER THEN adams.flow.control.Trigger
+
+adams-core.Branch=\
+  IF AFTER TRANSFORMER AND ISLAST THEN adams.flow.control.Branch
+
+adams-core.SequencePlotter1=\
+  IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter
+
+adams-core.Display1=\
+  IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display
+
+adams-core.Display2=\
+  IF PARENT IS adams.flow.control.Tee THEN adams.flow.sink.Display
+
+adams-core.Display3=\
+  IF PARENT IS adams.flow.control.Count THEN adams.flow.sink.Display
+
+adams-core.Console1=\
+  IF PARENT IS adams.flow.control.Tee THEN adams.flow.sink.Console
+
+adams-core.Console2=\
+  IF PARENT IS adams.flow.control.Count THEN adams.flow.sink.Console
+
+adams-core.IfThenElse=\
+  IF AFTER adams.flow.source.EnterValue THEN adams.flow.control.IfThenElse
+
+adams-core.Switch=\
+  IF AFTER adams.flow.source.EnterValue THEN adams.flow.control.Switch
+
+adams-core.SetVariable1=\
+  IF AFTER adams.flow.core.DataInfoActor THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable2=\
+  IF AFTER adams.flow.source.ForLoop THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable3=\
+  IF AFTER adams.flow.source.SelectDirectory THEN adams.flow.transformer.SetVariable
+  

@@ -1,0 +1,18 @@
+# Configuration for periodicity.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The formats for the various Periodicity types
+# See following URL for format strings:
+#   http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
+Format.NONE=y/M/d H:mm
+Format.YEARLY=y/M
+Format.QUARTERLY=y/M
+Format.MONTHLY=y/M
+Format.WEEKLY=y/M/d E
+Format.DAILY=M/d E
+Format.HALF_DAILY=M/d E a
+Format.HOURLY=M/d H:00
+Format.HALF_HOURLY=M/d H:mm
+Format.PER_MINUTE=M/d H:mm

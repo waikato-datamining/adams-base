@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2014-01-23 15:31:59
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Runs the \"add noise\" ImageJ command on the image\npassing through. The original and the processed \nimage get displayed together.\n\nNote: the commands and options can be obtained\nfrom ImageJ when recording Macros as Plugin.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-width
+					800
+					-height
+					600
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+					-entry-name-variable
+					name
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+	-actor
+		adams.flow.transformer.ImageJReader
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.ImageJToBufferedImage
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					original
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-actor
+		adams.flow.transformer.ImageJTransformer
+			-transformer
+				adams.data.imagej.transformer.Command
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.ImageJToBufferedImage
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			name
+			-var-value
+			tranformed
+	-actor
+		adams.flow.sink.CallableSink
+			-callable
+			DisplayPanelManager
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

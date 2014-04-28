@@ -1,0 +1,169 @@
+# Project: adams
+# Date: 2014-03-25 12:35:57
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Runs a predefined experiment on the anneal/iris/labor\ndatasets located in the \"data\" directory.\nGenerates a PDF from the CSV output of the\nExperiment evaluation and stores that as the\nfollowing file:\n ${TMP}/out.pdf
+	-actor
+		adams.flow.source.DirectoryLister
+			-output-array
+			true
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			(anneal|iris|labor).arff
+	-actor
+		adams.flow.transformer.WekaExperiment
+			-file
+			${EXAMPLE_FLOWS}/data/adams-base-all-wekaexperiment.xml
+	-actor
+		adams.flow.transformer.WekaExperimentEvaluation
+			-tester
+				weka.experiment.PairedCorrectedTTester
+					-R
+					0
+					-S
+					0.05
+					
+					
+					
+					
+					
+					
+					
+			-format
+				weka.experiment.ResultMatrixCSV
+					-mean-prec
+					2
+					-stddev-prec
+					0
+					-col-name-width
+					0
+					-row-name-width
+					25
+					-mean-width
+					0
+					-stddev-width
+					0
+					-sig-width
+					0
+					-count-width
+					0
+					-print-row-names
+					-enum-col-names
+	-actor
+		adams.flow.control.Tee
+			-name
+			csv
+			-tee
+				adams.flow.sink.DumpFile
+					-output
+					${TMP}/out.csv
+	-actor
+		adams.flow.control.Trigger
+			-name
+			split csv
+			-tee
+				adams.flow.source.StringConstants
+					-string
+					${TMP}/out.csv
+			-tee
+				adams.flow.transformer.TextFileReader
+					-reader
+						adams.data.io.input.SingleStringTextReader
+			-tee
+				adams.flow.control.Branch
+					-branch
+						adams.flow.control.Sequence
+							-name
+							setup
+							-actor
+								adams.flow.transformer.StringReplace
+									-find
+									Dataset,[\\s\\S]+
+							-actor
+								adams.flow.sink.DumpFile
+									-output
+									${TMP}/out0.txt
+					-branch
+						adams.flow.control.Sequence
+							-name
+							comparison
+							-actor
+								adams.flow.transformer.StringReplace
+									-find
+									Key,[\\s\\S]+
+							-actor
+								adams.flow.transformer.StringReplace
+									-name
+									StringReplace-1
+									-find
+									[.\\s\\S]+Dataset,
+									-replace
+									Dataset,
+							-actor
+								adams.flow.sink.DumpFile
+									-output
+									${TMP}/out1.csv
+					-branch
+						adams.flow.control.Sequence
+							-name
+							key
+							-actor
+								adams.flow.transformer.StringReplace
+									-find
+									[.\\s\\S]+Key,
+									-replace
+									Key,
+							-actor
+								adams.flow.sink.DumpFile
+									-output
+									${TMP}/out2.csv
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create PDF
+			-tee
+				adams.flow.source.StringConstants
+					-output-array
+					true
+					-string
+					${TMP}/out0.txt
+					-string
+					${TMP}/out1.csv
+					-string
+					${TMP}/out2.csv
+			-tee
+				adams.flow.transformer.PDFCreate
+					-output
+					${TMP}/out.pdf
+					-page-orientation
+					LANDSCAPE
+					-proclet
+						adams.core.io.PlainTextPdfProclet
+							-font-content
+							Courier-Normal-11
+					-proclet
+						adams.core.io.CsvPdfProclet
+							-font-table-header
+							Courier-Bold-11
+							-font-general-content
+							Courier-Normal-11
+							-font-numeric-content
+							Courier-Normal-11
+							-reader
+								adams.data.io.input.CsvSpreadSheetReader
+									-spreadsheet-type
+										adams.data.spreadsheet.SpreadSheet
+									-quote-char
+									'
+			-tee
+				adams.flow.sink.PDFViewer
+					-writer
+						adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

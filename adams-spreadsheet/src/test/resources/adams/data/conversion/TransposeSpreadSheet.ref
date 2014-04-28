@@ -1,0 +1,26 @@
+--> out-0.txt
+col-1,col-2
+A,D
+B,E
+C,F
+
+
+--> out-1.txt
+A,D
+B,E
+C,F
+
+
+--> out-2.txt
+col-1,col-2,col-3
+C1,A,D
+C2,B,E
+C3,C,F
+
+
+--> out-3.txt
+C1,A,D
+C2,B,E
+C3,C,F
+
+

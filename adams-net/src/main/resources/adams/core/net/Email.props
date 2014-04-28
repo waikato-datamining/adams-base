@@ -1,0 +1,37 @@
+# Properties file listing email related parameters.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Whether email support is enabled
+Enabled=false
+
+# The SMTP server
+SmtpServer=smtp.somehost.org
+
+# The SMTP port
+SmtpPort=25
+
+# Whether authentication is necessary
+SmtpRequiresAuthentication=false
+
+# Whether to issue the STARTTLS command
+SmtpStartTls=false
+
+# The user for the SMTP server
+SmtpUser=
+
+# The password the SMTP server
+SmtpPassword=
+
+# The timeout for the SMTP server (in msecs)
+SmtpTimeout=30000
+
+# The default "from" email address
+DefaultAddressFrom=John Doe <john.doe@nowhere.org>
+
+# The default "signature"
+DefaultSignature=
+
+# The default class for sending emails
+DefaultSendEmail=adams.core.net.JavaMailSendEmail

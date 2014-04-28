@@ -1,0 +1,182 @@
+# Project: adams
+# Date: 2014-01-23 15:37:15
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Flow to demonstrate how to display based on data from a spreadsheet.\nThis flow draws markers for the capitals of the world.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-name
+					City locations
+					-width
+					740
+					-x
+					-3
+					-provider
+						adams.flow.sink.SpreadSheetDisplay
+							-name
+							City locations
+							-short-title
+							true
+							-x
+							-3
+					-entry-name-variable
+					name
+			-actor
+				adams.flow.sink.OpenStreetMapViewer
+					-name
+					Map
+					-short-title
+					true
+					-writer
+						adams.gui.print.NullWriter
+					-tile-source
+						adams.flow.sink.openstreetmapviewer.OpenStreetMapSource
+					-tile-loader
+						adams.flow.sink.openstreetmapviewer.OpenStreetMapCachedLoader
+					-hit-listener
+						adams.flow.sink.openstreetmapviewer.SimpleMapObjectHitListener
+					-mapobject-pruner
+						adams.flow.sink.openstreetmapviewer.NullPruner
+					-map-overlay
+						adams.flow.sink.openstreetmapviewer.NullMapOverlay
+					-initial-zoom
+					1
+					-layer-tree
+					true
+					-layer
+					Capitals
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			radius
+			-var-value
+			25
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/cow.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+					-missing
+					
+					-separator
+					;
+	-actor
+		adams.flow.control.Tee
+			-name
+			display original spreadsheet
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					original
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					City locations
+	-actor
+		adams.flow.transformer.SpreadSheetRowFilter
+			-name
+			has capital
+			-finder
+				adams.data.spreadsheet.rowfinder.ByNumericValue
+					-att-index
+					HasCapital
+					-minimum
+					1.0
+					-minimum-included
+					true
+					-maximum
+					NaN
+	-actor
+		adams.flow.transformer.SpreadSheetRowFilter
+			-name
+			has population
+			-finder
+				adams.data.spreadsheet.rowfinder.ByNumericValue
+					-att-index
+					population
+					-minimum
+					1.0
+					-minimum-included
+					true
+					-maximum
+					NaN
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			join LAT and LON
+			-conversion
+				adams.data.conversion.SpreadSheetJoinColumns
+					-columns
+					"UNc_latitude","UNc_longitude"
+					-glue
+					 
+					-column-name
+					LOCATION
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			create GPS object column
+			-conversion
+				adams.data.conversion.SpreadSheetStringColumnToObject
+					-column
+					LOCATION
+					-keep-failed
+					true
+					-handler
+						adams.data.spreadsheet.GPSDecimalDegrees
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					map
+					-actor
+						adams.flow.transformer.Convert
+							-name
+							create mapobjects
+							-conversion
+								adams.data.conversion.SpreadSheetToMapObjects
+									-generator
+										adams.data.conversion.mapobject.SimpleDotMarkerGenerator
+											-layer
+											Capitals
+											-gps
+											LOCATION
+											-name
+											UNen_capital
+											-additional-attributes
+											population
+											-dot-color
+											#0000ff
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							Map
+			-branch
+				adams.flow.control.Sequence
+					-name
+					spreadsheet
+					-actor
+						adams.flow.transformer.SetVariable
+							-var-name
+							name
+							-var-value
+							GPS objects
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							City locations
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

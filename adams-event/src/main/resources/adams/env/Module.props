@@ -1,0 +1,28 @@
+# Contains information about the module.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The name of the module
+Name=adams-event
+
+# The version of the module
+Version=${project.version}
+
+# A short description of the module
+Description=Event support (e.g., cron/scheduled execution).
+
+# The author of the module
+Author=Peter Reutemann
+
+# The author's organization
+Organization=University of Waikato, Hamilton, NZ
+
+# The logo of the module (leave empty for default; 48x48 pixel).
+# If the logo is provided without path, it is assumed to be located in the
+# adams/gui/images sub-directory of the module.
+Logo=event-module.png
+
+# Whether this module is a meta-module and does not contain actual code etc.
+# (false|true)
+MetaModule=false

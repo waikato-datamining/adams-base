@@ -1,0 +1,10 @@
+# Setup for tesseract.
+#
+# Author: FracPete (fracpet at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The executable (incl path).
+Executable=
+
+# The default language
+Language=ENGLISH

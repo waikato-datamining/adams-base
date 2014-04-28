@@ -1,0 +1,137 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-transformer_reportvalue,\
+  Rename-transformer_arrayelement,\
+  Rename-transformer_makesequenceplottercontainer,\
+  Rename-singleton_conditionalsingleton,\
+  Rename-singleton_externalsingleton,\
+  Rename-singleton_instantiatablesingleton,\
+  Rename-singleton_singletons,\
+  Rename-condition_booleanreportvalue,\
+  Rename-condition_counting,\
+  Rename-condition_expression,\
+  Rename-condition_direxists,\
+  Rename-condition_fileexists,\
+  Rename-condition_multicondition,\
+  Rename-condition_optionalflowexec,\
+  Rename-condition_true,\
+  Rename-spreadsheetreader_csv,\
+  Rename-spreadsheetwriter_csv,\
+  Rename-textwriter_nullwriter,\
+  Rename-textwriter_textfilewriter,\
+  Rename-textwriter_textfilewriterwithlinenos,\
+  Rename-source_singlefilesupplier,\
+  Rename-source_multifilesupplier,\
+  Rename-control_sinkhole,\
+  Rename-standalone_globalactors,\
+  Rename-control_clearglobaldisplay,\
+  Rename-control_callableactorscreenshot,\
+  Rename-sink_globalsink,\
+  Rename-source_globalsource,\
+  Rename-transformer_globaltransformer,\
+  Rename-paintlet_barpaintlet,\
+  Rename-paintlet_circlepaintlet,\
+  Rename-paintlet_linepaintlet,\
+  Rename-paintlet_multipaintlet,\
+  Rename-paintlet_stickpaintlet,\
+  Rename-paintlet_horizontalindicator,\
+  Rename-paintlet_paintletwithfixedxrange,\
+  Rename-paintlet_paintletwithfixedxyrange,\
+  Rename-paintlet_paintletwithfixedyrange,\
+  Rename-flowtree_createglobalactor
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-transformer_reportvalue=adams.flow.transformer.ReportValue-adams.flow.transformer.GetReportValue
+Rename-transformer_arrayelement=adams.flow.transformer.ArrayElement-adams.flow.transformer.GetArrayElement
+Rename-transformer_makesequenceplottercontainer=adams.flow.transformer.MakeSequencePlotterContainer-adams.flow.transformer.MakePlotContainer
+Rename-singleton_conditionalsingleton=adams.flow.singleton.ConditionalSingleton-adams.flow.standalone.ConditionalStandalone
+Rename-singleton_externalsingleton=adams.flow.singleton.ExternalSingleton-adams.flow.standalone.ExternalStandalone
+Rename-singleton_instantiatablesingleton=adams.flow.singleton.InstantiatableSingleton-adams.flow.standalone.InstantiatableStandalone
+Rename-singleton_singletons=adams.flow.singleton.Singletons-adams.flow.standalone.Standalones
+Rename-condition_booleanreportvalue=adams.flow.condition.BooleanReportValue-adams.flow.condition.ifthenelse.BooleanReportValue
+Rename-condition_counting=adams.flow.condition.Counting-adams.flow.condition.ifthenelse.Counting
+Rename-condition_expression=adams.flow.condition.Expression-adams.flow.condition.ifthenelse.Expression
+Rename-condition_direxists=adams.flow.condition.DirExists-adams.flow.condition.test.DirExists
+Rename-condition_fileexists=adams.flow.condition.DirExists-adams.flow.condition.test.FileExists
+Rename-condition_multicondition=adams.flow.condition.DirExists-adams.flow.condition.test.MultiCondition
+Rename-condition_optionalflowexec=adams.flow.condition.OptionFlowExecution-adams.flow.condition.test.OptionFlowExecution
+Rename-condition_true=adams.flow.condition.DirExists-adams.flow.condition.test.True
+Rename-spreadsheetreader_csv=adams.core.io.CsvSpreadSheetReader-adams.data.io.input.CsvSpreadSheetReader
+Rename-spreadsheetwriter_csv=adams.core.io.CsvSpreadSheetWriter-adams.data.io.output.CsvSpreadSheetWriter
+Rename-textwriter_nullwriter=adams.core.io.NullWriter-adams.data.io.output.NullWriter
+Rename-textwriter_textfilewriter=adams.core.io.TextFileWriter-adams.data.io.output.TextFileWriter
+Rename-textwriter_textfilewriterwithlinenos=adams.core.io.TextFileWithLineNumbersWriter-adams.data.io.output.TextFileWithLineNumbersWriter
+Rename-source_singlefilesupplier=adams.flow.source.SingleFileSupplier-adams.flow.source.FileSupplier
+Rename-source_multifilesupplier=adams.flow.source.MultiFileSupplier-adams.flow.source.FileSupplier
+Rename-control_sinkhole=adams.flow.control.Sinkhole-adams.flow.control.Continue
+Rename-standalone_globalactors=adams.flow.standalone.GlobalActors-adams.flow.standalone.CallableActors
+Rename-control_clearglobaldisplay=adams.flow.control.ClearGlobalDisplay-adams.flow.control.ClearCallableDisplay
+Rename-control_callableactorscreenshot=adams.flow.control.GlobalActorScreenshot-adams.flow.control.CallableActorScreenshot
+Rename-sink_globalsink=adams.flow.sink.GlobalSink-adams.flow.sink.CallableSink
+Rename-source_globalsource=adams.flow.source.GlobalSource-adams.flow.source.CallableSource
+Rename-transformer_globaltransformer=adams.flow.transformer.GlobalTransformer-adams.flow.transformer.CallableTransformer
+Rename-paintlet_barpaintlet=adams.gui.visualization.sequence.XYSequenceBarPaintlet-adams.gui.visualization.sequence.BarPaintlet
+Rename-paintlet_circlepaintlet=adams.gui.visualization.sequence.XYSequenceCirclePaintlet-adams.gui.visualization.sequence.CirclePaintlet
+Rename-paintlet_linepaintlet=adams.gui.visualization.sequence.XYSequenceLinePaintlet-adams.gui.visualization.sequence.LinePaintlet
+Rename-paintlet_multipaintlet=adams.gui.visualization.sequence.XYSequenceMultiPaintlet-adams.gui.visualization.sequence.MultiPaintlet
+Rename-paintlet_stickpaintlet=adams.gui.visualization.sequence.XYSequenceStickPaintlet-adams.gui.visualization.sequence.StickPaintlet
+Rename-paintlet_dotpaintlet=adams.gui.visualization.sequence.XYSequenceDotPaintlet-adams.gui.visualization.sequence.DotPaintlet
+Rename-paintlet_horizontalindicator=adams.gui.visualization.sequence.XYSequenceHorizontalIndicator-adams.gui.visualization.sequence.HorizontalIndicator
+Rename-paintlet_paintletwithfixedxrange=adams.gui.visualization.sequence.XYSequencePaintletWithFixedXRange-adams.gui.visualization.sequence.PaintletWithFixedXRange
+Rename-paintlet_paintletwithfixedxyrange=adams.gui.visualization.sequence.XYSequencePaintletWithFixedXYRange-adams.gui.visualization.sequence.PaintletWithFixedXYRange
+Rename-paintlet_paintletwithfixedyrange=adams.gui.visualization.sequence.XYSequencePaintletWithFixedYRange-adams.gui.visualization.sequence.PaintletWithFixedYRange
+Rename-flowtree_createglobalactor=adams.gui.flow.tree.menu.CreateGlobalActor-adams.gui.flow.tree.menu.CreateCallableActor
+
+# Lists the keys that contain partial classname renaming.
+PartialRename=\
+  Rename-singleton,\
+  Rename-bool_conditions
+
+# general format for partial classname renaming (no regular expression, but case-sensitive):
+# <key>=<find>\t<replace>
+Rename-singleton=.singleton.\t.standalone.
+Rename-bool_conditions=.condition.ifthenelse.\t.condition.bool.
+
+# List the keys that contain renaming of options (ie "-blah" into "-bloerk")
+RenameOption=\
+  RenameOption-source_callablesource_global,\
+  RenameOption-transformer_callabletransformer_global,\
+  RenameOption-sink_callablesink_global,\
+  RenameOption-source_makecontainer_globalactor,\
+  RenameOption-control_callabelactorscreenshot_global,\
+  RenameOption-control_clearcallabledisplay_global
+  
+# general format for renaming options
+# <key>=<classname>#<old>#<new>
+RenameOption-source_callablesource_global=adams.flow.source.CallableSource#global#callable
+RenameOption-transformer_callabletransformer_global=adams.flow.transformer.CallableTransformer#global#callable
+RenameOption-sink_callablesink_global=adams.flow.sink.CallableSink#global#callable
+RenameOption-source_makecontainer_globalactor=adams.flow.source.MakeContainer#global-actor#callable-actor
+RenameOption-control_callabelactorscreenshot_global=adams.flow.control.CallableActorScreenshot#global#callable
+RenameOption-control_clearcallabledisplay_global=adams.flow.control.ClearCallableDisplay#global#callable
+
+# List the keys that contain renaming of properties (ie "blahProp" into "bloerkProp")
+RenameProperty=\
+  RenameProperty-source_callablesource_global,\
+  RenameProperty-transformer_callabletransformer_global,\
+  RenameProperty-sink_callablesink_global,\
+  RenameProperty-source_makecontainer_globalactor,\
+  RenameProperty-control_callabelactorscreenshot_global,\
+  RenameProperty-control_clearcallabledisplay_global
+  
+# general format for renaming options
+# <key>=<classname>#<oldProp>#<newProp>
+RenameProperty-source_callablesource_global=adams.flow.source.CallableSource#globalName#callableName
+RenameProperty-transformer_callabletransformer_global=adams.flow.transformer.CallableTransformer#globalName#callableName
+RenameProperty-sink_callablesink_global=adams.flow.sink.CallableSink#globalName#callableName
+RenameProperty-source_makecontainer_globalactor=adams.flow.source.MakeContainer#globalActors#callableActors
+RenameProperty-control_callabelactorscreenshot_global=adams.flow.control.CallableActorScreenshot#globalName#callableName
+RenameProperty-control_clearcallabledisplay_global=adams.flow.control.ClearCallableDisplay#globalName#callableName

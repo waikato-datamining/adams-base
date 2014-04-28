@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2014-01-23 15:30:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow with a Groovy script that just adds\na user-supplied integer value to the (integer) tokens\nbeing passed through.
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.Groovy
+			-script
+			${EXAMPLE_FLOWS}/scripts/SimpleTransformer.groovy
+			-options
+			add=10
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

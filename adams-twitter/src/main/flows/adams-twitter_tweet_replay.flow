@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-01-23 15:44:34
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Demonstrates how to replay archived tweets (generated with ADAMS).\nUseful when experimenting with algorithms processing \ntweets and require the same tweet stream each time.
+	-actor
+		adams.flow.source.TweetReplay
+			-replay
+				adams.data.io.input.SpreadSheetConverterArchive
+					-archive
+					${EXAMPLE_FLOWS}/data/adams-archive.csv
+	-actor
+		adams.flow.transformer.TwitterConverter
+			-converter
+				adams.data.twitter.TextConverter
+					-separator
+					\t
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

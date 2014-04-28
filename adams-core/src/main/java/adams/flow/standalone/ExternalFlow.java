@@ -1,0 +1,382 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * ExternalFlow.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ */
+package adams.flow.standalone;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.Variables;
+import adams.core.io.FlowFile;
+import adams.event.VariableChangeEvent;
+import adams.event.VariableChangeEvent.Type;
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorUtils;
+
+/**
+ <!-- globalinfo-start -->
+ * Allows to execute a complete external Flow rather than just an external actor.
+ * <p/>
+ <!-- globalinfo-end -->
+ *
+ <!-- flow-summary-start -->
+ <!-- flow-summary-end -->
+ *
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ExternalFlow
+ * </pre>
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-file &lt;adams.core.io.FlowFile&gt; (property: flowFile)
+ * &nbsp;&nbsp;&nbsp;The file containing the external flow.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-immediate-clean-up &lt;boolean&gt; (property: immediateCleanUp)
+ * &nbsp;&nbsp;&nbsp;If enabled, the flow gets immediately cleaned up after execution, ie removing 
+ * &nbsp;&nbsp;&nbsp;graphical output.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ <!-- options-end -->
+ *
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+public class ExternalFlow
+  extends AbstractActor {
+
+  /** for serialization. */
+  private static final long serialVersionUID = 6212392783858480058L;
+
+  /** the file the external flow is stored in. */
+  protected FlowFile m_FlowFile;
+
+  /** whether to immediately clean up after execution. */
+  protected boolean m_ImmediateCleanUp;
+  
+  /** the external flow itself. */
+  protected AbstractActor m_ExternalFlow;
+
+  /** indicates whether a variable is attached to the external file. */
+  protected Boolean m_FlowFileIsVariable;
+
+  /** the variable attached to the external file. */
+  protected String m_FlowFileVariable;
+
+  /** whether the external flow file has changed. */
+  protected boolean m_FlowFileChanged;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Allows to execute a complete external Flow rather than just an external actor.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "file", "flowFile",
+	    new FlowFile("."));
+
+    m_OptionManager.add(
+	    "immediate-clean-up", "immediateCleanUp",
+	    false);
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "file: ");
+    result += QuickInfoHelper.toString(this, "immediateCleanUp", m_ImmediateCleanUp, "clean-up", ", ");
+    
+    return result;
+  }
+
+  /**
+   * Sets the file containing the external actor.
+   *
+   * @param value	the flow file
+   */
+  public void setFlowFile(FlowFile value) {
+    m_FlowFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file containing the external flow.
+   *
+   * @return		the flow file
+   */
+  public FlowFile getFlowFile() {
+    return m_FlowFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String flowFileTipText() {
+    return "The file containing the external flow.";
+  }
+
+  /**
+   * Sets whether to immediately clean up after execution.
+   *
+   * @param value	true if to clean-up
+   */
+  public void setImmediateCleanUp(boolean value) {
+    m_ImmediateCleanUp = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to immediately clean up after execution.
+   *
+   * @return		true if clean-up occurs
+   */
+  public boolean getImmediateCleanUp() {
+    return m_ImmediateCleanUp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String immediateCleanUpTipText() {
+    return "If enabled, the flow gets immediately cleaned up after execution, ie removing graphical output.";
+  }
+
+  /**
+   * Ignored.
+   *
+   * @param value	ignored
+   */
+  @Override
+  public synchronized void setVariables(Variables value) {
+  }
+  
+  /**
+   * Ignored.
+   *
+   * @param value	ignored
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+  }
+
+  /**
+   * Gets triggered when a variable changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  @Override
+  public void variableChanged(VariableChangeEvent e) {
+    super.variableChanged(e);
+
+    if (m_FlowFileIsVariable == null) {
+      m_FlowFileVariable   = getOptionManager().getVariableForProperty("flowFile");
+      m_FlowFileIsVariable = (m_FlowFileVariable != null);
+      if (m_FlowFileIsVariable)
+	m_FlowFileVariable = Variables.extractName(m_FlowFileVariable);
+    }
+
+    if ((m_FlowFileIsVariable) && (e.getName().equals(m_FlowFileVariable)))
+      m_FlowFileChanged = (e.getType() != Type.REMOVED);
+  }
+
+  /**
+   * Sets up the external actor.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  public String setUpExternalActor() {
+    String		result;
+    List<String>	errors;
+
+    result = null;
+
+    if (!m_FlowFile.isFile()) {
+      result = "'" + m_FlowFile.getAbsolutePath() + "' does not point to a file!";
+    }
+    else {
+      errors = new ArrayList<String>();
+      m_ExternalFlow = ActorUtils.read(m_FlowFile.getAbsolutePath(), errors);
+      if (!errors.isEmpty()) {
+	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+      }
+      else if (m_ExternalFlow == null) {
+	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "'!";
+      }
+      else {
+	m_ExternalFlow.setHeadless(isHeadless());
+	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
+	result = m_ExternalFlow.setUp();
+      }
+    }
+
+    m_FlowFileChanged = false;
+
+    return result;
+  }
+
+  /**
+   * Cleans up the external actor.
+   */
+  public void cleanUpExternalActor() {
+    if (m_FlowFileChanged && (m_ExternalFlow != null)) {
+      m_ExternalFlow.wrapUp();
+      m_ExternalFlow.cleanUp();
+      m_ExternalFlow = null;
+    }
+  }
+
+  @Override
+  public String setUp() {
+    String	result;
+    
+    result = super.setUp();
+    
+    if (result == null) {
+      // due to change in variable, we might need to clean up external actor
+      cleanUpExternalActor();
+
+      if (getOptionManager().getVariableForProperty("flowFile") == null) {
+	if (m_ExternalFlow == null)
+	  result = setUpExternalActor();
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String		result;
+
+    result = null;
+
+    // not setup yet due to variable?
+    cleanUpExternalActor();
+    if (m_ExternalFlow == null)
+      result = setUpExternalActor();
+
+    if (result == null) {
+      result = m_ExternalFlow.execute();
+      if (m_ImmediateCleanUp) {
+	m_ExternalFlow.wrapUp();
+	m_ExternalFlow.destroy();
+	m_ExternalFlow = null;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    super.stopExecution();
+
+    if (m_ExternalFlow != null)
+      m_ExternalFlow.stopExecution();
+  }
+
+  /**
+   * Cleans up after the execution has finished. Graphical output is left
+   * untouched.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_ExternalFlow != null) {
+      if (!m_ImmediateCleanUp)
+	m_ExternalFlow.wrapUp();
+    }
+
+    m_FlowFileIsVariable = null;
+    m_FlowFileVariable   = null;
+    m_FlowFileChanged    = false;
+
+    super.wrapUp();
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void cleanUp() {
+    if (m_ExternalFlow != null) {
+      m_ExternalFlow.destroy();
+      m_ExternalFlow = null;
+    }
+
+    super.cleanUp();
+  }
+}

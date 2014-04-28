@@ -1,0 +1,16 @@
+# Properties file for the tests.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The database URL to use
+DatabaseURL=jdbc:mysql://localhost:3306/test
+
+# The user for connecting to the database
+DatabaseUser=
+
+# The password of the database user
+DatabasePassword=
+
+# The global data container filter to use
+GlobalFilter=adams.data.filter.PassThrough

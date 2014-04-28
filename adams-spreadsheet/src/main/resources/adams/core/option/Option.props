@@ -1,0 +1,33 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# SpreadSheetColumnIndex objects
+adams.data.spreadsheet.SpreadSheetColumnIndex=true
+adams.data.spreadsheet.SpreadSheetColumnIndex#toString=adams.gui.goe.SpreadSheetColumnIndexEditor#toString
+adams.data.spreadsheet.SpreadSheetColumnIndex#valueOf=adams.gui.goe.SpreadSheetColumnIndexEditor#valueOf
+
+# SpreadSheetColumnRange objects
+adams.data.spreadsheet.SpreadSheetColumnRange=true
+adams.data.spreadsheet.SpreadSheetColumnRange#toString=adams.gui.goe.SpreadSheetColumnRangeEditor#toString
+adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.gui.goe.SpreadSheetColumnRangeEditor#valueOf
+
+# SpreadSheetQueryText objects
+adams.parser.SpreadSheetQueryText=true
+adams.parser.SpreadSheetQueryText#toString=adams.gui.goe.AbstractScriptEditor#toString
+adams.parser.SpreadSheetQueryText#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf

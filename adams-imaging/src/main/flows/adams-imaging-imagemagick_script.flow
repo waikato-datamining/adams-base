@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2014-01-23 15:31:28
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow uses ImageMagick to load an image,\nresize and scale it, before displaying it.\n\nNB: ImageMagick must be installed and available\non the PATH.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+	-actor
+		adams.flow.transformer.ImageMagickReader
+	-actor
+		adams.flow.transformer.ImageMagickTransformer
+			-commands
+			# resizing image\n-resize 90x90 \n\n# scaling it up again\n-scale 200%
+	-actor
+		adams.flow.sink.ImageViewer
+			-writer
+				adams.gui.print.NullWriter
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

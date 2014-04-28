@@ -1,0 +1,1 @@
+type: KEY_VALUE, query: select key,value from table where id = "{ID}"

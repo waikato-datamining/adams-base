@@ -1,0 +1,4 @@
+--> out-0.txt
+adams.data.filter.PassThrough -logging-level FINEST
+adams.data.filter.BaselineCorrection -baseline adams.data.baseline.PassThrough
+

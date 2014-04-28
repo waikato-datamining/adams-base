@@ -1,0 +1,66 @@
+# Project: adams
+# Date: 2014-01-23 15:40:30
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Demonstrates how to load spreadsheet data into a database (sqlite)\nand return a subset using a SQL query.
+	-actor
+		adams.flow.standalone.DatabaseConnection
+			-url
+			jdbc:sqlite:${EXAMPLE_FLOWS}/output/test.db
+			-data-type-setup
+				adams.db.datatype.DummySetup
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			drop database
+			-tee
+				adams.flow.standalone.ExecSQL
+					-sql
+					drop table iris
+	-actor
+		adams.flow.control.Trigger
+			-name
+			load data
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/iris.csv
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+			-tee
+				adams.flow.sink.SpreadSheetDbWriter
+					-table
+					iris
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create indices
+			-tee
+				adams.flow.standalone.ExecSQL
+					-name
+					class
+					-sql
+					create index idx_class on iris (\'CLASS\');
+	-actor
+		adams.flow.control.Trigger
+			-name
+			query database
+			-tee
+				adams.flow.source.SpreadSheetDbReader
+					-query
+					select * from iris where CLASS = \'Iris-setosa\'
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+	-error-handling
+	ACTORS_DECIDE_TO_STOP_ON_ERROR
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

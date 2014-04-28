@@ -1,0 +1,12 @@
+--> adams.flow.condition.test.DirExists-out0.txt
+passed
+
+--> adams.flow.condition.test.DirExists-out1.txt
+Target '${TMP}/blahblah' is not a directory or does not exist!
+
+--> adams.flow.condition.test.DirExists-out2.txt
+Directory '${TMP}' already exists!
+
+--> adams.flow.condition.test.DirExists-out3.txt
+passed
+

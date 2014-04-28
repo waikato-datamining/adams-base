@@ -1,0 +1,262 @@
+% Copyright (c) 2009-2012 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-jython} \\
+  \vspace{1cm}
+  \includegraphics[width=4cm]{images/jython_logo.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+Developing a new actor for ADAMS is not hard. But it can take too long, if you
+simply want to test something: writing the code, compiling, packaging and,
+finally, executing it. Dynamic languages that run in the Java Virtual Machine
+(JVM), like Jython (\cite{jython}), come in handy. Here, you simply have to
+write the code and then execute it. There is no need to compile or package anything.
+
+Jython's syntax is quite different from the Java one. Here is an example, the
+following Java class:
+\begin{verbatim}
+import java.util.Vector;
+public class FunkyVector extends Vector {
+  public String toString() {
+    String result = "Funky output: ";
+    result += super.toString();
+    return result;
+  }
+}
+\end{verbatim}
+Looks like this as a Jython script:
+\begin{verbatim}
+import java.util.Vector as Vector
+class FunkyVector(Vector):
+    def toString(self):
+        result = "Funky output: "
+        result.join(Vector.toString(self))
+        return result
+\end{verbatim}
+For more details, you might want to check out the Jython
+\footnote{\url{http://www.jython.org/docs/tutorial/}{}} and Python
+\footnote{\url{http://docs.python.org/tutorial/}{}} tutorials.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Writing actors}
+Writing a Jython actor works similar to writing a regular ADAMS actor in Java.
+
+\section{Superclass and wrapper}
+First, you create an empty text file for you new 
+actor\footnote{You can also simply use the \textit{inlineScript} option if you don't 
+want to use a file}. Second, you choose what superclass you want to derive it from:
+\begin{tight_itemize}
+	\item \textbf{Standalone} -- \texttt{adams.flow.standalone.AbstractScript}
+	\item \textbf{Source} -- \texttt{adams.flow.source.AbstractScript}
+	\item \textbf{Transformer} -- \texttt{adams.flow.transformer.AbstractScript}
+	\item \textbf{Sink} -- \texttt{adams.flow.sink.AbstractScript}
+\end{tight_itemize}
+This also determines, which ADAMS wrapper actor you need to use for executing
+your external script:
+\begin{tight_itemize}
+	\item \textbf{Standalone} -- \texttt{adams.flow.standalone.Jython}
+	\item \textbf{Source} -- \texttt{adams.flow.source.Jython}
+	\item \textbf{Transformer} -- \texttt{adams.flow.transformer.Jython}
+	\item \textbf{Sink} -- \texttt{adams.flow.sink.Jython}
+\end{tight_itemize}
+You simply use your script file as the \texttt{scriptFile} property and now you
+only have to write the actual code.
+
+\newpage
+\section{Implementation}
+As for writing your code, you merely have to implement all the abstract methods
+from your \texttt{AbstractScript} superclass. The following code shows a
+minimalistic \textit{transformer}, which accepts and generates \texttt{Integer}
+objects. In the \texttt{doExecute()} method, as it stands, it does not do anything with
+the incoming data, it merely forwards a new \texttt{Token} with the data
+it received.
+\begin{verbatim}
+import adams.flow.core.Token as Token
+import adams.flow.transformer.AbstractScript as AbstractScript
+import java.lang.Class as Class
+
+class SimpleTransformer(AbstractScript):
+    def __init__(self):
+        AbstractScript.__init__(self)
+
+    def globalInfo(self):
+        return "My simple transformer"
+
+    def accepts(self):
+        return [Class.forName("java.lang.Integer")]
+
+    def generates(self):
+        return [Class.forName("java.lang.Integer")]
+
+    def doExecute(self):
+        self.m_OutputToken = Token(self.m_InputToken.getPayload())
+        return None
+\end{verbatim}
+A slightly more complex version computes the square of the incoming integer:
+\begin{verbatim}
+...
+def doExecute(self):
+    input = self.m_InputToken.getPayload()
+    self.m_OutputToken = Token(input * input)
+    return None
+...
+\end{verbatim}
+
+\newpage
+\section{Parameters}
+\label{parameters}
+Of course, most of the actors that you will write, will require some form of
+parametrization. Instead of defining options in the script itself, the ADAMS
+wrapper actor takes on the role of providing parameters. Each of the
+\texttt{Jython} wrapper actors has a property called \texttt{scriptOptions}
+which takes a blank-separated list of key-value pairs (``key=value'').
+
+These options are available in the Jython script via the
+\texttt{getAdditionalOptions()} method, returning an
+\texttt{adams.flow.core.AdditionalOptions} container object. This container
+object offers retrieval of the options via their key:
+\begin{tight_itemize}
+	\item \texttt{getBoolean(String)} and \texttt{getBoolean(String,Boolean)}
+	\item \texttt{getInteger(String)} and \texttt{getInteger(String,Integer)}
+	\item \texttt{getDouble(String)} and \texttt{getDouble(String,Double)}
+	\item \texttt{getString(String)} and \texttt{getString(String,String)}
+\end{tight_itemize}
+The second method listed allows you to specify a default value, in case the
+option was not supplied.
+
+Assuming that we require an additional option called \texttt{add}, we can use
+this parameter to add to our incoming integer value in order to generate output:
+{\small
+\begin{verbatim}
+..
+def doExecute(self):
+    input = self.m_InputToken.getPayload()
+    self.m_OutputToken = Token(input + self.getAdditionalOptions().getInteger("add", 1))
+    return None
+..
+\end{verbatim}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Writing conversions}
+Just like with Jython actors, Jython conversions have follow the same principle,
+by being implemented as regular conversion schemes in ADAMS.
+
+\section{Superclass and wrapper}
+First, you create an empty text file for you new 
+conversion\footnote{You can also simply use the \textit{inlineScript} option if you don't 
+want to use a file.}. Second, you use the following superclass to derive your 
+Jython conversion from:
+\begin{verbatim}
+  adams.data.conversion.AbstractScript
+\end{verbatim}
+The external script is executed using the following wrapper conversion:
+\begin{verbatim}
+  adams.data.conversion.Jython
+\end{verbatim}
+You simply use your script file as the \texttt{scriptFile} property and now you
+only have to write the actual code.
+
+\newpage
+\section{Implementation}
+As for writing your code, you merely have to implement all the abstract methods
+from your \texttt{AbstractScript} superclass. The following code shows a
+minimalistic conversion, which accepts and generates \texttt{Double}
+objects. In the \texttt{doConvert()} method, it merely divides the incoming
+doubles by 100.
+\begin{verbatim}
+import adams.data.conversion.AbstractScript as AbstractScript
+import java.lang.Class as Class
+
+class SimpleConversion(AbstractScript):
+    def globalInfo(self):
+        return "Just divides the incoming doubles by 100."
+
+    def accepts(self):
+        # very in-elegant, but works
+        # http://www.prasannatech.net/2009/02/class-object-name-java-interface-jython.html
+        return Class.forName("java.lang.Double")
+
+    def generates(self):
+        # very in-elegant, but works
+        # http://www.prasannatech.net/2009/02/class-object-name-java-interface-jython.html
+        return Class.forName("java.lang.Double")
+
+    def doConvert(self):
+        return self.m_Input / 100
+\end{verbatim}
+\section{Parameters}
+As in how to use parameters, see section \ref{parameters} as it works the
+same way as for actors.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Throubleshooting}
+\begin{itemize}
+	\item \textbf{Problem:} Unit tests fail with \texttt{"AttributeError: '...py'
+	object has no attribute '...'"} \\
+	\textbf{Solution:} Create a file called \texttt{'.jython'} in your home
+	directory and add the following content to it: \\
+	\begin{verbatim}
+    python.security.respectJavaAccessibility=false
+	\end{verbatim}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

@@ -1,0 +1,20 @@
+# Configuration file for listing template files for scripting editors.
+#
+# Format:
+#   type=file1,file2
+# For instance:
+#   Groovy=\
+#      adams/gui/goe/template/Standalone.groovy,\
+#      adams/gui/goe/template/Transformer.groovy
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Groovy=\
+  adams/gui/goe/template/BooleanCondition.groovy,\
+  adams/gui/goe/template/Conversion.groovy,\
+  adams/gui/goe/template/Standalone.groovy,\
+  adams/gui/goe/template/Source.groovy,\
+  adams/gui/goe/template/Transformer.groovy,\
+  adams/gui/goe/template/Sink.groovy

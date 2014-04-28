@@ -1,0 +1,9 @@
+--> adams.flow.condition.bool.IsSubClass-out0.txt
+true
+
+--> adams.flow.condition.bool.IsSubClass-out1.txt
+false
+
+--> adams.flow.condition.bool.IsSubClass-out2.txt
+true
+

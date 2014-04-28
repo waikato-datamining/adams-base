@@ -1,0 +1,4 @@
+--> adams.flow.template.DummyTransformer-out0.txt
+adams.flow.transformer.PassThrough
+
+

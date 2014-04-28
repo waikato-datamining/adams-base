@@ -1,0 +1,36 @@
+# Project: adams
+# Date: 2014-01-23 15:23:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates the use of the IfThenElse \ncontrol actor. This control actor counts tokens in \norder to determine which sub-branch to forward\nthe token to, in case the sub-branch accepts tokens.\nOtherwise, it just executes the correct sub-branch.
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.control.IfThenElse
+			-condition
+				adams.flow.condition.bool.Counting
+					-interval
+					2
+			-then
+				adams.flow.control.Sequence
+					-name
+					then
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display - even numbers
+			-else
+				adams.flow.control.Sequence
+					-name
+					else
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display - odd numbers
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

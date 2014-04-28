@@ -1,0 +1,7 @@
+# For displaying additional tabs
+Tabs=weka.gui.explorer.ClassifierPanel,\
+     weka.gui.explorer.ExperimentPanel,\
+     weka.gui.explorer.ClustererPanel,\
+     weka.gui.explorer.AssociationsPanel,\
+     weka.gui.explorer.AttributeSelectionPanel,\
+     weka.gui.explorer.VisualizePanel

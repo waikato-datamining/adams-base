@@ -1,0 +1,42 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+#########
+# hooks #
+#########
+
+# ExperimentFile objects
+adams.data.WekaExperimentFile=true
+adams.data.WekaExperimentFile#toString=adams.gui.goe.WekaExperimentFileEditor#toString
+adams.data.WekaExperimentFile#valueOf=adams.gui.goe.WekaExperimentFileEditor#valueOf
+
+# AttributeTypeList objects
+adams.core.base.AttributeTypeList=true
+adams.core.base.AttributeTypeList#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.AttributeTypeList#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# WekaAttributeIndex objects
+adams.data.weka.WekaAttributeIndex=true
+adams.data.weka.WekaAttributeIndex#toString=adams.gui.goe.WekaAttributeIndexEditor#toString
+adams.data.weka.WekaAttributeIndex#valueOf=adams.gui.goe.WekaAttributeIndexEditor#valueOf
+
+# WekaAttributeRange objects
+adams.data.weka.WekaAttributeRange=true
+adams.data.weka.WekaAttributeRange#toString=adams.gui.goe.WekaAttributeRangeEditor#toString
+adams.data.weka.WekaAttributeRange#valueOf=adams.gui.goe.WekaAttributeRangeEditor#valueOf

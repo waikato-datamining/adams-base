@@ -1,0 +1,96 @@
+# Project: adams
+# Date: 2014-01-23 15:41:17
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Iterates over all cells (row-wise) and outputs their values.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SetStorageValue
+			-storage-name
+			spreadsheet
+	-actor
+		adams.flow.control.Tee
+			-name
+			# columns
+			-tee
+				adams.flow.transformer.SpreadSheetInfo
+					-type
+					NUM_COLUMNS
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					cols
+	-actor
+		adams.flow.control.Tee
+			-name
+			# rows
+			-tee
+				adams.flow.transformer.SpreadSheetInfo
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					rows
+	-actor
+		adams.flow.control.Trigger
+			-name
+			iterate over cells
+			-tee
+				adams.flow.source.ForLoop
+					-upper
+					@{storage:rows}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					row
+			-tee
+				adams.flow.control.Trigger
+					-tee
+						adams.flow.source.ForLoop
+							-upper
+							@{cols}
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							col
+					-tee
+						adams.flow.control.Trigger
+							-tee
+								adams.flow.source.StorageValue
+									-storage-name
+									spreadsheet
+							-tee
+								adams.flow.transformer.SpreadSheetGetCell
+									-row
+									@{row}
+									-col
+									@{col}
+									-empty
+									N/A
+							-tee
+								adams.flow.transformer.Convert
+									-conversion
+										adams.data.conversion.AnyToString
+							-tee
+								adams.flow.transformer.StringReplace
+									-find
+									^
+									-replace
+									@{row}/@{col}: 
+									-variable
+									true
+							-tee
+								adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

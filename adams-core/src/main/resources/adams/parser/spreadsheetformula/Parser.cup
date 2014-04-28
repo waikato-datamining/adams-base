@@ -1,0 +1,413 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ */
+
+package adams.parser.spreadsheetformula;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+
+import adams.core.*;
+import adams.data.spreadsheet.*;
+import adams.parser.spreadsheetformula.ParserHelper;
+
+/**
+ * A parser for spreadsheet formulas.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+
+parser code {:
+  /** variable - value relation. */
+  protected HashMap m_Symbols = new HashMap();
+
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
+  /** for storing the result of the result. */
+  protected Object m_Result = null;
+
+  /**
+   * Sets the variable - value relation to use.
+   *
+   * @param value the variable-value relation
+   */
+  public void setSymbols(HashMap value) {
+    m_Symbols = value;
+    m_Helper.setSymbols(value);
+  }
+
+  /**
+   * Returns the current variable - value relation in use.
+   *
+   * @return the variable-value relation
+   */
+  public HashMap getSymbols() {
+    return m_Symbols;
+  }
+
+  /**
+   * Sets the spreadsheet to use.
+   *
+   * @param value the spreadsheet
+   */
+  public void setSheet(SpreadSheet value) {
+    m_Helper.setSheet(value);
+  }
+
+  /**
+   * Returns the current spreadsheet in use.
+   *
+   * @return the spreadsheet
+   */
+  public SpreadSheet getSheet() {
+    return m_Helper.getSheet();
+  }
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
+
+  /**
+   * Sets the result of the evaluation.
+   *
+   * @param value the result
+   */
+  public void setResult(Object value) {
+    m_Result = value;
+  }
+
+  /**
+   * Returns the result of the evaluation.
+   *
+   * @return the result
+   */
+  public Object getResult() {
+    return m_Result;
+  }
+:}
+
+terminal COMMA, SEMICOLON, LPAREN, RPAREN;
+terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
+terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE;
+terminal LENGTH, SUM, MIN, MAX, AVERAGE, STDEV, STDEVP, TRIM, COUNTIF, COUNTBLANK, SUMIF;
+terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT;
+terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
+terminal CELL_OBJECT, CELL_STRING;
+terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR, COLON;
+terminal PI, E;
+terminal NOW, TODAY, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, WEEKNUM, WEEKDAY;
+terminal Double NUMBER;
+terminal Boolean BOOLEAN;
+terminal String CELL;
+terminal String STRING;
+terminal Date DATE;
+terminal String FUNCTION;
+terminal String PROCEDURE;
+
+non terminal expr_list, expr_part, semi_or_comma;
+non terminal Object expr;
+
+precedence left AND, OR;
+precedence left LT, LE, GT, GE, EQ, NOT_EQ;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVISION, MODULO;
+precedence left EXPONENT;
+precedence left LPAREN, RPAREN;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, SUM, TRIM, COUNTIF, COUNTBLANK, SUMIF, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE, CELL_OBJECT, CELL_STRING;
+precedence left NOT, UMINUS;
+
+expr_list ::= expr_list expr_part | expr_part;
+
+expr_part ::=   expr:e
+                {: parser.setResult(e); :}
+                ;
+
+expr      ::=   
+                LPAREN expr:e RPAREN
+                {: RESULT = e; :}
+              | NUMBER:n
+                {: RESULT = n; :}
+              | STRING:s
+                {: RESULT = s; :}
+              | BOOLEAN:b
+                {: RESULT = b; :}
+              | DATE:d
+                {: RESULT = d; :}
+              | CELL:c
+                {: RESULT = parser.getHelper().toDouble(c); :}
+
+              | TRUE
+                {: RESULT = new Boolean(true); :}
+              | FALSE
+                {: RESULT = new Boolean(false); :}
+              | PI
+                {: RESULT = new Double(Math.PI); :}
+              | E
+                {: RESULT = new Double(Math.E); :}
+              | NOW LPAREN RPAREN
+                {: RESULT = DateUtils.now(); :}
+              | TODAY LPAREN RPAREN
+                {: RESULT = DateUtils.today(); :}
+
+              | MINUS expr:e
+                {: RESULT = -parser.getHelper().toDouble(e); :}
+                %prec UMINUS
+                
+              | expr:l LT expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) < 0); :}
+              | expr:l LE expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) <= 0); :}
+              | expr:l GT expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) > 0); :}
+              | expr:l GE expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) >= 0); :}
+              | expr:l EQ expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) == 0); :}
+              | expr:l NOT_EQ expr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) != 0); :}
+
+              | NOT expr:b
+                {: RESULT = !parser.getHelper().toBoolean(b); :}
+              | expr:l AND expr:r
+                {: RESULT = parser.getHelper().toBoolean(l) && parser.getHelper().toBoolean(r); :}
+              | expr:l OR expr:r
+                {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
+                
+              | expr:l PLUS expr:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+              | expr:l MINUS expr:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+              | expr:l TIMES expr:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+              | expr:l DIVISION expr:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+              | expr:l MODULO expr:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+              | expr:b EXPONENT expr:e
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                
+              | ABS LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
+              | SQRT LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.sqrt(parser.getHelper().toDouble(e))); :}
+              | LOG LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.log(parser.getHelper().toDouble(e))); :}
+              | EXP LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.exp(parser.getHelper().toDouble(e))); :}
+              | SIN LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.sin(parser.getHelper().toDouble(e))); :}
+              | COS LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.cos(parser.getHelper().toDouble(e))); :}
+              | TAN LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.tan(parser.getHelper().toDouble(e))); :}
+              | RINT LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.rint(parser.getHelper().toDouble(e))); :}
+              | FLOOR LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.floor(parser.getHelper().toDouble(e))); :}
+              | POW LPAREN expr:b semi_or_comma expr:e RPAREN
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+              | CEIL LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+              | IFELSE LPAREN expr:b semi_or_comma expr:e_true semi_or_comma expr:e_false RPAREN
+                {: if (parser.getHelper().toBoolean(b))
+                     RESULT = e_true;
+                   else
+                     RESULT = e_false;
+                :}
+              | LENGTH LPAREN expr:s RPAREN
+                {: RESULT = new Double(parser.getHelper().toString(s).length()); :}
+              | SUM LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().sum(c1, c2); :}
+              | MIN LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().min(c1, c2); :}
+              | MAX LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().max(c1, c2); :}
+              | AVERAGE LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().average(c1, c2); :}
+              | STDEV LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().stdev(c1, c2); :}
+              | STDEVP LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().stdevp(c1, c2); :}
+              | COUNTIF LPAREN CELL:c1 COLON CELL:c2 semi_or_comma expr:e RPAREN
+                {: RESULT = parser.getHelper().countif(c1, c2, e); :}
+              | SUMIF LPAREN CELL:c1 COLON CELL:c2 semi_or_comma expr:e RPAREN
+                {: RESULT = parser.getHelper().sumif(c1, c2, e); :}
+              | SUMIF LPAREN CELL:c1 COLON CELL:c2 semi_or_comma expr:e semi_or_comma CELL:s1 COLON CELL:s2 RPAREN
+                {: RESULT = parser.getHelper().sumif(c1, c2, e, s1, s2); :}
+              | COUNTBLANK LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().countblank(c1, c2); :}
+
+              | CELL_OBJECT LPAREN CELL:c RPAREN
+                {: 
+                   Cell cell = parser.getHelper().getCell(c);
+                   if (cell != null)
+                     RESULT = cell.getNative();
+                   else
+                     RESULT = null; 
+                :}
+              | CELL_STRING LPAREN CELL:c RPAREN
+                {: 
+                   Cell cell = parser.getHelper().getCell(c);
+                   if (cell != null)
+                     RESULT = cell.getContent();
+                   else
+                     RESULT = null; 
+                :}
+                                
+              | FUNCTION:f LPAREN RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{}); :}
+              | FUNCTION:f LPAREN expr:e1 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5, e6}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5, e6, e7}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 semi_or_comma expr:e9 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8, e9}); :}
+              | FUNCTION:f LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 semi_or_comma expr:e9 semi_or_comma expr:e10 RPAREN
+                {: RESULT = parser.getHelper().callFunction(f, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8, e9, e10}); :}
+                
+              | PROCEDURE:p LPAREN RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{}); :}
+              | PROCEDURE:p LPAREN expr:e1 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5, e6}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5, e6, e7}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 semi_or_comma expr:e9 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8, e9}); :}
+              | PROCEDURE:p LPAREN expr:e1 semi_or_comma expr:e2 semi_or_comma expr:e3 semi_or_comma expr:e4 semi_or_comma expr:e5 semi_or_comma expr:e6 semi_or_comma expr:e7 semi_or_comma expr:e8 semi_or_comma expr:e9 semi_or_comma expr:e10 RPAREN
+                {: parser.getHelper().callProcedure(p, new Object[]{e1, e2, e3, e4, e5, e6, e7, e8, e9, e10}); :}
+                
+              | YEAR LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.YEAR); :}
+              | YEAR LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.YEAR); :}
+              | MONTH LPAREN expr:s RPAREN
+                {: RESULT = new Double(parser.getHelper().getDateFieldFromString(s, Calendar.MONTH) + 1); :}
+              | MONTH LPAREN CELL:c RPAREN
+                {: RESULT = new Double(parser.getHelper().getDateFieldFromCell(c, Calendar.MONTH) + 1); :}
+              | DAY LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.DAY_OF_MONTH); :}
+              | DAY LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.DAY_OF_MONTH); :}
+              | HOUR LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.HOUR); :}
+              | HOUR LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.HOUR); :}
+              | MINUTE LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.MINUTE); :}
+              | MINUTE LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.MINUTE); :}
+              | SECOND LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.SECOND); :}
+              | SECOND LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.SECOND); :}
+              | WEEKDAY LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.DAY_OF_WEEK); :}
+              | WEEKDAY LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.DAY_OF_WEEK); :}
+              | WEEKNUM LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.WEEK_OF_YEAR); :}
+              | WEEKNUM LPAREN CELL:c RPAREN
+                {: RESULT = parser.getHelper().getDateFieldFromCell(c, Calendar.WEEK_OF_YEAR); :}
+
+              | SUBSTR LPAREN expr:s semi_or_comma expr:start RPAREN
+               {: RESULT = parser.getHelper().toString(s).substring(parser.getHelper().toDouble(start).intValue() - 1); :}
+              | SUBSTR LPAREN expr:s semi_or_comma expr:start semi_or_comma expr:end RPAREN
+                {: RESULT = parser.getHelper().toString(s).substring(parser.getHelper().toDouble(start).intValue() - 1, parser.getHelper().toDouble(end).intValue() - 1); :}
+              | LEFT LPAREN expr:s semi_or_comma expr:n RPAREN
+                {: RESULT = parser.getHelper().left(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | MID LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:n RPAREN
+                {: RESULT = parser.getHelper().mid(parser.getHelper().toString(s), parser.getHelper().toInteger(f) - 1, parser.getHelper().toInteger(n)); :}
+              | RIGHT LPAREN expr:s semi_or_comma expr:n RPAREN
+                {: RESULT = parser.getHelper().right(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | REPEAT LPAREN expr:s semi_or_comma expr:n RPAREN
+                {: RESULT = parser.getHelper().repeat(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | CONCATENATE LPAREN expr:s1 semi_or_comma expr:s2 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2)); :}
+              | CONCATENATE LPAREN expr:s1 semi_or_comma expr:s2 semi_or_comma expr:s3 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3)); :}
+              | CONCATENATE LPAREN expr:s1 semi_or_comma expr:s2 semi_or_comma expr:s3 semi_or_comma expr:s4 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3) + parser.getHelper().toString(s4)); :}
+              | CONCATENATE LPAREN expr:s1 semi_or_comma expr:s2 semi_or_comma expr:s3 semi_or_comma expr:s4 semi_or_comma expr:s5 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3) + parser.getHelper().toString(s4) + parser.getHelper().toString(s5)); :}
+              | LOWERCASE LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).toLowerCase(); :}
+              | UPPERCASE LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).toUpperCase(); :}
+              | TRIM LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).trim(); :}
+              | MATCHES LPAREN expr:s semi_or_comma expr:pattern RPAREN
+                {: RESULT = new Boolean(parser.getHelper().toString(s).matches(parser.getHelper().toString(pattern))); :}
+              | FIND LPAREN expr:f semi_or_comma expr:s RPAREN
+                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase()) + 1); :}
+              | FIND LPAREN expr:f semi_or_comma expr:s semi_or_comma expr:p RPAREN
+                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase(), parser.getHelper().toInteger(p) - 1) + 1); :}
+              | REPLACE LPAREN expr:s semi_or_comma expr:p semi_or_comma expr:l semi_or_comma expr:n RPAREN
+                {: RESULT = parser.getHelper().replace(parser.getHelper().toString(s), parser.getHelper().toInteger(p) - 1, parser.getHelper().toInteger(l), parser.getHelper().toString(n)); :}
+              | SUBSTITUTE LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r RPAREN
+                {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
+              | SUBSTITUTE LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r semi_or_comma expr:o RPAREN
+                {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r), parser.getHelper().toInteger(o)); :}
+              ;
+
+semi_or_comma ::= SEMICOLON | COMMA ;

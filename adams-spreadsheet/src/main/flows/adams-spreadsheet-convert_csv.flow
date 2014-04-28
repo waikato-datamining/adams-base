@@ -1,0 +1,78 @@
+# Project: adams
+# Date: 2014-02-21 02:05:16
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow demonstrating how to convert a CSV file\nfrom German (de) locale, using \",\" as decimal separator\nand \"\\t\" (tab) as column separator, into an English CSV \nfile, using \".\" as decimal separator and \",\" as column \nseparator.
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			output
+			-var-value
+			${EXAMPLE_FLOWS}/output/english.csv
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			convert
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/german.csv
+			-tee
+				adams.flow.control.Tee
+					-name
+					display input
+					-tee
+						adams.flow.transformer.TextFileReader
+							-reader
+								adams.data.io.input.SingleStringTextReader
+					-tee
+						adams.flow.sink.Display
+							-name
+							original
+							-short-title
+							true
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+							-separator
+							\t
+							-locale
+							de
+			-tee
+				adams.flow.sink.SpreadSheetFileWriter
+					-output
+					@{output}
+					-writer
+						adams.data.io.output.CsvSpreadSheetWriter
+							-locale
+							en
+	-actor
+		adams.flow.control.Trigger
+			-name
+			display converted
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					@{output}
+			-tee
+				adams.flow.transformer.TextFileReader
+					-reader
+						adams.data.io.input.SingleStringTextReader
+			-tee
+				adams.flow.sink.Display
+					-name
+					converted
+					-short-title
+					true
+					-x
+					-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

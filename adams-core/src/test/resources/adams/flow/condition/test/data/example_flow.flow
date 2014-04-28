@@ -1,0 +1,27 @@
+# Date: 2010-03-19 09:12:32
+# User: fracpete
+# Revision/weka: 6315:6317
+# Revision/adams: 950:1052MP
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			1
+			-string
+			2
+			-string
+			3
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.StringToDouble
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X^2
+	-actor
+		adams.flow.sink.DumpFile
+			-output
+			${TMP}/dumpfile.txt
+			-append

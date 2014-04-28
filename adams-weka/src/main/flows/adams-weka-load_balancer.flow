@@ -1,0 +1,108 @@
+# Project: adams
+# Date: 2014-01-23 15:50:19
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The LoadBalancer actor allows the parallel execution of the \nbalancer\'s sub-flow. Using \"-1\" as number of slots (ie threads)\nall available CPUs/cores will be used to process the incoming\ndata.\nThis example cross-validates all available datasets with J48\nand outputs the evaluation summary.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+			-actor
+				adams.flow.sink.HistoryDisplay
+					-x
+					-3
+					-caret-at-start
+					true
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*\\.arff
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.Display
+	-actor
+		adams.flow.control.LoadBalancer
+			-load
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+			-load
+				adams.flow.transformer.WekaClassSelector
+			-load
+				adams.flow.control.Continue
+					-condition
+						adams.flow.condition.bool.WekaCapabilities
+							-capability
+							NOMINAL_ATTRIBUTES
+							-capability
+							BINARY_ATTRIBUTES
+							-capability
+							UNARY_ATTRIBUTES
+							-capability
+							EMPTY_NOMINAL_ATTRIBUTES
+							-capability
+							NUMERIC_ATTRIBUTES
+							-capability
+							DATE_ATTRIBUTES
+							-capability
+							MISSING_VALUES
+							-capability
+							NOMINAL_CLASS
+							-capability
+							BINARY_CLASS
+							-capability
+							UNARY_CLASS
+							-capability
+							EMPTY_NOMINAL_CLASS
+							-capability
+							MISSING_CLASS_VALUES
+							-invert
+							true
+			-load
+				adams.flow.transformer.WekaCrossValidationEvaluator
+					-output
+						weka.classifiers.evaluation.output.prediction.Null
+					-classifier
+					WekaClassifier
+			-load
+				adams.flow.transformer.WekaEvaluationSummary
+					-relation
+					true
+					-complexity-stats
+					true
+					-class-details
+					true
+			-load
+				adams.flow.sink.CallableSink
+					-callable
+					HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

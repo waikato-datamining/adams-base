@@ -1,0 +1,60 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# instance generators
+adams.data.instances.AbstractInstanceGenerator=\
+  adams.data.instances
+
+# Instance evaluators
+adams.data.weka.evaluator.AbstractInstanceEvaluator=\
+  adams.data.weka.evaluator
+
+# The RowFinder algorithms
+adams.data.weka.rowfinder.RowFinder=\
+  adams.data.weka.rowfinder
+
+# The ColumnFinder algorithms
+adams.data.weka.columnfinder.ColumnFinder=\
+  adams.data.weka.columnfinder
+
+# error scalers
+adams.data.weka.predictions.AbstractErrorScaler=\
+  adams.data.weka.predictions
+
+# the cluster post-processors
+adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
+  adams.flow.transformer.wekaclusterer
+
+# the genetic algorithms
+adams.genetic.MTAbstractGeneticAlgorithm=\
+  adams.genetic
+
+# WEKA file loaders
+weka.core.converters.AbstractFileLoader=\
+  weka.core.converters
+
+# WEKA file savers
+weka.core.converters.AbstractFileSaver=\
+  weka.core.converters
+
+# WEKA stream filters
+weka.filters.StreamableFilter=\
+  weka.filters,\
+  weka.filters.supervised.attribute,\
+  weka.filters.supervised.instance,\
+  weka.filters.unsupervised.attribute,\
+  weka.filters.unsupervised.instance
+  
+# the handlers for the explorer panels
+weka.gui.explorer.AbstractExplorerPanelHandler=\
+  weka.gui.explorer
+
+# additional explorer panels
+weka.gui.explorer.panels.AdditionalExplorerPanel=\
+  weka.gui.explorer.panels

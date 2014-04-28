@@ -1,0 +1,7 @@
+# Configuration file for Provenance.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Whether provenance is enabled (true|false)
+Enabled=false

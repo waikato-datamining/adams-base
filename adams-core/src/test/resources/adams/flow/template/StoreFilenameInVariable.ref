@@ -1,0 +1,42 @@
+--> adams.flow.template.StoreFilenameInVariable-out0.txt
+adams.flow.control.Tee
+	-name
+	Store filename in @{variable}
+	-tee
+		adams.flow.transformer.SetVariable
+
+
+--> adams.flow.template.StoreFilenameInVariable-out1.txt
+adams.flow.control.Tee
+	-name
+	Store filename in @{variable}
+	-tee
+		adams.flow.transformer.BaseName
+	-tee
+		adams.flow.transformer.SetVariable
+
+
+--> adams.flow.template.StoreFilenameInVariable-out2.txt
+adams.flow.control.Tee
+	-name
+	Store filename in @{variable}
+	-tee
+		adams.flow.transformer.BaseName
+			-remove-extensions
+			true
+	-tee
+		adams.flow.transformer.SetVariable
+
+
+--> adams.flow.template.StoreFilenameInVariable-out3.txt
+adams.flow.control.Tee
+	-name
+	Store filename in @{variable}
+	-tee
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.ReplaceFileExtension
+	-tee
+		adams.flow.transformer.SetVariable
+
+

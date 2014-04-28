@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-01-23 15:35:30
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Downloads an HTML page and extracts the page title.
+	-actor
+		adams.flow.source.URLSupplier
+			-url
+			https://adams.cms.waikato.ac.nz/index.html
+	-actor
+		adams.flow.transformer.DownloadContent
+	-actor
+		adams.flow.transformer.StringSplit
+			-expression
+			\n
+	-actor
+		adams.flow.transformer.StringMatcher
+			-regexp
+			.*<title>.*
+	-actor
+		adams.flow.transformer.ArrayToSequence
+	-actor
+		adams.flow.transformer.StringReplace
+			-find
+			.*<title>
+	-actor
+		adams.flow.transformer.StringReplace
+			-name
+			StringReplace-1
+			-find
+			</title>.*
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

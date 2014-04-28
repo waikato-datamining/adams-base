@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>nz.ac.waikato.cms.adams</groupId>
+    <artifactId>adams-pom</artifactId>
+    <version>0.4.5-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>adams-base-all</artifactId>
+  <packaging>jar</packaging>
+
+  <name>adams-base-all</name>
+  <description>
+    Meta-module that encompasses all adams (base) modules.
+  </description>
+  <url>http://adams.cms.waikato.ac.nz/</url>
+  <organization>
+    <name>University of Waikato, Hamilton, NZ</name>
+    <url>http://www.waikato.ac.nz/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU General Public License 3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>fracpete</id>
+      <name>Peter Reutemann</name>
+      <email>fracpete@waikato.ac.nz</email>
+      <url>http://www.cms.waikato.ac.nz/~fracpete/</url>
+      <organization>University of Waikato, CS department</organization>
+      <organizationUrl>http://www.cs.waikato.ac.nz/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+12</timezone>
+    </developer>
+    <developer>
+      <id>dale</id>
+      <name>Dale Fletcher</name>
+      <email>dale@cs.waikato.ac.nz</email>
+      <organization>University of Waikato, CS department</organization>
+      <organizationUrl>http://www.cs.waikato.ac.nz/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+12</timezone>
+    </developer>
+  </developers>
+
+  <properties>
+    <class.adams.instancecompare>adams.gui.InstanceCompare</class.adams.instancecompare>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- core -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-core</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-core</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- compress -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-compress</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-compress</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- event -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-event</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-event</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- excel -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-excel</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-excel</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- groovy -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-groovy</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-groovy</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- gnuplot -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-gnuplot</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-gnuplot</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- imaging -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-imaging</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-imaging</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- jython -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-jython</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-jython</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- latex -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-latex</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-latex</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- maps -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-maps</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-maps</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- meta -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-meta</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-meta</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- ml -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-ml</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <!--dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-ml</artifactId>
+      <version>0.4.4-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency-->
+
+    <!-- moa -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-moa</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-moa</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- net -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-net</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-net</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- odf -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-odf</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-odf</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- osm -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-osm</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-osm</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- pdf -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-pdf</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-pdf</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- r -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-r</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-r</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- random -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-random</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-random</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- spreadsheet -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-spreadsheet</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-spreadsheet</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- timeseries -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-timeseries</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <!--dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-timeseries</artifactId>
+      <version>0.4.4-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency-->
+
+    <!-- twitter -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-twitter</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-twitter</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- visualstats -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-visualstats</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-visualstats</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- weka -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-weka</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-weka</artifactId>
+      <version>0.4.5-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>latex-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly-attached</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <attach>true</attach>
+              <descriptors>
+                <descriptor>src/main/assembly/flows.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-assembly-not-attached</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <attach>false</attach>
+              <descriptors>
+                <descriptor>src/main/assembly/bin.xml</descriptor>
+                <descriptor>src/main/assembly/doc.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>osxappbundle-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>${class.adams.main}</mainClass>
+          <jvmVersion>1.6+</jvmVersion>
+          <vmOptions>${heap.size}</vmOptions>
+          <iconFile>${basedir}/src/main/resources/osxappbundle/adams_icon.icns</iconFile>
+          <javaApplicationStub>${basedir}/src/main/resources/osxappbundle/JavaApplicationStub</javaApplicationStub>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- for generating the license information -->
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+      </plugin>
+      
+      <!-- generates dependency graphs, get pdfs/flows/sources -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+
+      <!-- updates/uses 'src/license/THIRD-PARTY.properties' for missing libraries -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <useMissingFile>true</useMissingFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,10 @@
+# Date: 2010-07-22 10:35:43
+# User: fracpete
+# Revision/weka: 6597M
+# Revision/adams: 1538:1558MP
+#
+adams.flow.control.SubProcess
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X*#mult#+#base#

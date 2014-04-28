@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-01-23 15:35:37
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Determines and displays the mime-types of several files.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+			-file
+			${EXAMPLE_FLOWS}/data/books.xml
+	-actor
+		adams.flow.control.Tee
+			-name
+			Store filename in @{file}
+			-tee
+				adams.flow.transformer.BaseName
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					file
+	-actor
+		adams.flow.transformer.MimeType
+	-actor
+		adams.flow.transformer.StringInsert
+			-position
+			first
+			-value
+			@{file}: 
+			-variable
+			true
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

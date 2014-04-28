@@ -1,0 +1,6 @@
+--> vote1-out0.arff
+Target value 'Class' not of type Double!
+
+--> vote1-out1.arff
+Target value 'blah' not in report!
+

@@ -1,0 +1,12 @@
+--> adams_icon-out0_0.txt
+Image:
+imp[adams_icon.png'' (16x16x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.PassThrough
+  2. adams.data.imagej.transformer.NamedSetup -setup imagej_transformer_passthrough
+
+
+

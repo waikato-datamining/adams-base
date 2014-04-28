@@ -1,0 +1,9 @@
+--> adams.flow.condition.bool.IsArray-out0.txt
+false
+
+--> adams.flow.condition.bool.IsArray-out1.txt
+true
+
+--> adams.flow.condition.bool.IsArray-out2.txt
+true
+

@@ -1,0 +1,9 @@
+--> adams.flow.condition.bool.BinaryFile-out0.txt
+false
+
+--> adams.flow.condition.bool.BinaryFile-out1.txt
+false
+
+--> adams.flow.condition.bool.BinaryFile-out2.txt
+true
+

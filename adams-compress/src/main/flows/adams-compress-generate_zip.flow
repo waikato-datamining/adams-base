@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2014-01-23 15:26:32
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow adds all ARFF files to a ZIP archive (stripping the complete path)\nand then displays the file name of the generated archive.
+	-actor
+		adams.flow.source.DirectoryLister
+			-output-array
+			true
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*.arff
+			-sorting
+			SORT_BY_NAME
+	-actor
+		adams.flow.transformer.ZIP
+			-output
+			${EXAMPLE_FLOWS}/output/datasets.zip
+			-strip-path
+			.*
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

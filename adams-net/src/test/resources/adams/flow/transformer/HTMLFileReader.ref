@@ -1,0 +1,587 @@
+--> dumpfile.txt
+<HTML lang="en">
+  
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+<META content="text/html; charset=utf-8" http-equiv="Content-Type">
+    
+<TITLE>
+      Computer Science Department, University of Waikato
+    </TITLE>
+    
+<LINK href="css/csstyle.css" rel="stylesheet" type="text/css">
+    
+<META content="Department of Computer Science, University of Waikato, Hamilton, New Zealand" name="description">
+    
+<META content="Computer Science, Waikato University, Hamilton, New Zealand" name="keywords">
+    
+</HEAD>
+  
+<BODY>
+    
+<TABLE cellspacing="0" class="header" summary="" width="100%">
+      
+<TBODY>
+        
+<TR>
+          
+<TD class="left-header-cell">
+            <A href="http://www.waikato.ac.nz/"><IMG alt="Waikato University crest" height="110" src="images-cs/uni.gif" title="Waikato University" width="244"></A>
+          </TD>
+          <TD class="centre-header-cell">
+            
+<H1 class="dept-name">
+              
+<SPAN class="dept-small">Department of</SPAN>
+<BR>
+              Computer Science<BR>
+              
+<SPAN class="dept-small" lang="mi">Tari
+              Rorohiko</SPAN>
+            
+</H1>
+          
+</TD>
+          <TD class="right-header-cell">
+            <A href="http://www.scms.waikato.ac.nz/" title="SCMS"><IMG alt="Computing &amp; Mathematical Sciences" height="48" src="images-cs/cms.gif" title="CMS" width="275"></A>
+          </TD>
+        
+</TR>
+      
+</TBODY>
+    
+</TABLE>
+    
+<DIV class="frontMain">
+      
+<TABLE class="mainTable" summary="" width="100%">
+        
+<TBODY>
+          
+<TR>
+            
+<TD valign="top">
+              
+<P class="main-heading">
+                
+<A href="/department/">The Department</A>
+              
+</P>
+              
+<DIV class="frontList">
+                
+<UL>
+                  
+<LI>
+                    
+<A href="/people/">People</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/events/">Events</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/department/contact.html">Contact
+                    Details</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/department/chair_message.html">Chairperson's
+                    message</A>
+                  
+</LI>
+                
+</UL>
+              
+</DIV>
+            
+</TD>
+            <TD valign="top">
+              
+<P class="main-heading">
+                
+<A href="research/">Research</A>
+              
+</P>
+              
+<DIV class="frontList">
+                
+<UL>
+                  
+<LI>
+                    
+<A href="/pubs/">Publications</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/pubs/wp/">Working Papers</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/people/student-archive.html">Student Theses</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/teaching/phd/">PhD</A> &ndash;
+                    <A href="/teaching/msc/">MSc</A> student info
+                  </LI>
+                
+</UL>
+              
+</DIV>
+            
+</TD>
+            <TD valign="top">
+              
+<P class="main-heading">
+                
+<A href="/research/">Research Groups</A>
+              
+</P>
+              
+<TABLE cellpadding="0" cellspacing="0">
+                
+<TR>
+                  
+<TD valign="top">
+                    
+<DIV class="frontRGList">
+                      
+<UL>
+                        
+<LI>
+                          
+<A href="http://www.nzdl.org/" title="home of the Greenstone digital library software">
+                          Digital Libraries</A>
+                        
+</LI>
+                        
+<LI>
+                          
+<A href="/Research/fm/">Formal
+                          Methods</A>
+                        
+</LI>
+
+<LI>
+                          
+<A href="/hci/">Human Computer
+                          Interaction</A>
+                        
+</LI> 
+                     
+                        
+<LI>
+                          
+<A href="http://isdb.cs.waikato.ac.nz/">Information
+                          Systems<BR>
+                          &amp; Databases</A>
+                        
+</LI>
+                      
+</UL>
+                    
+</DIV>
+                  
+</TD>
+                  <TD valign="top">
+                    
+<DIV class="frontRGList">
+                      
+<UL>
+                        
+<LI>
+                          
+<A href="/ml/" title="home of the WEKA Workbench">Machine
+                          Learning</A>
+                        
+</LI>
+                        
+<LI>
+                          
+<A href="/research/jstar/">JStar Parallel Programming</A>
+                        
+</LI>
+                        
+<LI>
+                          
+<A href="http://wand.cs.waikato.ac.nz/" title="Waikato Applied Network Dynamics">WAND
+                          Network Research</A>
+                        
+</LI>
+
+<LI>
+                          
+<A href="http://cgd.waikato.ac.nz/research">Computer Graphic Design</A>
+                        
+</LI>
+
+                      
+</UL>
+                    
+</DIV>
+                  
+</TD>
+                
+</TR>
+              
+</TABLE>
+            
+</TD>
+          
+</TR>
+          
+<TR>
+            
+<TD valign="top">
+              
+<P class="main-heading">
+                
+<A href="/admissions/">Prospective Students</A>
+              
+</P>
+              
+<DIV class="frontList">
+                
+<UL>
+                  
+<LI>
+                    
+<A href="/admissions/undergrad-degrees.html">Undergraduate</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/admissions/postgrad-degrees.html">Graduate
+                    &amp; Postgraduate</A>
+                  
+</LI>
+                  
+<LI>
+                    
+<A href="/admissions/scholarships.html">Scholarships</A>
+                  
+</LI>
+                
+</UL>
+              
+</DIV>
+            
+</TD>
+            <TD valign="top">
+              
+<P class="main-heading">
+                
+<A href="/teaching/">Teaching</A>
+              
+</P>
+              
+<DIV class="frontList">
+                
+<UL>
+                  
+<LI>
+                    
+<A href="/teaching/">2013 Papers</A> - our papers     <!--  <img title="New" alt="New" 
+src="http://www.cs.waikato.ac.nz/images-cs/new.gif" width="23" height="12">   -->
+                  </LI>
+                  
+<LI>
+                    
+<A href="http://www.cms.waikato.ac.nz/docs/pdfs/handbook-2013.pdf"> 2013 Faculty Handbook</A> <SPAN class="file-type">PDF</SPAN> <!-- <img title="New" alt="New" src="http://www.cs.waikato.ac.nz/images-cs/new.gif"
+                     width="23" height="12">   -->
+                  
+</LI>
+   <!--                 <li>
+                    <a href="/teaching/2012-papers.html">2012 Papers</a> - our papers<img title="New" alt="New" 
+src="http://www.cs.waikato.ac.nz/images-cs/new.gif" width="23" height="12"> 
+                  </li>         -->
+
+                  
+<LI>
+                    
+<A href="http://cgd.waikato.ac.nz/">Computer Graphic Design</A>
+                  
+</LI>
+                
+</UL>
+              
+</DIV>
+            
+</TD>
+            <TD rowspan="2">
+
+              
+<P class="frontImage">
+                
+<A href="/admissions/"><IMG align="middle" alt="Campus Photo" height="162" src="/images-cs/campus4.jpg" title="Campus Photo" width="230"></A>
+
+              
+</P>
+
+              
+<P class="caption">
+
+                
+<A href="/admissions/10reasons-small.pdf">10
+                Reasons to Study Computer Science at
+                Waikato...</A> <SPAN class="file-type">PDF</SPAN>
+
+
+         
+</P>
+            
+</TD>
+          
+</TR>
+          
+<TR valign="top">
+            
+<TD colspan="1" rowspan="2">
+              
+<DIV class="news">
+                
+<P class="main-heading">
+                  News
+                </P>
+                
+<UL class="newsList">
+								
+<!-- 
+<li><a href="http://www.degreeshow.waikato.ac.nz/">Computer Graphic Design Students Degree Shows 2012: 31st October &ndash; 6th November &raquo;</a></li>
+
+
+-->
+<!--
+<li><a href="http://www.cms.waikato.ac.nz/genquery.php?linklist=SCMS_Bottom&linktype=report&listby=Title&report=News&linkname=News&lwhere=unique_record_id=189">Ruben the Road Safety Bear now has his own Android phone app – thanks to programming work by Computer Science students. &raquo;</a></li>
+-->
+
+
+
+<LI>
+<A href="http://www.cms.waikato.ac.nz/genquery.php?linklist=SCMS_Bottom&amp;linktype=report&amp;listby=Title&amp;report=News&amp;linkname=News&amp;lwhere=unique_record_id=188">COMP314 students create app to print photos from your phone &raquo;</A>
+</LI>
+
+<LI>
+<A href="http://www.journals.elsevier.com/international-journal-of-human-computer-studies/news/most-cited-paper-award-ijhcs/">Research  
+on Wikipedia mining wins Most Cited Paper Award from <EM>International Journal of Human 
+Computer 
+Studies</EM> &raquo;</A>
+
+</LI>
+
+<!-- <li><a 
+href="http://www.scms.waikato.ac.nz/genquery.php?linklist=SCMS_Bottom&linktype=report&listby=Title&report=News&linkname=News&lwhere=unique_record_id=136">Computer Science held first-ever Global GameJam at Waikato &raquo;</li> -->
+<!--
+<li>Create a game at the <a href="http://www.globalgamejam.org.nz/">Global Game Jam 2011</a>,  
+28-30 January &raquo;
+</li>
+-->
+
+<!-- <li><a href="http://www.scms.waikato.ac.nz/genquery.php?linklist=SCMS_Bottom&linktype=report&listby=Title&report=News&linkname=News&lwhere=unique_record_id=183"><b>New Student Orientation Session</b></a> Friday 25 February, 10am, S.G.01 &raquo;
+</li>-->
+
+
+
+<LI>New book: <A href="http://www.cs.waikato.ac.nz/ml/weka/book.html">Data Mining: Practical 
+Machine Learning Tools and Techniques (Third Edition) &raquo;</A>
+
+</LI>
+
+
+<LI>New book: <A href="http://www.amazon.co.uk/Principles-Applications-Distributed-Event-Based-Systems/dp/1605666971">Principles and 
+Applications of Distributed Event-Based Systems &raquo;</A>
+</LI> 
+
+<!-- <li><a href="http://www.scms.waikato.ac.nz/genquery.php?linklist=SCMS_Bottom&linktype=report&listby=Title&report=News&linkname=News&lwhere=unique_record_id=177">Computer science student wins bronze at the 2010 International Olympiad in Informatics  &raquo;</a></li> -->
+
+<!-- 
+                  <li>
+                    <a href=
+                    "http://www.waikato.ac.nz/news/index.shtml?article=613">
+                    Computer Science at Waikato ranked 1st for research (again) 
+&raquo;</a>
+                  </li>-->
+
+                                             
+                
+</UL>
+              
+</DIV>
+            
+</TD>
+            <TD>
+              
+<DIV class="highlights">
+                
+<P class="main-heading">
+                  In Focus
+                </P>
+                
+<UL class="highlightsList">
+
+
+<LI>Try some of our software:
+<UL>
+
+<LI>
+<A href="http://greenstone.org" title="Digital Libraries">Greenstone</A>
+</LI>
+
+<LI>
+<A href="http://www.cs.waikato.ac.nz/~ml/weka/" title="Data Mining">Weka</A>
+</LI>
+
+<LI>
+<A href="http://wikipedia-miner.cms.waikato.ac.nz/">Wikipedia Miner</A>
+</LI>
+
+<LI>
+<A href="http://research.wand.net.nz/software/visualisation.php">BSOD Network 
+Visualisation</A>
+</LI>
+
+</UL>
+
+</LI>
+
+
+<LI>
+<A href="http://cosi.cms.waikato.ac.nz/">Centre for Open Software Innovation</A>
+
+</LI>
+<!--
+                  <li>
+                    <a href="/women-in-computing/">Women in
+                    Computing</a>
+                  </li>
+-->
+                  
+<LI>
+                    
+<A href="/pubs/books/">Books by our
+                    researchers</A>
+                  
+</LI>
+<!--                  <li>
+                    <a href=
+                    "http://www.cs.waikato.ac.nz/studentacm/">ACM
+                    Student Chapter</a>
+                  </li>
+-->
+            
+</UL>
+              
+</DIV>
+            
+</TD>
+          
+</TR>
+          
+<TR>
+            
+<TD colspan="2">
+              <!-- SiteSearch Google -->
+              
+<FORM action="http://www.google.com/search" method="get">
+                
+<DIV class="google">
+                  
+<TABLE bgcolor="#FFFFFF" border="0" rules="none" summary="" width="100%">
+                    
+<TR>
+                      
+<TD>
+                        <A href="http://www.google.com/"><IMG alt="Google" border="0" height="32" src="http://www.cs.waikato.ac.nz/images-cs/google.gif" width="75"></A>
+                      </TD>
+                      <TD>
+                        <INPUT maxlength="255" name="q" size="26" type="text" value=""> <INPUT name="btnG" type="submit" value="Google Search"> <INPUT name="domains" type="hidden" value="cs.waikato.ac.nz">
+<BR>
+                        
+<INPUT name="sitesearch" type="radio" value=""> Web <INPUT checked name="sitesearch" type="radio" value="cs.waikato.ac.nz"> cs.waikato.ac.nz<BR>
+                      
+</TD>
+                      <TD class="sitemap">
+                        
+<P>
+                          
+<A href="https://i.waikato.ac.nz/portal/server.pt/community/fcms/204/cs_intranet/453791">
+                          Staff Intranet</A> | <A href="/search/">Site
+                          Map</A>
+                        
+</P>
+                      
+</TD>
+                    
+</TR>
+		      
+<TR>
+		        
+<TD>
+		          
+<P>Our online surveys are powered by SurveyGizmo's <A href="http://www.surveygizmo.com">survey software</A>
+</P>
+		        
+</TD>
+		      
+</TR>
+                  
+</TABLE>
+                
+</DIV>
+              
+</FORM>
+<!-- SiteSearch Google -->
+            
+</TD>
+          
+</TR>
+        
+</TBODY>
+      
+</TABLE>
+    
+</DIV>
+    
+<DIV class="footer-note">
+      
+<P>
+        
+<A href="http://www.waikato.ac.nz/copyright.shtml">&copy;</A>
+        Department of Computer Science<BR>
+        The University of Waikato - <SPAN lang="mi">Te Whare
+        Wānanga o Waikato</SPAN>
+<BR>
+        Hamilton, New Zealand
+      </P>
+      
+<P>
+        
+<A href="mailto:webadministrator@scms.waikato.ac.nz">Web
+        Administrator</A>
+      
+</P>
+    
+</DIV>
+  
+
+
+</BODY>
+</HTML>
+
+

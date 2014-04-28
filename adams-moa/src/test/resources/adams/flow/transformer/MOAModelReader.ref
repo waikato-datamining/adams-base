@@ -1,0 +1,34 @@
+--> dumpfile.txt
+Header=@relation iris
+
+@attribute sepallength numeric
+@attribute sepalwidth numeric
+@attribute petallength numeric
+@attribute petalwidth numeric
+@attribute class {Iris-setosa,Iris-versicolor,Iris-virginica}
+
+@data
+, Model=Model type: moa.classifiers.bayes.NaiveBayes
+model training instances = 150
+model serialized size (bytes) = 0
+Model description:
+Observations for [class] = <class 1>:
+ Total observed weight = 50.0 / prob = 0.3333333333333333
+ Observations for [att 1]: 
+ Observations for [att 2]: 
+ Observations for [att 3]: 
+ Observations for [att 4]: 
+Observations for [class] = <class 2>:
+ Total observed weight = 50.0 / prob = 0.3333333333333333
+ Observations for [att 1]: 
+ Observations for [att 2]: 
+ Observations for [att 3]: 
+ Observations for [att 4]: 
+Observations for [class] = <class 3>:
+ Total observed weight = 50.0 / prob = 0.3333333333333333
+ Observations for [att 1]: 
+ Observations for [att 2]: 
+ Observations for [att 3]: 
+ Observations for [att 4]: 
+
+

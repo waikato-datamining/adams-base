@@ -1,0 +1,48 @@
+# Project: adams
+# Date: 2014-01-23 15:47:22
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Builds a classifier in batch mode and outputs generated ModelContainer,\ncontaining the training set header and the actual model.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaTrainClassifier
+			-name
+			WekaClassifier
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

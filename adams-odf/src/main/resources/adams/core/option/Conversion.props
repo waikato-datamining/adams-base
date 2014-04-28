@@ -1,0 +1,16 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-spreadsheetreader_odf,\
+  Rename-spreadsheetwriter_odf
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-spreadsheetreader_odf=adams.core.io.ODFSpreadSheetReader-adams.data.io.input.ODFSpreadSheetReader
+Rename-spreadsheetwriter_odf=adams.core.io.ODFSpreadSheetWriter-adams.data.io.output.ODFSpreadSheetWriter

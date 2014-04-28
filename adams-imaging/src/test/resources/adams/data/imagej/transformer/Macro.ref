@@ -1,0 +1,22 @@
+--> adams_icon-out0_0.txt
+Image:
+imp[adams_icon.png' (16x16x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.Macro
+
+
+
+--> adams_icon-out1_0.txt
+Image:
+imp[committee-1.jpg (8x8x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.Macro -commands "run(\\\"Scale...\\\", \\\"x=0.5 y=0.5 width=126 height=108 interpolation=Bilinear average create title=committee-1.jpg\\\");"
+
+
+

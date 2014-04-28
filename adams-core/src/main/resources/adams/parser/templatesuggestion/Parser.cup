@@ -1,0 +1,360 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ */
+
+package adams.parser.templatesuggestion;
+
+import adams.core.ClassLocator;
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorUtils;
+import adams.flow.template.AbstractActorTemplate;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * A parser for parsing a rule file for suggesting a template generator in
+ * flow editor.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+
+parser code {:
+  /** for storing the result of the expression. */
+  protected AbstractActorTemplate m_Result = null;
+
+  /** the parent of the where to suggest the template. */
+  protected AbstractActor m_Parent = null;
+
+  /** the position to add the proposed actor template at. */
+  protected Integer m_Position = null;
+
+  /** all the current nodes in which to insert/add to the proposed actor. */
+  protected AbstractActor[] m_Actors = null;
+
+  /**
+   * Sets the result of the evaluation.
+   *
+   * @param value the result
+   */
+  public void setResult(AbstractActorTemplate value) {
+    m_Result = value;
+  }
+
+  /**
+   * Returns the result of the evaluation.
+   *
+   * @return the result
+   */
+  public AbstractActorTemplate getResult() {
+    return m_Result;
+  }
+
+  /**
+   * Sets the parent of the proposed template.
+   *
+   * @param value the parent
+   */
+  public void setParent(AbstractActor value) {
+    m_Parent = value;
+  }
+
+  /**
+   * Returns the parent of the proposed template.
+   *
+   * @return the parent
+   */
+  public AbstractActor getParent() {
+    return m_Parent;
+  }
+
+  /**
+   * Sets the position of the proposed template.
+   *
+   * @param value the position
+   */
+  public void setPosition(Integer value) {
+    m_Position = value;
+  }
+
+  /**
+   * Returns the position of the proposed template.
+   *
+   * @return the position
+   */
+  public Integer getPosition() {
+    return m_Position;
+  }
+
+  /**
+   * Sets the actors in which to insert the proposed template.
+   *
+   * @param value the actors
+   */
+  public void setActors(AbstractActor[] value) {
+    m_Actors = value;
+  }
+
+  /**
+   * Returns the actors in which to insert the proposed template.
+   *
+   * @return the actors
+   */
+  public AbstractActor[] getActors() {
+    return m_Actors;
+  }
+
+  /**
+   * Returns whether the proposed actor will get added at the first position.
+   *
+   * @return true if the actor gets added at the first position
+   */
+  public Boolean isFirst() {
+    return (m_Position == 0);
+  }
+
+  /**
+   * Returns whether the proposed actor will get added at the last position.
+   *
+   * @return true if the actor gets added at the last position
+   */
+  public Boolean isLast() {
+    return (m_Position >= m_Actors.length);
+  }
+
+  /**
+   * Checks whether the actor will get added before or after a standalone
+   * actor.
+   *
+   * @param before whether the actor gets added before or after
+   * @return true if the actor gets added before/after a standalone one
+   */
+  public Boolean isStandalone(boolean before) {
+    boolean 	result;
+
+    result = false;
+
+    if (before) {
+      if (m_Position + 1 < m_Actors.length) {
+        result = (ActorUtils.isStandalone(m_Actors[m_Position + 1]));
+      }
+    }
+    else {
+      if (m_Position > 0) {
+        result = (ActorUtils.isStandalone(m_Actors[m_Position - 1]));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the actor will get added before or after a source
+   * actor.
+   *
+   * @param before whether the actor gets added before or after
+   * @return true if the actor gets added before/after a source one
+   */
+  public Boolean isSource(boolean before) {
+    boolean 	result;
+
+    result = false;
+
+    if (before) {
+      if (m_Position + 1 < m_Actors.length) {
+        result = (ActorUtils.isSource(m_Actors[m_Position + 1]));
+      }
+    }
+    else {
+      if (m_Position > 0) {
+        result = (ActorUtils.isSource(m_Actors[m_Position - 1]));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the actor will get added before or after a transformer
+   * actor.
+   *
+   * @param before whether the actor gets added before or after
+   * @return true if the actor gets added before/after a transformer one
+   */
+  public Boolean isTransformer(boolean before) {
+    boolean 	result;
+
+    result = false;
+
+    if (before) {
+      if (m_Position + 1 < m_Actors.length) {
+        result = (ActorUtils.isTransformer(m_Actors[m_Position + 1]));
+      }
+    }
+    else {
+      if (m_Position > 0) {
+        result = (ActorUtils.isTransformer(m_Actors[m_Position - 1]));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the actor will get added before or after a sink
+   * actor.
+   *
+   * @param before whether the actor gets added before or after
+   * @return true if the actor gets added before/after a sink one
+   */
+  public Boolean isSink(boolean before) {
+    boolean 	result;
+
+    result = false;
+
+    if (before) {
+      if (m_Position + 1 < m_Actors.length) {
+        result = (ActorUtils.isSink(m_Actors[m_Position + 1]));
+      }
+    }
+    else {
+      if (m_Position > 0) {
+        result = (ActorUtils.isSink(m_Actors[m_Position - 1]));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the actor will get added before or after a specific
+   * actor (exact classname or interface classname).
+   *
+   * @param before whether the actor gets added before or after
+   * @param classname the name of the actor to check against
+   * @return true if the actor gets added before/after a specific one
+   */
+  public Boolean isClassname(boolean before, String classname) {
+    boolean 	result;
+
+    result = false;
+
+    if (before) {
+      if (m_Position + 1 < m_Actors.length) {
+        result =    m_Actors[m_Position + 1].getClass().getName().equals(classname)
+                 || ClassLocator.hasInterface(classname, m_Actors[m_Position + 1].getClass().getName());
+      }
+    }
+    else {
+      if (m_Position > 0) {
+        result =    m_Actors[m_Position - 1].getClass().getName().equals(classname)
+                 || ClassLocator.hasInterface(classname, m_Actors[m_Position - 1].getClass().getName());
+      }
+    }
+
+    return result;
+  }
+:}
+
+terminal String CLASSNAME;
+terminal String PARENT;
+terminal Boolean ISFIRST, ISLAST;
+terminal Boolean STANDALONE, SOURCE, TRANSFORMER, SINK;
+terminal Boolean BOOLEAN, TRUE, FALSE;
+
+terminal LPAREN, RPAREN;
+terminal IF, THEN;
+terminal AND, OR;
+terminal BEFORE, AFTER;
+terminal IS, NOT;
+
+non terminal rule;
+non terminal expr_list, expr;
+non terminal Boolean boolexpr;
+
+precedence left LPAREN, RPAREN;
+precedence left AND, OR;
+
+rule     ::=    expr expr_list
+              | expr;
+
+expr     ::=    IF boolexpr:e THEN CLASSNAME:c
+                {:
+                  if (e)
+                    parser.setResult(AbstractActorTemplate.forCommandLine(c));
+                  else
+                    parser.setResult(null);
+                :} ;
+
+boolexpr ::=    LPAREN boolexpr:b RPAREN
+                {: RESULT = b; :}
+              | BOOLEAN:b
+                {: RESULT = b; :}
+              | TRUE
+                {: RESULT = new Boolean(true); :}
+              | FALSE
+                {: RESULT = new Boolean(false); :}
+              | boolexpr:l AND boolexpr:r
+                {: RESULT = l && r; :}
+              | boolexpr:l OR boolexpr:r
+                {: RESULT = l || r; :}
+              | NOT boolexpr:b
+                {: RESULT = !b; :}
+              | ISFIRST
+                {: RESULT = parser.isFirst(); :}
+              | ISLAST
+                {: RESULT = parser.isLast(); :}
+              | PARENT IS CLASSNAME:c
+                {: RESULT = new Boolean(parser.getParent().getClass().getName().equals(c)); :}
+              | BEFORE STANDALONE
+                {: RESULT = parser.isStandalone(true); :}
+              | AFTER STANDALONE
+                {: RESULT = parser.isStandalone(false); :}
+              | BEFORE SOURCE
+                {: RESULT = parser.isSource(true); :}
+              | AFTER SOURCE
+                {: RESULT = parser.isSource(false); :}
+              | BEFORE TRANSFORMER
+                {: RESULT = parser.isTransformer(true); :}
+              | AFTER TRANSFORMER
+                {: RESULT = parser.isTransformer(false); :}
+              | BEFORE SINK
+                {: RESULT = parser.isSink(true); :}
+              | AFTER SINK
+                {: RESULT = parser.isSink(false); :}
+              | BEFORE CLASSNAME:c
+                {: RESULT = parser.isClassname(true, c); :}
+              | AFTER CLASSNAME:c
+                {: RESULT = parser.isClassname(false, c); :}
+              ;
