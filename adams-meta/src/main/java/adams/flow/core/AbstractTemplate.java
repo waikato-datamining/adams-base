@@ -15,7 +15,7 @@
 
 /*
  * AbstractTemplate.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -174,6 +174,7 @@ public abstract class AbstractTemplate
     else {
       m_Actor.setParent(this);
       m_Actor.setHeadless(isHeadless());
+      m_Actor.setVariables(getVariables());
       result = m_Actor.setUp();
     }
 
