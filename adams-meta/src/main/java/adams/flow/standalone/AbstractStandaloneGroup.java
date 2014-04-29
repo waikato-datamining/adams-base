@@ -340,14 +340,15 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   @Override
   public void stopExecution() {
     int		i;
-    T		actor;
     
-    if (!m_Stopped) {
-      for (i = m_Actors.size() - 1; i >= 0; i--) {
-	actor = m_Actors.get(i);
-	actor.stopExecution();
-      }
+    for (i = 0; i < m_Actors.size(); i++) {
+      if (m_Actors.get(i).getSkip())
+	continue;
+      if (isLoggingEnabled())
+	getLogger().info("Stopping " + (i+1) + "/" + m_Actors.size() + ": " + m_Actors.get(i));
+      m_Actors.get(i).stopExecution();
     }
+    
     super.stopExecution();
   }
   
@@ -362,6 +363,8 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     for (i = 0; i < m_Actors.size(); i++) {
       if (m_Actors.get(i).getSkip())
 	continue;
+      if (isLoggingEnabled())
+	getLogger().info("Wrapping up " + (i+1) + "/" + m_Actors.size() + ": " + m_Actors.get(i));
       m_Actors.get(i).wrapUp();
     }
     
@@ -379,6 +382,8 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     for (i = 0; i < m_Actors.size(); i++) {
       if (m_Actors.get(i).getSkip())
 	continue;
+      if (isLoggingEnabled())
+	getLogger().info("Cleaning up " + (i+1) + "/" + m_Actors.size());
       m_Actors.get(i).cleanUp();
     }
     
