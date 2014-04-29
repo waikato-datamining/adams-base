@@ -339,9 +339,14 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    */
   @Override
   public void stopExecution() {
+    int		i;
+    T		actor;
+    
     if (!m_Stopped) {
-      for (T actor: m_Actors)
+      for (i = m_Actors.size() - 1; i >= 0; i--) {
+	actor = m_Actors.get(i);
 	actor.stopExecution();
+      }
     }
     super.stopExecution();
   }
