@@ -21,6 +21,7 @@ package adams.flow.standalone;
 
 import java.util.List;
 
+import adams.core.Variables;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -294,6 +295,23 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     }
     
     return result;
+  }
+  
+  /**
+   * Updates the Variables instance in use.
+   * <p/>
+   * Use with caution!
+   *
+   * @param value	the instance to use
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+    int		i;
+    
+    super.forceVariables(value);
+    
+    for (i = 0; i < size(); i++)
+      get(i).setVariables(value);
   }
 
   /**
