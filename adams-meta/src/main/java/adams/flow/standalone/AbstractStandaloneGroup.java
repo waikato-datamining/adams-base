@@ -342,11 +342,16 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     int		i;
     
     for (i = 0; i < m_Actors.size(); i++) {
-      if (m_Actors.get(i).getSkip())
-	continue;
       if (isLoggingEnabled())
-	getLogger().info("Stopping " + (i+1) + "/" + m_Actors.size() + ": " + m_Actors.get(i));
+	getLogger().info("Stopping " + (i+1) + "/" + m_Actors.size());
+      if (m_Actors.get(i).getSkip()) {
+	if (isLoggingEnabled())
+	  getLogger().info("Skipped " + (i+1) + "/" + m_Actors.size());
+	continue;
+      }
       m_Actors.get(i).stopExecution();
+      if (isLoggingEnabled())
+	getLogger().info("Stopped " + (i+1) + "/" + m_Actors.size());
     }
     
     super.stopExecution();
@@ -361,11 +366,16 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     int		i;
     
     for (i = 0; i < m_Actors.size(); i++) {
-      if (m_Actors.get(i).getSkip())
-	continue;
       if (isLoggingEnabled())
-	getLogger().info("Wrapping up " + (i+1) + "/" + m_Actors.size() + ": " + m_Actors.get(i));
+	getLogger().info("Wrapping up " + (i+1) + "/" + m_Actors.size());
+      if (m_Actors.get(i).getSkip()) {
+	if (isLoggingEnabled())
+	  getLogger().info("Skipped " + (i+1) + "/" + m_Actors.size());
+	continue;
+      }
       m_Actors.get(i).wrapUp();
+      if (isLoggingEnabled())
+	getLogger().info("Wrapped up " + (i+1) + "/" + m_Actors.size());
     }
     
     super.wrapUp();
@@ -380,11 +390,16 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     int		i;
     
     for (i = 0; i < m_Actors.size(); i++) {
-      if (m_Actors.get(i).getSkip())
-	continue;
       if (isLoggingEnabled())
 	getLogger().info("Cleaning up " + (i+1) + "/" + m_Actors.size());
+      if (m_Actors.get(i).getSkip()) {
+	if (isLoggingEnabled())
+	  getLogger().info("Skipped " + (i+1) + "/" + m_Actors.size());
+	continue;
+      }
       m_Actors.get(i).cleanUp();
+      if (isLoggingEnabled())
+	getLogger().info("Cleaned up " + (i+1) + "/" + m_Actors.size());
     }
     
     super.cleanUp();
