@@ -15,7 +15,7 @@
 
 /*
  * DelayedEvent.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -93,9 +93,6 @@ public class DelayedEvent
 
   /** for serialization. */
   private static final long serialVersionUID = 4670761846363281951L;
-
-  /** the key for the owner in the JobExecutionContent. */
-  public final static String KEY_OWNER = "owner";
 
   /** for actors that get executed. */
   protected Sequence m_Actors;
