@@ -53,6 +53,7 @@ import adams.core.DiffUtils.SideBySideDiff;
 import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
+import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.VariablesHandler;
 import adams.core.io.FileUtils;
@@ -76,7 +77,6 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorStatistic;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.AutomatableInteractiveActor;
-import adams.flow.core.PauseStateHandler;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.CheckVariableUsage;
 import adams.flow.processor.ManageInteractiveActors;
@@ -87,7 +87,6 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
-import adams.gui.core.ToolBarPanel.ToolBarLocation;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -129,20 +128,252 @@ public class FlowPanel
     m_Counter = 0;
   }
 
+  /**
+   * Specialized worker class for executing a flow.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class FlowWorker
+    extends SwingWorker
+    implements Pausable, Stoppable, StatusMessageHandler {
+
+    /** the panel this flow belongs to. */
+    protected FlowPanel m_Owner;
+    
+    /** the flow to execute. */
+    protected AbstractActor m_Flow;
+    
+    /** the current flow file. */
+    protected File m_File;
+
+    /** generated output. */
+    protected String m_Output;
+    
+    /** whether to show a notification. */
+    protected boolean m_ShowNotification;
+
+    /** whether the flow is still being executed. */
+    protected boolean m_Running;
+
+    /** whether the flow is being stopped. */
+    protected boolean m_Stopping;
+    
+    /**
+     * Initializes the worker.
+     */
+    public FlowWorker(FlowPanel owner, AbstractActor flow, File file, boolean showNotification) {
+      m_Owner            = owner;
+      m_Flow             = flow;
+      m_File             = file;
+      m_ShowNotification = showNotification;
+      m_Running          = false;
+      m_Stopping         = false;
+    }
+    
+    /**
+     * Executes the flow.
+     *
+     * @return always null
+     * @throws Exception if unable to compute a result
+     */
+    @Override
+    protected Object doInBackground() throws Exception {
+      m_Owner.update();
+      m_Owner.cleanUp();
+      
+      m_Running = true;
+      m_Owner.update();
+
+      try {
+	showStatus("Initializing");
+	if (m_Flow instanceof Flow)
+	  ((Flow) m_Flow).setParentComponent(m_Owner);
+	m_Flow.setHeadless(m_Owner.isHeadless());
+	m_Flow = ActorUtils.removeDisabledActors(m_Flow);
+	m_Output      = m_Flow.setUp();
+	if ((m_Output == null) && !m_Flow.isStopped()) {
+	  if (m_Flow instanceof VariablesHandler) {
+	    if (ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_Flow, m_File)) {
+	      if (m_Owner.isModified())
+		m_Flow.getLogger().warning("Flow '" + m_File + "' not saved, flow variables like '" + ActorUtils.FLOW_DIR + "' might not be accurate!");
+	    }
+	  }
+	  
+	  showStatus("Running");
+	  m_Output = m_Flow.execute();
+	  // did the flow get stopped by a critical actor?
+	  if ((m_Output == null) && m_Flow.hasStopMessage())
+	    m_Output = m_Flow.getStopMessage();
+	  
+	  // was flow stopped externally and we need to wait for it to finish?
+	  if (m_Stopping) {
+	    while (!m_Flow.isStopped()) {
+	      try {
+		synchronized(this) {
+		  wait(100);
+		}
+	      }
+	      catch (Exception e) {
+		// ignored
+	      }
+	    }
+	  }
+	}
+      }
+      catch (Throwable e) {
+	e.printStackTrace();
+	m_Output = Utils.throwableToString(e);
+      }
+
+      if ((m_Owner.getVariablesPanel() != null) && (m_Owner.getVariablesPanel().getParentDialog() != null))
+	m_Owner.getVariablesPanel().getParentDialog().setVisible(false);
+      
+      return null;
+    }
+
+    /**
+     * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
+     * method is finished. 
+     */
+    @Override
+    protected void done() {
+      String	msg;
+      String	errors;
+      int	countErrors;
+
+      super.done();
+
+      showStatus("Finishing up");
+      m_Flow.wrapUp();
+
+      m_Owner.setLastFlow(m_Flow);
+      m_Flow = null;
+      errors = null;
+
+      if (m_Owner.getLastFlow() instanceof LogEntryHandler) {
+	countErrors = ((LogEntryHandler) m_Owner.getLastFlow()).countLogEntries();
+	if (countErrors > 0)
+	  errors = countErrors + " error(s) logged";
+      }
+
+      if (m_Output != null) {
+	msg = "Finished with error: " + m_Output;
+	if (errors != null)
+	  msg += "(" + errors + ")";
+	showStatus(msg);
+	if (m_ShowNotification)
+	  showMessage(m_Output, true);
+      }
+      else {
+	if (m_Running)
+	  msg = "Flow finished.";
+	else
+	  msg = "User stopped flow.";
+	if (errors != null)
+	  msg += " " + errors + ".";
+	showStatus(msg);
+	if (m_ShowNotification) {
+	  if (m_Running)
+	    GUIHelper.showInformationMessage(m_Owner.getOwner(), msg);
+	  else
+	    GUIHelper.showErrorMessage(m_Owner.getOwner(), msg);
+	}
+      }
+
+      m_Running  = false;
+      m_Stopping = false;
+
+      m_Owner.update();
+      m_Owner.finishedExecution();
+    }
+
+    /**
+     * Pauses the execution.
+     */
+    @Override
+    public void pauseExecution() {
+      showStatus("Pausing");
+      ((Pausable) m_Flow).pauseExecution();
+      m_Owner.update();
+    }
+
+    /**
+     * Returns whether the object is currently paused.
+     *
+     * @return		true if object is paused
+     */
+    @Override
+    public boolean isPaused() {
+      return ((Pausable) m_Flow).isPaused();
+    }
+
+    /**
+     * Resumes the execution.
+     */
+    @Override
+    public void resumeExecution() {
+      showStatus("Resuming");
+      ((Pausable) m_Flow).resumeExecution();
+      m_Owner.update();
+    }
+
+    /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      m_Stopping = true;
+      m_Running  = false;
+      showStatus("Stopping");
+      m_Owner.update();
+      m_Flow.stopExecution();
+    }
+
+    /**
+     * Returns whether a flow is currently running.
+     *
+     * @return		true if a flow is being executed
+     */
+    public boolean isRunning() {
+      return m_Running;
+    }
+
+    /**
+     * Returns whether a flow is currently being stopped.
+     *
+     * @return		true if a flow is currently being stopped
+     */
+    public boolean isStopping() {
+      return m_Stopping;
+    }
+
+    /**
+     * Displays a message.
+     * 
+     * @param msg		the message to display
+     */
+    @Override
+    public void showStatus(String msg) {
+      m_Owner.showStatus(msg);
+    }
+
+    /**
+     * Displays the given message in a separate dialog.
+     *
+     * @param msg		the message to display
+     * @param isError	whether it is an error message
+     */
+    public void showMessage(String msg, boolean isError) {
+      m_Owner.showMessage(msg, isError);
+    }
+  }
+  
   /** the properties. */
   protected static Properties m_Properties;
 
   /** the owner. */
   protected FlowTabbedPane m_Owner;
-
-  /** whether the is currently running. */
-  protected boolean m_Running;
-
-  /** whether the generation is currently being stopped. */
-  protected boolean m_Stopping;
-
-  /** whether a flow is currently being loaded, etc. using a SwingWorker. */
-  protected boolean m_RunningSwingWorker;
 
   /** the current flow. */
   protected AbstractActor m_CurrentFlow;
@@ -153,6 +384,12 @@ public class FlowPanel
   /** the filename of the current flow. */
   protected File m_CurrentFile;
 
+  /** the current worker thread. */
+  protected FlowWorker m_CurrentWorker;
+  
+  /** whether a swingworker is currently running. */
+  protected boolean m_RunningSwingWorker;
+  
   /** the tree displaying the flow structure. */
   protected Tree m_Tree;
 
@@ -164,9 +401,6 @@ public class FlowPanel
 
   /** the last variable search performed. */
   protected String m_LastVariableSearch;
-
-  /** the default toolbar location to use. */
-  protected ToolBarLocation m_ToolBarLocation;
 
   /** the panel with the variables. */
   protected VariableManagementPanel m_PanelVariables;
@@ -216,6 +450,7 @@ public class FlowPanel
     m_LastFlow            = null;
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
+    m_CurrentWorker       = null;
     m_LastVariableSearch  = "";
     m_TitleGenerator      = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
     m_FilenameProposer    = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
@@ -307,7 +542,7 @@ public class FlowPanel
    * @param value	if true the flow gets executed in headless mode
    */
   public void setHeadless(boolean value) {
-    if (!m_Running && !m_Stopping)
+    if (!isRunning() && !isStopping())
       m_Headless = value;
   }
 
@@ -326,7 +561,7 @@ public class FlowPanel
   protected void updateWidgets() {
     boolean	inputEnabled;
 
-    inputEnabled = !m_Running && !m_Stopping;
+    inputEnabled = !isRunning() && !isStopping();
 
     getTree().setEditable(inputEnabled);
   }
@@ -578,6 +813,15 @@ public class FlowPanel
   }
 
   /**
+   * Sets the flow that was last executed.
+   * 
+   * @param value	the flow
+   */
+  protected void setLastFlow(AbstractActor value) {
+    m_LastFlow = value;
+  }
+  
+  /**
    * Returns the last executed flow (if any).
    *
    * @return		the flow, null if not available
@@ -759,112 +1003,25 @@ public class FlowPanel
    * 				errors/stopped/finished
    */
   public void run(boolean showNotification) {
-    final boolean fShowNotification;
-
-    fShowNotification = showNotification;
-    m_Running         = true;
-
-    SwingWorker worker = new SwingWorker() {
-      String m_Output;
-
-      @Override
-      protected Object doInBackground() throws Exception {
-	update();
-	cleanUp();
-
-	try {
-	  showStatus("Initializing");
-	  m_CurrentFlow = getCurrentFlow();
-	  if (m_CurrentFlow instanceof Flow)
-	    ((Flow) m_CurrentFlow).setParentComponent(FlowPanel.this);
-	  m_CurrentFlow.setHeadless(m_Headless);
-	  m_CurrentFlow = ActorUtils.removeDisabledActors(m_CurrentFlow);
-	  m_Output      = m_CurrentFlow.setUp();
-	  if ((m_Output == null) && !m_CurrentFlow.isStopped()) {
-	    if (m_CurrentFlow instanceof VariablesHandler) {
-	      if (ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_CurrentFlow, m_CurrentFile)) {
-		if (isModified())
-		  m_CurrentFlow.getLogger().warning("Flow '" + m_CurrentFile + "' not saved, flow variables like '" + ActorUtils.FLOW_DIR + "' might not be accurate!");
-	      }
-	    }
-	    showStatus("Running");
-	    m_Output = m_CurrentFlow.execute();
-	    // did the flow get stopped by a critical actor?
-	    if ((m_Output == null) && m_CurrentFlow.hasStopMessage())
-	      m_Output = m_CurrentFlow.getStopMessage();
-	  }
-	  showStatus("Finishing up");
-	  m_CurrentFlow.wrapUp();
-	}
-	catch (Throwable e) {
-	  e.printStackTrace();
-	  m_Output = Utils.throwableToString(e);
-	}
-
-	if ((m_PanelVariables != null) && (m_PanelVariables.getParentDialog() != null))
-	  m_PanelVariables.getParentDialog().setVisible(false);
-
-	return "Done!";
-      }
-
-      @Override
-      protected void done() {
-	String	msg;
-	String	errors;
-	int	countErrors;
-
-	super.done();
-
-	m_LastFlow    = m_CurrentFlow;
-	m_CurrentFlow = null;
-	errors        = null;
-
-	if (m_LastFlow instanceof LogEntryHandler) {
-	  countErrors = ((LogEntryHandler) m_LastFlow).countLogEntries();
-	  if (countErrors > 0)
-	    errors = countErrors + " error(s) logged";
-	}
-
-	if (m_Output != null) {
-	  msg = "Finished with error: " + m_Output;
-	  if (errors != null)
-	    msg += "(" + errors + ")";
-	  showStatus(msg);
-	  if (fShowNotification)
-	    showMessage(m_Output, true);
-	}
-	else {
-	  if (m_Running)
-	    msg = "Flow finished.";
-	  else
-	    msg = "User stopped flow.";
-	  if (errors != null)
-	    msg += " " + errors + ".";
-	  showStatus(msg);
-	  if (fShowNotification) {
-	    if (m_Running)
-	      GUIHelper.showInformationMessage(m_Owner, msg);
-	    else
-	      GUIHelper.showErrorMessage(m_Owner, msg);
-	  }
-	}
-
-	m_Running  = false;
-	m_Stopping = false;
-
-	update();
-      }
-    };
-    worker.execute();
+    m_CurrentWorker = new FlowWorker(this, getCurrentFlow(), getCurrentFile(), showNotification);
+    m_CurrentWorker.execute();
   }
 
+  /**
+   * Finishes up the execution, setting the worker to null.
+   */
+  protected void finishedExecution() {
+    m_CurrentWorker = null;
+    update();
+  }
+  
   /**
    * Returns whether a flow is currently running.
    *
    * @return		true if a flow is being executed
    */
   public boolean isRunning() {
-    return m_Running;
+    return (m_CurrentWorker != null) && m_CurrentWorker.isRunning();
   }
 
   /**
@@ -873,7 +1030,7 @@ public class FlowPanel
    * @return		true if a flow is currently being stopped
    */
   public boolean isStopping() {
-    return m_Stopping;
+    return (m_CurrentWorker != null) && m_CurrentWorker.isStopping();
   }
 
   /**
@@ -882,10 +1039,7 @@ public class FlowPanel
    * @return		true if a flow is being executed
    */
   public boolean isPaused() {
-    return 
-	   isRunning() 
-	&& (m_CurrentFlow instanceof PauseStateHandler) 
-	&& ((PauseStateHandler) m_CurrentFlow).getPauseStateManager().isPaused();
+    return isRunning() && m_CurrentWorker.isPaused();
   }
 
   /**
@@ -894,7 +1048,7 @@ public class FlowPanel
    * @return		true if a swing worker is being executed
    */
   public boolean isSwingWorkerRunning() {
-    return m_RunningSwingWorker;
+    return (m_CurrentWorker != null);
   }
 
   /**
@@ -904,19 +1058,15 @@ public class FlowPanel
    */
   public boolean pauseAndResume() {
     boolean	result;
-    Pausable	pausable;
 
-    result   = false;
-    pausable = (Pausable) m_CurrentFlow;
-    if (pausable != null) {
-      if (!pausable.isPaused()) {
-	showStatus("Pausing");
-	pausable.pauseExecution();
+    result = false;
+    if (m_CurrentWorker != null) {
+      if (!m_CurrentWorker.isPaused()) {
+	m_CurrentWorker.pauseExecution();
 	result = true;
       }
       else {
-	showStatus("Resuming");
-	pausable.resumeExecution();
+	m_CurrentWorker.resumeExecution();
 	result = false;
       }
     }
@@ -942,39 +1092,17 @@ public class FlowPanel
    */
   public void stop(final boolean cleanUp) {
     SwingWorker	worker;
-
-    showStatus("Stopping");
-
-    m_Running  = false;
-    m_Stopping = true;
-    update();
-
-    worker = new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
-	if (m_CurrentFlow != null)
-	  m_CurrentFlow.stopExecution();
-	while (m_Stopping) {
-	  try {
-	    synchronized(this) {
-	      wait(100);
-	    }
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
+    
+    if (m_CurrentWorker != null) {
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  m_CurrentWorker.stopExecution();
+	  return null;
 	}
-	return null;
       };
-      @Override
-      protected void done() {
-	if (cleanUp)
-	  cleanUp();
-	update();
-        super.done();
-      }
-    };
-    worker.execute();
+      worker.execute();
+    }
   }
 
   /**
@@ -1458,6 +1586,15 @@ public class FlowPanel
     getTree().enableBreakpoints(enable);
   }
 
+  /**
+   * Returns the panel with the variables.
+   * 
+   * @return		the panel, null if not available
+   */
+  protected VariableManagementPanel getVariablesPanel() {
+    return m_PanelVariables;
+  }
+  
   /**
    * Displays the variables in the currently running flow.
    */
