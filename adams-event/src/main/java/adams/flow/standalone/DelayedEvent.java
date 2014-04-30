@@ -39,8 +39,6 @@ import adams.flow.core.TriggerableEvent;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -69,7 +67,7 @@ import adams.flow.core.TriggerableEvent;
  * </pre>
  * 
  * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
- * &nbsp;&nbsp;&nbsp;The actor to execute according to the cron schedule.
+ * &nbsp;&nbsp;&nbsp;The actors to execute after the delay.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -215,7 +213,7 @@ public class DelayedEvent
    * 			displaying in the GUI or for listing the options.
    */
   public String actorsTipText() {
-    return "The actor to execute according to the cron schedule.";
+    return "The actors to execute after the delay.";
   }
 
   /**
