@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2014-04-30 16:45:12
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Shows how to add items to a queue using EnQueue and \nhow to listen to the queue using the QueueEvent actor.
+	-actor
+		adams.flow.standalone.QueueInit
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.QueueEvent
+					-actor
+						adams.flow.sink.Display
+							-writer
+								adams.data.io.output.NullWriter
+					-interval
+					100
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			1
+			-string
+			2
+			-string
+			3
+			-string
+			4
+			-string
+			5
+	-actor
+		adams.flow.control.Tee
+			-name
+			queue string
+			-tee
+				adams.flow.sink.EnQueue
+	-actor
+		adams.flow.control.Sleep
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
