@@ -23,6 +23,7 @@ package adams.flow.core;
 import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Variables;
 import adams.flow.template.AbstractActorTemplate;
 
 /**
@@ -33,7 +34,8 @@ import adams.flow.template.AbstractActorTemplate;
  * @version $Revision$
  */
 public abstract class AbstractTemplate
-  extends AbstractActor {
+  extends AbstractActor
+  implements InternalActorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7246162048306571873L;
@@ -71,11 +73,11 @@ public abstract class AbstractTemplate
 
   /**
    * Returns the default template to use.
-   * 
+   *
    * @return		the template
    */
   protected abstract AbstractActorTemplate getDefaultTemplate();
-  
+
   /**
    * Sets the name of the global actor to use.
    *
@@ -158,6 +160,30 @@ public abstract class AbstractTemplate
   }
 
   /**
+   * Returns the internal actor.
+   *
+   * @return		the actor, null if not available
+   */
+  @Override
+  public Actor getInternalActor() {
+    return m_Actor;
+  }
+
+  /**
+   * Updates the Variables instance in use.
+   * <p/>
+   * Use with caution!
+   *
+   * @param value	the instance to use
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+    super.forceVariables(value);
+    if (m_Actor != null)
+      m_Actor.forceVariables(value);
+  }
+
+  /**
    * Initializes the template for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -175,21 +201,26 @@ public abstract class AbstractTemplate
       m_Actor.setParent(this);
       m_Actor.setHeadless(isHeadless());
       m_Actor.setVariables(getVariables());
+      m_Actor.setStopFlowOnError(getStopFlowOnError());
       result = m_Actor.setUp();
-    }
+      if (result == null) {
+	if (getErrorHandler() != this)
+	  ActorUtils.updateErrorHandler(m_Actor, getErrorHandler());
+      }
+   }
 
     return result;
   }
 
   /**
    * Returns the actual actor that was generated from the template.
-   * 
+   *
    * @return		the actual actor, null if not available
    */
   public AbstractActor getActualActor() {
     return m_Actor;
   }
-  
+
   /**
    * Returns whether the actor has finished.
    *

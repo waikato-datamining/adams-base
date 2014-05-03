@@ -69,78 +69,78 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetTransformCells
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
  * &nbsp;&nbsp;&nbsp;If enabled, no copy of the spreadsheet is created before processing it.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The cell finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
- * 
+ *
  * <pre>-force-input-type &lt;boolean&gt; (property: forceInputType)
- * &nbsp;&nbsp;&nbsp;If enabled, the input type is forced to a user-specified type, rather than 
- * &nbsp;&nbsp;&nbsp;trying to determine type based on data types that the callable transformer 
+ * &nbsp;&nbsp;&nbsp;If enabled, the input type is forced to a user-specified type, rather than
+ * &nbsp;&nbsp;&nbsp;trying to determine type based on data types that the callable transformer
  * &nbsp;&nbsp;&nbsp;accepts.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-input-type &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|TIME|OBJECT&gt; (property: inputType)
  * &nbsp;&nbsp;&nbsp;The input type to use in case the input type is enforced.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
- * 
+ *
  * <pre>-skip-missing &lt;boolean&gt; (property: skipMissing)
  * &nbsp;&nbsp;&nbsp;If enabled, missing cells are skipped.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-missing-replacement-value &lt;java.lang.String&gt; (property: missingReplacementValue)
  * &nbsp;&nbsp;&nbsp;The string representation of the value to use for replacing missing values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-missing-replacement-type &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|TIME|OBJECT&gt; (property: missingReplacementType)
  * &nbsp;&nbsp;&nbsp;The data type to use for the replacement value for missing values.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
- * 
+ *
  * <pre>-transformer &lt;adams.flow.core.CallableActorReference&gt; (property: transformer)
  * &nbsp;&nbsp;&nbsp;The callable transformer to apply to the located cells.
  * &nbsp;&nbsp;&nbsp;default: unknown
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class SpreadSheetTransformCells
-  extends AbstractInPlaceSpreadSheetTransformer 
+  extends AbstractInPlaceSpreadSheetTransformer
   implements CallableActorUser {
 
   /** for serialization. */
@@ -151,22 +151,22 @@ public class SpreadSheetTransformCells
 
   /** for locating the cells. */
   protected AbstractCellFinder m_Finder;
-  
+
   /** whether to force the input type. */
   protected boolean m_ForceInputType;
-  
+
   /** the input type. */
   protected ContentType m_InputType;
-  
+
   /** whether to skip missing cells. */
   protected boolean m_SkipMissing;
-  
+
   /** the value to use instead of missing. */
   protected String m_MissingReplacementValue;
-  
+
   /** the data type of the replacement value. */
   protected ContentType m_MissingReplacementType;
-  
+
   /** the callable transformer to apply to the cells. */
   protected CallableActorReference m_Transformer;
 
@@ -175,13 +175,13 @@ public class SpreadSheetTransformCells
 
   /** the callable actor. */
   protected AbstractActor m_CallableActor;
-  
+
   /** used for parsing missing value replacement strings. */
   protected Cell m_Cell;
-  
+
   /** for compatibility comparisons. */
   protected Compatibility m_Compatibility;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -189,10 +189,10 @@ public class SpreadSheetTransformCells
    */
   @Override
   public String globalInfo() {
-    return 
+    return
 	"Finds cells in a spreadsheet and transforms them with a callable "
 	+ "transformer.\n"
-	+ "In case of transformers having " + Object.class.getSimpleName() 
+	+ "In case of transformers having " + Object.class.getSimpleName()
 	+ " or " + Unknown.class.getSimpleName() + " in their types of "
 	+ "classes that they accept, no proper type can be inferred automatically. "
 	+ "Therefore it is recommended to manually enforce the 'input type'.\n"
@@ -237,7 +237,7 @@ public class SpreadSheetTransformCells
 	    "transformer", "transformer",
 	    new CallableActorReference("unknown"));
   }
-  
+
   /**
    * Initializes the members.
    */
@@ -254,7 +254,7 @@ public class SpreadSheetTransformCells
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_CallableActor = null;
     m_Cell          = null;
     m_Compatibility = null;
@@ -333,7 +333,7 @@ public class SpreadSheetTransformCells
    * 			displaying in the GUI or for listing the options.
    */
   public String forceInputTypeTipText() {
-    return 
+    return
 	"If enabled, the input type is forced to a user-specified type, "
 	+ "rather than trying to determine type based on data types that "
 	+ "the callable transformer accepts.";
@@ -530,12 +530,12 @@ public class SpreadSheetTransformCells
   @Override
   protected Hashtable<String,Object> backupState() {
     Hashtable<String,Object>	result;
-    
+
     result = super.backupState();
-    
+
     if (m_CallableActor != null)
       result.put(BACKUP_CALLABLEACTOR, m_CallableActor);
-    
+
     return result;
   }
 
@@ -547,7 +547,7 @@ public class SpreadSheetTransformCells
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     super.restoreState(state);
-    
+
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
       m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
@@ -556,7 +556,7 @@ public class SpreadSheetTransformCells
 
   /**
    * Configures the callable actor.
-   * 
+   *
    * @return		null if successful, otherwise error message
    */
   protected String setUpCallableActor() {
@@ -583,7 +583,7 @@ public class SpreadSheetTransformCells
 
     return result;
   }
-  
+
   /**
    * Initializes the item for flow execution.
    *
@@ -605,10 +605,10 @@ public class SpreadSheetTransformCells
 
     return result;
   }
-  
+
   /**
    * Transfers the spreadsheet content as new columns to the spreadsheet the row belongs to.
-   * 
+   *
    * @param source	the content to transfer
    * @param cell	the cell where the spreadsheet data originated from
    */
@@ -621,35 +621,35 @@ public class SpreadSheetTransformCells
     Cell	hc;
     int		i;
     int		col;
-    
+
     if (source.getRowCount() < 1) {
       if (isLoggingEnabled())
 	getLogger().warning("No data rows generated for cell: " + cell.getContent());
       return;
     }
-    
+
     target       = cell.getSpreadSheet();
     targetRow    = cell.getOwner();
     targetHeader = target.getHeaderRow();
     sourceRow    = source.getRow(0);
     sourceHeader = source.getHeaderRow();
-    
+
     for (i = 0; i < sourceHeader.getCellCount(); i++) {
       hc = sourceHeader.getCell(i);
-      
+
       // extend sheet if necessary
       if (targetHeader.indexOfContent(hc.getContent()) == -1) {
 	if (isLoggingEnabled())
 	  getLogger().info("Adding column: " + hc.getContent());
 	target.insertColumn(target.getColumnCount(), hc.getContent());
       }
-      
+
       // transfer content
       if ((sourceRow.getCell(i) != null) && !sourceRow.getCell(i).isMissing()) {
 	col = targetHeader.indexOfContent(hc.getContent());
 	targetRow.addCell(col).assign(sourceRow.getCell(i));
       }
-      
+
       if (m_Stopped)
 	break;
     }
@@ -657,7 +657,7 @@ public class SpreadSheetTransformCells
 
   /**
    * Applies the transformation to the cell.
-   * 
+   *
    * @param location	the cell location to convert
    * @param sheet	the sheet to process
    * @return		null if successful, otherwise error message
@@ -673,19 +673,19 @@ public class SpreadSheetTransformCells
     result = null;
     input  = null;
     output = null;
-    
+
     if (m_Cell == null)
       m_Cell = new Cell(null);
     if (m_Compatibility == null)
       m_Compatibility = new Compatibility();
-    
+
     if (!sheet.hasCell(location.getRow(), location.getColumn())) {
       if (m_SkipMissing)
 	return null;
       else
 	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
-    
+
     // skip missing cells
     cell = sheet.getCell(location.getRow(), location.getColumn());
     if (cell.isMissing()) {
@@ -694,7 +694,7 @@ public class SpreadSheetTransformCells
       else
 	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
-    
+
     if (m_ForceInputType) {
       switch (m_InputType) {
 	case BOOLEAN:
@@ -725,7 +725,7 @@ public class SpreadSheetTransformCells
     else {
       classIn = ((InputConsumer) m_CallableActor).accepts();
     }
-   
+
     if (input == null) {
       if (m_Compatibility.isCompatible(new Class[]{Double.class}, classIn))
 	input = cell.toDouble();
@@ -742,9 +742,9 @@ public class SpreadSheetTransformCells
       else if (m_Compatibility.isCompatible(new Class[]{String.class}, classIn))
 	input = cell.getContent();
       else
-	result = "Don't know how to get cell value for transformation input type:\n" 
+	result = "Don't know how to get cell value for transformation input type:\n"
 	    + Utils.classesToString(classIn)
-	    + "/" 
+	    + "/"
 	    + ((input != null) ? input.getClass().getName() : "null")
 	    + "/" + cell.getContent();
     }
@@ -753,13 +753,13 @@ public class SpreadSheetTransformCells
       ((InputConsumer) m_CallableActor).input(new Token(input));
       result = m_CallableActor.execute();
     }
-      
+
     if (result == null) {
       classOut = ((OutputProducer) m_CallableActor).generates();
       output   = ((OutputProducer) m_CallableActor).output();
       if (output != null)
 	output = ((Token) output).getPayload();
-      
+
       if (output instanceof Double)
 	cell.setContent((Double) output);
       else if (output instanceof Integer)
@@ -777,20 +777,20 @@ public class SpreadSheetTransformCells
       else if (output instanceof SpreadSheet)
 	transfer((SpreadSheet) output, cell);
       else
-	result = "Don't know how to set cell value for transformation output type:\n" 
-	    + Utils.classesToString(classOut) 
-	    + "/" 
+	result = "Don't know how to set cell value for transformation output type:\n"
+	    + Utils.classesToString(classOut)
+	    + "/"
 	    + ((output != null) ? output.getClass().getName() : "null") + "\n"
 	    + "The input that resulted in this output:\n"
 	    + Utils.classesToString(classIn)
-	    + "/" 
+	    + "/"
 	    + ((input != null) ? input.getClass().getName() : "null")
 	    + "/" + cell.getContent();
     }
-    
+
     return result;
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -802,19 +802,19 @@ public class SpreadSheetTransformCells
     SpreadSheet			sheetOld;
     SpreadSheet			sheetNew;
     Iterator<CellLocation>	cells;
-    
+
     result = null;
 
     // is variable attached?
     if (m_CallableActor == null)
       result = setUpCallableActor();
-    
+
     sheetOld = (SpreadSheet) m_InputToken.getPayload();
     if (m_NoCopy)
       sheetNew = sheetOld;
     else
       sheetNew = sheetOld.getClone();
-    
+
     cells = m_Finder.findCells(sheetNew);
     if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !m_Stopped) {
       synchronized(m_CallableActor) {
@@ -825,10 +825,10 @@ public class SpreadSheetTransformCells
 	}
       }
     }
-    
+
     if (result == null)
       m_OutputToken = new Token(sheetNew);
-    
+
     return result;
   }
 }

@@ -15,25 +15,15 @@
 
 /**
  * TryCatch.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.lang.reflect.Array;
 import java.util.Hashtable;
 
-import adams.core.ClassLocator;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
-import adams.core.VariablesHandler;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
-import adams.core.option.BooleanOption;
-import adams.core.option.ClassOption;
-import adams.core.option.OptionTraversalPath;
-import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -63,50 +53,50 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: TryCatch
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-try &lt;adams.flow.core.AbstractActor&gt; (property: try)
  * &nbsp;&nbsp;&nbsp;The 'try' branch which is attempted to be executed.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name try
  * </pre>
- * 
+ *
  * <pre>-catch &lt;adams.flow.core.AbstractActor&gt; (property: catch)
  * &nbsp;&nbsp;&nbsp;The 'catch' branch which gets executed if the 'try' branch fails.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name catch
  * </pre>
- * 
+ *
  * <pre>-store-error &lt;boolean&gt; (property: storeError)
  * &nbsp;&nbsp;&nbsp;If enabled, then any error gets stored in the specified variable 'errorVariable'
  * &nbsp;&nbsp;&nbsp;; does not modify the variable if there was no error.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-error-variable &lt;adams.core.VariableName&gt; (property: errorVariable)
  * &nbsp;&nbsp;&nbsp;The name of the variable to store the error messages in.
  * &nbsp;&nbsp;&nbsp;default: trycatch
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -133,19 +123,19 @@ public class TryCatch
 
   /** the name for the catcj branch. */
   public final static String NAME_CATCH = "catch";
-  
+
   /** the current input token. */
   protected transient Token m_InputToken;
-  
+
   /** error message in try block. */
   protected String m_ErrorOccurred;
-  
+
   /** whether to store any error message in a variable. */
   protected boolean m_StoreError;
-  
+
   /** the variable to store the error in. */
   protected VariableName m_ErrorVariable;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -153,7 +143,7 @@ public class TryCatch
    */
   @Override
   public String globalInfo() {
-    return 
+    return
 	"Safe-guards the execution of the 'try' sequence of actors. "
 	+ "In case of an error, the 'catch' sequence is executed to generate "
 	+ "output instead.\n"
@@ -161,14 +151,14 @@ public class TryCatch
 	+ "to recover from unexpected errors and, for instance, return default "
 	+ "values.";
   }
-  
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Try   = getDefaultTry();
     m_Catch = getDefaultCatch();
   }
@@ -209,18 +199,18 @@ public class TryCatch
 
   /**
    * Returns the default try branch.
-   * 
+   *
    * @return		the default branch
    */
   protected AbstractActor getDefaultTry() {
     Sequence	result;
-    
+
     result = new SubProcess();
     result.setName(NAME_TRY);
-    
+
     return result;
   }
-  
+
   /**
    * Sets the try branch.
    *
@@ -259,18 +249,18 @@ public class TryCatch
 
   /**
    * Returns the default catch branch.
-   * 
+   *
    * @return		the default branch
    */
   protected AbstractActor getDefaultCatch() {
     Sequence	result;
-    
+
     result = new SubProcess();
     result.setName(NAME_CATCH);
-    
+
     return result;
   }
-  
+
   /**
    * Sets the catch branch.
    *
@@ -304,11 +294,11 @@ public class TryCatch
    * 			displaying in the GUI or for listing the options.
    */
   public String catchTipText() {
-    return 
-	"The '" + NAME_CATCH + "' branch which gets executed if the '" 
+    return
+	"The '" + NAME_CATCH + "' branch which gets executed if the '"
 	+ NAME_TRY + "' branch fails.";
   }
-  
+
   /**
    * Sets whether to store any error in a variable.
    *
@@ -335,11 +325,11 @@ public class TryCatch
    * 			displaying in the GUI or for listing the options.
    */
   public String storeErrorTipText() {
-    return 
+    return
 	"If enabled, then any error gets stored in the specified variable "
 	+ "'errorVariable'; does not modify the variable if there was no error.";
   }
-  
+
   /**
    * Sets the variable to store the error messages in.
    *
@@ -381,7 +371,7 @@ public class TryCatch
     else
       return null;
   }
-  
+
   /**
    * Backs up the current state of the actor before update the variables.
    *
@@ -420,6 +410,7 @@ public class TryCatch
    * @param token	the token to accept and process
    * @see		#m_InputToken
    */
+  @Override
   public void input(Token token) {
     m_InputToken = token;
   }
@@ -495,10 +486,11 @@ public class TryCatch
 
   /**
    * Returns the name for the sub-actor at this position.
-   * 
+   *
    * @param index	the position of the sub-actor
    * @return		the name to use
    */
+  @Override
   public String getFixedName(int index) {
     if (index == 0)
       return NAME_TRY;
@@ -510,9 +502,10 @@ public class TryCatch
 
   /**
    * Returns the class that the consumer accepts.
-   * 
+   *
    * @return		the Class of objects that can be processed
    */
+  @Override
   public Class[] accepts() {
     return ((InputConsumer) m_Try).accepts();
   }
@@ -540,42 +533,12 @@ public class TryCatch
   @Override
   public String setUp() {
     String	result;
-    
+
     result = super.setUp();
-    
-    if (result == null) {
-      // change the error handler
-      m_OptionManager.traverse(new OptionTraverser() {
-        public void handleClassOption(ClassOption option, OptionTraversalPath path) {
-          if (ClassLocator.hasInterface(Actor.class, option.getBaseClass())) {
-            Object current = option.getCurrentValue();
-            if (option.isMultiple()) {
-              for (int i = 0; i < Array.getLength(current); i++)
-                ((Actor) Array.get(current, i)).setErrorHandler(TryCatch.this);
-            }
-            else {
-              ((Actor) current).setErrorHandler(TryCatch.this);
-            }
-          }
-        }
-        public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
-          // ignored
-        }
-        public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-          // ignored
-        }
-        public boolean canHandle(AbstractOption option) {
-          return true;
-        }
-        public boolean canRecurse(Class cls) {
-          return !ClassLocator.hasInterface(VariablesHandler.class, cls);
-        }
-        public boolean canRecurse(Object obj) {
-          return canRecurse(obj.getClass());
-        }
-      });
-    }
-    
+
+    if (result == null)
+      ActorUtils.updateErrorHandler(this, this);
+
     return result;
   }
 
@@ -588,11 +551,11 @@ public class TryCatch
   protected String doExecute() {
     String	result;
     String	msg;
-    
+
     result          = null;
     m_ErrorOccurred = null;
     msg             = "Failed to execute '" + NAME_TRY + "' branch: ";
-    
+
     try {
       // input
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
@@ -613,11 +576,11 @@ public class TryCatch
     catch (Exception e) {
       m_ErrorOccurred = handleException(msg, e);
     }
-    
+
     if (m_ErrorOccurred != null) {
       if (m_StoreError)
 	getVariables().set(m_ErrorVariable.getValue(), m_ErrorOccurred);
-      
+
       // input
       if (ActorUtils.isTransformer(m_Catch)) {
 	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
@@ -633,7 +596,7 @@ public class TryCatch
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(m_Catch);
     }
-    
+
     return result;
   }
 
@@ -642,6 +605,7 @@ public class TryCatch
    *
    * @return		the Class of the generated tokens
    */
+  @Override
   public Class[] generates() {
     return ((OutputProducer) m_Try).generates();  // TODO combine with catch?
   }
@@ -656,6 +620,7 @@ public class TryCatch
    *
    * @return		true if there is pending output
    */
+  @Override
   public boolean hasPendingOutput() {
     if (m_ErrorOccurred != null)
       return ((OutputProducer) m_Catch).hasPendingOutput();
@@ -668,9 +633,10 @@ public class TryCatch
    *
    * @return		the generated token
    */
+  @Override
   public Token output() {
     Token	result;
-    
+
     if (m_ErrorOccurred != null) {
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().preOutput(m_Catch);
@@ -685,7 +651,7 @@ public class TryCatch
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().postOutput(m_Try, result);
     }
-    
+
     return result;
   }
 }

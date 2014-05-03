@@ -32,7 +32,7 @@ import adams.core.QuickInfoHelper;
  * @version $Revision$
  */
 public abstract class AbstractCallableActor
-  extends AbstractActor 
+  extends AbstractActor
   implements CallableActorUser {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public abstract class AbstractCallableActor
 
   /** the key for backing up the global actor. */
   public final static String BACKUP_CALLABLEACTOR = "callable actor";
-  
+
   /** the callable name. */
   protected CallableActorReference m_CallableName;
 
@@ -68,10 +68,10 @@ public abstract class AbstractCallableActor
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_CallableActor = null;
   }
-  
+
   /**
    * Initializes the members.
    */
@@ -167,12 +167,12 @@ public abstract class AbstractCallableActor
   @Override
   protected Hashtable<String,Object> backupState() {
     Hashtable<String,Object>	result;
-    
+
     result = super.backupState();
-    
+
     if (m_CallableActor != null)
       result.put(BACKUP_CALLABLEACTOR, m_CallableActor);
-    
+
     return result;
   }
 
@@ -184,7 +184,7 @@ public abstract class AbstractCallableActor
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     super.restoreState(state);
-    
+
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
       m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
@@ -193,7 +193,7 @@ public abstract class AbstractCallableActor
 
   /**
    * Configures the callable actor.
-   * 
+   *
    * @return		null if successful, otherwise error message
    */
   protected String setUpCallableActor() {
@@ -211,11 +211,13 @@ public abstract class AbstractCallableActor
       m_DetectedVariables.addAll(variables);
       if (m_DetectedVariables.size() > 0)
 	getVariables().addVariableChangeListener(this);
+      if (getErrorHandler() != this)
+	ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler());
     }
 
     return result;
   }
-  
+
   /**
    * Initializes the item for flow execution.
    *
@@ -260,7 +262,7 @@ public abstract class AbstractCallableActor
     // is variable attached?
     if (m_CallableActor == null)
       result = setUpCallableActor();
-    
+
     if (result == null) {
       if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
 	synchronized(m_CallableActor) {

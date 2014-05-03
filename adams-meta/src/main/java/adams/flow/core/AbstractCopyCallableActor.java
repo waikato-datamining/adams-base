@@ -26,12 +26,12 @@ import adams.core.Variables;
 
 /**
  * Ancestor for actors that use a copy of a callable actor.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public abstract class AbstractCopyCallableActor
-  extends AbstractActor 
+  extends AbstractActor
   implements CallableActorUser {
 
   /** for serialization. */
@@ -135,7 +135,7 @@ public abstract class AbstractCopyCallableActor
   public AbstractActor getCallableActor() {
     return m_CallableActor;
   }
-  
+
   /**
    * Updates the Variables instance in use.
    * <p/>
@@ -178,6 +178,8 @@ public abstract class AbstractCopyCallableActor
 	  m_DetectedVariables.addAll(variables);
 	  if (m_DetectedVariables.size() > 0)
 	    getVariables().addVariableChangeListener(this);
+	  if (getErrorHandler() != this)
+	    ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler());
 	}
       }
     }

@@ -42,7 +42,11 @@ import adams.core.VariablesHandler;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
+import adams.core.option.BooleanOption;
+import adams.core.option.ClassOption;
 import adams.core.option.OptionHandler;
+import adams.core.option.OptionTraversalPath;
+import adams.core.option.OptionTraverser;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.env.Environment;
@@ -82,7 +86,7 @@ public class ActorUtils {
 
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(ActorUtils.class);
-  
+
   /**
    * Enumerates all children of the given actor (depth-first search).
    *
@@ -133,7 +137,7 @@ public class ActorUtils {
     filterSet = null;
     if (filter != null)
       filterSet = new HashSet<Class>(Arrays.asList(filter));
-      
+
     enumerate(actor, result, filterSet);
 
     return result;
@@ -454,7 +458,7 @@ public class ActorUtils {
 	list.add(h.getClass().getName() + "/" + ((AbstractActor) h).getFullName());
       LOGGER.fine("Actor handlers: " + list + "\n" + Utils.getStackTrace(20));
     }
-    
+
     return result;
   }
 
@@ -528,7 +532,7 @@ public class ActorUtils {
   public static boolean write(String filename, AbstractActor actor) {
     boolean		result;
     DefaultFlowWriter	writer;
-    
+
     writer = new DefaultFlowWriter();
     result = writer.write(actor, filename);
 
@@ -739,7 +743,7 @@ public class ActorUtils {
 
   /**
    * Determines the height of the window.
-   * 
+   *
    * @param window	the frame/dialog to determine the location for
    * @param x		the position (-1: left, -2: middle, -3: right)
    * @param y		the position (-1: top, -2: middle, -3: bottom)
@@ -758,26 +762,26 @@ public class ActorUtils {
     if ((size.getWidth() == 0) || (size.getHeight() == 0))
       size = window.getPreferredSize();
     bounds = GUIHelper.getScreenBounds(window);
-    
+
     if (width == 0)
       actWidth = size.width;
     else if (width == -1)
       actWidth = (x > -1) ? bounds.width - x : bounds.width;
     else
       actWidth = width;
-    
+
     if (height == 0)
       actHeight = size.height;
     else if (height == -1)
       actHeight = (x > -1) ? bounds.height - x : bounds.height;
     else
       actHeight = height;
-    
+
     result = new Dimension(actWidth, actHeight);
-    
+
     return result;
   }
-  
+
   /**
    * Returns the database connection object to use.
    *
@@ -848,11 +852,11 @@ public class ActorUtils {
     ActorHandler	handler;
     HashSet<String>	paths;
     ActorPath		path;
-    
+
     if (actors.length == 0)
       throw new IllegalArgumentException(
 	  "At least one actor must be provided for externalizing!");
-    
+
     // ensure that all actors have same prefix, i.e., on same level in tree
     paths = new HashSet<String>();
     for (AbstractActor actor: actors) {
@@ -862,7 +866,7 @@ public class ActorUtils {
 	throw new IllegalArgumentException(
 	    "Actor is not on the same level in the same sub-flow!\n" + actor.getFullName());
     }
-    
+
     first = -1;
     for (i = 0; i < actors.length; i++) {
       if (!actors[i].getSkip()) {
@@ -873,7 +877,7 @@ public class ActorUtils {
     if (first == -1)
       throw new IllegalArgumentException(
 	  "At least one actor must be enabled!");
-    
+
     last = -1;
     for (i = actors.length - 1; i >= 0; i--) {
       if (!actors[i].getSkip()) {
@@ -888,28 +892,28 @@ public class ActorUtils {
       ((Standalones) handler).setActors(actors);
       return createExternalActor((AbstractActor) handler);
     }
-    
+
     // appears as transformer
     if (isTransformer(actors[first]) && isTransformer(actors[last])) {
       handler = new SubProcess();
       ((SubProcess) handler).setActors(actors);
       return createExternalActor((AbstractActor) handler);
     }
-    
+
     // appears as source
     if (isSource(actors[first]) && (actors[last] instanceof OutputProducer)) {
       handler = new SequenceSource();
       ((SequenceSource) handler).setActors(actors);
       return createExternalActor((AbstractActor) handler);
     }
-    
+
     // appears as sink
     if ((actors[first] instanceof InputConsumer) && (isSink(actors[last]))) {
       handler = new Sequence();
       ((Sequence) handler).setActors(actors);
       return createExternalActor((AbstractActor) handler);
     }
-    
+
     throw new IllegalArgumentException(
 	"Failed to find suitable actor handler to enclose all actors!");
   }
@@ -1108,11 +1112,11 @@ public class ActorUtils {
 
     return result;
   }
-  
+
   /**
    * Adds the flow filename (long and short) to the variables of the provided
    * variables handler.
-   * 
+   *
    * @param handler	the handler to add the filenames to
    * @param file	the flow file name
    * @return		true if successfully added
@@ -1122,18 +1126,18 @@ public class ActorUtils {
   public static boolean updateVariablesWithFlowFilename(VariablesHandler handler, File flow) {
     if (flow == null)
       return false;
-    
+
     handler.getLocalVariables().set(FLOW_DIR,            flow.getParentFile().getAbsolutePath());
     handler.getLocalVariables().set(FLOW_FILENAME_LONG,  flow.getAbsolutePath());
     handler.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
-    
+
     return true;
   }
-  
+
   /**
    * Processes the data using the specified transformer.
    * Automatically sets up, executes, wraps up and cleans up the actor.
-   * 
+   *
    * @param transformer	the transformer to use
    * @param input	the input data
    * @return		the generated output data as list, null if none produced.
@@ -1142,9 +1146,9 @@ public class ActorUtils {
   public static List transform(AbstractActor transformer, Object input) throws Exception {
     ArrayList	result;
     String	msg;
-    
+
     result = null;
-    
+
     if (!isTransformer(transformer))
       throw new IllegalArgumentException("Actor is not a transformer!");
 
@@ -1153,15 +1157,15 @@ public class ActorUtils {
       transformer.cleanUp();
       throw new Exception("Setup of actor failed: " + msg);
     }
-    
+
     ((InputConsumer) transformer).input(new Token(input));
-    
+
     msg = transformer.execute();
     if (msg != null) {
       transformer.cleanUp();
       throw new Exception("Execution of actor failed: " + msg);
     }
-    
+
     while (((OutputProducer) transformer).hasPendingOutput()) {
       if (result == null)
 	result = new ArrayList();
@@ -1169,7 +1173,79 @@ public class ActorUtils {
     }
 
     transformer.cleanUp();
-    
+
     return result;
+  }
+
+  /**
+   * Updates the error handler.
+   *
+   * @param actor	the actor to update the error handler for
+   * @param handler	the handler to use
+   */
+  public static void updateErrorHandler(Actor actor, final ErrorHandler handler) {
+    actor.getOptionManager().traverse(new OptionTraverser() {
+      @Override
+      public void handleClassOption(ClassOption option, OptionTraversalPath path) {
+        if (ClassLocator.hasInterface(Actor.class, option.getBaseClass())) {
+          Object current = option.getCurrentValue();
+          if (option.isMultiple()) {
+            for (int i = 0; i < Array.getLength(current); i++)
+              ((Actor) Array.get(current, i)).setErrorHandler(handler);
+          }
+          else {
+            ((Actor) current).setErrorHandler(handler);
+          }
+        }
+        else if (ClassLocator.hasInterface(CallableActorUser.class, option.getBaseClass())) {
+          Object current = option.getCurrentValue();
+          Actor callable = null;
+          if (option.isMultiple()) {
+            for (int i = 0; i < Array.getLength(current); i++) {
+              callable = ((CallableActorUser) Array.get(current, i)).getCallableActor();
+              updateErrorHandler(callable, handler);
+            }
+          }
+          else {
+            callable = ((CallableActorUser) current).getCallableActor();
+            updateErrorHandler(callable, handler);
+          }
+        }
+        else if (ClassLocator.hasInterface(InternalActorHandler.class, option.getBaseClass())) {
+          Object current = option.getCurrentValue();
+          Actor internal = null;
+          if (option.isMultiple()) {
+            for (int i = 0; i < Array.getLength(current); i++) {
+              internal = ((InternalActorHandler) Array.get(current, i)).getInternalActor();
+              updateErrorHandler(internal, handler);
+            }
+          }
+          else {
+            internal = ((InternalActorHandler) current).getInternalActor();
+            updateErrorHandler(internal, handler);
+          }
+        }
+      }
+      @Override
+      public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
+        // ignored
+      }
+      @Override
+      public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
+        // ignored
+      }
+      @Override
+      public boolean canHandle(AbstractOption option) {
+        return true;
+      }
+      @Override
+      public boolean canRecurse(Class cls) {
+        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+      }
+      @Override
+      public boolean canRecurse(Object obj) {
+        return canRecurse(obj.getClass());
+      }
+    });
   }
 }

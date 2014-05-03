@@ -39,39 +39,39 @@ import adams.flow.template.DummyTransformer;
  *
  <!-- options-start -->
  * Valid options are: <p/>
- * 
+ *
  * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
+ * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
  * &nbsp;&nbsp;&nbsp;the console (0 = off).
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: TemplateTransformer
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
- * 
+ *
  * <pre>-template &lt;adams.flow.template.AbstractActorTemplate&gt; (property: template)
  * &nbsp;&nbsp;&nbsp;The template to use for generating the actual actor.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.template.DummyTransformer
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -95,15 +95,17 @@ public class TemplateTransformer
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Feeds tokens into an actor generated from a template and broadcasts the generated output tokens.";
   }
 
   /**
    * Returns the default template to use.
-   * 
+   *
    * @return		the template
    */
+  @Override
   protected AbstractActorTemplate getDefaultTemplate() {
     return new DummyTransformer();
   }
@@ -113,16 +115,17 @@ public class TemplateTransformer
    *
    * @return		null if everything is fine, otherwise error message
    */
+  @Override
   protected String setUpTemplate() {
     String		result;
-   
+
     result = super.setUpTemplate();
-    
+
     if (result == null) {
       if (!ActorUtils.isTransformer(m_Actor))
 	result = "Template '" + m_Template + "' does not generate a transformer actor: " + m_Actor.getClass().getName();
     }
-    
+
     return result;
   }
 
@@ -131,6 +134,7 @@ public class TemplateTransformer
    *
    * @return		the backup
    */
+  @Override
   protected Hashtable<String,Object> backupState() {
     Hashtable<String,Object>	result;
 
@@ -146,6 +150,7 @@ public class TemplateTransformer
    *
    * @param state	the backup of the state to restore from
    */
+  @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_INPUT)) {
       m_InputToken = (Token) state.get(BACKUP_INPUT);
@@ -158,6 +163,7 @@ public class TemplateTransformer
   /**
    * Resets the scheme.
    */
+  @Override
   protected void reset() {
     super.reset();
 
@@ -169,6 +175,7 @@ public class TemplateTransformer
    *
    * @return		the Class of objects that can be processed
    */
+  @Override
   public Class[] accepts() {
     if (m_Actor != null)
       return ((InputConsumer) m_Actor).accepts();
@@ -181,6 +188,7 @@ public class TemplateTransformer
    *
    * @param token	the token to accept and process
    */
+  @Override
   public void input(Token token) {
     m_InputToken  = token;
   }
@@ -190,6 +198,7 @@ public class TemplateTransformer
    *
    * @return		depends on the global actor
    */
+  @Override
   public Class[] generates() {
     if (m_Actor != null)
       return ((OutputProducer) m_Actor).generates();
@@ -202,19 +211,20 @@ public class TemplateTransformer
    *
    * @return		null if everything is fine, otherwise error message
    */
+  @Override
   protected String doExecute() {
     String		result;
 
     result = null;
-    
+
     if (m_Actor == null)
       result = setUpTemplate();
-    
+
     if (result == null) {
       ((InputConsumer) m_Actor).input(m_InputToken);
       result = m_Actor.execute();
     }
-    
+
     return result;
   }
 
@@ -223,6 +233,7 @@ public class TemplateTransformer
    *
    * @return		the generated token
    */
+  @Override
   public Token output() {
     m_InputToken = null;
     return ((OutputProducer) m_Actor).output();
@@ -234,6 +245,7 @@ public class TemplateTransformer
    *
    * @return		true if there is pending output
    */
+  @Override
   public boolean hasPendingOutput() {
     return (m_Actor != null) && ((OutputProducer) m_Actor).hasPendingOutput();
   }
