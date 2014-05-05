@@ -27,6 +27,7 @@ adams.core.base.BaseString=adams.gui.goe.BaseObjectEditor
 adams.core.base.BasePassword=adams.gui.goe.BasePasswordEditor
 adams.core.base.BaseRegExp=adams.gui.goe.BaseRegExpEditor
 adams.core.base.BaseText=adams.gui.goe.BaseTextEditor
+adams.core.base.BaseAnnotation=adams.gui.goe.BaseAnnotationEditor
 adams.core.base.BaseByte=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseShort=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseInteger=adams.gui.goe.BaseObjectEditor

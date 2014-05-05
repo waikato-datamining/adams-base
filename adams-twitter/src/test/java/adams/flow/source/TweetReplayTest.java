@@ -105,7 +105,7 @@ public class TweetReplayTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
-      flow.setAnnotations((adams.core.base.BaseText) argOption.valueOf("Demonstrates how to replay archived tweets.\nUseful when experimenting with algorithms processing \ntweets and require the same tweet stream each time."));
+      flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Demonstrates how to replay archived tweets.\nUseful when experimenting with algorithms processing \ntweets and require the same tweet stream each time."));
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] actors2 = new adams.flow.core.AbstractActor[3];
 

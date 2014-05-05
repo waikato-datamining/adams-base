@@ -86,6 +86,11 @@ adams.core.base.BaseText=true
 adams.core.base.BaseText#toString=adams.gui.goe.BaseTextEditor#toString
 adams.core.base.BaseText#valueOf=adams.gui.goe.BaseTextEditor#valueOf
 
+# BaseAnnotation objects
+adams.core.base.BaseAnnotation=true
+adams.core.base.BaseAnnotation#toString=adams.gui.goe.BaseAnnotationEditor#toString
+adams.core.base.BaseAnnotation#valueOf=adams.gui.goe.BaseAnnotationEditor#valueOf
+
 # BaseCharacter objects
 adams.core.base.BaseCharacter=true
 adams.core.base.BaseCharacter#toString=adams.gui.goe.BaseObjectEditor#toString

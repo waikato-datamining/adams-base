@@ -68,7 +68,7 @@ public class UpdateStorageNameTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
-      flow.setAnnotations((adams.core.base.BaseText) argOption.valueOf("This flow demonstrates how to process the same storage value\nmultiple times with Triggers, but still output and forward in the\nflow. The actual processing is happening below the \n\"StorageValueSequence\" control actor, which also forwards the\nstorage value then.\nThis flow only uses a simple string to show the functionality, but\nit could be any complex data structure that the flow manipulates."));
+      flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("This flow demonstrates how to process the same storage value\nmultiple times with Triggers, but still output and forward in the\nflow. The actual processing is happening below the \n\"StorageValueSequence\" control actor, which also forwards the\nstorage value then.\nThis flow only uses a simple string to show the functionality, but\nit could be any complex data structure that the flow manipulates."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp2 = new adams.flow.core.AbstractActor[6];

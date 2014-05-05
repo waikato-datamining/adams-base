@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
-import adams.core.base.BaseText;
+import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.ProcessUtils;
 import adams.flow.core.AbstractActor;
@@ -916,7 +916,7 @@ public class LoadBalancer
     shell.setParent(null);
     shell.setParent(getParent());
     shell.setLoggingLevel(getLoggingLevel());
-    shell.setAnnotations(new BaseText("Thread #" + count));
+    shell.setAnnotations(new BaseAnnotation("Thread #" + count));
     m_ToCleanUp.add(shell);
     job = new Callable<String>() {
       public String call() throws Exception {

@@ -37,7 +37,7 @@ import adams.core.SizeOf;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
-import adams.core.base.BaseText;
+import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -105,7 +105,7 @@ public abstract class AbstractActor
   protected boolean m_Headless;
 
   /** annotations for the actor. */
-  protected BaseText m_Annotations;
+  protected BaseAnnotation m_Annotations;
 
   /** whether to skip the transformation and just forward the token. */
   protected boolean m_Skip;
@@ -283,7 +283,7 @@ public abstract class AbstractActor
 
     m_OptionManager.add(
 	    "annotation", "annotations",
-	    new BaseText(""));
+	    new BaseAnnotation(""));
 
     m_OptionManager.add(
 	    "skip", "skip",
@@ -366,7 +366,7 @@ public abstract class AbstractActor
    *
    * @param value	the annotations
    */
-  public void setAnnotations(BaseText value) {
+  public void setAnnotations(BaseAnnotation value) {
     m_Annotations = value;
     reset();
   }
@@ -376,7 +376,7 @@ public abstract class AbstractActor
    *
    * @return		the annotations
    */
-  public BaseText getAnnotations() {
+  public BaseAnnotation getAnnotations() {
     return m_Annotations;
   }
 

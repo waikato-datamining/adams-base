@@ -22,9 +22,11 @@ package adams.gui.flow.tree;
 
 import java.awt.datatransfer.Transferable;
 import java.util.HashSet;
+import java.util.List;
 
 import adams.core.Destroyable;
 import adams.core.Utils;
+import adams.core.base.BaseAnnotation.Tag;
 import adams.core.net.HtmlUtils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -409,6 +411,100 @@ public class Node
       return size;
     }
   }
+
+  /**
+   * Inserts line breaks.
+   * 
+   * @param s		the string to process
+   * @return		the updated string
+   */
+  protected String insertLineBreaks(String s) {
+    StringBuilder	result;
+    String[]		lines;
+    int			i;
+    int			n;
+    String		line;
+    boolean		trailingLF;
+
+    result     = new StringBuilder();
+    trailingLF = s.endsWith("\n");
+    lines  = s.split("\n");
+    result = new StringBuilder();
+    for (i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith(" ")) {
+	line = lines[i].trim();
+	for (n = 0; n < lines[i].length() - line.length(); n++)
+	  line = "&nbsp;" + HtmlUtils.toHTML(line);
+      }
+      else {
+	line = HtmlUtils.toHTML(lines[i]);
+      }
+      if (i > 0)
+	result.append("<br>");
+      result.append(line);
+    }
+    
+    if (trailingLF)
+      result.append("<br>");
+    
+    return result.toString();
+  }
+  
+  /**
+   * Assembles the annotation HTML string.
+   * 
+   * @param actor	the actor to obtain the annotation from
+   * @return		the generated string
+   */
+  protected String assembleAnnotation(AbstractActor actor) {
+    StringBuilder	result;
+    String		colorDef;
+    String		sizeDef;
+    String		color;
+    String		size;
+    boolean		font;
+    List		parts;
+    Tag			tag;
+    
+    result   = new StringBuilder();
+    colorDef = m_Owner.getAnnotationsColor();
+    sizeDef  = m_Owner.getAnnotationsSize();
+    
+    if (actor.getAnnotations().hasTag()) {
+      font  = false;
+      parts = actor.getAnnotations().getParts();
+      for (Object part: parts) {
+	if (part instanceof Tag) {
+	  tag   = (Tag) part;
+	  color = colorDef;
+	  size  = sizeDef;
+	  if (tag.getOptions().containsKey("color"))
+	    color = tag.getOptions().get("color");
+	  if (tag.getOptions().containsKey("size"))
+	    size = tag.getOptions().get("size");
+	  if (font)
+	    result.append("</font>");
+	  result.append("<font size='" + scaleFontSize(size) + "' color='" + color + "'>");
+	  result.append(tag.getName());
+	  font = true;
+	}
+	else {
+	  if (!font)
+	    result.append("<font size='" + scaleFontSize(sizeDef) + "' color='" + colorDef + "'>");
+	  result.append(insertLineBreaks(part.toString()));
+	  font = true;
+	}
+      }
+      result.append("</font>");
+    }
+    else {
+      result.append("<font size='" + scaleFontSize(sizeDef) + "' color='" + colorDef + "'>");
+      result.append(insertLineBreaks(actor.getAnnotations().getValue()));
+      result.append("</font>");
+    }
+    
+    return result.toString();
+  }
   
   /**
    * Returns the actor in HTML.
@@ -418,10 +514,6 @@ public class Node
   @Override
   public String toString() {
     StringBuilder	html;
-    String[]		lines;
-    String		line;
-    int			i;
-    int			n;
     String		quickInfo;
     AbstractActor	actor;
 
@@ -469,22 +561,8 @@ public class Node
 
 	// annotations?
 	if (m_Owner.getShowAnnotations()) {
-	  if (actor.getAnnotations().getValue().length() > 0) {
-	    html.append("<font size='" + scaleFontSize(m_Owner.getAnnotationsSize()) + "' color='" + m_Owner.getAnnotationsColor() + "'>");
-	    lines = actor.getAnnotations().getValue().split("\n");
-	    for (i = 0; i < lines.length; i++) {
-	      if (lines[i].startsWith(" ")) {
-		line = lines[i].trim();
-		for (n = 0; n < lines[i].length() - line.length(); n++)
-		  line = "&nbsp;" + HtmlUtils.toHTML(line);
-	      }
-	      else {
-		line = HtmlUtils.toHTML(lines[i]);
-	      }
-	      html.append("<br>" + line);
-	    }
-	    html.append("</font>");
-	  }
+	  if (actor.getAnnotations().getValue().length() > 0)
+	    html.append("<br>" + assembleAnnotation(actor));
 	}
 
 	// show output?

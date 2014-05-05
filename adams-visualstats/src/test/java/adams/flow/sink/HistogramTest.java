@@ -94,7 +94,7 @@ public class HistogramTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
-      flow.setAnnotations((adams.core.base.BaseText) argOption.valueOf("Generates a histogram of the first attribute\nof the UCI dataset \"iris\"."));
+      flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Generates a histogram of the first attribute\nof the UCI dataset \"iris\"."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] abstractactor2 = new adams.flow.core.AbstractActor[3];

@@ -69,7 +69,7 @@ public class UpdateVariableNameTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
-      flow.setAnnotations((adams.core.base.BaseText) argOption.valueOf("Simple example for using variables:\n1. The ForLoop generates the index for the file to load\n2. The Tee assembles the full path of the file to load\nand sets the variable \"filename\"\n3. The Trigger loads the file, the variable \"filename\"\nis attached to the \"file\" option of the FileSupplier\nactor."));
+      flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Simple example for using variables:\n1. The ForLoop generates the index for the file to load\n2. The Tee assembles the full path of the file to load\nand sets the variable \"filename\"\n3. The Trigger loads the file, the variable \"filename\"\nis attached to the \"file\" option of the FileSupplier\nactor."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp2 = new adams.flow.core.AbstractActor[3];

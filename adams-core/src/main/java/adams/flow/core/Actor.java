@@ -28,7 +28,7 @@ import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
 import adams.core.Stoppable;
 import adams.core.Variables;
-import adams.core.base.BaseText;
+import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingSupporter;
 import adams.core.option.OptionHandler;
@@ -102,14 +102,14 @@ public interface Actor
    *
    * @param value	the annotations
    */
-  public void setAnnotations(BaseText value);
+  public void setAnnotations(BaseAnnotation value);
 
   /**
    * Returns the current annotations.
    *
    * @return		the annotations
    */
-  public BaseText getAnnotations();
+  public BaseAnnotation getAnnotations();
 
   /**
    * Sets whether the transformation is skipped or not.

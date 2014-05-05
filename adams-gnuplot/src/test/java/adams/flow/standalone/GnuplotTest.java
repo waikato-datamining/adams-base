@@ -98,7 +98,7 @@ public class GnuplotTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
-      flow.setAnnotations((adams.core.base.BaseText) argOption.valueOf("This flow generates a Gnuplot script file for the \"bolts\" UCI dataset.\nIt then executes gnuplot (executable needs to be on the PATH).\nThe plot closes automatically after 5 seconds."));
+      flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("This flow generates a Gnuplot script file for the \"bolts\" UCI dataset.\nIt then executes gnuplot (executable needs to be on the PATH).\nThe plot closes automatically after 5 seconds."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp2 = new adams.flow.core.AbstractActor[6];
