@@ -1,0 +1,8 @@
+--> out-0.txt
+id=, content=Hello World, report=, notes=
+id=, content=The quick brown fox jumps over the lazy dog, report=, notes=
+
+--> out-1.txt
+id=42, content=Hello World, report=, notes=
+id=42, content=The quick brown fox jumps over the lazy dog, report=, notes=
+

@@ -15,7 +15,7 @@
 
 /**
  * BoofCVImageContainer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
 
@@ -44,10 +44,10 @@ public class BoofCVImageContainer
    */
   @Override
   public int getWidth() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getWidth();
+      return m_Content.getWidth();
   }
 
   /**
@@ -57,10 +57,10 @@ public class BoofCVImageContainer
    */
   @Override
   public int getHeight() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getHeight();
+      return m_Content.getHeight();
   }
   
   /**
@@ -71,11 +71,11 @@ public class BoofCVImageContainer
    * @return		the clone/subimage
    */
   @Override
-  protected ImageBase cloneImage() {
-    if (m_Image instanceof ImageSingleBand)
-      return ((ImageSingleBand) m_Image).clone();
+  protected ImageBase cloneContent() {
+    if (m_Content instanceof ImageSingleBand)
+      return ((ImageSingleBand) m_Content).clone();
     else
-      return m_Image.subimage(0, 0, m_Image.getWidth() - 1, m_Image.getHeight() - 1);
+      return m_Content.subimage(0, 0, m_Content.getWidth() - 1, m_Content.getHeight() - 1);
   }
 
   /**
@@ -85,9 +85,9 @@ public class BoofCVImageContainer
    */
   @Override
   public BufferedImage toBufferedImage() {
-    if (ImageUInt8.class == m_Image.getClass())
-      return VisualizeBinaryData.renderBinary((ImageUInt8) m_Image, null);
+    if (ImageUInt8.class == m_Content.getClass())
+      return VisualizeBinaryData.renderBinary((ImageUInt8) m_Content, null);
     else
-      return ConvertBufferedImage.convertTo(m_Image, null);
+      return ConvertBufferedImage.convertTo(m_Content, null);
   }
 }

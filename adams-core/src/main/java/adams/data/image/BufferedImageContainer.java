@@ -37,10 +37,10 @@ public class BufferedImageContainer
    */
   @Override
   public int getWidth() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getWidth();
+      return m_Content.getWidth();
   }
 
   /**
@@ -50,10 +50,10 @@ public class BufferedImageContainer
    */
   @Override
   public int getHeight() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getHeight();
+      return m_Content.getHeight();
   }
   
   /**
@@ -62,8 +62,8 @@ public class BufferedImageContainer
    * @return		the clone
    */
   @Override
-  protected BufferedImage cloneImage() {
-    return BufferedImageHelper.deepCopy(m_Image);
+  protected BufferedImage cloneContent() {
+    return BufferedImageHelper.deepCopy(m_Content);
   }
 
   /**
@@ -73,7 +73,7 @@ public class BufferedImageContainer
    */
   @Override
   public BufferedImage toBufferedImage() {
-    return m_Image;
+    return m_Content;
   }
   
   /**
@@ -83,6 +83,6 @@ public class BufferedImageContainer
    */
   @Override
   public String toString() {
-    return "image=" + m_Image + ", colormodel=" + m_Image.getColorModel() + ", samplemodel=" + m_Image.getSampleModel() + ", report=" + m_Report + ", notes=" + m_Notes;
+    return "image=" + m_Content + ", colormodel=" + m_Content.getColorModel() + ", samplemodel=" + m_Content.getSampleModel() + ", report=" + m_Report + ", notes=" + m_Notes;
   }
 }

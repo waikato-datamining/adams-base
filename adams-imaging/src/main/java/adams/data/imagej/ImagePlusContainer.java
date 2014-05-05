@@ -41,10 +41,10 @@ public class ImagePlusContainer
    */
   @Override
   public int getWidth() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getWidth();
+      return m_Content.getWidth();
   }
 
   /**
@@ -54,10 +54,10 @@ public class ImagePlusContainer
    */
   @Override
   public int getHeight() {
-    if (m_Image == null)
+    if (m_Content == null)
       return 0;
     else
-      return m_Image.getHeight();
+      return m_Content.getHeight();
   }
 
   /**
@@ -66,8 +66,8 @@ public class ImagePlusContainer
    * @return		the clone
    */
   @Override
-  protected ImagePlus cloneImage() {
-    return new ImagePlus(m_Image.getTitle() + "'", m_Image.getImage());
+  protected ImagePlus cloneContent() {
+    return new ImagePlus(m_Content.getTitle() + "'", m_Content.getImage());
   }
 
   /**
@@ -77,7 +77,7 @@ public class ImagePlusContainer
    */
   @Override
   public BufferedImage toBufferedImage() {
-    return m_Image.getBufferedImage();
+    return m_Content.getBufferedImage();
   }
 
   /**
@@ -110,6 +110,6 @@ public class ImagePlusContainer
    */
   @Override
   public String toString() {
-    return "image=" + m_Image + ", type=" + imageTypeToString(m_Image.getType()) + ", report=" + m_Report + ", notes=" + m_Notes;
+    return "image=" + m_Content + ", type=" + imageTypeToString(m_Content.getType()) + ", report=" + m_Report + ", notes=" + m_Notes;
   }
 }
