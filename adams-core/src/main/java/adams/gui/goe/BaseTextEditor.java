@@ -58,10 +58,10 @@ public class BaseTextEditor
   protected BaseTextArea m_TextValue;
 
   /**
-   * Returns the Compound as string.
+   * Returns the BaseText as string.
    *
    * @param option	the current option
-   * @param object	the Compound object to convert
+   * @param object	the BaseText object to convert
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
@@ -69,11 +69,11 @@ public class BaseTextEditor
   }
 
   /**
-   * Returns a Compound generated from the string.
+   * Returns a BaseText generated from the string.
    *
    * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
+   * @param str		the string to convert to a BaseText
+   * @return		the generated BaseText
    */
   public static Object valueOf(AbstractOption option, String str) {
     return new BaseText(Utils.unbackQuoteChars(str));
