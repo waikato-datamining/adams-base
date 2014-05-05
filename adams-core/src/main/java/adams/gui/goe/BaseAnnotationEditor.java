@@ -39,6 +39,7 @@ import adams.core.Utils;
 import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
+import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
@@ -283,9 +284,11 @@ public class BaseAnnotationEditor
 	"How to write annotations:\n"
 	+ "1. Annotations can be spread over several lines.\n"
 	+ "2. You can use custom tags, using the following format:\n"
-	+ "!{tagname[:key=value[,key=value...]]}\n"
+	+ BaseAnnotation.TAG_START + "tagname[:key=value[,key=value...]]" + BaseAnnotation.TAG_END + "\n"
 	+ "3. The 'color' and 'size' keys are automatically interpreted, "
 	+ "with 'color' either being a hex string '#ff0000' or a word like 'red' "
-	+ "and 'size' being an HTML size ranging from 1 to 7.";
+	+ "and 'size' being an HTML size ranging from 1 to 7.\n"
+	+ "4. You can use the " + ListAnnotationTags.class.getName() + " actor "
+	+ "processor to list tags in a flow.";
   }
 }
