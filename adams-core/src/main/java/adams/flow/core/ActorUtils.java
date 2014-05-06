@@ -1225,6 +1225,20 @@ public class ActorUtils {
             updateErrorHandler(internal, handler);
           }
         }
+        else if (ClassLocator.isSubclass(AbstractExternalActor.class, option.getBaseClass())) {
+          Object current = option.getCurrentValue();
+          Actor external = null;
+          if (option.isMultiple()) {
+            for (int i = 0; i < Array.getLength(current); i++) {
+              external = ((AbstractExternalActor) Array.get(current, i)).getExternalActor();
+              updateErrorHandler(external, handler);
+            }
+          }
+          else {
+            external = ((AbstractExternalActor) current).getExternalActor();
+            updateErrorHandler(external, handler);
+          }
+        }
       }
       @Override
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
