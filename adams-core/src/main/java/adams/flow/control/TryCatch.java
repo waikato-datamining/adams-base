@@ -29,13 +29,15 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.InternalActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
  * Safe-guards the execution of the 'try' sequence of actors. In case of an error, the 'catch' sequence is executed to generate output instead.<br/>
- * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.
+ * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.<br/>
+ * NB: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -53,50 +55,50 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: TryCatch
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-try &lt;adams.flow.core.AbstractActor&gt; (property: try)
  * &nbsp;&nbsp;&nbsp;The 'try' branch which is attempted to be executed.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name try
  * </pre>
- *
+ * 
  * <pre>-catch &lt;adams.flow.core.AbstractActor&gt; (property: catch)
  * &nbsp;&nbsp;&nbsp;The 'catch' branch which gets executed if the 'try' branch fails.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name catch
  * </pre>
- *
+ * 
  * <pre>-store-error &lt;boolean&gt; (property: storeError)
  * &nbsp;&nbsp;&nbsp;If enabled, then any error gets stored in the specified variable 'errorVariable'
  * &nbsp;&nbsp;&nbsp;; does not modify the variable if there was no error.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-error-variable &lt;adams.core.VariableName&gt; (property: errorVariable)
  * &nbsp;&nbsp;&nbsp;The name of the variable to store the error messages in.
  * &nbsp;&nbsp;&nbsp;default: trycatch
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -149,7 +151,10 @@ public class TryCatch
 	+ "output instead.\n"
 	+ "This works similar to the Java try-catch-block. Allowing the flow "
 	+ "to recover from unexpected errors and, for instance, return default "
-	+ "values.";
+	+ "values.\n"
+	+ "NB: If actors use other actors internally, these need to be accessible. "
+	+ "This can be achieved by simply  implementing the " 
+	+ InternalActorHandler.class.getName() + " interface.";
   }
 
   /**
