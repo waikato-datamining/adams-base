@@ -990,6 +990,8 @@ public class FileUtils {
   
   /**
    * Turns String, String[], File, File[] into a {@link File} array.
+   * Ensures that strings don't contain placeholders and {@link File} objects
+   * aren't {@link PlaceholderFile} objects.
    * 
    * @param input	the input
    * @return		the {@link File} array
@@ -997,23 +999,27 @@ public class FileUtils {
    */
   public static File[] toFileArray(Object input) {
     File[]	result;
+    File[]	files;
     String[]	str;
     int		i;
 
     if (input instanceof String) {
-      result = new File[]{new File((String) input)};
+      result = new File[]{new PlaceholderFile((String) input).getAbsoluteFile()};
     }
     else if (input instanceof String[]) {
       str   = (String[]) input;
       result = new File[str.length];
       for (i = 0; i < str.length; i++)
-	result[i] = new File(str[i]);
+	result[i] = new PlaceholderFile(str[i]).getAbsoluteFile();
     }
     else if (input instanceof File) {
-      result = new File[]{(File) input};
+      result = new File[]{new PlaceholderFile((File) input).getAbsoluteFile()};
     }
     else if (input instanceof File[]) {
-      result = (File[]) input;
+      files  = (File[]) input;
+      result = new File[files.length];
+      for (i = 0; i < files.length; i++)
+	result[i] = files[i].getAbsoluteFile();
     }
     else {
       throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
@@ -1024,6 +1030,7 @@ public class FileUtils {
   
   /**
    * Turns String, String[], File, File[] into a {@link String} array.
+   * Ensures that strings don't contain placeholders.
    * 
    * @param input	the input
    * @return		the {@link String} array
@@ -1031,14 +1038,18 @@ public class FileUtils {
    */
   public static String[] toStringArray(Object input) {
     String[]	result;
+    String[]	str;
     File[]	files;
     int		i;
 
     if (input instanceof String) {
-      result = new String[]{(String) input};
+      result = new String[]{new PlaceholderFile((String) input).getAbsolutePath()};
     }
     else if (input instanceof String[]) {
-      result = (String[]) input;
+      str    = (String[]) input;
+      result = new String[str.length];
+      for (i = 0; i < str.length; i++)
+	result[i] = new PlaceholderFile(str[i]).getAbsolutePath();
     }
     else if (input instanceof File) {
       result = new String[]{((File) input).getAbsolutePath()};
