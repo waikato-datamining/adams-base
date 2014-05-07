@@ -29,7 +29,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.source.MOAClustererSetup;
 
@@ -297,7 +297,7 @@ public class MOATrainClusterer
    * @return		the clusterer
    */
   protected moa.clusterers.Clusterer getClustererInstance() {
-    return (moa.clusterers.Clusterer) CallabledActorHelper.getSetup(moa.clusterers.Clusterer.class, m_Clusterer, this);
+    return (moa.clusterers.Clusterer) CallableActorHelper.getSetup(moa.clusterers.Clusterer.class, m_Clusterer, this);
   }
 
   /**

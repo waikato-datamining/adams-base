@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -37,7 +37,8 @@ import adams.event.VariableChangeEvent.Type;
  * @version $Revision$
  */
 public abstract class AbstractExternalActor
-  extends AbstractActor {
+  extends AbstractActor
+  implements ExternalActorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1024129351334661368L;

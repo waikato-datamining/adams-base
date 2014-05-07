@@ -34,7 +34,7 @@ import weka.core.Instances;
 import weka.core.MOAUtils;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -381,7 +381,7 @@ public class MOAClustererEvaluation
    * @return		the clusterer
    */
   protected AbstractClusterer getClustererInstance() {
-    return (AbstractClusterer) CallabledActorHelper.getSetup(AbstractClusterer.class, m_Clusterer, this);
+    return (AbstractClusterer) CallableActorHelper.getSetup(AbstractClusterer.class, m_Clusterer, this);
   }
 
   /**

@@ -15,14 +15,14 @@
 
 /**
  * ExternalActor.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
 import java.util.Hashtable;
 
 import adams.core.ClassLocator;
-import adams.flow.core.AbstractExternalActor;
+import adams.flow.core.ExternalActorHandler;
 
 /**
  * Provides further insight into external actors.
@@ -39,8 +39,9 @@ public class ExternalActor
    * @param cls		the class to check
    * @return		true if the handler can handle this type of object
    */
+  @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(AbstractExternalActor.class, cls);
+    return ClassLocator.isSubclass(ExternalActorHandler.class, cls);
   }
 
   /**
@@ -49,13 +50,14 @@ public class ExternalActor
    * @param obj		the object to further inspect
    * @return		the named inspected values
    */
+  @Override
   public Hashtable<String,Object> inspect(Object obj) {
     Hashtable<String,Object>	result;
     Object			value;
 
     result = new Hashtable<String,Object>();
 
-    value = ((AbstractExternalActor) obj).getExternalActor();
+    value = ((ExternalActorHandler) obj).getExternalActor();
     if (value != null)
       result.put("external actor", value);
 

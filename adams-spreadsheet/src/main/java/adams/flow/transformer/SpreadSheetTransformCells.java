@@ -40,7 +40,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -171,7 +171,7 @@ public class SpreadSheetTransformCells
   protected CallableActorReference m_Transformer;
 
   /** the helper class. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /** the callable actor. */
   protected AbstractActor m_CallableActor;
@@ -245,7 +245,7 @@ public class SpreadSheetTransformCells
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**

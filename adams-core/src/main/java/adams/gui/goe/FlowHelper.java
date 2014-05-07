@@ -27,10 +27,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import adams.flow.core.AbstractActor;
-import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.standalone.Standalones;
 import adams.gui.application.Child;
 import adams.gui.application.ChildFrame;
@@ -223,7 +223,7 @@ public class FlowHelper {
 		  }
 		}
 	      }
-	      else if (actor instanceof AbstractExternalActor) {
+	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++) {
@@ -341,7 +341,7 @@ public class FlowHelper {
 		  }
 		}
 	      }
-	      else if (actor instanceof AbstractExternalActor) {
+	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++)
@@ -428,7 +428,7 @@ public class FlowHelper {
 		}
 	      }
 	    }
-	    else if (actor instanceof AbstractExternalActor) {
+	    else if (actor instanceof ExternalActorHandler) {
 	      // load in external actor
 	      current.expand();
 	      for (n = 0; n < current.getChildCount(); n++)

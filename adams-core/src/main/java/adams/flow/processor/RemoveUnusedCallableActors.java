@@ -25,7 +25,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.standalone.CallableActors;
 
@@ -54,7 +54,7 @@ public class RemoveUnusedCallableActors
   private static final long serialVersionUID = 1634101991639994065L;
   
   /** the callable actor helper. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /**
    * Returns a string describing the object.
@@ -76,7 +76,7 @@ public class RemoveUnusedCallableActors
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**

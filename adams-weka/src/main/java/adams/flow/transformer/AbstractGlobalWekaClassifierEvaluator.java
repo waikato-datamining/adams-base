@@ -21,7 +21,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.source.WekaClassifierSetup;
 
 /**
@@ -161,6 +161,6 @@ public abstract class AbstractGlobalWekaClassifierEvaluator
    * @return		the classifier
    */
   protected weka.classifiers.Classifier getClassifierInstance() {
-    return (weka.classifiers.Classifier) CallabledActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this);
+    return (weka.classifiers.Classifier) CallableActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this);
   }
 }

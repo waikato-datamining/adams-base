@@ -36,7 +36,7 @@ import weka.core.Utils;
 import adams.core.MOAHelper;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -385,7 +385,7 @@ public class MOAClassifierEvaluation
    * @return		the classifier
    */
   protected AbstractClassifier getClassifierInstance() {
-    return (AbstractClassifier) CallabledActorHelper.getSetup(AbstractClassifier.class, m_Classifier, this);
+    return (AbstractClassifier) CallableActorHelper.getSetup(AbstractClassifier.class, m_Classifier, this);
   }
 
   /**

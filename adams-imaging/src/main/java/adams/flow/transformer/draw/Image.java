@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImage;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -238,7 +238,7 @@ public class Image
     else if (m_Y > image.getHeight())
       result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
 
-    obj    = CallabledActorHelper.getSetupFromSource(Object.class, m_ImageActor, m_Owner);
+    obj    = CallableActorHelper.getSetupFromSource(Object.class, m_ImageActor, m_Owner);
     todraw = null;
     if (obj instanceof BufferedImage)
       todraw = (BufferedImage) obj;

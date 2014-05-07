@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.provenance.ProvenanceInformation;
 
 /**
@@ -45,7 +45,7 @@ public class MaterializedArrayProducer
   private static final long serialVersionUID = -1441936327738738725L;
 
   /** the helper for locating global actors. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /**
    * Initializes the visitor.
@@ -54,7 +54,7 @@ public class MaterializedArrayProducer
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**

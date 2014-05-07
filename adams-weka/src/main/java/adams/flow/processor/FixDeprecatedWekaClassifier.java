@@ -24,7 +24,7 @@ import java.util.List;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.source.WekaClassifierSetup;
 import adams.flow.standalone.CallableActors;
@@ -85,7 +85,7 @@ public class FixDeprecatedWekaClassifier
 	m_Modified = true;
       }
       else {
-	CallableActors callable = CallabledActorHelper.createCallableActors(cactor, true);
+	CallableActors callable = CallableActorHelper.createCallableActors(cactor, true);
 	WekaClassifierSetup setup = new WekaClassifierSetup();
 	setup.setClassifier(cactor.getClassifier());
 	if (var != null)

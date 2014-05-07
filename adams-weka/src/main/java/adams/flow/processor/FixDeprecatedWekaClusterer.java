@@ -24,7 +24,7 @@ import java.util.List;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.source.WekaClustererSetup;
 import adams.flow.standalone.CallableActors;
@@ -85,7 +85,7 @@ public class FixDeprecatedWekaClusterer
 	m_Modified = true;
       }
       else {
-	CallableActors callable = CallabledActorHelper.createCallableActors(cactor, true);
+	CallableActors callable = CallableActorHelper.createCallableActors(cactor, true);
 	WekaClustererSetup setup = new WekaClustererSetup();
 	setup.setClusterer(cactor.getClusterer());
 	if (var != null)

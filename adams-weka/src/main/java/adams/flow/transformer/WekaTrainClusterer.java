@@ -28,7 +28,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -309,7 +309,7 @@ public class WekaTrainClusterer
   protected weka.clusterers.Clusterer getClustererInstance() throws Exception {
     weka.clusterers.Clusterer   result;
 
-    result = (weka.clusterers.Clusterer) CallabledActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this);
+    result = (weka.clusterers.Clusterer) CallableActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this);
     if (result == null)
       throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "'!");
 

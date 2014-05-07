@@ -51,7 +51,7 @@ import adams.event.JobCompleteListener;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PauseStateHandler;
@@ -628,7 +628,7 @@ public class WekaClassifierRanker
   protected int m_NumThreads;
 
   /** the helper class. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /** the job runner for evaluating the setups. */
   protected JobRunner<RankingJob> m_JobRunner;
@@ -694,7 +694,7 @@ public class WekaClassifierRanker
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**

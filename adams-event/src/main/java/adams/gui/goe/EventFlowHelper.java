@@ -15,7 +15,7 @@
 
 /**
  * EventFlowHelper.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.flow.core.AbstractActor;
-import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.standalone.Events;
 import adams.flow.standalone.Standalones;
 import adams.gui.flow.tree.Node;
@@ -112,7 +112,7 @@ public class EventFlowHelper
 		  }
 		}
 	      }
-	      else if (actor instanceof AbstractExternalActor) {
+	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++)

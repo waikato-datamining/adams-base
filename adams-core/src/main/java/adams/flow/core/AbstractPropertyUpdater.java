@@ -167,13 +167,13 @@ public abstract class AbstractPropertyUpdater
   @Override
   public String setUp() {
     String		result;
-    CallabledActorHelper	helper;
+    CallableActorHelper	helper;
     Class		cls;
 
     result = super.setUp();
 
     if (result == null) {
-      helper        = new CallabledActorHelper();
+      helper        = new CallableActorHelper();
       m_CallableActor = helper.findCallableActorRecursive(this, m_ActorName);
       if (m_CallableActor == null) {
 	result = "Cannot find global actor '" + m_ActorName + "'!";

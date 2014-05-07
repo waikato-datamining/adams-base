@@ -27,7 +27,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -198,7 +198,7 @@ public class WekaPrimeForecaster
     
     result = null;
     
-    obj = CallabledActorHelper.getSetup(Object.class, m_Forecaster, this);
+    obj = CallableActorHelper.getSetup(Object.class, m_Forecaster, this);
     if (obj instanceof WekaModelContainer)
       result = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
     else if (obj instanceof AbstractForecaster)

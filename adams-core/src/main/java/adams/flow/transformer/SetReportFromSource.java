@@ -25,7 +25,7 @@ import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -93,7 +93,7 @@ public class SetReportFromSource
   protected CallableActorReference m_Report;
 
   /** the helper class. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /**
    * Returns a string describing the object.
@@ -126,7 +126,7 @@ public class SetReportFromSource
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**

@@ -30,7 +30,7 @@ import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaForecastContainer;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 
 /**
@@ -332,7 +332,7 @@ public class WekaForecasting
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	obj = CallabledActorHelper.getSetup(null, m_ModelActor, this);
+	obj = CallableActorHelper.getSetup(null, m_ModelActor, this);
 	if (obj instanceof WekaModelContainer)
 	  m_Model = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
 	else if (obj instanceof AbstractForecaster)

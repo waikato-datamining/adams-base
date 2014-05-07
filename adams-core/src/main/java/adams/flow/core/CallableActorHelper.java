@@ -35,7 +35,7 @@ import adams.flow.transformer.CallableTransformer;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CallabledActorHelper
+public class CallableActorHelper
   extends LoggingObject {
 
   /** for serialization. */
@@ -54,7 +54,7 @@ public class CallabledActorHelper
     int				i;
     CallableActorHandler	callable;
     int				index;
-    AbstractExternalActor	external;
+    ExternalActorHandler	external;
 
     result = null;
 
@@ -67,8 +67,8 @@ public class CallabledActorHelper
 	  break;
 	}
       }
-      else if (group.get(i) instanceof AbstractExternalActor) {
-	external = (AbstractExternalActor) group.get(i);
+      else if (group.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) group.get(i);
 	if (external.getExternalActor() instanceof ActorHandler) {
 	  result = findCallableActor((ActorHandler) external.getExternalActor(), name);
 	  if (result != null)

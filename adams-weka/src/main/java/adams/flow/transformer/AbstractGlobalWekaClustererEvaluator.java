@@ -21,7 +21,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.source.WekaClustererSetup;
 
 /**
@@ -117,6 +117,6 @@ public abstract class AbstractGlobalWekaClustererEvaluator
    * @return		the clusterer
    */
   protected weka.clusterers.Clusterer getClustererInstance() {
-    return (weka.clusterers.Clusterer) CallabledActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this);
+    return (weka.clusterers.Clusterer) CallableActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this);
   }
 }

@@ -31,7 +31,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.source.MOAClassifierSetup;
 
@@ -219,7 +219,7 @@ public class MOATrainClassifier
    * @return		the classifier
    */
   protected moa.classifiers.Classifier getClassifierInstance() {
-    return (moa.classifiers.Classifier) CallabledActorHelper.getSetup(moa.classifiers.Classifier.class, m_Classifier, this);
+    return (moa.classifiers.Classifier) CallableActorHelper.getSetup(moa.classifiers.Classifier.class, m_Classifier, this);
   }
 
   /**

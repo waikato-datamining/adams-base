@@ -49,9 +49,9 @@ public class EventHelper
   public AbstractActor findEvent(ActorHandler group, EventReference name) {
     AbstractActor		result;
     int				i;
-    Events		global;
+    Events			global;
     int				index;
-    AbstractExternalActor	external;
+    ExternalActorHandler	external;
 
     result = null;
 
@@ -64,8 +64,8 @@ public class EventHelper
 	  break;
 	}
       }
-      else if (group.get(i) instanceof AbstractExternalActor) {
-	external = (AbstractExternalActor) group.get(i);
+      else if (group.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) group.get(i);
 	if (external.getExternalActor() instanceof ActorHandler) {
 	  result = findEvent((ActorHandler) external.getExternalActor(), name);
 	  if (result != null)

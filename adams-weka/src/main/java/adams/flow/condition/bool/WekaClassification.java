@@ -32,7 +32,7 @@ import adams.core.io.PlaceholderFile;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 
 /**
@@ -253,7 +253,7 @@ public class WekaClassification
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	m_Model = (Classifier) CallabledActorHelper.getSetup(Classifier.class, m_ModelActor, (AbstractActor) owner);
+	m_Model = (Classifier) CallableActorHelper.getSetup(Classifier.class, m_ModelActor, (AbstractActor) owner);
       }
       catch (Exception e) {
 	m_Model = null;

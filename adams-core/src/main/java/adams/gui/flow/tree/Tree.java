@@ -72,6 +72,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.InstantiatableActor;
@@ -1752,12 +1753,12 @@ public class Tree
   public void editFlow(TreePath path) {
     Node			node;
     FlowEditorDialog 		dialog;
-    AbstractExternalActor	actor;
+    ExternalActorHandler	actor;
 
     node = (Node) path.getLastPathComponent();
     if (node == null)
       return;
-    actor = (AbstractExternalActor) node.getActor();
+    actor = (ExternalActorHandler) node.getActor();
     if (actor == null)
       return;
 

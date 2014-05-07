@@ -15,14 +15,14 @@
 
 /**
  * ExternalFlow.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.menu;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import adams.flow.core.AbstractExternalActor;
+import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.BaseMenu;
 import adams.gui.flow.tree.StateContainer;
 
@@ -48,7 +48,7 @@ public class ExternalFlow
   protected JMenuItem getMenuItem(final StateContainer state) {
     JMenu	result;
     
-    if ((state.nodeAtMouseLoc != null) && (state.nodeAtMouseLoc.getActor() instanceof AbstractExternalActor)) {
+    if ((state.nodeAtMouseLoc != null) && (state.nodeAtMouseLoc.getActor() instanceof ExternalActorHandler)) {
       result = new BaseMenu("External flow");
       new EditExternalFlow().add(state, result);
       new ExpandCollapseExternalFlow().add(state, result);

@@ -37,7 +37,7 @@ import weka.filters.unsupervised.attribute.Reorder;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 
 /**
@@ -599,7 +599,7 @@ public class WekaReorderAttributesToReference
     if (m_ReferenceFile.isDirectory()) {
       // obtain reference from callable actor
       try {
-	m_Reference = (Instances) CallabledActorHelper.getSetupFromSource(null, m_ReferenceActor, this);
+	m_Reference = (Instances) CallableActorHelper.getSetupFromSource(null, m_ReferenceActor, this);
       }
       catch (Exception e) {
 	m_Reference = null;

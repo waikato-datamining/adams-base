@@ -399,7 +399,7 @@ public class ActorUtils {
     int				i;
     ActorHandler		handler;
     ActorHandler		subhandler;
-    AbstractExternalActor	extActor;
+    ExternalActorHandler	extActor;
     AbstractActor		root;
     ArrayList<String>		list;
 
@@ -415,8 +415,8 @@ public class ActorUtils {
 	  index = handler.indexOf(child.getName());
 	  for (i = index - 1; i >= 0; i--) {
 	    subhandler = null;
-	    if (handler.get(i) instanceof AbstractExternalActor) {
-	      extActor = (AbstractExternalActor) handler.get(i);
+	    if (handler.get(i) instanceof ExternalActorHandler) {
+	      extActor = (ExternalActorHandler) handler.get(i);
 	      if (extActor.getExternalActor() instanceof ActorHandler)
 		subhandler = (ActorHandler) extActor.getExternalActor();
 	    }
@@ -624,7 +624,7 @@ public class ActorUtils {
   protected static AbstractActor findClosestType(ActorHandler handler, Class type) {
     AbstractActor		result;
     int				i;
-    AbstractExternalActor	external;
+    ExternalActorHandler	external;
 
     result = null;
 
@@ -633,8 +633,8 @@ public class ActorUtils {
 	result = handler.get(i);
 	break;
       }
-      else if (handler.get(i) instanceof AbstractExternalActor) {
-	external = (AbstractExternalActor) handler.get(i);
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) handler.get(i);
 	if (external.getExternalActor() instanceof ActorHandler) {
 	  result = findClosestType((ActorHandler) external.getExternalActor(), type);
 	  if (result != null)
@@ -1225,17 +1225,17 @@ public class ActorUtils {
             updateErrorHandler(internal, handler);
           }
         }
-        else if (ClassLocator.isSubclass(AbstractExternalActor.class, option.getBaseClass())) {
+        else if (ClassLocator.hasInterface(ExternalActorHandler.class, option.getBaseClass())) {
           Object current = option.getCurrentValue();
           Actor external = null;
           if (option.isMultiple()) {
             for (int i = 0; i < Array.getLength(current); i++) {
-              external = ((AbstractExternalActor) Array.get(current, i)).getExternalActor();
+              external = ((ExternalActorHandler) Array.get(current, i)).getExternalActor();
               updateErrorHandler(external, handler);
             }
           }
           else {
-            external = ((AbstractExternalActor) current).getExternalActor();
+            external = ((ExternalActorHandler) current).getExternalActor();
             updateErrorHandler(external, handler);
           }
         }

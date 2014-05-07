@@ -30,7 +30,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -304,7 +304,7 @@ public class WekaTrainClassifier
   protected weka.classifiers.Classifier getClassifierInstance() throws Exception {
     weka.classifiers.Classifier   result;
 
-    result = (weka.classifiers.Classifier) CallabledActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this);
+    result = (weka.classifiers.Classifier) CallableActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this);
     if (result == null)
       throw new IllegalStateException("Failed to obtain classifier from '" + m_Classifier + "'!");
 

@@ -26,7 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 
 /**
@@ -256,7 +256,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	m_Model = (T) CallabledActorHelper.getSetup(null, m_ModelActor, this);
+	m_Model = (T) CallableActorHelper.getSetup(null, m_ModelActor, this);
       }
       catch (Exception e) {
 	m_Model = null;

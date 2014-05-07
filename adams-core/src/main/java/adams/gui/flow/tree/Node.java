@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -31,10 +31,10 @@ import adams.core.net.HtmlUtils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
@@ -754,7 +754,7 @@ public class Node
    */
   @Override
   public boolean canExpand() {
-    return (getActor() instanceof AbstractExternalActor);
+    return (getActor() instanceof ExternalActorHandler);
   }
   
   /**
@@ -764,7 +764,7 @@ public class Node
    */
   @Override
   public boolean getExpansionOccurred() {
-    if (getActor() instanceof AbstractExternalActor)
+    if (getActor() instanceof ExternalActorHandler)
       return m_ExpansionOccurred;
     else
       return true;
@@ -778,14 +778,14 @@ public class Node
   @Override
   protected boolean doExpand() {
     boolean			result;
-    AbstractExternalActor	actor;
+    ExternalActorHandler	actor;
     String			msg;
     Node			node;
     
     result = false;
     
-    if (getActor() instanceof AbstractExternalActor) {
-      actor = (AbstractExternalActor) getActor();
+    if (getActor() instanceof ExternalActorHandler) {
+      actor = (ExternalActorHandler) getActor();
       msg   = actor.setUpExternalActor();
       if (msg == null) {
 	node = m_Owner.buildTree(this, actor.getExternalActor(), true);
@@ -805,8 +805,8 @@ public class Node
    */
   @Override
   protected void doReset() {
-    if (getActor() instanceof AbstractExternalActor) {
-      ((AbstractExternalActor) getActor()).cleanUpExternalActor();
+    if (getActor() instanceof ExternalActorHandler) {
+      ((ExternalActorHandler) getActor()).cleanUpExternalActor();
     }
   }
   

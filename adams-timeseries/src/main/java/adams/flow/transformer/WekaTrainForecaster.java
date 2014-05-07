@@ -26,7 +26,7 @@ import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaForecastModelContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -240,7 +240,7 @@ public class WekaTrainForecaster
    * @return		the forecaster
    */
   protected AbstractForecaster getForecasterInstance() {
-    return (AbstractForecaster) CallabledActorHelper.getSetup(AbstractForecaster.class, m_Forecaster, this);
+    return (AbstractForecaster) CallableActorHelper.getSetup(AbstractForecaster.class, m_Forecaster, this);
   }
 
   /**

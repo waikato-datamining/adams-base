@@ -53,7 +53,7 @@ public class FlowVariables
   protected AbstractActor m_Flow;
 
   /** the helper class. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /**
    * Initializes the container.
@@ -62,7 +62,7 @@ public class FlowVariables
     super();
     
     m_Flow   = null;
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
   
   /**

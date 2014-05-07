@@ -15,7 +15,7 @@
 
 /**
  * EditExternalFlow.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.menu;
 
@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import adams.core.io.FlowFile;
-import adams.flow.core.AbstractExternalActor;
+import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.StateContainer;
 
@@ -79,9 +79,9 @@ public class EditExternalFlow
       }
       @Override
       public boolean stateApplies(StateContainer state) {
-	boolean result = state.editable && state.isSingleSel && (state.selNode.getActor() instanceof AbstractExternalActor);
+	boolean result = state.editable && state.isSingleSel && (state.selNode.getActor() instanceof ExternalActorHandler);
 	if (result) {
-	  FlowFile file = ((AbstractExternalActor) state.selNode.getActor()).getActorFile();
+	  FlowFile file = ((ExternalActorHandler) state.selNode.getActor()).getActorFile();
 	  result = file.exists() && !file.isDirectory();
 	}
 	return result;

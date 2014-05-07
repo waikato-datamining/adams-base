@@ -28,7 +28,7 @@ import adams.core.base.BaseString;
 import adams.flow.container.AbstractContainer;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallabledActorHelper;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -313,7 +313,7 @@ public class MakeContainer
    * @return		the obtained value
    */
   protected Object getValue(CallableActorReference name) {
-    return CallabledActorHelper.getSetupFromSource(null, name, this);
+    return CallableActorHelper.getSetupFromSource(null, name, this);
   }
 
   /**

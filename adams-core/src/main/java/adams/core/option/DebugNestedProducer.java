@@ -15,14 +15,14 @@
 
 /**
  * DebugNestedProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import adams.flow.core.AbstractExternalActor;
+import adams.flow.core.ExternalActorHandler;
 
 /**
  * Nested producer that outputs format useful for debugging purposes.
@@ -48,9 +48,9 @@ public class DebugNestedProducer
    */
   @Override
   protected Object getCurrentValue(AbstractOption option) {
-    if (    (option.getOwner().getOwner() instanceof AbstractExternalActor)
+    if (    (option.getOwner().getOwner() instanceof ExternalActorHandler)
 	 && option.getProperty().equals(PROPERTY_EXTERNALACTOR_FILE) )
-      return ((AbstractExternalActor) option.getOwner().getOwner()).getExternalActor();
+      return ((ExternalActorHandler) option.getOwner().getOwner()).getExternalActor();
     else
       return option.getCurrentValue();
   }
@@ -64,7 +64,7 @@ public class DebugNestedProducer
    */
   @Override
   protected boolean isDefaultValue(AbstractArgumentOption option, Object value) {
-    if (    (option.getOwner().getOwner() instanceof AbstractExternalActor)
+    if (    (option.getOwner().getOwner() instanceof ExternalActorHandler)
 	 && option.getProperty().equals(PROPERTY_EXTERNALACTOR_FILE) )
       return false;
     else

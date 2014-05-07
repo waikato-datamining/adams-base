@@ -44,7 +44,7 @@ public abstract class AbstractCopyCallableActor
   protected AbstractActor m_CallableActor;
 
   /** the helper class. */
-  protected CallabledActorHelper m_Helper;
+  protected CallableActorHelper m_Helper;
 
   /**
    * Adds options to the internal list of options.
@@ -65,7 +65,7 @@ public abstract class AbstractCopyCallableActor
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallabledActorHelper();
+    m_Helper = new CallableActorHelper();
   }
 
   /**
