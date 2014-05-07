@@ -25,8 +25,7 @@ package adams.flow.core;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface CallableActorUser 
-  extends Actor {
+public interface CallableActorUser {
 
   /**
    * Returns the currently set callable actor.
