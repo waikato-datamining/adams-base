@@ -11,8 +11,7 @@ package adams.flow.core;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface InternalActorHandler
-  extends Actor {
+public interface InternalActorHandler {
 
   /**
    * Returns the internal actor.
