@@ -15,7 +15,7 @@
 
 /*
  * PDFMerge.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.core.Token;
@@ -186,33 +187,19 @@ public class PDFMerge
    */
   @Override
   protected String doExecute() {
-    String	result;
-    File[]	files;
-    int		i;
-    int		n;
-    int		pages;
-    Document 	document;
-    PdfCopy 	copy;
-    PdfReader 	reader;
+    String		result;
+    PlaceholderFile[]	files;
+    int			i;
+    int			n;
+    int			pages;
+    Document 		document;
+    PdfCopy 		copy;
+    PdfReader 		reader;
 
     result = null;
 
     // get files
-    files = null;
-    if (m_InputToken.getPayload() instanceof File) {
-      files = new File[]{(File) m_InputToken.getPayload()};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      files = (File[]) m_InputToken.getPayload();
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      files = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      files = new File[((String[]) m_InputToken.getPayload()).length];
-      for (i = 0; i < files.length; i++)
-	files[i] = new PlaceholderFile(((String[]) m_InputToken.getPayload())[i]);
-    }
+    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     try {
       if (isLoggingEnabled())

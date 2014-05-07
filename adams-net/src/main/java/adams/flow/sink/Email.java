@@ -15,7 +15,7 @@
 
 /*
  * Email.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -29,6 +29,7 @@ import javax.swing.SwingWorker;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailAddress;
@@ -606,8 +607,7 @@ public class Email
   @Override
   protected String doExecute() {
     String			result;
-    final File[]		attachments;
-    int				i;
+    final PlaceholderFile[]	attachments;
     final String		subject;
     final String		body;
     final adams.core.net.Email	email;
@@ -617,24 +617,10 @@ public class Email
 
     // get attachments (if any)
     if ((m_InputToken == null) || (m_InputToken instanceof NullToken)) {
-      attachments = new File[0];
-    }
-    else if (m_InputToken.getPayload() instanceof File) {
-      attachments = new File[]{(File) m_InputToken.getPayload()};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      attachments = (File[]) m_InputToken.getPayload();
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      attachments = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      attachments = new File[((String[]) m_InputToken.getPayload()).length];
-      for (i = 0; i < attachments.length; i++)
-	attachments[i] = new PlaceholderFile(((String[]) m_InputToken.getPayload())[i]);
+      attachments = new PlaceholderFile[0];
     }
     else {
-      attachments = null;
+      attachments = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
     }
 
     // replace variables

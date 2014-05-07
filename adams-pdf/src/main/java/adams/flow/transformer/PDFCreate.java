@@ -15,7 +15,7 @@
 
 /*
  * PDFCreate.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import java.io.File;
 import adams.core.QuickInfoHelper;
 import adams.core.io.AbstractPdfProclet;
 import adams.core.io.CsvPdfProclet;
+import adams.core.io.FileUtils;
 import adams.core.io.ImagePdfProclet;
 import adams.core.io.PDFGenerator;
 import adams.core.io.PDFGenerator.PageOrientation;
@@ -318,28 +319,13 @@ public class PDFCreate
   @Override
   protected String doExecute() {
     String		result;
-    File[]		files;
-    int			i;
+    PlaceholderFile[]	files;
     PDFGenerator	generator;
 
     result = null;
 
     // get files
-    files = null;
-    if (m_InputToken.getPayload() instanceof File) {
-      files = new File[]{(File) m_InputToken.getPayload()};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      files = (File[]) m_InputToken.getPayload();
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      files = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      files = new File[((String[]) m_InputToken.getPayload()).length];
-      for (i = 0; i < files.length; i++)
-	files[i] = new PlaceholderFile(((String[]) m_InputToken.getPayload())[i]);
-    }
+    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     // create PDF document
     generator = new PDFGenerator();

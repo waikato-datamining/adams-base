@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -949,6 +949,74 @@ public class FileUtils {
 	  }
 	}
       }
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Turns String, String[], File, File[] into a {@link PlaceholderFile} array.
+   * 
+   * @param input	the input
+   * @return		the {@link PlaceholderFile} array
+   * @throws IllegalArgumentException	if unsupported input class
+   */
+  public static PlaceholderFile[] toPlaceholderFileArray(Object input) {
+    PlaceholderFile[]	result;
+    String[]		str;
+    int			i;
+
+    if (input instanceof String) {
+      result = new PlaceholderFile[]{new PlaceholderFile((String) input)};
+    }
+    else if (input instanceof String[]) {
+      str   = (String[]) input;
+      result = new PlaceholderFile[str.length];
+      for (i = 0; i < str.length; i++)
+	result[i] = new PlaceholderFile(str[i]);
+    }
+    else if (input instanceof File) {
+      result = new PlaceholderFile[]{new PlaceholderFile((File) input)};
+    }
+    else if (input instanceof File[]) {
+      result = (PlaceholderFile[]) input;
+    }
+    else {
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Turns String, String[], File, File[] into a {@link File} array.
+   * 
+   * @param input	the input
+   * @return		the {@link File} array
+   * @throws IllegalArgumentException	if unsupported input class
+   */
+  public static File[] toFileArray(Object input) {
+    File[]	result;
+    String[]	str;
+    int		i;
+
+    if (input instanceof String) {
+      result = new File[]{new File((String) input)};
+    }
+    else if (input instanceof String[]) {
+      str   = (String[]) input;
+      result = new File[str.length];
+      for (i = 0; i < str.length; i++)
+	result[i] = new File(str[i]);
+    }
+    else if (input instanceof File) {
+      result = new File[]{(File) input};
+    }
+    else if (input instanceof File[]) {
+      result = (File[]) input;
+    }
+    else {
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
     }
     
     return result;
