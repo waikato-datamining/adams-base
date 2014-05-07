@@ -35,6 +35,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import adams.core.Placeholders;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.management.OS;
@@ -955,6 +956,19 @@ public class FileUtils {
   }
   
   /**
+   * Ensures that the file string no longer contains a placeholder.
+   * 
+   * @param file	the file name to process
+   * @return		the "purged" file name
+   */
+  public static String convertPlaceholder(String file) {
+    if (file.startsWith(Placeholders.PLACEHOLDER_START))
+      return new PlaceholderFile(file).getAbsolutePath();
+    else
+      return file;
+  }
+
+  /**
    * Turns String, String[], File, File[] into a {@link PlaceholderFile} array.
    * 
    * @param input	the input
@@ -1004,16 +1018,16 @@ public class FileUtils {
     int		i;
 
     if (input instanceof String) {
-      result = new File[]{new PlaceholderFile((String) input).getAbsoluteFile()};
+      result = new File[]{new File(convertPlaceholder((String) input))};
     }
     else if (input instanceof String[]) {
       str   = (String[]) input;
       result = new File[str.length];
       for (i = 0; i < str.length; i++)
-	result[i] = new PlaceholderFile(str[i]).getAbsoluteFile();
+	result[i] = new File(convertPlaceholder(str[i]));
     }
     else if (input instanceof File) {
-      result = new File[]{new PlaceholderFile((File) input).getAbsoluteFile()};
+      result = new File[]{((File) input).getAbsoluteFile()};
     }
     else if (input instanceof File[]) {
       files  = (File[]) input;
@@ -1027,7 +1041,7 @@ public class FileUtils {
     
     return result;
   }
-  
+
   /**
    * Turns String, String[], File, File[] into a {@link String} array.
    * Ensures that strings don't contain placeholders.
@@ -1043,13 +1057,13 @@ public class FileUtils {
     int		i;
 
     if (input instanceof String) {
-      result = new String[]{new PlaceholderFile((String) input).getAbsolutePath()};
+      result = new String[]{convertPlaceholder((String) input)};
     }
     else if (input instanceof String[]) {
       str    = (String[]) input;
       result = new String[str.length];
       for (i = 0; i < str.length; i++)
-	result[i] = new PlaceholderFile(str[i]).getAbsolutePath();
+	result[i] = convertPlaceholder(str[i]);
     }
     else if (input instanceof File) {
       result = new String[]{((File) input).getAbsolutePath()};
