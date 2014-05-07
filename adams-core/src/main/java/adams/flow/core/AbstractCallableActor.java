@@ -38,7 +38,7 @@ public abstract class AbstractCallableActor
   /** for serialization. */
   private static final long serialVersionUID = -6652513967046303107L;
 
-  /** the key for backing up the global actor. */
+  /** the key for backing up the callable actor. */
   public final static String BACKUP_CALLABLEACTOR = "callable actor";
 
   /** the callable name. */
@@ -122,7 +122,7 @@ public abstract class AbstractCallableActor
   }
 
   /**
-   * Tries to find the callable actor referenced by its global name.
+   * Tries to find the callable actor referenced by its callable name.
    *
    * @return		the callable actor or null if not found
    */
