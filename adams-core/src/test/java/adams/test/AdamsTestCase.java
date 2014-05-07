@@ -15,7 +15,7 @@
 
 /**
  * AdamsTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
@@ -172,6 +172,18 @@ public class AdamsTestCase
     m_NoQuickInfoRegressionTest = Boolean.getBoolean(PROPERTY_NOQUICKINFOREGRESSION);
   }
 
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(Object[] expected, Object[] actual) {
+    assertEquals("Array length differs", expected.length, actual.length);
+    for (int i = 0; i < expected.length; i++)
+      assertEquals("Array element #" + (i+1) + " differs", expected[i], actual[i]);
+  }
+  
   /**
    * Override to run the test and assert its state. Checks whether the test
    * or test-method is platform-specific.
