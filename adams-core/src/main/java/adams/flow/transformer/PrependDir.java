@@ -15,7 +15,7 @@
 
 /*
  * PrependDir.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import java.io.File;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
@@ -244,30 +245,9 @@ public class PrependDir
 
     result = null;
 
-    array  = false;
-    string = false;
-    if (m_InputToken.getPayload() instanceof File) {
-      strings = new String[]{new PlaceholderFile((File) m_InputToken.getPayload()).getAbsolutePath()};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      files   = (File[]) m_InputToken.getPayload();
-      strings = new String[files.length];
-      array   = true;
-      for (i = 0; i < files.length; i++)
-	strings[i] = new PlaceholderFile(files[i]).getAbsolutePath();
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      strings = new String[]{(String) m_InputToken.getPayload()};
-      string  = true;
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      strings = (String[]) m_InputToken.getPayload();
-      array   = true;
-      string  = true;
-    }
-    else {
-      throw new IllegalStateException("Unhandled input type: " + m_InputToken.getPayload().getClass());
-    }
+    array  = m_InputToken.getPayload().getClass().isArray();
+    string = (m_InputToken.getPayload() instanceof String) || (m_InputToken.getPayload() instanceof String[]);
+    strings  = FileUtils.toStringArray(m_InputToken.getPayload());
 
     files = new File[strings.length];
     for (i = 0; i < strings.length; i++) {

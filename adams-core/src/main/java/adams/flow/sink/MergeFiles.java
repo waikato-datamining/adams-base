@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 
 /**
@@ -122,8 +123,7 @@ public class MergeFiles
   @Override
   protected String doExecute() {
     String		result;
-    String[]		filesStr;
-    File[]		files;
+    PlaceholderFile[]	files;
     FileReader		reader;
     FileWriter		writer;
     int			i;
@@ -133,15 +133,7 @@ public class MergeFiles
     result = null;
 
     // get input files
-    if (m_InputToken.getPayload() instanceof String[]) {
-      filesStr = (String[]) m_InputToken.getPayload();
-      files    = new File[filesStr.length];
-      for (i = 0; i < filesStr.length; i++)
-	files[i] = new PlaceholderFile(filesStr[i]);
-    }
-    else {
-      files = (File[]) m_InputToken.getPayload();
-    }
+    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
     
     // set up readers/writer
     buffer = new char[1024];

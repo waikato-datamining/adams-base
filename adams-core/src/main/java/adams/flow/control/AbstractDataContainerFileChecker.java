@@ -15,7 +15,7 @@
 
 /**
  * AbstractDataContainerFileChecker.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -547,24 +547,7 @@ public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
 
     isArray = (m_InputToken.getPayload() instanceof File[]) || (m_InputToken.getPayload() instanceof String[]);
     isFile  = (m_InputToken.getPayload() instanceof File[]) || (m_InputToken.getPayload() instanceof File);
-    if (isArray) {
-      if (isFile) {
-	files = (File[]) m_InputToken.getPayload();
-	for (i = 0; i < files.length; i++)
-	  files[i] = new PlaceholderFile(files[i]);
-      }
-      else {
-	files = new File[((String[]) m_InputToken.getPayload()).length];
-	for (i = 0; i < files.length; i++)
-	  files[i] = new PlaceholderFile(((String[]) m_InputToken.getPayload())[i]);
-      }
-    }
-    else {
-      if (isFile)
-	files = new File[]{new PlaceholderFile((File) m_InputToken.getPayload())};
-      else
-	files = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-    }
+    files   = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     now     = new Date();
     valid   = new ArrayList<File>();

@@ -15,7 +15,7 @@
 
 /*
  * DirName.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import java.io.File;
 
 import adams.core.ClassCrossReference;
-import adams.core.io.PlaceholderFile;
+import adams.core.io.FileUtils;
 import adams.flow.core.Token;
 
 /**
@@ -94,6 +94,7 @@ public class DirName
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "Extracts the directory part of the file/directory passing through, i.e., any "
@@ -132,6 +133,7 @@ public class DirName
    *
    * @return		null if everything is fine, otherwise error message
    */
+  @Override
   protected String doExecute() {
     String	result;
     String[]	strings;
@@ -142,30 +144,9 @@ public class DirName
 
     result = null;
 
-    array  = false;
-    string = false;
-    if (m_InputToken.getPayload() instanceof File) {
-      files = new File[]{new PlaceholderFile((File) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      files = (File[]) m_InputToken.getPayload();
-      array = true;
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      files = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-      string = true;
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      strings = (String[]) m_InputToken.getPayload();
-      files   = new File[strings.length];
-      for (i = 0; i < strings.length; i++)
-	files[i] = new PlaceholderFile(strings[i]);
-      array = true;
-      string = true;
-    }
-    else {
-      throw new IllegalStateException("Unhandled input type: " + m_InputToken.getPayload().getClass());
-    }
+    array  = m_InputToken.getPayload().getClass().isArray();
+    string = (m_InputToken.getPayload() instanceof String) || (m_InputToken.getPayload() instanceof String[]);
+    files  = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     strings = new String[files.length];
     for (i = 0; i < files.length; i++) {

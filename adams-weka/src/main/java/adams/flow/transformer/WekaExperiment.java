@@ -15,17 +15,15 @@
 
 /*
  * WekaExperiment.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.PlaceholderFile;
+import adams.core.io.FileUtils;
 import adams.data.WekaExperimentFile;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -245,9 +243,7 @@ public class WekaExperiment
   protected String doExecute() {
     String			result;
     weka.experiment.Experiment	exp;
-    File[]			tmpFiles;
-    List<File>			files;
-    String[]			tmpStr;
+    String[]			files;
     int				i;
 
     result = null;
@@ -264,29 +260,13 @@ public class WekaExperiment
     // more datasets to add?
     if (m_InputToken != null) {
       // get files
-      files = new ArrayList<File>();
-      if (m_InputToken.getPayload() instanceof File) {
-	files.add(((File) m_InputToken.getPayload()).getAbsoluteFile());
-      }
-      else if (m_InputToken.getPayload() instanceof File[]) {
-	tmpFiles = (File[]) m_InputToken.getPayload();
-	for (i = 0; i < tmpFiles.length; i++)
-	  files.add(tmpFiles[i].getAbsoluteFile());
-      }
-      else if (m_InputToken.getPayload() instanceof String) {
-	files.add(new PlaceholderFile((String) m_InputToken.getPayload()).getAbsoluteFile());
-      }
-      else if (m_InputToken.getPayload() instanceof String[]) {
-	tmpStr = (String[]) m_InputToken.getPayload();
-	for (i = 0; i < tmpStr.length; i++)
-	  files.add(new PlaceholderFile(tmpStr[i]).getAbsoluteFile());
-      }
+      files = FileUtils.toStringArray(m_InputToken.getPayload());
 
       // add files
       if (isLoggingEnabled())
 	getLogger().info("Adding files: " + files);
-      for (i = 0; i < files.size(); i++)
-	exp.getDatasets().addElement(files.get(i));
+      for (i = 0; i < files.length; i++)
+	exp.getDatasets().addElement(new File(files[i]));
     }
 
     // run experiment

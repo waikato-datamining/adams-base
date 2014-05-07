@@ -199,36 +199,17 @@ public class FileExtension
    */
   @Override
   protected String doExecute() {
-    String	result;
-    String[]	strings;
-    File[]	files;
-    int		i;
-    boolean	array;
-    int		pos;
+    String		result;
+    String[]		strings;
+    PlaceholderFile[]	files;
+    int			i;
+    boolean		array;
+    int			pos;
 
     result = null;
 
-    array = false;
-    if (m_InputToken.getPayload() instanceof File) {
-      files = new File[]{new PlaceholderFile((File) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof File[]) {
-      files = (File[]) m_InputToken.getPayload();
-      array = true;
-    }
-    else if (m_InputToken.getPayload() instanceof String) {
-      files = new File[]{new PlaceholderFile((String) m_InputToken.getPayload())};
-    }
-    else if (m_InputToken.getPayload() instanceof String[]) {
-      strings = (String[]) m_InputToken.getPayload();
-      files   = new File[strings.length];
-      for (i = 0; i < strings.length; i++)
-	files[i] = new PlaceholderFile(strings[i]);
-      array = true;
-    }
-    else {
-      throw new IllegalStateException("Unhandled input type: " + m_InputToken.getPayload().getClass());
-    }
+    array = m_InputToken.getPayload().getClass().isArray();
+    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     strings = new String[files.length];
     for (i = 0; i < files.length; i++) {
