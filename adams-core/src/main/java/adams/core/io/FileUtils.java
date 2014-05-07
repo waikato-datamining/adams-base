@@ -1021,4 +1021,38 @@ public class FileUtils {
     
     return result;
   }
+  
+  /**
+   * Turns String, String[], File, File[] into a {@link String} array.
+   * 
+   * @param input	the input
+   * @return		the {@link String} array
+   * @throws IllegalArgumentException	if unsupported input class
+   */
+  public static String[] toStringArray(Object input) {
+    String[]	result;
+    File[]	files;
+    int		i;
+
+    if (input instanceof String) {
+      result = new String[]{(String) input};
+    }
+    else if (input instanceof String[]) {
+      result = (String[]) input;
+    }
+    else if (input instanceof File) {
+      result = new String[]{((File) input).getAbsolutePath()};
+    }
+    else if (input instanceof File[]) {
+      files  = (File[]) input;
+      result = new String[files.length];
+      for (i = 0; i < files.length; i++)
+	result[i] = files[i].getAbsolutePath();
+    }
+    else {
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
+    }
+    
+    return result;
+  }
 }
