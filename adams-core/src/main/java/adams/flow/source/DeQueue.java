@@ -20,10 +20,9 @@
 
 package adams.flow.source;
 
-import java.util.ArrayList;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
+import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -256,16 +255,16 @@ public class DeQueue
    */
   @Override
   public Token output() {
-    Token	result;
-    ArrayList	queue;
+    Token		result;
+    StorageQueueHandler	queue;
 
     result = null;
-    queue  = (ArrayList) getStorageHandler().getStorage().get(m_StorageName);
+    queue  = (StorageQueueHandler) getStorageHandler().getStorage().get(m_StorageName);
     
     while ((result == null) && !m_Stopped) {
       try {
 	if (queue.size() > 0) {
-	  result = new Token(queue.remove(0));
+	  result = new Token(queue.remove());
 	}
 	else {
 	  synchronized(this) {

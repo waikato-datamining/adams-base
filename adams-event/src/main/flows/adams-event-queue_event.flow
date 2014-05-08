@@ -1,12 +1,24 @@
 # Project: adams
-# Date: 2014-04-30 16:45:12
+# Date: 2014-05-08 11:55:14
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Shows how to add items to a queue using EnQueue and \nhow to listen to the queue using the QueueEvent actor.
+	Shows how to add items to a queue using EnQueue and \nhow to listen to the queue using the QueueEvent actor.\nThe queue itself is being monitored as well.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.LogViewer
+					-x
+					-3
+					-dialog
+						adams.flow.sink.logview.DefaultLogEntryDialog
 	-actor
 		adams.flow.standalone.QueueInit
+			-log
+			LogViewer
+			-monitor
+			LogViewer
 	-actor
 		adams.flow.standalone.Events
 			-actor

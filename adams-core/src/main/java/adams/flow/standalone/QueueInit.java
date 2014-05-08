@@ -19,11 +19,17 @@
  */
 package adams.flow.standalone;
 
-import java.util.ArrayList;
+import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
+import adams.db.LogEntry;
 import adams.flow.control.StorageName;
+import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
+import adams.flow.core.AbstractActor;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.CallableActorUser;
 
 /**
  <!-- globalinfo-start -->
@@ -45,7 +51,7 @@ import adams.flow.control.StorageUpdater;
  * &nbsp;&nbsp;&nbsp;default: QueueInit
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -67,6 +73,24 @@ import adams.flow.control.StorageUpdater;
  * &nbsp;&nbsp;&nbsp;default: queue
  * </pre>
  * 
+ * <pre>-limit &lt;int&gt; (property: limit)
+ * &nbsp;&nbsp;&nbsp;The limit of the queue; use &lt;= 0 for unlimited size.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-log &lt;adams.flow.core.CallableActorReference&gt; (property: log)
+ * &nbsp;&nbsp;&nbsp;The name of the (optional) callable actor to use for logging errors of type 
+ * &nbsp;&nbsp;&nbsp;adams.db.LogEntry.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ * 
+ * <pre>-monitor &lt;adams.flow.core.CallableActorReference&gt; (property: monitor)
+ * &nbsp;&nbsp;&nbsp;The name of the (optional) callable actor to use for monitoring; generates 
+ * &nbsp;&nbsp;&nbsp;tokens of type adams.db.LogEntry.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -74,13 +98,37 @@ import adams.flow.control.StorageUpdater;
  */
 public class QueueInit
   extends AbstractStandalone
-  implements StorageUpdater {
+  implements StorageUpdater, CallableActorUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 4182914190162129217L;
 
+  /** the key for backing up the log actor. */
+  public final static String BACKUP_LOGACTOR = "log actor";
+
+  /** the key for backing up the monitoring actor. */
+  public final static String BACKUP_MONITORACTOR = "monitor actor";
+
   /** the name of the queue in the internal storage. */
   protected StorageName m_StorageName;
+
+  /** the limit of the queue (<= 0 is unlimited). */
+  protected int m_Limit;
+
+  /** the callable name for the log. */
+  protected CallableActorReference m_Log;
+
+  /** the log actor. */
+  protected AbstractActor m_LogActor;
+
+  /** the callable name for the monitor. */
+  protected CallableActorReference m_Monitor;
+
+  /** the monitor actor. */
+  protected AbstractActor m_MonitorActor;
+
+  /** the helper class. */
+  protected CallableActorHelper m_Helper;
 
   /**
    * Returns a string describing the object.
@@ -103,6 +151,38 @@ public class QueueInit
     m_OptionManager.add(
 	    "storage-name", "storageName",
 	    new StorageName("queue"));
+
+    m_OptionManager.add(
+	    "limit", "limit",
+	    -1, -1, null);
+
+    m_OptionManager.add(
+	    "log", "log",
+	    new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+	    "monitor", "monitor",
+	    new CallableActorReference("unknown"));
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_LogActor = null;
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Helper = new CallableActorHelper();
   }
 
   /**
@@ -124,6 +204,9 @@ public class QueueInit
     String	result;
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
+    result += QuickInfoHelper.toString(this, "log", m_Log, ", log: ");
+    result += QuickInfoHelper.toString(this, "monitor", m_Monitor, ", monitor: ");
 
     return result;
   }
@@ -156,7 +239,188 @@ public class QueueInit
   public String storageNameTipText() {
     return "The name of the queue in the internal storage.";
   }
+
+  /**
+   * Sets the limit of the queue.
+   *
+   * @param value	the limit, <=0 for unlimited
+   */
+  public void setLimit(int value) {
+    if (value <= 0)
+      value = -1;
+    m_Limit = value;
+    reset();
+  }
+
+  /**
+   * Returns the limit of the queue.
+   *
+   * @return		the limit, <=0 is unlimited
+   */
+  public int getLimit() {
+    return m_Limit;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String limitTipText() {
+    return "The limit of the queue; use <= 0 for unlimited size.";
+  }
+
+  /**
+   * Sets the name of the callable actor to use for logging errors.
+   *
+   * @param value 	the callable name
+   */
+  public void setLog(CallableActorReference value) {
+    m_Log = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the callable actor in use for logging errors.
+   *
+   * @return 		the callable name
+   */
+  public CallableActorReference getLog() {
+    return m_Log;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String logTipText() {
+    return 
+	"The name of the (optional) callable actor to use for logging errors of type " 
+	+ LogEntry.class.getName() + ".";
+  }
+
+  /**
+   * Sets the name of the callable actor to use for monitoring.
+   *
+   * @param value 	the callable name
+   */
+  public void setMonitor(CallableActorReference value) {
+    m_Monitor = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the callable actor in use for monitoring.
+   *
+   * @return 		the callable name
+   */
+  public CallableActorReference getMonitor() {
+    return m_Monitor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String monitorTipText() {
+    return 
+	"The name of the (optional) callable actor to use for monitoring; generates tokens of type " 
+	+ LogEntry.class.getName() + ".";
+  }
+
+  /**
+   * Tries to find the callable actor referenced by its callable name.
+   *
+   * @param name	the name of the actor
+   * @return		the callable actor or null if not found
+   */
+  protected AbstractActor findCallableActor(CallableActorReference name) {
+    return m_Helper.findCallableActorRecursive(this, name);
+  }
+
+  /**
+   * Returns the currently set callable actor.
+   *
+   * @return		the actor, can be null
+   */
+  @Override
+  public AbstractActor getCallableActor() {
+    return m_LogActor;
+  }
+
+  /**
+   * Removes entries from the backup.
+   */
+  @Override
+  protected void pruneBackup() {
+    super.pruneBackup();
+    pruneBackup(BACKUP_LOGACTOR);
+    pruneBackup(BACKUP_MONITORACTOR);
+  }
+
+  /**
+   * Backs up the current state of the actor before update the variables.
+   *
+   * @return		the backup
+   */
+  @Override
+  protected Hashtable<String,Object> backupState() {
+    Hashtable<String,Object>	result;
+
+    result = super.backupState();
+
+    if (m_LogActor != null)
+      result.put(BACKUP_LOGACTOR, m_LogActor);
+    if (m_MonitorActor != null)
+      result.put(BACKUP_MONITORACTOR, m_MonitorActor);
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the actor before the variables got updated.
+   *
+   * @param state	the backup of the state to restore from
+   */
+  @Override
+  protected void restoreState(Hashtable<String,Object> state) {
+    super.restoreState(state);
+
+    if (state.containsKey(BACKUP_LOGACTOR)) {
+      m_LogActor = (AbstractActor) state.get(BACKUP_LOGACTOR);
+      state.remove(BACKUP_LOGACTOR);
+    }
+
+    if (state.containsKey(BACKUP_MONITORACTOR)) {
+      m_MonitorActor = (AbstractActor) state.get(BACKUP_MONITORACTOR);
+      state.remove(BACKUP_MONITORACTOR);
+    }
+  }
   
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+    
+    result = super.setUp();
+    
+    if (result == null) {
+      m_LogActor     = findCallableActor(getLog());
+      m_MonitorActor = findCallableActor(getMonitor());
+    }
+    
+    return result;
+  }
+
   /**
    * Executes the flow item.
    *
@@ -164,7 +428,12 @@ public class QueueInit
    */
   @Override
   protected String doExecute() {
-    getStorageHandler().getStorage().put(m_StorageName, new ArrayList());
+    StorageQueueHandler	handler;
+    
+    handler = new StorageQueueHandler(m_StorageName.getValue(), m_Limit, m_LogActor, m_MonitorActor);
+    handler.setLoggingLevel(getLoggingLevel());
+    getStorageHandler().getStorage().put(m_StorageName, handler);
+    
     return null;
   }
 }

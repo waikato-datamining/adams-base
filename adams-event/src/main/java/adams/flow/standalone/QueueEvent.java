@@ -20,7 +20,6 @@
 
 package adams.flow.standalone;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 import adams.core.QuickInfoHelper;
@@ -28,6 +27,7 @@ import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.Sequence;
 import adams.flow.control.StorageName;
+import adams.flow.control.StorageQueueHandler;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
@@ -123,16 +123,16 @@ public class QueueEvent
     
     @Override
     protected void doRun() {
-      ArrayList	queue;
-      Token	token;
+      StorageQueueHandler	queue;
+      Token			token;
 
-      queue = (ArrayList) getOwner().getStorageHandler().getStorage().get(getOwner().getStorageName());
+      queue = (StorageQueueHandler) getOwner().getStorageHandler().getStorage().get(getOwner().getStorageName());
 
       if (queue != null) {
 	while (!m_Stopped) {
 	  try {
 	    if (queue.size() > 0) {
-	      token = new Token(queue.remove(0));
+	      token = new Token(queue.remove());
 	      getOwner().getInternalActors().input(token);
 	      getOwner().getInternalActors().execute();
 	    }

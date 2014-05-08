@@ -20,10 +20,9 @@
 
 package adams.flow.sink;
 
-import java.util.ArrayList;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
+import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -179,7 +178,7 @@ public class EnQueue
    */
   @Override
   public void input(Token token) {
-    ((ArrayList) getStorageHandler().getStorage().get(m_StorageName)).add(token.getPayload());
+    ((StorageQueueHandler) getStorageHandler().getStorage().get(m_StorageName)).add(token.getPayload());
   }
 
   /**
