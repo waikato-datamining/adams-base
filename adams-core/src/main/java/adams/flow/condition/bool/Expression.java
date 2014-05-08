@@ -15,7 +15,7 @@
 
 /**
  * Expression.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -32,6 +32,7 @@ import adams.parser.BooleanExpressionText;
  <!-- globalinfo-start -->
  * Evaluates to 'true' if the expression evaluates to 'true'.<br/>
  * In case of integer or double tokens that arrive at the input, these can be accessed in the expression via 'X'; string tokens can be accessed via expression '"X"' (surrounding double quotes are required).<br/>
+ * If the incoming token is either a Report or a ReportHandler, the contents of the report get added as values as well (boolean, numeric or string) and you can access them via their name instead of 'X'.<br/>
  * <br/>
  * The following grammar is used for evaluating the boolean expressions:<br/>
  * <br/>
@@ -71,6 +72,7 @@ import adams.parser.BooleanExpressionText;
  *               | expr | expr (or: expr or expr)<br/>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br/>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br/>
+ *               | isNaN ( expr )<br/>
  * <br/>
  * # arithmetics<br/>
  *               | expr + expr<br/>
@@ -182,7 +184,10 @@ public class Expression
         "Evaluates to 'true' if the expression evaluates to 'true'.\n"
       + "In case of integer or double tokens that arrive at the input, these "
       + "can be accessed in the expression via 'X'; string tokens can be accessed "
-      + "via expression '\"X\"' (surrounding double quotes are required).\n\n"
+      + "via expression '\"X\"' (surrounding double quotes are required).\n"
+      + "If the incoming token is either a Report or a ReportHandler, the contents "
+      + "of the report get added as values as well (boolean, numeric or string) "
+      + "and you can access them via their name instead of 'X'.\n\n"
       + "The following grammar is used for evaluating the boolean expressions:\n\n"
       + getGrammar();
   }
