@@ -73,6 +73,11 @@ import adams.flow.core.CallableActorUser;
  * &nbsp;&nbsp;&nbsp;default: queue
  * </pre>
  * 
+ * <pre>-keep-existing &lt;boolean&gt; (property: keepExisting)
+ * &nbsp;&nbsp;&nbsp;If enabled, existing queues won't get re-initialized.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-limit &lt;int&gt; (property: limit)
  * &nbsp;&nbsp;&nbsp;The limit of the queue; use &lt;= 0 for unlimited size.
  * &nbsp;&nbsp;&nbsp;default: -1
@@ -111,6 +116,9 @@ public class QueueInit
 
   /** the name of the queue in the internal storage. */
   protected StorageName m_StorageName;
+  
+  /** whether to keep existing queues. */
+  protected boolean m_KeepExisting;
 
   /** the limit of the queue (<= 0 is unlimited). */
   protected int m_Limit;
@@ -151,6 +159,10 @@ public class QueueInit
     m_OptionManager.add(
 	    "storage-name", "storageName",
 	    new StorageName("queue"));
+
+    m_OptionManager.add(
+	    "keep-existing", "keepExisting",
+	    false);
 
     m_OptionManager.add(
 	    "limit", "limit",
@@ -204,6 +216,7 @@ public class QueueInit
     String	result;
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "keepExisting", m_KeepExisting, "keep", ", ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
     result += QuickInfoHelper.toString(this, "log", m_Log, ", log: ");
     result += QuickInfoHelper.toString(this, "monitor", m_Monitor, ", monitor: ");
@@ -238,6 +251,35 @@ public class QueueInit
    */
   public String storageNameTipText() {
     return "The name of the queue in the internal storage.";
+  }
+
+  /**
+   * Sets whether to keep any existing queue rather than overwriting it.
+   *
+   * @param value	true if to keep existing
+   */
+  public void setKeepExisting(boolean value) {
+    m_KeepExisting = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep any existing queue rather than overwriting it.
+   *
+   * @return		true if to keep existing
+   */
+  public boolean getKeepExisting() {
+    return m_KeepExisting;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepExistingTipText() {
+    return "If enabled, existing queues won't get re-initialized.";
   }
 
   /**
@@ -430,9 +472,11 @@ public class QueueInit
   protected String doExecute() {
     StorageQueueHandler	handler;
     
-    handler = new StorageQueueHandler(m_StorageName.getValue(), m_Limit, m_LogActor, m_MonitorActor);
-    handler.setLoggingLevel(getLoggingLevel());
-    getStorageHandler().getStorage().put(m_StorageName, handler);
+    if ((m_KeepExisting && !getStorageHandler().getStorage().has(m_StorageName)) || !m_KeepExisting) {
+      handler = new StorageQueueHandler(m_StorageName.getValue(), m_Limit, m_LogActor, m_MonitorActor);
+      handler.setLoggingLevel(getLoggingLevel());
+      getStorageHandler().getStorage().put(m_StorageName, handler);
+    }
     
     return null;
   }
