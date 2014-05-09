@@ -238,17 +238,22 @@ public class NestedFormatHelper {
    * Turns the nested options from an option handler into indentated lines.
    *
    * @param nested	the nested structure to turn into indentated lines
+   * @param lineNo	whether to add the line numbers
    * @param lines	the lines so far
    * @param level	the current level of indentation
    */
-  protected static void nestedToLines(List nested, List<String> lines, int level) {
+  protected static void nestedToLines(List nested, boolean lineNo, List<String> lines, int level) {
     int		i;
+    Line	line;
 
     for (i = 0; i < nested.size(); i++) {
-      if (nested.get(i).getClass() == Line.class)
-        lines.add(getIndentation(level) + ((Line) nested.get(i)).getContent());
-      else
-        nestedToLines((List) nested.get(i), lines, level + 1);
+      if (nested.get(i).getClass() == Line.class) {
+	line = (Line) nested.get(i);
+        lines.add((lineNo ? (line.getNumber()+1) + ":" : "") + getIndentation(level) + line.getContent());
+      }
+      else {
+        nestedToLines((List) nested.get(i), lineNo, lines, level + 1);
+      }
     }
   }
 
@@ -259,10 +264,21 @@ public class NestedFormatHelper {
    * @return		the indentated lines
    */
   public static List<String> nestedToLines(List nested) {
+    return nestedToLines(nested, false);
+  }
+
+  /**
+   * Turns the nested options from an option handler into indentated lines.
+   *
+   * @param nested	the nested structure to turn into indentated lines
+   * @param lineNo	whether to add the line numbers
+   * @return		the indentated lines
+   */
+  public static List<String> nestedToLines(List nested, boolean lineNo) {
     ArrayList<String>	result;
 
     result = new ArrayList<String>();
-    nestedToLines(nested, result, 0);
+    nestedToLines(nested, lineNo, result, 0);
 
     return result;
   }
@@ -274,18 +290,21 @@ public class NestedFormatHelper {
    * @param offset	the current offset
    * @return		the last line number updated
    */
-  protected static int renumber(ArrayList nested, int offset) {
+  protected static int renumber(List nested, int offset) {
     int		line;
+    int		index;
     
-    line = offset;
-    while (line < nested.size()) {
-      if (nested.get(line) instanceof ArrayList) {
-	line = renumber((ArrayList) nested.get(line), line);
+    line  = offset;
+    index = 0;
+    while (index < nested.size()) {
+      if (nested.get(index) instanceof ArrayList) {
+	line = renumber((ArrayList) nested.get(index), line);
       }
       else {
-	((Line) nested.get(line)).setNumber(line);
+	((Line) nested.get(index)).setNumber(line);
 	line++;
       }
+      index++;
     }
     
     return line;
@@ -296,7 +315,7 @@ public class NestedFormatHelper {
    *
    * @param lines	the nested lines to updated
    */
-  public static void renumber(ArrayList nested) {
+  public static void renumber(List nested) {
     renumber(nested, 0);
   }
 }

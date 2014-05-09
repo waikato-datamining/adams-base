@@ -32,8 +32,6 @@ import javax.swing.JPanel;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.AbstractOptionProducer;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.NestedProducer;
 import adams.core.option.OptionConsumer;
@@ -320,12 +318,18 @@ public class OptionsConversionPanel
     
     try {
       consumer = (OptionConsumer) m_InputFormat.getCurrent();
-      handler  = AbstractOptionConsumer.fromString(consumer.getClass(), m_TextAreaInput.getText());
-      producer = (OptionProducer) m_OutputFormat.getCurrent();
-      m_TextAreaOutput.setText(AbstractOptionProducer.toString(producer.getClass(), handler));
-      m_TextAreaOutput.getComponent().setCaretPosition(0);
-      m_TextAreaCodeOutput.setText("\"" + Utils.backQuoteChars(m_TextAreaOutput.getText()) + "\"");
-      m_TextAreaCodeOutput.getComponent().setCaretPosition(0);
+      handler  = consumer.fromString(m_TextAreaInput.getText());
+      if (handler != null) {
+	producer = (OptionProducer) m_OutputFormat.getCurrent();
+	producer.produce(handler);
+	m_TextAreaOutput.setText(producer.toString());
+	m_TextAreaOutput.getComponent().setCaretPosition(0);
+	m_TextAreaCodeOutput.setText("\"" + Utils.backQuoteChars(m_TextAreaOutput.getText()) + "\"");
+	m_TextAreaCodeOutput.getComponent().setCaretPosition(0);
+      }
+      else {
+	throw new IllegalStateException("Failed to parse input!" + (consumer.hasErrors() ? "\n" + Utils.flatten(consumer.getErrors(), "\n") : ""));
+      }
     }
     catch (Exception ex) {
       ex.printStackTrace();

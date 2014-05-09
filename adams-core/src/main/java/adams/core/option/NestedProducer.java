@@ -54,6 +54,9 @@ public class NestedProducer
   /** whether to print the classpath. */
   protected boolean m_OutputClasspath;
 
+  /** whether to print line numbers. */
+  protected boolean m_OutputLineNumbers;
+
   /** for formatting dates. */
   protected static DateFormat m_DateFormat;
   static {
@@ -77,9 +80,10 @@ public class NestedProducer
   protected void initialize() {
     super.initialize();
 
-    m_Blacklisted     = new Class[0];
-    m_OutputProlog    = true;
-    m_OutputClasspath = false;
+    m_Blacklisted       = new Class[0];
+    m_OutputProlog      = true;
+    m_OutputClasspath   = false;
+    m_OutputLineNumbers = false;
   }
 
   /**
@@ -158,6 +162,34 @@ public class NestedProducer
    */
   public String outputClasspathTipText() {
     return "Whether to output the classpath in the comments as well.";
+  }
+
+  /**
+   * Sets whether to output the line numbers.
+   *
+   * @param value	if true then the lines get prefixed with line numbers
+   */
+  public void setOutputLineNumbers(boolean value) {
+    m_OutputLineNumbers = value;
+  }
+
+  /**
+   * Returns whether line numbers get output.
+   *
+   * @return		true if lines get prefixed with line numbers
+   */
+  public boolean getOutputLineNumbers() {
+    return m_OutputLineNumbers;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputLineNumbersTipText() {
+    return "Whether to prefix each line with the line number.";
   }
 
   /**
@@ -314,12 +346,16 @@ public class NestedProducer
     StringBuilder	result;
     List<String>	lines;
     int			i;
+    List		nested;
 
     try {
       result = new StringBuilder();
 
       // create nested structure
-      lines = NestedFormatHelper.nestedToLines(getOutput());
+      nested = getOutput();
+      if (m_OutputLineNumbers)
+	NestedFormatHelper.renumber(nested);
+      lines = NestedFormatHelper.nestedToLines(nested, m_OutputLineNumbers);
 
       // add meta-data
       if (m_OutputProlog) {
