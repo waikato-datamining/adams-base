@@ -1,1 +1,1 @@
-all -> ${CWD}
+all -> ${CWD}, new name: -keep old-

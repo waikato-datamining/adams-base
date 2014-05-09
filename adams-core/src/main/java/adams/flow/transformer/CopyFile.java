@@ -15,7 +15,7 @@
 
 /*
  * CopyFile.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -33,6 +33,7 @@ import adams.flow.core.Token;
  <!-- globalinfo-start -->
  * Copies the file received on its input port to the target directory if it matches the provided regular expression.<br/>
  * In case of a directory, the directory gets copied recursively.<br/>
+ * If required, you can also provide a new filename (just the name, no path).<br/>
  * The generated target file&#47;directory gets forwarded in the flow.
  * <p/>
  <!-- globalinfo-end -->
@@ -49,51 +50,56 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: CopyFile
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-create-sub-dirs (property: createSubDirectories)
- * &nbsp;&nbsp;&nbsp;If set to true, sub directories from the last path component of the inputs
+ * 
+ * <pre>-create-sub-dirs &lt;boolean&gt; (property: createSubDirectories)
+ * &nbsp;&nbsp;&nbsp;If set to true, sub directories from the last path component of the inputs 
  * &nbsp;&nbsp;&nbsp;are created below the target directory (eg: &#47;some&#47;where&#47;blah -&gt; TARGET&#47;blah
  * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression to match the filename against.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- *
+ * 
  * <pre>-target-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: targetDirectory)
  * &nbsp;&nbsp;&nbsp;The target directory to copy the files to.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
+ * <pre>-filename &lt;java.lang.String&gt; (property: filename)
+ * &nbsp;&nbsp;&nbsp;The (optional) new filename in the target directory, using the old name 
+ * &nbsp;&nbsp;&nbsp;if left empty.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -116,6 +122,9 @@ public class CopyFile
   /** the target directory. */
   protected PlaceholderDirectory m_TargetDirectory;
 
+  /** the (optional) new filename. */
+  protected String m_Filename;
+  
   /**
    * Returns a string describing the object.
    *
@@ -127,6 +136,7 @@ public class CopyFile
         "Copies the file received on its input port to the target directory if "
       + "it matches the provided regular expression.\n"
       + "In case of a directory, the directory gets copied recursively.\n"
+      + "If required, you can also provide a new filename (just the name, no path).\n"
       + "The generated target file/directory gets forwarded in the flow.";
   }
 
@@ -148,6 +158,10 @@ public class CopyFile
     m_OptionManager.add(
 	    "target-dir", "targetDirectory",
 	    new PlaceholderDirectory("."));
+
+    m_OptionManager.add(
+	    "filename", "filename",
+	    "");
   }
 
   /**
@@ -161,6 +175,7 @@ public class CopyFile
 
     result  = QuickInfoHelper.toString(this, "regExp", (m_RegExp.isMatchAll() ? "all" : m_RegExp.getValue()));
     result += QuickInfoHelper.toString(this, "targetDirectory", m_TargetDirectory, " -> ");
+    result += QuickInfoHelper.toString(this, "filename", (m_Filename.isEmpty() ? "-keep old-" : m_Filename), ", new name: ");
 
     return result;
   }
@@ -258,6 +273,37 @@ public class CopyFile
   }
 
   /**
+   * Sets the new filename to use.
+   *
+   * @param value	the new filename, leave empty to use old
+   */
+  public void setFilename(String value) {
+    m_Filename = value;
+    reset();
+  }
+
+  /**
+   * Returns the new filename to use.
+   *
+   * @return 		the new filename, ignored if empty
+   */
+  public String getFilename() {
+    return m_Filename;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return         tip text for this property suitable for
+   *             displaying in the GUI or for listing the options.
+   */
+  public String filenameTipText() {
+    return 
+	"The (optional) new filename in the target directory, using the old "
+	+ "name if left empty.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
@@ -299,14 +345,14 @@ public class CopyFile
 	getLogger().info(type + " '" + file + "' matches '" + m_RegExp + "': " + m_RegExp.isMatch(file.getName()));
 	if (m_RegExp.isMatch(file.getName())) {
 	  if (m_CreateSubDirectories && file.isDirectory())
-	    target = new File(m_TargetDirectory.getAbsolutePath() + File.separator + file.getName());
+	    target = new File(m_TargetDirectory.getAbsolutePath() + File.separator + file.getName() + (m_Filename.isEmpty() ? "" : File.separator + m_Filename));
 	  else
-	    target = m_TargetDirectory;
-	  getLogger().info("Target directory: " + target);
+	    target = new File(m_TargetDirectory.getAbsolutePath() + (m_Filename.isEmpty() ? "" : File.separator + m_Filename));
+	  getLogger().info("Target: " + target);
 	  FileUtils.copy(file, target);
 
 	  // create output
-	  if ((m_CreateSubDirectories && file.isDirectory()) || !file.isDirectory())
+	  if (target.isDirectory())
 	    m_OutputToken = new Token(target.getAbsolutePath() + File.separator + file.getName());
 	  else
 	    m_OutputToken = new Token(target.getAbsolutePath());
