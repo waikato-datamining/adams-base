@@ -150,6 +150,9 @@ public class SubProcess
   /** for storing generated output tokens. */
   protected transient List<Token> m_OutputTokens;
 
+  /** whether to allow no sub-actors. */
+  protected boolean m_AllowEmpty;
+  
   /**
    * Returns a string describing the object.
    *
@@ -162,6 +165,16 @@ public class SubProcess
       + "input and the last one must produce output.";
   }
 
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_AllowEmpty = false;
+  }
+  
   /**
    * Returns the class that is the corresponding conditional equivalent.
    * 
@@ -202,6 +215,24 @@ public class SubProcess
   }
 
   /**
+   * Sets whether we can have no active sub-actors.
+   * 
+   * @param value	true if to allow no active sub-actors
+   */
+  public void setAllowEmpty(boolean value) {
+    m_AllowEmpty = value;
+  }
+  
+  /**
+   * Returns whether it is possible to have no active sub-actors.
+   * 
+   * @return		true if no active sub-actors allowed
+   */
+  public boolean getAllowEmpty() {
+    return m_AllowEmpty;
+  }
+  
+  /**
    * Initializes the item for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -217,16 +248,18 @@ public class SubProcess
     if (m_PauseStateManager == null)
       m_PauseStateManager = new PauseStateManager();
     
-    if (result == null) {
-      if (active() == 0)
-	result = "No active (= non-skipped) actors!";
-    }
+    if (!m_AllowEmpty) {
+      if (result == null) {
+	if (active() == 0)
+	  result = "No active (= non-skipped) actors!";
 
-    if (result == null) {
-      if (!(firstActive() instanceof InputConsumer))
-	result = "First actor ('" + firstActive().getName() + "') does not accept input!";
-      else if (!(lastActive() instanceof OutputProducer))
-	result = "Last actor ('" + lastActive().getName() + "') does not generate output!";
+	if (result == null) {
+	  if (!(firstActive() instanceof InputConsumer))
+	    result = "First actor ('" + firstActive().getName() + "') does not accept input!";
+	  else if (!(lastActive() instanceof OutputProducer))
+	    result = "Last actor ('" + lastActive().getName() + "') does not generate output!";
+	}
+      }
     }
 
     return result;
