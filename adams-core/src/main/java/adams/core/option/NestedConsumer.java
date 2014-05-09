@@ -19,6 +19,8 @@
  */
 package adams.core.option;
 
+import gnu.trove.list.array.TIntArrayList;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.logging.Level;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.option.NestedFormatHelper.Line;
 
 /**
  * Parses a nested ArrayList of options.
@@ -50,6 +53,49 @@ public class NestedConsumer
   public String globalInfo() {
     return "Processes the nested format (tab indentation in string representation, nested ArrayList objects in object representation).";
   }
+  
+  /**
+   * Collects all the line numbers.
+   * 
+   * @param values	the list to traverse
+   * @param range	for collecting the line numbers
+   */
+  protected void getLineRange(List values, TIntArrayList range) {
+    for (Object obj: values) {
+      if (obj instanceof Line)
+	range.add(((Line) obj).getNumber());
+      else if (obj instanceof ArrayList)
+	getLineRange((List) obj, range);
+    }
+  }
+  
+  /**
+   * Generates a line number range from the list of values 
+   * (mixed Line/ArrayList).
+   * 
+   * @param values	the values to inspect
+   * @return		the line range, null if no line numbers available
+   */
+  protected String getLineRange(List values) {
+    TIntArrayList	range;
+    int			min;
+    int			max;
+    
+    range = new TIntArrayList();
+    getLineRange(values, range);
+    range.sort();
+    if (range.size() > 0) {
+      min = range.get(0);
+      max = range.get(range.size() - 1);
+      if (min == max)
+	return "" + min;
+      else
+	return min + "-" + max;
+    }
+    else {
+      return null;
+    }
+  }
 
   /**
    * Creates the empty option handler from the internal data structure and
@@ -60,10 +106,12 @@ public class NestedConsumer
   @Override
   protected OptionHandler initOutput() {
     OptionHandler	result;
+    Line		line;
     String		msg;
 
     try {
-      result = (OptionHandler) Class.forName(Conversion.rename((String) m_Input.get(0))).newInstance();
+      line   = (Line) m_Input.get(0);
+      result = (OptionHandler) Class.forName(Conversion.rename(line.getContent())).newInstance();
       m_Input.remove(0);
       if (m_Input.size() > 0) {
 	if (m_Input.get(0) instanceof ArrayList)
@@ -95,15 +143,14 @@ public class NestedConsumer
   protected List convertToInput(String s) {
     ArrayList<String>	lines;
     String		msg;
+    int			offset;
 
     try {
       // split into separate lines
-      lines = new ArrayList<String>(Arrays.asList(s.split("\n")));
-      // skip comments
-      while ((lines.size() > 0) && (lines.get(0).startsWith(NestedProducer.COMMENT)))
-	lines.remove(0);
+      lines  = new ArrayList<String>(Arrays.asList(s.split("\n")));
+      offset = NestedFormatHelper.removeComments(lines);
       // convert into nested format
-      return NestedFormatHelper.linesToNested(lines);
+      return NestedFormatHelper.linesToNested(lines, offset);
     }
     catch (Exception e) {
       msg = "Failed to convert to input:";
@@ -140,25 +187,32 @@ public class NestedConsumer
     Object			objects;
     NestedConsumer		consumer;
     int				i;
+    int				n;
     List			subset;
     List			optionsSet;
     AbstractCommandLineHandler	handler;
+    String			msg;
+    String			lines;
+    Line			line;
 
     method = getWriteMethod(option);
     if (method == null)
       return;
 
     objects = Array.newInstance(option.getBaseClass(), values.size());
+    lines   = getLineRange(values);
 
     for (i = 0; i < values.size(); i++) {
-      if ((values.get(i).getClass() == String.class) && Variables.isPlaceholder((String) values.get(i))) {
-	option.setVariable((String) values.get(i));
+      if ((values.get(i).getClass() == Line.class) && Variables.isPlaceholder(((Line) values.get(i)).getContent())) {
+	option.setVariable(((Line) values.get(i)).getContent());
 	return;
       }
 
       subset = (List) values.get(i);
-      subset.set(0, Conversion.rename((String) subset.get(0)));  // fix classname, if necessary
-      object = Class.forName((String) subset.get(0)).newInstance();  // we need to check actual instance of class, base class could be interface
+      line   = (Line) subset.get(0);
+      line   = new Line(line.getNumber(), Conversion.rename(line.getContent()));  // fix classname, if necessary
+      subset.set(0, line);
+      object = Class.forName(((Line) subset.get(0)).getContent()).newInstance();  // we need to check actual instance of class, base class could be interface
       if (object instanceof OptionHandler) {
 	consumer = new NestedConsumer();
 	consumer.setLoggingLevel(getLoggingLevel());
@@ -173,7 +227,9 @@ public class NestedConsumer
 	  optionsSet = (List) subset.get(1);
 	else
 	  optionsSet = new ArrayList();
-	options = (String[]) optionsSet.toArray(new String[optionsSet.size()]);
+	options = new String[optionsSet.size()];
+	for (n = 0; n < optionsSet.size(); n++)
+	  options[n] = ((Line) optionsSet.get(n)).getContent();
 	handler = AbstractCommandLineHandler.getHandler(object);
 	handler.setOptions(object, options);
       }
@@ -186,14 +242,21 @@ public class NestedConsumer
 	break;
     }
 
-    if (!option.isMultiple())
-      method.invoke(
-	  option.getOptionHandler(),
-	  new Object[]{Array.get(objects, 0)});
-    else
-      method.invoke(
-	  option.getOptionHandler(),
-	  new Object[]{objects});
+    try {
+      if (!option.isMultiple())
+	method.invoke(
+	    option.getOptionHandler(),
+	    new Object[]{Array.get(objects, 0)});
+      else
+	method.invoke(
+	    option.getOptionHandler(),
+	    new Object[]{objects});
+    }
+    catch (Exception e) {
+      msg = "Failed to process class option '" + getOptionIdentifier(option) + "/" + option.getOptionHandler().getClass().getName() + "'" + (lines == null ? ": " : " (lines: " + lines + "):");
+      logError(msg + "\n" + Utils.throwableToString(e));
+      getLogger().log(Level.SEVERE, msg, e);
+    }
   }
 
   /**
@@ -219,33 +282,43 @@ public class NestedConsumer
     Method	method;
     Object	objects;
     int		i;
+    String	msg;
+    String	lines;
 
     method = getWriteMethod(option);
     if (method == null)
       return;
 
     objects = Array.newInstance(option.getBaseClass(), values.size());
+    lines   = getLineRange(values);
 
     for (i = 0; i < values.size(); i++) {
       // variable?
-      if (Variables.isPlaceholder((String) values.get(i))) {
-	option.setVariable((String) values.get(i));
+      if (Variables.isPlaceholder(((Line) values.get(i)).getContent())) {
+	option.setVariable(((Line) values.get(i)).getContent());
 	return;
       }
 
-      Array.set(objects, i, option.valueOf((String) values.get(i)));
+      Array.set(objects, i, option.valueOf(((Line) values.get(i)).getContent()));
       if (!option.isMultiple())
 	break;
     }
 
-    if (!option.isMultiple())
-      method.invoke(
-	  option.getOptionHandler(),
-	  new Object[]{Array.get(objects, 0)});
-    else
-      method.invoke(
-	  option.getOptionHandler(),
-	  new Object[]{objects});
+    try {
+      if (!option.isMultiple())
+	method.invoke(
+	    option.getOptionHandler(),
+	    new Object[]{Array.get(objects, 0)});
+      else
+	method.invoke(
+	    option.getOptionHandler(),
+	    new Object[]{objects});
+    }
+    catch (Exception e) {
+      msg = "Failed to process argument option '" + getOptionIdentifier(option) + "/" + option.getOptionHandler().getClass().getName() + "'" + (lines == null ? ": " : " (lines: " + lines + "):");
+      logError(msg + "\n" + Utils.throwableToString(e));
+      getLogger().log(Level.SEVERE, msg, e);
+    }
   }
 
   /**
@@ -273,15 +346,15 @@ public class NestedConsumer
     i         = 0;
     optionStr = getOptionIdentifier(option);
     while (i < input.size()) {
-      if (input.get(i).getClass() == String.class) {
-	if (Conversion.renameOption(option.getOptionHandler().getClass().getName(), (String) input.get(i)).equals(optionStr)) {
+      if (input.get(i).getClass() == Line.class) {
+	if (Conversion.renameOption(option.getOptionHandler().getClass().getName(), ((Line) input.get(i)).getContent()).equals(optionStr)) {
 	  input.remove(i);
 	  if (hasArg) {
 	    if (isBool) {
 	      if (i < input.size()) {
 		str = input.get(i).toString();
 		if (str.equals("true") || str.equals("false") || str.startsWith(Variables.START)) {
-		  result.add(str);
+		  result.add(new Line(str));
 		  input.remove(i);
 		}
 		else {
@@ -328,12 +401,12 @@ public class NestedConsumer
 
     i = 0;
     while (i < input.size()) {
-      if (!(input.get(i).getClass() == String.class)) {
+      if (!(input.get(i).getClass() == Line.class)) {
 	i++;
 	continue;
       }
 
-      cmdline = (String) input.get(i);
+      cmdline = ((Line) input.get(i)).getContent();
 
       // skip empty strings
       if (cmdline.length() == 0) {
@@ -352,8 +425,8 @@ public class NestedConsumer
 	  getLogger().severe(msg);
 	  // remove unknown option
 	  input.remove(i);
-	  if ((i < input.size()) && (input.get(i).getClass() == String.class)) {
-	    if (!((String) input.get(i)).startsWith("-"))
+	  if ((i < input.size()) && (input.get(i).getClass() == Line.class)) {
+	    if (!(((Line) input.get(i)).getContent()).startsWith("-"))
 	      input.remove(i);
 	  }
 	  else {

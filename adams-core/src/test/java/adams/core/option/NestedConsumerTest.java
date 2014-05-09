@@ -15,7 +15,7 @@
 
 /**
  * NestedConsumerTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -25,6 +25,7 @@ import java.util.Arrays;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.NestedFormatHelper.Line;
 import adams.flow.core.AbstractActor;
 import adams.parser.MathematicalExpressionText;
 
@@ -56,16 +57,16 @@ public class NestedConsumerTest
     handler.setAppend(true);
 
     ArrayList input = new ArrayList();
-    input.add("adams.flow.sink.DumpFile");
+    input.add(new Line("adams.flow.sink.DumpFile"));
     ArrayList options = new ArrayList();
     input.add(options);
-    options.addAll(Arrays.asList(new String[]{
-	"-logging-level",
-	"INFO",
-	"-output",
-	"${TMP}/dumpfile.csv",
-	"-append",
-	"true"
+    options.addAll(Arrays.asList(new Line[]{
+	new Line("-logging-level"),
+	new Line("INFO"),
+	new Line("-output"),
+	new Line("${TMP}/dumpfile.csv"),
+	new Line("-append"),
+	new Line("true")
     }));
 
     performInputTest(new NestedConsumer(), input, handler);
@@ -106,33 +107,33 @@ public class NestedConsumerTest
     handler.setSubFilters(filters);
 
     ArrayList input = new ArrayList();
-    input.add("adams.data.filter.MultiFilter");
+    input.add(new Line("adams.data.filter.MultiFilter"));
     ArrayList options = new ArrayList();
     input.add(options);
-    options.add("-logging-level");
-    options.add("INFO");
+    options.add(new Line("-logging-level"));
+    options.add(new Line("INFO"));
 
-    options.add("-filter");
+    options.add(new Line("-filter"));
     ArrayList filter1 = new ArrayList();
     options.add(filter1);
-    filter1.add("adams.data.filter.PassThrough");
+    filter1.add(new Line("adams.data.filter.PassThrough"));
     ArrayList options1 = new ArrayList();
     filter1.add(options1);
-    options1.add("-logging-level");
-    options1.add("FINE");
+    options1.add(new Line("-logging-level"));
+    options1.add(new Line("FINE"));
 
-    options.add("-filter");
+    options.add(new Line("-filter"));
     ArrayList filter2 = new ArrayList();
     options.add(filter2);
-    filter2.add("adams.data.filter.MultiFilter");
+    filter2.add(new Line("adams.data.filter.MultiFilter"));
     ArrayList options2 = new ArrayList();
     filter2.add(options2);
-    options2.add("-logging-level");
-    options2.add("FINEST");
-    options2.add("-filter");
+    options2.add(new Line("-logging-level"));
+    options2.add(new Line("FINEST"));
+    options2.add(new Line("-filter"));
     ArrayList filter3 = new ArrayList();
     options2.add(filter3);
-    filter3.add("adams.data.filter.PassThrough");
+    filter3.add(new Line("adams.data.filter.PassThrough"));
 
     performInputTest(new NestedConsumer(), input, handler);
   }
@@ -178,21 +179,21 @@ public class NestedConsumerTest
     handler.setBaselineCorrection(baselineObj);
 
     ArrayList input = new ArrayList();
-    input.add("adams.data.filter.BaselineCorrection");
+    input.add(new Line("adams.data.filter.BaselineCorrection"));
     ArrayList options = new ArrayList();
     input.add(options);
-    options.add("-baseline");
+    options.add(new Line("-baseline"));
     ArrayList baseline = new ArrayList();
     options.add(baseline);
-    baseline.add("adams.data.baseline.SlidingWindow");
+    baseline.add(new Line("adams.data.baseline.SlidingWindow"));
     ArrayList optionsBase = new ArrayList();
     baseline.add(optionsBase);
-    optionsBase.add("-logging-level");
-    optionsBase.add("FINE");
-    optionsBase.add("-baseline");
+    optionsBase.add(new Line("-logging-level"));
+    optionsBase.add(new Line("FINE"));
+    optionsBase.add(new Line("-baseline"));
     ArrayList baseline2 = new ArrayList();
     optionsBase.add(baseline2);
-    baseline2.add("adams.data.baseline.PassThrough");
+    baseline2.add(new Line("adams.data.baseline.PassThrough"));
 
     performInputTest(new NestedConsumer(), input, handler);
   }

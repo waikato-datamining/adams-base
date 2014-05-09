@@ -572,6 +572,7 @@ public abstract class AbstractOptionConsumer<C,V>
       consumer.cleanUp();
     }
     catch (Exception e) {
+      System.err.println("Failed to process string: " + s);
       e.printStackTrace();
     }
 
@@ -598,6 +599,7 @@ public abstract class AbstractOptionConsumer<C,V>
       consumer.cleanUp();
     }
     catch (Exception e) {
+      System.err.println("Failed to process file: " + file);
       e.printStackTrace();
     }
 
@@ -625,6 +627,7 @@ public abstract class AbstractOptionConsumer<C,V>
       consumer.cleanUp();
     }
     catch (Exception e) {
+      System.err.println("Failed to process object: " + input);
       e.printStackTrace();
     }
 

@@ -706,8 +706,6 @@ public class FlowPanel
 	m_Flow = (AbstractActor) reader.read(file);
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
-	if (!m_Errors.isEmpty())
-	  m_Flow = null;
 	setCurrentFlow(m_Flow);
 	m_Tree.redraw();
 
@@ -720,22 +718,19 @@ public class FlowPanel
       protected void done() {
 	m_RunningSwingWorker = false;
 
-	if (m_Flow == null) {
-	  if (m_Errors.isEmpty())
-	    GUIHelper.showErrorMessage(
-		m_Owner, "Failed to load flow '" + file + "'!");
-	  else
-	    GUIHelper.showErrorMessage(
-		m_Owner, "Failed to load flow '" + file + "':\n" + Utils.flatten(m_Errors, "\n"));
-	}
-	else {
+	if (m_Errors.isEmpty())
 	  setCurrentFile(file);
-	  if (m_RecentFilesHandler != null)
-	    m_RecentFilesHandler.addRecentItem(file);
-	  if (!m_Warnings.isEmpty())
-	    GUIHelper.showErrorMessage(
-		m_Owner, "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n"));
+	if (m_RecentFilesHandler != null)
+	  m_RecentFilesHandler.addRecentItem(file);
+	if (!m_Errors.isEmpty()) {
+	  GUIHelper.showErrorMessage(
+	      m_Owner, 
+	      "Failed to load flow '" + file + "':\n" + Utils.flatten(m_Errors, "\n") 
+	      + (m_Warnings.isEmpty() ? "" : "\nWarning(s):\n" + Utils.flatten(m_Warnings, "\n")));
 	}
+	if (!m_Warnings.isEmpty())
+	  GUIHelper.showErrorMessage(
+	      m_Owner, "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n"));
 
 	update();
 

@@ -15,18 +15,18 @@
 
 /**
  * NestedProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import adams.core.DateFormat;
 import adams.core.management.Java;
+import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
 
 /**
@@ -201,8 +201,8 @@ public class NestedProducer
     result = new ArrayList();
 
     if (option.isVariableAttached() && !m_OutputVariableValues) {
-      result.add(getOptionIdentifier(option));
-      result.add(option.getVariable());
+      result.add(new Line(getOptionIdentifier(option)));
+      result.add(new Line(option.getVariable()));
     }
     else {
       currValue = getCurrentValue(option);
@@ -221,10 +221,10 @@ public class NestedProducer
 
 	  for (i = 0; i < Array.getLength(currValues); i++) {
 	    value = Array.get(currValues, i);
-	    result.add(getOptionIdentifier(option));
+	    result.add(new Line(getOptionIdentifier(option)));
 	    nested = new ArrayList();
 	    result.add(nested);
-	    nested.add(value.getClass().getName());
+	    nested.add(new Line(value.getClass().getName()));
 	    nestedDeeper = new ArrayList();
 	    nested.add(nestedDeeper);
 	    if (value instanceof OptionHandler) {
@@ -236,7 +236,8 @@ public class NestedProducer
 	    }
 	    else {
 	      handler = AbstractCommandLineHandler.getHandler(value);
-	      nestedDeeper.addAll(Arrays.asList(handler.getOptions(value)));
+	      for (String line: handler.getOptions(value))
+		nestedDeeper.add(new Line(line));
 	    }
 	  }
 	}
@@ -267,8 +268,8 @@ public class NestedProducer
     result = new ArrayList();
 
     if (option.isVariableAttached() && !m_OutputVariableValues) {
-      result.add(getOptionIdentifier(option));
-      result.add(option.getVariable());
+      result.add(new Line(getOptionIdentifier(option)));
+      result.add(new Line(option.getVariable()));
     }
     else {
       currValue = getCurrentValue(option);
@@ -286,8 +287,8 @@ public class NestedProducer
 	  }
 
 	  for (i = 0; i < Array.getLength(currValues); i++) {
-	    result.add(getOptionIdentifier(option));
-	    result.add(option.toString(Array.get(currValues, i)));
+	    result.add(new Line(getOptionIdentifier(option)));
+	    result.add(new Line(option.toString(Array.get(currValues, i))));
 	  }
 	}
       }
@@ -357,7 +358,7 @@ public class NestedProducer
     super.preProduce();
 
     m_Output.clear();
-    m_Output.add(m_Input.getClass().getName());
+    m_Output.add(new Line(m_Input.getClass().getName()));
     nested = new ArrayList();
     m_Output.add(nested);
 
