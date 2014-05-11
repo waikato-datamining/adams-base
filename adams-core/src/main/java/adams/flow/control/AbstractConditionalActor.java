@@ -15,7 +15,7 @@
 
 /*
  * AbstractConditionalActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 
 /**
- * Abstract superclass for actors that need to fullfil a condition before
+ * Abstract superclass for actors that need to fullfil a test condition before
  * they can be executed.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -56,16 +56,6 @@ public abstract class AbstractConditionalActor
 
   /** whether the base actor has been setup. */
   protected boolean m_BaseActorInitialized;
-
-  /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return "Singleton that takes a condition.";
-  }
 
   /**
    * Adds options to the internal list of options.
