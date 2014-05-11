@@ -53,10 +53,10 @@ public class NestedConsumer
   public String globalInfo() {
     return "Processes the nested format (tab indentation in string representation, nested ArrayList objects in object representation).";
   }
-  
+
   /**
    * Collects all the line numbers.
-   * 
+   *
    * @param values	the list to traverse
    * @param range	for collecting the line numbers
    */
@@ -68,11 +68,11 @@ public class NestedConsumer
 	getLineRange((List) obj, range);
     }
   }
-  
+
   /**
-   * Generates a line number range from the list of values 
+   * Generates a line number range from the list of values
    * (mixed Line/ArrayList).
-   * 
+   *
    * @param values	the values to inspect
    * @return		the line range, null if no line numbers available
    */
@@ -80,7 +80,7 @@ public class NestedConsumer
     TIntArrayList	range;
     int			min;
     int			max;
-    
+
     range = new TIntArrayList();
     getLineRange(values, range);
     range.sort();
@@ -340,7 +340,7 @@ public class NestedConsumer
     String	str;
 
     result = new ArrayList();
-    
+
     hasArg    = (option instanceof AbstractArgumentOption);
     isBool    = (option instanceof BooleanOption);
     i         = 0;
@@ -358,11 +358,11 @@ public class NestedConsumer
 		  input.remove(i);
 		}
 		else {
-		  result.add("true");
+		  result.add(new Line("true"));
 		}
 	      }
 	      else {
-		result.add("true");
+		result.add(new Line("true"));
 	      }
 	    }
 	    else {
