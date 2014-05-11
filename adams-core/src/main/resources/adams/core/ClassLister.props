@@ -274,7 +274,7 @@ adams.flow.source.newlist.AbstractListGenerator=\
 
 # flow conditions
 adams.flow.condition.test.TestCondition=\
-  adams.flow.test.condition
+  adams.flow.condition.test
 
 # conditions for the, e.g., IfThenElse control actor
 adams.flow.condition.bool.BooleanCondition=\
