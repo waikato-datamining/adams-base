@@ -20,6 +20,7 @@
 package adams.data.io.output;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.data.text.TextContainer;
 
 /**
  * Ancestor for classes that can write text documents.
@@ -100,5 +101,20 @@ public abstract class AbstractTextWriter
       return null;
     else
       return doWrite(content, name);
+  }
+
+  /**
+   * Writes the given content under the specified name.
+   *
+   * @param content	the content to write
+   * @param name	the name under which to save the content
+   * @return		if a file was generated, the filename the content was written
+   * 			as, otherwise null
+   */
+  public String write(TextContainer content, String name) {
+    if (!m_Enabled)
+      return null;
+    else
+      return doWrite(content.getContent(), name);
   }
 }

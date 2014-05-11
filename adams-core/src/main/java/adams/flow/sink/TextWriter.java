@@ -15,7 +15,7 @@
 
 /*
  * TextWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -23,6 +23,7 @@ package adams.flow.sink;
 import adams.core.QuickInfoHelper;
 import adams.data.io.output.AbstractTextWriter;
 import adams.data.io.output.NullWriter;
+import adams.data.text.TextContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -191,7 +192,7 @@ public class TextWriter
    * @return		<!-- flow-accepts-start -->java.lang.String.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class};
+    return new Class[]{String.class, TextContainer.class};
   }
 
   /**
@@ -204,10 +205,15 @@ public class TextWriter
     String		result;
 
     try {
-      if (m_Writer.write(m_InputToken.getPayload().toString(), m_ContentName) == null)
-	result = "Error writing data: " + m_Writer.toCommandLine();
-      else
-	result = null;
+      result = null;
+      if (m_InputToken.getPayload() instanceof TextContainer) {
+	if (m_Writer.write((TextContainer) m_InputToken.getPayload(), m_ContentName) == null)
+	  result = "Error writing data: " + m_Writer.toCommandLine();
+      }
+      else {
+	if (m_Writer.write(m_InputToken.getPayload().toString(), m_ContentName) == null)
+	  result = "Error writing data: " + m_Writer.toCommandLine();
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to write data:", e);
