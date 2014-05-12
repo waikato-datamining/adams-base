@@ -15,14 +15,16 @@
 
 /*
  * OptionTraverser.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraverserWithResult;
+import adams.core.option.OptionUtils;
 import adams.core.option.VariableLister;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -231,8 +233,12 @@ public class OptionTraverser
     String				result;
     adams.core.option.OptionTraverser	traverser;
 
-    result        = null;
-    traverser     = (adams.core.option.OptionTraverser) Utils.deepCopy(m_Traverser);
+    result = null;
+    
+    if (m_Traverser instanceof OptionHandler)
+      traverser = (adams.core.option.OptionTraverser) OptionUtils.shallowCopy((OptionHandler) m_Traverser, true);
+    else
+      traverser = (adams.core.option.OptionTraverser) Utils.deepCopy(m_Traverser);
     m_OutputToken = null;
 
     if (traverser instanceof OptionTraverserWithResult)
