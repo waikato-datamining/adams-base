@@ -15,7 +15,7 @@
 
 /*
  * AbstractRecentItemsHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 
 import adams.core.Properties;
 import adams.core.logging.LoggingObject;
@@ -327,7 +328,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
       menuitem = new JMenuItem((i+1) + " - " + createMenuItemText(i, item));
       if (i < 9)
 	menuitem.setMnemonic(Integer.toString(i+1).charAt(0));
-      if (i == 10)
+      if (i == 9)
 	menuitem.setMnemonic('0');
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -335,8 +336,13 @@ public abstract class AbstractRecentItemsHandler<M, T>
 	}
       });
 
-      if (m_Menu instanceof JMenu)
+      if (m_Menu instanceof JMenu) {
+	if (i < 9)
+	  menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed " + (i+1)));
+	if (i == 9)
+	  menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed 0"));
 	((JMenu) m_Menu).add(menuitem);
+      }
       else if (m_Menu instanceof JPopupMenu)
 	((JPopupMenu) m_Menu).add(menuitem);
     }
