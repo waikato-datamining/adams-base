@@ -15,7 +15,7 @@
 
 /**
  * VariablesInstanceLister.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -44,8 +44,7 @@ import adams.flow.core.AbstractActor;
  * @version $Revision$
  */
 public class VariablesInstanceLister
-  extends AbstractOptionHandler
-  implements OptionTraverserWithResult<String> {
+  extends AbstractOptionTraverserWithResult<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -6561961647781822476L;
@@ -64,20 +63,11 @@ public class VariablesInstanceLister
 	"Lists the hashcodes of the " + Variables.class.getName() + " objects "
 	+ "in use by the " + OptionManager.class.getName() + " objects.";
   }
-
-  /**
-   * Resets the object.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    resetResult();
-  }
   
   /**
    * Resets the result before traversing.
    */
+  @Override
   public void resetResult() {
     m_Result = new StringBuilder();
     m_Result.append("Path");
@@ -96,6 +86,7 @@ public class VariablesInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
     m_Result.append(path.getPath());
     m_Result.append("\t");
@@ -113,6 +104,7 @@ public class VariablesInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleClassOption(ClassOption option, OptionTraversalPath path) {
     handleArgumentOption(option, path);
   }
@@ -123,6 +115,7 @@ public class VariablesInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
     Variables	vars;
     
@@ -156,6 +149,7 @@ public class VariablesInstanceLister
    * 			{@link #handleBooleanOption(BooleanOption, OptionTraversalPath)} 
    * 			is allowed
    */
+  @Override
   public boolean canHandle(AbstractOption option) {
     return true;
   }
@@ -168,6 +162,7 @@ public class VariablesInstanceLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Class cls) {
     return true;
   }
@@ -179,6 +174,7 @@ public class VariablesInstanceLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Object obj) {
     return canRecurse(obj.getClass());
   }
@@ -188,6 +184,7 @@ public class VariablesInstanceLister
    *
    * @return		the result
    */
+  @Override
   public String getResult() {
     return m_Result.toString();
   }

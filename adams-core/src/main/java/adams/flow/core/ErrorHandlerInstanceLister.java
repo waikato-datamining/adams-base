@@ -21,11 +21,10 @@ package adams.flow.core;
 
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
-import adams.core.option.AbstractOptionHandler;
+import adams.core.option.AbstractOptionTraverserWithResult;
 import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
-import adams.core.option.OptionTraverserWithResult;
 
 /**
  <!-- globalinfo-start -->
@@ -45,8 +44,7 @@ import adams.core.option.OptionTraverserWithResult;
  * @version $Revision: 7042 $
  */
 public class ErrorHandlerInstanceLister
-  extends AbstractOptionHandler
-  implements OptionTraverserWithResult<String> {
+  extends AbstractOptionTraverserWithResult<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -6561961647781822476L;
@@ -65,20 +63,11 @@ public class ErrorHandlerInstanceLister
 	"Lists the hashcodes of the " + ErrorHandler.class.getName() + " objects "
 	+ "in use by actors.";
   }
-
-  /**
-   * Resets the object.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    resetResult();
-  }
   
   /**
    * Resets the result before traversing.
    */
+  @Override
   public void resetResult() {
     m_Result = new StringBuilder();
     m_Result.append("Path");
@@ -99,6 +88,7 @@ public class ErrorHandlerInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
   }
 
@@ -108,6 +98,7 @@ public class ErrorHandlerInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleClassOption(ClassOption option, OptionTraversalPath path) {
     handleArgumentOption(option, path);
   }
@@ -118,6 +109,7 @@ public class ErrorHandlerInstanceLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
     if (option.getOptionHandler() instanceof Actor) {
       m_Result.append(path.getPath());
@@ -143,6 +135,7 @@ public class ErrorHandlerInstanceLister
    * 			{@link #handleBooleanOption(BooleanOption, OptionTraversalPath)} 
    * 			is allowed
    */
+  @Override
   public boolean canHandle(AbstractOption option) {
     return true;
   }
@@ -155,6 +148,7 @@ public class ErrorHandlerInstanceLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Class cls) {
     return true;
   }
@@ -166,6 +160,7 @@ public class ErrorHandlerInstanceLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Object obj) {
     return canRecurse(obj.getClass());
   }
@@ -175,6 +170,7 @@ public class ErrorHandlerInstanceLister
    *
    * @return		the result
    */
+  @Override
   public String getResult() {
     return m_Result.toString();
   }

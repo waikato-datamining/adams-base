@@ -15,7 +15,7 @@
 
 /**
  * FileLister.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -47,8 +47,7 @@ import adams.core.VariablesHandler;
  * @version $Revision$
  */
 public class FileLister
-  extends AbstractOptionHandler
-  implements OptionTraverserWithResult<String> {
+  extends AbstractOptionTraverserWithResult<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -6561961647781822476L;
@@ -65,20 +64,11 @@ public class FileLister
   public String globalInfo() {
     return "Lists all file objects.";
   }
-
-  /**
-   * Resets the object.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    resetResult();
-  }
   
   /**
    * Resets the result before traversing.
    */
+  @Override
   public void resetResult() {
     m_Result = new StringBuilder();
     m_Result.append("Path");
@@ -97,6 +87,7 @@ public class FileLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
     // ignored
   }
@@ -107,6 +98,7 @@ public class FileLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleClassOption(ClassOption option, OptionTraversalPath path) {
     // ignored
   }
@@ -117,6 +109,7 @@ public class FileLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
     Object	array;
     int		i;
@@ -158,6 +151,7 @@ public class FileLister
    * 			{@link #handleBooleanOption(BooleanOption, OptionTraversalPath)} 
    * 			is allowed
    */
+  @Override
   public boolean canHandle(AbstractOption option) {
     return true;
   }
@@ -170,6 +164,7 @@ public class FileLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Class cls) {
     return !ClassLocator.hasInterface(VariablesHandler.class, cls);
   }
@@ -181,6 +176,7 @@ public class FileLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Object obj) {
     return canRecurse(obj.getClass());
   }
@@ -190,6 +186,7 @@ public class FileLister
    *
    * @return		the result
    */
+  @Override
   public String getResult() {
     return m_Result.toString();
   }

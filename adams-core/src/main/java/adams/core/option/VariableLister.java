@@ -15,7 +15,7 @@
 
 /**
  * VariableLister.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -44,8 +44,7 @@ import adams.core.VariablesHandler;
  * @version $Revision$
  */
 public class VariableLister
-  extends AbstractOptionHandler
-  implements OptionTraverserWithResult<String> {
+  extends AbstractOptionTraverserWithResult<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -8918602932870835907L;
@@ -62,20 +61,11 @@ public class VariableLister
   public String globalInfo() {
     return "Lists all variables in the flow.";
   }
-
-  /**
-   * Resets the object.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    resetResult();
-  }
   
   /**
    * Resets the result before traversing.
    */
+  @Override
   public void resetResult() {
     m_Result = new StringBuilder();
     m_Result.append("Path");
@@ -96,6 +86,7 @@ public class VariableLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
     // ignored
   }
@@ -106,6 +97,7 @@ public class VariableLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleClassOption(ClassOption option, OptionTraversalPath path) {
     // ignored
   }
@@ -116,6 +108,7 @@ public class VariableLister
    * @param option	the option to handle
    * @param path	the property path so far
    */
+  @Override
   public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
     if (!option.isVariableAttached())
       return;
@@ -142,6 +135,7 @@ public class VariableLister
    * 			{@link #handleBooleanOption(BooleanOption, OptionTraversalPath)} 
    * 			is allowed
    */
+  @Override
   public boolean canHandle(AbstractOption option) {
     return true;
   }
@@ -154,6 +148,7 @@ public class VariableLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Class cls) {
     return !ClassLocator.hasInterface(VariablesHandler.class, cls);
   }
@@ -165,6 +160,7 @@ public class VariableLister
    * 			possible or not
    * @return		true if to traverse the options recursively
    */
+  @Override
   public boolean canRecurse(Object obj) {
     return canRecurse(obj.getClass());
   }
@@ -174,6 +170,7 @@ public class VariableLister
    *
    * @return		the result
    */
+  @Override
   public String getResult() {
     return m_Result.toString();
   }
