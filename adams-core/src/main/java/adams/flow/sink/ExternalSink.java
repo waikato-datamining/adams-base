@@ -15,7 +15,7 @@
 
 /*
  * ExternalSink.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -35,31 +35,38 @@ import adams.flow.core.Unknown;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D (property: debug)
- *         If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
- *         The name of the actor.
- *         default: ExternalSink
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ExternalSink
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseString&gt; [-annotation ...] (property: annotations)
- *         The annotations to attach to this actor.
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- *         If set to true, transformation is skipped and the input token is just forwarded
- *          as it is.
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-file &lt;adams.core.io.FlowFile&gt; (property: actorFile)
- *         The file containing the external actor.
- *         default: .
+ * &nbsp;&nbsp;&nbsp;The file containing the external actor.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -83,6 +90,7 @@ public class ExternalSink
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Sink that executes an external sink actor stored on disk.";
   }
@@ -92,6 +100,7 @@ public class ExternalSink
    *
    * @return		the backup
    */
+  @Override
   protected Hashtable<String,Object> backupState() {
     Hashtable<String,Object>	result;
 
@@ -108,6 +117,7 @@ public class ExternalSink
    *
    * @param state	the backup of the state to restore from
    */
+  @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_INPUT)) {
       m_InputToken = (Token) state.get(BACKUP_INPUT);
@@ -122,6 +132,7 @@ public class ExternalSink
    *
    * @return		null if everything is fine, otherwise error message
    */
+  @Override
   public String setUpExternalActor() {
     String	result;
 
@@ -165,8 +176,10 @@ public class ExternalSink
    *
    * @return		null if everything ok, otherwise error message
    */
+  @Override
   protected String preExecuteExternalActorHook() {
-    ((InputConsumer) m_ExternalActor).input(m_InputToken);
+    if (m_ExternalActor != null)
+      ((InputConsumer) m_ExternalActor).input(m_InputToken);
     m_InputToken = null;
     return null;
   }
