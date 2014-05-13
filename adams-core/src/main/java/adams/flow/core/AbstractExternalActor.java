@@ -125,8 +125,11 @@ public abstract class AbstractExternalActor
 	m_ActorFileVariable = Variables.extractName(m_ActorFileVariable);
     }
 
-    if ((m_ActorFileIsVariable) && (e.getName().equals(m_ActorFileVariable)))
+    if ((m_ActorFileIsVariable) && (e.getName().equals(m_ActorFileVariable))) {
       m_ActorFileChanged = (e.getType() != Type.REMOVED);
+      if (isLoggingEnabled())
+	getLogger().fine("Actor file changed due to variable");
+    }
   }
 
   /**
@@ -167,6 +170,8 @@ public abstract class AbstractExternalActor
     }
     else {
       errors = new ArrayList<String>();
+      if (isLoggingEnabled())
+	getLogger().fine("Attempting to load actor file: " + m_ActorFile);
       m_ExternalActor = ActorUtils.read(m_ActorFile.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
 	result = "Error loading external actor '" + m_ActorFile.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
@@ -190,6 +195,8 @@ public abstract class AbstractExternalActor
 	    + "(which gets ignored since variables might get initialized later on):\n" + warning);
 	}
       }
+      if (isLoggingEnabled())
+	getLogger().fine("Actor file load/setUp result: " + result);
     }
 
     m_ActorFileChanged = false;

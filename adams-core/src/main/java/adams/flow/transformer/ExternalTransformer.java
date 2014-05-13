@@ -191,8 +191,11 @@ public class ExternalTransformer
    */
   @Override
   protected String preExecuteExternalActorHook() {
-    if (m_ExternalActor != null)
+    if (m_ExternalActor != null) {
+      if (isLoggingEnabled())
+	getLogger().fine("Inputting token in external flow: " + m_InputToken);
       ((InputConsumer) m_ExternalActor).input(m_InputToken);
+    }
     m_InputToken = null;
     return null;
   }
