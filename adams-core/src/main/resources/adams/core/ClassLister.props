@@ -46,7 +46,8 @@ adams.core.option.AbstractCommandLineHandler=\
 
 # the option traversers
 adams.core.option.OptionTraverser=\
-  adams.core.option
+  adams.core.option,\
+  adams.flow.core
 
 # the scripting handlers
 adams.core.scripting.AbstractScriptingHandler=\
