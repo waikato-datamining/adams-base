@@ -342,7 +342,7 @@ public abstract class AbstractConditionalActor
    * @return		true if it can be inspected, false otherwise
    */
   @Override
-  protected boolean canInspectOptions(Class cls) {
+  public boolean canInspectOptions(Class cls) {
     // we don't inspect sub-actors!
     if (cls == AbstractActor[].class)
       return false;

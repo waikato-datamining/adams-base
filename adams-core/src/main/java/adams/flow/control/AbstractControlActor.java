@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -268,7 +268,7 @@ public abstract class AbstractControlActor
    * @return		true if it can be inspected, false otherwise
    */
   @Override
-  protected boolean canInspectOptions(Class cls) {
+  public boolean canInspectOptions(Class cls) {
     // we don't inspect sub-actors!
     if (cls == AbstractActor[].class)
       return false;

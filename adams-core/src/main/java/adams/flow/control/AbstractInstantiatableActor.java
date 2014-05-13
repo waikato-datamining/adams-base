@@ -15,7 +15,7 @@
 
 /*
  * AbstractInstantiatableActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -120,7 +120,7 @@ public abstract class AbstractInstantiatableActor
    * @return		true if it can be inspected, false otherwise
    */
   @Override
-  protected boolean canInspectOptions(Class cls) {
+  public boolean canInspectOptions(Class cls) {
     if (cls == AbstractActor.class)
       return false;
     else

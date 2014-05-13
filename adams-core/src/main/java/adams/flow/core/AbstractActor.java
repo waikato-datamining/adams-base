@@ -39,16 +39,9 @@ import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingHelper;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
-import adams.core.option.BooleanOption;
-import adams.core.option.ClassOption;
-import adams.core.option.OptionManager;
-import adams.core.option.OptionTraversalPath;
-import adams.core.option.OptionTraverser;
 import adams.core.option.OptionUtils;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
@@ -792,47 +785,8 @@ public abstract class AbstractActor
    * @param cls		the class to check
    * @return		true if it can be inspected, false otherwise
    */
-  protected boolean canInspectOptions(Class cls) {
+  public boolean canInspectOptions(Class cls) {
     return true;
-  }
-
-  /**
-   * Recursively finds all the variables used in this actor's setup.
-   *
-   * @param manager	the options to go through
-   * @param variables	the hashset to store the variables in
-   */
-  protected void findVariables(OptionManager manager, final HashSet<String> variables) {
-    manager.traverse(new OptionTraverser() {
-      public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
-	handleArgumentOption(option, path);
-      }
-      public void handleClassOption(ClassOption option, OptionTraversalPath path) {
-	handleArgumentOption(option, path);
-      }
-      public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-	if (option.isVariableAttached() && !isSkipped(option))
-	  variables.add(option.getVariableName());
-      }
-      public boolean canHandle(AbstractOption option) {
-	return true;
-      }
-      public boolean canRecurse(Class cls) {
-        return canInspectOptions(cls);
-      }
-      public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
-      }
-      protected boolean isSkipped(AbstractOption option) {
-	boolean result = false;
-	if (option.getOptionHandler() instanceof AbstractActor) {
-	  // skip property is true and no variable attached to it
-	  result =    ((AbstractActor) option.getOptionHandler()).getSkip()
-	           && (option.getOwner().getVariableForProperty("skip") == null);
-	}
-	return result;
-      }
-    }, true);
   }
 
   /**
@@ -851,12 +805,15 @@ public abstract class AbstractActor
    * @return		the variables that were found
    */
   protected HashSet<String> findVariables(AbstractActor actor) {
-    HashSet<String>	result;
+    ActorVariablesFinder	finder;
+    HashSet<String>		result;
 
     getLogger().finest("Locating variables in " + actor.getFullName() + "...");
 
-    result = new HashSet<String>();
-    findVariables(actor.getOptionManager(), result);
+    finder = new ActorVariablesFinder();
+    finder.setInspection(actor);
+    actor.getOptionManager().traverse(finder);
+    result = finder.getResult();
 
     getLogger().finest("Found variables in " + actor.getFullName() + " (" + result.size() + "): " + result);
 

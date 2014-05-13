@@ -28,6 +28,7 @@ import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
 import adams.core.Stoppable;
 import adams.core.Variables;
+import adams.core.VariablesInspectionHandler;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingSupporter;
@@ -52,7 +53,7 @@ public interface Actor
   extends Comparable, AdditionalInformationHandler,
           CleanUpHandler, Stoppable, VariableChangeListener, OptionHandler, 
           /*ShallowCopySupporter<Actor>,*/ QuickInfoSupporter, ErrorHandler, 
-          LoggingSupporter, LoggingLevelHandler {
+          LoggingSupporter, LoggingLevelHandler, VariablesInspectionHandler {
   // TODO use Actor interface
 
   /** the file extension for flows (excl. dot). */
