@@ -179,6 +179,8 @@ public abstract class AbstractExternalActor
 	m_ExternalActor.setHeadless(isHeadless());
 	m_ExternalActor.setVariables(getVariables());
 	result = m_ExternalActor.setUp();
+	if (getErrorHandler() != this)
+	  ActorUtils.updateErrorHandler(m_ExternalActor, getErrorHandler());
 	// make sure we've got the current state of the variables
 	if (result == null) {
 	  warning = m_ExternalActor.getOptionManager().updateVariableValues(true);
