@@ -249,6 +249,7 @@ public abstract class AbstractActor
     m_VariablesUpdated        = new HashSet<String>();
     m_Self                    = this;
     m_LoggingPrefix           = "";
+    setErrorHandler(this);
 
     updatePrefix();
   }
@@ -912,10 +913,9 @@ public abstract class AbstractActor
 
     updateDetectedVariables();
     
-    m_Stopped      = false;
-    m_StopMessage  = null;
-    m_Executed     = false;
-    m_ErrorHandler = this;
+    m_Stopped     = false;
+    m_StopMessage = null;
+    m_Executed    = false;
 
     result = performSetUpChecks(true);
 
