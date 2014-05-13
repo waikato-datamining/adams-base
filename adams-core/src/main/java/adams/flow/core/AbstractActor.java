@@ -109,7 +109,7 @@ public abstract class AbstractActor
   /** the variable names that are used within this actor. */
   protected HashSet<String> m_DetectedVariables;
 
-  /** the variable names (referencing global actors or storage) that are used within this actor. */
+  /** the variable names (referencing callable actors or storage) that are used within this actor. */
   protected HashSet<String> m_DetectedObjectVariables;
 
   /** whether the actor needs re-setting up because of modified variables. */
@@ -612,7 +612,7 @@ public abstract class AbstractActor
     getOptionManager().registerVariables();
     m_DetectedVariables = findVariables();
 
-    // split off global refs/storage refs
+    // split off callable refs/storage refs
     m_DetectedObjectVariables = new HashSet<String>();
     for (String var: m_DetectedVariables) {
       if (getVariables().isObject(var))
