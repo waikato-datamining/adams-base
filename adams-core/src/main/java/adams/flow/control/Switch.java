@@ -596,15 +596,12 @@ public class Switch
 
     result = new HashSet<Class>();
 
-    if (m_Cases.size() == 0) {
+    for (AbstractActor actor: m_Cases) {
+      if (actor instanceof InputConsumer)
+	result.addAll(Arrays.asList(((InputConsumer) actor).accepts()));
+    }
+    if (result.size() == 0)
       result.add(Unknown.class);
-    }
-    else {
-      for (AbstractActor actor: m_Cases) {
-	if (actor instanceof InputConsumer)
-	  result.addAll(Arrays.asList(((InputConsumer) actor).accepts()));
-      }
-    }
 
     return result.toArray(new Class[result.size()]);
   }
