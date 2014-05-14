@@ -83,7 +83,7 @@ ones for classification:
 Clustering new data is done using the \textit{WekaClustering} transformer, which
 takes a single instance as input and outputs the generated clustering
 information in form of a container (\textit{WekaClusteringContainer}). You can
-either specify a serialized clusterer model to use or a global actor to obtain
+either specify a serialized clusterer model to use or a callable actor to obtain
 the clusterer from. The flow \footnote{adams-weka-clustering\_data.flow} in
 Figure \ref{clustering-flow} shows how to build a clusterer and use it to
 cluster new data, outputting the cluster distributions (see Figure

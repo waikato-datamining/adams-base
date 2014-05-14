@@ -129,7 +129,7 @@ build models. Since we are using supervised algorithms, we have to make sure
 that the datasets have a class attribute set. The \textit{WekaClassSelector}
 actor allows the setting of the class attribute, in the default setting it
 simply uses the last attribute as the class attribute. With the
-\textit{WekaTrainClassifier} actor you can choose a globally defined classifier to be built. 
+\textit{WekaTrainClassifier} actor you can choose a callable classifier to be built. 
 You define a callable classifier by adding a \textit{WekaClassifierSetup} source
 to the \textit{CallableActors} standalone, which you then reference in your 
 \textit{WekaTrainClassifier} actor.
@@ -265,13 +265,13 @@ We start with cross-validation, which is probably the most used type of
 evaluation. The \textit{WekaCrossValidationEvaluator} transformer is used for
 cross-validation. In order to get around ADAMS' limitation of allowing only one
 input, the \textit{WekaCrossValidationEvaluator} actor takes a dataset as input
-and obtains the classifier to evaluate from a \textit{global actor}. This
+and obtains the classifier to evaluate from a \textit{callable actor}. This
 approach hides \textit{how} the classifier is obtained, whether it is a simple
 \textit{WekaClassifierSetup} definition or a more complex scheme for outputting a
 \textit{Classifier} object (e.g., loading it from a serialized model file).
 Figure \ref{basic-crossvalidate1-flow} shows a
 flow\footnote{adams-weka-crossvalidate\_classifier.flow} with simple
-cross-validation using a global \textit{WekaClassifierSetup} to obtain the classifier
+cross-validation using a callable \textit{WekaClassifierSetup} to obtain the classifier
 object from.
 
 \begin{figure}[ht]
@@ -305,8 +305,8 @@ using the \textit{TextFileReader} transformer.
   \label{basic-crossvalidate_multiple_files-setups}
 \end{figure}
 
-For updating the global classifier's set up, we need to attach a variable to the
-global \textit{WekaClassifierSetup} actor's ``classifier'' option and update this
+For updating the callable classifier's set up, we need to attach a variable to the
+callable \textit{WekaClassifierSetup} actor's ``classifier'' option and update this
 variable with each set up that we are reading from the text file using the
 \textit{SetVariable} transformer. This update of the classifier set up has to
 happen before we are triggering the cross-validation. Figures
@@ -336,7 +336,7 @@ filtered J48, SMO).
 Simply testing a built classifier on a test set is useful when you are always
 intending to save the generated model to a file, but also want to keep an eye on
 the performance. In this case, you can very easily extend your current flow for
-building and saving the model. First, add a global actor that loads the separate
+building and saving the model. First, add a callable actor that loads the separate
 training set from disk. Second, add a \textit{Tee} control actor that performs
 the evaluation using the \textit{WekaTestSetEvaluator} and
 \textit{WekaEvaluationSummary} transformers and a \textit{Display} sink for
@@ -408,7 +408,7 @@ for manually creating a container using the general purpose
 \textit{MakeContainer} source actor. In order to assemble a container, you need
 to know \textbf{what} type of container you want to create (the type is normally
 listed in the ``Help'' of an actor), \textbf{where} to obtain the data from
-(i.e., the global actors) and \textbf{how} to store the data (i.e., under which
+(i.e., the callable actors) and \textbf{how} to store the data (i.e., under which
 name in the container).
 
 \begin{figure}[ht]
@@ -472,9 +472,9 @@ Of course, building models is only part of the picture. You will want to use
 this model as well and make predictions with it. The actor for making
 predictions on incoming data (i.e., single instance objects) is the
 \textit{WekaClassifying} actor. This actor can either use a serialized model or
-a global actor that generates a trained classifier. The
+a callable actor that generates a trained classifier. The
 flow\footnote{adams-weka-classifying\_data.flow} in Figure
-\ref{basic-classifying-flow} uses the global actor approach, training a
+\ref{basic-classifying-flow} uses the callable actor approach, training a
 classifier on a training set and then performing classifications on a test set,
 with the class distributions shown on screen (see Figure
 \ref{basic-classifying-output}).

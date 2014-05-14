@@ -109,7 +109,7 @@ Classification and regression in the flow work very similar to ones for WEKA.
 But instead of performing cross-validation or train/test splits, you use a
 special stream evaluator which performs an evaluation every X instances that
 come through. The transformer performing the evaluation is 
-\textit{MOAClassifierEvaluation}. It references a global classifier of type 
+\textit{MOAClassifierEvaluation}. It references a callable classifier of type 
 \textit{MOAClassifierSetup} to evaluate on the data stream and also what type of MOA 
 evaluation you want to perform.
 Figures \ref{moa-classifier-flow} and \ref{moa-classifier-output} show a 

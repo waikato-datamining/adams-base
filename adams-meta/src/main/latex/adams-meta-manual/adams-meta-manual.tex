@@ -90,13 +90,13 @@ Callable actors can not only be used as synchronization points in the flow. It
 is also possible to \textit{copy} them, using them as templates. If you don't
 want to use external flows, but still need to use the same sub-flow multiple
 times and avoid the bottle next of synchronous execution, then you can use
-one of the following actors to create a copy of the global at the very same 
+one of the following actors to create a copy of the callable at the very same 
 location:
 \begin{tight_itemize}
-	\item \textit{CopyCallableStandalone} -- copies a global standalone
-	\item \textit{CopyCallableSource} -- copies a global source
-	\item \textit{CopyCallableTransformer} -- copies a global transformer
-	\item \textit{CopyCallableSink} -- copies a global sink
+	\item \textit{CopyCallableStandalone} -- copies a callable standalone
+	\item \textit{CopyCallableSource} -- copies a callable source
+	\item \textit{CopyCallableTransformer} -- copies a callable transformer
+	\item \textit{CopyCallableSink} -- copies a callable sink
 \end{tight_itemize}
 
 

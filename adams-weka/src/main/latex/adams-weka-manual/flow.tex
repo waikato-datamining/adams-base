@@ -85,12 +85,12 @@ These transformers:
 	(untrained) setup.
 	\item \textit{WekaClassifierRanker} -- evaluates an array of classifier
 	setups on a dataset and outputs the top X performing setups.
-	\item \textit{WekaClassifying} -- uses a serialized (or global) model to
+	\item \textit{WekaClassifying} -- uses a serialized (or callable) model to
 	make predictions on incoming data.
 	\item \textit{WekaClassSelector} -- sets the class attribute in a dataset.
 	\item \textit{WekaTrainClusterer} -- trains a cluster algorithm setup
 	on a dataset.
-	\item \textit{WekaClustering} -- applies a serialized (or global) model
+	\item \textit{WekaClustering} -- applies a serialized (or callable) model
 	to incoming data.
 	\item \textit{WekaCrossValidationEvaluator} -- performs cross-validation
 	on an incoming dataset using a referenced classifier setup.
@@ -146,7 +146,7 @@ These transformers:
 	\item \textit{WekaRenameRelation} -- renames a dataset.
 	\item \textit{WekaReorderAttributesToReference} -- reorders the attributes
 	in incoming Instance/Instances based on an order defined in a reference
-	dataset (global actor or file).
+	dataset (callable actor or file).
 	\item \textit{WekaSetInstanceValue} -- sets a specific attribute value in
 	an instance object.
 	\item \textit{WekaStoreInstance} -- appends the passing through instance 
@@ -155,7 +155,7 @@ These transformers:
 	\item \textit{WekaSubsets} -- splits dataset into subsets using the unique
 	values of an attribute to identify subsets.
 	\item \textit{WekaTestSetEvaluator} -- evaluates a trained classifier on
-	a dataset obtained from a global actor.
+	a dataset obtained from a callable actor.
 	\item \textit{WekaTextDiectoryReader} -- reads in a directory with the 
 	documents in the sub-directories representing different classes.
 	\item \textit{WekaTrainTestSetEvaluator} -- evaluates a referenced classifier
