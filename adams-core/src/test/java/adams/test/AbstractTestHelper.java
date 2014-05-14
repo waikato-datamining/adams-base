@@ -213,7 +213,7 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
     File	newFile;
 
     result  = true;
-    oldFile = new File(getTmpDirectory() + File.separator + oldName);
+    oldFile = new File(getTmpDirectory() + File.separator + new File(oldName).getName());
     if (oldFile.exists()) {
       newFile = new File(getTmpDirectory() + File.separator + newName);
       try {
