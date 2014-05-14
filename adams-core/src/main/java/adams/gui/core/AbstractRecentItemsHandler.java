@@ -346,6 +346,25 @@ public abstract class AbstractRecentItemsHandler<M, T>
       else if (m_Menu instanceof JPopupMenu)
 	((JPopupMenu) m_Menu).add(menuitem);
     }
+    
+    // add "clear"
+    if (m_RecentItems.size() > 0) {
+      if (m_Menu instanceof JMenu)
+	((JMenu) m_Menu).addSeparator();
+      else if (m_Menu instanceof JPopupMenu)
+	((JPopupMenu) m_Menu).addSeparator();
+      menuitem = new JMenuItem("Clear");
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          removeAll();
+        }
+      });
+      if (m_Menu instanceof JMenu)
+	((JMenu) m_Menu).add(menuitem);
+      else if (m_Menu instanceof JPopupMenu)
+	((JPopupMenu) m_Menu).add(menuitem);
+    }
   }
 
   /**
@@ -394,7 +413,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
   }
 
   /**
-   * Removes the item to the internal list, e.g., if it no longer exists on
+   * Removes the item from the internal list, e.g., if it no longer exists on
    * disk.
    *
    * @param item	the item to remove from the list
@@ -402,6 +421,19 @@ public abstract class AbstractRecentItemsHandler<M, T>
   public synchronized void removeRecentItem(T item) {
     item = fromString(toString(item));
     m_RecentItems.remove(item);
+
+    if (m_IgnoreChanges)
+      return;
+
+    writeProps();
+    updateMenu();
+  }
+
+  /**
+   * Removes all items from the internal list.
+   */
+  public synchronized void removeAll() {
+    m_RecentItems.clear();
 
     if (m_IgnoreChanges)
       return;
