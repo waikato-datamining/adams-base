@@ -15,7 +15,7 @@
 
 /**
  * TestHelper.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
@@ -52,6 +52,7 @@ public class TestHelper<I extends DataContainer, O>
    * @param filename	the filename to load (without path)
    * @return		always null
    */
+  @Override
   public I load(String filename) {
     return null;
   }
@@ -64,6 +65,7 @@ public class TestHelper<I extends DataContainer, O>
    * @param filename	the filename to save to (without path)
    * @return		always true
    */
+  @Override
   public boolean save(O data, String filename) {
     return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), data.toString(), false);
   }
@@ -75,6 +77,7 @@ public class TestHelper<I extends DataContainer, O>
    * @param user	the database user
    * @param password	the database password
    */
+  @Override
   public AbstractDatabaseConnection getDatabaseConnection(String url, String user, BasePassword password) {
     m_DatabaseConnection = DatabaseConnection.getSingleton(url, user, password);
     return m_DatabaseConnection;
@@ -87,9 +90,9 @@ public class TestHelper<I extends DataContainer, O>
    * @param user	the database user
    * @param password	the database password
    */
+  @Override
   public void connect(String url, String user, BasePassword password) {
     String	lastError;
-    String	error;
 
     m_DatabaseConnection = DatabaseConnection.getSingleton(url, user, password);
     lastError            = m_DatabaseConnection.getLastConnectionError();
