@@ -15,7 +15,7 @@
 
 /**
  * TestHelper.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
@@ -29,8 +29,6 @@ import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
 import adams.data.container.DataContainer;
 import adams.db.AbstractDatabaseConnection;
-import adams.db.DatabaseConnection;
-import adams.db.DatabaseConnectionProvider;
 
 /**
  * Ancestor for helper classes for tests.
