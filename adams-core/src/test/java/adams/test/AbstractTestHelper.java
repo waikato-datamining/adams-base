@@ -232,6 +232,17 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
   }
 
   /**
+   * Removes the directory recursively from the tmp directory.
+   *
+   * @param dirname	the directory in the tmp directory to delete (relative path!)
+   * @return		true if deleting succeeded or dir not present
+   * @see		#getTmpLocationFromResource(String)
+   */
+  public boolean deleteDirFromTmp(String dirname) {
+    return FileUtils.delete(new File(getTmpDirectory() + File.separator + dirname));
+  }
+
+  /**
    * Loads the data to process.
    *
    * @param filename	the filename to load (without path)
