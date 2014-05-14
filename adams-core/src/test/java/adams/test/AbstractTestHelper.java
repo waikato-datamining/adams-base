@@ -187,7 +187,6 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
    *
    * @param filename	the file in the tmp directory to delete (no path!)
    * @return		true if deleting succeeded or file not present
-   * @see		#getTmpLocationFromResource(String)
    */
   public boolean deleteFileFromTmp(String filename) {
     boolean	result;
@@ -232,11 +231,23 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
   }
 
   /**
+   * Attempts to create a directory in the temp directory.
+   * 
+   * @param dirname	the relative directory path
+   * @return		true if successfully created
+   */
+  public boolean createDirInTmp(String dirname) {
+    File	file;
+    
+    file = new File(getTmpDirectory() + File.separator + dirname);
+    return file.mkdirs();
+  }
+  
+  /**
    * Removes the directory recursively from the tmp directory.
    *
    * @param dirname	the directory in the tmp directory to delete (relative path!)
    * @return		true if deleting succeeded or dir not present
-   * @see		#getTmpLocationFromResource(String)
    */
   public boolean deleteDirFromTmp(String dirname) {
     return FileUtils.delete(new File(getTmpDirectory() + File.separator + dirname));
