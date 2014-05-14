@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:25:09
+# Date: 2014-05-14 15:06:48
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	This flow uses a global actor to derive a value used in the\nMathExpression actor\'s expression. It uses a special notation\nto reference the global actor and obtain the output of the actor:\n  @{global:[global-actor-name]}\nThe global source \"val\" calculates a value based on the variable\n\"val\". This calculated value is then used in the MathExpression\nactor inside the Trigger.
+	This flow uses a callable actor to derive a value used in the\nMathExpression actor\'s expression. It uses a special notation\nto reference the callable actor and obtain the output of the actor:\n  @{callable:[callable-actor-name]}\nThe callable source \"val\" calculates a value based on the variable\n\"val\". This calculated value is then used in the MathExpression\nactor inside the Trigger.
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor
@@ -46,9 +46,11 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.transformer.MathExpression
 					-expression
-					X+@{global:val}
+					X+@{callable:val}
 			-tee
 				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
