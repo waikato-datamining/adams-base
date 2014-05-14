@@ -53,7 +53,7 @@ running of experiments and evaluating them, is essential.
 
 The following section introduces the basic concepts of flows in the ADAMS
 context and how to set them up. Advanced topics are covered as well, like
-global actors and variable support.
+callable actors and variable support.
 
 \section{Actors}
 A single step or node in a flow is called \textit{actor}. There are various
@@ -577,9 +577,9 @@ control actors. In the following a short introduction to the others:
 	sub-steps on an incoming array.
 	\item \textit{Breakpoint} -- Used for debugging a flow. See
 	\ref{debugging_flow} for more details.
-	\item \textit{ClearGlobalDisplay} -- Can be used to clear globally defined
-	graphical actors, e.g., a \textit{SequencePlotter}. See \ref{global_actors} for
-	more information on global actors.
+	\item \textit{ClearCallableDisplay} -- Can be used to clear callable
+	graphical actors, e.g., a \textit{SequencePlotter}. See \ref{callable_actors} for
+	more information on callable actors.
 	\item \textit{ConditionalTee} -- Basically like the \textit{Tee} actor, but it
 	allows you to impose constraints on when to tee off the tokens.
 	\item \textit{ContainerValuePicker} -- Since ADAMS only allows \textit{1-to-1}
@@ -599,9 +599,9 @@ control actors. In the following a short introduction to the others:
 	many-branched \textit{Branch} actor only get executed once, but still keep
 	their state and hog memory.
 	\item \textit{GC} -- For explicitly executing the Java garbage collection.
-	\item \textit{GlobalActorScreenshot} -- For taking screenshots of a globally
-	defined (graphical) actor, whenever a token passes through this control actor.
-	See \ref{global_actors} for	more information on global actors.
+	\item \textit{CallableActorScreenshot} -- For taking screenshots of a callable
+	(graphical) actor, whenever a token passes through this control actor.
+	See \ref{callable_actors} for more information on callable actors.
 	\item \textit{IfStorageValue} -- An \textit{if-then-else} source that executes
 	the \textit{then} branch if the specified storage value exists. Otherwise it
 	executes the \textit{else} branch, which needs to have a source actor for
@@ -1126,42 +1126,42 @@ module.
 
 
 \newpage
-\section{Global actors}
-\label{global_actors}
+\section{Callable actors}
+\label{callable_actors}
 ADAMS uses a tree structure to represent the nested actor structure. This
 enforces a 1-to-n relationship on how the actors can forward data. In the
 example flow shown in Figure \ref{floweditor-helloworld-branch_flow}, two
 separate \textit{Display} actors get displayed. The more branches, the more
 windows will pop up. This gets very confusing rather quickly. ADAMS offers a
-remedy for this: \textbf{global actors}. With this mechanism, multiple data
+remedy for this: \textbf{callable actors}. With this mechanism, multiple data
 streams can once again be channeled into a single actor again, simulating a
 n-to-1 relationship. And here is what to do:
 \begin{tight_itemize}
-	\item Add the \textit{GlobalActors} standalone actor at the start of the flow.
+	\item Add the \textit{CallableActors} standalone actor at the start of the flow.
 	\item Add the actor that you want to channel the data into below the
-	\textit{GlobalActors} actor that you just added. In our example, this is the
+	\textit{CallableActors} actor that you just added. In our example, this is the
 	\textit{Display} actor.
 	\item Replace each occurence of the actor that you just added below the
-	\textit{GlobalActors} actor with a \textit{GlobalSink} sink actor. Enter as
-	value for the parameter \textit{globalName} the name of the actor that you
-	added below the \textit{GlobalActors} actor. In this example this is simply
+	\textit{CallableActors} actor with a \textit{CallableSink} sink actor. Enter as
+	value for the parameter \textit{callableName} the name of the actor that you
+	added below the \textit{CallableActors} actor. In this example this is simply
 	\textit{Display}.
 \end{tight_itemize}
-Figure \ref{floweditor-helloworld-global_display} shows the modified flow
-\footnote{adams-core-hello\_world7.flow}, using a single global \textit{Display}
-actor and multiple \textit{GlobalSink} actors.
+Figure \ref{floweditor-helloworld-callable_display} shows the modified flow
+\footnote{adams-core-hello\_world7.flow}, using a single callable \textit{Display}
+actor and multiple \textit{CallableSink} actors.
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/floweditor-helloworld-global_display.png}
-  \caption{Outputting parallel processed strings in a single global
+  \includegraphics[width=10.0cm]{images/floweditor-helloworld-callable_display.png}
+  \caption{Outputting parallel processed strings in a single callable
   \textit{Display} actor.}
-  \label{floweditor-helloworld-global_display}
+  \label{floweditor-helloworld-callable_display}
 \end{figure}
-In addition to the \textit{GlobalSink} actor, there are also the
-\textit{GlobalSource} actor (for using the same source multiple times in a flow)
-and the \textit{GlobalTransformer} actor (for instance for using the same
+In addition to the \textit{CallableSink} actor, there are also the
+\textit{CallableSource} actor (for using the same source multiple times in a flow)
+and the \textit{CallableTransformer} actor (for instance for using the same
 preprocessing multiple times). They are used in the same fashion as the
-\textit{GlobalSink} actor that we just introduced.
+\textit{CallableSink} actor that we just introduced.
 
 \heading{Combining views}
 The \textit{GridView} standalone allows you to define several graphical actors
@@ -1170,7 +1170,7 @@ useful, for instance, if two plots have very different scales and plotting them
 in the same graph wouldn't make much sense. Using \textit{GridView}, you can create 
 a plot with two rows and one column for displaying the two \textit{SequencePlotter}
 actors below each other. The actors below the \textit{GridView} actor get
-referenced from within the flow using \textit{GlobalSink} actors.
+referenced from within the flow using \textit{CallableSink} actors.
 
 The \textit{TabView} standalone works just like the \textit{GridView} actor,
 but instead of displaying the graphical actors in a grid, they get displayed
@@ -1427,35 +1427,35 @@ The following actors are available to handle variables:
 	from internal memory (transformer).
 \end{tight_itemize}
 
-\heading{Using global actor as variables}
+\heading{Using callable actor as variables}
 One drawback of ADAMS is the absence of multiple inputs, only a single input is
 supported and containers can mitigate that only to a certain degree. Instead of
 only using variables values, ADAMS can also harness data generation on-the-fly,
-by attaching global actors to options. Attaching a global actor works just like
+by attaching callable actors to options. Attaching a callable actor works just like
 attaching a simple variable, only the naming convention is different:
 \begin{verbatim}
-  @{global:<global-actor-name>}
+  @{callable:<callable-actor-name>}
 \end{verbatim}
-The \texttt{global:} prefix tells ADAMS that the following name is referencing a
-global actor. It then locates the actor and executes it to obtain the value for
+The \texttt{callable:} prefix tells ADAMS that the following name is referencing a
+callable actor. It then locates the actor and executes it to obtain the value for
 using with the option in question.
 
 This mechanism has mainly three caveats:
 \begin{tight_itemize}
-	\item The global actor (or sequence of actors) gets executed whenever the
-	actor, which has one or more global actor references attached, gets executed.
+	\item The callable actor (or sequence of actors) gets executed whenever the
+	actor, which has one or more callable actor references attached, gets executed.
 	Depending on the actors in use, this can be rather computationally expensive.
 	\item Since the variable mechanism has no notion of \textit{where} in the flow
-	it is, only global actors that are defined below the \textit{Flow} actor can be
-	used (kind of ``super global actors'').
-	\item The global actor should generate the correct type for the option it is
+	it is, only callable actors that are defined below the \textit{Flow} actor can be
+	used (kind of ``super callable actors'').
+	\item The callable actor should generate the correct type for the option it is
 	attached to. Otherwise, the value gets converted and parsed as a command-line
 	value. Though the flow will be able to recover, this will slow things down
 	as an exception will get output whenever this occurs.
 \end{tight_itemize}
 
 \heading{Using storage items as variables}
-Similar to attaching global actors, storage values can be attached like
+Similar to attaching callable actors, storage values can be attached like
 variables as well. Once again, a custom prefix, ``storage'', is used to
 distinguish these special variables from ordinary ones:
 \begin{verbatim}
@@ -1488,7 +1488,7 @@ being the 0-based index of the array element that you want to access.
 The following actors allow the updating of properties:
 \begin{tight_itemize}
 	\item \textit{SetProperty} -- transformer that modifies a single property of a
-	global actor based on the current value of the specified variable.
+	callable actor based on the current value of the specified variable.
 	\item \textit{UpdateProperties} -- allows you to update multiple properties
 	(each property is associated with a particular variable) of the actor that
 	this actor manages.
