@@ -142,7 +142,7 @@ public class CombineVariables
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "expression", m_Expression);
+    return QuickInfoHelper.toString(this, "expression", m_Expression.stringValue());
   }
 
   /**
