@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:47:43
+# Date: 2014-05-15 13:39:07
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -14,7 +14,7 @@ adams.flow.control.Flow
 			-execute-on-fail
 			true
 			-actor
-				adams.flow.standalone.ExternalStandalone
+				adams.flow.standalone.ExternalFlow
 					-file
 					${EXAMPLE_FLOWS}/adams-weka-build_classifier-save_model.flow
 	-actor
@@ -45,6 +45,8 @@ adams.flow.control.Flow
 				adams.flow.sink.Display
 					-name
 					Display class distribution
+					-writer
+						adams.data.io.output.NullWriter
 			-value
 			Distribution
 	-flow-execution-listener
