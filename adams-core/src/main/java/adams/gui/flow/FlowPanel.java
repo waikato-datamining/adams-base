@@ -284,6 +284,7 @@ public class FlowPanel
       m_Running  = false;
       m_Stopping = false;
 
+      System.gc();
       m_Owner.update();
       m_Owner.finishedExecution();
     }
