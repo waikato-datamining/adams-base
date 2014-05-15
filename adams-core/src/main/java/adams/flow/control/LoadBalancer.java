@@ -41,13 +41,15 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import adams.flow.sink.CallableSink;
 import adams.flow.sink.Null;
+import adams.flow.transformer.CallableTransformer;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 
 /**
  <!-- globalinfo-start -->
  * Runs the specified 'load actor' in as many separate threads as specified with the 'num-threads' parameter.<br/>
- * NB: (changing) variables cannot be used in the load-balancer actor, as this would create unwanted side-effects.
+ * NB: no callable transformer or sink allowed.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -69,7 +71,7 @@ import adams.multiprocess.PausableFixedThreadPoolExecutor;
  * &nbsp;&nbsp;&nbsp;default: LoadBalancer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -389,8 +391,7 @@ public class LoadBalancer
     return
         "Runs the specified 'load actor' in as many separate threads as "
       + "specified with the 'num-threads' parameter.\n"
-      + "NB: (changing) variables cannot be used in the load-balancer actor, "
-      + "as this would create unwanted side-effects.";
+      + "NB: no callable transformer or sink allowed.";
   }
 
   /**
@@ -841,10 +842,20 @@ public class LoadBalancer
    */
   @Override
   public String setUp() {
-    String	result;
+    String		result;
+    List<AbstractActor>	actors;
 
     result = super.setUp();
 
+    if (result == null) {
+      // check for callable actors
+      actors = ActorUtils.enumerate(
+	  m_Actors, 
+	  new Class[]{CallableTransformer.class, CallableSink.class});
+      if (actors.size() > 0)
+	result = "No callable transformer or sink allowed!";
+    }
+    
     if (result == null) {
       if (m_NumThreads == -1)
 	m_ActualNumThreads = ProcessUtils.getAvailableProcessors();
@@ -852,7 +863,7 @@ public class LoadBalancer
 	m_ActualNumThreads = m_NumThreads;
       else
 	m_ActualNumThreads = 1;
-
+      
       m_ThreadsSpawned = 0;
       m_Executor       = new PausableFixedThreadPoolExecutor(m_ActualNumThreads);
     }
