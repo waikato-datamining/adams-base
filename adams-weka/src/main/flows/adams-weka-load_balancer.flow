@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:50:19
+# Date: 2014-05-15 15:32:01
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	The LoadBalancer actor allows the parallel execution of the \nbalancer\'s sub-flow. Using \"-1\" as number of slots (ie threads)\nall available CPUs/cores will be used to process the incoming\ndata.\nThis example cross-validates all available datasets with J48\nand outputs the evaluation summary.
+	The LoadBalancer actor allows the parallel execution of the \nbalancer\'s sub-flow. Using \"-1\" as number of slots (ie threads)\nall available CPUs/cores will be used to process the incoming\ndata.\nThis example cross-validates all available datasets with J48\nand outputs the evaluation summary in the console.
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor
@@ -17,24 +17,6 @@ adams.flow.control.Flow
 							0.25
 							-M
 							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-			-actor
-				adams.flow.sink.HistoryDisplay
-					-x
-					-3
-					-caret-at-start
-					true
 	-actor
 		adams.flow.source.DirectoryLister
 			-dir
@@ -47,6 +29,8 @@ adams.flow.control.Flow
 		adams.flow.control.Tee
 			-tee
 				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
 	-actor
 		adams.flow.control.LoadBalancer
 			-load
@@ -54,55 +38,51 @@ adams.flow.control.Flow
 					-loader
 						weka.core.converters.ArffLoader
 			-load
+				adams.flow.control.Tee
+					-name
+					relation name
+					-tee
+						adams.flow.transformer.WekaInstancesInfo
+							-type
+							RELATION_NAME
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							relation
+			-load
 				adams.flow.transformer.WekaClassSelector
 			-load
-				adams.flow.control.Continue
-					-condition
-						adams.flow.condition.bool.WekaCapabilities
-							-capability
-							NOMINAL_ATTRIBUTES
-							-capability
-							BINARY_ATTRIBUTES
-							-capability
-							UNARY_ATTRIBUTES
-							-capability
-							EMPTY_NOMINAL_ATTRIBUTES
-							-capability
-							NUMERIC_ATTRIBUTES
-							-capability
-							DATE_ATTRIBUTES
-							-capability
-							MISSING_VALUES
-							-capability
-							NOMINAL_CLASS
-							-capability
-							BINARY_CLASS
-							-capability
-							UNARY_CLASS
-							-capability
-							EMPTY_NOMINAL_CLASS
-							-capability
-							MISSING_CLASS_VALUES
-							-invert
-							true
-			-load
-				adams.flow.transformer.WekaCrossValidationEvaluator
-					-output
-						weka.classifiers.evaluation.output.prediction.Null
-					-classifier
-					WekaClassifier
-			-load
-				adams.flow.transformer.WekaEvaluationSummary
-					-relation
-					true
-					-complexity-stats
-					true
-					-class-details
+				adams.flow.control.TryCatch
+					-try
+						adams.flow.control.SubProcess
+							-name
+							try
+							-actor
+								adams.flow.transformer.WekaCrossValidationEvaluator
+									-output
+										weka.classifiers.evaluation.output.prediction.Null
+									-classifier
+									WekaClassifier
+							-actor
+								adams.flow.transformer.WekaEvaluationSummary
+									-relation
+									true
+									-complexity-stats
+									true
+									-class-details
+									true
+					-catch
+						adams.flow.source.CombineVariables
+							-name
+							catch
+							-expression
+							Relation: @{relation} - failed
+					-store-error
 					true
 			-load
-				adams.flow.sink.CallableSink
-					-callable
-					HistoryDisplay
+				adams.flow.sink.Console
+			-use-local-vars
+			true
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
