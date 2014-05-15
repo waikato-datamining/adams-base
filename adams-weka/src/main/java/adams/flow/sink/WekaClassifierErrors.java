@@ -523,7 +523,10 @@ public class WekaClassifierErrors
     AbstractDisplayPanel	result;
     String			name;
 
-    name = "Classifier errors (" + getEvaluation(token).getHeader().relationName() + ")";
+    if (token != null)
+      name = "Classifier errors (" + getEvaluation(token).getHeader().relationName() + ")";
+    else
+      name = "Classifier errors";
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -7362768698548152899L;
