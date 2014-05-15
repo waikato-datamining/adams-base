@@ -161,6 +161,17 @@ public class SimulatedUserMentionEntity
   public int getEnd() {
     return m_End;
   }
+
+  /**
+   * Returns the screen name mentioned in the status. This method implementation is to meet TweetEntity interface and the behavior is equivalent to {@link #getScreenName()}
+   *
+   * @return the screen name mentioned in the status
+   * @see #getScreenName()
+   */
+  @Override
+  public String getText() {
+    return getScreenName();
+  }
   
   /**
    * Returns the object as string.

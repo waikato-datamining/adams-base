@@ -22,7 +22,9 @@ package adams.data.io.input;
 import java.util.HashMap;
 
 import twitter4j.GeoLocation;
+import twitter4j.Scopes;
 import twitter4j.Status;
+import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -32,7 +34,9 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.twitter.SimulatedPlace;
+import adams.data.twitter.SimulatedScopes;
 import adams.data.twitter.SimulatedStatus;
+import adams.data.twitter.SimulatedSymbolEntity;
 import adams.data.twitter.SimulatedURLEntity;
 import adams.data.twitter.SimulatedUser;
 import adams.data.twitter.TwitterField;
@@ -211,8 +215,10 @@ public abstract class AbstractCsvArchive
     SimulatedStatus	result;
     int			index;
     Cell		cell;
-    String[]		urls;
-    URLEntity[]		entities;
+    String[]		parts;
+    URLEntity[]		urlEntities;
+    SymbolEntity[]	symEntities;
+    Scopes		scopes;
     int			i;
 
     result = new SimulatedStatus();
@@ -263,7 +269,7 @@ public abstract class AbstractCsvArchive
 	    result.setRetweet(cell.toBoolean());
 	    break;
 	  case RETWEET_COUNT:
-	    result.setRetweetCount(cell.toLong());
+	    result.setRetweetCount(cell.toLong().intValue());
 	    break;
 	  case RETWEET_BY_ME:
 	    result.setRetweetedByMe(cell.toBoolean());
@@ -278,12 +284,12 @@ public abstract class AbstractCsvArchive
 	    ((SimulatedStatus) result.getRetweetedStatus()).setCreatedAt(cell.toAnyDateType());
 	    break;
 	  case EXPANDED_URLS:
-	    urls = cell.getContent().split(",");
-	    if (urls.length > 0) {
-	      entities = new URLEntity[urls.length];
-	      for (i = 0; i < urls.length; i++)
-		entities[i] = new SimulatedURLEntity(urls[i]);
-	      result.setURLEntities(entities);
+	    parts = cell.getContent().split(",");
+	    if (parts.length > 0) {
+	      urlEntities = new URLEntity[parts.length];
+	      for (i = 0; i < parts.length; i++)
+		urlEntities[i] = new SimulatedURLEntity(parts[i]);
+	      result.setURLEntities(urlEntities);
 	    }
 	    break;
 	  case IN_REPLY_TO_STATUS_ID:
@@ -332,6 +338,30 @@ public abstract class AbstractCsvArchive
 		  new GeoLocation(
 		      row.getCell(m_Columns.get(TwitterField.GEO_LATITUDE)).toDouble(),
 		      row.getCell(m_Columns.get(TwitterField.GEO_LONGITUDE)).toDouble()));
+	    break;
+	  case SYMBOL_ENTITIES:
+	    parts       = cell.getContent().split(",");
+	    symEntities = new SymbolEntity[parts.length];
+	    for (i = 0; i < parts.length; i++) {
+	      symEntities[i] = new SimulatedSymbolEntity();
+	      ((SimulatedSymbolEntity) symEntities[i]).setText(parts[i]);
+	    }
+	    result.setSymbolEntities(symEntities);
+	    break;
+	  case IS_RETWEETED:
+	    result.setIsRetweeted(cell.toBoolean());
+	    break;
+	  case FAVORITE_COUNT:
+	    result.setFavoriteCount(cell.toLong().intValue());
+	    break;
+	  case STATUS_LANG:
+	    result.setLang(cell.getContent());
+	    break;
+	  case SCOPES:
+	    parts  = cell.getContent().split(",");
+	    scopes = new SimulatedScopes();
+	    ((SimulatedScopes) scopes).setPlaceIds(parts);
+	    result.setScopes(scopes);
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled twitter field: " + field);

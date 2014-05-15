@@ -40,7 +40,7 @@ public enum TwitterField {
   CREATED,
   /** whether tweet was favorited. */
   FAVORITED,
-  /** whether tweet was retweet. */
+  /** whether tweet is a retweet. */
   RETWEET,
   /** the retweet count. */
   RETWEET_COUNT,
@@ -78,4 +78,14 @@ public enum TwitterField {
   RETWEETED_STATUS_CREATED,
   /** expanded URLs. */
   EXPANDED_URLS,
+  /** symbol entities. */
+  SYMBOL_ENTITIES,
+  /** whether the status was retweeted. */
+  IS_RETWEETED,
+  /** how often the tweet was favorited. */
+  FAVORITE_COUNT,
+  /** the language of the status. */
+  STATUS_LANG,
+  /** the scopes. */
+  SCOPES
 }

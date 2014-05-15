@@ -135,6 +135,22 @@ parser code {:
   }
 
   /**
+   * Returns the boolean value associated with the symbol.
+   *
+   * @return the boolean value, false if not available
+   */
+  protected Boolean getBoolean(TwitterField symbol) {
+  	Boolean		result;
+
+    if (m_Symbols.containsKey(symbol))
+      result = (Boolean) m_Symbols.get(symbol);
+    else
+      result = false;
+
+    return result;
+  }
+
+  /**
    * Returns whether the symbol is present at all.
    *
    * @return true if present
@@ -291,7 +307,7 @@ parser code {:
 
 terminal COMMA, LPAREN, RPAREN;
 terminal SUBSTRING_MATCH, EXACT_MATCH, REGEXP_MATCH;
-terminal LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION;
+terminal LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION, STATUSLANG, RETWEET, ISRETWEETED, FAVCOUNT;
 terminal IFELSE, HAS;
 terminal NOT, AND, OR, XOR, LT, LE, NOT_EQ, GT, GE;
 terminal Boolean BOOLEAN;
@@ -307,7 +323,7 @@ non terminal TwitterField parameter;
 precedence left AND, OR, XOR, LT, LE, EXACT_MATCH, NOT_EQ, GT, GE;
 precedence left NOT;
 precedence left LPAREN, RPAREN;
-precedence left LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION;
+precedence left LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION, STATUSLANG, RETWEET, ISRETWEETED, FAVCOUNT;
 
 expr_list ::= expr_list expr_part | expr_part;
 expr_part ::= expr:e {: parser.setResult(e); :} ;
@@ -329,6 +345,11 @@ boolexpr ::=    BOOLEAN:b
                 {: RESULT = l || r; :}
               | boolexpr:l XOR boolexpr:r
                 {: RESULT = l != r; :}
+                
+              | RETWEET
+                {: RESULT = parser.getBoolean(TwitterField.RETWEET); :}
+              | ISRETWEETED
+                {: RESULT = parser.getBoolean(TwitterField.IS_RETWEETED); :}
 
               |  LANGUAGE_CODE SUBSTRING_MATCH STRING:s
                 {: RESULT = (parser.get(TwitterField.LANGUAGE_CODE).indexOf(s) > -1); :}
@@ -393,6 +414,13 @@ boolexpr ::=    BOOLEAN:b
               | USERMENTION REGEXP_MATCH STRING:s
                 {: RESULT = (parser.isRegExpMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_USERMENTIONS))); :}
 
+              | STATUSLANG SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.STATUS_LANG).indexOf(s) > -1); :}
+              | STATUSLANG EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.STATUS_LANG).equals(s); :}
+              | STATUSLANG REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.STATUS_LANG).matches(s); :}
+
               |  IFELSE LPAREN boolexpr:b COMMA boolexpr:e_true COMMA boolexpr:e_false RPAREN
                 {: if (b)
                      RESULT = e_true;
@@ -424,6 +452,8 @@ numexpr  ::=    NUMBER:n
                 {: RESULT = parser.getDouble(TwitterField.GEO_LONGITUDE); :}
               | LATITUDE
                 {: RESULT = parser.getDouble(TwitterField.GEO_LATITUDE); :}
+              | FAVCOUNT
+                {: RESULT = parser.getDouble(TwitterField.FAVORITE_COUNT); :}
               ;
 
 parameter ::=   LANGUAGE_CODE

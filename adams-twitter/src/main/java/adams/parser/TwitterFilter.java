@@ -52,6 +52,9 @@ import adams.parser.twitterfilter.Scanner;
  *               | numexpr &gt;= numexpr<br/>
  *               | numexpr &lt;&gt; numexpr<br/>
  * <br/>
+ *               | retweet<br/>
+ *               | isretweeted<br/>
+ * <br/>
  *               | langcode &lt;match&gt; pattern<br/>
  *               | country &lt;match&gt; pattern<br/>
  *               | countrycode &lt;match&gt; pattern<br/>
@@ -61,6 +64,7 @@ import adams.parser.twitterfilter.Scanner;
  *               | user &lt;match&gt; pattern<br/>
  *               | hashtag &lt;match&gt; pattern<br/>
  *               | usermention &lt;match&gt; pattern<br/>
+ *               | statuslang &lt;match&gt; pattern<br/>
  * <br/>
  *               | if[else] ( boolexpr:test , boolexpr:test_true , boolexpr:test_false )<br/>
  *               | has ( parameter )<br/>
@@ -69,6 +73,7 @@ import adams.parser.twitterfilter.Scanner;
  * numexpr  ::=    num<br/>
  *               | longitude<br/>
  *               | latitude<br/>
+ *               | favcount<br/>
  *               ;<br/>
  * <br/>
  * parameter ::=   langcode<br/>
@@ -162,6 +167,9 @@ public class TwitterFilter
       + "              | numexpr >= numexpr\n"
       + "              | numexpr <> numexpr\n"
       + "\n"
+      + "              | retweet\n"
+      + "              | isretweeted\n"
+      + "\n"
       + "              | langcode <match> pattern\n"
       + "              | country <match> pattern\n"
       + "              | countrycode <match> pattern\n"
@@ -171,6 +179,7 @@ public class TwitterFilter
       + "              | user <match> pattern\n"
       + "              | hashtag <match> pattern\n"
       + "              | usermention <match> pattern\n"
+      + "              | statuslang <match> pattern\n"
       + "\n"
       + "              | if[else] ( boolexpr:test , boolexpr:test_true , boolexpr:test_false )\n"
       + "              | has ( parameter )\n"
@@ -179,6 +188,7 @@ public class TwitterFilter
       + "numexpr  ::=    num\n"
       + "              | longitude\n"
       + "              | latitude\n"
+      + "              | favcount\n"
       + "              ;\n"
       + "\n"
       + "parameter ::=   langcode\n"

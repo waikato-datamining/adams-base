@@ -1,13 +1,13 @@
 /*
  * SimulatedURLEntity.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.twitter;
 
-import twitter4j.URLEntity;
-
 import java.io.Serializable;
+
+import twitter4j.URLEntity;
 
 /**
  * Encapsulates a URL entity for simulating tweets.
@@ -160,6 +160,18 @@ public class SimulatedURLEntity
   @Override
   public int getEnd() {
     return m_End;
+  }
+
+  /**
+   * Returns the URL mentioned in the tweet.<br>
+   * This method implementation is to meet TweetEntity interface and the behavior is equivalent to {@link #getURL()}
+   *
+   * @return the mentioned URL
+   * @see #getURL()
+   */
+  @Override
+  public String getText() {
+    return getURL();
   }
 
   /**

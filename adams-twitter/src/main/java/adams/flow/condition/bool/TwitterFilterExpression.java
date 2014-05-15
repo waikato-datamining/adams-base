@@ -15,7 +15,7 @@
 
 /**
  * TwitterExpression.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -54,6 +54,9 @@ import adams.parser.TwitterFilter;
  *               | numexpr &gt;= numexpr<br/>
  *               | numexpr &lt;&gt; numexpr<br/>
  * <br/>
+ *               | retweet<br/>
+ *               | isretweeted<br/>
+ * <br/>
  *               | langcode &lt;match&gt; pattern<br/>
  *               | country &lt;match&gt; pattern<br/>
  *               | countrycode &lt;match&gt; pattern<br/>
@@ -61,6 +64,9 @@ import adams.parser.TwitterFilter;
  *               | source &lt;match&gt; pattern<br/>
  *               | text &lt;match&gt; pattern<br/>
  *               | user &lt;match&gt; pattern<br/>
+ *               | hashtag &lt;match&gt; pattern<br/>
+ *               | usermention &lt;match&gt; pattern<br/>
+ *               | statuslang &lt;match&gt; pattern<br/>
  * <br/>
  *               | if[else] ( boolexpr:test , boolexpr:test_true , boolexpr:test_false )<br/>
  *               | has ( parameter )<br/>
@@ -69,6 +75,7 @@ import adams.parser.TwitterFilter;
  * numexpr  ::=    num<br/>
  *               | longitude<br/>
  *               | latitude<br/>
+ *               | favcount<br/>
  *               ;<br/>
  * <br/>
  * parameter ::=   langcode<br/>

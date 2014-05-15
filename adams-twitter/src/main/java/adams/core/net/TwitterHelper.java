@@ -27,6 +27,7 @@ import java.util.List;
 
 import twitter4j.HashtagEntity;
 import twitter4j.Status;
+import twitter4j.SymbolEntity;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.UserMentionEntity;
@@ -210,7 +211,7 @@ public class TwitterHelper {
    */
   public static Hashtable<TwitterField,Object> statusToHashtable(Status status) {
     Hashtable<TwitterField,Object>	result;
-    List<String>			urls;
+    List<String>			list;
 
     result = new Hashtable<TwitterField,Object>();
 
@@ -257,11 +258,29 @@ public class TwitterHelper {
 	result.put(TwitterField.PLACE, status.getPlace().getName());
     }
     if (status.getURLEntities() != null) {
-      urls = new ArrayList<String>();
+      list = new ArrayList<String>();
       for (URLEntity url: status.getURLEntities())
-	urls.add(url.getExpandedURL());
-      if (urls.size() > 0)
-	result.put(TwitterField.EXPANDED_URLS, Utils.flatten(urls, ","));
+	list.add(url.getExpandedURL());
+      if (list.size() > 0)
+	result.put(TwitterField.EXPANDED_URLS, Utils.flatten(list, ","));
+    }
+    if (status.getSymbolEntities() != null) {
+      list = new ArrayList<String>();
+      for (SymbolEntity sym: status.getSymbolEntities())
+	list.add(sym.getText());
+      if (list.size() > 0)
+	result.put(TwitterField.SYMBOL_ENTITIES, Utils.flatten(list, ","));
+    }
+    result.put(TwitterField.IS_RETWEETED, status.isRetweeted());
+    result.put(TwitterField.FAVORITE_COUNT, status.getFavoriteCount());
+    if (status.getLang() != null)
+      result.put(TwitterField.STATUS_LANG, status.getLang());
+    if (status.getScopes() != null) {
+      list = new ArrayList<String>();
+      for (String id: status.getScopes().getPlaceIds())
+	list.add(id);
+      if (list.size() > 0)
+	result.put(TwitterField.SCOPES, Utils.flatten(list, ","));
     }
 
     return result;

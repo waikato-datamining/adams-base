@@ -15,7 +15,7 @@
 
 /**
  * SimulatedStatus.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.twitter;
 
@@ -25,7 +25,9 @@ import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
 import twitter4j.Place;
+import twitter4j.Scopes;
 import twitter4j.Status;
+import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
@@ -101,7 +103,7 @@ public class SimulatedStatus
   protected long[] m_Contributors;
 
   /** the retweet count. */
-  protected long m_RetweetCount;
+  protected int m_RetweetCount;
 
   /** whether it was retweeted by me. */
   protected boolean m_RetweetedByMe;
@@ -111,6 +113,23 @@ public class SimulatedStatus
 
   /** whether the tweet is potentially sensitive. */
   protected boolean m_PossiblySensitive;
+
+  protected SymbolEntity[] m_SymbolEntities;
+
+  /** whether retweeted or not. */
+  protected boolean m_IsRetweeted;
+
+  /** the favorite count. */
+  protected int m_FavoriteCount;
+
+  /** the iso language code. */
+  protected String m_IsoLanguageCode;
+
+  /** the language. */
+  protected String m_Lang;
+
+  /** the scopes. */
+  protected Scopes m_Scopes;
 
   /**
    * Initializes the members.
@@ -142,6 +161,12 @@ public class SimulatedStatus
     m_RetweetedByMe        = false;
     m_CurrentUserRetweetId = -1;
     m_PossiblySensitive    = false;
+    m_SymbolEntities       = new SymbolEntity[0];
+    m_IsRetweeted          = false;
+    m_FavoriteCount        = 0;
+    m_IsoLanguageCode      = "";
+    m_Lang                 = "";
+    m_Scopes               = null;
   }
 
   /**
@@ -522,7 +547,7 @@ public class SimulatedStatus
    *
    * @param value the retweet count.
    */
-  public void setRetweetCount(long value) {
+  public void setRetweetCount(int value) {
     m_RetweetCount = value;
   }
 
@@ -533,7 +558,7 @@ public class SimulatedStatus
    * @return the retweet count.
    */
   @Override
-  public long getRetweetCount() {
+  public int getRetweetCount() {
     return m_RetweetCount;
   }
 
@@ -599,6 +624,125 @@ public class SimulatedStatus
   }
 
   /**
+   * Sets an array of SymbolEntities if medias are available in the tweet.
+   *
+   * @param value an array of SymbolEntities.
+   */
+  public void setSymbolEntities(SymbolEntity[] value) {
+    m_SymbolEntities = value;
+  }
+  
+  /**
+   * Returns an array of SymbolEntities if medias are available in the tweet. This method will an empty array if no symbols were mentioned.
+   *
+   * @return an array of SymbolEntities.
+   */
+  @Override
+  public SymbolEntity[] getSymbolEntities() {
+    return m_SymbolEntities;
+  }
+
+  /**
+   * Sets whether the status is retweeted.
+   * 
+   * @param value true if retweeted
+   */
+  public void setIsRetweeted(boolean value) {
+    m_IsRetweeted = value;
+  }
+  
+  /**
+   * Test if the status is retweeted
+   *
+   * @return true if retweeted
+   */
+  @Override
+  public boolean isRetweeted() {
+    return m_IsRetweeted;
+  }
+
+  /**
+   * Sets how many times this tweet has been "favorited" by twitter users.
+   * 
+   * @param value the count
+   */
+  public void setFavoriteCount(int value) {
+    m_FavoriteCount = value;
+  }
+  
+  /**
+   * Indicates approximately how many times this Tweet has been "favorited" by Twitter users.
+   *
+   * @return the favorite count
+   */
+  @Override
+  public int getFavoriteCount() {
+    return m_FavoriteCount;
+  }
+
+  /**
+   * Sets the iso language code set by the Twitter API (best-effort). This field is available only with the search api.
+   * It is suggested to use {@link #setLang()}
+   * 
+   * @param value the language code
+   */
+  @Deprecated
+  public void setIsoLanguageCode(String value) {
+    m_IsoLanguageCode = value;
+  }
+  
+  /**
+   * Returns the iso language code set by the Twitter API (best-effort). This field is available only with the search api.
+   * It is suggested to use {@link #getLang()}
+   *
+   * @return two-letter iso language code
+   * @deprecated use {@link #getLang()} instead
+   */
+  @Deprecated
+  @Override
+  public String getIsoLanguageCode() {
+    return m_IsoLanguageCode;
+  }
+
+  /**
+   * Sets the lang of the status text if available.
+   * 
+   * @param value	the language
+   */
+  public void setLang(String value) {
+    m_Lang = value;
+  }
+  
+  /**
+   * Returns the lang of the status text if available.
+   *
+   * @return two-letter iso language code
+   */
+  @Override
+  public String getLang() {
+    return m_Lang;
+  }
+
+  /**
+   * Sets the targeting scopes applied to a status.
+   * 
+   * @param value the scopes
+   */
+  public void setScopes(Scopes value) {
+    m_Scopes = value;
+  }
+  
+  /**
+   * Returns the targeting scopes applied to a status.
+   *
+   * @return the targeting scopes applied to a status.
+   */
+  @Override
+  public Scopes getScopes() {
+    return m_Scopes;
+  };
+
+  /**
    * Returns a short string describing the tweet (ID + text).
    *
    * @return		the string representation
@@ -606,5 +750,5 @@ public class SimulatedStatus
   @Override
   public String toString() {
     return m_Id + ": " + m_Text + ", #tags=" + m_HashtagEntity.length + ", #usermentions=" + m_UserMentionEntity.length;
-  };
+  }
 }

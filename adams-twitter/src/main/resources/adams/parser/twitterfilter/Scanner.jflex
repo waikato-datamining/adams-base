@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.twitterfilter;
@@ -90,6 +90,10 @@ import java.io.*;
 	"longitude"   { return sf.newSymbol("longitude", sym.LONGITUDE); }
 	"hashtag"     { return sf.newSymbol("hashtag", sym.HASHTAG); }
 	"usermention" { return sf.newSymbol("usermention", sym.USERMENTION); }
+	"statuslang"  { return sf.newSymbol("usermention", sym.STATUSLANG); }
+	"retweet"     { return sf.newSymbol("usermention", sym.RETWEET); }
+	"isretweeted" { return sf.newSymbol("usermention", sym.ISRETWEETED); }
+	"favcount"    { return sf.newSymbol("usermention", sym.FAVCOUNT); }
 
 	// functions
 	"if"     { return sf.newSymbol("ifelse", sym.IFELSE); }
