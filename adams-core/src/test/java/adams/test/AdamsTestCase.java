@@ -43,8 +43,20 @@ import adams.gui.scripting.ScriptingEngine;
 /**
  * Ancestor for all test cases.
  * <p/>
+ * The environment class can be set as follows: <br/>
+ *   <code>-Dadams.env.class=adams.env.Environment</code>
+ * <p/>
  * Any regression test can be skipped as follows: <br/>
  *   <code>-Dadams.test.noregression=true</code>
+ * <p/>
+ * Any quickinfo regression test can be skipped as follows: <br/>
+ *   <code>-Dadams.test.quickinfo.noregression=true</code>
+ * <p/>
+ * Headless environment can be indicated as follows: <br/>
+ *   <code>-Dadams.test.headless=true</code>
+ * <p/>
+ * Individual tests can be skipped as follows (comma-separated lost): <br/>
+ *   <code>-Dadams.test.skip=adams.some.where.Class1Test,adams.some.where.else.Class2Test</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -64,6 +76,9 @@ public class AdamsTestCase
   /** property defining the environment class to use (see pom.xml files/surefire plugin). */
   public final static String PROPERTY_ENV_CLASS = "adams.env.class";
 
+  /** property listing all test classes that should not get executed. */
+  public final static String PROPERTY_SKIP = "adams.test.skip";
+
   /** whether to execute any regression test. */
   protected boolean m_NoRegressionTest;
 
@@ -81,6 +96,9 @@ public class AdamsTestCase
 
   /** whether to run tests in headless mode. */
   protected boolean m_Headless;
+  
+  /** the classnames of tests to skip. */
+  protected HashSet<String> m_SkipTests;
 
   /**
    * Constructs the test case. Called by subclasses.
@@ -142,6 +160,8 @@ public class AdamsTestCase
   protected void setUp() throws Exception {
     String	clsname;
     Class	cls;
+    String	skipped;
+    String[]	parts;
 
     super.setUp();
 
@@ -152,6 +172,17 @@ public class AdamsTestCase
     if (adams.env.Environment.getEnvironmentClass() == null)
       throw new IllegalStateException("No environment class set!");
 
+    // any tests that are skipped?
+    m_SkipTests = new HashSet<String>();
+    skipped     = System.getProperty(PROPERTY_SKIP);
+    if ((skipped != null) && !skipped.trim().isEmpty()) {
+      parts = skipped.trim().replace(" ", "").split(",");
+      for (String part: parts) {
+	if (!part.trim().isEmpty())
+	  m_SkipTests.add(part);
+      }
+    }
+    
     // set up timezone/locale
     LocaleHelper.getSingleton().setDefault(LocaleHelper.LOCALE_EN_US);
     LocaleHelper.getSingleton().setLocale(LocaleHelper.LOCALE_EN_US);
@@ -192,27 +223,30 @@ public class AdamsTestCase
    */
   @Override
   protected void runTest() throws Throwable {
-    boolean		proceed;
+    String		msg;
     HashSet<Platform>	platforms;
     
     platforms = getPlatforms();
-    proceed   = true;
+    msg       = null;
     if (!platforms.contains(Platform.ALL)) {
-      if (proceed && OS.isMac() && !platforms.contains(Platform.MAC))
-	proceed = false;
-      if (proceed && OS.isWindows() && !platforms.contains(Platform.WINDOWS))
-	proceed = false;
-      if (proceed && (!OS.isWindows() && !OS.isMac()) && !platforms.contains(Platform.LINUX))
-	proceed = false;
+      if ((msg == null) && OS.isMac() && !platforms.contains(Platform.MAC))
+	msg = "Cannot run test on Mac";
+      if ((msg == null) && OS.isWindows() && !platforms.contains(Platform.WINDOWS))
+	msg = "Cannot run test on Windows";
+      if ((msg == null) && (!OS.isWindows() && !OS.isMac()) && !platforms.contains(Platform.LINUX))
+	msg = "Cannot run test on Linux";
     }
 
-    if (proceed && m_Headless && !canHandleHeadless())
-      proceed = false;
+    if ((msg == null) && m_Headless && !canHandleHeadless())
+      msg = "Cannot execute test in headless environment";
     
-    if (proceed)
+    if ((msg == null) && m_SkipTests.contains(getClass().getName()))
+      msg = "Test excluded from being run (" + getClass().getName() + ")";
+    
+    if (msg == null)
       super.runTest();
     else
-      System.out.println("Skipped, platform-specifc test.");
+      System.out.println("Skipped: " + msg);
   }
 
   /**
