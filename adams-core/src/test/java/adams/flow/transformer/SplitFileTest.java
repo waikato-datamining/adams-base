@@ -162,7 +162,7 @@ public class SplitFileTest
       // Flow.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables18 = new adams.flow.source.CombineVariables();
       argOption = (AbstractArgumentOption) combinevariables18.getOptionManager().findByProperty("expression");
-      combinevariables18.setExpression((adams.core.base.BaseString) argOption.valueOf("@{file}: @{size}"));
+      combinevariables18.setExpression((adams.core.base.BaseText) argOption.valueOf("@{file}: @{size}"));
       actors17[0] = combinevariables18;
 
       // Flow.Trigger.DumpFile

@@ -15,14 +15,14 @@
 
 /*
  * ConditionalStandalonesTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.base.BaseString;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -175,7 +175,7 @@ public class ConditionalStandalonesTest
       // Flow.CombineVariables
       adams.flow.source.CombineVariables combinevariables26 = new adams.flow.source.CombineVariables();
       argOption = (AbstractArgumentOption) combinevariables26.getOptionManager().findByProperty("expression");
-      combinevariables26.setExpression(new BaseString("@{a}-@{b}"));
+      combinevariables26.setExpression(new BaseText("@{a}-@{b}"));
       actors1[2] = combinevariables26;
 
       // Flow.DumpFile

@@ -15,14 +15,14 @@
 
 /*
  * CombineVariablesTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.base.BaseString;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -143,7 +143,7 @@ public class CombineVariablesTest
       // Flow.Trigger.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables12 = new adams.flow.source.CombineVariables();
       argOption = (AbstractArgumentOption) combinevariables12.getOptionManager().findByProperty("expression");
-      combinevariables12.setExpression(new BaseString("@{x}/@{y}"));
+      combinevariables12.setExpression(new BaseText("@{x}/@{y}"));
 
       abstractactor11[0] = combinevariables12;
 
