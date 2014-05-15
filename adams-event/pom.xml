@@ -6,7 +6,7 @@
   <parent>
     <groupId>nz.ac.waikato.cms.adams</groupId>
     <artifactId>adams-pom</artifactId>
-    <version>0.4.5</version>
+    <version>0.4.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>adams-event</artifactId>
@@ -59,13 +59,13 @@
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-core</artifactId>
-      <version>0.4.5</version>
+      <version>0.4.6-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-core</artifactId>
-      <version>0.4.5</version>
+      <version>0.4.6-SNAPSHOT</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
