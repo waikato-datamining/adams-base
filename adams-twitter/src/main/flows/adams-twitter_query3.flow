@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:44:23
+# Date: 2014-05-15 13:32:34
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -12,7 +12,7 @@ adams.flow.control.Flow
 			-query
 			work
 			-max-tweets
-			500
+			1000
 	-actor
 		adams.flow.transformer.TwitterFilter
 			-expression
