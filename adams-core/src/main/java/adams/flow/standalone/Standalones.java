@@ -128,7 +128,7 @@ public class Standalones
     
     for (i = 0; i < size(); i++) {
 	if ((result == null) && (getScopeHandler() != null))
-	  result = getScopeHandler().addGlobalName(get(i).getName());
+	  result = getScopeHandler().addCallableName(get(i).getName());
 	if (result != null)
 	  break;
     }

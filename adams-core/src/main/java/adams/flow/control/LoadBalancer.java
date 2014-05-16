@@ -912,7 +912,7 @@ public class LoadBalancer
     // to avoid errors, we need to turn off check here
     // any other callable name errors should have been captured already in
     // "setUp()" call when starting the flow
-    getScopeHandler().setEnforceGlobalNameCheck(false);
+    getScopeHandler().setEnforceCallableNameCheck(false);
     
     m_ThreadsSpawned++;
     token = m_CurrentToken;

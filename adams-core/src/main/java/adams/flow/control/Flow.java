@@ -197,11 +197,11 @@ public class Flow
   /** the frame for graphical flow execution listeners. */
   protected transient BaseFrame m_FlowExecutionListenerFrame;
   
-  /** the global names. */
-  protected HashSet<String> m_GlobalNames;
+  /** the callable names. */
+  protected HashSet<String> m_CallableNames;
   
-  /** whether the global name check is enforced. */
-  protected boolean m_EnforceGlobalNameCheck;
+  /** whether the callable name check is enforced. */
+  protected boolean m_EnforceCallableNameCheck;
   
   /** the parent component to use for interactive actors. */
   protected transient Component m_ParentComponent;
@@ -260,8 +260,8 @@ public class Flow
     m_ExecuteOnErrorActor    = null;
     m_ExecuteOnFinishActor   = null;
     m_PauseStateManager      = new PauseStateManager();
-    m_GlobalNames            = new HashSet<String>();
-    m_EnforceGlobalNameCheck = true;
+    m_CallableNames            = new HashSet<String>();
+    m_EnforceCallableNameCheck = true;
     m_ParentComponent        = null;
   }
 
@@ -273,7 +273,7 @@ public class Flow
     super.reset();
 
     m_AfterExecuteActor = null;
-    m_GlobalNames.clear();
+    m_CallableNames.clear();
   }
 
   /**
@@ -810,51 +810,51 @@ public class Flow
   }
 
   /**
-   * Sets whether to enforce the global name check.
+   * Sets whether to enforce the callable name check.
    * 
    * @param value	true if to enforce check
    */
-  public void setEnforceGlobalNameCheck(boolean value) {
-    m_EnforceGlobalNameCheck = value;
+  public void setEnforceCallableNameCheck(boolean value) {
+    m_EnforceCallableNameCheck = value;
   }
   
   /**
-   * Returns whether the check of global names is enforced.
+   * Returns whether the check of callable names is enforced.
    * 
    * @return		true if check enforced
    */
-  public boolean getEnforceGlobalNameCheck() {
-    return m_EnforceGlobalNameCheck;
+  public boolean getEnforceCallableNameCheck() {
+    return m_EnforceCallableNameCheck;
   }
 
   /**
-   * Checks whether a global name is already in use.
+   * Checks whether a callable name is already in use.
    * 
    * @param name	the name to check
-   * @see		#getEnforceGlobalNameCheck()
+   * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isGlobalNameUsed(String name) {
-    if (!getEnforceGlobalNameCheck())
+  public boolean isCallableNameUsed(String name) {
+    if (!getEnforceCallableNameCheck())
       return false;
     else
-      return m_GlobalNames.contains(name);
+      return m_CallableNames.contains(name);
   }
 
   /**
-   * Adds the global name to the list of used ones.
+   * Adds the callable name to the list of used ones.
    * 
    * @param name	the name to add
    * @return		null if successfully added, otherwise error message
-   * @see		#getEnforceGlobalNameCheck()
+   * @see		#getEnforceCallableNameCheck()
    */
-  public String addGlobalName(String name) {
-    if (!getEnforceGlobalNameCheck())
+  public String addCallableName(String name) {
+    if (!getEnforceCallableNameCheck())
       return null;
     
-    if (isGlobalNameUsed(name))
-      return "Global name '" + name + "' is already used in this scope ('" + getFullName() + "')!";
+    if (isCallableNameUsed(name))
+      return "Callable name '" + name + "' is already used in this scope ('" + getFullName() + "')!";
     
-    m_GlobalNames.add(name);
+    m_CallableNames.add(name);
     return null;
   }
 
@@ -940,7 +940,7 @@ public class Flow
   @Override
   public void cleanUp() {
     m_LogEntries.clear();
-    m_GlobalNames.clear();
+    m_CallableNames.clear();
 
     if (m_Storage != null) {
       m_Storage.clear();

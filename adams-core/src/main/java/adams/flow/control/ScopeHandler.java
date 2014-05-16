@@ -15,7 +15,7 @@
 
 /**
  * ScopeHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -32,33 +32,33 @@ public interface ScopeHandler
   extends ActorHandler {
 
   /**
-   * Sets whether to enforce the global name check.
+   * Sets whether to enforce the callable name check.
    * 
    * @param value	true if to enforce check
    */
-  public void setEnforceGlobalNameCheck(boolean value);
+  public void setEnforceCallableNameCheck(boolean value);
   
   /**
-   * Returns whether the check of global names is enforced.
+   * Returns whether the check of callable names is enforced.
    * 
    * @return		true if check enforced
    */
-  public boolean getEnforceGlobalNameCheck();
+  public boolean getEnforceCallableNameCheck();
   
   /**
-   * Checks whether a global name is already in use.
+   * Checks whether a callable name is already in use.
    * 
    * @param name	the name to check
-   * @see		#getEnforceGlobalNameCheck()
+   * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isGlobalNameUsed(String name);
+  public boolean isCallableNameUsed(String name);
 
   /**
-   * Adds the global name to the list of used ones.
+   * Adds the callable name to the list of used ones.
    * 
    * @param name	the name to add
    * @return		null if successfully added, otherwise error message
-   * @see		#getEnforceGlobalNameCheck()
+   * @see		#getEnforceCallableNameCheck()
    */
-  public String addGlobalName(String name);
+  public String addCallableName(String name);
 }

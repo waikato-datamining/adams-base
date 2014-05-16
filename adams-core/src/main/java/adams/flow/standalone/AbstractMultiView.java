@@ -390,7 +390,7 @@ public abstract class AbstractMultiView
     if (!ActorUtils.isSink(actor))
       return "Actor '" + actor.getName() + "' is not a sink!";
     if (getScopeHandler() != null)
-      return getScopeHandler().addGlobalName(actor.getName());
+      return getScopeHandler().addCallableName(actor.getName());
     return null;
   }
 
