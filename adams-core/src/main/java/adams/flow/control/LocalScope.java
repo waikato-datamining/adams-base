@@ -21,13 +21,16 @@ package adams.flow.control;
 
 import java.util.HashSet;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
+import adams.core.base.BaseRegExp;
 import adams.flow.core.FlowVariables;
 
 /**
  <!-- globalinfo-start -->
- * Executes the sub-actors whenever a token gets passed through, just like the adams.flow.control.Trigger actor, but also provides its own scope for variables and internal storage.
+ * Executes the sub-actors whenever a token gets passed through, just like the adams.flow.control.Trigger actor, but also provides its own scope for variables and internal storage.<br/>
+ * It is possible to 'propagate' or 'leak' variables and storage items from within the local scope back to the output scope. However, storage items from caches cannot be propagated.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -38,16 +41,15 @@ import adams.flow.core.FlowVariables;
  * - generates:<br/>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
  * <p/>
+ * Conditional equivalent:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTrigger
+ * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -55,24 +57,60 @@ import adams.flow.core.FlowVariables;
  * &nbsp;&nbsp;&nbsp;default: LocalScope
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
+ * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow 
+ * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
+ * &nbsp;&nbsp;&nbsp;If enabled, variables that match the specified regular expression get propagated 
+ * &nbsp;&nbsp;&nbsp;to the outer scope.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-variables-regexp &lt;adams.core.base.BaseRegExp&gt; (property: variablesRegExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get propagated.
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * </pre>
+ * 
+ * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
+ * &nbsp;&nbsp;&nbsp;If enabled, storage items which names match the specified regular expression 
+ * &nbsp;&nbsp;&nbsp;get propagated to the outer scope.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-storage-regexp &lt;adams.core.base.BaseRegExp&gt; (property: storageRegExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order 
+ * &nbsp;&nbsp;&nbsp;to get propagated.
+ * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
  <!-- options-end -->
@@ -99,6 +137,18 @@ public class LocalScope
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
 
+  /** whether to propagate variables from the local scope to the outer scope. */
+  protected boolean m_PropagateVariables;
+
+  /** the regular expression of the variables to propagate. */
+  protected BaseRegExp m_VariablesRegExp;
+
+  /** whether to propagate variables from the local scope to the outer scope. */
+  protected boolean m_PropagateStorage;
+
+  /** the regular expression of the variables to propagate. */
+  protected BaseRegExp m_StorageRegExp;
+  
   /**
    * Returns a string describing the object.
    *
@@ -109,7 +159,59 @@ public class LocalScope
     return
         "Executes the sub-actors whenever a token gets passed through, just " 
         + "like the " + Trigger.class.getName() + " actor, but also provides "
-        + "its own scope for variables and internal storage.";
+        + "its own scope for variables and internal storage.\n"
+        + "It is possible to 'propagate' or 'leak' variables and storage items "
+        + "from within the local scope back to the output scope. However, "
+        + "storage items from caches cannot be propagated.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "propagate-variables", "propagateVariables",
+	    false);
+
+    m_OptionManager.add(
+	    "variables-regexp", "variablesRegExp",
+	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+	    "propagate-storage", "propagateStorage",
+	    false);
+
+    m_OptionManager.add(
+	    "storage-regexp", "storageRegExp",
+	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = null;
+    
+    if (QuickInfoHelper.hasVariable(this, "propagateVariables") || m_PropagateVariables) {
+      result = QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, "var: ");
+    }
+    if (QuickInfoHelper.hasVariable(this, "propagateStorage") || m_PropagateStorage) {
+      if (result == null)
+	result = "";
+      else
+	result += ", ";
+      result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, "storage: ");
+    }
+
+    return result;
   }
 
   /**
@@ -130,6 +232,126 @@ public class LocalScope
   protected void reset() {
     super.reset();
     m_CallableNames.clear();
+  }
+
+  /**
+   * Sets whether to propagate variables from the local to the outer scope.
+   * 
+   * @param value	if true then variables get propagated
+   */
+  public void setPropagateVariables(boolean value) {
+    m_PropagateVariables = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether to propagate variables from the local to the outer scope.
+   * 
+   * @return		true if variables get propagated
+   */
+  public boolean getPropagateVariables() {
+    return m_PropagateVariables;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String propagateVariablesTipText() {
+    return "If enabled, variables that match the specified regular expression get propagated to the outer scope.";
+  }
+
+  /**
+   * Sets the regular expression that variable names must match to get
+   * propagated.
+   * 
+   * @param value	the expression
+   */
+  public void setVariablesRegExp(BaseRegExp value) {
+    m_VariablesRegExp = value;
+    reset();
+  }
+  
+  /**
+   * Returns the regular expression that variable names must match to get
+   * propagated.
+   * 
+   * @return		the expression
+   */
+  public BaseRegExp getVariablesRegExp() {
+    return m_VariablesRegExp;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variablesRegExpTipText() {
+    return "The regular expression that variable names must match in order to get propagated.";
+  }
+
+  /**
+   * Sets whether to propagate storage items from the local to the outer scope.
+   * 
+   * @param value	if true then storage get propagated
+   */
+  public void setPropagateStorage(boolean value) {
+    m_PropagateStorage = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether to propagate storage items from the local to the outer scope.
+   * 
+   * @return		true if storage get propagated
+   */
+  public boolean getPropagateStorage() {
+    return m_PropagateStorage;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String propagateStorageTipText() {
+    return "If enabled, storage items which names match the specified regular expression get propagated to the outer scope.";
+  }
+
+  /**
+   * Sets the regular expression that storage item names must match to get
+   * propagated.
+   * 
+   * @param value	the expression
+   */
+  public void setStorageRegExp(BaseRegExp value) {
+    m_StorageRegExp = value;
+    reset();
+  }
+  
+  /**
+   * Returns the regular expression that storage item names must match to get
+   * propagated.
+   * 
+   * @return		the expression
+   */
+  public BaseRegExp getStorageRegExp() {
+    return m_StorageRegExp;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String storageRegExpTipText() {
+    return "The regular expression that the names of storage items must match in order to get propagated.";
   }
 
   /**
@@ -227,6 +449,43 @@ public class LocalScope
     super.forceVariables(getLocalVariables());
   }
 
+  /**
+   * Post-execute hook.
+   *
+   * @return		null if everything is fine, otherwise error message
+   * @see		#m_Executed
+   */
+  @Override
+  protected String postExecute() {
+    String	result;
+    
+    result = super.postExecute();
+
+    if (!m_Stopped) {
+      if (m_PropagateVariables) {
+	for (String name: m_LocalVariables.nameSet()) {
+	  if (m_VariablesRegExp.isMatch(name)) {
+	    getParent().getVariables().set(name, m_LocalVariables.get(name));
+	    if (isLoggingEnabled())
+	      getLogger().fine("Propagating variable '" + name + "': " + m_LocalVariables.get(name));
+	  }
+	}
+      }
+      
+      if (m_PropagateStorage) {
+	for (StorageName name: m_LocalStorage.keySet()) {
+	  if (m_StorageRegExp.isMatch(name.getValue())) {
+	    getParent().getStorageHandler().getStorage().put(name, m_LocalStorage.get(name));
+	    if (isLoggingEnabled())
+	      getLogger().fine("Propagating storage '" + name + "': " + m_LocalStorage.get(name));
+	  }
+	}
+      }
+    }
+    
+    return result;
+  }
+  
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.
