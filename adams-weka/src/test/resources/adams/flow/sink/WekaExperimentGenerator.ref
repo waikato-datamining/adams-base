@@ -9,11 +9,11 @@
    <!ATTLIST object primitive CDATA "no">
    <!ATTLIST object array     CDATA "no">   <!-- the dimensions of the array; no=0, yes=1 -->
    <!ATTLIST object null      CDATA "no">
-   <!ATTLIST object version   CDATA "3.7.11-SNAPSHOT">
+   <!ATTLIST object version   CDATA "3.7.11">
 ]
 >
 
-<object class="weka.experiment.Experiment" name="__root__" version="3.7.11-SNAPSHOT">
+<object class="weka.experiment.Experiment" name="__root__" version="3.7.11">
    <object array="yes" class="weka.classifiers.Classifier" name="propertyArray">
       <object class="weka.classifiers.meta.FilteredClassifier" name="0">
          <object class="boolean" name="debug" primitive="yes">false</object>
@@ -4110,11 +4110,11 @@
    <!ATTLIST object primitive CDATA "no">
    <!ATTLIST object array     CDATA "no">   <!-- the dimensions of the array; no=0, yes=1 -->
    <!ATTLIST object null      CDATA "no">
-   <!ATTLIST object version   CDATA "3.7.11-SNAPSHOT">
+   <!ATTLIST object version   CDATA "3.7.11">
 ]
 >
 
-<object class="weka.experiment.Experiment" name="__root__" version="3.7.11-SNAPSHOT">
+<object class="weka.experiment.Experiment" name="__root__" version="3.7.11">
    <object array="yes" class="weka.classifiers.Classifier" name="propertyArray">
       <object class="weka.classifiers.meta.FilteredClassifier" name="0">
          <object class="boolean" name="debug" primitive="yes">false</object>
@@ -8213,11 +8213,11 @@
    <!ATTLIST object primitive CDATA "no">
    <!ATTLIST object array     CDATA "no">   <!-- the dimensions of the array; no=0, yes=1 -->
    <!ATTLIST object null      CDATA "no">
-   <!ATTLIST object version   CDATA "3.7.11-SNAPSHOT">
+   <!ATTLIST object version   CDATA "3.7.11">
 ]
 >
 
-<object class="weka.experiment.Experiment" name="__root__" version="3.7.11-SNAPSHOT">
+<object class="weka.experiment.Experiment" name="__root__" version="3.7.11">
    <object array="yes" class="weka.classifiers.Classifier" name="propertyArray">
       <object class="weka.classifiers.meta.FilteredClassifier" name="0">
          <object class="boolean" name="debug" primitive="yes">false</object>
