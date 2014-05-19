@@ -596,6 +596,10 @@ public class LocalScopeTrigger
       m_LocalVariables.cleanUp();
       m_LocalVariables = null;
     }
+    if (m_LocalStorage != null) {
+      m_LocalStorage.clear();
+      m_LocalStorage = null;
+    }
 
     m_CallableNames.clear();
 
