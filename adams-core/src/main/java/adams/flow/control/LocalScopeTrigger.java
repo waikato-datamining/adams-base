@@ -19,7 +19,9 @@
  */
 package adams.flow.control;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -54,7 +56,7 @@ import adams.flow.core.FlowVariables;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: LocalScope
+ * &nbsp;&nbsp;&nbsp;default: LocalScopeTrigger
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -88,6 +90,18 @@ import adams.flow.core.FlowVariables;
  * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-copy-variables &lt;boolean&gt; (property: copyVariables)
+ * &nbsp;&nbsp;&nbsp;If enabled, at execution time a copy of the current variables is made and 
+ * &nbsp;&nbsp;&nbsp;used in the local scope.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-copy-storage &lt;boolean&gt; (property: copyStorage)
+ * &nbsp;&nbsp;&nbsp;If enabled, a deep copy of the current storage state is made and made available 
+ * &nbsp;&nbsp;&nbsp;in the local scope.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
@@ -137,6 +151,12 @@ public class LocalScopeTrigger
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
 
+  /** whether to initialize the local variables with the current ones. */
+  protected boolean m_CopyVariables;
+
+  /** whether to initialize the local storage with the current one. */
+  protected boolean m_CopyStorage;
+
   /** whether to propagate variables from the local scope to the outer scope. */
   protected boolean m_PropagateVariables;
 
@@ -173,6 +193,14 @@ public class LocalScopeTrigger
     super.defineOptions();
 
     m_OptionManager.add(
+	    "copy-variables", "copyVariables",
+	    false);
+
+    m_OptionManager.add(
+	    "copy-storage", "copyStorage",
+	    false);
+
+    m_OptionManager.add(
 	    "propagate-variables", "propagateVariables",
 	    false);
 
@@ -196,17 +224,25 @@ public class LocalScopeTrigger
    */
   @Override
   public String getQuickInfo() {
-    String	result;
+    String		result;
+    List<String>	options;
 
     result = null;
+
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copy vars", m_CopyVariables));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copy storage", m_CopyStorage));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagate vars", m_PropagateVariables));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagate storage", m_PropagateStorage));
+    result = QuickInfoHelper.flatten(options);
     
     if (QuickInfoHelper.hasVariable(this, "propagateVariables") || m_PropagateVariables) {
+      if (!result.isEmpty())
+	result += ", ";
       result = QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, "var: ");
     }
     if (QuickInfoHelper.hasVariable(this, "propagateStorage") || m_PropagateStorage) {
-      if (result == null)
-	result = "";
-      else
+      if (!result.isEmpty())
 	result += ", ";
       result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, "storage: ");
     }
@@ -232,6 +268,64 @@ public class LocalScopeTrigger
   protected void reset() {
     super.reset();
     m_CallableNames.clear();
+  }
+
+  /**
+   * Sets whether to copy variables into the local scope.
+   * 
+   * @param value	if true then variables get copied
+   */
+  public void setCopyVariables(boolean value) {
+    m_CopyVariables = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether to copy variables into the local scope.
+   * 
+   * @return		true if variables get copied
+   */
+  public boolean getCopyVariables() {
+    return m_CopyVariables;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String copyVariablesTipText() {
+    return "If enabled, at execution time a copy of the current variables is made and used in the local scope.";
+  }
+
+  /**
+   * Sets whether to use copy of storage in local scope.
+   * 
+   * @param value	if true then storage gets copied
+   */
+  public void setCopyStorage(boolean value) {
+    m_CopyStorage = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether to use copy of storage in local scope.
+   * 
+   * @return		true if storage gets copied
+   */
+  public boolean getCopyStorage() {
+    return m_CopyStorage;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String copyStorageTipText() {
+    return "If enabled, a deep copy of the current storage state is made and made available in the local scope.";
   }
 
   /**
@@ -297,7 +391,7 @@ public class LocalScopeTrigger
   /**
    * Sets whether to propagate storage items from the local to the outer scope.
    * 
-   * @param value	if true then storage get propagated
+   * @param value	if true then storage items get propagated
    */
   public void setPropagateStorage(boolean value) {
     m_PropagateStorage = value;
@@ -307,7 +401,7 @@ public class LocalScopeTrigger
   /**
    * Returns whether to propagate storage items from the local to the outer scope.
    * 
-   * @return		true if storage get propagated
+   * @return		true if storage items get propagated
    */
   public boolean getPropagateStorage() {
     return m_PropagateStorage;
@@ -409,8 +503,12 @@ public class LocalScopeTrigger
    * @return		the container
    */
   public synchronized Storage getStorage() {
-    if (m_LocalStorage == null)
-      m_LocalStorage = new Storage();
+    if (m_LocalStorage == null) {
+      if (m_CopyStorage)
+	m_LocalStorage = getParent().getStorageHandler().getStorage().getClone();
+      else
+	m_LocalStorage = new Storage();
+    }
 
     return m_LocalStorage;
   }
@@ -423,6 +521,8 @@ public class LocalScopeTrigger
   public synchronized Variables getLocalVariables() {
     if (m_LocalVariables == null) {
       m_LocalVariables = new FlowVariables();
+      if (m_CopyVariables)
+	m_LocalVariables.assign(getParent().getVariables());
       m_LocalVariables.setFlow(this);
     }
     
