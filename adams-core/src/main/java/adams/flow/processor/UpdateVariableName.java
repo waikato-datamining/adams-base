@@ -29,7 +29,7 @@ import adams.core.Variables;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
 import adams.flow.control.Flow;
-import adams.flow.control.LocalScope;
+import adams.flow.control.LocalScopeTrigger;
 
 /**
  <!-- globalinfo-start -->
@@ -116,7 +116,7 @@ public class UpdateVariableName
    * Returns whether the traverser can recurse the specified class
    * (base class from a ClassOption).
    * <p/>
-   * Does not recurse into {@link LocalScope} and {@link Flow} actors.
+   * Does not recurse into {@link LocalScopeTrigger} and {@link Flow} actors.
    *
    * @param cls		the class to determine for whether recursing is
    * 			possible or not
@@ -124,7 +124,7 @@ public class UpdateVariableName
    */
   @Override
   public boolean canRecurse(Class cls) {
-    return !cls.equals(LocalScope.class) && !cls.equals(Flow.class);
+    return !cls.equals(LocalScopeTrigger.class) && !cls.equals(Flow.class);
   }
   
   /**

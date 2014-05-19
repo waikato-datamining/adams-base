@@ -14,7 +14,7 @@
  */
 
 /**
- * LocalScope.java
+ * LocalScopeTrigger.java
  * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
@@ -118,7 +118,7 @@ import adams.flow.core.FlowVariables;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class LocalScope
+public class LocalScopeTrigger
   extends Trigger 
   implements VariablesHandler, StorageHandler, ScopeHandler {
 

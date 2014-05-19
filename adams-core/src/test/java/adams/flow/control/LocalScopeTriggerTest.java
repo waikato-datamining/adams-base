@@ -14,7 +14,7 @@
  */
 
 /*
- * LocalScopeTest.java
+ * LocalScopeTriggerTest.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
@@ -29,13 +29,13 @@ import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
 
 /**
- * Test for LocalScope actor.
+ * Test for LocalScopeTrigger actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  * @version $Revision$
  */
-public class LocalScopeTest
+public class LocalScopeTriggerTest
   extends AbstractFlowTest {
 
   /**
@@ -43,7 +43,7 @@ public class LocalScopeTest
    *
    * @param name	the name of the test
    */
-  public LocalScopeTest(String name) {
+  public LocalScopeTriggerTest(String name) {
     super(name);
   }
 
@@ -88,7 +88,7 @@ public class LocalScopeTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(LocalScopeTest.class);
+    return new TestSuite(LocalScopeTriggerTest.class);
   }
 
   /**
@@ -129,7 +129,7 @@ public class LocalScopeTest
       actors1[2] = setvariable6;
 
       // Flow.LocalScope
-      adams.flow.control.LocalScope localscope10 = new adams.flow.control.LocalScope();
+      adams.flow.control.LocalScopeTrigger localscope10 = new adams.flow.control.LocalScopeTrigger();
       argOption = (AbstractArgumentOption) localscope10.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] actors11 = new adams.flow.core.AbstractActor[3];
 

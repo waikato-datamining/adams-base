@@ -22,7 +22,7 @@ package adams.flow.control;
 import adams.flow.core.ActorHandler;
 
 /**
- * For actors that define a scope like the {@link Flow} or {@link LocalScope}
+ * For actors that define a scope like the {@link Flow} or {@link LocalScopeTrigger}
  * actor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

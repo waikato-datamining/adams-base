@@ -45,7 +45,8 @@ Rename=\
   Rename-paintlet_paintletwithfixedxrange,\
   Rename-paintlet_paintletwithfixedxyrange,\
   Rename-paintlet_paintletwithfixedyrange,\
-  Rename-flowtree_createglobalactor
+  Rename-flowtree_createglobalactor,\
+  Rename-control_localscope
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
@@ -89,6 +90,7 @@ Rename-paintlet_paintletwithfixedxrange=adams.gui.visualization.sequence.XYSeque
 Rename-paintlet_paintletwithfixedxyrange=adams.gui.visualization.sequence.XYSequencePaintletWithFixedXYRange-adams.gui.visualization.sequence.PaintletWithFixedXYRange
 Rename-paintlet_paintletwithfixedyrange=adams.gui.visualization.sequence.XYSequencePaintletWithFixedYRange-adams.gui.visualization.sequence.PaintletWithFixedYRange
 Rename-flowtree_createglobalactor=adams.gui.flow.tree.menu.CreateGlobalActor-adams.gui.flow.tree.menu.CreateCallableActor
+Rename-control_localscope=adams.flow.control.LocalScope-adams.flow.control.LocalScopeTrigger
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\
