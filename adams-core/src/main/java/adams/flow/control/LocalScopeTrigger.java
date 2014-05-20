@@ -227,18 +227,9 @@ public class LocalScopeTrigger
     String		result;
     List<String>	options;
 
-    result = null;
-
-    options = new ArrayList<String>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copy vars", m_CopyVariables));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copy storage", m_CopyStorage));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagate vars", m_PropagateVariables));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagate storage", m_PropagateStorage));
-    result = QuickInfoHelper.flatten(options);
+    result = "";
     
     if (QuickInfoHelper.hasVariable(this, "propagateVariables") || m_PropagateVariables) {
-      if (!result.isEmpty())
-	result += ", ";
       result = QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, "var: ");
     }
     if (QuickInfoHelper.hasVariable(this, "propagateStorage") || m_PropagateStorage) {
@@ -246,6 +237,13 @@ public class LocalScopeTrigger
 	result += ", ";
       result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, "storage: ");
     }
+
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copyVariables", m_CopyVariables, "copy vars"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copyStorage", m_CopyStorage, "copy storage"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagateVariables", m_PropagateVariables, "propagate vars"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagateStorage", m_PropagateStorage, "propagate storage"));
+    result += QuickInfoHelper.flatten(options);
 
     return result;
   }
@@ -550,6 +548,20 @@ public class LocalScopeTrigger
   }
 
   /**
+   * Pre-execute hook.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String preExecute() {
+    m_LocalStorage   = null;
+    m_LocalVariables = null;
+    m_Actors.setVariables(getVariables());
+    
+    return super.preExecute();
+  }
+  
+  /**
    * Post-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
@@ -562,7 +574,7 @@ public class LocalScopeTrigger
     result = super.postExecute();
 
     if (!m_Stopped) {
-      if (m_PropagateVariables) {
+      if (m_PropagateVariables && (m_LocalVariables != null)) {
 	for (String name: m_LocalVariables.nameSet()) {
 	  if (m_VariablesRegExp.isMatch(name)) {
 	    getParent().getVariables().set(name, m_LocalVariables.get(name));
@@ -572,7 +584,7 @@ public class LocalScopeTrigger
 	}
       }
       
-      if (m_PropagateStorage) {
+      if (m_PropagateStorage && (m_LocalStorage != null)) {
 	for (StorageName name: m_LocalStorage.keySet()) {
 	  if (m_StorageRegExp.isMatch(name.getValue())) {
 	    getParent().getStorageHandler().getStorage().put(name, m_LocalStorage.get(name));
