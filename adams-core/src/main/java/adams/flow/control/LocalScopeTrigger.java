@@ -627,7 +627,7 @@ public class LocalScopeTrigger
 	}
       }
       
-      if ((m_ScopeHandlingVariables != ScopeHandling.SHARE) && m_PropagateStorage && (m_LocalStorage != null)) {
+      if ((m_ScopeHandlingStorage != ScopeHandling.SHARE) && m_PropagateStorage && (m_LocalStorage != null)) {
 	for (StorageName name: m_LocalStorage.keySet()) {
 	  if (m_StorageRegExp.isMatch(name.getValue())) {
 	    getParent().getStorageHandler().getStorage().put(name, m_LocalStorage.get(name));
