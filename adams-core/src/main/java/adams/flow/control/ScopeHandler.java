@@ -32,6 +32,21 @@ public interface ScopeHandler
   extends ActorHandler {
 
   /**
+   * Enumer for how the scope is being handled.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum ScopeHandling {
+    /** start with empty object. */
+    EMPTY,
+    /** use copy of outer scope. */
+    COPY,
+    /** share with outer scope. */
+    SHARE
+  }
+
+  /**
    * Sets whether to enforce the callable name check.
    * 
    * @param value	true if to enforce check

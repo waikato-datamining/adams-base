@@ -20,9 +20,7 @@
 
 package adams.flow.control;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -78,21 +76,16 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-copy-variables &lt;boolean&gt; (property: copyVariables)
- * &nbsp;&nbsp;&nbsp;If enabled, at execution time a copy of the current variables is made and 
- * &nbsp;&nbsp;&nbsp;used in the local scope.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-copy-storage &lt;boolean&gt; (property: copyStorage)
- * &nbsp;&nbsp;&nbsp;If enabled, a deep copy of the current storage state is made and made available 
- * &nbsp;&nbsp;&nbsp;in the local scope.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-scope-handling-variables &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingVariables)
+ * &nbsp;&nbsp;&nbsp;Defines how variables are handled in the local scope; whether to start with 
+ * &nbsp;&nbsp;&nbsp;empty set, a copy of the outer scope variables or share variables with the 
+ * &nbsp;&nbsp;&nbsp;outer scope.
+ * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
  * 
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
- * &nbsp;&nbsp;&nbsp;If enabled, variables that match the specified regular expression get propagated 
- * &nbsp;&nbsp;&nbsp;to the outer scope.
+ * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that 
+ * &nbsp;&nbsp;&nbsp;match the specified regular expression get propagated to the outer scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -101,9 +94,17 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
+ * <pre>-scope-handling-storage &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingStorage)
+ * &nbsp;&nbsp;&nbsp;Defines how storage is handled in the local scope; whether to start with 
+ * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage 
+ * &nbsp;&nbsp;&nbsp;with the outer scope.
+ * &nbsp;&nbsp;&nbsp;default: EMPTY
+ * </pre>
+ * 
  * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
- * &nbsp;&nbsp;&nbsp;If enabled, storage items which names match the specified regular expression 
- * &nbsp;&nbsp;&nbsp;get propagated to the outer scope.
+ * &nbsp;&nbsp;&nbsp;If enabled and storage is not shared with outer scope, storage items which 
+ * &nbsp;&nbsp;&nbsp;names match the specified regular expression get propagated to the outer 
+ * &nbsp;&nbsp;&nbsp;scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -141,11 +142,11 @@ public class LocalScopeTransformer
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
 
-  /** whether to initialize the local variables with the current ones. */
-  protected boolean m_CopyVariables;
+  /** how to handle the variables. */
+  protected ScopeHandling m_ScopeHandlingVariables;
 
-  /** whether to initialize the local storage with the current one. */
-  protected boolean m_CopyStorage;
+  /** how to handle the storage. */
+  protected ScopeHandling m_ScopeHandlingStorage;
 
   /** whether to propagate variables from the local scope to the outer scope. */
   protected boolean m_PropagateVariables;
@@ -185,12 +186,8 @@ public class LocalScopeTransformer
 	    new AbstractActor[0]);
 
     m_OptionManager.add(
-	    "copy-variables", "copyVariables",
-	    false);
-
-    m_OptionManager.add(
-	    "copy-storage", "copyStorage",
-	    false);
+	    "scope-handling-variables", "scopeHandlingVariables",
+	    ScopeHandling.EMPTY);
 
     m_OptionManager.add(
 	    "propagate-variables", "propagateVariables",
@@ -199,6 +196,10 @@ public class LocalScopeTransformer
     m_OptionManager.add(
 	    "variables-regexp", "variablesRegExp",
 	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+	    "scope-handling-storage", "scopeHandlingStorage",
+	    ScopeHandling.EMPTY);
 
     m_OptionManager.add(
 	    "propagate-storage", "propagateStorage",
@@ -242,25 +243,18 @@ public class LocalScopeTransformer
   @Override
   public String getQuickInfo() {
     String		result;
-    List<String>	options;
 
-    result = "";
+    result  = "variables [";
+    result += QuickInfoHelper.toString(this, "scopeHandlingVariables", m_ScopeHandlingVariables, "scope: ");
+    result += QuickInfoHelper.toString(this, "propagateVariables", (m_PropagateVariables ? "propagate" : "no propagation"), ", ");
+    result += QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, ", regexp: ");
+    result += "]";
     
-    if (QuickInfoHelper.hasVariable(this, "propagateVariables") || m_PropagateVariables) {
-      result = QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, "var: ");
-    }
-    if (QuickInfoHelper.hasVariable(this, "propagateStorage") || m_PropagateStorage) {
-      if (!result.isEmpty())
-	result += ", ";
-      result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, "storage: ");
-    }
-
-    options = new ArrayList<String>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copyVariables", m_CopyVariables, "copy vars"));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "copyStorage", m_CopyStorage, "copy storage"));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagateVariables", m_PropagateVariables, "propagate vars"));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "propagateStorage", m_PropagateStorage, "propagate storage"));
-    result += QuickInfoHelper.flatten(options);
+    result += ", storage [";
+    result += QuickInfoHelper.toString(this, "scopeHandlingStorage", m_ScopeHandlingStorage, "scope: ");
+    result += QuickInfoHelper.toString(this, "propagateStorage", (m_PropagateStorage ? "propagate" : "no propagation"), ", ");
+    result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, ", regexp: ");
+    result += "]";
 
     return result;
   }
@@ -307,22 +301,22 @@ public class LocalScopeTransformer
   }
 
   /**
-   * Sets whether to copy variables into the local scope.
+   * Sets how to handle variables into the local scope.
    * 
-   * @param value	if true then variables get copied
+   * @param value	the scope handling
    */
-  public void setCopyVariables(boolean value) {
-    m_CopyVariables = value;
+  public void setScopeHandlingVariables(ScopeHandling value) {
+    m_ScopeHandlingVariables = value;
     reset();
   }
   
   /**
-   * Returns whether to copy variables into the local scope.
+   * Returns how variables are handled in the local scope.
    * 
-   * @return		true if variables get copied
+   * @return		the scope handling
    */
-  public boolean getCopyVariables() {
-    return m_CopyVariables;
+  public ScopeHandling getScopeHandlingVariables() {
+    return m_ScopeHandlingVariables;
   }
   
   /**
@@ -331,37 +325,11 @@ public class LocalScopeTransformer
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String copyVariablesTipText() {
-    return "If enabled, at execution time a copy of the current variables is made and used in the local scope.";
-  }
-
-  /**
-   * Sets whether to use copy of storage in local scope.
-   * 
-   * @param value	if true then storage gets copied
-   */
-  public void setCopyStorage(boolean value) {
-    m_CopyStorage = value;
-    reset();
-  }
-  
-  /**
-   * Returns whether to use copy of storage in local scope.
-   * 
-   * @return		true if storage gets copied
-   */
-  public boolean getCopyStorage() {
-    return m_CopyStorage;
-  }
-  
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String copyStorageTipText() {
-    return "If enabled, a deep copy of the current storage state is made and made available in the local scope.";
+  public String scopeHandlingVariablesTipText() {
+    return 
+	"Defines how variables are handled in the local scope; whether to "
+	+ "start with empty set, a copy of the outer scope variables or "
+	+ "share variables with the outer scope.";
   }
 
   /**
@@ -390,7 +358,10 @@ public class LocalScopeTransformer
    * 			displaying in the GUI or for listing the options.
    */
   public String propagateVariablesTipText() {
-    return "If enabled, variables that match the specified regular expression get propagated to the outer scope.";
+    return 
+	"If enabled and variables are not shared with outer scope, variables "
+	+ "that match the specified regular expression get propagated to the "
+	+ "outer scope.";
   }
 
   /**
@@ -425,6 +396,38 @@ public class LocalScopeTransformer
   }
 
   /**
+   * Sets how to handle storage in the local scope.
+   * 
+   * @param value	the scope handling
+   */
+  public void setScopeHandlingStorage(ScopeHandling value) {
+    m_ScopeHandlingStorage = value;
+    reset();
+  }
+  
+  /**
+   * Returns how storage is handled in the local scope.
+   * 
+   * @return		the scope handling
+   */
+  public ScopeHandling getScopeHandlingStorage() {
+    return m_ScopeHandlingStorage;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scopeHandlingStorageTipText() {
+    return 
+	"Defines how storage is handled in the local scope; whether to "
+	+ "start with empty set, a (deep) copy of the outer scope storage or "
+	+ "share the storage with the outer scope.";
+  }
+
+  /**
    * Sets whether to propagate storage items from the local to the outer scope.
    * 
    * @param value	if true then storage items get propagated
@@ -450,7 +453,10 @@ public class LocalScopeTransformer
    * 			displaying in the GUI or for listing the options.
    */
   public String propagateStorageTipText() {
-    return "If enabled, storage items which names match the specified regular expression get propagated to the outer scope.";
+    return 
+	"If enabled and storage is not shared with outer scope, storage "
+	+ "items which names match the specified regular expression get "
+	+ "propagated to the outer scope.";
   }
 
   /**
@@ -540,10 +546,19 @@ public class LocalScopeTransformer
    */
   public synchronized Storage getStorage() {
     if (m_LocalStorage == null) {
-      if (m_CopyStorage)
-	m_LocalStorage = getParent().getStorageHandler().getStorage().getClone();
-      else
-	m_LocalStorage = new Storage();
+      switch (m_ScopeHandlingStorage) {
+	case EMPTY:
+	  m_LocalStorage = new Storage();
+	  break;
+	case COPY:
+	  m_LocalStorage = getParent().getStorageHandler().getStorage().getClone();
+	  break;
+	case SHARE:
+	  m_LocalStorage = getParent().getStorageHandler().getStorage();
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled storage scope handling type: " + m_ScopeHandlingStorage);
+      }
     }
 
     return m_LocalStorage;
@@ -556,9 +571,22 @@ public class LocalScopeTransformer
    */
   public synchronized Variables getLocalVariables() {
     if (m_LocalVariables == null) {
-      m_LocalVariables = new FlowVariables();
-      if (m_CopyVariables)
-	m_LocalVariables.assign(getParent().getVariables());
+      switch (m_ScopeHandlingStorage) {
+	case EMPTY:
+	  m_LocalVariables = new FlowVariables();
+	  m_LocalVariables.setFlow(this);
+	  break;
+	case COPY:
+	  m_LocalVariables = new FlowVariables();
+	  m_LocalVariables.assign(getParent().getVariables());
+	  m_LocalVariables.setFlow(this);
+	  break;
+	case SHARE:
+	  m_LocalVariables = (FlowVariables) getParent().getVariables();
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingStorage);
+      }
       m_LocalVariables.setFlow(this);
     }
     
@@ -777,7 +805,7 @@ public class LocalScopeTransformer
     result = super.postExecute();
 
     if (!m_Stopped) {
-      if (m_PropagateVariables && (m_LocalVariables != null)) {
+      if ((m_ScopeHandlingVariables != ScopeHandling.SHARE) && m_PropagateVariables && (m_LocalVariables != null)) {
 	for (String name: m_LocalVariables.nameSet()) {
 	  if (m_VariablesRegExp.isMatch(name)) {
 	    getParent().getVariables().set(name, m_LocalVariables.get(name));
@@ -787,7 +815,7 @@ public class LocalScopeTransformer
 	}
       }
       
-      if (m_PropagateStorage && (m_LocalStorage != null)) {
+      if ((m_ScopeHandlingStorage != ScopeHandling.SHARE) && m_PropagateStorage && (m_LocalStorage != null)) {
 	for (StorageName name: m_LocalStorage.keySet()) {
 	  if (m_StorageRegExp.isMatch(name.getValue())) {
 	    getParent().getStorageHandler().getStorage().put(name, m_LocalStorage.get(name));

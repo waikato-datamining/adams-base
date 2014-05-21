@@ -140,21 +140,6 @@ public class LocalScopeTrigger
   /** for serialization. */
   private static final long serialVersionUID = -8344934611549310497L;
 
-  /**
-   * Enumer for how the scope is being handled.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum ScopeHandling {
-    /** start with empty object. */
-    EMPTY,
-    /** use copy of outer scope. */
-    COPY,
-    /** share with outer scope. */
-    SHARE
-  }
-  
   /** the storage for temporary data. */
   protected transient Storage m_LocalStorage;
 
