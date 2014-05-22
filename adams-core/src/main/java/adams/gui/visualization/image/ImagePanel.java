@@ -21,6 +21,7 @@ package adams.gui.visualization.image;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -35,6 +36,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +50,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -83,7 +86,7 @@ import adams.gui.visualization.report.ReportFactory;
  */
 public class ImagePanel
   extends UndoPanel
-  implements StatusMessageHandler, TableModelListener {
+  implements StatusMessageHandler, TableModelListener, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3102446345758890249L;
@@ -705,6 +708,9 @@ public class ImagePanel
   /** the additional properties to display. */
   protected Report m_AdditionalProperties;
 
+  /** list of dependent dialogs to clean up. */
+  protected List<Dialog> m_DependentDialogs;
+  
   /**
    * Initializes the panel.
    */
@@ -723,6 +729,7 @@ public class ImagePanel
     m_Modified             = false;
     m_ImageProperties      = new Report();
     m_AdditionalProperties = null;
+    m_DependentDialogs              = new ArrayList<Dialog>();
   }
 
   /**
@@ -951,11 +958,32 @@ public class ImagePanel
     addUndoPoint("Saving undo data...", "Removing image");
     m_CurrentFile = null;
     m_PaintPanel.setCurrentImage(null);
+    removeDependentDialogs();
     updateImageProperties();
     showStatus("");
     repaint();
   }
 
+  /**
+   * Adds the dialog to the list of dialogs to be closed when the panel gets
+   * cleared or removed.
+   * 
+   * @param dlg		the dialog to add
+   */
+  public void addDependentDialog(Dialog dlg) {
+    m_DependentDialogs.add(dlg);
+  }
+  
+  /**
+   * Removes all dependent dialogs.
+   */
+  protected void removeDependentDialogs() {
+    for (Dialog dlg: m_DependentDialogs) {
+      dlg.setVisible(false);
+      dlg.dispose();
+    }
+  }
+  
   /**
    * Opens the file with the specified image reader.
    *
@@ -1336,5 +1364,15 @@ public class ImagePanel
    */
   public boolean isSelectionEnabled() {
     return m_PaintPanel.isSelectionEnabled();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    if (m_DependentDialogs != null) {
+      removeDependentDialogs();
+      m_DependentDialogs = null;
+    }
   }
 }

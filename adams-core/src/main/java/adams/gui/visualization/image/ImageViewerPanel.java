@@ -344,16 +344,20 @@ public class ImageViewerPanel
    * @return		the image panel, null if none available
    */
   public ImagePanel getCurrentPanel() {
-    ImagePanel	result;
-    int		index;
+    return getPanelAt(m_TabbedPane.getSelectedIndex());
+  }
 
-    result = null;
-
-    index = m_TabbedPane.getSelectedIndex();
-    if (index >= 0)
-      result = (ImagePanel) m_TabbedPane.getComponentAt(index);
-
-    return result;
+  /**
+   * Returns the image panel of the specified tab.
+   *
+   * @param index	the tab index
+   * @return		the image panel, null if none available
+   */
+  public ImagePanel getPanelAt(int index) {
+    if ((index < 0) || (index >= m_TabbedPane.getTabCount()))
+      return null;
+    else
+      return (ImagePanel) m_TabbedPane.getComponentAt(index);
   }
 
   /**
@@ -362,12 +366,23 @@ public class ImageViewerPanel
    * @return		the current image, can be null
    */
   public BufferedImage getCurrentImage() {
+    return getImageAt(m_TabbedPane.getSelectedIndex());
+  }
+
+  /**
+   * Returns the underlying image.
+   *
+   * @param index	the tab index
+   * @return		the current image, can be null
+   */
+  public BufferedImage getImageAt(int index) {
     BufferedImage	result;
+    ImagePanel		panel;
 
     result = null;
-
-    if (getCurrentPanel() != null)
-      result = getCurrentPanel().getCurrentImage();
+    panel  = getPanelAt(index);
+    if (panel != null)
+      result = panel.getCurrentImage();
 
     return result;
   }
@@ -378,12 +393,23 @@ public class ImageViewerPanel
    * @return		the current filename, can be null
    */
   public File getCurrentFile() {
+    return getFileAt(m_TabbedPane.getSelectedIndex());
+  }
+
+  /**
+   * Returns the current filename.
+   *
+   * @param index	the tab index
+   * @return		the current filename, can be null
+   */
+  public File getFileAt(int index) {
     File	result;
+    ImagePanel	panel;
 
     result = null;
-
-    if (getCurrentPanel() != null)
-      result = getCurrentPanel().getCurrentFile();
+    panel  = getPanelAt(index);
+    if (panel != null)
+      result = panel.getCurrentFile();
 
     return result;
   }
@@ -890,14 +916,17 @@ public class ImageViewerPanel
    */
   protected void close() {
     int		index;
+    ImagePanel	panel;
     boolean	canClose;
 
-    index    = m_TabbedPane.getSelectedIndex();
     canClose = false;
-    if (index >= 0)
-      canClose = checkForModified(getCurrentPanel());
+    index    = m_TabbedPane.getSelectedIndex();
+    panel    = getPanelAt(index);
+    if (panel != null)
+      canClose = checkForModified(panel);
 
     if (canClose) {
+      panel.cleanUp();
       m_TabbedPane.remove(index);
       update();
     }
