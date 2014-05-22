@@ -19,14 +19,20 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import java.awt.Dialog.ModalityType;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
 
 import weka.core.Instance;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.flattener.AbstractJAIFlattener;
 import adams.data.jai.flattener.Histogram;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.GenericObjectEditor;
+import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
  * Allows the user to apply a JAI flattner to an image in the ImageViewer.
@@ -35,10 +41,13 @@ import adams.gui.goe.GenericObjectEditorDialog;
  * @version $Revision: 7713 $
  */
 public class JAIFlattener
-  extends AbstractImageFlattener {
+  extends AbstractSelectedImagesFlattener {
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
+
+  /** the GOE editor with the transformer. */
+  protected GenericObjectEditor m_Editor;
 
   /**
    * Returns the text for the menu item to create.
@@ -48,6 +57,59 @@ public class JAIFlattener
   @Override
   public String getCaption() {
     return "JAI flattener...";
+  }
+  
+  /**
+   * Returns whether the dialog has an approval button.
+   * 
+   * @return		true if approval button visible
+   */
+  @Override
+  protected boolean hasApprovalButton() {
+    return false;
+  }
+  
+  /**
+   * Returns whether the dialog has a cancel button.
+   * 
+   * @return		true if cancel button visible
+   */
+  @Override
+  protected boolean hasCancelButton() {
+    return false;
+  }
+  
+  /**
+   * Creates the panel with the configuration (return null to suppress display).
+   * 
+   * @return		the generated panel, null to suppress
+   */
+  @Override
+  protected JPanel createConfigurationPanel(final ApprovalDialog dialog) {
+    JPanel	result;
+    
+    m_Editor = new GenericObjectEditor();
+    m_Editor.setClassType(AbstractJAIFlattener.class);
+    m_Editor.setCanChangeClassInDialog(true);
+    if (hasLastSetup())
+      m_Editor.setValue(getLastSetup());
+    else
+      m_Editor.setValue(new Histogram());
+    result = new JPanel(new BorderLayout());
+    result.add(m_Editor.getCustomEditor(), BorderLayout.CENTER);
+
+    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getApproveButton().doClick();
+      }
+    });
+    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getCancelButton().doClick();
+      }
+    });
+    
+    return result;
   }
 
   /**
@@ -59,32 +121,14 @@ public class JAIFlattener
   @Override
   protected Instance[] flatten(BufferedImage image) {
     weka.core.Instance[]	result;
-    GenericObjectEditorDialog	dialog;
     AbstractJAIFlattener	flattener;
     BufferedImageContainer	input;
     weka.core.Instance[]	flattened;
 
     result = null;
-    if (m_CurrentPanel.getParentDialog() != null)
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentDialog());
-    else
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
-    dialog.getGOEEditor().setClassType(AbstractJAIFlattener.class);
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    if (hasLastSetup())
-      dialog.setCurrent(getLastSetup());
-    else
-      dialog.setCurrent(new Histogram());
-    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.setLocationRelativeTo(m_CurrentPanel);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
-      m_CanceledByUser = true;
-      return result;
-    }
 
-    setLastSetup(dialog.getCurrent());
-    flattener = (AbstractJAIFlattener) dialog.getCurrent();
+    setLastSetup(m_Editor.getValue());
+    flattener = (AbstractJAIFlattener) m_Editor.getValue();
     input       = new BufferedImageContainer();
     input.setImage(image);
     flattened = flattener.flatten(input);

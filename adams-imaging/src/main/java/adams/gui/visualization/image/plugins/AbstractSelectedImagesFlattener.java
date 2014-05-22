@@ -23,6 +23,9 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 import adams.data.conversion.WekaInstanceToAdamsInstance;
@@ -39,14 +42,17 @@ import adams.gui.visualization.instance.InstanceExplorer;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractImageFlattener
-  extends AbstractImageViewerPlugin {
+public abstract class AbstractSelectedImagesFlattener
+  extends AbstractSelectedImagesViewerPlugin {
 
   /** for serialization. */
   private static final long serialVersionUID = -3111612432359476318L;
   
   /** for storing filtering errors. */
   protected String m_FilterError;
+
+  /** the collected data. */
+  protected List<weka.core.Instance> m_Collected;
 
   /**
    * Checks whether the plugin can be executed given the specified image panel.
@@ -60,14 +66,6 @@ public abstract class AbstractImageFlattener
   public boolean canExecute(ImagePanel panel) {
     return (panel != null) && (panel.getCurrentImage() != null);
   }
-
-  /**
-   * Flattens the image.
-   *
-   * @param image	the image to filter
-   * @return		the generated instance(s)
-   */
-  protected abstract weka.core.Instance[] flatten(BufferedImage image);
 
   /**
    * Returns the title for the dialog.
@@ -89,33 +87,53 @@ public abstract class AbstractImageFlattener
    * 
    * @return		the dimension of the dialog
    */
+  @Override
   protected Dimension getDialogSize() {
     return new Dimension(800, 600);
   }
-  
+
   /**
-   * Executes the plugin.
-   *
-   * @return		null if OK, otherwise error message
+   * Initializes the processing.
+   * 
+   * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doExecute() {
-    String				result;
-    BufferedImage			input;
-    weka.core.Instance[]		output;
-    ApprovalDialog			dlg;
-    InstanceExplorer			explorer;
-    InstanceContainerManager		manager;
-    InstanceContainer			cont;
-    adams.data.instance.Instance	ainst;
-    WekaInstanceToAdamsInstance		conv;
+  protected String processInit() {
+    String	result;
+    
+    result = super.processInit();
+    
+    if (result == null)
+      m_Collected = new ArrayList<weka.core.Instance>();
+    
+    return result;
+  }
+  
+  /**
+   * Flattens the image.
+   *
+   * @param image	the image to filter
+   * @return		the generated instance(s)
+   */
+  protected abstract weka.core.Instance[] flatten(BufferedImage image);
+  
+  /**
+   * Processes the specified panel.
+   * 
+   * @param panel	the panel to process
+   * @return		null if successful, error message otherwise
+   */
+  @Override
+  protected String process(ImagePanel panel) {
+    String			result;
+    BufferedImage		input;
+    weka.core.Instance[]	output;
 
     result = null;
-
-    input         = m_CurrentPanel.getCurrentImage();
-    m_FilterError = null;
+    input  = panel.getCurrentImage();
     try {
       output = flatten(input);
+      m_Collected.addAll(Arrays.asList(output));
 
       // did user abort filtering?
       if (m_CanceledByUser)
@@ -128,40 +146,6 @@ public abstract class AbstractImageFlattener
 	else
 	  result += m_FilterError;
       }
-      else {
-	if (m_CurrentPanel.getParentDialog() != null)
-	  dlg = new ApprovalDialog(m_CurrentPanel.getParentDialog(), ModalityType.MODELESS);
-	else
-	  dlg = new ApprovalDialog(m_CurrentPanel.getParentFrame(), false);
-	m_CurrentPanel.addDependentDialog(dlg);
-	explorer = new InstanceExplorer();
-	manager  = explorer.getContainerManager();
-	manager.startUpdate();
-	conv     = new WekaInstanceToAdamsInstance();
-	for (weka.core.Instance inst: output) {
-	  conv.setInput(inst);
-	  if (conv.convert() == null) {
-	    ainst = (adams.data.instance.Instance) conv.getOutput();
-	    cont  = manager.newContainer(ainst);
-	    if (m_CurrentPanel.getCurrentFile() != null) {
-	      cont.getData().getReport().setStringValue("File", m_CurrentPanel.getCurrentFile().getName());
-	      cont.getData().getReport().setStringValue("Path", m_CurrentPanel.getCurrentFile().getParent());
-	      cont.getData().getReport().setStringValue("Full", m_CurrentPanel.getCurrentFile().getAbsolutePath());
-	    }
-	    manager.add(cont);
-	  }
-	}
-	conv.cleanUp();
-	manager.finishUpdate();
-	dlg.setTitle(getDialogTitle());
-	dlg.setApproveVisible(true);
-	dlg.setCancelVisible(false);
-	dlg.setDiscardVisible(false);
-	dlg.getContentPane().add(explorer, BorderLayout.CENTER);
-	dlg.setSize(getDialogSize());
-	dlg.setLocationRelativeTo(null);
-	dlg.setVisible(true);
-      }
     }
     catch (Exception e) {
       m_FilterError = e.toString();
@@ -170,6 +154,62 @@ public abstract class AbstractImageFlattener
       result += m_FilterError;
     }
 
+    return result;
+  }
+
+  /**
+   * Finishes up the processing.
+   * 
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String processFinish() {
+    String				result;
+    ApprovalDialog			dlg;
+    InstanceExplorer			explorer;
+    InstanceContainerManager		manager;
+    InstanceContainer			cont;
+    adams.data.instance.Instance	ainst;
+    WekaInstanceToAdamsInstance		conv;
+    
+    result = super.processFinish();
+    
+    if (result == null) {
+      if (m_CurrentPanel.getParentDialog() != null)
+	dlg = new ApprovalDialog(m_CurrentPanel.getParentDialog(), ModalityType.MODELESS);
+      else
+	dlg = new ApprovalDialog(m_CurrentPanel.getParentFrame(), false);
+      m_CurrentPanel.addDependentDialog(dlg);
+      explorer = new InstanceExplorer();
+      manager  = explorer.getContainerManager();
+      manager.startUpdate();
+      conv     = new WekaInstanceToAdamsInstance();
+      for (weka.core.Instance inst: m_Collected) {
+	conv.setInput(inst);
+	if (conv.convert() == null) {
+	  ainst = (adams.data.instance.Instance) conv.getOutput();
+	  cont  = manager.newContainer(ainst);
+	  if (m_CurrentPanel.getCurrentFile() != null) {
+	    cont.setID(m_CurrentPanel.getCurrentFile().getName());
+	    cont.getData().getReport().setStringValue("File", m_CurrentPanel.getCurrentFile().getName());
+	    cont.getData().getReport().setStringValue("Path", m_CurrentPanel.getCurrentFile().getParent());
+	    cont.getData().getReport().setStringValue("Full", m_CurrentPanel.getCurrentFile().getAbsolutePath());
+	  }
+	  manager.add(cont);
+	}
+      }
+      conv.cleanUp();
+      manager.finishUpdate();
+      dlg.setTitle(getDialogTitle());
+      dlg.setApproveVisible(true);
+      dlg.setCancelVisible(false);
+      dlg.setDiscardVisible(false);
+      dlg.getContentPane().add(explorer, BorderLayout.CENTER);
+      dlg.setSize(getDialogSize());
+      dlg.setLocationRelativeTo(null);
+      dlg.setVisible(true);
+    }
+    
     return result;
   }
 }

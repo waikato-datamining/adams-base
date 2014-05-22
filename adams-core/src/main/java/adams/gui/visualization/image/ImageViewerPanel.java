@@ -235,26 +235,43 @@ public class ImageViewerPanel
    */
   protected void update() {
     updateTitle();
-    updateTabTitle();
+    updateTabTitles();
     updateMenu();
   }
 
   /**
-   * Updates the title of the current tab, taken modified state into account.
+   * Updates the title of all tabs, takes modified state into account.
    */
-  protected void updateTabTitle() {
-    int		index;
+  protected void updateTabTitles() {
+    int		i;
+    
+    for (i = 0; i < m_TabbedPane.getTabCount(); i++)
+      updateTabTitle(i);
+  }
+
+  /**
+   * Updates the title of the current tab, takes modified state into account.
+   */
+  protected void updateCurrentTabTitle() {
+    updateTabTitle(m_TabbedPane.getSelectedIndex());
+  }
+
+  /**
+   * Updates the title of the specified tab, takes modified state into account.
+   * 
+   * @param index	the index of the tab
+   */
+  protected void updateTabTitle(int index) {
     String	title;
     boolean	modified;
 
-    index = m_TabbedPane.getSelectedIndex();
     if (index >= 0) {
       title   = m_TabbedPane.getTitleAt(index);
       modified = title.startsWith("*");
       if (modified)
 	title = title.substring(1);
-      if (getCurrentPanel().isModified() != modified) {
-	if (getCurrentPanel().isModified())
+      if (getPanelAt(index).isModified() != modified) {
+	if (getPanelAt(index).isModified())
 	  title = "*" + title;
 	m_TabbedPane.setTitleAt(index, title);
       }
@@ -358,6 +375,22 @@ public class ImageViewerPanel
       return null;
     else
       return (ImagePanel) m_TabbedPane.getComponentAt(index);
+  }
+
+  /**
+   * Returns all the image panels.
+   *
+   * @return		the image panels
+   */
+  public ImagePanel[] getAllPanels() {
+    ImagePanel[]	result;
+    int			i;
+    
+    result = new ImagePanel[m_TabbedPane.getTabCount()];
+    for (i = 0; i < m_TabbedPane.getTabCount(); i++)
+      result[i] = (ImagePanel) m_TabbedPane.getComponentAt(i);
+    
+    return result;
   }
 
   /**
@@ -768,7 +801,6 @@ public class ImageViewerPanel
 	  menu.add(menuitem);
 	  menuitem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-	      getCurrentPanel().addUndoPoint("Saving undo data...", "Plugin: " + plugin.getCaption());
 	      String error = plugin.execute(getCurrentPanel());
 	      if (error != null)
 		GUIHelper.showErrorMessage(

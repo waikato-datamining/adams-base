@@ -15,20 +15,26 @@
 
 /**
  * ImageJTransformer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
 import ij.ImagePlus;
 
-import java.awt.Dialog.ModalityType;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Date;
+
+import javax.swing.JPanel;
 
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.transformer.AbstractImageJTransformer;
 import adams.data.imagej.transformer.PassThrough;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.GenericObjectEditor;
+import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
  * Allows the user to apply an ImageJ transformer to an image in the ImageViewer.
@@ -37,10 +43,13 @@ import adams.gui.goe.GenericObjectEditorDialog;
  * @version $Revision$
  */
 public class ImageJTransformer
-  extends AbstractImageFilter {
+  extends AbstractSelectedImagesFilter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9108452366270377935L;
+
+  /** the GOE editor with the transformer. */
+  protected GenericObjectEditor m_Editor;
 
   /**
    * Returns the text for the menu item to create.
@@ -50,6 +59,59 @@ public class ImageJTransformer
   @Override
   public String getCaption() {
     return "ImageJ transformer...";
+  }
+  
+  /**
+   * Returns whether the dialog has an approval button.
+   * 
+   * @return		true if approval button visible
+   */
+  @Override
+  protected boolean hasApprovalButton() {
+    return false;
+  }
+  
+  /**
+   * Returns whether the dialog has a cancel button.
+   * 
+   * @return		true if cancel button visible
+   */
+  @Override
+  protected boolean hasCancelButton() {
+    return false;
+  }
+  
+  /**
+   * Creates the panel with the configuration (return null to suppress display).
+   * 
+   * @return		the generated panel, null to suppress
+   */
+  @Override
+  protected JPanel createConfigurationPanel(final ApprovalDialog dialog) {
+    JPanel	result;
+    
+    m_Editor = new GenericObjectEditor();
+    m_Editor.setClassType(AbstractImageJTransformer.class);
+    m_Editor.setCanChangeClassInDialog(true);
+    if (hasLastSetup())
+      m_Editor.setValue(getLastSetup());
+    else
+      m_Editor.setValue(new PassThrough());
+    result = new JPanel(new BorderLayout());
+    result.add(m_Editor.getCustomEditor(), BorderLayout.CENTER);
+
+    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getApproveButton().doClick();
+      }
+    });
+    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getCancelButton().doClick();
+      }
+    });
+    
+    return result;
   }
 
   /**
@@ -61,37 +123,19 @@ public class ImageJTransformer
   @Override
   protected BufferedImage filter(BufferedImage image) {
     BufferedImage		result;
-    GenericObjectEditorDialog	dialog;
     AbstractImageJTransformer	transformer;
     String			title;
     ImagePlusContainer		input;
     ImagePlusContainer[]	transformed;
 
     result = null;
-    if (m_CurrentPanel.getParentDialog() != null)
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentDialog());
-    else
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
-    dialog.getGOEEditor().setClassType(AbstractImageJTransformer.class);
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    if (hasLastSetup())
-      dialog.setCurrent(getLastSetup());
-    else
-      dialog.setCurrent(new PassThrough());
-    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.setLocationRelativeTo(m_CurrentPanel);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
-      m_CanceledByUser = true;
-      return result;
-    }
 
-    setLastSetup(dialog.getCurrent());
+    setLastSetup(m_Editor.getValue());
     if (m_CurrentPanel.getCurrentFile() != null)
       title = m_CurrentPanel.getCurrentFile().toString();
     else
       title = "" + new Date();
-    transformer = (AbstractImageJTransformer) dialog.getCurrent();
+    transformer = (AbstractImageJTransformer) m_Editor.getValue();
     input       = new ImagePlusContainer();
     input.setImage(new ImagePlus(title, image));
     transformed = transformer.transform(input);

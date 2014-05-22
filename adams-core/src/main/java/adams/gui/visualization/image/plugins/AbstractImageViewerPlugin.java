@@ -15,7 +15,7 @@
 
 /**
  * AbstractImageViewerPlugin.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -27,6 +27,12 @@ import adams.gui.visualization.image.ImagePanel;
 
 /**
  * Ancestor for plugins for the ImageViewer.
+ * <p/>
+ * If the plugin modifies any panel, then an undo point should be added 
+ * before updating the panel. Here is an example:
+ * <pre>
+ * m_CurrentPanel.addUndoPoint("Saving undo data...", "Filtering image: " + getCaption());
+ * </pre> 
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

@@ -15,15 +15,15 @@
 
 /**
  * ImageMagick.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import adams.core.ImageMagickHelper;
 import adams.core.base.BaseText;
@@ -41,10 +41,13 @@ import adams.gui.visualization.image.ImagePanel;
  * @version $Revision$
  */
 public class ImageMagick
-  extends AbstractImageFilter {
+  extends AbstractSelectedImagesFilter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3840263834155992337L;
+
+  /** the editor with the commands. */
+  protected TextEditorPanel m_Editor;
 
   /**
    * Returns the text for the menu item to create.
@@ -69,6 +72,27 @@ public class ImageMagick
   public boolean canExecute(ImagePanel panel) {
     return ImageMagickHelper.isConvertAvailable() && super.canExecute(panel);
   }
+  
+  /**
+   * Creates the panel with the configuration (return null to suppress display).
+   * 
+   * @return		the generated panel, null to suppress
+   */
+  @Override
+  protected JPanel createConfigurationPanel(final ApprovalDialog dialog) {
+    JPanel		result;
+    
+    result = new JPanel(new BorderLayout());
+    m_Editor = new TextEditorPanel();
+    if (hasLastSetup())
+      m_Editor.setContent((String) getLastSetup());
+    else
+      m_Editor.setContent("");
+    result.add(new JLabel("Please enter the commands"), BorderLayout.NORTH);
+    result.add(m_Editor, BorderLayout.CENTER);
+    
+    return result;
+  }
 
   /**
    * Filters the image.
@@ -79,36 +103,14 @@ public class ImageMagick
   @Override
   protected BufferedImage filter(BufferedImage image) {
     BufferedImage		result;
-    ApprovalDialog	dialog;
-    TextEditorPanel		editor;
     BufferedImageContainer	input;
     ImageMagickTransformer	transformer;
 
     result = null;
-    if (m_CurrentPanel.getParentDialog() != null)
-      dialog = ApprovalDialog.getDialog(m_CurrentPanel.getParentDialog());
-    else
-      dialog = ApprovalDialog.getDialog(m_CurrentPanel.getParentFrame());
-    editor = new TextEditorPanel();
-    if (hasLastSetup())
-      editor.setContent((String) getLastSetup());
-    else
-      editor.setContent("");
-    dialog.setTitle("ImageMagick");
-    dialog.getContentPane().add(editor, BorderLayout.CENTER);
-    dialog.getContentPane().add(new JLabel("Please enter the commands"), BorderLayout.NORTH);
-    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.setSize(400, 300);
-    dialog.setLocationRelativeTo(m_CurrentPanel);
-    dialog.setVisible(true);
-    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION) {
-      m_CanceledByUser = true;
-      return result;
-    }
 
-    setLastSetup(editor.getContent());
+    setLastSetup(m_Editor.getContent());
     transformer = new ImageMagickTransformer();
-    transformer.setCommands(new BaseText(editor.getContent()));
+    transformer.setCommands(new BaseText(m_Editor.getContent()));
     m_FilterError = transformer.setUp();
     if (m_FilterError == null) {
       input = new BufferedImageContainer();

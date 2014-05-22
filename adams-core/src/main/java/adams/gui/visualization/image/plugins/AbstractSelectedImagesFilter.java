@@ -14,8 +14,8 @@
  */
 
 /**
- * AbstractImageFilter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractSelectedImagesFilter.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -26,13 +26,13 @@ import java.util.logging.Level;
 import adams.gui.visualization.image.ImagePanel;
 
 /**
- * Ancestor for plugins that
+ * Ancestor for plugins that filter the selected images.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 7171 $
  */
-public abstract class AbstractImageFilter
-  extends AbstractImageViewerPlugin {
+public abstract class AbstractSelectedImagesFilter
+  extends AbstractSelectedImagesViewerPlugin {
 
   /** for serialization. */
   private static final long serialVersionUID = 869121794905442017L;
@@ -62,27 +62,23 @@ public abstract class AbstractImageFilter
   protected abstract BufferedImage filter(BufferedImage image);
 
   /**
-   * Executes the plugin.
-   *
+   * Processes the panel.
+   * 
+   * @param panel	the panel to process
    * @return		null if OK, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String process(ImagePanel panel) {
     String		result;
     BufferedImage	input;
     BufferedImage	output;
     File		file;
 
-    result = null;
-
-    input         = m_CurrentPanel.getCurrentImage();
+    result        = null;
+    input         = panel.getCurrentImage();
     m_FilterError = null;
     try {
       output = filter(input);
-
-      // did user abort filtering?
-      if (m_CanceledByUser)
-	return result;
 
       if (output == null) {
 	result = "Failed to filter image: ";
@@ -92,10 +88,12 @@ public abstract class AbstractImageFilter
 	  result += m_FilterError;
       }
       else {
-	file = m_CurrentPanel.getCurrentFile();
-	m_CurrentPanel.setCurrentImage(output);
-	m_CurrentPanel.setCurrentFile(file);
-	m_CurrentPanel.setModified(true);
+	panel.addUndoPoint("Saving undo data...", "Filtering image: " + getCaption());
+	file = panel.getCurrentFile();
+	panel.setCurrentImage(output);
+	panel.setCurrentFile(file);
+	panel.setModified(true);
+	panel.showStatus("");
       }
     }
     catch (Exception e) {

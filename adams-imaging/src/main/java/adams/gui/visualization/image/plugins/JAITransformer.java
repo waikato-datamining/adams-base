@@ -19,26 +19,35 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import java.awt.Dialog.ModalityType;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.transformer.AbstractJAITransformer;
 import adams.data.jai.transformer.PassThrough;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.GenericObjectEditor;
+import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
- * Allows the user to apply a JAI transformer to an image in the ImageViewer.
+ * Allows the user to apply a JAI transformer to the selected images in the ImageViewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class JAITransformer
-  extends AbstractImageFilter {
+  extends AbstractSelectedImagesFilter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
 
+  /** the GOE editor with the transformer. */
+  protected GenericObjectEditor m_Editor;
+  
   /**
    * Returns the text for the menu item to create.
    *
@@ -47,6 +56,59 @@ public class JAITransformer
   @Override
   public String getCaption() {
     return "JAI transformer...";
+  }
+  
+  /**
+   * Returns whether the dialog has an approval button.
+   * 
+   * @return		true if approval button visible
+   */
+  @Override
+  protected boolean hasApprovalButton() {
+    return false;
+  }
+  
+  /**
+   * Returns whether the dialog has a cancel button.
+   * 
+   * @return		true if cancel button visible
+   */
+  @Override
+  protected boolean hasCancelButton() {
+    return false;
+  }
+  
+  /**
+   * Creates the panel with the configuration (return null to suppress display).
+   * 
+   * @return		the generated panel, null to suppress
+   */
+  @Override
+  protected JPanel createConfigurationPanel(final ApprovalDialog dialog) {
+    JPanel	result;
+    
+    m_Editor = new GenericObjectEditor();
+    m_Editor.setClassType(AbstractJAITransformer.class);
+    m_Editor.setCanChangeClassInDialog(true);
+    if (hasLastSetup())
+      m_Editor.setValue(getLastSetup());
+    else
+      m_Editor.setValue(new PassThrough());
+    result = new JPanel(new BorderLayout());
+    result.add(m_Editor.getCustomEditor(), BorderLayout.CENTER);
+
+    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getApproveButton().doClick();
+      }
+    });
+    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	dialog.getCancelButton().doClick();
+      }
+    });
+    
+    return result;
   }
 
   /**
@@ -58,32 +120,14 @@ public class JAITransformer
   @Override
   protected BufferedImage filter(BufferedImage image) {
     BufferedImage		result;
-    GenericObjectEditorDialog	dialog;
     AbstractJAITransformer	transformer;
     BufferedImageContainer	input;
     BufferedImageContainer[]	transformed;
 
     result = null;
-    if (m_CurrentPanel.getParentDialog() != null)
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentDialog());
-    else
-      dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
-    dialog.getGOEEditor().setClassType(AbstractJAITransformer.class);
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    if (hasLastSetup())
-      dialog.setCurrent(getLastSetup());
-    else
-      dialog.setCurrent(new PassThrough());
-    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.setLocationRelativeTo(m_CurrentPanel);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
-      m_CanceledByUser = true;
-      return result;
-    }
 
-    setLastSetup(dialog.getCurrent());
-    transformer = (AbstractJAITransformer) dialog.getCurrent();
+    setLastSetup(m_Editor.getValue());
+    transformer = (AbstractJAITransformer) m_Editor.getValue();
     input       = new BufferedImageContainer();
     input.setImage(image);
     transformed = transformer.transform(input);
