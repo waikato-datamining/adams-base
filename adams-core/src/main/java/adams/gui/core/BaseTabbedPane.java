@@ -15,7 +15,7 @@
 
 /**
  * BaseTabbedPane.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -24,6 +24,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JTabbedPane;
+
+import adams.core.CleanUpHandler;
 
 /**
  * Enhanced JTabbedPane. Offers closing of tabs with middle mouse button.
@@ -169,12 +171,15 @@ public class BaseTabbedPane
    * Hook method that gets executed after a tab was successfully removed with
    * a middle mouse button click.
    * <p/>
-   * Default implementation does nothing.
+   * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
+   * instances.
    * 
    * @param index	the original index
    * @param comp	the component that was removed
    */
   protected void afterTabClosedWithMiddleMouseButton(int index, Component comp) {
+    if (comp instanceof CleanUpHandler)
+      ((CleanUpHandler) comp).cleanUp();
   }
 
   /**
