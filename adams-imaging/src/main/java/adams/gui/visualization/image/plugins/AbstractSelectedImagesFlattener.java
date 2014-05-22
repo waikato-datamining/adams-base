@@ -43,7 +43,7 @@ import adams.gui.visualization.instance.InstanceExplorer;
  * @version $Revision$
  */
 public abstract class AbstractSelectedImagesFlattener
-  extends AbstractSelectedImagesViewerPlugin {
+  extends AbstractSelectedImagesViewerPluginWithGOE {
 
   /** for serialization. */
   private static final long serialVersionUID = -3111612432359476318L;

@@ -19,19 +19,11 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JPanel;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.transformer.AbstractJAITransformer;
 import adams.data.jai.transformer.PassThrough;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.goe.GenericObjectEditor;
-import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
  * Allows the user to apply a JAI transformer to the selected images in the ImageViewer.
@@ -40,13 +32,10 @@ import adams.gui.goe.GenericObjectEditor.GOEPanel;
  * @version $Revision$
  */
 public class JAITransformer
-  extends AbstractSelectedImagesFilter {
+  extends AbstractSelectedImagesFilterWithGOE {
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
-
-  /** the GOE editor with the transformer. */
-  protected GenericObjectEditor m_Editor;
   
   /**
    * Returns the text for the menu item to create.
@@ -59,56 +48,24 @@ public class JAITransformer
   }
   
   /**
-   * Returns whether the dialog has an approval button.
+   * Returns the class to use as type (= superclass) in the GOE.
    * 
-   * @return		true if approval button visible
+   * @return		the class
    */
   @Override
-  protected boolean hasApprovalButton() {
-    return false;
+  protected Class getEditorType() {
+    return AbstractJAITransformer.class;
   }
   
   /**
-   * Returns whether the dialog has a cancel button.
+   * Returns the default object to use in the GOE if no last setup is yet
+   * available.
    * 
-   * @return		true if cancel button visible
+   * @return		the object
    */
   @Override
-  protected boolean hasCancelButton() {
-    return false;
-  }
-  
-  /**
-   * Creates the panel with the configuration (return null to suppress display).
-   * 
-   * @return		the generated panel, null to suppress
-   */
-  @Override
-  protected JPanel createConfigurationPanel(final ApprovalDialog dialog) {
-    JPanel	result;
-    
-    m_Editor = new GenericObjectEditor();
-    m_Editor.setClassType(AbstractJAITransformer.class);
-    m_Editor.setCanChangeClassInDialog(true);
-    if (hasLastSetup())
-      m_Editor.setValue(getLastSetup());
-    else
-      m_Editor.setValue(new PassThrough());
-    result = new JPanel(new BorderLayout());
-    result.add(m_Editor.getCustomEditor(), BorderLayout.CENTER);
-
-    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	dialog.getApproveButton().doClick();
-      }
-    });
-    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	dialog.getCancelButton().doClick();
-      }
-    });
-    
-    return result;
+  protected Object getDefaultValue() {
+    return new PassThrough();
   }
 
   /**
