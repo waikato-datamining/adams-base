@@ -15,12 +15,11 @@
 
 /**
  * TabbedPane.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -114,20 +113,6 @@ public class TabbedPane
    */
   public int getPanelCount() {
     return getTabCount();
-  }
-
-  /**
-   * Hook method that gets executed after a tab was successfully removed with
-   * a middle mouse button click.
-   * <p/>
-   * Default implementation does nothing.
-   * 
-   * @param index	the original index
-   * @param comp	the component that was removed
-   */
-  @Override
-  protected void afterTabClosedWithMiddleMouseButton(int index, Component comp) {
-    ((SpreadSheetPanel) comp).cleanUp();
   }
 
   /**
