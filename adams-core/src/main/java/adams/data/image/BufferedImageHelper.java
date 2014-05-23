@@ -113,6 +113,16 @@ public class BufferedImageHelper {
   /**
    * Combines the R,G,B,A values back into single integer.
    * 
+   * @param rgba	the RGBA values
+   * @return		the combined integer
+   */
+  public static int combine(int[] rgba) {
+    return combine(rgba[0], rgba[1], rgba[2], rgba[3]);
+  }
+
+  /**
+   * Combines the R,G,B,A values back into single integer.
+   * 
    * @param r		the red value
    * @param g		the green value
    * @param b		the blue value
