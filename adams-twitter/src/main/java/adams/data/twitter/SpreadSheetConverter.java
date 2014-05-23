@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetConverter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.twitter;
 
@@ -211,6 +211,8 @@ public class SpreadSheetConverter
 	continue;
       if (obj instanceof Long)
 	row.addCell(i).setContent((Long) obj);
+      else if (obj instanceof Integer)
+	row.addCell(i).setContent(((Integer) obj).longValue());
       else if (obj instanceof String)
 	row.addCell(i).setContentAsString((String) obj);
       else if (obj instanceof Date)
