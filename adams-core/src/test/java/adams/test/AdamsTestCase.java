@@ -38,6 +38,7 @@ import adams.core.management.LocaleHelper;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.core.option.OptionHandler;
+import adams.data.statistics.StatUtils;
 import adams.gui.scripting.ScriptingEngine;
 
 /**
@@ -228,6 +229,132 @@ public class AdamsTestCase
     assertEquals(msg + "Array length differs", expected.length, actual.length);
     for (int i = 0; i < expected.length; i++)
       assertEquals(msg + "Array element #" + (i+1) + " differs", expected[i], actual[i]);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(byte[] expected, byte[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, byte[] expected, byte[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(short[] expected, short[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, short[] expected, short[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(int[] expected, int[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, int[] expected, int[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(long[] expected, long[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, long[] expected, long[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(float[] expected, float[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, float[] expected, float[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(double[] expected, double[] actual) {
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, double[] expected, double[] actual) {
+    assertEqualsArrays(msg, StatUtils.toNumberArray(expected), StatUtils.toNumberArray(actual));
   }
   
   /**
