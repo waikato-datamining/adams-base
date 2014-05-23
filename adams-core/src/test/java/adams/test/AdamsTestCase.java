@@ -210,9 +210,24 @@ public class AdamsTestCase
    * @param actual	the actual array
    */
   public void assertEqualsArrays(Object[] expected, Object[] actual) {
-    assertEquals("Array length differs", expected.length, actual.length);
+    assertEqualsArrays(null, expected, actual);
+  }
+
+  /**
+   * Compares arrays and fails if they differ.
+   * 
+   * @param msg		the message to output, null to ignore
+   * @param expected	the expected array
+   * @param actual	the actual array
+   */
+  public void assertEqualsArrays(String msg, Object[] expected, Object[] actual) {
+    if (msg == null)
+      msg = "";
+    if (!msg.isEmpty())
+      msg += ": ";
+    assertEquals(msg + "Array length differs", expected.length, actual.length);
     for (int i = 0; i < expected.length; i++)
-      assertEquals("Array element #" + (i+1) + " differs", expected[i], actual[i]);
+      assertEquals(msg + "Array element #" + (i+1) + " differs", expected[i], actual[i]);
   }
   
   /**
