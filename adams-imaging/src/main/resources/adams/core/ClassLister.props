@@ -39,6 +39,10 @@ adams.data.jai.transformer.crop.AbstractCropAlgorithm=\
 adams.data.jai.transformer.subimages.AbstractSubImagesGenerator=\
   adams.data.jai.transformer.subimages
 
+# the JAI white balance algorithms
+adams.data.jai.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
+  adams.data.jai.transformer.whitebalance
+
 # the BoofCV transformers
 adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
   adams.data.boofcv.transformer
