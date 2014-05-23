@@ -15,11 +15,10 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
-
 
 import java.util.Arrays;
 
@@ -34,6 +33,40 @@ import adams.core.Utils;
 public class StatUtils {
 
   /**
+   * Turns the byte array into a Byte array.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static Number[] toNumberArray(byte[] array) {
+    Byte[]	result;
+    int		i;
+
+    result = new Byte[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = new Byte(array[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the short array into a Short array.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static Number[] toNumberArray(short[] array) {
+    Short[]	result;
+    int		i;
+
+    result = new Short[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = new Short(array[i]);
+
+    return result;
+  }
+
+  /**
    * Turns the int array into a Integer array.
    *
    * @param array	the array to convert
@@ -46,6 +79,40 @@ public class StatUtils {
     result = new Integer[array.length];
     for (i = 0; i < array.length; i++)
       result[i] = new Integer(array[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the long array into a Long array.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static Number[] toNumberArray(long[] array) {
+    Long[]	result;
+    int		i;
+
+    result = new Long[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = new Long(array[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the float array into a Float array.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static Number[] toNumberArray(float[] array) {
+    Float[]	result;
+    int		i;
+
+    result = new Float[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = new Float(array[i]);
 
     return result;
   }
@@ -68,18 +135,35 @@ public class StatUtils {
   }
 
   /**
-   * Turns the Number array into one consisting of primitive doubles.
+   * Turns the Number array into one consisting of primitive bytes.
    *
    * @param array	the array to convert
    * @return		the converted array
    */
-  public static double[] toDoubleArray(Number[] array) {
-    double[]	result;
+  public static byte[] toByteArray(Number[] array) {
+    byte[]	result;
     int		i;
 
-    result = new double[array.length];
+    result = new byte[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = array[i].doubleValue();
+      result[i] = array[i].byteValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the Number array into one consisting of primitive shorts.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static short[] toShortArray(Number[] array) {
+    short[]	result;
+    int		i;
+
+    result = new short[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = array[i].shortValue();
 
     return result;
   }
@@ -97,6 +181,57 @@ public class StatUtils {
     result = new int[array.length];
     for (i = 0; i < array.length; i++)
       result[i] = array[i].intValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the Number array into one consisting of primitive longs.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static long[] toLongArray(Number[] array) {
+    long[]	result;
+    int		i;
+
+    result = new long[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = array[i].longValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the Number array into one consisting of primitive floats.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static float[] toFloatArray(Number[] array) {
+    float[]	result;
+    int		i;
+
+    result = new float[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = array[i].floatValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the Number array into one consisting of primitive doubles.
+   *
+   * @param array	the array to convert
+   * @return		the converted array
+   */
+  public static double[] toDoubleArray(Number[] array) {
+    double[]	result;
+    int		i;
+
+    result = new double[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = array[i].doubleValue();
 
     return result;
   }
