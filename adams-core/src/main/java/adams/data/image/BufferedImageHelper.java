@@ -93,6 +93,37 @@ public class BufferedImageHelper {
   }
 
   /**
+   * Splits the RGBA value into R,G,B,A.
+   * 
+   * @param pixel	the RGB value to split
+   * @return		the array with R,G,B,A
+   */
+  public static int[] split(int pixel) {
+    int[]	result;
+    
+    result    = new int[4];
+    result[0] = (pixel >> 16) & 0xFF;  // R
+    result[1] = (pixel >>  8) & 0xFF;  // G
+    result[2] = (pixel >>  0) & 0xFF;  // B
+    result[3] = (pixel >> 24) & 0xFF;  // A
+    
+    return result;
+  }
+
+  /**
+   * Combines the R,G,B,A values back into single integer.
+   * 
+   * @param r		the red value
+   * @param g		the green value
+   * @param b		the blue value
+   * @param a		the alpha value
+   * @return		the combined integer
+   */
+  public static int combine(int r, int g, int b, int a) {
+    return (r << 16) + (g << 8) + (b << 0) + (a << 24);
+  }
+  
+  /**
    * Returns all the pixels of the image as an int array (row-wise) with the 
    * RGB(A) components as second dimension.
    *
