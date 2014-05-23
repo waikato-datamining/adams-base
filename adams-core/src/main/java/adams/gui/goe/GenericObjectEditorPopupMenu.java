@@ -244,11 +244,16 @@ public class GenericObjectEditorPopupMenu
     try {
       if (customStringRepresentation) {
 	if (gae != null) {
-	  for (String part: parts)
-	    gae.addObject(((CustomStringRepresentationHandler) actualEditor).fromCustomStringRepresentation(part));
+	  for (String part: parts) {
+	    obj = ((CustomStringRepresentationHandler) actualEditor).fromCustomStringRepresentation(part);
+	    if (obj != null)
+	      gae.addObject(obj);
+	  }
 	}
 	else {
-	  editor.setValue(((CustomStringRepresentationHandler) editor).fromCustomStringRepresentation(str));
+	  obj = ((CustomStringRepresentationHandler) editor).fromCustomStringRepresentation(str);
+	  if (obj != null)
+	    editor.setValue(obj);
 	}
       }
       else {
@@ -257,23 +262,26 @@ public class GenericObjectEditorPopupMenu
 	    throw new IllegalArgumentException("Cannot change class!");
 	  for (String part: parts) {
 	    obj = OptionUtils.forString(Object.class, part);
-	    // correct class?
-	    gae.addObject(obj);
+	    // TODO correct class?
+	    if (obj != null)
+	      gae.addObject(obj);
 	  }
 	}
 	else {
 	  obj = OptionUtils.forString(Object.class, str);
-	  // correct class?
-	  if (!canChangeClass) {
-	    if (actualEditor.getValue().getClass() == obj.getClass())
+	  if (obj != null) {
+	    // TODO correct class?
+	    if (!canChangeClass) {
+	      if (actualEditor.getValue().getClass() == obj.getClass())
+		actualEditor.setValue(obj);
+	      else
+		throw new IllegalArgumentException(
+		    "Incorrect class: " + obj.getClass().getName() + "\n"
+			+ "Expected: " + actualEditor.getValue().getClass().getName());
+	    }
+	    else {
 	      actualEditor.setValue(obj);
-	    else
-	      throw new IllegalArgumentException(
-		  "Incorrect class: " + obj.getClass().getName() + "\n"
-		      + "Expected: " + actualEditor.getValue().getClass().getName());
-	  }
-	  else {
-	    actualEditor.setValue(obj);
+	    }
 	  }
 	}
       }
