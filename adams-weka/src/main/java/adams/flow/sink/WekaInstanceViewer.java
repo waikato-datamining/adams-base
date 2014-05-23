@@ -15,13 +15,15 @@
 
 /*
  * WekaInstanceViewer.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import java.awt.BorderLayout;
 
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
@@ -44,13 +46,9 @@ import adams.gui.visualization.instance.InstancePanel;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -58,31 +56,39 @@ import adams.gui.visualization.instance.InstancePanel;
  * &nbsp;&nbsp;&nbsp;default: WekaInstanceViewer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 500
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-x &lt;int&gt; (property: x)
@@ -104,8 +110,14 @@ import adams.gui.visualization.instance.InstancePanel;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-zoom-overview (property: zoomOverview)
+ * <pre>-zoom-overview &lt;boolean&gt; (property: zoomOverview)
  * &nbsp;&nbsp;&nbsp;If enabled, a zoom overview panel gets displayed as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-id &lt;java.lang.String&gt; (property: ID)
+ * &nbsp;&nbsp;&nbsp;The name of the attribute&#47;field to use as the ID in the display.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -125,6 +137,9 @@ public class WekaInstanceViewer
 
   /** whether to display the zoom overview. */
   protected boolean m_ZoomOverview;
+  
+  /** the name of the attribute/field to use as ID. */
+  protected String m_ID;
   
   /**
    * Returns a string describing the object.
@@ -148,6 +163,10 @@ public class WekaInstanceViewer
     m_OptionManager.add(
 	    "zoom-overview", "zoomOverview",
 	    false);
+
+    m_OptionManager.add(
+	    "id", "ID",
+	    "");
   }
 
   /**
@@ -200,6 +219,35 @@ public class WekaInstanceViewer
   }
 
   /**
+   * Sets the name of the attribute/field to use as ID in the display.
+   *
+   * @param value 	the attribute/field name
+   */
+  public void setID(String value) {
+    m_ID = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the attribute/field to use as ID in the display.
+   *
+   * @return 		the attribute/field name
+   */
+  public String getID() {
+    return m_ID;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String IDTipText() {
+    return "The name of the attribute/field to use as the ID in the display.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -244,14 +292,30 @@ public class WekaInstanceViewer
   protected void display(Token token) {
     InstanceContainerManager		manager;
     InstanceContainer			cont;
+    weka.core.Instance			winst;
+    weka.core.Attribute			att;
+    String				id;
     adams.data.instance.Instance	inst;
 
     if (token.getPayload() instanceof weka.core.Instance) {
-      inst = new adams.data.instance.Instance();
-      inst.set((weka.core.Instance) token.getPayload());
+      winst = (weka.core.Instance) token.getPayload();
+      inst  = new adams.data.instance.Instance();
+      inst.set(winst);
+      if (!m_ID.isEmpty()) {
+	att = winst.dataset().attribute(m_ID);
+	if (att != null) {
+	  if (att.isNominal() || att.isString())
+	    id = winst.stringValue(att.index());
+	  else
+	    id = "" + winst.value(att.index());
+	  inst.setID(id);
+	}
+      }
     }
     else {
       inst = (adams.data.instance.Instance) token.getPayload();
+      if (inst.hasReport() && inst.getReport().hasValue(m_ID))
+	inst.setID("" + inst.getReport().getValue(new Field(m_ID, DataType.UNKNOWN)));
     }
 
     manager = m_InstancePanel.getContainerManager();
