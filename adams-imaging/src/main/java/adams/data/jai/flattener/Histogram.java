@@ -15,11 +15,12 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.flattener;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
 
@@ -33,6 +34,7 @@ import weka.core.Instances;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.option.AbstractOption;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -132,6 +134,7 @@ public class Histogram
      *
      * @return		the display string
      */
+    @Override
     public String toString() {
       return toDisplay();
     }
@@ -199,6 +202,7 @@ public class Histogram
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "Turns an image into a histogram.\n"
@@ -209,6 +213,7 @@ public class Histogram
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -252,6 +257,7 @@ public class Histogram
    * @param img		the image to act as a template
    * @return		the generated header
    */
+  @Override
   public Instances createHeader(BufferedImageContainer img) {
     Instances			result;
     ArrayList<Attribute>	atts;
@@ -285,6 +291,7 @@ public class Histogram
    * @param img		the image to process
    * @return		the generated array
    */
+  @Override
   public Instance[] doFlatten(BufferedImageContainer img) {
     Instance[]			result;
     double[]			values;
@@ -295,8 +302,10 @@ public class Histogram
     ParameterBlock 		pb;
     PlanarImage			dst;
     int				i;
+    BufferedImage		image;
 
     result = null;
+    image  = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
     values = newArray(m_Header.numAttributes());
 
     switch (m_HistogramType) {
@@ -318,7 +327,7 @@ public class Histogram
 
     // Create the parameter block.
     pb = new ParameterBlock();
-    pb.addSource(PlanarImage.wrapRenderedImage(img.getImage())); // Specify the source image
+    pb.addSource(PlanarImage.wrapRenderedImage(image)); // Specify the source image
     pb.add(null);                      // No ROI
     pb.add(1);                         // Sampling
     pb.add(1);                         // periods
