@@ -58,6 +58,16 @@ public class TesseractOCR
   }
 
   /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "tesseract.png";
+  }
+
+  /**
    * Checks whether the plugin can be executed given the specified image panel.
    *
    * @param panel	the panel to use as basis for decision

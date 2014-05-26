@@ -44,14 +44,10 @@ UserComment,""
 "White Balance",0
 "Digital Zoom Ratio",1
 "Scene Capture Type",0
-"Unknown Tag (0xea1c)","28, -22, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0... (2060)"
 "Interop Version","48, 49, 48, 48"
 "Related Image Width",3264
 "Related Image Length",2448
 Compression,6
-XResolution,180
-YResolution,180
-"Resolution Unit",2
 "Jpg From Raw Start",10676
 "Jpg From Raw Length",7173
 "Format Details","Jpeg/JFIF v.1.1"

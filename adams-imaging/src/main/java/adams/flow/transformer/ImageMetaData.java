@@ -21,13 +21,8 @@ package adams.flow.transformer;
 
 import java.io.File;
 
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.IImageMetadata;
-import org.apache.sanselan.common.ImageMetadata;
-
-import adams.core.Utils;
+import adams.core.ImageMetaDataHelper;
 import adams.core.io.PlaceholderFile;
-import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 
@@ -115,21 +110,6 @@ public class ImageMetaData
   public Class[] generates() {
     return new Class[]{SpreadSheet.class};
   }
-  
-  /**
-   * Adds data to the spreadsheet.
-   * 
-   * @param sheet	the spreadsheet to add the data to
-   * @param key		the key column
-   * @param value	the value column
-   */
-  protected void addRow(SpreadSheet sheet, String key, String value) {
-    Row		row;
-    
-    row = sheet.addRow();
-    row.addCell("K").setContent(key);
-    row.addCell("V").setContent(Utils.unquote(value));
-  }
 
   /**
    * Executes the flow item.
@@ -138,17 +118,9 @@ public class ImageMetaData
    */
   @Override
   protected String doExecute() {
-    String				result;
-    SpreadSheet				sheet;
-    Row					row;
-    File				file;
-    IImageMetadata			meta;
-    String[]				parts;
-    String				key;
-    String				value;
-    org.apache.sanselan.ImageInfo	info;
-    String				infoStr;
-    String[]				lines;
+    String	result;
+    SpreadSheet	sheet;
+    File	file;
     
     result = null;
     
@@ -158,51 +130,7 @@ public class ImageMetaData
       file = new File(((File) m_InputToken.getPayload()).getAbsolutePath());
     
     try {
-      sheet = new SpreadSheet();
-      // header
-      row = sheet.getHeaderRow();
-      row.addCell("K").setContent("Key");
-      row.addCell("V").setContent("Value");
-      // meta-data
-      meta = Sanselan.getMetadata(file);
-      if (meta != null) {
-	for (Object item: meta.getItems()) {
-	  key   = null;
-	  value = null;
-	  if (item instanceof ImageMetadata.Item) {
-	    key   = ((ImageMetadata.Item) item).getKeyword();
-	    value = ((ImageMetadata.Item) item).getText();
-	  }
-	  else {
-	    parts = item.toString().split(": ");
-	    if (parts.length == 2) {
-	      key   = parts[0];
-	      value = parts[1];
-	    }
-	    else {
-	      if (isLoggingEnabled())
-		getLogger().info("Failed to parse: " + item);
-	    }
-	  }
-	  if (key != null)
-	    addRow(sheet, key, value);
-	}
-      }
-      // image info
-      info = Sanselan.getImageInfo(file);
-      if (info != null) {
-	infoStr = info.toString();
-	lines = infoStr.split(System.lineSeparator());
-	for (String line: lines) {
-	  parts = line.split(": ");
-	  if (parts.length == 2) {
-	    key   = parts[0];
-	    value = parts[1];
-	    addRow(sheet, key, value);
-	  }
-	}
-      }
-      
+      sheet         = ImageMetaDataHelper.getMetaData(file);
       m_OutputToken = new Token(sheet);
     }
     catch (Exception e) {

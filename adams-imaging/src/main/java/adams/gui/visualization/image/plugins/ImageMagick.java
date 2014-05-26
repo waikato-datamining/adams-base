@@ -60,6 +60,16 @@ public class ImageMagick
   }
 
   /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "imagemagick.png";
+  }
+
+  /**
    * Checks whether the plugin can be executed given the specified image panel.
    * <p/>
    * Panel must be non-null and must contain an image. Also, ImageMagick must

@@ -46,7 +46,17 @@ public class JAITransformer
   public String getCaption() {
     return "JAI transformer...";
   }
-  
+
+  /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "duke.png";
+  }
+
   /**
    * Returns the class to use as type (= superclass) in the GOE.
    * 

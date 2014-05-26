@@ -49,7 +49,17 @@ public class ImageJTransformer
   public String getCaption() {
     return "ImageJ transformer...";
   }
-  
+
+  /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "imagej.gif";
+  }
+
   /**
    * Returns the class to use as type (= superclass) in the GOE.
    * 

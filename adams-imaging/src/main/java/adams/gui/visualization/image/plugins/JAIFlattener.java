@@ -47,7 +47,17 @@ public class JAIFlattener
   public String getCaption() {
     return "JAI flattener...";
   }
-  
+
+  /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "duke.png";
+  }
+
   /**
    * Returns the class to use as type (= superclass) in the GOE.
    * 
