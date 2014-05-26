@@ -403,9 +403,11 @@ public class BufferedImageHelper {
    * Generates a histogram for each of the R, G and B channels.
    * 
    * @param img		the image to analyze
-   * @return		the histogram, 0 = R, 1 = G, 2 = B, 3 = A
+   * @param gray	whether to use (A)RGB or grayscale
+   * @return		the histogram, if ARGB then 0 = R, 1 = G, 2 = B, 3 = A
+   * 			or 0 = gray in case of grayscale
    */
-  public static int[][] histogram(BufferedImage img) {
+  public static int[][] histogram(BufferedImage img, boolean gray) {
     int[][]	result;
     int		width;
     int		height;
@@ -414,19 +416,34 @@ public class BufferedImageHelper {
     int[]	split;
     int		i;
     
-    result = new int[4][256];
-    img    = convert(img, BufferedImage.TYPE_4BYTE_ABGR);
-    height = img.getHeight();
-    width  = img.getWidth();
-    
-    for (y = 0; y < height; y++) {
-      for (x = 0; x < width; x++) {
-	split = split(img.getRGB(x, y));
-	for (i = 0; i < split.length; i++)
-	  result[i][split[i]]++;
+    if (gray) {
+      result = new int[1][256];
+      img    = convert(img, BufferedImage.TYPE_BYTE_GRAY);
+      height = img.getHeight();
+      width  = img.getWidth();
+      split  = new int[1];
+
+      for (y = 0; y < height; y++) {
+	for (x = 0; x < width; x++) {
+	  split[0] = (img.getRGB(x, y) >> 8) & 0xFF;
+	  result[0][split[0]]++;
+	}
       }
     }
-    
+    else {
+      result = new int[4][256];
+      img    = convert(img, BufferedImage.TYPE_4BYTE_ABGR);
+      height = img.getHeight();
+      width  = img.getWidth();
+
+      for (y = 0; y < height; y++) {
+	for (x = 0; x < width; x++) {
+	  split = split(img.getRGB(x, y));
+	  for (i = 0; i < split.length; i++)
+	    result[i][split[i]]++;
+	}
+      }
+    }
     
     return result;
   }

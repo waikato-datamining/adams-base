@@ -182,7 +182,7 @@ public class GIMP
     height = img.getHeight();
     
     // get RGBA histograms
-    histo = BufferedImageHelper.histogram(img);
+    histo = BufferedImageHelper.histogram(img, false);
     if (isLoggingEnabled()) {
       getLogger().finer("R: " + Utils.arrayToString(histo[0]));
       getLogger().finer("G: " + Utils.arrayToString(histo[1]));
