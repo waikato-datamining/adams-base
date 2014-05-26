@@ -329,8 +329,8 @@ public class Histogram
     pb = new ParameterBlock();
     pb.addSource(PlanarImage.wrapRenderedImage(image)); // Specify the source image
     pb.add(null);                      // No ROI
-    pb.add(1);                         // Sampling
-    pb.add(1);                         // periods
+    pb.add(1);                         // xPeriod
+    pb.add(1);                         // yPeriod
     pb.add(bins);
     pb.add(low);
     pb.add(high);
