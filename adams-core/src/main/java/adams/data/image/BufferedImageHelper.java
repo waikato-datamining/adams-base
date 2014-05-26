@@ -20,10 +20,9 @@
 package adams.data.image;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
@@ -50,21 +49,20 @@ public class BufferedImageHelper {
    * Returns a copy of a BufferedImage object.
    * <p/>
    * Taken from
-   * <a href="http://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage/3514297#3514297" target="_blank">here</a>
+   * <a href="http://stackoverflow.com/a/19327237" target="_blank">here</a>
    * (CC BY-SA 3.0).
    *
    * @param img		the image to copy
    */
-  public static BufferedImage deepCopy(BufferedImage img) {
-    ColorModel 		cm;
-    boolean 		isAlphaPremultiplied;
-    WritableRaster 	raster;
-
-    cm = img.getColorModel();
-    isAlphaPremultiplied = cm.isAlphaPremultiplied();
-    raster = img.copyData(null);
-
-    return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+  public static BufferedImage deepCopy(BufferedImage source) {
+    BufferedImage 	result;
+    Graphics 		g;
+    
+    result = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+    g      = result.getGraphics();
+    g.drawImage(source, 0, 0, null);
+    g.dispose();
+    return result;
   }
 
   /**
