@@ -20,6 +20,7 @@
 
 package adams.data.jai.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.transformer.crop.AbstractCropAlgorithm;
 import adams.data.jai.transformer.crop.NoCrop;
@@ -108,6 +109,16 @@ public class Cropping
    */
   public String algorithmTipText() {
     return "The crop algorithm to apply to the image.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "algorithm", m_Algorithm);
   }
 
   /**

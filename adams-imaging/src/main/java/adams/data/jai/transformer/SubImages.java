@@ -15,13 +15,14 @@
 
 /*
  * SubImages.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
 
 import java.util.List;
 
+import adams.core.QuickInfoHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.transformer.subimages.AbstractSubImagesGenerator;
 import adams.data.jai.transformer.subimages.PassThrough;
@@ -106,6 +107,16 @@ public class SubImages
    */
   public String generatorTipText() {
     return "The generator to use for generating the subimages.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "generator", m_Generator);
   }
 
   /**
