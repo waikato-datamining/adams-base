@@ -15,7 +15,7 @@
 
 /*
  * Macro.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.transformer;
@@ -25,6 +25,8 @@ import ij.ImagePlus;
 
 import java.util.Date;
 
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.data.imagej.ImagePlusContainer;
 
@@ -70,6 +72,7 @@ public class Macro
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return 
 	"Executes the macro commands to transform the image.\n"
@@ -81,6 +84,7 @@ public class Macro
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -119,11 +123,22 @@ public class Macro
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "commands", Utils.shorten(m_Commands.stringValue(), 40));
+  }
+
+  /**
    * Performs no transformation at all, just returns the input.
    *
    * @param img		the image to process (can be modified, since it is a copy)
    * @return		the copy of the image
    */
+  @Override
   protected ImagePlusContainer[] doTransform(ImagePlusContainer img) {
     ImagePlusContainer[]	result;
     ImagePlus			im;

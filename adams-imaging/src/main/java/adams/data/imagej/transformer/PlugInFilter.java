@@ -15,7 +15,7 @@
 
 /*
  * PlugInFilter.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2011 Albert Cardona (automating ImageJ dialog)
  */
 
@@ -25,6 +25,7 @@ import ij.IJ;
 import ij.Macro;
 import ij.WindowManager;
 import adams.core.License;
+import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import adams.data.imagej.ImagePlusContainer;
 
@@ -100,6 +101,7 @@ public class PlugInFilter
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "A transformer that allows the use of ImageJ's plug-in filters.\n"
@@ -116,6 +118,7 @@ public class PlugInFilter
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -135,6 +138,7 @@ public class PlugInFilter
   /**
    * Resets the scheme.
    */
+  @Override
   protected void reset() {
     super.reset();
 
@@ -229,6 +233,16 @@ public class PlugInFilter
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "plugInFilter", m_PlugInFilter);
+  }
+
+  /**
    * Returns the filter to use.
    *
    * @param img		the image used for setting up
@@ -264,6 +278,7 @@ public class PlugInFilter
    * @param img		the image to process (can be modified, since it is a copy)
    * @return		the copy of the image
    */
+  @Override
   protected ImagePlusContainer[] doTransform(ImagePlusContainer img) {
     ImagePlusContainer[]		result;
     ij.plugin.filter.PlugInFilter	filter;
@@ -294,6 +309,7 @@ public class PlugInFilter
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
     WindowManager.closeAllWindows();
 

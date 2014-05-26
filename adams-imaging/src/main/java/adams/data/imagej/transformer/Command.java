@@ -15,7 +15,7 @@
 
 /*
  * Command.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.transformer;
@@ -23,6 +23,8 @@ package adams.data.imagej.transformer;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
@@ -76,6 +78,7 @@ public class Command
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "A transformer that allows the execution of ImageJ commands.\n"
@@ -87,6 +90,7 @@ public class Command
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -158,11 +162,22 @@ public class Command
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "command", Utils.shorten(m_Command, 40));
+  }
+
+  /**
    * Performs no transformation at all, just returns the input.
    *
    * @param img		the image to process (can be modified, since it is a copy)
    * @return		the copy of the image
    */
+  @Override
   protected ImagePlusContainer[] doTransform(ImagePlusContainer img) {
     ImagePlusContainer[]	result;
     ImagePlus			imp;
@@ -179,6 +194,7 @@ public class Command
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
     WindowManager.closeAllWindows();
 

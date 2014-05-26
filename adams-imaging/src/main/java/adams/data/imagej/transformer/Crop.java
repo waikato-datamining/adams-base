@@ -15,11 +15,12 @@
 
 /*
  * Crop.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.transformer.crop.AbstractCropAlgorithm;
 import adams.data.imagej.transformer.crop.NoCrop;
@@ -108,6 +109,16 @@ public class Crop
    */
   public String algorithmTipText() {
     return "The crop algorithm to apply to the image.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "algorithm", m_Algorithm);
   }
 
   /**
