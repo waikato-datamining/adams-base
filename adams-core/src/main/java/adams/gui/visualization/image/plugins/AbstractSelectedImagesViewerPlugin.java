@@ -108,7 +108,6 @@ public abstract class AbstractSelectedImagesViewerPlugin
       model.addElement((model.getSize() + 1) + ": " + (p.getCurrentFile() == null ? "---" : p.getCurrentFile().getName()));
     }
     list = new JList(model);
-    list.setSelectedIndex(index);
     list.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
@@ -118,6 +117,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
 	  m_SelectedPanels[i] = panels[indices[i]];
       }
     });
+    list.setSelectedIndex(index);
     result.add(new BaseScrollPane(list), BorderLayout.CENTER);
     
     return result;
