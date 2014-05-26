@@ -15,7 +15,7 @@
 
 /**
  * ImageViewerPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -52,7 +52,6 @@ import adams.env.Modules;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
@@ -160,7 +159,7 @@ public class ImageViewerPanel
   protected Vector<JMenuItem> m_MenuItemPlugins;
 
   /** the tabbed pane with the images. */
-  protected BaseTabbedPane m_TabbedPane;
+  protected ImageTabbedPane m_TabbedPane;
 
   /** the recent files handler. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
@@ -196,17 +195,13 @@ public class ImageViewerPanel
    */
   @Override
   protected void initGUI() {
+    Properties	props;
+    
     super.initGUI();
-
+    
     setLayout(new BorderLayout());
 
-    m_TabbedPane = new BaseTabbedPane() {
-      private static final long serialVersionUID = -2247884686333300541L;
-      @Override
-      protected boolean canCloseTabWithMiddleMouseButton(int index) {
-	return checkForModified((ImagePanel) m_TabbedPane.getComponentAt(index));
-      };
-    };
+    m_TabbedPane = new ImageTabbedPane(this);
     m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
     m_TabbedPane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -235,47 +230,8 @@ public class ImageViewerPanel
    */
   protected void update() {
     updateTitle();
-    updateTabTitles();
+    m_TabbedPane.updateTabTitles();
     updateMenu();
-  }
-
-  /**
-   * Updates the title of all tabs, takes modified state into account.
-   */
-  protected void updateTabTitles() {
-    int		i;
-    
-    for (i = 0; i < m_TabbedPane.getTabCount(); i++)
-      updateTabTitle(i);
-  }
-
-  /**
-   * Updates the title of the current tab, takes modified state into account.
-   */
-  protected void updateCurrentTabTitle() {
-    updateTabTitle(m_TabbedPane.getSelectedIndex());
-  }
-
-  /**
-   * Updates the title of the specified tab, takes modified state into account.
-   * 
-   * @param index	the index of the tab
-   */
-  protected void updateTabTitle(int index) {
-    String	title;
-    boolean	modified;
-
-    if (index >= 0) {
-      title   = m_TabbedPane.getTitleAt(index);
-      modified = title.startsWith("*");
-      if (modified)
-	title = title.substring(1);
-      if (getPanelAt(index).isModified() != modified) {
-	if (getPanelAt(index).isModified())
-	  title = "*" + title;
-	m_TabbedPane.setTitleAt(index, title);
-      }
-    }
   }
 
   /**
@@ -361,7 +317,7 @@ public class ImageViewerPanel
    * @return		the image panel, null if none available
    */
   public ImagePanel getCurrentPanel() {
-    return getPanelAt(m_TabbedPane.getSelectedIndex());
+    return m_TabbedPane.getCurrentPanel();
   }
 
   /**
@@ -371,10 +327,7 @@ public class ImageViewerPanel
    * @return		the image panel, null if none available
    */
   public ImagePanel getPanelAt(int index) {
-    if ((index < 0) || (index >= m_TabbedPane.getTabCount()))
-      return null;
-    else
-      return (ImagePanel) m_TabbedPane.getComponentAt(index);
+    return m_TabbedPane.getPanelAt(index);
   }
 
   /**
@@ -383,14 +336,7 @@ public class ImageViewerPanel
    * @return		the image panels
    */
   public ImagePanel[] getAllPanels() {
-    ImagePanel[]	result;
-    int			i;
-    
-    result = new ImagePanel[m_TabbedPane.getTabCount()];
-    for (i = 0; i < m_TabbedPane.getTabCount(); i++)
-      result[i] = (ImagePanel) m_TabbedPane.getComponentAt(i);
-    
-    return result;
+    return m_TabbedPane.getAllPanels();
   }
 
   /**
@@ -399,7 +345,7 @@ public class ImageViewerPanel
    * @return		the current image, can be null
    */
   public BufferedImage getCurrentImage() {
-    return getImageAt(m_TabbedPane.getSelectedIndex());
+    return m_TabbedPane.getCurrentImage();
   }
 
   /**
@@ -409,15 +355,7 @@ public class ImageViewerPanel
    * @return		the current image, can be null
    */
   public BufferedImage getImageAt(int index) {
-    BufferedImage	result;
-    ImagePanel		panel;
-
-    result = null;
-    panel  = getPanelAt(index);
-    if (panel != null)
-      result = panel.getCurrentImage();
-
-    return result;
+    return m_TabbedPane.getImageAt(index);
   }
 
   /**
@@ -426,7 +364,7 @@ public class ImageViewerPanel
    * @return		the current filename, can be null
    */
   public File getCurrentFile() {
-    return getFileAt(m_TabbedPane.getSelectedIndex());
+    return m_TabbedPane.getCurrentFile();
   }
 
   /**
@@ -436,15 +374,7 @@ public class ImageViewerPanel
    * @return		the current filename, can be null
    */
   public File getFileAt(int index) {
-    File	result;
-    ImagePanel	panel;
-
-    result = null;
-    panel  = getPanelAt(index);
-    if (panel != null)
-      result = panel.getCurrentFile();
-
-    return result;
+    return m_TabbedPane.getFileAt(index);
   }
 
   /**
@@ -798,6 +728,7 @@ public class ImageViewerPanel
 	try {
 	  final AbstractImageViewerPlugin plugin = (AbstractImageViewerPlugin) Class.forName(plugins[i]).newInstance();
 	  menuitem = new JMenuItem(plugin.getCaption());
+	  menuitem.setIcon(plugin.getIcon());
 	  menu.add(menuitem);
 	  menuitem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -852,22 +783,10 @@ public class ImageViewerPanel
    * @param file	the file to load
    */
   public void load(File file) {
-    ImagePanel	panel;
-
-    panel = new ImagePanel();
-    panel.setSelectionEnabled(true);
-    if (!panel.load(file)) {
-      GUIHelper.showErrorMessage(
-	  this, "Failed to open image '" + file + "'!");
-    }
-    else {
-      panel.setScale(getProperties().getDouble("ZoomLevel") / 100);
-      m_TabbedPane.addTab(file.getName(), panel);
-      m_TabbedPane.setSelectedComponent(panel);
+    if (m_TabbedPane.load(file)) {
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(file);
     }
-
     update();
   }
 
@@ -875,15 +794,13 @@ public class ImageViewerPanel
    * Saves the current image under a new name.
    */
   protected void saveAs() {
-    int			index;
     int			retVal;
     File		file;
     ImagePanel		panel;
 
-    index  = m_TabbedPane.getSelectedIndex();
-    if (index < 0)
+    panel = getCurrentPanel();
+    if (panel == null)
       return;
-    panel = (ImagePanel) m_TabbedPane.getComponentAt(index);
 
     m_FileChooser.setSelectedFile(getCurrentFile());
     retVal = m_FileChooser.showSaveDialog(this);
@@ -904,46 +821,6 @@ public class ImageViewerPanel
   }
 
   /**
-   * Returns whether we can proceed with the operation or not, depending on
-   * whether the user saved the flow or discarded the changes.
-   *
-   * @param panel	the panel to check
-   * @return		true if safe to proceed
-   */
-  protected boolean checkForModified(ImagePanel panel) {
-    boolean 	result;
-    int		retVal;
-    String	msg;
-
-    if (panel == null)
-      return true;
-
-    result = !panel.isModified();
-
-    if (!result) {
-      if (getCurrentFile() == null)
-	msg = "Image not saved - save?";
-      else
-	msg = "Image not saved - save?\n" + getCurrentFile();
-      retVal = GUIHelper.showConfirmMessage(this, msg, "Image not saved");
-      switch (retVal) {
-	case GUIHelper.APPROVE_OPTION:
-	  saveAs();
-	  result = !panel.isModified();
-	  break;
-	case GUIHelper.DISCARD_OPTION:
-	  result = true;
-	  break;
-	case GUIHelper.CANCEL_OPTION:
-	  result = false;
-	  break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Closes the current image.
    */
   protected void close() {
@@ -955,7 +832,7 @@ public class ImageViewerPanel
     index    = m_TabbedPane.getSelectedIndex();
     panel    = getPanelAt(index);
     if (panel != null)
-      canClose = checkForModified(panel);
+      canClose = m_TabbedPane.checkForModified(panel);
 
     if (canClose) {
       panel.cleanUp();
@@ -972,7 +849,7 @@ public class ImageViewerPanel
 
     i = 0;
     while (i < m_TabbedPane.getTabCount()) {
-      if (!checkForModified((ImagePanel) m_TabbedPane.getComponentAt(i)))
+      if (!m_TabbedPane.checkForModified(m_TabbedPane.getPanelAt(i)))
 	return;
       else
 	m_TabbedPane.remove(i);

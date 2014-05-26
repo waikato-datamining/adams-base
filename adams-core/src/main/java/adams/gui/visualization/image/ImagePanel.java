@@ -68,9 +68,13 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.UndoPanel;
 import adams.gui.event.ImagePanelSelectionEvent;
 import adams.gui.event.ImagePanelSelectionListener;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.report.ReportFactory;
@@ -693,6 +697,12 @@ public class ImagePanel
   /** the table with the image properties. */
   protected ReportFactory.Table m_TableProperties;
 
+  /** the scrollpane for the properties. */
+  protected BaseScrollPane m_ScrollPaneProperties;
+  
+  /** the search panel for searching in the properties. */
+  protected SearchPanel m_PanelSearchProperties;
+  
   /** for displaying image and properties. */
   protected BaseSplitPane m_SplitPane;
 
@@ -729,7 +739,7 @@ public class ImagePanel
     m_Modified             = false;
     m_ImageProperties      = new Report();
     m_AdditionalProperties = null;
-    m_DependentDialogs              = new ArrayList<Dialog>();
+    m_DependentDialogs     = new ArrayList<Dialog>();
   }
 
   /**
@@ -764,7 +774,17 @@ public class ImagePanel
     m_TableProperties.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_TableProperties.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_TableProperties.sort(0);
-    m_PanelProperties.add(new BaseScrollPane(m_TableProperties));
+    m_ScrollPaneProperties = new BaseScrollPane(m_TableProperties);
+    m_PanelProperties.add(m_ScrollPaneProperties, BorderLayout.CENTER);
+    
+    m_PanelSearchProperties = new SearchPanel(LayoutType.HORIZONTAL, false);
+    m_PanelSearchProperties.addSearchListener(new SearchListener() {
+      @Override
+      public void searchInitiated(SearchEvent e) {
+	m_TableProperties.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+      }
+    });
+    m_PanelProperties.add(m_PanelSearchProperties, BorderLayout.SOUTH);
 
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
@@ -951,6 +971,24 @@ public class ImagePanel
     return m_SplitPane;
   }
 
+  /**
+   * Returns the underlying table for the properties.
+   * 
+   * @return		the table
+   */
+  public ReportFactory.Table getPropertiesTable() {
+    return m_TableProperties;
+  }
+
+  /**
+   * Returns the underlying table for the properties.
+   * 
+   * @return		the table
+   */
+  public BaseScrollPane getPropertiesScrollPane() {
+    return m_ScrollPaneProperties;
+  }
+  
   /**
    * Removes the image.
    */
@@ -1176,17 +1214,19 @@ public class ImagePanel
     
     result = false;
 
-    fields = current.getFields();
-    for (AbstractField field: fields) {
-      // deleted?
-      if (!modified.hasValue(field)) {
-	current.removeValue(field);
-	result = true;
-      }
-      // modified?
-      else if (!modified.getValue(field).equals(current.getValue(field))) {
-	current.setValue(field, modified.getValue(field));
-	result = true;
+    if (current != null) {
+      fields = current.getFields();
+      for (AbstractField field: fields) {
+	// deleted?
+	if (!modified.hasValue(field)) {
+	  current.removeValue(field);
+	  result = true;
+	}
+	// modified?
+	else if (!modified.getValue(field).equals(current.getValue(field))) {
+	  current.setValue(field, modified.getValue(field));
+	  result = true;
+	}
       }
     }
     

@@ -18,3 +18,11 @@ MaxRecentImages=5
 # The default zoom (in percent)
 ZoomLevel=100
 
+# Whether to show the images properties
+ShowProperties=True
+
+# The preferred width of the properties
+PropertiesWidth=400
+
+# The width of the image (the rest is for the properties)
+DividerLocation=800

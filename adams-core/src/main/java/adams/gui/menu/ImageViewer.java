@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -58,6 +58,7 @@ public class ImageViewer
    *
    * @return		the filename or null if no icon available
    */
+  @Override
   public String getIconName() {
     return "landscape.gif";
   }
@@ -65,9 +66,10 @@ public class ImageViewer
   /**
    * Launches the functionality of the menu item.
    */
+  @Override
   public void launch() {
     adams.gui.visualization.image.ImageViewerPanel panel = new adams.gui.visualization.image.ImageViewerPanel();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, 1200, 800);
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }
@@ -77,6 +79,7 @@ public class ImageViewer
    *
    * @return 		the title
    */
+  @Override
   public String getTitle() {
     return "Image viewer";
   }
@@ -86,6 +89,7 @@ public class ImageViewer
    *
    * @return		true if the panel can only be displayed once
    */
+  @Override
   public boolean isSingleton() {
     return false;
   }
@@ -95,6 +99,7 @@ public class ImageViewer
    *
    * @return		the user mode
    */
+  @Override
   public UserMode getUserMode() {
     return UserMode.BASIC;
   }
@@ -105,6 +110,7 @@ public class ImageViewer
    *
    * @return		the category/menu name
    */
+  @Override
   public String getCategory() {
     return CATEGORY_VISUALIZATION;
   }

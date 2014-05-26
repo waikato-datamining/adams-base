@@ -21,8 +21,11 @@ package adams.gui.visualization.image.plugins;
 
 import java.util.Hashtable;
 
+import javax.swing.ImageIcon;
+
 import adams.core.ClassLister;
 import adams.core.logging.LoggingObject;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.ImagePanel;
 
 /**
@@ -61,6 +64,38 @@ public abstract class AbstractImageViewerPlugin
    * @return		the text
    */
   public abstract String getCaption();
+
+  /**
+   * Returns the icon name.
+   *
+   * @return		the name, null if none available
+   */
+  public String getIconName() {
+    return null;
+  }
+
+  /**
+   * Returns the icon.
+   *
+   * @return		the icon or the empty icon if no icon name available
+   */
+  public ImageIcon getIcon() {
+    ImageIcon		result;
+
+    result = null;
+
+    if (getIconName() != null) {
+      if (getIconName().indexOf("/") > -1)
+        result = GUIHelper.getExternalIcon(getIconName());
+      else
+        result = GUIHelper.getIcon(getIconName());
+    }
+    else {
+      result = GUIHelper.getEmptyIcon();
+    }
+
+    return result;
+  }
 
   /**
    * Checks whether there is a setup available for the class of this object.
