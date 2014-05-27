@@ -103,7 +103,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class WekaTrainTestSetEvaluator
-  extends AbstractGlobalWekaClassifierEvaluator
+  extends AbstractCallableWekaClassifierEvaluator
   implements ProvenanceSupporter {
 
   /** for serialization. */

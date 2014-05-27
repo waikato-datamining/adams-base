@@ -133,7 +133,7 @@ import adams.multiprocess.JobRunner;
  * @version $Revision$
  */
 public class WekaCrossValidationEvaluator
-  extends AbstractGlobalWekaClassifierEvaluator
+  extends AbstractCallableWekaClassifierEvaluator
   implements Randomizable, ProvenanceSupporter {
 
   /** for serialization. */

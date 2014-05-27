@@ -14,14 +14,14 @@
  */
 
 /**
- * AbstractGlobalWekaClassifierEvaluator.java
+ * AbstractCallableWekaClassifierEvaluator.java
  * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.source.WekaClassifierSetup;
 
 /**
@@ -30,7 +30,7 @@ import adams.flow.source.WekaClassifierSetup;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractGlobalWekaClassifierEvaluator
+public abstract class AbstractCallableWekaClassifierEvaluator
   extends AbstractWekaClassifierEvaluator {
 
   /** for serialization. */
