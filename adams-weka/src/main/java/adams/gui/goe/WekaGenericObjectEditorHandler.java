@@ -14,8 +14,8 @@
  */
 
 /**
- * AdamsGenericObjectEditorHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * WekaGenericObjectEditorHandler.java
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -44,6 +44,7 @@ public class WekaGenericObjectEditorHandler
    * @param cls		the class to set
    * @return		true if successfully set
    */
+  @Override
   public boolean setClassType(PropertyEditor editor, Class cls) {
     ((weka.gui.GenericObjectEditor) editor).setClassType(cls);
     return true;
@@ -55,6 +56,7 @@ public class WekaGenericObjectEditorHandler
    * @param editor	the editor to query
    * @return		always Object.class
    */
+  @Override
   public Class getClassType(PropertyEditor editor) {
     return Object.class;
   }
@@ -66,6 +68,7 @@ public class WekaGenericObjectEditorHandler
    * @param canChange	if true the class can be changed in the dialog
    * @return		true if successfully set
    */
+  @Override
   public boolean setCanChangeClassInDialog(PropertyEditor editor, boolean canChange) {
     ((weka.gui.GenericObjectEditor) editor).setCanChangeClassInDialog(canChange);
     return true;
@@ -77,6 +80,7 @@ public class WekaGenericObjectEditorHandler
    * @param editor	the editor to query
    * @return		true if the class can be changed in the dialog
    */
+  @Override
   public boolean getCanChangeClassInDialog(PropertyEditor editor) {
     return ((weka.gui.GenericObjectEditor) editor).getCanChangeClassInDialog();
   }
@@ -88,6 +92,7 @@ public class WekaGenericObjectEditorHandler
    * @param value	the object to set
    * @return		true if successfully set
    */
+  @Override
   public boolean setValue(PropertyEditor editor, Object value) {
     ((weka.gui.GenericObjectEditor) editor).setValue(value);
     return true;
@@ -99,6 +104,7 @@ public class WekaGenericObjectEditorHandler
    * @param editor	the editor to query
    * @return		the current editor value
    */
+  @Override
   public Object getValue(PropertyEditor editor) {
     return ((weka.gui.GenericObjectEditor) editor).getValue();
   }
@@ -109,6 +115,7 @@ public class WekaGenericObjectEditorHandler
    * @param cls		the class to inspect
    * @return		always true
    */
+  @Override
   public boolean handles(Class cls) {
     return ClassLocator.isSubclass(weka.gui.GenericObjectEditor.class, cls);
   }
@@ -119,6 +126,7 @@ public class WekaGenericObjectEditorHandler
    * @param editor	the editor to check
    * @return		true if the editor provides a panel
    */
+  @Override
   public boolean hasCustomPanel(PropertyEditor editor) {
     return (editor instanceof weka.gui.CustomPanelSupplier);
   }
@@ -129,6 +137,7 @@ public class WekaGenericObjectEditorHandler
    * @param editor	the editor to obtain the panel from
    * @return		the custom panel, null if none available
    */
+  @Override
   public JPanel getCustomPanel(PropertyEditor editor) {
     if (editor instanceof weka.gui.CustomPanelSupplier)
       return ((weka.gui.CustomPanelSupplier) editor).getCustomPanel();
