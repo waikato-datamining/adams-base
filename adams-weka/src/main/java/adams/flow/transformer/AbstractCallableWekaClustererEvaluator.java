@@ -30,7 +30,7 @@ import adams.flow.source.WekaClustererSetup;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractGlobalWekaClustererEvaluator
+public abstract class AbstractCallableWekaClustererEvaluator
   extends AbstractTransformer {
 
   /** for serialization. */

@@ -105,7 +105,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class WekaCrossValidationClustererEvaluator
-  extends AbstractGlobalWekaClustererEvaluator
+  extends AbstractCallableWekaClustererEvaluator
   implements Randomizable, ProvenanceSupporter {
 
   /** for serialization. */
