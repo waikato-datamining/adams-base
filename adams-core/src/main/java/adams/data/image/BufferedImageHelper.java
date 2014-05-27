@@ -57,7 +57,7 @@ public class BufferedImageHelper {
    * <a href="http://stackoverflow.com/a/3514297" target="_blank">here</a>
    * (CC BY-SA 3.0).
    *
-   * @param img		the image to copy
+   * @param source	the image to copy
    */
   public static BufferedImage deepCopy(BufferedImage source) {
     BufferedImage 	result;
