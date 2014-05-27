@@ -23,8 +23,6 @@ import java.beans.PropertyEditor;
 
 import javax.swing.JPanel;
 
-import adams.core.ClassLocator;
-
 /**
  * Handler for the WEKA GenericObjectEditor.
  *
@@ -117,7 +115,7 @@ public class WekaGenericObjectEditorHandler
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(weka.gui.GenericObjectEditor.class, cls);
+    return (weka.gui.GenericObjectEditor.class == cls);
   }
 
   /**
