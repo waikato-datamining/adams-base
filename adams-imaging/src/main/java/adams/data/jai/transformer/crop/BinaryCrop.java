@@ -22,6 +22,7 @@ package adams.data.jai.transformer.crop;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageHelper;
+import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -35,6 +36,13 @@ import adams.data.image.BufferedImageHelper;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-num-check-points &lt;int&gt; (property: numCheckPoints)
+ * &nbsp;&nbsp;&nbsp;The number of check points (evenly distributed across width&#47;height) to use 
+ * &nbsp;&nbsp;&nbsp;for locating the smallest rectangle in the middle.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -46,6 +54,9 @@ public class BinaryCrop
   /** for serialization. */
   private static final long serialVersionUID = -696539737461589970L;
 
+  /** the number of checkpoints to use for determining minimum rectangle. */
+  protected int m_NumCheckPoints;
+  
   /**
    * Returns a string describing the object.
    *
@@ -56,6 +67,56 @@ public class BinaryCrop
     return 
 	"Turns image into binary (ie black and white) image and determines "
 	+ "largest rectangle in the middle to crop to.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	"num-check-points", "numCheckPoints",
+	1, 1, null);
+  }
+
+  /**
+   * Sets the number of check points to use for determining smallest rectangle
+   * in the middle.
+   *
+   * @param value	the number
+   */
+  public void setNumCheckPoints(int value) {
+    if (value > 0) {
+      m_NumCheckPoints = value;
+      reset();
+    }
+    else {
+      getLogger().severe("Number of check points has to be >0, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the number of check points to use for determining smallest rectangle
+   * in the middle.
+   *
+   * @return		the number
+   */
+  public int getNumCheckPoints() {
+    return m_NumCheckPoints;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String numCheckPointsTipText() {
+    return 
+	"The number of check points (evenly distributed across width/height) "
+	+ "to use for locating the smallest rectangle in the middle.";
   }
 
   /**
@@ -71,65 +132,87 @@ public class BinaryCrop
     int			width;
     int			height;
     int			i;
-    int			xMiddle;
-    int			yMiddle;
-    int			top;
-    int			bottom;
-    int			left;
-    int			right;
+    int			n;
+    int[]		xCheck;
+    int[]		yCheck;
+    int[]		top;
+    int[]		bottom;
+    int[]		left;
+    int[]		right;
+    int			atop;
+    int			abottom;
+    int			aleft;
+    int			aright;
 
-    binary    = BufferedImageHelper.convert(img, BufferedImage.TYPE_BYTE_BINARY);
-    width     = img.getWidth();
-    height    = img.getHeight();
-    xMiddle   = width / 2;
-    yMiddle   = height / 2;
+    binary = BufferedImageHelper.convert(img, BufferedImage.TYPE_BYTE_BINARY);
+    width  = img.getWidth();
+    height = img.getHeight();
+    xCheck = new int[m_NumCheckPoints];
+    yCheck = new int[m_NumCheckPoints];
+    top    = new int[m_NumCheckPoints];
+    bottom = new int[m_NumCheckPoints];
+    left   = new int[m_NumCheckPoints];
+    right  = new int[m_NumCheckPoints];
     
-    // from top
-    top = 0;
-    for (i = 0; i < yMiddle; i++) {
-      if (((binary.getRGB(xMiddle, i) >> 0) & 0xFF) > 0) {
-	top = i;
-	break;
-      }
+    for (n = 0; n < m_NumCheckPoints; n++) {
+      xCheck[n] = width  / (m_NumCheckPoints+1) * (n+1);
+      yCheck[n] = height / (m_NumCheckPoints+1) * (n+1);
     }
-    if (isLoggingEnabled())
-      getLogger().fine("top: " + top);
     
-    // from bottom
-    bottom = height - 1;
-    for (i = height - 1; i >= yMiddle; i--) {
-      if (((binary.getRGB(xMiddle, i) >> 0) & 0xFF) > 0) {
-	bottom = i;
-	break;
+    for (n = 0; n < m_NumCheckPoints; n++) {
+      // from top
+      top[n] = 0;
+      for (i = 0; i < yCheck[n]; i++) {
+	if (((binary.getRGB(xCheck[n], i) >> 0) & 0xFF) > 0) {
+	  top[n] = i;
+	  break;
+	}
       }
+      if (isLoggingEnabled())
+	getLogger().fine("top[" + n + "]: " + top);
+
+      // from bottom
+      bottom[n] = height - 1;
+      for (i = height - 1; i >= yCheck[n]; i--) {
+	if (((binary.getRGB(xCheck[n], i) >> 0) & 0xFF) > 0) {
+	  bottom[n] = i;
+	  break;
+	}
+      }
+      if (isLoggingEnabled())
+	getLogger().fine("bottom[" + n + "]: " + bottom);
+
+      // from left
+      left[n] = 0;
+      for (i = 0; i < xCheck[n]; i++) {
+	if (((binary.getRGB(i, yCheck[n]) >> 0) & 0xFF) > 0) {
+	  left[n] = i;
+	  break;
+	}
+      }
+      if (isLoggingEnabled())
+	getLogger().fine("left[" + n + "]: " + left);
+
+      // from right
+      right[n] = width - 1;
+      for (i = width - 1; i >= xCheck[n]; i--) {
+	if (((binary.getRGB(i, yCheck[n]) >> 0) & 0xFF) > 0) {
+	  right[n] = i;
+	  break;
+	}
+      }
+      if (isLoggingEnabled())
+	getLogger().fine("right[" + n + "]: " + right);
     }
-    if (isLoggingEnabled())
-      getLogger().fine("bottom: " + bottom);
     
-    // from left
-    left = 0;
-    for (i = 0; i < xMiddle; i++) {
-      if (((binary.getRGB(i, yMiddle) >> 0) & 0xFF) > 0) {
-	left = i;
-	break;
-      }
-    }
-    if (isLoggingEnabled())
-      getLogger().fine("left: " + left);
-    
-    // from right
-    right = width - 1;
-    for (i = width - 1; i >= xMiddle; i--) {
-      if (((binary.getRGB(i, yMiddle) >> 0) & 0xFF) > 0) {
-	right = i;
-	break;
-      }
-    }
-    if (isLoggingEnabled())
-      getLogger().fine("right: " + right);
+    // determine actual top/left/bottom/right
+    aleft   = StatUtils.max(left);
+    aright  = StatUtils.min(right);
+    atop    = StatUtils.max(top);
+    abottom = StatUtils.min(bottom);
     
     // crop original
-    image = img.getSubimage(left, top, right - left + 1, bottom - top + 1);
+    image = img.getSubimage(aleft, atop, aright - aleft + 1, abottom - atop + 1);
 
     return image;
   }
