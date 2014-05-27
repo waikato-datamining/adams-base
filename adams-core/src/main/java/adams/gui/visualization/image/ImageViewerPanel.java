@@ -134,6 +134,9 @@ public class ImageViewerPanel
   /** the menu item "flip vertically". */
   protected JMenuItem m_MenuItemImageFlipVertically;
 
+  /** the menu item "pick color". */
+  protected JMenuItem m_MenuItemImagePickColor;
+
   /** the menu "zoom". */
   protected JMenu m_MenuViewZoom;
 
@@ -169,6 +172,9 @@ public class ImageViewerPanel
   
   /** whether adams-imaging is present. */
   protected boolean m_ImagingModulePresent;
+  
+  /** the color picker dialog. */
+  protected ColorPickerDialog m_DialogColorPicker;
 
   /**
    * Initializes the members.
@@ -195,8 +201,6 @@ public class ImageViewerPanel
    */
   @Override
   protected void initGUI() {
-    Properties	props;
-    
     super.initGUI();
     
     setLayout(new BorderLayout());
@@ -295,6 +299,7 @@ public class ImageViewerPanel
     m_MenuItemImageRotateRight.setEnabled(imageAvailable);
     m_MenuItemImageFlipHorizontally.setEnabled(imageAvailable);
     m_MenuItemImageFlipVertically.setEnabled(imageAvailable);
+    m_MenuItemImagePickColor.setEnabled(imageAvailable);
 
     // View
     m_MenuViewZoom.setEnabled(imageAvailable);
@@ -597,6 +602,18 @@ public class ImageViewerPanel
 	}
       });
       m_MenuItemImageFlipVertically = menuitem;
+
+      // Image/Pick color...
+      menuitem = new JMenuItem("Pick color...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.setIcon(GUIHelper.getIcon("colorpicker.png"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  pickColor();
+	}
+      });
+      m_MenuItemImagePickColor = menuitem;
 
       // View
       menu = new JMenu("View");
@@ -935,6 +952,20 @@ public class ImageViewerPanel
       cmd += "VERTICAL";
     
     applyJAITransformer(cmd, "flip image");
+  }
+
+  /**
+   * Allows the user to pick a color.
+   */
+  protected void pickColor() {
+    if (m_DialogColorPicker == null) {
+      if (getParentDialog() != null)
+	m_DialogColorPicker = new ColorPickerDialog(getParentDialog(), getCurrentPanel());
+      else
+	m_DialogColorPicker = new ColorPickerDialog(getParentFrame(), getCurrentPanel());
+      m_DialogColorPicker.setLocationRelativeTo(getCurrentPanel());
+    }
+    m_DialogColorPicker.setVisible(true);
   }
 
   /**
