@@ -21,6 +21,9 @@ package adams.gui.core;
 
 import java.awt.Color;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+
 /**
  * Helper class for converting Colors to-and-from strings.
  *
@@ -283,5 +286,23 @@ public class ColorHelper {
       return "yellow";
     else
       return null;
+  }
+
+  /**
+   * Returns a contrast color.
+   * <p/>
+   * Taken from <a href="http://stackoverflow.com/a/13030061" target="_blank">here</a>.
+   * 
+   * @param color	the color to return the contrast color for
+   * @return		the contrast color
+   */
+  @MixedCopyright(
+      author = "brimborium",
+      copyright = "2012 stackoverflow",
+      license = License.CC_BY_SA_3
+  )
+  public static Color getContrastColor(Color color) {
+    double y = (299 * color.getRed() + 587 * color.getGreen() + 114 * color.getBlue()) / 1000;
+    return y >= 128 ? Color.black : Color.white;
   }
 }
