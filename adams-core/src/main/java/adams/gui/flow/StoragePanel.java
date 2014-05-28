@@ -54,6 +54,7 @@ import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.visualization.debug.InspectionPanel;
+import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
 
 /**
  * Displays the current items stored in the temp storage of a flow.
@@ -350,13 +351,22 @@ public class StoragePanel
    * Updates the preview.
    */
   protected void updatePreview() {
+    Object					obj;
+    List<AbstractObjectPlainTextRenderer>	renderer;
+    
     if (!m_PanelPreview.isVisible())
       return;
     if (m_Table.getSelectedRowCount() != 1)
       return;
-    m_TextAreaPreview.setText("" + m_TableModel.getObject(
+    obj = m_TableModel.getObject(
 	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1)));
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+    
+    renderer = AbstractObjectPlainTextRenderer.getRenderer(obj);
+    if (renderer.size() > 0)
+      m_TextAreaPreview.setText(renderer.get(0).render(obj));
+    else
+      m_TextAreaPreview.setText("" + obj);
   }
 
   /**
