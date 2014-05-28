@@ -1,1 +1,1 @@
-file: ${CWD}
+file: ${CWD}, generator: NullFilenameGenerator

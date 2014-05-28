@@ -15,11 +15,13 @@
 
 /**
  * FileExists.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.AbstractFilenameGenerator;
+import adams.core.io.NullFilenameGenerator;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
@@ -27,23 +29,26 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the file exists.
+ * Evaluates to 'true' if the file exists.<br/>
+ * If a filename generator other than adams.core.io.NullFilenameGenerator is specified, then this takes precedence over the supplied filename (uses the token passing through).
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-file &lt;adams.core.io.PlaceholderFile&gt; (property: file)
  * &nbsp;&nbsp;&nbsp;The file to look for.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-generator &lt;adams.core.io.AbstractFilenameGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The generator to use for generating the filename; uses the token passing 
+ * &nbsp;&nbsp;&nbsp;through.
+ * &nbsp;&nbsp;&nbsp;default: adams.core.io.NullFilenameGenerator
  * </pre>
  * 
  <!-- options-end -->
@@ -60,6 +65,9 @@ public class FileExists
   /** the file to look for. */
   protected PlaceholderFile m_File;
 
+  /** the filename generator. */
+  protected AbstractFilenameGenerator m_Generator;
+  
   /**
    * Returns a string describing the object.
    *
@@ -68,7 +76,10 @@ public class FileExists
   @Override
   public String globalInfo() {
     return
-        "Evaluates to 'true' if the file exists.";
+        "Evaluates to 'true' if the file exists.\n"
+	+ "If a filename generator other than "
+        + NullFilenameGenerator.class.getName() + " is specified, then this "
+        + "takes precedence over the supplied filename (uses the token passing through).";
   }
 
   /**
@@ -81,6 +92,10 @@ public class FileExists
     m_OptionManager.add(
 	    "file", "file",
 	    new PlaceholderFile("."));
+
+    m_OptionManager.add(
+	    "generator", "generator",
+	    new NullFilenameGenerator());
   }
 
   /**
@@ -113,13 +128,47 @@ public class FileExists
   }
 
   /**
+   * Sets the generator to use (ignored if {@link NullFilenameGenerator}).
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(AbstractFilenameGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the generator to use (ignored if {@link NullFilenameGenerator}).
+   *
+   * @return		the generator
+   */
+  public AbstractFilenameGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The generator to use for generating the filename; uses the token passing through.";
+  }
+
+  /**
    * Returns the quick info string to be displayed in the flow editor.
    *
    * @return		the info or null if no info to be displayed
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "file", m_File, "file: ");
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "file", m_File, "file: ");
+    result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
+    
+    return result;
   }
 
   /**
@@ -161,6 +210,13 @@ public class FileExists
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    return (m_File.exists() && !m_File.isDirectory());
+    PlaceholderFile	file;
+    
+    if (!(m_Generator instanceof NullFilenameGenerator))
+      file = new PlaceholderFile(m_Generator.generate(token.getPayload()));
+    else
+      file = m_File;
+    
+    return (file.exists() && !file.isDirectory());
   }
 }
