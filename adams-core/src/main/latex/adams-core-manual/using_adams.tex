@@ -924,6 +924,8 @@ Available source actors:
 \begin{tight_itemize}
 	\item \textit{DirectoryLister} -- lists directories and/or files in a
 	directory (lots of options: pattern matching, recursive, sorting, \ldots).
+	\item \textit{FilenameGenerator} -- allows to create filenames using various
+	generators.
 	\item \textit{FileSystemSearch} -- searches the file system using the
 	specified search algorithm.
 	\item \textit{SingleFileSupplier} -- outputs a single file specified by the
@@ -952,6 +954,8 @@ And transformers:
 	part after the ``.'').
 	\item \textit{FileInfo} -- outputs information on a file, like size or last
 	modified timestamp.
+	\item \textit{FilenameGenerator} -- allows to create filenames using various
+	generators, with some of them utilizing the token passing through.
 	\item \textit{MakeDir} -- creates the directory received on the input port
 	(also available as standalone actor).
 	\item \textit{MoveFile} -- moves/renames a file.

@@ -45,17 +45,26 @@ public abstract class AbstractFilenameGenerator
   public String getQuickInfo() {
     return null;
   }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  public abstract boolean canHandleNullObject();
 
   /**
    * Performs checks on the object to generate the filename for.
    * <p/>
-   * Default implementation only checks whether object is null.
+   * Default implementation only checks whether object is null (if one is required).
    *
    * @param obj		the object to check
    */
   protected void check(Object obj) {
-    if (obj == null)
-      throw new IllegalArgumentException("Object to generate filename for is null!");
+    if (!canHandleNullObject()) {
+      if (obj == null)
+	throw new IllegalArgumentException("Object to generate filename for is null!");
+    }
   }
 
   /**

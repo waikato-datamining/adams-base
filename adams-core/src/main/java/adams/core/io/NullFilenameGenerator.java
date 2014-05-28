@@ -40,6 +40,16 @@ public class NullFilenameGenerator
   public String globalInfo() {
     return "Dummy generator, always outputs null.";
   }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  @Override
+  public boolean canHandleNullObject() {
+    return true;
+  }
 
   /**
    * Performs the actual generation of the filename.

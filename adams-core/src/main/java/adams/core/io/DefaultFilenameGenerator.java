@@ -15,7 +15,7 @@
 
 /**
  * DefaultFilenameGenerator.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -71,6 +71,7 @@ public class DefaultFilenameGenerator
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "The default generator for database ID and ID handlers.";
   }
@@ -78,6 +79,7 @@ public class DefaultFilenameGenerator
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -114,6 +116,16 @@ public class DefaultFilenameGenerator
   public String suffixTipText() {
     return "The suffix to use (after the DB-ID or ID).";
   }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  @Override
+  public boolean canHandleNullObject() {
+    return false;
+  }
 
   /**
    * Performs the actual generation of the filename.
@@ -121,6 +133,7 @@ public class DefaultFilenameGenerator
    * @param obj		the object to generate the filename for
    * @return		the generated filename
    */
+  @Override
   protected String doGenerate(Object obj) {
     return DataUtils.createFilename(m_Directory, obj, m_Suffix, m_Extension);
   }

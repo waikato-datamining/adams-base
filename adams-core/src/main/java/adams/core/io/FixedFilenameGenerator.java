@@ -15,7 +15,7 @@
 
 /**
  * FixedFilenameGenerator.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -115,6 +115,16 @@ public class FixedFilenameGenerator
    */
   public String nameTipText() {
     return "The name to use, including the extension.";
+  }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  @Override
+  public boolean canHandleNullObject() {
+    return true;
   }
 
   /**

@@ -104,6 +104,16 @@ public class ReportFieldFilenameGenerator
   public String fieldTipText() {
     return "The report field to obtain the filename from.";
   }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  @Override
+  public boolean canHandleNullObject() {
+    return false;
+  }
 
   /**
    * Performs the actual generation of the filename.

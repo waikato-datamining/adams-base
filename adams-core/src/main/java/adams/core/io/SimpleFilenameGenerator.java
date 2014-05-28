@@ -155,6 +155,16 @@ public class SimpleFilenameGenerator
   public String suffixTipText() {
     return "The suffix to use (after the object).";
   }
+  
+  /**
+   * Returns whether we actually need an object to generate the filename.
+   * 
+   * @return		true if object required
+   */
+  @Override
+  public boolean canHandleNullObject() {
+    return true;
+  }
 
   /**
    * Performs the actual generation of the filename.
