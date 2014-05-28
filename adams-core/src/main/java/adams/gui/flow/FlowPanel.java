@@ -1044,7 +1044,7 @@ public class FlowPanel
    * @return		true if a swing worker is being executed
    */
   public boolean isSwingWorkerRunning() {
-    return (m_CurrentWorker != null);
+    return m_RunningSwingWorker;
   }
 
   /**
