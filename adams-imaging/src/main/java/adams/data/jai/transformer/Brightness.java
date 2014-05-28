@@ -27,8 +27,8 @@ import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Brightens or darkens an image using the specified factor.<br/>
- * &lt;0: darken image, &gt;0: brighten image.
+ * Brightens or darkens an image using the specified factor and offset.<br/>
+ * factor: &lt;0=darken image, &gt;0=brighten image.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -42,6 +42,11 @@ import adams.data.image.BufferedImageContainer;
  * &nbsp;&nbsp;&nbsp;The factor to use for brightening&#47;darkening.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-4
+ * </pre>
+ * 
+ * <pre>-offset &lt;float&gt; (property: offset)
+ * &nbsp;&nbsp;&nbsp;The offset to use for brightening&#47;darkening.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
  * 
  <!-- options-end -->
@@ -58,6 +63,9 @@ public class Brightness
   /** the factor to use. */
   protected float m_Factor;
 
+  /** the offset to use. */
+  protected float m_Offset;
+
   /**
    * Returns a string describing the object.
    *
@@ -66,8 +74,8 @@ public class Brightness
   @Override
   public String globalInfo() {
     return 
-	"Brightens or darkens an image using the specified factor.\n"
-	+ "<0: darken image, >0: brighten image.";
+	"Brightens or darkens an image using the specified factor and offset.\n"
+	+ "factor: <0=darken image, >0=brighten image.";
   }
 
   /**
@@ -80,6 +88,10 @@ public class Brightness
     m_OptionManager.add(
 	"factor", "factor",
 	1.0f, 0.0001f, null);
+
+    m_OptionManager.add(
+	"offset", "offset",
+	0.0f);
   }
 
   /**
@@ -117,6 +129,35 @@ public class Brightness
   }
 
   /**
+   * Sets the offset.
+   *
+   * @param value	the offset
+   */
+  public void setOffset(float value) {
+    m_Offset = value;
+    reset();
+  }
+
+  /**
+   * Returns the offset.
+   *
+   * @return		the offset
+   */
+  public float getOffset() {
+    return m_Offset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String offsetTipText() {
+    return "The offset to use for brightening/darkening.";
+  }
+
+  /**
    * Performs no transformation at all, just returns the input.
    *
    * @param img		the image to process (can be modified, since it is a copy)
@@ -130,7 +171,7 @@ public class Brightness
     RescaleOp 			op;
 
     image     = img.toBufferedImage();
-    op        = new RescaleOp(m_Factor, 0.0f, null);
+    op        = new RescaleOp(m_Factor, m_Offset, null);
     filtered  = op.filter(image, null);
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
