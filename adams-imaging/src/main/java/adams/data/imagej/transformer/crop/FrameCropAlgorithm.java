@@ -23,6 +23,8 @@ import ij.ImagePlus;
 import ij.gui.Roi;
 import ij.process.ImageProcessor;
 
+import java.awt.Point;
+
 
 /**
  <!-- globalinfo-start -->
@@ -126,6 +128,21 @@ extends AbstractCropAlgorithm {
   }
 
   /**
+   * Hook method after the crop happened.
+   * <p/>
+   * Sets the top-left and bottom-right corners.
+   * 
+   * @param img		the cropped
+   */
+  @Override
+  protected void postCrop(ImagePlus img) {
+    super.postCrop(img);
+    
+    m_TopLeft     = new Point(m_XCropMin, m_YCropMin);
+    m_BottomRight = new Point(m_XCropMax, m_YCropMax);
+  }
+  
+  /**
    * finds the first row/line with more foreground pixel than background pixel.
    * 
    * @param ip the imageprocessor which represents the image
@@ -214,25 +231,5 @@ extends AbstractCropAlgorithm {
     m_Background = 0;
     m_Foreground = 0;
     return -1; 
-  }
-
-  /**
-   * It is needed for the FrameCropAlgorithm 
-   * 
-   * @return the difference of the x value to the original image
-   */
-  @Override
-  public int getXValue(){
-    return m_XCropMin;
-  }
-
-  /**
-   * It is needed for the FrameCropAlgorithm
-   * 
-   * @return the difference of the y value to the original image
-   */
-  @Override
-  public int getYValue(){
-    return m_YCropMin;
   }
 }

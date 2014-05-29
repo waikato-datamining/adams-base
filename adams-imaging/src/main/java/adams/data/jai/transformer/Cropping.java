@@ -22,8 +22,12 @@ package adams.data.jai.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.CropAlgorithm;
 import adams.data.jai.transformer.crop.AbstractCropAlgorithm;
 import adams.data.jai.transformer.crop.NoCrop;
+import adams.data.report.DataType;
+import adams.data.report.Field;
+import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
@@ -130,10 +134,24 @@ public class Cropping
   @Override
   protected BufferedImageContainer[] doTransform(BufferedImageContainer img) {
     BufferedImageContainer	result;
+    Report			report;
     
     result = (BufferedImageContainer) img.getHeader();
     result.setImage(m_Algorithm.crop(img.getImage()));
     
+    report = result.getReport();
+    if (report != null) {
+      report.addField(new Field(CropAlgorithm.CROP_LEFT,   DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_TOP,    DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_RIGHT,  DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_BOTTOM, DataType.NUMERIC));
+      
+      report.setNumericValue(CropAlgorithm.CROP_LEFT,   m_Algorithm.getTopLeft().getX());
+      report.setNumericValue(CropAlgorithm.CROP_TOP,    m_Algorithm.getTopLeft().getY());
+      report.setNumericValue(CropAlgorithm.CROP_RIGHT,  m_Algorithm.getBottomRight().getX());
+      report.setNumericValue(CropAlgorithm.CROP_BOTTOM, m_Algorithm.getBottomRight().getY());
+    }
+
     return new BufferedImageContainer[]{result};
   }
 }

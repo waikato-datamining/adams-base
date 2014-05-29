@@ -19,6 +19,7 @@
  */
 package adams.data.jai.transformer.crop;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageHelper;
@@ -210,7 +211,10 @@ public class BinaryCrop
     aright  = StatUtils.min(right);
     atop    = StatUtils.max(top);
     abottom = StatUtils.min(bottom);
-    
+
+    m_TopLeft     = new Point(aleft,  atop);
+    m_BottomRight = new Point(aright, abottom);
+
     // crop original
     image = img.getSubimage(aleft, atop, aright - aleft + 1, abottom - atop + 1);
 

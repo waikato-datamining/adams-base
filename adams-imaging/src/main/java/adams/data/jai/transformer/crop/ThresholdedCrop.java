@@ -19,6 +19,7 @@
  */
 package adams.data.jai.transformer.crop;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import weka.core.Utils;
@@ -284,7 +285,10 @@ public class ThresholdedCrop
     }
     if (isLoggingEnabled())
       getLogger().fine("right: " + right);
-    
+
+    m_TopLeft     = new Point(left, top);
+    m_BottomRight = new Point(right, bottom);
+
     // crop original
     image = img.getSubimage(left, top, right - left + 1, bottom - top + 1);
 

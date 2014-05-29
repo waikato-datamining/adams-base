@@ -23,6 +23,8 @@ import ij.ImagePlus;
 import ij.gui.Roi;
 import ij.process.ImageProcessor;
 
+import java.awt.Point;
+
 /**
  <!-- globalinfo-start -->
  * Simple cropping algorithm that uses a fixed window. The user either specifies a window height&#47;width (if both non-zero) or the bottom-right corner coordinates apart from the coordinates of the top-left corner.
@@ -386,6 +388,9 @@ public class SimpleCrop
       width  = right  - m_Left + 1;
       height = bottom - m_Top  + 1;
     }
+
+    m_TopLeft     = new Point(m_Left, m_Top);
+    m_BottomRight = new Point(m_Left + width - 1, m_Top + height - 1);
     
     if (isLoggingEnabled())
       getLogger().info("left=" + m_Left + ", top=" + m_Top + ", width=" + width + ", height=" + height);

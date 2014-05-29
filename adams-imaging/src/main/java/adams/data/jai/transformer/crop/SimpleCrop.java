@@ -19,6 +19,7 @@
  */
 package adams.data.jai.transformer.crop;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
@@ -385,7 +386,10 @@ public class SimpleCrop
       width  = right  - m_Left;
       height = bottom - m_Top;
     }
-    
+
+    m_TopLeft     = new Point(m_Left, m_Top);
+    m_BottomRight = new Point(m_Left + width - 1, m_Top + height - 1);
+
     if (isLoggingEnabled())
       getLogger().info("left=" + m_Left + ", top=" + m_Top + ", width=" + width + ", height=" + height);
 

@@ -19,6 +19,7 @@
  */
 package adams.data.jai.transformer.crop;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageContainer;
@@ -141,7 +142,10 @@ public class RectangleCrop
     
     width  = right - left + 1;
     height = bottom - top + 1;
-    
+
+    m_TopLeft     = new Point(left, top);
+    m_BottomRight = new Point(left + width - 1, top + height - 1);
+
     if (isLoggingEnabled())
       getLogger().info("width=" + width + ", height=" + height);
 

@@ -20,6 +20,7 @@
 
 package adams.data.jai.transformer.crop;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
@@ -382,7 +383,10 @@ public class RelativeCrop
       getLogger().info("x=" + (x - 1) + ", y=" + (y - 1) + ", width=" + width + ", height=" + height + ", anchor=" + m_Anchor);
       getLogger().info("  --> " + "leftOrig=" + leftOrig + ", topOrig=" + topOrig);
     }
-    
+
+    m_TopLeft     = new Point(leftOrig, topOrig);
+    m_BottomRight = new Point(leftOrig + width - 1, topOrig + height - 1);
+
     heightOrig = img.getHeight();
     widthOrig  = img.getWidth();
     

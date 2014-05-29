@@ -15,7 +15,7 @@
 
 /*
  * Crop.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
@@ -23,6 +23,10 @@ package adams.data.jai.transformer;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.CropAlgorithm;
+import adams.data.report.DataType;
+import adams.data.report.Field;
+import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
@@ -335,6 +339,7 @@ public class Crop
     int				widthOrig;
     int				xOrig;
     int				yOrig;
+    Report			report;
     
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
@@ -405,6 +410,19 @@ public class Crop
     }
     
     result[0].setImage(image);
+
+    report = result[0].getReport();
+    if (report != null) {
+      report.addField(new Field(CropAlgorithm.CROP_LEFT,   DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_TOP,    DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_RIGHT,  DataType.NUMERIC));
+      report.addField(new Field(CropAlgorithm.CROP_BOTTOM, DataType.NUMERIC));
+      
+      report.setNumericValue(CropAlgorithm.CROP_LEFT,   leftOrig);
+      report.setNumericValue(CropAlgorithm.CROP_TOP,    topOrig);
+      report.setNumericValue(CropAlgorithm.CROP_RIGHT,  leftOrig + width - 1);
+      report.setNumericValue(CropAlgorithm.CROP_BOTTOM, topOrig + height - 1);
+    }
     
     return result;
   }

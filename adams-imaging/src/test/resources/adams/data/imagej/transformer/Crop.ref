@@ -2,6 +2,10 @@
 Image:
 imp[adams_icon.png' (16x16x1x1x1)]
 Report:
+Crop.Bottom[N]: 16.0
+Crop.Left[N]: 0.0
+Crop.Right[N]: 16.0
+Crop.Top[N]: 0.0
 
 Notes:
 PROCESS INFORMATION:
