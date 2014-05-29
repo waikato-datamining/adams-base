@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,7 +26,6 @@ import java.util.List;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
-import adams.core.Variables;
 import adams.flow.core.Unknown;
 
 /**
@@ -318,7 +317,7 @@ public class SetVariable
 
     variable = QuickInfoHelper.getVariable(this, "variableName");
     if (variable != null)
-      result = Variables.START + variable + Variables.END;
+      result = variable;
     else
       result = m_VariableName.paddedValue();
     value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue, " = ");

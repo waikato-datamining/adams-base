@@ -15,7 +15,7 @@
 
 /**
  * QuickInfoHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.util.List;
 
 import adams.core.base.BaseRegExp;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
@@ -56,7 +58,19 @@ public class QuickInfoHelper {
    * @return		the variable (incl @{...}), if attached, otherwise null
    */
   public static String getVariable(OptionHandler handler, String property) {
-    return handler.getOptionManager().getVariableForProperty(property);
+    String		result;
+    AbstractOption	option;
+    
+    result = handler.getOptionManager().getVariableForProperty(property);
+    if (result != null) {
+      option = handler.getOptionManager().findByProperty(property);
+      if (option instanceof AbstractArgumentOption) {
+	if (ClassLocator.isSubclass(VariableName.class, ((AbstractArgumentOption) option).getBaseClass()))
+	  result = Variables.START + result + Variables.END;
+      }
+    }
+    
+    return result;
   }
 
   /**

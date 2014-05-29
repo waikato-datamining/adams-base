@@ -15,7 +15,7 @@
 
 /**
  * Screenshot.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
-import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.InputConsumer;
@@ -183,7 +182,7 @@ public class Screenshot
       result = variable;
     }
     else if ((m_FilenameVariable != null) && (m_FilenameVariable.getValue().length() > 0)) {
-      result = Variables.START + m_FilenameVariable + Variables.END;
+      result = m_FilenameVariable.paddedValue();
     }
     else {
       output = QuickInfoHelper.toString(this, "output", m_Output);

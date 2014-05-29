@@ -26,7 +26,6 @@ import java.util.List;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
-import adams.core.Variables;
 
 /**
  <!-- globalinfo-start -->
@@ -247,8 +246,8 @@ public class SetVariable
     List<String>	options;
 
     variable = QuickInfoHelper.getVariable(this, "variableName");
-    if (variable != null)
-      result = Variables.START + variable + Variables.END;
+    if (variable == null)
+      result = variable;
     else
       result = m_VariableName.paddedValue();
     value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue, " = ");
