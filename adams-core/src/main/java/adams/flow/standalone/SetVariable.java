@@ -246,7 +246,7 @@ public class SetVariable
     List<String>	options;
 
     variable = QuickInfoHelper.getVariable(this, "variableName");
-    if (variable == null)
+    if (variable != null)
       result = variable;
     else
       result = m_VariableName.paddedValue();
