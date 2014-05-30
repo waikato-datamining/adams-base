@@ -15,7 +15,7 @@
 
 /*
  * NamedSetup.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.transformer;
@@ -24,7 +24,7 @@ import adams.data.imagej.ImagePlusContainer;
 
 /**
  <!-- globalinfo-start -->
- * Applies an ImageJ flattener that is referenced via its global setup name (see 'NamedSetups').
+ * Applies an ImageJ transformer that is referenced via its global setup name (see 'NamedSetups').
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -67,7 +67,7 @@ public class NamedSetup
    */
   @Override
   public String globalInfo() {
-    return "Applies an ImageJ flattener that is referenced via its global setup name (see 'NamedSetups').";
+    return "Applies an ImageJ transformer that is referenced via its global setup name (see 'NamedSetups').";
   }
 
   /**
