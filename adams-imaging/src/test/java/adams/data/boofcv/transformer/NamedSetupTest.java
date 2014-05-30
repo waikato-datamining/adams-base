@@ -24,8 +24,8 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the NamedSetup flattener. Run from the command line with: <p/>
- * java adams.data.boofcv.flattener.NamedSetupTest
+ * Test class for the NamedSetup transformer. Run from the command line with: <p/>
+ * java adams.data.boofcv.transformer.NamedSetupTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
