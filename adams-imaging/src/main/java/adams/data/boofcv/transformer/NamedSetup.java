@@ -15,7 +15,7 @@
 
 /*
  * NamedSetup.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -24,7 +24,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Applies a BoofCV flattener that is referenced via its global setup name (see 'NamedSetups').
+ * Applies a BoofCV transformer that is referenced via its global setup name (see 'NamedSetups').
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -65,7 +65,7 @@ public class NamedSetup
    */
   @Override
   public String globalInfo() {
-    return "Applies a BoofCV flattener that is referenced via its global setup name (see 'NamedSetups').";
+    return "Applies a BoofCV transformer that is referenced via its global setup name (see 'NamedSetups').";
   }
 
   /**
