@@ -97,6 +97,12 @@ import adams.flow.core.FlowVariables;
  * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
  * 
+ * <pre>-variables-filter &lt;adams.core.base.BaseRegExp&gt; (property: variablesFilter)
+ * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into 
+ * &nbsp;&nbsp;&nbsp;the local scope (when using COPY).
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * </pre>
+ * 
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
  * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that 
  * &nbsp;&nbsp;&nbsp;match the specified regular expression get propagated to the outer scope.
@@ -113,6 +119,12 @@ import adams.flow.core.FlowVariables;
  * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage 
  * &nbsp;&nbsp;&nbsp;with the outer scope.
  * &nbsp;&nbsp;&nbsp;default: EMPTY
+ * </pre>
+ * 
+ * <pre>-storage-filter &lt;adams.core.base.BaseRegExp&gt; (property: storageFilter)
+ * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get 
+ * &nbsp;&nbsp;&nbsp;into the local scope (when using COPY).
+ * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
  * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
@@ -155,8 +167,14 @@ public class LocalScopeTrigger
   /** how to handle the variables. */
   protected ScopeHandling m_ScopeHandlingVariables;
 
+  /** the regular expression of the variables to allow into the local scope. */
+  protected BaseRegExp m_VariablesFilter;
+
   /** how to handle the storage. */
   protected ScopeHandling m_ScopeHandlingStorage;
+
+  /** the regular expression of the storage items to allow into the local scope. */
+  protected BaseRegExp m_StorageFilter;
 
   /** whether to propagate variables from the local scope to the outer scope. */
   protected boolean m_PropagateVariables;
@@ -198,6 +216,10 @@ public class LocalScopeTrigger
 	    ScopeHandling.EMPTY);
 
     m_OptionManager.add(
+	    "variables-filter", "variablesFilter",
+	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
 	    "propagate-variables", "propagateVariables",
 	    false);
 
@@ -208,6 +230,10 @@ public class LocalScopeTrigger
     m_OptionManager.add(
 	    "scope-handling-storage", "scopeHandlingStorage",
 	    ScopeHandling.EMPTY);
+
+    m_OptionManager.add(
+	    "storage-filter", "storageFilter",
+	    new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
 	    "propagate-storage", "propagateStorage",
@@ -229,12 +255,14 @@ public class LocalScopeTrigger
 
     result  = "variables [";
     result += QuickInfoHelper.toString(this, "scopeHandlingVariables", m_ScopeHandlingVariables, "scope: ");
+    result += QuickInfoHelper.toString(this, "variablesFilter", m_VariablesFilter, "filter: ");
     result += QuickInfoHelper.toString(this, "propagateVariables", (m_PropagateVariables ? "propagate" : "no propagation"), ", ");
     result += QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, ", regexp: ");
     result += "]";
     
     result += ", storage [";
     result += QuickInfoHelper.toString(this, "scopeHandlingStorage", m_ScopeHandlingStorage, "scope: ");
+    result += QuickInfoHelper.toString(this, "storageFilter", m_StorageFilter, "filter: ");
     result += QuickInfoHelper.toString(this, "propagateStorage", (m_PropagateStorage ? "propagate" : "no propagation"), ", ");
     result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, ", regexp: ");
     result += "]";
@@ -292,6 +320,39 @@ public class LocalScopeTrigger
 	"Defines how variables are handled in the local scope; whether to "
 	+ "start with empty set, a copy of the outer scope variables or "
 	+ "share variables with the outer scope.";
+  }
+
+  /**
+   * Sets the regular expression that variable names must match to get
+   * into the local scope.
+   * 
+   * @param value	the expression
+   */
+  public void setVariablesFilter(BaseRegExp value) {
+    m_VariablesFilter = value;
+    reset();
+  }
+  
+  /**
+   * Returns the regular expression that variable names must match to get
+   * into the local scope.
+   * 
+   * @return		the expression
+   */
+  public BaseRegExp getVariablesFilter() {
+    return m_VariablesFilter;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variablesFilterTipText() {
+    return 
+	"The regular expression that variable names must match in order to "
+	+ "get into the local scope (when using " + ScopeHandling.COPY + ").";
   }
 
   /**
@@ -387,6 +448,39 @@ public class LocalScopeTrigger
 	"Defines how storage is handled in the local scope; whether to "
 	+ "start with empty set, a (deep) copy of the outer scope storage or "
 	+ "share the storage with the outer scope.";
+  }
+
+  /**
+   * Sets the regular expression that storage item names must match to get
+   * into the local scope.
+   * 
+   * @param value	the expression
+   */
+  public void setStorageFilter(BaseRegExp value) {
+    m_StorageFilter = value;
+    reset();
+  }
+  
+  /**
+   * Returns the regular expression that storage item names must match to get
+   * into the local scope.
+   * 
+   * @return		the expression
+   */
+  public BaseRegExp getStorageFilter() {
+    return m_StorageFilter;
+  }
+  
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String storageFilterTipText() {
+    return 
+	"The regular expression that storage item names must match in order "
+	+ "to get into the local scope (when using " + ScopeHandling.COPY + ").";
   }
 
   /**
@@ -513,7 +607,7 @@ public class LocalScopeTrigger
 	  m_LocalStorage = new Storage();
 	  break;
 	case COPY:
-	  m_LocalStorage = getParent().getStorageHandler().getStorage().getClone();
+	  m_LocalStorage = getParent().getStorageHandler().getStorage().getClone(m_StorageFilter);
 	  break;
 	case SHARE:
 	  m_LocalStorage = getParent().getStorageHandler().getStorage();
@@ -533,21 +627,21 @@ public class LocalScopeTrigger
    */
   public synchronized Variables getLocalVariables() {
     if (m_LocalVariables == null) {
-      switch (m_ScopeHandlingStorage) {
+      switch (m_ScopeHandlingVariables) {
 	case EMPTY:
 	  m_LocalVariables = new FlowVariables();
 	  m_LocalVariables.setFlow(this);
 	  break;
 	case COPY:
 	  m_LocalVariables = new FlowVariables();
-	  m_LocalVariables.assign(getParent().getVariables());
+	  m_LocalVariables.assign(getParent().getVariables(), m_VariablesFilter);
 	  m_LocalVariables.setFlow(this);
 	  break;
 	case SHARE:
 	  m_LocalVariables = (FlowVariables) getParent().getVariables();
 	  break;
 	default:
-	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingStorage);
+	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
       }
       m_LocalVariables.setFlow(this);
     }

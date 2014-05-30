@@ -662,11 +662,22 @@ public class Variables
    */
   @Override
   public Variables getClone() {
+    return getClone(null);
+  }
+
+  /**
+   * Returns a clone of the object (but without the listeners).
+   *
+   * @param filter	the regular expression that the variable names must 
+   * 			match, null to ignore
+   * @return		the clone, null if failed
+   */
+  public Variables getClone(BaseRegExp filter) {
     Variables	result;
 
     try {
       result = getClass().newInstance();
-      result.assign(this);
+      result.assign(this, filter);
     }
     catch (Exception e) {
       result = null;
@@ -684,13 +695,26 @@ public class Variables
    * @param other	the Variables to copy
    */
   public void assign(Variables other) {
+    assign(other, null);
+  }
+
+  /**
+   * Adds all the variables from the other Variables object (overwrites
+   * any existing ones).
+   *
+   * @param other	the Variables to copy
+   * @param filter	the regular expression that the variable names must 
+   * 			match, null to ignore
+   */
+  public void assign(Variables other, BaseRegExp filter) {
     Enumeration<String>		names;
     String			name;
 
     names = other.names();
     while (names.hasMoreElements()) {
       name = names.nextElement();
-      set(name, other.get(name));
+      if ((filter == null) || ((filter != null) && (filter.isMatch(name))))
+	set(name, other.get(name));
     }
   }
 

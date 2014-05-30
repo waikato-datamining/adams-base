@@ -15,7 +15,7 @@
 
 /**
  * Storage.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -29,6 +29,8 @@ import java.util.Set;
 
 import adams.core.CloneHandler;
 import adams.core.LRUCache;
+import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 
 /**
  * Used for temporary storage during flow execution.
@@ -247,11 +249,44 @@ public class Storage
   }
 
   /**
-   * Returns a clone of the object.
+   * Returns a clone (deep copy) of the object.
    *
    * @return		the clone
    */
   public Storage getClone() {
+    return getClone(null);
+  }
+
+  /**
+   * Returns a clone (deep copy) of the object.
+   *
+   * @param filter	the regular expression that the storage item names 
+   * 			must match (not applied to caches!), null to ignore
+   * @return		the clone
+   */
+  public Storage getClone(BaseRegExp filter) {
+    Storage			result;
+    LRUCache<String,Object>	cache;
+
+    result = new Storage();
+    for (String key: m_Caches.keySet()) {
+      cache = (LRUCache<String,Object>) Utils.deepCopy(m_Caches.get(key));
+      result.m_Caches.put(key, cache);
+    }
+    for (String name: m_Data.keySet()) {
+      if ((filter == null) || ((filter != null) && filter.isMatch(name)))
+	result.m_Data.put(name, Utils.deepCopy(m_Data.get(name)));
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a shallow copy of the object.
+   *
+   * @return		the shallow copy
+   */
+  public Storage getShallowCopy() {
     Storage			result;
     LRUCache<String,Object>	cache;
 

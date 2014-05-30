@@ -27,7 +27,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevel;
@@ -922,7 +921,7 @@ public class LoadBalancer
     shell = new ThreadShell(
 	actor,
 	(m_UseLocalVariables ? getVariables().getClone() : getVariables()),
-	(m_UseLocalStorage ? (m_DeepCopy ? (Storage) Utils.deepCopy(getStorageHandler().getStorage()) : getStorageHandler().getStorage().getClone()) : getStorageHandler().getStorage()));
+	(m_UseLocalStorage ? (m_DeepCopy ? getStorageHandler().getStorage().getClone() : getStorageHandler().getStorage().getShallowCopy()) : getStorageHandler().getStorage()));
     shell.setName(getName());
     shell.setParent(null);
     shell.setParent(getParent());
