@@ -97,6 +97,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
     DefaultListModel	model;
     final ImagePanel[]	panels;
     int			index;
+    BaseScrollPane	scrollPane;
     
     result  = new JPanel(new BorderLayout());
     panels = getAllPanels();
@@ -118,7 +119,9 @@ public abstract class AbstractSelectedImagesViewerPlugin
       }
     });
     list.setSelectedIndex(index);
-    result.add(new BaseScrollPane(list), BorderLayout.CENTER);
+    scrollPane = new BaseScrollPane(list);
+    scrollPane.setPreferredSize(new Dimension(200, 1));
+    result.add(scrollPane, BorderLayout.CENTER);
     
     return result;
   }
