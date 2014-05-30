@@ -15,7 +15,7 @@
 
 /**
  * NamedSetupTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.imagej.transformer;
 
@@ -28,8 +28,8 @@ import adams.env.Environment;
 import adams.test.Platform;
 
 /**
- * Test class for the NamedSetup flattener. Run from the command line with: <p/>
- * java adams.data.imagej.flattener.NamedSetupTest
+ * Test class for the NamedSetup transformer. Run from the command line with: <p/>
+ * java adams.data.imagej.transformer.NamedSetupTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -51,6 +51,7 @@ public class NamedSetupTest
    * 
    * @return		the platform.
    */
+  @Override
   protected HashSet<Platform> getPlatforms() {
     return new HashSet<Platform>(Arrays.asList(new Platform[]{Platform.LINUX}));
   }
@@ -61,6 +62,7 @@ public class NamedSetupTest
    *
    * @return		the filenames
    */
+  @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
 	"adams_icon.png"
@@ -72,6 +74,7 @@ public class NamedSetupTest
    *
    * @return		the setups
    */
+  @Override
   protected AbstractImageJTransformer[] getRegressionSetups() {
     NamedSetup[]	result;
 
