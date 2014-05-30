@@ -15,7 +15,7 @@
 
 /*
  * NamedSetup.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
@@ -24,7 +24,7 @@ import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Applies an JAI flattener that is referenced via its global setup name (see 'NamedSetups').
+ * Applies an JAI transfomer that is referenced via its global setup name (see 'NamedSetups').
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -67,7 +67,7 @@ public class NamedSetup
    */
   @Override
   public String globalInfo() {
-    return "Applies an JAI flattener that is referenced via its global setup name (see 'NamedSetups').";
+    return "Applies an JAI transfomer that is referenced via its global setup name (see 'NamedSetups').";
   }
 
   /**
