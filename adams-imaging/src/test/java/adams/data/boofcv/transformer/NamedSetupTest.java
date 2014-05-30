@@ -15,7 +15,7 @@
 
 /**
  * NamedSetupTest.java
- * Copyright (C) 201 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.transformer;
 
