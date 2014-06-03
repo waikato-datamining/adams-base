@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -118,7 +118,7 @@ public class SpreadSheetViewerPanel
   public final static String FILENAME = "SpreadSheetViewer.props";
 
   /** the file to store the recent files in. */
-  public final static String SESSION_FILE = "CSVViewerSession.props";
+  public final static String SESSION_FILE = "SpreadSheetViewerSession.props";
 
   /** the properties. */
   protected static Properties m_Properties;
