@@ -23,6 +23,7 @@ import java.util.logging.Level;
 
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Unknown;
@@ -212,7 +213,7 @@ public abstract class AbstractConversion
 	  getLogger().info("Output: " + m_Output);
       }
       catch (Exception e) {
-	msg    = "Failed to convert data (" + accepts().getName() + " -> " + generates().getName() + "):";
+	msg    = "Failed to convert data (" + Utils.classToString(accepts()) + " -> " + Utils.classToString(generates()) + "):";
 	result = msg + " " + e;
 	getLogger().log(Level.SEVERE, msg, e);
       }
