@@ -514,53 +514,44 @@ public class CsvSpreadSheetReader
 	  }
 
 	  // actual data
+	  isHeader = false;
 	  comments = false;
 	  if ((cells.size() == 1) && (cells.get(0).trim().length() == 0))
 	    continue;
 	  if (m_HeaderCells == null) {
 	    isHeader = true;
-	    // custom header?
-	    if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
-	      m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
-	      row = result.getHeaderRow();
-	      for (i = 0; i < m_HeaderCells.size(); i++)
-		row.addCell("" + i).setContent(m_HeaderCells.get(i));
-	      row = null;
-	    }
-	    else {
-	      // insert dummy header?
-	      if (m_Owner.getNoHeader()) {
-		// custom header?
-		if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
-		  m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
-		  if (cells.size() != m_HeaderCells.size())
-		    throw new IllegalStateException(
-			"Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
-		}
-		else {
-		  m_HeaderCells = new ArrayList<String>();
-		  for (i = 0; i < cells.size(); i++)
-		    m_HeaderCells.add("Col" + (i+1));
-		}
-		row = result.getHeaderRow();
-		for (i = 0; i < m_HeaderCells.size(); i++)
-		  row.addCell("" + i).setContentAsString(m_HeaderCells.get(i));
-		row      = null;
-		isHeader = false;
+	    // insert dummy header?
+	    if (m_Owner.getNoHeader()) {
+	      // custom header?
+	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
+		m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
+		if (cells.size() != m_HeaderCells.size())
+		  throw new IllegalStateException(
+		      "Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
 	      }
 	      else {
-		// custom header?
-		if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
-		  m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
-		  if (cells.size() != m_HeaderCells.size())
-		    throw new IllegalStateException(
-			"Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
-		}
-		else {
-		  m_HeaderCells = cells;
-		}
-		row = result.getHeaderRow();
+		m_HeaderCells = new ArrayList<String>();
+		for (i = 0; i < cells.size(); i++)
+		  m_HeaderCells.add("Col" + (i+1));
 	      }
+	      row = result.getHeaderRow();
+	      for (i = 0; i < m_HeaderCells.size(); i++)
+		row.addCell("" + i).setContentAsString(m_HeaderCells.get(i));
+	      row      = null;
+	      isHeader = false;
+	    }
+	    else {
+	      // custom header?
+	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
+		m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
+		if (cells.size() != m_HeaderCells.size())
+		  throw new IllegalStateException(
+		      "Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
+	      }
+	      else {
+		m_HeaderCells = cells;
+	      }
+	      row = result.getHeaderRow();
 	    }
 
 	    m_Owner.getTextColumns().setMax(m_HeaderCells.size());
@@ -577,9 +568,6 @@ public class CsvSpreadSheetReader
 	    m_HasDateTimeCols = (m_DateTimeCols.size() > 0);
 	    m_HasDateCols     = (m_DateCols.size()     > 0);
 	    m_HasTimeCols     = (m_TimeCols.size()     > 0);
-	  }
-	  else {
-	    isHeader = false;
 	  }
 
 	  // window not yet reached?
