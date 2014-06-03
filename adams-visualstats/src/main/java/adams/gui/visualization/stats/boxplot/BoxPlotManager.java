@@ -409,7 +409,8 @@ public class BoxPlotManager
    * object
    */
   public void reset() {
-    updateGui();
+	  m_Chosen.removeAllElements();
+	  updateGui();
     // add attributes to list, including class attribute
     for (int g = 0; g < m_Instances.numAttributes(); g++) {
       m_Attributes.addElement(m_Instances.attribute(g).name());

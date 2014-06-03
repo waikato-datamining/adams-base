@@ -23,6 +23,8 @@ package adams.gui.visualization.stats.boxplot;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import weka.core.Attribute;
@@ -106,14 +108,29 @@ public class BoxPlotGraph
     m_Median = StatUtils.median(m_Data);
     m_Min = StatUtils.min(m_Data);
     m_Max = StatUtils.max(m_Data);
-    Percentile<Double> percent= new Percentile<Double>();
-    List<Double> vec = new ArrayList<Double>();
-    for(double d: m_Data) {
-      vec.add(d);
+    
+    
+    //version 1
+//    Percentile<Double> percent= new Percentile<Double>();
+//    List<Double> vec = new ArrayList<Double>();
+//    for(double d: m_Data) {
+//      vec.add(d);
+//    }
+//    percent.addAll(vec);
+//    m_Lower = percent.getPercentile(0.25);
+//    m_Upper = percent.getPercentile(0.75);
+    
+    //version 2
+    Double[] copyArray = new Double[m_Data.length];
+    for(int j = 0; j < m_Data.length; j++) {
+    	copyArray[j] = m_Data[j];
     }
-    percent.addAll(vec);
-    m_Lower = percent.getPercentile(0.25);
-    m_Upper = percent.getPercentile(0.75);
+    Arrays.sort(copyArray);
+    
+    m_Lower = copyArray[(int)Math.round(((double)(copyArray.length-1)) * .25)];
+    m_Upper = copyArray[(int)Math.round(((double)(copyArray.length-1)) * .75)];
+    
+    
     m_AxisLeft.setMinimum(m_Min);
     m_AxisLeft.setMaximum(m_Max);
   }

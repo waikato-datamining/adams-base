@@ -215,6 +215,8 @@ extends AbstractGraphicalDisplay {
   @Override
   protected void display(Token token) {
     //set data for the box plot manager
+	  
+	  //should possibly clear the entire panel
     m_BoxPlot.setBoxWidth(m_WidthPlot);
     m_BoxPlot.setBoxHeight(m_HeightPlot);
     m_BoxPlot.setAxisWidth(m_WidthAx);
