@@ -1082,7 +1082,7 @@ public class ImagePanel
     removeDependentDialogs();
     updateImageProperties();
     showStatus("");
-    log("Clear");
+    log("clear");
     repaint();
   }
 
@@ -1124,7 +1124,7 @@ public class ImagePanel
       result        = true;
       updateImageProperties(cont.getReport());
       repaint();
-      log("Load: " + file);
+      log("load: " + file);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -1381,7 +1381,13 @@ public class ImagePanel
    * @param e		the trigger event
    */
   public void undoOccurred(UndoEvent e) {
-    // ignored
+    switch (e.getType()) {
+      case UNDO:
+      case REDO:
+	log(e.getType().toString().toLowerCase() + ": " + e.getUndoPoint().getComment());
+      default:
+	break;
+    }
   }
 
   /**
