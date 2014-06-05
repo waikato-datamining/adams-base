@@ -15,7 +15,7 @@
 
 /**
  * TesseractOCR.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -47,6 +47,9 @@ public class TesseractOCR
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
 
+  /** the last command that was executed. */
+  protected String m_LastCommand;
+  
   /**
    * Returns the text for the menu item to create.
    *
@@ -79,6 +82,16 @@ public class TesseractOCR
   }
 
   /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  @Override
+  protected String createLogEntry() {
+    return getClass().getSimpleName() + ": " + m_LastCommand;
+  }
+
+  /**
    * Executes the plugin.
    *
    * @return		null if OK, otherwise error message
@@ -95,6 +108,7 @@ public class TesseractOCR
 
     result = null;
 
+    m_LastCommand = "";
     tmp = null;
     try {
       tmp = File.createTempFile("ocr", ".png");
@@ -116,13 +130,14 @@ public class TesseractOCR
     
     // apply tesseract
     if (cmd != null) {
+      m_LastCommand = OptionUtils.joinOptions(cmd);
       try {
 	proc = ProcessUtils.execute(cmd);
 	if (proc.getExitCode() != 0)
 	  result = "OCR failed with exit code: " + proc.getExitCode() + "\n" + proc.getStdErr();
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to apply OCR: " + OptionUtils.joinOptions(cmd), e);
+	result = Utils.handleException(this, "Failed to apply OCR: " + m_LastCommand, e);
       }
     }
     

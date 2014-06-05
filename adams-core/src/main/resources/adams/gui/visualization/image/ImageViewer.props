@@ -26,3 +26,6 @@ PropertiesWidth=400
 
 # The width of the image (the rest is for the properties)
 DividerLocation=800
+
+# Whether to show the log
+ShowLog=True

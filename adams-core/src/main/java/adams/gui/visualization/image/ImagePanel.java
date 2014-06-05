@@ -43,10 +43,14 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -65,6 +69,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -718,6 +723,18 @@ public class ImagePanel
   /** the additional properties to display. */
   protected Report m_AdditionalProperties;
 
+  /** the panel for the log. */
+  protected BasePanel m_PanelLog;
+  
+  /** the text area for the log. */
+  protected BaseTextArea m_TextLog;
+  
+  /** the button for clearing the log. */
+  protected JButton m_ButtonClearLog;
+  
+  /** the button for copy the log. */
+  protected JButton m_ButtonCopyLog;
+  
   /** list of dependent dialogs to clean up. */
   protected List<Dialog> m_DependentDialogs;
   
@@ -765,7 +782,9 @@ public class ImagePanel
     m_SplitPane.setLeftComponentHidden(false);
 
     m_PanelProperties = new BasePanel(new BorderLayout());
+    m_PanelProperties.setBorder(BorderFactory.createTitledBorder("Properties"));
     m_PanelProperties.setMinimumSize(new Dimension(200, 0));
+    m_PanelProperties.setVisible(false);
     m_SplitPane.setRightComponent(m_PanelProperties);
     m_SplitPane.setRightComponentHidden(true);
 
@@ -786,6 +805,59 @@ public class ImagePanel
     });
     m_PanelProperties.add(m_PanelSearchProperties, BorderLayout.SOUTH);
 
+    m_PanelLog = new BasePanel(new BorderLayout());
+    m_PanelLog.setBorder(BorderFactory.createTitledBorder("Log"));
+    m_PanelLog.setVisible(false);
+    m_PanelProperties.add(m_PanelLog, BorderLayout.SOUTH);
+    m_TextLog  = new BaseTextArea(10, 20);
+    m_TextLog.setLineWrap(false);
+    m_TextLog.setEditable(false);
+    m_TextLog.setFont(GUIHelper.getMonospacedFont());
+    m_TextLog.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      public void updateButtons() {
+	m_ButtonClearLog.setEnabled(m_TextLog.getDocument().getLength() > 0);
+	m_ButtonCopyLog.setEnabled(m_TextLog.getDocument().getLength() > 0);
+      }
+    });
+    m_PanelLog.add(new BaseScrollPane(m_TextLog), BorderLayout.CENTER);
+    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    m_PanelLog.add(panel, BorderLayout.SOUTH);
+    m_ButtonClearLog = new JButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonClearLog.setEnabled(false);
+    m_ButtonClearLog.setToolTipText("Clear log");
+    m_ButtonClearLog.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	m_TextLog.setText("");
+      }
+    });
+    panel.add(m_ButtonClearLog);
+    m_ButtonCopyLog = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopyLog.setEnabled(false);
+    m_ButtonCopyLog.setToolTipText("Copy log");
+    m_ButtonCopyLog.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	if (m_TextLog.getSelectedText() == null)
+	  GUIHelper.copyToClipboard(m_TextLog.getText());
+	else
+	  GUIHelper.copyToClipboard(m_TextLog.getSelectedText());
+      }
+    });
+    panel.add(m_ButtonCopyLog);
+    
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
 
@@ -990,6 +1062,17 @@ public class ImagePanel
   }
   
   /**
+   * Appends the message to the log.
+   * 
+   * @param msg		the message to append
+   */
+  public void log(String msg) {
+    if (!msg.endsWith("\n"))
+      msg += "\n";
+    m_TextLog.append(msg);
+  }
+  
+  /**
    * Removes the image.
    */
   public void clear() {
@@ -999,6 +1082,7 @@ public class ImagePanel
     removeDependentDialogs();
     updateImageProperties();
     showStatus("");
+    log("Clear");
     repaint();
   }
 
@@ -1040,6 +1124,7 @@ public class ImagePanel
       result        = true;
       updateImageProperties(cont.getReport());
       repaint();
+      log("Load: " + file);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -1104,7 +1189,7 @@ public class ImagePanel
    * @return		true if the properties are displayed
    */
   public boolean getShowProperties() {
-    return !m_SplitPane.isRightComponentHidden();
+    return m_PanelProperties.isVisible();
   }
 
   /**
@@ -1113,7 +1198,27 @@ public class ImagePanel
    * @param value	if true then the properties get displayed
    */
   public void setShowProperties(boolean value) {
-    m_SplitPane.setRightComponentHidden(!value);
+    m_PanelProperties.setVisible(value);
+    m_SplitPane.setRightComponentHidden(!m_PanelProperties.isVisible() && !m_PanelLog.isVisible());
+  }
+
+  /**
+   * Returns whether the log is currently displayed or not.
+   *
+   * @return		true if the log is displayed
+   */
+  public boolean getShowLog() {
+    return m_PanelLog.isVisible();
+  }
+
+  /**
+   * Sets the display status of the log panel.
+   *
+   * @param value	if true then the log gets displayed
+   */
+  public void setShowLog(boolean value) {
+    m_PanelLog.setVisible(value);
+    m_SplitPane.setRightComponentHidden(!m_PanelProperties.isVisible() && !m_PanelLog.isVisible());
   }
 
   /**

@@ -908,10 +908,13 @@ public class ImageViewerPanel
       cont.setImage(getCurrentImage());
       transformer = (AbstractImageTransformer) OptionUtils.forCommandLine(AbstractImageTransformer.class, cmd);
       trans = transformer.transform(cont);
-      if (trans.length > 0)
+      if (trans.length > 0) {
+	getCurrentPanel().log("JAITransformer: " + cmd);
 	getCurrentPanel().setCurrentImage(trans[0]);
-      else
+      }
+      else {
 	GUIHelper.showErrorMessage(this, "Failed to " + operation + "?");
+      }
     }
     catch (Exception e) {
       msg = "Failed to " + operation + ":\n" + Utils.throwableToString(e);

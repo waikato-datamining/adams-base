@@ -22,6 +22,7 @@ package adams.gui.visualization.image.plugins;
 import java.awt.image.BufferedImage;
 
 import weka.core.Instance;
+import adams.core.option.OptionUtils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.flattener.AbstractJAIFlattener;
 import adams.data.jai.flattener.Histogram;
@@ -77,6 +78,16 @@ public class JAIFlattener
   @Override
   protected Object getDefaultValue() {
     return new Histogram();
+  }
+
+  /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  @Override
+  protected String createLogEntry() {
+    return getClass().getSimpleName() + ": " + OptionUtils.getCommandLine(m_Editor.getValue());
   }
 
   /**

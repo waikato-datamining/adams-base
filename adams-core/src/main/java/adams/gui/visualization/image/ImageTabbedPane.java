@@ -268,6 +268,7 @@ public class ImageTabbedPane
       props = ImageViewerPanel.getProperties();
       panel.setScale(props.getDouble("ZoomLevel") / 100);
       panel.setShowProperties(props.getBoolean("ShowProperties", true));
+      panel.setShowLog(props.getBoolean("ShowLog", true));
       panel.getSplitPane().setDividerLocation(props.getInteger("DividerLocation", 500));
       panel.getPropertiesScrollPane().setPreferredSize(new Dimension(props.getInteger("PropertiesWidth", 300), 100));
       addTab(file.getName(), panel);

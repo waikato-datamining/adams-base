@@ -24,6 +24,7 @@ import ij.ImagePlus;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 
+import adams.core.option.OptionUtils;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.transformer.AbstractImageJTransformer;
 import adams.data.imagej.transformer.PassThrough;
@@ -79,6 +80,16 @@ public class ImageJTransformer
   @Override
   protected Object getDefaultValue() {
     return new PassThrough();
+  }
+
+  /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  @Override
+  protected String createLogEntry() {
+    return getClass().getSimpleName() + ": " + OptionUtils.getCommandLine(m_Editor.getValue());
   }
 
   /**

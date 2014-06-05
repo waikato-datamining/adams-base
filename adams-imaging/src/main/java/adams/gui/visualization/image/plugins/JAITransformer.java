@@ -15,12 +15,13 @@
 
 /**
  * JAITransformer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
 import java.awt.image.BufferedImage;
 
+import adams.core.option.OptionUtils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.transformer.AbstractJAITransformer;
 import adams.data.jai.transformer.PassThrough;
@@ -76,6 +77,16 @@ public class JAITransformer
   @Override
   protected Object getDefaultValue() {
     return new PassThrough();
+  }
+
+  /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  @Override
+  protected String createLogEntry() {
+    return getClass().getSimpleName() + ": " + OptionUtils.getCommandLine(m_Editor.getValue());
   }
 
   /**

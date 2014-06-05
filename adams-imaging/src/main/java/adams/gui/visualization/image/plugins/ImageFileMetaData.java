@@ -68,6 +68,21 @@ public class ImageFileMetaData
     return (panel != null) && (panel.getCurrentImage() != null) && (panel.getCurrentFile() != null) && (!panel.isModified());
   }
 
+  /**
+   * Creates the log message.
+   * 
+   * @return		always null
+   */
+  @Override
+  protected String createLogEntry() {
+    return null;
+  }
+
+  /**
+   * Executes the plugin.
+   *
+   * @return		null if OK, otherwise error message
+   */
   @Override
   protected String doExecute() {
     String		result;

@@ -152,15 +152,40 @@ public abstract class AbstractImageViewerPlugin
   protected abstract String doExecute();
 
   /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  protected abstract String createLogEntry();
+  
+  /**
+   * Logs the successful action to the log.
+   */
+  protected void log() {
+    String	msg;
+    
+    msg = createLogEntry();
+    if (msg != null)
+      m_CurrentPanel.log(msg);
+  }
+  
+  /**
    * Executes the plugin.
    *
    * @param panel	the panel to use the plugin on
    * @return		null if OK, otherwise error message
    */
   public String execute(ImagePanel panel) {
+    String	result;
+    
     m_CurrentPanel   = panel;
     m_CanceledByUser = false;
-    return doExecute();
+    result = doExecute();
+    
+    if (result == null)
+      log();
+    
+    return result;
   }
 
   /**

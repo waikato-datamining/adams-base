@@ -105,6 +105,16 @@ public class ImageMagick
   }
 
   /**
+   * Creates the log message.
+   * 
+   * @return		the message, null if none available
+   */
+  @Override
+  protected String createLogEntry() {
+    return getClass().getSimpleName() + ": " + m_Editor.getContent();
+  }
+
+  /**
    * Filters the image.
    *
    * @param image	the image to filter
