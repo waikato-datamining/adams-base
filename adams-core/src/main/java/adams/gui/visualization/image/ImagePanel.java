@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -68,6 +67,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
+import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.CustomPopupMenuProvider;
@@ -99,6 +99,12 @@ public class ImagePanel
 
   /** for serialization. */
   private static final long serialVersionUID = -3102446345758890249L;
+
+  /** the tab title for the properties. */
+  public static final String TAB_PROPERTIES = "Properties";
+
+  /** the tab title for the log. */
+  public static final String TAB_LOG = "Log";
 
   /**
    * The panel used for painting.
@@ -693,8 +699,8 @@ public class ImagePanel
   /** the status bar label. */
   protected BaseStatusBar m_StatusBar;
 
-  /** the side pane (props/log). */
-  protected BaseSplitPane m_SideSplitPane;
+  /** the tabbed pane (props/log). */
+  protected BaseTabbedPaneWithTabHiding m_SideSplitPane;
   
   /** the panel with the properties. */
   protected BasePanel m_PanelProperties;
@@ -784,15 +790,13 @@ public class ImagePanel
     m_MainSplitPane.setLeftComponent(m_ScrollPane);
     m_MainSplitPane.setLeftComponentHidden(false);
 
-    m_SideSplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    m_SideSplitPane.setResizeWeight(1.0);
+    m_SideSplitPane = new BaseTabbedPaneWithTabHiding();
     m_MainSplitPane.setRightComponent(m_SideSplitPane);
     m_MainSplitPane.setRightComponentHidden(true);
     
     m_PanelProperties = new BasePanel(new BorderLayout());
-    m_PanelProperties.setBorder(BorderFactory.createTitledBorder("Properties"));
     m_PanelProperties.setMinimumSize(new Dimension(200, 0));
-    m_SideSplitPane.setTopComponent(m_PanelProperties);
+    m_SideSplitPane.addTab(TAB_PROPERTIES, m_PanelProperties);
 
     m_ModelProperties = new ReportFactory.Model();
     m_TableProperties = new ReportFactory.Table(m_ModelProperties);
@@ -812,8 +816,7 @@ public class ImagePanel
     m_PanelProperties.add(m_PanelSearchProperties, BorderLayout.SOUTH);
 
     m_PanelLog = new BasePanel(new BorderLayout());
-    m_PanelLog.setBorder(BorderFactory.createTitledBorder("Log"));
-    m_SideSplitPane.setBottomComponent(m_PanelLog);
+    m_SideSplitPane.addTab(TAB_LOG, m_PanelLog);
     m_TextLog  = new BaseTextArea(10, 20);
     m_TextLog.setLineWrap(false);
     m_TextLog.setEditable(false);
@@ -1194,7 +1197,7 @@ public class ImagePanel
    * @return		true if the properties are displayed
    */
   public boolean getShowProperties() {
-    return !m_SideSplitPane.isTopComponentHidden();
+    return !m_SideSplitPane.isHidden(TAB_PROPERTIES);
   }
 
   /**
@@ -1203,8 +1206,11 @@ public class ImagePanel
    * @param value	if true then the properties get displayed
    */
   public void setShowProperties(boolean value) {
-    m_SideSplitPane.setTopComponentHidden(!value);
-    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.isTopComponentHidden() && m_SideSplitPane.isBottomComponentHidden());
+    if (value)
+      m_SideSplitPane.displayTab(TAB_PROPERTIES);
+    else
+      m_SideSplitPane.hideTab(TAB_PROPERTIES);
+    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.getTabCount() == 0);
   }
 
   /**
@@ -1213,7 +1219,7 @@ public class ImagePanel
    * @return		true if the log is displayed
    */
   public boolean getShowLog() {
-    return !m_SideSplitPane.isBottomComponentHidden();
+    return !m_SideSplitPane.isHidden(TAB_LOG);
   }
 
   /**
@@ -1222,8 +1228,11 @@ public class ImagePanel
    * @param value	if true then the log gets displayed
    */
   public void setShowLog(boolean value) {
-    m_SideSplitPane.setBottomComponentHidden(!value);
-    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.isTopComponentHidden() && m_SideSplitPane.isBottomComponentHidden());
+    if (value)
+      m_SideSplitPane.displayTab(TAB_LOG);
+    else
+      m_SideSplitPane.hideTab(TAB_LOG);
+    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.getTabCount() == 0);
   }
 
   /**
