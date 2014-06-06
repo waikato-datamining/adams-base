@@ -15,7 +15,7 @@
 
 /**
  * AbstractCopyrightProcessor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
@@ -58,8 +58,9 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    *
    * @return the latest source version supported by this processor
    */
+  @Override
   public SourceVersion getSupportedSourceVersion() {
-    return SourceVersion.RELEASE_6;
+    return SourceVersion.RELEASE_7;
   }
 
   /**
@@ -71,6 +72,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    * @return the options recognized by this processor, or an empty
    * set if none
    */
+  @Override
   public Set<String> getSupportedOptions() {
     return new HashSet<String>(Arrays.asList(new String[]{"module", "output", "printheader"}));
   }
@@ -84,6 +86,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    * @return the names of the annotation types supported by this
    * processor, or an empty set if none
    */
+  @Override
   public Set<String> getSupportedAnnotationTypes() {
     return new HashSet<String>(Arrays.asList(new String[]{getAnnotationClass().getName()}));
   }
@@ -139,6 +142,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    * @param roundEnv  environment for information about the current and prior round
    * @return whether or not the set of annotations are claimed by this processor
    */
+  @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     String		cls;
     String		method;
