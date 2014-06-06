@@ -15,7 +15,7 @@
 
 /**
  * ImageFileChooser.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -36,6 +36,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import adams.data.image.BufferedImageHelper;
 import adams.gui.core.ExtensionFileFilter;
 
 /**
@@ -327,18 +328,13 @@ public class ImageFileChooser
   protected void updateCurrentHandlerHook() {
     String	suffix;
     Object	newHandler;
-    Iterator	iter;
 
     try {
-      // determine new handler
-      newHandler = null;
       suffix = ((ExtensionFileFilter) getFileFilter()).getExtensions()[0];
       if (m_DialogType == OPEN_DIALOG)
-	iter = ImageIO.getImageReadersBySuffix(suffix);
+	newHandler = BufferedImageHelper.getReaderForExtension(suffix);
       else
-	iter = ImageIO.getImageWritersBySuffix(suffix);
-      if (iter.hasNext())
-	newHandler = iter.next();
+	newHandler = BufferedImageHelper.getWriterForExtension(suffix);
       if (newHandler == null)
 	return;
 
