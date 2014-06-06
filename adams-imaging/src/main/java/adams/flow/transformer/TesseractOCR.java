@@ -15,12 +15,15 @@
 
 /*
  * TesseractOCR.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+
+import javax.media.jai.JAI;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -32,6 +35,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
+import adams.data.image.AbstractImage;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
@@ -53,14 +57,13 @@ import adams.flow.standalone.TesseractConfiguration;
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
  * &nbsp;&nbsp;&nbsp;java.io.File<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
  * - generates:<br/>
  * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -71,7 +74,7 @@ import adams.flow.standalone.TesseractConfiguration;
  * &nbsp;&nbsp;&nbsp;default: TesseractOCR
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -393,7 +396,7 @@ public class TesseractOCR
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, AbstractImage.class};
   }
 
   /**
@@ -416,64 +419,84 @@ public class TesseractOCR
   @Override
   protected String doExecute() {
     String		result;
-    String		file;
+    String		fileStr;
+    File		file;
     String[]		cmd;
     ProcessResult	proc;
     DirectoryLister	lister;
     String[]		files;
     StringBuilder	content;
     boolean		first;
+    BufferedImage	img;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof File)
-      file = ((File) m_InputToken.getPayload()).getAbsolutePath();
-    else
-      file = (String) m_InputToken.getPayload();
-
-    // delete all files that match the output base
-    lister = new DirectoryLister();
-    lister.setWatchDir(new PlaceholderDirectory(m_OutputBase.getParentFile()));
-    lister.setRegExp(new BaseRegExp(m_OutputBase.getName() + ".*"));
-    lister.setListFiles(true);
-    lister.setListDirs(false);
-    lister.setRecursive(false);
-    files = lister.list();
-    for (String f: files)
-      FileUtils.delete(new PlaceholderFile(f));
-    
-    cmd = m_Configuration.getCommand(file, m_OutputBase.getAbsolutePath(), m_Language, m_PageSegmentation);
-    try {
-      proc = ProcessUtils.execute(cmd);
-      if (proc.getExitCode() != 0) {
-	result = 
-	    "tesseract exited with " + proc.getExitCode() + "\n"
-		+ "stderr:\n" + proc.getStdErr();
+    fileStr = null;
+    if (m_InputToken.getPayload() instanceof File) {
+      fileStr = ((File) m_InputToken.getPayload()).getAbsolutePath();
+    }
+    else if (m_InputToken.getPayload() instanceof String) {
+      fileStr = (String) m_InputToken.getPayload();
+    }
+    else {
+      try {
+	file = File.createTempFile(getClass().getSimpleName(), ".png");
+	file.delete();
+	file.deleteOnExit();
+	fileStr = file.getAbsolutePath();
+	img = ((AbstractImage) m_InputToken.getPayload()).toBufferedImage();
+	JAI.create("filestore", img, fileStr, "PNG");
       }
-      else {
-	files = lister.list();
-	if (m_OutputText) {
-	  content = new StringBuilder();
-	  first   = true;
-	  for (String f: files) {
-	    if (!first) {
-	      content.append(m_Separator);
-	      first = false;
-	    }
-	    content.append(Utils.flatten(FileUtils.loadFromFile(new PlaceholderFile(f)), "\n"));
-	  }
-	  m_OutputToken = new Token(content.toString());
+      catch (Exception e) {
+	result = handleException("Failed to save image to temporary file!", e);
+      }
+    }
+
+    if (result == null) {
+      // delete all files that match the output base
+      lister = new DirectoryLister();
+      lister.setWatchDir(new PlaceholderDirectory(m_OutputBase.getParentFile()));
+      lister.setRegExp(new BaseRegExp(m_OutputBase.getName() + ".*"));
+      lister.setListFiles(true);
+      lister.setListDirs(false);
+      lister.setRecursive(false);
+      files = lister.list();
+      for (String f: files)
+	FileUtils.delete(new PlaceholderFile(f));
+
+      cmd = m_Configuration.getCommand(fileStr, m_OutputBase.getAbsolutePath(), m_Language, m_PageSegmentation);
+      try {
+	proc = ProcessUtils.execute(cmd);
+	if (proc.getExitCode() != 0) {
+	  result = 
+	      "tesseract exited with " + proc.getExitCode() + "\n"
+		  + "stderr:\n" + proc.getStdErr();
 	}
 	else {
-	  m_OutputToken = new Token(files);
+	  files = lister.list();
+	  if (m_OutputText) {
+	    content = new StringBuilder();
+	    first   = true;
+	    for (String f: files) {
+	      if (!first) {
+		content.append(m_Separator);
+		first = false;
+	      }
+	      content.append(Utils.flatten(FileUtils.loadFromFile(new PlaceholderFile(f)), "\n"));
+	    }
+	    m_OutputToken = new Token(content.toString());
+	  }
+	  else {
+	    m_OutputToken = new Token(files);
+	  }
 	}
       }
+      catch (Exception e) {
+	result = handleException("Failed to execute tesseract: " + OptionUtils.joinOptions(cmd), e);
+      }
+      
+      lister = null;
     }
-    catch (Exception e) {
-      result = handleException("Failed to execute tesseract: " + OptionUtils.joinOptions(cmd), e);
-    }
-    
-    lister = null;
 
     return result;
   }
