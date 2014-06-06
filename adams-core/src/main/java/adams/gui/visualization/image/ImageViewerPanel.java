@@ -152,6 +152,9 @@ public class ImageViewerPanel
   /** the menu item "show properties". */
   protected JMenuItem m_MenuItemViewShowProperties;
 
+  /** the menu item "show log". */
+  protected JMenuItem m_MenuItemViewShowLog;
+
   /** the menu "plugins". */
   protected BaseMenu m_MenuPlugins;
 
@@ -308,6 +311,8 @@ public class ImageViewerPanel
     m_MenuItemViewBackgroundColor.setEnabled(imageAvailable);
     m_MenuItemViewShowProperties.setSelected(imageAvailable && getCurrentPanel().getShowProperties());
     m_MenuItemViewShowProperties.setEnabled(imageAvailable);
+    m_MenuItemViewShowLog.setSelected(imageAvailable && getCurrentPanel().getShowLog());
+    m_MenuItemViewShowLog.setEnabled(imageAvailable);
 
     // Plugins
     for (i = 0; i < m_Plugins.size(); i++) {
@@ -724,6 +729,17 @@ public class ImageViewerPanel
 	}
       });
       m_MenuItemViewShowProperties = menuitem;
+
+      // View/Log
+      menuitem = new JCheckBoxMenuItem("Show log");
+      menu.add(menuitem);
+      menuitem.setIcon(GUIHelper.getIcon("log.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  getCurrentPanel().setShowLog(!getCurrentPanel().getShowLog());
+	}
+      });
+      m_MenuItemViewShowLog = menuitem;
 
       // Plugins
       plugins = AbstractImageViewerPlugin.getPlugins();

@@ -693,6 +693,9 @@ public class ImagePanel
   /** the status bar label. */
   protected BaseStatusBar m_StatusBar;
 
+  /** the side pane (props/log). */
+  protected BaseSplitPane m_SideSplitPane;
+  
   /** the panel with the properties. */
   protected BasePanel m_PanelProperties;
 
@@ -709,7 +712,7 @@ public class ImagePanel
   protected SearchPanel m_PanelSearchProperties;
   
   /** for displaying image and properties. */
-  protected BaseSplitPane m_SplitPane;
+  protected BaseSplitPane m_MainSplitPane;
 
   /** the background color. */
   protected Color m_BackgroundColor;
@@ -770,23 +773,26 @@ public class ImagePanel
 
     setLayout(new BorderLayout());
 
-    m_SplitPane = new BaseSplitPane();
-    m_SplitPane.setResizeWeight(1.0);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_MainSplitPane = new BaseSplitPane();
+    m_MainSplitPane.setResizeWeight(1.0);
+    add(m_MainSplitPane, BorderLayout.CENTER);
 
     m_PaintPanel = new PaintPanel(this);
     panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     panel.add(m_PaintPanel);
     m_ScrollPane = new BaseScrollPane(panel);
-    m_SplitPane.setLeftComponent(m_ScrollPane);
-    m_SplitPane.setLeftComponentHidden(false);
+    m_MainSplitPane.setLeftComponent(m_ScrollPane);
+    m_MainSplitPane.setLeftComponentHidden(false);
 
+    m_SideSplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SideSplitPane.setResizeWeight(1.0);
+    m_MainSplitPane.setRightComponent(m_SideSplitPane);
+    m_MainSplitPane.setRightComponentHidden(true);
+    
     m_PanelProperties = new BasePanel(new BorderLayout());
     m_PanelProperties.setBorder(BorderFactory.createTitledBorder("Properties"));
     m_PanelProperties.setMinimumSize(new Dimension(200, 0));
-    m_PanelProperties.setVisible(false);
-    m_SplitPane.setRightComponent(m_PanelProperties);
-    m_SplitPane.setRightComponentHidden(true);
+    m_SideSplitPane.setTopComponent(m_PanelProperties);
 
     m_ModelProperties = new ReportFactory.Model();
     m_TableProperties = new ReportFactory.Table(m_ModelProperties);
@@ -807,8 +813,7 @@ public class ImagePanel
 
     m_PanelLog = new BasePanel(new BorderLayout());
     m_PanelLog.setBorder(BorderFactory.createTitledBorder("Log"));
-    m_PanelLog.setVisible(false);
-    m_PanelProperties.add(m_PanelLog, BorderLayout.SOUTH);
+    m_SideSplitPane.setBottomComponent(m_PanelLog);
     m_TextLog  = new BaseTextArea(10, 20);
     m_TextLog.setLineWrap(false);
     m_TextLog.setEditable(false);
@@ -980,7 +985,7 @@ public class ImagePanel
     
     if ((value == -1) && (getCurrentImage() != null)) {
       if (getShowProperties()) {
-	width  = getWidth() - m_SplitPane.getRightComponent().getMinimumSize().width;
+	width  = getWidth() - m_MainSplitPane.getRightComponent().getMinimumSize().width;
 	height = getHeight();
       }
       else {
@@ -1040,7 +1045,7 @@ public class ImagePanel
    * @return		the split pane
    */
   public BaseSplitPane getSplitPane() {
-    return m_SplitPane;
+    return m_MainSplitPane;
   }
 
   /**
@@ -1189,7 +1194,7 @@ public class ImagePanel
    * @return		true if the properties are displayed
    */
   public boolean getShowProperties() {
-    return m_PanelProperties.isVisible();
+    return !m_SideSplitPane.isTopComponentHidden();
   }
 
   /**
@@ -1198,8 +1203,8 @@ public class ImagePanel
    * @param value	if true then the properties get displayed
    */
   public void setShowProperties(boolean value) {
-    m_PanelProperties.setVisible(value);
-    m_SplitPane.setRightComponentHidden(!m_PanelProperties.isVisible() && !m_PanelLog.isVisible());
+    m_SideSplitPane.setTopComponentHidden(!value);
+    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.isTopComponentHidden() && m_SideSplitPane.isBottomComponentHidden());
   }
 
   /**
@@ -1208,7 +1213,7 @@ public class ImagePanel
    * @return		true if the log is displayed
    */
   public boolean getShowLog() {
-    return m_PanelLog.isVisible();
+    return !m_SideSplitPane.isBottomComponentHidden();
   }
 
   /**
@@ -1217,8 +1222,8 @@ public class ImagePanel
    * @param value	if true then the log gets displayed
    */
   public void setShowLog(boolean value) {
-    m_PanelLog.setVisible(value);
-    m_SplitPane.setRightComponentHidden(!m_PanelProperties.isVisible() && !m_PanelLog.isVisible());
+    m_SideSplitPane.setBottomComponentHidden(!value);
+    m_MainSplitPane.setRightComponentHidden(m_SideSplitPane.isTopComponentHidden() && m_SideSplitPane.isBottomComponentHidden());
   }
 
   /**
