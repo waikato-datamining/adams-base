@@ -15,7 +15,7 @@
 
 /**
  * BaseTabbedPaneWithTabHiding.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -165,6 +165,7 @@ public class BaseTabbedPaneWithTabHiding
   /**
    * Performs further initializations.
    */
+  @Override
   protected void initialize() {
     super.initialize();
 
@@ -173,6 +174,29 @@ public class BaseTabbedPaneWithTabHiding
   }
 
   /**
+   * Determines the hidden component from the tab title.
+   * 
+   * @param title	the title of the tab to get the associated component for
+   * @return		the component or null if not found
+   */
+  protected Component getHiddenComponent(String title) {
+    Component		result;
+    PageBackup		page;
+    
+    result = null;
+    
+    for (Component comp: m_HiddenPages.keySet()) {
+      page = m_HiddenPages.get(comp);
+      if (page.getTitle().equals(title)) {
+	result = comp;
+	break;
+      }
+    }
+    
+    return result;
+  }  
+  
+  /**
    * Hides the tab containing the specified component.
    *
    * @param component	the component which tab to hide
@@ -180,6 +204,16 @@ public class BaseTabbedPaneWithTabHiding
    */
   public Component hideTab(Component component) {
     return hideTab(indexOfComponent(component));
+  }
+
+  /**
+   * Hides the tab with the specified tab title.
+   *
+   * @param title	the title of the tab to hide
+   * @return		the component that was hidden
+   */
+  public Component hideTab(String title) {
+    return hideTab(indexOfTab(title));
   }
 
   /**
@@ -218,6 +252,9 @@ public class BaseTabbedPaneWithTabHiding
   public void displayTab(Component component) {
     PageBackup	page;
 
+    if (component == null)
+      return;
+    
     page = m_HiddenPages.get(component);
     if (page != null) {
       addTab(page.getTitle(), page.getIcon(), (Component) page.getPayload(), page.getTip());
@@ -228,9 +265,19 @@ public class BaseTabbedPaneWithTabHiding
   }
 
   /**
+   * Displays a hidden tab again.
+   *
+   * @param title	the title of the hidden tab to display again
+   */
+  public void displayTab(String title) {
+    displayTab(getHiddenComponent(title));
+  }
+
+  /**
    * Removes all the tabs and their corresponding components
    * from the <code>tabbedpane</code>. Removes the hidden tabs as well.
    */
+  @Override
   public void removeAll() {
     m_HiddenPages.clear();
     super.removeAll();
@@ -286,6 +333,22 @@ public class BaseTabbedPaneWithTabHiding
   }
 
   /**
+   * Checks whether the tab with the specified title is currently hidden.
+   *
+   * @param title	the title of the tab to check
+   * @return		true if the tab is hidden
+   */
+  public boolean isHidden(String title) {
+    boolean	result;
+    Component	comp;
+    
+    comp   = getHiddenComponent(title);
+    result = (comp != null) && m_HiddenPages.containsKey(comp);
+    
+    return result;
+  }
+
+  /**
    * Removes the hidden component.
    *
    * @param comp	the hidden component to remove
@@ -293,6 +356,20 @@ public class BaseTabbedPaneWithTabHiding
    */
   public boolean removeHidden(Component comp) {
     return (m_HiddenPages.remove(comp) != null);
+  }
+
+  /**
+   * Removes the hidden component.
+   *
+   * @param title	the title of the tab to remove
+   * @return		true if successfully remove
+   */
+  public boolean removeHidden(String title) {
+    Component	comp;
+    
+    comp = getHiddenComponent(title);
+    
+    return (comp != null) && (m_HiddenPages.remove(comp) != null);
   }
 
   /**
