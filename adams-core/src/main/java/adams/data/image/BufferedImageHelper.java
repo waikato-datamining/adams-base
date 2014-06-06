@@ -30,12 +30,16 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
 import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.data.conversion.DOMToProperties;
 import adams.data.report.Report;
 
@@ -335,6 +339,77 @@ public class BufferedImageHelper {
   }
   
   /**
+   * Returns the first image reader that handles the extension of the specified
+   * file.
+   * 
+   * @param file	the file to get the reader for
+   * @return		the reader, null if none found
+   */
+  public static ImageReader getReaderForFile(File file) {
+    ImageReader		result;
+    String		suffix;
+
+    suffix = FileUtils.getExtension(file);
+    result = getReaderForExtension(suffix);
+
+    return result;
+  }
+  
+  /**
+   * Returns the first image reader that handles the specified extension.
+   * 
+   * @param ext		the extension to get the reader for
+   * @return		the reader, null if none found
+   */
+  public static ImageReader getReaderForExtension(String ext) {
+    ImageReader			result;
+    Iterator<ImageReader>	iter;
+
+    result = null;
+    iter   = ImageIO.getImageReadersBySuffix(ext);
+    if (iter.hasNext())
+      result = iter.next();
+
+    return result;
+  }
+  
+  /**
+   * Returns the first image writer that handles the extension of the specified
+   * file.
+   * 
+   * @param file	the file to get the writer for
+   * @return		the writer, null if none found
+   */
+  public static ImageWriter getWriterForFile(File file) {
+    ImageWriter			result;
+    String			suffix;
+
+    suffix = FileUtils.getExtension(file);
+    result = getWriterForExtension(suffix);
+
+    return result;
+  }
+  
+  /**
+   * Returns the first image writer that handles the extension of the specified
+   * file.
+   * 
+   * @param ext		the extension to get the writer for
+   * @return		the writer, null if none found
+   */
+  public static ImageWriter getWriterForExtension(String ext) {
+    ImageWriter			result;
+    Iterator<ImageWriter>	iter;
+
+    result = null;
+    iter   = ImageIO.getImageWritersBySuffix(ext);
+    if (iter.hasNext())
+      result = iter.next();
+
+    return result;
+  }
+
+  /**
    * Reads an image, also fills in meta-data.
    * 
    * @param file	the file to read
@@ -390,6 +465,31 @@ public class BufferedImageHelper {
     }
   }
   
+  /**
+   * Writes the image to the specified file.
+   * 
+   * @param img		the image to save
+   * @param file	the file to write to
+   * @return		null if successful, otherwise error message
+   */
+  public static String write(BufferedImage img, File file) {
+    ImageWriter	writer;
+    
+    writer = getWriterForFile(file);
+    if (writer == null)
+      return "No image writer found (based on extension) for file: " + file;
+    
+    try {
+      writer.write(new IIOImage(img, null, null));
+      writer.dispose();
+    }
+    catch (Exception e) {
+      return "Failed to write image to '" + file + "': " + Utils.throwableToString(e);
+    }
+    
+    return null;
+  }
+
   /**
    * Converts the image, if necessary to the specified type.
    * 
