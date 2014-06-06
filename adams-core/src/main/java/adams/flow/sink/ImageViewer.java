@@ -210,6 +210,7 @@ public class ImageViewer
       super.initGUI();
       setLayout(new BorderLayout());
       m_ImagePanel = new ImagePanel();
+      m_ImagePanel.setShowLog(false);
       add(m_ImagePanel, BorderLayout.CENTER);
     }
 
@@ -624,6 +625,7 @@ public class ImageViewer
   protected BasePanel newPanel() {
     m_ImagePanel = new ImagePanel();
     m_ImagePanel.setShowProperties(m_ShowProperties);
+    m_ImagePanel.setShowLog(false);
     if (m_ShowProperties)
       m_ImagePanel.getSplitPane().getRightComponent().setMinimumSize(new Dimension(m_PropertiesWidth, 0));
     return m_ImagePanel;
