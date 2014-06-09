@@ -15,7 +15,7 @@
 
 /*
  * AbstractContainer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -237,6 +237,21 @@ public abstract class AbstractContainer
   }
   
   /**
+   * Turns the object into a string.
+   * 
+   * @param obj		the object to turn into a string
+   * @return		the generated string
+   */
+  protected String toString(Object obj) {
+    if (obj == null)
+      return "null";
+    if (obj.getClass().isArray())
+      return Utils.arrayToString(obj);
+    else
+      return obj.toString();
+  }
+  
+  /**
    * Returns a short description of the stored data.
    *
    * @return		short description
@@ -253,7 +268,7 @@ public abstract class AbstractContainer
       name = names.next();
       if (result.length() > 0)
 	result += ", ";
-      result += name + "=" + getValue(name);
+      result += name + "=" + toString(getValue(name));
     }
 
     return result;
