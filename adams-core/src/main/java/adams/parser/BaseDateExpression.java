@@ -15,7 +15,7 @@
 
 /*
  * BaseDateExpression.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -96,7 +96,8 @@ import adams.parser.basedate.Scanner;
  * @version $Revision$
  */
 public class BaseDateExpression
-  extends AbstractExpressionEvaluator<Date> {
+  extends AbstractExpressionEvaluator<Date>
+  implements GrammarSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = -5923987640355752595L;

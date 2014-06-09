@@ -191,7 +191,8 @@ import adams.data.report.Report;
  * @version $Revision$
  */
 public class ReportMathExpression
-  extends AbstractExpressionEvaluator<Double> {
+  extends AbstractExpressionEvaluator<Double>
+  implements GrammarSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = 8014316012335802585L;

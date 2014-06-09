@@ -15,7 +15,7 @@
 
 /**
  * AbstractSymbolEvaluator.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -32,7 +32,8 @@ import adams.core.base.BaseString;
  * @param <T> the return type of the parser
  */
 public abstract class AbstractSymbolEvaluator<T>
-  extends AbstractExpressionEvaluator<T> {
+  extends AbstractExpressionEvaluator<T>
+  implements GrammarSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = -5532014159307231647L;
