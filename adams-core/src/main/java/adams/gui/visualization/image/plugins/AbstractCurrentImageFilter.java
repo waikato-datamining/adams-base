@@ -72,12 +72,14 @@ public abstract class AbstractCurrentImageFilter
     BufferedImage	input;
     BufferedImage	output;
     File		file;
+    double		scale;
 
     result = null;
 
     m_CurrentPanel.addUndoPoint("Saving undo data...", "Filtering image: " + getCaption());
     
     input         = m_CurrentPanel.getCurrentImage();
+    scale         = m_CurrentPanel.getScale();
     m_FilterError = null;
     try {
       output = filter(input);
@@ -98,6 +100,7 @@ public abstract class AbstractCurrentImageFilter
 	m_CurrentPanel.setCurrentImage(output);
 	m_CurrentPanel.setCurrentFile(file);
 	m_CurrentPanel.setModified(true);
+	m_CurrentPanel.setScale(scale);
       }
     }
     catch (Exception e) {

@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import javax.swing.SwingUtilities;
+
 import adams.core.Properties;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -254,8 +256,10 @@ public class ImageTabbedPane
    * @return		true if successfully loaded
    */
   public boolean load(File file) {
-    ImagePanel	panel;
-    Properties	props;
+    final ImagePanel	panel;
+    final double	zoom;
+    Properties		props;
+    Runnable		run;
 
     panel = new ImagePanel();
     panel.setSelectionEnabled(true);
@@ -266,13 +270,20 @@ public class ImageTabbedPane
     }
     else {
       props = ImageViewerPanel.getProperties();
-      panel.setScale(props.getDouble("ZoomLevel") / 100);
       panel.setShowProperties(props.getBoolean("ShowProperties", true));
       panel.setShowLog(props.getBoolean("ShowLog", true));
       panel.getSplitPane().setDividerLocation(props.getInteger("DividerLocation", 500));
       panel.getPropertiesScrollPane().setPreferredSize(new Dimension(props.getInteger("PropertiesWidth", 300), 100));
       addTab(file.getName(), panel);
       setSelectedComponent(panel);
+      zoom = props.getDouble("ZoomLevel") / 100;
+      run  = new Runnable() {
+	@Override
+	public void run() {
+	  panel.setScale(zoom);
+	}
+      };
+      SwingUtilities.invokeLater(run);
       return true;
     }
   }

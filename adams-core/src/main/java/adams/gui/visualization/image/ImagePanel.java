@@ -747,6 +747,9 @@ public class ImagePanel
   /** list of dependent dialogs to clean up. */
   protected List<Dialog> m_DependentDialogs;
   
+  /** the scale that the user chose. */
+  protected double m_Scale;
+  
   /**
    * Initializes the panel.
    */
@@ -766,6 +769,7 @@ public class ImagePanel
     m_ImageProperties      = new Report();
     m_AdditionalProperties = null;
     m_DependentDialogs     = new ArrayList<Dialog>();
+    m_Scale                = -1;
   }
 
   /**
@@ -981,28 +985,23 @@ public class ImagePanel
     double	scaleH;
     int		width;
     int		height;
+    double	actual;
     
     //addUndoPoint("Saving undo data...", "Scaling with factor " + value);
     
     // TODO keep "best fit" scale and re-adjust image when resizing component
     
+    m_Scale = value;
+    actual  = value;
     if ((value == -1) && (getCurrentImage() != null)) {
-      if (getShowProperties()) {
-	width  = getWidth() - m_MainSplitPane.getRightComponent().getMinimumSize().width;
-	height = getHeight();
-      }
-      else {
-	width  = getWidth();
-	height = getHeight();
-      }
-      width  -= 30;  // -30 for border
-      height -= 40;  // -40 for border
+      width  = m_ScrollPane.getWidth()  - 20;
+      height = m_ScrollPane.getHeight() - 20;
       scaleW = (double) width / (double) getCurrentImage().getWidth();
       scaleH = (double) height / (double) getCurrentImage().getHeight();
-      value  = Math.min(scaleW, scaleH);
+      actual = Math.min(scaleW, scaleH);
     }
     
-    m_PaintPanel.setScale(value);
+    m_PaintPanel.setScale(actual);
   }
 
   /**
@@ -1011,7 +1010,7 @@ public class ImagePanel
    * @return		the scaling factor
    */
   public double getScale() {
-    return m_PaintPanel.getScale();
+    return m_Scale;
   }
 
   /**

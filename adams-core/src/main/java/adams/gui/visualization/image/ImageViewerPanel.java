@@ -667,7 +667,6 @@ public class ImageViewerPanel
       m_MenuItemViewZoomOut = menuitem;
 
       // zoom levels
-      // TODO: add "fit" zoom
       zooms = new int[]{
 	  -100,
 	  25,

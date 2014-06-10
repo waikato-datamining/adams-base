@@ -15,8 +15,8 @@ InitialDir=%h
 # The number of recent setups to display in the menu.
 MaxRecentImages=5
 
-# The default zoom (in percent)
-ZoomLevel=100
+# The default zoom (in percent); use -100 for best fit
+ZoomLevel=-100
 
 # Whether to show the images properties
 ShowProperties=True

@@ -73,9 +73,11 @@ public abstract class AbstractSelectedImagesFilter
     BufferedImage	input;
     BufferedImage	output;
     File		file;
+    double		scale;
 
     result        = null;
     input         = panel.getCurrentImage();
+    scale         = panel.getScale();
     m_FilterError = null;
     try {
       output = filter(input);
@@ -93,6 +95,7 @@ public abstract class AbstractSelectedImagesFilter
 	panel.setCurrentImage(output);
 	panel.setCurrentFile(file);
 	panel.setModified(true);
+	panel.setScale(scale);
 	panel.showStatus("");
       }
     }
