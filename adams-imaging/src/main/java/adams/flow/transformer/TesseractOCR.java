@@ -432,6 +432,7 @@ public class TesseractOCR
     result = null;
 
     fileStr = null;
+    file    = null;
     if (m_InputToken.getPayload() instanceof File) {
       fileStr = ((File) m_InputToken.getPayload()).getAbsolutePath();
     }
@@ -442,7 +443,6 @@ public class TesseractOCR
       try {
 	file = File.createTempFile(getClass().getSimpleName(), ".png");
 	file.delete();
-	file.deleteOnExit();
 	fileStr = file.getAbsolutePath();
 	img = ((AbstractImage) m_InputToken.getPayload()).toBufferedImage();
 	JAI.create("filestore", img, fileStr, "PNG");
@@ -497,6 +497,9 @@ public class TesseractOCR
       
       lister = null;
     }
+    
+    if ((file != null) && file.exists())
+      file.delete();
 
     return result;
   }
