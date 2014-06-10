@@ -305,7 +305,7 @@ public class ImagePanel
             scale = scale * Math.pow(1.2, -rotation);
           else
             scale = scale / Math.pow(1.2, rotation);
-          setScale(scale);
+          getOwner().setScale(scale);
           updateStatus();
         }
       });
@@ -981,27 +981,8 @@ public class ImagePanel
    * @param value	the scaling factor
    */
   public void setScale(double value) {
-    double	scaleW;
-    double	scaleH;
-    int		width;
-    int		height;
-    double	actual;
-    
-    //addUndoPoint("Saving undo data...", "Scaling with factor " + value);
-    
-    // TODO keep "best fit" scale and re-adjust image when resizing component
-    
     m_Scale = value;
-    actual  = value;
-    if ((value == -1) && (getCurrentImage() != null)) {
-      width  = m_ScrollPane.getWidth()  - 20;
-      height = m_ScrollPane.getHeight() - 20;
-      scaleW = (double) width / (double) getCurrentImage().getWidth();
-      scaleH = (double) height / (double) getCurrentImage().getHeight();
-      actual = Math.min(scaleW, scaleH);
-    }
-    
-    m_PaintPanel.setScale(actual);
+    m_PaintPanel.setScale(calcActualScale(m_Scale));
   }
 
   /**
@@ -1011,6 +992,47 @@ public class ImagePanel
    */
   public double getScale() {
     return m_Scale;
+  }
+
+  /**
+   * Calculates the actual scale.
+   * 
+   * @param scale	the scale to use as basis
+   * @return		the actual scale to use
+   */
+  protected double calcActualScale(double scale) {
+    double	result;
+    double	scaleW;
+    double	scaleH;
+    int		width;
+    int		height;
+    
+    result = scale;
+    if ((result == -1) && (getCurrentImage() != null)) {
+      width  = m_ScrollPane.getWidth()  - 20;
+      height = m_ScrollPane.getHeight() - 20;
+      scaleW = (double) width / (double) getCurrentImage().getWidth();
+      scaleH = (double) height / (double) getCurrentImage().getHeight();
+      result = Math.min(scaleW, scaleH);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Paints the component. Also determines best fit scales.
+   * 
+   * @param g		the graphics context
+   */
+  @Override
+  protected void paintComponent(Graphics g) {
+    double	actual;
+    
+    actual = calcActualScale(m_Scale);
+    if (actual != m_PaintPanel.getScale())
+      m_PaintPanel.setScale(actual);
+
+    super.paintComponent(g);
   }
 
   /**
@@ -1529,7 +1551,7 @@ public class ImagePanel
   public boolean isSelectionEnabled() {
     return m_PaintPanel.isSelectionEnabled();
   }
-
+  
   /**
    * Cleans up data structures, frees up memory.
    */
