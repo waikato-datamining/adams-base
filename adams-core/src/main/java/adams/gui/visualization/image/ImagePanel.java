@@ -1556,9 +1556,9 @@ public class ImagePanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    if (m_DependentDialogs != null) {
+    if (m_DependentDialogs.size() > 0) {
       removeDependentDialogs();
-      m_DependentDialogs = null;
+      m_DependentDialogs.clear();
     }
   }
 }
