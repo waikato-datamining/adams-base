@@ -15,7 +15,7 @@
 
 /**
  * RenameSpreadSheetColumn.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -177,15 +177,17 @@ public class RenameSpreadSheetColumn
   protected SpreadSheet convert(SpreadSheet input) throws Exception {
     SpreadSheet		result;
     int			index;
+    String		raw;
 
     if (m_NoCopy)
       result = input;
     else
       result = input.getClone();
+    raw = m_Column.getIndex();
     m_Column.setSpreadSheet(input);
     index = m_Column.getIntIndex();
     if (index == -1)
-      throw new IllegalStateException("Not a valid column index: " + m_Column.getIndex());
+      throw new IllegalStateException("Not a valid column index: " + raw);
 
     result.getHeaderRow().getCell(index).setContent(m_NewName);
     
