@@ -15,7 +15,7 @@
 
 /**
  * WekaAttributeIndexTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka;
 
@@ -129,7 +129,7 @@ public class WekaAttributeIndexTest
     index.setData(m_Data);
     index.setIndex("Duration");
     assertEquals("should be invalid", -1, index.getIntIndex());
-    assertEquals("should be empty", "", index.getIndex());
+    assertEquals("should be same", "Duration", index.getIndex());
     
     index.setData(m_Data);
     index.setIndex("class");
