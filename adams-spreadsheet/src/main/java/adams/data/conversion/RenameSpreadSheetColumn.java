@@ -177,17 +177,15 @@ public class RenameSpreadSheetColumn
   protected SpreadSheet convert(SpreadSheet input) throws Exception {
     SpreadSheet		result;
     int			index;
-    String		raw;
 
     if (m_NoCopy)
       result = input;
     else
       result = input.getClone();
-    raw = m_Column.getIndex();
     m_Column.setSpreadSheet(input);
     index = m_Column.getIntIndex();
     if (index == -1)
-      throw new IllegalStateException("Not a valid column index: " + raw);
+      throw new IllegalStateException("Not a valid column index (1-based): " + m_Column.getIndex());
 
     result.getHeaderRow().getCell(index).setContent(m_NewName);
     
