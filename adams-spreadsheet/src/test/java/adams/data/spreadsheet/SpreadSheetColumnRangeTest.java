@@ -138,7 +138,7 @@ public class SpreadSheetColumnRangeTest
     range.setSpreadSheet(m_Sheet);
     range.setRange("Feild");
     assertEquals("should be invalid", 0, range.getIntIndices().length);
-    assertEquals("should be empty", "", range.getRange());
+    assertEquals("should be same", "Feild", range.getRange());
     
     range.setSpreadSheet(null);
     range.setRange("Field-Value");
