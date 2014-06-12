@@ -15,7 +15,7 @@
 
 /**
  * Range.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -399,7 +399,10 @@ public class Range
     if (m_Range == null)
       m_Range = clean(m_Raw);
     
-    return m_Range;
+    if (m_Range.isEmpty())
+      return m_Raw;
+    else
+      return m_Range;
   }
   
   /**

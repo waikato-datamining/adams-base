@@ -15,7 +15,7 @@
 
 /**
  * Index.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -131,11 +131,13 @@ public class Index
    * @return		the index in use
    */
   public synchronized String getIndex() {
-    if (m_Index == null) {
+    if (m_Index == null)
       m_Index = clean(m_Raw);
-      m_Raw   = null;
-    }
-    return m_Index;
+      
+    if (m_Index.isEmpty())
+      return m_Raw;
+    else
+      return m_Index;
   }
 
   /**
