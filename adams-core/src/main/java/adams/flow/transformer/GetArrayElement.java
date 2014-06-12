@@ -191,18 +191,16 @@ public class GetArrayElement
   protected String doExecute() {
     String	result;
     Object	array;
-    String	raw;
 
     result = null;
 
-    raw = m_Index.getIndex();
     try {
       array = m_InputToken.getPayload();
       m_Index.setMax(Array.getLength(array));
       m_OutputToken = new Token(Array.get(array, m_Index.getIntIndex()));
     }
     catch (Exception e) {
-      result = handleException("Failed to get array element: " + raw, e);
+      result = handleException("Failed to get array element (1-based): " + m_Index.getIndex(), e);
     }
 
     return result;
