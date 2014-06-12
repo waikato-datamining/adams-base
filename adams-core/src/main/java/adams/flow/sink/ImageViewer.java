@@ -656,7 +656,10 @@ public class ImageViewer
       m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload());
     else if (token.getPayload() instanceof AbstractImage)
       m_ImagePanel.setCurrentImage((AbstractImage) token.getPayload());
-    m_ImagePanel.setScale(m_Zoom / 100.0);
+    if (m_Zoom == -1)
+      m_ImagePanel.setScale(m_Zoom);
+    else
+      m_ImagePanel.setScale(m_Zoom / 100.0);
     m_ImagePanel.setBackgroundColor(m_BackgroundColor);
     if (!(m_SelectionProcessor instanceof NullProcessor)) {
       m_ImagePanel.addSelectionListener(m_SelectionProcessor.shallowCopy(true));
