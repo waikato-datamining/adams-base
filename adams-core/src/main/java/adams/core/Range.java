@@ -706,10 +706,17 @@ public class Range
   protected int parse(String s, int max) {
     int		result;
 
-    if (isPlaceholder(s))
+    if (isPlaceholder(s)) {
       result = parsePlaceholder(s, max);
-    else
-      result = Integer.parseInt(s) - 1;
+    }
+    else {
+      try {
+        result = Integer.parseInt(s) - 1;
+      }
+      catch (Exception e) {
+	result = -1;
+      }
+    }
 
     return result;
   }
