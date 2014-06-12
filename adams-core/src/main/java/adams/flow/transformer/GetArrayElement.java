@@ -15,7 +15,7 @@
 
 /*
  * GetArrayElement.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -191,16 +191,18 @@ public class GetArrayElement
   protected String doExecute() {
     String	result;
     Object	array;
+    String	raw;
 
     result = null;
 
+    raw = m_Index.getIndex();
     try {
       array = m_InputToken.getPayload();
       m_Index.setMax(Array.getLength(array));
       m_OutputToken = new Token(Array.get(array, m_Index.getIntIndex()));
     }
     catch (Exception e) {
-      result = handleException("Failed to get array element: " + m_Index.getIndex(), e);
+      result = handleException("Failed to get array element: " + raw, e);
     }
 
     return result;
