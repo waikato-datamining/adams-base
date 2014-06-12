@@ -26,8 +26,6 @@ import junit.framework.TestSuite;
 import adams.core.Index;
 import adams.core.IndexTest;
 import adams.data.io.input.CsvSpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
@@ -129,7 +127,7 @@ public class SpreadSheetColumnIndexTest
     index.setSpreadSheet(m_Sheet);
     index.setIndex("field");
     assertEquals("should be invalid", -1, index.getIntIndex());
-    assertEquals("should be empty", "", index.getIndex());
+    assertEquals("should be same", "field", index.getIndex());
     
     index.setSpreadSheet(m_Sheet);
     index.setIndex("Value");
