@@ -15,7 +15,7 @@
 
 /**
  * WekaAttributeRangeTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka;
 
@@ -142,7 +142,7 @@ public class WekaAttributeRangeTest
     range.setData(m_Data);
     range.setRange("duratoin");
     assertEquals("should be invalid", 0, range.getIntIndices().length);
-    assertEquals("should be empty", "", range.getRange());
+    assertEquals("should be same", "duratoin", range.getRange());
     
     range.setData(null);
     range.setRange("class-duration");
