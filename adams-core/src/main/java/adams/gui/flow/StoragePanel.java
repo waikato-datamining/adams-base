@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import adams.core.CleanUpHandler;
+import adams.core.Utils;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageHandler;
 import adams.flow.control.StorageName;
@@ -117,7 +118,7 @@ public class StoragePanel
 
       cls = obj.getClass();
       if (cls.isArray())
-	result = cls.getName() + "[]" + " (length: " + Array.getLength(obj) + ")";
+	result = Utils.classToString(cls) + " (length: " + Array.getLength(obj) + ")";
       else if (obj instanceof Collection)
 	result = cls.getName() + " (size: " + ((Collection) obj).size() + ")";
       else
