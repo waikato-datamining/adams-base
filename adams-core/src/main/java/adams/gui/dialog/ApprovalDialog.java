@@ -20,7 +20,6 @@
 
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -171,8 +170,6 @@ public class ApprovalDialog
   @Override
   protected void initGUI() {
     super.initGUI();
-
-    getContentPane().setLayout(new BorderLayout());
 
     m_ButtonApprove = new JButton();
     setApproveCaption("OK");
