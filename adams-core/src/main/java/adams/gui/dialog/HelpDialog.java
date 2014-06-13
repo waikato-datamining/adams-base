@@ -21,7 +21,6 @@ package adams.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,9 +33,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
-import javax.swing.JPanel;
 
-import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.GUIHelper;
@@ -48,16 +45,13 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class HelpDialog
-  extends BaseDialog {
+  extends DialogWithButtons {
 
   /** for serialization. */
   private static final long serialVersionUID = 8716599240055591957L;
 
   /** for displaying the help text. */
   protected JEditorPane m_TextArea;
-  
-  /** the buttons panel. */
-  protected JPanel m_PanelButtons;
   
   /** the button for closing the dialog. */
   protected JButton m_ButtonClose;
@@ -83,6 +77,7 @@ public class HelpDialog
   /**
    * Initializes the dialog.
    */
+  @Override
   protected void initGUI() {
     super.initGUI();
 
@@ -95,9 +90,9 @@ public class HelpDialog
     m_TextArea.setAutoscrolls(true);
     m_TextArea.addHyperlinkListener(new DefaultHyperlinkListener());
     m_TextArea.addKeyListener(getKeyListener());
+    getContentPane().add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
 
     // buttons
-    m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_ButtonClose = new JButton("Close");
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addKeyListener(getKeyListener());
@@ -107,19 +102,24 @@ public class HelpDialog
 	close();
       }
     });
-    m_PanelButtons.add(m_ButtonClose);
+    m_PanelButtonsRight.add(m_ButtonClose);
     
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
 	close();
       }
     });
-
-    getContentPane().setLayout(new BorderLayout());
-    getContentPane().add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
-    getContentPane().add(m_PanelButtons, BorderLayout.SOUTH);
-    pack();
+  }
+  
+  /**
+   * finishes the initialization, by setting size/location.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
     
+    pack();
     m_ButtonClose.requestFocusInWindow();
   }
 

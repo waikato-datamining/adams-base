@@ -15,14 +15,13 @@
 
 /*
  * ApprovalDialog.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +31,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 
 /**
@@ -45,7 +43,7 @@ import adams.gui.core.GUIHelper;
  * @see #getOption()
  */
 public class ApprovalDialog
-  extends BaseDialog {
+  extends DialogWithButtons {
 
   /** for serialization. */
   private static final long serialVersionUID = -7382983170735594052L;
@@ -70,15 +68,6 @@ public class ApprovalDialog
 
   /** the option selected by the user (CANCEL_OPTION, APPROVE_OPTION). */
   protected int m_Option;
-
-  /** the panel with the buttons (left and right). */
-  protected JPanel m_PanelButtons;
-
-  /** the panel with the buttons (left). */
-  protected JPanel m_PanelButtonsLeft;
-
-  /** the panel with the buttons (right). */
-  protected JPanel m_PanelButtonsRight;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -184,16 +173,6 @@ public class ApprovalDialog
     super.initGUI();
 
     getContentPane().setLayout(new BorderLayout());
-
-    // buttons
-    m_PanelButtons = new JPanel(new BorderLayout());
-    getContentPane().add(m_PanelButtons, BorderLayout.SOUTH);
-    
-    m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    m_PanelButtons.add(m_PanelButtonsLeft, BorderLayout.WEST);
-
-    m_PanelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    m_PanelButtons.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     m_ButtonApprove = new JButton();
     setApproveCaption("OK");

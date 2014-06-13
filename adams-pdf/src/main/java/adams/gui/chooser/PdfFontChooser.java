@@ -14,14 +14,13 @@
  */
 
 /*
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -30,12 +29,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import adams.core.io.PdfFont;
 import adams.env.Environment;
-import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFrame;
+import adams.gui.dialog.DialogWithButtons;
 import adams.gui.goe.PdfFontEditor;
 
 /**
@@ -45,7 +43,7 @@ import adams.gui.goe.PdfFontEditor;
  * @version $Revision$
  */
 public class PdfFontChooser
-  extends BaseDialog {
+  extends DialogWithButtons {
 
   /** for serialization. */
   private static final long serialVersionUID = 4228582248866956387L;
@@ -83,21 +81,16 @@ public class PdfFontChooser
   /**
    * Initializes the widgets.
    */
+  @Override
   protected void initGUI() {
-    JPanel 	panelButtons;
-
     super.initGUI();
-
-    getContentPane().setLayout(new BorderLayout());
 
     m_FontPanel = new PdfFontChooserPanel();
     getContentPane().add(m_FontPanel, BorderLayout.CENTER);
 
-    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
     m_ButtonOK = new JButton("OK");
     m_ButtonOK.setMnemonic('O');
-    panelButtons.add(m_ButtonOK);
+    m_PanelButtonsRight.add(m_ButtonOK);
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	m_Current = m_FontPanel.getCurrent();
@@ -108,7 +101,7 @@ public class PdfFontChooser
 
     m_ButtonCancel = new JButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
-    panelButtons.add(m_ButtonCancel);
+    m_PanelButtonsRight.add(m_ButtonCancel);
     m_ButtonCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	m_FontPanel.setCurrent(m_Current);
@@ -116,9 +109,15 @@ public class PdfFontChooser
         setVisible(false);
       }
     });
-
-    getContentPane().add(panelButtons, BorderLayout.SOUTH);
-
+  }
+  
+  /**
+   * finishes the initialization, by setting size/location.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    
     pack();
     setLocationRelativeTo(null);
   }
