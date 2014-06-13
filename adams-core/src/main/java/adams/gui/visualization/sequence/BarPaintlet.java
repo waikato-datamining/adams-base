@@ -38,8 +38,6 @@ import adams.gui.visualization.core.plot.Axis;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -57,9 +55,15 @@ import adams.gui.visualization.core.plot.Axis;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
- * <pre>-paint-all (property: paintAll)
+ * <pre>-offset &lt;int&gt; (property: offset)
+ * &nbsp;&nbsp;&nbsp;The X offset for additional sequences in pixel.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ * 
+ * <pre>-paint-all &lt;boolean&gt; (property: paintAll)
  * &nbsp;&nbsp;&nbsp;If set to true, all data points will be painted, regardless whether they 
  * &nbsp;&nbsp;&nbsp;are visible or not.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -79,6 +83,12 @@ public class BarPaintlet
 
   /** the width of the bar. */
   protected int m_Width;
+  
+  /** the offset factor. */
+  protected int m_Offset;
+  
+  /** the current offset. */
+  protected int m_CurrentOffset;
   
   /**
    * Returns a string describing the object.
@@ -100,6 +110,10 @@ public class BarPaintlet
     m_OptionManager.add(
 	    "width", "width",
 	    20, 1, null);
+
+    m_OptionManager.add(
+	    "offset", "offset",
+	    0);
 
     m_OptionManager.add(
 	    "paint-all", "paintAll",
@@ -133,6 +147,35 @@ public class BarPaintlet
    */
   public String widthTipText() {
     return "The width of the bar in pixel.";
+  }
+
+  /**
+   * Sets the X offset for additional sequences.
+   *
+   * @param value	offset in pixel
+   */
+  public void setOffset(int value) {
+    m_Offset = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the X offset for additional sequences.
+   *
+   * @return		offset in pixel
+   */
+  public int getOffset() {
+    return m_Offset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String offsetTipText() {
+    return "The X offset for additional sequences in pixel.";
   }
 
   /**
@@ -236,7 +279,8 @@ public class BarPaintlet
       curr = (XYSequencePoint) points.get(i);
 
       // determine coordinates
-      currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
+      currX  = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
+      currX += m_CurrentOffset;
       if (!m_PaintAll) {
 	if ((i != start) && (i != end) && (currX + m_Width < prevX))
 	  continue;
@@ -263,6 +307,7 @@ public class BarPaintlet
 
     // paint all points
     synchronized(getActualContainerManager()) {
+      m_CurrentOffset = 0;
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
@@ -272,7 +317,9 @@ public class BarPaintlet
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));
 	}
+	m_CurrentOffset += m_Offset;
       }
+      m_CurrentOffset = 0;
     }
   }
 }

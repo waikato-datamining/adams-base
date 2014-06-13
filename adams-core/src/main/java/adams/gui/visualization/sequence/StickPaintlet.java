@@ -38,21 +38,28 @@ import adams.gui.visualization.core.plot.Axis;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
  * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
- *
+ * 
+ * <pre>-offset &lt;int&gt; (property: offset)
+ * &nbsp;&nbsp;&nbsp;The X offset for additional sequences in pixel.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ * 
+ * <pre>-paint-all &lt;boolean&gt; (property: paintAll)
+ * &nbsp;&nbsp;&nbsp;If set to true, all data points will be painted, regardless whether they 
+ * &nbsp;&nbsp;&nbsp;are visible or not.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -67,6 +74,12 @@ public class StickPaintlet
 
   /** whether to paint all the data points (no optimization). */
   protected boolean m_PaintAll;
+  
+  /** the offset factor. */
+  protected int m_Offset;
+  
+  /** the current offset. */
+  protected int m_CurrentOffset;
 
   /**
    * Returns a string describing the object.
@@ -86,8 +99,41 @@ public class StickPaintlet
     super.defineOptions();
 
     m_OptionManager.add(
+	    "offset", "offset",
+	    0);
+
+    m_OptionManager.add(
 	    "paint-all", "paintAll",
 	    false);
+  }
+
+  /**
+   * Sets the X offset for additional sequences.
+   *
+   * @param value	offset in pixel
+   */
+  public void setOffset(int value) {
+    m_Offset = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the X offset for additional sequences.
+   *
+   * @return		offset in pixel
+   */
+  public int getOffset() {
+    return m_Offset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String offsetTipText() {
+    return "The X offset for additional sequences in pixel.";
   }
 
   /**
@@ -177,7 +223,8 @@ public class StickPaintlet
       curr = (XYSequencePoint) points.get(i);
 
       // determine coordinates
-      currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
+      currX  = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
+      currX += m_CurrentOffset;
       if (!m_PaintAll) {
 	if ((i != start) && (i != end) && (currX == prevX))
 	  continue;
@@ -204,6 +251,7 @@ public class StickPaintlet
 
     // paint all points
     synchronized(getActualContainerManager()) {
+      m_CurrentOffset = 0;
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
@@ -213,7 +261,9 @@ public class StickPaintlet
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));
 	}
+	m_CurrentOffset += m_Offset;
       }
+      m_CurrentOffset = 0;
     }
   }
 }
