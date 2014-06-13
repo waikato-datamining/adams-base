@@ -30,7 +30,6 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import adams.data.image.BufferedImageContainer;
-import adams.data.report.Report;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.DialogWithButtons;
 import adams.gui.visualization.image.ImagePanel;
@@ -62,8 +61,11 @@ public class Brightness
     /** the owner. */
     protected Brightness m_Owner;
     
-    /** the brightness value. */
-    protected JTextField m_TextBrightness;
+    /** the brightness factor. */
+    protected JTextField m_TextFactor;
+    
+    /** the brightness offset. */
+    protected JTextField m_TextOffset;
     
     /** the preview button. */
     protected JButton m_ButtonPreview;
@@ -112,8 +114,12 @@ public class Brightness
       getContentPane().add(panel, BorderLayout.CENTER);
       
       // the factor
-      m_TextBrightness = new JTextField(10);
-      panel.addParameter("Factor", m_TextBrightness);
+      m_TextFactor = new JTextField(10);
+      panel.addParameter("Factor", m_TextFactor);
+      
+      // the offset
+      m_TextOffset = new JTextField(10);
+      panel.addParameter("Offset", m_TextOffset);
       
       // the buttons
       m_ButtonPreview = new JButton("Preview");
@@ -183,7 +189,8 @@ public class Brightness
      */
     protected boolean updateSetup() {
       try {
-	m_Brightness.setFactor(Float.parseFloat(m_TextBrightness.getText()));
+	m_Brightness.setFactor(Float.parseFloat(m_TextFactor.getText()));
+	m_Brightness.setOffset(Float.parseFloat(m_TextOffset.getText()));
 	return true;
       }
       catch (Exception e) {
@@ -211,7 +218,8 @@ public class Brightness
       m_Brightness = value;
       if (m_Brightness == null)
 	m_Brightness = new adams.data.jai.transformer.Brightness();
-      m_TextBrightness.setText("" + m_Brightness.getFactor());
+      m_TextFactor.setText("" + m_Brightness.getFactor());
+      m_TextOffset.setText("" + m_Brightness.getOffset());
     }
     
     /**
@@ -278,7 +286,6 @@ public class Brightness
     String			result;
     BufferedImageContainer	cont;
     BufferedImageContainer[]	trans;
-    Report			additional;
     double			scale;
     
     result = null;
@@ -286,15 +293,13 @@ public class Brightness
     scale = m_CurrentPanel.getScale();
     cont  = new BufferedImageContainer();
     cont.setImage(m_CurrentPanel.getCurrentImage());
-    cont.setReport(m_CurrentPanel.getImageProperties());
-    additional = m_CurrentPanel.getAdditionalProperties();
+    cont.setReport(m_CurrentPanel.getAllProperties());
     trans = brightness.transform(cont);
     if (trans.length != 1) {
       result = "Failed to change brightness!";
     }
     else {
       m_CurrentPanel.setCurrentImage(trans[0]);
-      m_CurrentPanel.setAdditionalProperties(additional);
       m_CurrentPanel.setScale(scale);
     }
     
