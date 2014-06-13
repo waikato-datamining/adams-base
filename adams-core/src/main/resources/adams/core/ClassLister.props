@@ -455,7 +455,8 @@ adams.gui.visualization.report.reportfactory.AbstractTableAction=\
 
 # paintlets for XY sequences
 adams.gui.visualization.sequence.XYSequencePaintlet=\
-  adams.gui.visualization.sequence
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
 
 # paintlets for drawing custom data
 adams.gui.visualization.sequence.PaintletWithCustomDataSupport=\
