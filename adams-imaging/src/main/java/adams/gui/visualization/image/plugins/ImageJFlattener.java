@@ -30,7 +30,7 @@ import adams.data.imagej.flattener.AbstractImageJFlattener;
 import adams.data.imagej.flattener.Histogram;
 
 /**
- * Allows the user to apply a ImageJ flattner to an image in the ImageViewer.
+ * Allows the user to apply a ImageJ flattener to an image in the ImageViewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7713 $
