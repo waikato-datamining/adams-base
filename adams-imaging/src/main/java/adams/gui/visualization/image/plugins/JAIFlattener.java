@@ -28,7 +28,7 @@ import adams.data.jai.flattener.AbstractJAIFlattener;
 import adams.data.jai.flattener.Histogram;
 
 /**
- * Allows the user to apply a JAI flattner to an image in the ImageViewer.
+ * Allows the user to apply a JAI flattener to an image in the ImageViewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7713 $
