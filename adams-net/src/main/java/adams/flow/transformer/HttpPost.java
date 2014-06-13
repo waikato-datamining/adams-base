@@ -22,7 +22,6 @@ package adams.flow.transformer;
 import gnu.trove.list.array.TByteArrayList;
 
 import java.io.InputStream;
-import java.net.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,6 +29,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseURL;
 import adams.flow.core.Token;
 
 /**
@@ -75,9 +75,9 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-url &lt;java.net.URL&gt; (property: URL)
+ * <pre>-url &lt;adams.core.base.BaseURL&gt; (property: URL)
  * &nbsp;&nbsp;&nbsp;The URL to post the string content to.
- * &nbsp;&nbsp;&nbsp;default: java.net.URL
+ * &nbsp;&nbsp;&nbsp;default: http:&#47;&#47;localhost&#47;
  * </pre>
  * 
  <!-- options-end -->
@@ -92,7 +92,7 @@ public class HttpPost
   private static final long serialVersionUID = 4296378541399733662L;
   
   /** the URL to post to. */
-  protected URL m_URL;
+  protected BaseURL m_URL;
   
   /**
    * Returns a string describing the object.
@@ -115,7 +115,7 @@ public class HttpPost
 
     m_OptionManager.add(
 	    "url", "URL",
-	    getDefaultURL());
+	    new BaseURL("http://localhost/"));
   }
 
   /**
@@ -127,27 +127,13 @@ public class HttpPost
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "url", m_URL, "URL: ");
   }
-  
-  /**
-   * Returns the default URL to use.
-   * 
-   * @return		the default URL
-   */
-  protected URL getDefaultURL() {
-    try {
-      return new URL("http://localhost/");
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
 
   /**
    * Sets the URL to post to.
    *
    * @param value	the URL
    */
-  public void setURL(URL value) {
+  public void setURL(BaseURL value) {
     m_URL = value;
     reset();
   }
@@ -157,7 +143,7 @@ public class HttpPost
    *
    * @return	the URL
    */
-  public URL getURL() {
+  public BaseURL getURL() {
     return m_URL;
   }
 
