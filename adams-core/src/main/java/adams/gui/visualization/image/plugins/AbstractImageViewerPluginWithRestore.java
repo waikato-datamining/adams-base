@@ -51,8 +51,7 @@ public abstract class AbstractImageViewerPluginWithRestore
     
     result = new ArrayList();
     result.add(m_CurrentPanel.getCurrentImage());
-    result.add(m_CurrentPanel.getImageProperties());
-    result.add(m_CurrentPanel.getAdditionalProperties());
+    result.add(m_CurrentPanel.getAllProperties());
     result.add(m_CurrentPanel.getScale());
     
     return result;
@@ -70,8 +69,7 @@ public abstract class AbstractImageViewerPluginWithRestore
     cont.setImage((BufferedImage) state.get(0));
     cont.setReport((Report) state.get(1));
     m_CurrentPanel.setCurrentImage(cont);
-    m_CurrentPanel.setAdditionalProperties((Report) state.get(2));
-    m_CurrentPanel.setScale((Double) state.get(3));
+    m_CurrentPanel.setScale((Double) state.get(2));
   }
   
   /**
