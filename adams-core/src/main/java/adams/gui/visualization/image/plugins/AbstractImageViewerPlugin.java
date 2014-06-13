@@ -147,7 +147,9 @@ public abstract class AbstractImageViewerPlugin
   /**
    * Executes the plugin.
    *
-   * @return		null if OK, otherwise error message
+   * @return		null if OK, otherwise error message. Using an empty 
+   * 			string will suppress the error message display and
+   * 			the creation of a log entry.
    */
   protected abstract String doExecute();
 

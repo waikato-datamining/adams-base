@@ -765,7 +765,7 @@ public class ImageViewerPanel
 	  menuitem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      String error = plugin.execute(getCurrentPanel());
-	      if (error != null)
+	      if ((error != null) && !error.isEmpty())
 		GUIHelper.showErrorMessage(
 		    getCurrentPanel(),
 		    "Error occurred executing plugin '" + plugin.getCaption() + "':\n" + error);
