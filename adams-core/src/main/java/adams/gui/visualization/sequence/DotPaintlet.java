@@ -81,7 +81,7 @@ public class DotPaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new DotHitDetector(getSequencePanel());
+    return new DotHitDetector(this);
   }
 
   /**

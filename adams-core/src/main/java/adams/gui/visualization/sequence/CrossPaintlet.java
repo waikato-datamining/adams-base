@@ -170,7 +170,7 @@ public class CrossPaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new CrossHitDetector(getSequencePanel());
+    return new CrossHitDetector(this);
   }
 
   /**

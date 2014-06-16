@@ -23,6 +23,7 @@ import java.awt.Graphics;
 
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.PaintablePanel;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
 
 /**
  * A wrapper for XY-sequence paintlets, in order to use fixed a X range.
@@ -219,5 +220,18 @@ public class PaintletWithFixedXRange
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
     return m_Paintlet.newHitDetector();
+  }
+
+  /**
+   * Returns the hit detector to use for this paintlet.
+   *
+   * @return		the detector
+   */
+  @Override
+  public AbstractXYSequencePointHitDetector getHitDetector() {
+    if (m_Paintlet instanceof HitDetectorSupporter<?>)
+      return ((HitDetectorSupporter<AbstractXYSequencePointHitDetector>) m_Paintlet).getHitDetector();
+    else
+      return m_HitDetector;
   }
 }

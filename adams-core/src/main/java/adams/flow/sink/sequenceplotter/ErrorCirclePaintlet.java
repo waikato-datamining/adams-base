@@ -92,7 +92,7 @@ public class ErrorCirclePaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new ErrorCircleHitDetector(getSequencePanel());
+    return new ErrorCircleHitDetector(this);
   }
 
   /**

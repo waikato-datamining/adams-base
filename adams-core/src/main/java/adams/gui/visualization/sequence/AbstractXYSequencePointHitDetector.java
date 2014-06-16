@@ -15,7 +15,7 @@
 
 /*
  * AbstractXYSequencePointHitDetector.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -40,14 +40,14 @@ public abstract class AbstractXYSequencePointHitDetector
   private static final long serialVersionUID = 8048373104725687691L;
 
   /** the owner of this detector. */
-  protected XYSequencePanel m_Owner;
+  protected XYSequencePaintlet m_Owner;
 
   /**
    * Initializes the hit detector.
    *
-   * @param owner	the panel that uses this detector
+   * @param owner	the paintlet that uses this detector
    */
-  public AbstractXYSequencePointHitDetector(XYSequencePanel owner) {
+  public AbstractXYSequencePointHitDetector(XYSequencePaintlet owner) {
     super();
     setOwner(owner);
   }
@@ -57,16 +57,16 @@ public abstract class AbstractXYSequencePointHitDetector
    *
    * @param value	the owning panel
    */
-  public void setOwner(XYSequencePanel value) {
+  public void setOwner(XYSequencePaintlet value) {
     m_Owner = value;
   }
 
   /**
    * Returns the owner.
    *
-   * @return		the owning panel
+   * @return		the owning paintlet
    */
-  public XYSequencePanel getOwner() {
+  public XYSequencePaintlet getOwner() {
     return m_Owner;
   }
 
@@ -76,6 +76,7 @@ public abstract class AbstractXYSequencePointHitDetector
    * @param e		the MouseEvent (for coordinates)
    * @return		the associated object with the hit, otherwise null
    */
+  @Override
   protected abstract Object isHit(MouseEvent e);
 
   /**
@@ -85,6 +86,7 @@ public abstract class AbstractXYSequencePointHitDetector
    * @param hit		the object that got determined by the hit
    * @return		the generated appendix for the tiptext
    */
+  @Override
   protected Object processHit(MouseEvent e, Object hit) {
     String			result;
     Vector<XYSequencePoint>	hits;
@@ -99,7 +101,7 @@ public abstract class AbstractXYSequencePointHitDetector
       if (i > 0)
 	result += ", ";
       sp  = (XYSequence) hits.get(i).getParent();
-      cont = m_Owner.getContainerManager().newContainer(sp);
+      cont = m_Owner.getSequencePanel().getContainerManager().newContainer(sp);
       result += cont.getDisplayID();
     }
     result += ")";
@@ -110,6 +112,7 @@ public abstract class AbstractXYSequencePointHitDetector
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
     m_Owner = null;
 

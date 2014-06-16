@@ -31,7 +31,7 @@ import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
-import adams.gui.visualization.sequence.XYSequencePanel;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 /**
  * Detects selections of sequence points in the sequence panel.
@@ -48,9 +48,9 @@ public class ErrorCrossHitDetector
   /**
    * Initializes the hit detector.
    *
-   * @param owner	the panel that uses this detector
+   * @param owner	the paintlet that uses this detector
    */
-  public ErrorCrossHitDetector(XYSequencePanel owner) {
+  public ErrorCrossHitDetector(XYSequencePaintlet owner) {
     super(owner);
     
     m_MinimumPixelDifference = 1;
@@ -90,16 +90,16 @@ public class ErrorCrossHitDetector
     y          = axisLeft.posToValue((int) e.getY());
     x          = axisBottom.posToValue((int) e.getX());
     paintlet   = null;
-    if (m_Owner.getPaintlet() instanceof ErrorCrossPaintlet)
-      paintlet = (ErrorCrossPaintlet) m_Owner.getPaintlet();
+    if (m_Owner instanceof ErrorCrossPaintlet)
+      paintlet = (ErrorCrossPaintlet) m_Owner;
     logging    = isLoggingEnabled();
 
-    for (i = 0; i < m_Owner.getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getContainerManager().get(i)).isVisible())
+    for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
+      if (!((VisibilityContainer) m_Owner.getSequencePanel().getContainerManager().get(i)).isVisible())
 	continue;
 
       // check for hit
-      s      = m_Owner.getContainerManager().get(i).getData();
+      s      = m_Owner.getSequencePanel().getContainerManager().get(i).getData();
       points = s.toList();
 
       if (logging)

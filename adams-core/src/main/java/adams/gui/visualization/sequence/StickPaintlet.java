@@ -172,7 +172,7 @@ public class StickPaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new StickHitDetector(getSequencePanel());
+    return new StickHitDetector(this);
   }
   /**
    * Draws the custom data with the given color.

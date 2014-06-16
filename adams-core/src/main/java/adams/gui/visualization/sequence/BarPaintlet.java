@@ -216,7 +216,7 @@ public class BarPaintlet
   public AbstractXYSequencePointHitDetector newHitDetector() {
     BarHitDetector	result;
     
-    result = new BarHitDetector(getSequencePanel());
+    result = new BarHitDetector(this);
     result.setWidth(m_Width);
     
     return result;

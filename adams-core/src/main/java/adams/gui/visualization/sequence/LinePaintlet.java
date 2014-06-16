@@ -117,7 +117,7 @@ public class LinePaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new LineHitDetector(getSequencePanel());
+    return new LineHitDetector(this);
   }
 
   /**

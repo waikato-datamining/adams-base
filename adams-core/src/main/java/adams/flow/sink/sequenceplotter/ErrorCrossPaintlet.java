@@ -92,7 +92,7 @@ public class ErrorCrossPaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new ErrorCrossHitDetector(getSequencePanel());
+    return new ErrorCrossHitDetector(this);
   }
 
   /**

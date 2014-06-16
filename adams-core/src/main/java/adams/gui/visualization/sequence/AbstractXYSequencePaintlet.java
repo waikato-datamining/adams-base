@@ -109,7 +109,7 @@ public abstract class AbstractXYSequencePaintlet
   public void setPanel(PaintablePanel value) {
     super.setPanel(value);
     if (m_HitDetector != null)
-      m_HitDetector.setOwner(getSequencePanel());
+      m_HitDetector.setOwner(this);
   }
 
   /**

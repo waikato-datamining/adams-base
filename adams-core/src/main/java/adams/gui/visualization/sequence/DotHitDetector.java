@@ -46,9 +46,9 @@ public class DotHitDetector
   /**
    * Initializes the hit detector.
    *
-   * @param owner	the panel that uses this detector
+   * @param owner	the paintlet that uses this detector
    */
-  public DotHitDetector(XYSequencePanel owner) {
+  public DotHitDetector(XYSequencePaintlet owner) {
     super(owner);
   }
 
@@ -85,12 +85,12 @@ public class DotHitDetector
     x          = axisBottom.posToValue((int) e.getX());
     logging    = isLoggingEnabled();
 
-    for (i = 0; i < m_Owner.getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getContainerManager().get(i)).isVisible())
+    for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
+      if (!((VisibilityContainer) m_Owner.getSequencePanel().getContainerManager().get(i)).isVisible())
 	continue;
 
       // check for hit
-      s      = m_Owner.getContainerManager().get(i).getData();
+      s      = m_Owner.getSequencePanel().getContainerManager().get(i).getData();
       points = s.toList();
 
       if (logging)
