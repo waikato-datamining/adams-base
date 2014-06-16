@@ -77,6 +77,20 @@
 
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-spreadsheet</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-spreadsheet</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-weka</artifactId>
       <version>${project.version}</version>
     </dependency>
