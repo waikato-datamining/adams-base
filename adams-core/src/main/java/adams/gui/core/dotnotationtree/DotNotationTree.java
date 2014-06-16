@@ -315,6 +315,16 @@ public class DotNotationTree<N extends DotNotationNode>
   }
 
   /**
+   * Returns the root part for the specified item.
+   * 
+   * @param item	the item to determine the root part for
+   * @return		the root part
+   */
+  protected String getRootPart(String item) {
+    return splitItem(item)[0];
+  }
+  
+  /**
    * Finds the root for the given item. Creates the root node if necessary.
    *
    * @param root	optional root node to use
@@ -328,7 +338,7 @@ public class DotNotationTree<N extends DotNotationNode>
     int		i;
 
     result = null;
-    prefix = item.replaceAll("\\..*", "");
+    prefix = getRootPart(item);
     if (root == null) {
       if (hasRootNodeLabel()) {
 	root  = newNode(getRootNodeLabel());
