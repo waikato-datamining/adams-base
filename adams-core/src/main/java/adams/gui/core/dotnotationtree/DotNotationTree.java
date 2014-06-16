@@ -414,6 +414,15 @@ public class DotNotationTree<N extends DotNotationNode>
   }
   
   /**
+   * Returns the separator in use.
+   * 
+   * @return		the separator
+   */
+  public String getSeparator() {
+    return ".";
+  }
+  
+  /**
    * Adds the item to the tree structure.
    *
    * @param root	the root node
@@ -580,7 +589,7 @@ public class DotNotationTree<N extends DotNotationNode>
 	if (!child.isLeaf()) {
 	  parent = (N) root.getParent();
 	  if (parent != null) {
-	    newRoot = newNode(root.getLabel() + "." + child.getLabel());
+	    newRoot = newNode(root.getLabel() + getSeparator() + child.getLabel());
 	    while (child.getChildCount() > 0)
 	      newRoot.add((BaseTreeNode) child.getChildAt(0));
 	    parent.insert(newRoot, parent.getIndex(root));

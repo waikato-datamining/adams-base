@@ -15,7 +15,7 @@
 
 /*
  * DotNotationNode.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dotnotationtree;
@@ -85,6 +85,15 @@ public class DotNotationNode
   public boolean isItemLeaf() {
     return isLeaf();
   }
+  
+  /**
+   * Returns the separator in use.
+   * 
+   * @return		the separator
+   */
+  public String getSeparator() {
+    return ".";
+  }
 
   /**
    * Returns the full label.
@@ -105,7 +114,7 @@ public class DotNotationNode
           node = (DotNotationNode) node.getParent();
           if (node.isRoot() && node.getLabel().equals(MULTIPLE_ROOT))
             continue;
-          m_Item = node.getLabel() + "." + m_Item;
+          m_Item = node.getLabel() + getSeparator() + m_Item;
         }
       }
 
@@ -121,6 +130,7 @@ public class DotNotationNode
    * @return		the generated string
    * @see		#getItem()
    */
+  @Override
   public Transferable toTransferable() {
     return new TransferableString(getItem());
   }
