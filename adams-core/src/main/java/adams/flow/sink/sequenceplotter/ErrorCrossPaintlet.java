@@ -31,7 +31,6 @@ import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
-import adams.gui.visualization.sequence.CrossHitDetector;
 import adams.gui.visualization.sequence.CrossPaintlet;
 
 /**
@@ -93,7 +92,7 @@ public class ErrorCrossPaintlet
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return new CrossHitDetector(getSequencePanel());
+    return new ErrorCrossHitDetector(getSequencePanel());
   }
 
   /**
@@ -115,8 +114,6 @@ public class ErrorCrossPaintlet
     int				i;
     int 			radius;
     int				diameter;
-    SequencePlotPoint		ppoint;
-    Double[]			errors;
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
@@ -136,30 +133,84 @@ public class ErrorCrossPaintlet
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
 
-      diameter = m_Diameter;
-      if (curr instanceof SequencePlotPoint) {
-	ppoint = (SequencePlotPoint) curr;
-	if (ppoint.hasErrorX()) {
-	  errors = ppoint.getErrorX();
-	  if (errors.length == 1)
-	    diameter = Math.max(diameter, axisX.valueToPos(currX - errors[0]) - axisX.valueToPos(currX + errors[0]));
-	  else
-	    diameter = Math.max(diameter, axisX.valueToPos(errors[1]) - axisX.valueToPos(errors[0]));
-	}
-	else if (ppoint.hasErrorY()) {
-	  errors = ppoint.getErrorY();
-	  if (errors.length == 1)
-	    diameter = Math.max(diameter, axisY.valueToPos(currY - errors[0]) - axisY.valueToPos(currY + errors[0]));
-	  else
-	    diameter = Math.max(diameter, axisY.valueToPos(errors[1]) - axisY.valueToPos(errors[0]));
-	}
-      }
-      radius = diameter / 2;
+      diameter = getDiameter(axisX, axisY, currX, currY, curr);
+      radius   = diameter / 2;
       
       // draw cross
       g.drawLine(currX - radius, currY - radius, currX + radius, currY + radius);
       g.drawLine(currX + radius, currY - radius, currX - radius, currY + radius);
     }
+  }
+  
+  /**
+   * Calculates the diameter for the given point (slow call).
+   * 
+   * @param curr	the current point
+   * @return		the diameter in pixel
+   */
+  public int getDiameter(XYSequencePoint curr) {
+    AxisPanel	axisX;
+    AxisPanel	axisY;
+
+    axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
+    axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
+    
+    return getDiameter(axisX, axisY, curr);
+  }
+  
+  /**
+   * Calculates the diameter for the given point (medium fast call).
+   * 
+   * @param axisX	the X axis to use
+   * @param axisY	the Y axis to use
+   * @param curr	the current point
+   * @return		the diameter in pixel
+   */
+  public int getDiameter(AxisPanel axisX, AxisPanel axisY, XYSequencePoint curr) {
+    double	currX;
+    double	currY;
+
+    currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
+    currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
+    
+    return getDiameter(axisX, axisY, currX, currY, curr);
+  }
+  
+  /**
+   * Calculates the diameter for the given point (fast call).
+   * 
+   * @param axisX	the X axis to use
+   * @param axisY	the Y axis to use
+   * @param currX	the current X value
+   * @param currY	the current Y value
+   * @param curr	the current point
+   * @return		the diameter in pixel
+   */
+  public int getDiameter(AxisPanel axisX, AxisPanel axisY, double currX, double currY, XYSequencePoint curr) {
+    int				diameter;
+    SequencePlotPoint		ppoint;
+    Double[]			errors;
+
+    diameter = m_Diameter;
+    if (curr instanceof SequencePlotPoint) {
+      ppoint = (SequencePlotPoint) curr;
+      if (ppoint.hasErrorX()) {
+	errors = ppoint.getErrorX();
+	if (errors.length == 1)
+	  diameter = Math.max(diameter, axisX.valueToPos(currX - errors[0]) - axisX.valueToPos(currX + errors[0]));
+	else
+	  diameter = Math.max(diameter, axisX.valueToPos(errors[1]) - axisX.valueToPos(errors[0]));
+      }
+      else if (ppoint.hasErrorY()) {
+	errors = ppoint.getErrorY();
+	if (errors.length == 1)
+	  diameter = Math.max(diameter, axisY.valueToPos(currY - errors[0]) - axisY.valueToPos(currY + errors[0]));
+	else
+	  diameter = Math.max(diameter, axisY.valueToPos(errors[1]) - axisY.valueToPos(errors[0]));
+      }
+    }
+
+    return diameter;
   }
 
   /**
