@@ -109,7 +109,6 @@ public class BoxPlot
     BoxPlotManager	result;
 
     result = new BoxPlotManager();
-    // TODO parameters?
     result.setInstances(m_Data);
     result.setNumHorizontal(3);
     result.setFill(true);
