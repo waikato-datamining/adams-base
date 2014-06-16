@@ -164,7 +164,7 @@ public class SpreadSheetPanel
     result = null;
     
     if (getOwner() != null) {
-      index = getOwner().indexOfTabComponent(this);
+      index = getOwner().indexOfComponent(this);
       if (index > -1)
 	result = getOwner().getTitleAt(index);
     }
