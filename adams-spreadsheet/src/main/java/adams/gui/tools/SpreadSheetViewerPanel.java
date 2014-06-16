@@ -1347,17 +1347,23 @@ public class SpreadSheetViewerPanel
     BasePanel		panel;
     SpreadSheet		sheet;
     ApprovalDialog	dialog;
+    String		title;
+    SpreadSheetPanel	current;
 
-    sheet = m_TabbedPane.getCurrentSheet();
-    if (sheet == null)
+    current = m_TabbedPane.getCurrentPanel();
+    if ((current == null) || (current.getSheet() == null))
       return;
+    sheet = current.getSheet();
 
     panel = plugin.generate(sheet);
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
     else
       dialog = new ApprovalDialog(getParentFrame(), false);
-    dialog.setTitle(plugin.getMenuText());
+    title = plugin.getMenuText();
+    if (current.getTabTitle() != null)
+      title += " - " + current.getTabTitle();
+    dialog.setTitle(title);
     if (plugin.getMenuIcon() != null)
       dialog.setIconImage(GUIHelper.getIcon(plugin.getMenuIcon()).getImage());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
