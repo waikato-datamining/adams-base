@@ -404,6 +404,16 @@ public class DotNotationTree<N extends DotNotationNode>
   }
 
   /**
+   * Splits the item into its sub-parts.
+   * 
+   * @param item	the full item string to split
+   * @return		the generated parts, without the separator
+   */
+  protected String[] splitItem(String item) {
+    return item.split("\\.");
+  }
+  
+  /**
    * Adds the item to the tree structure.
    *
    * @param root	the root node
@@ -424,7 +434,7 @@ public class DotNotationTree<N extends DotNotationNode>
     if (root == null)
       return result;
 
-    parts = item.split("\\.");
+    parts = splitItem(item);
     for (i = 0; i < root.getChildCount(); i++) {
       node = (N) root.getChildAt(i);
       if (node.isLabelMatch(parts[0])) {
@@ -485,7 +495,7 @@ public class DotNotationTree<N extends DotNotationNode>
 
     for (i = 0; i < root.getChildCount(); i++) {
       node      = (N) root.getChildAt(i);
-      itemParts = node.getLabel().split("\\.");
+      itemParts = splitItem(node.getLabel());
       match     = true;
       max       = Math.min(itemParts.length, parts.length);
       for (n = 0; n < max; n++) {
@@ -525,7 +535,7 @@ public class DotNotationTree<N extends DotNotationNode>
     if (root == null)
       return result;
 
-    parts    = item.split("\\.");
+    parts    = splitItem(item);
     newParts = null;
 
     // find root node and determine left-over bits of item
