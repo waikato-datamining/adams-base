@@ -26,6 +26,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -791,6 +792,43 @@ public class DotNotationTree<N extends DotNotationNode>
     buildTree();
   }
 
+  /**
+   * Adds the items to the current ones and rebuilds the tree.
+   * 
+   * @param items	the additional items
+   */
+  public void addItems(List<String> items) {
+    m_Items.addAll(items);
+    if (m_Sorted)
+      Collections.sort(m_Items);
+    buildTree();
+  }
+
+  /**
+   * Adds the items to the current ones and rebuilds the tree.
+   * 
+   * @param items	the additional items
+   */
+  public void addItems(String[] items) {
+    m_Items.addAll(Arrays.asList(items));
+    if (m_Sorted)
+      Collections.sort(m_Items);
+    buildTree();
+  }
+
+  /**
+   * Adds the items to the current ones and rebuilds the tree.
+   * 
+   * @param items	the additional items
+   */
+  public void addItems(BaseString[] items) {
+    for (BaseString item: items)
+      m_Items.add(item.getValue());
+    if (m_Sorted)
+      Collections.sort(m_Items);
+    buildTree();
+  }
+  
   /**
    * Returns the first stored item.
    *
