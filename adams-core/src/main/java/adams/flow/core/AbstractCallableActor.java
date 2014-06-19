@@ -41,14 +41,23 @@ public abstract class AbstractCallableActor
   /** the key for backing up the callable actor. */
   public final static String BACKUP_CALLABLEACTOR = "callable actor";
 
+  /** the key for backing up the configured state. */
+  public final static String BACKUP_CONFIGURED = "configured";
+
   /** the callable name. */
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
   protected AbstractActor m_CallableActor;
 
+  /** whether the callable actor has been configured. */
+  protected boolean m_Configured;
+  
   /** the helper class. */
   protected CallableActorHelper m_Helper;
+  
+  /** whether the callable actor is optional. */
+  protected boolean m_Optional;
 
   /**
    * Adds options to the internal list of options.
@@ -60,6 +69,10 @@ public abstract class AbstractCallableActor
     m_OptionManager.add(
 	    "callable", "callableName",
 	    new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+	    "optional", "optional",
+	    false);
   }
 
   /**
@@ -70,6 +83,7 @@ public abstract class AbstractCallableActor
     super.reset();
 
     m_CallableActor = null;
+    m_Configured    = false;
   }
 
   /**
@@ -112,13 +126,49 @@ public abstract class AbstractCallableActor
   }
 
   /**
+   * Sets whether the callable actor is optional.
+   *
+   * @param value 	true if optional
+   */
+  public void setOptional(boolean value) {
+    m_Optional = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the callable actor is optional.
+   *
+   * @return 		true if optional
+   */
+  public boolean getOptional() {
+    return m_Optional;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String optionalTipText() {
+    return 
+	"If enabled, then the callable actor is optional, ie no error is "
+	+ "raised if not found, merely ignored.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "callableName", m_CallableName);
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "callableName", m_CallableName);
+    result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
+    
+    return result;
   }
 
   /**
@@ -157,6 +207,7 @@ public abstract class AbstractCallableActor
   protected void pruneBackup() {
     super.pruneBackup();
     pruneBackup(BACKUP_CALLABLEACTOR);
+    pruneBackup(BACKUP_CONFIGURED);
   }
 
   /**
@@ -172,6 +223,8 @@ public abstract class AbstractCallableActor
 
     if (m_CallableActor != null)
       result.put(BACKUP_CALLABLEACTOR, m_CallableActor);
+    
+    result.put(BACKUP_CONFIGURED, m_Configured);
 
     return result;
   }
@@ -189,6 +242,11 @@ public abstract class AbstractCallableActor
       m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
+
+    if (state.containsKey(BACKUP_CONFIGURED)) {
+      m_Configured = (Boolean) state.get(BACKUP_CONFIGURED);
+      state.remove(BACKUP_CONFIGURED);
+    }
   }
 
   /**
@@ -203,8 +261,10 @@ public abstract class AbstractCallableActor
     result = null;
 
     m_CallableActor = findCallableActor();
+    m_Configured    = true;
     if (m_CallableActor == null) {
-      result = "Couldn't find callable actor '" + getCallableName() + "'!";
+      if (!m_Optional)
+	result = "Couldn't find callable actor '" + getCallableName() + "'!";
     }
     else {
       variables = findVariables(m_CallableActor);
@@ -260,17 +320,19 @@ public abstract class AbstractCallableActor
     result = null;
 
     // is variable attached?
-    if (m_CallableActor == null)
+    if (!m_Configured)
       result = setUpCallableActor();
 
     if (result == null) {
-      if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
-	synchronized(m_CallableActor) {
-	  if (isLoggingEnabled())
-	    getLogger().info("Executing callable actor - start: " + m_CallableActor);
-	  result = executeCallableActor();
-	  if (isLoggingEnabled())
-	    getLogger().info("Executing callable actor - end: " + result);
+      if (m_CallableActor != null) {
+	if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
+	  synchronized(m_CallableActor) {
+	    if (isLoggingEnabled())
+	      getLogger().info("Executing callable actor - start: " + m_CallableActor);
+	    result = executeCallableActor();
+	    if (isLoggingEnabled())
+	      getLogger().info("Executing callable actor - end: " + result);
+	  }
 	}
       }
     }

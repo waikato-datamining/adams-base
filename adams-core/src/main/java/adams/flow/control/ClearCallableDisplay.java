@@ -53,7 +53,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: ClearCallableDisplay
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -73,6 +73,12 @@ import adams.flow.core.Unknown;
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor to use.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ * 
+ * <pre>-optional &lt;boolean&gt; (property: optional)
+ * &nbsp;&nbsp;&nbsp;If enabled, then the callable actor is optional, ie no error is raised if 
+ * &nbsp;&nbsp;&nbsp;not found, merely ignored.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -115,8 +121,10 @@ public class ClearCallableDisplay
     result = super.setUpCallableActor();
 
     if (result == null) {
-      if (!(m_CallableActor instanceof AbstractDisplay))
-	result = "Callable actor '" + m_CallableName + "' is not a graphical actor (" + AbstractDisplay.class.getName() + ")!";
+      if (m_CallableActor != null) {
+	if (!(m_CallableActor instanceof AbstractDisplay))
+	  result = "Callable actor '" + m_CallableName + "' is not a graphical actor (" + AbstractDisplay.class.getName() + ")!";
+      }
     }
 
     return result;
