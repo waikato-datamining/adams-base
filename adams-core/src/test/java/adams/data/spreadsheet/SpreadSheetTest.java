@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -480,8 +480,8 @@ public class SpreadSheetTest
   }
 
   /**
-   * Tests the {@link Dataset#getCellValues(int)} and 
-   * {@link Dataset#getCellValues(String)} methods.
+   * Tests the {@link SpreadSheet#getCellValues(int)} and 
+   * {@link SpreadSheet#getCellValues(String)} methods.
    */
   public void testCellValues() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
@@ -498,6 +498,16 @@ public class SpreadSheetTest
     assertEquals("Value #1 differs", "A", values.get(0));
     assertEquals("Value #2 differs", "B", values.get(1));
     assertEquals("Value #3 differs", "C", values.get(2));
+  }
+
+  /**
+   * Tests the {@link SpreadSheet#clear()} method.
+   */
+  public void testClear() {
+    CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
+    SpreadSheet data = reader.read(new TmpFile("sample3.csv").getAbsolutePath());
+    data.clear();
+    assertEquals("column header differs", "Col", data.getHeaderRow().getCell(0).getContent());
   }
 
   /**

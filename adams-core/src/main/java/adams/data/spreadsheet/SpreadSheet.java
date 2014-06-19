@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheet.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -350,9 +350,27 @@ public class SpreadSheet
    * Removes all cells, but leaves comments.
    */
   public void clear() {
+    String[]	header;
+    int		i;
+    
+    // backup header strings
+    header = new String[m_HeaderRow.getCellCount()];
+    for (i = 0; i < header.length; i++) {
+      if (m_HeaderRow.hasCell(i) && (m_HeaderRow.getCell(i).getContentType() == ContentType.STRING)) {
+	header[i] = m_HeaderRow.getCell(i).getContent();
+	m_HeaderRow.getCell(i).setContent(0L);
+      }
+    }
+    
     m_RowKeys.clear();
     m_Rows.clear();
     m_StringsTable.clear();
+    
+    // restore header strings
+    for (i = 0; i < header.length; i++) {
+      if (header[i] != null)
+	m_HeaderRow.getCell(i).setContentAsString(header[i]);
+    }
   }
 
   /**
@@ -1439,6 +1457,8 @@ public class SpreadSheet
     row.addCell(0).setContent("B");
     System.out.println(sheet);
     sheet.sort(new RowComparator(new int[]{0}), true);
+    System.out.println(sheet);
+    sheet.clear();
     System.out.println(sheet);
   }
 }
