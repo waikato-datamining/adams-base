@@ -14,8 +14,8 @@
  */
 
 /**
- * ImageMetaData.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * ImageMetaDataExtractor.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -73,9 +73,9 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 9194 $
  */
-public class ImageMetaData
+public class ImageMetaDataExtractor
   extends AbstractTransformer
   implements ImageMetaDataExtraction {
 
@@ -89,7 +89,7 @@ public class ImageMetaData
    */
   @Override
   public String globalInfo() {
-    return "Returns any EXIF or IPTC and basic image information as a spreadsheet.";
+    return "Returns any image meta-data information as a spreadsheet.";
   }
 
   /**
@@ -131,7 +131,7 @@ public class ImageMetaData
       file = new File(((File) m_InputToken.getPayload()).getAbsolutePath());
     
     try {
-      sheet         = ImageMetaDataHelper.getMetaData(file);
+      sheet         = ImageMetaDataHelper.getMetaDataExtractor(file);
       m_OutputToken = new Token(sheet);
     }
     catch (Exception e) {

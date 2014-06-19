@@ -51,6 +51,10 @@ adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
 adams.flow.sink.ffmpeg.AbstractFFmpegPlugin=\
   adams.flow.sink.ffmpeg
 
+# the image meta-data extractors
+adams.flow.transformer.ImageMetaDataExtraction=\
+  adams.flow.transformer
+
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
