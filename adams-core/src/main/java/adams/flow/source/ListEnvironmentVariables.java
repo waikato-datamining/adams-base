@@ -20,7 +20,9 @@
 
 package adams.flow.source;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
@@ -131,7 +133,18 @@ public class ListEnvironmentVariables
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "regExp", m_RegExp, (m_Invert ? "! " : ""));
+    String		result;
+    List<String>	options;
+
+    result = QuickInfoHelper.toString(this, "regExp", m_RegExp, (m_Invert ? "! " : ""));
+
+    // further options
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", getOutputArray(), "array"));
+    result += QuickInfoHelper.flatten(options);
+
+    
+    return result;
   }
 
   /**
