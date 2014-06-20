@@ -15,7 +15,7 @@
 
 /*
  * ListStorageNames.java.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -256,16 +256,6 @@ public class ListStorageNames
    */
   public String invertTipText() {
     return "If set to true, then the matching sense is inverted.";
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
-   */
-  @Override
-  public Class[] generates() {
-    return new Class[]{String.class};
   }
 
   /**

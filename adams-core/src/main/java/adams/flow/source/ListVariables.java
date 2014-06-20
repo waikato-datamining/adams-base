@@ -214,16 +214,6 @@ public class ListVariables
   }
 
   /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
-   */
-  @Override
-  public Class[] generates() {
-    return new Class[]{String.class};
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
