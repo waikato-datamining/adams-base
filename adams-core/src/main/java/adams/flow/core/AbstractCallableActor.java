@@ -265,6 +265,8 @@ public abstract class AbstractCallableActor
     if (m_CallableActor == null) {
       if (!m_Optional)
 	result = "Couldn't find callable actor '" + getCallableName() + "'!";
+      else
+	getLogger().info("Callable actor '" + getCallableName() + "' not found, ignoring.");
     }
     else {
       variables = findVariables(m_CallableActor);
