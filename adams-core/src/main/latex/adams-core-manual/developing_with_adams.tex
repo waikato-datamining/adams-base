@@ -971,7 +971,23 @@ public class HelloWorldItem extends AbstractTreePopupMenuItem {
 \end{verbatim}
 }
 
-\subsection{Database access}
+\section{Image viewer}
+The Image viewer allows you to add custom plugins to the menu. The superclass
+for all plugins is:
+\begin{verbatim}
+  adams.gui.visualization.image.plugins.AbstractImageViewerPlugin
+\end{verbatim}
+\begin{tight_itemize}
+  \item \textit{canExecute(ImagePanel)} -- determines whether the plugin can
+  be applied to the current image panel.
+  \item \textit{doExecute()} -- executes the plugin and returns a string
+  depending on success (\textit{null}) or failure (\textit{error message}).
+  \item \textit{createLogEntry()} -- can be used to output a string that 
+  should appear the in viewer's log tab; return \textit{null} if that does
+  not apply.
+\end{tight_itemize}
+
+\section{Database access}
 In order to add support in ADAMS for a database, in addition to MySQL\footnote{\url{http://www.mysql.com/}{}} 
 and sqlite\footnote{\url{http://www.sqlite.org/}{}}, the following steps
 are required:
