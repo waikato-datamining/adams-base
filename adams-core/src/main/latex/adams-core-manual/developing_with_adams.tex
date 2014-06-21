@@ -12,7 +12,7 @@ The requirements are as follows:
 \begin{tight_itemize}
   \item Java 1.7+
   \item Maven 3.0+
-  \item TexLive 2010+
+  \item TexLive 2010+ (for compiling the LaTeX documentation)
 \end{tight_itemize}
 
 The following sections cover the various tools and environments that are
@@ -78,7 +78,7 @@ through the process:
 \heading{Create maven home directory}
 First, you need to create maven's home directory, if it doesn't exist already.
 The directory is usually located in your home directory and is called
-\texttt{.m2}. The full path, on Unix/Linux systems, is as follows:
+\texttt{.m2}. The full path, on Unix/Linux/Mac systems, is as follows:
 \begin{verbatim}
   $HOME/.m2
 \end{verbatim}
@@ -90,7 +90,7 @@ On Windows, use the following instead:
 \heading{Configure maven}
 Download the following configuration file and place it in your maven home directory that you just created:
 
-{\scriptsize \url{https://adams.cms.waikato.ac.nz/elgg/file/view/226/maven-configuration-file}{}}
+{\scriptsize \url{https://adams.cms.waikato.ac.nz/resources/settings.xml}{}}
 
 \noindent This file will point maven to ADAMS' repository manager, which manages not only all
 the ADAMS modules, but also all its dependencies. It specifies a range of public
