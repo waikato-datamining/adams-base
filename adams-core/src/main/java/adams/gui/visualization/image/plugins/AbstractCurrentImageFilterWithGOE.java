@@ -85,6 +85,7 @@ public abstract class AbstractCurrentImageFilterWithGOE
       dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentDialog());
     else
       dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
+    dialog.setTitle(getCaption());
     dialog.getGOEEditor().setClassType(getEditorType());
     dialog.getGOEEditor().setCanChangeClassInDialog(getCanChangeClassInDialog());
     if (hasLastSetup())

@@ -176,6 +176,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
       result = new ApprovalDialog(m_CurrentPanel.getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       result = new ApprovalDialog(m_CurrentPanel.getParentFrame(), true);
+    result.setTitle(getCaption());
     result.setApproveVisible(hasApprovalButton());
     result.setCancelVisible(hasCancelButton());
     result.setDiscardVisible(false);
