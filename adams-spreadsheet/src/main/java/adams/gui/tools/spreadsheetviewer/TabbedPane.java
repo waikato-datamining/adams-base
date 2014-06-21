@@ -116,6 +116,22 @@ public class TabbedPane
   }
 
   /**
+   * Returns all the image panels.
+   *
+   * @return		the image panels
+   */
+  public SpreadSheetPanel[] getAllPanels() {
+    SpreadSheetPanel[]	result;
+    int			i;
+    
+    result = new SpreadSheetPanel[getTabCount()];
+    for (i = 0; i < getTabCount(); i++)
+      result[i] = getPanelAt(i);
+    
+    return result;
+  }
+
+  /**
    * Returns the panel at the specified position.
    *
    * @param index	the tab index of the table

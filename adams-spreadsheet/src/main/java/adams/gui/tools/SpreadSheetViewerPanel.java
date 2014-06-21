@@ -25,6 +25,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -186,11 +187,17 @@ public class SpreadSheetViewerPanel
   /** the "show formulas" menu item. */
   protected JMenuItem m_MenuItemViewShowFormulas;
 
-  /** the submenu for data plugins. */
-  protected JMenu m_MenuDataPlugins;
+  /** the data plugin menu items. */
+  protected List<JMenuItem> m_MenuItemDataPlugins;
 
-  /** the submenu for view plugins. */
-  protected JMenu m_MenuViewPlugins;
+  /** the data plugins. */
+  protected List<AbstractDataPlugin> m_DataPlugins;
+
+  /** the view plugin menu items. */
+  protected List<JMenuItem> m_MenuItemViewPlugins;
+
+  /** the view plugins. */
+  protected List<AbstractViewPlugin> m_ViewPlugins;
 
   /** the filedialog for loading CSV files. */
   protected SpreadSheetFileChooser m_FileChooser;
@@ -469,19 +476,13 @@ public class SpreadSheetViewerPanel
       // Data/Plugin
       classes = AbstractDataPlugin.getPlugins();
       if (classes.length > 0) {
-	submenu = new JMenu("Plugin");
-	menu.add(submenu);
-	submenu.setMnemonic('P');
-	submenu.addChangeListener(new ChangeListener() {
-	  @Override
-	  public void stateChanged(ChangeEvent e) {
-	    updateMenu();
-	  }
-	});
-	m_MenuDataPlugins = submenu;
+	menu.addSeparator();
+	m_MenuItemDataPlugins = new ArrayList<JMenuItem>();
+	m_DataPlugins         = new ArrayList<AbstractDataPlugin>();
 	for (String cls: classes) {
 	  try {
 	    final AbstractDataPlugin data = (AbstractDataPlugin) Class.forName(cls).newInstance();
+	    m_DataPlugins.add(data);
 	    if (data.getMenuIcon() == null)
 	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getEmptyIcon());
 	    else
@@ -492,7 +493,8 @@ public class SpreadSheetViewerPanel
 		process(data);
 	      }
 	    });
-	    submenu.add(menuitem);
+	    m_MenuItemDataPlugins.add(menuitem);
+	    menu.add(menuitem);
 	  }
 	  catch (Exception e) {
 	    System.err.println("Failed to generate menu item for data plugin: " + cls);
@@ -581,20 +583,13 @@ public class SpreadSheetViewerPanel
       // View/Plugins
       classes = AbstractViewPlugin.getPlugins();
       if (classes.length > 0) {
-	submenu = new JMenu("Plugin");
 	menu.addSeparator();
-	menu.add(submenu);
-	submenu.setMnemonic('P');
-	submenu.addChangeListener(new ChangeListener() {
-	  @Override
-	  public void stateChanged(ChangeEvent e) {
-	    updateMenu();
-	  }
-	});
-	m_MenuViewPlugins = submenu;
+	m_MenuItemViewPlugins = new ArrayList<JMenuItem>();
+	m_ViewPlugins         = new ArrayList<AbstractViewPlugin>();
 	for (String cls: classes) {
 	  try {
 	    final AbstractViewPlugin view = (AbstractViewPlugin) Class.forName(cls).newInstance();
+	    m_ViewPlugins.add(view);
 	    if (view.getMenuIcon() == null)
 	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getEmptyIcon());
 	    else
@@ -605,7 +600,8 @@ public class SpreadSheetViewerPanel
 		view(view);
 	      }
 	    });
-	    submenu.add(menuitem);
+	    m_MenuItemViewPlugins.add(menuitem);
+	    menu.add(menuitem);
 	  }
 	  catch (Exception e) {
 	    System.err.println("Failed to generate menu item for view plugin: " + cls);
@@ -768,12 +764,15 @@ public class SpreadSheetViewerPanel
    * updates the enabled state of the menu items.
    */
   protected void updateMenu() {
-    boolean	sheetSelected;
+    boolean		sheetSelected;
+    SpreadSheetPanel	panel;
+    int			i;
 
     if (m_MenuBar == null)
       return;
 
     sheetSelected = (m_TabbedPane.getTabCount() > 0) && (m_TabbedPane.getSelectedIndex() != -1);
+    panel         = m_TabbedPane.getCurrentPanel();
 
     // File
     m_MenuItemFileSaveAs.setEnabled(sheetSelected);
@@ -787,16 +786,24 @@ public class SpreadSheetViewerPanel
     m_MenuItemDataSort.setEnabled(sheetSelected);
     m_MenuItemDataChart.setEnabled(sheetSelected);
     m_MenuItemDataComputeDifference.setEnabled(m_TabbedPane.getTabCount() >= 2);
-    if (m_MenuDataPlugins != null)
-      m_MenuDataPlugins.setEnabled(sheetSelected);
+    if (m_MenuItemDataPlugins != null) {
+      for (i = 0; i < m_DataPlugins.size(); i++) {
+	m_MenuItemDataPlugins.get(i).setEnabled(
+	    sheetSelected && m_DataPlugins.get(i).canProcess(panel));
+      }
+    }
 
     // View
     m_MenuItemViewDisplayedDecimals.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_MenuItemViewNegativeBackground.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_MenuItemViewPositiveBackground.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_MenuItemViewShowFormulas.setEnabled(m_TabbedPane.getTabCount() > 0);
-    if (m_MenuViewPlugins != null)
-      m_MenuViewPlugins.setEnabled(sheetSelected);
+    if (m_MenuItemViewPlugins != null) {
+      for (i = 0; i < m_ViewPlugins.size(); i++) {
+	m_MenuItemViewPlugins.get(i).setEnabled(
+	    sheetSelected && m_ViewPlugins.get(i).canView(panel));
+      }
+    }
   }
 
   /**
@@ -917,6 +924,15 @@ public class SpreadSheetViewerPanel
    */
   protected void close() {
     closeParent();
+  }
+
+  /**
+   * Returns all the image panels.
+   *
+   * @return		the image panels
+   */
+  public SpreadSheetPanel[] getAllPanels() {
+    return m_TabbedPane.getAllPanels();
   }
 
   /**
@@ -1325,17 +1341,25 @@ public class SpreadSheetViewerPanel
    * @param plugin	the plugin to use
    */
   protected void process(AbstractDataPlugin plugin) {
-    SpreadSheet	input;
-    SpreadSheet	output;
+    SpreadSheetPanel	panel;
+    SpreadSheet		input;
+    SpreadSheet		output;
 
-    input = m_TabbedPane.getCurrentSheet();
+    panel = m_TabbedPane.getCurrentPanel();
+    if (panel == null)
+      return;
+    input = panel.getSheet();
     if (input == null)
       return;
+    plugin.setCurrentPanel(panel);
     output = plugin.process(input);
+    if (plugin.getCanceledByUser() || (output == null))
+      return;
     if (plugin.isInPlace())
       m_TabbedPane.getCurrentTable().setModel(new SpreadSheetTableModel(output));
     else
       m_TabbedPane.addTab(m_TabbedPane.newTitle(), output);
+    plugin.setCurrentPanel(null);
   }
 
   /**
@@ -1355,7 +1379,11 @@ public class SpreadSheetViewerPanel
       return;
     sheet = current.getSheet();
 
+    plugin.setCurrentPanel(current);
     panel = plugin.generate(sheet);
+    plugin.setCurrentPanel(null);
+    if (plugin.getCanceledByUser() || (panel == null))
+      return;
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
     else
