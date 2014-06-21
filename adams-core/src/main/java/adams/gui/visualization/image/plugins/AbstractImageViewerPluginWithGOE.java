@@ -51,6 +51,15 @@ public abstract class AbstractImageViewerPluginWithGOE
   protected abstract Object getDefaultValue();
 
   /**
+   * Returns whether the class can be changed in the GOE.
+   * 
+   * @return		true if class can be changed by the user
+   */
+  protected boolean getCanChangeClassInDialog() {
+    return true;
+  }
+
+  /**
    * Processes the image.
    */
   protected abstract String process();
@@ -73,7 +82,7 @@ public abstract class AbstractImageViewerPluginWithGOE
     else
       dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
     dialog.getGOEEditor().setClassType(getEditorType());
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setCanChangeClassInDialog(getCanChangeClassInDialog());
     if (hasLastSetup())
       dialog.setCurrent(getLastSetup());
     else

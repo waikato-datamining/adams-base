@@ -51,6 +51,15 @@ public abstract class AbstractCurrentImageFilterWithGOE
    * @return		the object
    */
   protected abstract Object getDefaultValue();
+
+  /**
+   * Returns whether the class can be changed in the GOE.
+   * 
+   * @return		true if class can be changed by the user
+   */
+  protected boolean getCanChangeClassInDialog() {
+    return true;
+  }
   
   /**
    * Performs the actual filtering of the image.
@@ -77,7 +86,7 @@ public abstract class AbstractCurrentImageFilterWithGOE
     else
       dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame());
     dialog.getGOEEditor().setClassType(getEditorType());
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setCanChangeClassInDialog(getCanChangeClassInDialog());
     if (hasLastSetup())
       dialog.setCurrent(getLastSetup());
     else

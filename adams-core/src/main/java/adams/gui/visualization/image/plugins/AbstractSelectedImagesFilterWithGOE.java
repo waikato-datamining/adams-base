@@ -79,7 +79,16 @@ public abstract class AbstractSelectedImagesFilterWithGOE
    * @return		the object
    */
   protected abstract Object getDefaultValue();
-  
+
+  /**
+   * Returns whether the class can be changed in the GOE.
+   * 
+   * @return		true if class can be changed by the user
+   */
+  protected boolean getCanChangeClassInDialog() {
+    return true;
+  }
+
   /**
    * Creates the panel with the configuration (return null to suppress display).
    * 
@@ -91,7 +100,7 @@ public abstract class AbstractSelectedImagesFilterWithGOE
     
     m_Editor = new GenericObjectEditor();
     m_Editor.setClassType(getEditorType());
-    m_Editor.setCanChangeClassInDialog(true);
+    m_Editor.setCanChangeClassInDialog(getCanChangeClassInDialog());
     if (hasLastSetup())
       m_Editor.setValue(getLastSetup());
     else
