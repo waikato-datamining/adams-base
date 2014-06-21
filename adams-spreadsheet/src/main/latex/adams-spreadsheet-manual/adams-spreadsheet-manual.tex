@@ -333,6 +333,14 @@ are present:
 \begin{verbatim}
   adams.gui.tools.spreadsheetviewer.Statistics
 \end{verbatim}
+Further superclasses:
+\begin{tight_itemize}
+	\item \textit{AbstractSelectedSheetsViewPlugin} -- for view plugins that
+	operate on one or more spreadsheets that the user selects.
+	\item \textit{AbstractSelectedSheetsViewPluginWithGOE} -- same as
+	\textit{AbstractSelectedSheetsViewPlugin} but offers the user to change
+	the settings through a GenericObjectEditor view.
+\end{tight_itemize}
 
 \subsection{Data plug-ins}
 A view plug-in is derived from the following super-class:
@@ -350,6 +358,15 @@ There are four methods that need implementing:
 	\item \textit{isInPlace()} -- returns whether the generated spreadsheet
 	object should simply replace the current one (``in-place'') or added as
 	new tab.
+\end{tight_itemize}
+Further superclasses:
+\begin{tight_itemize}
+	\item \textit{AbstractSelectedSheetsDataPlugin} -- for data plugins that
+	operate on one or more spreadsheets that the user selects (see 
+	\textit{Append} plugin).
+	\item \textit{AbstractSelectedSheetsDataPluginWithGOE} -- same as
+	\textit{AbstractSelectedSheetsDataPlugin} but offers the user to change
+	the settings through a GenericObjectEditor view (see \textit{Merge} plugin).
 \end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,9 +391,9 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 	\item \textit{$<$} -- less than
 	\item \textit{$<=$} -- less than or equal
 	\item \textit{$>$} -- greater than
-	\item \textit{$>=$} -- greated than or equal
+	\item \textit{$>=$} -- greater than or equal
 	\item \textit{$=$} -- equals
-	\item \textit{$!=$} -- does not equal
+	\item \textit{$!=$} -- does not equal (alternative: \textit{$<>$})
 	\item \textit{$!$} -- negation
 	\item \textit{$\&$} -- and
 	\item \textit{$|$} -- or
@@ -388,6 +405,7 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 	\item \textit{average} -- average computed from a range of cells.
 	\item \textit{ceil} -- smallest value that is greater than or equal to the cell/number and is equal to a mathematical integer.
 	\item \textit{cos} -- the trigonometric cosine of a number/cell.
+	\item \textit{countblank} -- counts empty/missing value cells in a range of cells.
 	\item \textit{exp} -- Euler's number e raised to the power of a number/cell.
 	\item \textit{floor} -- largest value that is less than or equal to the cell/number and is equal to a mathematical integer.
 	\item \textit{if[else]} -- if-then-else construct.
@@ -401,6 +419,7 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 	\item \textit{stdev} -- the sample standard deviation from a range of cells.
 	\item \textit{stdevp} -- the population standard deviation from a range of cells.
 	\item \textit{sum} -- the sum over a range of cells.
+	\item \textit{sumif} -- the conditional sum over a range of cells.
 	\item \textit{tan} -- trigonometric tangent of a number/cell.
 \end{tight_itemize}
 
@@ -411,6 +430,18 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 	\item \textit{matches} -- matches a string against a regular expression.
 	\item \textit{substr} -- creates a substring from a string, given start/end position.
 	\item \textit{uppercase} -- converts string to an uppercase one.
+\end{tight_itemize}
+
+\noindent Date/time functions:
+\begin{tight_itemize}
+	\item \textit{year} -- extracts the year from a date/time cell.
+	\item \textit{month} -- extracts the month from a date/time cell.
+	\item \textit{day} -- extracts the day from a date/time cell.
+	\item \textit{hour} -- extracts the hour from a date/time cell.
+	\item \textit{minute} -- extracts the minute from a date/time cell.
+	\item \textit{second} -- extracts the second from a date/time cell.
+	\item \textit{weekday} -- extracts the weekday from a date/time cell (Sunday=1, Saturday=7).
+	\item \textit{weeknum} -- extracts the week number from a date/time cell.
 \end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
