@@ -15,16 +15,15 @@
 
 /*
  * SpreadSheetAppend.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 
@@ -179,18 +178,16 @@ public class SpreadSheetAppend
    */
   @Override
   protected String doExecute() {
-    String			result;
-    SpreadSheet			sheet;
-    SpreadSheet			stored;
-    int				i;
-    int				n;
-    Row				headerSheet;
-    Row				headerStored;
-    Row				row;
-    Row				newRow;
-    Integer			index;
-    String			key;
-    Hashtable<String,Integer>	headerIndex;
+    String		result;
+    SpreadSheet		sheet;
+    SpreadSheet		stored;
+    int			i;
+    int			n;
+    Row			headerSheet;
+    Row			headerStored;
+    Row			row;
+    Row			newRow;
+    String		key;
 
     result = null;
 
@@ -225,33 +222,7 @@ public class SpreadSheetAppend
 	  getLogger().info("Spreadsheet added to storage: " + m_StorageName);
       }
       else {
-	if (!m_NoCopy)
-	  stored = stored.getClone();
-	headerStored = stored.getHeaderRow();
-	headerSheet  = sheet.getHeaderRow();
-	headerIndex  = new Hashtable<String,Integer>();
-	// current header
-	for (i = 0; i < headerStored.getCellCount(); i++)
-	  headerIndex.put(headerStored.getCell(i).getContent(), i);
-	// extend header, if necessary
-	for (i = 0; i < headerSheet.getCellCount(); i++) {
-	  key = headerSheet.getCell(i).getContent();
-	  if (!headerIndex.containsKey(key)) {
-	    headerStored.addCell("" + headerStored.getCellCount()).setContent(key);
-	    headerIndex.put(key, headerStored.getCellCount() - 1);
-	  }
-	}
-	for (n = 0; n < sheet.getRowCount(); n++) {
-	  row    = sheet.getRow(n);
-	  newRow = stored.addRow();
-	  for (i = 0; i < headerSheet.getCellCount(); i++) {
-	    index = headerIndex.get(headerSheet.getCell(i).getContent());
-	    if (index == null)
-	      continue;
-	    if (row.hasCell(headerSheet.getCellKey(i)))
-	      newRow.addCell(headerStored.getCellKey(index)).setContent(row.getCell(headerSheet.getCellKey(i)).getContent());
-	  }
-	}
+	stored = SpreadSheetHelper.append(stored, sheet, m_NoCopy);
 	getStorageHandler().getStorage().put(m_StorageName, stored);
 	m_OutputToken = new Token(stored);
 	if (isLoggingEnabled())
