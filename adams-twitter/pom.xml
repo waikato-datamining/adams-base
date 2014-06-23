@@ -14,7 +14,7 @@
 
   <name>adams-twitter</name>
   <description>Module for basic twitter access, using the twitter-4j library. Useful for online learning.</description>
-  <url>http://adams.cms.waikato.ac.nz/</url>
+  <url>https://adams.cms.waikato.ac.nz/</url>
   <organization>
     <name>University of Waikato, Hamilton, NZ</name>
     <url>http://www.waikato.ac.nz/</url>

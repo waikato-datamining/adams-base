@@ -14,7 +14,7 @@
 
   <name>adams-core</name>
   <description>The base module for all adams related applications, contains all the core components for GUI and flow related development.</description>
-  <url>http://adams.cms.waikato.ac.nz/</url>
+  <url>https://adams.cms.waikato.ac.nz/</url>
   <organization>
     <name>University of Waikato, Hamilton, NZ</name>
     <url>http://www.waikato.ac.nz/</url>
