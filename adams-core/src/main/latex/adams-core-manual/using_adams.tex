@@ -940,7 +940,7 @@ And transformers:
 	\item \textit{BaseName} -- strips the parent directory and forwards the
 	remainder.
 	\item \textit{BinaryFileReader} -- reads a specific range of bytes from 
-	a binary file and outputs the bytes one-by-one.
+	a binary file and outputs the bytes one-by-one or as array.
 	\item \textit{CopyFile} -- copies the file passing through to a target
 	directory (if pattern matches).
 	\item \textit{DeleteFile} -- deletes the file passing through if the pattern
@@ -967,6 +967,8 @@ And transformers:
 \end{tight_itemize}
 Sink actors:
 \begin{tight_itemize}
+	\item \textit{BinaryFileWriter} -- writes a byte array of 
+	\textit{BlobContainer} to a binary file.
 	\item \textit{SideBySideDiff} -- displays a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}} 
 	between two files visually.
 	\item \textit{MergeFiles} -- merges several files back into a single one.
