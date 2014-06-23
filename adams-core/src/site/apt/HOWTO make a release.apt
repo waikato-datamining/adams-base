@@ -55,13 +55,15 @@ HOWTO make a release
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
 +--
     
-  * add new section on Elgg with updated links (dir + file)
+  * add new section with updated links (dir + file)
   
 +--
-  https://adams.cms.waikato.ac.nz/elgg/pages/view/198/downloads
+  https://adams.cms.waikato.ac.nz/release.html
 +--
 
-  * publish update on The Wire (Elgg)
+  * publish release on Twitter
+
+  * publish release on theadamsflow-dev and theadamsflow-user mailing lists
 
   * update entry on mloss.org
 
