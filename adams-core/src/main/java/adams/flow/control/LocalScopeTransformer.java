@@ -681,7 +681,6 @@ public class LocalScopeTransformer
 	default:
 	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
       }
-      m_LocalVariables.setFlow(this);
     }
     
     return m_LocalVariables;
@@ -872,7 +871,8 @@ public class LocalScopeTransformer
     m_LocalStorage   = null;
     m_LocalVariables = null;
     m_Actors.setVariables(getVariables());
-
+    m_Actors.updateVariables();
+    
     return super.preExecute();
   }
 
