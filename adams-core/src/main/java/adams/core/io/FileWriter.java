@@ -13,21 +13,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * OutputFileGenerator.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+/**
+ * FileWriter.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-
-package adams.tools;
-
-import adams.core.io.FileWriter;
+package adams.core.io;
 
 /**
- * For tools that generate an output file.
+ * Interface for classes that write data to a file.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface OutputFileGenerator
-  extends FileWriter {
+public interface FileWriter {
+
+  /**
+   * Set output file.
+   *
+   * @param value	file
+   */
+  public void setOutputFile(PlaceholderFile value);
+
+  /**
+   * Get output file.
+   *
+   * @return	file
+   */
+  public PlaceholderFile getOutputFile();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public abstract String outputFileTipText();
+
 }

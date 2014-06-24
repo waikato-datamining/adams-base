@@ -15,12 +15,13 @@
 
 /*
  * AbstractFileWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
 
 /**
@@ -30,7 +31,8 @@ import adams.core.io.PlaceholderFile;
  * @version $Revision$
  */
 public abstract class AbstractFileWriter
-  extends AbstractSink {
+  extends AbstractSink
+  implements FileWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3429427421208115104L;

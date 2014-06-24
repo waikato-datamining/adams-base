@@ -34,6 +34,7 @@ import javax.imageio.stream.ImageOutputStream;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
+import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ControlActor;
@@ -97,7 +98,7 @@ import adams.flow.core.Unknown;
  */
 public class DesktopScreenshot
   extends AbstractActor
-  implements ControlActor, InputConsumer, OutputProducer {
+  implements ControlActor, InputConsumer, OutputProducer, FileWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = -7346814880631564292L;
