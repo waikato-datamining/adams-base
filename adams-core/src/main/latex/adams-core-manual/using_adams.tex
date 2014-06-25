@@ -1428,6 +1428,8 @@ The following actors are available to handle variables:
 	with the variable.
 	\item \textit{VariablesArray} -- outputs the associated values of several
 	variables as a string array (source).
+	\item \textit{ExpandVariables} -- similar to the \textit{CombineVariables}
+	source, this actor expands all variables in the string(s) passing through.
 	\item \textit{SetVariable} -- updates the value of a variable (transformer).
 	\item \textit{IncVariable} -- increments the value of the variable by either an
 	integer or double increment (transformer).
@@ -1597,6 +1599,9 @@ The following actors are available to handle variables:
 	LRU cache with a specific size.
 	\item \textit{CombineStorage} -- source actor for combining string 
 	representations of storage items and variables into a string.
+	\item \textit{ExpandStorage} -- similar to the \textit{CombineStorage}
+	source, this actor expands all storage items and variables in the string(s) 
+	passing through.
 	\item \textit{ListStorageNames} -- source actor for outputting the names of 
 	the currently stored items.
 	\item \textit{StorageValue} -- source actor for outputting the storage value
