@@ -29,11 +29,12 @@ import javax.swing.JTextField;
 import adams.core.Properties;
 import adams.core.io.PlaceholderDirectory;
 import adams.gui.chooser.DirectoryChooserPanel;
-import adams.gui.chooser.FileChooserBookmark;
-import adams.gui.chooser.FileChooserBookmarksManger;
+import adams.gui.chooser.FileChooserBookmarksPanel.FileChooserBookmarksFactory;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchParameters;
+
+import com.googlecode.jfilechooserbookmarks.Bookmark;
 
 /**
  * Panel for managing email addresses.
@@ -42,7 +43,7 @@ import adams.gui.core.SearchParameters;
  * @version $Revision$
  */
 public class FileChooserBookmarksManagementPanel
-  extends AbstractManagementPanelWithProperties<FileChooserBookmark> {
+  extends AbstractManagementPanelWithProperties<Bookmark> {
 
   /** for serialization. */
   private static final long serialVersionUID = 2870352856009767535L;
@@ -54,7 +55,7 @@ public class FileChooserBookmarksManagementPanel
    * @version $Revision$
    */
   public static class TableModel
-    extends AbstractManagementTableModel<FileChooserBookmark> {
+    extends AbstractManagementTableModel<Bookmark> {
 
     /** for serialization. */
     private static final long serialVersionUID = 6097860917524908958L;
@@ -71,7 +72,7 @@ public class FileChooserBookmarksManagementPanel
      *
      * @param bookmarks	the bookmarks to display
      */
-    public TableModel(List<FileChooserBookmark> bookmarks) {
+    public TableModel(List<Bookmark> bookmarks) {
       super(bookmarks, false);
     }
 
@@ -80,7 +81,7 @@ public class FileChooserBookmarksManagementPanel
      *
      * @param bookmarks	the bookmarks to display
      */
-    public TableModel(FileChooserBookmark[] bookmarks) {
+    public TableModel(Bookmark[] bookmarks) {
       super(bookmarks, false);
     }
 
@@ -178,6 +179,17 @@ public class FileChooserBookmarksManagementPanel
   /** the move down button. */
   protected JButton m_ButtonDown;
   
+  /** the manager. */
+  protected FileChooserBookmarksFactory m_Factory;
+  
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Factory = new FileChooserBookmarksFactory(); 
+  }
+  
+  
   /**
    * Initializes the widgets.
    */
@@ -240,7 +252,16 @@ public class FileChooserBookmarksManagementPanel
    */
   @Override
   protected synchronized Properties getProperties() {
-    return FileChooserBookmarksManger.getSingleton().getProperties();
+    Properties			result;
+    java.util.Properties	props;
+    
+    props = m_Factory.getBookmarksManager().getProperties();
+    if (!(props instanceof Properties))
+      result = new Properties(props);
+    else
+      result = (Properties) props;
+    
+    return result;
   }
 
   /**
@@ -250,7 +271,7 @@ public class FileChooserBookmarksManagementPanel
    */
   @Override
   protected boolean storeProperties() {
-    return FileChooserBookmarksManger.getSingleton().save(m_ModelValues.toList());
+    return m_Factory.getBookmarksManager().save(m_ModelValues.toList());
   }
   
   /**
@@ -259,8 +280,8 @@ public class FileChooserBookmarksManagementPanel
    * @return		all available Objects
    */
   @Override
-  protected List<FileChooserBookmark> loadAll() {
-    return FileChooserBookmarksManger.getSingleton().load();
+  protected List<Bookmark> loadAll() {
+    return m_Factory.getBookmarksManager().load();
   }
   
   /**
@@ -270,7 +291,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		true if successfully stored
    */
   @Override
-  protected boolean store(FileChooserBookmark value) {
+  protected boolean store(Bookmark value) {
     m_ModelValues.add(value);
     return storeProperties();
   }
@@ -282,7 +303,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		true if successfully removed
    */
   @Override
-  protected boolean remove(FileChooserBookmark value) {
+  protected boolean remove(Bookmark value) {
     m_ModelValues.remove(value);
     return storeProperties();
   }
@@ -294,7 +315,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		the generated key
    */
   @Override
-  protected String createKey(FileChooserBookmark value) {
+  protected String createKey(Bookmark value) {
     return value.getName();
   }
 
@@ -305,7 +326,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		always null
    */
   @Override
-  protected FileChooserBookmark fromString(String s) {
+  protected Bookmark fromString(String s) {
     return null;
   }
 
@@ -316,7 +337,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		always the name
    */
   @Override
-  protected String toString(FileChooserBookmark value) {
+  protected String toString(Bookmark value) {
     return value.getName();
   }
 
@@ -326,7 +347,7 @@ public class FileChooserBookmarksManagementPanel
    * @return		the table model
    */
   @Override
-  protected AbstractManagementTableModel<FileChooserBookmark> newTableModel() {
+  protected AbstractManagementTableModel<Bookmark> newTableModel() {
     return new TableModel();
   }
 
@@ -337,7 +358,7 @@ public class FileChooserBookmarksManagementPanel
    */
   @Override
   protected Class getManagedClass() {
-    return FileChooserBookmark.class;
+    return Bookmark.class;
   }
 
   /**
@@ -355,8 +376,8 @@ public class FileChooserBookmarksManagementPanel
    * @return		the generated object
    */
   @Override
-  protected FileChooserBookmark fieldsToObject() {
-    return new FileChooserBookmark(m_TextName.getText().trim(), new PlaceholderDirectory(m_PanelDirectory.getCurrent()));
+  protected Bookmark fieldsToObject() {
+    return new Bookmark(m_TextName.getText().trim(), new PlaceholderDirectory(m_PanelDirectory.getCurrent()));
   }
 
   /**
@@ -365,7 +386,7 @@ public class FileChooserBookmarksManagementPanel
    * @param value	the object to display
    */
   @Override
-  protected void objectToFields(FileChooserBookmark value) {
+  protected void objectToFields(Bookmark value) {
     m_TextName.setText(value.getName());
     m_PanelDirectory.setCurrent(value.getDirectory());
   }

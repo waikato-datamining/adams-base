@@ -170,6 +170,12 @@
       <artifactId>trove4j</artifactId>
       <version>3.0.3</version>
     </dependency>
+    
+    <dependency>
+      <groupId>com.googlecode.jfilechooser-bookmarks</groupId>
+      <artifactId>jfilechooser-bookmarks</artifactId>
+      <version>0.1.0</version>
+    </dependency>
   </dependencies>
 
   <build>
