@@ -44,6 +44,12 @@ public class Storage
   /** allowed characters. */
   public final static String CHARS = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789:.";
 
+  /** the start of a storage placeholder. */
+  public final static String START = "%{";
+
+  /** the end of a storage placeholder. */
+  public final static String END = "}";
+
   /** for storing the data. */
   protected Hashtable<String,Object> m_Data;
 
@@ -393,5 +399,58 @@ public class Storage
     }
     
     return result.toString();
+  }
+  
+  /**
+   * Replaces all storage placeholders in the string with the currently stored values.
+   *
+   * @param s		the string to process
+   * @return		the processed string
+   */
+  public String expand(String s) {
+    return expand(s, (s.indexOf(START + START) > -1));
+  }
+
+  /**
+   * Expands storage placeholders.
+   *
+   * @param s		the string to expand
+   * @return		the potentially expanded string
+   */
+  protected String doExpand(String s) {
+    String			result;
+    String			part;
+    Iterator<StorageName>	names;
+    StorageName			name;
+
+    result = s;
+    part   = START;
+    if (result.indexOf(part) > -1) {
+      names = keySet().iterator();
+      while (names.hasNext() && (result.indexOf(part) > -1)) {
+	name   = names.next();
+	result = result.replace(START + name.getValue() + END, "" + get(name));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Replaces all storage placeholders in the string with the currently 
+   * stored values (ie string representation).
+   *
+   * @param s		the string to process
+   * @param recurse	whether to recurse, i.e., replacing "%{%{"
+   * @return		the processed string
+   */
+  protected String expand(String s, boolean recurse) {
+    String		result;
+
+    result = doExpand(s);
+    if (recurse)
+      result = expand(result);
+
+    return result;
   }
 }

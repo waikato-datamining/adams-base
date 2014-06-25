@@ -15,7 +15,7 @@
 
 /*
  * StorageTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,6 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.env.Environment;
-import adams.flow.control.Storage;
 import adams.test.AdamsTestCase;
 
 /**
@@ -158,6 +157,20 @@ public class StorageTest
     assertEquals("removed non-existing item", 3, s.size("1"));
     s.remove("1", new StorageName("blah2"));
     assertEquals("removed existing item", 2, s.size("1"));
+  }
+
+  /**
+   * Tests the {@link Storage#expand(String)} method.
+   */
+  public void testExpand() {
+    Storage s = new Storage();
+    s.put(new StorageName("blah"), 1);
+    assertEquals("expanded string differs", "value: 1", s.expand("value: %{blah}"));
+    
+    s = new Storage();
+    s.put(new StorageName("blah"), 1);
+    s.put(new StorageName("bloerk"), "blah");
+    assertEquals("expanded string differs", "value: 1", s.expand("value: %{%{bloerk}}"));
   }
 
   /**
