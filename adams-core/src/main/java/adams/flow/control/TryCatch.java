@@ -21,6 +21,7 @@ package adams.flow.control;
 
 import java.util.Hashtable;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.flow.core.AbstractActor;
@@ -38,7 +39,10 @@ import adams.flow.core.Token;
  * Safe-guards the execution of the 'try' sequence of actors. In case of an error, the 'catch' sequence is executed to generate output instead.<br/>
  * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.<br/>
  * If the 'try' block fails and the 'catch' block accepts input (doesn't have to be a transformer, it can be just a source, eg SequenceSource), then the same input token is presented to the 'catch' block. This allows you to react to errors better. E.g., if the input token is a filename, then you can create an error message made up of the recorded error and the filename and pass this on.<br/>
- * Note for developers: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.
+ * Note for developers: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.<br/>
+ * <br/>
+ * See also:<br/>
+ * adams.flow.control.RaiseError
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -107,7 +111,7 @@ import adams.flow.core.Token;
  */
 public class TryCatch
   extends AbstractControlActor
-  implements InputConsumer, OutputProducer, FixedNameActorHandler {
+  implements InputConsumer, OutputProducer, FixedNameActorHandler, ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -9029393233616734995L;
@@ -207,6 +211,15 @@ public class TryCatch
     m_OptionManager.add(
 	    "error-variable", "errorVariable",
 	    new VariableName("trycatch"));
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{RaiseError.class};
   }
 
   /**
@@ -585,8 +598,8 @@ public class TryCatch
       if (result != null)
 	m_ErrorOccurred = msg + result;
     }
-    catch (Exception e) {
-      m_ErrorOccurred = handleException(msg, e);
+    catch (Throwable t) {
+      m_ErrorOccurred = handleException(msg, t);
     }
 
     if (m_ErrorOccurred != null) {
