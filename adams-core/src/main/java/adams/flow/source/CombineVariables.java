@@ -162,9 +162,13 @@ public class CombineVariables
   @Override
   protected String doExecute() {
     String	result;
+    String	expanded;
 
-    result        = null;
-    m_OutputToken = new Token(getVariables().expand(m_Expression.getValue()));
+    result   = null;
+    expanded = getVariables().expand(m_Expression.getValue());
+    if (isLoggingEnabled())
+      getLogger().info(m_Expression.getValue() + " -> " + expanded);
+    m_OutputToken = new Token(expanded);
 
     return result;
   }
