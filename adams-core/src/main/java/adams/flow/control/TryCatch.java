@@ -37,7 +37,8 @@ import adams.flow.core.Token;
  <!-- globalinfo-start -->
  * Safe-guards the execution of the 'try' sequence of actors. In case of an error, the 'catch' sequence is executed to generate output instead.<br/>
  * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.<br/>
- * NB: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.
+ * If the 'try' block fails and the 'catch' block accepts input (doesn't have to be a transformer, it can be just a source, eg SequenceSource), then the same input token is presented to the 'catch' block. This allows you to react to errors better. E.g., if the input token is a filename, then you can create an error message made up of the recorded error and the filename and pass this on.<br/>
+ * Note for developers: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -152,7 +153,13 @@ public class TryCatch
 	+ "This works similar to the Java try-catch-block. Allowing the flow "
 	+ "to recover from unexpected errors and, for instance, return default "
 	+ "values.\n"
-	+ "NB: If actors use other actors internally, these need to be accessible. "
+	+ "If the 'try' block fails and the 'catch' block accepts input (doesn't "
+	+ "have to be a transformer, it can be just a source, eg SequenceSource), "
+	+ "then the same input token is presented to the 'catch' block. This allows "
+	+ "you to react to errors better. E.g., if the input token is a filename, "
+	+ "then you can create an error message made up of the recorded error "
+	+ "and the filename and pass this on.\n"
+	+ "Note for developers: If actors use other actors internally, these need to be accessible. "
 	+ "This can be achieved by simply  implementing the " 
 	+ InternalActorHandler.class.getName() + " interface.";
   }
