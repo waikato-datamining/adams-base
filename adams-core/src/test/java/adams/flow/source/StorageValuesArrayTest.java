@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -117,7 +118,7 @@ public class StorageValuesArrayTest
       setvariable2.setVariableName((adams.core.VariableName) argOption.valueOf("items"));
 
       argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableValue");
-      setvariable2.setVariableValue((java.lang.String) argOption.valueOf(""));
+      setvariable2.setVariableValue((BaseText) argOption.valueOf(""));
 
       abstractactor1[0] = setvariable2;
 

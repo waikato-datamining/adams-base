@@ -24,18 +24,18 @@ import java.io.File;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.base.BaseRegExp;
 import adams.core.VariableName;
-import adams.core.Variables;
+import adams.core.base.BaseRegExp;
+import adams.core.base.BaseText;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.condition.test.FileExists;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.sink.DumpFile;
 import adams.flow.standalone.ConditionalStandalone;
 import adams.flow.standalone.DeleteFile;
 import adams.flow.standalone.SetVariable;
-import adams.flow.sink.DumpFile;
 import adams.test.TmpDirectory;
 import adams.test.TmpFile;
 
@@ -62,6 +62,7 @@ public class VariableTest
    *
    * @throws Exception if an error occurs
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -74,6 +75,7 @@ public class VariableTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("bolts.csv");
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
@@ -86,13 +88,14 @@ public class VariableTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     FileExists fe = new FileExists();
     fe.setFile(new TmpFile("bolts.csv"));
 
     SetVariable sv = new SetVariable();
     sv.setVariableName(new VariableName("file_exists"));
-    sv.setVariableValue("yes");
+    sv.setVariableValue(new BaseText("yes"));
 
     ConditionalStandalone cond = new ConditionalStandalone();
     cond.setCondition(fe);
@@ -104,7 +107,7 @@ public class VariableTest
 
     SetVariable sv2 = new SetVariable();
     sv2.setVariableName(new VariableName("file_exists"));
-    sv2.setVariableValue("no");
+    sv2.setVariableValue(new BaseText("no"));
 
     Variable var = new Variable();
     var.setVariableName(new VariableName("file_exists"));

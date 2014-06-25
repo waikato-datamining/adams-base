@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -112,7 +113,7 @@ public class VariablesArrayTest
       argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableName");
       setvariable2.setVariableName((adams.core.VariableName) argOption.valueOf("v1"));
       argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableValue");
-      setvariable2.setVariableValue((java.lang.String) argOption.valueOf("1.0"));
+      setvariable2.setVariableValue((BaseText) argOption.valueOf("1.0"));
       actors1[0] = setvariable2;
 
       // Flow.SetVariable-1
@@ -122,7 +123,7 @@ public class VariablesArrayTest
       argOption = (AbstractArgumentOption) setvariable5.getOptionManager().findByProperty("variableName");
       setvariable5.setVariableName((adams.core.VariableName) argOption.valueOf("v2"));
       argOption = (AbstractArgumentOption) setvariable5.getOptionManager().findByProperty("variableValue");
-      setvariable5.setVariableValue((java.lang.String) argOption.valueOf("2.0"));
+      setvariable5.setVariableValue((BaseText) argOption.valueOf("2.0"));
       actors1[1] = setvariable5;
 
       // Flow.VariablesArray

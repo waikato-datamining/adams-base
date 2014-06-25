@@ -22,6 +22,7 @@ package adams.flow.standalone;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -110,7 +111,7 @@ public class GnuplotTest
       tmp3.setVariableName((adams.core.VariableName) argOption.valueOf("data_file"));
 
       argOption = (AbstractArgumentOption) tmp3.getOptionManager().findByProperty("variableValue");
-      tmp3.setVariableValue((java.lang.String) argOption.valueOf("${TMP}/bolts_plot.data"));
+      tmp3.setVariableValue((BaseText) argOption.valueOf("${TMP}/bolts_plot.data"));
 
       tmp2[0] = tmp3;
       adams.flow.standalone.SetVariable tmp7 = new adams.flow.standalone.SetVariable();
@@ -121,7 +122,7 @@ public class GnuplotTest
       tmp7.setVariableName((adams.core.VariableName) argOption.valueOf("script_file"));
 
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("variableValue");
-      tmp7.setVariableValue((java.lang.String) argOption.valueOf("${TMP}/bolts_plot.script"));
+      tmp7.setVariableValue((BaseText) argOption.valueOf("${TMP}/bolts_plot.script"));
 
       tmp2[1] = tmp7;
       adams.flow.source.Start tmp11 = new adams.flow.source.Start();

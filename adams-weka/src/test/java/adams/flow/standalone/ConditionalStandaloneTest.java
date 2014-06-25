@@ -25,7 +25,7 @@ import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.VariableName;
-import adams.core.Variables;
+import adams.core.base.BaseText;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.condition.test.FileExists;
@@ -58,6 +58,7 @@ public class ConditionalStandaloneTest
    *
    * @throws Exception if an error occurs
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -70,6 +71,7 @@ public class ConditionalStandaloneTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("vote.arff");
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
@@ -82,13 +84,14 @@ public class ConditionalStandaloneTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     FileExists fe = new FileExists();
     fe.setFile(new TmpFile("vote.arff"));
 
     SetVariable sv = new SetVariable();
     sv.setVariableName(new VariableName("file_exists"));
-    sv.setVariableValue("yes");
+    sv.setVariableValue(new BaseText("yes"));
 
     ConditionalStandalone cond = new ConditionalStandalone();
     cond.setCondition(fe);

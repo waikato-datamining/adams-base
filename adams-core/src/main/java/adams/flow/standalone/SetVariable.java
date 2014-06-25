@@ -26,6 +26,7 @@ import java.util.List;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
+import adams.core.base.BaseText;
 
 /**
  <!-- globalinfo-start -->
@@ -48,7 +49,7 @@ import adams.core.VariableUpdater;
  * &nbsp;&nbsp;&nbsp;default: SetVariable
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -70,7 +71,7 @@ import adams.core.VariableUpdater;
  * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
  * 
- * <pre>-var-value &lt;java.lang.String&gt; (property: variableValue)
+ * <pre>-var-value &lt;adams.core.base.BaseText&gt; (property: variableValue)
  * &nbsp;&nbsp;&nbsp;The value for the variable to use.
  * &nbsp;&nbsp;&nbsp;default: value
  * </pre>
@@ -97,7 +98,7 @@ public class SetVariable
   protected VariableName m_VariableName;
 
   /** the value of the variable. */
-  protected String m_VariableValue;
+  protected BaseText m_VariableValue;
   
   /** whether to expand the value. */
   protected boolean m_ExpandValue;
@@ -128,7 +129,7 @@ public class SetVariable
 
     m_OptionManager.add(
 	    "var-value", "variableValue",
-	    "value");
+	    new BaseText("value"));
 
     m_OptionManager.add(
 	    "expand-value", "expandValue",
@@ -169,7 +170,7 @@ public class SetVariable
    *
    * @param value	the value
    */
-  public void setVariableValue(String value) {
+  public void setVariableValue(BaseText value) {
     m_VariableValue = value;
     reset();
   }
@@ -179,7 +180,7 @@ public class SetVariable
    *
    * @return		the value
    */
-  public String getVariableValue() {
+  public BaseText getVariableValue() {
     return m_VariableValue;
   }
 
@@ -250,7 +251,7 @@ public class SetVariable
       result = variable;
     else
       result = m_VariableName.paddedValue();
-    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue, " = ");
+    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue.getValue(), " = ");
     if (value != null)
       result += value;
 
@@ -274,7 +275,7 @@ public class SetVariable
 
     result = null;
 
-    value = m_VariableValue;
+    value = m_VariableValue.getValue();
     if (m_ExpandValue)
       value = getVariables().expand(value);
     

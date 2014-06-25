@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractRFlowTest;
@@ -120,7 +121,7 @@ public class RSinkTest
       setvariable3.setVariableName((adams.core.VariableName) argOption.valueOf("num"));
 
       argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableValue");
-      setvariable3.setVariableValue((java.lang.String) argOption.valueOf("200"));
+      setvariable3.setVariableValue((BaseText) argOption.valueOf("200"));
 
       abstractactor1[1] = setvariable3;
 

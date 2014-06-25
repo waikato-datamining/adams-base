@@ -21,19 +21,12 @@ package adams.flow.processor;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.base.BaseRegExp;
-import adams.core.base.BaseString;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.condition.bool.Expression;
-import adams.flow.control.Flow;
-import adams.flow.control.Sequence;
-import adams.flow.control.WhileLoop;
 import adams.flow.core.AbstractActor;
-import adams.flow.processor.AbstractActorProcessor;
-import adams.flow.sink.Display;
 import adams.flow.source.Start;
-import adams.flow.transformer.Convert;
 import adams.parser.BooleanExpressionText;
 import adams.parser.MathematicalExpressionText;
 
@@ -60,6 +53,7 @@ public class FlattenStructureTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     AbstractArgumentOption    argOption;
 
@@ -73,7 +67,7 @@ public class FlattenStructureTest
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("i"));
 
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableValue");
-      tmp2.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp2.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp1[0] = tmp2;
       adams.flow.source.Start tmp5 = new adams.flow.source.Start();
@@ -145,6 +139,7 @@ public class FlattenStructureTest
    *
    * @return		the setups
    */
+  @Override
   protected AbstractActorProcessor[] getRegressionSetups() {
     return new AbstractActorProcessor[]{
 	new FlattenStructure()

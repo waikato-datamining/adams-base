@@ -54,6 +54,7 @@ import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.HtmlUtils;
 import adams.data.io.input.FlowReader;
@@ -622,7 +623,7 @@ public class FlowRunnerPanel
       for (i = 0; i < m_CurrentSetVariables.size(); i++) {
 	// text field
 	textfield = new JTextField(15);
-	textfield.setText(m_CurrentSetVariables.get(i).getVariableValue());
+	textfield.setText(m_CurrentSetVariables.get(i).getVariableValue().getValue());
 	buttonHelp = null;
 	final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
 	final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
@@ -839,7 +840,7 @@ public class FlowRunnerPanel
 	try {
 	  showStatus("Initializing");
 	  for (int i = 0; i < m_CurrentParameters.size(); i++)
-	    m_CurrentSetVariables.get(i).setVariableValue(m_CurrentParameters.get(i).getText());
+	    m_CurrentSetVariables.get(i).setVariableValue(new BaseText(m_CurrentParameters.get(i).getText()));
 	  if (m_CurrentFlow instanceof Flow)
 	    ((Flow) m_CurrentFlow).setParentComponent(FlowRunnerPanel.this);
 	  if (m_ActionHeadless != null)

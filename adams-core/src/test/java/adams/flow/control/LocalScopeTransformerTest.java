@@ -22,6 +22,7 @@ package adams.flow.control;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -115,7 +116,7 @@ public class LocalScopeTransformerTest
       argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableName");
       setvariable3.setVariableName((adams.core.VariableName) argOption.valueOf("blah"));
       argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableValue");
-      setvariable3.setVariableValue((java.lang.String) argOption.valueOf("BLAH"));
+      setvariable3.setVariableValue((BaseText) argOption.valueOf("BLAH"));
       actors1[1] = setvariable3;
 
       // Flow.SetVariable-1
@@ -125,7 +126,7 @@ public class LocalScopeTransformerTest
       argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("variableName");
       setvariable6.setVariableName((adams.core.VariableName) argOption.valueOf("hello"));
       argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("variableValue");
-      setvariable6.setVariableValue((java.lang.String) argOption.valueOf("WORLD"));
+      setvariable6.setVariableValue((BaseText) argOption.valueOf("WORLD"));
       actors1[2] = setvariable6;
 
       // Flow.LocalScopeTransformer
@@ -138,7 +139,7 @@ public class LocalScopeTransformerTest
       argOption = (AbstractArgumentOption) setvariable12.getOptionManager().findByProperty("variableName");
       setvariable12.setVariableName((adams.core.VariableName) argOption.valueOf("blah"));
       argOption = (AbstractArgumentOption) setvariable12.getOptionManager().findByProperty("variableValue");
-      setvariable12.setVariableValue((java.lang.String) argOption.valueOf("blah"));
+      setvariable12.setVariableValue((BaseText) argOption.valueOf("blah"));
       actors11[0] = setvariable12;
 
       // Flow.LocalScopeTransformer.LocalScopeTransformer.SetVariable-1
@@ -148,7 +149,7 @@ public class LocalScopeTransformerTest
       argOption = (AbstractArgumentOption) setvariable15.getOptionManager().findByProperty("variableName");
       setvariable15.setVariableName((adams.core.VariableName) argOption.valueOf("hello"));
       argOption = (AbstractArgumentOption) setvariable15.getOptionManager().findByProperty("variableValue");
-      setvariable15.setVariableValue((java.lang.String) argOption.valueOf("world"));
+      setvariable15.setVariableValue((BaseText) argOption.valueOf("world"));
       actors11[1] = setvariable15;
       localscopetransformer10.setActors(actors11);
 

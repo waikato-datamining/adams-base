@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
@@ -130,7 +131,7 @@ public class WekaAggregateEvaluationsTest
       tmp7.setVariableName((adams.core.VariableName) argOption.valueOf("folds"));
 
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("variableValue");
-      tmp7.setVariableValue((java.lang.String) argOption.valueOf("10"));
+      tmp7.setVariableValue((BaseText) argOption.valueOf("10"));
 
       tmp1[1] = tmp7;
       // Flow.FileSupplier

@@ -24,6 +24,7 @@ import java.io.File;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -171,7 +172,7 @@ public class IncVariableTest
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("val"));
 
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableValue");
-      tmp2.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp2.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp1[0] = tmp2;
       adams.flow.standalone.CallableActors tmp6 = new adams.flow.standalone.CallableActors();
@@ -284,7 +285,7 @@ public class IncVariableTest
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("val"));
 
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableValue");
-      tmp2.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp2.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp1[0] = tmp2;
       adams.flow.source.ForLoop tmp5 = new adams.flow.source.ForLoop();

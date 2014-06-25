@@ -118,7 +118,7 @@ public class ConditionalStandalonesTest
       argOption = (AbstractArgumentOption) setvariable4.getOptionManager().findByProperty("variableName");
       setvariable4.setVariableName((adams.core.VariableName) argOption.valueOf("a"));
       argOption = (AbstractArgumentOption) setvariable4.getOptionManager().findByProperty("variableValue");
-      setvariable4.setVariableValue((java.lang.String) argOption.valueOf("yes"));
+      setvariable4.setVariableValue((BaseText) argOption.valueOf("yes"));
       actors3[0] = setvariable4;
 
       // Flow.ConditionalStandalones.SetVariable-1
@@ -128,7 +128,7 @@ public class ConditionalStandalonesTest
       argOption = (AbstractArgumentOption) setvariable7.getOptionManager().findByProperty("variableName");
       setvariable7.setVariableName((adams.core.VariableName) argOption.valueOf("b"));
       argOption = (AbstractArgumentOption) setvariable7.getOptionManager().findByProperty("variableValue");
-      setvariable7.setVariableValue((java.lang.String) argOption.valueOf("yes"));
+      setvariable7.setVariableValue((BaseText) argOption.valueOf("yes"));
       actors3[1] = setvariable7;
       conditionalstandalones2.setActors(actors3);
 
@@ -150,7 +150,7 @@ public class ConditionalStandalonesTest
       argOption = (AbstractArgumentOption) setvariable16.getOptionManager().findByProperty("variableName");
       setvariable16.setVariableName((adams.core.VariableName) argOption.valueOf("a"));
       argOption = (AbstractArgumentOption) setvariable16.getOptionManager().findByProperty("variableValue");
-      setvariable16.setVariableValue((java.lang.String) argOption.valueOf("yes"));
+      setvariable16.setVariableValue((BaseText) argOption.valueOf("yes"));
       actors15[0] = setvariable16;
 
       // Flow.ConditionalStandalones-1.SetVariable-1
@@ -160,7 +160,7 @@ public class ConditionalStandalonesTest
       argOption = (AbstractArgumentOption) setvariable19.getOptionManager().findByProperty("variableName");
       setvariable19.setVariableName((adams.core.VariableName) argOption.valueOf("b"));
       argOption = (AbstractArgumentOption) setvariable19.getOptionManager().findByProperty("variableValue");
-      setvariable19.setVariableValue((java.lang.String) argOption.valueOf("yes"));
+      setvariable19.setVariableValue((BaseText) argOption.valueOf("yes"));
       actors15[1] = setvariable19;
       conditionalstandalones13.setActors(actors15);
 

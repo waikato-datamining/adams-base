@@ -22,6 +22,7 @@ package adams.flow.processor;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.control.Flow;
@@ -77,7 +78,7 @@ public class UpdateStorageNameTest
       tmp3.setVariableName((adams.core.VariableName) argOption.valueOf("count"));
 
       argOption = (AbstractArgumentOption) tmp3.getOptionManager().findByProperty("variableValue");
-      tmp3.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp3.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp2[0] = tmp3;
       adams.flow.source.StringConstants tmp6 = new adams.flow.source.StringConstants();

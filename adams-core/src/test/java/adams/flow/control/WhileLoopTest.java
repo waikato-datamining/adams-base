@@ -26,17 +26,17 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.VariableName;
 import adams.core.base.BaseString;
+import adams.core.base.BaseText;
+import adams.data.conversion.StringToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.condition.bool.Expression;
-import adams.flow.control.WhileLoop;
 import adams.flow.core.AbstractActor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.Start;
 import adams.flow.source.StringConstants;
-import adams.flow.transformer.MathExpression;
 import adams.flow.transformer.Convert;
-import adams.data.conversion.StringToDouble;
+import adams.flow.transformer.MathExpression;
 import adams.parser.BooleanExpressionText;
 import adams.parser.MathematicalExpressionText;
 import adams.test.TmpFile;
@@ -64,6 +64,7 @@ public class WhileLoopTest
    *
    * @throws Exception if an error occurs
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -75,6 +76,7 @@ public class WhileLoopTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
 
@@ -86,10 +88,11 @@ public class WhileLoopTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     adams.flow.standalone.SetVariable sv1 = new adams.flow.standalone.SetVariable();
     sv1.setVariableName(new VariableName("i"));
-    sv1.setVariableValue("0");
+    sv1.setVariableValue(new BaseText("0"));
 
     Start st = new Start();
     

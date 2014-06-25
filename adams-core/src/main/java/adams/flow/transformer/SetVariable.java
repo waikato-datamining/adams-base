@@ -26,6 +26,7 @@ import java.util.List;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
+import adams.core.base.BaseText;
 import adams.flow.core.Unknown;
 
 /**
@@ -56,7 +57,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: SetVariable
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -78,7 +79,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
  * 
- * <pre>-var-value &lt;java.lang.String&gt; (property: variableValue)
+ * <pre>-var-value &lt;adams.core.base.BaseText&gt; (property: variableValue)
  * &nbsp;&nbsp;&nbsp;The fixed value to use instead of the current token; only used if non-empty.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -125,7 +126,7 @@ public class SetVariable
   protected VariableName m_VariableName;
 
   /** the optional fixed value. */
-  protected String m_VariableValue;
+  protected BaseText m_VariableValue;
 
   /** how to update the variable value. */
   protected UpdateType m_UpdateType;
@@ -163,7 +164,7 @@ public class SetVariable
 
     m_OptionManager.add(
 	    "var-value", "variableValue",
-	    "");
+	    new BaseText(""));
 
     m_OptionManager.add(
 	    "update-type", "updateType",
@@ -208,7 +209,7 @@ public class SetVariable
    *
    * @param value	the value
    */
-  public void setVariableValue(String value) {
+  public void setVariableValue(BaseText value) {
     m_VariableValue = value;
     reset();
   }
@@ -218,7 +219,7 @@ public class SetVariable
    *
    * @return		the name
    */
-  public String getVariableValue() {
+  public BaseText getVariableValue() {
     return m_VariableValue;
   }
 
@@ -320,7 +321,7 @@ public class SetVariable
       result = variable;
     else
       result = m_VariableName.paddedValue();
-    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue, " = ");
+    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue.getValue(), " = ");
     if (value != null)
       result += value;
 
@@ -357,8 +358,8 @@ public class SetVariable
 
     try {
       value = null;
-      if (m_VariableValue.length() > 0) {
-	value = m_VariableValue;
+      if (!m_VariableValue.isEmpty()) {
+	value = m_VariableValue.getValue();
       }
       else {
 	if (m_InputToken.getPayload() != null)

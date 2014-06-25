@@ -22,6 +22,7 @@ package adams.flow.standalone;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -121,7 +122,7 @@ public class CronTest
       tmp5.setVariableName((adams.core.VariableName) argOption.valueOf("counter"));
 
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("variableValue");
-      tmp5.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp5.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp1[1] = tmp5;
       adams.flow.standalone.Events tmp8 = new adams.flow.standalone.Events();

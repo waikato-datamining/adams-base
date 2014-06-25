@@ -23,6 +23,7 @@ package adams.flow.control;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.Index;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -53,6 +54,7 @@ public class StorageValueSequenceTest
    *
    * @throws Exception 	if an error occurs.
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     
@@ -64,6 +66,7 @@ public class StorageValueSequenceTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
     
@@ -95,6 +98,7 @@ public class StorageValueSequenceTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     AbstractArgumentOption    argOption;
     
@@ -108,7 +112,7 @@ public class StorageValueSequenceTest
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("count"));
 
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableValue");
-      tmp2.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      tmp2.setVariableValue((BaseText) argOption.valueOf("0"));
 
       tmp1[0] = tmp2;
       adams.flow.source.StringConstants tmp5 = new adams.flow.source.StringConstants();

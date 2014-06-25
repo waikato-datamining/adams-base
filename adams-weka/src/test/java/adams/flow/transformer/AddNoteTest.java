@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
@@ -115,7 +116,7 @@ public class AddNoteTest
       argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableName");
       setvariable2.setVariableName((adams.core.VariableName) argOption.valueOf("count"));
       argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableValue");
-      setvariable2.setVariableValue((java.lang.String) argOption.valueOf("0"));
+      setvariable2.setVariableValue((BaseText) argOption.valueOf("0"));
       actors1[0] = setvariable2;
 
       // Flow.FileSupplier
