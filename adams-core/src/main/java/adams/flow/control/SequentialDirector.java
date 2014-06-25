@@ -15,11 +15,10 @@
 
 /*
  * SequentialDirector.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,8 +149,8 @@ public class SequentialDirector
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().postInput(actor);
     }
-    catch (Exception e) {
-      result = handleException(actor, "Calling the 'input(Token)' method with token '" + input + "' generated error: ", e);
+    catch (Throwable t) {
+      result = handleException(actor, "Calling the 'input(Token)' method with token '" + input + "' generated error: ", t);
     }
 
     if (result != null) {
@@ -188,8 +187,8 @@ public class SequentialDirector
       if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
 	getLogger().finest("Size after 'execute()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
     }
-    catch (Exception e) {
-      result = handleException(actor, "Calling the 'execute()' method generated error: ", e);
+    catch (Throwable t) {
+      result = handleException(actor, "Calling the 'execute()' method generated error: ", t);
     }
 
     if (result != null) {
@@ -220,8 +219,8 @@ public class SequentialDirector
     try {
       result = ((OutputProducer) actor).hasPendingOutput();
     }
-    catch (Exception e) {
-      msgFull = handleException(actor, "Calling the 'hasPendingOutput()' method generated error: ", e);
+    catch (Throwable t) {
+      msgFull = handleException(actor, "Calling the 'hasPendingOutput()' method generated error: ", t);
       result = false;
     }
 
@@ -263,8 +262,8 @@ public class SequentialDirector
       if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
 	getLogger().finest("Size after 'output()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
     }
-    catch (Exception e) {
-      msgFull = handleException(actor, "Calling the 'output()' method generated error: ", e);
+    catch (Throwable t) {
+      msgFull = handleException(actor, "Calling the 'output()' method generated error: ", t);
       result = null;
     }
 
@@ -515,8 +514,8 @@ public class SequentialDirector
 	if (isLoggingEnabled())
 	  getLogger().info("doExecuteStandalones: " + ((start == null) ? "only standalones" : start.getFullName()));
       }
-      catch (Exception e) {
-	result = handleException("Execution of standalones failed: ", e);
+      catch (Throwable t) {
+	result = handleException("Execution of standalones failed: ", t);
 	if (isLoggingEnabled())
 	  getLogger().info("doExecuteStandalones: " + result);
       }
@@ -538,8 +537,8 @@ public class SequentialDirector
 	  if (msg != null)
 	    result = "Execution of actors failed: " + msg;
 	}
-	catch (Exception e) {
-	  result = handleException("Execution of actors died: ", e);
+	catch (Throwable t) {
+	  result = handleException("Execution of actors died: ", t);
 	  if (isLoggingEnabled())
 	    getLogger().info("doExecuteActors: " + result);
 	}

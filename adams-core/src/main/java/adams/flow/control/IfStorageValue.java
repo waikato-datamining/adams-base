@@ -15,7 +15,7 @@
 
 /*
  * IfStorageValue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -210,8 +210,8 @@ public class IfStorageValue
 	if (branch.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	  branch.getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(branch);
       }
-      catch (Exception e) {
-	result = handleException(branch.getFullName() + " generated the following exception: ", e);
+      catch (Throwable t) {
+	result = handleException(branch.getFullName() + " generated the following exception: ", t);
       }
 
       if (result != null)

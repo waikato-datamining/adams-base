@@ -193,8 +193,8 @@ public class Switch
 	      break;
 	    }
 	  }
-	  catch (Exception e) {
-	    handleException("Error evaluating boolean condition: " + switchActor.getConditions(), e);
+	  catch (Throwable t) {
+	    handleException("Error evaluating boolean condition: " + switchActor.getConditions(), t);
 	  }
 	}
       }
@@ -255,8 +255,8 @@ public class Switch
 	    }
 	  }
 	}
-	catch (Exception e) {
-	  result = handleException(caseActor.getFullName() + " generated the following exception: ", e);
+	catch (Throwable t) {
+	  result = handleException(caseActor.getFullName() + " generated the following exception: ", t);
 	}
 
 	if (result != null)
