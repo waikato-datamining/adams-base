@@ -534,7 +534,7 @@ public class Variables
    * @return		the processed string
    */
   public String expand(String s) {
-    return expand(s, (s.indexOf(Variables.START + Variables.START) > -1));
+    return expand(s, (s.indexOf(START + START) > -1));
   }
 
   /**
@@ -550,7 +550,7 @@ public class Variables
     String		name;
 
     result = s;
-    part   = Variables.START + ENVIRONMENT_VARIABLE_PREFIX;
+    part   = START + ENVIRONMENT_VARIABLE_PREFIX;
     if (result.indexOf(part) > -1) {
       enm = m_EnvironmentVariables.keys();
       while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
@@ -575,7 +575,7 @@ public class Variables
     String		name;
 
     result = s;
-    part   = Variables.START + SYSTEM_PROPERTY_PREFIX;
+    part   = START + SYSTEM_PROPERTY_PREFIX;
     if (result.indexOf(part) > -1) {
       enm = m_SystemProperties.keys();
       while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
@@ -600,7 +600,7 @@ public class Variables
     String		name;
 
     result = s;
-    part   = Variables.START;
+    part   = START;
     if (result.indexOf(part) > -1) {
       enm = names();
       while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
