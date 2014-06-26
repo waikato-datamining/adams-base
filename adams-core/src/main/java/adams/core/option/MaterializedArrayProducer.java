@@ -23,15 +23,15 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import adams.flow.core.AbstractActor;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.provenance.ProvenanceInformation;
 
 /**
- * Specialized ArrayProducer that resolves "global actor references" into
+ * Specialized ArrayProducer that resolves "callable actor references" into
  * concrete options. Used in provenance.
  * <p/>
- * Assumes that the global actor forwards a setup if merely executed, without
+ * Assumes that the callable actor forwards a setup if merely executed, without
  * any input.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -44,7 +44,7 @@ public class MaterializedArrayProducer
   /** for serialization. */
   private static final long serialVersionUID = -1441936327738738725L;
 
-  /** the helper for locating global actors. */
+  /** the helper for locating callable actors. */
   protected CallableActorHelper m_Helper;
 
   /**
@@ -77,9 +77,9 @@ public class MaterializedArrayProducer
   }
 
   /**
-   * Returns the setup represented by the global actor.
+   * Returns the setup represented by the callable actor.
    *
-   * @param ref		the global reference
+   * @param ref		the callable reference
    * @return		the commandline setup
    */
   protected String materialize(CallableActorReference ref) {
@@ -91,7 +91,7 @@ public class MaterializedArrayProducer
     if (actor != null)
       result = OptionUtils.getCommandLine(actor);
     else
-      result = "Failed to locate/process global reference '" + ref + "'!";
+      result = "Failed to locate/process callable reference '" + ref + "'!";
 
     return result;
   }
