@@ -30,6 +30,14 @@ ShowInputOutput=false
 # Divider location (= size of left component)
 DividerLocation=500
 
+# The actors to list in the "New" submenu
+NewList=\
+  adams.flow.control.Flow,\
+  adams.flow.control.Sequence,\
+  adams.flow.control.SubProcess,\
+  adams.flow.control.Tee,\
+  adams.flow.control.Trigger
+
 # The font color of the actor name in the tree
 Tree.ActorName.Color=black
 

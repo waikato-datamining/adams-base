@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -40,7 +40,6 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.FlowVariables;
-import adams.flow.core.InstantiatableActor;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.TriggerableEvent;
@@ -135,7 +134,7 @@ import adams.gui.core.BaseFrame;
  */
 public class Flow
   extends MutableConnectedControlActor
-  implements InstantiatableActor, MutableLogEntryHandler, StorageHandler,
+  implements MutableLogEntryHandler, StorageHandler,
              VariablesHandler, TriggerableEvent, PauseStateHandler,
              FlowExecutionListeningSupporter, ScopeHandler {
 

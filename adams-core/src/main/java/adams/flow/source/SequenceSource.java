@@ -15,7 +15,7 @@
 
 /*
  * SequenceSource.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -29,7 +29,6 @@ import adams.flow.control.SequentialDirector;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
-import adams.flow.core.InstantiatableActor;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 
@@ -84,7 +83,7 @@ import adams.flow.core.Token;
  */
 public class SequenceSource
   extends MutableConnectedControlActor
-  implements OutputProducer, InstantiatableActor {
+  implements OutputProducer {
 
   /** for serialization. */
   private static final long serialVersionUID = -1007878227244351146L;

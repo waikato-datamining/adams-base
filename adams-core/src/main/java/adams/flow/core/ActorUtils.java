@@ -57,13 +57,9 @@ import adams.flow.processor.CheckProcessor;
 import adams.flow.processor.CleanUpProcessor;
 import adams.flow.processor.MultiProcessor;
 import adams.flow.processor.RemoveDisabledActors;
-import adams.flow.sink.InstantiatableSink;
-import adams.flow.source.InstantiatableSource;
 import adams.flow.source.SequenceSource;
-import adams.flow.standalone.InstantiatableStandalone;
 import adams.flow.standalone.Standalones;
 import adams.flow.transformer.CallableTransformer;
-import adams.flow.transformer.InstantiatableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
 
@@ -845,7 +841,7 @@ public class ActorUtils {
    * @return		the processed actor
    * @see		InstantiatableActor
    */
-  public static AbstractActor createExternalActor(AbstractActor[] actors) {
+  public static Actor createExternalActor(AbstractActor[] actors) {
     int			first;
     int			last;
     int			i;
@@ -890,67 +886,32 @@ public class ActorUtils {
     if (isStandalone(actors[first]) && isStandalone(actors[last])) {
       handler = new Standalones();
       ((Standalones) handler).setActors(actors);
-      return createExternalActor((AbstractActor) handler);
+      return handler;
     }
 
     // appears as transformer
     if (isTransformer(actors[first]) && isTransformer(actors[last])) {
       handler = new SubProcess();
       ((SubProcess) handler).setActors(actors);
-      return createExternalActor((AbstractActor) handler);
+      return handler;
     }
 
     // appears as source
     if (isSource(actors[first]) && (actors[last] instanceof OutputProducer)) {
       handler = new SequenceSource();
       ((SequenceSource) handler).setActors(actors);
-      return createExternalActor((AbstractActor) handler);
+      return handler;
     }
 
     // appears as sink
     if ((actors[first] instanceof InputConsumer) && (isSink(actors[last]))) {
       handler = new Sequence();
       ((Sequence) handler).setActors(actors);
-      return createExternalActor((AbstractActor) handler);
+      return handler;
     }
 
     throw new IllegalArgumentException(
 	"Failed to find suitable actor handler to enclose all actors!");
-  }
-
-  /**
-   * Ensures that the actor is enclosed in an "instantiable" wrapper, if it
-   * doesn't implement the InstantiatableActor interface itself.
-   *
-   * @param actor	the actor to check and (potentially) enclose
-   * @return		the processed actor
-   * @see		InstantiatableActor
-   */
-  public static AbstractActor createExternalActor(AbstractActor actor) {
-    AbstractActor	result;
-
-    result = actor;
-
-    if (!(actor instanceof InstantiatableActor)) {
-      if (isStandalone(actor)) {
-	result = new InstantiatableStandalone();
-	((InstantiatableStandalone) result).set(0, actor);
-      }
-      else if (isSource(actor)) {
-	result = new InstantiatableSource();
-	((InstantiatableSource) result).set(0, actor);
-      }
-      else if (isTransformer(actor)) {
-	result = new InstantiatableTransformer();
-	((InstantiatableTransformer) result).set(0, actor);
-      }
-      else if (isSink(actor)) {
-	result = new InstantiatableSink();
-	((InstantiatableSink) result).set(0, actor);
-      }
-    }
-
-    return result;
   }
 
   /**

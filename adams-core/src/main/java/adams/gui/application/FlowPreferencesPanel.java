@@ -15,7 +15,7 @@
 
 /**
  * FlowPreferencesPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -46,6 +46,7 @@ public class FlowPreferencesPanel
     addPropertyType("ShowAnnotations", PropertyType.BOOLEAN);
     addPropertyType("ShowInputOutput", PropertyType.BOOLEAN);
     addPropertyType("DividerLocation", PropertyType.INTEGER);
+    addPropertyType("NewList", PropertyType.COMMA_SEPARATED_LIST);
     addPropertyType("Tree.ActorName.Size", PropertyType.INTEGER);
     addPropertyType("Tree.ActorName.Color", PropertyType.COLOR);
     addPropertyType("Tree.QuickInfo.Size", PropertyType.INTEGER);

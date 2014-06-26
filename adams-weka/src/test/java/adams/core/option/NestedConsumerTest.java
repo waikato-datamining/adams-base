@@ -15,7 +15,7 @@
 
 /**
  * NestedConsumerTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -43,16 +43,16 @@ public class NestedConsumerTest
    * Tests generating an  option handler from a string, which includes a Weka class.
    */
   public void testFromStringWeka() {
-    adams.flow.transformer.InstantiatableTransformer handler = new adams.flow.transformer.InstantiatableTransformer();
+    adams.flow.control.SubProcess handler = new adams.flow.control.SubProcess();
     adams.flow.transformer.WekaFilter wekafilter = new adams.flow.transformer.WekaFilter();
-    handler.setActor(wekafilter);
+    handler.add(wekafilter);
     weka.filters.unsupervised.attribute.Remove remove = new weka.filters.unsupervised.attribute.Remove();
     wekafilter.setFilter(remove);
     remove.setAttributeIndices("1-10");
 
     performFromStringTest(
 	NestedConsumer.class,
-	  "adams.flow.transformer.InstantiatableTransformer\n"
+	  "adams.flow.control.SubProcess\n"
 	+ "\t-actor\n"
 	+ "\t\tadams.flow.transformer.WekaFilter\n"
 	+ "\t\t\t-filter\n"

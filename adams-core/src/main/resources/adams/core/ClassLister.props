@@ -201,14 +201,6 @@ adams.flow.core.ActorHandler=\
   adams.flow.transformer,\
   adams.flow.sink
 
-# actors that can be instantiated in the flow editor
-adams.flow.core.InstantiatableActor=\
-  adams.flow.control,\
-  adams.flow.standalone,\
-  adams.flow.source,\
-  adams.flow.transformer,\
-  adams.flow.sink
-
 # the flow control actors
 adams.flow.core.ControlActor=\
   adams.flow.control,\

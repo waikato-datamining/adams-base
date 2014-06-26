@@ -15,7 +15,7 @@
 
 /**
  * ArrayConsumerTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -41,16 +41,16 @@ public class ArrayConsumerTest
    * Tests generating an  option handler from a string, which includes a Weka class.
    */
   public void testFromStringWeka() {
-    adams.flow.transformer.InstantiatableTransformer handler = new adams.flow.transformer.InstantiatableTransformer();
+    adams.flow.control.SubProcess handler = new adams.flow.control.SubProcess();
     adams.flow.transformer.WekaFilter wekafilter = new adams.flow.transformer.WekaFilter();
-    handler.setActor(wekafilter);
+    handler.add(wekafilter);
     weka.filters.unsupervised.attribute.Remove remove = new weka.filters.unsupervised.attribute.Remove();
     wekafilter.setFilter(remove);
     remove.setAttributeIndices("1-10");
 
     performFromStringTest(
 	ArrayConsumer.class,
-	"adams.flow.transformer.InstantiatableTransformer -actor \"adams.flow.transformer.WekaFilter -filter \\\"weka.filters.unsupervised.attribute.Remove -R 1-10\\\"\"",
+	"adams.flow.control.SubProcess -actor \"adams.flow.transformer.WekaFilter -filter \\\"weka.filters.unsupervised.attribute.Remove -R 1-10\\\"\"",
 	handler);
   }
 }

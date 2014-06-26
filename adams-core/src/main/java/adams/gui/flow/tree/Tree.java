@@ -75,7 +75,6 @@ import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
-import adams.flow.core.InstantiatableActor;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.processor.AbstractActorProcessor;
@@ -1712,15 +1711,8 @@ public class Tree
 
       if (changed) {
 	if (parent == null) {
-	  if (actor instanceof InstantiatableActor) {
-	    buildTree(actor);
-	    currNode = (Node) getModel().getRoot();
-	  }
-	  else {
-	    GUIHelper.showErrorMessage(
-		m_Self, "Root node must be an instantiatable actor!");
-	    return;
-	  }
+	  buildTree(actor);
+	  currNode = (Node) getModel().getRoot();
 	}
 	else {
 	  newNode = buildTree(null, actor, false);
@@ -2158,7 +2150,7 @@ public class Tree
 	parent = (Node) currNode.getParent();
     }
     try {
-      handler = ActorUtils.createExternalActor(actors);
+      handler = (AbstractActor) ActorUtils.createExternalActor(actors);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
@@ -2209,7 +2201,6 @@ public class Tree
 
     currNode  = (Node) path.getLastPathComponent();
     currActor = currNode.getFullActor().shallowCopy();
-    currActor = ActorUtils.createExternalActor(currActor);
     if (getParentDialog() != null)
       dialog = new FlowEditorDialog(getParentDialog());
     else

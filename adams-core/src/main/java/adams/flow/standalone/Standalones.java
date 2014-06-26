@@ -15,7 +15,7 @@
 
 /*
  * Standalones.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -24,7 +24,6 @@ import adams.flow.control.MutableControlActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.InstantiatableActor;
 
 /**
  <!-- globalinfo-start -->
@@ -76,8 +75,7 @@ import adams.flow.core.InstantiatableActor;
  * @version $Revision$
  */
 public class Standalones
-  extends MutableControlActor
-  implements InstantiatableActor {
+  extends MutableControlActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755216459759839030L;

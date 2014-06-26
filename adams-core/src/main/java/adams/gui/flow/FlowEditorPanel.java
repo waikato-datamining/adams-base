@@ -47,7 +47,6 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import adams.core.ClassLister;
 import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -63,7 +62,6 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorStatistic;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.AutomatableInteractiveActor;
-import adams.flow.core.InstantiatableActor;
 import adams.flow.processor.RemoveBreakpoints;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.ToggleAction;
@@ -1071,7 +1069,7 @@ public class FlowEditorPanel
       submenu.setMnemonic('N');
       submenu.setIcon(GUIHelper.getIcon("new.gif"));
       m_MenuFileNew = submenu;
-      actors   = ClassLister.getSingleton().getClassnames(InstantiatableActor.class);
+      actors = getProperties().getProperty("NewList").replace(" ", "").split(",");
       prefixes = new Vector<String>();
       for (i = 0; i < actors.length; i++) {
 	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
