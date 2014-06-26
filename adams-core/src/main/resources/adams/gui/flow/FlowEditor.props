@@ -37,7 +37,8 @@ NewList=\
   adams.flow.control.SubProcess,\
   adams.flow.control.Tee,\
   adams.flow.control.Trigger,\
-  adams.flow.standalone.Standalones
+  adams.flow.standalone.Standalones,\
+  adams.flow.source.SequenceSource
 
 # The font color of the actor name in the tree
 Tree.ActorName.Color=black
