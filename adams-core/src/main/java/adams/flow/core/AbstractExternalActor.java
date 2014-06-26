@@ -110,6 +110,20 @@ public abstract class AbstractExternalActor
   }
 
   /**
+   * Sets the parent of this actor, e.g., the group it belongs to.
+   *
+   * @param value	the new parent
+   */
+  @Override
+  public void setParent(AbstractActor value) {
+    super.setParent(value);
+    if (m_ExternalActor != null) {
+      m_ExternalActor.setParent(null);
+      m_ExternalActor.setParent(this);
+    }
+  }
+  
+  /**
    * Gets triggered when a variable changed (added, modified, removed).
    *
    * @param e		the event
