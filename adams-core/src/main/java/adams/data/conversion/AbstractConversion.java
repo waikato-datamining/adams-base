@@ -160,8 +160,8 @@ public abstract class AbstractConversion
 
     if ((accepts() != Unknown.class) && !accepts().isAssignableFrom(m_Input.getClass()))
       return
-          "Data cannot be processed: input=" + m_Input.getClass().getName()
-        + ", accepts=" + accepts().getName();
+          "Data cannot be processed: input=" + Utils.classToString(m_Input.getClass())
+        + ", accepts=" + Utils.classToString(accepts());
 
     return null;
   }
