@@ -626,6 +626,8 @@ control actors. In the following a short introduction to the others:
 	\item \textit{PlotContainerUpdater} -- Allows one to update the \textit{name},
 	\textit{x} or \textit{y} value stored in a plot container. Useful for
 	post-processing of plot containers, e.g., for scaling.
+	\item \textit{RaiseError} -- Raises an error if its condition evaluates to
+	\textit{true} using the specified error message (see \textit{TryCatch}).
 	\item \textit{Rejector} -- Rejects tokens container data containers that have
 	error messages attached.
 	\item \textit{Sequence} -- Allows to specify multiple actors that get exectued
@@ -645,7 +647,7 @@ control actors. In the following a short introduction to the others:
 	forwarded the token if the corresponding condition evaluates to \textit{true}.
 	\item \textit{TryCatch} -- Allows you to protect a sub-flow in a ``try''
 	block. If the execution fails for some reason the ``catch'' sub-flow gets
-	executed to ensure that flow execution continues .
+	executed to ensure that flow execution continues (see \textit{RaiseError}).
 	\item \textit{UpdateContainerValue} -- Applies all defined sub-actors to the
 	specified element of the container that is passing through.
 	\item \textit{UpdateProperties} -- Updates multiple properties of an actor
