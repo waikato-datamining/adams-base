@@ -179,7 +179,7 @@ public abstract class AbstractCopyCallableActor
 	  if (m_DetectedVariables.size() > 0)
 	    getVariables().addVariableChangeListener(this);
 	  if (getErrorHandler() != this)
-	    ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler());
+	    ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler(), isLoggingEnabled());
 	}
       }
     }

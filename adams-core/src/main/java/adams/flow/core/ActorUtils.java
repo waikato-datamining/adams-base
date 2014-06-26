@@ -1182,62 +1182,41 @@ public class ActorUtils {
    *
    * @param actor	the actor to update the error handler for
    * @param handler	the handler to use
+   * @param trace	whether to output the names of the actors that were updated
    */
-  public static void updateErrorHandler(Actor actor, final ErrorHandler handler) {
+  public static void updateErrorHandler(Actor actor, final ErrorHandler handler, final boolean trace) {
+    if (actor == null)
+      return;
     actor.getOptionManager().traverse(new OptionTraverser() {
+      protected void update(Object obj, final ErrorHandler handler) {
+        if (ClassLocator.hasInterface(Actor.class, obj.getClass())) {
+          ((Actor) obj).setErrorHandler(handler);
+          if (trace)
+            System.out.println(((Actor) obj).getFullName());
+        }
+        if (ClassLocator.hasInterface(CallableActorUser.class, obj.getClass())) {
+          Actor callable = ((CallableActorUser) obj).getCallableActor();
+          updateErrorHandler(callable, handler, trace);
+        }
+        if (ClassLocator.hasInterface(InternalActorHandler.class, obj.getClass())) {
+          Actor internal = ((InternalActorHandler) obj).getInternalActor();
+          updateErrorHandler(internal, handler, trace);
+        }
+        if (ClassLocator.hasInterface(ExternalActorHandler.class, obj.getClass())) {
+          Actor external = ((ExternalActorHandler) obj).getExternalActor();
+          updateErrorHandler(external, handler, trace);
+        }
+      }
       @Override
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
-        if (ClassLocator.hasInterface(Actor.class, option.getBaseClass())) {
-          Object current = option.getCurrentValue();
-          if (option.isMultiple()) {
-            for (int i = 0; i < Array.getLength(current); i++)
-              ((Actor) Array.get(current, i)).setErrorHandler(handler);
-          }
-          else {
-            ((Actor) current).setErrorHandler(handler);
+        Object current = option.getCurrentValue();
+        if (option.isMultiple()) {
+          for (int i = 0; i < Array.getLength(current); i++) {
+            update(Array.get(current, i), handler);
           }
         }
-        else if (ClassLocator.hasInterface(CallableActorUser.class, option.getBaseClass())) {
-          Object current = option.getCurrentValue();
-          Actor callable = null;
-          if (option.isMultiple()) {
-            for (int i = 0; i < Array.getLength(current); i++) {
-              callable = ((CallableActorUser) Array.get(current, i)).getCallableActor();
-              updateErrorHandler(callable, handler);
-            }
-          }
-          else {
-            callable = ((CallableActorUser) current).getCallableActor();
-            updateErrorHandler(callable, handler);
-          }
-        }
-        else if (ClassLocator.hasInterface(InternalActorHandler.class, option.getBaseClass())) {
-          Object current = option.getCurrentValue();
-          Actor internal = null;
-          if (option.isMultiple()) {
-            for (int i = 0; i < Array.getLength(current); i++) {
-              internal = ((InternalActorHandler) Array.get(current, i)).getInternalActor();
-              updateErrorHandler(internal, handler);
-            }
-          }
-          else {
-            internal = ((InternalActorHandler) current).getInternalActor();
-            updateErrorHandler(internal, handler);
-          }
-        }
-        else if (ClassLocator.hasInterface(ExternalActorHandler.class, option.getBaseClass())) {
-          Object current = option.getCurrentValue();
-          Actor external = null;
-          if (option.isMultiple()) {
-            for (int i = 0; i < Array.getLength(current); i++) {
-              external = ((ExternalActorHandler) Array.get(current, i)).getExternalActor();
-              updateErrorHandler(external, handler);
-            }
-          }
-          else {
-            external = ((ExternalActorHandler) current).getExternalActor();
-            updateErrorHandler(external, handler);
-          }
+        else {
+          update(current, handler);
         }
       }
       @Override

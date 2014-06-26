@@ -562,7 +562,7 @@ public class TryCatch
     result = super.setUp();
 
     if (result == null)
-      ActorUtils.updateErrorHandler(this, this);
+      ActorUtils.updateErrorHandler(this, this, isLoggingEnabled());
 
     return result;
   }

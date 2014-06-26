@@ -205,7 +205,7 @@ public abstract class AbstractTemplate
       result = m_Actor.setUp();
       if (result == null) {
 	if (getErrorHandler() != this)
-	  ActorUtils.updateErrorHandler(m_Actor, getErrorHandler());
+	  ActorUtils.updateErrorHandler(m_Actor, getErrorHandler(), isLoggingEnabled());
       }
    }
 
