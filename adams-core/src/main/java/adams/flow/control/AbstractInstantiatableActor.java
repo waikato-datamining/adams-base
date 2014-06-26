@@ -213,6 +213,20 @@ public abstract class AbstractInstantiatableActor
   }
 
   /**
+   * Sets the parent of this actor, e.g., the group it belongs to.
+   *
+   * @param value	the new parent
+   */
+  @Override
+  public void setParent(AbstractActor value) {
+    super.setParent(value);
+    if (m_BaseActor != null) {
+      m_BaseActor.setParent(null);
+      m_BaseActor.setParent(this);
+    }
+  }
+
+  /**
    * Initializes the item for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
