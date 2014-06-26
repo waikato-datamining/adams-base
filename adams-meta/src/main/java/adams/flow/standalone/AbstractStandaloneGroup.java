@@ -83,6 +83,22 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
       get(i).setParent(this);
     }
   }
+  
+  /**
+   * Sets whether the actor is to be run in headless mode, i.e., suppressing
+   * GUI components.
+   *
+   * @param value	if true then GUI components will be suppressed
+   */
+  @Override
+  public void setHeadless(boolean value) {
+    int		i;
+
+    super.setHeadless(value);
+
+    for (i = 0; i < size(); i++)
+      get(i).setHeadless(value);
+  }
 
   /**
    * Checks the actors whether they are of the correct type.
