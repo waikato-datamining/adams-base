@@ -315,7 +315,10 @@ public class Breakpoint
     
     /** the button for copying the actor path. */
     protected JToggleButton m_ButtonActorPath;
-    
+
+    /** whether the stop button is enabled. */
+    protected boolean m_StopButtonEnabled;
+
     /**
      * Initializes the widgets.
      */
@@ -483,6 +486,25 @@ public class Breakpoint
     }
 
     /**
+     * Sets whether the stop button is enabled.
+     * 
+     * @param value	true if the stop button should be enabled
+     */
+    public void setStopButtonEnabled(boolean value) {
+      m_StopButtonEnabled = value;
+      m_ButtonStop.setEnabled(value);
+    }
+    
+    /**
+     * Returns whether the stop button is enabled.
+     * 
+     * @return		true if the stop button is enabled
+     */
+    public boolean isStopButtonEnabled() {
+      return m_StopButtonEnabled;
+    }
+    
+    /**
      * Returns the underlying flow.
      *
      * @return		the flow
@@ -500,7 +522,7 @@ public class Breakpoint
       flow = getFlow();
 
       m_ButtonContinue.setEnabled(flow.isPaused());
-      m_ButtonStop.setEnabled(!flow.isStopped());
+      m_ButtonStop.setEnabled(!flow.isStopped() && m_StopButtonEnabled);
       m_ButtonDisableEnable.setEnabled(!flow.isStopped());
       m_ButtonExpressions.setEnabled(flow.isPaused());
       m_ButtonInspectFlow.setEnabled(flow.isPaused());
@@ -851,6 +873,9 @@ public class Breakpoint
   /** whether the GUI is currently being updated. */
   protected Boolean m_Updating;
 
+  /** whether the stop button is enabled. */
+  protected boolean m_StopButtonEnabled;
+  
   /**
    * Returns a string describing the object.
    *
@@ -906,6 +931,16 @@ public class Breakpoint
 	    new View[0]);
   }
 
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_StopButtonEnabled = true;
+  }
+  
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -1238,6 +1273,27 @@ public class Breakpoint
   }
 
   /**
+   * Sets whether the stop button is enabled or not.
+   * 
+   * @param value	true if the stop button should be enabled
+   */
+  public void setStopButtonEnabled(boolean value) {
+    m_StopButtonEnabled = value;
+    if (m_Panel != null) {
+      ((ControlPanel) m_Panel).setStopButtonEnabled(value);
+    }
+  }
+  
+  /**
+   * Returns whether the stop button is enabled or not.
+   * 
+   * @return		true if the stop button is enabled
+   */
+  public boolean isStopButtonEnabled() {
+    return m_StopButtonEnabled;
+  }
+  
+  /**
    * Creates the panel to display in the dialog.
    *
    * @return		the panel
@@ -1247,6 +1303,7 @@ public class Breakpoint
     int			i;
 
     result = new ControlPanel();
+    result.setStopButtonEnabled(m_StopButtonEnabled);
 
     for (i = 0; i < m_Watches.length; i++)
       result.addWatch(m_Watches[i].getValue(), m_WatchTypes[i]);
