@@ -131,8 +131,15 @@ public abstract class AbstractIncludeExternalActor
 	if (result == null) {
 	  if (externalActor.getName().equals(externalActor.getDefaultName()))
 	    externalActor.setName(getName());
+	  externalActor.setHeadless(isHeadless());
+	  externalActor.setVariables(getVariables());
 	  ((ActorHandler) getParent()).set(index(), externalActor);
 	  result = externalActor.setUp();
+	  if (getErrorHandler() != this)
+	    ActorUtils.updateErrorHandler(externalActor, getErrorHandler(), isLoggingEnabled());
+	  // make sure we've got the current state of the variables
+	  if (result == null)
+	    externalActor.getOptionManager().updateVariableValues(true);
 	  setParent(null);
 	  cleanUp();
 	}
