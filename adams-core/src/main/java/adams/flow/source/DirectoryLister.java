@@ -15,11 +15,10 @@
 
 /*
  * DirectoryLister.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +28,7 @@ import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister.Sorting;
 import adams.core.io.PlaceholderDirectory;
+
 
 /**
  <!-- globalinfo-start -->
@@ -321,6 +321,7 @@ public class DirectoryLister
    */
   public void setWatchDir(PlaceholderDirectory value) {
     m_Lister.setWatchDir(value);
+    reset();
   }
 
   /**
