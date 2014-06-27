@@ -1,4 +1,4 @@
-% Copyright (c) 2009-2012 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2009-2014 by the University of Waikato, Hamilton, NZ. 
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -46,7 +46,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2014} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -97,6 +97,20 @@ location:
 	\item \textit{CopyCallableSource} -- copies a callable source
 	\item \textit{CopyCallableTransformer} -- copies a callable transformer
 	\item \textit{CopyCallableSink} -- copies a callable sink
+\end{tight_itemize}
+
+\newpage
+\chapter{Including external actors}
+\label{includeexteranlactors}
+Similar to the external actors of the \textit{adams-core} module, the following
+actors allow the use of external flow snippets. However, these flows simply
+replace themselves with the content of the external flow and cannot be changed
+dynamically with variables. Flexibility has been traded here for performance.
+\begin{tight_itemize}
+	\item \textit{IncludeExternalStandalone} -- includes an external standalone
+	\item \textit{IncludeExternalSource} -- includes an external source
+	\item \textit{IncludeExternalTransformer} -- includes an external transformer
+	\item \textit{IncludeExternalSink} -- includes an external sink
 \end{tight_itemize}
 
 
