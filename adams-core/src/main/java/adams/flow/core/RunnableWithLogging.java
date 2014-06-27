@@ -92,8 +92,8 @@ public abstract class RunnableWithLogging
     try {
       doRun();
     }
-    catch (Exception e) {
-      Utils.handleException(this, "Exception occurred on run!", e);
+    catch (Throwable t) {
+      Utils.handleException(this, "Exception occurred on run!", t);
     }
     
     if (isLoggingEnabled())
