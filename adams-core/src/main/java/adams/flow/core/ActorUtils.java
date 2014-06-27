@@ -93,8 +93,12 @@ public class ActorUtils {
   protected static void enumerate(AbstractActor actor, List<AbstractActor> children, HashSet<Class> filter) {
     int			i;
     ActorHandler	handler;
+    AbstractActor	other;
     boolean		add;
 
+    if (actor == null)
+      return;
+    
     if (actor instanceof ActorHandler) {
       handler = (ActorHandler) actor;
       for (i = 0; i < handler.size(); i++) {
@@ -105,6 +109,18 @@ public class ActorUtils {
 	  children.add(handler.get(i));
 	enumerate(handler.get(i), children, filter);
       }
+    }
+    if (ClassLocator.hasInterface(CallableActorUser.class, actor.getClass())) {
+      other = ((CallableActorUser) actor).getCallableActor();
+      enumerate(other, children, filter);
+    }
+    if (ClassLocator.hasInterface(InternalActorHandler.class, actor.getClass())) {
+      other = (AbstractActor) ((InternalActorHandler) actor).getInternalActor();
+      enumerate(other, children, filter);
+    }
+    if (ClassLocator.hasInterface(ExternalActorHandler.class, actor.getClass())) {
+      other = ((ExternalActorHandler) actor).getExternalActor();
+      enumerate(other, children, filter);
     }
   }
 
