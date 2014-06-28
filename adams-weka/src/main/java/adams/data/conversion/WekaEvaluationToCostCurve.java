@@ -146,13 +146,13 @@ public class WekaEvaluationToCostCurve
   @Override
   protected Object doConvert() throws Exception {
     Evaluation	eval;
-    CostCurve	cc;
+    CostCurve	curve;
     Instances 	cost;
     
-    eval = (Evaluation) m_Input;
+    eval  = (Evaluation) m_Input;
     m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-    cc   = new CostCurve();
-    cost = cc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+    curve = new CostCurve();
+    cost  = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
     
     return cost;
   }

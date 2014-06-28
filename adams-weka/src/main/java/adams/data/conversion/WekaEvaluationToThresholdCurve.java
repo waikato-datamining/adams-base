@@ -145,14 +145,14 @@ public class WekaEvaluationToThresholdCurve
    */
   @Override
   protected Object doConvert() throws Exception {
-    Evaluation	eval;
-    ThresholdCurve	cc;
-    Instances 	cost;
+    Evaluation		eval;
+    ThresholdCurve	curve;
+    Instances 		cost;
     
-    eval = (Evaluation) m_Input;
+    eval  = (Evaluation) m_Input;
     m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-    cc   = new ThresholdCurve();
-    cost = cc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+    curve = new ThresholdCurve();
+    cost  =  curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
     
     return cost;
   }
