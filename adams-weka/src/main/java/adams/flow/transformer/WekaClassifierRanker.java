@@ -50,8 +50,8 @@ import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PauseStateHandler;
@@ -999,22 +999,22 @@ public class WekaClassifierRanker
       actor = m_Helper.findCallableActorRecursive(this, m_Train);
       comp  = new Compatibility();
       if (actor == null)
-	result = "Global actor '" + m_Train + "' providing the training set not found!";
+	result = "Callable actor '" + m_Train + "' providing the training set not found!";
       else if (!ActorUtils.isSource(actor))
-	result = "Global actor '" + m_Train + "' (training set) is not a source!";
+	result = "Callable actor '" + m_Train + "' (training set) is not a source!";
       else if (!comp.isCompatible(((OutputProducer) actor).generates(), new Class[]{Instances.class}))
-	result = "Global actor '" + m_Train + "' (training set) does not generated " + Instances.class.getName() + "!";
+	result = "Callable actor '" + m_Train + "' (training set) does not generated " + Instances.class.getName() + "!";
     }
 
     if ((result == null) && (m_Folds < 2)) {
       actor = m_Helper.findCallableActorRecursive(this, m_Test);
       comp  = new Compatibility();
       if (actor == null)
-	result = "Global actor '" + m_Test + "' providing the test set not found!";
+	result = "Callable actor '" + m_Test + "' providing the test set not found!";
       else if (!ActorUtils.isSource(actor))
-	result = "Global actor '" + m_Test  + "' (test set) is not a source!";
+	result = "Callable actor '" + m_Test  + "' (test set) is not a source!";
       else if (!comp.isCompatible(((OutputProducer) actor).generates(), new Class[]{Instances.class}))
-	result = "Global actor '" + m_Test + "' (test set) does not generated " + Instances.class.getName() + "!";
+	result = "Callable actor '" + m_Test + "' (test set) does not generated " + Instances.class.getName() + "!";
     }
 
     if (result == null) {
