@@ -1,0 +1,48 @@
+# Project: adams
+# Date: 2014-06-29 10:49:45
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier and displays\nthe cost curve and margin curve.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.bayes.NaiveBayes
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/labor.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+			-classifier
+			WekaClassifier
+			-num-threads
+			-1
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.WekaCostCurve
+					-writer
+						adams.gui.print.NullWriter
+			-branch
+				adams.flow.sink.WekaMarginCurve
+					-x
+					-3
+					-writer
+						adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
