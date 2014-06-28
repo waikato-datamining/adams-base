@@ -267,12 +267,12 @@ public class WekaCostCurve
    */
   @Override
   protected void display(Token token) {
-    weka.classifiers.evaluation.CostCurve 	cc;
+    weka.classifiers.evaluation.CostCurve 	curve;
     Evaluation					eval;
     PlotData2D					plot;
     boolean[] 					connectPoints;
     int						cp;
-    Instances 					cost;
+    Instances 					data;
 
     try {
       if (token.getPayload() instanceof WekaEvaluationContainer)
@@ -284,11 +284,11 @@ public class WekaCostCurve
 	return;
       }
       m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-      cc   = new weka.classifiers.evaluation.CostCurve();
-      cost = cc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-      plot = new PlotData2D(cost);
+      curve = new weka.classifiers.evaluation.CostCurve();
+      data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+      plot = new PlotData2D(data);
       plot.m_displayAllPoints = true;
-      connectPoints = new boolean [cost.numInstances()];
+      connectPoints = new boolean [data.numInstances()];
       for (cp = 1; cp < connectPoints.length; cp++)
 	connectPoints[cp] = true;
       plot.setConnectPoints(connectPoints);
@@ -355,11 +355,11 @@ public class WekaCostCurve
 	try {
 	  Evaluation eval = getEvaluation(token);
 	  m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-	  weka.classifiers.evaluation.CostCurve cc = new weka.classifiers.evaluation.CostCurve();
-	  Instances cost = cc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-	  PlotData2D plot = new PlotData2D(cost);
+	  weka.classifiers.evaluation.CostCurve curve = new weka.classifiers.evaluation.CostCurve();
+	  Instances data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+	  PlotData2D plot = new PlotData2D(data);
 	  plot.m_displayAllPoints = true;
-	  boolean[] connectPoints = new boolean [cost.numInstances()];
+	  boolean[] connectPoints = new boolean [data.numInstances()];
 	  for (int cp = 1; cp < connectPoints.length; cp++)
 	    connectPoints[cp] = true;
 	  plot.setConnectPoints(connectPoints);
