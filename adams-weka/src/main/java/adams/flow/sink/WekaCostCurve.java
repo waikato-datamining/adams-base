@@ -38,7 +38,7 @@ import adams.gui.core.BasePanel;
 
 /**
  <!-- globalinfo-start -->
- * Actor for displaying classifier errors.
+ * Actor for displaying a cost curve.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -123,7 +123,7 @@ public class WekaCostCurve
   /** for serialization. */
   private static final long serialVersionUID = 3247255046513744115L;
 
-  /** the text area. */
+  /** the panel. */
   protected ThresholdVisualizePanel m_VisualizePanel;
 
   /** the class label index. */
@@ -136,7 +136,7 @@ public class WekaCostCurve
    */
   @Override
   public String globalInfo() {
-    return "Actor for displaying classifier errors.";
+    return "Actor for displaying a cost curve.";
   }
 
   /**
