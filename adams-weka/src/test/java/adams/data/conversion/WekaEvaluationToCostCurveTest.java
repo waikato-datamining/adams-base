@@ -20,6 +20,7 @@
 
 package adams.data.conversion;
 
+import java.io.StringWriter;
 import java.util.Random;
 
 import weka.classifiers.Evaluation;
@@ -27,6 +28,8 @@ import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Utils;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.test.TmpFile;
 
 
@@ -70,6 +73,42 @@ public class WekaEvaluationToCostCurveTest
     m_TestHelper.deleteFileFromTmp("labor.csv");
     
     super.tearDown();
+  }
+
+  /**
+   * Turns the data object into a useful string representation.
+   *
+   * @param data	the object to convert
+   * @return		the string representation
+   */
+  @Override
+  protected String toString(Object data) {
+    String			result;
+    Instances			inst;
+    WekaInstancesToSpreadSheet	conv;
+    String			msg;
+    SpreadSheet			sheet;
+    CsvSpreadSheetWriter	writer;
+    StringWriter		swriter;
+    
+    inst = (Instances) data;
+    conv = new WekaInstancesToSpreadSheet();
+    conv.setInput(inst);
+    msg  = conv.convert();
+    if (msg == null) {
+      sheet   = (SpreadSheet) conv.getOutput();
+      swriter = new StringWriter();
+      writer  = new CsvSpreadSheetWriter();
+      writer.setNumberFormat("0.000000");
+      writer.write(sheet, swriter);
+      result = swriter.toString();
+    }
+    else {
+      result = null;
+    }
+    conv.cleanUp();
+    
+    return result;
   }
   
   /**
