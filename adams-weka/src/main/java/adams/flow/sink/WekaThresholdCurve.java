@@ -488,12 +488,12 @@ public class WekaThresholdCurve
    */
   @Override
   protected void display(Token token) {
-    ThresholdCurve 	tc;
+    ThresholdCurve 	curve;
     Evaluation		eval;
     PlotData2D		plot;
     boolean[] 		connectPoints;
     int			cp;
-    Instances 		roc;
+    Instances 		data;
     
     try {
       if (token.getPayload() instanceof WekaEvaluationContainer)
@@ -505,19 +505,19 @@ public class WekaThresholdCurve
 	return;
       }
       m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-      tc = new ThresholdCurve();
-      roc = tc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-      plot = new PlotData2D(roc);
+      curve = new ThresholdCurve();
+      data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+      plot = new PlotData2D(data);
       plot.m_displayAllPoints = true;
-      connectPoints = new boolean [roc.numInstances()];
+      connectPoints = new boolean [data.numInstances()];
       for (cp = 1; cp < connectPoints.length; cp++)
 	connectPoints[cp] = true;
       plot.setConnectPoints(connectPoints);
       m_VisualizePanel.addPlot(plot);
-      if (roc.attribute(m_AttributeX.toDisplay()) != null)
-	m_VisualizePanel.setXIndex(roc.attribute(m_AttributeX.toDisplay()).index());
-      if (roc.attribute(m_AttributeY.toDisplay()) != null)
-	m_VisualizePanel.setYIndex(roc.attribute(m_AttributeY.toDisplay()).index());
+      if (data.attribute(m_AttributeX.toDisplay()) != null)
+	m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
+      if (data.attribute(m_AttributeY.toDisplay()) != null)
+	m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
     }
     catch (Exception e) {
       handleException("Failed to display token: " + token, e);
@@ -582,19 +582,19 @@ public class WekaThresholdCurve
 	try {
 	  Evaluation eval = getEvaluation(token);
 	  m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-	  ThresholdCurve tc = new ThresholdCurve();
-	  Instances roc = tc.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-	  PlotData2D plot = new PlotData2D(roc);
+	  ThresholdCurve curve = new ThresholdCurve();
+	  Instances data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
+	  PlotData2D plot = new PlotData2D(data);
 	  plot.m_displayAllPoints = true;
-	  boolean[] connectPoints = new boolean [roc.numInstances()];
+	  boolean[] connectPoints = new boolean [data.numInstances()];
 	  for (int cp = 1; cp < connectPoints.length; cp++)
 	    connectPoints[cp] = true;
 	  plot.setConnectPoints(connectPoints);
 	  m_VisualizePanel.addPlot(plot);
-	  if (roc.attribute(m_AttributeX.toDisplay()) != null)
-	    m_VisualizePanel.setXIndex(roc.attribute(m_AttributeX.toDisplay()).index());
-	  if (roc.attribute(m_AttributeY.toDisplay()) != null)
-	    m_VisualizePanel.setYIndex(roc.attribute(m_AttributeY.toDisplay()).index());
+	  if (data.attribute(m_AttributeX.toDisplay()) != null)
+	    m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
+	  if (data.attribute(m_AttributeY.toDisplay()) != null)
+	    m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to display token: " + token, e);
