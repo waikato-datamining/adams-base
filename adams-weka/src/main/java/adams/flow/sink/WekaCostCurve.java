@@ -15,7 +15,7 @@
 
 /*
  * WekaCostCurve.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -271,7 +271,7 @@ public class WekaCostCurve
     Evaluation					eval;
     PlotData2D					plot;
     boolean[] 					connectPoints;
-    int						jj;
+    int						cp;
     Instances 					cost;
 
     try {
@@ -289,8 +289,8 @@ public class WekaCostCurve
       plot = new PlotData2D(cost);
       plot.m_displayAllPoints = true;
       connectPoints = new boolean [cost.numInstances()];
-      for (jj = 1; jj < connectPoints.length; jj+=2)
-	connectPoints[jj] = true;
+      for (cp = 1; cp < connectPoints.length; cp++)
+	connectPoints[cp] = true;
       plot.setConnectPoints(connectPoints);
       m_VisualizePanel.addPlot(plot);
     }
@@ -335,7 +335,10 @@ public class WekaCostCurve
     AbstractDisplayPanel	result;
     String			name;
 
-    name = "Cost curve (" + getEvaluation(token).getHeader().relationName() + ")";
+    if (token != null)
+      name = "Cost curve (" + getEvaluation(token).getHeader().relationName() + ")";
+    else
+      name = "Cost curve";
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -3513994354297811163L;
@@ -357,8 +360,8 @@ public class WekaCostCurve
 	  PlotData2D plot = new PlotData2D(cost);
 	  plot.m_displayAllPoints = true;
 	  boolean[] connectPoints = new boolean [cost.numInstances()];
-	  for (int jj = 1; jj < connectPoints.length; jj+=2)
-	    connectPoints[jj] = true;
+	  for (int cp = 1; cp < connectPoints.length; cp++)
+	    connectPoints[cp] = true;
 	  plot.setConnectPoints(connectPoints);
 	  m_VisualizePanel.addPlot(plot);
 	}

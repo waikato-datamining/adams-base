@@ -15,7 +15,7 @@
 
 /*
  * WekaThresholdCurve.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -492,7 +492,7 @@ public class WekaThresholdCurve
     Evaluation		eval;
     PlotData2D		plot;
     boolean[] 		connectPoints;
-    int			jj;
+    int			cp;
     Instances 		roc;
     
     try {
@@ -510,8 +510,8 @@ public class WekaThresholdCurve
       plot = new PlotData2D(roc);
       plot.m_displayAllPoints = true;
       connectPoints = new boolean [roc.numInstances()];
-      for (jj = 1; jj < connectPoints.length; jj+=2)
-	connectPoints[jj] = true;
+      for (cp = 1; cp < connectPoints.length; cp++)
+	connectPoints[cp] = true;
       plot.setConnectPoints(connectPoints);
       m_VisualizePanel.addPlot(plot);
       if (roc.attribute(m_AttributeX.toDisplay()) != null)
@@ -544,6 +544,8 @@ public class WekaThresholdCurve
    * @return		the {@link Evaluation} object
    */
   protected Evaluation getEvaluation(Token token) {
+    if (token == null)
+      return null;
     if (token.getPayload() instanceof WekaEvaluationContainer)
       return (Evaluation) ((WekaEvaluationContainer) token.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
     else
@@ -560,7 +562,10 @@ public class WekaThresholdCurve
     AbstractDisplayPanel	result;
     String			name;
 
-    name = "Threshold curve (" + getEvaluation(token).getHeader().relationName() + ")";
+    if (token != null)
+      name = "Threshold curve (" + getEvaluation(token).getHeader().relationName() + ")";
+    else
+      name = "Threshold curve";
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -7362768698548152899L;
@@ -582,8 +587,8 @@ public class WekaThresholdCurve
 	  PlotData2D plot = new PlotData2D(roc);
 	  plot.m_displayAllPoints = true;
 	  boolean[] connectPoints = new boolean [roc.numInstances()];
-	  for (int jj = 1; jj < connectPoints.length; jj+=2)
-	    connectPoints[jj] = true;
+	  for (int cp = 1; cp < connectPoints.length; cp++)
+	    connectPoints[cp] = true;
 	  plot.setConnectPoints(connectPoints);
 	  m_VisualizePanel.addPlot(plot);
 	  if (roc.attribute(m_AttributeX.toDisplay()) != null)
