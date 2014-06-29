@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.env.ScriptEditorTemplatesDefinition;
+import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for script editors that support text templates.
@@ -129,6 +130,7 @@ public abstract class AbstractScriptEditorWithTemplates
       return;
     
     submenu = new JMenu("Templates");
+    submenu.setIcon(GUIHelper.getIcon("template.gif"));
     menu.add(submenu);
     
     for (final String template: templates) {

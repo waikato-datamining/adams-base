@@ -210,7 +210,6 @@ public class AbstractScriptEditor
     buttonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = createPopupMenu();
-	addAdditionalMenuItems(menu);
 	menu.show(buttonOptions, 0, buttonOptions.getHeight());
       }
     });
@@ -344,7 +343,7 @@ public class AbstractScriptEditor
     
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(GUIHelper.getIcon("linewrap.png"));
     menuitem.setSelected(m_TextStatement.getWordWrap());
     menuitem.addActionListener(new ActionListener() {
       @Override
