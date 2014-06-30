@@ -1069,7 +1069,7 @@ public class FlowEditorPanel
       submenu.setMnemonic('N');
       submenu.setIcon(GUIHelper.getIcon("new.gif"));
       m_MenuFileNew = submenu;
-      actors = getProperties().getProperty("NewList").replace(" ", "").split(",");
+      actors = getProperties().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
       prefixes = new Vector<String>();
       for (i = 0; i < actors.length; i++) {
 	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
