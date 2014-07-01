@@ -678,7 +678,7 @@ public class LocalScopeTrigger
     m_LocalStorage   = null;
     m_LocalVariables = null;
     m_Actors.setVariables(getVariables());
-    m_Actors.updateVariables();
+    m_Actors.getOptionManager().updateVariableValues(true);
     
     return super.preExecute();
   }
