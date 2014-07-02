@@ -15,7 +15,7 @@
 
 /**
  * MultiImageOverlay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -109,6 +109,17 @@ public class MultiImageOverlay
    */
   public String overlaysTipText() {
     return "The overlays to apply sequentially to the image.";
+  }
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  @Override
+  protected void doImageChanged(PaintPanel panel) {
+    for (AbstractImageOverlay overlay: m_Overlays)
+      overlay.imageChanged(panel);
   }
 
   /**

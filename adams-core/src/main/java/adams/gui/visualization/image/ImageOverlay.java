@@ -15,7 +15,7 @@
 
 /**
  * ImageOverlay.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -30,6 +30,13 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
  * @version $Revision$
  */
 public interface ImageOverlay {
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel);
 
   /**
    * Paints the overlay over the image.

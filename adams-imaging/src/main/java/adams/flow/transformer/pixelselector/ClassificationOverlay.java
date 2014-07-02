@@ -15,7 +15,7 @@
 
 /**
  * ClassificationOverlay.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
@@ -161,6 +161,14 @@ public class ClassificationOverlay
    */
   public String showLabelTipText() {
     return "If enabled, the classification label is shown as part of the text accompanying the location of the pixel.";
+  }
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel) {
   }
 
   /**

@@ -477,7 +477,9 @@ public class ImagePanel
     /**
      * Updates the image.
      */
-    protected void update() {
+    public void update() {
+      for (ImageOverlay overlay: m_ImageOverlays)
+	overlay.imageChanged(this);
       getOwner().invalidate();
       getOwner().validate();
       repaint();
@@ -1325,6 +1327,7 @@ public class ImagePanel
     m_TableProperties.setOptimalColumnWidth();
     m_TableProperties.sort(0);
     m_TableProperties.getModel().addTableModelListener(this);
+    m_PaintPanel.update();
   }
 
   /**

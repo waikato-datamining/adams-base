@@ -15,7 +15,7 @@
 
 /**
  * NullOverlay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -60,6 +60,15 @@ public class NullOverlay
   @Override
   public String globalInfo() {
     return "Dummy overlay, does nothing.";
+  }
+
+  /**
+   * Does nothing.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  @Override
+  protected void doImageChanged(PaintPanel panel) {
   }
 
   /**

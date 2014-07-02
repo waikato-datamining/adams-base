@@ -15,7 +15,7 @@
 
 /**
  * AbstractImageOverlay.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -81,6 +81,23 @@ public abstract class AbstractImageOverlay
    */
   public String enabledTipText() {
     return "If enabled, this overlay is painted over the image.";
+  }
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  protected abstract void doImageChanged(PaintPanel panel);
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel) {
+    if (m_Enabled)
+      doImageChanged(panel);
   }
 
   /**

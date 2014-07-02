@@ -15,7 +15,7 @@
 
 /**
  * SimpleOverlay.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
@@ -65,6 +65,7 @@ public class SimpleOverlay
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   protected String getGlobalInfo() {
     return "Simply highlights the selected pixel";
   }
@@ -74,6 +75,7 @@ public class SimpleOverlay
    * 
    * @return		the actions
    */
+  @Override
   public Class[] getSuggestedActions() {
     return new Class[]{SimpleSelect.class};
   }
@@ -100,13 +102,22 @@ public class SimpleOverlay
     
     return result;
   }
-  
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel) {
+  }
+
   /**
    * Paints the actual overlay over the image.
    *
    * @param panel	the panel this overlay is for
    * @param g		the graphics context
    */
+  @Override
   protected void doPaintOverlay(PaintPanel panel, Graphics g) {
     Point	loc;
     
