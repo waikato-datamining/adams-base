@@ -500,7 +500,9 @@ public class ImagePanel
      * Removes all image overlays.
      */
     public void clearImageOverlays() {
-      m_ImageOverlays.clear();
+      synchronized (m_ImageOverlays) {
+	m_ImageOverlays.clear();
+      }
       update();
     }
 
@@ -510,7 +512,9 @@ public class ImagePanel
      * @param io	the image overlay to add
      */
     public void addImageOverlay(ImageOverlay io) {
-      m_ImageOverlays.add(io);
+      synchronized (m_ImageOverlays) {
+	m_ImageOverlays.add(io);
+      }
       update();
     }
 
@@ -520,7 +524,9 @@ public class ImagePanel
      * @param io	the image overlay to remove
      */
     public void removeImageOverlay(ImageOverlay io) {
-      m_ImageOverlays.remove(io);
+      synchronized (m_ImageOverlays) {
+	m_ImageOverlays.remove(io);
+      }
       update();
     }
 
@@ -529,7 +535,7 @@ public class ImagePanel
      * 
      * @return		iterator on image overlays
      */
-    public Iterator<ImageOverlay> imageOverlays() {
+    public synchronized Iterator<ImageOverlay> imageOverlays() {
       return m_ImageOverlays.iterator();
     }
     
@@ -608,7 +614,9 @@ public class ImagePanel
         g.drawImage(m_CurrentImage, 0, 0, getOwner().getBackgroundColor(), null);
 
         // overlays
-        overlays = m_ImageOverlays.toArray(new ImageOverlay[m_ImageOverlays.size()]);
+        synchronized (m_ImageOverlays) {
+          overlays = m_ImageOverlays.toArray(new ImageOverlay[m_ImageOverlays.size()]);
+        }
         for (ImageOverlay overlay: overlays)
           overlay.paintOverlay(this, g);
         
