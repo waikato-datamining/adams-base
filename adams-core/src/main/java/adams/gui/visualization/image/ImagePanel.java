@@ -478,8 +478,10 @@ public class ImagePanel
      * Updates the image.
      */
     public void update() {
-      for (ImageOverlay overlay: m_ImageOverlays)
-	overlay.imageChanged(this);
+      synchronized(m_ImageOverlays) {
+	for (ImageOverlay overlay: m_ImageOverlays)
+	  overlay.imageChanged(this);
+      }
       getOwner().invalidate();
       getOwner().validate();
       repaint();
