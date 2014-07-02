@@ -117,7 +117,7 @@ public class MultiImageOverlay
    * @param panel	the panel this overlay belongs to
    */
   @Override
-  protected void doImageChanged(PaintPanel panel) {
+  protected synchronized void doImageChanged(PaintPanel panel) {
     for (AbstractImageOverlay overlay: m_Overlays)
       overlay.imageChanged(panel);
   }
@@ -129,7 +129,7 @@ public class MultiImageOverlay
    * @param g		the graphics context
    */
   @Override
-  protected void doPaintOverlay(PaintPanel panel, Graphics g) {
+  protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
     for (AbstractImageOverlay overlay: m_Overlays)
       overlay.paintOverlay(panel, g);
   }
