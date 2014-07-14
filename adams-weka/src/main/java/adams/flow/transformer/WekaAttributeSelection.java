@@ -15,7 +15,7 @@
 
 /*
  * WekaAttributeSelection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -360,6 +360,7 @@ public class WekaAttributeSelection
     double[][]				ranked;
     Range 				range;
     String				rangeStr;
+    boolean				useReduced;
 
     result = null;
 
@@ -418,11 +419,30 @@ public class WekaAttributeSelection
 	if (!crossValidate) {
 	  stats = new SpreadSheet();
 	  row   = stats.getHeaderRow();
-	  for (i = 0; i < data.numAttributes(); i++)
-	    row.addCell("" + i).setContent(data.attribute(i).name());
-	  row = stats.addRow();
-	  for (i = 0; i < data.numAttributes(); i++)
-	    row.addCell(i).setContent(0.0);
+	  
+	  useReduced = false;
+	  if (m_Search instanceof RankedOutputSearch) {
+	    i = reduced.numAttributes();
+	    if (reduced.classIndex() > -1)
+	      i--;
+	    ranked = eval.rankedAttributes();
+	    useReduced = (ranked.length == i);
+	  }
+	  
+	  if (useReduced) {
+	    for (i = 0; i < reduced.numAttributes(); i++)
+	      row.addCell("" + i).setContent(reduced.attribute(i).name());
+	    row = stats.addRow();
+	    for (i = 0; i < reduced.numAttributes(); i++)
+	      row.addCell(i).setContent(0.0);
+	  }
+	  else {
+	    for (i = 0; i < data.numAttributes(); i++)
+	      row.addCell("" + i).setContent(data.attribute(i).name());
+	    row = stats.addRow();
+	    for (i = 0; i < data.numAttributes(); i++)
+	      row.addCell(i).setContent(0.0);
+	  }
 	  
 	  if (m_Search instanceof RankedOutputSearch) {
 	    ranked = eval.rankedAttributes();
