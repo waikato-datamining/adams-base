@@ -15,7 +15,7 @@
 
 /**
  * LinePlot.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -281,6 +281,7 @@ public class LinePlot
     SequencePlotter		plotter;
     SimplePlotUpdater		updater;
     AxisPanelOptions		axis;
+    int[]			indices;
 
     m_XColumn.setData(sheet);
     m_YColumns.setData(sheet);
@@ -308,20 +309,21 @@ public class LinePlot
     plotter.setHeight(m_Height);
 
     axis = plotter.getAxisX();
-    axis.setLabel("X");
+    axis.setLabel(sheet.getColumnName(m_XColumn.getIntIndex()));
     axis.setNthValueToShow(1);
     axis.setTickGenerator(columnTypeToTickGenerator(sheet, m_XColumn.getIntIndex()));
     axis.setType(columnTypeToAxisType(sheet, m_XColumn.getIntIndex()));
     axis.setCustomFormat(new DecimalFormatString("0.0"));
     plotter.setAxisX(axis);
     
+    indices = m_YColumns.getIntIndices();
     axis = plotter.getAxisY();
-    axis.setLabel("Y");
+    axis.setLabel((indices.length == 1) ? sheet.getColumnName(indices[0]) : "Y");
     axis.setNthValueToShow(1);
-    axis.setTickGenerator(columnTypesToTickGenerator(sheet, m_YColumns.getIntIndices()));
-    axis.setType(columnTypesToAxisType(sheet, m_YColumns.getIntIndices()));
+    axis.setTickGenerator(columnTypesToTickGenerator(sheet, indices));
+    axis.setType(columnTypesToAxisType(sheet, indices));
     axis.setCustomFormat(new DecimalFormatString("0.0"));
-    plotter.setAxisX(axis);
+    plotter.setAxisY(axis);
 
     flow.add(plotter);
   }
