@@ -174,7 +174,6 @@ public class LoadBalancer
       m_LocalVariables = vars;
       m_LocalStorage   = storage;
       m_Actor.setVariables(vars);
-      m_Actor.getOptionManager().updateVariablesInstance(vars);
     }
 
     /**
@@ -308,6 +307,17 @@ public class LoadBalancer
       else
 	return new Class[0];
     }
+    
+    /**
+     * Initializes the sub-actors for flow execution.
+     *
+     * @return		null if everything is fine, otherwise error message
+     */
+    @Override
+    public String setUp() {
+      m_Actor.getOptionManager().updateVariableValues(true);
+      return super.setUp();
+    }
 
     /**
      * The method that accepts the input token and then processes it.
@@ -333,7 +343,6 @@ public class LoadBalancer
     protected String doExecute() {
       String	result;
       
-      m_Actor.getOptionManager().updateVariableValues(true);
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().preExecute(m_Actor);
       result = m_Actor.execute();
@@ -791,23 +800,12 @@ public class LoadBalancer
    */
   protected String setUpLoadActors() {
     String			result;
-    Sequence			actor;
     Hashtable<String,Integer>	count;
 
-    actor = (Sequence) m_Actors.shallowCopy(true);
-    actor.setAllowStandalones(true);
-    actor.setName(getName());
-    actor.setParent(null);
-    actor.setParent(getParent());
-    result = actor.setUp();
-    if (result != null)
-      result = "Failed to setUp() load-actors: " + result;
-    actor.destroy();
-    if (result == null) {
-      count = ActorUtils.findCallableTransformers(m_Actors);
-      if (count.size() > 0)
-	result = "Load-actors contain callable transformers, no load-balancing possible: " + count.keySet();
-    }
+    result = null;
+    count  = ActorUtils.findCallableTransformers(m_Actors);
+    if (count.size() > 0)
+      result = "Load-actors contain callable transformers, no load-balancing possible: " + count.keySet();
 
     return result;
   }
