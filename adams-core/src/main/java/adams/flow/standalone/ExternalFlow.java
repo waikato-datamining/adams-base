@@ -208,24 +208,6 @@ public class ExternalFlow
   }
 
   /**
-   * Ignored.
-   *
-   * @param value	ignored
-   */
-  @Override
-  public synchronized void setVariables(Variables value) {
-  }
-  
-  /**
-   * Ignored.
-   *
-   * @param value	ignored
-   */
-  @Override
-  protected void forceVariables(Variables value) {
-  }
-
-  /**
    * Gets triggered when a variable changed (added, modified, removed).
    *
    * @param e		the event
