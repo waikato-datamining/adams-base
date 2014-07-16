@@ -15,7 +15,7 @@
 
 /*
  * AbstractConnectedControlActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -73,14 +73,14 @@ public abstract class AbstractConnectedControlActor
     int			i;
     AbstractActor	curr;
     AbstractActor	prev;
-    boolean		singletons;
+    boolean		standalones;
     ActorHandlerInfo	info;
 
     result     = null;
     curr       = null;
     prev       = null;
     info       = getActorHandlerInfo();
-    singletons = info.canContainStandalones();   // singletons are only allowed at start (if group allows them at all)
+    standalones = info.canContainStandalones();   // standalones are only allowed at start (if group allows them at all)
     for (i = 0; i < size(); i++) {
       if ((curr != null) && (!curr.getSkip()))
 	prev = curr;
@@ -91,13 +91,13 @@ public abstract class AbstractConnectedControlActor
       if (isLoggingEnabled())
 	getLogger().fine(getFullName() + ".checkConnections/" + i + ": curr=" + curr.getFullName() + ", prev=" + ((prev == null) ? "-null-" : prev.getFullName()));
 
-      // all singletons have to be at start!
-      if (singletons) {
-	// no more singletons allowed
+      // all standalones have to be at start!
+      if (standalones) {
+	// no more standalones allowed
 	if ((curr instanceof InputConsumer) || (curr instanceof OutputProducer)) {
-	  singletons = false;
+	  standalones = false;
 	  if (!(curr instanceof OutputProducer) && (i < size() - 1)) {
-	    result =   "First non-singleton actor has to be a '" + OutputProducer.class.getName() + "'. "
+	    result =   "First non-standalone actor has to be a '" + OutputProducer.class.getName() + "'. "
      	             + "'" + curr.getFullName() + "' isn't one!";
 	    break;
 	  }
@@ -107,16 +107,16 @@ public abstract class AbstractConnectedControlActor
       else {
 	if (!(curr instanceof InputConsumer) && !(curr instanceof OutputProducer)) {
 	  if (info.canContainStandalones())
-	    result =   "The singleton '" + curr.getFullName() + "' "
+	    result =   "The standalone '" + curr.getFullName() + "' "
 	             + "has to be listed before all other types of actors!";
 	  else
-	    result = "No singletons allowed!";
+	    result = "No standalones allowed!";
 	  break;
 	}
       }
 
       // are connections compatible?
-      if ((prev != null) && !singletons) {
+      if ((prev != null) && !standalones) {
 	if ((prev instanceof OutputProducer) && (curr instanceof InputConsumer)) {
 	  if (!m_Compatibility.isCompatible((OutputProducer) prev, (InputConsumer) curr)) {
 	    result =   "Actor '" + prev.getFullName() + "' "
