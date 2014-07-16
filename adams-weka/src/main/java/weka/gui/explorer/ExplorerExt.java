@@ -634,6 +634,15 @@ public class ExplorerExt
       saveAs();
       return;
     }
+    else {
+      try {
+	saver.setFile(m_CurrentFile);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to save data to file '" + m_CurrentFile + "':\n" + e);
+	e.printStackTrace();
+      }
+    }
     
     getPreprocessPanel().saveInstancesToFile(saver, getPreprocessPanel().getInstances());
   }
@@ -644,6 +653,8 @@ public class ExplorerExt
   public void saveAs() {
     getPreprocessPanel().saveWorkingInstancesToFileQ();
     m_CurrentFile = m_FileChooser.getSelectedFile();
+    if (m_RecentFilesHandler != null)
+      m_RecentFilesHandler.addRecentItem(m_CurrentFile);
   }
 
   /**
