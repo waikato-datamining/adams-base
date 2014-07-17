@@ -15,12 +15,14 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -42,15 +44,19 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import adams.core.Utils;
+import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.core.axis.AbsoluteAxisModel;
 import adams.gui.visualization.core.axis.AbstractAxisModel;
 import adams.gui.visualization.core.axis.Direction;
@@ -68,7 +74,7 @@ import adams.gui.visualization.core.axis.Visibility;
  * @version $Revision$
  */
 public class AxisPanel
-  extends JPanel {
+  extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = 5811111621680835988L;
@@ -731,6 +737,59 @@ public class AxisPanel
   }
 
   /**
+   * Pops up a dialog letting the user choose the range (min/max) for the
+   * axis.
+   */
+  public void selectRange() {
+    ApprovalDialog	dialog;
+    ParameterPanel	panel;
+    final JTextField	textMin;
+    final JTextField	textMax;
+    double		min;
+    double		max;
+
+    panel = new ParameterPanel();
+    textMin = new JTextField(10);
+    textMin.setText(Utils.doubleToString(getMinimum(), 8));
+    panel.addParameter("Minimum", textMin);
+    textMax = new JTextField(10);
+    textMax.setText(Utils.doubleToString(getMaximum(), 8));
+    panel.addParameter("Maximum", textMax);
+    
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setTitle("Select range for " + getAxisName());
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setCancelVisible(true);
+    dialog.setApproveVisible(true);
+    dialog.setDiscardVisible(false);
+    dialog.pack();
+    dialog.setLocationRelativeTo(getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+    
+    try {
+      min = Double.parseDouble(textMin.getText());
+      max = Double.parseDouble(textMax.getText());
+      if (!getAxisModel().canHandle(min, max))
+	throw new Exception("Cannot handle range!");
+      setMinimum(min);
+      setMaximum(max);
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	  getParent(), 
+	  "Failed to parse/set range parameters:\n"
+	  + textMin.getText() + "\n" 
+	  + textMax.getText() + "\n" 
+	  + Utils.throwableToString(e));
+    }
+  }
+
+  /**
    * Sets the class to customize the right-click popup menu.
    *
    * @param value	the customizer
@@ -821,6 +880,16 @@ public class AxisPanel
       });
       result.add(item);
     }
+    
+    // range
+    item = new JMenuItem("Range...");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	selectRange();
+      }
+    });
+    result.add(item);
     
     // customize it?
     if (m_PopupMenuCustomizer != null)
