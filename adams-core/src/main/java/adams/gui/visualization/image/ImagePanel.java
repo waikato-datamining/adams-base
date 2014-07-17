@@ -482,6 +482,10 @@ public class ImagePanel
 	for (ImageOverlay overlay: m_ImageOverlays)
 	  overlay.imageChanged(this);
       }
+      synchronized(m_SelectionListeners) {
+	for (ImagePanelSelectionListener l: m_SelectionListeners)
+	  l.imageChanged(this);
+      }
       getOwner().invalidate();
       getOwner().validate();
       repaint();

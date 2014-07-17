@@ -15,7 +15,7 @@
 
 /*
  * ImagePanelSelectionListener.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.event;
@@ -23,6 +23,7 @@ package adams.gui.event;
 import java.util.EventListener;
 
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  * Interface for listening for selection events in the {@link ImagePanel}.
@@ -32,6 +33,13 @@ import adams.gui.visualization.image.ImagePanel;
  */
 public interface ImagePanelSelectionListener
   extends EventListener {
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel);
 
   /**
    * Invoked when a selection happened in a {@link ImagePanel}.

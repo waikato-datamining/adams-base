@@ -15,7 +15,7 @@
 
 /**
  * AbstractSelectionProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
@@ -27,6 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.event.ImagePanelSelectionEvent;
 import adams.gui.event.ImagePanelSelectionListener;
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  * Ancestor for classes that react to selection in an image.
@@ -40,6 +41,24 @@ public abstract class AbstractSelectionProcessor
 
   /** for serialization. */
   private static final long serialVersionUID = 3515366296579391750L;
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  protected void doImageChanged(PaintPanel panel) {
+    reset();
+  }
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  public void imageChanged(PaintPanel panel) {
+    doImageChanged(panel);
+  }
 
   /**
    * Process the selection that occurred in the image panel.
