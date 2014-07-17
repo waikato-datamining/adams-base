@@ -15,13 +15,14 @@
 
 /**
  * MultiSelectionProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
 import java.awt.Point;
 
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  <!-- globalinfo-start -->
@@ -105,6 +106,18 @@ public class MultiSelectionProcessor
    */
   public String processorsTipText() {
     return "The sub-processors to apply sequentially to the selection.";
+  }
+
+  /**
+   * Notifies the overlay that the image has changed.
+   *
+   * @param panel	the panel this overlay belongs to
+   */
+  @Override
+  protected void doImageChanged(PaintPanel panel) {
+    super.doImageChanged(panel);
+    for (AbstractSelectionProcessor processor: m_Processors)
+      processor.imageChanged(panel);
   }
 
   /**
