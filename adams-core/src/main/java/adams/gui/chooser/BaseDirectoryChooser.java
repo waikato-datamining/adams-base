@@ -15,15 +15,22 @@
 
 /*
  * BaseDirectoryChooser.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
@@ -41,13 +48,17 @@ import com.jidesoft.swing.FolderChooser;
  *
  * @author FracPete (fracpete at waikat dot ac dot nz)
  */
-public class BaseDirectoryChooser extends FolderChooser {
+public class BaseDirectoryChooser
+  extends FolderChooser {
 
   /** for serialization. */
   private static final long serialVersionUID = -7252242971482953986L;
   
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
+
+  /** the button for showing/hiding the bookmarks. */
+  protected JButton m_ButtonBookmarks;
 
   /**
    * Creates a BaseDirectoryChooser pointing to the user's home directory.
@@ -120,11 +131,11 @@ public class BaseDirectoryChooser extends FolderChooser {
     
     setRecentListVisible(false);
    
-    if (GUIHelper.getBoolean("BaseDirectoryChooser.ShowBookmarks", false)) {
-      accessory = createAccessoryPanel();
-      if (accessory != null)
-	setAccessory(accessory);
-    }
+    accessory = createAccessoryPanel();
+    if (accessory != null)
+      setAccessory(accessory);
+    
+    showBookmarks(GUIHelper.getBoolean("BaseDirectoryChooser.ShowBookmarks", false));
   }
 
   /**
@@ -133,12 +144,50 @@ public class BaseDirectoryChooser extends FolderChooser {
    * @return		the panel or null if none available
    */
   protected JComponent createAccessoryPanel() {
+    JPanel	result;
+    JPanel	panel;
+    
+    result = new JPanel(new BorderLayout());
+    
+    m_ButtonBookmarks = new JButton(GUIHelper.getIcon("arrow-head-up.png"));
+    m_ButtonBookmarks.setBorder(BorderFactory.createEmptyBorder());
+    m_ButtonBookmarks.setPreferredSize(new Dimension(18, 18));
+    m_ButtonBookmarks.setBorderPainted(false);
+    m_ButtonBookmarks.setContentAreaFilled(false);
+    m_ButtonBookmarks.setFocusPainted(false);
+    m_ButtonBookmarks.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	showBookmarks(!m_PanelBookmarks.isVisible());
+      }
+    });
+    
+    panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    panel.add(m_ButtonBookmarks);
+    result.add(panel, BorderLayout.NORTH);
+    
     m_PanelBookmarks = new FileChooserBookmarksPanel();
     m_PanelBookmarks.setOwner(this);
     m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
-    return m_PanelBookmarks;
+    
+    result.add(m_PanelBookmarks, BorderLayout.CENTER);
+    
+    return result;
   }
 
+  /**
+   * Either displays or hides the bookmarks.
+   * 
+   * @param value	true if to show bookmarks
+   */
+  protected void showBookmarks(boolean value) {
+    m_PanelBookmarks.setVisible(value);
+    if (m_PanelBookmarks.isVisible())
+      m_ButtonBookmarks.setIcon(GUIHelper.getIcon("arrow-head-up.png"));
+    else
+      m_ButtonBookmarks.setIcon(GUIHelper.getIcon("arrow-head-down.png"));
+  }
+  
   /**
    * Does nothing.
    *
