@@ -15,7 +15,7 @@
 
 /**
  * SqlDumpSpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -30,6 +30,8 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 
 import adams.core.Utils;
+import adams.data.io.output.SpreadSheetWriter;
+import adams.data.io.output.SqlDumpSpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -407,6 +409,15 @@ public class SqlDumpSpreadSheetReader
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"sql"};
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new SqlDumpSpreadSheetWriter();
   }
 
   /**

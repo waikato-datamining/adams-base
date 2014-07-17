@@ -15,7 +15,7 @@
 
 /**
  * GnumericSpreadSheetWriter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -28,6 +28,8 @@ import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseDateTime;
 import adams.core.net.HtmlUtils;
+import adams.data.io.input.GnumericSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -205,6 +207,15 @@ public class GnumericSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"gnumeric"};
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new GnumericSpreadSheetReader();
   }
 
   /**

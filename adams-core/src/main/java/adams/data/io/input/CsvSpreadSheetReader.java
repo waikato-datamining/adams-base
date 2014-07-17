@@ -15,7 +15,7 @@
 
 /**
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -44,6 +44,8 @@ import adams.core.base.BaseCharset;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -1540,6 +1542,15 @@ public class CsvSpreadSheetReader
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"csv", "csv.gz"};
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new CsvSpreadSheetWriter();
   }
 
   /**

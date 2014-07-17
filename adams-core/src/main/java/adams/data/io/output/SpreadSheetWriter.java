@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import adams.core.option.OptionHandler;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -49,6 +50,13 @@ public interface SpreadSheetWriter
    * @return 			the extension (without the dot!)
    */
   public String[] getFormatExtensions();
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public abstract SpreadSheetReader getCorrespondingReader();
 
   /**
    * Resets the writer.

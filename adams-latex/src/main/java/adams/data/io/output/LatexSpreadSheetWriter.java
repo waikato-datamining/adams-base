@@ -15,13 +15,14 @@
 
 /**
  * LatexSpreadSheetWriter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
 import java.io.Writer;
 import java.util.logging.Level;
 
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
@@ -93,6 +94,15 @@ public class LatexSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"tex"};
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return null;
   }
 
   /**

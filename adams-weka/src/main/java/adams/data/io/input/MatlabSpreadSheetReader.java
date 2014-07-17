@@ -15,12 +15,14 @@
 
 /**
  * MatlabSpreadSheetReader.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.MatlabLoader;
+import adams.data.io.output.MatlabSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -67,6 +69,15 @@ public class MatlabSpreadSheetReader
   @Override
   public String globalInfo() {
     return "Reads WEKA datasets in Matlab ASCII format (containing single matrix) and turns them into spreadsheets.";
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new MatlabSpreadSheetWriter();
   }
 
   /**

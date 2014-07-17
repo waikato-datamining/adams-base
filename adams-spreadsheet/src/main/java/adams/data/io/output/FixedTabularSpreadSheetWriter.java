@@ -27,6 +27,7 @@ import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.data.DateFormatString;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -162,6 +163,15 @@ public class FixedTabularSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"txt"};
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return null;
   }
 
   /**

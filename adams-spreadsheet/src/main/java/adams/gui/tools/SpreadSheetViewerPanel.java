@@ -882,13 +882,25 @@ public class SpreadSheetViewerPanel
    */
   public void write(SpreadSheetWriter writer, File file) {
     SpreadSheetTable	table;
+    SpreadSheetPanel	panel;
+    int			index;
+    SpreadSheet		sheet;
 
-    table = m_TabbedPane.getCurrentTable();
+    index = m_TabbedPane.getSelectedIndex();
+    if (index == -1)
+      return;
+    panel = m_TabbedPane.getPanelAt(index);
+    if (panel == null)
+      return;
+    table = panel.getTable();
     if (table == null)
       return;
 
-    if (!writer.write(table.toSpreadSheet(), file))
+    sheet = table.toSpreadSheet();
+    if (!writer.write(sheet, file))
       GUIHelper.showErrorMessage(this, "Failed to write spreadsheet to '" + file + "'!");
+    else
+      m_TabbedPane.setTitleAt(index, m_TabbedPane.createTabTitle(file, sheet));
   }
 
   /**
@@ -904,6 +916,8 @@ public class SpreadSheetViewerPanel
 
     file = m_FileChooser.getSelectedPlaceholderFile();
     write(m_FileChooser.getWriter(), file);
+    if ((m_RecentFilesHandler != null) && (m_FileChooser.getWriter().getCorrespondingReader() != null))
+      m_RecentFilesHandler.addRecentItem(new Setup(file, m_FileChooser.getWriter().getCorrespondingReader()));
   }
 
   /**

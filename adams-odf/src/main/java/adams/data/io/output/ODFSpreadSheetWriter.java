@@ -15,7 +15,7 @@
 
 /**
  * ODFSpreadSheetWriter.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -28,6 +28,8 @@ import javax.swing.table.TableModel;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.data.io.input.ODFSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -122,6 +124,15 @@ public class ODFSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"ods"};
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new ODFSpreadSheetReader();
   }
 
   /**

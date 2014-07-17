@@ -15,12 +15,14 @@
 
 /**
  * XrffSpreadSheetWriter.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.XRFFSaver;
+import adams.data.io.input.SpreadSheetReader;
+import adams.data.io.input.XrffSpreadSheetReader;
 
 /**
  <!-- globalinfo-start -->
@@ -57,6 +59,15 @@ public class XrffSpreadSheetWriter
   @Override
   public String globalInfo() {
     return "Writes a spreadsheet in XRFF file format.";
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new XrffSpreadSheetReader();
   }
 
   /**

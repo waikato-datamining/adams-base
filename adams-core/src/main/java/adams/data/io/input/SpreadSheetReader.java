@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -26,6 +26,7 @@ import java.io.Reader;
 import adams.core.Stoppable;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.DataRowType;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -60,6 +61,13 @@ public interface SpreadSheetReader
    */
   public abstract String getDefaultFormatExtension();
 
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public abstract SpreadSheetWriter getCorrespondingWriter();
+  
   /**
    * Sets the type of data row to use.
    *

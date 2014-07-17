@@ -27,6 +27,8 @@ import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.data.DateFormatString;
+import adams.data.io.input.CsvSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
@@ -770,6 +772,15 @@ public class CsvSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"csv", "csv.gz"};
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new CsvSpreadSheetReader();
   }
 
   /**

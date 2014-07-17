@@ -15,7 +15,7 @@
 
 /**
  * GnumericSpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 
 import adams.core.Utils;
 import adams.data.io.output.GnumericSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -163,6 +164,15 @@ public class GnumericSpreadSheetReader
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"gnumeric"};
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new GnumericSpreadSheetWriter();
   }
 
   /**

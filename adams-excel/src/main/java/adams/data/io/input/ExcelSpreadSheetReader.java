@@ -15,7 +15,7 @@
 
 /**
  * ExcelSpreadSheetReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -35,6 +35,8 @@ import adams.core.DateFormat;
 import adams.core.DateTime;
 import adams.core.DateUtils;
 import adams.core.Utils;
+import adams.data.io.output.ExcelSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -124,6 +126,15 @@ public class ExcelSpreadSheetReader
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"xls", "xlsx"};
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new ExcelSpreadSheetWriter();
   }
 
   /**

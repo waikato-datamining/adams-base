@@ -15,12 +15,14 @@
 
 /**
  * LibSVMSpreadSheetWriter.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.LibSVMSaver;
+import adams.data.io.input.LibSVMSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 
 /**
  <!-- globalinfo-start -->
@@ -57,6 +59,15 @@ public class LibSVMSpreadSheetWriter
   @Override
   public String globalInfo() {
     return "Writes a spreadsheet in LibSVM file format.";
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new LibSVMSpreadSheetReader();
   }
 
   /**

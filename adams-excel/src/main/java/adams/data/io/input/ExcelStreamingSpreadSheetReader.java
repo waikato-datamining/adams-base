@@ -15,7 +15,7 @@
 
 /**
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -54,6 +54,8 @@ import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseString;
 import adams.core.logging.LoggingHelper;
+import adams.data.io.output.ExcelStreamingSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
@@ -584,6 +586,15 @@ public class ExcelStreamingSpreadSheetReader
   @Override
   public String[] getFormatExtensions() {
     return new String[]{"xlsx"};
+  }
+
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  public SpreadSheetWriter getCorrespondingWriter() {
+    return new ExcelStreamingSpreadSheetWriter();
   }
 
   /**

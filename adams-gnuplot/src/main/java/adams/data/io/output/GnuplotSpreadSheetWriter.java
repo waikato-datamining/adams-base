@@ -15,7 +15,7 @@
 
 /**
  * GnuplotSpreadSheetWriter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.data.io.input.GnuplotSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
@@ -178,6 +179,15 @@ public class GnuplotSpreadSheetWriter
   @Override
   public String[] getFormatExtensions() {
     return new GnuplotSpreadSheetReader().getFormatExtensions();
+  }
+
+  /**
+   * Returns, if available, the corresponding reader.
+   * 
+   * @return		the reader, null if none available
+   */
+  public SpreadSheetReader getCorrespondingReader() {
+    return new GnuplotSpreadSheetReader();
   }
 
   /**

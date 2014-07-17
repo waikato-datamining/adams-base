@@ -379,7 +379,7 @@ public class TabbedPane
    * @return		the create panel
    */
   public SpreadSheetPanel addTab(File file, SpreadSheet sheet) {
-    return addTab(file.getName() + (sheet.getName() != null ? "/" + sheet.getName() : ""), sheet);
+    return addTab(createTabTitle(file, sheet), sheet);
   }
   
   /**
@@ -401,6 +401,17 @@ public class TabbedPane
     setSelectedIndex(getTabCount() - 1);
     
     return result;
+  }
+  
+  /**
+   * Creates a tab title.
+   * 
+   * @param file	the file name to use
+   * @param sheet	the sheet loaded from the file
+   * @return		the generated filename
+   */
+  public String createTabTitle(File file, SpreadSheet sheet) {
+    return file.getName() + (sheet.getName() != null ? "/" + sheet.getName() : "");
   }
   
   /**
