@@ -672,7 +672,9 @@ public class ImagePanel
      * @param l		the listener to add
      */
     public void addSelectionListener(ImagePanelSelectionListener l) {
-      m_SelectionListeners.add(l);
+      synchronized(m_SelectionListeners) {
+	m_SelectionListeners.add(l);
+      }
     }
 
     /**
@@ -681,7 +683,9 @@ public class ImagePanel
      * @param l		the listener to remove
      */
     public void removeSelectionListener(ImagePanelSelectionListener l) {
-      m_SelectionListeners.remove(l);
+      synchronized(m_SelectionListeners) {
+	m_SelectionListeners.remove(l);
+      }
     }
 
     /**
@@ -696,10 +700,12 @@ public class ImagePanel
       Iterator<ImagePanelSelectionListener>	iter;
       ImagePanelSelectionEvent			e;
 
-      e    = new ImagePanelSelectionEvent(getOwner(), topLeft, bottomRight, modifiersEx);
-      iter = m_SelectionListeners.iterator();
-      while (iter.hasNext())
-        iter.next().selected(e);
+      synchronized(m_SelectionListeners) {
+	e    = new ImagePanelSelectionEvent(getOwner(), topLeft, bottomRight, modifiersEx);
+	iter = m_SelectionListeners.iterator();
+	while (iter.hasNext())
+	  iter.next().selected(e);
+      }
     }
   }
 
