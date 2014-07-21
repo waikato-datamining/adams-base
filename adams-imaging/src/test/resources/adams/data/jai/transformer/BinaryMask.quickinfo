@@ -1,0 +1,1 @@
+threshold: 128, type: REPLACE_WHITE_PIXELS, color: #ffffff
