@@ -778,6 +778,7 @@ public class AxisPanel
 	throw new Exception("Cannot handle range!");
       setMinimum(min);
       setMaximum(max);
+      clearZoom();
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
