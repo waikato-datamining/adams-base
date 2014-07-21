@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import weka.core.Instances;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
@@ -92,6 +93,7 @@ public class FixedClassifierErrorsPlot
 	plot.getPlot().getAxis(Axis.BOTTOM).setAxisName("Actual");;
 	// create plot data
 	SequencePlotSequence seq = new SequencePlotSequence();
+	seq.setComparison(Comparison.X_AND_Y);
 	seq.setID("Act vs Pred");
 	for (int i = 0; i < predInst.numInstances(); i++) {
 	  double actual = predInst.instance(i).value(predInst.classIndex());
