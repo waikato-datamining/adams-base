@@ -514,6 +514,24 @@ public class AxisPanel
   }
 
   /**
+   * Sets the manual minimum to display on the axis.
+   *
+   * @param value	the minimum value, null to unset
+   */
+  public void setManualMinimum(Double value) {
+    m_Model.setManualMinimum(value);
+  }
+
+  /**
+   * Returns the currently set manual minimum on the axis.
+   *
+   * @return		the minimum value, null if none set
+   */
+  public Double getManualMinimum() {
+    return m_Model.getManualMinimum();
+  }
+
+  /**
    * Returns the actual minimum on the axis (incl zoom/panning).
    *
    * @return		the actual minimum value
@@ -538,6 +556,24 @@ public class AxisPanel
    */
   public double getMaximum() {
     return m_Model.getMaximum();
+  }
+
+  /**
+   * Sets the manual maximum to display on the axis.
+   *
+   * @param value	the maximum value, null to unset
+   */
+  public void setManualMaximum(Double value) {
+    m_Model.setManualMaximum(value);
+  }
+
+  /**
+   * Returns the currently set manual maximum on the axis.
+   *
+   * @return		the manual maximum value, null if none set
+   */
+  public Double getManualMaximum() {
+    return m_Model.getManualMaximum();
   }
 
   /**
@@ -776,9 +812,10 @@ public class AxisPanel
       max = Double.parseDouble(textMax.getText());
       if (!getAxisModel().canHandle(min, max))
 	throw new Exception("Cannot handle range!");
-      setMinimum(min);
-      setMaximum(max);
+      setManualMinimum(min);
+      setManualMaximum(max);
       clearZoom();
+      clearPanning();
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
@@ -788,6 +825,16 @@ public class AxisPanel
 	  + textMax.getText() + "\n" 
 	  + Utils.throwableToString(e));
     }
+  }
+
+  /**
+   * Resets any manually set range for the axis.
+   */
+  public void resetRange() {
+    setManualMinimum(null);
+    setManualMaximum(null);
+    clearZoom();
+    clearPanning();
   }
 
   /**
@@ -888,6 +935,16 @@ public class AxisPanel
       @Override
       public void actionPerformed(ActionEvent e) {
 	selectRange();
+      }
+    });
+    result.add(item);
+    
+    // reset range
+    item = new JMenuItem("Reset range");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	resetRange();
       }
     });
     result.add(item);

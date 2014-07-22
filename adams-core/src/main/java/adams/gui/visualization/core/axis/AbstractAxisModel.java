@@ -15,7 +15,7 @@
 
 /*
  * AbstractAxisModel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -82,6 +82,12 @@ public abstract class AbstractAxisModel
 
   /** every nth value to display. */
   protected int m_NthValueToShow;
+
+  /** the manual minimum. */
+  protected Double m_ManualMinimum;
+
+  /** the manual maximum. */
+  protected Double m_ManualMaximum;
 
   /**
    * Initializes the model.
@@ -165,6 +171,26 @@ public abstract class AbstractAxisModel
   }
 
   /**
+   * Sets the manual minimum to display on the axis.
+   *
+   * @param value	the minimum value, null to unset
+   */
+  public void setManualMinimum(Double value) {
+    m_ManualMinimum = value;
+    invalidate();
+    update();
+  }
+
+  /**
+   * Returns the currently set manual minimum on the axis.
+   *
+   * @return		the minimum value, null if none set
+   */
+  public Double getManualMinimum() {
+    return m_ManualMinimum;
+  }
+
+  /**
    * Returns the actual minimum on the axis.
    *
    * @return		the actual minimum
@@ -192,6 +218,26 @@ public abstract class AbstractAxisModel
    */
   public double getMaximum() {
     return m_Maximum;
+  }
+
+  /**
+   * Sets the manual maximum to display on the axis.
+   *
+   * @param value	the maximum value, null to unset
+   */
+  public void setManualMaximum(Double value) {
+    m_ManualMaximum = value;
+    invalidate();
+    update();
+  }
+
+  /**
+   * Returns the currently set manual maximum on the axis.
+   *
+   * @return		the manual maximum value, null if none set
+   */
+  public Double getManualMaximum() {
+    return m_ManualMaximum;
   }
 
   /**
@@ -532,8 +578,14 @@ public abstract class AbstractAxisModel
       max = m_ZoomHandler.peek().getMaximum();
     }
     else {
-      min = m_Minimum;
-      max = m_Maximum;
+      if (m_ManualMinimum != null)
+	min = m_ManualMinimum;
+      else
+	min = m_Minimum;
+      if (m_ManualMaximum != null)
+	max = m_ManualMaximum;
+      else
+	max = m_Maximum;
     }
 
     if (getParent().getLength() == 0)
