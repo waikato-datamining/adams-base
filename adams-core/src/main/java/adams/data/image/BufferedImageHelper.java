@@ -112,6 +112,22 @@ public class BufferedImageHelper {
   }
 
   /**
+   * Returns all the pixels of the image as an int array (row-wise).
+   *
+   * @param img		the image to get the pixels from
+   * @return		the pixel array
+   * @see		BufferedImage#getRGB(int, int)
+   */
+  public static IntArrayMatrixView getPixelMatrix(BufferedImage img) {
+    int[]	data;
+    
+    data = new int[img.getWidth() * img.getHeight()];
+    img.getRGB(0, 0, img.getWidth(), img.getHeight(), data, 0, img.getWidth());
+    
+    return new IntArrayMatrixView(data, img.getWidth(), img.getHeight());
+  }
+
+  /**
    * Splits the RGBA value into R,G,B,A.
    * 
    * @param pixel	the RGB value to split
