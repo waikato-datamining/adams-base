@@ -43,6 +43,13 @@ public abstract class AbstractXYSequencePointHitDetector
   protected XYSequencePaintlet m_Owner;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public AbstractXYSequencePointHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the paintlet that uses this detector

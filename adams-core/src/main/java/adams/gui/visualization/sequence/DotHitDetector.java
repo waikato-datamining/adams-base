@@ -44,6 +44,13 @@ public class DotHitDetector
   private static final long serialVersionUID = -3363546923840405674L;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public DotHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the paintlet that uses this detector

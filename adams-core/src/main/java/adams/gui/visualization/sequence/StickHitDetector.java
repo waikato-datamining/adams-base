@@ -45,6 +45,13 @@ public class StickHitDetector
   private static final long serialVersionUID = -6333044496555537078L;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public StickHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the panel that uses this detector

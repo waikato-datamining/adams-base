@@ -41,9 +41,11 @@ import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.CrossHitDetector;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 
@@ -89,6 +91,9 @@ public class FixedClassifierErrorsPlot
 	plot.setOverlayPaintlet(overlay);
 	FancyTickGenerator tick = new FancyTickGenerator();
 	tick.setNumTicks(10);
+	ViewDataClickAction action = new ViewDataClickAction();
+	action.setHitDetector(new CrossHitDetector());
+	plot.setMouseClickAction(action);
 	plot.getPlot().getAxis(Axis.LEFT).setTickGenerator(tick.shallowCopy());
 	plot.getPlot().getAxis(Axis.LEFT).setNumberFormat("0.0");
 	plot.getPlot().getAxis(Axis.LEFT).setNthValueToShow(2);
@@ -112,16 +117,18 @@ public class FixedClassifierErrorsPlot
 	    for (int n = 0; n < predInst.numAttributes(); n++) {
 	      if ((n == predInst.classIndex()) || (n == predInst.classIndex() - 1))
 		continue;
+	      String name = "Att-" + predInst.attribute(n).name();
+	      int type = predInst.attribute(n).type();
 	      if (inst.isMissing(n))
-		meta.put(predInst.attribute(n).name(), "?");
-	      else if (predInst.attribute(n).type() == Attribute.NUMERIC)
-		meta.put(predInst.attribute(n).name(), inst.value(n));
-	      else if (predInst.attribute(n).type() == Attribute.DATE)
-		meta.put(predInst.attribute(n).name(), format.format(new Date((int) inst.value(n))));
-	      else if (predInst.attribute(n).type() == Attribute.NOMINAL)
-		meta.put(predInst.attribute(n).name(), inst.stringValue(n));
-	      else if (predInst.attribute(n).type() == Attribute.STRING)
-		meta.put(predInst.attribute(n).name(), inst.stringValue(n));
+		meta.put(name, "?");
+	      else if (type == Attribute.NUMERIC)
+		meta.put(name, inst.value(n));
+	      else if (type == Attribute.DATE)
+		meta.put(name, format.format(new Date((int) inst.value(n))));
+	      else if (type == Attribute.NOMINAL)
+		meta.put(name, inst.stringValue(n));
+	      else if (type == Attribute.STRING)
+		meta.put(name, inst.stringValue(n));
 	    }
 	    point.setMetaData(meta);
 	  }

@@ -133,6 +133,16 @@ public abstract class AbstractHitDetector
   }
 
   /**
+   * Detects hits and returns them without processing them.
+   *
+   * @param e		the mouse event to analyze for a hit
+   * @return		the hits if any, null otherwise
+   */
+  public Object locate(MouseEvent e) {
+    return isHit(e);
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    * <p/>
    * Default implementation does nothing.

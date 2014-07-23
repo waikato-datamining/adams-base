@@ -20,11 +20,15 @@
 package adams.flow.sink.sequenceplotter;
 
 import gnu.trove.list.array.TIntArrayList;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.visualization.core.AbstractColorProvider;
-import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.LinePaintlet;
+import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintletWithCustomerContainerManager;
 import adams.gui.visualization.sequence.XYSequencePanel;
@@ -57,6 +61,9 @@ public class SequencePlotterPanel
   /** the error paintlet. */
   protected AbstractErrorPaintlet m_ErrorPaintlet;
 
+  /** the mouse click action. */
+  protected MouseClickAction m_MouseClickAction;
+  
   /**
    * Initializes the panel with the specified title.
    *
@@ -75,6 +82,7 @@ public class SequencePlotterPanel
 
     m_MarkerContainerManager  = newMarkerContainerManager();
     m_OverlayContainerManager = newOverlayContainerManager();
+    m_MouseClickAction        = new NullClickAction();
   }
 
   /**
@@ -94,6 +102,14 @@ public class SequencePlotterPanel
     m_ErrorPaintlet = new NoErrorPaintlet();
     m_ErrorPaintlet.setPanel(this);
 
+    getPlot().addMouseClickListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_MouseClickAction != null)
+	  m_MouseClickAction.mouseClickOccurred(SequencePlotterPanel.this, e);
+      }
+    });
+    
     setAllowResize(true);
   }
 
@@ -220,6 +236,24 @@ public class SequencePlotterPanel
     return m_ErrorPaintlet;
   }
 
+  /**
+   * Sets the mouse click action to use.
+   * 
+   * @param value	the action
+   */
+  public void setMouseClickAction(MouseClickAction value) {
+    m_MouseClickAction = value;
+  }
+  
+  /**
+   * Returns the current mouse click action in use.
+   * 
+   * @return		the action
+   */
+  public MouseClickAction getMouseClickAction() {
+    return m_MouseClickAction;
+  }
+  
   /**
    * Sets the color provider to use.
    *

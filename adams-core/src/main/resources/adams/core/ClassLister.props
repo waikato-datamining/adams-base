@@ -249,6 +249,10 @@ adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor=\
 adams.flow.sink.sequenceplotter.AbstractPlotUpdater=\
   adams.flow.sink.sequenceplotter
 
+# the mouse click actions for the SequencePlotter
+adams.flow.sink.sequenceplotter.MouseClickAction=\
+  adams.flow.sink.sequenceplotter
+
 # the paintlets for the Canvas sink
 adams.flow.sink.canvas.DataPoolPaintlet=\
   adams.flow.sink.canvas
@@ -417,6 +421,12 @@ adams.gui.visualization.core.MouseMovementTracker=\
 adams.gui.visualization.core.axis.TickGenerator=\
   adams.gui.visualization.core.axis
 
+# hit detectors for plots
+adams.gui.visualization.core.plot.AbstractHitDetector=\
+  adams.gui.visualization.core.plot,\
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
+
 # special handlers for inspection objects
 adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler=\
   adams.gui.visualization.debug.inspectionhandler
@@ -453,6 +463,11 @@ adams.gui.visualization.sequence.XYSequencePaintlet=\
 # paintlets for drawing custom data
 adams.gui.visualization.sequence.PaintletWithCustomDataSupport=\
   adams.gui.visualization.sequence
+
+# hit detectors for sequence plots
+adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector=\
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
 
 # the optimization schemes
 adams.optimise.AbstractOptimiser=\

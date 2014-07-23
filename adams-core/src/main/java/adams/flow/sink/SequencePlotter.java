@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -36,8 +36,10 @@ import adams.flow.sink.sequenceplotter.AbstractErrorPaintlet;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
 import adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor;
 import adams.flow.sink.sequenceplotter.MarkerPaintlet;
+import adams.flow.sink.sequenceplotter.MouseClickAction;
 import adams.flow.sink.sequenceplotter.NoErrorPaintlet;
 import adams.flow.sink.sequenceplotter.NoMarkers;
+import adams.flow.sink.sequenceplotter.NullClickAction;
 import adams.flow.sink.sequenceplotter.PassThrough;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
@@ -67,7 +69,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
  * <p/>
  * Container information:<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
  * <p/>
  <!-- flow-summary-end -->
  *
@@ -82,7 +84,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * &nbsp;&nbsp;&nbsp;default: SequencePlotter
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -143,12 +145,12 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * 
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.XYSequenceCirclePaintlet
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
  * </pre>
  * 
  * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.XYSequenceCirclePaintlet
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
  * </pre>
  * 
  * <pre>-marker-paintlet &lt;adams.flow.sink.sequenceplotter.MarkerPaintlet&gt; (property: markerPaintlet)
@@ -159,6 +161,11 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * <pre>-error-paintlet &lt;adams.flow.sink.sequenceplotter.AbstractErrorPaintlet&gt; (property: errorPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting error overlays.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NoErrorPaintlet
+ * </pre>
+ * 
+ * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
+ * &nbsp;&nbsp;&nbsp;The action to use for mouse clicks on the canvas.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
  * </pre>
  * 
  * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
@@ -229,6 +236,9 @@ public class SequencePlotter
   /** the color provider to use for the overlays. */
   protected AbstractColorProvider m_OverlayColorProvider;
 
+  /** the mouse click action. */
+  protected MouseClickAction m_MouseClickAction;
+
   /** the title. */
   protected String m_Title;
 
@@ -283,6 +293,10 @@ public class SequencePlotter
     m_OptionManager.add(
 	    "error-paintlet", "errorPaintlet",
 	    new NoErrorPaintlet());
+
+    m_OptionManager.add(
+	    "mouse-click-action", "mouseClickAction",
+	    new NullClickAction());
 
     m_OptionManager.add(
 	    "color-provider", "colorProvider",
@@ -496,6 +510,35 @@ public class SequencePlotter
    */
   public String errorPaintletTipText() {
     return "The paintlet to use for painting error overlays.";
+  }
+
+  /**
+   * Sets the mouse click action to use.
+   * 
+   * @param value	the action
+   */
+  public void setMouseClickAction(MouseClickAction value) {
+    m_MouseClickAction = value;
+    reset();
+  }
+  
+  /**
+   * Returns the current mouse click action in use.
+   * 
+   * @return		the action
+   */
+  public MouseClickAction getMouseClickAction() {
+    return m_MouseClickAction;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String mouseClickActionTipText() {
+    return "The action to use for mouse clicks on the canvas.";
   }
 
   /**
@@ -774,6 +817,7 @@ public class SequencePlotter
     result.setOverlayPaintlet(m_OverlayPaintlet);
     result.setMarkerPaintlet(getMarkerPaintlet());
     result.setErrorPaintlet(getErrorPaintlet());
+    result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(m_ColorProvider);
@@ -895,6 +939,8 @@ public class SequencePlotter
         m_Panel.setPaintlet(getPaintlet());
         m_Panel.setOverlayPaintlet(m_OverlayPaintlet);
         m_Panel.setMarkerPaintlet(getMarkerPaintlet());
+        m_Panel.setErrorPaintlet(m_ErrorPaintlet);
+        m_Panel.setMouseClickAction(m_MouseClickAction);
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
         m_Panel.setColorProvider(m_ColorProvider);

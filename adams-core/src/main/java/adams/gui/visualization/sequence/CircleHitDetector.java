@@ -44,6 +44,13 @@ public class CircleHitDetector
   private static final long serialVersionUID = -3363546923840405674L;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public CircleHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the paintlet that uses this detector

@@ -45,6 +45,13 @@ public class LineHitDetector
   private static final long serialVersionUID = -6387662418337280157L;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public LineHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the paintlet that uses this detector

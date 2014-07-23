@@ -44,6 +44,13 @@ public class CrossHitDetector
   private static final long serialVersionUID = -3363546923840405674L;
 
   /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public CrossHitDetector() {
+    this(null);
+  }
+
+  /**
    * Initializes the hit detector.
    *
    * @param owner	the paintlet that uses this detector
@@ -77,6 +84,9 @@ public class CrossHitDetector
     List<XYSequencePoint>	points;
     int				diameter;
     boolean			logging;
+    double			diameterActual;
+    int				fromIndex;
+    int				toIndex;
 
     if (m_Owner == null)
       return null;
@@ -90,6 +100,7 @@ public class CrossHitDetector
       diameter = ((CrossPaintlet) m_Owner).getDiameter();
     else
       diameter = 1;
+    diameterActual = axisBottom.posToValue(diameter);
     logging    = isLoggingEnabled();
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
@@ -103,28 +114,32 @@ public class CrossHitDetector
       if (logging)
 	getLogger().info("\n" + s.getID() + ":");
 
-      index = XYSequenceUtils.findClosestX(points, x);
-      if (index == -1)
+      fromIndex = XYSequenceUtils.findClosestX(points, x - diameterActual);
+      toIndex   = XYSequenceUtils.findClosestX(points, x + diameterActual);
+      if ((fromIndex == -1) || (toIndex == -1))
 	continue;
-      sp = points.get(index);
+      
+      for (index = fromIndex; index <= toIndex; index++) {
+	sp = points.get(index);
 
-      diffX     = sp.getX() - x;
-      diffPixel = Math.abs(axisBottom.valueToPos(diffX) - axisBottom.valueToPos(0));
-      if (logging)
-	getLogger().info("diff x=" + diffPixel);
-      if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
-	continue;
-      diffY     = sp.getY() - y;
-      diffPixel = Math.abs(axisLeft.valueToPos(diffY) - axisLeft.valueToPos(0));
-      if (logging)
-	getLogger().info("diff y=" + diffPixel);
-      if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
-	continue;
+	diffX     = sp.getX() - x;
+	diffPixel = Math.abs(axisBottom.valueToPos(diffX) - axisBottom.valueToPos(0));
+	if (logging)
+	  getLogger().info("diff x=" + diffPixel);
+	if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
+	  continue;
+	diffY     = sp.getY() - y;
+	diffPixel = Math.abs(axisLeft.valueToPos(diffY) - axisLeft.valueToPos(0));
+	if (logging)
+	  getLogger().info("diff y=" + diffPixel);
+	if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
+	  continue;
 
-      // add hit
-      if (logging)
-	getLogger().info("hit!");
-      result.add(sp);
+	// add hit
+	if (logging)
+	  getLogger().info("hit!");
+	result.add(sp);
+      }
     }
 
     if (result.size() > 0)

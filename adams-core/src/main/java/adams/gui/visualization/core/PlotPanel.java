@@ -15,7 +15,7 @@
 
 /*
  * PlotPanel.java
- * Copyright (C) 2008-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
@@ -94,6 +95,9 @@ public class PlotPanel
   /** the paint listeners. */
   protected HashSet<PaintListener> m_PaintListeners;
 
+  /** the mouse click listeners. */
+  protected HashSet<MouseListener> m_MouseClickListeners;
+
   /** the vector with the axes that make up the values in the tooltip. */
   protected Vector<Axis> m_ToolTipAxes;
 
@@ -124,13 +128,14 @@ public class PlotPanel
   public PlotPanel(boolean debug) {
     super();
 
-    m_Debug           = debug;
-    m_AxisWidth       = 40;
-    m_PaintListeners  = new HashSet<PaintListener>();
-    m_ToolTipAxes     = new Vector<Axis>();
-    m_GridColor       = new Color(235, 235, 235);
-    m_BackgroundColor = Color.WHITE;
-    m_ForegroundColor = Color.BLACK;
+    m_Debug               = debug;
+    m_AxisWidth           = 40;
+    m_PaintListeners      = new HashSet<PaintListener>();
+    m_MouseClickListeners = new HashSet<MouseListener>();
+    m_ToolTipAxes         = new Vector<Axis>();
+    m_GridColor           = new Color(235, 235, 235);
+    m_BackgroundColor     = Color.WHITE;
+    m_ForegroundColor     = Color.BLACK;
 
     initGUI();
   }
@@ -212,6 +217,7 @@ public class PlotPanel
     // left-clicking on axes sets focus in plotpanel (if possible)
     for (Axis axis: Axis.values()) {
       getAxis(axis).addMouseListener(new MouseAdapter() {
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (    (e.getButton() == MouseEvent.BUTTON1)
 	       && (e.getModifiers() == MouseEvent.BUTTON1_MASK) ) {
@@ -325,6 +331,26 @@ public class PlotPanel
     addPrintScreenListener(m_AxisBottom);
     addPrintScreenListener(m_AxisLeft);
     addPrintScreenListener(m_AxisRight);
+    
+    m_PanelContent.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseReleased(MouseEvent e) {
+      }
+      @Override
+      public void mousePressed(MouseEvent e) {
+      }
+      @Override
+      public void mouseExited(MouseEvent e) {
+      }
+      @Override
+      public void mouseEntered(MouseEvent e) {
+      }
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_MouseClickListeners.size() > 0)
+	  notifyMouseClickListeners(e);
+      }
+    });
   }
 
   /**
@@ -626,6 +652,39 @@ public class PlotPanel
   }
 
   /**
+   * Adds the given listener to the internal list of mouse click listeners.
+   *
+   * @param l		the listener to add
+   */
+  public void addMouseClickListener(MouseListener l) {
+    m_MouseClickListeners.add(l);
+  }
+
+  /**
+   * Removes the given listener from the internal list of mouse click listeners.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeMouseClickListener(MouseListener l) {
+    m_MouseClickListeners.remove(l);
+  }
+
+  /**
+   * Notifies all paint listeners.
+   *
+   * @param g		the graphics context of the paint update
+   * @param moment	the paint moment, indicating which paintlets are to
+   * 			be executed
+   */
+  public void notifyMouseClickListeners(MouseEvent e) {
+    Iterator<MouseListener>	iter;
+
+    iter = m_MouseClickListeners.iterator();
+    while (iter.hasNext())
+      iter.next().mouseClicked(e);
+  }
+
+  /**
    * Adds the given listener to the internal list of zoom listeners.
    *
    * @param l		the listener to add
@@ -849,6 +908,7 @@ public class PlotPanel
    *
    * @return		the description
    */
+  @Override
   public String toString() {
     return "left: " + m_AxisLeft + ", top: " + m_AxisTop + ", right: " + m_AxisRight + ", bottom: " + m_AxisBottom;
   }

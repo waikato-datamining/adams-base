@@ -46,7 +46,14 @@ public class BarHitDetector
 
   /** the width of the bar in pixel. */
   protected int m_Width;
-  
+
+  /**
+   * Initializes the hit detector (constructor only for GOE) with no owner.
+   */
+  public BarHitDetector() {
+    this(null);
+  }
+
   /**
    * Initializes the hit detector.
    *
