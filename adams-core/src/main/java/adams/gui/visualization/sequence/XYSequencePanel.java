@@ -738,20 +738,25 @@ public class XYSequencePanel
   protected void viewSequence(XYSequenceContainer cont) {
     XYSequence 		seq;
     SpreadSheetDialog	dialog;
+    SpreadSheet		sheet;
     
     if (m_ViewDialogs == null)
       m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
 
+    seq = cont.getData();
+    sheet = seq.toSpreadSheet();
     if (getParentDialog() != null)
       dialog = new SpreadSheetDialog(getParentDialog(), ModalityType.MODELESS);
     else
       dialog = new SpreadSheetDialog(getParentFrame(), false);
     m_ViewDialogs.add(dialog);
     dialog.setTitle("Sequence: " + cont.getDisplayID());
-    dialog.setSize(400, 600);
+    if (sheet.getColumnCount() > 2)
+      dialog.setSize(800, 600);
+    else
+      dialog.setSize(400, 600);
     dialog.setLocationRelativeTo(this);
-    seq = cont.getData();
-    dialog.setSpreadSheet(seq.toSpreadSheet());
+    dialog.setSpreadSheet(sheet);
     dialog.setVisible(true);
   }
 
