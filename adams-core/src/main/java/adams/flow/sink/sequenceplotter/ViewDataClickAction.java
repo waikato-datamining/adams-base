@@ -21,7 +21,10 @@ package adams.flow.sink.sequenceplotter;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import adams.data.sequence.XYSequencePoint;
@@ -114,10 +117,12 @@ public class ViewDataClickAction
     SequencePlotPoint		point;
     HashMap<String,Object>	meta;
     SpreadSheetDialog		dialog;
+    List<String>		cols;
 
     if (m_HitDetector.getOwner() != panel.getPaintlet())
       m_HitDetector.setOwner(panel.getPaintlet());
     located = m_HitDetector.locate(e);
+    cols    = null;
     if (located instanceof Vector) {
       hits   = (Vector<XYSequencePoint>) located;
       sheet  = new SpreadSheet();
@@ -131,10 +136,16 @@ public class ViewDataClickAction
 	row.addCell("y").setContent(hit.getY());
 	if (hit instanceof SequencePlotPoint) {
 	  point = (SequencePlotPoint) hit;
+	  if (cols == null)
+	    cols = new ArrayList<String>();
+	  else
+	    cols.clear();
 	  // TODO errors?
 	  if (point.hasMetaData()) {
 	    meta = point.getMetaData();
-	    for (String key: meta.keySet()) {
+	    cols.addAll(meta.keySet());
+	    Collections.sort(cols);
+	    for (String key: cols) {
 	      header.addCell(key).setContent(key);
 	      row.addCell(key).setNative(meta.get(key));
 	    }
