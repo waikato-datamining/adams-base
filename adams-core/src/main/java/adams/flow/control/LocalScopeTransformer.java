@@ -29,6 +29,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.FlowVariables;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
@@ -843,9 +844,21 @@ public class LocalScopeTransformer
    */
   @Override
   protected String setUpSubActors() {
-    String	result;
+    String		result;
+    AbstractActor	first;
+    AbstractActor	last;
 
     result = super.setUpSubActors();
+    
+    first = firstActive();
+    last  = lastActive();
+    if ((first != null) && (last != null)) {
+      if (!ActorUtils.isTransformer(first))
+	result = "First active actor (" + first.getName() + ") is not a transformer!";
+      else if (!ActorUtils.isTransformer(last))
+	result = "Last active actor (" + first.getName() + ") is not a transformer!";
+    }
+    
     if (result == null)
       result = m_Actors.setUp();
     
