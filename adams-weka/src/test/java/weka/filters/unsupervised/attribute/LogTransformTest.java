@@ -49,18 +49,6 @@ public class LogTransformTest
   }
 
   /**
-   * Called by JUnit before each test method.
-   *
-   * @throws Exception if an error occurs
-   */
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    m_Instances = getFilteredClassifierData();
-  }
-
-  /**
    * returns data generated for the FilteredClassifier test.
    *
    * @return		the dataset for the FilteredClassifier
@@ -86,20 +74,22 @@ public class LogTransformTest
    */
   @Override
   public Filter getFilter() {
-    return getFilter("first-last");
+    return getFilter("first-last", true);
   }
 
   /**
    * Creates a specialized LogTransform.
    *
    * @param range	the attribute range
+   * @param addone	whether to add '1' to the values
    * @return		the filter
    */
-  public Filter getFilter(String range) {
+  public Filter getFilter(String range, boolean addone) {
     LogTransform 	result;
 
     result = new LogTransform();
     result.setAttributeRange(range);
+    result.setAddOne(addone);
 
     return result;
   }
@@ -143,7 +133,7 @@ public class LogTransformTest
    * Test only first attribute.
    */
   public void testFirst() {
-    m_Filter = getFilter("first");
+    m_Filter = getFilter("first", true);
     testBuffered();
     performTest();
   }
@@ -152,7 +142,7 @@ public class LogTransformTest
    * Test only first 3 attribute.
    */
   public void testFirst3() {
-    m_Filter = getFilter("1-3");
+    m_Filter = getFilter("1-3", true);
     testBuffered();
     performTest();
   }

@@ -41,7 +41,8 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Transforms all numeric attributes in the specified range using a log-transform.<br/>
- * The class attribute is omitted.
+ * The class attribute is omitted.<br/>
+ * If a value less or equal to zero is encountered, a missing value is output.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -60,6 +61,11 @@ import weka.filters.UnsupervisedFilter;
  *  The range of attributes to process.
  *  (default: first-last)</pre>
  * 
+ * <pre> -add-one
+ *  Whether to add '1' to the values before transform.
+ *  Useful when dealing with counts, avoiding 0 counts.
+ *  (default: off)</pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -74,6 +80,9 @@ public class LogTransform
   
   /** the range of attributes to log-transform. */
   protected Range m_AttributeRange = new Range("first-last");
+  
+  /** If true output nominal, false output numeric  .*/
+  protected boolean m_AddOne = false;
 
   /**
    * Returns a string describing this classifier.
@@ -86,7 +95,8 @@ public class LogTransform
     return 
 	"Transforms all numeric attributes in the specified range using a "
 	+ "log-transform.\n"
-	+ "The class attribute is omitted.";
+	+ "The class attribute is omitted.\n"
+	+ "If a value less or equal to zero is encountered, a missing value is output.";
   }
 
   /**
@@ -109,6 +119,12 @@ public class LogTransform
 	"\tThe range of attributes to process.\n"
 	+ "\t(default: first-last)",
 	"R", 1, "-R <range specification>"));
+    
+    result.add(new Option(
+	"\tWhether to add '1' to the values before transform.\n"
+	+ "\tUseful when dealing with counts, avoiding 0 counts.\n"
+	+ "\t(default: off)",
+	"add-one", 0, "-add-one"));
 
     return result.elements();
   }
@@ -134,6 +150,8 @@ public class LogTransform
     else
       setAttributeRange("first-last");
 
+    setAddOne(Utils.getFlag("add-one", options));
+    
     super.setOptions(options);
   }
 
@@ -151,6 +169,9 @@ public class LogTransform
     result.add("-R");
     result.add("" + getAttributeRange());
 
+    if (getAddOne())
+      result.add("-add-one");
+    
     return result.toArray(new String[result.size()]);
   }
 
@@ -180,6 +201,34 @@ public class LogTransform
    */
   public String attributeRangeTipText() {
     return "The range of attributes to process.";
+  }
+  
+  /** 
+   * Sets whether to add '1' to the values before log-transform.
+   * 
+   * @param value	true if to add '1'
+   */
+  public void setAddOne(boolean value) {
+    m_AddOne = value;
+  }
+  
+  /**
+   * Returns whether to add '1' to the values before log-transform.
+   * 
+   * @return		true if '1' added
+   */
+  public boolean getAddOne() {
+    return m_AddOne;
+  }
+
+  /** 
+   * Returns the tip text for this property.
+   * 
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String addOneTipText() {
+    return "Whether to add '1' to the values before performing log-transform.";
   }
 
   /**
@@ -248,8 +297,14 @@ public class LogTransform
 	continue;
       if (!instance.attribute(i).isNumeric())
 	continue;
-      if (m_AttributeRange.isInRange(i))
-	values[i] = Math.log(values[i]);
+      if (m_AttributeRange.isInRange(i)) {
+	if (m_AddOne)
+	  values[i] += 1.0;
+	if (values[i] > 0)
+	  values[i] = Math.log(values[i]);
+	else
+	  values[i] = Utils.missingValue();
+      }
     }
 
     // create instance
