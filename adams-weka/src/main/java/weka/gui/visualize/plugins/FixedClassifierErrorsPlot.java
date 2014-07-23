@@ -112,8 +112,9 @@ public class FixedClassifierErrorsPlot
 	  double actual = inst.value(predInst.classIndex());
 	  double predicted = inst.value(predInst.classIndex() - 1);
 	  SequencePlotPoint point = new SequencePlotPoint("Act vs Pred", actual, predicted);
+	  HashMap<String,Object> meta = new HashMap<String,Object>();
+	  meta.put("Error", actual - predicted);
 	  if (predInst.numAttributes() > 2) {
-	    HashMap<String,Object> meta = new HashMap<String,Object>();
 	    for (int n = 0; n < predInst.numAttributes(); n++) {
 	      if ((n == predInst.classIndex()) || (n == predInst.classIndex() - 1))
 		continue;
@@ -130,8 +131,8 @@ public class FixedClassifierErrorsPlot
 	      else if (type == Attribute.STRING)
 		meta.put(name, inst.stringValue(n));
 	    }
-	    point.setMetaData(meta);
 	  }
+	  point.setMetaData(meta);
 	  seq.add(point);
 	}
 	SequencePlotContainer cont = (SequencePlotContainer) plot.getContainerManager().newContainer(seq);
