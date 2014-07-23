@@ -26,10 +26,16 @@ import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.JMenuItem;
 
+import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
@@ -95,10 +101,30 @@ public class FixedClassifierErrorsPlot
 	SequencePlotSequence seq = new SequencePlotSequence();
 	seq.setComparison(Comparison.X_AND_Y);
 	seq.setID("Act vs Pred");
+	DateFormat format = DateUtils.getTimestampFormatter();
 	for (int i = 0; i < predInst.numInstances(); i++) {
-	  double actual = predInst.instance(i).value(predInst.classIndex());
-	  double predicted = predInst.instance(i).value(predInst.classIndex() - 1);
+	  Instance inst = predInst.instance(i);
+	  double actual = inst.value(predInst.classIndex());
+	  double predicted = inst.value(predInst.classIndex() - 1);
 	  SequencePlotPoint point = new SequencePlotPoint("Act vs Pred", actual, predicted);
+	  if (predInst.numAttributes() > 2) {
+	    HashMap<String,Object> meta = new HashMap<String,Object>();
+	    for (int n = 0; n < predInst.numAttributes(); n++) {
+	      if ((n == predInst.classIndex()) || (n == predInst.classIndex() - 1))
+		continue;
+	      if (inst.isMissing(n))
+		meta.put(predInst.attribute(n).name(), "?");
+	      else if (predInst.attribute(n).type() == Attribute.NUMERIC)
+		meta.put(predInst.attribute(n).name(), inst.value(n));
+	      else if (predInst.attribute(n).type() == Attribute.DATE)
+		meta.put(predInst.attribute(n).name(), format.format(new Date((int) inst.value(n))));
+	      else if (predInst.attribute(n).type() == Attribute.NOMINAL)
+		meta.put(predInst.attribute(n).name(), inst.stringValue(n));
+	      else if (predInst.attribute(n).type() == Attribute.STRING)
+		meta.put(predInst.attribute(n).name(), inst.stringValue(n));
+	    }
+	    point.setMetaData(meta);
+	  }
 	  seq.add(point);
 	}
 	SequencePlotContainer cont = (SequencePlotContainer) plot.getContainerManager().newContainer(seq);
