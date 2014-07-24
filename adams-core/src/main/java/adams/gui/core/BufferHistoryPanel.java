@@ -15,7 +15,7 @@
 
 /**
  * BufferHistoryPanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -302,6 +302,7 @@ public class BufferHistoryPanel
     FileUtils.writeToFile(
 	getFileChooser().getSelectedFile().getAbsolutePath(),
 	getEntry(name).toString(),
+	false,
 	getFileChooser().getEncoding());
   }
 
