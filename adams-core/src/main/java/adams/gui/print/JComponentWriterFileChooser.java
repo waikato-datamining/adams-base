@@ -15,13 +15,14 @@
 
 /*
  * JComponentWriterFileChooser.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.print;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -141,6 +142,7 @@ public class JComponentWriterFileChooser
   protected JComponent createAccessoryPanel() {
     JPanel	result;
     JPanel	panel;
+    Dimension	dim;
 
     super.createAccessoryPanel();
     
@@ -155,6 +157,13 @@ public class JComponentWriterFileChooser
     m_ImagePreview = new ImagePreview(this);
     panel.add(m_PanelBookmarks, BorderLayout.CENTER);
     panel.add(m_ImagePreview, BorderLayout.SOUTH);
+    
+    dim = getDefaultAccessoryDimension();
+    if (dim != null) {
+      result.setSize(dim);
+      result.setMinimumSize(dim);
+      result.setPreferredSize(dim);
+    }
 
     return result;
   }

@@ -15,12 +15,13 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.io.File;
 
@@ -126,14 +127,40 @@ public class BaseFileChooser
   }
 
   /**
+   * Returns the preferred dimension.
+   * 
+   * @return		the dimension, null if to use default
+   */
+  protected Dimension getDefaultAccessoryDimension() {
+    int		height;
+    int		width;
+    
+    width  = GUIHelper.getInteger("BaseFileChooser.Accessory.Width", -1);
+    height = GUIHelper.getInteger("BaseFileChooser.Accessory.Height", -1);
+    if ((width != -1) && (height != -1))
+      return new Dimension(width, height);
+    else
+      return null;
+  }
+  
+  /**
    * Creates an accessory panel displayed next to the files.
    * 
    * @return		the panel or null if none available
    */
   protected JComponent createAccessoryPanel() {
+    Dimension	dim;
+    
     m_PanelBookmarks = new FileChooserBookmarksPanel();
     m_PanelBookmarks.setOwner(this);
     m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
+    dim = getDefaultAccessoryDimension();
+    if (dim != null) {
+      m_PanelBookmarks.setSize(dim);
+      m_PanelBookmarks.setMinimumSize(dim);
+      m_PanelBookmarks.setPreferredSize(dim);
+    }
+    
     return m_PanelBookmarks;
   }
   

@@ -22,6 +22,10 @@ LogoIcon=adams_icon.png
 # The preferred JComponentWriter
 PreferredJComponentWriter=adams.gui.print.PNGWriter
 
+# The default dimensions of the BaseFileChooser accessory panel (use -1 to use default)
+BaseFileChooser.Accessory.Width=-1
+BaseFileChooser.Accessory.Height=-1
+
 # Whether the BaseDirectoryChooser shows bookmarks
 BaseDirectoryChooser.ShowBookmarks=false
 

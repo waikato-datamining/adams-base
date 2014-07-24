@@ -15,13 +15,14 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.List;
 
@@ -117,6 +118,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
   @Override
   protected JComponent createAccessoryPanel() {
     JPanel	result;
+    Dimension	dim;
     
     super.createAccessoryPanel();
 
@@ -125,6 +127,12 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     result = new JPanel(new BorderLayout());
     result.add(m_CheckBoxOptions, BorderLayout.NORTH);
     result.add(m_PanelBookmarks, BorderLayout.CENTER);
+    dim = getDefaultAccessoryDimension();
+    if (dim != null) {
+      result.setSize(dim);
+      result.setMinimumSize(dim);
+      result.setPreferredSize(dim);
+    }
     
     return result;
   }

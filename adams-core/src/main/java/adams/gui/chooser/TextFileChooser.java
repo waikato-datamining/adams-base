@@ -15,12 +15,13 @@
 
 /**
  * TextFileChooser.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -215,11 +216,18 @@ public class TextFileChooser
   @Override
   protected void initialize() {
     ExtensionFileFilter	filter;
+    Dimension		dim;
     
     super.initialize();
     
     m_PanelEncoding = new FileEncodingPanel();
     m_PanelEncoding.setOwner(this);
+    dim = getDefaultAccessoryDimension();
+    if (dim != null) {
+      m_PanelEncoding.setSize(dim);
+      m_PanelEncoding.setMinimumSize(dim);
+      m_PanelEncoding.setPreferredSize(dim);
+    }
     setAccessory(m_PanelEncoding);
 
     filter = ExtensionFileFilter.getTextFileFilter();

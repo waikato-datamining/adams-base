@@ -20,6 +20,7 @@
 package adams.gui.chooser;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -245,6 +246,7 @@ public class ImageFileChooser
   protected JComponent createAccessoryPanel() {
     JPanel	result;
     JPanel	panel;
+    Dimension	dim;
 
     super.createAccessoryPanel();
 
@@ -265,6 +267,13 @@ public class ImageFileChooser
     m_ImagePreview = new ImagePreview(this);
     panel.add(m_PanelBookmarks, BorderLayout.CENTER);
     panel.add(m_ImagePreview, BorderLayout.SOUTH);
+    
+    dim = getDefaultAccessoryDimension();
+    if (dim != null) {
+      result.setSize(dim);
+      result.setMinimumSize(dim);
+      result.setPreferredSize(dim);
+    }
     
     return result;
   }
