@@ -15,7 +15,7 @@
 
 /*
  * Notes.java
- * Copyright (C) 2008-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data;
@@ -487,7 +487,7 @@ public class Notes
   public boolean equals(Object o) {
     Notes	notes;
 
-    if (o == null)
+    if ((o == null) || !(o instanceof Notes))
       return false;
 
     notes = (Notes) o;
