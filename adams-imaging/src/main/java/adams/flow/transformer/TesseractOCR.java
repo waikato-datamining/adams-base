@@ -145,7 +145,7 @@ public class TesseractOCR
   /** the separator between multiple text files. */
   protected String m_Separator;
   
-  /** the FTP connection to use. */
+  /** the tesseract connection to use. */
   protected TesseractConfiguration m_Configuration;
 
   /**
