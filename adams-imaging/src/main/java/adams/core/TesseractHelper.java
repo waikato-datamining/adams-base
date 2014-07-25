@@ -15,7 +15,7 @@
 
 /**
  * TesseractHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -141,7 +141,7 @@ public class TesseractHelper {
   
   /**
    * Assembles the tesseract command for the given input/output. Uses default
-   * values for executable, language and page segmentation.
+   * values for executable, language and page segmentation, output in ASCII.
    * 
    * @param input	the input file to process
    * @param outputbase	the output base to use
@@ -149,7 +149,7 @@ public class TesseractHelper {
    * @return		the command
    */
   public String[] getCommand(String input, String outputbase, PlaceholderFile config) {
-    return getCommand(null, input, outputbase, null, null, config);
+    return getCommand(null, input, outputbase, null, null, config, false);
   }
   
   /**
@@ -161,9 +161,10 @@ public class TesseractHelper {
    * @param lang	the language to use, null to use default
    * @param seg		the page segemention, null to use default
    * @param config	the config file, null or directory to ignore
+   * @param hocr	whether to output in hOCR format instead of ASCII
    * @return		the command
    */
-  public String[] getCommand(String exe, String input, String outputbase, TesseractLanguage lang, TesseractPageSegmentation seg, PlaceholderFile config) {
+  public String[] getCommand(String exe, String input, String outputbase, TesseractLanguage lang, TesseractPageSegmentation seg, PlaceholderFile config, boolean hocr) {
     List<String>	result;
     
     if (exe == null)
@@ -183,6 +184,8 @@ public class TesseractHelper {
     result.add("" + seg.toCode());
     if ((config != null) && config.exists() && !config.isDirectory())
       result.add(config.getAbsolutePath());
+    if (hocr)
+      result.add("hocr");
     
     return result.toArray(new String[result.size()]);
   }

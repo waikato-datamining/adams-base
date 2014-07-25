@@ -47,8 +47,13 @@ import adams.flow.standalone.TesseractConfiguration;
  * Applies OCR to the incoming image file using Tesseract.<br/>
  * In case of successful OCR, either the file names of the generated files are broadcast or the combined text of the files.<br/>
  * NB: The actor deletes all files that have the same prefix as the specified output base. Something you need to be aware of when doing OCR in parallel or generate other files with the same prefix.<br/>
- * For more information see:<br/>
- * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;
+ * <br/>
+ * For more information on tesseract see:<br/>
+ * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;<br/>
+ * <br/>
+ * <br/>
+ * For more information on hOCR see:<br/>
+ * https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;HOCR
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -119,6 +124,12 @@ import adams.flow.standalone.TesseractConfiguration;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-output-hocr &lt;boolean&gt; (property: outputHOCR)
+ * &nbsp;&nbsp;&nbsp;If enabled, HTML files using the hOCR format are generated rather than ASCII 
+ * &nbsp;&nbsp;&nbsp;files.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -145,6 +156,9 @@ public class TesseractOCR
   /** the separator between multiple text files. */
   protected String m_Separator;
   
+  /** whether to output hOCR instead of ASCII. */
+  protected boolean m_OutputHOCR;
+  
   /** the tesseract connection to use. */
   protected TesseractConfiguration m_Configuration;
 
@@ -162,8 +176,12 @@ public class TesseractOCR
 	+ "NB: The actor deletes all files that have the same prefix as the "
 	+ "specified output base. Something you need to be aware of when "
 	+ "doing OCR in parallel or generate other files with the same prefix.\n"
-	+ "For more information see:\n"
-	+ "http://code.google.com/p/tesseract-ocr/";
+	+ "\n"
+	+ "For more information on tesseract see:\n"
+	+ "http://code.google.com/p/tesseract-ocr/\n\n"
+	+ "\n"
+	+ "For more information on hOCR see:\n"
+	+ "https://en.wikipedia.org/wiki/HOCR";
   }
 
   /**
@@ -192,6 +210,10 @@ public class TesseractOCR
     m_OptionManager.add(
 	    "separator", "separator",
 	    "");
+
+    m_OptionManager.add(
+	    "output-hocr", "outputHOCR",
+	    false);
   }
 
   /**
@@ -214,6 +236,9 @@ public class TesseractOCR
       if (value != null)
 	result += value;
     }
+    value = QuickInfoHelper.toString(this, "outputHOCR", m_OutputHOCR, "hOCR", ", ");
+    if (value != null)
+      result += value;
     
     return result;
   }
@@ -371,6 +396,37 @@ public class TesseractOCR
   }
 
   /**
+   * Sets whether to use hOCR format instead of ASCII.
+   *
+   * @param value	true if to output hOCR
+   */
+  public void setOutputHOCR(boolean value) {
+    m_OutputHOCR = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use hOCR format as output instead of ASCII.
+   *
+   * @return		true if to output hOCR
+   */
+  public boolean getOutputHOCR() {
+    return m_OutputHOCR;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputHOCRTipText() {
+    return 
+	"If enabled, HTML files using the hOCR format are generated rather "
+	+ "than ASCII files.";
+  }
+
+  /**
    * Initializes the item for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -437,7 +493,7 @@ public class TesseractOCR
       fileStr = ((File) m_InputToken.getPayload()).getAbsolutePath();
     }
     else if (m_InputToken.getPayload() instanceof String) {
-      fileStr = (String) m_InputToken.getPayload();
+      fileStr = new PlaceholderFile((String) m_InputToken.getPayload()).getAbsolutePath();
     }
     else {
       try {
@@ -464,12 +520,13 @@ public class TesseractOCR
       for (String f: files)
 	FileUtils.delete(new PlaceholderFile(f));
 
-      cmd = m_Configuration.getCommand(fileStr, m_OutputBase.getAbsolutePath(), m_Language, m_PageSegmentation);
+      cmd = m_Configuration.getCommand(fileStr, m_OutputBase.getAbsolutePath(), m_Language, m_PageSegmentation, m_OutputHOCR);
       try {
 	proc = ProcessUtils.execute(cmd);
 	if (proc.getExitCode() != 0) {
 	  result = 
 	      "tesseract exited with " + proc.getExitCode() + "\n"
+		  + "cmd: " + OptionUtils.joinOptions(cmd) + "\n"
 		  + "stderr:\n" + proc.getStdErr();
 	}
 	else {

@@ -15,7 +15,7 @@
 
 /*
  * TesseractConfiguration.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -250,15 +250,19 @@ public class TesseractConfiguration
    * 
    * @param input	the input file to process
    * @param outputbase	the output base to use
+   * @param lang	the language to use
+   * @param seg		the segmentation to use
+   * @param hocr	whether to output in hOCR format instead of ASCII
    * @return		the command
    */
-  public String[] getCommand(String input, String outputbase, TesseractLanguage lang, TesseractPageSegmentation seg) {
+  public String[] getCommand(String input, String outputbase, TesseractLanguage lang, TesseractPageSegmentation seg, boolean hocr) {
     return TesseractHelper.getSingleton().getCommand(
 	m_Executable.getAbsolutePath(), 
 	input, 
 	outputbase, 
 	lang, 
 	seg, 
-	m_ConfigFile);
+	m_ConfigFile,
+	hocr);
   }
 }
