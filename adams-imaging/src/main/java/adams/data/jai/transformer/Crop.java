@@ -81,7 +81,7 @@ public class Crop
   private static final long serialVersionUID = 2959486760492196174L;
 
   /**
-   * Enumeration for the crop rectangle anchor.\
+   * Enumeration for the crop rectangle anchor.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
