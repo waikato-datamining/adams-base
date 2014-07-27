@@ -59,6 +59,9 @@ public abstract class AbstractDirector
 
   /** whether the director has been paused. */
   protected boolean m_Paused;
+  
+  /** whether to flush the execution. */
+  protected boolean m_Flushing;
 
   /**
    * Initializes the item.
@@ -185,6 +188,22 @@ public abstract class AbstractDirector
    */
   public boolean isPaused() {
     return m_Paused;
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    m_Flushing = true;
+  }
+
+  /**
+   * Returns whether the execution is being flushed.
+   *
+   * @return		true if execution is being flushed
+   */
+  public boolean isFlushing() {
+    return m_Flushing;
   }
 
   /**

@@ -39,9 +39,11 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
+import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
 import adams.flow.sink.AbstractSink;
 import adams.flow.sink.ComponentSupplier;
@@ -77,7 +79,7 @@ public abstract class AbstractMultiView
    */
   public static class ViewWrapper
     extends AbstractSink
-    implements ComponentSupplier, TextSupplier {
+    implements ComponentSupplier, TextSupplier, Flushable {
     
     /** for serialization. */
     private static final long serialVersionUID = -1571827759359015717L;
@@ -200,6 +202,14 @@ public abstract class AbstractMultiView
       return result;
     }
     
+    /**
+     * Stops the processing of tokens without stopping the flow.
+     */
+    public void flushExecution() {
+      if (m_Wrapped instanceof ActorHandler)
+	((ActorHandler) m_Wrapped).flushExecution();
+    }
+
     /**
      * Cleans up after the execution has finished.
      */
@@ -724,6 +734,17 @@ public abstract class AbstractMultiView
    * @param panel	the panel to replace the dummy one
    */
   public abstract void addPanel(AbstractActor actor, BasePanel panel);
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_Wrappers != null) {
+      for (ViewWrapper wrapper: m_Wrappers) {
+	wrapper.flushExecution();
+      }
+    }
+  }
 
   /**
    * Stops the execution. No message set.

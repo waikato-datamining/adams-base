@@ -37,6 +37,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.management.ProcessUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Compatibility;
@@ -830,6 +831,20 @@ public class Branch
       return executeSequential();
     else
       return executeParallel();
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    int		i;
+    
+    for (i = size() - 1; i >= 0; i--) {
+      if (get(i).getSkip())
+	continue;
+      if (get(i) instanceof ActorHandler)
+	((ActorHandler) get(i)).flushExecution();
+    }
   }
 
   /**

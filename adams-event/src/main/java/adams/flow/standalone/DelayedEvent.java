@@ -452,6 +452,14 @@ public class DelayedEvent
 
     return result;
   }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_Actors != null)
+      m_Actors.flushExecution();
+  }
 
   /**
    * Stops the execution.

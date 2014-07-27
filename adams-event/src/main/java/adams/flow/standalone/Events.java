@@ -15,7 +15,7 @@
 
 /**
  * Events.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -25,6 +25,7 @@ import java.util.List;
 import adams.flow.control.AbstractControlActor;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.DaemonEvent;
@@ -339,5 +340,19 @@ public class Events
     }
 
     return result;
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    int		i;
+
+    for (i = 0; i < m_Actors.size(); i++) {
+      if (m_Actors.get(i).getSkip())
+	continue;
+      if (m_Actors.get(i) instanceof ActorHandler)
+	((ActorHandler) m_Actors.get(i)).flushExecution();
+    }
   }
 }

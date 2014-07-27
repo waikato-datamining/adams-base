@@ -170,6 +170,14 @@ public abstract class AbstractDirectedControlActor
 
     return result;
   }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_Director != null)
+      m_Director.flushExecution();
+  }
 
   /**
    * Stops the execution.

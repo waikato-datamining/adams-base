@@ -294,7 +294,7 @@ public class SequentialDirector
 	pause();
 
       // stopped?
-      if (isStopped() || isStopping())
+      if (isStopped() || isStopping() || isFlushing())
 	break;
 
       curr = m_ControlActor.get(i);
@@ -355,7 +355,7 @@ public class SequentialDirector
 	pause();
 
       // do we have to stop the execution?
-      if (isStopped() || isStopping())
+      if (isStopped() || isStopping() || isFlushing())
 	break;
 
       // determing starting point of next iteration
@@ -381,7 +381,7 @@ public class SequentialDirector
 	  pause();
 
 	// do we have to stop the execution?
-	if (isStopped() || isStopping())
+	if (isStopped() || isStopping() || isFlushing())
 	  break;
 
 	curr = m_ControlActor.get(i);
@@ -487,7 +487,7 @@ public class SequentialDirector
       if (isLoggingEnabled())
 	getLogger().info("---> execution finished: " + finished);
     }
-    while (!(finished || isStopped() || isStopping()));
+    while (!(finished || isStopped() || isStopping() || isFlushing()));
 
     return result;
   }
@@ -507,6 +507,7 @@ public class SequentialDirector
     start      = null;
     m_Finished = false;
     m_Executed = true;
+    m_Flushing = false;
 
     if (m_ControlActor.getActorHandlerInfo().canContainStandalones()) {
       try {
@@ -526,7 +527,7 @@ public class SequentialDirector
     }
 
     // execute other actors until finished
-    if ((result == null) && !isStopped() && !isStopping()) {
+    if ((result == null) && !isStopped() && !isStopping() && !isFlushing()) {
       if (start != null) {
 	if (isLoggingEnabled())
 	  getLogger().info("doExecuteActors: start");
@@ -564,6 +565,16 @@ public class SequentialDirector
     return (m_Executed && m_Finished) || !m_Executed || m_Stopped;
   }
 
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  @Override
+  public void flushExecution() {
+    super.flushExecution();
+    
+    m_FinalOutput.clear();
+  }
+  
   /**
    * Stops the execution.
    */

@@ -26,6 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.FixedNameActorHandler;
@@ -547,7 +548,10 @@ public class TryCatch
   @Override
   public String handleError(AbstractActor source, String type, String msg) {
     m_ErrorOccurred = source.getFullName() + "/" + type + ": " + msg;
-    return null;
+    // stop further processing of tokens in m_Try
+    if (m_Try instanceof ActorHandler)
+      ((ActorHandler) m_Try).flushExecution();
+    return m_ErrorOccurred;
   }
 
   /**
@@ -623,6 +627,16 @@ public class TryCatch
     }
 
     return result;
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_Try instanceof ActorHandler)
+      ((ActorHandler) m_Try).flushExecution();
+    if (m_Catch instanceof ActorHandler)
+      ((ActorHandler) m_Catch).flushExecution();
   }
 
   /**

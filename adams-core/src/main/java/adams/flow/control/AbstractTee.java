@@ -15,7 +15,7 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -718,6 +718,13 @@ public abstract class AbstractTee
    */
   public boolean hasPendingOutput() {
     return (m_OutputToken != null);
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    m_Actors.flushExecution();
   }
 
   /**

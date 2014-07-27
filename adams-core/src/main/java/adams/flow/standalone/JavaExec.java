@@ -15,7 +15,7 @@
 
 /**
  * JavaExec.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -30,6 +30,7 @@ import adams.core.management.RecordingOutputPrinter;
 import adams.flow.control.AbstractControlActor;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
@@ -644,5 +645,15 @@ public class JavaExec
     }
 
     return result;
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_StdOut instanceof ActorHandler)
+      ((ActorHandler) m_StdOut).flushExecution();
+    if (m_StdErr instanceof ActorHandler)
+      ((ActorHandler) m_StdErr).flushExecution();
   }
 }

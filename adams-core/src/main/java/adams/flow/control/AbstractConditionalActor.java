@@ -438,6 +438,14 @@ public abstract class AbstractConditionalActor
 
     return result;
   }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    if (m_BaseActor instanceof ActorHandler)
+      ((ActorHandler) m_BaseActor).flushExecution();
+  }
 
   /**
    * Cleans up data structures, frees up memory.

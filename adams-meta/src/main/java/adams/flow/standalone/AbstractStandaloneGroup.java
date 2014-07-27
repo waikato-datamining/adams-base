@@ -25,6 +25,7 @@ import adams.core.Variables;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 
 /**
@@ -368,6 +369,20 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   @Override
   protected abstract String doExecute();
   
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    int		i;
+    
+    for (i = 0; i < m_Actors.size(); i++) {
+      if (m_Actors.get(i).getSkip())
+	continue;
+      if (m_Actors.get(i) instanceof ActorHandler)
+	((ActorHandler) m_Actors.get(i)).flushExecution();
+    }
+  }
+
   /**
    * Stops the execution. No message set.
    */

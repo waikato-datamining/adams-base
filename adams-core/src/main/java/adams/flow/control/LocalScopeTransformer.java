@@ -956,6 +956,13 @@ public class LocalScopeTransformer
   public Token output() {
     return m_Actors.output();
   }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    m_Actors.flushExecution();
+  }
 
   /**
    * Stops the execution.

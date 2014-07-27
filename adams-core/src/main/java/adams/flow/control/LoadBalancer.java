@@ -351,6 +351,14 @@ public class LoadBalancer
       
       return result;
     }
+    
+    /**
+     * Stops the processing of tokens without stopping the flow.
+     */
+    public void flushExecution() {
+      if (m_Actor instanceof ActorHandler)
+	((ActorHandler) m_Actor).flushExecution();
+    }
   }
 
   /** the key for storing the current token in the backup. */
@@ -979,6 +987,16 @@ public class LoadBalancer
     m_CurrentToken = null;
 
     super.wrapUp();
+  }
+  
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    for (AbstractActor actor: m_ToCleanUp) {
+      if (actor instanceof ActorHandler)
+	((ActorHandler) actor).flushExecution();
+    }
   }
 
   /**
