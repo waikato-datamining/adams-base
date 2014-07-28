@@ -15,13 +15,13 @@
 
 /**
  * DFTTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.jai.flattener;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.base.BaseString;
+import adams.data.jai.flattener.DFT.OutputType;
 import adams.env.Environment;
 
 /**
@@ -49,8 +49,11 @@ public class DFTTest
    *
    * @return		the filenames
    */
+  @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
+	"adams_icon.png",
+	"adams_icon.png",
 	"adams_icon.png"
     };
   }
@@ -60,12 +63,17 @@ public class DFTTest
    *
    * @return		the setups
    */
+  @Override
   protected AbstractJAIFlattener[] getRegressionSetups() {
     DFT[]	result;
 
-    result = new DFT[1];
+    result = new DFT[3];
 
     result[0] = new DFT();
+    result[1] = new DFT();
+    result[1].setOutputType(OutputType.REAL);
+    result[2] = new DFT();
+    result[2].setOutputType(OutputType.IMAGINARY);
 
     return result;
   }

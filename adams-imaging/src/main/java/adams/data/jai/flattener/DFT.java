@@ -15,7 +15,7 @@
 
 /*
  * DFT.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.flattener;
@@ -41,13 +41,9 @@ import adams.data.image.BufferedImageContainer;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -59,6 +55,11 @@ import adams.data.image.BufferedImageContainer;
  * &nbsp;&nbsp;&nbsp;The notes to add as attributes to the generated data, eg 'PROCESS INFORMATION'
  * &nbsp;&nbsp;&nbsp;.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-output-type &lt;REAL|IMAGINARY|BOTH&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;The type of output to generate.
+ * &nbsp;&nbsp;&nbsp;default: BOTH
  * </pre>
  * 
  <!-- options-end -->
@@ -74,13 +75,73 @@ public class DFT
   private static final long serialVersionUID = 3993399058139605286L;
 
   /**
+   * Determines how to output the data.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum OutputType {
+    /** outputs only the real values. */
+    REAL,
+    /** outputs only the imaginary values. */
+    IMAGINARY,
+    /** outputs real and imaginary values. */
+    BOTH
+  }
+  
+  /** the output type. */
+  protected OutputType m_OutputType;
+  
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "Performs discrete fourier transform (DFT).";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "output-type", "outputType",
+	    OutputType.BOTH);
+  }
+
+  /**
+   * Sets the type of output to generate.
+   *
+   * @param value 	the type
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of output to generate.
+   *
+   * @return 		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "The type of output to generate.";
   }
 
   /**
@@ -89,6 +150,7 @@ public class DFT
    * @param img		the image to act as a template
    * @return		the generated header
    */
+  @Override
   public Instances createHeader(BufferedImageContainer img) {
     Instances			result;
     double[]			values;
@@ -97,11 +159,25 @@ public class DFT
 
     values = performDFT(img);
     atts      = new ArrayList<Attribute>();
-    for (i = 0; i < values.length; i++) {
-      if (i % 2 == 0)
-	atts.add(new Attribute("real_" + ((int) (i/2 + 1))));
-      else
-	atts.add(new Attribute("imag_" + ((int) (i/2 + 1))));
+    switch (m_OutputType) {
+      case BOTH:
+	for (i = 0; i < values.length; i++) {
+	  if (i % 2 == 0)
+	    atts.add(new Attribute("real_" + ((int) (i/2 + 1))));
+	  else
+	    atts.add(new Attribute("imag_" + ((int) (i/2 + 1))));
+	}
+	break;
+	
+      case REAL:
+	for (i = 0; i < values.length; i++)
+	  atts.add(new Attribute("real_" + ((int) (i + 1))));
+	break;
+	
+      case IMAGINARY:
+	for (i = 0; i < values.length; i++)
+	  atts.add(new Attribute("imag_" + ((int) (i + 1))));
+	break;
     }
     result = new Instances(getClass().getName(), atts, 0);
 
@@ -134,10 +210,29 @@ public class DFT
     real    = dftData.getSamples(0, 0, dft.getWidth(), dft.getHeight(), 0, (double[])null);
     imag    = dftData.getSamples(0, 0, dft.getWidth(), dft.getHeight(), 1, (double[])null);
 
-    values  = newArray(real.length + imag.length);
-    for (i = 0; i < real.length; i++) {
-      values[i*2 + 0] = real[i];
-      values[i*2 + 1] = imag[i];
+    switch (m_OutputType) {
+      case BOTH:
+	values  = newArray(real.length + imag.length);
+	for (i = 0; i < real.length; i++) {
+	  values[i*2 + 0] = real[i];
+	  values[i*2 + 1] = imag[i];
+	}
+	break;
+      
+      case REAL:
+	values  = newArray(real.length);
+	for (i = 0; i < real.length; i++)
+	  values[i] = real[i];
+	break;
+      
+      case IMAGINARY:
+	values  = newArray(imag.length);
+	for (i = 0; i < imag.length; i++)
+	  values[i] = imag[i];
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
     }
 
     return values;
@@ -149,6 +244,7 @@ public class DFT
    * @param img		the image to process
    * @return		the generated array
    */
+  @Override
   public Instance[] doFlatten(BufferedImageContainer img) {
     Instance[]		result;
     double[]		values;
