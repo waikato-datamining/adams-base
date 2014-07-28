@@ -15,13 +15,14 @@
 
 /*
  * Instance.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -35,6 +36,9 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.weka.ArffUtils;
 
 /**
@@ -46,7 +50,7 @@ import adams.data.weka.ArffUtils;
  */
 public class Instance
   extends AbstractDataContainer<InstancePoint>
-  implements MutableReportHandler<Report>, NotesHandler {
+  implements MutableReportHandler<Report>, NotesHandler, SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8553741559715144356L;
@@ -104,6 +108,7 @@ public class Instance
    *
    * @param value	the new ID
    */
+  @Override
   public void setID(String value) {
     super.setID(value);
     m_Report.addParameter(REPORT_DISPLAY_ID, value);
@@ -159,6 +164,7 @@ public class Instance
    *
    * @see	#m_DatasetHeader
    */
+  @Override
   public void clear() {
     m_DatasetHeader = null;
     m_Report        = newReport();
@@ -172,6 +178,7 @@ public class Instance
    *
    * @param other	the data point to get the values from
    */
+  @Override
   public void assign(DataContainer<InstancePoint> other) {
     super.assign(other);
 
@@ -364,5 +371,32 @@ public class Instance
    */
   public Notes getNotes() {
     return m_Notes;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   * 
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    Iterator<InstancePoint>	iter;
+    SpreadSheet			result;
+    Row				row;
+    InstancePoint		point;
+
+    result = new SpreadSheet();
+    result.setName(getID());
+    row    = result.getHeaderRow();
+    row.addCell("A").setContent("Attribute");
+    row.addCell("V").setContent("Value");
+    iter = iterator();
+    while (iter.hasNext()) {
+      point = iter.next();
+      row = result.addRow();
+      row.addCell("A").setContent(point.getX());
+      row.addCell("V").setContent(point.getY());
+    }
+    
+    return result;
   }
 }

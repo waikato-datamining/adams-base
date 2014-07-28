@@ -22,12 +22,14 @@ package adams.gui.visualization.instance;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -45,16 +47,20 @@ import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.data.instance.Instance;
 import adams.data.instance.InstancePoint;
+import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
+import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.Undo;
+import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.PaintListener;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.ScriptingEngine;
-import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.AbstractContainerManager;
+import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithSidePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
@@ -103,6 +109,12 @@ public class InstancePanel
 
   /** the zoom overview panel. */
   protected InstanceZoomOverviewPanel m_PanelZoomOverview;
+
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+  
+  /** the dialog for displaying a sequence. */
+  protected List<SpreadSheetDialog> m_ViewDialogs;
 
   /**
    * Initializes the panel.
@@ -458,7 +470,78 @@ public class InstancePanel
       result.add(item);
     }
 
+    result.addSeparator();
+
+    item = new JMenuItem("Save as...");
+    item.setEnabled(indices.length == 1);
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	saveInstance(getContainerManager().get(indices[0]));
+      }
+    });
+    result.add(item);
+
+    item = new JMenuItem("View as table");
+    item.setEnabled(indices.length == 1);
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	viewInstance(getContainerManager().get(indices[0]));
+      }
+    });
+    result.add(item);
+
     return result;
+  }
+
+  /**
+   * Saves the specified instance as spreadsheet file.
+   * 
+   * @param cont	the instance to save
+   */
+  protected void saveInstance(InstanceContainer cont) {
+    int			retVal;
+    Instance 		inst;
+    SpreadSheetWriter	writer;
+    
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+    
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+    
+    inst   = cont.getData();
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(inst.toSpreadSheet(), m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+	  this, "Failed to save instance to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Views the specified instance in a table.
+   * 
+   * @param cont	the instance to view
+   */
+  protected void viewInstance(InstanceContainer cont) {
+    Instance 		isnt;
+    SpreadSheetDialog	dialog;
+    SpreadSheet		sheet;
+    
+    if (m_ViewDialogs == null)
+      m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
+
+    isnt  = cont.getData();
+    sheet = isnt.toSpreadSheet();
+    if (getParentDialog() != null)
+      dialog = new SpreadSheetDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new SpreadSheetDialog(getParentFrame(), false);
+    m_ViewDialogs.add(dialog);
+    dialog.setTitle("Instance: " + cont.getDisplayID());
+    dialog.setSize(400, 600);
+    dialog.setLocationRelativeTo(this);
+    dialog.setSpreadSheet(sheet);
+    dialog.setVisible(true);
   }
 
   /**
@@ -632,6 +715,13 @@ public class InstancePanel
     if (m_InstancePointHitDetector != null) {
       m_InstancePointHitDetector.cleanUp();
       m_InstancePointHitDetector = null;
+    }
+
+    if (m_ViewDialogs != null) {
+      for (SpreadSheetDialog dialog: m_ViewDialogs)
+	dialog.dispose();
+      m_ViewDialogs.clear();
+      m_ViewDialogs = null;
     }
 
     super.cleanUp();
