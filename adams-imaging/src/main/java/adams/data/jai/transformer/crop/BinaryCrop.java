@@ -27,7 +27,8 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Turns image into binary (ie black and white) image and determines largest rectangle in the middle to crop to.
+ * Turns image into binary (ie black and white) image and determines largest (white) rectangle in the middle to crop to.<br/>
+ * When looking for a black rectangle, check the 'invert' option.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -44,6 +45,12 @@ import adams.data.statistics.StatUtils;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-invert &lt;boolean&gt; (property: invert)
+ * &nbsp;&nbsp;&nbsp;If enabled, the algorithm looks for a black rectangle rather than a white 
+ * &nbsp;&nbsp;&nbsp;one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -58,6 +65,9 @@ public class BinaryCrop
   /** the number of checkpoints to use for determining minimum rectangle. */
   protected int m_NumCheckPoints;
   
+  /** whether to invert the check (ie look for black rectangle). */
+  protected boolean m_Invert;
+  
   /**
    * Returns a string describing the object.
    *
@@ -67,7 +77,8 @@ public class BinaryCrop
   public String globalInfo() {
     return 
 	"Turns image into binary (ie black and white) image and determines "
-	+ "largest rectangle in the middle to crop to.";
+	+ "largest (white) rectangle in the middle to crop to.\n"
+	+ "When looking for a black rectangle, check the 'invert' option.";
   }
 
   /**
@@ -80,6 +91,10 @@ public class BinaryCrop
     m_OptionManager.add(
 	"num-check-points", "numCheckPoints",
 	1, 1, null);
+
+    m_OptionManager.add(
+	"invert", "invert",
+	false);
   }
 
   /**
@@ -121,6 +136,37 @@ public class BinaryCrop
   }
 
   /**
+   * Sets whether to look for black rectangle (true) rather than white (false).
+   *
+   * @param value	true if to look for black rectangle
+   */
+  public void setInvert(boolean value) {
+    m_Invert = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to look for black rectangle (true) rather than white (false).
+   *
+   * @return		true if to look for black rectangle
+   */
+  public boolean getInvert() {
+    return m_Invert;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String invertTipText() {
+    return 
+	"If enabled, the algorithm looks for a black rectangle rather than "
+	+ "a white one.";
+  }
+
+  /**
    * Performs the actual cropping.
    * 
    * @param img		the image to crop
@@ -144,6 +190,7 @@ public class BinaryCrop
     int			abottom;
     int			aleft;
     int			aright;
+    int			value;
 
     binary = BufferedImageHelper.convert(img, BufferedImage.TYPE_BYTE_BINARY);
     width  = img.getWidth();
@@ -163,47 +210,51 @@ public class BinaryCrop
     for (n = 0; n < m_NumCheckPoints; n++) {
       // from top
       top[n] = 0;
-      for (i = 0; i < yCheck[n]; i++) {
-	if (((binary.getRGB(xCheck[n], i) >> 0) & 0xFF) > 0) {
+      for (i = 0; i < height / 2; i++) {
+	value = binary.getRGB(xCheck[n], i) & 0xFF;
+	if ((m_Invert && (value == 0)) || (!m_Invert && (value > 0))) {
 	  top[n] = i;
 	  break;
 	}
       }
       if (isLoggingEnabled())
-	getLogger().fine("top[" + n + "]: " + top);
+	getLogger().fine("top[" + n + "]: " + top[n]);
 
       // from bottom
       bottom[n] = height - 1;
-      for (i = height - 1; i >= yCheck[n]; i--) {
-	if (((binary.getRGB(xCheck[n], i) >> 0) & 0xFF) > 0) {
+      for (i = height - 1; i >= height / 2; i--) {
+	value = binary.getRGB(xCheck[n], i) & 0xFF;
+	if ((m_Invert && (value == 0)) || (!m_Invert && (value > 0))) {
 	  bottom[n] = i;
 	  break;
 	}
       }
       if (isLoggingEnabled())
-	getLogger().fine("bottom[" + n + "]: " + bottom);
+	getLogger().fine("bottom[" + n + "]: " + bottom[n]);
 
       // from left
       left[n] = 0;
-      for (i = 0; i < xCheck[n]; i++) {
-	if (((binary.getRGB(i, yCheck[n]) >> 0) & 0xFF) > 0) {
+      for (i = 0; i < width / 2; i++) {
+	value = binary.getRGB(i, yCheck[n]) & 0xFF;
+	if ((m_Invert && (value == 0)) || (!m_Invert && (value > 0))) {
 	  left[n] = i;
 	  break;
 	}
       }
       if (isLoggingEnabled())
-	getLogger().fine("left[" + n + "]: " + left);
+	getLogger().fine("left[" + n + "]: " + left[n]);
 
       // from right
       right[n] = width - 1;
-      for (i = width - 1; i >= xCheck[n]; i--) {
-	if (((binary.getRGB(i, yCheck[n]) >> 0) & 0xFF) > 0) {
+      for (i = width - 1; i >= width / 2; i--) {
+	value = binary.getRGB(i, yCheck[n]) & 0xFF;
+	if ((m_Invert && (value == 0)) || (!m_Invert && (value > 0))) {
 	  right[n] = i;
 	  break;
 	}
       }
       if (isLoggingEnabled())
-	getLogger().fine("right[" + n + "]: " + right);
+	getLogger().fine("right[" + n + "]: " + right[n]);
     }
     
     // determine actual top/left/bottom/right
