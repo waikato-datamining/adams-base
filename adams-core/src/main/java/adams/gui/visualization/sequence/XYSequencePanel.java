@@ -705,9 +705,8 @@ public class XYSequencePanel
     }
   }
 
-  
   /**
-   * Saves the specified sequence as CSV file.
+   * Saves the specified sequence as spreadsheet file.
    * 
    * @param cont	the sequence to save
    */
