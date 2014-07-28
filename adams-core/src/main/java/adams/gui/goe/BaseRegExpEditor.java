@@ -15,7 +15,7 @@
 
 /**
  * BaseRegExpEditor.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -36,12 +36,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseRegExp;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
@@ -94,16 +95,18 @@ public class BaseRegExpEditor
   protected JComponent createCustomEditor() {
     JPanel	panelAll;
     JPanel	panelCheck;
+    JPanel	panelInput;
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
     JButton 	buttonOK;
     JButton 	buttonClose;
 
-    panelAll = new JPanel(new BorderLayout());
-    panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panelAll.add(panel, BorderLayout.NORTH);
-    m_TextValue = new JTextField(20);
+    panelAll   = new JPanel(new BorderLayout());
+    panelInput = new JPanel(new BorderLayout());
+    panelAll.add(panelInput, BorderLayout.CENTER);
+    m_TextValue = new BaseTextArea(1, 20);
+    ((BaseTextArea) m_TextValue).setLineWrap(true);
     m_TextValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -130,12 +133,16 @@ public class BaseRegExpEditor
 	BrowserHelper.openURL(getHelpURL());
       }
     });
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelInput.add(panel, BorderLayout.WEST);
     panel.add(label);
-    panel.add(m_TextValue);
+    panelInput.add(new BaseScrollPane(m_TextValue), BorderLayout.CENTER);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelInput.add(panel, BorderLayout.EAST);
     panel.add(m_ButtonHelp);
 
     panelCheck = new JPanel(new BorderLayout());
-    panelAll.add(panelCheck, BorderLayout.CENTER);
+    panelInput.add(panelCheck, BorderLayout.SOUTH);
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelCheck.add(panel, BorderLayout.NORTH);
     m_CheckBoxEscapedInput = new JCheckBox("Escaped input");
