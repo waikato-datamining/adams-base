@@ -829,8 +829,12 @@ public class ImageViewerPanel
     int			retVal;
     File		file;
     ImagePanel		panel;
+    int			index;
 
-    panel = getCurrentPanel();
+    index = m_TabbedPane.getSelectedIndex();
+    if (index == -1)
+      return;
+    panel = getPanelAt(index);
     if (panel == null)
       return;
 
@@ -845,6 +849,7 @@ public class ImageViewerPanel
 	  this, "Failed to write image to '" + file + "'!");
     }
     else {
+      m_TabbedPane.setTitleAt(index, file.getName());
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(file);
     }
