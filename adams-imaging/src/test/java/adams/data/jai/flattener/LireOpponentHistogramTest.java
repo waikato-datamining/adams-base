@@ -14,7 +14,7 @@
  */
 
 /**
- * LireBasicFeaturesTest.java
+ * LireOpponentHistogramTest.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.jai.flattener;
@@ -24,13 +24,13 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the LireBasicFeatures flattener. Run from the command line with: <p/>
- * java adams.data.jai.flattener.LireBasicFeaturesTest
+ * Test class for the LireOpponentHistogram flattener. Run from the command line with: <p/>
+ * java adams.data.jai.flattener.LireOpponentHistogramTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 4649 $
  */
-public class LireBasicFeaturesTest
+public class LireOpponentHistogramTest
   extends AbstractJAIFlattenerTestCase {
 
   /**
@@ -38,7 +38,7 @@ public class LireBasicFeaturesTest
    *
    * @param name 	the name of the test
    */
-  public LireBasicFeaturesTest(String name) {
+  public LireOpponentHistogramTest(String name) {
     super(name);
   }
 
@@ -62,11 +62,11 @@ public class LireBasicFeaturesTest
    */
   @Override
   protected AbstractJAIFlattener[] getRegressionSetups() {
-    LireBasicFeatures[]	result;
+    LireOpponentHistogram[]	result;
 
-    result = new LireBasicFeatures[1];
+    result = new LireOpponentHistogram[1];
 
-    result[0] = new LireBasicFeatures();
+    result[0] = new LireOpponentHistogram();
 
     return result;
   }
@@ -77,7 +77,7 @@ public class LireBasicFeaturesTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(LireBasicFeaturesTest.class);
+    return new TestSuite(LireOpponentHistogramTest.class);
   }
 
   /**
