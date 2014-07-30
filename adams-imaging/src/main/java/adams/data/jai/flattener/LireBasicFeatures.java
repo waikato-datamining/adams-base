@@ -116,16 +116,16 @@ public class LireBasicFeatures
     Instance[]		result;
     BufferedImage	image;
     double[]		values;
-    BasicFeatures	basic;
+    BasicFeatures	features;
     double[]		histo;
     int			i;
 
-    result = null;
-    image  = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    values = newArray(m_Header.numAttributes());
-    basic  = new BasicFeatures();
-    basic.extract(image);
-    histo = basic.getDoubleHistogram();
+    result   = null;
+    image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
+    values   = newArray(m_Header.numAttributes());
+    features = new BasicFeatures();
+    features.extract(image);
+    histo    = features.getDoubleHistogram();
     for (i = 0; i < histo.length; i++)
       values[i] = histo[i];
 
