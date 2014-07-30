@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.flow.control.AbstractControlActor;
+import adams.flow.control.Breakpoint;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -318,6 +319,28 @@ public class Events
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo(true, true, ActorExecution.UNDEFINED, false, new Class[]{Event.class});
+  }
+  
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String		result;
+    List<AbstractActor>	breakpoints;
+    
+    result = super.setUp();
+    
+    if (result == null) {
+      // disable stop buttons in breakpoints
+      breakpoints = ActorUtils.enumerate(this, new Class[]{Breakpoint.class});
+      for (AbstractActor actor: breakpoints)
+	((Breakpoint) actor).setStopButtonEnabled(false);
+    }
+    
+    return result;
   }
 
   /**
