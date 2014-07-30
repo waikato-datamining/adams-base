@@ -33,7 +33,7 @@ import adams.data.image.BufferedImageHelper;
 
 /**
  <!-- globalinfo-start -->
- * Turns an image into a LIRE histogram.<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.BasicFeatures.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
@@ -75,7 +75,7 @@ public class LireBasicFeatures
   @Override
   public String globalInfo() {
     return
-        "Turns an image into a LIRE histogram.\n"
+        "Generates features using " + BasicFeatures.class.getName() + ".\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
   }
