@@ -28,6 +28,10 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 
@@ -35,7 +39,9 @@ import adams.data.image.BufferedImageHelper;
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.<br/>
  * For more information on the LIRE project, see:<br/>
- * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
+ * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;<br/>
+ * For more information see:<br/>
+ * Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. &amp; Zabih, R. (2007). Image Indexing Using Color Correlograms. IEEE Computer Society..
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -62,7 +68,8 @@ import adams.data.image.BufferedImageHelper;
  * @version $Revision: 9196 $
  */
 public class LireAutoColorCorrelogram
-  extends AbstractJAIFlattener {
+  extends AbstractJAIFlattener
+  implements TechnicalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 353245595318472893L;
@@ -77,7 +84,29 @@ public class LireAutoColorCorrelogram
     return
         "Generates features using " + AutoColorCorrelogram.class.getName() + ".\n"
         + "For more information on the LIRE project, see:\n"
-        + "http://code.google.com/p/lire/";
+        + "http://code.google.com/p/lire/\n"
+        + "For more information see:\n"
+        + getTechnicalInformation().toString();
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(Type.ARTICLE);
+    result.setValue(Field.AUTHOR, "Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. & Zabih, R.");
+    result.setValue(Field.TITLE, "Image Indexing Using Color Correlograms");
+    result.setValue(Field.JOURNAL, "IEEE Computer Society");
+    result.setValue(Field.YEAR, "2007");
+    result.setValue(Field.HTTP, "http://doi.ieeecomputersociety.org/10.1109/CVPR.1997.609412");
+
+    return result;
   }
 
   /**
