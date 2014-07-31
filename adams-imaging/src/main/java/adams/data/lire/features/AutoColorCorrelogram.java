@@ -45,6 +45,19 @@ import adams.data.image.BufferedImageHelper;
  * <p/>
  <!-- globalinfo-end -->
  *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{Huang2007,
+ *    author = {Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. &amp; Zabih, R.},
+ *    journal = {IEEE Computer Society},
+ *    title = {Image Indexing Using Color Correlograms},
+ *    year = {2007},
+ *    HTTP = {http:&#47;&#47;doi.ieeecomputersociety.org&#47;10.1109&#47;CVPR.1997.609412}
+ * }
+ * </pre>
+ * <p/>
+ <!-- technical-bibtex-end -->
+ * 
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
