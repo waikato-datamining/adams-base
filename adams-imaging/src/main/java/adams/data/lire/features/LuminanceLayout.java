@@ -34,6 +34,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.LuminanceLayout.<br/>
+ * Intended for grayscale or B&#47;W images. It scales an image down to a very small size and uses this smaller version as a descriptor. Interesting aspect is that white stripes are added to make the small image quadratic.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
@@ -76,6 +77,9 @@ public class LuminanceLayout
   public String globalInfo() {
     return
         "Generates features using " + net.semanticmetadata.lire.imageanalysis.LuminanceLayout.class.getName() + ".\n"
+        + "Intended for grayscale or B/W images. It scales an image down to a very "
+        + "small size and uses this smaller version as a descriptor. Interesting "
+        + "aspect is that white stripes are added to make the small image quadratic.\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
   }
@@ -124,7 +128,7 @@ public class LuminanceLayout
     int			i;
 
     result   = null;
-    image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
+    image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_BYTE_GRAY);
     values   = newArray(m_Header.numAttributes());
     features = new net.semanticmetadata.lire.imageanalysis.LuminanceLayout();
     features.extract(image);
