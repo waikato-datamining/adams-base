@@ -1,0 +1,6 @@
+--> adams.flow.condition.bool.HasStorageValue-out0.txt
+false
+
+--> adams.flow.condition.bool.HasStorageValue-out1.txt
+true
+
