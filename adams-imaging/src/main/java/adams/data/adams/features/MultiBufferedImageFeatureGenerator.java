@@ -204,8 +204,10 @@ public class MultiBufferedImageFeatureGenerator
     String	name;
     
     m_SubHeaders = new Instances[m_SubGenerators.length];
-    for (i = 0; i < m_SubHeaders.length; i++)
+    for (i = 0; i < m_SubHeaders.length; i++) {
       m_SubHeaders[i] = m_SubGenerators[i].createHeader(img);
+      m_SubHeaders[i] = m_SubGenerators[i].postProcessHeader(m_SubHeaders[i]);
+    }
 
     // disambiguate the attribute names
     if (!m_Prefix.isEmpty()) {

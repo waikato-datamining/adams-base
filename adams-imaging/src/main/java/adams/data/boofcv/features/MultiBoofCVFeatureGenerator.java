@@ -74,7 +74,7 @@ public class MultiBoofCVFeatureGenerator
   private static final long serialVersionUID = -4136037171201268286L;
   
   /** the flatteners to use. */
-  protected AbstractBoofCVFeatureGenerator[] m_SubFlatteners;
+  protected AbstractBoofCVFeatureGenerator[] m_SubGenerators;
   
   /** the prefix to use to disambiguate the attributes. */
   protected String m_Prefix;
@@ -104,7 +104,7 @@ public class MultiBoofCVFeatureGenerator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "sub-flattener", "subFlatteners",
+	    "sub-generator", "subGenerators",
 	    new AbstractBoofCVFeatureGenerator[0]);
 
     m_OptionManager.add(
@@ -117,8 +117,8 @@ public class MultiBoofCVFeatureGenerator
    *
    * @param value 	the flatteners
    */
-  public void setSubFlatteners(AbstractBoofCVFeatureGenerator[] value) {
-    m_SubFlatteners = value;
+  public void setSubGenerators(AbstractBoofCVFeatureGenerator[] value) {
+    m_SubGenerators = value;
     reset();
   }
 
@@ -127,8 +127,8 @@ public class MultiBoofCVFeatureGenerator
    *
    * @return 		the flatteners
    */
-  public AbstractBoofCVFeatureGenerator[] getSubFlatteners() {
-    return m_SubFlatteners;
+  public AbstractBoofCVFeatureGenerator[] getSubGenerators() {
+    return m_SubGenerators;
   }
 
   /**
@@ -137,8 +137,8 @@ public class MultiBoofCVFeatureGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String subFlattenersTipText() {
-    return "The flatteners to apply to the image.";
+  public String subGeneratorsTipText() {
+    return "The feature generators to apply to the image.";
   }
 
   /**
@@ -203,9 +203,11 @@ public class MultiBoofCVFeatureGenerator
     int		n;
     String	name;
     
-    m_SubHeaders = new Instances[m_SubFlatteners.length];
-    for (i = 0; i < m_SubHeaders.length; i++)
-      m_SubHeaders[i] = m_SubFlatteners[i].createHeader(img);
+    m_SubHeaders = new Instances[m_SubGenerators.length];
+    for (i = 0; i < m_SubHeaders.length; i++) {
+      m_SubHeaders[i] = m_SubGenerators[i].createHeader(img);
+      m_SubHeaders[i] = m_SubGenerators[i].postProcessHeader(m_SubHeaders[i]);
+    }
 
     // disambiguate the attribute names
     if (!m_Prefix.isEmpty()) {
@@ -248,9 +250,9 @@ public class MultiBoofCVFeatureGenerator
     int		max;
     
     // flatten image
-    sub = new Instances[m_SubFlatteners.length];
-    for (i = 0; i < m_SubFlatteners.length; i++) {
-      flat   = m_SubFlatteners[i].generate(img);
+    sub = new Instances[m_SubGenerators.length];
+    for (i = 0; i < m_SubGenerators.length; i++) {
+      flat   = m_SubGenerators[i].generate(img);
       sub[i] = new Instances(m_SubHeaders[i]);
       for (n = 0; n < flat.length; n++)
 	sub[i].add(flat[n]);

@@ -74,13 +74,13 @@ public class MultiBoofCVFeatureGeneratorTest
     result[1] = new MultiBoofCVFeatureGenerator();
     sub       = new AbstractBoofCVFeatureGenerator[1];
     sub[0]    = new Pixels();
-    result[1].setSubFlatteners(sub);
+    result[1].setSubGenerators(sub);
 
     result[2] = new MultiBoofCVFeatureGenerator();
     sub       = new AbstractBoofCVFeatureGenerator[2];
     sub[0]    = new Pixels();
     sub[1]    = new Pixels();
-    result[2].setSubFlatteners(sub);
+    result[2].setSubGenerators(sub);
     result[2].setPrefix("#-");
 
     return result;
