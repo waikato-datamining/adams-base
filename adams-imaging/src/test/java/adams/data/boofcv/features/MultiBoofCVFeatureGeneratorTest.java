@@ -21,6 +21,9 @@ package adams.data.boofcv.features;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.data.image.BufferedImageContainer;
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.env.Environment;
 
 /**
@@ -53,6 +56,7 @@ public class MultiBoofCVFeatureGeneratorTest
     return new String[]{
 	"adams_icon.png",
 	"adams_icon.png",
+	"adams_icon.png",
 	"adams_icon.png"
     };
   }
@@ -67,7 +71,7 @@ public class MultiBoofCVFeatureGeneratorTest
     MultiBoofCVFeatureGenerator[]	result;
     AbstractBoofCVFeatureGenerator[]	sub;
 
-    result = new MultiBoofCVFeatureGenerator[3];
+    result = new MultiBoofCVFeatureGenerator[4];
 
     result[0] = new MultiBoofCVFeatureGenerator();
 
@@ -82,6 +86,12 @@ public class MultiBoofCVFeatureGeneratorTest
     sub[1]    = new Pixels();
     result[2].setSubGenerators(sub);
     result[2].setPrefix("#-");
+
+    result[3] = new MultiBoofCVFeatureGenerator();
+    sub       = new AbstractBoofCVFeatureGenerator[1];
+    sub[0]    = new Pixels();
+    result[3].setSubGenerators(sub);
+    result[3].setFields(new Field[]{new Field(BufferedImageContainer.FIELD_FILENAME, DataType.STRING)});
 
     return result;
   }

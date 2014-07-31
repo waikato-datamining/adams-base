@@ -25,6 +25,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Utils;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
@@ -247,7 +248,10 @@ public class MultiImageJFeatureGenerator
     Instance[]	flat;
     int		i;
     int		n;
+    int		m;
     int		max;
+    Attribute	att;
+    double[]	values;
     
     // flatten image
     sub = new Instances[m_SubGenerators.length];
@@ -269,9 +273,24 @@ public class MultiImageJFeatureGenerator
 
     // merge datasets
     if (sub.length > 0) {
-      merged = sub[0];
-      for (i = 1; i < sub.length; i++)
-	merged = Instances.mergeInstances(merged, sub[i]);
+      merged = new Instances(m_Header, max);
+      for (n = 0; n < max; n++) {
+	values = new double[m_Header.numAttributes()];
+	for (i = 0; i < sub.length; i++) {
+	  for (m = 0; m < sub[i].numAttributes(); m++) {
+	    att = merged.attribute(sub[i].attribute(m).name());
+	    if (att.isNumeric())
+	      values[att.index()] = sub[i].instance(n).value(m);
+	    else if (att.isNominal())
+	      values[att.index()] = sub[i].instance(n).value(m);
+	    else if (att.isString())
+	      values[att.index()] = att.addStringValue(sub[i].instance(n).stringValue(m));
+	    else
+	      values[att.index()] = Utils.missingValue();
+	  }
+	  merged.add(new DenseInstance(1.0, values));
+	}
+      }
     }
     else {
       flat    = new Instance[1];

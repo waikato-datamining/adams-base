@@ -21,8 +21,11 @@ package adams.data.adams.features;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.data.image.BufferedImageContainer;
 import adams.data.jai.features.Histogram;
 import adams.data.jai.features.Histogram.HistogramType;
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.env.Environment;
 
 /**
@@ -55,6 +58,7 @@ public class MultiBufferedImageFeatureGeneratorTest
     return new String[]{
 	"adams_logo.png",
 	"adams_logo.png",
+	"adams_logo.png",
 	"adams_logo.png"
     };
   }
@@ -69,7 +73,7 @@ public class MultiBufferedImageFeatureGeneratorTest
     MultiBufferedImageFeatureGenerator[]	result;
     AbstractBufferedImageFeatureGenerator[]	sub;
 
-    result = new MultiBufferedImageFeatureGenerator[3];
+    result = new MultiBufferedImageFeatureGenerator[4];
 
     result[0] = new MultiBufferedImageFeatureGenerator();
 
@@ -85,6 +89,12 @@ public class MultiBufferedImageFeatureGeneratorTest
     ((Histogram) sub[1]).setHistogramType(HistogramType.EIGHT_BIT);
     result[2].setSubGenerators(sub);
     result[2].setPrefix("#-");
+
+    result[3] = new MultiBufferedImageFeatureGenerator();
+    sub       = new AbstractBufferedImageFeatureGenerator[1];
+    sub[0]    = new Histogram();
+    result[3].setSubGenerators(sub);
+    result[3].setFields(new Field[]{new Field(BufferedImageContainer.FIELD_FILENAME, DataType.STRING)});
 
     return result;
   }
