@@ -82,7 +82,7 @@ RenameOption=\
   RenameOption-transformer_imagej_featuregenerator_flattener,\
   RenameOption-transformer_bufferedimage_featuregenerator_flattener,\
   RenameOption-features_multibufferedimagefeaturegenerator_subflattener,\
-  RenameOption-features_multiimagejfeaturegenerator_subflattener,\
+  RenameOption-features_multiimagejfeaturegenerator_subflattener
   
 # general format for renaming options
 # <key>=<classname>#<old>#<new>
@@ -90,4 +90,4 @@ RenameOption-transformer_boofcv_featuregenerator_flattener=adams.flow.transforme
 RenameOption-transformer_imagej_featuregenerator_flattener=adams.flow.transformer.ImageJFeatureGenerator#flattener#algorithm
 RenameOption-transformer_bufferedimage_featuregenerator_flattener=adams.flow.transformer.BufferedImageFeatureGenerator#flattener#algorithm
 RenameOption-features_multibufferedimagefeaturegenerator_subflattener=adams.data.adams.features.MultiBufferedImageFeatureGenerator#sub-flattener#sub-generator
-RenameOption-features_imagejfeaturegenerator_subflattener=adams.data.adams.features.MultiImageJFeatureGenerator#sub-flattener#sub-generator
+RenameOption-features_multiimagejfeaturegenerator_subflattener=adams.data.adams.features.MultiImageJFeatureGenerator#sub-flattener#sub-generator
