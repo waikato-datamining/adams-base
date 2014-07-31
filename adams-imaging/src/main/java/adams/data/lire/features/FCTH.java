@@ -27,6 +27,10 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -34,11 +38,27 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.FCTH.<br/>
+ * For more information, see:<br/>
+ * Savvas A. Chatzichristofis, Yiannis S. Boutalis: FCTH: Fuzzy Color and Texture Histogram - A Low Level Feature for Accurate Image Retrieval. In: 9th International Workshop on Image Analysis for Multimedia Interactive Services, 2008.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
  <!-- globalinfo-end -->
  *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;inproceedings{Chatzichristofis2008,
+ *    author = {Savvas A. Chatzichristofis and Yiannis S. Boutalis},
+ *    booktitle = {9th International Workshop on Image Analysis for Multimedia Interactive Services},
+ *    editor = {A. Gasteratos, M. Vincze, and J.K. Tsotsos},
+ *    publisher = {IEEE},
+ *    title = {FCTH: Fuzzy Color and Texture Histogram - A Low Level Feature for Accurate Image Retrieval},
+ *    year = {2008}
+ * }
+ * </pre>
+ * <p/>
+ <!-- technical-bibtex-end -->
+ * 
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
@@ -62,7 +82,8 @@ import adams.data.image.BufferedImageHelper;
  * @version $Revision: 9196 $
  */
 public class FCTH
-  extends AbstractBufferedImageFeatureGenerator {
+  extends AbstractBufferedImageFeatureGenerator
+  implements TechnicalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4620733370581047719L;
@@ -76,8 +97,32 @@ public class FCTH
   public String globalInfo() {
     return
         "Generates features using " + net.semanticmetadata.lire.imageanalysis.FCTH.class.getName() + ".\n"
+        + "For more information, see:\n"
+        + getTechnicalInformation().toString() + "\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing detailed
+   * information about the technical background of this class, e.g., paper
+   * reference or book this class is based on.
+   * 
+   * @return the technical information about this class
+   */
+  @Override
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation result;
+
+    result = new TechnicalInformation(Type.INPROCEEDINGS);
+    result.setValue(Field.AUTHOR, "Savvas A. Chatzichristofis and Yiannis S. Boutalis");
+    result.setValue(Field.TITLE, "FCTH: Fuzzy Color and Texture Histogram - A Low Level Feature for Accurate Image Retrieval");
+    result.setValue(Field.BOOKTITLE, "9th International Workshop on Image Analysis for Multimedia Interactive Services");
+    result.setValue(Field.EDITOR, "A. Gasteratos, M. Vincze, and J.K. Tsotsos");
+    result.setValue(Field.YEAR, "2008");
+    result.setValue(Field.PUBLISHER, "IEEE");
+
+    return result;
   }
 
   /**
