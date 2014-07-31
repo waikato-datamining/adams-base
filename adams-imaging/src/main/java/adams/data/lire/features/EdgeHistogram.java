@@ -34,6 +34,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.EdgeHistogram.<br/>
+ * Implements the EdgeHistogram descriptor from the MPEG-7 standard.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
@@ -76,6 +77,7 @@ public class EdgeHistogram
   public String globalInfo() {
     return
         "Generates features using " + net.semanticmetadata.lire.imageanalysis.EdgeHistogram.class.getName() + ".\n"
+        + "Implements the EdgeHistogram descriptor from the MPEG-7 standard.\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
   }
