@@ -284,7 +284,8 @@ public class WekaSetInstanceValue
     }
 
     // broadcast data
-    m_OutputToken = new Token(inst);
+    if (result == null)
+      m_OutputToken = new Token(inst);
 
     return result;
   }
