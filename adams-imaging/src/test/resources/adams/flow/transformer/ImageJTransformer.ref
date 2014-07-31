@@ -1,5 +1,5 @@
 --> dumpfile.arff
-@relation adams.data.imagej.flattener.Histogram
+@relation adams.data.imagej.features.Histogram
 
 @attribute histo_r_1 numeric
 @attribute histo_g_1 numeric

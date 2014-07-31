@@ -1,4 +1,4 @@
-% Copyright (c) 2009-2013 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2009-2014 by the University of Waikato, Hamilton, NZ. 
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -49,7 +49,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2014} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -62,7 +62,52 @@
 %\listoftables
 
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{ADAMS}
+ADAMS has custom image processing support that does not rely on other libraries.
+
+The following actors are available:
+\begin{tight_itemize}
+	\item \texttt{transformer.BufferedImageTransformer} -- performs a transformation
+	using an existing transformer class on the incoming image and
+	outputs another image again.
+	\item \texttt{transformer.BufferedImageFeatureGenerator} -- turns a
+	\texttt{BufferedImageContainer} into an \texttt{weka.core.Instance} object to
+	be used in WEKA. The attaced meta-data in form of a report can be added to the
+	output object as well.
+\end{tight_itemize}
+
+Figure \ref{adams-blur-flow} shows a
+flow\footnote{adams-imaging-gaussian\_blur.flow} for reading images, blurring
+them using a gaussian blur transformer and displaying them side-by-side. Figures
+\ref{adams-blur-output-original} and \ref{adams-blur-output-blurred} show original
+and blurred image.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/adams-blur-flow.png}
+  \caption{Flow for blurring images stored in a directory.}
+  \label{adams-blur-flow}
+\end{figure}
+
+\begin{figure}[htb]
+  \begin{minipage}[b]{0.48\linewidth}
+  \centering
+  \includegraphics[height=3.7cm]{images/adams-blur-output-original.png}
+  \caption{The original image.}
+  \label{adams-blur-output-original}
+  \end{minipage}%
+  \begin{minipage}[b]{0.48\linewidth}
+  \centering
+  \includegraphics[height=3.7cm]{images/adams-blur-output-blurred.png}
+  \caption{The blurred image.}
+  \label{adams-blur-output-blurred}
+  \end{minipage}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter[Java Advanced
 Imaging]{\parbox[b]{1.2cm}{\includegraphics[width=1cm]{images/jai.png}}\parbox[c]{14cm}{Java
 Advanced Imaging}}
@@ -70,51 +115,20 @@ Java Advanced Imaging (JAI) is an API to provide a simple, high-level
 programming model which allows developers to create their own image manipulation
 routines\footnote{\url{http://en.wikipedia.org/wiki/Java_Advanced_Imaging}{}}.
 
-There are five JAI actors available:
+The following actors are available:
 \begin{tight_itemize}
     \item \texttt{source.JAICreateImage} -- for creating an empty image to be 
     forwarded.
 	\item \texttt{transformer.JAIReader} -- for reading any image file that	JAI
 	supports\footnote{\url{http://java.sun.com/products/java-media/jai/iio.html}{}} and forwarding a \texttt{BufferedImageContainer} object.
-	\item \texttt{transformer.JAITransformer} -- performs a transformation
-	using an existing JAI transformer class on the incoming image and
-	outputs another image again.
-	\item \texttt{transformer.JAIFlattener} -- turns a
-	\texttt{BufferedImageContainer} into an \texttt{weka.core.Instance} object to
-	be used in WEKA. The attaced meta-data in form of a report can be added to the
-	output object as well.
 	\item \texttt{sink.JAIWriter} -- for writing a \texttt{BufferedImageContainer}
 	to a file format that JAI supports. If the image type cannot be
 	determined based on the extension, you can also specify which type to generate.
 \end{tight_itemize}
 
-Figure \ref{jai-blur-flow} shows a
-flow\footnote{adams-imaging-gaussian\_blur.flow} for reading images, blurring
-them using a gaussian blur transformer and displaying them side-by-side. Figures
-\ref{jai-blur-output-original} and \ref{jai-blur-output-blurred} show original
-and blurred image.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/jai-blur-flow.png}
-  \caption{JAI flow for blurring images stored in a directory.}
-  \label{jai-blur-flow}
-\end{figure}
-
-\begin{figure}[htb]
-  \begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \includegraphics[height=3.7cm]{images/jai-blur-output-original.png}
-  \caption{The original image.}
-  \label{jai-blur-output-original}
-  \end{minipage}%
-  \begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \includegraphics[height=3.7cm]{images/jai-blur-output-blurred.png}
-  \caption{The blurred image.}
-  \label{jai-blur-output-blurred}
-  \end{minipage}
-\end{figure}
+Since the JAI actors use \texttt{BufferedImageContainer}, the 
+\texttt{BufferedImageTransformer} and \texttt{BufferedImageFeatureGenerator}
+transformers can be used.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +147,7 @@ There are four ImageJ actors available:
 	using an existing ImageJ transformer class on the incoming image and
 	outputs another image again. ImageJ plugin filters, commands and pre-recorded
 	macros can be used to perform transformations.
-	\item \texttt{transformer.ImageJFlattener} -- turns an
+	\item \texttt{transformer.ImageJFeatureGenerator} -- turns an
 	\texttt{ImagePlusContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
@@ -218,7 +232,7 @@ There are three ImageMagick actors available:
 
 There is no separate transformer for generating a WEKA instance, since the
 ImageMagick actors process and output \texttt{BufferedImageContainer} objects as
-well, just like the JAI actors. You can use the \texttt{JAIFlattener} for
+well, just like the JAI actors. You can use the \texttt{JAIFeatureGenerator} for
 generating WEKA output.
 
 The example flow\footnote{adams-imaging-imagemagick\_script.flow} in Figure
@@ -275,11 +289,17 @@ There are two BoofCV actors available:
 	outputs another image again.
 	\item \texttt{transformer.BoofCVDetectLines} -- detects lines in images
 	using a Hough line detector based on polar parametrization.
-	\item \texttt{transformer.BoofCVFlattener} -- turns a
+	\item \texttt{transformer.BoofCVFeatureGenerator} -- turns a
 	\texttt{BoofCVImageContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
 \end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{LIRE}
+The Lucene Image Retrieval library \cite{lire} provides a wide range of feature
+generators that work on \textit{BufferedImageContainer} objects.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,10 +433,10 @@ cast the type of the tokens to the desired one, e.g.,
 \chapter{WEKA output}
 Of course, the data can be turned into a format that is suitable for WEKA
 (\cite{weka}). For JAI and ImageMagick transformers, both generating
-\textit{BufferedImageContainer} tokens, the \textit{JAIFlattener} can be used to
+\textit{BufferedImageContainer} tokens, the \textit{BufferedImageFeatureGenerator} can be used to
 generate WEKA output in the form of \textit{weka.core.Instance} objects.
 For ImageJ generated tokens, outputting \textit{ImagePlusContainer} tokens, you
-have to use the \textit{ImageJFlattener} instead. This transformer also outputs
+have to use the \textit{ImageJFeatureGenerator} instead. This transformer also outputs
 \textit{weka.core.Instance} objects. These \textit{Instance} objects can then be
 processed further or simply dumped into a file. Figure
 \ref{imagej-arff-generation-flow} shows a
@@ -456,7 +476,9 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
 	\textit{height} information from an image.
 	\item \textit{ImageMetaData} -- Extracts meta-data (EXIF or IPTC) from an
-	image as spreadsheet.\footnote{adams-imaging-meta\_data.flow}
+	image as spreadsheet using the Sanselan library\cite{sanselan}.\footnote{adams-imaging-meta\_data.flow}
+	\item \textit{ImageMetaDataExtractor} -- Extracts meta-data (EXIF or IPTC) from an
+	image as spreadsheet using the Meta-Data Extractor library\cite{metadataextractor}.
 \end{tight_itemize}
 
 \noindent Available sinks:

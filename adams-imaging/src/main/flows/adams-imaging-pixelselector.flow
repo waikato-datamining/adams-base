@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:44
+# Date: 2014-07-31 12:21:12
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -40,9 +40,9 @@ adams.flow.control.Flow
 			-classname
 			adams.data.image.BufferedImageContainer
 	-actor
-		adams.flow.transformer.JAIFlattener
-			-flattener
-				adams.data.jai.flattener.PixelClassifications
+		adams.flow.transformer.BufferedImageFeatureGenerator
+			-algorithm
+				adams.data.adams.features.PixelClassifications
 					-width
 					5
 					-height

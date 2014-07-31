@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-02-05 15:32:31
+# Date: 2014-07-31 12:20:14
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -44,9 +44,9 @@ adams.flow.control.Flow
 			-name
 			gray filter
 			-tee
-				adams.flow.transformer.JAITransformer
+				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.jai.transformer.ImageFilter
+						adams.data.adams.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.GrayFilterProvider
 							-copy
@@ -66,9 +66,9 @@ adams.flow.control.Flow
 			-name
 			transparent background
 			-tee
-				adams.flow.transformer.JAITransformer
+				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.jai.transformer.ImageFilter
+						adams.data.adams.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.TransparentBackground
 							-copy
@@ -88,9 +88,9 @@ adams.flow.control.Flow
 			-name
 			keep only colors
 			-tee
-				adams.flow.transformer.JAITransformer
+				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.jai.transformer.ImageFilter
+						adams.data.adams.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.KeepOnlyColors
 									-color

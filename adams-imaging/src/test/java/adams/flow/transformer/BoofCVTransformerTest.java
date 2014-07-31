@@ -24,7 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
 import adams.data.boofcv.BoofCVImageType;
-import adams.data.boofcv.flattener.Pixels;
+import adams.data.boofcv.features.Pixels;
 import adams.data.boofcv.transformer.Gray8;
 import adams.data.conversion.BufferedImageToBoofCV;
 import adams.data.jai.transformer.Resize;
@@ -97,7 +97,7 @@ public class BoofCVTransformerTest
 
     JAIReader ir = new JAIReader();
 
-    JAITransformer itr = new JAITransformer();
+    BufferedImageTransformer itr = new BufferedImageTransformer();
     Resize res = new Resize();
     res.setWidth(16);
     res.setHeight(16);
@@ -111,9 +111,9 @@ public class BoofCVTransformerTest
     BoofCVTransformer btr = new BoofCVTransformer();
     btr.setTransformAlgorithm(new Gray8());
 
-    BoofCVFlattener ifl = new BoofCVFlattener();
+    BoofCVFeatureGenerator ifl = new BoofCVFeatureGenerator();
     Pixels pix = new Pixels();
-    ifl.setFlattenAlgorithm(pix);
+    ifl.setAlgorithm(pix);
 
     WekaInstanceDumper id = new WekaInstanceDumper();
     id.setOutputPrefix(new TmpFile("dumpfile"));

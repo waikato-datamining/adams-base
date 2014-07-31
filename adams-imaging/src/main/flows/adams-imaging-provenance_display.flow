@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:52
+# Date: 2014-07-31 12:21:22
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -26,9 +26,9 @@ adams.flow.control.Flow
 					-height
 					50
 	-actor
-		adams.flow.transformer.ImageJFlattener
-			-flattener
-				adams.data.imagej.flattener.Pixels
+		adams.flow.transformer.ImageJFeatureGenerator
+			-algorithm
+				adams.data.imagej.features.Pixels
 	-actor
 		adams.flow.sink.ProvenanceDisplay
 			-writer

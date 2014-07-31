@@ -1,5 +1,5 @@
 --> dumpfile.arff
-@relation adams.data.boofcv.flattener.Pixels
+@relation adams.data.boofcv.features.Pixels
 
 @attribute att_1 numeric
 @attribute att_2 numeric

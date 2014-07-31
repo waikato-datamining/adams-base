@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:48
+# Date: 2014-07-31 12:21:16
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -15,18 +15,6 @@ adams.flow.control.Flow
 							0.25
 							-M
 							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
 			-actor
 				adams.flow.source.StorageValue
 					-name
@@ -170,9 +158,9 @@ adams.flow.control.Flow
 					-classname
 					adams.data.image.BufferedImageContainer
 			-tee
-				adams.flow.transformer.JAIFlattener
-					-flattener
-						adams.data.jai.flattener.PixelClassifications
+				adams.flow.transformer.BufferedImageFeatureGenerator
+					-algorithm
+						adams.data.adams.features.PixelClassifications
 							-width
 							@{crop}
 							-height
@@ -217,10 +205,6 @@ adams.flow.control.Flow
 						weka.filters.unsupervised.attribute.StringToNominal
 							-R
 							last
-							
-							
-							
-							
 			-tee
 				adams.flow.transformer.WekaClassSelector
 			-tee
@@ -231,6 +215,8 @@ adams.flow.control.Flow
 				adams.flow.transformer.WekaEvaluationSummary
 			-tee
 				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
 			-condition
 				adams.flow.condition.bool.Expression
 					-expression
@@ -253,10 +239,6 @@ adams.flow.control.Flow
 						weka.filters.unsupervised.attribute.StringToNominal
 							-R
 							last
-							
-							
-							
-							
 			-tee
 				adams.flow.transformer.WekaClassSelector
 			-tee
@@ -320,9 +302,9 @@ adams.flow.control.Flow
 									-storage-name
 									image
 							-tee
-								adams.flow.transformer.JAITransformer
+								adams.flow.transformer.BufferedImageTransformer
 									-transformer
-										adams.data.jai.transformer.Crop
+										adams.data.adams.transformer.Crop
 											-x
 											@{x}
 											-y
@@ -334,9 +316,9 @@ adams.flow.control.Flow
 											-anchor
 											CENTER
 							-tee
-								adams.flow.transformer.JAIFlattener
-									-flattener
-										adams.data.jai.flattener.Pixels
+								adams.flow.transformer.BufferedImageFeatureGenerator
+									-algorithm
+										adams.data.adams.features.Pixels
 											-field
 											Classification[S]
 											-pixel-type
@@ -349,10 +331,6 @@ adams.flow.control.Flow
 										weka.filters.unsupervised.attribute.StringToNominal
 											-R
 											last
-											
-											
-											
-											
 							-tee
 								adams.flow.transformer.WekaFilter
 									-filter

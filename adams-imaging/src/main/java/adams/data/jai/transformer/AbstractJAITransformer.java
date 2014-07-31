@@ -15,18 +15,13 @@
 
 /*
  * AbstractJAITransformer.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
 
-import adams.core.ClassLister;
 import adams.core.JAIHelper;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
-import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImageTransformer;
-import adams.data.image.BufferedImageContainer;
+import adams.data.adams.transformer.AbstractBufferedImageTransformer;
 
 /**
  * Abstract base class for JAI transformations.
@@ -39,55 +34,12 @@ import adams.data.image.BufferedImageContainer;
  * @version $Revision$
  */
 public abstract class AbstractJAITransformer
-  extends AbstractImageTransformer<BufferedImageContainer> {
+  extends AbstractBufferedImageTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 6509685876509009633L;
 
   static {
     JAIHelper.disableMediaLib();
-  }
-
-  /**
-   * Returns a list with classnames of transformations.
-   *
-   * @return		the transformation classnames
-   */
-  public static String[] getTransformations() {
-    return ClassLister.getSingleton().getClassnames(AbstractJAITransformer.class);
-  }
-
-  /**
-   * Instantiates the transformation with the given options.
-   *
-   * @param classname	the classname of the transformation to instantiate
-   * @param options	the options for the transformation
-   * @return		the instantiated transformation or null if an error occurred
-   */
-  public static AbstractJAITransformer forName(String classname, String[] options) {
-    AbstractJAITransformer	result;
-
-    try {
-      result = (AbstractJAITransformer) OptionUtils.forName(AbstractJAITransformer.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the transformation from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			transformation to instantiate
-   * @return		the instantiated transformation
-   * 			or null if an error occurred
-   */
-  public static AbstractJAITransformer forCommandLine(String cmdline) {
-    return (AbstractJAITransformer) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

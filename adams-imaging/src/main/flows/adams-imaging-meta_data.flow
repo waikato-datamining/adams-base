@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:35
+# Date: 2014-07-31 12:20:58
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -13,6 +13,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.ImageMetaData
 	-actor
 		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

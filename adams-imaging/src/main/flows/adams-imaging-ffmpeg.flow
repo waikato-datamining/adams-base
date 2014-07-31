@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:19
+# Date: 2014-07-31 12:20:10
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -71,6 +71,8 @@ adams.flow.control.Flow
 					Movie generated
 					-short-title
 					true
+					-writer
+						adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

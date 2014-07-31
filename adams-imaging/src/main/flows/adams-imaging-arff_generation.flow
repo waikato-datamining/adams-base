@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:02
+# Date: 2014-07-31 12:19:11
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -50,9 +50,9 @@ adams.flow.control.Flow
 							-image-overlay
 								adams.gui.visualization.image.NullOverlay
 	-actor
-		adams.flow.transformer.ImageJFlattener
-			-flattener
-				adams.data.imagej.flattener.Pixels
+		adams.flow.transformer.ImageJFeatureGenerator
+			-algorithm
+				adams.data.imagej.features.Pixels
 	-actor
 		adams.flow.transformer.WekaInstanceDumper
 			-prefix

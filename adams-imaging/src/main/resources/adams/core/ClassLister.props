@@ -7,16 +7,18 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
-# the ImageJ flatteners
-adams.data.imagej.flattener.AbstractImageJFlattener=\
-  adams.data.imagej.flattener
+# the BufferedImage feature generators
+adams.data.adams.features.AbstractBufferedImageFeatureGenerator=\
+  adams.data.adams.features,\
+  adams.data.jai.features,\
+  adams.data.lire.features
 
-# the JAI flatteners
-adams.data.jai.flattener.AbstractJAIFlattener=\
-  adams.data.jai.flattener
+# the ImageJ feature generators
+adams.data.imagej.features.AbstractImageJFeatureGenerator=\
+  adams.data.imagej.features
 
-# the BoofCV flatteners
-adams.data.boofcv.flattener.AbstractBoofCVFlattener=\
+# the BoofCV feature generators
+adams.data.boofcv.features.AbstractBoofCVFeatureGenerator=\
   adams.data.boofcv.flattener
 
 # the ImageJ transformers
@@ -27,21 +29,23 @@ adams.data.imagej.transformer.AbstractImageJTransformer=\
 adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
   adams.data.imagej.transformer.crop
 
-# the JAI transformers
-adams.data.jai.transformer.AbstractJAITransformer=\
-  adams.data.jai.transformer
+# the buffered image transformers
+adams.data.adams.transformer.AbstractBufferedImageTransformer=\
+  adams.data.adams.transformer,\
+  adams.data.jai.transformer,\
+  adams.data.lire.transformer
 
-# the JAI crop algorithms
-adams.data.jai.transformer.crop.AbstractCropAlgorithm=\
-  adams.data.jai.transformer.crop
+# the buffered image crop algorithms
+adams.data.adams.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.adams.transformer.crop
 
 # the subimage generators
-adams.data.jai.transformer.subimages.AbstractSubImagesGenerator=\
-  adams.data.jai.transformer.subimages
+adams.data.adams.transformer.subimages.AbstractSubImagesGenerator=\
+  adams.data.adams.transformer.subimages
 
-# the JAI white balance algorithms
-adams.data.jai.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
-  adams.data.jai.transformer.whitebalance
+# the buffered image white balance algorithms
+adams.data.adams.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
+  adams.data.adams.transformer.whitebalance
 
 # the BoofCV transformers
 adams.data.boofcv.transformer.AbstractBoofCVTransformer=\

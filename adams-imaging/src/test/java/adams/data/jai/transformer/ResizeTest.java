@@ -19,15 +19,14 @@
  */
 package adams.data.jai.transformer;
 
-import java.awt.Color;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.data.adams.transformer.AbstractBufferedImageTransformer;
 import adams.env.Environment;
 
 /**
  * Test class for the Resize transformer. Run from the command line with: <p/>
- * java adams.data.jai.transformer.ResizeTest
+ * java adams.data.adams.transformer.ResizeTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -50,6 +49,7 @@ public class ResizeTest
    *
    * @return		the filenames
    */
+  @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
 	"adams_logo.png",
@@ -62,7 +62,8 @@ public class ResizeTest
    *
    * @return		the setups
    */
-  protected AbstractJAITransformer[] getRegressionSetups() {
+  @Override
+  protected AbstractBufferedImageTransformer[] getRegressionSetups() {
     Resize[]	result;
 
     result    = new Resize[2];

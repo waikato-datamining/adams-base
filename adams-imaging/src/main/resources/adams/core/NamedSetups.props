@@ -12,9 +12,9 @@
 # Version: $Revision$
 
 # data
-boofcv_flattener_pixels=adams.data.boofcv.flattener.Pixels
+boofcv_features_pixels=adams.data.boofcv.features.Pixels
 boofcv_transformer_passthrough=adams.data.boofcv.transformer.PassThrough
-imagej_flattener_pixels=adams.data.imagej.flattener.Pixels
+imagej_features_pixels=adams.data.imagej.features.Pixels
 imagej_transformer_passthrough=adams.data.imagej.transformer.PassThrough
-jai_flattener_pixels=adams.data.jai.flattener.Pixels
-jai_transformer_passthrough=adams.data.jai.transformer.PassThrough
+adams_features_pixels=adams.data.adams.features.Pixels
+adams_transformer_passthrough=adams.data.adams.transformer.PassThrough

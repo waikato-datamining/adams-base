@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:23
+# Date: 2014-07-31 12:20:40
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -32,9 +32,9 @@ adams.flow.control.Flow
 					-name
 					grey
 					-actor
-						adams.flow.transformer.JAITransformer
+						adams.flow.transformer.BufferedImageTransformer
 							-transformer
-								adams.data.jai.transformer.GaussianBlur
+								adams.data.adams.transformer.GaussianBlur
 									-radius
 									10.0
 					-actor

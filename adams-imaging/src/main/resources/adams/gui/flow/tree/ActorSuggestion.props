@@ -50,32 +50,32 @@ adams-imaging.ImageMagickReader4=\
 adams-imaging.ImageJTransformer=\
   IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
 
-adams-imaging.JAITransformer1=\
-  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.JAITransformer
+adams-imaging.BufferedImageTransformer1=\
+  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.BufferedImageTransformer
 
-adams-imaging.JAITransformer2=\
-  IF AFTER adams.flow.transformer.JAIReader THEN adams.flow.transformer.JAITransformer
+adams-imaging.BufferedImageTransformer2=\
+  IF AFTER adams.flow.transformer.JAIReader THEN adams.flow.transformer.BufferedImageTransformer
 
 adams-imaging.ImageMagickTransformer=\
   IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.ImageMagickTransformer
 
-adams-imaging.ImageJFlattener=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFlattener
+adams-imaging.ImageJFeatureGenerator=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
 
-adams-imaging.JAIFlattener=\
-  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.JAIFlattener
+adams-imaging.BufferedImageFeatureGenerator=\
+  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
 
 adams-imaging.WekaInstanceDumper1=\
-  IF AFTER adams.flow.transformer.JAIFlattener THEN adams.flow.transformer.WekaInstanceDumper
+  IF AFTER adams.flow.transformer.BufferedImageFeatureGenerator THEN adams.flow.transformer.WekaInstanceDumper
 
 adams-imaging.WekaInstanceDumper2=\
-  IF AFTER adams.flow.transformer.ImageJFlattener THEN adams.flow.transformer.WekaInstanceDumper
+  IF AFTER adams.flow.transformer.ImageJFeatureGenerator THEN adams.flow.transformer.WekaInstanceDumper
 
 adams-imaging.Convert=\
   IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
 
 adams-imaging.ImageViewer1=\
-  IF AFTER adams.flow.transformer.JAITransformer THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.sink.ImageViewer
 
 adams-imaging.ImageViewer2=\
   IF AFTER adams.flow.transformer.Convert THEN adams.flow.sink.ImageViewer

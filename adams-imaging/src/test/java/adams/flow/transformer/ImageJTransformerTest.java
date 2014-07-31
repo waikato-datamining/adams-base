@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
-import adams.data.imagej.flattener.Histogram;
+import adams.data.imagej.features.Histogram;
 import adams.data.imagej.transformer.Gray8;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -55,6 +55,7 @@ public class ImageJTransformerTest
    *
    * @throws Exception if an error occurs
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -68,6 +69,7 @@ public class ImageJTransformerTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("adams_logo.png");
     m_TestHelper.deleteFileFromTmp("adams_icon.png");
@@ -81,6 +83,7 @@ public class ImageJTransformerTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     FileSupplier mfs = new FileSupplier();
     mfs.setFiles(
@@ -94,8 +97,8 @@ public class ImageJTransformerTest
     ImageJTransformer itr = new ImageJTransformer();
     itr.setTransformAlgorithm(new Gray8());
 
-    ImageJFlattener ifl = new ImageJFlattener();
-    ifl.setFlattenAlgorithm(new Histogram());
+    ImageJFeatureGenerator ifl = new ImageJFeatureGenerator();
+    ifl.setAlgorithm(new Histogram());
 
     WekaInstanceDumper id = new WekaInstanceDumper();
     id.setOutputPrefix(new TmpFile("dumpfile"));
