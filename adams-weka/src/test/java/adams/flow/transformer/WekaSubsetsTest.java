@@ -15,15 +15,15 @@
 
 /*
  * WekaSubsetsTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.Index;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.weka.WekaAttributeIndex;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -122,7 +122,7 @@ public class WekaSubsetsTest
       tmp1[1] = tmp4;
       adams.flow.transformer.WekaSubsets tmp7 = new adams.flow.transformer.WekaSubsets();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("index");
-      tmp7.setIndex(new Index("last"));
+      tmp7.setIndex(new WekaAttributeIndex("last"));
 
       tmp1[2] = tmp7;
       adams.flow.sink.DumpFile tmp9 = new adams.flow.sink.DumpFile();
