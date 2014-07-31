@@ -27,6 +27,10 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -34,10 +38,30 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.OpponentHistogram.<br/>
+ * For more information, see:<br/>
+ * van de Sande, K.E.A., Gevers, T., Snoek, C.G.M. (2010). Evaluating Color Descriptors for Object and Scene Recognition. Pattern Analysis and Machine Intelligence, IEEE Transactions on. 32(9):1582-1596.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
  <!-- globalinfo-end -->
+ *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{vandeSande2010,
+ *    author = {van de Sande, K.E.A. and Gevers, T. and Snoek, C.G.M.},
+ *    journal = {Pattern Analysis and Machine Intelligence, IEEE Transactions on},
+ *    month = {September},
+ *    number = {9},
+ *    pages = {1582-1596},
+ *    title = {Evaluating Color Descriptors for Object and Scene Recognition},
+ *    volume = {32},
+ *    year = {2010},
+ *    ISSN = {0162-8828},
+ *    HTTP = {http:&#47;&#47;doi.ieeecomputersociety.org&#47;10.1109&#47;TPAMI.2009.154}
+ * }
+ * </pre>
+ * <p/>
+ <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
@@ -62,7 +86,8 @@ import adams.data.image.BufferedImageHelper;
  * @version $Revision: 9196 $
  */
 public class OpponentHistogram
-  extends AbstractBufferedImageFeatureGenerator {
+  extends AbstractBufferedImageFeatureGenerator
+  implements TechnicalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5934074718170214988L;
@@ -76,8 +101,35 @@ public class OpponentHistogram
   public String globalInfo() {
     return
         "Generates features using " + net.semanticmetadata.lire.imageanalysis.OpponentHistogram.class.getName() + ".\n"
+        + "For more information, see:\n"
+        + getTechnicalInformation().toString() + "\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(Type.ARTICLE);
+    result.setValue(Field.AUTHOR, "van de Sande, K.E.A. and Gevers, T. and Snoek, C.G.M.");
+    result.setValue(Field.TITLE, "Evaluating Color Descriptors for Object and Scene Recognition");
+    result.setValue(Field.JOURNAL, "Pattern Analysis and Machine Intelligence, IEEE Transactions on");
+    result.setValue(Field.YEAR, "2010");
+    result.setValue(Field.MONTH, "September");
+    result.setValue(Field.VOLUME, "32");
+    result.setValue(Field.NUMBER, "9");
+    result.setValue(Field.PAGES, "1582-1596");
+    result.setValue(Field.ISSN, "0162-8828");
+    result.setValue(Field.HTTP, "http://doi.ieeecomputersociety.org/10.1109/TPAMI.2009.154");
+
+    return result;
   }
 
   /**
