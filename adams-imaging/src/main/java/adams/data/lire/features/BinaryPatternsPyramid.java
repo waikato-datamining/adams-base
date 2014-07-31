@@ -34,6 +34,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Generates features using net.semanticmetadata.lire.imageanalysis.BinaryPatternsPyramid.<br/>
+ * Works the same way as PHOG, but instead of measuring the orientation of gradients, this class uses a histogram of rotation-invariant local binary patterns.<br/>
  * For more information on the LIRE project, see:<br/>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
  * <p/>
@@ -76,6 +77,9 @@ public class BinaryPatternsPyramid
   public String globalInfo() {
     return
         "Generates features using " + net.semanticmetadata.lire.imageanalysis.BinaryPatternsPyramid.class.getName() + ".\n"
+        + "Works the same way as PHOG, but instead of measuring the "
+        + "orientation of gradients, this class uses a histogram of " 
+        + "rotation-invariant local binary patterns.\n"
         + "For more information on the LIRE project, see:\n"
         + "http://code.google.com/p/lire/";
   }
