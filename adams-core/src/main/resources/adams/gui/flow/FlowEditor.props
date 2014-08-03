@@ -18,17 +18,20 @@ MaxRecentFlows=5
 # The panel class to use
 FlowPanelClass=adams.gui.flow.FlowPanel
 
-# Whether to show the quick info
+# Whether to show the quick info (true|false)
 ShowQuickInfo=true
 
-# Whether to show the annotations
+# Whether to show the annotations (true|false)
 ShowAnnotations=true
 
-# Whether to show the input/output information
+# Whether to show the input/output information (true|false)
 ShowInputOutput=false
 
 # Divider location (= size of left component)
 DividerLocation=500
+
+# Whether to perform garbage collection after a flow has finished/was stopped (true|false)
+GarbageCollectAfterFinish=true
 
 # The actors to list in the "New" submenu
 NewList=\
@@ -92,7 +95,7 @@ Tree.BookmarkHighlight.Background=#FFDD00
 Tree.StateUsesNested=false
 
 # Whether to ignore name changes of actors and don't prompt user whether to 
-# propagate the changes throughout the tree
+# propagate the changes throughout the tree (true|false)
 Tree.IgnoreNameChanges=false
 
 # The scale factor for the icons (1.0 is actual size)

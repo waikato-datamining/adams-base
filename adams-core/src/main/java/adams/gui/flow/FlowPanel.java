@@ -246,6 +246,8 @@ public class FlowPanel
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
+      if (getProperties().getBoolean("GarbageCollectAfterFinish", true))
+	System.gc();
 
       m_Owner.setLastFlow(m_Flow);
       m_Flow = null;
@@ -284,7 +286,6 @@ public class FlowPanel
       m_Running  = false;
       m_Stopping = false;
 
-      System.gc();
       m_Owner.update();
       m_Owner.finishedExecution();
     }
