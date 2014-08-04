@@ -124,8 +124,10 @@ public class TableMapObjectHitListener
       row.addCell("layer").setContentAsString(hit.getLayer().getName());
       if (hit instanceof MetaDataSupporter) {
 	meta = (MetaDataSupporter) hit;
-	for (String key: keys)
-	  row.addCell("meta-" + key).setContent(meta.getMetaData(key).toString());
+	for (String key: keys) {
+	  if (meta.getMetaData(key) != null)
+	    row.addCell("meta-" + key).setContent(meta.getMetaData(key).toString());
+	}
       }
     }
     
