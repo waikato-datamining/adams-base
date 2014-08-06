@@ -15,7 +15,7 @@
 
 /**
  * MultiExplorer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
@@ -500,6 +500,7 @@ public class MultiExplorer
     try {
       m_Explorer = new MultiExplorer();
       final BaseFrame frame = new BaseFrame("Multi-Explorer");
+      frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
       frame.getContentPane().setLayout(new BorderLayout());
       frame.getContentPane().add(m_Explorer, BorderLayout.CENTER);
       frame.pack();
