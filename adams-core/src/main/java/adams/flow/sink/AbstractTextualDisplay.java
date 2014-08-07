@@ -63,7 +63,7 @@ public abstract class AbstractTextualDisplay
   /** the text writer to use. */
   protected AbstractTextWriter m_Writer;
   
-  /** the width of the dialog. */
+  /** the font to use. */
   protected Font m_Font;
 
   /** whether to always clear the display before a token is processed. */
