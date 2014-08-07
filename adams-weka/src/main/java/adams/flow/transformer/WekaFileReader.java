@@ -15,7 +15,7 @@
 
 /*
  * WekaFileReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,11 +29,12 @@ import java.util.List;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ArffLoader;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.SafeArffLoader;
 import weka.core.converters.URLSourcedLoader;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
@@ -96,7 +97,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * 
  * <pre>-loader &lt;weka.core.converters.AbstractFileLoader&gt; (property: customLoader)
  * &nbsp;&nbsp;&nbsp;The custom loader to use if enabled.
- * &nbsp;&nbsp;&nbsp;default: weka.core.converters.ArffLoader
+ * &nbsp;&nbsp;&nbsp;default: weka.core.converters.SafeArffLoader
  * </pre>
  * 
  * <pre>-output-type &lt;DATASET|HEADER|INCREMENTAL&gt; (property: outputType)
@@ -179,7 +180,7 @@ public class WekaFileReader
 
     m_OptionManager.add(
 	    "loader", "customLoader",
-	    new ArffLoader());
+	    new SafeArffLoader());
 
     m_OptionManager.add(
 	    "output-type", "outputType",
@@ -402,13 +403,17 @@ public class WekaFileReader
     Object		obj;
     File		file;
     URL			url;
+    boolean		isArff;
+    String		ext;
 
     result = null;
 
     try {
-      obj  = m_InputToken.getPayload();
-      file = null;
-      url  = null;
+      obj    = m_InputToken.getPayload();
+      ext    = FileUtils.getExtensions(obj.toString().toLowerCase())[0];
+      isArff = (ext.equals("arff") || ext.equals("arff.gz"));
+      file   = null;
+      url    = null;
       if (obj instanceof File)
 	file = new File(((File) obj).getAbsolutePath());
       else if (obj instanceof URL)
@@ -425,10 +430,20 @@ public class WekaFileReader
 	m_Source = new DataSource(loader);
       }
       else {
-	if (url != null)
-	  m_Source = new DataSource(url.toString());
-	else
-	  m_Source = new DataSource(file.getAbsolutePath());
+	if (isArff) {
+	  loader = new SafeArffLoader();
+	  if (url != null)
+	    ((URLSourcedLoader) loader).setURL(url.toString());
+	  else
+	    loader.setFile(file);
+	  m_Source = new DataSource(loader);
+	}
+	else {
+	  if (url != null)
+	    m_Source = new DataSource(url.toString());
+	  else
+	    m_Source = new DataSource(file.getAbsolutePath());
+	}
       }
       m_Structure = m_Source.getStructure();
     }
