@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,6 +41,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.JTextComponent;
 
+import adams.gui.event.ConsolePanelEvent;
+import adams.gui.event.ConsolePanelListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
@@ -411,11 +414,24 @@ public class ConsolePanel
   /** the find next item. */
   protected JMenuItem m_MenuItemFindNext;
 
+  /** the listeners. */
+  protected HashSet<ConsolePanelListener> m_Listeners;
+  
   /**
    * Initializes the panel.
    */
   protected ConsolePanel() {
     super();
+  }
+  
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Listeners = new HashSet<ConsolePanelListener>();
   }
 
   /**
@@ -628,6 +644,52 @@ public class ConsolePanel
   }
 
   /**
+   * Adds the listener.
+   * 
+   * @param l		the listener to add
+   */
+  public void addListener(ConsolePanelListener l) {
+    synchronized(m_Listeners) {
+      m_Listeners.add(l);
+    }
+  }
+
+  /**
+   * Removes the listener.
+   * 
+   * @param l		the listener to remove
+   */
+  public void removeListener(ConsolePanelListener l) {
+    synchronized(m_Listeners) {
+      m_Listeners.remove(l);
+    }
+  }
+  
+  /**
+   * Notifies the listeners.
+   * 
+   * @param outputType	the type of output the string represents
+   * @param msg		the message to append
+   */
+  protected void notifyListeners(OutputType outputType, String msg) {
+    ConsolePanelEvent	e;
+    
+    if (m_Listeners.size() == 0)
+      return;
+    
+    e = new ConsolePanelEvent(this, outputType, msg);
+    try {
+      synchronized(m_Listeners) {
+	for (ConsolePanelListener l: m_Listeners)
+	  l.consolePanelMessageReceived(e);
+      }
+    }
+    catch (Throwable t) {
+      // ignored
+    }
+  }
+  
+  /**
    * Appends the given string to the according panels.
    *
    * @param outputType	the type of output the string represents
@@ -650,6 +712,8 @@ public class ConsolePanel
       default:
 	throw new IllegalArgumentException("Unhandled output type: " + outputType);
     }
+    
+    notifyListeners(outputType, msg);
   }
 
   /**
