@@ -15,7 +15,7 @@
 
 /*
  * Performance.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta.multisearch;
@@ -168,6 +168,42 @@ public class Performance
    * returns the performance measure.
    *
    * @param evaluation	the type of evaluation to return
+   * @param value 	the performance measure
+   */
+  public void setPerformance(int evaluation, double value) {
+    switch (evaluation) {
+      case EVALUATION_CC:
+        m_CC = value;
+        break;
+      case EVALUATION_RMSE:
+        m_RMSE = value;
+        break;
+      case EVALUATION_RRSE:
+        m_RRSE = value;
+        break;
+      case EVALUATION_MAE:
+        m_MAE = value;
+        break;
+      case EVALUATION_RAE:
+        m_RAE = value;
+        break;
+      case EVALUATION_COMBINED:
+        break;
+      case EVALUATION_ACC:
+        m_ACC = value;
+        break;
+      case EVALUATION_KAPPA:
+        m_Kappa = value;
+        break;
+      default:
+        throw new IllegalArgumentException("Evaluation type '" + evaluation + "' not supported!");
+    }
+  }
+
+  /**
+   * returns the performance measure.
+   *
+   * @param evaluation	the type of evaluation to return
    * @return 			the performance measure
    */
   public double getPerformance(int evaluation) {
@@ -221,6 +257,7 @@ public class Performance
    *
    * @return a string representation
    */
+  @Override
   public String toString() {
     String	result;
 
