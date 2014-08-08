@@ -15,7 +15,7 @@
 
 /*
  * PerformanceComparator.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta.multisearch;
@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 import weka.classifiers.meta.MultiSearch;
-import weka.core.Utils;
 
 /**
  * A concrete Comparator for the Performance class.
@@ -85,9 +84,9 @@ public class PerformanceComparator
     p1 = o1.getPerformance();
     p2 = o2.getPerformance();
 
-    if (Utils.sm(p1, p2))
+    if (p1 < p2)
       result = -1;
-    else if (Utils.gr(p1, p2))
+    else if (p1 > p2)
       result = 1;
     else
       result = 0;
@@ -109,6 +108,7 @@ public class PerformanceComparator
    * @param obj	the object to compare with
    * @return		true if the same evaluation type is used
    */
+  @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof PerformanceComparator))
       throw new IllegalArgumentException("Must be PerformanceComparator!");
