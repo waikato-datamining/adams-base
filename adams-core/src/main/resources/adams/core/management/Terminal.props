@@ -8,6 +8,18 @@ LinuxExecutable=xterm
 # Terminal options for Linux (use %d for the initial directory)
 LinuxOptions=
 
+# Mate example
+#LinuxExecutable=mate-terminal
+#LinuxOptions="--working-directory\=%d"
+
+# Gnome example
+#LinuxExecutable=gnome-terminal
+#LinuxOptions="--working-directory\=%d"
+
+# KDE example
+#LinuxExecutable=konsole
+#LinuxOptions="--workdir %d"
+
 # Terminal for Mac
 MacExecutable=xterm
 # Terminal options for Mac (use %d for the initial directory)
