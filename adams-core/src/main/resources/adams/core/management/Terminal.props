@@ -1,0 +1,19 @@
+# Configuration for terminal related stuff.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 8872 $
+
+# Terminal for Linux
+LinuxExecutable=xterm
+# Terminal options for Linux (use %d for the initial directory)
+LinuxOptions=
+
+# Terminal for Mac
+MacExecutable=xterm
+# Terminal options for Mac (use %d for the initial directory)
+MacOptions=
+
+# Terminal for Windows
+WindowsExecutable=cmd.exe
+# Terminal options for Windows (use %d for the initial directory)
+WindowsOptions=/k "cd /d %d"

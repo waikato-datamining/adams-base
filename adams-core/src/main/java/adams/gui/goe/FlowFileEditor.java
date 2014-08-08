@@ -15,7 +15,7 @@
 
 /*
  *    FlowFileEditor.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,6 +31,7 @@ import javax.swing.JPopupMenu;
 
 import adams.core.io.FlowFile;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -235,6 +236,8 @@ public class FlowFileEditor
     JMenuItem		menuitem;
     final FlowFile	file;
 
+    menu.addSeparator();
+
     file     = (FlowFile) getValue();
     menuitem = new JMenuItem("Open in Flow editor...");
     menuitem.setIcon(GUIHelper.getIcon("flow.gif"));
@@ -253,7 +256,6 @@ public class FlowFileEditor
 	  setValue(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
       }
     });
-    menu.addSeparator();
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Open in preview browser...");
@@ -265,6 +267,15 @@ public class FlowFileEditor
 	dialog.open(file);
 	dialog.setLocationRelativeTo(dialog.getOwner());
 	dialog.setVisible(true);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Open in terminal...");
+    menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	Terminal.launch(file);
       }
     });
     menu.add(menuitem);

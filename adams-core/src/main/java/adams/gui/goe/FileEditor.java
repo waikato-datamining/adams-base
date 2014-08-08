@@ -15,7 +15,7 @@
 
 /*
  *    FileEditor.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -32,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
@@ -268,6 +269,8 @@ public class FileEditor
     JMenuItem			menuitem;
     final PlaceholderFile	file;
 
+    menu.addSeparator();
+
     file     = (PlaceholderFile) getValue();
     menuitem = new JMenuItem("Open in preview browser...");
     menuitem.setIcon(GUIHelper.getIcon("open.gif"));
@@ -280,7 +283,15 @@ public class FileEditor
 	dialog.setVisible(true);
       }
     });
-    menu.addSeparator();
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Open in terminal...");
+    menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	Terminal.launch(file);
+      }
+    });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy (absolute path)");

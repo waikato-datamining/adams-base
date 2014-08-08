@@ -24,6 +24,7 @@ Menu-Program=\
   -,\
   adams.gui.menu.ScriptingLog,\
   adams.gui.menu.ConsoleWindow,\
+  adams.gui.menu.Terminal,\
   -,\
   adams.gui.menu.ProgramUserMode,\
   adams.gui.menu.Preferences,\
