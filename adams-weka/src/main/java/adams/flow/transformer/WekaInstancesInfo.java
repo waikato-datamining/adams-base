@@ -15,27 +15,34 @@
 
 /*
  * WekaInstancesInfo.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 
 import weka.core.Attribute;
+import weka.core.AttributeStats;
 import weka.core.Instances;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Outputs statistics of a weka.core.Instances object.
+ * Outputs statistics of a weka.core.Instances object.<br/>
+ * FULL_ATTRIBUTE and FULL_CLASS output a spreadsheet with detailed attribute statistics. All others output either strings, integers or doubles.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -49,13 +56,9 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -63,22 +66,24 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: WekaInstancesInfo
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-type &lt;FULL|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
+ * <pre>-type &lt;FULL|FULL_ATTRIBUTE|FULL_CLASS|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate; NB some of the types are only available 
  * &nbsp;&nbsp;&nbsp;for numeric or nominal attributes.
  * &nbsp;&nbsp;&nbsp;default: FULL
@@ -89,6 +94,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp; An index is a number starting with 1; the following placeholders can be 
  * &nbsp;&nbsp;&nbsp;used as well: first, second, third, last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-class-label-index &lt;adams.core.Index&gt; (property: classLabelIndex)
@@ -96,6 +102,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;1; the following placeholders can be used as well: first, second, third, 
  * &nbsp;&nbsp;&nbsp;last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  <!-- options-end -->
@@ -122,6 +129,10 @@ public class WekaInstancesInfo
   public enum InfoType {
     /** full stats. */
     FULL,
+    /** full attribute stats (nominal/numeric). */
+    FULL_ATTRIBUTE,
+    /** full class attribute stats (nominal/numeric). */
+    FULL_CLASS,
     /** the header (as string). */
     HEADER,
     /** the name of the dataset. */
@@ -172,6 +183,9 @@ public class WekaInstancesInfo
 
   /** the index of the class label. */
   protected Index m_ClassLabelIndex;
+  
+  /** for formatting dates. */
+  protected DateFormat m_DateFormat;
 
   /**
    * Returns a string describing the object.
@@ -180,7 +194,11 @@ public class WekaInstancesInfo
    */
   @Override
   public String globalInfo() {
-    return "Outputs statistics of a weka.core.Instances object.";
+    return 
+	"Outputs statistics of a weka.core.Instances object.\n"
+	+ InfoType.FULL_ATTRIBUTE + " and " + InfoType.FULL_CLASS + " output "
+	+ "a spreadsheet with detailed attribute statistics. All others output "
+	+ "either strings, integers or doubles.";
   }
 
   /**
@@ -229,6 +247,7 @@ public class WekaInstancesInfo
 	Arrays.asList(
 	    new InfoType[]{
 		InfoType.FULL,
+		InfoType.FULL_CLASS,
 		InfoType.HEADER,
 		InfoType.RELATION_NAME,
 		InfoType.NUM_ATTRIBUTES,
@@ -383,9 +402,105 @@ public class WekaInstancesInfo
       case STDEV:
 	return new Class[]{Double.class};
 
+      case FULL_ATTRIBUTE:
+      case FULL_CLASS:
+	return new Class[]{SpreadSheet.class};
+
       default:
 	throw new IllegalStateException("Unhandled info type: " + m_Type);
     }
+  }
+  
+  /**
+   * Adds a statistic to the dataset.
+   * 
+   * @param sheet	the spreadsheet to add the data to
+   * @param name	the name of the statistic
+   * @param value	the statistic (string, double, int)
+   */
+  protected void addStatistic(SpreadSheet sheet, String name, Object value) {
+    Row		row;
+    
+    row = sheet.addRow();
+    row.addCell("S").setContent(name);
+    if (value instanceof String)
+      row.addCell("V").setContent((String) value);
+    else if (value instanceof Double)
+      row.addCell("V").setContent((Double) value);
+    else if (value instanceof Integer)
+      row.addCell("V").setContent((Integer) value);
+  }
+  
+  /**
+   * Formats date stats.
+   * 
+   * @param value	the date (java epoch) to process
+   * @return		the (potentially) formatted value
+   */
+  protected Object formatDate(double value) {
+    if (m_DateFormat == null)
+      m_DateFormat = DateUtils.getTimestampFormatter();
+    return m_DateFormat.format(new Date((long) value));
+  }
+  
+  /**
+   * Generates attributes statistics.
+   * 
+   * @param data	the dataset to use
+   * @param index	the 0-based index of the attribute
+   */
+  protected SpreadSheet getAttributeStats(Instances data, int index) {
+    SpreadSheet		result;
+    Attribute		att;
+    AttributeStats	stats;
+    Row			row;
+    int			i;
+    
+    result = new SpreadSheet();
+    result.setName("Attribute statistics - #" + (index + 1) + " " + data.attribute(index).name());
+    
+    // header
+    row = result.getHeaderRow();
+    row.addCell("S").setContent("Statistic");
+    row.addCell("V").setContent("Value");
+    
+    // data
+    att = data.attribute(index);
+    if (att.isNominal()) {
+      stats = data.attributeStats(index);
+      addStatistic(result, "Total",  stats.totalCount);
+      addStatistic(result, "Missing",  stats.missingCount);
+      addStatistic(result, "Unique",  stats.uniqueCount);
+      addStatistic(result, "Distinct",  stats.distinctCount);
+      addStatistic(result, "Integer-like",  stats.intCount);
+      addStatistic(result, "Float-like",  stats.realCount);
+      for (i = 0; i < stats.nominalCounts.length; i++)
+	addStatistic(result, "Label-" + (i+1) + "-" + att.value(i), stats.nominalCounts[i]);
+      for (i = 0; i < stats.nominalWeights.length; i++)
+	addStatistic(result, "Weight-" + (i+1) + "-" + att.value(i), stats.nominalWeights[i]);
+    }
+    else if (att.isDate()) {
+      if (m_DateFormat == null)
+	m_DateFormat = DateUtils.getTimestampFormatter();
+      stats = data.attributeStats(index);
+      addStatistic(result, "Count",  stats.numericStats.count);
+      addStatistic(result, "Min",    formatDate(stats.numericStats.min));
+      addStatistic(result, "Max",    formatDate(stats.numericStats.max));
+      addStatistic(result, "Mean",   formatDate(stats.numericStats.mean));
+      addStatistic(result, "StdDev (in days)", stats.numericStats.stdDev / 1000 / 60 / 60 / 24);
+    }
+    else if (att.isNumeric()) {
+      stats = data.attributeStats(index);
+      addStatistic(result, "Count",  stats.numericStats.count);
+      addStatistic(result, "Min",    stats.numericStats.min);
+      addStatistic(result, "Max",    stats.numericStats.max);
+      addStatistic(result, "Mean",   stats.numericStats.mean);
+      addStatistic(result, "StdDev", stats.numericStats.stdDev);
+      addStatistic(result, "Sum",    stats.numericStats.sum);
+      addStatistic(result, "Sum^2",  stats.numericStats.sumSq);
+    }
+    
+    return result;
   }
 
   /**
@@ -412,6 +527,15 @@ public class WekaInstancesInfo
     switch (m_Type) {
       case FULL:
 	m_Queue.add(inst.toSummaryString());
+	break;
+
+      case FULL_ATTRIBUTE:
+	m_Queue.add(getAttributeStats(inst, index));
+	break;
+
+      case FULL_CLASS:
+	if (inst.classIndex() > -1)
+	  m_Queue.add(getAttributeStats(inst, inst.classIndex()));
 	break;
 
       case HEADER:
