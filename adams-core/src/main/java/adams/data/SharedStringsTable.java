@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Common strings are represented by integers, conversing memory.
+ * Common strings are represented by integers, conserving memory.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -55,7 +55,7 @@ public class SharedStringsTable
   /**
    * Resets the table.
    */
-  public void clear() {
+  public synchronized void clear() {
     m_Map.clear();
     m_Strings.clear();
   }
@@ -66,7 +66,7 @@ public class SharedStringsTable
    * 
    * @param table	the table to obtain the data from
    */
-  public void assign(SharedStringsTable table) {
+  public synchronized void assign(SharedStringsTable table) {
     clear();
     m_Map.putAll(table.m_Map);
     m_Strings.addAll(table.m_Strings);
@@ -79,7 +79,7 @@ public class SharedStringsTable
    * @param s		the string to get the index for
    * @return		the the index
    */
-  public int getIndex(String s) {
+  public synchronized int getIndex(String s) {
     int		result;
     
     if (!m_Map.containsKey(s)) {
@@ -109,7 +109,7 @@ public class SharedStringsTable
    * @return		the cloned object
    */
   @Override
-  public SharedStringsTable clone() {
+  public synchronized SharedStringsTable clone() {
     SharedStringsTable	result;
     
     result = new SharedStringsTable();
