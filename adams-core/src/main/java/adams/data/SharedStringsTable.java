@@ -15,9 +15,9 @@
 
 /**
  * SharedStringsTable.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet;
+package adams.data;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -25,8 +25,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Strings across a spreadsheet are identified using an Integer rather the
- * string itself to conserve memory.
+ * Common strings are represented by integers, conversing memory.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

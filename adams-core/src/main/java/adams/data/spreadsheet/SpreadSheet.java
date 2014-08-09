@@ -44,6 +44,7 @@ import adams.core.Mergeable;
 import adams.core.Utils;
 import adams.core.management.LocaleHelper;
 import adams.core.management.LocaleSupporter;
+import adams.data.SharedStringsTable;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.env.Environment;
