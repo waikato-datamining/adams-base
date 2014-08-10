@@ -36,6 +36,7 @@ import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.weka.WekaAttributeIndex;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 
@@ -89,12 +90,13 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: FULL
  * </pre>
  * 
- * <pre>-attribute-index &lt;adams.core.Index&gt; (property: attributeIndex)
+ * <pre>-attribute-index &lt;adams.data.weka.WekaAttributeIndex&gt; (property: attributeIndex)
  * &nbsp;&nbsp;&nbsp;The attribute index to use for generating attribute-specific information;
- * &nbsp;&nbsp;&nbsp; An index is a number starting with 1; the following placeholders can be 
- * &nbsp;&nbsp;&nbsp;used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp; An index is a number starting with 1; apart from attribute names (case-sensitive
+ * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
+ * &nbsp;&nbsp;&nbsp;last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: last
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-class-label-index &lt;adams.core.Index&gt; (property: classLabelIndex)
@@ -179,7 +181,7 @@ public class WekaInstancesInfo
   protected InfoType m_Type;
 
   /** the index of the attribute to get the information for. */
-  protected Index m_AttributeIndex;
+  protected WekaAttributeIndex m_AttributeIndex;
 
   /** the index of the class label. */
   protected Index m_ClassLabelIndex;
@@ -214,7 +216,7 @@ public class WekaInstancesInfo
 
     m_OptionManager.add(
 	    "attribute-index", "attributeIndex",
-	    new Index(Index.LAST));
+	    new WekaAttributeIndex(WekaAttributeIndex.LAST));
 
     m_OptionManager.add(
 	    "class-label-index", "classLabelIndex",
@@ -306,7 +308,7 @@ public class WekaInstancesInfo
    *
    * @param value	the 1-based index
    */
-  public void setAttributeIndex(Index value) {
+  public void setAttributeIndex(WekaAttributeIndex value) {
     m_AttributeIndex = value;
     reset();
   }
@@ -316,7 +318,7 @@ public class WekaInstancesInfo
    *
    * @return		the 1-based index
    */
-  public Index getAttributeIndex() {
+  public WekaAttributeIndex getAttributeIndex() {
     return m_AttributeIndex;
   }
 
@@ -519,7 +521,7 @@ public class WekaInstancesInfo
     result = null;
 
     inst  = (Instances) m_InputToken.getPayload();
-    m_AttributeIndex.setMax(inst.numAttributes());
+    m_AttributeIndex.setData(inst);
     index = m_AttributeIndex.getIntIndex();
 
     m_Queue.clear();
