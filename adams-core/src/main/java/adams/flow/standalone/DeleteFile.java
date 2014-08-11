@@ -15,7 +15,7 @@
 
 /*
  * DeleteFile.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -325,7 +325,13 @@ public class DeleteFile
 	  deleted = FileUtils.delete(file);
 	  if (isLoggingEnabled())
 	    getLogger().info(type + " '" + file + "' deleted: " + deleted);
-
+	  if (!deleted) {
+	    if (result == null)
+	      result = "";
+	    else
+	      result += "\n";
+	    result += "Failed to delete " + type + ": " + file;
+	  }
 	}
       }
       catch (Exception e) {
