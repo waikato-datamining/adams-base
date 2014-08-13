@@ -74,7 +74,7 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
    * @param dbcon	the database connection object to create the URL for
    * @return		the complete URL
    */
-  protected String createURL(T dbcon) {
+  public String createURL(T dbcon) {
     return createURL(dbcon.getURL(), dbcon.getUser(), dbcon.getPassword());
   }
 
@@ -86,7 +86,7 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
    * @param password	the database password
    * @return		the complete URL
    */
-  protected String createURL(String url, String user, BasePassword password) {
+  public String createURL(String url, String user, BasePassword password) {
     return user + ":" + password + "@" + url;
   }
 
