@@ -20,9 +20,12 @@
 
 package adams.data;
 
+import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Comparator;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
@@ -34,6 +37,9 @@ import adams.test.AdamsTestCase;
 public class SortedListTest
   extends AdamsTestCase {
 
+  /** the list to use. */
+  protected SortedList m_List;
+
   /**
    * Initializes the test.
    *
@@ -42,72 +48,179 @@ public class SortedListTest
   public SortedListTest(String name) {
     super(name);
   }
-  
+
   /**
-   * Tests simple inserting.
+   * Called by JUnit before each test method. This implementation creates
+   * the default list object.
+   *
+   * @throws Exception 	if set up fails
    */
-  public void testInserting() {
-    SortedList<Integer> list = new SortedList<Integer>();
-    list.add(10);
-    list.add(3);
-    list.add(50);
-    Integer[] expected = new Integer[]{3, 10, 50};
-    assertEquals("size differs", expected.length, list.size());
-    for (int i = 0; i < list.size(); i++)
-      assertEquals("item #" + i + " differs", expected[i], list.get(i));
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    m_List = new SortedList();
   }
-  
+
   /**
-   * Tests the constructor that takes collection.
+   * Called by JUnit after each test method.
+   *
+   * @throws Exception 	if something goes wrong
    */
-  public void testCollectionConstructor() {
-    Integer[] expected = new Integer[]{3, 10, 50};
-    SortedList<Integer> list = new SortedList<Integer>(Arrays.asList(expected));
-    assertEquals("size differs", expected.length, list.size());
-    for (int i = 0; i < list.size(); i++)
-      assertEquals("item #" + i + " differs", expected[i], list.get(i));
+  @Override
+  protected void tearDown() throws Exception {
+    m_List.clear();
+    m_List = null;
+
+    super.tearDown();
   }
-  
+
   /**
-   * Tests the addAll method.
+   * Performs the actual test.
+   *
+   * @param insert	the data to insert in the list
+   * @param expected	the expected output
    */
-  public void testAddAll() {
-    Integer[] expected = new Integer[]{3, 10, 50};
-    SortedList<Integer> list = new SortedList<Integer>();
-    list.addAll(Arrays.asList(expected));
-    assertEquals("size differs", expected.length, list.size());
-    for (int i = 0; i < list.size(); i++)
-      assertEquals("item #" + i + " differs", expected[i], list.get(i));
+  protected void performTest(Comparable[] insert, Comparable[] expected) {
+    assertEquals("input and output arrays length differ", expected.length, insert.length);
+
+    // add elements
+    for (Comparable c: insert)
+      m_List.add((Serializable) c);
+    assertEquals("number of elements in list are different from expected", expected.length, m_List.size());
+
+    // check elements
+    for (int i = 0; i < insert.length; i++)
+      assertEquals("element #" + (i + 1) + " differs", expected[i], m_List.get(i));
   }
-  
+
   /**
-   * Tests the removeAll method.
+   * Tests the sorting when inserting integers that are already sorted.
    */
-  public void testRemoveAll() {
-    Integer[] expected = new Integer[]{3, 10, 50};
-    SortedList<Integer> list = new SortedList<Integer>();
-    list.addAll(Arrays.asList(expected));
-    assertEquals("size differs", expected.length, list.size());
-    list.removeAll(Arrays.asList(expected));
-    assertEquals("size differs", 0, list.size());
+  public void testSortedIntegers() {
+    performTest(new Integer[]{1, 2, 3}, new Integer[]{1, 2, 3});
   }
-  
+
   /**
-   * Tests a custom comparator.
+   * Tests the sorting when inserting integers that are not yet sorted.
    */
-  public void testCustomComparator() {
-    SortedList<Integer> list = new SortedList<Integer>(new Comparator<Integer>() {
-      @Override
-      public int compare(Integer o1, Integer o2) {
-        return -o1.compareTo(o2);
-      }
-    });
-    list.add(10);
-    list.add(3);
-    list.add(50);
-    Integer[] expected = new Integer[]{50, 10, 3};
-    assertEquals("size differs", expected.length, list.size());
-    for (int i = 0; i < list.size(); i++)
-      assertEquals("item #" + i + " differs", expected[i], list.get(i));
+  public void testUnsortedIntegers() {
+    performTest(new Integer[]{2, 4, 3, 1}, new Integer[]{1, 2, 3, 4});
+  }
+
+  /**
+   * Tests the sorting when inserting duplicate integers that are not yet sorted.
+   */
+  public void testUnsortedDuplicateIntegers() {
+    performTest(new Integer[]{2, 4, 2, 3, 1, 4}, new Integer[]{1, 2, 2, 3, 4, 4});
+  }
+
+  /**
+   * Tests accessing the first string element.
+   */
+  public void testFirstInteger() {
+    m_List.addAll(Arrays.asList(new Integer[]{2, 4, 2, 3, 1, 4}));
+    assertEquals("first element differs", 1, m_List.get(0));
+  }
+
+  /**
+   * Tests accessing the last string element.
+   */
+  public void testLastInteger() {
+    m_List.addAll(Arrays.asList(new Integer[]{2, 4, 2, 3, 1, 4}));
+    assertEquals("last element differs", 4, m_List.get(m_List.size()- 1));
+  }
+
+  /**
+   * Tests the sorting when inserting doubles that are already sorted.
+   */
+  public void testSortedDoubles() {
+    performTest(new Double[]{1.0, 2.0, 3.0}, new Double[]{1.0, 2.0, 3.0});
+  }
+
+  /**
+   * Tests the sorting when inserting doubles that are not yet sorted.
+   */
+  public void testUnsortedDoubles() {
+    performTest(new Double[]{2.0, 4.0, 3.0, 1.0}, new Double[]{1.0, 2.0, 3.0, 4.0});
+  }
+
+  /**
+   * Tests the sorting when inserting duplicate doubles that are not yet sorted.
+   */
+  public void testUnsortedDuplicateDoubles() {
+    performTest(new Double[]{2.0, 4.0, 2.0, 3.0, 1.0, 4.0}, new Double[]{1.0, 2.0, 2.0, 3.0, 4.0, 4.0});
+  }
+
+  /**
+   * Tests accessing the first string element.
+   */
+  public void testFirstDouble() {
+    m_List.addAll(Arrays.asList(new Double[]{2.0, 4.0, 2.0, 3.0, 1.0, 4.0}));
+    assertEquals("first element differs", 1.0, m_List.get(0));
+  }
+
+  /**
+   * Tests accessing the last string element.
+   */
+  public void testLastDouble() {
+    m_List.addAll(Arrays.asList(new Double[]{2.0, 4.0, 2.0, 3.0, 1.0, 4.0}));
+    assertEquals("last element differs", 4.0, m_List.get(m_List.size()- 1));
+  }
+
+  /**
+   * Tests the sorting when inserting strings that are already sorted.
+   */
+  public void testSortedStrings() {
+    performTest(new String[]{"1", "2", "3"}, new String[]{"1", "2", "3"});
+  }
+
+  /**
+   * Tests the sorting when inserting strings that are not yet sorted.
+   */
+  public void testUnsortedStrings() {
+    performTest(new String[]{"2", "4", "3", "1"}, new String[]{"1", "2", "3", "4"});
+  }
+
+  /**
+   * Tests the sorting when inserting duplicate strings that are not yet sorted.
+   */
+  public void testUnsortedDuplicateStrings() {
+    performTest(new String[]{"2", "4", "2", "3", "1", "4"}, new String[]{"1", "2", "2", "3", "4", "4"});
+  }
+
+  /**
+   * Tests accessing the first string element.
+   */
+  public void testFirstString() {
+    m_List.addAll(Arrays.asList(new String[]{"2", "4", "2", "3", "1", "4"}));
+    assertEquals("first element differs", "1", m_List.get(0));
+  }
+
+  /**
+   * Tests accessing the last string element.
+   */
+  public void testLastString() {
+    m_List.addAll(Arrays.asList(new String[]{"2", "4", "2", "3", "1", "4"}));
+    assertEquals("last element differs", "4", m_List.get(m_List.size()- 1));
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(SortedListTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

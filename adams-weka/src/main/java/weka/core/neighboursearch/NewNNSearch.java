@@ -15,7 +15,7 @@
 
 /*
  *    NewNNSearch.java
- *    Copyright (C) 1999-2007 University of Waikato
+ *    Copyright (C) 1999-2014 University of Waikato
  */
 
 package weka.core.neighboursearch;
@@ -30,7 +30,7 @@ import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
-import adams.core.SortedList;
+import adams.data.SortedList;
 
 /**
  <!-- globalinfo-start -->
@@ -76,7 +76,6 @@ public class NewNNSearch
     }
 
     public int compareTo(Object o) {
-      // TODO Auto-generated method stub
       return Double.compare(distance,((InstanceNode)o).distance);
     }
   }
@@ -107,6 +106,7 @@ public class NewNNSearch
    * @return 		a description of the algorithm for displaying in the 
    * 			explorer/experimenter gui
    */
+  @Override
   public String globalInfo() {
     return 
         "Class implementing the brute force search algorithm for nearest "
@@ -118,6 +118,7 @@ public class NewNNSearch
    *
    * @return 		an enumeration of all the available options.
    */
+  @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
     
@@ -143,6 +144,7 @@ public class NewNNSearch
    * @param options 	the list of options as an array of strings
    * @throws Exception 	if an option is not supported
    */
+  @Override
   public void setOptions(String[] options) throws Exception {
     super.setOptions(options);
 
@@ -154,6 +156,7 @@ public class NewNNSearch
    *
    * @return 		an array of strings suitable for passing to setOptions()
    */
+  @Override
   public String[] getOptions() {
     Vector<String>	result;
     String[]		options;
@@ -209,6 +212,7 @@ public class NewNNSearch
    * @return		the nearest instance
    * @throws Exception 	if the nearest neighbour could not be found.
    */
+  @Override
   public Instance nearestNeighbour(Instance target) throws Exception {
     return (kNearestNeighbours(target, 1)).instance(0);
   }
@@ -222,6 +226,7 @@ public class NewNNSearch
    * @return		the k nearest neighbors
    * @throws Exception  if the neighbours could not be found.
    */
+  @Override
   public Instances kNearestNeighbours(Instance target, int kNN) throws Exception {
   
     if(m_Stats!=null)
@@ -244,7 +249,7 @@ public class NewNNSearch
 	this.m_neighbours.add(new InstanceNode(i,distance));
 	if (m_neighbours.size() > kNN) {
 	  m_neighbours.remove(m_neighbours.size()-1);
-	  last_distance=m_neighbours.last().distance;
+	  last_distance=m_neighbours.get(m_neighbours.size() - 1).distance;
 	}
       }      
     }
@@ -284,6 +289,7 @@ public class NewNNSearch
    * @throws Exception 	if called before calling kNearestNeighbours
    *            	or nearestNeighbours.
    */
+  @Override
   public double[] getDistances() throws Exception {
     if(m_Distances==null)
       throw new Exception("No distances available. Please call either "+
@@ -299,6 +305,7 @@ public class NewNNSearch
    * 			training set. 
    * @throws Exception	if setting of instances fails
    */
+  @Override
   public void setInstances(Instances insts) throws Exception {
     m_Instances = insts;
     m_DistanceFunction.setInstances(insts);
@@ -315,6 +322,7 @@ public class NewNNSearch
    * 			instances.
    * @throws Exception	if the given instances are null
    */
+  @Override
   public void update(Instance ins) throws Exception {
     if(m_Instances==null)
       throw new Exception("No instances supplied yet. Cannot update without"+
@@ -330,6 +338,7 @@ public class NewNNSearch
    * 			the test instance supplied to update the range of 
    * 			attributes in the  distance function.
    */
+  @Override
   public void addInstanceInfo(Instance ins) {
     if(m_Instances!=null)
       try{ update(ins); }

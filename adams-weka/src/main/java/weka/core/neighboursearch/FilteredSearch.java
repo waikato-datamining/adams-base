@@ -91,6 +91,7 @@ public class FilteredSearch
     return(ret);   
   }
   
+  @Override
   public Instance transformInstance(Instance in) throws Exception { 
     m_Filter.input(in);
     m_Filter.batchFinished();     
@@ -128,6 +129,7 @@ public class FilteredSearch
    * @return		the k nearest neighbors
    * @throws Exception  if the neighbours could not be found.
    */
+  @Override
   public Instances kNearestNeighbours(Instance target, int kNN) throws Exception {
   
     if(m_Stats!=null)
@@ -151,7 +153,7 @@ public class FilteredSearch
 	this.m_neighbours.add(new InstanceNode(i,distance));
 	if (m_neighbours.size() > kNN){
 	  m_neighbours.remove(m_neighbours.size()-1);
-	  last_distance=m_neighbours.last().distance;
+	  last_distance=m_neighbours.get(m_neighbours.size() - 1).distance;
 	}
       }      
     }
@@ -183,6 +185,7 @@ public class FilteredSearch
    * 			training set. 
    * @throws Exception	if setting of instances fails
    */
+  @Override
   public void setInstances(Instances insts) throws Exception {
     m_Instances=insts;
     Instances t_instances=this.transformInstances(insts);
@@ -201,6 +204,7 @@ public class FilteredSearch
    * 			instances.
    * @throws Exception	if the given instances are null
    */
+  @Override
   public void update(Instance ins) throws Exception {
     if(m_Instances==null)
       throw new Exception("No instances supplied yet. Cannot update without"+
@@ -216,12 +220,14 @@ public class FilteredSearch
    * 			the test instance supplied to update the range of 
    * 			attributes in the  distance function.
    */
+  @Override
   public void addInstanceInfo(Instance ins) {
     if(m_Instances!=null)
       try{ update(ins); }
       catch(Exception ex) { ex.printStackTrace(); }
   }
   
+  @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
 
@@ -284,6 +290,7 @@ public class FilteredSearch
   }
 
   
+  @Override
   public void setOptions(String[] options) throws Exception {
     
  // Same for filter
@@ -305,6 +312,7 @@ public class FilteredSearch
   }
 
   
+  @Override
   public String[] getOptions() {
     
     String [] superOptions = super.getOptions();

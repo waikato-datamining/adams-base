@@ -253,7 +253,7 @@ public class SortedList<T>
       result = true;
     }
     else {
-      m_List.set(index, e);
+      m_List.add(index, e);
       result = true;
     }
 
@@ -304,7 +304,7 @@ public class SortedList<T>
         result = true;
       }
       else {
-        m_List.set(index, element);
+        m_List.add(index, element);
         result = true;
       }
     }

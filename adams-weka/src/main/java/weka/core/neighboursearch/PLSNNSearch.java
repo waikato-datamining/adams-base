@@ -15,7 +15,7 @@
 
 /*
  *    PLSNNSearch.java
- *    Copyright (C) 1999-2007 University of Waikato
+ *    Copyright (C) 1999-2014 University of Waikato
  */
 
 package weka.core.neighboursearch;
@@ -98,6 +98,7 @@ public class PLSNNSearch
     return(ret);   
   }
   
+  @Override
   public Instance transformInstance(Instance in) throws Exception { 
     m_plsfilter.input(in);
     m_plsfilter.batchFinished();     
@@ -142,6 +143,7 @@ public class PLSNNSearch
    * @return		the k nearest neighbors
    * @throws Exception  if the neighbours could not be found.
    */
+  @Override
   public Instances kNearestNeighbours(Instance target, int kNN) throws Exception {
   
     if(m_Stats!=null)
@@ -165,7 +167,7 @@ public class PLSNNSearch
 	this.m_neighbours.add(new InstanceNode(i,distance));
 	if (m_neighbours.size() > kNN) {
 	  m_neighbours.remove(m_neighbours.size()-1);
-	  last_distance=m_neighbours.last().distance;
+	  last_distance=m_neighbours.get(m_neighbours.size() - 1).distance;
 	}
       }      
     }
@@ -198,6 +200,7 @@ public class PLSNNSearch
    * 			training set. 
    * @throws Exception	if setting of instances fails
    */
+  @Override
   public void setInstances(Instances insts) throws Exception {
     m_Instances=insts;
     Instances t_instances=this.transformInstances(insts);
@@ -216,6 +219,7 @@ public class PLSNNSearch
    * 			instances.
    * @throws Exception	if the given instances are null
    */
+  @Override
   public void update(Instance ins) throws Exception {
     if(m_Instances==null)
       throw new Exception("No instances supplied yet. Cannot update without"+
@@ -231,12 +235,14 @@ public class PLSNNSearch
    * 			the test instance supplied to update the range of 
    * 			attributes in the  distance function.
    */
+  @Override
   public void addInstanceInfo(Instance ins) {
     if(m_Instances!=null)
       try{ update(ins); }
       catch(Exception ex) { ex.printStackTrace(); }
   }
   
+  @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
     result.addElement(new Option(
@@ -272,6 +278,7 @@ public class PLSNNSearch
      m_Preprocessing = value.getSelectedTag().getID();
    }
  }
+  @Override
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
@@ -297,6 +304,7 @@ public class PLSNNSearch
   public SelectedTag getPreprocessing() {
     return new SelectedTag(m_Preprocessing, PLSFilter.TAGS_PREPROCESSING);
   }
+  @Override
   public String[] getOptions() {
     Vector<String>	result;
     String[]		options;
