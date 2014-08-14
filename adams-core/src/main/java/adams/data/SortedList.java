@@ -158,21 +158,21 @@ public class SortedList<T>
   }
   
   /**
+   * Sorts the list.
+   */
+  protected void sort() {
+    Collections.sort(m_List, m_Comparator);
+  }
+  
+  /**
    * Creates a clone of this list.
    * 
    * @return				the clone
    * @throws CloneNotSupportedException	does never occur
    */
   @Override
-  public Object clone() throws CloneNotSupportedException {
+  public synchronized Object clone() throws CloneNotSupportedException {
     return new SortedList<T>(m_List, m_Comparator);
-  }
-  
-  /**
-   * Sorts the list.
-   */
-  protected void sort() {
-    Collections.sort(m_List, m_Comparator);
   }
   
   /**
@@ -181,7 +181,7 @@ public class SortedList<T>
    * @return		the size
    */
   @Override
-  public int size() {
+  public synchronized int size() {
     return m_List.size();
   }
 
@@ -191,7 +191,7 @@ public class SortedList<T>
    * @return		true if empty
    */
   @Override
-  public boolean isEmpty() {
+  public synchronized boolean isEmpty() {
     return m_List.isEmpty();
   }
 
@@ -201,7 +201,7 @@ public class SortedList<T>
    * @return		true if present
    */
   @Override
-  public boolean contains(Object o) {
+  public synchronized boolean contains(Object o) {
     return m_List.contains(o);
   }
 
@@ -211,7 +211,7 @@ public class SortedList<T>
    * @return		the iterator
    */
   @Override
-  public Iterator<T> iterator() {
+  public synchronized Iterator<T> iterator() {
     return m_List.iterator();
   }
 
@@ -221,7 +221,7 @@ public class SortedList<T>
    * @return		the items as array
    */
   @Override
-  public Object[] toArray() {
+  public synchronized Object[] toArray() {
     return m_List.toArray();
   }
 
@@ -232,7 +232,7 @@ public class SortedList<T>
    * @return		the items as array
    */
   @Override
-  public <T> T[] toArray(T[] a) {
+  public synchronized <T> T[] toArray(T[] a) {
     return m_List.toArray(a);
   }
 
@@ -243,7 +243,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean add(T e) {
+  public synchronized boolean add(T e) {
     boolean	result;
     int 	index;
 
@@ -267,7 +267,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean remove(Object o) {
+  public synchronized boolean remove(Object o) {
     return m_List.remove(o);
   }
 
@@ -278,7 +278,7 @@ public class SortedList<T>
    * @return		true if all contained
    */
   @Override
-  public boolean containsAll(Collection<?> c) {
+  public synchronized boolean containsAll(Collection<?> c) {
     return m_List.containsAll(c);
   }
 
@@ -289,7 +289,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean addAll(Collection<? extends T> c) {
+  public synchronized boolean addAll(Collection<? extends T> c) {
     boolean	result;
     int		index;
     
@@ -319,7 +319,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public synchronized boolean removeAll(Collection<?> c) {
     return m_List.removeAll(c);
   }
 
@@ -330,7 +330,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean retainAll(Collection<?> c) {
+  public synchronized boolean retainAll(Collection<?> c) {
     return m_List.retainAll(c);
   }
 
@@ -338,7 +338,7 @@ public class SortedList<T>
    * Empties the list.
    */
   @Override
-  public void clear() {
+  public synchronized void clear() {
     m_List.clear();
   }
 
@@ -351,7 +351,7 @@ public class SortedList<T>
    * @return		true if list modified
    */
   @Override
-  public boolean addAll(int index, Collection<? extends T> c) {
+  public synchronized boolean addAll(int index, Collection<? extends T> c) {
     boolean	result;
     
     result = m_List.addAll(index, c);
@@ -366,7 +366,7 @@ public class SortedList<T>
    * @param index	the position to get the item at
    */
   @Override
-  public T get(int index) {
+  public synchronized T get(int index) {
     return m_List.get(index);
   }
 
@@ -379,7 +379,7 @@ public class SortedList<T>
    * @return		the previous element at that position
    */
   @Override
-  public T set(int index, T element) {
+  public synchronized T set(int index, T element) {
     T		result;
     
     result = m_List.set(index, element);
@@ -396,7 +396,7 @@ public class SortedList<T>
    * @param element	the element to insert
    */
   @Override
-  public void add(int index, T element) {
+  public synchronized void add(int index, T element) {
     m_List.add(index, element);
     sort();
   }
@@ -408,7 +408,7 @@ public class SortedList<T>
    * @return		the removed item
    */
   @Override
-  public T remove(int index) {
+  public synchronized T remove(int index) {
     return m_List.remove(index);
   }
 
@@ -420,7 +420,7 @@ public class SortedList<T>
    * @return		the index, -1 if not found
    */
   @Override
-  public int indexOf(Object o) {
+  public synchronized int indexOf(Object o) {
     int		result;
     
     result = Collections.binarySearch(m_List, o, m_Comparator);
@@ -437,7 +437,7 @@ public class SortedList<T>
    * @return		the index, -1 if not found
    */
   @Override
-  public int lastIndexOf(Object o) {
+  public synchronized int lastIndexOf(Object o) {
     return m_List.lastIndexOf(o);
   }
 
@@ -447,7 +447,7 @@ public class SortedList<T>
    * @return		the iterator
    */
   @Override
-  public ListIterator<T> listIterator() {
+  public synchronized ListIterator<T> listIterator() {
     return m_List.listIterator();
   }
 
@@ -458,7 +458,7 @@ public class SortedList<T>
    * @return		the iterator
    */
   @Override
-  public ListIterator<T> listIterator(int index) {
+  public synchronized ListIterator<T> listIterator(int index) {
     return m_List.listIterator(index);
   }
 
@@ -468,7 +468,7 @@ public class SortedList<T>
    * @param fromIndex	the starting index
    */
   @Override
-  public List<T> subList(int fromIndex, int toIndex) {
+  public synchronized List<T> subList(int fromIndex, int toIndex) {
     SortedList<T>	result;
     
     result = new SortedList<T>();
@@ -485,7 +485,7 @@ public class SortedList<T>
    * @see		ArrayList#hashCode()
    */
   @Override
-  public int hashCode() {
+  public synchronized int hashCode() {
     return m_List.hashCode();
   }
   
@@ -496,7 +496,7 @@ public class SortedList<T>
    * @see		ArrayList#toString()
    */
   @Override
-  public String toString() {
+  public synchronized String toString() {
     return m_List.toString();
   }
 }
