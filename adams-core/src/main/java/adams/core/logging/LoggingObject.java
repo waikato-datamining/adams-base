@@ -15,7 +15,7 @@
 
 /*
  * ConsoleObject.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.logging;
@@ -92,7 +92,7 @@ public class LoggingObject
   /**
    * Returns whether logging is enabled.
    * 
-   * @return		true if at least {@link Level#INFO}
+   * @return		true if at least {@link Level#CONFIG}
    */
   public boolean isLoggingEnabled() {
     return LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.CONFIG);
