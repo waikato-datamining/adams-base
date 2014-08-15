@@ -15,7 +15,7 @@
 
 /**
  * LoggingHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -74,6 +74,31 @@ public class LoggingHelper {
       }
       catch (Exception e) {
 	result = Level.WARNING;
+      }
+    }
+
+    return result;
+  }
+  
+  /**
+   * Returns the logging level for the specified class. E.g., for the class
+   * "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
+   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
+   * returned. Default is WARNING.
+   *
+   * @param cls		the class to return the debug level for
+   * @return		the logging level
+   */
+  public static LoggingLevel getLoggingLevel(Class cls) {
+    LoggingLevel	result;
+    Level		level;
+
+    result = LoggingLevel.WARNING;
+    level  = getLevel(cls);
+    for (LoggingLevel l: LoggingLevel.values()) {
+      if (l.getLevel() == level) {
+	result = l;
+	break;
       }
     }
 
