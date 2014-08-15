@@ -99,6 +99,15 @@ public class LoggingObject
   }
   
   /**
+   * Returns whether info logging is enabled.
+   * 
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isInfoLoggingEnabled() {
+    return LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.INFO);
+  }
+  
+  /**
    * Returns the size of the object.
    *
    * @return		the size of the object
