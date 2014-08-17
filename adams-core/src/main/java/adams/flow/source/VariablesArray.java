@@ -15,7 +15,7 @@
 
 /*
  * VariablesArray.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -224,13 +224,13 @@ public class VariablesArray
     
     result = null;
 
-    // get storage items
+    // get variables
     values = new String[m_VariableNames.length];
     for (i = 0; i < m_VariableNames.length; i++) {
       if (getVariables().has(m_VariableNames[i].getValue()))
 	values[i] = getVariables().get(m_VariableNames[i].getValue());
       else
-	result = "Storage item #" + (i+1) + " (" + m_VariableNames[i] + ") not found!";
+	result = "Variable #" + (i+1) + " (" + m_VariableNames[i] + ") not set!";
       if (result != null)
 	break;
     }
