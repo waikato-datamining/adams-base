@@ -15,7 +15,7 @@
 
 /*
  * HeaderRow.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -48,6 +48,24 @@ public class HeaderRow
     super(owner);
 
     m_CellKeys = new ArrayList<String>();
+  }
+
+  /**
+   * Obtains copies of the cells from the other row, but not the owner.
+   *
+   * @param row		the row to get the cells from
+   */
+  @Override
+  public void assign(Row row) {
+    int		i;
+    String	key;
+    
+    clear();
+
+    for (i = 0; i < row.getOwner().getColumnCount(); i++) {
+      key = row.getCellKey(i);
+      addCell(key).assign(row.getCell(key));
+    }
   }
   
   /**
