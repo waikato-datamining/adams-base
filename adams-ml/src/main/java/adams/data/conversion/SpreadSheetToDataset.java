@@ -15,11 +15,13 @@
 
 /**
  * SpreadSheetToDataset.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.ml.data.Dataset;
 
 /**
@@ -34,6 +36,12 @@ import adams.ml.data.Dataset;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-class-attribute &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: classAttribute)
+ * &nbsp;&nbsp;&nbsp;The columns to use as class attributes.
+ * &nbsp;&nbsp;&nbsp;default: last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -45,6 +53,9 @@ public class SpreadSheetToDataset
   /** for serialization. */
   private static final long serialVersionUID = 836034550904607888L;
 
+  /** the attribute(s) to use as class attribute(s). */
+  protected SpreadSheetColumnRange m_ClassAttribute;
+  
   /**
    * Returns a string describing the object.
    *
@@ -53,6 +64,57 @@ public class SpreadSheetToDataset
   @Override
   public String globalInfo() {
     return "Turns a spreadsheet object into a dataset object.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "class-attribute", "classAttribute",
+	    new SpreadSheetColumnRange(""));
+  }
+
+  /**
+   * Sets the columns to use as class attributes.
+   *
+   * @param value	the range
+   */
+  public void setClassAttribute(SpreadSheetColumnRange value) {
+    m_ClassAttribute = value;
+    reset();
+  }
+
+  /**
+   * Returns the colums that identify a rowx
+   *
+   * @return		the range
+   */
+  public SpreadSheetColumnRange getClassAttribute() {
+    return m_ClassAttribute;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classAttributeTipText() {
+    return "The columns to use as class attributes.";
+  }
+  
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "classAttribute", (m_ClassAttribute.getRange().isEmpty() ? "-none-" : m_ClassAttribute.getRange()), "class: ");
   }
 
   /**
@@ -84,9 +146,14 @@ public class SpreadSheetToDataset
   @Override
   protected Object doConvert() throws Exception {
     Dataset	result;
+    int[]	indices;
     
     result = new Dataset();
     result.assign((SpreadSheet) m_Input);
+    m_ClassAttribute.setData(result);
+    indices = m_ClassAttribute.getIntIndices();
+    for (int index: indices)
+      result.setClassAttribute(index, true);
     
     return result;
   }
