@@ -15,7 +15,7 @@
 
 /**
  * ParameterPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -28,6 +28,8 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -39,7 +41,7 @@ import adams.gui.chooser.AbstractChooserPanel;
 /**
  * A panel that lists one parameter (label and component or just
  * AbstractChooserPanel) per row. The sizes of the labels get automatically
- * adjusted.
+ * adjusted. Optionally, a checkbox can be displayed per parameter.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -53,6 +55,9 @@ public class ParameterPanel
   /** the labels. */
   protected List<JLabel> m_Labels;
 
+  /** the check boxes. */
+  protected List<JCheckBox> m_CheckBoxes;
+
   /** the parameters. */
   protected List<Component> m_Parameters;
 
@@ -61,6 +66,9 @@ public class ParameterPanel
 
   /** the vertical gap. */
   protected int m_GapVertical;
+  
+  /** whether to use checkboxes. */
+  protected boolean m_UseCheckBoxes;
 
   /** the preferred dimensions for JSpinner components. */
   protected Dimension m_PreferredDimensionJSpinner;
@@ -69,7 +77,16 @@ public class ParameterPanel
    * Initializes the panel.
    */
   public ParameterPanel() {
-    this(0, 0);
+    this(false);
+  }
+
+  /**
+   * Initializes the panel.
+   * 
+   * @param useCheckBoxes	whether to use checkboxes
+   */
+  public ParameterPanel(boolean useCheckBoxes) {
+    this(0, 0, useCheckBoxes);
   }
 
   /**
@@ -79,10 +96,22 @@ public class ParameterPanel
    * @param vgap	the vertical gap in pixel
    */
   public ParameterPanel(int hgap, int vgap) {
+    this(hgap, vgap, false);
+  }
+
+  /**
+   * Initializes the panel.
+   *
+   * @param hgap		the horizontal gap in pixel
+   * @param vgap		the vertical gap in pixel
+   * @param useCheckBoxes	whether to use checkboxes
+   */
+  public ParameterPanel(int hgap, int vgap, boolean useCheckBoxes) {
     super();
 
     m_GapHorizontal = hgap;
     m_GapVertical   = vgap;
+    m_UseCheckBoxes = useCheckBoxes;
 
     update();
   }
@@ -95,6 +124,7 @@ public class ParameterPanel
     super.initialize();
 
     m_Labels                     = new ArrayList<JLabel>();
+    m_CheckBoxes                 = new ArrayList<JCheckBox>();
     m_Parameters                 = new ArrayList<Component>();
     m_PreferredDimensionJSpinner = new Dimension(100, 20);
   }
@@ -113,10 +143,20 @@ public class ParameterPanel
    */
   public void clearParameters() {
     m_Labels.clear();
+    m_CheckBoxes.clear();
     m_Parameters.clear();
     update();
   }
 
+  /**
+   * Returns whether checkboxes are used.
+   * 
+   * @return		true if checkboxes are used
+   */
+  public boolean useCheckBoxes() {
+    return m_UseCheckBoxes;
+  }
+  
   /**
    * Sets the preferred dimension for JSpinner and derived classes.
    *
@@ -143,16 +183,31 @@ public class ParameterPanel
    * @param comp	the component to add
    */
   public void addParameter(String label, Component comp) {
-    addParameter(-1, label, comp);
+    addParameter(label, false, comp);
   }
 
   /**
-   * Adds the chooser panel at the end.
+   * Adds the label and component as new row at the end.
+   *
+   * @param label	the label to add, the mnemonic to use is preceded by "_"
+   * @param checked	whether the checkbox is checked
+   * @param comp	the component to add
+   */
+  public void addParameter(String label, boolean checked, Component comp) {
+    addParameter(-1, label, checked, comp);
+  }
+
+  /**
+   * Adds the chooser panel at the end. Cannot be used if checkboxes used.
    *
    * @param chooser	the chooser panel to add
+   * @see		#useCheckBoxes()
    */
   public void addParameter(AbstractChooserPanel chooser) {
-    addParameter(-1, chooser);
+    if (!m_UseCheckBoxes)
+      addParameter(-1, chooser);
+    else
+      throw new IllegalArgumentException("Cannot use chooser panel with checkboxes!");
   }
 
   /**
@@ -164,7 +219,21 @@ public class ParameterPanel
    * 			add the component at the end
    */
   public void addParameter(int index, String label, Component comp) {
+    addParameter(index, label, false, comp);
+  }
+
+  /**
+   * Inserts the label and component as new row at the specified row.
+   *
+   * @param label	the label to add, the mnemonic to use is preceded by "_"
+   * @param checked	whether the checkbox is checked
+   * @param comp	the component to add
+   * @param index	the row index to insert the label/editfield at, -1 will
+   * 			add the component at the end
+   */
+  public void addParameter(int index, String label, boolean checked, Component comp) {
     JLabel		lbl;
+    JCheckBox		check;
     JPanel		panel;
     GridBagConstraints	gbC;
     GridBagLayout	gbL;
@@ -173,6 +242,11 @@ public class ParameterPanel
     lbl.setDisplayedMnemonic(GUIHelper.getMnemonic(label));
     lbl.setLabelFor(comp);
 
+    if (m_UseCheckBoxes)
+      check = new JCheckBox("", checked);
+    else
+      check = null;
+    
     if (comp instanceof JTextArea)
       comp = new BaseScrollPane(comp);
     else if (comp instanceof JTextPane)
@@ -189,11 +263,25 @@ public class ParameterPanel
     gbL.setConstraints(lbl, gbC);
     panel.add(lbl);
     
+    if (check != null) {
+      gbC = new GridBagConstraints();
+      gbC.anchor = GridBagConstraints.WEST;
+      gbC.fill = GridBagConstraints.HORIZONTAL;
+      gbC.gridy = 0;
+      gbC.gridx = 1;
+      gbC.insets = new Insets(2, 5, 2, 5);
+      gbL.setConstraints(check, gbC);
+      panel.add(check);
+    }
+    
     gbC = new GridBagConstraints();
     gbC.anchor = GridBagConstraints.WEST;
     gbC.fill = GridBagConstraints.HORIZONTAL;
     gbC.gridy = 0;
-    gbC.gridx = 1;
+    if (m_UseCheckBoxes)
+      gbC.gridx = 2;
+    else
+      gbC.gridx = 1;
     gbC.weightx = 100;
     gbC.ipadx = 20;
     gbC.insets = new Insets(2, 5, 2, 5);
@@ -202,10 +290,14 @@ public class ParameterPanel
 
     if (index == -1) {
       m_Labels.add(lbl);
+      if (check != null)
+	m_CheckBoxes.add(check);
       m_Parameters.add(comp);
     }
     else {
       m_Labels.add(index, lbl);
+      if (check != null)
+	m_CheckBoxes.add(index, check);
       m_Parameters.add(index, comp);
     }
 
@@ -223,6 +315,9 @@ public class ParameterPanel
     JPanel		panel;
     GridBagConstraints	gbC;
     GridBagLayout	gbL;
+    
+    if (m_UseCheckBoxes)
+      throw new IllegalArgumentException("Cannot use chooser panel with checkboxes!");
     
     gbL   = new GridBagLayout();
     panel = new JPanel(gbL);
@@ -294,6 +389,63 @@ public class ParameterPanel
   }
 
   /**
+   * Returns the checkbof for the parameter at the specified location.
+   *
+   * @param index	the row index
+   * @return		the requested checkbox, null if not used
+   * @see		#useCheckBoxes()
+   */
+  public JCheckBox getCheckBox(int index) {
+    if (m_UseCheckBoxes)
+      return m_CheckBoxes.get(index);
+    else
+      return null;
+  }
+
+  /**
+   * Returns whether the checkbox is ticked.
+   *
+   * @param index	the row index
+   * @return		true if checked
+   */
+  public boolean isChecked(int index) {
+    if (!m_UseCheckBoxes)
+      return false;
+    else 
+      return m_CheckBoxes.get(index).isSelected();
+  }
+  
+  /**
+   * Sets the tiptext to display.
+   * 
+   * @param index	the index of the component
+   * @param text	the tiptext to use, null to turn off
+   * @param label	whether to set the tiptext for the label
+   * @param comp	whether to set the tiptext for the component
+   */
+  public void setToolTipText(int index, String text, boolean label, boolean comp) {
+    setToolTipText(index, text, label, false, comp);
+  }
+  
+  /**
+   * Sets the tiptext to display.
+   * 
+   * @param index	the index of the component
+   * @param text	the tiptext to use, null to turn off
+   * @param label	whether to set the tiptext for the label
+   * @param check	whether to set the tiptext for the checkbox
+   * @param comp	whether to set the tiptext for the component (must be {@link JComponent})
+   */
+  public void setToolTipText(int index, String text, boolean label, boolean check, boolean comp) {
+    if (label)
+      getLabel(index).setToolTipText(text);
+    if (m_UseCheckBoxes && check)
+      getCheckBox(index).setToolTipText(text);
+    if (comp && (getParameter(index) instanceof JComponent))
+      ((JComponent) getParameter(index)).setToolTipText(text);
+  }
+
+  /**
    * Updates the layout.
    */
   protected void update() {
@@ -322,11 +474,26 @@ public class ParameterPanel
       layout.setConstraints(m_Labels.get(i), con);
       add(m_Labels.get(i));
 
+      if (m_UseCheckBoxes) {
+	con           = new GridBagConstraints();
+	con.anchor    = GridBagConstraints.WEST;
+	con.fill      = GridBagConstraints.HORIZONTAL;
+	con.gridy     = i;
+	con.gridx     = 1;
+	con.ipadx     = 20;
+	con.insets    = new Insets(3, 5, 3, 5);
+	layout.setConstraints(m_CheckBoxes.get(i), con);
+	add(m_CheckBoxes.get(i));
+      }
+
       con           = new GridBagConstraints();
       con.anchor    = GridBagConstraints.WEST;
       con.fill      = GridBagConstraints.HORIZONTAL;
       con.gridy     = i;
-      con.gridx     = 1;
+      if (m_UseCheckBoxes)
+	con.gridx = 2;
+      else
+	con.gridx = 1;
       con.weightx   = 100;
       con.ipadx     = 20;
       con.gridwidth = GridBagConstraints.REMAINDER;
@@ -357,8 +524,11 @@ public class ParameterPanel
   public void setEnabled(boolean enabled) {
     int		i;
 
-    for (i = 0; i < m_Parameters.size(); i++)
+    for (i = 0; i < m_Parameters.size(); i++) {
       m_Parameters.get(i).setEnabled(enabled);
+      if (m_UseCheckBoxes)
+	m_CheckBoxes.get(i).setEnabled(enabled);
+    }
 
     super.setEnabled(enabled);
   }
