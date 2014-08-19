@@ -69,6 +69,10 @@ adams.data.conversion.ConversionFromString=\
 adams.data.conversion.ConversionToString=\
   adams.data.conversion
 
+# feature converters
+adams.data.featureconverter.AbstractFeatureConverter=\
+  adams.data.featureconverter
+
 # filters
 adams.data.filter.AbstractFilter=\
   adams.data.filter
