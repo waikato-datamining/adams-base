@@ -15,7 +15,7 @@
 
 /**
  * DateTimeTypeDifference.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -58,7 +58,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: DateTimeTypeDifference
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -75,12 +75,12 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: inputDateTimeType)
+ * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -246,6 +246,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDateTime[].class};
       case BASETIME:
 	return new Class[]{BaseTime[].class};
+      case JULIANDATE:
+	return new Class[]{Double[].class};
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -275,6 +277,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDateTime.class};
       case BASETIME:
 	return new Class[]{BaseTime.class};
+      case JULIANDATE:
+	return new Class[]{Double.class};
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }

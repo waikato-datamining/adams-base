@@ -15,12 +15,13 @@
 
 /**
  * StringToDateTimeType.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import java.util.Date;
 
+import jodd.datetime.JDateTime;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
@@ -49,7 +50,7 @@ import adams.data.DateFormatString;
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to generate from the string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
@@ -241,6 +242,8 @@ public class StringToDateTimeType
 	return BaseDateTime.class;
       case BASETIME:
 	return BaseTime.class;
+      case JULIANDATE:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -301,6 +304,8 @@ public class StringToDateTimeType
 	  return new BaseDateTime(date);
 	case BASETIME:
 	  return new BaseTime(date);
+	case JULIANDATE:
+	  return new JDateTime(date).getJulianDateDouble();
 	default:
 	  throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
       }

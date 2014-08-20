@@ -15,7 +15,7 @@
 
 /**
  * ExtractDateTimeField.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import jodd.datetime.JDateTime;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
@@ -41,16 +42,12 @@ import adams.data.DateFormatString;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-datetime-type &lt;MSECS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to extract the field from.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
@@ -64,6 +61,7 @@ import adams.data.DateFormatString;
  * &nbsp;&nbsp;&nbsp;The format for turning the date&#47;time type into a string in case of field 
  * &nbsp;&nbsp;&nbsp;CUSTOM
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
  <!-- options-end -->
@@ -317,6 +315,8 @@ public class ExtractDateTimeField
 	return BaseDateTime.class;
       case BASETIME:
 	return BaseTime.class;
+      case JULIANDATE:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -388,6 +388,8 @@ public class ExtractDateTimeField
       case BASETIME:
 	m_Calendar.setTime(((BaseTime) m_Input).dateValue());
 	break;
+      case JULIANDATE:
+	m_Calendar.setTime(new JDateTime((Double) m_Input).convertToDate());
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }

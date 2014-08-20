@@ -176,6 +176,12 @@
       <artifactId>jfilechooser-bookmarks</artifactId>
       <version>0.1.0</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.jodd</groupId>
+      <artifactId>jodd-core</artifactId>
+      <version>3.5.2</version>
+    </dependency>
   </dependencies>
 
   <build>

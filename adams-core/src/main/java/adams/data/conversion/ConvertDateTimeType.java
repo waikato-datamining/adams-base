@@ -15,12 +15,13 @@
 
 /**
  * ConvertDateTimeType.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import java.util.Date;
 
+import jodd.datetime.JDateTime;
 import adams.core.DateTime;
 import adams.core.DateTimeType;
 import adams.core.QuickInfoHelper;
@@ -41,12 +42,12 @@ import adams.core.base.BaseTime;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: inputDateTimeType)
+ * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -192,6 +193,8 @@ public class ConvertDateTimeType
 	return BaseDateTime.class;
       case BASETIME:
 	return BaseTime.class;
+      case JULIANDATE:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -221,6 +224,8 @@ public class ConvertDateTimeType
 	return BaseDateTime.class;
       case BASETIME:
 	return BaseTime.class;
+      case JULIANDATE:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }
@@ -265,6 +270,9 @@ public class ConvertDateTimeType
       case BASETIME:
 	msecs = ((BaseTime) m_Input).dateValue().getTime();
 	break;
+      case JULIANDATE:
+	msecs = new JDateTime((Double) m_Input).convertToDate().getTime();
+	break;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -286,6 +294,8 @@ public class ConvertDateTimeType
 	return new BaseDateTime(new DateTime(msecs));
       case BASETIME:
 	return new BaseTime(new Time(msecs));
+      case JULIANDATE:
+	return new JDateTime(new Date(msecs)).getJulianDateDouble();
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }
