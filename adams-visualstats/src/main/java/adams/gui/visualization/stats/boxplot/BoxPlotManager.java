@@ -728,21 +728,52 @@ public class BoxPlotManager
       Double max = null;
       Double min = null;
       // if all graphs to be drawn with same axis
+      //This has been changed to use max/min of attributes chosen, not all attributes.
       if (m_AxisSame) {
+    	  boolean contains;
+    	  String chosen;
+    	  String inst;
+    	  
+    	  for (int i = 0; i < m_Instances.numAttributes(); i++) {
+    		  contains = false;
+    		  for(int j = 0; j < m_Chosen.size(); j++) {
+    			  chosen = m_Chosen.get(j).toString();
+    			  inst = m_Instances.attribute(i).name();
+    			  if(chosen.equals(inst)) {
+    				  contains = true;
+    				  break;
+    			  }
+    		  }
+    		  if(contains) {
+    		  double[] data = m_Instances.attributeToDoubleArray(i);
+    		  double tempMax = StatUtils.max(data);
+    		  double tempMin = StatUtils.min(data);
+    		  if (max == null)
+    		    max = tempMax;
+    		  if (min == null)
+    		    min = tempMin;
+    		  if (tempMax > max)
+    		    max = tempMax;
+    		  if (tempMin < min)
+    		    min = tempMin;
+    		  }
+    		}
+    	  
+    	  //old version
 	// finding max and min values
-	for (int i = 0; i < m_Instances.numAttributes(); i++) {
-	  double[] data = m_Instances.attributeToDoubleArray(i);
-	  double tempMax = StatUtils.max(data);
-	  double tempMin = StatUtils.min(data);
-	  if (max == null)
-	    max = tempMax;
-	  if (min == null)
-	    min = tempMin;
-	  if (tempMax > max)
-	    max = tempMax;
-	  if (tempMin < min)
-	    min = tempMin;
-	}
+//	for (int i = 0; i < m_Instances.numAttributes(); i++) {
+//	  double[] data = m_Instances.attributeToDoubleArray(i);
+//	  double tempMax = StatUtils.max(data);
+//	  double tempMin = StatUtils.min(data);
+//	  if (max == null)
+//	    max = tempMax;
+//	  if (min == null)
+//	    min = tempMin;
+//	  if (tempMax > max)
+//	    max = tempMax;
+//	  if (tempMin < min)
+//	    min = tempMin;
+//	}
       }
       // Jpanel with flowlayout for the scrollpane
       JPanel scrollHold = new JPanel();
