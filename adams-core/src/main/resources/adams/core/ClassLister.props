@@ -69,6 +69,10 @@ adams.data.conversion.ConversionFromString=\
 adams.data.conversion.ConversionToString=\
   adams.data.conversion
 
+# distribution schemes
+adams.data.distribution.AbstractRealDistribution=\
+  adams.data.distribution
+
 # feature converters
 adams.data.featureconverter.AbstractFeatureConverter=\
   adams.data.featureconverter
