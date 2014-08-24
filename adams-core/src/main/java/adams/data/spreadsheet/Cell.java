@@ -137,6 +137,8 @@ public class Cell
    * @param cell	the cell to get the content/type from
    */
   public void assign(Cell cell) {
+    String	content;
+    
     m_ContentType = cell.m_ContentType;
 
     if (cell.isFormula()) {
@@ -150,7 +152,11 @@ public class Cell
       // gets updated correctly
       switch (m_ContentType) {
 	case STRING:
-	  setContentAsString(cell.getContent());
+	  content = cell.getContent();
+	  if (!cell.isMissing() && content.equals(SpreadSheet.MISSING_VALUE))
+	    setContentAsString("'" + SpreadSheet.MISSING_VALUE + "'");
+	  else
+	    setContentAsString(content);
 	  break;
 	default:
 	  m_Content = cell.m_Content;
