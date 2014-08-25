@@ -15,7 +15,7 @@
 
 /**
  * Dataset.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.data;
 
@@ -87,21 +87,6 @@ public class Dataset
     
     if (sheet instanceof Dataset)
       m_ClassAttributes.addAll(((Dataset) sheet).m_ClassAttributes);
-  }
-  
-  /**
-   * Returns a new instance.
-   * 
-   * @return		the new instance
-   */
-  @Override
-  public Dataset newInstance() {
-    Dataset	result;
-    
-    result = new Dataset();
-    result.setDataRowClass(getDataRowClass());
-    
-    return result;
   }
 
   /**
