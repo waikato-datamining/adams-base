@@ -28,6 +28,7 @@ import java.util.Calendar;
  * @author  dale (dale at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class BaseData {
 
   public static class Date {

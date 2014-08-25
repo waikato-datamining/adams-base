@@ -27,6 +27,7 @@ import java.util.Vector;
  * @author  dale (dale at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 abstract public class Classifier {
 
   /** List of attributes to use in modeling. */
@@ -52,6 +53,7 @@ abstract public class Classifier {
       m_classificationS=s;
     }
 
+    @Override
     public String toString(){
       return(m_result+":"+m_classification+":"+m_classificationS);
     }

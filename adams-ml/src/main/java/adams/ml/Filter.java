@@ -25,6 +25,7 @@ package adams.ml;
  * @author  dale (dale at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 abstract public class Filter {
   public class BuildResult{
     protected String m_result;

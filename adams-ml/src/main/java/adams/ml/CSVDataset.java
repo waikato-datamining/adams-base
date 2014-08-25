@@ -12,6 +12,7 @@ import java.util.Vector;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 
+@Deprecated
 public class CSVDataset extends Dataset {
 
   /** suid  */

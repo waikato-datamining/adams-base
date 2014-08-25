@@ -31,6 +31,7 @@ import adams.ml.BaseData.Date;
  * @author  dale (dale at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class DataRow {
   protected Hashtable<String,BaseData> m_Data;
 
