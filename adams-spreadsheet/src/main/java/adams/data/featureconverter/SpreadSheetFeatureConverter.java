@@ -21,7 +21,6 @@ package adams.data.featureconverter;
 
 import java.util.List;
 
-import adams.data.report.DataType;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRowType;
 import adams.data.spreadsheet.Row;
@@ -146,17 +145,35 @@ public class SpreadSheetFeatureConverter
   public String spreadSheetTypeTipText() {
     return "The type of spreadsheet to use for the data.";
   }
+  
+  /**
+   * Returns the class of the dataset that the converter generates.
+   * 
+   * @return		the format
+   */
+  @Override
+  public Class getDatasetFormat() {
+    return m_SpreadSheetType.getClass();
+  }
+  
+  /**
+   * Returns the class of the row that the converter generates.
+   * 
+   * @return		the format
+   */
+  @Override
+  public Class getRowFormat() {
+    return Row.class;
+  }
 
   /**
-   * Performs the actual generation of the header data structure using the 
-   * names and data types.
+   * Performs the actual generation of a row from the raw data.
    * 
-   * @param names	the attribute names
-   * @param types	the attribute types
+   * @param data	the data of the row, elements can be null (= missing)
    * @return		the dataset structure
    */
   @Override
-  protected SpreadSheet doGenerateHeader(List<String> names, List<DataType> types) {
+  protected SpreadSheet doGenerateHeader(HeaderDefinition header) {
     SpreadSheet	result;
     Row		row;
     
@@ -165,7 +182,7 @@ public class SpreadSheetFeatureConverter
     result.setName(getClass().getName());
     
     row = result.getHeaderRow();
-    for (String name: names)
+    for (String name: header.getNames())
       row.addCell("" + row.getCellCount()).setContent(name);
     
     return result;
@@ -193,7 +210,7 @@ public class SpreadSheetFeatureConverter
 	cell.setMissing();
 	continue;
       }
-      switch (m_Types.get(i)) {
+      switch (m_HeaderDefinition.getType(i)) {
 	case BOOLEAN:
 	  cell.setContent((Boolean) obj);
 	  break;

@@ -19,11 +19,9 @@
  */
 package adams.data.featureconverter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.data.report.DataType;
 
 /**
  * Ancestor for generic feature converter schemes.
@@ -43,7 +41,7 @@ public abstract class AbstractFeatureConverter<D,R>
   protected D m_Header;
 
   /** the data types. */
-  protected List<DataType> m_Types;
+  protected HeaderDefinition m_HeaderDefinition;
   
   /**
    * Resets the scheme.
@@ -52,33 +50,60 @@ public abstract class AbstractFeatureConverter<D,R>
   protected void reset() {
     super.reset();
     
-    m_Header = null;
-    m_Types  = null;
+    m_Header           = null;
+    m_HeaderDefinition = null;
   }
   
   /**
-   * Performs the actual generation of the header data structure using the 
-   * names and data types.
+   * Returns the current header, if any.
    * 
-   * @param names	the attribute names
-   * @param types	the attribute types
-   * @return		the dataset structure
+   * @return		the header, null if none generated yet
    */
-  protected abstract D doGenerateHeader(List<String> names, List<DataType> types);
+  public D getHeader() {
+    return m_Header;
+  }
   
   /**
-   * Generates the header data structure using the names and data types.
+   * Returns the current header definition, if any.
    * 
-   * @param names	the attribute names
-   * @param types	the attribute types
+   * @return		the header definition, null if none supplied yet
+   */
+  public HeaderDefinition getHeaderDefinition() {
+    return m_HeaderDefinition;
+  }
+  
+  /**
+   * Returns the class of the dataset that the converter generates.
+   * 
+   * @return		the format
+   */
+  public abstract Class getDatasetFormat();
+  
+  /**
+   * Returns the class of the row that the converter generates.
+   * 
+   * @return		the format
+   */
+  public abstract Class getRowFormat();
+  
+  /**
+   * Performs the actual generation of the header data structure using the 
+   * supplied header definition.
+   * 
+   * @param header	the header definition
    * @return		the dataset structure
    */
-  public D generateHeader(List<String> names, List<DataType> types) {
-    if (names.size() != types.size())
-      throw new IllegalArgumentException("Number of names and types vary: " + names.size() + " != " + types.size());
-    
-    m_Header = doGenerateHeader(names, types);
-    m_Types  = new ArrayList<DataType>(types);
+  protected abstract D doGenerateHeader(HeaderDefinition header);
+  
+  /**
+   * Generates the header data structure using the supplied header definition.
+   * 
+   * @param header	the header definition
+   * @return		the dataset structure
+   */
+  public D generateHeader(HeaderDefinition header) {
+    m_Header           = doGenerateHeader(header);
+    m_HeaderDefinition = header;
     
     return m_Header;
   }
@@ -101,6 +126,8 @@ public abstract class AbstractFeatureConverter<D,R>
   public R generateRow(List<Object> data) {
     if (m_Header == null)
       throw new IllegalStateException("No header available! generatedHeader called?");
+    if (m_HeaderDefinition.size() != data.size())
+      throw new IllegalStateException("Header and data differ in size: " + m_HeaderDefinition.size() + " != " + data.size());
     
     return doGenerateRow(data);
   }

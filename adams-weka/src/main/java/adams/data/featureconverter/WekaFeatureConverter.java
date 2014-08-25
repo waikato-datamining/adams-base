@@ -27,7 +27,6 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
-import adams.data.report.DataType;
 
 /**
  * Generates features in spreadsheet format.
@@ -50,37 +49,55 @@ public class WekaFeatureConverter
   public String globalInfo() {
     return "Turns the features into Weka format.";
   }
+  
+  /**
+   * Returns the class of the dataset that the converter generates.
+   * 
+   * @return		the format
+   */
+  @Override
+  public Class getDatasetFormat() {
+    return Instances.class;
+  }
+  
+  /**
+   * Returns the class of the row that the converter generates.
+   * 
+   * @return		the format
+   */
+  @Override
+  public Class getRowFormat() {
+    return Instance.class;
+  }
 
   /**
-   * Performs the actual generation of the header data structure using the 
-   * names and data types.
+   * Performs the actual generation of a row from the raw data.
    * 
-   * @param names	the attribute names
-   * @param types	the attribute types
+   * @param data	the data of the row, elements can be null (= missing)
    * @return		the dataset structure
    */
   @Override
-  protected Instances doGenerateHeader(List<String> names, List<DataType> types) {
+  protected Instances doGenerateHeader(HeaderDefinition header) {
     Instances			result;
     ArrayList<Attribute>	atts;
     ArrayList<String>		values;
     int				i;
     
     atts = new ArrayList<Attribute>();
-    for (i = 0; i < names.size(); i++) {
-      switch (m_Types.get(i)) {
+    for (i = 0; i < header.size(); i++) {
+      switch (header.getType(i)) {
 	case BOOLEAN:
 	  values = new ArrayList<String>();
 	  values.add("yes");
 	  values.add("no");
-	  atts.add(new Attribute(names.get(i), values));
+	  atts.add(new Attribute(header.getName(i), values));
 	  break;
 	case NUMERIC:
-	  atts.add(new Attribute(names.get(i)));
+	  atts.add(new Attribute(header.getName(i)));
 	  break;
 	case STRING:
 	case UNKNOWN:
-	  atts.add(new Attribute(names.get(i), (List<String>) null));
+	  atts.add(new Attribute(header.getName(i), (List<String>) null));
 	  break;
       }
     }
@@ -111,7 +128,7 @@ public class WekaFeatureConverter
 	values[i] = Utils.missingValue();
 	continue;
       }
-      switch (m_Types.get(i)) {
+      switch (m_HeaderDefinition.getType(i)) {
 	case BOOLEAN:
 	  values[i] = ((Boolean) obj) ? 0.0 : 1.0;
 	  break;
