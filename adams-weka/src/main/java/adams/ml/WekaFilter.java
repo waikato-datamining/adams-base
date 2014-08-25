@@ -26,6 +26,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.SavitzkyGolay;
 
+@Deprecated
 public class WekaFilter
 extends Filter {
   protected Instances m_Instances;
@@ -102,6 +103,7 @@ extends Filter {
     return(buildandfilterP(d,atts));
   }
 
+  @Override
   public WekaData buildandfilter(Dataset d) {
     return(buildandfilter(d,null));
   }
