@@ -139,6 +139,13 @@ public class Dataset
   }
 
   /**
+   * Removes all set class attributes.
+   */
+  public void removeClassAttributes() {
+    m_ClassAttributes.clear();
+  }
+
+  /**
    * Returns whether the specified column is a class attribute.
    * 
    * @param colKey	they key of the column to query
