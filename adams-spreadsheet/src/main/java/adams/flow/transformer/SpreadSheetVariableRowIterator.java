@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetVariableRowIterator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -33,8 +33,9 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Iterates through a defined range of rows, outputting them one-by-one (ie each time a spreadsheet with one row). In each iteration the cell values of the defined column range are mapped to variables.<br/>
- * By default the (cleaned up) header names of the columns are used as variable names. To avoid name clashes, a prefix can be chosen for the variable names.
+ * Iterates through a defined range of rows. In each iteration the cell values of the defined column range are mapped to variables.<br/>
+ * By default the (cleaned up) header names of the columns are used as variable names. To avoid name clashes, a prefix can be chosen for the variable names.<br/>
+ * The subset of columns of the row in the current iteration can be output as spreadsheet well (computationally expensive). By default, the complete spreadsheet is forwarded as is.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -48,8 +49,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -60,7 +59,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetVariableRowIterator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,17 +79,21 @@ import adams.flow.core.Token;
  * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
  * &nbsp;&nbsp;&nbsp;The rows to retrieve the values from; A range is a comma-separated list 
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; apart from column names (case-sensitive), the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
+ * &nbsp;&nbsp;&nbsp; last_1, last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
  * &nbsp;&nbsp;&nbsp;The columns to retrieve the values from; A range is a comma-separated list 
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; apart from column names (case-sensitive), the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
+ * &nbsp;&nbsp;&nbsp; last_1, last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-variable-prefix &lt;java.lang.String&gt; (property: variablePrefix)
@@ -101,6 +104,12 @@ import adams.flow.core.Token;
  * <pre>-missing-value &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The value to use as variable value in case of missing cells.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-output-modified &lt;boolean&gt; (property: outputModified)
+ * &nbsp;&nbsp;&nbsp;If enabled, the modified spreadsheet (current row with subset of columns
+ * &nbsp;&nbsp;&nbsp;) is output instead of the full dataset (computationally expensive).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -144,6 +153,9 @@ public class SpreadSheetVariableRowIterator
   /** the column indices. */
   protected int[] m_ColumnIndices;
   
+  /** whether to output the modified spreadsheet. */
+  protected boolean m_OutputModified;
+
   /**
    * Returns a string describing the object.
    *
@@ -152,12 +164,14 @@ public class SpreadSheetVariableRowIterator
   @Override
   public String globalInfo() {
     return 
-	"Iterates through a defined range of rows, outputting them one-by-one "
-	+ "(ie each time a spreadsheet with one row). In each iteration the "
+	"Iterates through a defined range of rows. In each iteration the "
 	+ "cell values of the defined column range are mapped to variables.\n"
 	+ "By default the (cleaned up) header names of the columns are used as "
 	+ "variable names. To avoid name clashes, a prefix can be chosen for "
-	+ "the variable names.";
+	+ "the variable names.\n"
+	+ "The subset of columns of the row in the current iteration can be "
+	+ "output as spreadsheet well (computationally expensive). By default, "
+	+ "the complete spreadsheet is forwarded as is.";
   }
 
   /**
@@ -182,6 +196,10 @@ public class SpreadSheetVariableRowIterator
     m_OptionManager.add(
 	    "missing-value", "missingValue",
 	    "");
+
+    m_OptionManager.add(
+	    "output-modified", "outputModified",
+	    false);
   }
 
   /**
@@ -383,6 +401,40 @@ public class SpreadSheetVariableRowIterator
   }
 
   /**
+   * Sets whether to output the modified spreadsheet (current row, subset 
+   * of columns) instead of the full one.
+   *
+   * @param value	true if to output modified spreadsheet
+   */
+  public void setOutputModified(boolean value) {
+    m_OutputModified = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the modified spreadsheet (current row, subset 
+   * of columns) instead of the full one.
+   *
+   * @return		true if to output modified spreadsheet
+   */
+  public boolean getOutputModified() {
+    return m_OutputModified;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputModifiedTipText() {
+    return 
+	"If enabled, the modified spreadsheet (current row with subset of "
+	+ "columns) is output instead of the full dataset (computationally "
+	+ "expensive).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -400,7 +452,10 @@ public class SpreadSheetVariableRowIterator
     value = QuickInfoHelper.toString(this, "missingValue", (m_MissingValue.length() > 0 ? m_MissingValue : null), ", missing: ");
     if (value != null)
       result += value;
-    
+    value = QuickInfoHelper.toString(this, "outputModified", m_OutputModified, ", output modified");
+    if (value != null)
+      result += value;
+
     return result;
   }
 
@@ -474,17 +529,52 @@ public class SpreadSheetVariableRowIterator
    */
   @Override
   public Token output() {
-    Token	result;
-    int		rowIndex;
-    int		i;
-    int		col;
-    Row		row;
-    Row		header;
-    String	name;
+    Token			result;
+    SpreadSheet			mod;
+    int				rowIndex;
+    int				i;
+    int				col;
+    Row				row;
+    Row				header;
+    String			name;
+    SpreadSheetRemoveColumn	remove;
+    SpreadSheetColumnRange	range;
+    String			msg;
     
-    result = new Token(m_Sheet);
+    result   = null;
     rowIndex = m_Queue.get(0);
     m_Queue.remove(0);
+
+    if (m_OutputModified) {
+      mod = m_Sheet.getHeader();
+      mod.addRow().assign(m_Sheet.getRow(rowIndex));
+      if (!m_Columns.isAllRange()) {
+	range  = new SpreadSheetColumnRange(m_Columns.getRange());
+	range.setInverted(!range.isInverted());
+	remove = new SpreadSheetRemoveColumn();
+	remove.setPosition(range);
+	remove.input(new Token(m_Sheet));
+	msg = remove.execute();
+	if (msg == null) {
+	  if (remove.hasPendingOutput()) {
+	    mod = (SpreadSheet) remove.output().getPayload();
+	  }
+	  else {
+	    getLogger().severe("Failed to generate modified spreadsheet (no output)!");
+	    mod = null;
+	  }
+	}
+	else {
+	  getLogger().severe("Failed to generate modified spreadsheet: " + msg);
+	  mod = null;
+	}
+      }
+      if (mod != null)
+	result = new Token(mod);
+    }
+    else {
+      result = new Token(m_Sheet);
+    }
     
     header = m_Sheet.getHeaderRow();
     row    = m_Sheet.getRow(rowIndex);

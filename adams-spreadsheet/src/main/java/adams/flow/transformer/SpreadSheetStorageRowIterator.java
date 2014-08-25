@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetStorageRowIterator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -34,8 +34,9 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Iterates through a defined range of rows, outputting them one-by-one (ie each time a spreadsheet with one row). In each iteration the cell values of the defined column range are mapped to storage values.<br/>
- * By default the (cleaned up) header names of the columns are used as storage names. To avoid name clashes, a prefix can be chosen for the storage names.
+ * Iterates through a defined range of rows. In each iteration the cell values of the defined column range are mapped to storage values.<br/>
+ * By default the (cleaned up) header names of the columns are used as storage names. To avoid name clashes, a prefix can be chosen for the storage names.<br/>
+ * The subset of columns of the row in the current iteration can be output as spreadsheet well (computationally expensive). By default, the complete spreadsheet is forwarded as is.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -49,8 +50,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -61,7 +60,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetStorageRowIterator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -85,6 +84,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
  * &nbsp;&nbsp;&nbsp; last_1, last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
@@ -94,6 +94,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
  * &nbsp;&nbsp;&nbsp; last_1, last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-storage-prefix &lt;java.lang.String&gt; (property: storagePrefix)
@@ -108,6 +109,12 @@ import adams.flow.core.Token;
  * 
  * <pre>-use-native &lt;boolean&gt; (property: useNative)
  * &nbsp;&nbsp;&nbsp;If enabled, native objects are stored rather than strings.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-modified &lt;boolean&gt; (property: outputModified)
+ * &nbsp;&nbsp;&nbsp;If enabled, the modified spreadsheet (current row with subset of columns
+ * &nbsp;&nbsp;&nbsp;) is output instead of the full dataset (computationally expensive).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -155,6 +162,9 @@ public class SpreadSheetStorageRowIterator
   /** the column indices. */
   protected int[] m_ColumnIndices;
   
+  /** whether to output the modified spreadsheet. */
+  protected boolean m_OutputModified;
+  
   /**
    * Returns a string describing the object.
    *
@@ -163,12 +173,14 @@ public class SpreadSheetStorageRowIterator
   @Override
   public String globalInfo() {
     return 
-	"Iterates through a defined range of rows, outputting them one-by-one "
-	+ "(ie each time a spreadsheet with one row). In each iteration the "
+	"Iterates through a defined range of rows. In each iteration the "
 	+ "cell values of the defined column range are mapped to storage values.\n"
 	+ "By default the (cleaned up) header names of the columns are used as "
 	+ "storage names. To avoid name clashes, a prefix can be chosen for "
-	+ "the storage names.";
+	+ "the storage names.\n"
+	+ "The subset of columns of the row in the current iteration can be "
+	+ "output as spreadsheet well (computationally expensive). By default, "
+	+ "the complete spreadsheet is forwarded as is.";
   }
 
   /**
@@ -196,6 +208,10 @@ public class SpreadSheetStorageRowIterator
 
     m_OptionManager.add(
 	    "use-native", "useNative",
+	    false);
+
+    m_OptionManager.add(
+	    "output-modified", "outputModified",
 	    false);
   }
 
@@ -427,6 +443,40 @@ public class SpreadSheetStorageRowIterator
   }
 
   /**
+   * Sets whether to output the modified spreadsheet (current row, subset 
+   * of columns) instead of the full one.
+   *
+   * @param value	true if to output modified spreadsheet
+   */
+  public void setOutputModified(boolean value) {
+    m_OutputModified = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the modified spreadsheet (current row, subset 
+   * of columns) instead of the full one.
+   *
+   * @return		true if to output modified spreadsheet
+   */
+  public boolean getOutputModified() {
+    return m_OutputModified;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputModifiedTipText() {
+    return 
+	"If enabled, the modified spreadsheet (current row with subset of "
+	+ "columns) is output instead of the full dataset (computationally "
+	+ "expensive).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -445,6 +495,9 @@ public class SpreadSheetStorageRowIterator
     if (value != null)
       result += value;
     value = QuickInfoHelper.toString(this, "useNative", m_UseNative, ", native");
+    if (value != null)
+      result += value;
+    value = QuickInfoHelper.toString(this, "outputModified", m_OutputModified, ", output modified");
     if (value != null)
       result += value;
     
@@ -521,17 +574,52 @@ public class SpreadSheetStorageRowIterator
    */
   @Override
   public Token output() {
-    Token	result;
-    int		rowIndex;
-    int		i;
-    int		col;
-    Row		row;
-    Row		header;
-    StorageName	name;
+    Token			result;
+    SpreadSheet			mod;
+    int				rowIndex;
+    int				i;
+    int				col;
+    Row				row;
+    Row				header;
+    StorageName			name;
+    SpreadSheetRemoveColumn	remove;
+    SpreadSheetColumnRange	range;
+    String			msg;
     
-    result = new Token(m_Sheet);
+    result   = null;
     rowIndex = m_Queue.get(0);
     m_Queue.remove(0);
+
+    if (m_OutputModified) {
+      mod = m_Sheet.getHeader();
+      mod.addRow().assign(m_Sheet.getRow(rowIndex));
+      if (!m_Columns.isAllRange()) {
+	range  = new SpreadSheetColumnRange(m_Columns.getRange());
+	range.setInverted(!range.isInverted());
+	remove = new SpreadSheetRemoveColumn();
+	remove.setPosition(range);
+	remove.input(new Token(m_Sheet));
+	msg = remove.execute();
+	if (msg == null) {
+	  if (remove.hasPendingOutput()) {
+	    mod = (SpreadSheet) remove.output().getPayload();
+	  }
+	  else {
+	    getLogger().severe("Failed to generate modified spreadsheet (no output)!");
+	    mod = null;
+	  }
+	}
+	else {
+	  getLogger().severe("Failed to generate modified spreadsheet: " + msg);
+	  mod = null;
+	}
+      }
+      if (mod != null)
+	result = new Token(mod);
+    }
+    else {
+      result = new Token(m_Sheet);
+    }
     
     header = m_Sheet.getHeaderRow();
     row    = m_Sheet.getRow(rowIndex);
