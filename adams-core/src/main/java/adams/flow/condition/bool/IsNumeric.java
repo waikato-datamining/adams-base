@@ -15,7 +15,7 @@
 
 /**
  * IsNumeric.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -25,7 +25,7 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the payload of the token is a number of a numeric string.
+ * Evaluates to 'true' if the payload of the token is a number or a numeric string.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -53,7 +53,7 @@ public class IsNumeric
    */
   @Override
   public String globalInfo() {
-    return "Evaluates to 'true' if the payload of the token is a number of a numeric string.";
+    return "Evaluates to 'true' if the payload of the token is a number or a numeric string.";
   }
 
   /**
