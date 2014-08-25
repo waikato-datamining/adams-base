@@ -76,6 +76,7 @@
     <weka.version>3.7.11</weka.version>
     <postgresql.version>9.1-901.jdbc4</postgresql.version>
     <postgis.version>1.5.3</postgis.version>
+    <jodd.version>3.5.2</jodd.version>
   </properties>
 
   <scm>

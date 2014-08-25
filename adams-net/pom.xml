@@ -127,6 +127,12 @@
       <artifactId>jericho-html</artifactId>
       <version>3.3</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.jodd</groupId>
+      <artifactId>jodd-mail</artifactId>
+      <version>${jodd.version}</version>
+    </dependency>
   </dependencies>
   
   <build>

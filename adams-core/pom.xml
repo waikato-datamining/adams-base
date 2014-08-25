@@ -71,7 +71,7 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <version>1.4.4</version>
+      <version>1.4.5</version>
       <type>jar</type>
     </dependency>
     
@@ -186,7 +186,7 @@
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-core</artifactId>
-      <version>3.5.2</version>
+      <version>${jodd.version}</version>
     </dependency>
   </dependencies>
 
