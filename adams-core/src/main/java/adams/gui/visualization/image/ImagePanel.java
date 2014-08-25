@@ -53,6 +53,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -530,6 +531,26 @@ public class ImagePanel
     public void removeImageOverlay(ImageOverlay io) {
       synchronized (m_ImageOverlays) {
 	m_ImageOverlays.remove(io);
+      }
+      update();
+    }
+
+    /**
+     * Removes all image overlay instances that are instances of the specified 
+     * class.
+     *
+     * @param cls	the image overlay class to remove
+     */
+    public void removeImageOverlays(Class cls) {
+      List<ImageOverlay>	remove;
+      
+      synchronized (m_ImageOverlays) {
+	remove = new ArrayList<ImageOverlay>();
+	for (ImageOverlay io: m_ImageOverlays) {
+	  if (ClassLocator.isSubclass(cls, io.getClass()))
+	    remove.add(io);
+	}
+	m_ImageOverlays.removeAll(remove);
       }
       update();
     }
@@ -1480,6 +1501,16 @@ public class ImagePanel
    */
   public void removeImageOverlay(ImageOverlay io) {
     m_PaintPanel.removeImageOverlay(io);
+  }
+
+  /**
+   * Removes all image overlay instances that are instances of the specified 
+   * class.
+   *
+   * @param cls	the image overlay class to remove
+   */
+  public void removeImageOverlays(Class cls) {
+    m_PaintPanel.removeImageOverlays(cls);
   }
 
   /**
