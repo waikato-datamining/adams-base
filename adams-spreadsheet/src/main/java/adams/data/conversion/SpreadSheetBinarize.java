@@ -159,7 +159,7 @@ public class SpreadSheetBinarize
 	mapping.get(indices[i]).add(labels.get(n));
     }
 
-    result = new SpreadSheet();
+    result = input.newInstance();
     result.setDataRowClass(input.getDataRowClass());
     result.addComment(input.getComments());
     result.setName(input.getName());
