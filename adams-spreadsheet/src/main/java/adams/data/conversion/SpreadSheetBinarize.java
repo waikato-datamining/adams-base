@@ -59,6 +59,9 @@ public class SpreadSheetBinarize
   /** for serialization. */
   private static final long serialVersionUID = -5364554292793461868L;
 
+  /** the separator to use between column name and label. */
+  public final static String SEPARATOR = "-";
+  
   /** the columns to merge. */
   protected SpreadSheetColumnRange m_Columns;
   
@@ -171,7 +174,7 @@ public class SpreadSheetBinarize
       if (m_Columns.isInRange(i) && mapping.containsKey(i)) {
 	labels = new ArrayList<String>(mapping.get(i));
 	for (String label: labels) {
-	  binarized = rowInp.getCell(i).getContent() + "-" + label;
+	  binarized = rowInp.getCell(i).getContent() + SEPARATOR + label;
 	  rowRes.addCell("" + rowRes.getCellCount()).setContent(binarized);
 	}
       }
@@ -192,7 +195,7 @@ public class SpreadSheetBinarize
 	else if (m_Columns.isInRange(i) && mapping.containsKey(i)) {
 	  labels = new ArrayList<String>(mapping.get(i));
 	  for (String label: labels) {
-	    binarized = rowInp.getCell(i).getContent() + "-" + label;
+	    binarized = rowInp.getCell(i).getContent() + SEPARATOR + label;
 	    if (label.equals(row.getCell(i).getContent()))
 	      rowRes.addCell(n).setContent(1);
 	    else
