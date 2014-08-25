@@ -44,7 +44,22 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
  * &nbsp;&nbsp;&nbsp;The range of columns to binarize.
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-binarize-type &lt;NUMERIC|BOOLEAN|LABELS&gt; (property: binarizeType)
+ * &nbsp;&nbsp;&nbsp;The type of binarization to perform.
+ * &nbsp;&nbsp;&nbsp;default: NUMERIC
+ * </pre>
+ * 
+ * <pre>-label-positive &lt;java.lang.String&gt; (property: labelPositive)
+ * &nbsp;&nbsp;&nbsp;The positive label (ie 1s) in case of LABELS.
+ * &nbsp;&nbsp;&nbsp;default: yes
+ * </pre>
+ * 
+ * <pre>-label-negative &lt;java.lang.String&gt; (property: labelNegative)
+ * &nbsp;&nbsp;&nbsp;The negative label (ie 0s) in case of LABELS.
+ * &nbsp;&nbsp;&nbsp;default: no
  * </pre>
  * 
  <!-- options-end -->
@@ -61,8 +76,32 @@ public class SpreadSheetBinarize
   /** the separator to use between column name and label. */
   public final static String SEPARATOR = "-";
   
+  /**
+   * How to binarize the data.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision: 8614 $
+   */
+  public enum BinarizeType {
+    /** using 1s and 0s. */
+    NUMERIC,
+    /** using booleans. */
+    BOOLEAN,
+    /** using string labels. */
+    LABELS
+  }
+  
   /** the columns to merge. */
   protected SpreadSheetColumnRange m_Columns;
+  
+  /** how to binarize. */
+  protected BinarizeType m_BinarizeType;
+  
+  /** the positive label. */
+  protected String m_LabelPositive;
+  
+  /** the negative label. */
+  protected String m_LabelNegative;
   
   /**
    * Returns a string describing the object.
@@ -86,6 +125,18 @@ public class SpreadSheetBinarize
     m_OptionManager.add(
 	    "columns", "columns",
 	    new SpreadSheetColumnRange(Range.ALL));
+
+    m_OptionManager.add(
+	    "binarize-type", "binarizeType",
+	    BinarizeType.NUMERIC);
+
+    m_OptionManager.add(
+	    "label-positive", "labelPositive",
+	    "yes");
+
+    m_OptionManager.add(
+	    "label-negative", "labelNegative",
+	    "no");
   }
 
   /**
@@ -118,13 +169,107 @@ public class SpreadSheetBinarize
   }
 
   /**
+   * Sets how to binarize the data.
+   *
+   * @param value	the type
+   */
+  public void setBinarizeType(BinarizeType value) {
+    m_BinarizeType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to binarize the data.
+   *
+   * @return		the type
+   */
+  public BinarizeType getBinarizeType() {
+    return m_BinarizeType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String binarizeTypeTipText() {
+    return "The type of binarization to perform.";
+  }
+
+  /**
+   * Sets the positive label (for 1s) in case of {@link BinarizeType#LABELS}.
+   *
+   * @param value	the label
+   */
+  public void setLabelPositive(String value) {
+    m_LabelPositive = value;
+    reset();
+  }
+
+  /**
+   * Returns the positive label (for 1s) in case of {@link BinarizeType#LABELS}.
+   *
+   * @return		the label
+   */
+  public String getLabelPositive() {
+    return m_LabelPositive;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelPositiveTipText() {
+    return "The positive label (ie 1s) in case of " + BinarizeType.LABELS + ".";
+  }
+
+  /**
+   * Sets the negative label (for 0s) in case of {@link BinarizeType#LABELS}.
+   *
+   * @param value	the label
+   */
+  public void setLabelNegative(String value) {
+    m_LabelNegative = value;
+    reset();
+  }
+
+  /**
+   * Returns the negative label (for 0s) in case of {@link BinarizeType#LABELS}.
+   *
+   * @return		the label
+   */
+  public String getLabelNegative() {
+    return m_LabelNegative;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelNegativeTipText() {
+    return "The negative label (ie 0s) in case of " + BinarizeType.LABELS + ".";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "columns", m_Columns);
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "columns", m_Columns, "cols: ");
+    result += QuickInfoHelper.toString(this, "binarizeType", m_BinarizeType, ", type: ");
+    result += QuickInfoHelper.toString(this, "labelPositive", m_LabelPositive, ", pos: ");
+    result += QuickInfoHelper.toString(this, "labelNegative", m_LabelNegative, ", neg: ");
+    
+    return result;
   }
   
   /**
@@ -143,6 +288,7 @@ public class SpreadSheetBinarize
     List<String>			labels;
     HashMap<Integer,List<String>>	mapping;
     String				binarized;
+    boolean				match;
     
     m_Columns.setSpreadSheet(input);
     indices = m_Columns.getIntIndices();
@@ -193,11 +339,20 @@ public class SpreadSheetBinarize
 	else if (m_Columns.isInRange(i) && mapping.containsKey(i)) {
 	  labels = new ArrayList<String>(mapping.get(i));
 	  for (String label: labels) {
-	    binarized = rowInp.getCell(i).getContent() + SEPARATOR + label;
-	    if (label.equals(row.getCell(i).getContent()))
-	      rowRes.addCell(n).setContent(1);
-	    else
-	      rowRes.addCell(n).setContent(0);
+	    match = label.equals(row.getCell(i).getContent());
+	    switch (m_BinarizeType) {
+	      case NUMERIC:
+		rowRes.addCell(n).setContent(match ? 1 : 0);
+		break;
+	      case BOOLEAN:
+		rowRes.addCell(n).setContent(match);
+		break;
+	      case LABELS:
+		rowRes.addCell(n).setContent(match ? m_LabelPositive : m_LabelNegative);
+		break;
+	      default:
+		throw new IllegalStateException("Unhandled binarize type: " + m_BinarizeType);
+	    }
 	    n++;
 	  }
 	}
