@@ -146,6 +146,9 @@ public class ImageViewerPanel
   /** the menu item "zoom out". */
   protected JMenuItem m_MenuItemViewZoomOut;
 
+  /** the menu item "remove overlays". */
+  protected JMenuItem m_MenuItemViewRemoveOverlays;
+
   /** the menu item "background color". */
   protected JMenuItem m_MenuItemViewBackgroundColor;
 
@@ -308,6 +311,7 @@ public class ImageViewerPanel
     m_MenuViewZoom.setEnabled(imageAvailable);
     m_MenuItemViewZoomIn.setEnabled(imageAvailable);
     m_MenuItemViewZoomOut.setEnabled(imageAvailable);
+    m_MenuItemViewRemoveOverlays.setEnabled(imageAvailable && panel.imageOverlays().hasNext());
     m_MenuItemViewBackgroundColor.setEnabled(imageAvailable);
     m_MenuItemViewShowProperties.setSelected(imageAvailable && getCurrentPanel().getShowProperties());
     m_MenuItemViewShowProperties.setEnabled(imageAvailable);
@@ -707,6 +711,17 @@ public class ImageViewerPanel
 	});
       }
 
+      // View/Remove overlays
+      menuitem = new JMenuItem("Remove overlays");
+      menu.add(menuitem);
+      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  removeOverlays();
+	}
+      });
+      m_MenuItemViewRemoveOverlays = menuitem;
+
       // View/Background color
       menuitem = new JMenuItem("Background color...");
       menu.add(menuitem);
@@ -998,6 +1013,13 @@ public class ImageViewerPanel
    */
   protected void zoom(int zoom) {
     getCurrentPanel().setScale((double) zoom / 100);
+  }
+
+  /**
+   * Removes all image overlays.
+   */
+  protected void removeOverlays() {
+    getCurrentPanel().clearImageOverlays();
   }
 
   /**
