@@ -19,9 +19,12 @@
  */
 package adams.ml.data;
 
+import gnu.trove.list.array.TIntArrayList;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -275,5 +278,91 @@ public class Dataset
       for (i = 0; i < indices.length; i++)
 	setClassAttribute(numCols + indices[i], true);
     }
+  }
+  
+  /**
+   * Returns a spreadsheet containing only the input columns, not class
+   * columns.
+   * 
+   * @return		the input features, null if data conists only of class columns
+   */
+  public SpreadSheet getInputs() {
+    SpreadSheet		result;
+    TIntArrayList	indices;
+    int			i;
+    Row			newRow;
+    
+    if (m_ClassAttributes.size() == 0)
+      return getClone();
+    else if (m_ClassAttributes.size() == getColumnCount())
+      return null;
+
+    // determine indices
+    indices = new TIntArrayList();
+    for (i = 0; i < getColumnCount(); i++) {
+      if (!isClassAttribute(i))
+	indices.add(i);
+    }
+    
+    result = newInstance();
+    
+    // header
+    newRow = result.getHeaderRow();
+    for (i = 0; i < indices.size(); i++)
+      newRow.addCell("" + i).assign(getHeaderRow().getCell(indices.get(i)));
+    
+    // data
+    for (Row row: rows()) {
+      newRow = result.addRow();
+      for (i = 0; i < indices.size(); i++) {
+	if (row.hasCell(indices.get(i)))
+	  newRow.addCell(i).assign(row.getCell(indices.get(i)));
+      }
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Returns a spreadsheet containing only output columns, i.e., the class
+   * columns.
+   * 
+   * @return		the output features, null if data has no class columns
+   */
+  public SpreadSheet getOutputs() {
+    SpreadSheet		result;
+    TIntArrayList	indices;
+    int			i;
+    Row			newRow;
+    
+    if (m_ClassAttributes.size() == 0)
+      return null;
+    else if (m_ClassAttributes.size() == getColumnCount())
+      return getClone();
+
+    // determine indices
+    indices = new TIntArrayList();
+    for (i = 0; i < getColumnCount(); i++) {
+      if (isClassAttribute(i))
+	indices.add(i);
+    }
+    
+    result = newInstance();
+    
+    // header
+    newRow = result.getHeaderRow();
+    for (i = 0; i < indices.size(); i++)
+      newRow.addCell("" + i).assign(getHeaderRow().getCell(indices.get(i)));
+    
+    // data
+    for (Row row: rows()) {
+      newRow = result.addRow();
+      for (i = 0; i < indices.size(); i++) {
+	if (row.hasCell(indices.get(i)))
+	  newRow.addCell(i).assign(row.getCell(indices.get(i)));
+      }
+    }
+    
+    return result;
   }
 }

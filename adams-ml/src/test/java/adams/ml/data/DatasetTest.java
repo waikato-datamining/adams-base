@@ -15,13 +15,14 @@
 
 /**
  * DatasetTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.data;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetTest;
 import adams.env.Environment;
 import adams.test.TmpFile;
@@ -44,6 +45,30 @@ public class DatasetTest
     super(name);
   }
 
+  /**
+   * Called by JUnit before each test method.
+   *
+   * @throws Exception if an error occurs
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    
+    m_TestHelper.copyResourceToTmp("labor.csv");
+  }
+  
+  /**
+   * Called by JUnit after each test method.
+   *
+   * @throws Exception	if tear-down fails
+   */
+  @Override
+  protected void tearDown() throws Exception {
+    m_TestHelper.deleteFileFromTmp("labor.csv");
+    
+    super.tearDown();
+  }
+  
   /**
    * Tests the {@link Dataset#getClone()} method.
    */
@@ -104,6 +129,51 @@ public class DatasetTest
     indices = data.getClassAttributeIndices();
     assertEquals("# of class attributes differ", 1, indices.length);
     assertEquals("index of class attribute differs", 0, indices[0]);
+  }
+  
+  /**
+   * Tests the {@link Dataset#getInputs()} method.
+   */
+  public void testInputs() {
+    CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
+    reader.setSpreadSheetType(new Dataset());
+    Dataset data = (Dataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
+    Dataset copy = (Dataset) data.getClone();
+    
+    SpreadSheet inputs = data.getInputs();
+    assertNotNull("input features should not have been null", inputs);
+
+    data.setClassAttribute(data.getColumnCount() - 1, true);
+    inputs = data.getInputs();
+    assertNotNull("input features should not have been null", inputs);
+    assertEquals("input features column count differs", copy.getColumnCount() - 1, inputs.getColumnCount());
+
+    data.setClassAttribute(data.getColumnCount() - 2, true);
+    inputs = data.getInputs();
+    assertNotNull("input features should not have been null", inputs);
+    assertEquals("input features column count differs", copy.getColumnCount() - 2, inputs.getColumnCount());
+  }
+  
+  /**
+   * Tests the {@link Dataset#getOutputs()} method.
+   */
+  public void testOutputs() {
+    CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
+    reader.setSpreadSheetType(new Dataset());
+    Dataset data = (Dataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
+    
+    SpreadSheet outputs = data.getOutputs();
+    assertNull("output features should have been null", outputs);
+
+    data.setClassAttribute(data.getColumnCount() - 1, true);
+    outputs = data.getOutputs();
+    assertNotNull("output features should not have been null", outputs);
+    assertEquals("output features column count differs", 1, outputs.getColumnCount());
+
+    data.setClassAttribute(data.getColumnCount() - 2, true);
+    outputs = data.getOutputs();
+    assertNotNull("output features should not have been null", outputs);
+    assertEquals("output features column count differs", 2, outputs.getColumnCount());
   }
 
   /**
