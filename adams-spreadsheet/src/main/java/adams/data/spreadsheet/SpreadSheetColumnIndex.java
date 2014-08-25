@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetColumnIndex.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -112,8 +112,8 @@ public class SpreadSheetColumnIndex
   @Override
   public String getExample() {
     return
-        "An index is a number starting with 1; apart from column names "
-      + "(case-sensitive), the following placeholders can be used as well: "
+        "An index is a number starting with 1; column names "
+      + "(case-sensitive) as well as the following placeholders can be used: "
       + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST;
   }
 }

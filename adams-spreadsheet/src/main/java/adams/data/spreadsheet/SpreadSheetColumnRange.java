@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetColumnRange.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -128,8 +128,8 @@ public class SpreadSheetColumnRange
     return
         "A range is a comma-separated list of single 1-based indices or "
       + "sub-ranges of indices ('start-end'); "
-      + "'inv(...)' inverts the range '...'; apart from column names "
-      + "(case-sensitive), the following placeholders can be used as well: "
+      + "'inv(...)' inverts the range '...'; column names "
+      + "(case-sensitive) as well as the following placeholders can be used: "
       + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST;
   }
 }
