@@ -20,7 +20,6 @@
 package adams.data.conversion;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -155,7 +154,6 @@ public class SpreadSheetBinarize
       if (input.isNumeric(indices[i]))
 	continue;
       labels = input.getCellValues(indices[i]);
-      Collections.sort(labels);
       if (!mapping.containsKey(indices[i]))
 	mapping.put(indices[i], new ArrayList<String>());
       for (n = 0; n < labels.size(); n++)
