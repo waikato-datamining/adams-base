@@ -15,7 +15,7 @@
 
 /*
  * ClassSelector.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -305,14 +305,11 @@ public class ClassSelector
     
     indices = data.getClassAttributeIndices();
     if (m_Unset) {
-      for (int index: indices)
-	data.setClassAttribute(index, false);
+      data.removeClassAttributes();
     }
     else {
-      if (m_Override) {
-	for (int index: indices)
-	  data.setClassAttribute(index, false);
-      }
+      if (m_Override)
+	data.removeClassAttributes();
       if ((indices.length == 0) || ((indices.length == 0) && m_Override)) {
 	m_ClassIndex.setData(data);
 	indices = m_ClassIndex.getIntIndices();
