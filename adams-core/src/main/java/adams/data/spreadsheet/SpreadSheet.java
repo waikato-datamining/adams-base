@@ -184,13 +184,20 @@ public class SpreadSheet
   /**
    * Returns a new instance.
    * 
-   * @return		the new instance
+   * @return		the new instance, null if failed to create new instance
    */
   public SpreadSheet newInstance() {
     SpreadSheet	result;
     
-    result = new SpreadSheet();
-    result.setDataRowClass(getDataRowClass());
+    try {
+      result = (SpreadSheet) getClass().newInstance();
+      result.setDataRowClass(getDataRowClass());
+    }
+    catch (Exception e) {
+      System.err.println("Failed to create new instance of " + getClass().getName());
+      e.printStackTrace();
+      result = null;
+    }
     
     return result;
   }
