@@ -82,7 +82,7 @@ public class HeaderRow
     result = new HeaderRow(owner);
     result.m_CellKeys.addAll(m_CellKeys);
     for (i = 0; i < m_CellKeys.size(); i++) {
-      cell = new Cell(result);
+      cell = newCell(result);
       cell.assign(m_Cells.get(m_CellKeys.get(i)));
       result.m_Cells.put(result.m_CellKeys.get(i), cell);
     }
@@ -98,7 +98,17 @@ public class HeaderRow
     super.clear();
     m_CellKeys.clear();
   }
-  
+
+  /**
+   * Creates a new instance of a cell.
+   * 
+   * @param owner	the owner
+   * @return		the cell
+   */
+  public Cell newCell(Row owner) {
+    return new DoubleCell(owner);
+  }
+
   /**
    * Returns whether the row alread contains the cell at the specified location.
    *
@@ -170,7 +180,7 @@ public class HeaderRow
       result = getCell(cellKey);
     }
     else {
-      result = new Cell(this);
+      result = newCell(this);
       m_CellKeys.add(cellKey);
       m_Cells.put(cellKey, result);
     }
@@ -189,7 +199,7 @@ public class HeaderRow
     int		i;
     String	col;
     
-    result = new Cell(this);
+    result = newCell(this);
     
     synchronized(m_Cells) {
       synchronized(m_CellKeys) {

@@ -77,13 +77,23 @@ public class SparseDataRow
 
     result = new SparseDataRow(owner);
     for (String key: m_Cells.keySet()) {
-      cell = new Cell(result);
+      cell = newCell(result);
       cell.assign(m_Cells.get(key));
       cell.setOwner(result);
       result.m_Cells.put(key, cell);
     }
 
     return result;
+  }
+
+  /**
+   * Creates a new instance of a cell.
+   * 
+   * @param owner	the owner
+   * @return		the cell
+   */
+  public Cell newCell(Row owner) {
+    return new DoubleCell(owner);
   }
 
   /**
@@ -102,7 +112,7 @@ public class SparseDataRow
       result = getCell(cellKey);
     }
     else {
-      result = new Cell(this);
+      result = newCell(this);
       m_Cells.put(cellKey, result);
     }
 

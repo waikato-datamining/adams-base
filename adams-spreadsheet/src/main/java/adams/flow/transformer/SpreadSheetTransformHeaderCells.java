@@ -32,9 +32,9 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
-import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -571,7 +571,7 @@ public class SpreadSheetTransformHeaderCells
     output = null;
 
     if (m_Cell == null)
-      m_Cell = new Cell(null);
+      m_Cell = sheet.newCell();
     if (m_Compatibility == null)
       m_Compatibility = new Compatibility();
 
@@ -582,7 +582,6 @@ public class SpreadSheetTransformHeaderCells
       else
 	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
-
 
     if (m_ForceInputType) {
       switch (m_InputType) {

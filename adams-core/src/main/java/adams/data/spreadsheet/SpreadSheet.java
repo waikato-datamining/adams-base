@@ -461,6 +461,23 @@ public class SpreadSheet
   }
 
   /**
+   * Creates a new cell.
+   *
+   * @return		the new instance, null in case of an instantiation error
+   */
+  public Cell newCell() {
+    Cell	result;
+    DataRow	row;
+
+    result = null;
+    row    = newRow();
+    if (row != null)
+      result = row.newCell(null);
+
+    return result;
+  }
+
+  /**
    * Appends a row to the spreadsheet.
    *
    * @return		the created row

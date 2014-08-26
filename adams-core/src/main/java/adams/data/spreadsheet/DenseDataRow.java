@@ -99,7 +99,7 @@ public class DenseDataRow
     
     result = new DenseDataRow(owner);
     for (i = 0; i < m_Cells.length; i++) {
-      result.m_Cells[i] = new Cell(result);
+      result.m_Cells[i] = newCell(result);
       result.m_Cells[i].assign(m_Cells[i]);
     }
     
@@ -121,7 +121,7 @@ public class DenseDataRow
     m_Cells = new Cell[getOwner().getColumnCount()];
     
     for (i = 0; i < m_Cells.length; i++) {
-      m_Cells[i] = new Cell(this);
+      m_Cells[i] = newCell(this);
       m_Cells[i].setMissing();
     }
   }
@@ -143,6 +143,16 @@ public class DenseDataRow
       if (row.hasCell(i))
 	getCell(i).assign(row.getCell(i));
     }
+  }
+
+  /**
+   * Creates a new instance of a cell.
+   * 
+   * @param owner	the owner
+   * @return		the cell
+   */
+  public Cell newCell(Row owner) {
+    return new DoubleCell(owner);
   }
 
   /**
@@ -387,7 +397,7 @@ public class DenseDataRow
     synchronized(m_Cells) {
       cells = new Cell[m_Cells.length + 1];
       n     = 0;
-      cells[e.getColumnIndex()] = new Cell(this);
+      cells[e.getColumnIndex()] = newCell(this);
       for (i = 0; i < m_Cells.length; i++) {
 	if (i == e.getColumnIndex())
 	  n++;
@@ -448,7 +458,7 @@ public class DenseDataRow
     
     start = m_Cells.length - other.getCellCount();
     for (i = 0; i < other.getOwner().getColumnCount(); i++) {
-      m_Cells[start + i] = new Cell(this);
+      m_Cells[start + i] = newCell(this);
       if (!other.hasCell(i) || other.getCell(i).isMissing())
 	m_Cells[start + i].setMissing();
       else

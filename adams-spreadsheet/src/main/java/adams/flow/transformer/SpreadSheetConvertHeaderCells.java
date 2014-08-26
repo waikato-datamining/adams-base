@@ -310,7 +310,7 @@ public class SpreadSheetConvertHeaderCells
     output = null;
     
     if (m_Cell == null)
-      m_Cell = new Cell(null);
+      m_Cell = sheet.newCell();
 
     if (cell.isMissing()) {
       if (m_SkipMissing)

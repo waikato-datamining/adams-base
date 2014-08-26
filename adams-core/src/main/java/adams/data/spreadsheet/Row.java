@@ -69,6 +69,14 @@ public interface Row
   public void assign(Row row);
 
   /**
+   * Creates a new instance of a cell.
+   * 
+   * @param owner	the owner
+   * @return		the cell
+   */
+  public Cell newCell(Row owner);
+
+  /**
    * Returns whether the row alread contains the cell at the specified location.
    *
    * @param columnIndex	the column index

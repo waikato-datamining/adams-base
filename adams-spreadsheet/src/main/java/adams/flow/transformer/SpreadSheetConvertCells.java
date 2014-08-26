@@ -424,7 +424,7 @@ public class SpreadSheetConvertCells
     output = null;
     
     if (m_Cell == null)
-      m_Cell = new Cell(null);
+      m_Cell = sheet.newCell();
 
     if (!sheet.hasCell(location.getRow(), location.getColumn())) {
       if (m_SkipMissing)

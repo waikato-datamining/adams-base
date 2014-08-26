@@ -38,9 +38,9 @@ import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
-import adams.flow.core.CallableActorHelper;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -675,7 +675,7 @@ public class SpreadSheetTransformCells
     output = null;
 
     if (m_Cell == null)
-      m_Cell = new Cell(null);
+      m_Cell = sheet.newCell();
     if (m_Compatibility == null)
       m_Compatibility = new Compatibility();
 
