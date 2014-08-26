@@ -15,12 +15,13 @@
 
 /**
  * TimeseriesToSpreadSheet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.DateTime;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.timeseries.Timeseries;
@@ -33,11 +34,19 @@ import adams.data.timeseries.TimeseriesPoint;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
+ * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  <!-- options-end -->
@@ -52,7 +61,7 @@ public class TimeseriesToSpreadSheet
   private static final long serialVersionUID = -7385757807406641857L;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -76,7 +85,7 @@ public class TimeseriesToSpreadSheet
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
-	    DataRowType.DENSE);
+	    new DenseDataRow());
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
@@ -88,7 +97,7 @@ public class TimeseriesToSpreadSheet
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -98,7 +107,7 @@ public class TimeseriesToSpreadSheet
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -180,7 +189,7 @@ public class TimeseriesToSpreadSheet
     series = (Timeseries) m_Input;
 
     result = m_SpreadSheetType.newInstance();
-    result.setDataRowClass(m_DataRowType.getRowClass());
+    result.setDataRowClass(m_DataRowType.getClass());
     result.setName(series.getID());
     row = result.getHeaderRow();
     row.addCell("T").setContent("Timestamp");

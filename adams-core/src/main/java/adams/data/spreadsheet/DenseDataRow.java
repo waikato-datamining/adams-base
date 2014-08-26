@@ -43,7 +43,14 @@ public class DenseDataRow
   protected Cell[] m_Cells;
 
   /**
-   * default constructor.
+   * Default constructor for GOE only.
+   */
+  public DenseDataRow() {
+    this(null);
+  }
+
+  /**
+   * Constructor that ties row to spreadsheet.
    * 
    * @param owner	the spreadsheet this row belongs to
    */
@@ -106,6 +113,11 @@ public class DenseDataRow
   public void clear() {
     int		i;
     
+    if (getOwner() == null) {
+      m_Cells = new Cell[0];
+      return;
+    }
+    
     m_Cells = new Cell[getOwner().getColumnCount()];
     
     for (i = 0; i < m_Cells.length; i++) {
@@ -123,6 +135,9 @@ public class DenseDataRow
     int		i;
     
     clear();
+
+    if (getOwner() == null)
+      return;
 
     for (i = 0; i < getOwner().getColumnCount(); i++) {
       if (row.hasCell(i))
@@ -149,7 +164,10 @@ public class DenseDataRow
    */
   @Override
   public boolean hasCell(String cellKey) {
-    return getOwner().getHeaderRow().hasCell(cellKey);
+    if (getOwner() == null)
+      return false;
+    else
+      return getOwner().getHeaderRow().hasCell(cellKey);
   }
 
   /**
@@ -178,7 +196,10 @@ public class DenseDataRow
    */
   @Override
   public Cell addCell(String cellKey) {
-    return addCell(getOwner().getHeaderRow().indexOf(cellKey));
+    if (getOwner() == null)
+      return null;
+    else
+      return addCell(getOwner().getHeaderRow().indexOf(cellKey));
   }
 
   /**
@@ -224,7 +245,10 @@ public class DenseDataRow
    */
   @Override
   public Cell removeCell(String cellKey) {
-    return removeCell(getOwner().getHeaderRow().indexOf(cellKey));
+    if (getOwner() == null)
+      return null;
+    else
+      return removeCell(getOwner().getHeaderRow().indexOf(cellKey));
   }
 
   /**
@@ -235,7 +259,10 @@ public class DenseDataRow
    */
   @Override
   public Cell getCell(String cellKey) {
-    return getCell(getOwner().getHeaderRow().indexOf(cellKey));
+    if (getOwner() == null)
+      return null;
+    else
+      return getCell(getOwner().getHeaderRow().indexOf(cellKey));
   }
 
   /**
@@ -274,7 +301,10 @@ public class DenseDataRow
    */
   @Override
   public String getCellKey(int columnIndex) {
-    return getOwner().getHeaderRow().getCellKey(columnIndex);
+    if (getOwner() == null)
+      return null;
+    else
+      return getOwner().getHeaderRow().getCellKey(columnIndex);
   }
 
   /**
@@ -284,7 +314,10 @@ public class DenseDataRow
    */
   @Override
   public Collection<String> cellKeys() {
-    return getOwner().getHeaderRow().cellKeys();
+    if (getOwner() == null)
+      return null;
+    else
+      return getOwner().getHeaderRow().cellKeys();
   }
 
   /**
@@ -376,6 +409,9 @@ public class DenseDataRow
     StringBuilder	result;
     int			i;
     
+    if (getOwner() == null)
+      return getClass().getSimpleName();
+    
     result = new StringBuilder("[");
     for (i = 0; i < m_Cells.length; i++) {
       if (i > 0)
@@ -399,7 +435,10 @@ public class DenseDataRow
     Cell[]	cellsNew;
     int		i;
     int		start;
-    
+
+    if (getOwner() == null)
+      return;
+
     // do we need to extend array?
     if (m_Cells.length != getOwner().getColumnCount()) {
       cellsNew = new Cell[getOwner().getColumnCount()];

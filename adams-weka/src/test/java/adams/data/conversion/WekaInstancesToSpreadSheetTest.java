@@ -15,14 +15,14 @@
 
 /**
  * WekaInstancesToSpreadSheetTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.SparseDataRow;
 import adams.test.TmpFile;
 
 /**
@@ -105,7 +105,7 @@ public class WekaInstancesToSpreadSheetTest
     result = new WekaInstancesToSpreadSheet[2];
     result[0] = new WekaInstancesToSpreadSheet();
     result[1] = new WekaInstancesToSpreadSheet();
-    result[1].setDataRowType(DataRowType.SPARSE);
+    result[1].setDataRowType(new SparseDataRow());
 
     return result;
   }

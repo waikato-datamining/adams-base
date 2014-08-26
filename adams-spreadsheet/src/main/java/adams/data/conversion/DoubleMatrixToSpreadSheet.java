@@ -15,30 +15,37 @@
 
 /**
  * DoubleMatrixToSpreadSheet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Converts adams.data.instance.Instance objects into weka.core.Instance ones.
+ * Converts a double matrix into a SpreadSheet object.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
+ * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -51,7 +58,7 @@ public class DoubleMatrixToSpreadSheet
   private static final long serialVersionUID = -2047404866165517428L;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -75,7 +82,7 @@ public class DoubleMatrixToSpreadSheet
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
-	    DataRowType.DENSE);
+	    new DenseDataRow());
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
@@ -87,7 +94,7 @@ public class DoubleMatrixToSpreadSheet
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -97,7 +104,7 @@ public class DoubleMatrixToSpreadSheet
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -178,7 +185,7 @@ public class DoubleMatrixToSpreadSheet
     Row			row;
 
     result = m_SpreadSheetType.newInstance();
-    result.setDataRowClass(m_DataRowType.getRowClass());
+    result.setDataRowClass(m_DataRowType.getClass());
     matrix = (Double[][]) getInput();
 
     // header

@@ -149,6 +149,10 @@ adams.data.smoothing.AbstractSmoother=\
 adams.data.spreadsheet.SpreadSheet=\
   adams.data.spreadsheet
 
+# The types of data rows
+adams.data.spreadsheet.DataRow=\
+  adams.data.spreadsheet
+
 # the spreadsheet handlers for the OBJECT type
 adams.data.spreadsheet.AbstractObjectHandler=\
   adams.data.spreadsheet

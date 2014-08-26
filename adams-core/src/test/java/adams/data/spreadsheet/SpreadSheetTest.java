@@ -337,7 +337,7 @@ public class SpreadSheetTest
    */
   public void testInsertColumnSparse() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setDataRowType(DataRowType.SPARSE);
+    reader.setDataRowType(new SparseDataRow());
     SpreadSheet sheet = reader.read(new TmpFile("sample.csv").getAbsolutePath());
     SpreadSheet out;
     
@@ -383,7 +383,7 @@ public class SpreadSheetTest
    */
   public void testInsertColumnDense() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setDataRowType(DataRowType.DENSE);
+    reader.setDataRowType(new DenseDataRow());
     SpreadSheet sheet = reader.read(new TmpFile("sample.csv").getAbsolutePath());
     SpreadSheet out;
     
@@ -447,7 +447,7 @@ public class SpreadSheetTest
    */
   public void testSort() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setDataRowType(DataRowType.DENSE);
+    reader.setDataRowType(new DenseDataRow());
     SpreadSheet sheet = reader.read(new TmpFile("sample2.csv").getAbsolutePath());
     SpreadSheet out = sheet.getClone();
     RowComparator comp = new RowComparator(new int[]{0});
@@ -461,7 +461,7 @@ public class SpreadSheetTest
    */
   public void testSortUnique() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setDataRowType(DataRowType.DENSE);
+    reader.setDataRowType(new DenseDataRow());
     SpreadSheet sheet = reader.read(new TmpFile("sample2.csv").getAbsolutePath());
     SpreadSheet out = sheet.getClone();
     RowComparator comp = new RowComparator(new int[]{0});
@@ -470,7 +470,7 @@ public class SpreadSheetTest
     assertEquals("# cols differ", sheet.getColumnCount(), out.getColumnCount());
 
     reader = new CsvSpreadSheetReader();
-    reader.setDataRowType(DataRowType.DENSE);
+    reader.setDataRowType(new DenseDataRow());
     sheet = reader.read(new TmpFile("sample3.csv").getAbsolutePath());
     out = sheet.getClone();
     comp = new RowComparator(new int[]{0});

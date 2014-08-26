@@ -15,7 +15,7 @@
 
 /*
  * AbstractRow.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -88,6 +88,9 @@ public abstract class AbstractRow
     int		i;
     
     clear();
+
+    if (getOwner() == null)
+      return;
 
     for (i = 0; i < getOwner().getColumnCount(); i++) {
       if (row.hasCell(i))
@@ -252,6 +255,9 @@ public abstract class AbstractRow
    */
   @Override
   public String toString() {
-    return m_Cells.toString();
+    if (getOwner() == null)
+      return getClass().getSimpleName();
+   else
+      return m_Cells.toString();
   }
 }

@@ -27,7 +27,7 @@ import adams.core.Stoppable;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
 import adams.data.io.output.SpreadSheetWriter;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -73,14 +73,14 @@ public interface SpreadSheetReader
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value);
+  public void setDataRowType(DataRow value);
 
   /**
    * Returns the type of data row to use.
    *
    * @return		the type
    */
-  public DataRowType getDataRowType();
+  public DataRow getDataRowType();
 
   /**
    * Returns the tip text for this property.

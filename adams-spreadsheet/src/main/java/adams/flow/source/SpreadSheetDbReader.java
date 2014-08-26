@@ -23,7 +23,8 @@ import java.sql.ResultSet;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SqlUtils.Reader;
 import adams.db.SQL;
@@ -107,7 +108,7 @@ public class SpreadSheetDbReader
   protected SQLStatement m_Query;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
   
   /** the chunk size to use. */
   protected int m_ChunkSize;
@@ -150,7 +151,7 @@ public class SpreadSheetDbReader
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
-	    DataRowType.DENSE);
+	    new DenseDataRow());
 
     m_OptionManager.add(
 	    "chunk-size", "chunkSize",
@@ -220,7 +221,7 @@ public class SpreadSheetDbReader
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -230,7 +231,7 @@ public class SpreadSheetDbReader
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -334,7 +335,7 @@ public class SpreadSheetDbReader
     try {
       sql      = new SQL(m_DatabaseConnection);
       sql.setDebug(isLoggingEnabled());
-      m_Reader = new Reader(m_DataRowType.getRowClass());
+      m_Reader = new Reader(m_DataRowType.getClass());
       m_Reader.setLoggingLevel(getLoggingLevel());
       if (isLoggingEnabled())
 	getLogger().info("Query: " + query);

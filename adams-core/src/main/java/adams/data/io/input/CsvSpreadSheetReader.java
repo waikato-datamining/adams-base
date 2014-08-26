@@ -489,7 +489,7 @@ public class CsvSpreadSheetReader
 	result.setTimeLenient(m_Owner.isTimeLenient());
 	result.setTimeZone(m_Owner.getTimeZone());
 	result.setLocale(m_Owner.getLocale());
-	result.setDataRowClass(m_Owner.getDataRowType().getRowClass());
+	result.setDataRowClass(m_Owner.getDataRowType().getClass());
       }
       else {
 	result = m_Header.getHeader();

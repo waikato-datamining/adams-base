@@ -22,7 +22,8 @@ package adams.data.featureconverter;
 import java.util.List;
 
 import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -39,7 +40,7 @@ public class SpreadSheetFeatureConverter
   private static final long serialVersionUID = -1696817128027564877L;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -75,8 +76,8 @@ public class SpreadSheetFeatureConverter
    * 
    * @return		the default
    */
-  protected DataRowType getDefaultDataRowType() {
-    return DataRowType.DENSE;
+  protected DataRow getDefaultDataRowType() {
+    return new DenseDataRow();
   }
   
   /**
@@ -84,7 +85,7 @@ public class SpreadSheetFeatureConverter
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -94,7 +95,7 @@ public class SpreadSheetFeatureConverter
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -178,7 +179,7 @@ public class SpreadSheetFeatureConverter
     Row		row;
     
     result = m_SpreadSheetType.getClone();
-    result.setDataRowClass(m_DataRowType.getRowClass());
+    result.setDataRowClass(m_DataRowType.getClass());
     result.setName(getClass().getName());
     
     row = result.getHeaderRow();

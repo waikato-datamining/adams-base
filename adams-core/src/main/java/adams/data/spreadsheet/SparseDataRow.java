@@ -39,7 +39,14 @@ public class SparseDataRow
   private static final long serialVersionUID = 6870041975871526417L;
 
   /**
-   * default constructor.
+   * Default constructor for GOE only.
+   */
+  public SparseDataRow() {
+    this(null);
+  }
+
+  /**
+   * Constructor that ties row to spreadsheet.
    * 
    * @param owner	the spreadsheet this row belongs to
    */
@@ -110,7 +117,10 @@ public class SparseDataRow
    */
   @Override
   public boolean hasCell(int columnIndex) {
-    return hasCell(getOwner().getHeaderRow().getCellKey(columnIndex));
+    if (getOwner() == null)
+      return false;
+    else
+      return hasCell(getOwner().getHeaderRow().getCellKey(columnIndex));
   }
   
   /**
@@ -123,7 +133,10 @@ public class SparseDataRow
    */
   @Override
   public Cell addCell(int columnIndex) {
-    return addCell(getOwner().getHeaderRow().getCellKey(columnIndex));
+    if (getOwner() == null)
+      return null;
+    else
+      return addCell(getOwner().getHeaderRow().getCellKey(columnIndex));
   }
 
   /**
@@ -168,11 +181,14 @@ public class SparseDataRow
    * Returns the cell key with the given column index.
    *
    * @param columnIndex	the index of the column
-   * @return			the cell key, null if invalid index
+   * @return		the cell key, null if invalid index
    */
   @Override
   public String getCellKey(int columnIndex) {
-    return getOwner().getHeaderRow().getCellKey(columnIndex);
+    if (getOwner() == null)
+      return null;
+    else
+      return getOwner().getHeaderRow().getCellKey(columnIndex);
   }
 
   /**
@@ -206,6 +222,9 @@ public class SparseDataRow
     int		result;
     
     result = -1;
+
+    if (getOwner() == null)
+      return result;
     
     if (cell.getOwner() == this) {
       if (m_Cells.containsValue(cell)) {
@@ -242,6 +261,9 @@ public class SparseDataRow
   public void mergeWith(Row other) {
     int		i;
     int		start;
+
+    if (getOwner() == null)
+      return;
     
     start = getOwner().getColumnCount();
     for (i = 0; i < other.getOwner().getColumnCount(); i++) {

@@ -256,7 +256,7 @@ public class ODFSpreadSheetReader
       indices = m_SheetRange.getIntIndices();
       for (int index: indices) {
 	spsheet = m_SpreadSheetType.newInstance();
-	spsheet.setDataRowClass(m_DataRowType.getRowClass());
+	spsheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(spsheet);
 	sheet       = spreadsheet.getSheet(index);
 	spsheet.setName(sheet.getName());

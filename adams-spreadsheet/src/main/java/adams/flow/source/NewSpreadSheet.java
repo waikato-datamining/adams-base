@@ -20,7 +20,8 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 
@@ -103,7 +104,7 @@ public class NewSpreadSheet
   protected String m_Columns;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -135,7 +136,7 @@ public class NewSpreadSheet
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
-	    DataRowType.DENSE);
+	    new DenseDataRow());
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
@@ -222,7 +223,7 @@ public class NewSpreadSheet
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -232,7 +233,7 @@ public class NewSpreadSheet
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -301,7 +302,7 @@ public class NewSpreadSheet
     sheet = m_SpreadSheetType.newInstance();
     if (!m_SheetName.isEmpty())
       sheet.setName(m_SheetName);
-    sheet.setDataRowClass(m_DataRowType.getRowClass());
+    sheet.setDataRowClass(m_DataRowType.getClass());
     cols  = m_Columns.split(",");
     for (String col: cols)
       sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);

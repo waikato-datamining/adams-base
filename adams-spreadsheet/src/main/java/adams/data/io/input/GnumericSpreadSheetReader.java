@@ -234,7 +234,7 @@ public class GnumericSpreadSheetReader
       indices = m_SheetRange.getIntIndices();
       for (i = 0; i < indices.length; i++) {
 	sheet = m_SpreadSheetType.newInstance();
-	sheet.setDataRowClass(m_DataRowType.getRowClass());
+	sheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(sheet);
 	
 	sheetNode = sheetList.item(indices[i]);

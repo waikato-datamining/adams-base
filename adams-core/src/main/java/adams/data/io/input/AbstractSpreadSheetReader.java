@@ -15,7 +15,7 @@
 
 /**
  * AbstractSpreadSheetReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -36,7 +36,8 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -68,7 +69,7 @@ public abstract class AbstractSpreadSheetReader
   }
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -137,8 +138,8 @@ public abstract class AbstractSpreadSheetReader
    * 
    * @return		the default
    */
-  protected DataRowType getDefaultDataRowType() {
-    return DataRowType.DENSE;
+  protected DataRow getDefaultDataRowType() {
+    return new DenseDataRow();
   }
   
   /**
@@ -146,7 +147,7 @@ public abstract class AbstractSpreadSheetReader
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -156,7 +157,7 @@ public abstract class AbstractSpreadSheetReader
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 

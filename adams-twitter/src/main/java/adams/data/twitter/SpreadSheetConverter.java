@@ -23,7 +23,8 @@ import java.util.Date;
 import java.util.Hashtable;
 
 import adams.core.DateTime;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -56,7 +57,7 @@ public class SpreadSheetConverter
   private static final long serialVersionUID = -4932470309464987225L;
 
   /** the data row type to use. */
-  protected DataRowType m_DataRowType;
+  protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
@@ -83,7 +84,7 @@ public class SpreadSheetConverter
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
-	    DataRowType.DENSE);
+	    new DenseDataRow());
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
@@ -105,7 +106,7 @@ public class SpreadSheetConverter
    *
    * @param value	the type
    */
-  public void setDataRowType(DataRowType value) {
+  public void setDataRowType(DataRow value) {
     m_DataRowType = value;
     reset();
   }
@@ -115,7 +116,7 @@ public class SpreadSheetConverter
    *
    * @return		the type
    */
-  public DataRowType getDataRowType() {
+  public DataRow getDataRowType() {
     return m_DataRowType;
   }
 
@@ -179,7 +180,7 @@ public class SpreadSheetConverter
     Row		row;
 
     sheet = m_SpreadSheetType.newInstance();
-    sheet.setDataRowClass(m_DataRowType.getRowClass());
+    sheet.setDataRowClass(m_DataRowType.getClass());
     row   = sheet.getHeaderRow();
     for (TwitterField field: m_Fields)
       row.addCell("" + row.getCellCount()).setContent(field.toString());

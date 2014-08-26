@@ -15,13 +15,13 @@
 
 /**
  * ConvertSpreadSheetRowsTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
 import adams.data.io.input.CsvSpreadSheetReader;
-import adams.data.spreadsheet.DataRowType;
+import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.test.TmpFile;
 
@@ -104,7 +104,7 @@ public class ConvertSpreadSheetRowsTest
     result    = new ConvertSpreadSheetRows[2];
     result[0] = new ConvertSpreadSheetRows();
     result[1] = new ConvertSpreadSheetRows();
-    result[1].setDataRowType(DataRowType.SPARSE);
+    result[1].setDataRowType(new DenseDataRow());
 
     return result;
   }

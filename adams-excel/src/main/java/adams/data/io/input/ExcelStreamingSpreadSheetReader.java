@@ -803,7 +803,7 @@ public class ExcelStreamingSpreadSheetReader
 	sheet = sheets.next();
 	if (indices.contains(count)) {
 	  spsheet = m_SpreadSheetType.newInstance();
-	  spsheet.setDataRowClass(m_DataRowType.getRowClass());
+	  spsheet.setDataRowClass(m_DataRowType.getClass());
 	  spsheet.setName(sheets.getSheetName());
 	  parser    = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
 	  m_Handler = new SheetHandler(this, spsheet, sst);

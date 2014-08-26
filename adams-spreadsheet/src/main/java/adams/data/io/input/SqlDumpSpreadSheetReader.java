@@ -256,7 +256,7 @@ public class SqlDumpSpreadSheetReader
       if (m_Header == null) {
 	result = m_Owner.getSpreadSheetType().newInstance();
 	result.setTimeZone(m_Owner.getTimeZone());
-	result.setDataRowClass(m_Owner.getDataRowType().getRowClass());
+	result.setDataRowClass(m_Owner.getDataRowType().getClass());
 	m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().split(",")));
 	row           = result.getHeaderRow();
 	for (String cell: m_HeaderCells)
