@@ -19,6 +19,11 @@
  */
 package adams.data.io.output;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
 
@@ -31,6 +36,7 @@ import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -152,7 +158,8 @@ import adams.data.spreadsheet.SpreadSheet;
  */
 public class CsvSpreadSheetWriter
   extends AbstractFormattedSpreadSheetWriter
-  implements AppendableSpreadSheetWriter, SpreadSheetWriterWithFormulaSupport {
+  implements AppendableSpreadSheetWriter, SpreadSheetWriterWithFormulaSupport, 
+             IncrementalSpreadSheetWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
@@ -214,6 +221,15 @@ public class CsvSpreadSheetWriter
   /** the format string for the times. */
   protected DateFormatString m_TimeFormat;
 
+  /** the date formatter. */
+  protected transient DateFormat m_DateFormatter;
+
+  /** the date/time formatter. */
+  protected transient DateFormat m_DateTimeFormatter;
+
+  /** the time formatter. */
+  protected transient DateFormat m_TimeFormatter;
+  
   /**
    * Returns a string describing the object.
    *
@@ -802,6 +818,39 @@ public class CsvSpreadSheetWriter
   protected boolean supportsCompressedOutput() {
     return !isAppending();
   }
+  
+  /**
+   * Returns the formatter for dates.
+   * 
+   * @return		the formatter
+   */
+  protected DateFormat getDateFormatter() {
+    if (m_DateFormatter == null)
+      m_DateFormatter = m_DateFormat.toDateFormat();
+    return m_DateFormatter;
+  }
+  
+  /**
+   * Returns the formatter for date/times.
+   * 
+   * @return		the formatter
+   */
+  protected DateFormat getDateTimeFormatter() {
+    if (m_DateTimeFormatter == null)
+      m_DateTimeFormatter = m_DateTimeFormat.toDateFormat();
+    return m_DateTimeFormatter;
+  }
+  
+  /**
+   * Returns the formatter for times.
+   * 
+   * @return		the formatter
+   */
+  protected DateFormat getTimeFormatter() {
+    if (m_TimeFormatter == null)
+      m_TimeFormatter = m_TimeFormat.toDateFormat();
+    return m_TimeFormatter;
+  }
 
   /**
    * Quotes the string if necessary.
@@ -856,12 +905,11 @@ public class CsvSpreadSheetWriter
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
    *
-   * @param content	the spreadsheet to write
+   * @param content	the row to write
    * @param writer	the writer to write the spreadsheet to
    * @return		true if successfully written
    */
-  @Override
-  protected boolean doWrite(SpreadSheet content, Writer writer) {
+  protected boolean doWrite(Row content, Writer writer) {
     boolean			result;
     boolean			first;
     Cell			cell;
@@ -873,22 +921,22 @@ public class CsvSpreadSheetWriter
     result = true;
 
     try {
-      dformat  = m_DateFormat.toDateFormat();
-      dtformat = m_DateTimeFormat.toDateFormat();
-      tformat  = m_TimeFormat.toDateFormat();
+      dformat  = getDateFormatter();
+      dtformat = getDateTimeFormatter();
+      tformat  = getTimeFormatter();
 
       if (m_Header == null) {
 	if (!m_FileExists || !m_KeepExisting) {
 	  // comments?
 	  if (m_OutputComments) {
-	    for (i = 0; i < content.getComments().size(); i++)
-	      writer.write(m_Comment + " " + content.getComments().get(i) + m_NewLine);
+	    for (i = 0; i < content.getOwner().getComments().size(); i++)
+	      writer.write(m_Comment + " " + content.getOwner().getComments().get(i) + m_NewLine);
 	  }
 
 	  // write header
 	  first = true;
-	  for (String key: content.getHeaderRow().cellKeys()) {
-	    cell = content.getHeaderRow().getCell(key);
+	  for (String key: content.getOwner().getHeaderRow().cellKeys()) {
+	    cell = content.getOwner().getHeaderRow().getCell(key);
 
 	    if (!first)
 	      writer.write(m_Separator);
@@ -904,58 +952,56 @@ public class CsvSpreadSheetWriter
 
 	// keep header as reference
 	if (m_Appending)
-	  m_Header = content.getHeader();
+	  m_Header = content.getOwner().getHeader();
       }
 
       // write data rows
-      for (DataRow row: content.rows()) {
-	first = true;
-	for (String keyd: content.getHeaderRow().cellKeys()) {
-	  cell = row.getCell(keyd);
+      first = true;
+      for (String keyd: content.getOwner().getHeaderRow().cellKeys()) {
+	cell = content.getCell(keyd);
 
-	  if (!first)
-	    writer.write(m_Separator);
-	  if ((cell != null) && (cell.getContent() != null) && !cell.isMissing()) {
-	    if (cell.isFormula() && !m_OutputAsDisplayed) {
-	      writer.write(quoteString(cell.getFormula()));
-	    }
-	    else {
-	      switch (cell.getContentType()) {
-		case STRING:
-		  writer.write(quoteString(cell.getContent()));
-		  break;
-		case LONG:
-		  writer.write(quoteNumber(cell.toLong().toString()));
-		  break;
-		case DOUBLE:
-		  writer.write(quoteNumber(format(cell.toDouble())));
-		  break;
-		case DATE:
-		  writer.write(quoteString(dformat.format(cell.toDate())));
-		  break;
-		case DATETIME:
-		  writer.write(quoteString(dtformat.format(cell.toDateTime())));
-		  break;
-		case TIME:
-		  writer.write(quoteString(tformat.format(cell.toTime())));
-		  break;
-		case BOOLEAN:
-		  writer.write(quoteString(cell.toBoolean().toString()));
-		  break;
-		default:
-		  writer.write(quoteString(cell.toString()));
-		  break;
-	      }
-	    }
+	if (!first)
+	  writer.write(m_Separator);
+	if ((cell != null) && (cell.getContent() != null) && !cell.isMissing()) {
+	  if (cell.isFormula() && !m_OutputAsDisplayed) {
+	    writer.write(quoteString(cell.getFormula()));
 	  }
 	  else {
-	    writer.write(quoteString(m_MissingValue));
+	    switch (cell.getContentType()) {
+	      case STRING:
+		writer.write(quoteString(cell.getContent()));
+		break;
+	      case LONG:
+		writer.write(quoteNumber(cell.toLong().toString()));
+		break;
+	      case DOUBLE:
+		writer.write(quoteNumber(format(cell.toDouble())));
+		break;
+	      case DATE:
+		writer.write(quoteString(dformat.format(cell.toDate())));
+		break;
+	      case DATETIME:
+		writer.write(quoteString(dtformat.format(cell.toDateTime())));
+		break;
+	      case TIME:
+		writer.write(quoteString(tformat.format(cell.toTime())));
+		break;
+	      case BOOLEAN:
+		writer.write(quoteString(cell.toBoolean().toString()));
+		break;
+	      default:
+		writer.write(quoteString(cell.toString()));
+		break;
+	    }
 	  }
-
-	  first = false;
 	}
-	writer.write(m_NewLine);
+	else {
+	  writer.write(quoteString(m_MissingValue));
+	}
+
+	first = false;
       }
+      writer.write(m_NewLine);
     }
     catch (Exception e) {
       result = false;
@@ -963,5 +1009,109 @@ public class CsvSpreadSheetWriter
     }
 
     return result;
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the writer gets
+   * closed.
+   *
+   * @param content	the spreadsheet to write
+   * @param writer	the writer to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean doWrite(SpreadSheet content, Writer writer) {
+    boolean	result;
+    
+    result      = true;
+    m_Appending = true;
+    
+    for (DataRow row: content.rows()) {
+      result = doWrite(row, writer);
+      if (!result)
+	break;
+    }
+    
+    return result;
+  }
+
+  /**
+   * Returns whether the writer can write data incrementally.
+   * 
+   * @return		true if data can be written incrementally
+   */
+  public boolean isIncremental() {
+    return true;
+  }
+  
+  /**
+   * Writes the given content to the specified file.
+   *
+   * @param content	the content to write
+   * @param file	the file to write to
+   * @return		true if successfully written
+   */
+  public boolean write(Row content, File file) {
+    m_Appending = true;
+    return write(content, file.getAbsolutePath());
+  }
+
+  /**
+   * Writes the spreadsheet to the given file.
+   *
+   * @param content	the spreadsheet to write
+   * @param filename	the file to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  public boolean write(Row content, String filename) {
+    boolean			result;
+    BufferedWriter		writer;
+    OutputStream		output;
+
+    result      = true;
+    m_Appending = true;
+
+    try {
+      output = new FileOutputStream(filename, (m_Header != null));
+      if (m_Encoding != null)
+	writer = new BufferedWriter(new OutputStreamWriter(output, m_Encoding.charsetValue()));
+      else
+	writer = new BufferedWriter(new OutputStreamWriter(output));
+      result = doWrite(content, writer);
+      writer.flush();
+      writer.close();
+    }
+    catch (Exception e) {
+      result = false;
+      e.printStackTrace();
+    }
+
+    return result;
+  }
+
+  /**
+   * Writes the spreadsheet to the given output stream. The caller
+   * must ensure that the stream gets closed.
+   *
+   * @param content	the spreadsheet to write
+   * @param stream	the output stream to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  public boolean write(Row content, OutputStream stream) {
+    m_Appending = true;
+    return doWrite(content, new OutputStreamWriter(stream));
+  }
+
+  /**
+   * Writes the spreadsheet to the given writer. The caller
+   * must ensure that the writer gets closed.
+   *
+   * @param content	the spreadsheet to write
+   * @param writer	the writer to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  public boolean write(Row content, Writer writer) {
+    m_Appending = true;
+    return doWrite(content, writer);
   }
 }

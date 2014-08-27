@@ -15,16 +15,21 @@
 
 /*
  * SpreadSheetFileWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.io.output.IncrementalSpreadSheetWriter;
 import adams.data.io.output.MultiSheetSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -36,50 +41,49 @@ import adams.data.spreadsheet.SpreadSheet;
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: SpreadSheetWriter
+ * &nbsp;&nbsp;&nbsp;default: SpreadSheetFileWriter
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The name of the output file.
  * &nbsp;&nbsp;&nbsp;default: ${TMP}&#47;out.csv
  * </pre>
- *
- * <pre>-writer &lt;adams.core.io.AbstractSpreadSheetWriter [options]&gt; (property: writer)
+ * 
+ * <pre>-writer &lt;adams.data.io.output.SpreadSheetWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer for storing the spreadsheet.
- * &nbsp;&nbsp;&nbsp;default: adams.core.io.CsvSpreadSheetWriter
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.CsvSpreadSheetWriter
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -192,14 +196,24 @@ public class SpreadSheetFileWriter
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.core.io.SpreadSheet.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class, adams.data.spreadsheet.Row.class<!-- flow-accepts-end -->
    */
   @Override
   public Class[] accepts() {
+    List<Class>	result;
+    
+    result = new ArrayList<Class>();
+    result.add(SpreadSheet.class);
+
     if (m_Writer instanceof MultiSheetSpreadSheetWriter)
-      return new Class[]{SpreadSheet[].class, SpreadSheet.class};
-    else
-      return new Class[]{SpreadSheet.class};
+      result.add(SpreadSheet[].class);
+
+    if (m_Writer instanceof IncrementalSpreadSheetWriter) {
+      if (((IncrementalSpreadSheetWriter) m_Writer).isIncremental())
+	result.add(Row.class);
+    }
+    
+    return result.toArray(new Class[result.size()]);
   }
 
   /**
@@ -210,12 +224,18 @@ public class SpreadSheetFileWriter
   @Override
   protected String doExecute() {
     String		result;
+    Row			row;
     SpreadSheet		sheet;
     SpreadSheet[]	sheets;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof SpreadSheet) {
+    if (m_InputToken.getPayload() instanceof Row) {
+      row = (Row) m_InputToken.getPayload();
+      if (!((IncrementalSpreadSheetWriter) m_Writer).write(row, m_OutputFile))
+	result = "Problems writing row to '" + m_OutputFile + "'!";
+    }
+    else if (m_InputToken.getPayload() instanceof SpreadSheet) {
       sheet = (SpreadSheet) m_InputToken.getPayload();
       if (!m_Writer.write(sheet, m_OutputFile))
 	result = "Problems writing spreadsheet to '" + m_OutputFile + "'!";

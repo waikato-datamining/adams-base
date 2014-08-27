@@ -54,9 +54,9 @@ adams.flow.control.Flow
 			-algorithm
 				adams.data.imagej.features.Pixels
 	-actor
-		adams.flow.transformer.WekaInstanceDumper
-			-prefix
-			${EXAMPLE_FLOWS}/output/flattened
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/flattened.csv
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

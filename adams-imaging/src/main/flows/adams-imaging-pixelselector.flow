@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	This flows generates an ARFF file from the JPG pictures\nin the \"data\" directory, which the user manually labels.\nThe labelling consists of selecting pixels on the image\nand labelling them using the right-click menu for selecting\na classification label for this pixel. A region around these\nselected pixels is then cropped and turned into a \nweka.core.Instance object which gets output in an ARFF file.
+	This flows generates a CSV file from the JPG pictures\nin the \"data\" directory, which the user manually labels.\nThe labelling consists of selecting pixels on the image\nand labelling them using the right-click menu for selecting\na classification label for this pixel. A region around these\nselected pixels is then cropped and turned into a \nadams.data.spreadsheet.Row object which gets output in a CSV file.
 	-actor
 		adams.flow.source.DirectoryLister
 			-dir
@@ -52,9 +52,9 @@ adams.flow.control.Flow
 					-pixel-type
 					RGB_SEPARATE
 	-actor
-		adams.flow.transformer.WekaInstanceDumper
-			-prefix
-			${EXAMPLE_FLOWS}/output/pixelselector
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/pixelselector.csv
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
