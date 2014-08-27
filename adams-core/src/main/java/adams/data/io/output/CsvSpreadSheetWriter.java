@@ -902,6 +902,68 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Writes the header.
+   *
+   * @param header	the header row to write
+   * @param writer	the writer to write the header to
+   */
+  protected boolean doWriteHeader(Row header, Writer writer) {
+    boolean	result;
+    int		i;
+    boolean	first;
+    Cell	cell;
+    
+    result = true;
+    
+    try {
+      // comments?
+      if (m_OutputComments) {
+	for (i = 0; i < header.getOwner().getComments().size(); i++)
+	  writer.write(m_Comment + " " + header.getOwner().getComments().get(i) + m_NewLine);
+      }
+
+      // write header
+      first = true;
+      for (String key: header.cellKeys()) {
+	cell = header.getCell(key);
+
+	if (!first)
+	  writer.write(m_Separator);
+	if (cell.isMissing())
+	  writer.write(quoteString(m_MissingValue));
+	else
+	  writer.write(quoteString(cell.getContent()));
+
+	first = false;
+      }
+      writer.write(m_NewLine);
+    }
+    catch (Exception e) {
+      result = false;
+      getLogger().log(Level.SEVERE, "Failed writing spreadsheet header", e);
+    }
+    
+    return result;
+  }
+
+  /**
+   * Writes the header.
+   *
+   * @param header	the header row to write
+   * @param writer	the writer to write the header to
+   */
+  protected boolean writeHeader(Row header, Writer writer) {
+    boolean	result;
+    
+    result = true;
+    
+    if (!m_FileExists || !m_KeepExisting)
+      result = doWriteHeader(header, writer);
+    
+    return result;
+  }
+
+  /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
    *
@@ -913,7 +975,6 @@ public class CsvSpreadSheetWriter
     boolean			result;
     boolean			first;
     Cell			cell;
-    int				i;
     DateFormat			dformat;
     DateFormat			dtformat;
     DateFormat			tformat;
@@ -926,30 +987,6 @@ public class CsvSpreadSheetWriter
       tformat  = getTimeFormatter();
 
       if (m_Header == null) {
-	if (!m_FileExists || !m_KeepExisting) {
-	  // comments?
-	  if (m_OutputComments) {
-	    for (i = 0; i < content.getOwner().getComments().size(); i++)
-	      writer.write(m_Comment + " " + content.getOwner().getComments().get(i) + m_NewLine);
-	  }
-
-	  // write header
-	  first = true;
-	  for (String key: content.getOwner().getHeaderRow().cellKeys()) {
-	    cell = content.getOwner().getHeaderRow().getCell(key);
-
-	    if (!first)
-	      writer.write(m_Separator);
-	    if (cell.isMissing())
-	      writer.write(quoteString(m_MissingValue));
-	    else
-	      writer.write(quoteString(cell.getContent()));
-
-	    first = false;
-	  }
-	  writer.write(m_NewLine);
-	}
-
 	// keep header as reference
 	if (m_Appending)
 	  m_Header = content.getOwner().getHeader();
@@ -1023,9 +1060,8 @@ public class CsvSpreadSheetWriter
   protected boolean doWrite(SpreadSheet content, Writer writer) {
     boolean	result;
     
-    result      = true;
     m_Appending = true;
-    
+    result      = writeHeader(content.getHeaderRow(), writer);
     for (DataRow row: content.rows()) {
       result = doWrite(row, writer);
       if (!result)
