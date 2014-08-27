@@ -392,6 +392,7 @@ public class GenericPlot
     axis.setNthValueToShow(1);
     axis.setTickGenerator(m_YTickGenerator);
     axis.setCustomFormat(new DecimalFormatString("0.0"));
+    axis.setWidth(80);
     plotter.setAxisY(axis);
 
     flow.add(plotter);

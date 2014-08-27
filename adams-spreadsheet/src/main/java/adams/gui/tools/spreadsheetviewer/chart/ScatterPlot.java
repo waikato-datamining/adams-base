@@ -314,6 +314,7 @@ public class ScatterPlot
     axis.setTickGenerator(columnTypeToTickGenerator(sheet, m_XColumn.getIntIndex()));
     axis.setType(columnTypeToAxisType(sheet, m_XColumn.getIntIndex()));
     axis.setCustomFormat(new DecimalFormatString("0.0"));
+    axis.setWidth(80);
     plotter.setAxisX(axis);
     
     indices = m_YColumns.getIntIndices();

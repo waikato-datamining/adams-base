@@ -323,6 +323,7 @@ public class LinePlot
     axis.setTickGenerator(columnTypesToTickGenerator(sheet, indices));
     axis.setType(columnTypesToAxisType(sheet, indices));
     axis.setCustomFormat(new DecimalFormatString("0.0"));
+    axis.setWidth(80);
     plotter.setAxisY(axis);
 
     flow.add(plotter);
