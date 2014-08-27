@@ -947,7 +947,7 @@ public class CsvSpreadSheetWriter
   }
 
   /**
-   * Writes the header.
+   * Writes the header, if necessary.
    *
    * @param header	the header row to write
    * @param writer	the writer to write the header to
@@ -957,8 +957,14 @@ public class CsvSpreadSheetWriter
     
     result = true;
     
-    if (!m_FileExists || !m_KeepExisting)
-      result = doWriteHeader(header, writer);
+    if (m_Header == null) {
+      if (!m_FileExists || !m_KeepExisting) {
+	result = doWriteHeader(header, writer);
+	// keep header as reference
+	if (m_Appending)
+	  m_Header = header.getOwner().getHeader();
+      }
+    }
     
     return result;
   }
@@ -985,12 +991,6 @@ public class CsvSpreadSheetWriter
       dformat  = getDateFormatter();
       dtformat = getDateTimeFormatter();
       tformat  = getTimeFormatter();
-
-      if (m_Header == null) {
-	// keep header as reference
-	if (m_Appending)
-	  m_Header = content.getOwner().getHeader();
-      }
 
       // write data rows
       first = true;
@@ -1113,7 +1113,7 @@ public class CsvSpreadSheetWriter
 	writer = new BufferedWriter(new OutputStreamWriter(output, m_Encoding.charsetValue()));
       else
 	writer = new BufferedWriter(new OutputStreamWriter(output));
-      result = doWrite(content, writer);
+      result = write(content, writer);
       writer.flush();
       writer.close();
     }
@@ -1135,7 +1135,7 @@ public class CsvSpreadSheetWriter
    */
   public boolean write(Row content, OutputStream stream) {
     m_Appending = true;
-    return doWrite(content, new OutputStreamWriter(stream));
+    return write(content, new OutputStreamWriter(stream));
   }
 
   /**
@@ -1147,7 +1147,13 @@ public class CsvSpreadSheetWriter
    * @return		true if successfully written
    */
   public boolean write(Row content, Writer writer) {
+    boolean	result;
+    
     m_Appending = true;
-    return doWrite(content, writer);
+    result      = writeHeader(content.getOwner().getHeaderRow(), writer);
+    if (result)
+      result = doWrite(content, writer);
+    
+    return result;
   }
 }

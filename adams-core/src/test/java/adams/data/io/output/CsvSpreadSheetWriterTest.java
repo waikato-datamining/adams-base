@@ -105,6 +105,57 @@ public class CsvSpreadSheetWriterTest
   }
 
   /**
+   * Returns the filenames (without path) of the input data files to use
+   * in the setup tests.
+   *
+   * @return		the filenames
+   */
+  @Override
+  protected String[] getIncrementalInputFiles() {
+    return new String[]{
+	"sample.csv",
+	"sample2.csv",
+	"sample3.csv",
+    };
+  }
+
+  /**
+   * Returns the filenames (without path) of the output data files to use
+   * in the setup tests.
+   *
+   * @return		the filenames
+   */
+  @Override
+  protected String[] getIncrementalOutputFiles() {
+    return new String[]{
+	"sample-inc-out.csv",
+	"sample2-inc-out.csv",
+	"sample3-inc-out.csv",
+    };
+  }
+
+  /**
+   * Returns the setups to use in the setup tests.
+   *
+   * @return		the setups
+   */
+  @Override
+  protected SpreadSheetWriter[] getIncrementalSetups() {
+    CsvSpreadSheetWriter[]	result;
+    
+    result = new CsvSpreadSheetWriter[3];
+    result[0] = new CsvSpreadSheetWriter();
+    result[0].setNewLine("\\n");
+    result[1] = new CsvSpreadSheetWriter();
+    result[1].setNewLine("\\n");
+    result[2] = new CsvSpreadSheetWriter();
+    result[2].setNewLine("\\n");
+    result[2].setAlwaysQuoteText(true);
+    
+    return result;
+  }
+
+  /**
    * Returns a test suite.
    *
    * @return		the test suite
