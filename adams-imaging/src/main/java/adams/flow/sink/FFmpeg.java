@@ -15,7 +15,7 @@
 
 /*
  * FFmpeg.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -30,7 +30,7 @@ import adams.flow.sink.ffmpeg.GenericPlugin;
 
 /**
  <!-- globalinfo-start -->
- * Uses the specified plugin to perform a ffmpeg operation.
+ * Uses the specified plugin to perform a avconv/ffmpeg operation.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -114,7 +114,7 @@ public class FFmpeg
    */
   @Override
   public String globalInfo() {
-    return "Uses the specified plugin to perform a ffmpeg operation.";
+    return "Uses the specified plugin to perform an avconv/ffmpeg operation.";
   }
 
   /**
@@ -157,9 +157,9 @@ public class FFmpeg
   protected PlaceholderFile getDefaultExecutable() {
     // TODO search PATH?
     if (OS.isWindows())
-      return new PlaceholderFile("ffmpeg.exe");
+      return new PlaceholderFile("avconv.exe");
     else
-      return new PlaceholderFile("/usr/bin/ffmpeg");
+      return new PlaceholderFile("/usr/bin/avconv");
   }
 
   /**
@@ -188,7 +188,7 @@ public class FFmpeg
    * 			displaying in the GUI or for listing the options.
    */
   public String executableTipText() {
-    return "The ffmpeg executable.";
+    return "The avconv/ffmpeg executable.";
   }
 
   /**

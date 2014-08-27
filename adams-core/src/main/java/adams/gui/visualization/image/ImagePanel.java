@@ -63,6 +63,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.flow.control.Flow;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -790,6 +791,9 @@ public class ImagePanel
   /** list of dependent dialogs to clean up. */
   protected List<Dialog> m_DependentDialogs;
   
+  /** list of dependent flows to clean up. */
+  protected List<Flow> m_DependentFlows;
+
   /** the scale that the user chose. */
   protected double m_Scale;
   
@@ -812,6 +816,7 @@ public class ImagePanel
     m_ImageProperties      = new Report();
     m_AdditionalProperties = null;
     m_DependentDialogs     = new ArrayList<Dialog>();
+    m_DependentFlows       = new ArrayList<Flow>();
     m_Scale                = -1;
   }
 
@@ -1152,6 +1157,7 @@ public class ImagePanel
     m_CurrentFile = null;
     m_PaintPanel.setCurrentImage(null);
     removeDependentDialogs();
+    removeDependentFlows();
     updateImageProperties();
     showStatus("");
     log("clear");
@@ -1165,16 +1171,45 @@ public class ImagePanel
    * @param dlg		the dialog to add
    */
   public void addDependentDialog(Dialog dlg) {
-    m_DependentDialogs.add(dlg);
+    synchronized(m_DependentDialogs) {
+      m_DependentDialogs.add(dlg);
+    }
   }
   
   /**
    * Removes all dependent dialogs.
    */
   protected void removeDependentDialogs() {
-    for (Dialog dlg: m_DependentDialogs) {
-      dlg.setVisible(false);
-      dlg.dispose();
+    synchronized(m_DependentDialogs) {
+      for (Dialog dlg: m_DependentDialogs) {
+	dlg.setVisible(false);
+	dlg.dispose();
+      }
+      m_DependentDialogs.clear();
+    }
+  }
+
+  /**
+   * Adds the flow to the list of flows to be cleaned up when the panel gets
+   * cleared or removed.
+   * 
+   * @param flow	the flow to add
+   */
+  public void addDependentFlow(Flow flow) {
+    synchronized(m_DependentFlows) {
+      m_DependentFlows.add(flow);
+    }
+  }
+  
+  /**
+   * Removes all dependent flows.
+   */
+  protected void removeDependentFlows() {
+    synchronized(m_DependentFlows) {
+      for (Flow flow: m_DependentFlows) {
+	flow.cleanUp();
+      }
+      m_DependentFlows.clear();
     }
   }
   
@@ -1610,9 +1645,7 @@ public class ImagePanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    if (m_DependentDialogs.size() > 0) {
-      removeDependentDialogs();
-      m_DependentDialogs.clear();
-    }
+    removeDependentDialogs();
+    removeDependentFlows();
   }
 }

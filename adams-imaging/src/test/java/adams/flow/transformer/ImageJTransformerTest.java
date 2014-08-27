@@ -15,7 +15,7 @@
 
 /*
  * ImageJTransformerTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,6 +29,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.test.TmpFile;
 
@@ -61,7 +62,7 @@ public class ImageJTransformerTest
 
     m_TestHelper.copyResourceToTmp("adams_logo.png");
     m_TestHelper.copyResourceToTmp("adams_icon.png");
-    m_TestHelper.deleteFileFromTmp("dumpfile.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile.csv");
   }
 
   /**
@@ -73,7 +74,7 @@ public class ImageJTransformerTest
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("adams_logo.png");
     m_TestHelper.deleteFileFromTmp("adams_icon.png");
-    m_TestHelper.deleteFileFromTmp("dumpfile.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile.csv");
 
     super.tearDown();
   }
@@ -100,11 +101,12 @@ public class ImageJTransformerTest
     ImageJFeatureGenerator ifl = new ImageJFeatureGenerator();
     ifl.setAlgorithm(new Histogram());
 
-    WekaInstanceDumper id = new WekaInstanceDumper();
-    id.setOutputPrefix(new TmpFile("dumpfile"));
+    DumpFile df = new DumpFile();
+    df.setAppend(true);
+    df.setOutputFile(new TmpFile("dumpfile.csv"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{mfs, ir, itr, ifl, id});
+    flow.setActors(new AbstractActor[]{mfs, ir, itr, ifl, df});
 
     return flow;
   }
@@ -114,7 +116,7 @@ public class ImageJTransformerTest
    */
   public void testRegression() {
     performRegressionTest(
-	new TmpFile("dumpfile.arff"));
+	new TmpFile("dumpfile.csv"));
   }
 
   /**

@@ -47,11 +47,20 @@ public abstract class AbstractFeatureConverter<D,R>
    * Resets the scheme.
    */
   @Override
-  protected void reset() {
+  public void reset() {
     super.reset();
     
     m_Header           = null;
     m_HeaderDefinition = null;
+  }
+  
+  /**
+   * Returns whether the header has been initialized.
+   * 
+   * @return		true if initialized
+   */
+  public boolean isInitialized() {
+    return (m_Header != null);
   }
   
   /**

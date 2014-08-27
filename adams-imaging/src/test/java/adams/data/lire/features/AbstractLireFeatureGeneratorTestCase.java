@@ -14,8 +14,8 @@
  */
 
 /**
- * AbstractJAIFeatureGeneratorTestCase.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractLireFeatureGeneratorTestCase.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.lire.features;
 

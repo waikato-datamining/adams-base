@@ -22,7 +22,7 @@ package adams.data.adams.transformer.crop;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import weka.core.Utils;
+import adams.core.Utils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.statistics.StatUtils;
 

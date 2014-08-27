@@ -23,12 +23,14 @@ import java.io.File;
 
 import javax.media.jai.RenderedOp;
 
-import weka.core.Instance;
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.JAIHelper;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Row;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
@@ -97,8 +99,39 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
    * @param scheme	the scheme to process the data with
    * @return		the generated data
    */
-  protected Instance[] process(BoofCVImageContainer img, AbstractBoofCVFeatureGenerator scheme) {
+  protected Object[] process(BoofCVImageContainer img, AbstractBoofCVFeatureGenerator scheme) {
     return scheme.generate(img);
+  }
+  
+  /**
+   * Converts the object to a string representation.
+   * 
+   * @param obj		the object to convert
+   * @return		the generated string
+   */
+  protected String toString(Object obj) {
+    StringBuilder	result;
+    Row			row;
+    int			i;
+    Cell		cell;
+    
+    if (obj instanceof Row) {
+      row    = (Row) obj;
+      result = new StringBuilder();
+      for (i = 0; i < row.getCellCount(); i++) {
+	if (i > 0)
+	  result.append(",");
+	cell = row.getCell(i);
+	if (cell.isNumeric())
+	  result.append(Utils.doubleToString(cell.toDouble(), 6));
+	else
+	  result.append(cell.getContent());
+      }
+      return result.toString();
+    }
+    else {
+      return obj.toString();
+    }
   }
 
   /**
@@ -108,15 +141,15 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
    * @param filename	the filename to save to (without path)
    * @return		true if successfully saved
    */
-  protected boolean save(Instance[] data, String filename) {
+  protected boolean save(Object[] data, String filename) {
     boolean	result;
     
     result = true;
     
-    for (Instance inst: data) {
+    for (Object obj: data) {
       result = FileUtils.writeToFile(
 	  m_TestHelper.getTmpDirectory() + File.separator + filename,
-	  inst.toString(),
+	  toString(obj),
 	  false);
       if (!result)
 	break;
@@ -172,7 +205,7 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
    */
   public void testRegression() {
     BoofCVImageContainer	data;
-    Instance[]			processed;
+    Object[]			processed;
     boolean			ok;
     String			regression;
     int				i;

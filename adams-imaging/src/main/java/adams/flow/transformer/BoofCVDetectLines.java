@@ -15,7 +15,7 @@
 
 /**
  * BoofCVDetectLines.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -37,7 +37,7 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Detects lines in images.
+ * Detects lines in images (Hough line detector based on polar parametrization).
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -157,7 +157,7 @@ public class BoofCVDetectLines
    */
   @Override
   public String globalInfo() {
-    return "Detects lines in images.";
+    return "Detects lines in images (Hough line detector based on polar parametrization).";
   }
 
   /**

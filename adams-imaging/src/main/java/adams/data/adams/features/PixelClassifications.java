@@ -15,7 +15,7 @@
 
 /*
  * PixelClassifications.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.adams.features;
@@ -24,14 +24,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.filters.unsupervised.attribute.RenameAttribute;
 import adams.data.adams.features.Pixels.PixelType;
 import adams.data.adams.transformer.Crop;
 import adams.data.adams.transformer.Crop.Anchor;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -42,7 +39,7 @@ import adams.flow.transformer.pixelselector.AddClassification;
 
 /**
  <!-- globalinfo-start -->
- * Generates an instance for each pixel classification that is stored in the image's report.<br/>
+ * Generates a feature vector for each pixel classification that is stored in the image's report.<br/>
  * Pixel classifications are generated with the adams.flow.transformer.PixelSelector transformer, using the adams.flow.transformer.pixelselector.AddClassification action.<br/>
  * Automatically adds the classification label associated with a classification position in the report as a separate attribute.
  * <p/>
@@ -121,7 +118,7 @@ public class PixelClassifications
   @Override
   public String globalInfo() {
     return 
-	"Generates an instance for each pixel classification that is stored "
+	"Generates a feature vector for each pixel classification that is stored "
 	+ "in the image's report.\n"
 	+ "Pixel classifications are generated with the " 
 	+ PixelSelector.class.getName() + " transformer, using the "
@@ -287,10 +284,10 @@ public class PixelClassifications
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BufferedImageContainer img) {
-    Instances	result;
-    Crop	crop;
-    Pixels	pixels;
+  public HeaderDefinition createHeader(BufferedImageContainer img) {
+    HeaderDefinition	result;
+    Crop		crop;
+    Pixels		pixels;
 
     // 1st: crop
     crop = new Crop();
@@ -357,24 +354,22 @@ public class PixelClassifications
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BufferedImageContainer img) {
-    ArrayList<Instance>		result;
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    List<List<Object>>		result;
     Integer[]			indices;
     Crop			crop;
     Pixels			pixels;
     Point			loc;
-    Instance[]			inst;
-    RenameAttribute		rename;
+    List<Object>[]		data;
     BufferedImageContainer	cropped;
-    int				i;
 
-    result  = new ArrayList<Instance>();
+    result  = new ArrayList<List<Object>>();
     indices = getClassificationIndices(img);
     for (Integer index: indices) {
       loc = getPixelLocation(img, index);
@@ -395,31 +390,13 @@ public class PixelClassifications
       pixels.setFields(new Field[]{
 	  new Field(AddClassification.CLASSIFICATION + index, DataType.STRING)
       });
-      inst = pixels.generate(cropped);
+      data = pixels.postProcessRows(img, pixels.generateRows(cropped));
       pixels.destroy();
-      if (inst.length == 0)
+      if (data.length == 0)
 	continue;
-      
-      // rename classification attribute
-      try {
-	rename = new RenameAttribute();
-	rename.setAttributeIndices("last");
-	rename.setFind(AddClassification.CLASSIFICATION + index);
-	rename.setReplace("Classification");
-	rename.setInputFormat(inst[0].dataset());
-	for (Instance in: inst)
-	  rename.input(in);
-	rename.batchFinished();
-	for (i = 0; i < inst.length; i++)
-	  inst[i] = rename.output();
-	// add to output
-	result.addAll(Arrays.asList(inst));
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to rename classification attribute: ", e);
-      }
+      result.addAll(Arrays.asList(data));
     }
 
-    return result.toArray(new Instance[result.size()]);
+    return result.toArray(new List[result.size()]);
   }
 }

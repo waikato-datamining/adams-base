@@ -23,17 +23,18 @@ package adams.data.jai.features;
 import java.awt.image.Raster;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.operator.DFTDescriptor;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
+import adams.data.report.DataType;
+import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -152,35 +153,33 @@ public class DFT
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BufferedImageContainer img) {
-    Instances			result;
+  public HeaderDefinition createHeader(BufferedImageContainer img) {
+    HeaderDefinition		result;
     double[]			values;
-    ArrayList<Attribute>	atts;
     int				i;
 
+    result = new HeaderDefinition();
     values = performDFT(img);
-    atts      = new ArrayList<Attribute>();
     switch (m_OutputType) {
       case BOTH:
 	for (i = 0; i < values.length; i++) {
 	  if (i % 2 == 0)
-	    atts.add(new Attribute("real_" + ((int) (i/2 + 1))));
+	    result.add("real_" + ((int) (i/2 + 1)), DataType.NUMERIC);
 	  else
-	    atts.add(new Attribute("imag_" + ((int) (i/2 + 1))));
+	    result.add("imag_" + ((int) (i/2 + 1)), DataType.NUMERIC);
 	}
 	break;
 	
       case REAL:
 	for (i = 0; i < values.length; i++)
-	  atts.add(new Attribute("real_" + ((int) (i + 1))));
+	  result.add("real_" + ((int) (i + 1)), DataType.NUMERIC);
 	break;
 	
       case IMAGINARY:
 	for (i = 0; i < values.length; i++)
-	  atts.add(new Attribute("imag_" + ((int) (i + 1))));
+	  result.add("imag_" + ((int) (i + 1)), DataType.NUMERIC);
 	break;
     }
-    result = new Instances(getClass().getName(), atts, 0);
 
     return result;
   }
@@ -213,7 +212,7 @@ public class DFT
 
     switch (m_OutputType) {
       case BOTH:
-	values  = newArray(real.length + imag.length);
+	values  = new double[real.length + imag.length];
 	for (i = 0; i < real.length; i++) {
 	  values[i*2 + 0] = real[i];
 	  values[i*2 + 1] = imag[i];
@@ -221,13 +220,13 @@ public class DFT
 	break;
       
       case REAL:
-	values  = newArray(real.length);
+	values  = new double[real.length];
 	for (i = 0; i < real.length; i++)
 	  values[i] = real[i];
 	break;
       
       case IMAGINARY:
-	values  = newArray(imag.length);
+	values  = new double[imag.length];
 	for (i = 0; i < imag.length; i++)
 	  values[i] = imag[i];
 	break;
@@ -240,19 +239,20 @@ public class DFT
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BufferedImageContainer img) {
-    Instance[]		result;
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    List<Object>[]		result;
     double[]		values;
 
-    values = performDFT(img);
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
+    values    = performDFT(img);
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
+    result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
 
     return result;
   }

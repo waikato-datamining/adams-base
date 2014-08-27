@@ -15,20 +15,19 @@
 
 /*
  * Pixels.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.features;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageFloat64;
 import boofcv.struct.image.ImageInteger;
@@ -90,31 +89,28 @@ public class Pixels
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BoofCVImageContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
+  public HeaderDefinition createHeader(BoofCVImageContainer img) {
+    HeaderDefinition		result;
     int				i;
     int				numPixels;
 
     numPixels = img.getWidth() * img.getHeight();
-    atts      = new ArrayList<Attribute>();
+    result    = new HeaderDefinition();
     for (i = 0; i < numPixels; i++)
-      atts.add(new Attribute("att_" + (i+1)));
-    result = new Instances(getClass().getName(), atts, 0);
+      result.add("att_" + (i+1), DataType.NUMERIC);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BoofCVImageContainer img) {
-    Instance[]		result;
-    double[]		values;
+  public List<Object>[] generateRows(BoofCVImageContainer img) {
+    List<Object>[]	result;
     int[]		pixels;
     int			i;
     int			n;
@@ -126,49 +122,45 @@ public class Pixels
     int			height;
     int			width;
 
-    result = null;
-    
-    values = newArray(m_Header.numAttributes());
-    height = img.getHeight();
-    width  = img.getWidth();
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
+    height    = img.getHeight();
+    width     = img.getWidth();
     
     if (img.getImage() instanceof ImageInteger) {
       integer = (ImageInteger) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
-	  values[n*height + i] = integer.get(i, n);
+	  result[0].add(integer.get(i, n));
       }
     }
     else if (img.getImage() instanceof ImageFloat32) {
       float32 = (ImageFloat32) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
-	  values[n*height + i] = float32.get(i, n);
+	  result[0].add(float32.get(i, n));
       }
     }
     else if (img.getImage() instanceof ImageFloat64) {
       float64 = (ImageFloat64) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
-	  values[n*height + i] = float64.get(i, n);
+	  result[0].add(float64.get(i, n));
       }
     }
     else if (img.getImage() instanceof ImageSInt64) {
       sInt64 = (ImageSInt64) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
-	  values[n*height + i] = sInt64.get(i, n);
+	  result[0].add(sInt64.get(i, n));
       }
     }
     else {
       buff   = img.toBufferedImage();
       pixels = BufferedImageHelper.getPixels(buff);
       for (i = 0; i < pixels.length; i++)
-	values[i] = pixels[i];
+	result[0].add(pixels[i]);
     }
-
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
 
     return result;
   }

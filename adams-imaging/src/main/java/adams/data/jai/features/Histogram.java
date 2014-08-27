@@ -23,19 +23,20 @@ package adams.data.jai.features;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.option.AbstractOption;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
+import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -259,42 +260,40 @@ public class Histogram
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BufferedImageContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
+  public HeaderDefinition createHeader(BufferedImageContainer img) {
+    HeaderDefinition		result;
     int				i;
     int				numAtts;
 
+    result  = new HeaderDefinition();
     numAtts = 256;
-    atts    = new ArrayList<Attribute>();
     for (i = 0; i < numAtts; i++) {
       switch (m_HistogramType) {
 	case EIGHT_BIT:
-	  atts.add(new Attribute("histo_" + (i+1)));
+	  result.add("histo_" + (i+1), DataType.NUMERIC);
 	  break;
 	case RGB:
-	  atts.add(new Attribute("histo_r_" + (i+1)));
-	  atts.add(new Attribute("histo_g_" + (i+1)));
-	  atts.add(new Attribute("histo_b_" + (i+1)));
+	  result.add("histo_r_" + (i+1), DataType.NUMERIC);
+	  result.add("histo_g_" + (i+1), DataType.NUMERIC);
+	  result.add("histo_b_" + (i+1), DataType.NUMERIC);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
       }
     }
-    result = new Instances(getClass().getName(), atts, 0);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BufferedImageContainer img) {
-    Instance[]			result;
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    List<Object>[]		result;
     double[]			values;
     int[] 			bins;
     double[] 			low;
@@ -307,19 +306,20 @@ public class Histogram
 
     result = null;
     image  = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    values = newArray(m_Header.numAttributes());
 
     switch (m_HistogramType) {
       case EIGHT_BIT:
-	bins = new int[]{256};             // The number of bins.
-	low  = new double[]{0.0D};        // The low value.
-	high = new double[]{256.0D}; // The high value.
+	values = new double[256];
+	bins   = new int[]{256};             // The number of bins.
+	low    = new double[]{0.0D};        // The low value.
+	high   = new double[]{256.0D}; // The high value.
 	break;
 
       case RGB:
-	bins = new int[]{256, 256, 256};             // The number of bins.
-	low  = new double[]{0.0D, 0.0D, 0.0D};        // The low value.
-	high = new double[]{256.0D, 256.0D, 256.0D}; // The high value.
+	values = new double[256 * 3];
+	bins   = new int[]{256, 256, 256};             // The number of bins.
+	low    = new double[]{0.0D, 0.0D, 0.0D};        // The low value.
+	high   = new double[]{256.0D, 256.0D, 256.0D}; // The high value.
 	break;
 
       default:
@@ -359,8 +359,9 @@ public class Histogram
 	break;
     }
 
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
+    result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
 
     return result;
   }

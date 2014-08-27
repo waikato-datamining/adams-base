@@ -21,11 +21,11 @@ package adams.data.adams.transformer.whitebalance;
 
 import java.awt.image.BufferedImage;
 
-import weka.core.Utils;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
+import adams.core.Utils;
 import adams.data.image.BufferedImageHelper;
 
 /**

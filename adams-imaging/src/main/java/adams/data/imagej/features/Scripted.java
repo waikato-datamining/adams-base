@@ -15,29 +15,33 @@
 
 /*
  * Scripted.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.features;
 
-import weka.core.Instance;
-import weka.core.Instances;
+import java.util.List;
+
 import adams.core.scripting.AbstractScriptingHandler;
 import adams.core.scripting.Dummy;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
  <!-- globalinfo-start -->
- * An image flattener that uses any scripting handler for processing the data with a script located in the specified file.
+ * A feature generator that uses any scripting handler for processing the data with a script located in the specified file.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -56,7 +60,7 @@ import adams.data.imagej.ImagePlusContainer;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-options &lt;java.lang.String&gt; (property: scriptOptions)
+ * <pre>-options &lt;adams.core.base.BaseText&gt; (property: scriptOptions)
  * &nbsp;&nbsp;&nbsp;The options for the script; must consist of 'key=value' pairs separated 
  * &nbsp;&nbsp;&nbsp;by blanks; the value of 'key' can be accessed via the 'getAdditionalOptions
  * &nbsp;&nbsp;&nbsp;().getXYZ("key")' method in the script actor.
@@ -80,7 +84,7 @@ public class Scripted
   private static final long serialVersionUID = 1304903578667689350L;
 
   /** the loaded script object. */
-  protected transient AbstractImageJFeatureGenerator m_FlattenerObject;
+  protected transient AbstractImageJFeatureGenerator m_FeatureGeneratorObject;
 
   /** the scripting handler to use. */
   protected AbstractScriptingHandler m_Handler;
@@ -93,7 +97,7 @@ public class Scripted
   @Override
   public String globalInfo() {
     return 
-	"An image flattener that uses any scripting handler for processing the "
+	"A feature generator that uses any scripting handler for processing the "
 	+ "data with a script located in the specified file.";
   }
 
@@ -191,7 +195,7 @@ public class Scripted
   protected void checkImage(ImagePlusContainer img) {
     super.checkImage(img);
 
-    m_FlattenerObject = (AbstractImageJFeatureGenerator) m_ScriptObject;
+    m_FeatureGeneratorObject = (AbstractImageJFeatureGenerator) m_ScriptObject;
   }
 
   /**
@@ -201,20 +205,19 @@ public class Scripted
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(ImagePlusContainer img) {
-    return m_FlattenerObject.createHeader(img);
+  public HeaderDefinition createHeader(ImagePlusContainer img) {
+    return m_FeatureGeneratorObject.createHeader(img);
   }
 
   /**
-   * Performs the actual flattening of the image. Will use the previously
-   * generated header.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(ImagePlusContainer img) {
-    return m_FlattenerObject.generate(img);
+  public List<Object>[] generateRows(ImagePlusContainer img) {
+    return m_FeatureGeneratorObject.generateRows(img);
   }
   
   /**
@@ -224,6 +227,6 @@ public class Scripted
   public void destroy() {
     super.destroy();
     
-    m_FlattenerObject = null;
+    m_FeatureGeneratorObject = null;
   }
 }

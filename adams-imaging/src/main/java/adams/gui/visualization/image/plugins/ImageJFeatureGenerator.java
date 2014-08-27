@@ -21,13 +21,14 @@ package adams.gui.visualization.image.plugins;
 
 import java.awt.image.BufferedImage;
 
-import weka.core.Instance;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.BufferedImageToImageJ;
+import adams.data.featureconverter.SpreadSheetFeatureConverter;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
 import adams.data.imagej.features.Histogram;
+import adams.data.spreadsheet.Row;
 
 /**
  * Allows the user to apply a ImageJ feature generator to an image in the ImageViewer.
@@ -36,7 +37,7 @@ import adams.data.imagej.features.Histogram;
  * @version $Revision: 7713 $
  */
 public class ImageJFeatureGenerator
-  extends AbstractSelectedImagesFlattener {
+  extends AbstractSelectedImagesFeatureGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = 6721788085343201024L;
@@ -99,12 +100,12 @@ public class ImageJFeatureGenerator
    * @return		the generated instances
    */
   @Override
-  protected Instance[] flatten(BufferedImage image) {
-    weka.core.Instance[]	result;
-    AbstractImageJFeatureGenerator	flattener;
-    weka.core.Instance[]	flattened;
-    BufferedImageContainer	input;
-    BufferedImageToImageJ	conv;
+  protected Row[] generateFeatures(BufferedImage image) {
+    Row[]				result;
+    AbstractImageJFeatureGenerator	generator;
+    Row[]				features;
+    BufferedImageContainer		input;
+    BufferedImageToImageJ		conv;
 
     result = null;
 
@@ -114,12 +115,13 @@ public class ImageJFeatureGenerator
     conv.setInput(input);
     if ((m_FilterError = conv.convert()) == null) {
       setLastSetup(m_Editor.getValue());
-      flattener = (AbstractImageJFeatureGenerator) m_Editor.getValue();
-      flattened = flattener.generate((ImagePlusContainer) conv.getOutput());
-      if (flattened.length == 0)
-        m_FilterError = "No instances generated!";
-      if (flattened.length > 0)
-        result = flattened;
+      generator = (AbstractImageJFeatureGenerator) m_Editor.getValue();
+      generator.setConverter(new SpreadSheetFeatureConverter());
+      features = (Row[]) generator.generate((ImagePlusContainer) conv.getOutput());
+      if (features.length == 0)
+        m_FilterError = "No features generated!";
+      if (features.length > 0)
+        result = features;
     }
     conv.cleanUp();
 

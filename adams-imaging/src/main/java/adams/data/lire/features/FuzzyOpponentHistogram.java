@@ -22,18 +22,19 @@ package adams.data.lire.features;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
+import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -139,53 +140,45 @@ public class FuzzyOpponentHistogram
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BufferedImageContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
-    net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram	features;
+  public HeaderDefinition createHeader(BufferedImageContainer img) {
+    HeaderDefinition		result;
     BufferedImage		image;
     double[]			histo;
     int				i;
+    net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram	features;
 
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
     features = new net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram();
     features.extract(image);
     histo    = features.getDoubleHistogram();
-    
-    atts = new ArrayList<Attribute>();
+    result   = new HeaderDefinition();
     for (i = 0; i < histo.length; i++)
-      atts.add(new Attribute("FuzzyOpponentHistogram-" + (i+1)));
-    result = new Instances(getClass().getName(), atts, 0);
+      result.add("FuzzyOpponentHistogram-" + (i+1), DataType.NUMERIC);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BufferedImageContainer img) {
-    Instance[]			result;
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    List<Object>[]		result;
     BufferedImage		image;
-    double[]			values;
-    net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram	features;
     double[]			histo;
-    int				i;
+    net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram	features;
 
     result   = null;
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    values   = newArray(m_Header.numAttributes());
     features = new net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram();
     features.extract(image);
     histo    = features.getDoubleHistogram();
-    for (i = 0; i < histo.length; i++)
-      values[i] = histo[i];
-
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
+    result[0].addAll(Arrays.asList(StatUtils.toNumberArray(histo)));
 
     return result;
   }

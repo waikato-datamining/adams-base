@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-07-31 12:21:04
+# Date: 2014-08-27 14:21:25
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -9,12 +9,20 @@ adams.flow.control.Flow
 		adams.flow.standalone.CallableActors
 			-actor
 				adams.flow.sink.HistoryDisplay
+					-name
+					Text
+					-short-title
+					true
+					-x
+					-3
 					-entry-name-variable
 					image
 			-actor
 				adams.flow.sink.DisplayPanelManager
-					-x
-					-3
+					-name
+					Image
+					-short-title
+					true
 					-provider
 						adams.flow.sink.ImageViewer
 							-writer
@@ -46,7 +54,7 @@ adams.flow.control.Flow
 					-tee
 						adams.flow.sink.CallableSink
 							-callable
-							DisplayPanelManager
+							Image
 	-actor
 		adams.flow.standalone.TesseractConfiguration
 	-actor
@@ -72,7 +80,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.sink.CallableSink
 					-callable
-					HistoryDisplay
+					Text
 	-actor
 		adams.flow.control.Trigger
 			-name
@@ -96,7 +104,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.sink.CallableSink
 					-callable
-					HistoryDisplay
+					Text
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

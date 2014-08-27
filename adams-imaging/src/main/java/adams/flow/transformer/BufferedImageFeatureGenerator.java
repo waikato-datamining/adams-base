@@ -15,7 +15,7 @@
 
 /*
  * BufferedImageFeatureGenerator.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import weka.core.Instance;
 import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
@@ -104,8 +103,8 @@ public class BufferedImageFeatureGenerator
   /** the algorithm to apply to the image. */
   protected AbstractBufferedImageFeatureGenerator m_Algorithm;
 
-  /** the generated Instance objects. */
-  protected ArrayList<Instance> m_Queue;
+  /** the generated objects. */
+  protected ArrayList m_Queue;
 
   /**
    * Returns a string describing the object.
@@ -138,7 +137,7 @@ public class BufferedImageFeatureGenerator
   protected void initialize() {
     super.initialize();
     
-    m_Queue = new ArrayList<Instance>();
+    m_Queue = new ArrayList();
   }
   
   /**
@@ -224,7 +223,7 @@ public class BufferedImageFeatureGenerator
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_QUEUE)) {
-      m_Queue = (ArrayList<Instance>) state.get(BACKUP_QUEUE);
+      m_Queue = (ArrayList) state.get(BACKUP_QUEUE);
       state.remove(BACKUP_QUEUE);
     }
 
@@ -246,7 +245,10 @@ public class BufferedImageFeatureGenerator
    * @return		<!-- flow-generates-start -->weka.core.Instance.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Instance.class};
+    if (m_Algorithm == null)
+      return new Class[]{Object.class};
+    else
+      return new Class[]{m_Algorithm.getRowFormat()};
   }
 
   /**

@@ -20,10 +20,6 @@
 
 package adams.data.boofcv.features;
 
-import adams.core.ClassLister;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
-import adams.core.option.OptionUtils;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.image.AbstractImageFeatureGenerator;
 
@@ -42,47 +38,4 @@ public abstract class AbstractBoofCVFeatureGenerator
 
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;
-
-  /**
-   * Returns a list with classnames of transformations.
-   *
-   * @return		the transformation classnames
-   */
-  public static String[] getFlatteners() {
-    return ClassLister.getSingleton().getClassnames(AbstractBoofCVFeatureGenerator.class);
-  }
-
-  /**
-   * Instantiates the transformation with the given options.
-   *
-   * @param classname	the classname of the transformation to instantiate
-   * @param options	the options for the transformation
-   * @return		the instantiated transformation or null if an error occurred
-   */
-  public static AbstractBoofCVFeatureGenerator forName(String classname, String[] options) {
-    AbstractBoofCVFeatureGenerator	result;
-
-    try {
-      result = (AbstractBoofCVFeatureGenerator) OptionUtils.forName(AbstractBoofCVFeatureGenerator.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the transformation from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			transformation to instantiate
-   * @return		the instantiated transformation
-   * 			or null if an error occurred
-   */
-  public static AbstractBoofCVFeatureGenerator forCommandLine(String cmdline) {
-    return (AbstractBoofCVFeatureGenerator) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
 }

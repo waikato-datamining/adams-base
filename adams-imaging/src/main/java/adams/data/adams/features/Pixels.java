@@ -23,13 +23,12 @@ package adams.data.adams.features;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
@@ -153,14 +152,13 @@ public class Pixels
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BufferedImageContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
+  public HeaderDefinition createHeader(BufferedImageContainer img) {
+    HeaderDefinition		result;
     int				i;
     int				numPixels;
 
     numPixels = img.getWidth() * img.getHeight();
-    atts      = new ArrayList<Attribute>();
+    result    = new HeaderDefinition();
     
     for (i = 0; i < numPixels; i++) {
       switch (m_PixelType) {
@@ -168,68 +166,66 @@ public class Pixels
 	case LUMINANCE_STANDARD:
 	case LUMINANCE_PERCEIVED1:
 	case LUMINANCE_PERCEIVED2:
-	  atts.add(new Attribute("att_" + (i+1)));
+	  result.add("att_" + (i+1), DataType.NUMERIC);
 	  break;
 	  
 	case RGB_SEPARATE:
-	  atts.add(new Attribute("att_r_" + (i+1)));
-	  atts.add(new Attribute("att_g_" + (i+1)));
-	  atts.add(new Attribute("att_b_" + (i+1)));
+	  result.add("att_r_" + (i+1), DataType.NUMERIC);
+	  result.add("att_g_" + (i+1), DataType.NUMERIC);
+	  result.add("att_b_" + (i+1), DataType.NUMERIC);
 	  break;
 	  
 	case HSB_SEPARATE:
-	  atts.add(new Attribute("att_h_" + (i+1)));
-	  atts.add(new Attribute("att_s_" + (i+1)));
-	  atts.add(new Attribute("att_b_" + (i+1)));
+	  result.add("att_h_" + (i+1), DataType.NUMERIC);
+	  result.add("att_s_" + (i+1), DataType.NUMERIC);
+	  result.add("att_b_" + (i+1), DataType.NUMERIC);
 	  break;
 	  
 	default:
 	  throw new IllegalStateException("Unhandled pixel type: " + m_PixelType);
       }
     }
-    result = new Instances(getClass().getName(), atts, 0);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BufferedImageContainer img) {
-    Instance[]	result;
-    double[]	values;
-    int[]	pixels;
-    int[][]	rgbas;
-    int		i;
-    float[]	hsb;
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    List<Object>[]	result;
+    int[]		pixels;
+    int[][]		rgbas;
+    int			i;
+    float[]		hsb;
 
-    result = null;
-    values = newArray(m_Header.numAttributes());
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
     
     switch (m_PixelType) {
       case RGB_SINGLE:
 	if (img.getImage().getType() == BufferedImage.TYPE_BYTE_GRAY) {
 	  rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	  for (i = 0; i < rgbas.length; i++)
-	    values[i] = rgbas[i][0];   // R = G = B
+	    result[0].add(rgbas[i][0]);   // R = G = B
 	}
 	else {
 	  pixels = BufferedImageHelper.getPixels(img.getImage());
 	  for (i = 0; i < pixels.length; i++)
-	    values[i] = pixels[i];
+	    result[0].add(pixels[i]);
 	}
 	break;
 	
       case RGB_SEPARATE:
 	rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	for (i = 0; i < rgbas.length; i++) {
-	  values[i*3 + 0] = rgbas[i][0];
-	  values[i*3 + 1] = rgbas[i][1];
-	  values[i*3 + 2] = rgbas[i][2];
+	  result[0].add(rgbas[i][0]);
+	  result[0].add(rgbas[i][1]);
+	  result[0].add(rgbas[i][2]);
 	}
 	break;
 	
@@ -238,36 +234,33 @@ public class Pixels
 	rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	for (i = 0; i < rgbas.length; i++) {
 	  hsb = Color.RGBtoHSB(rgbas[i][0], rgbas[i][1], rgbas[i][2], hsb);
-	  values[i*3 + 0] = hsb[0];
-	  values[i*3 + 1] = hsb[1];
-	  values[i*3 + 2] = hsb[2];
+	  result[0].add(hsb[0]);
+	  result[0].add(hsb[1]);
+	  result[0].add(hsb[2]);
 	}
 	break;
 	
       case LUMINANCE_STANDARD:
 	rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	for (i = 0; i < rgbas.length; i++)
-	  values[i] = rgbas[i][0] * 0.2126 + rgbas[i][1] * 0.7152 + rgbas[i][2] * 0.0722;
+	  result[0].add(rgbas[i][0] * 0.2126 + rgbas[i][1] * 0.7152 + rgbas[i][2] * 0.0722);
 	break;
 	
       case LUMINANCE_PERCEIVED1:
 	rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	for (i = 0; i < rgbas.length; i++)
-	  values[i] = rgbas[i][0] * 0.299 + rgbas[i][1] * 0.587 + rgbas[i][2] * 0.114;
+	  result[0].add(rgbas[i][0] * 0.299 + rgbas[i][1] * 0.587 + rgbas[i][2] * 0.114);
 	break;
 	
       case LUMINANCE_PERCEIVED2:
 	rgbas = BufferedImageHelper.getRGBPixels(img.getImage());
 	for (i = 0; i < rgbas.length; i++)
-	  values[i] = Math.sqrt(rgbas[i][0] * rgbas[i][0] * 0.241 + rgbas[i][1] * rgbas[i][1] * 0.691 + rgbas[i][2] * rgbas[i][2] * 0.068);
+	  result[0].add(Math.sqrt(rgbas[i][0] * rgbas[i][0] * 0.241 + rgbas[i][1] * rgbas[i][1] * 0.691 + rgbas[i][2] * rgbas[i][2] * 0.068));
 	break;
 	
       default:
 	throw new IllegalStateException("Unhandled pixel type: " + m_PixelType);
     }
-
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
 
     return result;
   }

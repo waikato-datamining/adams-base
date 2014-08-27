@@ -48,6 +48,13 @@ public class HeaderDefinition
   
   /**
    * Initializes the header.
+   */
+  public HeaderDefinition() {
+    this(new ArrayList<String>(), new ArrayList<DataType>());
+  }
+  
+  /**
+   * Initializes the header.
    * 
    * @param names	the names of the fields
    * @param types	the types of the fields
@@ -105,6 +112,37 @@ public class HeaderDefinition
    */
   public DataType getType(int index) {
     return m_Types.get(index);
+  }
+  
+  /**
+   * Renames the name at the specified index.
+   * 
+   * @param index	the index of the name to rename
+   * @param name	the new name
+   */
+  public void rename(int index, String name) {
+    m_Names.set(index, name);
+  }
+  
+  /**
+   * Adds the definition at the end.
+   * 
+   * @param name	the feature name
+   * @param type	the data type of the feature
+   */
+  public void add(String name, DataType type) {
+    m_Names.add(name);
+    m_Types.add(type);
+  }
+  
+  /**
+   * Adds all the definitions at the end.
+   * 
+   * @param definition	the definitions to add
+   */
+  public void add(HeaderDefinition definition) {
+    m_Names.addAll(definition.getNames());
+    m_Types.addAll(definition.getTypes());
   }
   
   /**

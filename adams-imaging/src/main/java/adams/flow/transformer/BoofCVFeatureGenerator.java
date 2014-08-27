@@ -15,7 +15,7 @@
 
 /*
  * BoofCVFeatureGenerator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import weka.core.Instance;
 import adams.core.QuickInfoHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.features.AbstractBoofCVFeatureGenerator;
@@ -38,7 +37,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Applies a BoofCV flattener to the incoming image and outputs the generated WEKA Instance(s).
+ * Applies a BoofCV feature generator to the incoming image and outputs the generated WEKA Instance(s).
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -47,13 +46,11 @@ import adams.flow.provenance.ProvenanceSupporter;
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;adams.data.boofcv.BoofCVImageContainer<br/>
  * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -61,27 +58,29 @@ import adams.flow.provenance.ProvenanceSupporter;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: BoofCVFlattener
+ * &nbsp;&nbsp;&nbsp;default: BoofCVFeatureGenerator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-flattener &lt;adams.data.boofcv.flattener.AbstractBoofCVFlattener&gt; (property: flattenAlgorithm)
- * &nbsp;&nbsp;&nbsp;The flattener to use for flattening the image.
- * &nbsp;&nbsp;&nbsp;default: adams.data.boofcv.flattener.Pixels
+ * <pre>-algorithm &lt;adams.data.boofcv.features.AbstractBoofCVFeatureGenerator&gt; (property: algorithm)
+ * &nbsp;&nbsp;&nbsp;The feature generation algorithm to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.boofcv.features.Pixels -converter \"adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet\"
  * </pre>
  * 
  <!-- options-end -->
@@ -102,8 +101,8 @@ public class BoofCVFeatureGenerator
   /** the algorithm to apply to the image. */
   protected AbstractBoofCVFeatureGenerator m_Algorithm;
 
-  /** the generated Instance objects. */
-  protected ArrayList<Instance> m_Queue;
+  /** the generated objects. */
+  protected ArrayList m_Queue;
 
   /**
    * Returns a string describing the object.
@@ -136,7 +135,7 @@ public class BoofCVFeatureGenerator
   protected void initialize() {
     super.initialize();
     
-    m_Queue = new ArrayList<Instance>();
+    m_Queue = new ArrayList();
   }
   
   /**
@@ -222,7 +221,7 @@ public class BoofCVFeatureGenerator
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_QUEUE)) {
-      m_Queue = (ArrayList<Instance>) state.get(BACKUP_QUEUE);
+      m_Queue = (ArrayList) state.get(BACKUP_QUEUE);
       state.remove(BACKUP_QUEUE);
     }
 
@@ -241,10 +240,13 @@ public class BoofCVFeatureGenerator
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->weka.core.Instance.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.data.spreadsheet.Row.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Instance.class};
+    if (m_Algorithm == null)
+      return new Class[]{Object.class};
+    else
+      return new Class[]{m_Algorithm.getRowFormat()};
   }
 
   /**

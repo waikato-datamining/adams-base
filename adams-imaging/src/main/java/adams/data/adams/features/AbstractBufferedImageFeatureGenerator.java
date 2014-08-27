@@ -20,11 +20,7 @@
 
 package adams.data.adams.features;
 
-import adams.core.ClassLister;
 import adams.core.JAIHelper;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
-import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageFeatureGenerator;
 import adams.data.image.BufferedImageContainer;
 
@@ -46,48 +42,5 @@ public abstract class AbstractBufferedImageFeatureGenerator
 
   static {
     JAIHelper.disableMediaLib();
-  }
-
-  /**
-   * Returns a list with classnames of transformations.
-   *
-   * @return		the transformation classnames
-   */
-  public static String[] getFlatteners() {
-    return ClassLister.getSingleton().getClassnames(AbstractBufferedImageFeatureGenerator.class);
-  }
-
-  /**
-   * Instantiates the transformation with the given options.
-   *
-   * @param classname	the classname of the transformation to instantiate
-   * @param options	the options for the transformation
-   * @return		the instantiated transformation or null if an error occurred
-   */
-  public static AbstractBufferedImageFeatureGenerator forName(String classname, String[] options) {
-    AbstractBufferedImageFeatureGenerator	result;
-
-    try {
-      result = (AbstractBufferedImageFeatureGenerator) OptionUtils.forName(AbstractBufferedImageFeatureGenerator.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the transformation from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			transformation to instantiate
-   * @return		the instantiated transformation
-   * 			or null if an error occurred
-   */
-  public static AbstractBufferedImageFeatureGenerator forCommandLine(String cmdline) {
-    return (AbstractBufferedImageFeatureGenerator) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

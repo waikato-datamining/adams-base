@@ -22,12 +22,11 @@ package adams.data.imagej.features;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.imagej.ImagePlusContainer;
+import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
@@ -73,6 +72,7 @@ public class Pixels
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Gets all the pixels of the image.";
   }
@@ -83,41 +83,38 @@ public class Pixels
    * @param img		the image to act as a template
    * @return		the generated header
    */
-  public Instances createHeader(ImagePlusContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
+  @Override
+  public HeaderDefinition createHeader(ImagePlusContainer img) {
+    HeaderDefinition		result;
     int				i;
     int				numPixels;
 
+    result    = new HeaderDefinition();
     numPixels = img.getWidth() * img.getHeight();
-    atts      = new ArrayList<Attribute>();
     for (i = 0; i < numPixels; i++)
-      atts.add(new Attribute("att_" + (i+1)));
-    result = new Instances(getClass().getName(), atts, 0);
+      result.add("att_" + (i+1), DataType.NUMERIC);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
-  public Instance[] doGenerate(ImagePlusContainer img) {
-    Instance[]	result;
-    double[]	values;
-    Object	pixels;
-    int		i;
+  @Override
+  public List<Object>[] generateRows(ImagePlusContainer img) {
+    List<Object>[]	result;
+    Object		pixels;
+    int			i;
 
-    result = null;
-    pixels = img.getImage().getProcessor().getPixels();
-    values = newArray(m_Header.numAttributes());
+    result    = null;
+    pixels    = img.getImage().getProcessor().getPixels();
+    result    = new List[1];
+    result[0] = new ArrayList<Object>();
     for (i = 0; i < Array.getLength(pixels); i++)
-      values[i] = Array.getDouble(pixels, i);
-
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
+      result[0].add(Array.getDouble(pixels, i));
 
     return result;
   }

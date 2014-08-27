@@ -21,11 +21,12 @@ package adams.gui.visualization.image.plugins;
 
 import java.awt.image.BufferedImage;
 
-import weka.core.Instance;
 import adams.core.option.OptionUtils;
 import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.featureconverter.SpreadSheetFeatureConverter;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.features.Histogram;
+import adams.data.spreadsheet.Row;
 
 /**
  * Allows the user to apply a BufferedImage feature generator to an image in the ImageViewer.
@@ -34,7 +35,7 @@ import adams.data.jai.features.Histogram;
  * @version $Revision: 7713 $
  */
 public class BufferedImageFeatureGenerator
-  extends AbstractSelectedImagesFlattener {
+  extends AbstractSelectedImagesFeatureGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
@@ -97,23 +98,24 @@ public class BufferedImageFeatureGenerator
    * @return		the generated instances
    */
   @Override
-  protected Instance[] flatten(BufferedImage image) {
-    weka.core.Instance[]			result;
-    AbstractBufferedImageFeatureGenerator	flattener;
+  protected Row[] generateFeatures(BufferedImage image) {
+    Row[]					result;
+    AbstractBufferedImageFeatureGenerator	generator;
     BufferedImageContainer			input;
-    weka.core.Instance[]			flattened;
+    Row[]					features;
 
     result = null;
 
     setLastSetup(m_Editor.getValue());
-    flattener = (AbstractBufferedImageFeatureGenerator) m_Editor.getValue();
-    input       = new BufferedImageContainer();
+    generator = (AbstractBufferedImageFeatureGenerator) m_Editor.getValue();
+    generator.setConverter(new SpreadSheetFeatureConverter());
+    input     = new BufferedImageContainer();
     input.setImage(image);
-    flattened = flattener.generate(input);
-    if (flattened.length == 0)
-      m_FilterError = "No instances generated!";
-    if (flattened.length > 0)
-      result = flattened;
+    features = (Row[]) generator.generate(input);
+    if (features.length == 0)
+      m_FilterError = "No features generated!";
+    if (features.length > 0)
+      result = features;
 
     return result;
   }

@@ -26,14 +26,13 @@ import ij.process.ColorProcessor;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.option.AbstractOption;
+import adams.data.featureconverter.HeaderDefinition;
 import adams.data.imagej.ImagePlusContainer;
+import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
@@ -133,6 +132,7 @@ public class Histogram
      *
      * @return		the display string
      */
+    @Override
     public String toString() {
       return toDisplay();
     }
@@ -200,6 +200,7 @@ public class Histogram
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "Turns an image into a histogram.\n"
@@ -210,6 +211,7 @@ public class Histogram
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -253,42 +255,41 @@ public class Histogram
    * @param img		the image to act as a template
    * @return		the generated header
    */
-  public Instances createHeader(ImagePlusContainer img) {
-    Instances			result;
-    ArrayList<Attribute>	atts;
+  @Override
+  public HeaderDefinition createHeader(ImagePlusContainer img) {
+    HeaderDefinition		result;
     int				i;
     int				numAtts;
 
+    result  = new HeaderDefinition();
     numAtts = 256;
-    atts    = new ArrayList<Attribute>();
     for (i = 0; i < numAtts; i++) {
       switch (m_HistogramType) {
 	case EIGHT_BIT:
-	  atts.add(new Attribute("histo_" + (i+1)));
+	  result.add("histo_" + (i+1), DataType.NUMERIC);
 	  break;
 	case RGB:
-	  atts.add(new Attribute("histo_r_" + (i+1)));
-	  atts.add(new Attribute("histo_g_" + (i+1)));
-	  atts.add(new Attribute("histo_b_" + (i+1)));
+	  result.add("histo_r_" + (i+1), DataType.NUMERIC);
+	  result.add("histo_g_" + (i+1), DataType.NUMERIC);
+	  result.add("histo_b_" + (i+1), DataType.NUMERIC);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
       }
     }
-    result = new Instances(getClass().getName(), atts, 0);
 
     return result;
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
-  public Instance[] doGenerate(ImagePlusContainer img) {
-    Instance[]		result;
-    double[]		values;
+  @Override
+  public List<Object>[] generateRows(ImagePlusContainer img) {
+    List<Object>[]	result;
     Object		pixels;
     int			i;
     int			n;
@@ -299,15 +300,15 @@ public class Histogram
     byte[] 		G;
     byte[] 		B;
 
-    result = null;
-    values = newArray(m_Header.numAttributes());
+    result = new List[1];
+    result[0] = new ArrayList<Object>();
     ip     = img.getImage();
 
     switch (m_HistogramType) {
       case EIGHT_BIT:
 	pixels = ip.getProcessor().getHistogram();
 	for (i = 0; i < Array.getLength(pixels); i++)
-	  values[i] = Array.getDouble(pixels, i);
+	  result[0].add(Array.getDouble(pixels, i));
 	break;
 
       case RGB:
@@ -325,17 +326,19 @@ public class Histogram
 	  else if (n == 2)
 	    bp = new ByteProcessor(ip.getWidth(), ip.getHeight(), B, null);
 	  pixels = bp.getHistogram();
+	  // init list
+	  if (result[0].size() == 0) {
+	    for (i = 0; i < Array.getLength(pixels) * 3; i++)
+	      result[0].add(0);
+	  }
 	  for (i = 0; i < Array.getLength(pixels); i++)
-	    values[i*3 + n] = Array.getDouble(pixels, i);
+	    result[0].set(i*3 + n, Array.getDouble(pixels, i));
 	}
 	break;
 
       default:
 	throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
     }
-
-    result = new Instance[]{new DenseInstance(1.0, values)};
-    result[0].setDataset(m_Header);
 
     return result;
   }

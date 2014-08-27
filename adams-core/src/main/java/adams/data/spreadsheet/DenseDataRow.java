@@ -422,13 +422,12 @@ public class DenseDataRow
     if (getOwner() == null)
       return getClass().getSimpleName();
     
-    result = new StringBuilder("[");
-    for (i = 0; i < m_Cells.length; i++) {
+    result = new StringBuilder();
+    for (i = 0; i < getOwner().getColumnCount(); i++) {
       if (i > 0)
-	result.append(", ");
-      result.append(m_Cells[i].toString());
+	result.append(",");
+      result.append(getCell(i).toString());
     }
-    result.append("]");
     
     return result.toString();
   }

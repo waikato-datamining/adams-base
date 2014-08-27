@@ -20,21 +20,17 @@
 
 package adams.data.image;
 
-import java.util.logging.Level;
+import java.lang.reflect.Array;
+import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.SelectedTag;
-import weka.core.Utils;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Add;
 import adams.core.CleanUpHandler;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImage;
+import adams.data.featureconverter.AbstractFeatureConverter;
+import adams.data.featureconverter.HeaderDefinition;
+import adams.data.featureconverter.SpreadSheetFeatureConverter;
+import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 
@@ -52,9 +48,9 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;
 
-  /** the current header. */
-  protected Instances m_Header;
-
+  /** the feature converter to use. */
+  protected AbstractFeatureConverter m_Converter;
+  
   /** fields to add to the output data. */
   protected Field[] m_Fields;
 
@@ -67,6 +63,10 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+	    "converter", "converter",
+	    new SpreadSheetFeatureConverter());
 
     m_OptionManager.add(
 	    "field", "fields",
@@ -84,7 +84,37 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
   protected void reset() {
     super.reset();
 
-    m_Header = null;
+    if (m_Converter != null)
+      m_Converter.reset();
+  }
+
+  /**
+   * Sets the feature converter to use.
+   *
+   * @param value	the converter
+   */
+  public void setConverter(AbstractFeatureConverter value) {
+    m_Converter = value;
+    reset();
+  }
+
+  /**
+   * Returns the feature converter in use.
+   *
+   * @return		the converter
+   */
+  public AbstractFeatureConverter getConverter() {
+    return m_Converter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String converterTipText() {
+    return "The feature converter to use to produce the output data.";
   }
 
   /**
@@ -144,6 +174,24 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
   public String notesTipText() {
     return "The notes to add as attributes to the generated data, eg 'PROCESS INFORMATION'.";
   }
+  
+  /**
+   * Returns the class of the dataset that the converter generates.
+   * 
+   * @return		the format
+   */
+  public Class getDatasetFormat() {
+    return m_Converter.getDatasetFormat();
+  }
+  
+  /**
+   * Returns the class of the row that the converter generates.
+   * 
+   * @return		the format
+   */
+  public Class getRowFormat() {
+    return m_Converter.getRowFormat();
+  }
 
   /**
    * Optional checks of the image.
@@ -163,7 +211,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
    * @param img		the image to act as a template
    * @return		the generated header
    */
-  public abstract Instances createHeader(T img);
+  public abstract HeaderDefinition createHeader(T img);
 
   /**
    * Post-processes the header, adding fields and notes.
@@ -171,141 +219,87 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
    * @param header	the header to process
    * @return		the post-processed header
    */
-  public Instances postProcessHeader(Instances header) {
-    Instances	result;
-    int		i;
-    Add		add;
-    String	name;
+  public HeaderDefinition postProcessHeader(HeaderDefinition header) {
+    HeaderDefinition	result;
+    int			i;
     
     result = header;
-    name   = header.relationName();
     
     // notes
-    for (i = m_Notes.length - 1; i >= 0; i--) {
-      header = result;
-      try {
-	add = new Add();
-	add.setAttributeIndex("last");
-	add.setAttributeName(m_Notes[i].getValue());
-	add.setAttributeType(new SelectedTag(Attribute.STRING, Add.TAGS_TYPE));
-	add.setInputFormat(header);
-	result = Filter.useFilter(header, add);
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to add note '" + m_Notes[i] + "' as attribute:", e);
-      }
-    }
+    for (i = m_Notes.length - 1; i >= 0; i--)
+      header.add(m_Notes[i].getValue(), DataType.STRING);
     
     // fields
-    for (i = m_Fields.length - 1; i >= 0; i--) {
-      header = result;
-      try {
-	add = new Add();
-	add.setAttributeIndex("last");
-	add.setAttributeName(m_Fields[i].toDisplayString());
-	switch (m_Fields[i].getDataType()) {
-	  case BOOLEAN:
-	    add.setAttributeType(new SelectedTag(Attribute.NOMINAL, Add.TAGS_TYPE));
-	    add.setNominalLabels("no,yes");
-	    break;
-	  case NUMERIC:
-	    add.setAttributeType(new SelectedTag(Attribute.NUMERIC, Add.TAGS_TYPE));
-	    break;
-	  default:
-	    add.setAttributeType(new SelectedTag(Attribute.STRING, Add.TAGS_TYPE));
-	    break;
-	}
-	add.setInputFormat(header);
-	result = Filter.useFilter(header, add);
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to add field '" + m_Fields[i] + "' as attribute:", e);
-      }
-    }
-    
-    result.setRelationName(name);
+    for (i = m_Fields.length - 1; i >= 0; i--)
+      header.add(m_Fields[i].getName(), m_Fields[i].getDataType());
     
     return result;
   }
   
   /**
-   * Returns a double array filled with missing values.
-   * 
-   * @param numAttributes	the length of the array
-   * @return			the array
-   */
-  protected double[] newArray(int numAttributes) {
-    double[]	result;
-    int		i;
-    
-    result = new double[numAttributes];
-    for (i = 0; i < result.length; i++)
-      result[i] = Utils.missingValue();
-    
-    return result;
-  }
-  
-  /**
-   * Performs the actual flattening of the image. Will use the previously
-   * generated header.
+   * Performs the actual feature genration.
    *
    * @param img		the image to process
-   * @return		the generated array
-   * @see		#m_Header
+   * @return		the generated features
    */
-  public abstract Instance[] doGenerate(T img);
+  public abstract List<Object>[] generateRows(T img);
 
   /**
-   * Post-processes the generated instance, adding notes and fields.
+   * Post-processes the generated row, adding notes and fields.
    * 
    * @param img		the image container
    * @param inst	the inst to process
    * @return		the updated instance
    */
-  public Instance postProcessInstance(T img, Instance inst) {
-    Instance	result;
+  public List<Object> postProcessRow(T img, List<Object> data) {
     int		i;
-    Attribute	att;
-    double[]	values;
     String	valueStr;
     Report	report;
     
-    if ((m_Notes.length == 0) && (m_Fields.length == 0))
-      return inst;
-    values = inst.toDoubleArray();
-    
     // notes
     for (i = 0; i < m_Notes.length; i++) {
-      att      = m_Header.attribute(m_Notes[i].getValue());
       valueStr = img.getNotes().getPrefixSubset(m_Notes[i].getValue()).toString();
-      if (valueStr != null)
-	values[att.index()] = att.addStringValue(valueStr);
+      data.add(valueStr);
     }
     
     // fields
     report = img.getReport();
     for (i = 0; i < m_Fields.length; i++) {
-      att = m_Header.attribute(m_Fields[i].toDisplayString());
       if (report.hasValue(m_Fields[i])) {
 	switch (m_Fields[i].getDataType()) {
 	  case NUMERIC:
-	    values[att.index()] = report.getDoubleValue(m_Fields[i]);
+	    data.add(report.getDoubleValue(m_Fields[i]));
 	    break;
 	  case BOOLEAN:
-	    if (report.getBooleanValue(m_Fields[i]))
-	      values[att.index()] = 1.0;
-	    else
-	      values[att.index()] = 0.0;
+	    data.add(report.getBooleanValue(m_Fields[i]));
 	    break;
 	  default:
-	    values[att.index()] = att.addStringValue(report.getStringValue(m_Fields[i]));
+	    data.add(report.getStringValue(m_Fields[i]));
 	    break;
 	}
       }
+      else {
+	data.add(null);
+      }
     }
     
-    result = new DenseInstance(inst.weight(), values);
-    result.setDataset(m_Header);
+    return data;
+  }
+
+  /**
+   * Post-processes the generated rows, adding notes and fields.
+   * 
+   * @param img		the image container
+   * @param inst	the inst to process
+   * @return		the updated instance
+   */
+  public List<Object>[] postProcessRows(T img, List<Object>[] data) {
+    List<Object>[]	result;
+    int			i;
+    
+    result = new List[data.length];
+    for (i = 0; i < result.length; i++)
+      result[i] = postProcessRow(img, data[i]);
     
     return result;
   }
@@ -319,24 +313,28 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
    * @see		#m_Header
    * @see		#createHeader(T)
    */
-  public Instance[] generate(T img) {
-    Instance[]	result;
-    Instances	header;
-    int		i;
+  public Object[] generate(T img) {
+    Object[]		result;
+    HeaderDefinition	header;
+    List<Object>[]	data;
+    int			i;
 
     checkImage(img);
 
     // create header if necessary
-    if (m_Header == null) {
+    if (!m_Converter.isInitialized()) {
       header = createHeader(img);
       if (header == null)
 	throw new IllegalStateException("Failed to create header!");
-      m_Header = postProcessHeader(header);
+      header = postProcessHeader(header);
+      m_Converter.generateHeader(header);
     }
 
-    result = doGenerate(img);
+    data   = generateRows(img);
+    data   = postProcessRows(img, data);
+    result = (Object[]) Array.newInstance(m_Converter.getRowFormat(), data.length);
     for (i = 0; i < result.length; i++)
-      result[i] = postProcessInstance(img, result[i]);
+      result[i] = m_Converter.generateRow(data[i]);
 
     return result;
   }

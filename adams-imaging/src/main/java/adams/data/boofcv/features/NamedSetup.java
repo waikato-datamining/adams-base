@@ -15,27 +15,31 @@
 
 /*
  * NamedSetup.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.features;
 
-import weka.core.Instance;
-import weka.core.Instances;
+import java.util.List;
+
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.featureconverter.HeaderDefinition;
 
 /**
  <!-- globalinfo-start -->
- * Applies a BoofCV flattener that is referenced via its global setup name (see 'NamedSetups').
+ * Applies a BoofCV feature generator that is referenced via its global setup name (see 'NamedSetups').
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -78,7 +82,7 @@ public class NamedSetup
    */
   @Override
   public String globalInfo() {
-    return "Applies a BoofCV flattener that is referenced via its global setup name (see 'NamedSetups').";
+    return "Applies a BoofCV feature generator that is referenced via its global setup name (see 'NamedSetups').";
   }
 
   /**
@@ -157,18 +161,18 @@ public class NamedSetup
    * @return		the generated header
    */
   @Override
-  public Instances createHeader(BoofCVImageContainer img) {
+  public HeaderDefinition createHeader(BoofCVImageContainer img) {
     return getActualScheme().createHeader(img);
   }
 
   /**
-   * Performs the actual flattening of the image.
+   * Performs the actual feature generation.
    *
    * @param img		the image to process
-   * @return		the generated array
+   * @return		the generated features
    */
   @Override
-  public Instance[] doGenerate(BoofCVImageContainer img) {
-    return getActualScheme().generate(img);
+  public List<Object>[] generateRows(BoofCVImageContainer img) {
+    return getActualScheme().generateRows(img);
   }
 }

@@ -36,7 +36,7 @@ import boofcv.struct.image.ImageFloat32;
 
 /**
  <!-- globalinfo-start -->
- * Detects line segments in images.
+ * Detects line segments in images (line RANSAC).
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -134,7 +134,7 @@ public class BoofCVDetectLineSegments
    */
   @Override
   public String globalInfo() {
-    return "Detects line segments in images.";
+    return "Detects line segments in images (line RANSAC).";
   }
 
   /**

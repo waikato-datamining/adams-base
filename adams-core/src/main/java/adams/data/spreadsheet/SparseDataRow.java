@@ -282,4 +282,30 @@ public class SparseDataRow
       addCell(start + i).assign(other.getCell(i));
     }
   }
+
+  /**
+   * Returns the internal array of cells as string.
+   *
+   * @return		the values of the row
+   */
+  @Override
+  public String toString() {
+    StringBuilder	result;
+    int			i;
+    
+    if (getOwner() == null)
+      return getClass().getSimpleName();
+    
+    result = new StringBuilder();
+    for (i = 0; i < getOwner().getColumnCount(); i++) {
+      if (i > 0)
+	result.append(",");
+      if (!hasCell(i))
+	result.append(SpreadSheet.MISSING_VALUE);
+      else
+	result.append(getCell(i).toString());
+    }
+    
+    return result.toString();
+  }
 }
