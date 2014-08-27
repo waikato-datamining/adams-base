@@ -304,6 +304,9 @@ public class PixelClassifications
     pixels.setPixelType(m_PixelType);
     result = pixels.createHeader(img);
     pixels.destroy();
+    
+    // add classification
+    result.add("Classification", DataType.STRING);
 
     return result;
   }
