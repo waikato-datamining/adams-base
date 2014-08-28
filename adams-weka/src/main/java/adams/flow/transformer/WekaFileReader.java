@@ -30,7 +30,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.core.converters.SafeArffLoader;
+import weka.core.converters.AArffLoader;
 import weka.core.converters.URLSourcedLoader;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -180,7 +180,7 @@ public class WekaFileReader
 
     m_OptionManager.add(
 	    "loader", "customLoader",
-	    new SafeArffLoader());
+	    new AArffLoader());
 
     m_OptionManager.add(
 	    "output-type", "outputType",
@@ -431,7 +431,7 @@ public class WekaFileReader
       }
       else {
 	if (isArff) {
-	  loader = new SafeArffLoader();
+	  loader = new AArffLoader();
 	  if (url != null)
 	    ((URLSourcedLoader) loader).setURL(url.toString());
 	  else

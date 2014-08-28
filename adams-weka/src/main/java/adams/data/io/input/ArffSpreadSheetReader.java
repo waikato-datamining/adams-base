@@ -20,7 +20,7 @@
 package adams.data.io.input;
 
 import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.SafeArffLoader;
+import weka.core.converters.AArffLoader;
 import adams.data.io.output.ArffSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 
@@ -87,6 +87,6 @@ public class ArffSpreadSheetReader
    */
   @Override
   protected AbstractFileLoader newLoader() {
-    return new SafeArffLoader();
+    return new AArffLoader();
   }
 }

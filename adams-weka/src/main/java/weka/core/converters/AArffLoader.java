@@ -30,13 +30,13 @@ import weka.core.Instances;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SafeArffLoader
+public class AArffLoader
   extends ArffLoader {
 
   /** for serialization. */
   private static final long serialVersionUID = 8739929496992782311L;
 
-  public static class SafeArffReader
+  public static class AArffReader
     extends ArffReader {
 
     /**
@@ -47,12 +47,12 @@ public class SafeArffLoader
      * @throws IOException if something goes wrong
      * @see #getData()
      */
-    public SafeArffReader(Reader reader) throws IOException {
+    public AArffReader(Reader reader) throws IOException {
       super(reader);
       setRetainStringValues(true);
     }
 
-    public SafeArffReader(Reader reader, int capacity) throws IOException {
+    public AArffReader(Reader reader, int capacity) throws IOException {
       super(reader, capacity);
       setRetainStringValues(true);
     }
@@ -68,7 +68,7 @@ public class SafeArffLoader
      * @see #getStructure()
      * @see #readInstance(Instances)
      */
-    public SafeArffReader(Reader reader, int capacity, boolean batch) throws IOException {
+    public AArffReader(Reader reader, int capacity, boolean batch) throws IOException {
       super(reader, capacity, batch);
       setRetainStringValues(true);
     }
@@ -83,7 +83,7 @@ public class SafeArffLoader
      * @throws IOException if something goes wrong
      * @see #getData()
      */
-    public SafeArffReader(Reader reader, Instances template, int lines) throws IOException {
+    public AArffReader(Reader reader, Instances template, int lines) throws IOException {
       super(reader, template, lines);
       setRetainStringValues(true);
     }
@@ -100,7 +100,7 @@ public class SafeArffLoader
      * @throws IOException if something goes wrong
      * @see #getData()
      */
-    public SafeArffReader(Reader reader, Instances template, int lines, int capacity) throws IOException {
+    public AArffReader(Reader reader, Instances template, int lines, int capacity) throws IOException {
       super(reader, template, lines, capacity);
       setRetainStringValues(true);
     }
@@ -119,7 +119,7 @@ public class SafeArffLoader
      * @throws IOException if something goes wrong
      * @see #getData()
      */
-    public SafeArffReader(Reader reader, Instances template, int lines, int capacity, boolean batch) throws IOException {
+    public AArffReader(Reader reader, Instances template, int lines, int capacity, boolean batch) throws IOException {
       super(reader, template, lines, capacity, batch);
       setRetainStringValues(true);
     }
@@ -159,7 +159,7 @@ public class SafeArffLoader
 
       try {
         m_ArffReader =
-          new SafeArffReader(m_sourceReader, 1, (getRetrieval() == BATCH));
+          new AArffReader(m_sourceReader, 1, (getRetrieval() == BATCH));
         m_structure = m_ArffReader.getStructure();
       } catch (Exception ex) {
         throw new IOException("Unable to determine structure as arff (Reason: "

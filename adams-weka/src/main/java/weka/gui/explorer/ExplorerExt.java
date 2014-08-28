@@ -34,16 +34,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ArffLoader;
 import weka.core.converters.ConverterUtils;
 import weka.core.converters.ConverterUtils.DataSink;
 import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
 import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
+import weka.gui.ExtensionFileFilter;
 import weka.gui.LookAndFeel;
 import weka.gui.explorer.panels.AbstractAdditionalExplorerPanel;
 import weka.gui.explorer.panels.AdditionalExplorerPanel;
@@ -158,10 +161,28 @@ public class ExplorerExt
     AdditionalExplorerPanel		additional;
     ExplorerPanel			panel;
     AbstractExplorerPanelHandler	handler;
+    ExtensionFileFilter			extFilter;
+    boolean				finished;
     
     hideButtons(getPreprocessPanel());
     m_FileChooser = getPreprocessPanel().m_FileChooser;
     AdamsHelper.updateFileChooserAccessory(m_FileChooser);
+    
+    finished = false;
+    for (FileFilter filter: m_FileChooser.getChoosableFileFilters()) {
+      if (filter instanceof ExtensionFileFilter) {
+	extFilter = (ExtensionFileFilter) filter;
+	for (String ext: extFilter.getExtensions())  {
+	  if (ext.equals(ArffLoader.FILE_EXTENSION)) {
+	    m_FileChooser.setFileFilter(filter);
+	    finished = true;
+	    break;
+	  }
+	}
+      }
+      if (finished)
+	break;
+    }
     
     classnames = AbstractAdditionalExplorerPanel.getPanels();
     for (String classname: classnames) {
