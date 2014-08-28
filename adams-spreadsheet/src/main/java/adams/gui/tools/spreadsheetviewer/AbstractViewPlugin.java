@@ -150,6 +150,17 @@ public abstract class AbstractViewPlugin
   }
   
   /**
+   * Returns whether the dialog requires the OK/Cancel buttons.
+   * <p/>
+   * Default implementation returns true.
+   * 
+   * @return		true if the dialog requires the buttons
+   */
+  public boolean requiresButtons() {
+    return true;
+  }
+  
+  /**
    * Performs the actual generation of the information.
    * 
    * @param sheet	the sheet to process

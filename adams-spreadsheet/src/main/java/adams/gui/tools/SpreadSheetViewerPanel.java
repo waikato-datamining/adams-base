@@ -1409,6 +1409,8 @@ public class SpreadSheetViewerPanel
     if (plugin.getMenuIcon() != null)
       dialog.setIconImage(GUIHelper.getIcon(plugin.getMenuIcon()).getImage());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setCancelVisible(plugin.requiresButtons());
+    dialog.setApproveVisible(plugin.requiresButtons());
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
