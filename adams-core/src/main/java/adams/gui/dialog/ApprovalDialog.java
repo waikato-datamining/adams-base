@@ -28,7 +28,6 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import adams.gui.core.GUIHelper;
 
@@ -432,20 +431,6 @@ public class ApprovalDialog
    */
   public int getCancelMnemonic() {
     return m_ButtonCancel.getMnemonic();
-  }
-  
-  /**
-   * Returns a panel for buttons. By default, only the right one is 
-   * initialized with buttons.
-   * 
-   * @param left	whether to retrieve the left or right panel
-   * @return		the specified panel
-   */
-  public JPanel getButtonsPanel(boolean left) {
-    if (left)
-      return m_PanelButtonsLeft;
-    else
-      return m_PanelButtonsRight;
   }
 
   /**

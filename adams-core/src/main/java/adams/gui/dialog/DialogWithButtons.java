@@ -156,4 +156,27 @@ public class DialogWithButtons
     m_PanelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_PanelButtons.add(m_PanelButtonsRight, BorderLayout.EAST);
   }
+  
+  /**
+   * Returns the parent panel for left/right buttons.
+   * 
+   * @return		the panel
+   */
+  public JPanel getButtonsPanel() {
+    return m_PanelButtons;
+  }
+  
+  /**
+   * Returns a panel for buttons. By default, only the right one is 
+   * initialized with buttons.
+   * 
+   * @param left	whether to retrieve the left or right panel
+   * @return		the specified panel
+   */
+  public JPanel getButtonsPanel(boolean left) {
+    if (left)
+      return m_PanelButtonsLeft;
+    else
+      return m_PanelButtonsRight;
+  }
 }
