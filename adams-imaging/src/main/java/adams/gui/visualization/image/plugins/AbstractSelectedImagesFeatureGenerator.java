@@ -269,8 +269,8 @@ public abstract class AbstractSelectedImagesFeatureGenerator
 	    super.done();
 	    if (msg != null) {
 	      GUIHelper.showErrorMessage(m_CurrentPanel, msg);
-	      ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
-	      ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine());
+	      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
+	      ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine() + "\n");
 	      flow.destroy();
 	    }
 	    else {
