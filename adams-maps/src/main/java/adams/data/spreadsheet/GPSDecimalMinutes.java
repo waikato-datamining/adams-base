@@ -26,7 +26,8 @@ package adams.data.spreadsheet;
  * @version $Revision$
  */
 public class GPSDecimalMinutes
-  extends AbstractObjectHandler<adams.data.gps.AbstractGPS> {
+  extends AbstractObjectHandler<adams.data.gps.AbstractGPS>
+  implements GPSObjectHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 6259928028346964272L;
