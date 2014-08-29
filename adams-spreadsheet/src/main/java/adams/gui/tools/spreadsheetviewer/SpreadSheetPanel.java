@@ -362,8 +362,8 @@ public class SpreadSheetPanel
         super.done();
         if (msg != null) {
           GUIHelper.showErrorMessage(SpreadSheetPanel.this, msg);
-          ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
-          ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine());
+          ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
+          ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine() + "\n");
           flow.destroy();
         }
         else {
