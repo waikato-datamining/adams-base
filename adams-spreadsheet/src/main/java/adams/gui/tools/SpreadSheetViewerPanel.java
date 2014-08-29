@@ -24,6 +24,8 @@ import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -1381,7 +1383,7 @@ public class SpreadSheetViewerPanel
    *
    * @param plugin	for generating the view
    */
-  protected void view(AbstractViewPlugin plugin) {
+  protected void view(final AbstractViewPlugin plugin) {
     BasePanel		panel;
     SpreadSheet		sheet;
     ApprovalDialog	dialog;
@@ -1395,9 +1397,10 @@ public class SpreadSheetViewerPanel
 
     plugin.setCurrentPanel(current);
     panel = plugin.generate(sheet);
-    plugin.setCurrentPanel(null);
-    if (plugin.getCanceledByUser() || (panel == null))
+    if (plugin.getCanceledByUser() || (panel == null)) {
+      plugin.setCurrentPanel(null);
       return;
+    }
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
     else
@@ -1413,6 +1416,16 @@ public class SpreadSheetViewerPanel
     dialog.setApproveVisible(plugin.requiresButtons());
     dialog.pack();
     dialog.setLocationRelativeTo(this);
+    dialog.addWindowListener(new WindowAdapter() {
+      /* (non-Javadoc)
+       * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+       */
+      @Override
+      public void windowClosing(WindowEvent e) {
+        super.windowClosing(e);
+        plugin.setCurrentPanel(null);
+      }
+    });
     dialog.setVisible(true);
   }
 
