@@ -75,8 +75,8 @@ public class SpreadSheetPanel
   /** the search panel. */
   protected SearchPanel m_PanelSearch;
   
-  /** the generated charts. */
-  protected List<Flow> m_Charts;
+  /** the generated flows (eg charts). */
+  protected List<Flow> m_GeneratedFlows;
 
   /**
    * Initializes the panel.
@@ -95,7 +95,7 @@ public class SpreadSheetPanel
   protected void initialize() {
     super.initialize();
     
-    m_Charts = new ArrayList<Flow>();
+    m_GeneratedFlows = new ArrayList<Flow>();
   }
   
   /**
@@ -367,7 +367,7 @@ public class SpreadSheetPanel
           flow.destroy();
         }
         else {
-          m_Charts.add(flow);
+          addGeneratedFlow(flow);
         }
       }
     };
@@ -376,11 +376,20 @@ public class SpreadSheetPanel
   }
   
   /**
+   * Adds the flow to the list of flows to clean up.
+   * 
+   * @param flow	the flow to clean up
+   */
+  public void addGeneratedFlow(Flow flow) {
+    m_GeneratedFlows.add(flow);
+  }
+  
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    for (Flow flow: m_Charts)
+    for (Flow flow: m_GeneratedFlows)
       flow.destroy();
-    m_Charts.clear();
+    m_GeneratedFlows.clear();
   }
 }
