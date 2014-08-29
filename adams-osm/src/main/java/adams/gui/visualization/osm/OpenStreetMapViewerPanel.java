@@ -137,7 +137,7 @@ public class OpenStreetMapViewerPanel
       ConsolePanel.getSingleton().append(
 	  OutputType.ERROR, 
 	  "Failed to use tile source from provider: " + props.getProperty("TileSourceProvider") + "\n" 
-	  + Utils.throwableToString(e));
+	  + Utils.throwableToString(e) + "\n");
       m_Viewer.getViewer().setTileSource(new Mapnik());
     }
 
