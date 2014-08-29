@@ -954,7 +954,7 @@ public class ImageViewerPanel
     catch (Exception e) {
       msg = "Failed to " + operation + ":\n" + Utils.throwableToString(e);
       GUIHelper.showErrorMessage(this, msg);
-      ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
     }
   }
   
