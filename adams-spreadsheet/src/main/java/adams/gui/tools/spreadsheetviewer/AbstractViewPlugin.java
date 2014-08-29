@@ -50,6 +50,9 @@ public abstract class AbstractViewPlugin
   /** the current panel. */
   protected SpreadSheetPanel m_CurrentPanel;
 
+  /** the generated panel. */
+  protected BasePanel m_Panel;
+  
   /** whether the user canceled the operation. */
   protected boolean m_CanceledByUser;
 
@@ -183,7 +186,9 @@ public abstract class AbstractViewPlugin
     if (msg != null)
       throw new IllegalArgumentException(msg);
     
-    return doGenerate(sheet);
+    m_Panel = doGenerate(sheet);
+    
+    return m_Panel;
   }
   
   /**
