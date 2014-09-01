@@ -507,6 +507,8 @@ public class ImagePanel
      */
     public void clearImageOverlays() {
       synchronized (m_ImageOverlays) {
+	for (ImageOverlay overlay: m_ImageOverlays)
+	  overlay.cleanUp();
 	m_ImageOverlays.clear();
       }
       update();

@@ -21,6 +21,7 @@ package adams.gui.visualization.image;
 
 import java.awt.Graphics;
 
+import adams.core.CleanUpHandler;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
@@ -29,7 +30,8 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface ImageOverlay {
+public interface ImageOverlay
+  extends CleanUpHandler {
 
   /**
    * Notifies the overlay that the image has changed.
