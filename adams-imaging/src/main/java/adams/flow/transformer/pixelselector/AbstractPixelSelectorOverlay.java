@@ -15,7 +15,7 @@
 
 /**
  * AbstractPixelSelectorOverlay.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
@@ -50,6 +50,7 @@ public abstract class AbstractPixelSelectorOverlay
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     StringBuilder	result;
     Class[]		actions;
@@ -139,5 +140,12 @@ public abstract class AbstractPixelSelectorOverlay
    */
   public AbstractPixelSelectorOverlay shallowCopy(boolean expand) {
     return (AbstractPixelSelectorOverlay) OptionUtils.shallowCopy(this, expand);
+  }
+  
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
   }
 }
