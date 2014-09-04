@@ -151,6 +151,10 @@ There are four ImageJ actors available:
 	\texttt{ImagePlusContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
+	\item \texttt{transformer.ImageJReleaseAllImages} -- removes all images
+	currently listed in ImageJ's batch mode list, freeing up memory.
+	\item \texttt{sink.ImageJReleaseImage} -- removes the incoming image from
+	ImageJ's batch mode list of images, freeing up memory.
 	\item \texttt{sink.ImageJWriter} -- for writing an \texttt{ImagePlusContainer}
 	to a file format that ImageJ supports. If the image type cannot be
 	determined based on the extension, you can also specify which type to generate.
