@@ -226,11 +226,11 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
     result = header;
     
     // notes
-    for (i = m_Notes.length - 1; i >= 0; i--)
+    for (i = 0; i < m_Notes.length; i++)
       header.add(m_Notes[i].getValue(), DataType.STRING);
     
     // fields
-    for (i = m_Fields.length - 1; i >= 0; i--)
+    for (i = 0; i < m_Fields.length; i++)
       header.add(m_Fields[i].getName(), m_Fields[i].getDataType());
     
     return result;
