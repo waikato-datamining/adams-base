@@ -50,6 +50,15 @@ public abstract class AbstractSetupOptionPanel
   }
   
   /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    update();
+  }
+  
+  /**
    * Sets the setup panel this option panel belongs to.
    * 
    * @param value	the owner
@@ -75,5 +84,13 @@ public abstract class AbstractSetupOptionPanel
       return;
     if (m_Owner != null)
       m_Owner.setModified(true);
+  }
+  
+  /**
+   * Performs GUI updates.
+   * <p/>
+   * Default implementation does nothing.
+   */
+  protected void update() {
   }
 }

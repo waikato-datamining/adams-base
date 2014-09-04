@@ -198,7 +198,9 @@ public class ClassifierPanel
   /**
    * Updates the buttons.
    */
+  @Override
   protected void update() {
+    super.update();
     m_ButtonEdit.setEnabled(m_List.getSelectedIndices().length == 1);
     m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
     m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);

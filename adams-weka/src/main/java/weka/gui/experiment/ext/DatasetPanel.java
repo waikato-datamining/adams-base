@@ -199,4 +199,16 @@ public class DatasetPanel
     
     return result;
   }
+  
+  /**
+   * Updates the buttons.
+   */
+  @Override
+  protected void update() {
+    super.update();
+    m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
+    m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
+    m_ButtonUp.setEnabled(m_List.canMoveUp());
+    m_ButtonDown.setEnabled(m_List.canMoveDown());
+  }
 }
