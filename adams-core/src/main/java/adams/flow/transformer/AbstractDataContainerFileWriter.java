@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -175,29 +175,19 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /**
-   * Executes the flow item.
-   *
+   * Performs the actual writing.
+   * 
+   * @param conts	the container array (if an array was received)
+   * @param cont	the container (if a single container was received)
    * @return		null if everything is fine, otherwise error message
    */
-  @Override
-  protected String doExecute() {
+  protected String doWrite(T[] conts, T cont) {
     String		result;
     PlaceholderFile	file;
-    T			cont;
-    T[]			conts;
     boolean		success;
     String[]		ext;
 
     result = null;
-
-    if (m_InputToken.getPayload().getClass().isArray()) {
-      conts = (T[]) m_InputToken.getPayload();
-      cont  = conts[0];
-    }
-    else {
-      conts = null;
-      cont  = (T) m_InputToken.getPayload();
-    }
 
     // extensions
     if (m_Writer instanceof MetaFileWriter)
@@ -247,6 +237,31 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
       result = handleException("Error writing container(s) to '" + file + "': ", e);
       return result;
     }
+
+    return result;
+  }
+  
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String		result;
+    T			cont;
+    T[]			conts;
+
+    if (m_InputToken.getPayload().getClass().isArray()) {
+      conts = (T[]) m_InputToken.getPayload();
+      cont  = conts[0];
+    }
+    else {
+      conts = null;
+      cont  = (T) m_InputToken.getPayload();
+    }
+    
+    result = doWrite(conts, cont);
 
     return result;
   }

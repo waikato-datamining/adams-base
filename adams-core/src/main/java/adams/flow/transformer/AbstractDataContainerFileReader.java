@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -57,7 +57,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   protected AbstractDataContainerReader<T> m_Reader;
 
   /** the chromatograms that were read. */
-  protected List<T> m_Containers;
+  protected List m_Containers;
 
   /**
    * Adds options to the internal list of options.
@@ -167,7 +167,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_CONTAINERS)) {
-      m_Containers = (List<T>) state.get(BACKUP_CONTAINERS);
+      m_Containers = (List) state.get(BACKUP_CONTAINERS);
       state.remove(BACKUP_CONTAINERS);
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   protected void reset() {
     super.reset();
 
-    m_Containers = new ArrayList<T>();
+    m_Containers = new ArrayList();
   }
 
   /**
