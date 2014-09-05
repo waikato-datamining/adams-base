@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -264,6 +264,9 @@ public class Placeholders {
     int			bestLeft;
     int			currLeft;
 
+    if (s == null)
+      return s;
+    
     result  = s;
     bestKey = null;
     if ((result.length() > 0) && !result.equals(".")) {
@@ -296,6 +299,7 @@ public class Placeholders {
    *
    * @return		the properties as (simple) string
    */
+  @Override
   public String toString() {
     return m_Placeholders.toStringSimple();
   }
