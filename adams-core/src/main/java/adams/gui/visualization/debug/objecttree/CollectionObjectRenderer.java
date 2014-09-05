@@ -15,7 +15,7 @@
 
 /**
  * CollectionObjectRenderer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -67,7 +67,7 @@ public class CollectionObjectRenderer
       i++;
       next = iter.next();
       renderer = AbstractObjectPlainTextRenderer.getRenderer(next).get(0);
-      result.append((i+1) + ": ");
+      result.append(i + ": ");
       result.append(renderer.render(next));
       result.append("\n");
     }
