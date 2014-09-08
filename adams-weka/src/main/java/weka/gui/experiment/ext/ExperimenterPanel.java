@@ -42,6 +42,8 @@ import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 
+import com.googlecode.jfilechooserbookmarks.core.Utils;
+
 /**
  * The Experimenter panel.
  * 
@@ -154,6 +156,8 @@ public class ExperimenterPanel
     
     setup.setOwner(this);
     m_TabbedPane.setComponentAt(0, setup);
+    
+    logMessage("New setup: " + current.getClass().getName());
   }
 
   /**
@@ -181,18 +185,23 @@ public class ExperimenterPanel
    */
   public void open(File file) {
     Experiment	exp;
+    String	msg;
     
+    logMessage("Loading " + file + "...");
     exp = m_PanelSetup.getExperimentIO().load(file);
-    if ((exp != null) && (m_PanelSetup.handlesExperiment(exp))) {
+    if (exp == null)
+      msg = "Failed to load experiment";
+    else
+      msg = m_PanelSetup.handlesExperiment(exp);
+    if (msg == null) {
       m_PanelSetup.setExperiment(exp);
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       update();
+      logMessage("Loaded " + file);
     }
     else {
-      GUIHelper.showErrorMessage(this,
-	  "Cannot handle experiment stored in " + file + "!\n",
-	  "Load experiment");
+      logError("Cannot handle experiment stored in " + file + "!\n" + msg, "Load experiment");
     }
   }
   
@@ -223,19 +232,17 @@ public class ExperimenterPanel
    */
   public void save(File file) {
     try {
+      logMessage("Saving experiment to " + file);
       Experiment.write(file.getAbsolutePath(), getExperiment());
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(m_CurrentFile);
       update();
+      logMessage("Saved experiment to " + file);
     }
     catch (Exception e) {
-      System.err.println("Failed to save experiment to " + file + "!");
-      e.printStackTrace();
-      GUIHelper.showErrorMessage(this,
-	  "Failed to save experiment to " + file + "!\n" + e,
-	  "Save experiment");
+      logError("Failed to save experiment to " + file + "!\n" + Utils.throwableToString(e), "Save experiment");
     }
   }
 
@@ -300,11 +307,7 @@ public class ExperimenterPanel
 	  submenu.add(menuitem);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate experiment: " + cls);
-	  e.printStackTrace();
-	  GUIHelper.showErrorMessage(this,
-	      "Failed to instantiate experiment: " + cls,
-	      "New experiment");
+	  logError("Failed to instantiate experiment: " + cls + "\n" + Utils.throwableToString(e), "New experiment");
 	}
       }
 
@@ -459,7 +462,28 @@ public class ExperimenterPanel
    * @param exp		the experiment to check
    * @return		true if can be handled
    */
-  public boolean handlesExperiment(Experiment exp) {
+  public String handlesExperiment(Experiment exp) {
     return m_PanelSetup.handlesExperiment(exp);
+  }
+  
+  /**
+   * Logs the message.
+   * 
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    m_PanelLog.append(msg);
+  }
+  
+  /**
+   * Logs the error message and also displays an error dialog.
+   * 
+   * @param msg		the error message
+   */
+  public void logError(String msg, String title) {
+    m_PanelLog.append(msg);
+    GUIHelper.showErrorMessage(this,
+	msg,
+	title);
   }
 }

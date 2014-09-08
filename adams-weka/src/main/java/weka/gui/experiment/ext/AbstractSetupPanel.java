@@ -97,9 +97,9 @@ public abstract class AbstractSetupPanel<T extends Experiment>
    * Checks whether the experiment can be handled.
    * 
    * @param exp		the experiment to check
-   * @return		true if can be handled
+   * @return		null if can handle, otherwise error message
    */
-  public abstract boolean handlesExperiment(T exp);
+  public abstract String handlesExperiment(T exp);
 
   /**
    * Sets the modified state.
@@ -111,7 +111,8 @@ public abstract class AbstractSetupPanel<T extends Experiment>
     if (m_IgnoreChanges)
       return;
     m_Modified = value;
-    getOwner().update();
+    if (getOwner() != null)
+      getOwner().update();
   }
   
   /**

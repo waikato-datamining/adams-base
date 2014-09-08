@@ -97,7 +97,7 @@ public class OutputPanel
     m_ComboBoxOutput.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	AbstractOutputPanel m_Panel = m_Panels.get((String) m_ComboBoxOutput.getSelectedItem());
+	m_Panel = m_Panels.get((String) m_ComboBoxOutput.getSelectedItem());
 	removeAll();
 	add(m_PanelComboBox, BorderLayout.WEST);
 	add(m_Panel, BorderLayout.CENTER);

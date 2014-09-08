@@ -69,8 +69,24 @@ public class LogPanel
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	m_TextArea.setText("");
+	clear();
       }
     });
+  }
+  
+  /**
+   * Clears the content.
+   */
+  public void clear() {
+    m_TextArea.setText("");
+  }
+  
+  /**
+   * Appends the log message.
+   * 
+   * @param msg		the log message
+   */
+  public void append(String msg) {
+    m_TextArea.append(msg + "\n");
   }
 }
