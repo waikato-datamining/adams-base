@@ -30,6 +30,10 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import weka.core.Instances;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils;
 import weka.experiment.Experiment;
 import weka.gui.ConverterFileChooser;
 import adams.core.Properties;
@@ -220,7 +224,7 @@ public class ExperimenterPanel
     Experiment	exp;
     String	msg;
     
-    logMessage("Loading " + file + "...");
+    logMessage("Loading setup from " + file + "...");
     exp = m_PanelSetup.getExperimentIO().load(file);
     if (exp == null)
       msg = "Failed to load experiment";
@@ -231,7 +235,7 @@ public class ExperimenterPanel
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       update();
-      logMessage("Loaded " + file);
+      logMessage("Loaded setup from " + file);
     }
     else {
       logError("Cannot handle experiment stored in " + file + "!\n" + msg, "Load experiment");
@@ -307,7 +311,7 @@ public class ExperimenterPanel
    * Starts the execution.
    */
   public void startExecution() {
-    // TODO make it a thread?
+    // TODO make it a thread? See RunPanel
     try {
       m_Experiment = getExperiment();
       logMessage("Initializing...");
@@ -334,7 +338,16 @@ public class ExperimenterPanel
    * Loads the results from a file.
    */
   public void openResults() {
-    // TODO
+    int 	retVal;
+    
+    retVal = m_FileChooserResults.showOpenDialog(this);
+    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+      return;
+
+    if (m_RecentFilesHandlerResults != null)
+      m_RecentFilesHandlerSetups.addRecentItem(m_FileChooserResults.getSelectedFile());
+    openResults(m_FileChooserResults.getSelectedFile());
+    update();
   }
   
   /**
@@ -352,7 +365,30 @@ public class ExperimenterPanel
    * @param file	the file to load the results from
    */
   public void openResults(File file) {
-    // TODO
+    AbstractFileLoader 	loader;
+    Instances		results;
+    String		msg;
+    
+    logMessage("Loading results " + file + "...");
+    loader = ConverterUtils.getLoaderForFile(file);
+    if (loader == null) {
+      logError("Failed to determine file loader for the following file:\n" + file, "Loading results");
+      return;
+    }
+    
+    try {
+      loader.setFile(file);
+      results = loader.getDataSet();
+      msg     = m_PanelAnalysis.handlesResults(results);
+      if (msg == null)
+	m_PanelAnalysis.setResults(results);
+      else
+	logError("Cannot handle results from " + file + "\n" + msg, "Loading results");
+    }
+    catch (Exception e) {
+      msg = "Failed to load results from " + file + "\n" + Utils.throwableToString(e);
+      logError("Cannot handle results from " + file + "\n" + msg, "Loading results");
+    }
   }
 
   /**
@@ -366,7 +402,13 @@ public class ExperimenterPanel
    * Saves the results to a file.
    */
   public void saveResults() {
-    // TODO
+    int		retVal;
+    
+    retVal = m_FileChooserResults.showSaveDialog(this);
+    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+      return;
+    
+    saveResults(m_FileChooserResults.getSelectedFile(), m_FileChooserResults.getSaver());
   }
 
   /**
@@ -375,7 +417,33 @@ public class ExperimenterPanel
    * @param file	the file to save the results to
    */
   public void saveResults(File file) {
-    // TODO
+    AbstractFileSaver	saver;
+
+    saver = ConverterUtils.getSaverForFile(file);
+    if (saver == null)
+      logError("Failed to determine file saver for " + file, "Saving results");
+    else
+      saveResults(file, saver);
+  }
+
+  /**
+   * Saves the results to the file.
+   * 
+   * @param file	the file to save the results to
+   * @param saver	the saver to use
+   */
+  protected void saveResults(File file, AbstractFileSaver saver) {
+    try {
+      logMessage("Saving results to " + file + "...");
+      saver.setInstances(m_PanelAnalysis.getResults());
+      saver.writeBatch();
+      logMessage("Results saved to " + file);
+      if (m_RecentFilesHandlerResults != null)
+	m_RecentFilesHandlerResults.addRecentItem(file);
+    }
+    catch (Exception e) {
+      logError("Failed to save results to " + file + "\n" + Utils.throwableToString(e), "Saving results");
+    }
   }
 
   /**
@@ -635,7 +703,7 @@ public class ExperimenterPanel
     m_MenuItemExecutionStop.setEnabled(isExecuting());
     
     // Analysis
-    m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.getResults() != null);
+    m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.hasResults());
   }
   
   /**

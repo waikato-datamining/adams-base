@@ -143,6 +143,28 @@ public class AnalysisPanel
   }
 
   /**
+   * Checks whether the results can be handled at all.
+   * 
+   * @param results	the results to check
+   * @return		null if can handle, otherwise error message
+   */
+  public String handlesResults(Instances results) {
+    if (m_PanelAnalysis != null)
+      return m_PanelAnalysis.handlesResults(results);
+    else
+      return "No analysis panel available!";
+  }
+
+  /**
+   * Checks whether there are any results available.
+   * 
+   * @return		true if results available
+   */
+  public boolean hasResults() {
+    return (getResults() != null);
+  }
+  
+  /**
    * Sets the results to use for analysis.
    * 
    * @param value	the results

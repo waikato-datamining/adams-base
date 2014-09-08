@@ -19,6 +19,8 @@
  */
 package weka.gui.experiment.ext;
 
+import weka.core.Instances;
+
 /**
  * Default panel for analyzing results from experiments.
  * 
@@ -39,5 +41,17 @@ public class DefaultAnalysisPanel
   @Override
   public String getAnalysisName() {
     return "Default";
+  }
+
+  /**
+   * Checks whether the results can be handled at all.
+   * 
+   * @param results	the results to check
+   * @return		null if can handle, otherwise error message
+   */
+  @Override
+  public String handlesResults(Instances results) {
+    // TODO
+    return null;
   }
 }

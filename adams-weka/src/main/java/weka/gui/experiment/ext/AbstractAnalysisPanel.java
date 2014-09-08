@@ -64,6 +64,14 @@ public abstract class AbstractAnalysisPanel
   public abstract String getAnalysisName();
 
   /**
+   * Checks whether the results can be handled at all.
+   * 
+   * @param results	the results to check
+   * @return		null if can handle, otherwise error message
+   */
+  public abstract String handlesResults(Instances results);
+  
+  /**
    * Sets the results to analyze.
    * 
    * @param value	the results
