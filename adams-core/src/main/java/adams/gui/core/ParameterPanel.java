@@ -181,9 +181,10 @@ public class ParameterPanel
    *
    * @param label	the label to add, the mnemonic to use is preceded by "_"
    * @param comp	the component to add
+   * @return		the index of the parameter
    */
-  public void addParameter(String label, Component comp) {
-    addParameter(false, label, comp);
+  public int addParameter(String label, Component comp) {
+    return addParameter(false, label, comp);
   }
 
   /**
@@ -192,29 +193,32 @@ public class ParameterPanel
    * @param checked	whether the checkbox is checked
    * @param label	the label to add, the mnemonic to use is preceded by "_"
    * @param comp	the component to add
+   * @return		the index of the parameter
    */
-  public void addParameter(boolean checked, String label, Component comp) {
-    addParameter(-1, checked, label, comp);
+  public int addParameter(boolean checked, String label, Component comp) {
+    return addParameter(-1, checked, label, comp);
   }
 
   /**
    * Adds the chooser panel at the end. Cannot be used if checkboxes used.
    *
    * @param chooser	the chooser panel to add
+   * @return		the index of the parameter
    * @see		#useCheckBoxes()
    */
-  public void addParameter(AbstractChooserPanel chooser) {
-    addParameter(false, chooser);
+  public int addParameter(AbstractChooserPanel chooser) {
+    return addParameter(false, chooser);
   }
 
   /**
    * Adds the chooser panel at the end. Cannot be used if checkboxes used.
    *
    * @param chooser	the chooser panel to add
+   * @return		the index of the parameter
    * @see		#useCheckBoxes()
    */
-  public void addParameter(boolean checked, AbstractChooserPanel chooser) {
-    addParameter(-1, false, chooser);
+  public int addParameter(boolean checked, AbstractChooserPanel chooser) {
+    return addParameter(-1, false, chooser);
   }
 
   /**
@@ -224,9 +228,10 @@ public class ParameterPanel
    * 			add the component at the end
    * @param label	the label to add, the mnemonic to use is preceded by "_"
    * @param comp	the component to add
+   * @return		the index of the parameter
    */
-  public void addParameter(int index, String label, Component comp) {
-    addParameter(index, false, label, comp);
+  public int addParameter(int index, String label, Component comp) {
+    return addParameter(index, false, label, comp);
   }
 
   /**
@@ -237,8 +242,9 @@ public class ParameterPanel
    * @param checked	whether the checkbox is checked
    * @param label	the label to add, the mnemonic to use is preceded by "_"
    * @param comp	the component to add
+   * @return		the index of the parameter
    */
-  public void addParameter(int index, boolean checked, String label, Component comp) {
+  public int addParameter(int index, boolean checked, String label, Component comp) {
     JLabel		lbl;
     JCheckBox		check;
     JPanel		panel;
@@ -300,6 +306,7 @@ public class ParameterPanel
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(check);
       m_Labels.add(lbl);
+      index = m_Parameters.size();
       m_Parameters.add(comp);
     }
     else {
@@ -310,6 +317,8 @@ public class ParameterPanel
     }
 
     update();
+    
+    return index;
   }
 
   /**
@@ -330,8 +339,9 @@ public class ParameterPanel
    * 			add the chooser at the end
    * @param checked	whether the checkbox is checked
    * @param chooser	the chooser panel to insert
+   * @return		the index of the parameter
    */
-  public void addParameter(int index, boolean checked, AbstractChooserPanel chooser) {
+  public int addParameter(int index, boolean checked, AbstractChooserPanel chooser) {
     JPanel		panel;
     JCheckBox		check;
     GridBagConstraints	con;
@@ -373,6 +383,7 @@ public class ParameterPanel
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(check);
       m_Labels.add(chooser.getPrefixLabel());
+      index = m_Parameters.size();
       m_Parameters.add(chooser);
     }
     else {
@@ -383,6 +394,8 @@ public class ParameterPanel
     }
 
     update();
+    
+    return index;
   }
 
   /**
