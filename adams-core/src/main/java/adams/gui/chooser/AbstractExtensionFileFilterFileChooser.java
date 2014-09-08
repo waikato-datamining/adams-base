@@ -15,7 +15,7 @@
 
 /*
  * AbstractExtensionFileFilterFileChooser.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -29,6 +29,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.ExtensionFileFilter;
 
@@ -412,5 +413,67 @@ public abstract class AbstractExtensionFileFilterFileChooser<F extends Extension
   @Override
   public void setAcceptAllFileFilterUsed(boolean b) {
     super.setAcceptAllFileFilterUsed(false);
+  }
+  
+  /**
+   * Attempts to set the correct file filter for the specified file, using its
+   * extension to determine the file filter.
+   * 
+   * @param file	the file to set the filter for
+   * @return		true if successfully set filter
+   */
+  public boolean setCorrectOpenFileFilter(File file) {
+    boolean	result;
+    String	fileExt;
+
+    result = false;
+    
+    fileExt = FileUtils.getExtension(file);
+    for (F filter: getOpenFileFilters()) {
+      for (String ext: filter.getExtensions()) {
+	if (ext.equals(fileExt)) {
+	  setFileFilter(filter);
+	  m_LastFilter = filter;
+	  result       = true;
+	  updateCurrentHandlerHook();
+	  break;
+	}
+      }
+      if (result)
+	break;
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Attempts to set the correct file filter for the specified file, using its
+   * extension to determine the file filter.
+   * 
+   * @param file	the file to set the filter for
+   * @return		true if successfully set filter
+   */
+  public boolean setCorrectSaveFileFilter(File file) {
+    boolean	result;
+    String	fileExt;
+
+    result = false;
+    
+    fileExt = FileUtils.getExtension(file);
+    for (F filter: getSaveFileFilters()) {
+      for (String ext: filter.getExtensions()) {
+	if (ext.equals(fileExt)) {
+	  setFileFilter(filter);
+	  m_LastFilter = filter;
+	  result       = true;
+	  updateCurrentHandlerHook();
+	  break;
+	}
+      }
+      if (result)
+	break;
+    }
+    
+    return result;
   }
 }

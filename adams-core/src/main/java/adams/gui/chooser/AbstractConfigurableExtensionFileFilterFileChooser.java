@@ -406,4 +406,40 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
 	return;
     }
   }
+  
+  /**
+   * Attempts to set the correct file filter for the specified file, using its
+   * extension to determine the file filter.
+   * 
+   * @param file	the file to set the filter for
+   * @return		true if successfully set filter
+   */
+  @Override
+  public boolean setCorrectOpenFileFilter(File file) {
+    boolean	result;
+    
+    result = super.setCorrectOpenFileFilter(file);
+    if (result)
+      m_LastOpenHandler = m_CurrentHandler;
+    
+    return result;
+  }
+  
+  /**
+   * Attempts to set the correct file filter for the specified file, using its
+   * extension to determine the file filter.
+   * 
+   * @param file	the file to set the filter for
+   * @return		true if successfully set filter
+   */
+  @Override
+  public boolean setCorrectSaveFileFilter(File file) {
+    boolean	result;
+
+    result = super.setCorrectSaveFileFilter(file);
+    if (result)
+      m_LastSaveHandler = m_CurrentHandler;
+    
+    return result;
+  }
 }
