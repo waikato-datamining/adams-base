@@ -286,7 +286,7 @@ public class MultiExperimenter
       run = new Runnable() {
 	@Override
 	public void run() {
-	  panel.open(file);
+	  panel.openSetup(file);
 	}
       };
       SwingUtilities.invokeLater(run);

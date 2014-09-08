@@ -19,6 +19,19 @@
  */
 package weka.gui.experiment.ext;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import weka.core.Instances;
+import adams.core.Utils;
 
 /**
  * The analysis panel.
@@ -31,4 +44,123 @@ public class AnalysisPanel
 
   /** for serialization. */
   private static final long serialVersionUID = -7809897225003422111L;
+
+  /** the current panel. */
+  protected AbstractAnalysisPanel m_PanelAnalysis;
+
+  /** the combobox with all available panels. */
+  protected JComboBox m_ComboBoxPanels;
+
+  /**
+   * For initializing the GUI.
+   */
+  @Override
+  protected void initGUI() {
+    String[]			classes;
+    List<AbstractAnalysisPanel>	panels;
+    int				i;
+    JPanel			panel;
+    JLabel			label;
+    
+    super.initGUI();
+    
+    classes = AbstractAnalysisPanel.getPanels();
+    panels  = new ArrayList<AbstractAnalysisPanel>();
+    for (i = 0; i < classes.length; i++) {
+      try {
+	if (classes[i].equals(DefaultAnalysisPanel.class.getName()))
+	  continue;
+	panels.add((AbstractAnalysisPanel) Class.forName(classes[i]).newInstance());
+      }
+      catch (Exception e) {
+	logError("Failed to instantiate analysis panel: " + classes[i], "Analysis panels");
+      }
+    }
+    panels.add(0, new DefaultAnalysisPanel());
+    m_ComboBoxPanels = new JComboBox(panels.toArray(new AbstractAnalysisPanel[panels.size()]));
+    m_ComboBoxPanels.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	updatePanel((AbstractAnalysisPanel) m_ComboBoxPanels.getSelectedItem());
+      }
+    });
+    
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    add(panel, BorderLayout.NORTH);
+    label = new JLabel("Type");
+    label.setLabelFor(m_ComboBoxPanels);
+    panel.add(label);
+    panel.add(m_ComboBoxPanels);
+  }
+  
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    m_ComboBoxPanels.setSelectedIndex(0);
+  }
+  
+  /**
+   * Gets called when the owner changes.
+   */
+  @Override
+  protected void ownerChanged() {
+    String	preferred;
+    int		i;
+    
+    super.ownerChanged();
+    
+    if (getOwner() != null) {
+      preferred = ExperimenterPanel.getProperties().getProperty(
+	  "ResultsInitialPanel", DefaultAnalysisPanel.class.getName());
+      for (i = 0; i < m_ComboBoxPanels.getItemCount(); i++) {
+	if (m_ComboBoxPanels.getItemAt(i).getClass().getName().equals(preferred)) {
+	  updatePanel((AbstractAnalysisPanel) m_ComboBoxPanels.getItemAt(i));
+	  break;
+	}
+      }
+    }
+  }
+
+  /**
+   * Sets the panel as the new analysis panel.
+   * 
+   * @param panel	the panel to use
+   */
+  protected void updatePanel(AbstractAnalysisPanel panel) {
+    Instances	results;
+    
+    results = null;
+    if (m_PanelAnalysis != null) {
+      results = m_PanelAnalysis.getResults();
+      remove(m_PanelAnalysis);
+    }
+    m_PanelAnalysis = (AbstractAnalysisPanel) Utils.deepCopy(panel);
+    add(m_PanelAnalysis, BorderLayout.CENTER);
+    m_PanelAnalysis.setResults(results);
+  }
+
+  /**
+   * Sets the results to use for analysis.
+   * 
+   * @param value	the results
+   */
+  public void setResults(Instances value) {
+    if (m_PanelAnalysis != null)
+      m_PanelAnalysis.setResults(value);
+  }
+  
+  /**
+   * Returns the current set results.
+   * 
+   * @return		the results
+   */
+  public Instances getResults() {
+    if (m_PanelAnalysis != null)
+      return m_PanelAnalysis.getResults();
+    else
+      return null;
+  }
 }

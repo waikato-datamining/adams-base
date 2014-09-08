@@ -83,8 +83,7 @@ public class JdbcOutputPanel
       dbutils = new DatabaseUtils();
     }
     catch (Exception e) {
-      System.err.println("Failed to instantiate " + DatabaseUtils.class.getName());
-      e.printStackTrace();
+      logError("Failed to instantiate " + DatabaseUtils.class.getName(), "Initializing database");
       dbutils = null;
     }
     

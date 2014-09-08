@@ -20,6 +20,7 @@
 package weka.gui.experiment.ext;
 
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for panels that get added to a {@link AbstractSetupPanel}.
@@ -62,9 +63,19 @@ public abstract class AbstractSetupOptionPanel
    * Sets the setup panel this option panel belongs to.
    * 
    * @param value	the owner
+   * @see		#ownerChanged()
    */
   public void setOwner(AbstractSetupPanel value) {
     m_Owner = value;
+    ownerChanged();
+  }
+  
+  /**
+   * Gets called when the owner changes.
+   * <p/>
+   * Default implementation does nothing
+   */
+  protected void ownerChanged() {
   }
   
   /**
@@ -92,5 +103,34 @@ public abstract class AbstractSetupOptionPanel
    * Default implementation does nothing.
    */
   protected void update() {
+  }
+  
+  /**
+   * Logs the message.
+   * 
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    if (getOwner() != null)
+      getOwner().logMessage(msg);
+    else
+      System.out.println(msg);
+  }
+  
+  /**
+   * Logs the error message and also displays an error dialog.
+   * 
+   * @param msg		the error message
+   */
+  public void logError(String msg, String title) {
+    if (getOwner() != null) {
+      getOwner().logError(msg, title);
+    }
+    else {
+      System.err.println(msg);
+      GUIHelper.showErrorMessage(this,
+	  msg,
+	  title);
+    }
   }
 }

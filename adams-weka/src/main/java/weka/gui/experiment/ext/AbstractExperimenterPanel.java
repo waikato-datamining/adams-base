@@ -20,6 +20,7 @@
 package weka.gui.experiment.ext;
 
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for panels in the experimenter.
@@ -40,9 +41,11 @@ public class AbstractExperimenterPanel
    * Sets the experimenter this panel belongs to.
    * 
    * @param value	the owner
+   * @see		#ownerChanged()
    */
   public void setOwner(ExperimenterPanel value) {
     m_Owner = value;
+    ownerChanged();
   }
   
   /**
@@ -52,5 +55,42 @@ public class AbstractExperimenterPanel
    */
   public ExperimenterPanel getOwner() {
     return m_Owner;
+  }
+  
+  /**
+   * Gets called when the owner changes.
+   * <p/>
+   * Default implementation does nothing
+   */
+  protected void ownerChanged() {
+  }
+  
+  /**
+   * Logs the message.
+   * 
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    if (getOwner() != null)
+      getOwner().logMessage(msg);
+    else
+      System.out.println(msg);
+  }
+  
+  /**
+   * Logs the error message and also displays an error dialog.
+   * 
+   * @param msg		the error message
+   */
+  public void logError(String msg, String title) {
+    if (getOwner() != null) {
+      getOwner().logError(msg, title);
+    }
+    else {
+      System.err.println(msg);
+      GUIHelper.showErrorMessage(this,
+	  msg,
+	  title);
+    }
   }
 }

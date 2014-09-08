@@ -73,8 +73,7 @@ public class OutputPanel
 	m_Panels.put(panel.getOutputName(), panel);
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate output panel class: " + cls);
-	e.printStackTrace();
+	logError("Failed to instantiate output panel class: " + cls, "Output panels");
       }
     }
   }

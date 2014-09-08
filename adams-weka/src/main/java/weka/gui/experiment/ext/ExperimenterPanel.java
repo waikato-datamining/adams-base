@@ -32,9 +32,12 @@ import javax.swing.event.ChangeListener;
 
 import weka.experiment.Experiment;
 import weka.gui.ConverterFileChooser;
+import adams.core.Properties;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
@@ -58,23 +61,44 @@ public class ExperimenterPanel
   private static final long serialVersionUID = 7314544066929763500L;
 
   /** the file to store the recent files in. */
-  public final static String SESSION_FILE = "ExperimenterSession.props";
+  public final static String SESSION_FILE = "ExperimenterExtSession.props";
 
-  /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  /** the name of the props file with the general properties. */
+  public final static String FILENAME = "weka/gui/experiment/ext/ExperimenterExt.props";
+
+  /** the properties. */
+  protected static Properties m_Properties;
+
+  /** the recent files handler for setups. */
+  protected RecentFilesHandler<JMenu> m_RecentFilesHandlerSetups;
+
+  /** the recent files handler for results. */
+  protected RecentFilesHandler<JMenu> m_RecentFilesHandlerResults;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
 
   /** the "load recent" submenu. */
-  protected JMenu m_MenuItemLoadRecent;
+  protected JMenu m_MenuItemFileLoadRecent;
 
   /** the save menu item. */
   protected JMenuItem m_MenuItemFileSave;
 
   /** the save as menu item. */
   protected JMenuItem m_MenuItemFileSaveAs;
-  
+
+  /** the start menu item. */
+  protected JMenuItem m_MenuItemExecutionStart;
+
+  /** the stop menu item. */
+  protected JMenuItem m_MenuItemExecutionStop;
+
+  /** the "load recent" submenu. */
+  protected JMenu m_MenuItemResultsLoadRecent;
+
+  /** the save results menu item. */
+  protected JMenuItem m_MenuItemResultsSave;
+
   /** the current file. */
   protected File m_CurrentFile;
 
@@ -93,6 +117,12 @@ public class ExperimenterPanel
   /** the log panel. */
   protected LogPanel m_PanelLog;
   
+  /** the current experiment. */
+  protected Experiment m_Experiment;
+  
+  /** the filechooser for loading/saving results. */
+  protected ConverterFileChooser m_FileChooserResults;
+  
   /**
    * For initializing members.
    */
@@ -100,8 +130,11 @@ public class ExperimenterPanel
   protected void initialize() {
     super.initialize();
 
-    m_RecentFilesHandler = null;
-    m_TitleGenerator     = new TitleGenerator("Experimenter", true);
+    m_RecentFilesHandlerSetups  = null;
+    m_RecentFilesHandlerResults = null;
+    m_TitleGenerator            = new TitleGenerator("Experimenter", true);
+    m_Experiment                = null;
+    m_FileChooserResults        = new ConverterFileChooser();
   }
 
   /**
@@ -161,9 +194,9 @@ public class ExperimenterPanel
   }
 
   /**
-   * Lets the user choose a file.
+   * Lets the user choose an experiment file.
    */
-  public void open() {
+  public void openSetup() {
     int 		retVal;
     BaseFileChooser	filechooser;
     
@@ -172,18 +205,18 @@ public class ExperimenterPanel
     if (retVal != ConverterFileChooser.APPROVE_OPTION)
       return;
 
-    if (m_RecentFilesHandler != null)
-      m_RecentFilesHandler.addRecentItem(filechooser.getSelectedFile());
-    open(filechooser.getSelectedFile());
+    if (m_RecentFilesHandlerSetups != null)
+      m_RecentFilesHandlerSetups.addRecentItem(filechooser.getSelectedFile());
+    openSetup(filechooser.getSelectedFile());
     update();
   }
   
   /**
-   * For opening an external file.
+   * For opening an experiment file.
    * 
    * @param file	the file to open
    */
-  public void open(File file) {
+  public void openSetup(File file) {
     Experiment	exp;
     String	msg;
     
@@ -206,38 +239,38 @@ public class ExperimenterPanel
   }
   
   /**
-   * For opening a recently used file.
+   * For opening a recently used experiment file.
    * 
    * @param e		the event
    */
-  public void openRecent(RecentItemEvent<JMenu,File> e) {
-    open(e.getItem());
+  public void openRecentSetup(RecentItemEvent<JMenu,File> e) {
+    openSetup(e.getItem());
   }
 
   /**
    * Allows the user to save the file. Prompts user with dialog if no filename
    * set currently.
    */
-  public void save() {
+  public void saveSetup() {
     if (m_CurrentFile == null) {
-      saveAs();
+      saveSetupAs();
       return;
     }
     
-    save(m_CurrentFile);
+    saveSetup(m_CurrentFile);
   }
 
   /**
    * Saves the experiment to the specified file.
    */
-  public void save(File file) {
+  public void saveSetup(File file) {
     try {
       logMessage("Saving experiment to " + file);
       Experiment.write(file.getAbsolutePath(), getExperiment());
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
-      if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(m_CurrentFile);
+      if (m_RecentFilesHandlerSetups != null)
+	m_RecentFilesHandlerSetups.addRecentItem(m_CurrentFile);
       update();
       logMessage("Saved experiment to " + file);
     }
@@ -249,7 +282,7 @@ public class ExperimenterPanel
   /**
    * Allows the user to save the file. Prompts user with dialog.
    */
-  public void saveAs() {
+  public void saveSetupAs() {
     BaseFileChooser	filechooser;
     int			retVal;
     
@@ -258,7 +291,91 @@ public class ExperimenterPanel
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    save(filechooser.getSelectedFile());
+    saveSetup(filechooser.getSelectedFile());
+  }
+
+  /**
+   * Returns whether an experiment is currently being executed.
+   * 
+   * @return		true if an experiment is running
+   */
+  public boolean isExecuting() {
+    return (m_Experiment != null) && m_Experiment.hasMoreIterations();
+  }
+  
+  /**
+   * Starts the execution.
+   */
+  public void startExecution() {
+    // TODO make it a thread?
+    try {
+      m_Experiment = getExperiment();
+      logMessage("Initializing...");
+      m_Experiment.initialize();
+      logMessage("Running...");
+      m_Experiment.runExperiment();
+      logMessage("Post-processing...");
+      m_Experiment.postProcess();
+      logMessage("Finished!");
+    }
+    catch (Exception e) {
+      logError("Failed to execute experiment!\n" + Utils.throwableToString(e), "Execute experiment");
+    }
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    // TODO kill thread
+  }
+
+  /**
+   * Loads the results from a file.
+   */
+  public void openResults() {
+    // TODO
+  }
+  
+  /**
+   * For opening a recently used results file.
+   * 
+   * @param e		the event
+   */
+  public void openRecentResults(RecentItemEvent<JMenu,File> e) {
+    openResults(e.getItem());
+  }
+
+  /**
+   * Loads the results from the file.
+   * 
+   * @param file	the file to load the results from
+   */
+  public void openResults(File file) {
+    // TODO
+  }
+
+  /**
+   * Loads the results from a database.
+   */
+  public void openResultsDB() {
+    // TODO
+  }
+
+  /**
+   * Saves the results to a file.
+   */
+  public void saveResults() {
+    // TODO
+  }
+
+  /**
+   * Saves the results to the file.
+   * 
+   * @param file	the file to save the results to
+   */
+  public void saveResults(File file) {
+    // TODO
   }
 
   /**
@@ -319,23 +436,24 @@ public class ExperimenterPanel
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  open();
+	  openSetup();
 	}
       });
 
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(SESSION_FILE, 10, submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
+      m_RecentFilesHandlerSetups = new RecentFilesHandler<JMenu>(
+	  SESSION_FILE, "Setup-", ExperimenterPanel.getProperties().getInteger("SetupsMaxRecent", 5), submenu);
+      m_RecentFilesHandlerSetups.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
 	}
 	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
-	  openRecent(e);
+	  openRecentSetup(e);
 	}
       });
-      m_MenuItemLoadRecent = submenu;
+      m_MenuItemFileLoadRecent = submenu;
 
       // File/Save
       menuitem = new JMenuItem("Save");
@@ -346,7 +464,7 @@ public class ExperimenterPanel
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  save();
+	  saveSetup();
 	}
       });
       m_MenuItemFileSave = menuitem;
@@ -359,7 +477,7 @@ public class ExperimenterPanel
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  saveAs();
+	  saveSetupAs();
 	}
       });
       m_MenuItemFileSaveAs = menuitem;
@@ -376,6 +494,102 @@ public class ExperimenterPanel
 	  close();
 	}
       });
+
+      // Execution
+      menu = new JMenu("Execution");
+      result.add(menu);
+      menu.setMnemonic('E');
+      menu.addChangeListener(new ChangeListener() {
+	public void stateChanged(ChangeEvent e) {
+	  updateMenu();
+	}
+      });
+
+      // Execution/Start
+      menuitem = new JMenuItem("Start");
+      menu.add(menuitem);
+      menuitem.setMnemonic('S');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed R"));
+      menuitem.setIcon(GUIHelper.getIcon("run.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  startExecution();
+	}
+      });
+      m_MenuItemExecutionStart = menuitem;
+
+      // Execution/Start
+      menuitem = new JMenuItem("Stop");
+      menu.add(menuitem);
+      menuitem.setMnemonic('p');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed K"));
+      menuitem.setIcon(GUIHelper.getIcon("stop_blue.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  stopExecution();
+	}
+      });
+      m_MenuItemExecutionStop = menuitem;
+
+      // Analysis
+      menu = new JMenu("Analysis");
+      result.add(menu);
+      menu.setMnemonic('A');
+      menu.addChangeListener(new ChangeListener() {
+	public void stateChanged(ChangeEvent e) {
+	  updateMenu();
+	}
+      });
+
+      // Analysis/Open
+      menuitem = new JMenuItem("Open...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('O');
+      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  openResults();
+	}
+      });
+
+      // Analysis/Recent files
+      submenu = new JMenu("Open recent");
+      menu.add(submenu);
+      m_RecentFilesHandlerResults = new RecentFilesHandler<JMenu>(
+	  SESSION_FILE, "Results-", ExperimenterPanel.getProperties().getInteger("ResultsMaxRecent", 5), submenu);
+      m_RecentFilesHandlerResults.addRecentItemListener(new RecentItemListener<JMenu,File>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+	  // ignored
+	}
+	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
+	  openRecentResults(e);
+	}
+      });
+      m_MenuItemResultsLoadRecent = submenu;
+
+      // Analysis/Open DB
+      menuitem = new JMenuItem("Open DB...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('D');
+      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  openResultsDB();
+	}
+      });
+
+      // Analysis/Save
+      menuitem = new JMenuItem("Save...");
+      menu.addSeparator();
+      menu.add(menuitem);
+      menuitem.setMnemonic('S');
+      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  saveResults();
+	}
+      });
+      m_MenuItemResultsSave = menuitem;
 
       // update menu
       m_MenuBar = result;
@@ -415,6 +629,13 @@ public class ExperimenterPanel
 
     // File
     m_MenuItemFileSave.setEnabled(m_PanelSetup.isModified());
+    
+    // Execution
+    m_MenuItemExecutionStart.setEnabled(!isExecuting());
+    m_MenuItemExecutionStop.setEnabled(isExecuting());
+    
+    // Analysis
+    m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.getResults() != null);
   }
   
   /**
@@ -485,5 +706,28 @@ public class ExperimenterPanel
     GUIHelper.showErrorMessage(this,
 	msg,
 	title);
+  }
+
+  /**
+   * Returns the properties that define the editor.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getProperties() {
+    String	msg;
+    
+    if (m_Properties == null) {
+      try {
+	m_Properties = Properties.read(FILENAME);
+      }
+      catch (Exception e) {
+	msg = "Failed to load " + FILENAME + "\n" + Utils.throwableToString(e);
+	ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+	System.err.println(msg);
+	m_Properties = new Properties();
+      }
+    }
+
+    return m_Properties;
   }
 }

@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
-import weka.gui.experiment.ExperimenterDefaults;
+import adams.core.io.PlaceholderFile;
 import adams.gui.core.BaseListWithButtons;
 
 /**
@@ -79,7 +79,7 @@ public class DatasetPanel
   protected void initialize() {
     super.initialize();
     
-    m_FileChooser = new ConverterFileChooser(ExperimenterDefaults.getInitialDatasetsDirectory());
+    m_FileChooser = new ConverterFileChooser();
     AdamsHelper.updateFileChooserAccessory(m_FileChooser);
     m_FileChooser.setMultiSelectionEnabled(true);
     m_Model = new DefaultListModel<File>();
@@ -169,6 +169,21 @@ public class DatasetPanel
     });
   }
   
+  /**
+   * Gets called when the owner changes.
+   */
+  @Override
+  protected void ownerChanged() {
+    super.ownerChanged();
+    
+    if (getOwner() != null) {
+      m_FileChooser.setCurrentDirectory(
+	  new PlaceholderFile(
+	      ExperimenterPanel.getProperties().getPath(
+		  "DatasetsInitialDir", "%h")).getAbsoluteFile());
+    }
+  }
+
   /**
    * Sets the files to use.
    * 

@@ -181,8 +181,8 @@ public class BasicSetupPanel
     add(m_TabbedPane, BorderLayout.CENTER);
   }
   
-  /* (non-Javadoc)
-   * @see adams.gui.core.BasePanel#finishInit()
+  /**
+   * finishes the initialization.
    */
   @Override
   protected void finishInit() {
@@ -191,6 +191,7 @@ public class BasicSetupPanel
     m_SpinnerRepetitions.setValue(10);
     m_ComboBoxClassificationRegression.setSelectedIndex(0);
     m_ComboBoxEvaluation.setSelectedIndex(0);
+    m_TextEvaluation.setText("10");
     m_ComboBoxOrder.setSelectedIndex(0);
 
     setModified(false);

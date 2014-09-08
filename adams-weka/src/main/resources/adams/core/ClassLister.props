@@ -59,6 +59,10 @@ weka.gui.experiment.ext.AbstractOutputPanel=\
 weka.gui.experiment.ext.AbstractSetupPanel=\
   weka.gui.experiment.ext
 
+# the analysis panels for the experimenter
+weka.gui.experiment.ext.AbstractAnalysisPanel=\
+  weka.gui.experiment.ext
+
 # the handlers for the explorer panels
 weka.gui.explorer.AbstractExplorerPanelHandler=\
   weka.gui.explorer

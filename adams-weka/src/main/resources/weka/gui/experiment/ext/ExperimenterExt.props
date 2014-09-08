@@ -1,0 +1,48 @@
+# Default settings for the extended Experimenter.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Initial directory for setups
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+SetupsInitialDir=%h
+
+# The maximum of recent setups to keep track of
+SetupsMaxRecent=5
+
+# The preferred output format, default ones: ARFF|CSV|JDBC
+SetupsInitialOutput=ARFF
+
+# The preferred setup panel
+# derived from: weka.gui.experiment.ext.AbstractSetupPanel
+SetupsInitialPanel=weka.gui.experiment.ext.BasicSetupPanel
+
+# Initial directory for datasets
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+DatasetsInitialDir=%h
+
+# Initial directory for results
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+ResultsInitialDir=%h
+
+# The maximum of recent results to keep track of
+ResultsMaxRecent=5
+
+# The preferred analysis panel
+# derived from: weka.gui.experiment.ext.AbstractAnalysisPanel
+ResultsInitialPanel=weka.gui.experiment.ext.DefaultAnalysisPanel
