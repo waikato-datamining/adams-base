@@ -63,6 +63,10 @@ adams.flow.transformer.ImageMetaDataExtraction=\
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
   
+# the algorithms for locating objects
+adams.flow.transformer.locateobjects.AbstractObjectLocator=\
+  adams.flow.transformer.locateobjects
+  
 # the actions for the PixelSelector transformer
 adams.flow.transformer.pixelselector.AbstractPixelSelectorAction=\
   adams.flow.transformer.pixelselector
