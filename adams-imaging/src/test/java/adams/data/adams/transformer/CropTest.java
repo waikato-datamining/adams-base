@@ -15,13 +15,13 @@
 
 /**
  * CropTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.adams.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.data.adams.transformer.Crop.Anchor;
+import adams.data.image.ImageAnchor;
 import adams.env.Environment;
 
 /**
@@ -72,13 +72,13 @@ public class CropTest
     result    = new Crop[5];
     result[0] = new Crop();
     result[1] = new Crop();
-    result[1].setAnchor(Anchor.TOP_RIGHT);
+    result[1].setImageAnchor(ImageAnchor.TOP_RIGHT);
     result[2] = new Crop();
-    result[2].setAnchor(Anchor.BOTTOM_LEFT);
+    result[2].setImageAnchor(ImageAnchor.BOTTOM_LEFT);
     result[3] = new Crop();
-    result[3].setAnchor(Anchor.BOTTOM_RIGHT);
+    result[3].setImageAnchor(ImageAnchor.BOTTOM_RIGHT);
     result[4] = new Crop();
-    result[4].setAnchor(Anchor.CENTER);
+    result[4].setImageAnchor(ImageAnchor.CENTER);
 
     return result;
   }

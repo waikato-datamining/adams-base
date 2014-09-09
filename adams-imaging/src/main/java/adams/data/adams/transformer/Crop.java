@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.CropAlgorithm;
+import adams.data.image.ImageAnchor;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -39,36 +40,36 @@ import adams.data.report.Report;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-x &lt;double&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The horizontal pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-y &lt;double&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The vertical pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-width &lt;double&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- * 
+ *
  * <pre>-height &lt;double&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- * 
+ *
  * <pre>-anchor &lt;TOP_LEFT|TOP_RIGHT|CENTER|BOTTOM_LEFT|BOTTOM_RIGHT&gt; (property: anchor)
  * &nbsp;&nbsp;&nbsp;Defines where to anchor the position on the crop rectangle.
  * &nbsp;&nbsp;&nbsp;default: TOP_LEFT
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -80,39 +81,20 @@ public class Crop
   /** for serialization. */
   private static final long serialVersionUID = 2959486760492196174L;
 
-  /**
-   * Enumeration for the crop rectangle anchor.
-   * 
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum Anchor {
-    /** top left corner. */
-    TOP_LEFT,
-    /** top right corner. */
-    TOP_RIGHT,
-    /** center. */
-    CENTER,
-    /** bottom left corner. */
-    BOTTOM_LEFT,
-    /** bottom right corner. */
-    BOTTOM_RIGHT
-  }
-  
   /** the X position of the crop rectangle. */
   protected double m_X;
-  
+
   /** the Y position of the crop rectangle. */
   protected double m_Y;
-  
+
   /** the width of the crop rectangle. */
   protected double m_Width;
-  
+
   /** the height of the crop rectangle. */
   protected double m_Height;
-  
+
   /** where to anchor the position on the rectangle. */
-  protected Anchor m_Anchor;
+  protected ImageAnchor m_ImageAnchor;
 
   /**
    * Returns a string describing the object.
@@ -121,7 +103,7 @@ public class Crop
    */
   @Override
   public String globalInfo() {
-    return 
+    return
 	"Crops the image to specified width and height. Where the crop "
 	+ "rectangle starts is defined by the X and Y position and the anchor.";
   }
@@ -151,7 +133,7 @@ public class Crop
 
     m_OptionManager.add(
 	"anchor", "anchor",
-	Anchor.TOP_LEFT);
+	ImageAnchor.TOP_LEFT);
   }
 
   /**
@@ -295,8 +277,8 @@ public class Crop
    *
    * @param value	the anchor
    */
-  public void setAnchor(Anchor value) {
-    m_Anchor = value;
+  public void setImageAnchor(ImageAnchor value) {
+    m_ImageAnchor = value;
     reset();
   }
 
@@ -305,8 +287,8 @@ public class Crop
    *
    * @return		the anchor
    */
-  public Anchor getAnchor() {
-    return m_Anchor;
+  public ImageAnchor getImageAnchor() {
+    return m_ImageAnchor;
   }
 
   /**
@@ -340,7 +322,7 @@ public class Crop
     int				xOrig;
     int				yOrig;
     Report			report;
-    
+
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
 
@@ -361,10 +343,10 @@ public class Crop
       y = (int) Math.round(img.getHeight() * m_Y);
     else
       y = (int) m_Y;
-    
+
     // generate cropped image
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    switch (m_Anchor) {
+    switch (m_ImageAnchor) {
       case TOP_LEFT:
 	leftOrig = x - 1;
 	topOrig  = y - 1;
@@ -386,17 +368,17 @@ public class Crop
 	topOrig  = y - 1 - height / 2;
 	break;
       default:
-	throw new IllegalStateException("Unhandled anchor: " + m_Anchor);
+	throw new IllegalStateException("Unhandled anchor: " + m_ImageAnchor);
     }
 
     if (isLoggingEnabled()) {
-      getLogger().info("x=" + (x - 1) + ", y=" + (y - 1) + ", width=" + width + ", height=" + height + ", anchor=" + m_Anchor);
+      getLogger().info("x=" + (x - 1) + ", y=" + (y - 1) + ", width=" + width + ", height=" + height + ", anchor=" + m_ImageAnchor);
       getLogger().info("  --> " + "leftOrig=" + leftOrig + ", topOrig=" + topOrig);
     }
-    
+
     heightOrig = img.getHeight();
     widthOrig  = img.getWidth();
-    
+
     for (y = 0; y < height; y++) {
       yOrig = topOrig + y;
       if ((yOrig < 0) || (yOrig >= heightOrig))
@@ -408,7 +390,7 @@ public class Crop
 	image.setRGB(x, y, img.getImage().getRGB(xOrig, yOrig));
       }
     }
-    
+
     result[0].setImage(image);
 
     report = result[0].getReport();
@@ -417,13 +399,13 @@ public class Crop
       report.addField(new Field(CropAlgorithm.CROP_TOP,    DataType.NUMERIC));
       report.addField(new Field(CropAlgorithm.CROP_RIGHT,  DataType.NUMERIC));
       report.addField(new Field(CropAlgorithm.CROP_BOTTOM, DataType.NUMERIC));
-      
+
       report.setNumericValue(CropAlgorithm.CROP_LEFT,   leftOrig);
       report.setNumericValue(CropAlgorithm.CROP_TOP,    topOrig);
       report.setNumericValue(CropAlgorithm.CROP_RIGHT,  leftOrig + width - 1);
       report.setNumericValue(CropAlgorithm.CROP_BOTTOM, topOrig + height - 1);
     }
-    
+
     return result;
   }
 }
