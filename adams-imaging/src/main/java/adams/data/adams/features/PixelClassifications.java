@@ -105,7 +105,7 @@ public class PixelClassifications
   protected int m_Height;
 
   /** where to anchor the position on the rectangle. */
-  protected ImageAnchor m_ImageAnchor;
+  protected ImageAnchor m_Anchor;
 
   /** how to output the pixels. */
   protected PixelType m_PixelType;
@@ -224,8 +224,8 @@ public class PixelClassifications
    *
    * @param value	the anchor
    */
-  public void setImageAnchor(ImageAnchor value) {
-    m_ImageAnchor = value;
+  public void setAnchor(ImageAnchor value) {
+    m_Anchor = value;
     reset();
   }
 
@@ -234,8 +234,8 @@ public class PixelClassifications
    *
    * @return		the anchor
    */
-  public ImageAnchor getImageAnchor() {
-    return m_ImageAnchor;
+  public ImageAnchor getAnchor() {
+    return m_Anchor;
   }
 
   /**
@@ -381,7 +381,7 @@ public class PixelClassifications
       crop = new Crop();
       crop.setWidth(m_Width);
       crop.setHeight(m_Height);
-      crop.setAnchor(m_ImageAnchor);
+      crop.setAnchor(m_Anchor);
       crop.setX((int) (loc.getX() + 1));
       crop.setY((int) (loc.getY() + 1));
       cropped = crop.transform(img)[0];
