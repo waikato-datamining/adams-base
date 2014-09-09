@@ -69,7 +69,7 @@ Crop.Top[N]: 0.0
 
 Notes:
 PROCESS INFORMATION:
-  1. adams.data.adams.transformer.Crop -anchor CENTER
+  1. adams.data.adams.transformer.Crop -anchor MIDDLE_CENTER
 
 
 

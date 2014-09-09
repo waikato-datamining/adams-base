@@ -85,7 +85,7 @@ public class RelativeCropTest
     result[4] = new RelativeCrop();
     result[4].setWidth(100);
     result[4].setHeight(100);
-    result[4].setAnchor(ImageAnchor.CENTER);
+    result[4].setAnchor(ImageAnchor.MIDDLE_CENTER);
     result[5] = new RelativeCrop();
     result[5].setWidth(100);
     result[5].setHeight(100);

@@ -22,6 +22,14 @@ package adams.data.image;
 
 /**
  * Enumeration for an anchor on an image.
+ * 
+ * <pre>
+ * TL - TC - TR
+ * |    |    |
+ * ML - MC - MR
+ * |    |    |
+ * BL - BC - BR
+ * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -29,12 +37,20 @@ package adams.data.image;
 public enum ImageAnchor {
   /** top left corner. */
   TOP_LEFT,
+  /** top center. */
+  TOP_CENTER,
   /** top right corner. */
   TOP_RIGHT,
-  /** center. */
-  CENTER,
+  /** middle left. */
+  MIDDLE_LEFT,
+  /** middle center. */
+  MIDDLE_CENTER,
+  /** middle right. */
+  MIDDLE_RIGHT,
   /** bottom left corner. */
   BOTTOM_LEFT,
+  /** bottom center. */
+  BOTTOM_CENTER,
   /** bottom right corner. */
   BOTTOM_RIGHT
 }

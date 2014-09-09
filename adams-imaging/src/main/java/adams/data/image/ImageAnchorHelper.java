@@ -85,32 +85,63 @@ public class ImageAnchorHelper {
     int			heightAct;
     int			leftOrig;
     int			topOrig;
+    int			top;
+    int			middle;
+    int			bottom;
+    int			left;
+    int			center;
+    int			right;
     
     xAct      = calculateX(img, x);
     yAct      = calculateY(img, y);
     widthAct  = calculateX(img, width);
     heightAct = calculateY(img, height);
     
+    // X
+    top    = yAct - 1;
+    middle = img.getHeight() / 2 - (heightAct / 2) - (yAct - 1) / 2;
+    bottom = img.getHeight() - heightAct - (yAct - 1);
+    // Y
+    left   = xAct - 1;
+    center = img.getWidth() / 2 - (widthAct / 2) - (xAct - 1) / 2;
+    right  = img.getWidth() - widthAct - (xAct - 1);
+    
     switch (anchor) {
       case TOP_LEFT:
-	leftOrig = xAct - 1;
-	topOrig  = yAct - 1;
+	leftOrig = left;
+	topOrig  = top;
+	break;
+      case TOP_CENTER:
+	leftOrig = center;
+	topOrig  = top;
 	break;
       case TOP_RIGHT:
-	leftOrig = img.getWidth() - widthAct - (xAct - 1);
-	topOrig  = yAct - 1;
+	leftOrig = right;
+	topOrig  = top;
+	break;
+      case MIDDLE_LEFT:
+	leftOrig = left;
+	topOrig  = middle;
+	break;
+      case MIDDLE_CENTER:
+	leftOrig = center;
+	topOrig  = middle;
+	break;
+      case MIDDLE_RIGHT:
+	leftOrig = right;
+	topOrig  = middle;
 	break;
       case BOTTOM_LEFT:
-	leftOrig = xAct - 1;
-	topOrig  = img.getHeight() - heightAct - (yAct - 1);
+	leftOrig = left;
+	topOrig  = bottom;
+	break;
+      case BOTTOM_CENTER:
+	leftOrig = center;
+	topOrig  = bottom;
 	break;
       case BOTTOM_RIGHT:
-	leftOrig = img.getWidth() - widthAct - (xAct - 1);
-	topOrig  = img.getHeight() - heightAct - (yAct - 1);
-	break;
-      case CENTER:
-	leftOrig = img.getWidth() / 2 - (widthAct / 2) - (xAct - 1) / 2;
-	topOrig  = img.getHeight() / 2 - (heightAct / 2) - (yAct - 1) / 2;
+	leftOrig = right;
+	topOrig  = bottom;
 	break;
       default:
 	throw new IllegalStateException("Unhandled anchor: " + anchor);

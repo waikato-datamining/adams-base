@@ -78,7 +78,7 @@ public class CropTest
     result[3] = new Crop();
     result[3].setAnchor(ImageAnchor.BOTTOM_RIGHT);
     result[4] = new Crop();
-    result[4].setAnchor(ImageAnchor.CENTER);
+    result[4].setAnchor(ImageAnchor.MIDDLE_CENTER);
 
     return result;
   }
