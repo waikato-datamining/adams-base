@@ -72,13 +72,13 @@ public class CropTest
     result    = new Crop[5];
     result[0] = new Crop();
     result[1] = new Crop();
-    result[1].setImageAnchor(ImageAnchor.TOP_RIGHT);
+    result[1].setAnchor(ImageAnchor.TOP_RIGHT);
     result[2] = new Crop();
-    result[2].setImageAnchor(ImageAnchor.BOTTOM_LEFT);
+    result[2].setAnchor(ImageAnchor.BOTTOM_LEFT);
     result[3] = new Crop();
-    result[3].setImageAnchor(ImageAnchor.BOTTOM_RIGHT);
+    result[3].setAnchor(ImageAnchor.BOTTOM_RIGHT);
     result[4] = new Crop();
-    result[4].setImageAnchor(ImageAnchor.CENTER);
+    result[4].setAnchor(ImageAnchor.CENTER);
 
     return result;
   }

@@ -277,7 +277,7 @@ public class Crop
    *
    * @param value	the anchor
    */
-  public void setImageAnchor(ImageAnchor value) {
+  public void setAnchor(ImageAnchor value) {
     m_ImageAnchor = value;
     reset();
   }
@@ -287,7 +287,7 @@ public class Crop
    *
    * @return		the anchor
    */
-  public ImageAnchor getImageAnchor() {
+  public ImageAnchor getAnchor() {
     return m_ImageAnchor;
   }
 
@@ -352,20 +352,20 @@ public class Crop
 	topOrig  = y - 1;
 	break;
       case TOP_RIGHT:
-	leftOrig = x - 1 - width;
+	leftOrig = img.getWidth() - width - (x - 1);
 	topOrig  = y - 1;
 	break;
       case BOTTOM_LEFT:
 	leftOrig = x - 1;
-	topOrig  = y - 1 - height;
+	topOrig  = img.getHeight() - height - (y - 1);
 	break;
       case BOTTOM_RIGHT:
-	leftOrig = x - 1 - width;
-	topOrig  = y - 1 - height;
+	leftOrig = img.getWidth() - width - (x - 1);
+	topOrig  = img.getHeight() - height - (y - 1);
 	break;
       case CENTER:
-	leftOrig = x - 1 - width / 2;
-	topOrig  = y - 1 - height / 2;
+	leftOrig = img.getWidth() / 2 - (width / 2) - (x - 1) / 2;
+	topOrig  = img.getHeight() / 2 - (height / 2) - (y - 1) / 2;
 	break;
       default:
 	throw new IllegalStateException("Unhandled anchor: " + m_ImageAnchor);

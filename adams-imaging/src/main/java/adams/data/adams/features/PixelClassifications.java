@@ -293,7 +293,7 @@ public class PixelClassifications
     crop = new Crop();
     crop.setWidth(m_Width);
     crop.setHeight(m_Height);
-    crop.setImageAnchor(ImageAnchor.TOP_LEFT);
+    crop.setAnchor(ImageAnchor.TOP_LEFT);
     crop.setX(1);
     crop.setY(1);
     img = crop.transform(img)[0];
@@ -381,7 +381,7 @@ public class PixelClassifications
       crop = new Crop();
       crop.setWidth(m_Width);
       crop.setHeight(m_Height);
-      crop.setImageAnchor(m_ImageAnchor);
+      crop.setAnchor(m_ImageAnchor);
       crop.setX((int) (loc.getX() + 1));
       crop.setY((int) (loc.getY() + 1));
       cropped = crop.transform(img)[0];
