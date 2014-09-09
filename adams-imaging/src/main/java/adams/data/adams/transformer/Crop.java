@@ -20,11 +20,13 @@
 
 package adams.data.adams.transformer;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.CropAlgorithm;
 import adams.data.image.ImageAnchor;
+import adams.data.image.ImageAnchorHelper;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -94,7 +96,7 @@ public class Crop
   protected double m_Height;
 
   /** where to anchor the position on the rectangle. */
-  protected ImageAnchor m_ImageAnchor;
+  protected ImageAnchor m_Anchor;
 
   /**
    * Returns a string describing the object.
@@ -278,7 +280,7 @@ public class Crop
    * @param value	the anchor
    */
   public void setAnchor(ImageAnchor value) {
-    m_ImageAnchor = value;
+    m_Anchor = value;
     reset();
   }
 
@@ -288,7 +290,7 @@ public class Crop
    * @return		the anchor
    */
   public ImageAnchor getAnchor() {
-    return m_ImageAnchor;
+    return m_Anchor;
   }
 
   /**
@@ -311,6 +313,7 @@ public class Crop
   protected BufferedImageContainer[] doTransform(BufferedImageContainer img) {
     BufferedImageContainer[]	result;
     BufferedImage		image;
+    Point[]			corners;
     int				x;
     int				y;
     int				width;
@@ -326,59 +329,21 @@ public class Crop
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
 
-    // calculate absolute values
-    if (m_Width <= 1.0)
-      width = (int) Math.round(img.getWidth() * m_Width);
-    else
-      width = (int) m_Width;
-    if (m_Height <= 1.0)
-      height = (int) Math.round(img.getHeight() * m_Height);
-    else
-      height = (int) m_Height;
-    if (m_X <= 1.0)
-      x = (int) Math.round(img.getWidth() * m_X);
-    else
-      x = (int) m_X;
-    if (m_Y <= 1.0)
-      y = (int) Math.round(img.getHeight() * m_Y);
-    else
-      y = (int) m_Y;
-
-    // generate cropped image
-    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    switch (m_ImageAnchor) {
-      case TOP_LEFT:
-	leftOrig = x - 1;
-	topOrig  = y - 1;
-	break;
-      case TOP_RIGHT:
-	leftOrig = img.getWidth() - width - (x - 1);
-	topOrig  = y - 1;
-	break;
-      case BOTTOM_LEFT:
-	leftOrig = x - 1;
-	topOrig  = img.getHeight() - height - (y - 1);
-	break;
-      case BOTTOM_RIGHT:
-	leftOrig = img.getWidth() - width - (x - 1);
-	topOrig  = img.getHeight() - height - (y - 1);
-	break;
-      case CENTER:
-	leftOrig = img.getWidth() / 2 - (width / 2) - (x - 1) / 2;
-	topOrig  = img.getHeight() / 2 - (height / 2) - (y - 1) / 2;
-	break;
-      default:
-	throw new IllegalStateException("Unhandled anchor: " + m_ImageAnchor);
-    }
+    corners       = ImageAnchorHelper.calculateCorners(img.getImage(), m_Anchor, m_X, m_Y, m_Width, m_Height);
+    leftOrig      = (int) corners[0].getX();
+    topOrig       = (int) corners[0].getY();
+    width         = (int) (corners[1].getX() - corners[0].getX() + 1);
+    height        = (int) (corners[1].getY() - corners[0].getY() + 1);
 
     if (isLoggingEnabled()) {
-      getLogger().info("x=" + (x - 1) + ", y=" + (y - 1) + ", width=" + width + ", height=" + height + ", anchor=" + m_ImageAnchor);
-      getLogger().info("  --> " + "leftOrig=" + leftOrig + ", topOrig=" + topOrig);
+      getLogger().info("x=" + m_X + ", y=" + m_Y + ", width=" + m_Width + ", height=" + m_Height + ", anchor=" + m_Anchor);
+      getLogger().info("  --> " + "top-left=" + corners[0] + ", bottom-right=" + corners[1]);
     }
 
     heightOrig = img.getHeight();
     widthOrig  = img.getWidth();
 
+    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     for (y = 0; y < height; y++) {
       yOrig = topOrig + y;
       if ((yOrig < 0) || (yOrig >= heightOrig))

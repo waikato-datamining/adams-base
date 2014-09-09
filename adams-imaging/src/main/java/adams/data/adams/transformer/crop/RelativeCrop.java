@@ -24,6 +24,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import adams.data.image.ImageAnchor;
+import adams.data.image.ImageAnchorHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -306,6 +307,7 @@ public class RelativeCrop
   @Override
   protected BufferedImage doCrop(BufferedImage img) {
     BufferedImage	result;
+    Point[]		corners;
     int			x;
     int			y;
     int			width;
@@ -317,62 +319,23 @@ public class RelativeCrop
     int			xOrig;
     int			yOrig;
 
-    // calculate absolute values
-    if (m_Width <= 1.0)
-      width = (int) Math.round(img.getWidth() * m_Width);
-    else
-      width = (int) m_Width;
-    if (m_Height <= 1.0)
-      height = (int) Math.round(img.getHeight() * m_Height);
-    else
-      height = (int) m_Height;
-    if (m_X <= 1.0)
-      x = (int) Math.round(img.getWidth() * m_X);
-    else
-      x = (int) m_X;
-    if (m_Y <= 1.0)
-      y = (int) Math.round(img.getHeight() * m_Y);
-    else
-      y = (int) m_Y;
-
-    // generate cropped image
-    result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    switch (m_Anchor) {
-      case TOP_LEFT:
-	leftOrig = x - 1;
-	topOrig  = y - 1;
-	break;
-      case TOP_RIGHT:
-	leftOrig = img.getWidth() - width - (x - 1);
-	topOrig  = y - 1;
-	break;
-      case BOTTOM_LEFT:
-	leftOrig = x - 1;
-	topOrig  = img.getHeight() - height - (y - 1);
-	break;
-      case BOTTOM_RIGHT:
-	leftOrig = img.getWidth() - width - (x - 1);
-	topOrig  = img.getHeight() - height - (y - 1);
-	break;
-      case CENTER:
-	leftOrig = img.getWidth() / 2 - (width / 2) - (x - 1) / 2;
-	topOrig  = img.getHeight() / 2 - (height / 2) - (y - 1) / 2;
-	break;
-      default:
-	throw new IllegalStateException("Unhandled anchor: " + m_Anchor);
-    }
+    corners       = ImageAnchorHelper.calculateCorners(img, m_Anchor, m_X, m_Y, m_Width, m_Height);
+    m_TopLeft     = corners[0];
+    m_BottomRight = corners[1];
+    leftOrig      = (int) m_TopLeft.getX();
+    topOrig       = (int) m_TopLeft.getY();
+    width         = (int) (m_BottomRight.getX() - m_TopLeft.getX() + 1);
+    height        = (int) (m_BottomRight.getY() - m_TopLeft.getY() + 1);
 
     if (isLoggingEnabled()) {
-      getLogger().info("x=" + (x - 1) + ", y=" + (y - 1) + ", width=" + width + ", height=" + height + ", anchor=" + m_Anchor);
-      getLogger().info("  --> " + "leftOrig=" + leftOrig + ", topOrig=" + topOrig);
+      getLogger().info("x=" + m_X + ", y=" + m_Y + ", width=" + m_Width + ", height=" + m_Height + ", anchor=" + m_Anchor);
+      getLogger().info("  --> " + "top-left=" + m_TopLeft + ", bottom-right=" + m_BottomRight);
     }
-
-    m_TopLeft     = new Point(leftOrig, topOrig);
-    m_BottomRight = new Point(leftOrig + width - 1, topOrig + height - 1);
 
     heightOrig = img.getHeight();
     widthOrig  = img.getWidth();
 
+    result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     for (y = 0; y < height; y++) {
       yOrig = topOrig + y;
       if ((yOrig < 0) || (yOrig >= heightOrig))
