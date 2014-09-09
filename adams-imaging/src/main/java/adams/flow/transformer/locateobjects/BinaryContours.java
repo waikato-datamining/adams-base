@@ -55,7 +55,7 @@ import boofcv.struct.image.ImageUInt8;
 @MixedCopyright(
     author = "Peter Abeles",
     license = License.APACHE2,
-    url = "http://boofcv.org/index.php?title=Example_Fit_Ellipse",
+    url = "https://github.com/lessthanoptimal/BoofCV/blob/v0.15/examples/src/boofcv/examples/ExampleFitEllipse.java",
     note = "Code taken from this BoofCV example"
 )
 public class BinaryContours
@@ -107,7 +107,7 @@ public class BinaryContours
     
     result = new ArrayList<LocatedObject>();
     for (Contour contour: contours) {
-      // determine larges rectangle for contour
+      // determine largest rectangle for contour
       left   = image.getWidth();
       right  = 0;
       top    = image.getHeight();
