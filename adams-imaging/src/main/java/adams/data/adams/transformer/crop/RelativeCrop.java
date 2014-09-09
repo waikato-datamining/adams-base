@@ -36,36 +36,36 @@ import adams.data.image.ImageAnchor;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-x &lt;double&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The horizontal pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-y &lt;double&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The vertical pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-width &lt;double&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- * 
+ *
  * <pre>-height &lt;double&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- * 
+ *
  * <pre>-anchor &lt;TOP_LEFT|TOP_RIGHT|CENTER|BOTTOM_LEFT|BOTTOM_RIGHT&gt; (property: anchor)
  * &nbsp;&nbsp;&nbsp;Defines where to anchor the position on the crop rectangle.
  * &nbsp;&nbsp;&nbsp;default: TOP_LEFT
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -79,16 +79,16 @@ public class RelativeCrop
 
   /** the X position of the crop rectangle. */
   protected double m_X;
-  
+
   /** the Y position of the crop rectangle. */
   protected double m_Y;
-  
+
   /** the width of the crop rectangle. */
   protected double m_Width;
-  
+
   /** the height of the crop rectangle. */
   protected double m_Height;
-  
+
   /** where to anchor the position on the rectangle. */
   protected ImageAnchor m_Anchor;
 
@@ -99,7 +99,7 @@ public class RelativeCrop
    */
   @Override
   public String globalInfo() {
-    return 
+    return
 	"Crops the image to specified width and height. Where the crop "
 	+ "rectangle starts is defined by the X and Y position and the anchor.";
   }
@@ -299,7 +299,7 @@ public class RelativeCrop
 
   /**
    * Performs the actual cropping.
-   * 
+   *
    * @param img		the image to crop
    * @return		the (potentially) cropped image
    */
@@ -316,7 +316,7 @@ public class RelativeCrop
     int			widthOrig;
     int			xOrig;
     int			yOrig;
-    
+
     // calculate absolute values
     if (m_Width <= 1.0)
       width = (int) Math.round(img.getWidth() * m_Width);
@@ -334,7 +334,7 @@ public class RelativeCrop
       y = (int) Math.round(img.getHeight() * m_Y);
     else
       y = (int) m_Y;
-    
+
     // generate cropped image
     result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     switch (m_Anchor) {
@@ -343,20 +343,20 @@ public class RelativeCrop
 	topOrig  = y - 1;
 	break;
       case TOP_RIGHT:
-	leftOrig = x - 1 - width;
+	leftOrig = img.getWidth() - width - (x - 1);
 	topOrig  = y - 1;
 	break;
       case BOTTOM_LEFT:
 	leftOrig = x - 1;
-	topOrig  = y - 1 - height;
+	topOrig  = img.getHeight() - height - (y - 1);
 	break;
       case BOTTOM_RIGHT:
-	leftOrig = x - 1 - width;
-	topOrig  = y - 1 - height;
+	leftOrig = img.getWidth() - width - (x - 1);
+	topOrig  = img.getHeight() - height - (y - 1);
 	break;
       case CENTER:
-	leftOrig = x - 1 - width / 2;
-	topOrig  = y - 1 - height / 2;
+	leftOrig = img.getWidth() / 2 - (width / 2) - (x - 1) / 2;
+	topOrig  = img.getHeight() / 2 - (height / 2) - (y - 1) / 2;
 	break;
       default:
 	throw new IllegalStateException("Unhandled anchor: " + m_Anchor);
@@ -372,7 +372,7 @@ public class RelativeCrop
 
     heightOrig = img.getHeight();
     widthOrig  = img.getWidth();
-    
+
     for (y = 0; y < height; y++) {
       yOrig = topOrig + y;
       if ((yOrig < 0) || (yOrig >= heightOrig))
@@ -384,7 +384,7 @@ public class RelativeCrop
 	result.setRGB(x, y, img.getRGB(xOrig, yOrig));
       }
     }
-    
+
     return result;
   }
 }

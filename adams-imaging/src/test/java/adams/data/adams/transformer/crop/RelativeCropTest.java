@@ -19,9 +19,11 @@
  */
 package adams.data.adams.transformer.crop;
 
+import adams.data.image.ImageAnchor;
+
 /**
  * Tests the RelativeCrop cropping algorithm.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 8487 $
  */
@@ -48,6 +50,11 @@ public class RelativeCropTest
     return new String[]{
 	"yellow_plate.jpg",
 	"yellow_plate.jpg",
+	"horizontal_color_gradient.png",
+	"horizontal_color_gradient.png",
+	"horizontal_color_gradient.png",
+	"horizontal_color_gradient.png",
+	"horizontal_color_gradient.png",
     };
   }
 
@@ -59,15 +66,35 @@ public class RelativeCropTest
   @Override
   protected AbstractCropAlgorithm[] getRegressionSetups() {
     RelativeCrop[]	result;
-    
-    result    = new RelativeCrop[2];
+
+    result    = new RelativeCrop[7];
     result[0] = new RelativeCrop();
     result[1] = new RelativeCrop();
     result[1].setX(0.1);
     result[1].setY(0.2);
     result[1].setWidth(0.5);
     result[1].setHeight(0.66);
-    
+    result[2] = new RelativeCrop();
+    result[2].setWidth(100);
+    result[2].setHeight(100);
+    result[2].setAnchor(ImageAnchor.TOP_LEFT);
+    result[3] = new RelativeCrop();
+    result[3].setWidth(100);
+    result[3].setHeight(100);
+    result[3].setAnchor(ImageAnchor.TOP_RIGHT);
+    result[4] = new RelativeCrop();
+    result[4].setWidth(100);
+    result[4].setHeight(100);
+    result[4].setAnchor(ImageAnchor.CENTER);
+    result[5] = new RelativeCrop();
+    result[5].setWidth(100);
+    result[5].setHeight(100);
+    result[5].setAnchor(ImageAnchor.BOTTOM_LEFT);
+    result[6] = new RelativeCrop();
+    result[6].setWidth(100);
+    result[6].setHeight(100);
+    result[6].setAnchor(ImageAnchor.BOTTOM_RIGHT);
+
     return result;
   }
 }
