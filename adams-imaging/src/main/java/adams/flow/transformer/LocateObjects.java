@@ -20,8 +20,6 @@
 package adams.flow.transformer;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import adams.data.Notes;
@@ -78,7 +76,7 @@ import adams.flow.transformer.locateobjects.LocatedObject;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  * 
- * <pre>-locator &lt;adams.flow.transformer.findobjects.AbstractBugLocator&gt; (property: locator)
+ * <pre>-locator &lt;adams.flow.transformer.findobjects.AbstractObjectLocator&gt; (property: locator)
  * &nbsp;&nbsp;&nbsp;The algorithm for locating the objects.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.findobjects.PassThrough
  * </pre>
@@ -89,10 +87,10 @@ import adams.flow.transformer.locateobjects.LocatedObject;
  * @version $Revision: 78 $
  */
 public class LocateObjects
-  extends AbstractTransformer {
+extends AbstractArrayProvider {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1061046022461821816L;
+  private static final long serialVersionUID = 2180810317840558011L;
 
   /** the key for storing the current images in the backup. */
   public final static String BACKUP_QUEUE = "queue";
@@ -111,10 +109,7 @@ public class LocateObjects
 
   /** the algorithm to use. */
   protected AbstractObjectLocator m_Locator;
-  
-  /** the located objects. */
-  protected List<BufferedImageContainer> m_Queue;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -133,71 +128,21 @@ public class LocateObjects
     super.defineOptions();
 
     m_OptionManager.add(
-	    "locator", "locator",
-	    new adams.flow.transformer.locateobjects.PassThrough());
+	"locator", "locator",
+	new adams.flow.transformer.locateobjects.PassThrough());
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_Queue = new ArrayList<BufferedImageContainer>();
-  }
-  
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Queue.clear();
-  }
-
-  /**
-   * Removes entries from the backup.
-   */
-  @Override
-  protected void pruneBackup() {
-    super.pruneBackup();
-
-    pruneBackup(BACKUP_QUEUE);
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
+   * Returns the tip text for this property.
    *
-   * @return		the backup
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
    */
   @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_QUEUE, m_Queue);
-
-    return result;
+  public String outputArrayTipText() {
+    return "Outputs the images either one by one or as array.";
   }
 
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_QUEUE)) {
-      m_Queue = (ArrayList<BufferedImageContainer>) state.get(BACKUP_QUEUE);
-      state.remove(BACKUP_QUEUE);
-    }
-
-    super.restoreState(state);
-  }
-  
   /**
    * Sets the scheme for locating the objects.
    *
@@ -243,7 +188,7 @@ public class LocateObjects
       result += variable;
     else
       result += m_Locator.getClass().getSimpleName();
-    
+
     return result;
   }
 
@@ -258,13 +203,13 @@ public class LocateObjects
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		the Class of the generated tokens
+   * @return		the class
    */
   @Override
-  public Class[] generates() {
-    return new Class[]{BufferedImageContainer.class};
+  protected Class getItemClass() {
+    return BufferedImageContainer.class;
   }
 
   /**
@@ -276,15 +221,15 @@ public class LocateObjects
   protected String doExecute() {
     String			result;
     BufferedImage		image;
-    List<LocatedObject>			objects;
+    List<LocatedObject>		objects;
     AbstractImage		contIn;
     Notes			notes;
     Report			report;
     Report			reportNew;
     BufferedImageContainer	cont;
-    
+
     result = null;
-    
+
     if (m_InputToken.getPayload() instanceof AbstractImage) {
       contIn = (AbstractImage) m_InputToken.getPayload();
       image  = contIn.toBufferedImage();
@@ -296,7 +241,7 @@ public class LocateObjects
       notes  = null;
       report = new Report();
     }
-    
+
     // doesn't work in headless mode
     if (m_Headless) {
       cont = new BufferedImageContainer();
@@ -306,7 +251,7 @@ public class LocateObjects
       m_OutputToken = new Token(cont);
       return result;
     }
-    
+
     try {
       objects = m_Locator.locate(image);
       // any errors encountered?
@@ -342,36 +287,10 @@ public class LocateObjects
     catch (Exception e) {
       result = handleException("Failed to locate objects!", e);
     }
-    
-    return result;
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    result = new Token(m_Queue.get(0));
-    m_Queue.remove(0);
 
     return result;
   }
 
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_Queue.size() > 0);
-  }
-  
   /**
    * Stops the execution. No message set.
    */
