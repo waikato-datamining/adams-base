@@ -1,10 +1,56 @@
 # Project: adams
-# Date: 2014-09-09 16:36:09
+# Date: 2014-09-09 21:35:52
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
 	Locates objects in an image and displays them.
+	-actor
+		adams.flow.standalone.TabView
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-name
+					binary contours
+					-width
+					1000
+					-height
+					600
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-zoom
+							-1.0
+							-show-properties
+							true
+							-properties-width
+							350
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-name
+					canny edges
+					-width
+					1000
+					-height
+					600
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-zoom
+							-1.0
+							-show-properties
+							true
+							-properties-width
+							350
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
 	-actor
 		adams.flow.source.FileSupplier
 			-file
@@ -12,29 +58,37 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.JAIReader
 	-actor
-		adams.flow.transformer.LocateObjects
-			-locator
-				adams.flow.transformer.locateobjects.BinaryContours
-	-actor
-		adams.flow.sink.DisplayPanelManager
-			-width
-			1000
-			-height
-			600
-			-provider
-				adams.flow.sink.ImageViewer
-					-writer
-						adams.gui.print.NullWriter
-					-zoom
-					-1.0
-					-show-properties
-					true
-					-properties-width
-					350
-					-selection-processor
-						adams.gui.visualization.image.selection.NullProcessor
-					-image-overlay
-						adams.gui.visualization.image.NullOverlay
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					binary contours
+					-actor
+						adams.flow.transformer.LocateObjects
+							-locator
+								adams.flow.transformer.locateobjects.BinaryContours
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							binary contours
+			-branch
+				adams.flow.control.Sequence
+					-name
+					canny edges
+					-actor
+						adams.flow.transformer.LocateObjects
+							-locator
+								adams.flow.transformer.locateobjects.SizeFilter
+									-locator
+										adams.flow.transformer.locateobjects.CannyEdges
+									-min-width
+									10
+									-min-height
+									10
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							canny edges
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
