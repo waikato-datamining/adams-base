@@ -139,6 +139,16 @@
       <groupId>com.github.kzwang</groupId>
       <artifactId>lire</artifactId>
       <version>0.9.4-kzwang-beta1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>nz.ac.waikato.cms.weka</groupId>
+          <artifactId>weka-stable</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.stromberglabs</groupId>
+          <artifactId>jopensurf</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
   </dependencies>
 
