@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-09-09 16:36:09
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Locates objects in an image and displays them.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/particles.jpg
+	-actor
+		adams.flow.transformer.JAIReader
+	-actor
+		adams.flow.transformer.LocateObjects
+			-locator
+				adams.flow.transformer.locateobjects.BinaryContours
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-width
+			1000
+			-height
+			600
+			-provider
+				adams.flow.sink.ImageViewer
+					-writer
+						adams.gui.print.NullWriter
+					-zoom
+					-1.0
+					-show-properties
+					true
+					-properties-width
+					350
+					-selection-processor
+						adams.gui.visualization.image.selection.NullProcessor
+					-image-overlay
+						adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

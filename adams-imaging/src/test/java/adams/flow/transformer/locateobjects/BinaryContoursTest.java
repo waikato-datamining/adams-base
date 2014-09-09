@@ -14,18 +14,18 @@
  */
 
 /**
- * PassThroughTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * BinaryContoursTest.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
 /**
- * Tests the PassThrough object locator.
+ * Tests the BinaryContours object locator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 78 $
  */
-public class PassThroughTest
+public class BinaryContoursTest
   extends AbstractObjectLocatorTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class PassThroughTest
    *
    * @param name	the name of the test
    */
-  public PassThroughTest(String name) {
+  public BinaryContoursTest(String name) {
     super(name);
   }
 
@@ -55,6 +55,6 @@ public class PassThroughTest
    */
   @Override
   protected AbstractObjectLocator[] getRegressionSetups() {
-    return new AbstractObjectLocator[]{new PassThrough()};
+    return new AbstractObjectLocator[]{new BinaryContours()};
   }
 }
