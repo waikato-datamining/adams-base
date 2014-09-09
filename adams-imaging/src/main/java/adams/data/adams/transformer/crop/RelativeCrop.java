@@ -23,6 +23,8 @@ package adams.data.adams.transformer.crop;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import adams.data.image.ImageAnchor;
+
 /**
  <!-- globalinfo-start -->
  * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.
@@ -75,25 +77,6 @@ public class RelativeCrop
   /** for serialization. */
   private static final long serialVersionUID = 2959486760492196174L;
 
-  /**
-   * Enumeration for the crop rectangle anchor.\
-   * 
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 8950 $
-   */
-  public enum Anchor {
-    /** top left corner. */
-    TOP_LEFT,
-    /** top right corner. */
-    TOP_RIGHT,
-    /** center. */
-    CENTER,
-    /** bottom left corner. */
-    BOTTOM_LEFT,
-    /** bottom right corner. */
-    BOTTOM_RIGHT
-  }
-  
   /** the X position of the crop rectangle. */
   protected double m_X;
   
@@ -107,7 +90,7 @@ public class RelativeCrop
   protected double m_Height;
   
   /** where to anchor the position on the rectangle. */
-  protected Anchor m_Anchor;
+  protected ImageAnchor m_Anchor;
 
   /**
    * Returns a string describing the object.
@@ -146,7 +129,7 @@ public class RelativeCrop
 
     m_OptionManager.add(
 	"anchor", "anchor",
-	Anchor.TOP_LEFT);
+	ImageAnchor.TOP_LEFT);
   }
 
   /**
@@ -290,7 +273,7 @@ public class RelativeCrop
    *
    * @param value	the anchor
    */
-  public void setAnchor(Anchor value) {
+  public void setAnchor(ImageAnchor value) {
     m_Anchor = value;
     reset();
   }
@@ -300,7 +283,7 @@ public class RelativeCrop
    *
    * @return		the anchor
    */
-  public Anchor getAnchor() {
+  public ImageAnchor getAnchor() {
     return m_Anchor;
   }
 
