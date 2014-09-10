@@ -34,14 +34,14 @@ public class ImageAnchorHelper {
    * Calculates the actual X value.
    *
    * @param x		the x (0-1: percent of original image width, >1 absolute pixels)
-   * @param img		the image to use as basis
+   * @param width	the width to use as basis
    * @return		the actual X
    */
-  public static int calculateX(BufferedImage img, double x) {
+  public static int calculateX(int width, double x) {
     int		result;
 
     if (x <= 1.0)
-      result = (int) Math.round(img.getWidth() * x);
+      result = (int) Math.round(width * x);
     else
       result = (int) x;
 
@@ -52,14 +52,14 @@ public class ImageAnchorHelper {
    * Calculates the actual Y value.
    *
    * @param y		the y (0-1: percent of original image width, >1 absolute pixels)
-   * @param img		the image to use as basis
+   * @param height	the height to use as basis
    * @return		the actual Y
    */
-  public static int calculateY(BufferedImage img, double y) {
+  public static int calculateY(int height, double y) {
     int		result;
 
     if (y <= 1.0)
-      result = (int) Math.round(img.getHeight() * y);
+      result = (int) Math.round(height * y);
     else
       result = (int) y;
 
@@ -78,6 +78,22 @@ public class ImageAnchorHelper {
    * @return		the top-left and bottom-right coordinates
    */
   public static Point[] calculateCorners(BufferedImage img, ImageAnchor anchor, double x, double y, double width, double height) {
+    return calculateCorners(img.getWidth(), img.getHeight(), anchor, x, y, width, height);
+  }
+
+  /**
+   * Calculates the actual top-left (index 0) and bottom-right coordinates (index 1).
+   *
+   * @param x		the x (0-1: percent of original image width, >1 absolute pixels)
+   * @param y		the y (0-1: percent of original image width, >1 absolute pixels)
+   * @param width	the width (0-1: percent of original image width, >1 absolute pixels)
+   * @param height	the height (0-1: percent of original image width, >1 absolute pixels)
+   * @param anchor	the anchor to use
+   * @param imgWidth	the image width to use as basis
+   * @param imgHeight	the image height to use as basis
+   * @return		the top-left and bottom-right coordinates
+   */
+  public static Point[] calculateCorners(int imgWidth, int imgHeight, ImageAnchor anchor, double x, double y, double width, double height) {
     Point[]		result;
     int			xAct;
     int			yAct;
@@ -92,19 +108,19 @@ public class ImageAnchorHelper {
     int			center;
     int			right;
     
-    xAct      = calculateX(img, x);
-    yAct      = calculateY(img, y);
-    widthAct  = calculateX(img, width);
-    heightAct = calculateY(img, height);
+    xAct      = calculateX(imgWidth, x);
+    yAct      = calculateY(imgHeight, y);
+    widthAct  = calculateX(imgWidth, width);
+    heightAct = calculateY(imgHeight, height);
     
-    // X
-    top    = yAct - 1;
-    middle = img.getHeight() / 2 - (heightAct / 2) - (yAct - 1) / 2;
-    bottom = img.getHeight() - heightAct - (yAct - 1);
     // Y
-    left   = xAct - 1;
-    center = img.getWidth() / 2 - (widthAct / 2) - (xAct - 1) / 2;
-    right  = img.getWidth() - widthAct - (xAct - 1);
+    top    = yAct;
+    middle = imgHeight / 2 - (heightAct / 2) - yAct / 2;
+    bottom = imgHeight - heightAct - yAct;
+    // X
+    left   = xAct;
+    center = imgWidth / 2 - (widthAct / 2) - xAct / 2;
+    right  = imgWidth - widthAct - xAct;
     
     switch (anchor) {
       case TOP_LEFT:
