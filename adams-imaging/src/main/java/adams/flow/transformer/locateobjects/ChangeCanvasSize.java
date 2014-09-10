@@ -64,6 +64,11 @@ import adams.data.image.ImageAnchorHelper;
  * &nbsp;&nbsp;&nbsp;default: TOP_LEFT
  * </pre>
  * 
+ * <pre>-background &lt;java.awt.Color&gt; (property: background)
+ * &nbsp;&nbsp;&nbsp;The background color to use.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -81,7 +86,7 @@ public class ChangeCanvasSize
   /** the height of the canvas. */
   protected int m_CanvasHeight;
 
-  /** where to anchor the position on the rectangle. */
+  /** where to anchor the position on the canvas. */
   protected ImageAnchor m_Anchor;
 
   /** the background color. */
@@ -117,6 +122,10 @@ public class ChangeCanvasSize
     m_OptionManager.add(
 	"anchor", "anchor",
 	ImageAnchor.TOP_LEFT);
+
+    m_OptionManager.add(
+	"background", "background",
+	Color.WHITE);
   }
 
   /**
@@ -188,7 +197,7 @@ public class ChangeCanvasSize
   }
 
   /**
-   * Sets where to anchor the position on the rectangle.
+   * Sets where to anchor the position on the canvas.
    *
    * @param value	the anchor
    */
@@ -198,7 +207,7 @@ public class ChangeCanvasSize
   }
 
   /**
-   * Returns where to anchor the position on the rectangle.
+   * Returns where to anchor the position on the canvas.
    *
    * @return		the anchor
    */
@@ -282,6 +291,7 @@ public class ChangeCanvasSize
       
       // background
       g = modified.createGraphics();
+      g.setColor(m_Background);
       g.fillRect(0, 0, m_CanvasWidth, m_CanvasHeight);
       g.dispose();
       
