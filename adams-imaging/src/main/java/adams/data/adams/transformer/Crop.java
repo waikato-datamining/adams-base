@@ -23,6 +23,7 @@ package adams.data.adams.transformer;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import adams.data.adams.transformer.crop.RelativeCrop;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.CropAlgorithm;
 import adams.data.image.ImageAnchor;
@@ -33,7 +34,10 @@ import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
- * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.
+ * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.<br/>
+ * <br/>
+ * DEPRECATED<br/>
+ * Use adams.data.adams.transformer.Cropping in conjunction with adams.data.adams.transformer.crop.RelativeCrop instead.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -42,41 +46,42 @@ import adams.data.report.Report;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-x &lt;double&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The horizontal pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- *
+ * 
  * <pre>-y &lt;double&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The vertical pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- *
+ * 
  * <pre>-width &lt;double&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- *
+ * 
  * <pre>-height &lt;double&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- *
- * <pre>-anchor &lt;TOP_LEFT|TOP_RIGHT|CENTER|BOTTOM_LEFT|BOTTOM_RIGHT&gt; (property: anchor)
+ * 
+ * <pre>-anchor &lt;TOP_LEFT|TOP_CENTER|TOP_RIGHT|MIDDLE_LEFT|MIDDLE_CENTER|MIDDLE_RIGHT|BOTTOM_LEFT|BOTTOM_CENTER|BOTTOM_RIGHT&gt; (property: anchor)
  * &nbsp;&nbsp;&nbsp;Defines where to anchor the position on the crop rectangle.
  * &nbsp;&nbsp;&nbsp;default: TOP_LEFT
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class Crop
   extends AbstractBufferedImageTransformer {
 
@@ -107,7 +112,9 @@ public class Crop
   public String globalInfo() {
     return
 	"Crops the image to specified width and height. Where the crop "
-	+ "rectangle starts is defined by the X and Y position and the anchor.";
+	+ "rectangle starts is defined by the X and Y position and the anchor.\n\n"
+	+ "DEPRECATED\n"
+	+ "Use " + Cropping.class.getName() + " in conjunction with " + RelativeCrop.class.getName() + " instead.";
   }
 
   /**
