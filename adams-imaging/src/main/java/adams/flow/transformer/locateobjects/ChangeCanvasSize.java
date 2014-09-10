@@ -264,7 +264,7 @@ public class ChangeCanvasSize
     int			widthOrig;
     int			xNew;
     int			yNew;
-    BufferedImage	flat;
+    BufferedImage	modified;
     Graphics		g;
 
     result = new ArrayList<LocatedObject>();
@@ -278,10 +278,10 @@ public class ChangeCanvasSize
       heightOrig = obj.getImage().getHeight();
       widthOrig  = obj.getImage().getWidth();
 
-      flat = new BufferedImage(m_CanvasWidth, m_CanvasHeight, BufferedImage.TYPE_INT_ARGB);
+      modified = new BufferedImage(m_CanvasWidth, m_CanvasHeight, BufferedImage.TYPE_INT_ARGB);
       
       // background
-      g = flat.createGraphics();
+      g = modified.createGraphics();
       g.fillRect(0, 0, m_CanvasWidth, m_CanvasHeight);
       g.dispose();
       
@@ -294,11 +294,11 @@ public class ChangeCanvasSize
 	  xNew = leftNew + x;
 	  if ((xNew < 0) || (xNew >= m_CanvasWidth))
 	    continue;
-	  flat.setRGB(xNew, yNew, obj.getImage().getRGB(x, y));
+	  modified.setRGB(xNew, yNew, obj.getImage().getRGB(x, y));
 	}
       }
       
-      result.add(new LocatedObject(flat, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
+      result.add(new LocatedObject(modified, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
     }
 
     return result;
