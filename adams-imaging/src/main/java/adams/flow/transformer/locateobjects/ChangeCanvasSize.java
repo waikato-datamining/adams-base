@@ -14,7 +14,7 @@
  */
 
 /*
- * Flatten.java
+ * ChangeCanvasSize.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
@@ -69,7 +69,7 @@ import adams.data.image.ImageAnchorHelper;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9648 $
  */
-public class Flatten
+public class ChangeCanvasSize
   extends AbstractMetaObjectLocator {
 
   /** for serialization. */
