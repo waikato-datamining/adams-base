@@ -30,6 +30,7 @@ import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.RunnableWithLogging;
 
 /**
  <!-- globalinfo-start -->
@@ -51,7 +52,7 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;default: ExternalFlow
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -73,10 +74,9 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-immediate-clean-up &lt;boolean&gt; (property: immediateCleanUp)
- * &nbsp;&nbsp;&nbsp;If enabled, the flow gets immediately cleaned up after execution, ie removing 
- * &nbsp;&nbsp;&nbsp;graphical output.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-execution-type &lt;SYNCHRONOUS|SYNCHRONOUS_IMMEDIATE_CLEANUP|ASYNCHRONOUS&gt; (property: executionType)
+ * &nbsp;&nbsp;&nbsp;Determines how the flow is executed.
+ * &nbsp;&nbsp;&nbsp;default: SYNCHRONOUS
  * </pre>
  * 
  <!-- options-end -->
@@ -90,11 +90,26 @@ public class ExternalFlow
   /** for serialization. */
   private static final long serialVersionUID = 6212392783858480058L;
 
+  /**
+   * Determines how the flow is exected.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum ExecutionType {
+    /** wait for flow to finish. */
+    SYNCHRONOUS,
+    /** wait for flow to finish and cleanup. */
+    SYNCHRONOUS_IMMEDIATE_CLEANUP,
+    /** launch flow and don't wait to finish. */
+    ASYNCHRONOUS
+  }
+  
   /** the file the external flow is stored in. */
   protected FlowFile m_FlowFile;
 
-  /** whether to immediately clean up after execution. */
-  protected boolean m_ImmediateCleanUp;
+  /** how to execute the flow. */
+  protected ExecutionType m_ExecutionType;
   
   /** the external flow itself. */
   protected AbstractActor m_ExternalFlow;
@@ -107,6 +122,9 @@ public class ExternalFlow
 
   /** whether the external flow file has changed. */
   protected boolean m_FlowFileChanged;
+  
+  /** the background processes launched. */
+  protected List<RunnableWithLogging> m_Asynchronous;
 
   /**
    * Returns a string describing the object.
@@ -130,10 +148,20 @@ public class ExternalFlow
 	    new FlowFile("."));
 
     m_OptionManager.add(
-	    "immediate-clean-up", "immediateCleanUp",
-	    false);
+	    "execution-type", "executionType",
+	    ExecutionType.SYNCHRONOUS);
   }
 
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Asynchronous = new ArrayList<RunnableWithLogging>();
+  }
+  
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -144,7 +172,7 @@ public class ExternalFlow
     String	result;
     
     result  = QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "file: ");
-    result += QuickInfoHelper.toString(this, "immediateCleanUp", m_ImmediateCleanUp, "clean-up", ", ");
+    result += QuickInfoHelper.toString(this, "executionType", m_ExecutionType, ", execution: ");
     
     return result;
   }
@@ -179,22 +207,22 @@ public class ExternalFlow
   }
 
   /**
-   * Sets whether to immediately clean up after execution.
+   * Sets how to execute the flow.
    *
-   * @param value	true if to clean-up
+   * @param value	the type
    */
-  public void setImmediateCleanUp(boolean value) {
-    m_ImmediateCleanUp = value;
+  public void setExecutionType(ExecutionType value) {
+    m_ExecutionType = value;
     reset();
   }
 
   /**
-   * Returns whether to immediately clean up after execution.
+   * Returns how to execute the flow.
    *
-   * @return		true if clean-up occurs
+   * @return		the type
    */
-  public boolean getImmediateCleanUp() {
-    return m_ImmediateCleanUp;
+  public ExecutionType getExecutionType() {
+    return m_ExecutionType;
   }
 
   /**
@@ -203,8 +231,8 @@ public class ExternalFlow
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String immediateCleanUpTipText() {
-    return "If enabled, the flow gets immediately cleaned up after execution, ie removing graphical output.";
+  public String executionTypeTipText() {
+    return "Determines how the flow is executed.";
   }
 
   /**
@@ -300,6 +328,7 @@ public class ExternalFlow
   @Override
   protected String doExecute() {
     String		result;
+    RunnableWithLogging	run;
 
     result = null;
 
@@ -309,11 +338,35 @@ public class ExternalFlow
       result = setUpExternalActor();
 
     if (result == null) {
-      result = m_ExternalFlow.execute();
-      if (m_ImmediateCleanUp) {
-	m_ExternalFlow.wrapUp();
-	m_ExternalFlow.destroy();
-	m_ExternalFlow = null;
+      switch (m_ExecutionType) {
+	case SYNCHRONOUS:
+	  result = m_ExternalFlow.execute();
+	  break;
+	case SYNCHRONOUS_IMMEDIATE_CLEANUP:
+	  result = m_ExternalFlow.execute();
+	  m_ExternalFlow.wrapUp();
+	  m_ExternalFlow.destroy();
+	  m_ExternalFlow = null;
+	  break;
+	case ASYNCHRONOUS:
+	  run = new RunnableWithLogging() {
+	    private static final long serialVersionUID = -3439650903854980640L;
+	    @Override
+	    protected void doRun() {
+	      m_ExternalFlow.execute();
+	      m_Asynchronous.remove(this);
+	    }
+	    @Override
+	    public void stopExecution() {
+	      m_ExternalFlow.stopExecution();
+	      super.stopExecution();
+	    }
+	  };
+	  m_Asynchronous.add(run);
+	  new Thread(run).start();
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled execution type: " + m_ExecutionType);
       }
     }
 
@@ -338,8 +391,28 @@ public class ExternalFlow
   @Override
   public void wrapUp() {
     if (m_ExternalFlow != null) {
-      if (!m_ImmediateCleanUp)
-	m_ExternalFlow.wrapUp();
+      switch (m_ExecutionType) {
+	case SYNCHRONOUS:
+	  m_ExternalFlow.wrapUp();
+	  break;
+	case SYNCHRONOUS_IMMEDIATE_CLEANUP:
+	  // nothing to do
+	  break;
+	case ASYNCHRONOUS:
+	  while (m_Asynchronous.size() > 0) {
+	    try {
+	      synchronized(this) {
+		wait(100);
+	      }
+	    }
+	    catch (Exception e) {
+	      // ignored
+	    }
+	  }
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled execution type: " + m_ExecutionType);
+      }
     }
 
     m_FlowFileIsVariable = null;
