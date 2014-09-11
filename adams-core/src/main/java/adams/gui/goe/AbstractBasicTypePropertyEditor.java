@@ -15,7 +15,7 @@
 
 /**
  * AbstractPropertyEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -43,6 +43,7 @@ public abstract class AbstractBasicTypePropertyEditor
    * @return  True if the class will honor the paintValue method.
    */
 
+  @Override
   public boolean isPaintable() {
     return false;
   }
@@ -62,6 +63,7 @@ public abstract class AbstractBasicTypePropertyEditor
    * @param gfx  Graphics object to paint into.
    * @param box  Rectangle within graphics object into which we should paint.
    */
+  @Override
   public void paintValue(Graphics gfx, Rectangle box) {
     // does nothing
   }
@@ -74,8 +76,21 @@ public abstract class AbstractBasicTypePropertyEditor
    * <p>   If a non-null value is returned, then the PropertyEditor should
    *	     be prepared to parse that string back in setAsText().
    */
+  @Override
   public String getAsText() {
-    return getValue().toString();
+    return toString(getValue());
+  }
+  
+  /**
+   * Turns the object into a string representation.
+   * <p/>
+   * Default implementation just uses the Object's toString() method.
+   *
+   * @param obj		the object to convert
+   * @return		the string representation
+   */
+  protected String toString(Object obj) {
+    return obj.toString();
   }
 
   /**
@@ -88,6 +103,7 @@ public abstract class AbstractBasicTypePropertyEditor
    * @throws IllegalArgumentException 	if parsing fails
    * @see 		#parse(String)
    */
+  @Override
   public void setAsText(String text) throws IllegalArgumentException {
     setValue(parse(text));
   }
@@ -106,6 +122,7 @@ public abstract class AbstractBasicTypePropertyEditor
    *
    * @return		the custom editor
    */
+  @Override
   protected JComponent createCustomEditor() {
     JTextField	result;
 
@@ -138,9 +155,10 @@ public abstract class AbstractBasicTypePropertyEditor
   /**
    * Initializes the display of the value.
    */
+  @Override
   protected void initForDisplay() {
     super.initForDisplay();
-    if (!((JTextField) m_CustomEditor).getText().equals(getValue().toString()))
-      ((JTextField) m_CustomEditor).setText(getValue().toString());
+    if (!((JTextField) m_CustomEditor).getText().equals(toString(getValue())))
+      ((JTextField) m_CustomEditor).setText(toString(getValue()));
   }
 }

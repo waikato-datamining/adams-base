@@ -15,7 +15,7 @@
 
 /**
  * DoubleEditor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -76,6 +76,17 @@ public class DoubleEditor
   @Override
   public Object getValue() {
     return m_CurrentValue;
+  }
+  
+  /**
+   * Turns the object into a string representation.
+   *
+   * @param obj		the object to convert
+   * @return		the string representation
+   */
+  @Override
+  protected String toString(Object obj) {
+    return Utils.doubleToString((Double) obj, 8);
   }
 
   /**

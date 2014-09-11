@@ -15,7 +15,7 @@
 
 /**
  * NumberTextField.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -240,7 +240,7 @@ public class NumberTextField
       // check bounds
       if (result) {
 	try {
-	  value = new Double(text);
+	  value = Utils.toDouble(text);
 	}
 	catch (Exception e) {
 	  result = false;
