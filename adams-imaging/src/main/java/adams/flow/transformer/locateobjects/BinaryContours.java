@@ -47,6 +47,11 @@ import boofcv.struct.image.ImageUInt8;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
+ * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -64,6 +69,9 @@ public class BinaryContours
   /** for serialization. */
   private static final long serialVersionUID = 9160763275489359825L;
   
+  /** whether to remove small blobs. */
+  protected boolean m_RemoveSmallBlobs;
+
   /**
    * Returns a string describing the object.
    *
@@ -73,7 +81,48 @@ public class BinaryContours
   public String globalInfo() {
     return "Uses the BoofCV contour-finding algorithm to locate objects.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "remove-small-blobs", "removeSmallBlobs",
+	    false);
+  }
+
+  /**
+   * Sets whether to remove small blobs using erode8/dilate8.
+   *
+   * @param value	true if to remove blobs
+   */
+  public void setRemoveSmallBlobs(boolean value) {
+    m_RemoveSmallBlobs = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to remove small blobs using erode8/dilate8.
+   *
+   * @return		true if blobs removed
+   */
+  public boolean getRemoveSmallBlobs() {
+    return m_RemoveSmallBlobs;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String removeSmallBlobsTipText() {
+    return "If enabled, small blobs are removed using erode8/dilate8.";
+  }
+
   /**
    * Returns the input image as output.
    * 
@@ -99,9 +148,14 @@ public class BinaryContours
     mean = ImageStatistics.mean(input);
     // create a binary image by thresholding
     ThresholdImageOps.threshold(input, binary, (float) mean, true);
-    // reduce noise with some filtering
-    filtered = BinaryImageOps.erode8(binary, null);
-    filtered = BinaryImageOps.dilate8(filtered, null);
+    // reduce noise with some filtering?
+    if (m_RemoveSmallBlobs) {
+      filtered = BinaryImageOps.erode8(binary, null);
+      filtered = BinaryImageOps.dilate8(filtered, null);
+    }
+    else {
+      filtered = binary;
+    }
     // Find the contour around the shapes
     contours = BinaryImageOps.contour(filtered, 8, null);
     
