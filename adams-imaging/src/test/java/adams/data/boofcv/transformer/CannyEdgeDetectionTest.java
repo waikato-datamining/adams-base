@@ -51,7 +51,7 @@ public class CannyEdgeDetectionTest
   @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
-	"adams_logo.png",
+	"particles.jpg",
     };
   }
 
