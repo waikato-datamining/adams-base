@@ -23,6 +23,7 @@ package adams.data.boofcv.transformer;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
@@ -30,6 +31,7 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.feature.detect.edge.CannyEdge;
 import boofcv.alg.feature.detect.edge.EdgeContour;
 import boofcv.alg.filter.binary.BinaryImageOps;
@@ -262,7 +264,7 @@ public class CannyEdgeDetection
     List<Contour> 			contours;
     BufferedImage			rendered;
     
-    gray      = ConvertBufferedImage.convertFrom(img.toBufferedImage(), (ImageUInt8) null);
+    gray      = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     edgeImage = new ImageUInt8(gray.width, gray.height);
 
     // Create a canny edge detector which will dynamically compute the threshold based on maximum edge intensity

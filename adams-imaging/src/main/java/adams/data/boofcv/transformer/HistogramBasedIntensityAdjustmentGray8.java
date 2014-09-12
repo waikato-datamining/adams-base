@@ -20,12 +20,13 @@
 
 package adams.data.boofcv.transformer;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.enhance.EnhanceImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageUInt8;
 
 /**
@@ -86,7 +87,7 @@ public class HistogramBasedIntensityAdjustmentGray8
     int[] 			histogram;
     int[] 			transform;
 
-    gray     = ConvertBufferedImage.convertFrom(img.toBufferedImage(), (ImageUInt8) null);
+    gray     = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     adjusted = new ImageUInt8(gray.width, gray.height);
 
     histogram = new int[256];

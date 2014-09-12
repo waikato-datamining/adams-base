@@ -20,13 +20,14 @@
 
 package adams.data.boofcv.transformer;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
@@ -214,7 +215,7 @@ public class Binary
     double 			threshold;
     ImageUInt8 			filtered;
     
-    input  = ConvertBufferedImage.convertFromSingle(img.toBufferedImage(), null, ImageFloat32.class);
+    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
     binary = new ImageUInt8(input.width,input.height);
 
     if (m_UseMeanThreshold) {

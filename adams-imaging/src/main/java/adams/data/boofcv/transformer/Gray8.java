@@ -15,13 +15,14 @@
 
 /*
  * Gray8.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
 
+import adams.core.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
-import boofcv.core.image.ConvertBufferedImage;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.struct.image.ImageUInt8;
 
 /**
@@ -71,8 +72,7 @@ public class Gray8
     BoofCVImageContainer[]	result;
     ImageUInt8			newImg;
     
-    newImg = ConvertBufferedImage.convertFromSingle(img.toBufferedImage(), null, ImageUInt8.class);
-
+    newImg    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
     result[0].setImage(newImg);

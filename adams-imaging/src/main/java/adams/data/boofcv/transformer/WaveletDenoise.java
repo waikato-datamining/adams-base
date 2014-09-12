@@ -20,12 +20,13 @@
 
 package adams.data.boofcv.transformer;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.abst.denoise.FactoryImageDenoise;
 import boofcv.abst.denoise.WaveletDenoiseFilter;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageFloat32;
 
 /**
@@ -130,7 +131,7 @@ public class WaveletDenoise
     ImageFloat32 			denoised;
     WaveletDenoiseFilter<ImageFloat32> 	denoiser;
     
-    input    = ConvertBufferedImage.convertFromSingle(img.toBufferedImage(), null, ImageFloat32.class);
+    input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
     denoised = new ImageFloat32(input.width,input.height);
     denoiser = FactoryImageDenoise.waveletBayes(ImageFloat32.class, m_NumLevels, 0, 255);
 

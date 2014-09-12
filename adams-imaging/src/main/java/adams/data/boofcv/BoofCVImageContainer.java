@@ -21,12 +21,10 @@ package adams.data.boofcv;
 
 import java.awt.image.BufferedImage;
 
+import adams.core.BoofCVHelper;
 import adams.data.image.AbstractImage;
-import boofcv.core.image.ConvertBufferedImage;
-import boofcv.gui.binary.VisualizeBinaryData;
 import boofcv.struct.image.ImageBase;
 import boofcv.struct.image.ImageSingleBand;
-import boofcv.struct.image.ImageUInt8;
 
 /**
  * Image wrapper around a {@link ImageBase} used by BoofCV.
@@ -85,9 +83,6 @@ public class BoofCVImageContainer
    */
   @Override
   public BufferedImage toBufferedImage() {
-    if (ImageUInt8.class == m_Content.getClass())
-      return VisualizeBinaryData.renderBinary((ImageUInt8) m_Content, null);
-    else
-      return ConvertBufferedImage.convertTo(m_Content, null);
+    return BoofCVHelper.toBufferedImage(m_Content);
   }
 }

@@ -15,9 +15,11 @@
 
 /**
  * BoofCVHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
 import adams.data.boofcv.BoofCVImageContainer;
@@ -25,6 +27,10 @@ import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImage;
 import adams.data.report.Report;
 import boofcv.core.image.ConvertBufferedImage;
+import boofcv.gui.binary.VisualizeBinaryData;
+import boofcv.struct.image.ImageBase;
+import boofcv.struct.image.ImageSingleBand;
+import boofcv.struct.image.ImageUInt8;
 
 /**
  * Helper class for BoofCV operations.
@@ -33,10 +39,61 @@ import boofcv.core.image.ConvertBufferedImage;
  * @version $Revision$
  */
 public class BoofCVHelper {
+
+  /**
+   * Turns the image into a buffered image.
+   * 
+   * @img		the cimage to convert
+   * @return		the buffered image
+   */
+  public static BufferedImage toBufferedImage(ImageBase img) {
+    if (ImageUInt8.class == img.getClass())
+      return VisualizeBinaryData.renderBinary((ImageUInt8) img, null);
+    else
+      return ConvertBufferedImage.convertTo(img, null);
+  }
+  
+  /**
+   * Clones the image.
+   * 
+   * @param img		the image to clone
+   * @return		the clone
+   */
+  public static ImageBase clone(ImageBase img) {
+    if (img instanceof ImageSingleBand)
+      return ((ImageSingleBand) img).clone();
+    else
+      return img.subimage(0, 0, img.getWidth() - 1, img.getHeight() - 1);
+  }
+
+  /**
+   * Converts the image to the specified type if necessary.
+   * 
+   * @param img		the image to convert
+   * @param type	the type of image
+   * @return		the converted container
+   */
+  public static ImageBase toBoofCVImage(ImageBase img, BoofCVImageType type) {
+    if (img.getClass() == type.getImageClass())
+      return img;
+    else
+      return toBoofCVImage(toBufferedImage(img), type);
+  }
+
+  /**
+   * Converts the image to the specified type if necessary.
+   * 
+   * @param img		the image to convert
+   * @param type	the type of image
+   * @return		the converted container
+   */
+  public static ImageBase toBoofCVImage(BufferedImage img, BoofCVImageType type) {
+    return ConvertBufferedImage.convertFromSingle(img, null, type.getImageClass());
+  }
   
   /**
    * Creates a {@link BoofCVImageContainer} container if necessary, otherwise
-   * it just casts the object.
+   * it just casts the object. In either, the correct image type is generated.
    * 
    * @param cont	the cont to cast/convert
    * @param type	the type of image
@@ -47,15 +104,26 @@ public class BoofCVHelper {
     Report			report;
     Notes			notes;
     
-    if (cont instanceof BoofCVImageContainer)
-      return (BoofCVImageContainer) cont;
-
-    report = cont.getReport().getClone();
-    notes  = cont.getNotes().getClone();
-    result = new BoofCVImageContainer();
-    result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, type.getImageClass()));
-    result.setReport(report);
-    result.setNotes(notes);
+    if (cont instanceof BoofCVImageContainer) {
+      if (((BoofCVImageContainer) cont).getImage().getClass() == type.getImageClass()) {
+	result = (BoofCVImageContainer) cont;
+      }
+      else {
+	result = (BoofCVImageContainer) cont.getHeader();
+	result.setImage(toBoofCVImage(((BoofCVImageContainer) cont).getImage(), type));
+      }
+    }
+    else {
+      report = cont.getReport().getClone();
+      notes  = cont.getNotes().getClone();
+      result = new BoofCVImageContainer();
+      if (cont.getImage() instanceof ImageBase)
+	result.setImage(toBoofCVImage((ImageBase) cont.getImage(), type));
+      else
+	result.setImage(toBoofCVImage(cont.toBufferedImage(), type));
+      result.setReport(report);
+      result.setNotes(notes);
+    }
     
     return result;
   }

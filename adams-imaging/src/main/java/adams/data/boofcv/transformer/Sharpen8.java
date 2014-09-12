@@ -15,12 +15,14 @@
 
 /*
  * Sharpen8.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
 
+import adams.core.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.enhance.EnhanceImageOps;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageFloat32;
@@ -73,6 +75,7 @@ public class Sharpen8
     ImageFloat32		input;
     ImageFloat32		output;
     
+    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
     input  = ConvertBufferedImage.convertFromSingle(img.toBufferedImage(), null, ImageFloat32.class);
     output = new ImageFloat32(input.width, input.height);
 
