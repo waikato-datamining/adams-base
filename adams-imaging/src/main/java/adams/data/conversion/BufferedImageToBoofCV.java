@@ -15,7 +15,7 @@
 
 /**
  * BufferedImageToBoofCV.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -41,7 +41,7 @@ import adams.data.image.BufferedImageContainer;
  * 
  * <pre>-image-type &lt;FLOAT_32|FLOAT_64|SIGNED_INT_8|UNSIGNED_INT_8|SIGNED_INT_16|UNSIGNED_INT_16|SIGNED_INT_32|SIGNED_INT_64&gt; (property: imageType)
  * &nbsp;&nbsp;&nbsp;The BoofCV image type to convert to.
- * &nbsp;&nbsp;&nbsp;default: SIGNED_INT_32
+ * &nbsp;&nbsp;&nbsp;default: FLOAT_32
  * </pre>
  * 
  <!-- options-end -->
@@ -77,7 +77,7 @@ public class BufferedImageToBoofCV
 
     m_OptionManager.add(
 	    "image-type", "imageType",
-	    BoofCVImageType.SIGNED_INT_32);
+	    BoofCVImageType.FLOAT_32);
   }
 
   /**
