@@ -15,7 +15,7 @@
 
 /**
  * ProgressBar.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.DecimalFormatString;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
@@ -203,6 +204,7 @@ public class ProgressBar
      */
     public void update(double current) {
       m_Current = current;
+      setToolTipText(Utils.doubleToString(m_Current, 3) + " of " + Utils.doubleToString(m_Owner.getMaximum(), 3));
       repaint();
     }
     
