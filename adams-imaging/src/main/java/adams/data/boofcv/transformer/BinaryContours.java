@@ -29,11 +29,8 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
-import boofcv.alg.filter.binary.ThresholdImageOps;
-import boofcv.alg.misc.ImageStatistics;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
-import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
 /**
@@ -133,30 +130,23 @@ public class BinaryContours
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageFloat32 		input;
-    ImageUInt8 			binary;
+    ImageUInt8 			input;
     ImageUInt8 			filtered;
     List<Contour> 		contours;
     BufferedImage		rendered;
-    double 			mean;
     
-    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    binary = new ImageUInt8(input.width, input.height);
-    // the mean pixel value is often a reasonable threshold when creating a binary image
-    mean = ImageStatistics.mean(input);
-    // create a binary image by thresholding
-    ThresholdImageOps.threshold(input, binary, (float) mean, true);
+    input = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     // reduce noise with some filtering?
     if (m_RemoveSmallBlobs) {
-      filtered = BinaryImageOps.erode8(binary, null);
+      filtered = BinaryImageOps.erode8(input, null);
       filtered = BinaryImageOps.dilate8(filtered, null);
     }
     else {
-      filtered = binary;
+      filtered = input;
     }
     // Find the contour around the shapes
     contours = BinaryImageOps.contour(filtered, 8, null);
-    rendered = VisualizeBinaryData.renderExternal(contours, null, binary.width, binary.height, null);
+    rendered = VisualizeBinaryData.renderExternal(contours, null, input.width, input.height, null);
 
     result = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
