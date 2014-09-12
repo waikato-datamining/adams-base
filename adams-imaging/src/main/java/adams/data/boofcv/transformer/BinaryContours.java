@@ -35,7 +35,7 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Uses the BoofCV binary contours algorithm to detect edges.
+ * Uses the BoofCV binary contours algorithm to detect edges in a binary image.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -77,7 +77,7 @@ public class BinaryContours
    */
   @Override
   public String globalInfo() {
-    return "Uses the BoofCV binary contours algorithm to detect edges.";
+    return "Uses the BoofCV binary contours algorithm to detect edges in a binary image.";
   }
 
   /**
