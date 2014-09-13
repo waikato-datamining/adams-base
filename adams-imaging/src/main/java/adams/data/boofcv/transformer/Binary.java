@@ -42,22 +42,22 @@ import boofcv.struct.image.ImageUInt8;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
- * <pre>-use-mean-threshold &lt;boolean&gt; (property: useMeanThreshold)
- * &nbsp;&nbsp;&nbsp;If enabled, the mean is used rather than the fixed threshold value.
- * &nbsp;&nbsp;&nbsp;default: false
+ *
+ * <pre>-threshold-type &lt;MANUAL|MEAN&gt; (property: thresholdType)
+ * &nbsp;&nbsp;&nbsp;The type of threshold to apply.
+ * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
- * 
+ *
  * <pre>-threshold &lt;float&gt; (property: threshold)
- * &nbsp;&nbsp;&nbsp;The threshold to use.
+ * &nbsp;&nbsp;&nbsp;The manual threshold to use.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
- * 
+ *
  * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
  * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -75,15 +75,30 @@ public class Binary
   /** for serialization. */
   private static final long serialVersionUID = -465068613851000709L;
 
-  /** whether to use the mean as threshold. */
-  protected boolean m_UseMeanThreshold;
-  
+  /**
+   * The treshold type to apply.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum ThresholdType {
+    /** manually supplied threshold. */
+    MANUAL,
+    /** using the mean. */
+    MEAN,
+    /** using adaptive gaussian. */
+    //ADAPTIVE_GAUSSIAN  TODO upgrade BoofCV
+  }
+
+  /** the type of threshold to apply. */
+  protected ThresholdType m_ThresholdType;
+
   /** the threshold to use. */
   protected float m_Threshold;
-  
+
   /** whether to remove small blobs. */
   protected boolean m_RemoveSmallBlobs;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -102,8 +117,8 @@ public class Binary
     super.defineOptions();
 
     m_OptionManager.add(
-	    "use-mean-threshold", "useMeanThreshold",
-	    false);
+	    "threshold-type", "thresholdType",
+	    ThresholdType.MANUAL);
 
     m_OptionManager.add(
 	    "threshold", "threshold",
@@ -115,22 +130,22 @@ public class Binary
   }
 
   /**
-   * Sets whether to use the mean as threshold rather than fixed value.
+   * Sets the type of threshold to apply.
    *
-   * @param value	true if to use mean
+   * @param value	the type
    */
-  public void setUseMeanThreshold(boolean value) {
-    m_UseMeanThreshold = value;
+  public void setThresholdType(ThresholdType value) {
+    m_ThresholdType = value;
     reset();
   }
 
   /**
-   * Returns whether to use the mean as threshold rather than fixed value.
+   * Returns the type of threshold to apply.
    *
-   * @return		true if mean is used
+   * @return		the type
    */
-  public boolean getUseMeanThreshold() {
-    return m_UseMeanThreshold;
+  public ThresholdType getThresholdType() {
+    return m_ThresholdType;
   }
 
   /**
@@ -139,12 +154,12 @@ public class Binary
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String useMeanThresholdTipText() {
-    return "If enabled, the mean is used rather than the fixed threshold value.";
+  public String thresholdTypeTipText() {
+    return "The type of threshold to apply.";
   }
 
   /**
-   * Sets the threshold to use.
+   * Sets the manual threshold to use.
    *
    * @param value	the threshold to use
    */
@@ -154,7 +169,7 @@ public class Binary
   }
 
   /**
-   * Returns the threshold to use.
+   * Returns the manual threshold to use.
    *
    * @return		the threshold in use
    */
@@ -169,7 +184,7 @@ public class Binary
    * 			displaying in the gui
    */
   public String thresholdTipText() {
-    return "The threshold to use.";
+    return "The manual threshold to use.";
   }
 
   /**
@@ -214,19 +229,22 @@ public class Binary
     ImageUInt8 			binary;
     double 			threshold;
     ImageUInt8 			filtered;
-    
+
     input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
     binary = new ImageUInt8(input.width,input.height);
 
-    if (m_UseMeanThreshold) {
-      threshold = ImageStatistics.mean(input);
-      getLogger().info("mean: " + threshold);
+    switch (m_ThresholdType) {
+      case MANUAL:
+	ThresholdImageOps.threshold(input, binary, m_Threshold, true);
+	break;
+      case MEAN:
+	threshold = ImageStatistics.mean(input);
+	getLogger().info("mean: " + threshold);
+	ThresholdImageOps.threshold(input, binary, (float) threshold, true);
+	break;
+      default:
+	throw new IllegalStateException("Unhandled threshold type: " + m_ThresholdType);
     }
-    else {
-      threshold = m_Threshold;
-    }
-
-    ThresholdImageOps.threshold(input, binary, (float) threshold, true);
 
     if (m_RemoveSmallBlobs) {
       filtered = BinaryImageOps.erode8(binary,null);
@@ -239,7 +257,7 @@ public class Binary
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
     result[0].setImage(filtered);
-    
+
     return result;
   }
 }

@@ -27,7 +27,7 @@ Report:
 
 Notes:
 PROCESS INFORMATION:
-  1. adams.data.boofcv.transformer.Binary -use-mean-threshold true
+  1. adams.data.boofcv.transformer.Binary -threshold-type MEAN
 
 
 

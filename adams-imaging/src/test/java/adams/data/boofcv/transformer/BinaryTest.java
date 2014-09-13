@@ -21,6 +21,7 @@ package adams.data.boofcv.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.data.boofcv.transformer.Binary.ThresholdType;
 import adams.env.Environment;
 
 /**
@@ -65,14 +66,14 @@ public class BinaryTest
   @Override
   protected AbstractBoofCVTransformer[] getRegressionSetups() {
     Binary[]	result;
-    
+
     result    = new Binary[3];
     result[0] = new Binary();
     result[1] = new Binary();
     result[1].setRemoveSmallBlobs(true);
     result[2] = new Binary();
-    result[2].setUseMeanThreshold(true);
-    
+    result[2].setThresholdType(ThresholdType.MEAN);
+
     return result;
   }
 
