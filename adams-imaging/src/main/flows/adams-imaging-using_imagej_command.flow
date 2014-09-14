@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:31:59
+# Date: 2014-09-15 11:45:25
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -49,10 +49,6 @@ adams.flow.control.Flow
 		adams.flow.transformer.ImageJTransformer
 			-transformer
 				adams.data.imagej.transformer.Command
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.ImageJToBufferedImage
 	-actor
 		adams.flow.transformer.SetVariable
 			-var-name

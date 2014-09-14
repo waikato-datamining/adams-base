@@ -81,6 +81,23 @@ public class BoofCVHelper {
   }
 
   /**
+   * Attempts to convert the image to the closest BoofCV type.
+   * 
+   * @param img		the image to convert
+   * @return		the converted container
+   */
+  public static ImageBase toBoofCVImage(BufferedImage img) {
+    switch (img.getType()) {
+      case BufferedImage.TYPE_BYTE_BINARY:
+	return toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+      case BufferedImage.TYPE_BYTE_GRAY:
+	return toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+      default:
+	return toBoofCVImage(img, BoofCVImageType.FLOAT_32);
+    }
+  }
+
+  /**
    * Converts the image to the specified type if necessary.
    * 
    * @param img		the image to convert
@@ -89,6 +106,35 @@ public class BoofCVHelper {
    */
   public static ImageBase toBoofCVImage(BufferedImage img, BoofCVImageType type) {
     return ConvertBufferedImage.convertFromSingle(img, null, type.getImageClass());
+  }
+
+  /**
+   * Converts the image container to the specified image type if necessary.
+   * 
+   * @param img		the image container to convert
+   * @param type	the type of image
+   * @return		the converted image
+   */
+  public static ImageBase toBoofCVImage(AbstractImage cont, BoofCVImageType type) {
+    if (cont instanceof BoofCVImageContainer)
+      return toBoofCVImage(((BoofCVImageContainer) cont).getImage(), type);
+    else
+      return toBoofCVImage(cont.toBufferedImage(), type);
+  }
+  
+  /**
+   * Creates a {@link BoofCVImageContainer} container if necessary, using 
+   * {@link BoofCVImageType#FLOAT_32}, otherwise it just casts the object.
+   * 
+   * @param cont	the cont to cast/convert
+   * @param type	the type of image
+   * @return		the casted/converted container
+   */
+  public static BoofCVImageContainer toBoofCVImageContainer(AbstractImage cont) {
+    if (cont instanceof BoofCVImageContainer)
+      return (BoofCVImageContainer) cont;
+    else
+      return toBoofCVImageContainer(cont, BoofCVImageType.FLOAT_32);
   }
   
   /**

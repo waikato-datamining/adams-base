@@ -23,14 +23,15 @@ import georegression.struct.line.LineParametric2D_F32;
 
 import java.util.List;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
-import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
+import adams.data.image.AbstractImage;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineHoughPolar;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.struct.image.ImageSInt16;
@@ -398,7 +399,7 @@ public class BoofCVDetectLines
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{BoofCVImageContainer.class};
+    return new Class[]{AbstractImage.class};
   }
 
   /**
@@ -419,7 +420,7 @@ public class BoofCVDetectLines
   @Override
   protected String doExecute() {
     String			result;
-    BoofCVImageContainer 	cont;
+    AbstractImage	 	cont;
     ImageUInt8 			input;
     ConfigHoughPolar		config;
     DetectLineHoughPolar 	detector;
@@ -430,8 +431,8 @@ public class BoofCVDetectLines
     result = null;
     
     try {
-      cont = (BoofCVImageContainer) m_InputToken.getPayload();
-      input = ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageUInt8.class);
+      cont   = (AbstractImage) m_InputToken.getPayload();
+      input  = (ImageUInt8) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.UNSIGNED_INT_8);
       config = new ConfigHoughPolar(
 	  m_LocalMaxRadius, 
 	  m_MinCounts, 

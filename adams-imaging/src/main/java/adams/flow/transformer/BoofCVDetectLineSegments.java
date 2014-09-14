@@ -23,14 +23,15 @@ import georegression.struct.line.LineSegment2D_F32;
 
 import java.util.List;
 
+import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
-import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.BoofCVImageType;
+import adams.data.image.AbstractImage;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineSegmentsGridRansac;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.struct.image.ImageFloat32;
 
@@ -293,7 +294,7 @@ public class BoofCVDetectLineSegments
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{BoofCVImageContainer.class};
+    return new Class[]{AbstractImage.class};
   }
 
   /**
@@ -314,7 +315,7 @@ public class BoofCVDetectLineSegments
   @Override
   protected String doExecute() {
     String				result;
-    BoofCVImageContainer 		cont;
+    AbstractImage	 		cont;
     ImageFloat32 			input;
     DetectLineSegmentsGridRansac 	detector;
     List<LineSegment2D_F32> 		found;
@@ -324,8 +325,8 @@ public class BoofCVDetectLineSegments
     result = null;
     
     try {
-      cont     = (BoofCVImageContainer) m_InputToken.getPayload();
-      input    = ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageFloat32.class);
+      cont     = (AbstractImage) m_InputToken.getPayload();
+      input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.FLOAT_32);
       detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, ImageFloat32.class, ImageFloat32.class);
       found    = detector.detect(input);
       
