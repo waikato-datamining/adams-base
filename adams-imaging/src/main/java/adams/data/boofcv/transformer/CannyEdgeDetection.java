@@ -39,6 +39,7 @@ import boofcv.alg.filter.binary.Contour;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.edge.FactoryEdgeDetectors;
 import boofcv.gui.binary.VisualizeBinaryData;
+import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageSInt16;
 import boofcv.struct.image.ImageUInt8;
@@ -281,7 +282,7 @@ public class CannyEdgeDetection
     // The 'edgeContours' is a tree graph that can be difficult to process.  An alternative is to extract
     // the contours from the binary image, which will produce a single loop for each connected cluster of pixels.
     // Note that you are only interested in external contours.
-    contours = BinaryImageOps.contour(edgeImage, 8, null);
+    contours = BinaryImageOps.contour(edgeImage, ConnectRule.EIGHT, null);
 
     // render the result
     switch (m_Type) {

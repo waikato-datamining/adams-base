@@ -71,7 +71,7 @@ public class Dilate8
     ImageUInt8 			filtered;
     
     input     = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-    filtered  = BinaryImageOps.dilate8(input, null);
+    filtered  = BinaryImageOps.dilate8(input, 1, null);
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
     result[0].setImage(filtered);

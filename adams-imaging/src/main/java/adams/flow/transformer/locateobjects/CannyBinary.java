@@ -32,6 +32,7 @@ import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.edge.FactoryEdgeDetectors;
+import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
@@ -246,7 +247,7 @@ public class CannyBinary
     // Finds edges inside the image
     canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, ImageFloat32.class, ImageFloat32.class);
     canny.process(input, m_ThresholdLow, m_ThresholdHigh, binary);
-    contours = BinaryImageOps.contour(binary, 8, null);
+    contours = BinaryImageOps.contour(binary, ConnectRule.EIGHT, null);
     
     result = new ArrayList<LocatedObject>();
     for (Contour contour: contours) {

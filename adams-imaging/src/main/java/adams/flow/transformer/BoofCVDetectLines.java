@@ -31,6 +31,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineHoughPolar;
 import boofcv.core.image.ConvertBufferedImage;
+import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.struct.image.ImageSInt16;
 import boofcv.struct.image.ImageUInt8;
@@ -420,6 +421,7 @@ public class BoofCVDetectLines
     String			result;
     BoofCVImageContainer 	cont;
     ImageUInt8 			input;
+    ConfigHoughPolar		config;
     DetectLineHoughPolar 	detector;
     List<LineParametric2D_F32> 	found;
     SpreadSheet  		sheet;
@@ -430,13 +432,15 @@ public class BoofCVDetectLines
     try {
       cont = (BoofCVImageContainer) m_InputToken.getPayload();
       input = ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageUInt8.class);
-      detector = FactoryDetectLineAlgs.houghPolar(
+      config = new ConfigHoughPolar(
 	  m_LocalMaxRadius, 
 	  m_MinCounts, 
 	  m_ResolutionRange, 
 	  m_ResolutionAngle, 
 	  m_EdgeThreshold, 
-	  m_MaxLines, 
+	  m_MaxLines);
+      detector = FactoryDetectLineAlgs.houghPolar(
+	  config, 
 	  ImageUInt8.class, 
 	  ImageSInt16.class);
       found = detector.detect(input);

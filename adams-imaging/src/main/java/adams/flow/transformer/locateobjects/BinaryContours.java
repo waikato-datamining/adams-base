@@ -32,6 +32,7 @@ import boofcv.alg.filter.binary.Contour;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
 import boofcv.core.image.ConvertBufferedImage;
+import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
@@ -150,14 +151,14 @@ public class BinaryContours
     ThresholdImageOps.threshold(input, binary, (float) mean, true);
     // reduce noise with some filtering?
     if (m_RemoveSmallBlobs) {
-      filtered = BinaryImageOps.erode8(binary, null);
-      filtered = BinaryImageOps.dilate8(filtered, null);
+      filtered = BinaryImageOps.erode8(binary, 1, null);
+      filtered = BinaryImageOps.dilate8(filtered, 1, null);
     }
     else {
       filtered = binary;
     }
     // Find the contour around the shapes
-    contours = BinaryImageOps.contour(filtered, 8, null);
+    contours = BinaryImageOps.contour(filtered, ConnectRule.EIGHT, null);
     
     result = new ArrayList<LocatedObject>();
     for (Contour contour: contours) {

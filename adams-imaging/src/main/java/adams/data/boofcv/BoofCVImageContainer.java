@@ -73,7 +73,7 @@ public class BoofCVImageContainer
     if (m_Content instanceof ImageSingleBand)
       return ((ImageSingleBand) m_Content).clone();
     else
-      return m_Content.subimage(0, 0, m_Content.getWidth() - 1, m_Content.getHeight() - 1);
+      return m_Content.subimage(0, 0, m_Content.getWidth() - 1, m_Content.getHeight() - 1, null);
   }
 
   /**

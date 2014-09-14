@@ -50,7 +50,7 @@ public class BoofCVHelper {
     if (ImageUInt8.class == img.getClass())
       return VisualizeBinaryData.renderBinary((ImageUInt8) img, null);
     else
-      return ConvertBufferedImage.convertTo(img, null);
+      return ConvertBufferedImage.convertTo(img, null, true);
   }
   
   /**
@@ -63,7 +63,7 @@ public class BoofCVHelper {
     if (img instanceof ImageSingleBand)
       return ((ImageSingleBand) img).clone();
     else
-      return img.subimage(0, 0, img.getWidth() - 1, img.getHeight() - 1);
+      return img.subimage(0, 0, img.getWidth() - 1, img.getHeight() - 1, null);
   }
 
   /**

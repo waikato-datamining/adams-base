@@ -247,8 +247,8 @@ public class Binary
     }
 
     if (m_RemoveSmallBlobs) {
-      filtered = BinaryImageOps.erode8(binary,null);
-      filtered = BinaryImageOps.dilate8(filtered, null);
+      filtered = BinaryImageOps.erode8(binary, 1, null);
+      filtered = BinaryImageOps.dilate8(filtered, 1, null);
     }
     else {
       filtered = binary;

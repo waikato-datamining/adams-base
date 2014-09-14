@@ -31,6 +31,7 @@ import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
+import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageUInt8;
 
 /**
@@ -138,14 +139,14 @@ public class BinaryContours
     input = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     // reduce noise with some filtering?
     if (m_RemoveSmallBlobs) {
-      filtered = BinaryImageOps.erode8(input, null);
-      filtered = BinaryImageOps.dilate8(filtered, null);
+      filtered = BinaryImageOps.erode8(input, 1, null);
+      filtered = BinaryImageOps.dilate8(filtered, 1, null);
     }
     else {
       filtered = input;
     }
     // Find the contour around the shapes
-    contours = BinaryImageOps.contour(filtered, 8, null);
+    contours = BinaryImageOps.contour(filtered, ConnectRule.EIGHT, null);
     rendered = VisualizeBinaryData.renderExternal(contours, null, input.width, input.height, null);
 
     result = new BoofCVImageContainer[1];
