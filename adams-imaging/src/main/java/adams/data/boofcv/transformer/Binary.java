@@ -42,22 +42,44 @@ import boofcv.struct.image.ImageUInt8;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-threshold-type &lt;MANUAL|MEAN&gt; (property: thresholdType)
+ * 
+ * <pre>-threshold-type &lt;MANUAL|MEAN|ADAPTIVE_GAUSSIAN|ADAPTIVE_SQUARE&gt; (property: thresholdType)
  * &nbsp;&nbsp;&nbsp;The type of threshold to apply.
  * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
- *
+ * 
  * <pre>-threshold &lt;float&gt; (property: threshold)
  * &nbsp;&nbsp;&nbsp;The manual threshold to use.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
- *
+ * 
+ * <pre>-gaussian-radius &lt;int&gt; (property: gaussianRadius)
+ * &nbsp;&nbsp;&nbsp;The Gaussian radius to use.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-square-radius &lt;int&gt; (property: squareRadius)
+ * &nbsp;&nbsp;&nbsp;The radius of the square region to use.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-bias &lt;float&gt; (property: bias)
+ * &nbsp;&nbsp;&nbsp;The bias to use (for adaptive methods).
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * </pre>
+ * 
+ * <pre>-threshold-down &lt;boolean&gt; (property: thresholdDown)
+ * &nbsp;&nbsp;&nbsp;Whether to threshold down or up.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
  * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -87,14 +109,28 @@ public class Binary
     /** using the mean. */
     MEAN,
     /** using adaptive gaussian. */
-    //ADAPTIVE_GAUSSIAN  TODO upgrade BoofCV
+    ADAPTIVE_GAUSSIAN,
+    /** using adaptive square. */
+    ADAPTIVE_SQUARE
   }
 
   /** the type of threshold to apply. */
   protected ThresholdType m_ThresholdType;
 
-  /** the threshold to use. */
+  /** the manual threshold to use. */
   protected float m_Threshold;
+
+  /** the gaussian radius. */
+  protected int m_GaussianRadius;
+
+  /** the square radius. */
+  protected int m_SquareRadius;
+
+  /** the bias (for adaptive methods). */
+  protected float m_Bias;
+
+  /** the down (for adaptive methods). */
+  protected boolean m_ThresholdDown;
 
   /** whether to remove small blobs. */
   protected boolean m_RemoveSmallBlobs;
@@ -123,6 +159,22 @@ public class Binary
     m_OptionManager.add(
 	    "threshold", "threshold",
 	    0.0f);
+
+    m_OptionManager.add(
+	    "gaussian-radius", "gaussianRadius",
+	    1, 1, null);
+
+    m_OptionManager.add(
+	    "square-radius", "squareRadius",
+	    1, 1, null);
+
+    m_OptionManager.add(
+	    "bias", "bias",
+	    0.0f);
+
+    m_OptionManager.add(
+	    "threshold-down", "thresholdDown",
+	    false);
 
     m_OptionManager.add(
 	    "remove-small-blobs", "removeSmallBlobs",
@@ -188,6 +240,132 @@ public class Binary
   }
 
   /**
+   * Sets the Gaussian radius to use.
+   *
+   * @param value	the radius
+   */
+  public void setGaussianRadius(int value) {
+    if (value >= 1) {
+      m_GaussianRadius = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Gaussian radius must be at least 1, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the Gaussian radius to use.
+   *
+   * @return		the radius
+   */
+  public int getGaussianRadius() {
+    return m_GaussianRadius;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String gaussianRadiusTipText() {
+    return "The Gaussian radius to use.";
+  }
+
+  /**
+   * Sets the radius of the square region to use.
+   *
+   * @param value	the radius
+   */
+  public void setSquareRadius(int value) {
+    if (value >= 1) {
+      m_SquareRadius = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Square radius must be at least 1, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the radius of the square region to use.
+   *
+   * @return		the radius
+   */
+  public int getSquareRadius() {
+    return m_SquareRadius;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String squareRadiusTipText() {
+    return "The radius of the square region to use.";
+  }
+
+  /**
+   * Sets the bias to use.
+   *
+   * @param value	the bias to use
+   */
+  public void setBias(float value) {
+    m_Bias = value;
+    reset();
+  }
+
+  /**
+   * Returns the bias to use (for adaptive methods).
+   *
+   * @return		the bias in use
+   */
+  public float getBias() {
+    return m_Bias;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String biasTipText() {
+    return "The bias to use (for adaptive methods).";
+  }
+
+  /**
+   * Sets whether to threshold down or up (adaptive methods).
+   *
+   * @param value	true if to threshold down
+   */
+  public void setThresholdDown(boolean value) {
+    m_ThresholdDown = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to threshold down or up (adaptive methods).
+   *
+   * @return		true if to threshold down
+   */
+  public boolean getThresholdDown() {
+    return m_ThresholdDown;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String thresholdDownTipText() {
+    return "Whether to threshold down or up.";
+  }
+
+  /**
    * Sets whether to remove small blobs using erode8/dilate8.
    *
    * @param value	true if to remove blobs
@@ -241,6 +419,12 @@ public class Binary
 	threshold = ImageStatistics.mean(input);
 	getLogger().info("mean: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, true);
+	break;
+      case ADAPTIVE_GAUSSIAN:
+	ThresholdImageOps.adaptiveGaussian(input, binary, m_GaussianRadius, m_Bias, m_ThresholdDown, null, null);
+	break;
+      case ADAPTIVE_SQUARE:
+	ThresholdImageOps.adaptiveSquare(input, binary, m_SquareRadius, m_Bias, m_ThresholdDown, null, null);
 	break;
       default:
 	throw new IllegalStateException("Unhandled threshold type: " + m_ThresholdType);
