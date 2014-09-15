@@ -21,7 +21,7 @@
 package adams.data.jai.transformer;
 
 import adams.core.JAIHelper;
-import adams.data.adams.transformer.AbstractBufferedImageTransformer;
+import adams.data.base.transformer.AbstractBufferedImageTransformer;
 
 /**
  * Abstract base class for JAI transformations.

@@ -22,8 +22,8 @@ package adams.gui.visualization.image.plugins;
 import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
-import adams.data.adams.transformer.AbstractBufferedImageTransformer;
-import adams.data.adams.transformer.PassThrough;
+import adams.data.base.transformer.AbstractBufferedImageTransformer;
+import adams.data.base.transformer.PassThrough;
 import adams.data.image.BufferedImageContainer;
 
 /**

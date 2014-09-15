@@ -31,7 +31,7 @@ import javax.media.jai.PlanarImage;
 
 import adams.core.EnumWithCustomDisplay;
 import adams.core.option.AbstractOption;
-import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;

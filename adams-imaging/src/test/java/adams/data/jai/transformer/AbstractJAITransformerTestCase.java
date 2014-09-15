@@ -19,7 +19,7 @@
  */
 package adams.data.jai.transformer;
 
-import adams.data.adams.transformer.AbstractBufferedImageTransformerTestCase;
+import adams.data.base.transformer.AbstractBufferedImageTransformerTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 

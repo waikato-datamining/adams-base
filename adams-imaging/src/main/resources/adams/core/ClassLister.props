@@ -8,8 +8,8 @@
 # Version: $Revision$
 
 # the BufferedImage feature generators
-adams.data.adams.features.AbstractBufferedImageFeatureGenerator=\
-  adams.data.adams.features,\
+adams.data.base.features.AbstractBufferedImageFeatureGenerator=\
+  adams.data.base.features,\
   adams.data.jai.features,\
   adams.data.lire.features
 
@@ -30,22 +30,22 @@ adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
   adams.data.imagej.transformer.crop
 
 # the buffered image transformers
-adams.data.adams.transformer.AbstractBufferedImageTransformer=\
-  adams.data.adams.transformer,\
+adams.data.base.transformer.AbstractBufferedImageTransformer=\
+  adams.data.base.transformer,\
   adams.data.jai.transformer,\
   adams.data.lire.transformer
 
 # the buffered image crop algorithms
-adams.data.adams.transformer.crop.AbstractCropAlgorithm=\
-  adams.data.adams.transformer.crop
+adams.data.base.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.base.transformer.crop
 
 # the subimage generators
-adams.data.adams.transformer.subimages.AbstractSubImagesGenerator=\
-  adams.data.adams.transformer.subimages
+adams.data.base.transformer.subimages.AbstractSubImagesGenerator=\
+  adams.data.base.transformer.subimages
 
 # the buffered image white balance algorithms
-adams.data.adams.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
-  adams.data.adams.transformer.whitebalance
+adams.data.base.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
+  adams.data.base.transformer.whitebalance
 
 # the BoofCV transformers
 adams.data.boofcv.transformer.AbstractBoofCVTransformer=\

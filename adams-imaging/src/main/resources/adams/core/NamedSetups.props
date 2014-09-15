@@ -16,5 +16,5 @@ boofcv_features_pixels=adams.data.boofcv.features.Pixels
 boofcv_transformer_passthrough=adams.data.boofcv.transformer.PassThrough
 imagej_features_pixels=adams.data.imagej.features.Pixels
 imagej_transformer_passthrough=adams.data.imagej.transformer.PassThrough
-adams_features_pixels=adams.data.adams.features.Pixels
-adams_transformer_passthrough=adams.data.adams.transformer.PassThrough
+adams_features_pixels=adams.data.base.features.Pixels
+adams_transformer_passthrough=adams.data.base.transformer.PassThrough

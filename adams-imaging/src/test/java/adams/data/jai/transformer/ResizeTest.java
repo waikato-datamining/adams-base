@@ -21,7 +21,7 @@ package adams.data.jai.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.data.adams.transformer.AbstractBufferedImageTransformer;
+import adams.data.base.transformer.AbstractBufferedImageTransformer;
 import adams.env.Environment;
 
 /**

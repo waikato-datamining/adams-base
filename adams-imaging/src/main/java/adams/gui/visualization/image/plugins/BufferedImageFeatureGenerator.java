@@ -22,7 +22,7 @@ package adams.gui.visualization.image.plugins;
 import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
-import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.featureconverter.SpreadSheetFeatureConverter;
 import adams.data.image.BufferedImageContainer;
 import adams.data.jai.features.Histogram;

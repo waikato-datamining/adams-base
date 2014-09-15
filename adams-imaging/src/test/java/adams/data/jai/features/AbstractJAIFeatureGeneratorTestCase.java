@@ -19,7 +19,7 @@
  */
 package adams.data.jai.features;
 
-import adams.data.adams.features.AbstractBufferedImageFeatureGeneratorTestCase;
+import adams.data.base.features.AbstractBufferedImageFeatureGeneratorTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 

@@ -26,8 +26,8 @@ import java.util.Hashtable;
 
 import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
-import adams.data.adams.features.Pixels;
+import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.base.features.Pixels;
 import adams.data.image.AbstractImage;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;

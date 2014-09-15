@@ -21,7 +21,7 @@ package adams.data.jai.features;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.data.adams.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.jai.features.Histogram.HistogramType;
 import adams.env.Environment;
 

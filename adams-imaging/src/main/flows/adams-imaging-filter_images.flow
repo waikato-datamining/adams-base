@@ -46,7 +46,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.adams.transformer.ImageFilter
+						adams.data.base.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.GrayFilterProvider
 							-copy
@@ -68,7 +68,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.adams.transformer.ImageFilter
+						adams.data.base.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.TransparentBackground
 							-copy
@@ -90,7 +90,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.transformer.BufferedImageTransformer
 					-transformer
-						adams.data.adams.transformer.ImageFilter
+						adams.data.base.transformer.ImageFilter
 							-filter
 								adams.data.imagefilter.KeepOnlyColors
 									-color

@@ -27,7 +27,7 @@ import java.util.List;
 
 import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.adams.transformer.AbstractBufferedImageTransformer;
+import adams.data.base.transformer.AbstractBufferedImageTransformer;
 import adams.data.image.AbstractImage;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
@@ -127,7 +127,7 @@ public class BufferedImageTransformer
 
     m_OptionManager.add(
 	    "transformer", "transformAlgorithm",
-	    new adams.data.adams.transformer.PassThrough());
+	    new adams.data.base.transformer.PassThrough());
   }
 
   /**
