@@ -55,22 +55,22 @@ public class DefaultExperimentRunner
   protected void doRun() throws Exception {
     int errors = 0;
     showStatus("Iterating...");
-    while (m_Running && m_ExpCopy.hasMoreIterations()) {
+    while (m_Running && m_Exp.hasMoreIterations()) {
       try {
 	String current = "Iteration:";
-	if (m_ExpCopy.getUsePropertyIterator()) {
-	  int cnum = m_ExpCopy.getCurrentPropertyNumber();
-	  String ctype = m_ExpCopy.getPropertyArray().getClass().getComponentType().getName();
+	if (m_Exp.getUsePropertyIterator()) {
+	  int cnum = m_Exp.getCurrentPropertyNumber();
+	  String ctype = m_Exp.getPropertyArray().getClass().getComponentType().getName();
 	  int lastDot = ctype.lastIndexOf('.');
 	  if (lastDot != -1)
 	    ctype = ctype.substring(lastDot + 1);
-	  String cname = " " + ctype + "=" + (cnum + 1) + ":" + m_ExpCopy.getPropertyArrayValue(cnum).getClass().getName();
+	  String cname = " " + ctype + "=" + (cnum + 1) + ":" + m_Exp.getPropertyArrayValue(cnum).getClass().getName();
 	  current += cname;
 	}
-	String dname = ((File) m_ExpCopy.getDatasets().elementAt(m_ExpCopy.getCurrentDatasetNumber())).getName();
-	current += " Dataset=" + dname + " Run=" + (m_ExpCopy.getCurrentRunNumber());
+	String dname = ((File) m_Exp.getDatasets().elementAt(m_Exp.getCurrentDatasetNumber())).getName();
+	current += " Dataset=" + dname + " Run=" + (m_Exp.getCurrentRunNumber());
 	showStatus(current);
-	m_ExpCopy.nextIteration();
+	m_Exp.nextIteration();
       } 
       catch (Exception ex) {
 	errors++;
@@ -78,13 +78,13 @@ public class DefaultExperimentRunner
 	ex.printStackTrace();
 	boolean continueAfterError = false;
 	if (continueAfterError)
-	  m_ExpCopy.advanceCounters(); // Try to keep plowing through
+	  m_Exp.advanceCounters(); // Try to keep plowing through
 	else
 	  m_Running = false;
       }
     }
     showStatus("Postprocessing...");
-    m_ExpCopy.postProcess();
+    m_Exp.postProcess();
     if (!m_Running)
       logMessage("Interrupted");
     else

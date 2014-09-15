@@ -51,7 +51,7 @@ public class RemoteExperimentRunner
   @Override
   public void abortExperiment() {
     super.abortExperiment();
-    ((RemoteExperiment) m_ExpCopy).abortExperiment();
+    ((RemoteExperiment) m_Exp).abortExperiment();
     update();
   }
 
@@ -65,7 +65,7 @@ public class RemoteExperimentRunner
     super.preRun();
     // add a listener
     logMessage("Adding a listener");
-    ((RemoteExperiment)m_ExpCopy).addRemoteExperimentListener(new RemoteExperimentListener() {
+    ((RemoteExperiment)m_Exp).addRemoteExperimentListener(new RemoteExperimentListener() {
       public void remoteExperimentStatus(RemoteExperimentEvent e) {
 	if (e.m_statusMessage)
 	  showStatus(e.m_messageString);
@@ -88,6 +88,6 @@ public class RemoteExperimentRunner
   @Override
   protected void doRun() throws Exception {
     showStatus("Remote experiment running...");
-    ((RemoteExperiment) m_ExpCopy).runExperiment();
+    ((RemoteExperiment) m_Exp).runExperiment();
   }
 }

@@ -46,7 +46,7 @@ public abstract class AbstractExperimentRunner
   protected ExperimenterPanel m_Owner;
 
   /** the copy of the experiment. */
-  protected Experiment m_ExpCopy;
+  protected Experiment m_Exp;
 
   /** whether the experiment is still running. */
   protected boolean m_Running;
@@ -67,7 +67,7 @@ public abstract class AbstractExperimentRunner
     logMessage("Writing experiment copy");
     SerializedObject so = new SerializedObject(exp);
     logMessage("Reading experiment copy");
-    m_ExpCopy = (Experiment) so.getObject();
+    m_Exp = (Experiment) so.getObject();
     logMessage("Made experiment copy");
   }
 
@@ -156,7 +156,7 @@ public abstract class AbstractExperimentRunner
    * @throws Exception	fails due to some error
    */
   protected void doInitialize() throws Exception {
-    m_ExpCopy.initialize();
+    m_Exp.initialize();
   }
   
   /**
