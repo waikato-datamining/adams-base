@@ -45,7 +45,7 @@ Rename-jai_flattener_scripted=adams.data.jai.flattener.Scripted-adams.data.adams
 Rename-jai_transformer_binary=adams.data.jai.transformer.Binary-adams.data.adams.transformer.Binary
 Rename-jai_transformer_binarymask=adams.data.jai.transformer.BinaryMask-adams.data.adams.transformer.BinaryMask
 Rename-jai_transformer_crop=adams.data.jai.transformer.Crop-adams.data.adams.transformer.Crop
-Rename-jai_transformer_cropping=adams.data.jai.transformer.-adams.data.adams.transformer.Cropping
+Rename-jai_transformer_cropping=adams.data.jai.transformer.Cropping-adams.data.adams.transformer.Cropping
 Rename-jai_transformer_gaussianblur=adams.data.jai.transformer.GaussianBlur-adams.data.adams.transformer.GaussianBlur
 Rename-jai_transformer_imagefilter=adams.data.jai.transformer.ImageFilter-adams.data.adams.transformer.ImageFilter
 Rename-jai_transformer_imagetype=adams.data.jai.transformer.ImageType-adams.data.adams.transformer.ImageType
@@ -73,9 +73,9 @@ PartialRename=\
 # <key>=<find>\t<replace>
 PartialRename-boofcv=.boofcv.flattener.\t.boofcv.features.
 PartialRename-imagej=.imagej.flattener.\t.imagej.features.
-PartialRename-jai_transformer_crop=.jai.transformer.crop.\t.adams.transformer.crop.
-PartialRename-jai_transformer_subimages=.jai.transformer.subimages.\t.adams.transformer.subimages.
-PartialRename-jai_transformer_whitebalance=.jai.transformer.whitebalance.\t.adams.transformer.whitebalance.
+PartialRename-jai_transformer_crop=.jai.transformer.crop.\t.base.transformer.crop.
+PartialRename-jai_transformer_subimages=.jai.transformer.subimages.\t.base.transformer.subimages.
+PartialRename-jai_transformer_whitebalance=.jai.transformer.whitebalance.\t.base.transformer.whitebalance.
 PartialRename-adams=adams.data.adams.\tadams.data.base.
 
 # List the keys that contain renaming of options (ie "-blah" into "-bloerk")
