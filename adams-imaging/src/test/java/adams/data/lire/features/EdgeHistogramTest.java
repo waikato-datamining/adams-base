@@ -21,7 +21,7 @@ package adams.data.lire.features;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.env.Environment;
 
 /**

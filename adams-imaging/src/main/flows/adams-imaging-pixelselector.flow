@@ -42,7 +42,7 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.BufferedImageFeatureGenerator
 			-algorithm
-				adams.data.base.features.PixelClassifications
+				adams.data.image.features.PixelClassifications
 					-width
 					5
 					-height

@@ -26,10 +26,10 @@ import java.util.Hashtable;
 
 import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
-import adams.data.base.features.Pixels;
 import adams.data.image.AbstractImage;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
+import adams.data.image.features.Pixels;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;

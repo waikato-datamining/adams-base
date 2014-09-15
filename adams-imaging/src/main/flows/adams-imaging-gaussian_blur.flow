@@ -34,7 +34,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.transformer.BufferedImageTransformer
 							-transformer
-								adams.data.base.transformer.GaussianBlur
+								adams.data.image.transformer.GaussianBlur
 									-radius
 									10.0
 					-actor

@@ -22,9 +22,9 @@ package adams.gui.visualization.image.plugins;
 import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
-import adams.data.base.transformer.AbstractBufferedImageTransformer;
-import adams.data.base.transformer.PassThrough;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.transformer.AbstractBufferedImageTransformer;
+import adams.data.image.transformer.PassThrough;
 
 /**
  * Allows the user to apply a BufferedImage transformer to the selected images in the ImageViewer.

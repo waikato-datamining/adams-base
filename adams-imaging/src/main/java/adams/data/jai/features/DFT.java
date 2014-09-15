@@ -30,9 +30,9 @@ import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.operator.DFTDescriptor;
 
-import adams.data.base.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.report.DataType;
 import adams.data.statistics.StatUtils;
 

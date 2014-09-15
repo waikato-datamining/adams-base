@@ -67,7 +67,8 @@ PartialRename=\
   PartialRename-jai_transformer_crop,\
   PartialRename-jai_transformer_subimages,\
   PartialRename-jai_transformer_whitebalance,\
-  PartialRename-adams
+  PartialRename-adams,\
+  PartialRename-base
 
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
@@ -77,6 +78,7 @@ PartialRename-jai_transformer_crop=.jai.transformer.crop.\t.base.transformer.cro
 PartialRename-jai_transformer_subimages=.jai.transformer.subimages.\t.base.transformer.subimages.
 PartialRename-jai_transformer_whitebalance=.jai.transformer.whitebalance.\t.base.transformer.whitebalance.
 PartialRename-adams=adams.data.adams.\tadams.data.base.
+PartialRename-base=adams.data.nase.\tadams.data.image.
 
 # List the keys that contain renaming of options (ie "-blah" into "-bloerk")
 RenameOption=\
