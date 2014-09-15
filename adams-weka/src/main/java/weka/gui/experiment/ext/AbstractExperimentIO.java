@@ -122,4 +122,13 @@ public abstract class AbstractExperimentIO<T extends Experiment>
    * @return		false if failed to save
    */
   public abstract boolean save(T exp, File file);
+  
+  /**
+   * Creates an experiment runner thread object.
+   * 
+   * @param owner	the owning experimenter
+   * @return		the runner
+   * @throws Exception	if failed to instantiate runner
+   */
+  public abstract AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception;
 }

@@ -95,5 +95,16 @@ public class RemoteExperimentIO
       return false;
     }
   }
-
+  
+  /**
+   * Creates an experiment runner thread object.
+   * 
+   * @param owner	the owning experimenter
+   * @return		the runner
+   * @throws Exception	if failed to instantiate runner
+   */
+  @Override
+  public AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception {
+    return new RemoteExperimentRunner(owner);
+  }
 }
