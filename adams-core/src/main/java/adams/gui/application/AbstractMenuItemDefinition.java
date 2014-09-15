@@ -61,6 +61,9 @@ public abstract class AbstractMenuItemDefinition
   /** the "Tools" category. */
   public final static String CATEGORY_TOOLS = "Tools";
 
+  /** the "Wizard" category. */
+  public final static String CATEGORY_WIZARD = "Wizard";
+
   /** the "Maintenance" category. */
   public final static String CATEGORY_MAINTENANCE = "Maintenance";
 
