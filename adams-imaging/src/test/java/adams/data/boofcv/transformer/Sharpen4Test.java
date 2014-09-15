@@ -51,7 +51,7 @@ public class Sharpen4Test
   @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
-	"adams_icon.png"
+	"6486290583_633d994a25_z.jpg"
     };
   }
 

@@ -51,7 +51,7 @@ public class Dilate4Test
   @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
-	"particles.jpg",
+	"6486290583_633d994a25_z.jpg",
     };
   }
 

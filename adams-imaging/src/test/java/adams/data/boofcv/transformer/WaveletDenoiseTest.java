@@ -51,8 +51,8 @@ public class WaveletDenoiseTest
   @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
-	"adams_logo.png",
-	"adams_logo.png",
+	"6486290583_633d994a25_z.jpg",
+	"6486290583_633d994a25_z.jpg",
     };
   }
 
