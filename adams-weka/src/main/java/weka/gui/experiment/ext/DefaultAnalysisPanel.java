@@ -34,6 +34,14 @@ public class DefaultAnalysisPanel
   private static final long serialVersionUID = 7850777725811230009L;
   
   /**
+   * For initializing the GUI.
+   */
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+  }
+  
+  /**
    * Returns the name to display in the GUI.
    * 
    * @return		the name

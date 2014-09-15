@@ -22,6 +22,9 @@ package weka.gui.experiment.ext;
 import java.awt.BorderLayout;
 import java.io.File;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import weka.experiment.InstancesResultListener;
 import weka.experiment.ResultListener;
 import adams.core.io.PlaceholderFile;
@@ -56,6 +59,12 @@ public class ArffOutputPanel
     panel = new ParameterPanel();
     m_PanelFile = new FileChooserPanel(new PlaceholderFile("${TMP}"));
     m_PanelFile.addChoosableFileFilter(new ExtensionFileFilter("ARFF file", "arff"));
+    m_PanelFile.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+	m_Owner.setModified(true);
+      }
+    });
     panel.addParameter("File", m_PanelFile);
     add(panel, BorderLayout.CENTER);
   }

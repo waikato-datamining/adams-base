@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -35,10 +37,17 @@ import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils;
 import weka.experiment.Experiment;
+import weka.experiment.RemoteExperiment;
+import weka.experiment.RemoteExperimentEvent;
+import weka.experiment.RemoteExperimentListener;
 import weka.gui.ConverterFileChooser;
+import adams.core.DateUtils;
 import adams.core.Properties;
+import adams.core.SerializedObject;
+import adams.core.StatusMessageHandler;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
@@ -59,7 +68,7 @@ import com.googlecode.jfilechooserbookmarks.core.Utils;
  */
 public class ExperimenterPanel
   extends BasePanel
-  implements MenuBarProvider {
+  implements MenuBarProvider, StatusMessageHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7314544066929763500L;
@@ -73,6 +82,221 @@ public class ExperimenterPanel
   /** the properties. */
   protected static Properties m_Properties;
 
+  /**
+   * A class that handles running a copy of the experiment
+   * in a separate thread.
+   * 
+   * @see weka.gui.experiment.RunPanel.ExperimentRunner
+   */
+  public static class ExperimentRunner
+    extends Thread
+    implements Serializable {
+
+    /** for serialization */
+    private static final long serialVersionUID = -5591889874714150118L;
+
+    /** The message displayed when no experiment is running */
+    protected static final String NOT_RUNNING = "Not running";
+
+    /** the experimenter this runner belongs to. */
+    protected ExperimenterPanel m_Owner;
+    
+    /** the copy of the experiment. */
+    protected Experiment m_ExpCopy;
+    
+    /** whether the experiment is still running. */
+    protected boolean m_Running;
+    
+    /**
+     * Initializes the thread.
+     * 
+     * @param owner		the experimenter this runner belongs to
+     * @throws Exception	if experiment is null or cannot be copied via serialization
+     */
+    public ExperimentRunner(ExperimenterPanel owner) throws Exception {
+      super();
+      
+      m_Owner = owner;
+      Experiment exp = m_Owner.getExperiment();
+      logMessage("--> START: " + DateUtils.getTimestampFormatter().format(new Date()));
+      logMessage("Running experiment: " + exp.toString());
+      logMessage("Writing experiment copy");
+      SerializedObject so = new SerializedObject(exp);
+      logMessage("Reading experiment copy");
+      m_ExpCopy = (Experiment) so.getObject();
+      logMessage("Made experiment copy");
+    }
+
+    /**
+     * Aborts the experiment.
+     */
+    public void abortExperiment() {
+      m_Running = false;
+      if (m_ExpCopy instanceof RemoteExperiment) {
+	((RemoteExperiment)m_ExpCopy).abortExperiment();
+	update();
+      }
+    }
+
+    /**
+     * Whether the experiment is still running.
+     * 
+     * @return		true if still running
+     */
+    public boolean isRunning() {
+      return m_Running;
+    }
+    
+    /**
+     * Logs the exception with no dialog.
+     * 
+     * @param t		the exception
+     */
+    public void logMessage(Throwable t) {
+      m_Owner.logMessage(t);
+    }
+    
+    /**
+     * Logs the message.
+     * 
+     * @param msg		the log message
+     */
+    public void logMessage(String msg) {
+      m_Owner.logMessage(msg);
+    }
+    
+    /**
+     * Logs the exception and also displays an error dialog.
+     * 
+     * @param t		the exception
+     * @param title	the title for the dialog
+     */
+    public void logError(Throwable t, String title) {
+      m_Owner.logError(t, title);
+    }
+    
+    /**
+     * Logs the error message and also displays an error dialog.
+     * 
+     * @param msg		the error message
+     * @param title	the title for the dialog
+     */
+    public void logError(String msg, String title) {
+      m_Owner.logError(msg, title);
+    }
+    
+    /**
+     * Displays a message.
+     * 
+     * @param msg		the message to display
+     */
+    public void showStatus(String msg) {
+      m_Owner.showStatus(msg);
+      m_Owner.logMessage(msg);
+    }
+
+    /**
+     * Updates the owner's state.
+     */
+    public void update() {
+      m_Owner.update();
+    }
+    
+    /**
+     * Starts running the experiment.
+     */
+    @Override
+    public void run() {
+      m_Running = true;
+      update();
+      try {
+	if (m_ExpCopy instanceof RemoteExperiment) {
+	  // add a listener
+	  logMessage("Adding a listener");
+	  ((RemoteExperiment)m_ExpCopy).addRemoteExperimentListener(new RemoteExperimentListener() {
+	    public void remoteExperimentStatus(RemoteExperimentEvent e) {
+	      if (e.m_statusMessage) {
+		showStatus(e.m_messageString);
+	      }
+	      if (e.m_logMessage) {
+		logMessage(e.m_messageString);
+	      }
+	      if (e.m_experimentFinished) {
+		m_Running = false;
+		showStatus(NOT_RUNNING);
+		update();
+	      }
+	    }
+	  });
+	}
+	logMessage("Started");
+	showStatus("Initializing...");
+	m_ExpCopy.initialize();
+	int errors = 0;
+	if (!(m_ExpCopy instanceof RemoteExperiment)) {
+	  showStatus("Iterating...");
+	  while (m_Running && m_ExpCopy.hasMoreIterations()) {
+	    try {
+	      String current = "Iteration:";
+	      if (m_ExpCopy.getUsePropertyIterator()) {
+		int cnum = m_ExpCopy.getCurrentPropertyNumber();
+		String ctype = m_ExpCopy.getPropertyArray().getClass().getComponentType().getName();
+		int lastDot = ctype.lastIndexOf('.');
+		if (lastDot != -1)
+		  ctype = ctype.substring(lastDot + 1);
+		String cname = " " + ctype + "=" + (cnum + 1) + ":" + m_ExpCopy.getPropertyArrayValue(cnum).getClass().getName();
+		current += cname;
+	      }
+	      String dname = ((File) m_ExpCopy.getDatasets().elementAt(m_ExpCopy.getCurrentDatasetNumber())).getName();
+	      current += " Dataset=" + dname + " Run=" + (m_ExpCopy.getCurrentRunNumber());
+	      showStatus(current);
+	      m_ExpCopy.nextIteration();
+	    } 
+	    catch (Exception ex) {
+	      errors++;
+	      logMessage(ex);
+	      ex.printStackTrace();
+	      boolean continueAfterError = false;
+	      if (continueAfterError)
+		m_ExpCopy.advanceCounters(); // Try to keep plowing through
+	      else
+		m_Running = false;
+	    }
+	  }
+	  showStatus("Postprocessing...");
+	  m_ExpCopy.postProcess();
+	  if (!m_Running)
+	    logMessage("Interrupted");
+	  else
+	    logMessage("Finished");
+	  if (errors == 1)
+	    logMessage("There was " + errors + " error");
+	  else
+	    logMessage("There were " + errors + " errors");
+	  showStatus(NOT_RUNNING);
+	} 
+	else {
+	  showStatus("Remote experiment running...");
+	  ((RemoteExperiment)m_ExpCopy).runExperiment();
+	}
+      }
+      catch (Exception ex) {
+	logError(ex, "Execution error");
+	showStatus(ex.getMessage());
+      }
+      finally {
+	if (!(m_ExpCopy instanceof RemoteExperiment)) {
+	  m_Owner.finishExecution();
+	  update();
+	  m_Running = false;
+	  logMessage("Done!");
+	  logMessage("--> END: " + DateUtils.getTimestampFormatter().format(new Date()));
+	}
+      }
+    }
+  }
+
+  
   /** the recent files handler for setups. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandlerSetups;
 
@@ -103,6 +327,9 @@ public class ExperimenterPanel
   /** the save results menu item. */
   protected JMenuItem m_MenuItemResultsSave;
 
+  /** the status bar. */
+  protected BaseStatusBar m_StatusBar;
+  
   /** the current file. */
   protected File m_CurrentFile;
 
@@ -127,6 +354,9 @@ public class ExperimenterPanel
   /** the filechooser for loading/saving results. */
   protected ConverterFileChooser m_FileChooserResults;
   
+  /** the runner thread. */
+  protected ExperimentRunner m_Runner;
+  
   /**
    * For initializing members.
    */
@@ -139,6 +369,7 @@ public class ExperimenterPanel
     m_TitleGenerator            = new TitleGenerator("Experimenter", true);
     m_Experiment                = null;
     m_FileChooserResults        = new ConverterFileChooser();
+    m_Runner                    = null;
   }
 
   /**
@@ -162,6 +393,9 @@ public class ExperimenterPanel
     m_PanelLog = new LogPanel();
     m_PanelLog.setOwner(this);
     m_TabbedPane.addTab("Log", m_PanelLog);
+    
+    m_StatusBar = new BaseStatusBar();
+    add(m_StatusBar, BorderLayout.SOUTH);
   }
   
   /**
@@ -304,34 +538,37 @@ public class ExperimenterPanel
    * @return		true if an experiment is running
    */
   public boolean isExecuting() {
-    return (m_Experiment != null) && m_Experiment.hasMoreIterations();
+    return (m_Runner != null);
   }
   
   /**
    * Starts the execution.
    */
   public void startExecution() {
-    // TODO make it a thread? See RunPanel
     try {
-      m_Experiment = getExperiment();
-      logMessage("Initializing...");
-      m_Experiment.initialize();
-      logMessage("Running...");
-      m_Experiment.runExperiment();
-      logMessage("Post-processing...");
-      m_Experiment.postProcess();
-      logMessage("Finished!");
+      m_Runner = new ExperimentRunner(this);
     }
     catch (Exception e) {
-      logError("Failed to execute experiment!\n" + Utils.throwableToString(e), "Execute experiment");
+      logError("Failed to run experiment: " + Utils.throwableToString(e), "Execution error");
+      return;
     }
+    m_Runner.start();
   }
 
   /**
    * Stops the execution.
    */
   public void stopExecution() {
-    // TODO kill thread
+    m_Runner.abortExperiment();
+    update();
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void finishExecution() {
+    m_Runner = null;
+    update();
   }
 
   /**
@@ -756,6 +993,15 @@ public class ExperimenterPanel
   }
   
   /**
+   * Logs the exception with no dialog.
+   * 
+   * @param t		the exception
+   */
+  public void logMessage(Throwable t) {
+    logMessage(Utils.throwableToString(t));
+  }
+  
+  /**
    * Logs the message.
    * 
    * @param msg		the log message
@@ -765,15 +1011,35 @@ public class ExperimenterPanel
   }
   
   /**
+   * Logs the exception and also displays an error dialog.
+   * 
+   * @param t		the exception
+   * @param title	the title for the dialog
+   */
+  public void logError(Throwable t, String title) {
+    logError(Utils.throwableToString(t), title);
+  }
+  
+  /**
    * Logs the error message and also displays an error dialog.
    * 
    * @param msg		the error message
+   * @param title	the title for the dialog
    */
   public void logError(String msg, String title) {
     m_PanelLog.append(msg);
     GUIHelper.showErrorMessage(this,
 	msg,
 	title);
+  }
+  
+  /**
+   * Displays a message.
+   * 
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    m_StatusBar.showStatus(msg);
   }
 
   /**

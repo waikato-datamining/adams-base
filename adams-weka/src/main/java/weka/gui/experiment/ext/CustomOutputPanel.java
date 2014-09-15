@@ -21,6 +21,9 @@ package weka.gui.experiment.ext;
 
 import java.awt.BorderLayout;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import weka.experiment.InstancesResultListener;
 import weka.experiment.ResultListener;
 import adams.gui.core.ParameterPanel;
@@ -52,6 +55,12 @@ public class CustomOutputPanel
     
     panel = new ParameterPanel();
     m_PanelGOE = new WekaGenericObjectEditorPanel(ResultListener.class, new InstancesResultListener(), true);
+    m_PanelGOE.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+	m_Owner.setModified(true);
+      }
+    });
     panel.addParameter("Results", m_PanelGOE);
     add(panel, BorderLayout.CENTER);
   }

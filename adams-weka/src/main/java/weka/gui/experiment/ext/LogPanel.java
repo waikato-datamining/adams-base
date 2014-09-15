@@ -72,13 +72,16 @@ public class LogPanel
 	clear();
       }
     });
+    panel.add(m_ButtonClear);
   }
   
   /**
    * Clears the content.
    */
   public void clear() {
-    m_TextArea.setText("");
+    synchronized(m_TextArea) {
+      m_TextArea.setText("");
+    }
   }
   
   /**
@@ -87,6 +90,9 @@ public class LogPanel
    * @param msg		the log message
    */
   public void append(String msg) {
-    m_TextArea.append(msg + "\n");
+    synchronized(m_TextArea) {
+      m_TextArea.append(msg + "\n");
+      m_TextArea.setCaretPosition(m_TextArea.getText().length());
+    }
   }
 }
