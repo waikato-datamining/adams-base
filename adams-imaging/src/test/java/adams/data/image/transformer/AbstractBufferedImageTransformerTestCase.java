@@ -122,7 +122,13 @@ public abstract class AbstractBufferedImageTransformerTestCase
     content = new StringBuilder();
 
     content.append("Image:\n");
-    content.append(Utils.arrayToString(BufferedImageHelper.getPixelRaster(data.getImage())));
+    content.append(
+	Utils.flatten(
+	    Utils.breakUp(
+		Utils.arrayToString(
+		    BufferedImageHelper.getPixelRaster(data.getImage())), 
+		80), 
+	    "\n"));
     content.append("\n");
 
     content.append("Report:\n");

@@ -28,6 +28,7 @@ import java.util.List;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.image.AbstractImage;
 import adams.data.imagej.ImagePlusContainer;
@@ -117,6 +118,10 @@ public abstract class AbstractImageJTransformerTestCase
 
     content.append("Image:\n");
     content.append(data.getImage());
+    content.append(
+	Utils.flatten(
+	    Utils.breakUp(data.getImage().toString(), 80), 
+	    "\n"));
     content.append("\n");
 
     content.append("Report:\n");
