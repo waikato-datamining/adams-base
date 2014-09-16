@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 
 import adams.data.image.BufferedImageHelper;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 
 /**
  * A file chooser for images.
@@ -273,6 +274,60 @@ public class ImageFileChooser
       result.setSize(dim);
       result.setMinimumSize(dim);
       result.setPreferredSize(dim);
+    }
+    
+    return result;
+  }
+
+  /**
+   * Returns the default file filter to use.
+   * 
+   * @param dialogType	the dialog type: open/save
+   * @return		the default file filter, null if unable find default one
+   */
+  @Override
+  protected ExtensionFileFilter getDefaultFileFilter(int dialogType) {
+    ExtensionFileFilter	result;
+    boolean		found;
+    String		preferred;
+    
+    result = null;
+    found  = false;
+    
+    if (dialogType == OPEN_DIALOG) {
+      preferred = GUIHelper.getString("PreferredImageReader", "png");
+      for (ImageFormat format: m_ImageReaders.values()) {
+	for (String ext: format.getExtensions()) {
+	  if (ext.equalsIgnoreCase(preferred)) {
+	    found = true;
+	    result = new ExtensionFileFilter(
+		format.getDisplayName(),
+		format.getExtensions().toArray(new String[0]));
+	    break;
+	  }
+	}
+	if (found)
+	  break;
+      }
+    }
+    else if (dialogType == SAVE_DIALOG) {
+      preferred = GUIHelper.getString("PreferredImageWriter", "png");
+      for (ImageFormat format: m_ImageWriters.values()) {
+	for (String ext: format.getExtensions()) {
+	  if (ext.equalsIgnoreCase(preferred)) {
+	    found = true;
+	    result = new ExtensionFileFilter(
+		format.getDisplayName(),
+		format.getExtensions().toArray(new String[0]));
+	    break;
+	  }
+	}
+	if (found)
+	  break;
+      }
+    }
+    else {
+      result = super.getDefaultFileFilter(dialogType);
     }
     
     return result;
