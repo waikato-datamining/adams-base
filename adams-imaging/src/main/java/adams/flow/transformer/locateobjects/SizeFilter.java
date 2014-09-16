@@ -24,6 +24,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import adams.core.QuickInfoHelper;
+
 /**
  <!-- globalinfo-start -->
  * Allows filtering the located objects based on the min&#47;max width&#47;height.
@@ -256,6 +258,23 @@ public class SizeFilter
    */
   public String maxHeightTipText() {
     return "The maximum height; ignored if <= 0.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "minWidth", (m_MinWidth < 1 ? "NA" : "" + m_MinWidth), "minW: ");
+    result += QuickInfoHelper.toString(this, "maxWidth", (m_MaxWidth < 1 ? "NA" : "" + m_MaxWidth), ", maxW: ");
+    result += QuickInfoHelper.toString(this, "minHeight", (m_MinHeight < 1 ? "NA" : "" + m_MinHeight), "minH: ");
+    result += QuickInfoHelper.toString(this, "maxHeight", (m_MaxHeight < 1 ? "NA" : "" + m_MaxHeight), ", maxH: ");
+    
+    return result;
   }
 
   /**

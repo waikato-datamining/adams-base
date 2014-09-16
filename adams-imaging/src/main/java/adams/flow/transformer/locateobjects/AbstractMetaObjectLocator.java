@@ -22,6 +22,8 @@ package adams.flow.transformer.locateobjects;
 
 import java.awt.image.BufferedImage;
 
+import adams.core.QuickInfoHelper;
+
 /**
  * Ancestor for object locators that enhance a base locator.
  *
@@ -76,6 +78,16 @@ public abstract class AbstractMetaObjectLocator
    */
   public String locatorTipText() {
     return "The base locator to use.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "locator", m_Locator, "locator: ");
   }
 
   /**

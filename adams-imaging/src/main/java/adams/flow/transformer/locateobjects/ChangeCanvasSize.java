@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import adams.core.QuickInfoHelper;
 import adams.data.image.ImageAnchor;
 import adams.data.image.ImageAnchorHelper;
 
@@ -252,6 +253,23 @@ public class ChangeCanvasSize
    */
   public String backgroundTipText() {
     return "The background color to use.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "canvasWidth", m_CanvasWidth, "width: ");
+    result += QuickInfoHelper.toString(this, "canvasHeight", m_CanvasHeight, ", height: ");
+    result += QuickInfoHelper.toString(this, "anchor", m_Anchor, ", anchor: ");
+    result += QuickInfoHelper.toString(this, "background", m_Background, ", bg: ");
+    
+    return result;
   }
 
   /**

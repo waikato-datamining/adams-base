@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.License;
+import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import boofcv.alg.feature.detect.edge.CannyEdge;
 import boofcv.alg.filter.binary.BinaryImageOps;
@@ -222,6 +223,22 @@ public class CannyBinary
    */
   public String thresholdHighTipText() {
     return "The high threshold.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "blurRadius", m_BlurRadius, "radius: ");
+    result += QuickInfoHelper.toString(this, "thresholdLow", m_ThresholdLow, ", low: ");
+    result += QuickInfoHelper.toString(this, "thresholdHigh", m_ThresholdHigh, ", high: ");
+    
+    return result;
   }
 
   /**

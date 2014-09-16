@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.License;
+import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
@@ -122,6 +123,16 @@ public class BinaryContours
    */
   public String removeSmallBlobsTipText() {
     return "If enabled, small blobs are removed using erode8/dilate8.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "removeSmallBlobs", m_RemoveSmallBlobs, "remove small blobs");
   }
 
   /**

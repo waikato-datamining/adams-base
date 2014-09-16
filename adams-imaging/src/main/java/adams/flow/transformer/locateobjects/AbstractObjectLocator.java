@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.CleanUpHandler;
+import adams.core.QuickInfoSupporter;
 import adams.core.Stoppable;
 import adams.core.option.AbstractOptionHandler;
 
@@ -35,7 +36,7 @@ import adams.core.option.AbstractOptionHandler;
  */
 public abstract class AbstractObjectLocator
   extends AbstractOptionHandler 
-  implements Stoppable, CleanUpHandler {
+  implements Stoppable, CleanUpHandler, QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4035633099365011707L;
@@ -70,7 +71,19 @@ public abstract class AbstractObjectLocator
     m_Errors.clear();
     m_Warnings.clear();
   }
-  
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <p/>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return null;
+  }
+
   /**
    * Checks whether there are any errors recorded.
    * 
