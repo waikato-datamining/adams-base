@@ -24,10 +24,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
@@ -39,6 +43,7 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
 import adams.gui.visualization.image.ImagePanel;
@@ -66,6 +71,127 @@ public class ImageProcessingPanel
   public enum LayoutType {
     HORIZONTAL,
     VERTICAL
+  }
+  
+  /**
+   * Custom popup menu provider for the {@link ImagePanel} instances.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class ImagePopupMenuProvider
+    implements CustomPopupMenuProvider {
+
+    /** the {@link ImagePanel} this provider is for. */
+    protected ImagePanel m_Panel;
+    
+    /**
+     * Initializes the provider.
+     * 
+     * @param panel	the panel this provider is for
+     */
+    public ImagePopupMenuProvider(ImagePanel panel) {
+      if (panel == null)
+	throw new IllegalArgumentException("ImagePanel instance cannot be null!");
+      m_Panel = panel;
+    }
+    
+    /**
+     * Returns the {@link ImagePanel} this provider is for.
+     * 
+     * @return		the panel
+     */
+    public ImagePanel getPanel() {
+      return m_Panel;
+    }
+    
+    /**
+     * Creates a popup menu for the given mouse event.
+     * 
+     * @param e		the event that triggered the request
+     * @return		the menu, null if none was generated
+     */
+    @Override
+    public JPopupMenu getCustomPopupMenu(MouseEvent e) {
+      JPopupMenu	menu;
+      JMenuItem		menuitem;
+      JMenu		submenu;
+      int		i;
+      int[]		zooms;
+
+      menu = new JPopupMenu();
+
+      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem.setEnabled(getPanel().getCurrentImage() != null);
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  GUIHelper.copyToClipboard(getPanel().getCurrentImage());
+	}
+      });
+      menu.add(menuitem);
+
+      menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+      menuitem.setEnabled(getPanel().getCurrentImage() != null);
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  getPanel().export();
+	}
+      });
+      menu.add(menuitem);
+
+      // View/Zoom
+      submenu = new JMenu("Zoom");
+      menu.addSeparator();
+      menu.add(submenu);
+      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+
+      //View/Zoom/Zoom in
+      menuitem = new JMenuItem("Zoom in");
+      submenu.add(menuitem);
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  m_Panel.setScale(m_Panel.getActualScale() * 1.5);
+	}
+      });
+
+      //View/Zoom/Zoom out
+      menuitem = new JMenuItem("Zoom out");
+      submenu.add(menuitem);
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  m_Panel.setScale(m_Panel.getActualScale() / 1.5);
+	}
+      });
+
+      // zoom levels
+      zooms = new int[]{
+	  -100,
+	  25,
+	  50,
+	  66,
+	  75,
+	  100,
+	  150,
+	  200,
+	  400,
+	  800};
+      submenu.addSeparator();
+      for (i = 0; i < zooms.length; i++) {
+	final int fZoom = zooms[i];
+	if (zooms[i] == -100)
+	  menuitem = new JMenuItem("Best fit");
+	else
+	  menuitem = new JMenuItem(zooms[i] + "%");
+	submenu.add(menuitem);
+	menuitem.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    m_Panel.setScale(fZoom / 100.0);
+	  }
+	});
+      }
+
+      return menu;
+    }
   }
   
   /** the layout. */
@@ -124,8 +250,9 @@ public class ImageProcessingPanel
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
-    JPanel	panelButtons;
+    JPanel			panel;
+    JPanel			panelButtons;
+    ImagePopupMenuProvider	popup;
     
     super.initGUI();
     
@@ -169,9 +296,13 @@ public class ImageProcessingPanel
     m_PanelOriginal = new ImagePanel();
     m_PanelOriginal.setShowProperties(false);
     m_PanelOriginal.setShowLog(false);
+    popup = new ImagePopupMenuProvider(m_PanelOriginal);
+    m_PanelOriginal.setCustomPopupMenuProvider(popup);
     m_PanelProcessed = new ImagePanel();
     m_PanelProcessed.setShowProperties(false);
     m_PanelProcessed.setShowLog(false);
+    popup = new ImagePopupMenuProvider(m_PanelProcessed);
+    m_PanelProcessed.setCustomPopupMenuProvider(popup);
     
     m_SplitImages.setTopComponent(m_PanelOriginal);
     m_SplitImages.setBottomComponent(m_PanelProcessed);
