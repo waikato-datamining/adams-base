@@ -45,6 +45,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.Undo;
 import adams.gui.flow.FlowPanel;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -264,6 +265,7 @@ public class ImageProcessorSubPanel
 
     m_PanelFlow   = new FlowPanel();
     m_PanelFlow.setMinimumSize(new Dimension(250, 0));
+    m_PanelFlow.getUndo().clear();
     m_PanelFlow.setCurrentFlow(new SubProcess());
     panel = new JPanel(new BorderLayout());    
     panel.add(m_PanelFlow, BorderLayout.CENTER);
@@ -474,6 +476,38 @@ public class ImageProcessorSubPanel
     else if (msg != null) {
       GUIHelper.showErrorMessage(this, "Flow execution failed:\n" + msg);
     }
+  }
+  
+  /**
+   * Returns the current undo manager, can be null.
+   * 
+   * @return		the undo manager, if any
+   */
+  public Undo getUndo() {
+    return getFlow().getUndo();
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   * 
+   * @return		true if an undo manager is set
+   */
+  public boolean isUndoSupported() {
+    return getFlow().isUndoSupported();
+  }
+
+  /**
+   * peforms an undo if possible.
+   */
+  public void undo() {
+    getFlow().undo();
+  }
+
+  /**
+   * peforms an redo if possible.
+   */
+  public void redo() {
+    getFlow().redo();
   }
 
   /**

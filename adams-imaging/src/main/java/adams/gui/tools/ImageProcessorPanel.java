@@ -80,6 +80,12 @@ public class ImageProcessorPanel
   /** the menu item "vertical". */
   protected JMenuItem m_MenuItemViewVertical;
 
+  /** the menu item "undo". */
+  protected JMenuItem m_MenuItemEditUndo;
+
+  /** the menu item "redo". */
+  protected JMenuItem m_MenuItemEditRedo;
+
   /** the recent files handler. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
 
@@ -161,16 +167,38 @@ public class ImageProcessorPanel
    * updates the enabled state of the menu items.
    */
   protected void updateMenu() {
+    ImageProcessorSubPanel	panel;
+    
     if (m_MenuBar == null)
       return;
 
+    panel = getCurrentPanel();
+    
     // File
     m_MenuItemFileLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
-    m_MenuItemFileClose.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_MenuItemFileClose.setEnabled(panel != null);
+    
+    // Edit
+    if ((panel != null) && panel.getUndo().canUndo()) {
+      m_MenuItemEditUndo.setEnabled(true);
+      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment(true));
+    }
+    else {
+      m_MenuItemEditUndo.setEnabled(false);
+      m_MenuItemEditUndo.setText("Undo");
+    }
+    if ((panel != null) && panel.getUndo().canRedo()) {
+      m_MenuItemEditRedo.setEnabled(true);
+      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment(true));
+    }
+    else {
+      m_MenuItemEditRedo.setEnabled(false);
+      m_MenuItemEditRedo.setText("Redo");
+    }
     
     // View
-    m_MenuItemViewHorizontal.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_MenuItemViewVertical.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_MenuItemViewHorizontal.setEnabled(panel != null);
+    m_MenuItemViewVertical.setEnabled(panel != null);
   }
 
   /**
@@ -250,6 +278,42 @@ public class ImageProcessorPanel
 	  exit();
 	}
       });
+
+      // Edit
+      menu = new JMenu("Edit");
+      result.add(menu);
+      menu.setMnemonic('E');
+      menu.addChangeListener(new ChangeListener() {
+	public void stateChanged(ChangeEvent e) {
+	  updateMenu();
+	}
+      });
+
+      // Edit/Undo
+      menuitem = new JMenuItem("Undo");
+      menu.add(menuitem);
+      menuitem.setMnemonic('U');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
+      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  undo();
+	}
+      });
+      m_MenuItemEditUndo = menuitem;
+
+      // Edit/Redo
+      menuitem = new JMenuItem("Redo");
+      menu.add(menuitem);
+      menuitem.setMnemonic('R');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
+      menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  redo();
+	}
+      });
+      m_MenuItemEditRedo = menuitem;
 
       // View
       menu = new JMenu("View");
@@ -398,5 +462,31 @@ public class ImageProcessorPanel
       getParentDialog().setVisible(false);
       getParentDialog().dispose();
     }
+  }
+
+  /**
+   * peforms an undo if possible.
+   */
+  public void undo() {
+    ImageProcessorSubPanel	panel;
+
+    panel = getCurrentPanel();
+    if (panel == null)
+      return;
+
+    panel.undo();
+  }
+
+  /**
+   * peforms a redo if possible.
+   */
+  public void redo() {
+    ImageProcessorSubPanel	panel;
+
+    panel = getCurrentPanel();
+    if (panel == null)
+      return;
+
+    panel.redo();
   }
 }
