@@ -63,7 +63,7 @@ public class ImageProcessorTabbedPane
    *
    * @return		the image panel, null if none available
    */
-  public ImageProcessingPanel getCurrentPanel() {
+  public ImageProcessorSubPanel getCurrentPanel() {
     return getPanelAt(getSelectedIndex());
   }
 
@@ -73,11 +73,11 @@ public class ImageProcessorTabbedPane
    * @param index	the tab index
    * @return		the image panel, null if none available
    */
-  public ImageProcessingPanel getPanelAt(int index) {
+  public ImageProcessorSubPanel getPanelAt(int index) {
     if ((index < 0) || (index >= getTabCount()))
       return null;
     else
-      return (ImageProcessingPanel) getComponentAt(index);
+      return (ImageProcessorSubPanel) getComponentAt(index);
   }
 
   /**
@@ -85,13 +85,13 @@ public class ImageProcessorTabbedPane
    *
    * @return		the image panels
    */
-  public ImageProcessingPanel[] getAllPanels() {
-    ImageProcessingPanel[]	result;
+  public ImageProcessorSubPanel[] getAllPanels() {
+    ImageProcessorSubPanel[]	result;
     int				i;
     
-    result = new ImageProcessingPanel[getTabCount()];
+    result = new ImageProcessorSubPanel[getTabCount()];
     for (i = 0; i < getTabCount(); i++)
-      result[i] = (ImageProcessingPanel) getComponentAt(i);
+      result[i] = (ImageProcessorSubPanel) getComponentAt(i);
     
     return result;
   }
@@ -113,7 +113,7 @@ public class ImageProcessorTabbedPane
    */
   public File getFileAt(int index) {
     File			result;
-    ImageProcessingPanel	panel;
+    ImageProcessorSubPanel	panel;
 
     result = null;
     panel  = getPanelAt(index);
@@ -130,9 +130,9 @@ public class ImageProcessorTabbedPane
    * @return		true if successfully loaded
    */
   public boolean load(File file) {
-    ImageProcessingPanel	panel;
+    ImageProcessorSubPanel	panel;
 
-    panel = new ImageProcessingPanel();
+    panel = new ImageProcessorSubPanel();
     if (!panel.load(file)) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to open image '" + file + "'!");

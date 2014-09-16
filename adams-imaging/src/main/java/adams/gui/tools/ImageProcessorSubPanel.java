@@ -14,7 +14,7 @@
  */
 
 /**
- * ImageProcessingPanel.java
+ * ImageProcessorSubPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
@@ -55,7 +55,7 @@ import adams.gui.visualization.image.ImagePanel;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ImageProcessingPanel
+public class ImageProcessorSubPanel
   extends BasePanel
   implements CleanUpHandler {
 
@@ -221,7 +221,7 @@ public class ImageProcessingPanel
   /**
    * Initializes the panel with a vertical layout.
    */
-  public ImageProcessingPanel() {
+  public ImageProcessorSubPanel() {
     this(LayoutType.VERTICAL);
   }
   
@@ -230,7 +230,7 @@ public class ImageProcessingPanel
    * 
    * @param layout	the layout to use
    */
-  public ImageProcessingPanel(LayoutType layout) {
+  public ImageProcessorSubPanel(LayoutType layout) {
     super();
     setLayoutType(layout);
   }

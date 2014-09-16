@@ -40,7 +40,7 @@ import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
-import adams.gui.tools.ImageProcessingPanel.LayoutType;
+import adams.gui.tools.ImageProcessorSubPanel.LayoutType;
 import adams.gui.visualization.image.ImageViewerPanel;
 
 /**
@@ -314,7 +314,7 @@ public class ImageProcessorPanel
    *
    * @return		the image panel, null if none available
    */
-  public ImageProcessingPanel getCurrentPanel() {
+  public ImageProcessorSubPanel getCurrentPanel() {
     return m_TabbedPane.getCurrentPanel();
   }
 
@@ -324,7 +324,7 @@ public class ImageProcessorPanel
    * @param index	the tab index
    * @return		the image panel, null if none available
    */
-  public ImageProcessingPanel getPanelAt(int index) {
+  public ImageProcessorSubPanel getPanelAt(int index) {
     return m_TabbedPane.getPanelAt(index);
   }
 
@@ -333,7 +333,7 @@ public class ImageProcessorPanel
    *
    * @return		the image panels
    */
-  public ImageProcessingPanel[] getAllPanels() {
+  public ImageProcessorSubPanel[] getAllPanels() {
     return m_TabbedPane.getAllPanels();
   }
 
@@ -371,7 +371,7 @@ public class ImageProcessorPanel
    */
   protected void close() {
     int				index;
-    ImageProcessingPanel	panel;
+    ImageProcessorSubPanel	panel;
 
     index = m_TabbedPane.getSelectedIndex();
     panel = getPanelAt(index);
