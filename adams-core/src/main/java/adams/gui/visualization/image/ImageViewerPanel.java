@@ -653,7 +653,7 @@ public class ImageViewerPanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed I"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  getCurrentPanel().setScale(getCurrentPanel().getScale() * 1.5);
+	  getCurrentPanel().setScale(getCurrentPanel().getActualScale() * 1.5);
 	}
       });
       m_MenuItemViewZoomIn = menuitem;
@@ -665,7 +665,7 @@ public class ImageViewerPanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  getCurrentPanel().setScale(getCurrentPanel().getScale() / 1.5);
+	  getCurrentPanel().setScale(getCurrentPanel().getActualScale() / 1.5);
 	}
       });
       m_MenuItemViewZoomOut = menuitem;

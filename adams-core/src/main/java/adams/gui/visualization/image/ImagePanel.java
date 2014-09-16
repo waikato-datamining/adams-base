@@ -406,7 +406,7 @@ public class ImagePanel
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
-	    m_PrintMouseListener.saveComponent();
+	    export();
 	  }
 	});
 	menu.addSeparator();
@@ -511,6 +511,13 @@ public class ImagePanel
 	m_ImageOverlays.clear();
       }
       update();
+    }
+
+    /**
+     * Exports the current image.
+     */
+    public void export() {
+      m_PrintMouseListener.saveComponent();
     }
 
     /**
@@ -1044,6 +1051,15 @@ public class ImagePanel
   }
 
   /**
+   * Returns the actual scaling factor (0-16).
+   *
+   * @return		the scaling factor
+   */
+  public double getActualScale() {
+    return m_PaintPanel.getScale();
+  }
+
+  /**
    * Calculates the actual scale.
    * 
    * @param scale	the scale to use as basis
@@ -1280,6 +1296,13 @@ public class ImagePanel
       m_Modified = false;
 
     return result;
+  }
+
+  /**
+   * Exports the current image.
+   */
+  public void export() {
+    m_PaintPanel.export();
   }
 
   /**
