@@ -25,7 +25,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
 import adams.data.Notes;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 
@@ -78,7 +78,7 @@ public class JAIHelper {
    * @param cont	the cont to cast/convert
    * @return		the casted/converted container
    */
-  public static BufferedImageContainer toBufferedImageContainer(AbstractImage cont) {
+  public static BufferedImageContainer toBufferedImageContainer(AbstractImageContainer cont) {
     BufferedImageContainer	result;
     Report			report;
     Notes			notes;

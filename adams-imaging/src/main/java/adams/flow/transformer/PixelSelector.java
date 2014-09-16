@@ -22,7 +22,7 @@ package adams.flow.transformer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -291,7 +291,7 @@ public class PixelSelector
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -300,7 +300,7 @@ public class PixelSelector
    * @return		<!-- flow-generates-start -->adams.data.image.AbstractImage.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -370,7 +370,7 @@ public class PixelSelector
     result = false;
     
     panel = (PixelSelectorPanel) m_Panel;
-    panel.setImage((AbstractImage) m_InputToken.getPayload());
+    panel.setImage((AbstractImageContainer) m_InputToken.getPayload());
     panel.setActions(m_Actions);
     panel.clearImageOverlays();
     for (ImageOverlay overlay: m_Overlays)

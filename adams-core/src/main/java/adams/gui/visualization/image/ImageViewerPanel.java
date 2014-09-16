@@ -43,7 +43,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.AbstractImageTransformer;
 import adams.data.image.BufferedImageContainer;
 import adams.env.Environment;
@@ -935,7 +935,7 @@ public class ImageViewerPanel
     AbstractImageTransformer	transformer;
     BufferedImageContainer	cont;
     String			msg;
-    AbstractImage[]		trans;
+    AbstractImageContainer[]		trans;
     
     getCurrentPanel().addUndoPoint("Saving undo data...", operation);
     try {

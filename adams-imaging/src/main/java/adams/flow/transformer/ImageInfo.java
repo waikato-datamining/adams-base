@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 
@@ -170,7 +170,7 @@ public class ImageInfo
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -197,11 +197,11 @@ public class ImageInfo
   @Override
   protected String doExecute() {
     String		result;
-    AbstractImage	image;
+    AbstractImageContainer	image;
 
     result = null;
 
-    image = (AbstractImage) m_InputToken.getPayload();
+    image = (AbstractImageContainer) m_InputToken.getPayload();
     
     switch (m_Type) {
       case WIDTH:

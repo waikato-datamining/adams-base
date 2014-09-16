@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import adams.data.Notes;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
@@ -115,7 +115,7 @@ public class BoofCVHelper {
    * @param type	the type of image
    * @return		the converted image
    */
-  public static ImageBase toBoofCVImage(AbstractImage cont, BoofCVImageType type) {
+  public static ImageBase toBoofCVImage(AbstractImageContainer cont, BoofCVImageType type) {
     if (cont instanceof BoofCVImageContainer)
       return toBoofCVImage(((BoofCVImageContainer) cont).getImage(), type);
     else
@@ -130,7 +130,7 @@ public class BoofCVHelper {
    * @param type	the type of image
    * @return		the casted/converted container
    */
-  public static BoofCVImageContainer toBoofCVImageContainer(AbstractImage cont) {
+  public static BoofCVImageContainer toBoofCVImageContainer(AbstractImageContainer cont) {
     if (cont instanceof BoofCVImageContainer)
       return (BoofCVImageContainer) cont;
     else
@@ -145,7 +145,7 @@ public class BoofCVHelper {
    * @param type	the type of image
    * @return		the casted/converted container
    */
-  public static BoofCVImageContainer toBoofCVImageContainer(AbstractImage cont, BoofCVImageType type) {
+  public static BoofCVImageContainer toBoofCVImageContainer(AbstractImageContainer cont, BoofCVImageType type) {
     BoofCVImageContainer	result;
     Report			report;
     Notes			notes;

@@ -29,7 +29,7 @@ import adams.core.BoofCVHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.transformer.AbstractBoofCVTransformer;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -185,7 +185,7 @@ public class BoofCVTransformer
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -251,7 +251,7 @@ public class BoofCVTransformer
     result = null;
 
     try {
-      img = BoofCVHelper.toBoofCVImageContainer((AbstractImage) m_InputToken.getPayload());
+      img = BoofCVHelper.toBoofCVImageContainer((AbstractImageContainer) m_InputToken.getPayload());
 
       m_CurrentImages = new ArrayList<BoofCVImageContainer>(
 	  Arrays.asList(

@@ -25,7 +25,7 @@ import java.awt.datatransfer.DataFlavor;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
@@ -78,8 +78,8 @@ public class BufferedImage
   protected java.awt.image.BufferedImage unwrap(Token data) {
     if (data.getPayload() instanceof java.awt.image.BufferedImage)
       return (java.awt.image.BufferedImage) data.getPayload();
-    else if (data.getPayload() instanceof AbstractImage)
-      return ((AbstractImage) data.getPayload()).toBufferedImage();
+    else if (data.getPayload() instanceof AbstractImageContainer)
+      return ((AbstractImageContainer) data.getPayload()).toBufferedImage();
     else
       return null;
   }

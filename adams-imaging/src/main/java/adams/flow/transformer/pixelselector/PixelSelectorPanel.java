@@ -44,7 +44,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import adams.core.CleanUpHandler;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -83,7 +83,7 @@ public class PixelSelectorPanel
   public final static int APPROVE_OPTION = 1;
   
   /** the current image container. */
-  protected AbstractImage m_Image;
+  protected AbstractImageContainer m_Image;
   
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -231,7 +231,7 @@ public class PixelSelectorPanel
    * 
    * @param value	the image
    */
-  public void setImage(AbstractImage value) {
+  public void setImage(AbstractImageContainer value) {
     m_ReportTable.getModel().removeTableModelListener(this);
     
     m_Image = value;
@@ -258,7 +258,7 @@ public class PixelSelectorPanel
    * 
    * @return		the image, null if none set
    */
-  public AbstractImage getImage() {
+  public AbstractImageContainer getImage() {
     return m_Image;
   }
   

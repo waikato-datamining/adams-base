@@ -14,7 +14,7 @@
  */
 
 /**
- * AbstractImage.java
+ * AbstractImageContainer.java
  * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
@@ -30,7 +30,7 @@ import adams.data.container.AbstractSimpleContainer;
  * @version $Revision$
  * @param <T> the type of image to handle
  */
-public abstract class AbstractImage<T>
+public abstract class AbstractImageContainer<T>
   extends AbstractSimpleContainer<T> {
 
   /** the field for the filename. */

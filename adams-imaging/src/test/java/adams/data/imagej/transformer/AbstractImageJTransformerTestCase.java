@@ -30,7 +30,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -126,7 +126,7 @@ public abstract class AbstractImageJTransformerTestCase
 
     content.append("Report:\n");
     report = data.getReport().getClone();
-    report.removeValue(new Field(AbstractImage.FIELD_FILENAME, DataType.STRING));
+    report.removeValue(new Field(AbstractImageContainer.FIELD_FILENAME, DataType.STRING));
     content.append(report);
     content.append("\n");
 

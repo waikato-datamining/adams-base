@@ -23,7 +23,7 @@ import ij.ImagePlus;
 
 import java.awt.image.BufferedImage;
 
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 
 /**
  * Image wrapper around an ImagePlus used by ImageJ.
@@ -32,7 +32,7 @@ import adams.data.image.AbstractImage;
  * @version $Revision$
  */
 public class ImagePlusContainer
-  extends AbstractImage<ImagePlus> {
+  extends AbstractImageContainer<ImagePlus> {
 
   /**
    * Returns the width of the image.

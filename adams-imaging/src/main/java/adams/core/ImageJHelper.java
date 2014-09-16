@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.Date;
 
 import adams.data.Notes;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.report.Report;
 import adams.env.Environment;
@@ -83,7 +83,7 @@ public class ImageJHelper {
    * @param cont	the cont to cast/convert
    * @return		the casted/converted container
    */
-  public static ImagePlusContainer toImagePlusContainer(AbstractImage cont) {
+  public static ImagePlusContainer toImagePlusContainer(AbstractImageContainer cont) {
     ImagePlusContainer	result;
     Report		report;
     Notes		notes;

@@ -23,7 +23,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
 
@@ -242,8 +242,8 @@ public class Image
     todraw = null;
     if (obj instanceof BufferedImage)
       todraw = (BufferedImage) obj;
-    else if (obj instanceof AbstractImage)
-      todraw = ((AbstractImage) obj).toBufferedImage();
+    else if (obj instanceof AbstractImageContainer)
+      todraw = ((AbstractImageContainer) obj).toBufferedImage();
     else
       result = "Unknown image class: " + obj.getClass().getName();
     

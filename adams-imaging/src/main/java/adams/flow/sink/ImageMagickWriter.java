@@ -29,7 +29,7 @@ import adams.core.EnumWithCustomDisplay;
 import adams.core.ImageMagickHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.option.AbstractOption;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -421,7 +421,7 @@ public class ImageMagickWriter
    * @return		<!-- flow-accepts-start -->adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -475,7 +475,7 @@ public class ImageMagickWriter
   @Override
   protected String doExecute() {
     String		result;
-    AbstractImage	img;
+    AbstractImageContainer	img;
     String		filename;
     ImageType		type;
     ConvertCmd		cmd;
@@ -483,7 +483,7 @@ public class ImageMagickWriter
 
     result = null;
 
-    img      = (AbstractImage) m_InputToken.getPayload();
+    img      = (AbstractImageContainer) m_InputToken.getPayload();
     filename = m_OutputFile.getAbsolutePath();
 
     try {

@@ -27,7 +27,7 @@ import java.util.List;
 
 import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.AbstractBufferedImageTransformer;
 import adams.flow.core.Token;
@@ -185,7 +185,7 @@ public class BufferedImageTransformer
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -251,7 +251,7 @@ public class BufferedImageTransformer
     result = null;
 
     try {
-      img = JAIHelper.toBufferedImageContainer((AbstractImage) m_InputToken.getPayload());
+      img = JAIHelper.toBufferedImageContainer((AbstractImageContainer) m_InputToken.getPayload());
 
       m_CurrentImages = new ArrayList<BufferedImageContainer>(
 	  Arrays.asList(

@@ -24,7 +24,7 @@ import java.awt.Graphics;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
@@ -43,7 +43,7 @@ public abstract class AbstractPixelSelectorOverlay
   private static final long serialVersionUID = -3880315824020638532L;
 
   /** the underlying image. */
-  protected AbstractImage m_Image;
+  protected AbstractImageContainer m_Image;
   
   /**
    * Returns a string describing the object.
@@ -87,7 +87,7 @@ public abstract class AbstractPixelSelectorOverlay
    * 
    * @param value	the image
    */
-  public void setImage(AbstractImage value) {
+  public void setImage(AbstractImageContainer value) {
     m_Image = value;
     reset();
   }
@@ -97,7 +97,7 @@ public abstract class AbstractPixelSelectorOverlay
    * 
    * @return		the image
    */
-  public AbstractImage getImage() {
+  public AbstractImageContainer getImage() {
     return m_Image;
   }
   

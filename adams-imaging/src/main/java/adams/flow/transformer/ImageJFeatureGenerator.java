@@ -26,7 +26,7 @@ import java.util.Hashtable;
 
 import adams.core.ImageJHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
 import adams.data.imagej.features.Pixels;
@@ -236,7 +236,7 @@ public class ImageJFeatureGenerator
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -282,7 +282,7 @@ public class ImageJFeatureGenerator
 
     m_Queue.clear();
     try {
-      cont = ImageJHelper.toImagePlusContainer((AbstractImage) m_InputToken.getPayload());
+      cont = ImageJHelper.toImagePlusContainer((AbstractImageContainer) m_InputToken.getPayload());
       m_Queue.addAll(Arrays.asList(m_Algorithm.generate(cont)));
     }
     catch (Exception e) {

@@ -41,7 +41,7 @@ import adams.data.report.Report;
  * @version $Revision$
  * @param <T> the type of image to process
  */
-public abstract class AbstractImageFeatureGenerator<T extends AbstractImage>
+public abstract class AbstractImageFeatureGenerator<T extends AbstractImageContainer>
   extends AbstractOptionHandler
   implements Comparable, CleanUpHandler {
 

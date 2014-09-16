@@ -22,7 +22,7 @@ package adams.data.boofcv;
 import java.awt.image.BufferedImage;
 
 import adams.core.BoofCVHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import boofcv.struct.image.ImageBase;
 import boofcv.struct.image.ImageSingleBand;
 
@@ -33,7 +33,7 @@ import boofcv.struct.image.ImageSingleBand;
  * @version $Revision$
  */
 public class BoofCVImageContainer
-  extends AbstractImage<ImageBase> {
+  extends AbstractImageContainer<ImageBase> {
 
   /**
    * Returns the width of the image.

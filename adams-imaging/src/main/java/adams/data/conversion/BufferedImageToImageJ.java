@@ -20,7 +20,7 @@
 package adams.data.conversion;
 
 import adams.core.ImageJHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 
@@ -89,6 +89,6 @@ public class BufferedImageToImageJ
    */
   @Override
   protected Object doConvert() throws Exception {
-    return ImageJHelper.toImagePlusContainer((AbstractImage) m_Input);
+    return ImageJHelper.toImagePlusContainer((AbstractImageContainer) m_Input);
   }
 }

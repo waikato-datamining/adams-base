@@ -31,7 +31,7 @@ import adams.core.JAIHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -135,7 +135,7 @@ public abstract class AbstractBoofCVTransformerTestCase
 
     content.append("Report:\n");
     report = data.getReport().getClone();
-    report.removeValue(new Field(AbstractImage.FIELD_FILENAME, DataType.STRING));
+    report.removeValue(new Field(AbstractImageContainer.FIELD_FILENAME, DataType.STRING));
     content.append(report);
     content.append("\n");
 

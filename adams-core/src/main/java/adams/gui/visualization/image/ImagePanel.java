@@ -58,7 +58,7 @@ import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.report.AbstractField;
@@ -987,7 +987,7 @@ public class ImagePanel
    *
    * @param value	the image to display
    */
-  public void setCurrentImage(AbstractImage value) {
+  public void setCurrentImage(AbstractImageContainer value) {
     m_CurrentFile = null;
     m_PaintPanel.setCurrentImage(value.toBufferedImage());
     updateImageProperties();

@@ -35,7 +35,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
@@ -452,7 +452,7 @@ public class TesseractOCR
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class, AbstractImage.class};
+    return new Class[]{String.class, File.class, AbstractImageContainer.class};
   }
 
   /**
@@ -500,7 +500,7 @@ public class TesseractOCR
 	file = File.createTempFile(getClass().getSimpleName(), ".png");
 	file.delete();
 	fileStr = file.getAbsolutePath();
-	img = ((AbstractImage) m_InputToken.getPayload()).toBufferedImage();
+	img = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();
 	JAI.create("filestore", img, fileStr, "PNG");
       }
       catch (Exception e) {

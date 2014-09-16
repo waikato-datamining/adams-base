@@ -22,7 +22,7 @@ package adams.data.conversion;
 import adams.core.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 
 /**
@@ -137,6 +137,6 @@ public class BufferedImageToBoofCV
    */
   @Override
   protected Object doConvert() throws Exception {
-    return BoofCVHelper.toBoofCVImageContainer((AbstractImage) m_Input, m_ImageType);
+    return BoofCVHelper.toBoofCVImageContainer((AbstractImageContainer) m_Input, m_ImageType);
   }
 }

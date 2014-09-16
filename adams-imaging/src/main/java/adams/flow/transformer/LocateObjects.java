@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import adams.data.Notes;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.flow.core.Token;
@@ -199,7 +199,7 @@ extends AbstractArrayProvider {
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class, BufferedImage.class};
+    return new Class[]{AbstractImageContainer.class, BufferedImage.class};
   }
 
   /**
@@ -222,7 +222,7 @@ extends AbstractArrayProvider {
     String			result;
     BufferedImage		image;
     List<LocatedObject>		objects;
-    AbstractImage		contIn;
+    AbstractImageContainer		contIn;
     Notes			notes;
     Report			report;
     Report			reportNew;
@@ -230,8 +230,8 @@ extends AbstractArrayProvider {
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof AbstractImage) {
-      contIn = (AbstractImage) m_InputToken.getPayload();
+    if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
+      contIn = (AbstractImageContainer) m_InputToken.getPayload();
       image  = contIn.toBufferedImage();
       notes  = contIn.getNotes().getClone();
       report = contIn.getReport().getClone();

@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import java.awt.Color;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 
@@ -374,7 +374,7 @@ public class SetImagePixel
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -394,12 +394,12 @@ public class SetImagePixel
   @Override
   protected String doExecute() {
     String			result;
-    AbstractImage		image;
+    AbstractImageContainer		image;
     BufferedImageContainer	cont;
 
     result = null;
 
-    image = (AbstractImage) m_InputToken.getPayload();
+    image = (AbstractImageContainer) m_InputToken.getPayload();
 
     if (m_X > image.getWidth())
       result = "X is larger than image width: " + m_X + " > " + image.getWidth();

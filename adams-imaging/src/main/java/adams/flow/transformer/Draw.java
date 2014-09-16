@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.data.InPlaceProcessing;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.flow.core.Token;
@@ -208,7 +208,7 @@ public class Draw
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -231,7 +231,7 @@ public class Draw
     BufferedImage		image;
     BufferedImageContainer	cont;
 
-    image = ((AbstractImage) m_InputToken.getPayload()).toBufferedImage();;
+    image = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();;
     if (!m_NoCopy)
       image = BufferedImageHelper.deepCopy(image);
     m_Operation.setOwner(this);
@@ -239,7 +239,7 @@ public class Draw
     
     if (result == null) {
       cont = new BufferedImageContainer();
-      cont.setReport(((AbstractImage) m_InputToken.getPayload()).getReport().getClone());
+      cont.setReport(((AbstractImageContainer) m_InputToken.getPayload()).getReport().getClone());
       cont.setImage(image);
       m_OutputToken = new Token(cont);
     }

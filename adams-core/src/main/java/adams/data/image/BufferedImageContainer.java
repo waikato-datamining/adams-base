@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
  * @version $Revision$
  */
 public class BufferedImageContainer
-  extends AbstractImage<BufferedImage> {
+  extends AbstractImageContainer<BufferedImage> {
 
   /**
    * Returns the width of the image.

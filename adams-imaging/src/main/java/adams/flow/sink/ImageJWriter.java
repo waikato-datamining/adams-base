@@ -23,7 +23,7 @@ package adams.flow.sink;
 import ij.io.FileSaver;
 import adams.core.ImageJHelper;
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
@@ -202,7 +202,7 @@ public class ImageJWriter
    * @return		<!-- flow-accepts-start -->adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -276,7 +276,7 @@ public class ImageJWriter
 
     result = null;
 
-    img = ImageJHelper.toImagePlusContainer((AbstractImage) m_InputToken.getPayload());
+    img = ImageJHelper.toImagePlusContainer((AbstractImageContainer) m_InputToken.getPayload());
     filename = m_OutputFile.getAbsolutePath();
     if (m_ImageType == ImageType.AUTO)
       type = determineImageType(filename);

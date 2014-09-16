@@ -21,7 +21,7 @@
 package adams.flow.sink;
 
 import ij.macro.Interpreter;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
@@ -97,7 +97,7 @@ public class ImageJReleaseImage
    * @return		<!-- flow-accepts-start -->adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
   
   /**

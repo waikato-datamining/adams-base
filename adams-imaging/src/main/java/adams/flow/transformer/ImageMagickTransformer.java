@@ -32,7 +32,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.option.OptionUtils;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -183,7 +183,7 @@ public class ImageMagickTransformer
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -233,7 +233,7 @@ public class ImageMagickTransformer
     result = null;
 
     try {
-      img = JAIHelper.toBufferedImageContainer((AbstractImage) m_InputToken.getPayload());
+      img = JAIHelper.toBufferedImageContainer((AbstractImageContainer) m_InputToken.getPayload());
 
       op = new IMOperation();
       op.addImage();  // input

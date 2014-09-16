@@ -32,7 +32,7 @@ import adams.core.option.OptionUtils;
  * @version $Revision$
  * @param <T> the type of image to process
  */
-public abstract class AbstractImageTransformer<T extends AbstractImage>
+public abstract class AbstractImageTransformer<T extends AbstractImageContainer>
   extends AbstractOptionHandler
   implements Comparable, CleanUpHandler, QuickInfoSupporter {
 

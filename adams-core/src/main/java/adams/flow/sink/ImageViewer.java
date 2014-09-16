@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 
 import adams.core.ShallowCopySupporter;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.flow.core.Token;
@@ -227,8 +227,8 @@ public class ImageViewer
 	m_ImagePanel.load((File) token.getPayload());
       else if (token.getPayload() instanceof BufferedImage)
 	m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload());
-      else if (token.getPayload() instanceof AbstractImage)
-	m_ImagePanel.setCurrentImage((AbstractImage) token.getPayload());
+      else if (token.getPayload() instanceof AbstractImageContainer)
+	m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload());
       m_ImagePanel.setShowProperties(m_Owner.getShowProperties());
       if (m_Owner.getShowProperties())
 	m_ImagePanel.getSplitPane().getRightComponent().setMinimumSize(new Dimension(m_Owner.getPropertiesWidth(), 0));
@@ -637,7 +637,7 @@ public class ImageViewer
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class, BufferedImage.class, AbstractImage.class};
+    return new Class[]{String.class, File.class, BufferedImage.class, AbstractImageContainer.class};
   }
 
   /**
@@ -654,8 +654,8 @@ public class ImageViewer
       m_ImagePanel.load((File) token.getPayload());
     else if (token.getPayload() instanceof BufferedImage)
       m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload());
-    else if (token.getPayload() instanceof AbstractImage)
-      m_ImagePanel.setCurrentImage((AbstractImage) token.getPayload());
+    else if (token.getPayload() instanceof AbstractImageContainer)
+      m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload());
     if (m_Zoom == -1)
       m_ImagePanel.setScale(m_Zoom);
     else

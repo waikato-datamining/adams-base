@@ -28,7 +28,7 @@ import adams.core.BoofCVHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.boofcv.features.AbstractBoofCVFeatureGenerator;
 import adams.data.boofcv.features.Pixels;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -235,7 +235,7 @@ public class BoofCVFeatureGenerator
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -263,7 +263,7 @@ public class BoofCVFeatureGenerator
 
     m_Queue.clear();
     try {
-      m_Queue.addAll(Arrays.asList(m_Algorithm.generate(BoofCVHelper.toBoofCVImageContainer((AbstractImage) m_InputToken.getPayload()))));
+      m_Queue.addAll(Arrays.asList(m_Algorithm.generate(BoofCVHelper.toBoofCVImageContainer((AbstractImageContainer) m_InputToken.getPayload()))));
     }
     catch (Exception e) {
       result = handleException("Failed to generate features: ", e);

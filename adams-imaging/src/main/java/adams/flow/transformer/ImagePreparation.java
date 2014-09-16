@@ -22,7 +22,7 @@ package adams.flow.transformer;
 import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.flow.transformer.imagepreparation.AbstractImagePreparation;
@@ -176,7 +176,7 @@ public class ImagePreparation
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class, BufferedImage.class};
+    return new Class[]{AbstractImageContainer.class, BufferedImage.class};
   }
 
   /**
@@ -186,7 +186,7 @@ public class ImagePreparation
    */
   @Override
   public Class[] generates() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -204,9 +204,9 @@ public class ImagePreparation
     
     result = null;
     
-    if (m_InputToken.getPayload() instanceof AbstractImage) {
-      image = ((AbstractImage) m_InputToken.getPayload()).toBufferedImage();
-      notes = ((AbstractImage) m_InputToken.getPayload()).getNotes();
+    if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
+      image = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();
+      notes = ((AbstractImageContainer) m_InputToken.getPayload()).getNotes();
     }
     else {
       image = (BufferedImage) m_InputToken.getPayload();

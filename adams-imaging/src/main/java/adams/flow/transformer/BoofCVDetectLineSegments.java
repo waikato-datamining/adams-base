@@ -27,7 +27,7 @@ import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVImageType;
-import adams.data.image.AbstractImage;
+import adams.data.image.AbstractImageContainer;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -294,7 +294,7 @@ public class BoofCVDetectLineSegments
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImage.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
@@ -315,7 +315,7 @@ public class BoofCVDetectLineSegments
   @Override
   protected String doExecute() {
     String				result;
-    AbstractImage	 		cont;
+    AbstractImageContainer	 		cont;
     ImageFloat32 			input;
     DetectLineSegmentsGridRansac 	detector;
     List<LineSegment2D_F32> 		found;
@@ -325,7 +325,7 @@ public class BoofCVDetectLineSegments
     result = null;
     
     try {
-      cont     = (AbstractImage) m_InputToken.getPayload();
+      cont     = (AbstractImageContainer) m_InputToken.getPayload();
       input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.FLOAT_32);
       detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, ImageFloat32.class, ImageFloat32.class);
       found    = detector.detect(input);
