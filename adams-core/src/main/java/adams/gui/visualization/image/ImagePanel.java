@@ -447,7 +447,6 @@ public class ImagePanel
     
     /**
      * Sets the scaling factor (0-16).
-     * TODO: allow "fit" via "-1.0"
      *
      * @param value	the scaling factor
      */
