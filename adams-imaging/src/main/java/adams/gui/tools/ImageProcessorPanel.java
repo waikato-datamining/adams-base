@@ -86,6 +86,12 @@ public class ImageProcessorPanel
   /** the menu item "redo". */
   protected JMenuItem m_MenuItemEditRedo;
 
+  /** the menu "locate objects". */
+  protected JMenuItem m_MenuViewLocateObjects;
+
+  /** the menu "remove overlays". */
+  protected JMenuItem m_MenuViewRemoveOverlays;
+
   /** the recent files handler. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
 
@@ -168,18 +174,20 @@ public class ImageProcessorPanel
    */
   protected void updateMenu() {
     ImageProcessorSubPanel	panel;
+    boolean			hasPanel;
     
     if (m_MenuBar == null)
       return;
 
-    panel = getCurrentPanel();
+    panel    = getCurrentPanel();
+    hasPanel = (panel != null);
     
     // File
     m_MenuItemFileLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
-    m_MenuItemFileClose.setEnabled(panel != null);
+    m_MenuItemFileClose.setEnabled(hasPanel);
     
     // Edit
-    if ((panel != null) && panel.getUndo().canUndo()) {
+    if (hasPanel && panel.getUndo().canUndo()) {
       m_MenuItemEditUndo.setEnabled(true);
       m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment(true));
     }
@@ -187,7 +195,7 @@ public class ImageProcessorPanel
       m_MenuItemEditUndo.setEnabled(false);
       m_MenuItemEditUndo.setText("Undo");
     }
-    if ((panel != null) && panel.getUndo().canRedo()) {
+    if (hasPanel && panel.getUndo().canRedo()) {
       m_MenuItemEditRedo.setEnabled(true);
       m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment(true));
     }
@@ -197,8 +205,10 @@ public class ImageProcessorPanel
     }
     
     // View
-    m_MenuItemViewHorizontal.setEnabled(panel != null);
-    m_MenuItemViewVertical.setEnabled(panel != null);
+    m_MenuItemViewHorizontal.setEnabled(hasPanel);
+    m_MenuItemViewVertical.setEnabled(hasPanel);
+    m_MenuViewLocateObjects.setEnabled(hasPanel);
+    m_MenuViewRemoveOverlays.setEnabled(hasPanel);
   }
 
   /**
@@ -361,6 +371,74 @@ public class ImageProcessorPanel
       });
       group.add(menuitem);
       m_MenuItemViewVertical = menuitem;
+
+      menu.addSeparator();
+      
+      // View/Remove overlays
+      submenu = new JMenu("Remove overlays");
+      menu.add(submenu);
+      submenu.setMnemonic('R');
+      submenu.setIcon(GUIHelper.getIcon("delete.gif"));
+      m_MenuViewRemoveOverlays = submenu;
+
+      // View/Remove overlays/Original
+      menuitem = new JMenuItem("Original");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('O');
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+	  if (getCurrentPanel() == null)
+	    return;
+	  getCurrentPanel().clearImageOverlays(true);
+        }
+      });
+
+      // View/Remove overlays/Processed
+      menuitem = new JMenuItem("Processed");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+	  if (getCurrentPanel() == null)
+	    return;
+	  getCurrentPanel().clearImageOverlays(false);
+        }
+      });
+
+      // View/Locate objects
+      submenu = new JMenu("Locate objects");
+      menu.add(submenu);
+      submenu.setMnemonic('L');
+      submenu.setIcon(GUIHelper.getIcon("locateobjects.gif"));
+      m_MenuViewLocateObjects = submenu;
+
+      // View/Locate objects/Original
+      menuitem = new JMenuItem("Original");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('O');
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+	  if (getCurrentPanel() == null)
+	    return;
+	  getCurrentPanel().locateObjects(true);
+        }
+      });
+
+      // View/Locate objects/Processed
+      menuitem = new JMenuItem("Processed");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+	  if (getCurrentPanel() == null)
+	    return;
+	  getCurrentPanel().locateObjects(false);
+        }
+      });
 
       // update menu
       m_MenuBar = result;

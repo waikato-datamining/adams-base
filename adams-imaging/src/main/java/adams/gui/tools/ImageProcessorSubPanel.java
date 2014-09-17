@@ -20,12 +20,14 @@
 package adams.gui.tools;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -41,13 +43,19 @@ import adams.flow.control.SubProcess;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Compatibility;
 import adams.flow.core.Token;
+import adams.flow.transformer.locateobjects.AbstractObjectLocator;
+import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.PassThrough;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.Undo;
 import adams.gui.flow.FlowPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
 /**
  * A panel with three panes: original image, processed image and flow for
@@ -140,9 +148,20 @@ public class ImageProcessorSubPanel
       });
       menu.add(menuitem);
 
+      menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
+      menuitem.setEnabled(getPanel().getCurrentImage() != null);
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  getPanel().saveReport();
+	}
+      });
+      menu.add(menuitem);
+
+      // separator
+      menu.addSeparator();
+
       // View/Zoom
       submenu = new JMenu("Zoom");
-      menu.addSeparator();
       menu.add(submenu);
       submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
 
@@ -219,6 +238,9 @@ public class ImageProcessorSubPanel
   /** the splitpane for the images. */
   protected BaseSplitPane m_SplitImages;
   
+  /** the last object locator in use. */
+  protected AbstractObjectLocator m_LastObjectLocator;
+  
   /**
    * Initializes the panel with a vertical layout.
    */
@@ -243,7 +265,8 @@ public class ImageProcessorSubPanel
   protected void initialize() {
     super.initialize();
     
-    m_LayoutType = LayoutType.VERTICAL;
+    m_LayoutType        = LayoutType.VERTICAL;
+    m_LastObjectLocator = new PassThrough();
   }
   
   /**
@@ -510,6 +533,74 @@ public class ImageProcessorSubPanel
     getFlow().redo();
   }
 
+  /**
+   * Removes all overlays.
+   * 
+   * @param original	whether to locate objects in the original image or the processed one
+   */
+  public void clearImageOverlays(boolean original) {
+    if (original)
+      m_PanelOriginal.clearImageOverlays();
+    else
+      m_PanelProcessed.clearImageOverlays();
+  }
+
+  /**
+   * Returns iterator over current overlays.
+   * 
+   * @param original	whether to locate objects in the original image or the processed one
+   * @return		the iterator
+   */
+  public Iterator<ImageOverlay> imageOverlays(boolean original) {
+    if (original)
+      return m_PanelOriginal.imageOverlays();
+    else
+      return m_PanelProcessed.imageOverlays();
+  }
+  
+  /**
+   * Displays a dialog for the user to configure an object locator and then
+   * locates the objects.
+   * 
+   * @param original	whether to locate objects in the original image or the processed one
+   */
+  public void locateObjects(boolean original) {
+    GenericObjectEditorDialog		dialog;
+    LocatedObjects			located;
+    ObjectLocationsOverlayFromReport	overlay;
+    
+    // create dialog
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Locate objects");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(AbstractObjectLocator.class);
+    dialog.setCurrent(m_LastObjectLocator);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    // locate objects
+    clearImageOverlays(original);
+    m_LastObjectLocator = (AbstractObjectLocator) dialog.getCurrent();
+    overlay             = new ObjectLocationsOverlayFromReport();
+    if (original) {
+      m_PanelOriginal.addImageOverlay(overlay);
+      located = m_LastObjectLocator.locate(m_PanelOriginal.getCurrentImage());
+      m_PanelOriginal.setAdditionalProperties(located.toReport(overlay.getPrefix()));
+    }
+    else {
+      m_PanelProcessed.addImageOverlay(overlay);
+      located = m_LastObjectLocator.locate(m_PanelProcessed.getCurrentImage());
+      m_PanelProcessed.setAdditionalProperties(located.toReport(overlay.getPrefix()));
+    }
+    
+  }
+  
   /**
    * Cleans up data structures, frees up memory.
    */
