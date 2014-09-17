@@ -22,7 +22,6 @@ package adams.flow.transformer.locateobjects;
 import georegression.struct.point.Point2D_I32;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.License;
@@ -142,17 +141,17 @@ public class BinaryContours
    * @return		the original image
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    ArrayList<LocatedObject>	result;
-    ImageFloat32 		input;
-    ImageUInt8 			binary;
-    ImageUInt8 			filtered;
-    List<Contour> 		contours;
-    int				left;
-    int				right;
-    int				top;
-    int				bottom;
-    double 			mean;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects	result;
+    ImageFloat32 	input;
+    ImageUInt8 		binary;
+    ImageUInt8 		filtered;
+    List<Contour> 	contours;
+    int			left;
+    int			right;
+    int			top;
+    int			bottom;
+    double 		mean;
 
     input  = ConvertBufferedImage.convertFromSingle(image, null, ImageFloat32.class);
     binary = new ImageUInt8(input.width, input.height);
@@ -171,7 +170,7 @@ public class BinaryContours
     // Find the contour around the shapes
     contours = BinaryImageOps.contour(filtered, ConnectRule.EIGHT, null);
     
-    result = new ArrayList<LocatedObject>();
+    result = new LocatedObjects();
     for (Contour contour: contours) {
       // determine largest rectangle for contour
       left   = image.getWidth();

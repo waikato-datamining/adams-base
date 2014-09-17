@@ -22,7 +22,6 @@ package adams.flow.transformer.locateobjects;
 import georegression.struct.point.Point2D_I32;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.License;
@@ -246,8 +245,8 @@ public class CannyEdges
    * @return		the original image
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    ArrayList<LocatedObject>			result;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects				result;
     ImageFloat32 				input;
     CannyEdge<ImageFloat32,ImageFloat32> 	canny;
     List<EdgeContour> 				contours;
@@ -262,7 +261,7 @@ public class CannyEdges
     canny.process(input, m_ThresholdLow, m_ThresholdHigh, null);
     contours = canny.getContours();
     
-    result = new ArrayList<LocatedObject>();
+    result = new LocatedObjects();
     for (EdgeContour contour: contours) {
       // determine largest rectangle for contour
       left   = image.getWidth();

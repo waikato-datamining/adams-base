@@ -20,7 +20,6 @@
 package adams.flow.transformer;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
@@ -29,6 +28,7 @@ import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.LocatedObject;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
@@ -39,46 +39,60 @@ import adams.flow.transformer.locateobjects.LocatedObject;
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
  * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br/>
  * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: deobjectLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: FindBugs
+ * &nbsp;&nbsp;&nbsp;default: LocateObjects
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-locator &lt;adams.flow.transformer.findobjects.AbstractObjectLocator&gt; (property: locator)
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Outputs the images either one by one or as array.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-locator &lt;adams.flow.transformer.locateobjects.AbstractObjectLocator&gt; (property: locator)
  * &nbsp;&nbsp;&nbsp;The algorithm for locating the objects.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.findobjects.PassThrough
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.locateobjects.PassThrough
+ * </pre>
+ * 
+ * <pre>-generate-report &lt;boolean&gt; (property: generateReport)
+ * &nbsp;&nbsp;&nbsp;If enabled, a report with all the locations is generated instead of separate 
+ * &nbsp;&nbsp;&nbsp;image objects.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The report field prefix to use when generating a report.
+ * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
  * 
  <!-- options-end -->
@@ -87,7 +101,7 @@ import adams.flow.transformer.locateobjects.LocatedObject;
  * @version $Revision: 78 $
  */
 public class LocateObjects
-extends AbstractArrayProvider {
+  extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 2180810317840558011L;
@@ -110,6 +124,12 @@ extends AbstractArrayProvider {
   /** the algorithm to use. */
   protected AbstractObjectLocator m_Locator;
 
+  /** whether to generate a report rather than single image objects. */
+  protected boolean m_GenerateReport;
+  
+  /** the prefix to use when generating a report. */
+  protected String m_Prefix;
+  
   /**
    * Returns a string describing the object.
    *
@@ -130,6 +150,14 @@ extends AbstractArrayProvider {
     m_OptionManager.add(
 	"locator", "locator",
 	new adams.flow.transformer.locateobjects.PassThrough());
+
+    m_OptionManager.add(
+	"generate-report", "generateReport",
+	false);
+
+    m_OptionManager.add(
+	"prefix", "prefix",
+	"Object.");
   }
 
   /**
@@ -173,6 +201,64 @@ extends AbstractArrayProvider {
   }
 
   /**
+   * Sets whether to generate a report instead of separate image objects.
+   *
+   * @param value 	true of to generate report
+   */
+  public void setGenerateReport(boolean value) {
+    m_GenerateReport = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to generate a report instead of separate image objects.
+   *
+   * @return 		true if to generate report
+   */
+  public boolean getGenerateReport() {
+    return m_GenerateReport;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generateReportTipText() {
+    return "If enabled, a report with all the locations is generated instead of separate image objects.";
+  }
+
+  /**
+   * Sets the field prefix to use when generating a report.
+   *
+   * @param value 	the field prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the field prefix to use when generating a report.
+   *
+   * @return 		the field prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The report field prefix to use when generating a report.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -209,7 +295,10 @@ extends AbstractArrayProvider {
    */
   @Override
   protected Class getItemClass() {
-    return BufferedImageContainer.class;
+    if (m_GenerateReport)
+      return Report.class;
+    else
+      return BufferedImageContainer.class;
   }
 
   /**
@@ -221,8 +310,8 @@ extends AbstractArrayProvider {
   protected String doExecute() {
     String			result;
     BufferedImage		image;
-    List<LocatedObject>		objects;
-    AbstractImageContainer		contIn;
+    LocatedObjects		objects;
+    AbstractImageContainer	contIn;
     Notes			notes;
     Report			report;
     Report			reportNew;
@@ -269,18 +358,23 @@ extends AbstractArrayProvider {
 	  notes.addWarning(this.getClass(), warning);
       }
       m_Queue.clear();
-      for (LocatedObject object: objects) {
-	cont = new BufferedImageContainer();
-	cont.setImage(object.getImage());
-	cont.getNotes().mergeWith(notes);
-	reportNew = new Report();
-	reportNew.setNumericValue(FIELD_X, object.getX());
-	reportNew.setNumericValue(FIELD_Y, object.getY());
-	reportNew.setNumericValue(FIELD_WIDTH, object.getWidth());
-	reportNew.setNumericValue(FIELD_HEIGHT, object.getHeight());
-	cont.setReport(reportNew);
-	cont.getReport().mergeWith(report);
-	m_Queue.add(cont);
+      if (m_GenerateReport) {
+	m_Queue.add(objects.toReport(m_Prefix));
+      }
+      else {
+	for (LocatedObject object: objects) {
+	  cont = new BufferedImageContainer();
+	  cont.setImage(object.getImage());
+	  cont.getNotes().mergeWith(notes);
+	  reportNew = new Report();
+	  reportNew.setNumericValue(FIELD_X, object.getX());
+	  reportNew.setNumericValue(FIELD_Y, object.getY());
+	  reportNew.setNumericValue(FIELD_WIDTH, object.getWidth());
+	  reportNew.setNumericValue(FIELD_HEIGHT, object.getHeight());
+	  cont.setReport(reportNew);
+	  cont.getReport().mergeWith(report);
+	  m_Queue.add(cont);
+	}
       }
       m_Locator.cleanUp();
     }

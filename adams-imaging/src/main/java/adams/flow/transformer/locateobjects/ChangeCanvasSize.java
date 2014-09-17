@@ -24,8 +24,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.ImageAnchor;
@@ -279,9 +277,9 @@ public class ChangeCanvasSize
    * @return		the containers of located objects
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    List<LocatedObject>	result;
-    List<LocatedObject>	base;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects	result;
+    LocatedObjects	base;
     Point[]		corners;
     int			x;
     int			y;
@@ -294,7 +292,7 @@ public class ChangeCanvasSize
     BufferedImage	modified;
     Graphics		g;
 
-    result = new ArrayList<LocatedObject>();
+    result = new LocatedObjects();
     base   = m_Locator.locate(image);
 
     for (LocatedObject obj: base) {

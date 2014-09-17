@@ -21,8 +21,6 @@
 package adams.flow.transformer.locateobjects;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 
@@ -284,11 +282,11 @@ public class SizeFilter
    * @return		the containers of located objects
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    List<LocatedObject>	result;
-    List<LocatedObject>	base;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects	result;
+    LocatedObjects	base;
 
-    result = new ArrayList<LocatedObject>();
+    result = new LocatedObjects();
     base   = m_Locator.locate(image);
 
     for (LocatedObject obj: base) {

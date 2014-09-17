@@ -20,8 +20,6 @@
 package adams.flow.transformer.locateobjects;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.transformer.crop.AbstractCropAlgorithm;
@@ -138,9 +136,9 @@ public class CroppedLocator
    * @return		the containers of located objects
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    List<LocatedObject>		result;
-    List<LocatedObject>		temp;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects		result;
+    LocatedObjects		base;
     BufferedImage		cropped;
     int				left;
     int				top;
@@ -159,11 +157,11 @@ public class CroppedLocator
     }
     
     // located objects
-    temp = m_Locator.locate(cropped);
+    base = m_Locator.locate(cropped);
 
     // adjust locations
-    result = new ArrayList<LocatedObject>();
-    for (LocatedObject obj: temp) {
+    result = new LocatedObjects();
+    for (LocatedObject obj: base) {
       adjusted = new LocatedObject(
 	  obj.getImage(), 
 	  left + obj.getX(), top + obj.getY(), 

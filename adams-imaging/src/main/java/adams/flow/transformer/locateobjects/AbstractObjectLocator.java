@@ -156,7 +156,7 @@ public abstract class AbstractObjectLocator
    * @param imp	        the image to process
    * @return		the containers of located objects
    */
-  protected abstract List<LocatedObject> doLocate(BufferedImage image);
+  protected abstract LocatedObjects doLocate(BufferedImage image);
   
   /**
    * Locates the objects in the image.
@@ -164,8 +164,8 @@ public abstract class AbstractObjectLocator
    * @param image	the image to process
    * @return		the containers of located objects
    */
-  public List<LocatedObject> locate(BufferedImage image) {
-    List<LocatedObject>	result;
+  public LocatedObjects locate(BufferedImage image) {
+    LocatedObjects	result;
     
     m_Stopped = false;
     m_Errors.clear();
@@ -175,7 +175,7 @@ public abstract class AbstractObjectLocator
     
     result = doLocate(image);
     if (m_Stopped)
-      result = new ArrayList<LocatedObject>();
+      result = new LocatedObjects();
     
     return result;
   }

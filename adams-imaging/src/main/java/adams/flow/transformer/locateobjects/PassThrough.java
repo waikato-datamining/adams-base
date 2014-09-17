@@ -20,8 +20,6 @@
 package adams.flow.transformer.locateobjects;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Dummy, just forwards container with input image.
@@ -52,10 +50,10 @@ public class PassThrough
    * @return		the original image
    */
   @Override
-  protected List<LocatedObject> doLocate(BufferedImage image) {
-    ArrayList<LocatedObject>	result;
+  protected LocatedObjects doLocate(BufferedImage image) {
+    LocatedObjects	result;
     
-    result = new ArrayList<LocatedObject>();
+    result = new LocatedObjects();
     result.add(new LocatedObject(image, 0, 0, image.getWidth(), image.getHeight()));
     
     return result;
