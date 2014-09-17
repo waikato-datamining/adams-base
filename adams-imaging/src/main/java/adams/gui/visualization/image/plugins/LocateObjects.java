@@ -71,6 +71,7 @@ public class LocateObjects
     LocatedObjects			located;
     ObjectLocationsOverlayFromReport	overlay;
     
+    setLastSetup(m_Editor.getValue());
     locater = (AbstractObjectLocator) m_Editor.getValue();
     overlay = new ObjectLocationsOverlayFromReport();
     panel.removeImageOverlays(ObjectLocationsOverlayFromReport.class);
