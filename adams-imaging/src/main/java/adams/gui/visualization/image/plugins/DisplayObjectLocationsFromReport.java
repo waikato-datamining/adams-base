@@ -53,7 +53,7 @@ public class DisplayObjectLocationsFromReport
    */
   @Override
   public String getCaption() {
-    return "Display object locations (report)...";
+    return "Located objects (report)...";
   }
 
   /**
