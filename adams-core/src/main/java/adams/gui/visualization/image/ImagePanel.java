@@ -61,9 +61,11 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.control.Flow;
+import adams.gui.chooser.DefaultReportFileChooser;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -411,6 +413,15 @@ public class ImagePanel
 	});
 	menu.addSeparator();
 	menu.add(menuitem);
+
+	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
+	menuitem.setEnabled(getCurrentImage() != null);
+	menuitem.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    saveReport();
+	  }
+	});
+	menu.add(menuitem);
       }
 
       menu.show(this, e.getX(), e.getY());
@@ -518,6 +529,25 @@ public class ImagePanel
      */
     public void export() {
       m_PrintMouseListener.saveComponent();
+    }
+
+    /**
+     * Saves the report to a file.
+     */
+    public void saveReport() {
+      DefaultReportFileChooser	filechooser;
+      int				retVal;
+      AbstractReportWriter	writer;
+      
+      filechooser = new DefaultReportFileChooser();
+      retVal = filechooser.showSaveDialog(this);
+      if (retVal != DefaultReportFileChooser.APPROVE_OPTION)
+        return;
+      writer = filechooser.getWriter();
+      writer.setOutput(filechooser.getSelectedPlaceholderFile());
+      if (!writer.write(getOwner().getAllProperties()))
+        GUIHelper.showErrorMessage(
+  	  this, "Failed to save report to:\n" + filechooser.getSelectedPlaceholderFile());
     }
 
     /**
@@ -1305,6 +1335,13 @@ public class ImagePanel
     m_PaintPanel.export();
   }
 
+  /**
+   * Saves the report to a file.
+   */
+  public void saveReport() {
+    m_PaintPanel.saveReport();
+  }
+  
   /**
    * Displays a message.
    *
