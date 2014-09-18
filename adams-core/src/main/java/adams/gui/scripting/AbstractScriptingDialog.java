@@ -15,7 +15,7 @@
 
 /*
  * ScriptingDialog.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
@@ -917,11 +917,22 @@ public abstract class AbstractScriptingDialog
 
     updateTitle();
   }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
 
   /**
    * Updates the title of the dialog.
    */
   protected void updateTitle() {
+    if (!m_TitleGenerator.isEnabled())
+      return;
     setTitle(m_TitleGenerator.generate(m_CurrentFile, m_Modified));
   }
 

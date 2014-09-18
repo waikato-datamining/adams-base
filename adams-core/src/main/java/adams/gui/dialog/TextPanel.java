@@ -15,7 +15,7 @@
 
 /**
  * TextPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -139,9 +139,6 @@ public class TextPanel
   /** for generating the title. */
   protected TitleGenerator m_TitleGenerator;
 
-  /** whether to update the parent's title. */
-  protected boolean m_UpdateParentTitle;
-
   /**
    * Initializes the members.
    */
@@ -150,7 +147,6 @@ public class TextPanel
     super.initialize();
 
     m_TitleGenerator     = new TitleGenerator("Text editor", true);
-    m_UpdateParentTitle  = true;
     m_RecentFilesHandler = null;
   }
 
@@ -220,6 +216,15 @@ public class TextPanel
     return m_TitleGenerator.getTitle();
   }
   
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
+
   /**
    * Sets the customizer to use.
    * 
@@ -712,7 +717,7 @@ public class TextPanel
   protected void updateTitle() {
     Runnable	run;
 
-    if (!m_UpdateParentTitle)
+    if (!m_TitleGenerator.isEnabled())
       return;
 
     run = new Runnable() {
@@ -851,8 +856,8 @@ public class TextPanel
    * @param value	if true the parent's title will get updated
    */
   public void setUpdateParentTitle(boolean value) {
-    m_UpdateParentTitle = value;
-    if (m_UpdateParentTitle)
+    m_TitleGenerator.setEnabled(value);
+    if (m_TitleGenerator.isEnabled())
       updateTitle();
   }
 
@@ -862,6 +867,6 @@ public class TextPanel
    * @return		true if to update the parent's title
    */
   public boolean getUpdateParentTitle() {
-    return m_UpdateParentTitle;
+    return m_TitleGenerator.isEnabled();
   }
 }

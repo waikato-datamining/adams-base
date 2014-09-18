@@ -15,7 +15,7 @@
 
 /**
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -655,11 +655,22 @@ public class FlowRunnerPanel
       m_PanelParameters.revalidate();
     }
   }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
 
   /**
    * Updates the title of the dialog.
    */
   protected void updateTitle() {
+    if (!m_TitleGenerator.isEnabled())
+      return;
     setParentTitle(m_TitleGenerator.generate(m_CurrentFile));
   }
 

@@ -243,6 +243,15 @@ public class ImageViewerPanel
     m_TabbedPane.updateTabTitles();
     updateMenu();
   }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
 
   /**
    * Updats the title of the dialog/frame if applicable.
@@ -250,6 +259,9 @@ public class ImageViewerPanel
   protected void updateTitle() {
     boolean	modified;
 
+    if (!m_TitleGenerator.isEnabled())
+      return;
+    
     modified = false;
     if (getCurrentPanel() != null)
       modified = getCurrentPanel().isModified();

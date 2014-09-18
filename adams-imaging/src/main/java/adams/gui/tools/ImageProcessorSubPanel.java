@@ -287,6 +287,7 @@ public class ImageProcessorSubPanel
     add(m_SplitImagesFlow, BorderLayout.CENTER);
 
     m_PanelFlow   = new FlowPanel();
+    m_PanelFlow.getTitleGenerator().setEnabled(false);
     m_PanelFlow.setMinimumSize(new Dimension(250, 0));
     m_PanelFlow.getUndo().clear();
     m_PanelFlow.setCurrentFlow(new SubProcess());

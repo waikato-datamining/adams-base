@@ -832,9 +832,20 @@ public class PreviewBrowserPanel
   }
   
   /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
+
+  /**
    * Updates the title.
    */
   protected void updateTitle() {
+    if (!m_TitleGenerator.isEnabled())
+      return;
     if (m_CurrentFiles.length == 0)
       setParentTitle(m_TitleGenerator.generate());
     else if (m_CurrentFiles.length == 1)

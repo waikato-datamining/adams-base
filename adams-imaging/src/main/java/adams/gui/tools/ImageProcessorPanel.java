@@ -142,11 +142,22 @@ public class ImageProcessorPanel
     updateTitle();
     updateMenu();
   }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
 
   /**
    * Updats the title of the dialog/frame if applicable.
    */
   protected void updateTitle() {
+    if (!m_TitleGenerator.isEnabled())
+      return;
     setParentTitle(m_TitleGenerator.generate(getCurrentFile()));
   }
 

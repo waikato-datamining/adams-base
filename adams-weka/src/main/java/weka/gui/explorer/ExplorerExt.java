@@ -470,6 +470,15 @@ public class ExplorerExt
     updateTitle();
     updateMenu();
   }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
+  }
 
   /**
    * Updates the title of the dialog.
@@ -477,6 +486,9 @@ public class ExplorerExt
   protected void updateTitle() {
     String	title;
 
+    if (!m_TitleGenerator.isEnabled())
+      return;
+    
     title = m_TitleGenerator.generate(m_CurrentFile);
     setParentTitle(title);
   }

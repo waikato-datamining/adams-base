@@ -607,11 +607,16 @@ public class FlowPanel
   }
 
   /**
-   * Updates the title of the dialog/frame.
+   * Updates the title of the dialog/frame if the title generator is enabled.
+   * 
+   * @see		#getTitleGenerator()
    */
   public void updateTitle() {
     int		index;
 
+    if (!m_TitleGenerator.isEnabled())
+      return;
+    
     setParentTitle(m_TitleGenerator.generate(getCurrentFile(), getTree().isModified()));
 
     if (getOwner() != null) {
@@ -677,6 +682,15 @@ public class FlowPanel
    */
   public File getCurrentFile() {
     return m_CurrentFile;
+  }
+  
+  /**
+   * Returns the title generator in use.
+   * 
+   * @return		the generator
+   */
+  public TitleGenerator getTitleGenerator() {
+    return m_TitleGenerator;
   }
 
   /**
