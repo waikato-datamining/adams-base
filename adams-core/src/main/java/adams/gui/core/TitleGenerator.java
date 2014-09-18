@@ -15,7 +15,7 @@
 
 /*
  * TitleGenerator.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -41,6 +41,9 @@ public class TitleGenerator
   /** whether to split the full filename into path and filename. */
   protected boolean m_Split;
 
+  /** whether the generator is enabled. */
+  protected boolean m_Enabled;
+  
   /**
    * Initializes the generator.
    *
@@ -50,8 +53,9 @@ public class TitleGenerator
   public TitleGenerator(String title, boolean split) {
     super();
 
-    m_Title = title;
-    m_Split = split;
+    m_Title   = title;
+    m_Split   = split;
+    m_Enabled = true;
   }
 
   /**
@@ -81,6 +85,24 @@ public class TitleGenerator
     return m_Split;
   }
 
+  /**
+   * Sets whether the generator is enabled.
+   * 
+   * @param value	true if enabled
+   */
+  public void setEnabled(boolean value) {
+    m_Enabled = value;
+  }
+  
+  /**
+   * Returns whether the generator is enabled.
+   * 
+   * @return		true if enabled
+   */
+  public boolean isEnabled() {
+    return m_Enabled;
+  }
+  
   /**
    * Generates the default title.
    *
