@@ -15,7 +15,7 @@
 
 /**
  * TextEditorPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -478,6 +478,37 @@ public class TextEditorPanel
    */
   public boolean getLineWrap() {
     return m_TextArea.getLineWrap();
+  }
+
+  /**
+   * Sets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   * By default this property is false.
+   *
+   * @param word indicates if word boundaries should be used
+   *   for line wrapping
+   * @see #getWrapStyleWord
+   */
+  public void setWrapStyleWord(boolean word) {
+    m_TextArea.setWrapStyleWord(word);
+  }
+
+  /**
+   * Gets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (ie whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   *
+   * @return if the wrap style should be word boundaries
+   *  instead of character boundaries
+   * @see #setWrapStyleWord
+   */
+  public boolean getWrapStyleWord() {
+    return m_TextArea.getWrapStyleWord();
   }
 
   /**
