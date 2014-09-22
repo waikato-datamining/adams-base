@@ -15,7 +15,7 @@
 
 /**
  * BaseStatusBar.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -115,6 +115,9 @@ public class BaseStatusBar
   
   /** the default dimension for displaying the status. */
   protected Dimension m_DialogSize;
+  
+  /** the current status. */
+  protected String m_Status;
 
   /**
    * Initializes the members.
@@ -128,6 +131,7 @@ public class BaseStatusBar
     m_StatusProcessor     = null;
     m_DialogSize          = new Dimension(400, 300);
     m_PopupMenuCustomizer = null;
+    m_Status              = EMPTY_STATUS;
   }
 
   /**
@@ -151,6 +155,7 @@ public class BaseStatusBar
    * Removes any status message currently being displayed.
    */
   protected void clearStatus() {
+    m_Status = EMPTY_STATUS;
     m_LabelStatus.setText(EMPTY_STATUS);
   }
 
@@ -160,7 +165,7 @@ public class BaseStatusBar
    * @return		true if a status message is being displayed
    */
   public boolean hasStatus() {
-    return !m_LabelStatus.getText().equals(EMPTY_STATUS);
+    return !m_Status.equals(EMPTY_STATUS);
   }
 
   /**
@@ -171,12 +176,13 @@ public class BaseStatusBar
   public void setStatus(final String msg) {
     Runnable	run;
 
+    m_Status = msg;
     run = new Runnable() {
       public void run() {
 	if ((msg == null) || (msg.length() == 0))
 	  clearStatus();
 	else
-	  m_LabelStatus.setText(msg);
+	  m_LabelStatus.setText(msg.replace("\r\n", "|").replace("\n", "|"));
       }
     };
     SwingUtilities.invokeLater(run);
@@ -192,8 +198,8 @@ public class BaseStatusBar
 
     result = null;
 
-    if (!m_LabelStatus.getText().equals(EMPTY_STATUS))
-      result = m_LabelStatus.getText();
+    if (!m_Status.equals(EMPTY_STATUS))
+      result = m_Status;
 
     return result;
   }
@@ -216,7 +222,7 @@ public class BaseStatusBar
     Component 	parent;
     TextDialog	dialog;
 
-    status = getStatus();
+    status = m_Status;
     if (m_StatusProcessor != null)
       status = m_StatusProcessor.process(status);
 
@@ -267,7 +273,7 @@ public class BaseStatusBar
 	m_MouseListener = new MouseAdapter() {
 	  @Override
 	  public void mouseClicked(MouseEvent e) {
-	    if (MouseUtils.isDoubleClick(e) && (m_LabelStatus.getText().length() > 0)) {
+	    if (MouseUtils.isDoubleClick(e) && (m_Status.length() > 0)) {
 	      e.consume();
 	      displayStatus();
 	    }
@@ -310,7 +316,7 @@ public class BaseStatusBar
     result = new JPopupMenu();
 
     menuitem = new JMenuItem("Show status");
-    menuitem.setEnabled(m_LabelStatus.getText().length() > 0);
+    menuitem.setEnabled(m_Status.length() > 0);
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	displayStatus();
@@ -321,7 +327,7 @@ public class BaseStatusBar
     result.addSeparator();
 
     menuitem = new JMenuItem("Clear status");
-    menuitem.setEnabled(m_LabelStatus.getText().length() > 0);
+    menuitem.setEnabled(m_Status.length() > 0);
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	clearStatus();
