@@ -207,4 +207,21 @@ public abstract class BaseObject
     
     return result;
   }
+  
+  /**
+   * Turns the BaseObject array into a string array.
+   * 
+   * @param array	the array to convert
+   * @return		the generated string array
+   */
+  public static String[] toStringArray(BaseObject[] array) {
+    String[]	result;
+    int		i;
+    
+    result = new String[array.length];
+    for (i = 0; i < array.length; i++)
+      result[i] = array[i].getValue();
+    
+    return result;
+  }
 }
