@@ -15,10 +15,11 @@
 
 /**
  * AbstractSendEmail.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
+import adams.core.CleanUpHandler;
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractOptionHandler;
 
@@ -29,7 +30,8 @@ import adams.core.option.AbstractOptionHandler;
  * @version $Revision$
  */
 public abstract class AbstractSendEmail
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements CleanUpHandler {
   
   /** for serialization. */
   private static final long serialVersionUID = -5248888725267599119L;
@@ -47,6 +49,7 @@ public abstract class AbstractSendEmail
    * @param server		the SMTP server
    * @param port		the SMTP port
    * @param useTLS		whether to use TLS
+   * @param useSSL		whether to use SSL
    * @param timeout		the timeout
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
@@ -54,7 +57,7 @@ public abstract class AbstractSendEmail
    * @return			the session
    * @throws Exception		if initialization fails
    */
-  public abstract void initializeSmtpSession(String server, int port, boolean useTLS, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception;
+  public abstract void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception;
 
   /**
    * Sends an email.
@@ -64,4 +67,12 @@ public abstract class AbstractSendEmail
    * @throws Exception	in case of invalid internet addresses or messaging problem
    */
   public abstract boolean sendMail(Email email) throws Exception;
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <p/>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
+  }
 }

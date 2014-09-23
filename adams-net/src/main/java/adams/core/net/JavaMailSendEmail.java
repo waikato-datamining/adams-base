@@ -55,17 +55,32 @@ public class JavaMailSendEmail
   /** the system-wide property for the SMTP host. */
   public final static String KEY_SMTPHOST = "mail.smtp.host";
 
+  /** the system-wide property for the SMTPS host. */
+  public final static String KEY_SMTPSHOST = "mail.smtps.host";
+
   /** the system-wide property for the SMTP port. */
   public final static String KEY_SMTPPORT = "mail.smtp.port";
+
+  /** the system-wide property for the SMTPS port. */
+  public final static String KEY_SMTPSPORT = "mail.smtps.port";
 
   /** the system-wide property for StartTLS. */
   public final static String KEY_STARTTLS = "mail.smtp.starttls.enable";
 
+  /** the system-wide property for using SSL. */
+  public final static String KEY_USESSL = "mail.smtp.ssl.enable";
+
   /** the system-wide property for SMTP Auth. */
   public final static String KEY_SMTPAUTH = "mail.smtp.auth";
 
+  /** the system-wide property for SMTPS Auth. */
+  public final static String KEY_SMTPSAUTH = "mail.smtps.auth";
+
   /** the system-wide property for SMTP timeout. */
   public final static String KEY_SMTPTIMEOUT = "mail.smtp.timeout";
+
+  /** the system-wide property for SMTPS timeout. */
+  public final static String KEY_SMTPSTIMEOUT = "mail.smtps.timeout";
   
   /** the SMTP session object. */
   protected transient Session m_Session;
@@ -96,6 +111,7 @@ public class JavaMailSendEmail
    * @param server		the SMTP server
    * @param port		the SMTP port
    * @param useTLS		whether to use TLS
+   * @param useSSL		whether to use SSL
    * @param timeout		the timeout
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
@@ -104,15 +120,25 @@ public class JavaMailSendEmail
    * @throws Exception		if initialization fails
    */
   @Override
-  public void initializeSmtpSession(String server, int port, boolean useTLS, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception {
+  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception {
     java.util.Properties 	props;
 
     props = (java.util.Properties) System.getProperties().clone();
-    props.setProperty(KEY_SMTPHOST,    server);
-    props.setProperty(KEY_SMTPPORT,    "" + port);
-    props.setProperty(KEY_STARTTLS,    "" + useTLS);
-    props.setProperty(KEY_SMTPAUTH,    "" + requiresAuth);
-    props.setProperty(KEY_SMTPTIMEOUT, "" + timeout);
+    if (useSSL) {
+      props.setProperty(KEY_USESSL,       "" + useSSL);
+      props.setProperty(KEY_STARTTLS,     "" + useTLS);
+      props.setProperty(KEY_SMTPSHOST,    server);
+      props.setProperty(KEY_SMTPSPORT,    "" + port);
+      props.setProperty(KEY_SMTPSAUTH,    "" + requiresAuth);
+      props.setProperty(KEY_SMTPSTIMEOUT, "" + timeout);
+    }
+    else {
+      props.setProperty(KEY_STARTTLS,    "" + useTLS);
+      props.setProperty(KEY_SMTPHOST,    server);
+      props.setProperty(KEY_SMTPPORT,    "" + port);
+      props.setProperty(KEY_SMTPAUTH,    "" + requiresAuth);
+      props.setProperty(KEY_SMTPTIMEOUT, "" + timeout);
+    }
 
     if (requiresAuth) {
       m_Session = Session.getInstance(

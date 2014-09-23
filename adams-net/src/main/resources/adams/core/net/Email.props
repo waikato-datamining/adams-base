@@ -18,6 +18,9 @@ SmtpRequiresAuthentication=false
 # Whether to issue the STARTTLS command
 SmtpStartTls=false
 
+# Whether to connect using SSL
+SmtpUseSsl=false
+
 # The user for the SMTP server
 SmtpUser=
 

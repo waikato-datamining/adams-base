@@ -592,6 +592,7 @@ public class Email
 	    EmailHelper.getSmtpServer(), 
 	    EmailHelper.getSmtpPort(), 
 	    EmailHelper.getSmtpStartTLS(), 
+	    EmailHelper.getSmtpUseSSL(),
 	    EmailHelper.getSmtpTimeout(), 
 	    EmailHelper.getSmtpRequiresAuthentication(), 
 	    EmailHelper.getSmtpUser(), 

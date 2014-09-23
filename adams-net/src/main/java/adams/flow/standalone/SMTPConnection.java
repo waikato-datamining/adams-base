@@ -15,7 +15,7 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -42,13 +42,9 @@ import adams.gui.dialog.PasswordDialog;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -56,19 +52,21 @@ import adams.gui.dialog.PasswordDialog;
  * &nbsp;&nbsp;&nbsp;default: SMTPConnection
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-server &lt;java.lang.String&gt; (property: server)
@@ -83,8 +81,14 @@ import adams.gui.dialog.PasswordDialog;
  * &nbsp;&nbsp;&nbsp;maximum: 65536
  * </pre>
  * 
- * <pre>-use-tls (property: useTLS)
+ * <pre>-use-tls &lt;boolean&gt; (property: useTLS)
  * &nbsp;&nbsp;&nbsp;If enabled, TLS (transport layer security) is used.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-use-ssl &lt;boolean&gt; (property: useSSL)
+ * &nbsp;&nbsp;&nbsp;If enabled, SSL (secure sockets layer) is used for connecting.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-timeout &lt;int&gt; (property: timeout)
@@ -93,26 +97,28 @@ import adams.gui.dialog.PasswordDialog;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-requires-auth (property: requiresAuthentication)
+ * <pre>-requires-auth &lt;boolean&gt; (property: requiresAuthentication)
  * &nbsp;&nbsp;&nbsp;Enable this if SMTP server requires authentication using user&#47;pw.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  * <pre>-user &lt;java.lang.String&gt; (property: user)
  * &nbsp;&nbsp;&nbsp;The SMTP user to use.
- * &nbsp;&nbsp;&nbsp;default: theadamsflow
  * </pre>
  * 
  * <pre>-password &lt;adams.core.base.BasePassword&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The password of the SMTP user.
  * </pre>
  * 
- * <pre>-prompt-for-password (property: promptForPassword)
+ * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled and authentication is required, the user gets prompted for enter 
  * &nbsp;&nbsp;&nbsp;a password if none has been provided in the setup.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
@@ -141,6 +147,9 @@ public class SMTPConnection
 
   /** whether to use TLS. */
   protected boolean m_UseTLS;
+
+  /** whether to use SSL. */
+  protected boolean m_UseSSL;
 
   /** the timeout in msecs. */
   protected int m_Timeout;
@@ -197,6 +206,10 @@ public class SMTPConnection
 	    EmailHelper.getSmtpStartTLS());
 
     m_OptionManager.add(
+	    "use-ssl", "useSSL",
+	    EmailHelper.getSmtpUseSSL());
+
+    m_OptionManager.add(
 	    "timeout", "timeout",
 	    EmailHelper.getSmtpTimeout(), 0, null);
 
@@ -251,6 +264,7 @@ public class SMTPConnection
     
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useTLS", m_UseTLS, "TLS"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useSSL", m_UseSSL, "SSL"));
     if (   (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
         && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
@@ -351,6 +365,35 @@ public class SMTPConnection
    */
   public String useTLSTipText() {
     return "If enabled, TLS (transport layer security) is used.";
+  }
+
+  /**
+   * Sets whether to use SSL.
+   *
+   * @param value	if true SSL is used
+   */
+  public void setUseSSL(boolean value) {
+    m_UseSSL = value;
+    reset();
+  }
+
+  /**
+   * Returns whether SSL is used.
+   *
+   * @return		true if SSL is used
+   */
+  public boolean getUseSSL() {
+    return m_UseSSL;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useSSLTipText() {
+    return "If enabled, SSL (secure sockets layer) is used for connecting.";
   }
 
   /**
@@ -596,6 +639,7 @@ public class SMTPConnection
 	  m_Server, 
 	  m_Port, 
 	  m_UseTLS, 
+	  m_UseSSL,
 	  m_Timeout, 
 	  m_RequiresAuthentication, 
 	  m_User, 

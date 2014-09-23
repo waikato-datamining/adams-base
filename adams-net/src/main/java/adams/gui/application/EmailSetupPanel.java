@@ -15,7 +15,7 @@
 
 /**
  * EmailSetupPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -36,7 +36,6 @@ import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseText;
 import adams.core.net.EmailHelper;
-import adams.gui.application.AbstractPreferencesPanel;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ParameterPanel;
@@ -73,6 +72,9 @@ public class EmailSetupPanel
 
   /** Whether to start TLS. */
   protected JCheckBox m_CheckBoxSmtpStartTLS;
+
+  /** Whether to use SSL. */
+  protected JCheckBox m_CheckBoxSmtpUseSSL;
 
   /** the SMTP user. */
   protected JTextField m_TextSmtpUser;
@@ -131,6 +133,10 @@ public class EmailSetupPanel
     m_CheckBoxSmtpStartTLS.setSelected(EmailHelper.getSmtpStartTLS());
     m_PanelParameters.addParameter("Start _TLS", m_CheckBoxSmtpStartTLS);
 
+    m_CheckBoxSmtpUseSSL = new JCheckBox();
+    m_CheckBoxSmtpUseSSL.setSelected(EmailHelper.getSmtpUseSSL());
+    m_PanelParameters.addParameter("Use SS_L", m_CheckBoxSmtpUseSSL);
+
     m_TextSmtpUser = new JTextField(20);
     m_TextSmtpUser.setText(EmailHelper.getSmtpUser());
     m_PanelParameters.addParameter("SMTP _User", m_TextSmtpUser);
@@ -180,6 +186,7 @@ public class EmailSetupPanel
     result.setInteger(EmailHelper.SMTP_TIMEOUT, ((Number) m_SpinnerSmtpTimeout.getValue()).intValue());
     result.setBoolean(EmailHelper.SMTP_REQUIRES_AUTHENTICATION, m_CheckBoxSmtpRequiresAuthentication.isSelected());
     result.setBoolean(EmailHelper.SMTP_START_TLS, m_CheckBoxSmtpStartTLS.isSelected());
+    result.setBoolean(EmailHelper.SMTP_USE_SSL, m_CheckBoxSmtpUseSSL.isSelected());
     result.setProperty(EmailHelper.SMTP_USER, m_TextSmtpUser.getText());
     result.setPassword(EmailHelper.SMTP_PASSWORD, new BasePassword(m_TextSmtpPassword.getText()));
     result.setProperty(EmailHelper.DEFAULT_ADDRESS_FROM, m_TextDefaultFromAddress.getText());

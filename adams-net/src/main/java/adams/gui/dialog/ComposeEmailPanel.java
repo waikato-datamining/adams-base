@@ -15,7 +15,7 @@
 
 /**
  * ComposeEmailPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -425,6 +425,7 @@ public class ComposeEmailPanel
 	    EmailHelper.getSmtpServer(), 
 	    EmailHelper.getSmtpPort(), 
 	    EmailHelper.getSmtpStartTLS(), 
+	    EmailHelper.getSmtpUseSSL(),
 	    EmailHelper.getSmtpTimeout(), 
 	    EmailHelper.getSmtpRequiresAuthentication(), 
 	    EmailHelper.getSmtpUser(), 

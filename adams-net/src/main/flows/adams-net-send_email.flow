@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2014-09-23 13:39:33
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Shows how to send an email. Requires the configuration \nof the SMTP server in the preferences.
+	-actor
+		adams.flow.standalone.SMTPConnection
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.transformer.CreateEmail
+			-sender
+			"Peter Reutemann" <fracpete@gmail.com>
+			-recipient
+			"Peter Reutemann" <fracpete@waikato.ac.nz>
+			-subject
+			ADAMS sending emails
+			-body
+			To Whom It May Concern\n\nYep, ADAMS can send (plain text) emails.\n\nCheers, ADAMS
+	-actor
+		adams.flow.sink.SendEmail
+			-send-email
+				adams.core.net.SimpleApacheSendEmail
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

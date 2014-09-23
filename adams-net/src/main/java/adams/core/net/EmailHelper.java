@@ -15,7 +15,7 @@
 
 /*
  * Email.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
@@ -56,6 +56,9 @@ public class EmailHelper {
 
   /** Whether STARTTLS is necessary. */
   public final static String SMTP_START_TLS = "SmtpStartTls";
+
+  /** Whether to use SSL. */
+  public final static String SMTP_USE_SSL = "SmtpUseSsl";
 
   /** The user for the SMTP server. */
   public final static String SMTP_USER = "SmtpUser";
@@ -159,6 +162,15 @@ public class EmailHelper {
    */
   public static boolean getSmtpStartTLS() {
     return getProperties().getBoolean(SMTP_START_TLS, false);
+  }
+
+  /**
+   * Returns whether to use SSL.
+   *
+   * @return		true if to use SSL
+   */
+  public static boolean getSmtpUseSSL() {
+    return getProperties().getBoolean(SMTP_USE_SSL, false);
   }
 
   /**

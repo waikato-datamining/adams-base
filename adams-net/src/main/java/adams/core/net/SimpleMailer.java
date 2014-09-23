@@ -15,7 +15,7 @@
 
 /**
  * SimpleMailer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -371,6 +371,7 @@ public class SimpleMailer {
 		EmailHelper.getSmtpServer(), 
 		EmailHelper.getSmtpPort(), 
 		EmailHelper.getSmtpStartTLS(), 
+		EmailHelper.getSmtpUseSSL(), 
 		EmailHelper.getSmtpTimeout(), 
 		EmailHelper.getSmtpRequiresAuthentication(), 
 		EmailHelper.getSmtpUser(), 

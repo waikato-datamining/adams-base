@@ -15,7 +15,7 @@
 
 /**
  * ApacheSendEmail.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
@@ -69,6 +69,9 @@ public class ApacheSendEmail
   /** whether to use TLS. */
   protected boolean m_UseTLS;
   
+  /** whether to use SSL. */
+  protected boolean m_UseSSL;
+  
   /** the timeout for the server. */
   protected int m_Timeout;
   
@@ -107,6 +110,7 @@ public class ApacheSendEmail
    * @param server		the SMTP server
    * @param port		the SMTP port
    * @param useTLS		whether to use TLS
+   * @param useSSL		whether to use SSL
    * @param timeout		the timeout
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
@@ -115,14 +119,17 @@ public class ApacheSendEmail
    * @throws Exception		if initialization fails
    */
   @Override
-  public void initializeSmtpSession(String server, int port, boolean useTLS, int timeout, boolean requiresAuth, String user, BasePassword pw) throws Exception {
+  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, String user, BasePassword pw) throws Exception {
     m_Server       = server;
     m_Port         = port;
     m_UseTLS       = useTLS;
+    m_UseSSL       = useSSL;
     m_Timeout      = timeout;
     m_RequiresAuth = requiresAuth;
     m_User         = user;
     m_Password     = pw;
+    
+    // TODO SSL?
     
     if (m_UseTLS) {
       if (m_RequiresAuth)
