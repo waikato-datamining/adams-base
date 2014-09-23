@@ -21,6 +21,7 @@
 package adams.core.base;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 
 import adams.core.CloneHandler;
 
@@ -231,5 +232,33 @@ public abstract class BaseObject
       result[i] = array[i].getValue();
     
     return result;
+  }
+  
+  /**
+   * Turns the String array into a BaseObject array.
+   * 
+   * @param array	the array to convert
+   * @param cls		the BaseObject derived class to use
+   * @return		the generated object array
+   */
+  public static BaseObject[] toObjectArray(String[] array, Class cls) {
+    Object	result;
+    BaseObject	obj;
+    int		i;
+    
+    result = Array.newInstance(cls, array.length);
+    for (i = 0; i < array.length; i++) {
+      try {
+	obj = (BaseObject) cls.newInstance();
+	obj.setValue(array[i]);
+	Array.set(result, i, obj);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to turn '" + array[i] + "' into a " + cls.getName() + " object:");
+	e.printStackTrace();
+      }
+    }
+    
+    return (BaseObject[]) result;
   }
 }
