@@ -15,7 +15,7 @@
 
 /**
  * EmailAddressBook.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -91,7 +91,10 @@ public class EmailAddressBook {
    * @return		the contact, or the default if not found
    */
   public EmailContact getContact(EmailAddress address, EmailContact defValue) {
-    return fromString(getProperties().getProperty(address.stringValue(), toString(defValue)));
+    if (address.stringValue() == null)
+      return null;
+    else
+      return fromString(getProperties().getProperty(address.stringValue(), toString(defValue)));
   }
   
   /**
