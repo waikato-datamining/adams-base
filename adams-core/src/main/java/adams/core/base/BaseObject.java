@@ -84,7 +84,7 @@ public abstract class BaseObject
 
     if (o == null)
       return 1;
-
+    
     if (o instanceof String) {
       try {
 	other = (BaseObject) getClass().newInstance();
@@ -101,6 +101,14 @@ public abstract class BaseObject
 
       other = (BaseObject) o;
     }
+
+    // handle nulls
+    if ((getInternal() == null) && (other.getInternal() == null))
+      return 0;
+    else if (getInternal() == null)
+      return -1;
+    else if (other.getInternal() == null)
+      return 1;
 
     return getInternal().compareTo(other.getInternal());
   }
