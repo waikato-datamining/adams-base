@@ -15,7 +15,7 @@
 
 /*
  * EmailAddressEditor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -210,6 +210,8 @@ public class EmailAddressEditor
     vpad = (box.height - fm.getHeight()) / 2 ;
     curr = (EmailAddress) getValue();
     val  = curr.stringValue();
+    if (val == null)
+      val = "";
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 
