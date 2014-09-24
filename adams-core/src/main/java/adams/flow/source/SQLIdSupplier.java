@@ -15,7 +15,7 @@
 
 /**
  * SQLIdSupplier.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -250,10 +250,11 @@ public class SQLIdSupplier
   /**
    * Returns the IDs from the database.
    *
+   * @param errors	for storing any error messages
    * @return		the IDs
    */
   @Override
-  protected ArrayList getIDs() {
+  protected ArrayList getIDs(StringBuilder errors) {
     ArrayList	result;
     SQL		sql;
     ResultSet	rs;
@@ -287,7 +288,7 @@ public class SQLIdSupplier
 	getLogger().info("--> " + result.size() + " IDs");
     }
     catch (Exception e) {
-      handleException("Failed to obtain IDs, using: " + ((query == null) ? m_SQL : query), e);
+      errors.append(handleException("Failed to obtain IDs, using: " + ((query == null) ? m_SQL : query), e));
     }
     SQL.closeAll(rs);
 

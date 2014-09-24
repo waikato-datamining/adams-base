@@ -114,9 +114,10 @@ public abstract class AbstractIdSupplier
   /**
    * Returns the IDs from the database.
    *
+   * @param errors	for storing any error messages
    * @return		the IDs
    */
-  protected abstract ArrayList getIDs();
+  protected abstract ArrayList getIDs(StringBuilder errors);
 
   /**
    * Executes the flow item.
@@ -125,11 +126,15 @@ public abstract class AbstractIdSupplier
    */
   @Override
   protected String doExecute() {
-    String	result;
+    String		result;
+    StringBuilder	errors;
 
     result  = null;
-    m_Queue = getIDs();
-    if ((m_Queue.size() == 0) && !m_Lenient)
+    errors  = new StringBuilder();
+    m_Queue = getIDs(errors);
+    if (errors.length() > 0)
+      result = errors.toString();
+    else if ((m_Queue.size() == 0) && !m_Lenient)
       result = "No IDs found!";
 
     return result;
