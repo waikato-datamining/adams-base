@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import adams.core.CloneHandler;
 import adams.data.report.DataType;
 
 /**
@@ -32,7 +33,7 @@ import adams.data.report.DataType;
  * @version $Revision$
  */
 public class HeaderDefinition
-  implements Serializable, Comparable<HeaderDefinition> {
+  implements Serializable, Comparable<HeaderDefinition>, CloneHandler<HeaderDefinition> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3616920834737849123L;
@@ -66,7 +67,16 @@ public class HeaderDefinition
     m_Names = new ArrayList<String>(names);
     m_Types = new ArrayList<DataType>(types);
   }
-  
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public HeaderDefinition getClone() {
+    return new HeaderDefinition(m_Names, m_Types);
+  }
+
   /**
    * Returns the names.
    * 
@@ -143,6 +153,16 @@ public class HeaderDefinition
   public void add(HeaderDefinition definition) {
     m_Names.addAll(definition.getNames());
     m_Types.addAll(definition.getTypes());
+  }
+  
+  /**
+   * Removes the specified definition.
+   * 
+   * @param index	the index of the name/type to remove
+   */
+  public void remove(int index) {
+    m_Names.remove(index);
+    m_Types.remove(index);
   }
   
   /**

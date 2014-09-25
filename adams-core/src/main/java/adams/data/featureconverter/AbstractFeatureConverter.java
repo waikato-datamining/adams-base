@@ -21,6 +21,7 @@ package adams.data.featureconverter;
 
 import java.util.List;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 
 /**
@@ -32,7 +33,8 @@ import adams.core.option.AbstractOptionHandler;
  * @param <R> the type of row that is generated
  */
 public abstract class AbstractFeatureConverter<D,R>
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4745159188031576718L;
@@ -53,7 +55,18 @@ public abstract class AbstractFeatureConverter<D,R>
     m_Header           = null;
     m_HeaderDefinition = null;
   }
-  
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <p/>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
+  }
+
   /**
    * Returns whether the header has been initialized.
    * 
