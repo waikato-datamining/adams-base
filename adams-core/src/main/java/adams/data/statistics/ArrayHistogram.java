@@ -15,67 +15,76 @@
 
 /**
  * ArrayHistogram.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformationHandler;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
+import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
  * Generates a histogram from the given array.<br/>
- * The formulas for the various width/#bin calculations can be found here:<br/>
+ * The formulas for the various width&#47;#bin calculations can be found here:<br/>
  * WikiPedia (2010). Histogram.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
- * BibTeX:
  * <pre>
  * &#64;misc{WikiPedia2010,
  *    author = {WikiPedia},
  *    title = {Histogram},
  *    year = {2010},
- *    HTTP = {http://en.wikipedia.org/wiki/Histogram}
+ *    HTTP = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Histogram}
  * }
  * </pre>
  * <p/>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-bin-calc &lt;MANUAL|DENSITY|STURGES|SCOTT|SQRT&gt; (property: binCalculation)
  * &nbsp;&nbsp;&nbsp;Defines how the number of bins are calculated.
  * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
- *
+ * 
  * <pre>-num-bins &lt;int&gt; (property: numBins)
  * &nbsp;&nbsp;&nbsp;The number of bins to use in case of manual bin calculation.
  * &nbsp;&nbsp;&nbsp;default: 50
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
+ * 
  * <pre>-bin-width &lt;double&gt; (property: binWidth)
  * &nbsp;&nbsp;&nbsp;The bin width to use for some of the calculations.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- *
- * <pre>-normalize (property: normalize)
+ * 
+ * <pre>-normalize &lt;boolean&gt; (property: normalize)
  * &nbsp;&nbsp;&nbsp;If set to true the data gets normalized first before the histogram is calculated.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-display-ranges &lt;boolean&gt; (property: displayRanges)
+ * &nbsp;&nbsp;&nbsp;If enabled, the bins get description according to their range, rather than 
+ * &nbsp;&nbsp;&nbsp;a simple index.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals to show in the bin descriptions.
+ * &nbsp;&nbsp;&nbsp;default: 3
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -129,11 +138,18 @@ public class ArrayHistogram<T extends Number>
   /** whether to normalize the data. */
   protected boolean m_Normalize;
 
+  /** whether to use the ranges as bin description. */
+  protected boolean m_DisplayRanges;
+
+  /** the number of decimals to show. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "Generates a histogram from the given array.\n"
@@ -163,6 +179,7 @@ public class ArrayHistogram<T extends Number>
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -181,6 +198,14 @@ public class ArrayHistogram<T extends Number>
     m_OptionManager.add(
 	    "normalize", "normalize",
 	    false);
+
+    m_OptionManager.add(
+	    "display-ranges", "displayRanges",
+	    false);
+
+    m_OptionManager.add(
+	    "num-decimals", "numDecimals",
+	    3, 0, null);
   }
 
   /**
@@ -300,6 +325,66 @@ public class ArrayHistogram<T extends Number>
   }
 
   /**
+   * Sets whether to use the bin ranges as their description rather than a 
+   * simple index.
+   *
+   * @param value 	true if to display the ranges
+   */
+  public void setDisplayRanges(boolean value) {
+    m_DisplayRanges = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the bin ranges as their description rather than a 
+   * simple index.
+   *
+   * @return 		true if to display the ranges
+   */
+  public boolean getDisplayRanges() {
+    return m_DisplayRanges;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayRangesTipText() {
+    return "If enabled, the bins get description according to their range, rather than a simple index.";
+  }
+
+  /**
+   * Sets the number of decimals to show in the bin description.
+   *
+   * @param value 	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    m_NumDecimals = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of decimals to show in the bin description.
+   *
+   * @return 		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals to show in the bin descriptions.";
+  }
+
+  /**
    * Returns the length of the stored arrays.
    *
    * @return		the length of the arrays, -1 if none stored
@@ -317,6 +402,7 @@ public class ArrayHistogram<T extends Number>
    *
    * @return		the minimum number, -1 for unbounded
    */
+  @Override
   public int getMin() {
     return 1;
   }
@@ -327,6 +413,7 @@ public class ArrayHistogram<T extends Number>
    *
    * @return		the maximum number, -1 for unbounded
    */
+  @Override
   public int getMax() {
     return 1;
   }
@@ -421,9 +508,9 @@ public class ArrayHistogram<T extends Number>
    *
    * @return		the generated result
    */
+  @Override
   protected StatisticContainer doCalculate() {
     StatisticContainer<Double>	result;
-    String			prefix;
     int				n;
     double			binWidth;
     int				numBins;
@@ -433,6 +520,7 @@ public class ArrayHistogram<T extends Number>
     double			min;
     double			max;
     double[]			binX;
+    String			prefix;
 
     array = get(0);
     if (m_Normalize)
@@ -441,14 +529,25 @@ public class ArrayHistogram<T extends Number>
     prefix   = "bin";
     binWidth = calcBinWidth(array);
     numBins  = calcNumBins(array, binWidth);
-    result   = new StatisticContainer<Double>(size(), numBins);
-    for (n = 0; n < numBins; n++)
-      result.setHeader(n, prefix + " " + (n+1));
-
     min      = StatUtils.min(array).doubleValue();
     max      = StatUtils.max(array).doubleValue();
     binWidth = (max - min) / numBins;
     bins     = new int[numBins];
+    result   = new StatisticContainer<Double>(size(), numBins);
+    for (n = 0; n < numBins; n++) {
+      if (m_DisplayRanges)
+	result.setHeader(
+	    n, 
+	    "[" 
+	    + Utils.doubleToString(min + binWidth * n, m_NumDecimals)
+	    + "-"
+	    + Utils.doubleToString(min + binWidth * (n + 1), m_NumDecimals)
+	    + ((n == numBins - 1) ? "]" : ")"));
+      else
+	result.setHeader(
+	    n, 
+	    prefix + " " + (n+1));
+    }
 
     // fill bins
     for (n = 0; n < array.length; n++) {
