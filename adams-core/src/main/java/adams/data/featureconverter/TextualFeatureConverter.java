@@ -195,8 +195,6 @@ public class TextualFeatureConverter
       result.append(Utils.doubleQuote(name));
     }
     
-    result.append("\n");
-    
     return result.toString();
   }
 
@@ -219,8 +217,6 @@ public class TextualFeatureConverter
       else
 	result.append(Utils.doubleQuote(value.toString()));
     }
-    
-    result.append("\n");
 
     return result.toString();
   }

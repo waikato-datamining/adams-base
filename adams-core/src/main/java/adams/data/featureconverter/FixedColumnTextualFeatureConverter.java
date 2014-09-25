@@ -326,7 +326,6 @@ public class FixedColumnTextualFeatureConverter
       sep.delete(max, sep.length());
     
     result.append(sep.toString());
-    result.append("\n");
 
     return result.toString();
   }
@@ -354,8 +353,6 @@ public class FixedColumnTextualFeatureConverter
 	result.append(fixLength(value.toString(), m_ColumnWidth, m_HeaderDefinition.getType(i) != DataType.NUMERIC));
     }
     
-    result.append("\n");
-
     return result.toString();
   }
 }
