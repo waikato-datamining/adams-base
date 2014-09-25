@@ -12,6 +12,9 @@ Max=200
 # The factor to divide the raw number of bytes with
 Divisor=1048576
 
+# Color provider for plots
+ColorProvider=adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #ff0000
+
 # Available values for an axis (suffixes listed):
 # - .Visibility=VISIBLE|INVISIBLE|HIDDEN
 # - .Name=string

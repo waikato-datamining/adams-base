@@ -15,7 +15,7 @@
 
 /**
  * MemoryMonitorPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -39,14 +39,16 @@ import adams.env.MemoryMonitorDefinition;
 import adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor;
 import adams.flow.sink.sequenceplotter.AligningSequences;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.AbstractTickGenerator;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.PaintletWithFixedYRange;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
-import adams.gui.visualization.sequence.PaintletWithFixedYRange;
 
 /**
  * Displays the memory consumption.
@@ -148,6 +150,8 @@ public class MemoryMonitorPanel
     paintlet.setMinY(0.0);
     paintlet.setMaxY(scale(m_Memory.getHeapMemoryUsage().getMax()));
     m_PlotPanel.setPaintlet(paintlet);
+    // color provider
+    m_PlotPanel.setColorProvider(AbstractColorProvider.forCommandLine(props.getProperty("ColorProvider", new DefaultColorProvider().toCommandLine())));
     
     add(m_PlotPanel, BorderLayout.CENTER);
   }
