@@ -13,20 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Min.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+/**
+ * Missing.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the min for a numeric column.
+ * Counts the missing cells.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -41,11 +39,14 @@ import adams.data.statistics.StatUtils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Min
-  extends AbstractDoubleArrayColumnStatistic {
+public class Missing
+  extends AbstractColumnStatistic {
 
   /** for serialization. */
-  private static final long serialVersionUID = 330391755072250767L;
+  private static final long serialVersionUID = 2725451104774755739L;
+
+  /** the count. */
+  protected int m_Count;
   
   /**
    * Returns a string describing the object.
@@ -54,7 +55,30 @@ public class Min
    */
   @Override
   public String globalInfo() {
-    return "Calculates the min for a numeric column.";
+    return "Counts the missing cells.";
+  }
+
+  /**
+   * Performs initialization before the cells are being visited.
+   * 
+   * @param sheet	the spreadsheet to generate the stats for
+   * @param colIndex	the column index
+   */
+  @Override
+  protected void preVisit(SpreadSheet sheet, int colIndex) {
+    m_Count = 0;
+  }
+
+  /**
+   * Gets called with every row in the spreadsheet for generating the stats.
+   * 
+   * @param row		the current row
+   * @param colIndex	the column index
+   */
+  @Override
+  protected void doVisit(Row row, int colIndex) {
+    if (!row.hasCell(colIndex) || row.getCell(colIndex).isMissing())
+      m_Count++;
   }
 
   /**
@@ -72,10 +96,8 @@ public class Min
     result = createOutputHeader();
 
     row = result.addRow();
-    row.addCell(0).setContent("Min");
-    row.addCell(1).setContent(StatUtils.min(m_Values.toArray()));
-
-    m_Values = null;
+    row.addCell(0).setContent("Missing");
+    row.addCell(1).setContent(m_Count);
     
     return result;
   }

@@ -14,23 +14,25 @@
  */
 
 /*
- * Distinct.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * SignalToNoiseRatio.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
-import gnu.trove.set.hash.TDoubleHashSet;
-
-import java.util.HashSet;
-
-import adams.data.spreadsheet.Cell;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Counts the distinct numeric&#47;string values.
+ * Calculates the signal to noise ratio for a numeric column.<br/>
+ * For more information, see:<br/>
+ * WikiPedia. Signal-to-noise ratio.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -45,17 +47,12 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Distinct
-  extends AbstractColumnStatistic {
+public class SignalToNoiseRatio
+  extends AbstractDoubleArrayColumnStatistic
+  implements TechnicalInformationHandler {
 
   /** for serialization. */
-  private static final long serialVersionUID = 4899075284716702404L;
-  
-  /** for counting the distinct the numeric values. */
-  protected TDoubleHashSet m_Numbers;
-  
-  /** for counting the distinct the labels. */
-  protected HashSet<String> m_Labels;
+  private static final long serialVersionUID = 330391755072250767L;
   
   /**
    * Returns a string describing the object.
@@ -64,38 +61,28 @@ public class Distinct
    */
   @Override
   public String globalInfo() {
-    return "Counts the distinct numeric/string values.";
+    return 
+	"Calculates the signal to noise ratio for a numeric column.\n"
+	+ "For more information, see:\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
-   * Performs initialization before the cells are being visited.
-   * 
-   * @param sheet	the spreadsheet to generate the stats for
-   * @param colIndex	the column index
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
    */
-  @Override
-  protected void preVisit(SpreadSheet sheet, int colIndex) {
-    m_Numbers = new TDoubleHashSet();
-    m_Labels  = new HashSet<String>();
-  }
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
 
-  /**
-   * Gets called with every row in the spreadsheet for generating the stats.
-   * 
-   * @param row		the current row
-   * @param colIndex	the column index
-   */
-  @Override
-  protected void doVisit(Row row, int colIndex) {
-    Cell	cell;
-    
-    if (row.hasCell(colIndex)) {
-      cell = row.getCell(colIndex);
-      if (cell.isNumeric())
-	m_Numbers.add(cell.toDouble());
-      else if (!cell.isMissing())
-	m_Labels.add(cell.getContent());
-    }
+    result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "WikiPedia");
+    result.setValue(Field.TITLE, "Signal-to-noise ratio");
+    result.setValue(Field.HTTP, "http://en.wikipedia.org/wiki/Signal-to-noise_ratio");
+
+    return result;
   }
 
   /**
@@ -113,17 +100,10 @@ public class Distinct
     result = createOutputHeader();
 
     row = result.addRow();
-    if (m_Numbers.size() > 0) {
-      row.addCell(0).setContent("Distinct numbers");
-      row.addCell(1).setContent(m_Numbers.size());
-    }
-    else if (m_Labels.size() > 0) {
-      row.addCell(0).setContent("Distinct labels");
-      row.addCell(1).setContent(m_Labels.size());
-    }
+    row.addCell(0).setContent("SNR");
+    row.addCell(1).setContent(StatUtils.signalToNoiseRatio(m_Values.toArray()));
 
-    m_Numbers = null;
-    m_Labels  = null;
+    m_Values = null;
     
     return result;
   }

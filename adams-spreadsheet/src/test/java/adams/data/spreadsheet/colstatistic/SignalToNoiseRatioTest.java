@@ -14,18 +14,18 @@
  */
 
 /**
- * MinTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * SignalToNoiseRatioTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Min statistic generator.
+ * Tests the SignalToNoiseRatio statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MinTest
+public class SignalToNoiseRatioTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class MinTest
    * 
    * @param name	the name of the test
    */
-  public MinTest(String name) {
+  public SignalToNoiseRatioTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class MinTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Min[]	result;
+    SignalToNoiseRatio[]	result;
     
-    result    = new Min[3];
-    result[0] = new Min();
-    result[1] = new Min();
-    result[2] = new Min();
+    result    = new SignalToNoiseRatio[3];
+    result[0] = new SignalToNoiseRatio();
+    result[1] = new SignalToNoiseRatio();
+    result[2] = new SignalToNoiseRatio();
     
     return result;
   }

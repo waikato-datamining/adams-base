@@ -14,18 +14,18 @@
  */
 
 /**
- * MissingTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * IQRTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Missing statistic generator.
+ * Tests the IQR statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MissingTest
+public class IQRTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class MissingTest
    * 
    * @param name	the name of the test
    */
-  public MissingTest(String name) {
+  public IQRTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class MissingTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Missing[]	result;
+    IQR[]	result;
     
-    result    = new Missing[3];
-    result[0] = new Missing();
-    result[1] = new Missing();
-    result[2] = new Missing();
+    result    = new IQR[3];
+    result[0] = new IQR();
+    result[1] = new IQR();
+    result[2] = new IQR();
     
     return result;
   }
@@ -73,7 +73,7 @@ public class MissingTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	11,
+	1,
 	16,
     };
   }

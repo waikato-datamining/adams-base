@@ -14,18 +14,24 @@
  */
 
 /*
- * MultiColumnStatistic.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * LabelCounts.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Combines the statistics calculated from the specified statistic generators.
+ * Counts how often a label (ie string) occurs.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -35,8 +41,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-statistic &lt;adams.data.spreadsheet.statistic.AbstractColumnStatistic&gt; [-statistic ...] (property: statistics)
- * &nbsp;&nbsp;&nbsp;The statistics to calculate.
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix to use for the label, eg, to distinguish them from other statistics.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -45,15 +51,18 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MultiColumnStatistic
+public class LabelCounts
   extends AbstractColumnStatistic {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2141252366056112668L;
+  private static final long serialVersionUID = 330391755072250767L;
 
-  /** the statistics to calculate. */
-  protected AbstractColumnStatistic[] m_Statistics;
-
+  /** the prefix to use. */
+  protected String m_Prefix;
+  
+  /** the label counts. */
+  protected HashMap<String,Integer> m_Counts;
+  
   /**
    * Returns a string describing the object.
    *
@@ -61,7 +70,7 @@ public class MultiColumnStatistic
    */
   @Override
   public String globalInfo() {
-    return "Combines the statistics calculated from the specified statistic generators.";
+    return "Counts how often a label (ie string) occurs.";
   }
 
   /**
@@ -72,27 +81,27 @@ public class MultiColumnStatistic
     super.defineOptions();
 
     m_OptionManager.add(
-	    "statistic", "statistics",
-	    new AbstractColumnStatistic[0]);
+	    "prefix", "prefix",
+	    "");
   }
 
   /**
-   * Sets the statistic generators to use.
+   * Sets the prefix to use for the labels.
    *
-   * @param value	the generators
+   * @param value	the prefix
    */
-  public void setStatistics(AbstractColumnStatistic[] value) {
-    m_Statistics = value;
+  public void setPrefix(String value) {
+    m_Prefix = value;
     reset();
   }
 
   /**
-   * Returns the statistic generators in use.
+   * Returns the prefix to use for the labels.
    *
-   * @return		the generators
+   * @return		the prefix
    */
-  public AbstractColumnStatistic[] getStatistics() {
-    return m_Statistics;
+  public String getPrefix() {
+    return m_Prefix;
   }
 
   /**
@@ -101,8 +110,8 @@ public class MultiColumnStatistic
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String statisticsTipText() {
-    return "The statistics to calculate.";
+  public String prefixTipText() {
+    return "The prefix to use for the label, eg, to distinguish them from other statistics.";
   }
 
   /**
@@ -113,8 +122,7 @@ public class MultiColumnStatistic
    */
   @Override
   protected void preVisit(SpreadSheet sheet, int colIndex) {
-    for (AbstractColumnStatistic stat: m_Statistics)
-      stat.preVisit(sheet, colIndex);
+    m_Counts = new HashMap<String,Integer>();
   }
 
   /**
@@ -125,8 +133,15 @@ public class MultiColumnStatistic
    */
   @Override
   protected void doVisit(Row row, int colIndex) {
-    for (AbstractColumnStatistic stat: m_Statistics)
-      stat.doVisit(row, colIndex);
+    String	label;
+    
+    if (row.hasCell(colIndex) && row.getCell(colIndex).getContentType() == ContentType.STRING) {
+      label = row.getCell(colIndex).getContent();
+      if (!m_Counts.containsKey(label))
+	m_Counts.put(label, 1);
+      else
+	m_Counts.put(label, m_Counts.get(label) + 1);
+    }
   }
 
   /**
@@ -139,16 +154,21 @@ public class MultiColumnStatistic
   @Override
   protected SpreadSheet postVisit(SpreadSheet sheet, int colIndex) {
     SpreadSheet		result;
-    SpreadSheet		sub;
+    Row			row;
+    List<String>	labels;
 
     result = createOutputHeader();
-    for (AbstractColumnStatistic stat: m_Statistics) {
-      sub = stat.postVisit(sheet, colIndex);
-      if (sub == null)
-	continue;
-      for (Row row: sub.rows())
-	result.addRow().assign(row);
+
+    labels = new ArrayList<String>(m_Counts.keySet());;
+    Collections.sort(labels);
+    
+    for (String label: labels) {
+      row = result.addRow();
+      row.addCell(0).setContent(m_Prefix + label);
+      row.addCell(1).setContent(m_Counts.get(label));
     }
+
+    m_Counts = null;
     
     return result;
   }

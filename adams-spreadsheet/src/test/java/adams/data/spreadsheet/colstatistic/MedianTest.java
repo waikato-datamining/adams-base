@@ -14,18 +14,18 @@
  */
 
 /**
- * StandardDeviationTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MedianTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the StandardDeviation statistic generator.
+ * Tests the Median statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class StandardDeviationTest
+public class MedianTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class StandardDeviationTest
    * 
    * @param name	the name of the test
    */
-  public StandardDeviationTest(String name) {
+  public MedianTest(String name) {
     super(name);
   }
   
@@ -59,13 +59,12 @@ public class StandardDeviationTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    StandardDeviation[]	result;
+    Median[]	result;
     
-    result    = new StandardDeviation[3];
-    result[0] = new StandardDeviation();
-    result[1] = new StandardDeviation();
-    result[1].setIsSample(false);
-    result[2] = new StandardDeviation();
+    result    = new Median[3];
+    result[0] = new Median();
+    result[1] = new Median();
+    result[2] = new Median();
     
     return result;
   }
@@ -74,7 +73,7 @@ public class StandardDeviationTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	0,
+	1,
 	16,
     };
   }

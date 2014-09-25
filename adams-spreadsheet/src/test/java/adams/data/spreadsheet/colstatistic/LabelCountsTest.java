@@ -14,18 +14,18 @@
  */
 
 /**
- * MedianTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * LabelCountsTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Median statistic generator.
+ * Tests the LabelCounts statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MedianTest
+public class LabelCountsTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class MedianTest
    * 
    * @param name	the name of the test
    */
-  public MedianTest(String name) {
+  public LabelCountsTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class MedianTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Median[]	result;
+    LabelCounts[]	result;
     
-    result    = new Median[3];
-    result[0] = new Median();
-    result[1] = new Median();
-    result[2] = new Median();
+    result    = new LabelCounts[3];
+    result[0] = new LabelCounts();
+    result[1] = new LabelCounts();
+    result[2] = new LabelCounts();
     
     return result;
   }
@@ -73,7 +73,7 @@ public class MedianTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	1,
+	11,
 	16,
     };
   }

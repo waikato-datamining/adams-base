@@ -20,8 +20,8 @@ adams.data.spreadsheet.columnfinder.ColumnFinder=\
   adams.data.spreadsheet.columnfinder
 
 # The column statistic generators
-adams.data.spreadsheet.statistic.AbstractColumnStatistic=\
-  adams.data.spreadsheet.statistic
+adams.data.spreadsheet.colstatistic.AbstractColumnStatistic=\
+  adams.data.spreadsheet.colstatistic
 
 # data conversion schemes for spreadsheets
 adams.data.conversion.AbstractSpreadSheetConversion=\

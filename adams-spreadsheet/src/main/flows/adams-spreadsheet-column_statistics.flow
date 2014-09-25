@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:40:17
+# Date: 2014-09-26 11:09:24
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -13,6 +13,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.SpreadSheetFileReader
 			-reader
 				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
 					-spreadsheet-type
 						adams.data.spreadsheet.SpreadSheet
 	-actor
@@ -20,27 +22,29 @@ adams.flow.control.Flow
 			-column
 			last
 			-statistic
-				adams.data.spreadsheet.statistic.MultiColumnStatistic
+				adams.data.spreadsheet.colstatistic.MultiColumnStatistic
 					-statistic
-						adams.data.spreadsheet.statistic.Min
+						adams.data.spreadsheet.colstatistic.Min
 					-statistic
-						adams.data.spreadsheet.statistic.Max
+						adams.data.spreadsheet.colstatistic.Max
 					-statistic
-						adams.data.spreadsheet.statistic.Mean
+						adams.data.spreadsheet.colstatistic.Mean
 					-statistic
-						adams.data.spreadsheet.statistic.StandardDeviation
+						adams.data.spreadsheet.colstatistic.StandardDeviation
 					-statistic
-						adams.data.spreadsheet.statistic.Median
+						adams.data.spreadsheet.colstatistic.Median
 					-statistic
-						adams.data.spreadsheet.statistic.IQR
+						adams.data.spreadsheet.colstatistic.IQR
 					-statistic
-						adams.data.spreadsheet.statistic.Distinct
+						adams.data.spreadsheet.colstatistic.Distinct
 					-statistic
-						adams.data.spreadsheet.statistic.Unique
+						adams.data.spreadsheet.colstatistic.Unique
 					-statistic
-						adams.data.spreadsheet.statistic.Missing
+						adams.data.spreadsheet.colstatistic.Missing
 	-actor
 		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetColumnStatistic.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,8 +24,8 @@ import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.data.spreadsheet.statistic.AbstractColumnStatistic;
-import adams.data.spreadsheet.statistic.Mean;
+import adams.data.spreadsheet.colstatistic.AbstractColumnStatistic;
+import adams.data.spreadsheet.colstatistic.Mean;
 import adams.flow.core.Token;
 
 /**

@@ -14,18 +14,18 @@
  */
 
 /**
- * IQRTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * SumTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the IQR statistic generator.
+ * Tests the Sum statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class IQRTest
+public class SumTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class IQRTest
    * 
    * @param name	the name of the test
    */
-  public IQRTest(String name) {
+  public SumTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class IQRTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    IQR[]	result;
+    Sum[]	result;
     
-    result    = new IQR[3];
-    result[0] = new IQR();
-    result[1] = new IQR();
-    result[2] = new IQR();
+    result    = new Sum[3];
+    result[0] = new Sum();
+    result[1] = new Sum();
+    result[2] = new Sum();
     
     return result;
   }

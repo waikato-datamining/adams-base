@@ -15,10 +15,10 @@
 
 /*
  * IQR.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;

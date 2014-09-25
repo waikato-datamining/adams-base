@@ -20,3 +20,11 @@ Rename-transformer_spreadsheetcell=adams.flow.transformer.SpreadSheetCell-adams.
 Rename-transformer_spreadsheetreader=adams.flow.transformer.SpreadSheetReader-adams.flow.transformer.SpreadSheetFileReader
 Rename-sink_spreadsheetwriter=adams.flow.sink.SpreadSheetWriter-adams.flow.sink.SpreadSheetFileWriter
 Rename-conversion_mergespreadsheetcolumns=adams.data.conversion.MergeSpreadSheetColumns-adams.data.conversion.SpreadSheetJoinColumns
+
+# Lists the keys that contain partial classname renaming.
+PartialRename=\
+  Rename-statistic
+
+# general format for partial classname renaming (no regular expression, but case-sensitive):
+# <key>=<find>\t<replace>
+Rename-statistic=.spreadsheet.statistic.\t.spreadsheet.colstatistic.

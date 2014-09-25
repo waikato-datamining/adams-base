@@ -14,11 +14,11 @@
  */
 
 /*
- * Mean.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Max.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -26,7 +26,7 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the mean for a numeric column.
+ * Calculates the max for a numeric column.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -35,13 +35,13 @@ import adams.data.statistics.StatUtils;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Mean
+public class Max
   extends AbstractDoubleArrayColumnStatistic {
 
   /** for serialization. */
@@ -54,7 +54,7 @@ public class Mean
    */
   @Override
   public String globalInfo() {
-    return "Calculates the mean for a numeric column.";
+    return "Calculates the max for a numeric column.";
   }
 
   /**
@@ -72,8 +72,8 @@ public class Mean
     result = createOutputHeader();
 
     row = result.addRow();
-    row.addCell(0).setContent("Mean");
-    row.addCell(1).setContent(StatUtils.mean(m_Values.toArray()));
+    row.addCell(0).setContent("Max");
+    row.addCell(1).setContent(StatUtils.max(m_Values.toArray()));
 
     m_Values = null;
     

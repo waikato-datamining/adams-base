@@ -14,18 +14,18 @@
  */
 
 /**
- * MaxTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * DistinctTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Max statistic generator.
+ * Tests the Distinct statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MaxTest
+public class DistinctTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class MaxTest
    * 
    * @param name	the name of the test
    */
-  public MaxTest(String name) {
+  public DistinctTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class MaxTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Max[]	result;
+    Distinct[]	result;
     
-    result    = new Max[3];
-    result[0] = new Max();
-    result[1] = new Max();
-    result[2] = new Max();
+    result    = new Distinct[3];
+    result[0] = new Distinct();
+    result[1] = new Distinct();
+    result[2] = new Distinct();
     
     return result;
   }

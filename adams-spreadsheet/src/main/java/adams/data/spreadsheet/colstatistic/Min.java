@@ -14,11 +14,11 @@
  */
 
 /*
- * Max.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Min.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -26,7 +26,7 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the max for a numeric column.
+ * Calculates the min for a numeric column.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -41,7 +41,7 @@ import adams.data.statistics.StatUtils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Max
+public class Min
   extends AbstractDoubleArrayColumnStatistic {
 
   /** for serialization. */
@@ -54,7 +54,7 @@ public class Max
    */
   @Override
   public String globalInfo() {
-    return "Calculates the max for a numeric column.";
+    return "Calculates the min for a numeric column.";
   }
 
   /**
@@ -72,8 +72,8 @@ public class Max
     result = createOutputHeader();
 
     row = result.addRow();
-    row.addCell(0).setContent("Max");
-    row.addCell(1).setContent(StatUtils.max(m_Values.toArray()));
+    row.addCell(0).setContent("Min");
+    row.addCell(1).setContent(StatUtils.min(m_Values.toArray()));
 
     m_Values = null;
     

@@ -14,18 +14,18 @@
  */
 
 /**
- * LabelCountsTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MeanTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the LabelCounts statistic generator.
+ * Tests the Mean statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class LabelCountsTest
+public class MeanTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class LabelCountsTest
    * 
    * @param name	the name of the test
    */
-  public LabelCountsTest(String name) {
+  public MeanTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class LabelCountsTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    LabelCounts[]	result;
+    Mean[]	result;
     
-    result    = new LabelCounts[3];
-    result[0] = new LabelCounts();
-    result[1] = new LabelCounts();
-    result[2] = new LabelCounts();
+    result    = new Mean[3];
+    result[0] = new Mean();
+    result[1] = new Mean();
+    result[2] = new Mean();
     
     return result;
   }
@@ -73,7 +73,7 @@ public class LabelCountsTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	11,
+	1,
 	16,
     };
   }

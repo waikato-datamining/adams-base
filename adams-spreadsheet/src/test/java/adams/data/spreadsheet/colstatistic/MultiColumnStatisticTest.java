@@ -14,18 +14,19 @@
  */
 
 /**
- * SumTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MultiColumnStatisticTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
+
 
 /**
- * Tests the Sum statistic generator.
+ * Tests the MultiColumnStatistic statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SumTest
+public class MultiColumnStatisticTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +34,7 @@ public class SumTest
    * 
    * @param name	the name of the test
    */
-  public SumTest(String name) {
+  public MultiColumnStatisticTest(String name) {
     super(name);
   }
   
@@ -59,12 +60,32 @@ public class SumTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Sum[]	result;
+    MultiColumnStatistic[]	result;
     
-    result    = new Sum[3];
-    result[0] = new Sum();
-    result[1] = new Sum();
-    result[2] = new Sum();
+    result    = new MultiColumnStatistic[3];
+    result[0] = new MultiColumnStatistic();
+    result[1] = new MultiColumnStatistic();
+    result[1].setStatistics(new AbstractColumnStatistic[]{
+	new Mean(),
+	new StandardDeviation(),
+	new Min(),
+	new Max(),
+	new Median(),
+	new IQR(),
+	new Sum(),
+	new SignalToNoiseRatio(),
+	new Unique(),
+	new Distinct(),
+    });
+    result[2] = new MultiColumnStatistic();
+    LabelCounts lc = new LabelCounts();
+    lc.setPrefix("Label: ");
+    result[2].setStatistics(new AbstractColumnStatistic[]{
+	new Missing(),
+	lc,
+	new Unique(),
+	new Distinct(),
+    });
     
     return result;
   }
@@ -73,8 +94,8 @@ public class SumTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	1,
-	16,
+	0,
+	11,
     };
   }
 }

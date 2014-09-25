@@ -14,19 +14,18 @@
  */
 
 /**
- * MultiColumnStatisticTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * StandardDeviationTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
-
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the MultiColumnStatistic statistic generator.
+ * Tests the StandardDeviation statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MultiColumnStatisticTest
+public class StandardDeviationTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -34,7 +33,7 @@ public class MultiColumnStatisticTest
    * 
    * @param name	the name of the test
    */
-  public MultiColumnStatisticTest(String name) {
+  public StandardDeviationTest(String name) {
     super(name);
   }
   
@@ -60,32 +59,13 @@ public class MultiColumnStatisticTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    MultiColumnStatistic[]	result;
+    StandardDeviation[]	result;
     
-    result    = new MultiColumnStatistic[3];
-    result[0] = new MultiColumnStatistic();
-    result[1] = new MultiColumnStatistic();
-    result[1].setStatistics(new AbstractColumnStatistic[]{
-	new Mean(),
-	new StandardDeviation(),
-	new Min(),
-	new Max(),
-	new Median(),
-	new IQR(),
-	new Sum(),
-	new SignalToNoiseRatio(),
-	new Unique(),
-	new Distinct(),
-    });
-    result[2] = new MultiColumnStatistic();
-    LabelCounts lc = new LabelCounts();
-    lc.setPrefix("Label: ");
-    result[2].setStatistics(new AbstractColumnStatistic[]{
-	new Missing(),
-	lc,
-	new Unique(),
-	new Distinct(),
-    });
+    result    = new StandardDeviation[3];
+    result[0] = new StandardDeviation();
+    result[1] = new StandardDeviation();
+    result[1].setIsSample(false);
+    result[2] = new StandardDeviation();
     
     return result;
   }
@@ -95,7 +75,7 @@ public class MultiColumnStatisticTest
     return new int[]{
 	0,
 	0,
-	11,
+	16,
     };
   }
 }

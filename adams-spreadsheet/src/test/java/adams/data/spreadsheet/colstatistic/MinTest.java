@@ -14,18 +14,18 @@
  */
 
 /**
- * DistinctTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MinTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Distinct statistic generator.
+ * Tests the Min statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DistinctTest
+public class MinTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class DistinctTest
    * 
    * @param name	the name of the test
    */
-  public DistinctTest(String name) {
+  public MinTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class DistinctTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Distinct[]	result;
+    Min[]	result;
     
-    result    = new Distinct[3];
-    result[0] = new Distinct();
-    result[1] = new Distinct();
-    result[2] = new Distinct();
+    result    = new Min[3];
+    result[0] = new Min();
+    result[1] = new Min();
+    result[2] = new Min();
     
     return result;
   }

@@ -14,18 +14,18 @@
  */
 
 /**
- * SignalToNoiseRatioTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * UniqueTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the SignalToNoiseRatio statistic generator.
+ * Tests the Unique statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SignalToNoiseRatioTest
+public class UniqueTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class SignalToNoiseRatioTest
    * 
    * @param name	the name of the test
    */
-  public SignalToNoiseRatioTest(String name) {
+  public UniqueTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class SignalToNoiseRatioTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    SignalToNoiseRatio[]	result;
+    Unique[]	result;
     
-    result    = new SignalToNoiseRatio[3];
-    result[0] = new SignalToNoiseRatio();
-    result[1] = new SignalToNoiseRatio();
-    result[2] = new SignalToNoiseRatio();
+    result    = new Unique[3];
+    result[0] = new Unique();
+    result[1] = new Unique();
+    result[2] = new Unique();
     
     return result;
   }

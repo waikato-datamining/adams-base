@@ -14,18 +14,18 @@
  */
 
 /**
- * MeanTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MissingTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Mean statistic generator.
+ * Tests the Missing statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MeanTest
+public class MissingTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class MeanTest
    * 
    * @param name	the name of the test
    */
-  public MeanTest(String name) {
+  public MissingTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class MeanTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Mean[]	result;
+    Missing[]	result;
     
-    result    = new Mean[3];
-    result[0] = new Mean();
-    result[1] = new Mean();
-    result[2] = new Mean();
+    result    = new Missing[3];
+    result[0] = new Missing();
+    result[1] = new Missing();
+    result[2] = new Missing();
     
     return result;
   }
@@ -73,7 +73,7 @@ public class MeanTest
   protected int[] getRegressionColumns() {
     return new int[]{
 	0,
-	1,
+	11,
 	16,
     };
   }

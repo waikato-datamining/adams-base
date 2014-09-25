@@ -14,18 +14,18 @@
  */
 
 /**
- * UniqueTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * MaxTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
 /**
- * Tests the Unique statistic generator.
+ * Tests the Max statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class UniqueTest
+public class MaxTest
   extends AbstractColumnStatisticTestCase {
 
   /**
@@ -33,7 +33,7 @@ public class UniqueTest
    * 
    * @param name	the name of the test
    */
-  public UniqueTest(String name) {
+  public MaxTest(String name) {
     super(name);
   }
   
@@ -59,12 +59,12 @@ public class UniqueTest
    */
   @Override
   protected AbstractColumnStatistic[] getRegressionSetups() {
-    Unique[]	result;
+    Max[]	result;
     
-    result    = new Unique[3];
-    result[0] = new Unique();
-    result[1] = new Unique();
-    result[2] = new Unique();
+    result    = new Max[3];
+    result[0] = new Max();
+    result[1] = new Max();
+    result[2] = new Max();
     
     return result;
   }

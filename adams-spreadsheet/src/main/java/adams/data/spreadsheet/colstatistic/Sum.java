@@ -14,25 +14,19 @@
  */
 
 /*
- * SignalToNoiseRatio.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Sum.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
-import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
-import adams.core.TechnicalInformationHandler;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the signal to noise ratio for a numeric column.<br/>
- * For more information, see:<br/>
- * WikiPedia. Signal-to-noise ratio.
+ * Calculates the sum for a numeric column.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -47,9 +41,8 @@ import adams.data.statistics.StatUtils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SignalToNoiseRatio
-  extends AbstractDoubleArrayColumnStatistic
-  implements TechnicalInformationHandler {
+public class Sum
+  extends AbstractDoubleArrayColumnStatistic {
 
   /** for serialization. */
   private static final long serialVersionUID = 330391755072250767L;
@@ -61,28 +54,7 @@ public class SignalToNoiseRatio
    */
   @Override
   public String globalInfo() {
-    return 
-	"Calculates the signal to noise ratio for a numeric column.\n"
-	+ "For more information, see:\n"
-	+ getTechnicalInformation().toString();
-  }
-
-  /**
-   * Returns an instance of a TechnicalInformation object, containing
-   * detailed information about the technical background of this class,
-   * e.g., paper reference or book this class is based on.
-   *
-   * @return 		the technical information about this class
-   */
-  public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.AUTHOR, "WikiPedia");
-    result.setValue(Field.TITLE, "Signal-to-noise ratio");
-    result.setValue(Field.HTTP, "http://en.wikipedia.org/wiki/Signal-to-noise_ratio");
-
-    return result;
+    return "Calculates the sum for a numeric column.";
   }
 
   /**
@@ -100,8 +72,8 @@ public class SignalToNoiseRatio
     result = createOutputHeader();
 
     row = result.addRow();
-    row.addCell(0).setContent("SNR");
-    row.addCell(1).setContent(StatUtils.signalToNoiseRatio(m_Values.toArray()));
+    row.addCell(0).setContent("Sum");
+    row.addCell(1).setContent(StatUtils.sum(m_Values.toArray()));
 
     m_Values = null;
     

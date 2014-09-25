@@ -14,19 +14,23 @@
  */
 
 /*
- * StandardDeviation.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Distinct.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.spreadsheet.statistic;
+package adams.data.spreadsheet.colstatistic;
 
+import gnu.trove.set.hash.TDoubleHashSet;
+
+import java.util.HashSet;
+
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the standard deviation (population or sample).
+ * Counts the distinct numeric&#47;string values.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -35,26 +39,24 @@ import adams.data.statistics.StatUtils;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-is-sample &lt;boolean&gt; (property: isSample)
- * &nbsp;&nbsp;&nbsp;If set to true, the columns are treated as samples and not as populations.
- * &nbsp;&nbsp;&nbsp;default: true
- * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class StandardDeviation
-  extends AbstractDoubleArrayColumnStatistic {
+public class Distinct
+  extends AbstractColumnStatistic {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2141252366056112668L;
-
-  /** whether the arrays are samples or populations. */
-  protected boolean m_IsSample;
-
+  private static final long serialVersionUID = 4899075284716702404L;
+  
+  /** for counting the distinct the numeric values. */
+  protected TDoubleHashSet m_Numbers;
+  
+  /** for counting the distinct the labels. */
+  protected HashSet<String> m_Labels;
+  
   /**
    * Returns a string describing the object.
    *
@@ -62,48 +64,38 @@ public class StandardDeviation
    */
   @Override
   public String globalInfo() {
-    return "Calculates the standard deviation (population or sample).";
+    return "Counts the distinct numeric/string values.";
   }
 
   /**
-   * Adds options to the internal list of options.
+   * Performs initialization before the cells are being visited.
+   * 
+   * @param sheet	the spreadsheet to generate the stats for
+   * @param colIndex	the column index
    */
   @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "is-sample", "isSample",
-	    true);
+  protected void preVisit(SpreadSheet sheet, int colIndex) {
+    m_Numbers = new TDoubleHashSet();
+    m_Labels  = new HashSet<String>();
   }
 
   /**
-   * Sets whether the columns represent samples instead of populations.
-   *
-   * @param value	true if columns are samples and not populations
+   * Gets called with every row in the spreadsheet for generating the stats.
+   * 
+   * @param row		the current row
+   * @param colIndex	the column index
    */
-  public void setIsSample(boolean value) {
-    m_IsSample = value;
-    reset();
-  }
-
-  /**
-   * Returns whether the columns represent samples instead of populations.
-   *
-   * @return		true if columns are samples and not populations
-   */
-  public boolean getIsSample() {
-    return m_IsSample;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String isSampleTipText() {
-    return "If set to true, the columns are treated as samples and not as populations.";
+  @Override
+  protected void doVisit(Row row, int colIndex) {
+    Cell	cell;
+    
+    if (row.hasCell(colIndex)) {
+      cell = row.getCell(colIndex);
+      if (cell.isNumeric())
+	m_Numbers.add(cell.toDouble());
+      else if (!cell.isMissing())
+	m_Labels.add(cell.getContent());
+    }
   }
 
   /**
@@ -121,10 +113,17 @@ public class StandardDeviation
     result = createOutputHeader();
 
     row = result.addRow();
-    row.addCell(0).setContent("StdDev" + (getIsSample() ? "" : "P"));
-    row.addCell(1).setContent(StatUtils.stddev(m_Values.toArray(), getIsSample()));
+    if (m_Numbers.size() > 0) {
+      row.addCell(0).setContent("Distinct numbers");
+      row.addCell(1).setContent(m_Numbers.size());
+    }
+    else if (m_Labels.size() > 0) {
+      row.addCell(0).setContent("Distinct labels");
+      row.addCell(1).setContent(m_Labels.size());
+    }
 
-    m_Values = null;
+    m_Numbers = null;
+    m_Labels  = null;
     
     return result;
   }
