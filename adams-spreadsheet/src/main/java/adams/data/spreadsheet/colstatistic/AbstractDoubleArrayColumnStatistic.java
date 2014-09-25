@@ -36,7 +36,7 @@ public abstract class AbstractDoubleArrayColumnStatistic
   /** for serialization. */
   private static final long serialVersionUID = 9076465449580989452L;
   
-  /** for calculating the mean. */
+  /** for calculating the stats. */
   protected TDoubleArrayList m_Values;
 
   /**
