@@ -38,7 +38,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Applies a BoofCV feature generator to the incoming image and outputs the generated WEKA Instance(s).
+ * Applies a BoofCV feature generator to the incoming image and outputs the generated features.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -96,7 +96,7 @@ public class BoofCVFeatureGenerator
   /** for serialization. */
   private static final long serialVersionUID = -1998955116780561587L;
 
-  /** the key for storing the current instances in the backup. */
+  /** the key for storing the current objects in the backup. */
   public final static String BACKUP_QUEUE = "queue";
 
   /** the algorithm to apply to the image. */
@@ -114,7 +114,7 @@ public class BoofCVFeatureGenerator
   public String globalInfo() {
     return
         "Applies a BoofCV feature generator to the incoming image and outputs "
-      + "the generated WEKA Instance(s).";
+      + "the generated features.";
   }
 
   /**

@@ -39,7 +39,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Applies an ImageJ flattener to the incoming image and outputs the generated WEKA Instance(s).
+ * Applies an ImageJ flattener to the incoming image and outputs the generated features.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -97,7 +97,7 @@ public class ImageJFeatureGenerator
   /** for serialization. */
   private static final long serialVersionUID = 2931644921913892736L;
 
-  /** the key for storing the current instances in the backup. */
+  /** the key for storing the current objects in the backup. */
   public final static String BACKUP_QUEUE = "queue";
 
   /** the algorithm to apply to the image. */
@@ -115,7 +115,7 @@ public class ImageJFeatureGenerator
   public String globalInfo() {
     return
         "Applies an ImageJ feature generator to the incoming image and outputs "
-      + "the generated WEKA Instance(s).";
+      + "the generated features.";
   }
 
   /**
