@@ -1,4 +1,4 @@
-% Copyright (c) 2013 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2013-2014 by the University of Waikato, Hamilton, NZ. 
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -45,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2013} &
+		\parbox[c][2cm]{2cm}{\copyright 2013-2014} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -149,6 +149,8 @@ data, as well as make future predictions. \\
 	\item \textit{SpreadSheetToTimeseries} -- similar to the 
 	\textit{TimeseriesDbReader} source, this transformer generates one or more
 	timeseries containers from specified columns in a spreadsheet.
+	\item \textit{TimeseriesFeatureGenerator} -- extracts features from a
+	timeseries and generates, e.g., spreadsheet data from it.
 	\item \textit{TimeseriesFileReader} -- loads timeseries data from 
 	disk.\footnote{adams-timeseries-load\_and\_display.flow, adams-timeseries-load\_from\_csv\_and\_save.flow}
 	\item \textit{TimeseriesFileWriter} -- writes timeseries data to 

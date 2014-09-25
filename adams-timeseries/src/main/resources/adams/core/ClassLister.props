@@ -15,6 +15,10 @@ adams.data.io.input.AbstractTimeseriesReader=\
 adams.data.io.output.AbstractTimeseriesWriter=\
   adams.data.io.output
 
+# the feature generators
+adams.data.timeseries.AbstractTimeseriesFeatureGenerator=\
+  adams.data.timeseries
+
 # the forecaster generators
 adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
   adams.flow.source.wekaforecastersetup
