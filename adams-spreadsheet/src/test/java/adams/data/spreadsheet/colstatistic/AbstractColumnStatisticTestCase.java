@@ -31,7 +31,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Ancestor for cell locator test cases.
+ * Ancestor for column stats test cases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
