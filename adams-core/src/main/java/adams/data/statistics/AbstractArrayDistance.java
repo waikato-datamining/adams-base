@@ -96,6 +96,15 @@ public abstract class AbstractArrayDistance<T extends Number>
   protected abstract double calcDistance(double[] first, double[] second);
   
   /**
+   * Creates the cell header prefix to use.
+   * 
+   * @return		the prefix
+   */
+  protected String createCellHeader() {
+    return getDistanceName() + " distance";
+  }
+  
+  /**
    * Generates the actual result.
    *
    * @return		the generated result
@@ -112,7 +121,7 @@ public abstract class AbstractArrayDistance<T extends Number>
     first = StatUtils.toDoubleArray(get(0));
     for (i = 1; i < size(); i++) {
       other = StatUtils.toDoubleArray(get(i));
-      result.setHeader(i - 1, getDistanceName() + " distance 1-" + (i+1));
+      result.setHeader(i - 1, createCellHeader() + " 1-" + (i+1));
       result.setCell(0, i - 1, calcDistance(first, other));
     }
 

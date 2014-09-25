@@ -100,6 +100,16 @@ public class ArrayMinkowskiDistance
   public String exponentTipText() {
     return "The exponent 'p' to use for 'sum(|x-y|^p)^(1/p)'.";
   }
+  
+  /**
+   * Creates the cell header prefix to use.
+   * 
+   * @return		the prefix
+   */
+  @Override
+  protected String createCellHeader() {
+    return super.createCellHeader() + " (p=" + m_Exponent + ")";
+  }
 
   /**
    * Calculates the distance between the two arrays.
@@ -116,7 +126,7 @@ public class ArrayMinkowskiDistance
     result = 0.0;
 
     for (i = 0; i < first.length; i++)
-      result += Math.pow(first[i] - second[i], m_Exponent);
+      result += Math.pow(Math.abs(first[i] - second[i]), m_Exponent);
     
     result = Math.pow(result, 1/m_Exponent);
     
