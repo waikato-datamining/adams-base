@@ -209,7 +209,7 @@ public class Values
       point = (TimeseriesPoint) timeseries.toList().get(i);
       if (m_AddTimestamp)
 	result[0].add(tsformat.format(point.getTimestamp()));
-      result[0].add(point.m_Value);
+      result[0].add(point.getValue());
     }
     
     return result;
