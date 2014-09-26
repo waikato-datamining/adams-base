@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import adams.core.CleanUpHandler;
+import adams.core.ShallowCopySupporter;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
@@ -43,7 +44,7 @@ import adams.data.report.Report;
  */
 public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler {
+  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractTimeseriesFeatureGenerator> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;
@@ -200,7 +201,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
    *
    * @param timeseries		the timeseries to check
    */
-  protected void checkTimeseries(T timeseries) {
+  protected void checkData(T timeseries) {
     if (timeseries == null)
       throw new IllegalStateException("No timeseries provided!");
   }
@@ -319,7 +320,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
     List<Object>[]	data;
     int			i;
 
-    checkTimeseries(timeseries);
+    checkData(timeseries);
 
     // create header if necessary
     if (!m_Converter.isInitialized()) {
@@ -378,7 +379,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
    *
    * @return		the shallow copy
    */
-  public T shallowCopy() {
+  public AbstractTimeseriesFeatureGenerator shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -388,8 +389,8 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public T shallowCopy(boolean expand) {
-    return (T) OptionUtils.shallowCopy(this, expand);
+  public AbstractTimeseriesFeatureGenerator shallowCopy(boolean expand) {
+    return (AbstractTimeseriesFeatureGenerator) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
