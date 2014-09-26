@@ -23,6 +23,10 @@ adams.data.spreadsheet.columnfinder.ColumnFinder=\
 adams.data.spreadsheet.colstatistic.AbstractColumnStatistic=\
   adams.data.spreadsheet.colstatistic
 
+# The row statistic generators
+adams.data.spreadsheet.rowstatistic.AbstractRowStatistic=\
+  adams.data.spreadsheet.rowstatistic
+
 # data conversion schemes for spreadsheets
 adams.data.conversion.AbstractSpreadSheetConversion=\
   adams.data.conversion

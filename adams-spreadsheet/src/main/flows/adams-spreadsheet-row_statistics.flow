@@ -1,0 +1,52 @@
+# Project: adams
+# Date: 2014-09-26 12:40:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates various statistic for a row in a spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.TransposeSpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetRowStatistic
+			-statistic
+				adams.data.spreadsheet.rowstatistic.MultiRowStatistic
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Min
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Max
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Mean
+					-statistic
+						adams.data.spreadsheet.rowstatistic.StandardDeviation
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Median
+					-statistic
+						adams.data.spreadsheet.rowstatistic.IQR
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Distinct
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Unique
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Missing
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
