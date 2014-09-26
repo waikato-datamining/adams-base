@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import adams.core.CleanUpHandler;
+import adams.core.ShallowCopySupporter;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
@@ -43,7 +44,7 @@ import adams.data.report.Report;
  */
 public abstract class AbstractImageFeatureGenerator<T extends AbstractImageContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler {
+  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractImageFeatureGenerator> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;
@@ -378,7 +379,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    *
    * @return		the shallow copy
    */
-  public T shallowCopy() {
+  public AbstractImageFeatureGenerator shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -388,8 +389,8 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public T shallowCopy(boolean expand) {
-    return (T) OptionUtils.shallowCopy(this, expand);
+  public AbstractImageFeatureGenerator shallowCopy(boolean expand) {
+    return (AbstractImageFeatureGenerator) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
