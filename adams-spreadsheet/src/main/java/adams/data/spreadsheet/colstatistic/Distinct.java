@@ -112,12 +112,13 @@ public class Distinct
 
     result = createOutputHeader();
 
-    row = result.addRow();
     if (m_Numbers.size() > 0) {
+      row = result.addRow();
       row.addCell(0).setContent("Distinct numbers");
       row.addCell(1).setContent(m_Numbers.size());
     }
-    else if (m_Labels.size() > 0) {
+    if (m_Labels.size() > 0) {
+      row = result.addRow();
       row.addCell(0).setContent("Distinct labels");
       row.addCell(1).setContent(m_Labels.size());
     }
