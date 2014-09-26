@@ -27,6 +27,10 @@ adams.data.spreadsheet.colstatistic.AbstractColumnStatistic=\
 adams.data.spreadsheet.rowstatistic.AbstractRowStatistic=\
   adams.data.spreadsheet.rowstatistic
 
+# The row score algorithms
+adams.data.spreadsheet.rowscore.AbstractRowScore=\
+  adams.data.spreadsheet.rowscore
+
 # data conversion schemes for spreadsheets
 adams.data.conversion.AbstractSpreadSheetConversion=\
   adams.data.conversion
