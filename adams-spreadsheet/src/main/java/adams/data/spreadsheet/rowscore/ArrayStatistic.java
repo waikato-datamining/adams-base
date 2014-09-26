@@ -276,6 +276,7 @@ public class ArrayStatistic
     rows.insert(0, rowIndex);
     
     // generate stats
+    m_Statistic.clear();
     values = new ArrayList<Double>();
     for (i = 0; i < rows.size(); i++) {
       values.clear();
