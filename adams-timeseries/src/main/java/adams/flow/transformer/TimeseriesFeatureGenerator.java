@@ -35,7 +35,7 @@ import adams.flow.provenance.ProvenanceInformation;
 
 /**
  <!-- globalinfo-start -->
- * Applies a timeseries feature generator to the incoming image and outputs the generated features.
+ * Applies a timeseries feature generator to the incoming timeseries and outputs the generated features.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -109,7 +109,7 @@ public class TimeseriesFeatureGenerator
   @Override
   public String globalInfo() {
     return
-        "Applies a timeseries feature generator to the incoming image and outputs "
+        "Applies a timeseries feature generator to the incoming timeseries and outputs "
       + "the generated features.";
   }
 
