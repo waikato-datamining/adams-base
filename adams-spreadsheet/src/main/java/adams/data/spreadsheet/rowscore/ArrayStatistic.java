@@ -270,7 +270,8 @@ public class ArrayStatistic
     if (!m_AdditionalRows.isEmpty()) {
       m_AdditionalRows.setMax(sheet.getRowCount());
       rows.addAll(m_AdditionalRows.getIntIndices());
-      rows.remove(rowIndex);
+      if (m_Statistic.getMin() == 1)
+	rows.remove(rowIndex);
     }
     rows.insert(0, rowIndex);
     
