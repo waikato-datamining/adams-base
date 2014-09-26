@@ -192,8 +192,8 @@ public class Scripted
    * @param img		the image to check
    */
   @Override
-  protected void checkImage(BoofCVImageContainer img) {
-    super.checkImage(img);
+  protected void checkData(BoofCVImageContainer img) {
+    super.checkData(img);
 
     m_FeatureGeneratorObject = (AbstractBoofCVFeatureGenerator) m_ScriptObject;
   }

@@ -168,10 +168,10 @@ public abstract class AbstractScriptedFeatureGenerator
    * @param img		the image to check
    */
   @Override
-  protected void checkImage(ImagePlusContainer img) {
+  protected void checkData(ImagePlusContainer img) {
     String	msg;
 
-    super.checkImage(img);
+    super.checkData(img);
     
     msg = initScriptObject();
     if (msg != null)

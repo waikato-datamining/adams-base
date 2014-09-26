@@ -201,7 +201,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    *
    * @param img		the image to check
    */
-  protected void checkImage(T img) {
+  protected void checkData(T img) {
     if (img == null)
       throw new IllegalStateException("No image provided!");
   }
@@ -320,7 +320,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
     List<Object>[]	data;
     int			i;
 
-    checkImage(img);
+    checkData(img);
 
     // create header if necessary
     if (!m_Converter.isInitialized()) {

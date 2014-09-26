@@ -168,10 +168,10 @@ public abstract class AbstractScriptedFeatureGenerator
    * @param img		the image to check
    */
   @Override
-  protected void checkImage(BoofCVImageContainer img) {
+  protected void checkData(BoofCVImageContainer img) {
     String	msg;
 
-    super.checkImage(img);
+    super.checkData(img);
     
     msg = initScriptObject();
     if (msg != null)

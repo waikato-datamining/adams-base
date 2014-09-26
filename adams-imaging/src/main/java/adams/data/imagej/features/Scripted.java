@@ -192,8 +192,8 @@ public class Scripted
    * @param img		the image to check
    */
   @Override
-  protected void checkImage(ImagePlusContainer img) {
-    super.checkImage(img);
+  protected void checkData(ImagePlusContainer img) {
+    super.checkData(img);
 
     m_FeatureGeneratorObject = (AbstractImageJFeatureGenerator) m_ScriptObject;
   }
