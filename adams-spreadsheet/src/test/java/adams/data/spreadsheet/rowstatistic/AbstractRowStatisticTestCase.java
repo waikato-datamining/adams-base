@@ -104,11 +104,11 @@ public abstract class AbstractRowStatisticTestCase
    *
    * @param data	the data to work on
    * @param scheme	the scheme to process the data with
-   * @param column	the column to use
+   * @param row		the row to use
    * @return		the processed data
    */
-  protected SpreadSheet process(SpreadSheet data, int column, AbstractRowStatistic scheme) {
-    return scheme.generate(data, column);
+  protected SpreadSheet process(SpreadSheet data, int row, AbstractRowStatistic scheme) {
+    return scheme.generate(data, row);
   }
 
   /**
@@ -161,7 +161,7 @@ public abstract class AbstractRowStatisticTestCase
     String[]			input;
     AbstractRowStatistic[]	setups;
     AbstractRowStatistic	current;
-    int[]			columns;
+    int[]			rows;
     String[]			output;
     TmpFile[]			outputFiles;
 
@@ -171,9 +171,9 @@ public abstract class AbstractRowStatisticTestCase
     input   = getRegressionInputFiles();
     output  = new String[input.length];
     setups  = getRegressionSetups();
-    columns = getRegressionRows();
+    rows    = getRegressionRows();
     assertEquals("Number of files and setups differ!", input.length, setups.length);
-    assertEquals("Number of setups and columns differ!", setups.length, columns.length);
+    assertEquals("Number of setups and rows differ!", setups.length, rows.length);
 
     // process data
     for (i = 0; i < input.length; i++) {
@@ -183,7 +183,7 @@ public abstract class AbstractRowStatisticTestCase
       current = (AbstractRowStatistic) OptionUtils.shallowCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
-      processed = process(data, columns[i], current);
+      processed = process(data, rows[i], current);
       assertNotNull("Failed to process data?", processed);
 
       output[i] = createOutputFilename(input[i], i);
