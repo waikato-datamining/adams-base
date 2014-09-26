@@ -329,6 +329,7 @@ public class SpreadSheetInsertRowScore
   @Override
   protected String doExecute() {
     String		result;
+    List<Double>	scores;
     SpreadSheet		sheetOld;
     SpreadSheet		sheetNew;
     int			pos;
@@ -336,8 +337,13 @@ public class SpreadSheetInsertRowScore
     Double		score;
     Cell		cell;
 
-    result = null;
-    sheetOld  = (SpreadSheet) m_InputToken.getPayload();
+    result   = null;
+    sheetOld = (SpreadSheet) m_InputToken.getPayload();
+
+    // calc scores
+    scores = new ArrayList<Double>();
+    for (row = 0; row < sheetOld.getRowCount(); row++)
+      scores.add(m_Score.calculateScore(sheetOld, row));
     
     // determine position
     m_Position.setSpreadSheet(sheetOld);
@@ -352,9 +358,9 @@ public class SpreadSheetInsertRowScore
       sheetNew = sheetOld.getClone();
     sheetNew.insertColumn(pos, m_Header);
 
-    // add scores
+    // set scores
     for (row = 0; row < sheetNew.getRowCount(); row++) {
-      score = m_Score.calculateScore(sheetNew, row);
+      score = scores.get(row);
       if (score != null) {
 	cell  = sheetNew.getCell(row, pos);
 	if (cell != null)
@@ -367,6 +373,8 @@ public class SpreadSheetInsertRowScore
 	  getLogger().info(SpreadSheet.getCellPosition(row, pos) + ": failed to calculate score");
       }
     }
+    
+    scores.clear();
     
     m_OutputToken = new Token(sheetNew);
     
