@@ -93,9 +93,9 @@ public abstract class AbstractRowStatisticTestCase
   protected abstract AbstractRowStatistic[] getRegressionSetups();
 
   /**
-   * Returns the columns to use in the regression test.
+   * Returns the rows to use in the regression test.
    *
-   * @return		the columns (0-based)
+   * @return		the rows (0-based)
    */
   protected abstract int[] getRegressionRows();
 
