@@ -1,0 +1,82 @@
+# Project: adams
+# Date: 2014-09-29 12:57:50
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots data points from a spreadsheet in CSV format.\nEach row in the CSV file is treated as separate plot.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetPlotGenerator
+			-generator
+				adams.flow.transformer.plotgenerator.RowWisePlotGenerator
+					-data-columns
+					first-last_1
+					-meta-data-columns
+					last
+	-actor
+		adams.flow.sink.SequencePlotter
+			-writer
+				adams.gui.print.NullWriter
+			-comparison
+			X_AND_Y
+			-paintlet
+				adams.gui.visualization.sequence.LinePaintlet
+			-overlay-paintlet
+				adams.gui.visualization.sequence.CirclePaintlet
+			-marker-paintlet
+				adams.flow.sink.sequenceplotter.NoMarkers
+			-error-paintlet
+				adams.flow.sink.sequenceplotter.SimpleErrorPaintlet
+					-plot-type
+					BOX
+			-mouse-click-action
+				adams.flow.sink.sequenceplotter.NullClickAction
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-overlay-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-title
+			bolts
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					attributes
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					40
+					-custom-format
+					0
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					values
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					60
+					-custom-format
+					0.0
+			-plot-updater
+				adams.flow.sink.sequenceplotter.SimplePlotUpdater
+			-post-processor
+				adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
