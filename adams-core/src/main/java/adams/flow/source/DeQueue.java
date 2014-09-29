@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
+import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -231,7 +232,7 @@ public class DeQueue
     
     result = null;
     
-    if (!getStorageHandler().getStorage().has(m_StorageName))
+    if (!QueueHelper.hasQueue(this, m_StorageName))
       result = "Queue '" + m_StorageName + "' not available from internal storage!";
     
     return result;
@@ -259,7 +260,7 @@ public class DeQueue
     StorageQueueHandler	queue;
 
     result = null;
-    queue  = (StorageQueueHandler) getStorageHandler().getStorage().get(m_StorageName);
+    queue  = QueueHelper.getQueue(this, m_StorageName);
     
     while ((result == null) && !m_Stopped) {
       try {

@@ -22,8 +22,8 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
-import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
+import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -178,7 +178,8 @@ public class EnQueue
    */
   @Override
   public void input(Token token) {
-    ((StorageQueueHandler) getStorageHandler().getStorage().get(m_StorageName)).add(token.getPayload());
+    if (QueueHelper.hasQueue(this, m_StorageName))
+      QueueHelper.enqueue(this, m_StorageName, token.getPayload());
   }
 
   /**

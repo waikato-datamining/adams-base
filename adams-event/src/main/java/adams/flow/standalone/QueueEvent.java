@@ -33,6 +33,7 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.EventRunnable;
 import adams.flow.core.MutableActorHandler;
+import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
 
 /**
@@ -126,7 +127,7 @@ public class QueueEvent
       StorageQueueHandler	queue;
       Token			token;
 
-      queue = (StorageQueueHandler) getOwner().getStorageHandler().getStorage().get(getOwner().getStorageName());
+      queue = QueueHelper.getQueue(getOwner(), getOwner().getStorageName());
 
       if (queue != null) {
 	while (!m_Stopped) {
