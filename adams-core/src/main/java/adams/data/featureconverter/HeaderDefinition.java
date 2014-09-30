@@ -135,6 +135,18 @@ public class HeaderDefinition
   }
   
   /**
+   * Inserts the definition at the specified position.
+   * 
+   * @param index	the index to insert the definition
+   * @param name	the feature name
+   * @param type	the data type of the feature
+   */
+  public void add(int index, String name, DataType type) {
+    m_Names.add(index, name);
+    m_Types.add(index, type);
+  }
+  
+  /**
    * Adds the definition at the end.
    * 
    * @param name	the feature name
