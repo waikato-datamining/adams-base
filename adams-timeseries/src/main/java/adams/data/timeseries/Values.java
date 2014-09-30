@@ -45,6 +45,16 @@ import adams.data.report.DataType;
  * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
+ * <pre>-add-database-id &lt;boolean&gt; (property: addDatabaseID)
+ * &nbsp;&nbsp;&nbsp;If enabled, the database ID of the container gets added to the data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-add-id &lt;boolean&gt; (property: addID)
+ * &nbsp;&nbsp;&nbsp;If enabled, the ID of the container gets added to the data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
  * &nbsp;&nbsp;&nbsp;The fields to add to the output.
  * &nbsp;&nbsp;&nbsp;default: 

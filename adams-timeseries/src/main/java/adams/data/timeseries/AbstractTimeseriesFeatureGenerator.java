@@ -52,6 +52,12 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
   /** the feature converter to use. */
   protected AbstractFeatureConverter m_Converter;
   
+  /** whether to add the database ID. */
+  protected boolean m_AddDatabaseID;
+  
+  /** whether to add the container ID. */
+  protected boolean m_AddID;
+  
   /** fields to add to the output data. */
   protected Field[] m_Fields;
 
@@ -68,6 +74,14 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
     m_OptionManager.add(
 	    "converter", "converter",
 	    new SpreadSheetFeatureConverter());
+
+    m_OptionManager.add(
+	    "add-database-id", "addDatabaseID",
+	    false);
+
+    m_OptionManager.add(
+	    "add-id", "addID",
+	    false);
 
     m_OptionManager.add(
 	    "field", "fields",
@@ -116,6 +130,64 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
    */
   public String converterTipText() {
     return "The feature converter to use to produce the output data.";
+  }
+
+  /**
+   * Sets whether to add the database ID.
+   *
+   * @param value	true if to add database ID
+   */
+  public void setAddDatabaseID(boolean value) {
+    m_AddDatabaseID = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the database ID.
+   *
+   * @return		true if to add database ID
+   */
+  public boolean getAddDatabaseID() {
+    return m_AddDatabaseID;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addDatabaseIDTipText() {
+    return "If enabled, the database ID of the container gets added to the data.";
+  }
+
+  /**
+   * Sets whether to add the ID.
+   *
+   * @param value	true if to add ID
+   */
+  public void setAddID(boolean value) {
+    m_AddID = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the ID.
+   *
+   * @return		true if to add ID
+   */
+  public boolean getAddID() {
+    return m_AddID;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addIDTipText() {
+    return "If enabled, the ID of the container gets added to the data.";
   }
 
   /**
@@ -226,6 +298,14 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
     
     result = header;
     
+    // ID
+    if (m_AddID)
+      header.add(0, "ID", DataType.STRING);
+    
+    // database ID
+    if (m_AddDatabaseID)
+      header.add(0, "DatabaseID", DataType.NUMERIC);
+    
     // notes
     for (i = 0; i < m_Notes.length; i++)
       header.add(m_Notes[i].getValue(), DataType.STRING);
@@ -256,6 +336,14 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
     int		i;
     String	valueStr;
     Report	report;
+    
+    // ID
+    if (m_AddID)
+      data.add(0, timeseries.getID());
+    
+    // database ID
+    if (m_AddDatabaseID)
+      data.add(0, timeseries.getDatabaseID());
     
     // notes
     for (i = 0; i < m_Notes.length; i++) {
