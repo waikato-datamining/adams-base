@@ -15,7 +15,7 @@
 
 /**
  * ClassOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -203,12 +203,14 @@ public class ClassOption
 	method.invoke(getOptionHandler(), Array.get(value, 0));
     }
     catch (Exception e) {
-      System.err.println(
-	  "Error setting nested values for "
-	  + getOptionHandler().getClass().getName() + "/"
-	  + getClass().getName() + "/"
-	  + "-" + getCommandline() + ": " + values);
-      e.printStackTrace();
+      if (!m_Owner.isQuiet()) {
+	System.err.println(
+	    "Error setting nested values for "
+		+ getOptionHandler().getClass().getName() + "/"
+		+ getClass().getName() + "/"
+		+ "-" + getCommandline() + ": " + values);
+	e.printStackTrace();
+      }
       return;
     }
   }
@@ -261,8 +263,10 @@ public class ClassOption
 	  ((OptionHandler) value).cleanUpOptions();
 	}
 	catch (Exception e) {
-	  System.err.println("Error calling cleanUp()/" + getProperty() + ":");
-	  e.printStackTrace();
+	  if (!m_Owner.isQuiet()) {
+	    System.err.println("Error calling cleanUp()/" + getProperty() + ":");
+	    e.printStackTrace();
+	  }
 	}
       }
     }

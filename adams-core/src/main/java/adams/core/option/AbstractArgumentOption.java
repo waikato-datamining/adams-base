@@ -232,15 +232,17 @@ public abstract class AbstractArgumentOption
 
     method = getWriteMethod();
     if (method == null) {
-      System.err.println(
-	  "Failed to obtain write method for option '" + getCommandline() + "/" + getProperty()
-	  + ", cannot set variable value ('" + m_Variable + "')!");
+      if (!m_Owner.isQuiet())
+	System.err.println(
+	    "Failed to obtain write method for option '" + getCommandline() + "/" + getProperty()
+	    + ", cannot set variable value ('" + m_Variable + "')!");
       return "Write method not found";
     }
 
     vars = getOwner().getVariables();
     if (!vars.has(m_Variable)) {
-      System.err.println("Variable '" + m_Variable + "' is not defined (" + getOwner().getVariables().hashCode() + ")!");
+      if (!m_Owner.isQuiet())
+	System.err.println("Variable '" + m_Variable + "' is not defined (" + getOwner().getVariables().hashCode() + ")!");
       return "Variable '" + m_Variable + "' not defined (" + getOwner().getVariables().hashCode() + ")";
     }
 
@@ -249,7 +251,8 @@ public abstract class AbstractArgumentOption
     else
       value = vars.get(m_Variable);
     if (value == null) {
-      System.err.println("Variable '" + m_Variable + "' has no value associated!");
+      if (!m_Owner.isQuiet())
+	System.err.println("Variable '" + m_Variable + "' has no value associated!");
       return "Variable '" + m_Variable + "' has no value associated";
     }
 
@@ -262,10 +265,12 @@ public abstract class AbstractArgumentOption
 	return null;
       }
       catch (Exception e) {
-	System.err.println(
-	    "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
-	e.printStackTrace();
-	System.err.println("Wrong class? Attempting to set value using string representation instead!");
+	if (!m_Owner.isQuiet()) {
+	  System.err.println(
+	      "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
+	  e.printStackTrace();
+	  System.err.println("Wrong class? Attempting to set value using string representation instead!");
+	}
 	value = vars.get(m_Variable);
       }
     }
@@ -287,13 +292,15 @@ public abstract class AbstractArgumentOption
       m_VariableModified = false;
     }
     catch (Exception e) {
-      if (value.getClass().isArray())
-	System.err.println(
-	    "Failed to set value for variable '" + m_Variable + "' (" + Utils.getArrayClass(value.getClass()).getName() + "): " + value);
-      else
-	System.err.println(
-	    "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
-      e.printStackTrace();
+      if (!m_Owner.isQuiet()) {
+	if (value.getClass().isArray())
+	  System.err.println(
+	      "Failed to set value for variable '" + m_Variable + "' (" + Utils.getArrayClass(value.getClass()).getName() + "): " + value);
+	else
+	  System.err.println(
+	      "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
+	e.printStackTrace();
+      }
       return "Failed to set value for variable '" + m_Variable + "'";
     }
 

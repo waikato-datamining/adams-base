@@ -67,6 +67,9 @@ public class OptionManager
   /** the Variables instance to use for resolving variables. */
   protected Variables m_Variables;
   
+  /** whether to suppress error messages. */
+  protected boolean m_Quiet;
+  
   /**
    * Initializes the manager.
    *
@@ -81,6 +84,7 @@ public class OptionManager
     m_PropertyIndex    = new HashMap<String,Integer>();
     m_ThrowExceptions  = false;
     m_Variables        = null;
+    m_Quiet            = false;
   }
 
   /**
@@ -140,6 +144,24 @@ public class OptionManager
    */
   public boolean getThrowExceptions() {
     return m_ThrowExceptions;
+  }
+  
+  /**
+   * Sets whether to suppress error messages.
+   * 
+   * @param value	true if to suppress error messages
+   */
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+  }
+  
+  /**
+   * Returns whether to suppress error messages.
+   * 
+   * @return		true if to suppress error messages
+   */
+  public boolean isQuiet() {
+    return m_Quiet;
   }
 
   /**
@@ -617,7 +639,8 @@ public class OptionManager
         method.invoke(option.getOptionHandler(), new Object[]{option.getDefaultValue()});
       }
       catch (Exception e) {
-        System.err.println("Error setting default value for '" + m_Owner.getClass().getName() + "/" + option.getProperty() + "':");
+	if (!m_Quiet)
+	  System.err.println("Error setting default value for '" + m_Owner.getClass().getName() + "/" + option.getProperty() + "':");
         handleError(e);
       }
     }
@@ -952,7 +975,8 @@ public class OptionManager
       }
     }
     catch (Exception e) {
-      System.err.println("Failed to traverse non-ADAMS object: path=" + path + ", class=" + obj.getClass() + ", object=" + obj + ", exeption=" + e);
+      if (!m_Quiet)
+	System.err.println("Failed to traverse non-ADAMS object: path=" + path + ", class=" + obj.getClass() + ", object=" + obj + ", exeption=" + e);
     }
   }
 

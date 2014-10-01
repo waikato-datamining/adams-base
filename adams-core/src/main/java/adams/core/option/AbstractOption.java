@@ -15,7 +15,7 @@
 
 /*
  * AbstractOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -89,9 +89,10 @@ public abstract class AbstractOption
 	m_DefaultValue = getDescriptor().getReadMethod().invoke(getOptionHandler(), new Object[]{});
       }
       catch (Exception e) {
-	System.err.println(
-	    "Cannot determine default value: "
-	    + getOptionHandler().getClass().getName() + "." + getProperty());
+	if (!m_Owner.isQuiet())
+	  System.err.println(
+	      "Cannot determine default value: "
+		  + getOptionHandler().getClass().getName() + "." + getProperty());
       }
     }
   }
@@ -167,8 +168,10 @@ public abstract class AbstractOption
 	result = m_DefaultValue;
     }
     catch (Exception e) {
-      System.err.println("Error getting current value of '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
-      e.printStackTrace();
+      if (!m_Owner.isQuiet()) {
+	System.err.println("Error getting current value of '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
+	e.printStackTrace();
+      }
       result = m_DefaultValue;
     }
 
@@ -191,8 +194,10 @@ public abstract class AbstractOption
       result = true;
     }
     catch (Exception e) {
-      System.err.println("Error setting value for '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
-      e.printStackTrace();
+      if (!m_Owner.isQuiet()) {
+	System.err.println("Error setting value for '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
+	e.printStackTrace();
+      }
       result = false;
     }
     
@@ -235,9 +240,10 @@ public abstract class AbstractOption
     catch (Exception e) {
       // ignored, means that there's no tooltip available
       result = null;
-      System.err.println(
-	  "Missing tooltip: " + getOptionHandler().getClass().getName()
-	  + "." + getProperty() + TOOLTIP_SUFFIX);
+      if (!m_Owner.isQuiet())
+	System.err.println(
+	    "Missing tooltip: " + getOptionHandler().getClass().getName()
+	    + "." + getProperty() + TOOLTIP_SUFFIX);
     }
 
     return result;
@@ -256,8 +262,10 @@ public abstract class AbstractOption
     else
       result = null;
 
-    if (result == null)
-      System.err.println("No read method for '" + getProperty() + "'??");
+    if (result == null) {
+      if (!m_Owner.isQuiet())
+	System.err.println("No read method for '" + getProperty() + "'??");
+    }
 
     return result;
   }
@@ -275,8 +283,10 @@ public abstract class AbstractOption
     else
       result = null;
 
-    if (result == null)
-      System.err.println("No write method for '" + getProperty() + "'??");
+    if (result == null) {
+      if (!m_Owner.isQuiet())
+	System.err.println("No write method for '" + getProperty() + "'??");
+    }
 
     return result;
   }

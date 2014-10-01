@@ -129,15 +129,18 @@ public class CustomHooksOption
 
     method = OptionUtils.getToStringHook(getBaseClass());
     if (method == null) {
-      System.err.println("No 'toString' method defined for base class '" + Utils.getArrayClass(getBaseClass()).getName() + "'?");
+      if (!m_Owner.isQuiet())
+	System.err.println("No 'toString' method defined for base class '" + Utils.getArrayClass(getBaseClass()).getName() + "'?");
     }
     else {
       try {
 	result = (String) method.invoke(getOptionHandler(), new Object[]{this, obj});
       }
       catch (Exception e) {
-	System.err.println("Error obtaining string representation for '" + getProperty() + "' (" + Utils.getArrayClass(obj.getClass()).getName() + "):");
-	e.printStackTrace();
+	if (!m_Owner.isQuiet()) {
+	  System.err.println("Error obtaining string representation for '" + getProperty() + "' (" + Utils.getArrayClass(obj.getClass()).getName() + "):");
+	  e.printStackTrace();
+	}
       }
     }
 
