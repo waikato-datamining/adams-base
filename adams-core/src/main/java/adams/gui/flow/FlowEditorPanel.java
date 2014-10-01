@@ -341,6 +341,7 @@ public class FlowEditorPanel
     m_RecentFilesHandler  = null;
     m_LastVariableSearch  = "";
     m_FileChooser         = new FlowFileChooser();
+    m_FileChooser.setMultiSelectionEnabled(true);
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")));
     m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_ExportDialog        = null;
