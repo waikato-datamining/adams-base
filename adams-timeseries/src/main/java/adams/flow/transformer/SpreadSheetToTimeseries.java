@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetToTimeseries.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -59,7 +59,7 @@ import adams.data.timeseries.TimeseriesPoint;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetToTimeseries
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -85,19 +85,19 @@ import adams.data.timeseries.TimeseriesPoint;
  * &nbsp;&nbsp;&nbsp;The column to use for grouping the timeseries data points; if left empty 
  * &nbsp;&nbsp;&nbsp;all rows are added to the same timeseries.
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-column-timestamp &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: columnTimestamp)
  * &nbsp;&nbsp;&nbsp;The column that contains the timestamp for the data points.
  * &nbsp;&nbsp;&nbsp;default: 2
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-column-value &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: columnValue)
  * &nbsp;&nbsp;&nbsp;The column that contains the value of the data points.
  * &nbsp;&nbsp;&nbsp;default: 3
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  <!-- options-end -->
@@ -162,8 +162,8 @@ public class SpreadSheetToTimeseries
     String	result;
     
     result  = QuickInfoHelper.toString(this, "columnID", m_ColumnID, "ID: ");
-    result += QuickInfoHelper.toString(this, "columnTimestamp", m_ColumnID, ", Timestamp: ");
-    result += QuickInfoHelper.toString(this, "columnValue", m_ColumnID, ", Value: ");
+    result += QuickInfoHelper.toString(this, "columnTimestamp", m_ColumnTimestamp, ", Timestamp: ");
+    result += QuickInfoHelper.toString(this, "columnValue", m_ColumnValue, ", Value: ");
     
     return result;
   }
