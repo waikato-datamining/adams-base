@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesDisplay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -65,7 +65,7 @@ import adams.gui.visualization.timeseries.TimeseriesExplorer;
  * &nbsp;&nbsp;&nbsp;default: TimeseriesDisplay
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -149,6 +149,21 @@ import adams.gui.visualization.timeseries.TimeseriesExplorer;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-fix-y &lt;boolean&gt; (property: fixY)
+ * &nbsp;&nbsp;&nbsp;If enabled, fixed minimum&#47;maximum are used for the Y axis.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-min-y &lt;double&gt; (property: minY)
+ * &nbsp;&nbsp;&nbsp;The minimum for the Y axis, if fixed.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * </pre>
+ * 
+ * <pre>-max-y &lt;double&gt; (property: maxY)
+ * &nbsp;&nbsp;&nbsp;The maximum for the Y axis, if fixed.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -191,6 +206,10 @@ public class TimeseriesDisplay
       m_Panel.getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(m_Periodicity);
       if (m_Panel.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
 	((PeriodicityTickGenerator) m_Panel.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(m_Periodicity);
+      if (m_FixY) {
+	m_Panel.getTimeseriesPanel().setMinY(m_MinY);
+	m_Panel.getTimeseriesPanel().setMaxY(m_MaxY);
+      }
       add(m_Panel, BorderLayout.CENTER);
     }
 
@@ -254,6 +273,15 @@ public class TimeseriesDisplay
   /** whether to display the zoom overview. */
   protected boolean m_ZoomOverview;
   
+  /** whether to fix the Y axis. */
+  protected boolean m_FixY;
+
+  /** the minimum for the Y axis. */
+  protected double m_MinY;
+
+  /** the maximum for the Y axis. */
+  protected double m_MaxY;
+  
   /**
    * Returns a string describing the object.
    *
@@ -294,6 +322,18 @@ public class TimeseriesDisplay
     m_OptionManager.add(
 	    "zoom-overview", "zoomOverview",
 	    false);
+
+    m_OptionManager.add(
+	    "fix-y", "fixY",
+	    false);
+
+    m_OptionManager.add(
+	    "min-y", "minY",
+	    0.0);
+
+    m_OptionManager.add(
+	    "max-y", "maxY",
+	    1.0);
   }
 
   /**
@@ -539,6 +579,93 @@ public class TimeseriesDisplay
   }
 
   /**
+   * Sets whether to fix the Y axis.
+   *
+   * @param value 	if true then the Y axis gets fixed
+   */
+  public void setFixY(boolean value) {
+    m_FixY = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the Y axis is fixed.
+   *
+   * @return 		true if the Y axis is fixed
+   */
+  public boolean getFixY() {
+    return m_FixY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fixYTipText() {
+    return "If enabled, fixed minimum/maximum are used for the Y axis.";
+  }
+
+  /**
+   * Sets the minimum for the Y axis (if fixed).
+   *
+   * @param value 	the minimum
+   */
+  public void setMinY(double value) {
+    m_MinY = value;
+    reset();
+  }
+
+  /**
+   * Returns the minimum for the Y axis (if fixed).
+   *
+   * @return 		the minimum
+   */
+  public double getMinY() {
+    return m_MinY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minYTipText() {
+    return "The minimum for the Y axis, if fixed.";
+  }
+
+  /**
+   * Sets the maximum for the Y axis (if fixed).
+   *
+   * @param value 	the maximum
+   */
+  public void setMaxY(double value) {
+    m_MaxY = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum for the Y axis (if fixed).
+   *
+   * @return 		the maximum
+   */
+  public double getMaxY() {
+    return m_MaxY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxYTipText() {
+    return "The maximum for the Y axis, if fixed.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -567,6 +694,10 @@ public class TimeseriesDisplay
     result.getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(m_Periodicity);
     if (result.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
       ((PeriodicityTickGenerator) result.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(m_Periodicity);
+    if (m_FixY) {
+      result.getTimeseriesPanel().setMinY(m_MinY);
+      result.getTimeseriesPanel().setMaxY(m_MaxY);
+    }
 
     return result;
   }

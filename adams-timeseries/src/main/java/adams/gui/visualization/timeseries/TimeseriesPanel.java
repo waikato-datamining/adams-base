@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -131,6 +131,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   
   /** the export dialog. */
   protected TimeseriesExportDialog m_ExportDialog;
+  
+  /** the minimum Y to use. */
+  protected Double m_MinY;
+  
+  /** the maximum Y to use. */
+  protected Double m_MaxY;
 
   /**
    * Initializes the panel without title.
@@ -157,6 +163,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     m_AdjustToVisibleData = true;
     m_HistogramSetup      = null;
+    m_MinY                = null;
+    m_MaxY                = null;
   }
 
   /**
@@ -350,6 +358,44 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
+   * Sets the fixed minimum for the Y axis.
+   * 
+   * @param value	the minimum, null to automatically calculate
+   */
+  public void setMinY(Double value) {
+    m_MinY = value;
+    update();
+  }
+  
+  /**
+   * Returns the fixed minimum for the Y axis.
+   * 
+   * @return		the minimum, null if automatically calculated
+   */
+  public Double getMinY() {
+    return m_MinY;
+  }
+
+  /**
+   * Sets the fixed maximum for the Y axis.
+   * 
+   * @param value	the maximum, null to automatically calculate
+   */
+  public void setMaxY(Double value) {
+    m_MaxY = value;
+    update();
+  }
+  
+  /**
+   * Returns the fixed maximum for the Y axis.
+   * 
+   * @return		the maximum, null if automatically calculated
+   */
+  public Double getMaxY() {
+    return m_MaxY;
+  }
+  
+  /**
    * Returns true if the paintlets can be executed.
    *
    * @param g		the graphics context
@@ -374,8 +420,14 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     minX = Double.MAX_VALUE;
     maxX = -Double.MAX_VALUE;
-    minY = Double.MAX_VALUE;
-    maxY = -Double.MAX_VALUE;
+    if (m_MinY != null)
+      minY = m_MinY;
+    else
+      minY = Double.MAX_VALUE;
+    if (m_MaxY != null)
+      maxY = m_MaxY;
+    else
+      maxY = -Double.MAX_VALUE;
 
     for (i = 0; i < getContainerManager().count(); i++) {
       if (m_AdjustToVisibleData) {
@@ -391,8 +443,10 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       minX = Math.min(minX, points.get(0).getTimestamp().getTime());
       maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
       for (TimeseriesPoint point: points) {
-	maxY = Math.max(maxY, point.getValue());
-	minY = Math.min(minY, point.getValue());
+	if (m_MaxY == null)
+	  maxY = Math.max(maxY, point.getValue());
+	if (m_MinY == null)
+	  minY = Math.min(minY, point.getValue());
       }
     }
 
