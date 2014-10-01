@@ -80,6 +80,7 @@ import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.CheckVariableUsage;
 import adams.flow.processor.ManageInteractiveActors;
+import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;

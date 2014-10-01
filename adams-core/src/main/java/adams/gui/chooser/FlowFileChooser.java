@@ -18,7 +18,7 @@
  * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.flow;
+package adams.gui.chooser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,9 +31,6 @@ import adams.data.io.input.FlowReader;
 import adams.data.io.output.AbstractFlowWriter;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
-import adams.gui.chooser.AbstractConfigurableExtensionFileFilterFileChooser;
-import adams.gui.chooser.ExtensionFileFilterWithClass;
-import adams.gui.chooser.FileTypeDeterminingFileChooser;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers

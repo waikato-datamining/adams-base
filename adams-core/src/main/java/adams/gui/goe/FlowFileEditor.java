@@ -33,11 +33,11 @@ import adams.core.io.FlowFile;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
+import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.flow.FlowEditorDialog;
-import adams.gui.flow.FlowFileChooser;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 
 /**

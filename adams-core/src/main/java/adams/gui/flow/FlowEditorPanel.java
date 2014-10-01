@@ -68,6 +68,7 @@ import adams.gui.action.ToggleAction;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
