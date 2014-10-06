@@ -125,7 +125,7 @@ import adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions;
  * 
  * <pre>-axis-x &lt;adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -width 40
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -type DATE -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -width 40
  * </pre>
  * 
  * <pre>-axis-y &lt;adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions&gt; (property: axisY)
@@ -315,7 +315,7 @@ public class TimeseriesDisplay
     PeriodicityTickGenerator		tick;
 
     result = new DefaultTimeseriesXAxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DATE);
     result.setLabel("time");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
