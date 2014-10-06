@@ -46,6 +46,7 @@ import javax.swing.event.TableModelListener;
 
 import adams.core.Properties;
 import adams.core.Range;
+import adams.core.base.BaseDateTime;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -137,6 +138,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   
   /** the maximum Y to use. */
   protected Double m_MaxY;
+  
+  /** the minimum X to use. */
+  protected BaseDateTime m_MinX;
+  
+  /** the maximum X to use. */
+  protected BaseDateTime m_MaxX;
 
   /**
    * Initializes the panel without title.
@@ -165,6 +172,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_HistogramSetup      = null;
     m_MinY                = null;
     m_MaxY                = null;
+    m_MinX                = null;
+    m_MaxX                = null;
   }
 
   /**
@@ -394,6 +403,44 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   public Double getMaxY() {
     return m_MaxY;
   }
+
+  /**
+   * Sets the fixed minimum for the X axis.
+   * 
+   * @param value	the minimum, null to automatically calculate
+   */
+  public void setMinX(BaseDateTime value) {
+    m_MinX = value;
+    update();
+  }
+  
+  /**
+   * Returns the fixed minimum for the X axis.
+   * 
+   * @return		the minimum, null if automatically calculated
+   */
+  public BaseDateTime getMinX() {
+    return m_MinX;
+  }
+
+  /**
+   * Sets the fixed maximum for the X axis.
+   * 
+   * @param value	the maximum, null to automatically calculate
+   */
+  public void setMaxX(BaseDateTime value) {
+    m_MaxX = value;
+    update();
+  }
+  
+  /**
+   * Returns the fixed maximum for the X axis.
+   * 
+   * @return		the maximum, null if automatically calculated
+   */
+  public BaseDateTime getMaxX() {
+    return m_MaxX;
+  }
   
   /**
    * Returns true if the paintlets can be executed.
@@ -418,8 +465,16 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     double 				maxY;
     int					i;
 
-    minX = Double.MAX_VALUE;
-    maxX = -Double.MAX_VALUE;
+    // X
+    if (m_MinX != null)
+      minX = m_MinX.dateValue().getTime();
+    else
+      minX = Double.MAX_VALUE;
+    if (m_MaxX != null)
+      maxX = m_MaxX.dateValue().getTime();
+    else
+      maxX = -Double.MAX_VALUE;
+    // Y
     if (m_MinY != null)
       minY = m_MinY;
     else
@@ -440,8 +495,10 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	continue;
 
       // determine min/max
-      minX = Math.min(minX, points.get(0).getTimestamp().getTime());
-      maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
+      if (m_MinX == null)
+	minX = Math.min(minX, points.get(0).getTimestamp().getTime());
+      if (m_MaxX == null)
+	maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
       for (TimeseriesPoint point: points) {
 	if (m_MaxY == null)
 	  maxY = Math.max(maxY, point.getValue());
