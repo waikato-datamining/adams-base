@@ -14,8 +14,8 @@
  */
 
 /*
- * TimeseriesReportDbReaderTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesReportDbUpdaterTest.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -35,7 +35,7 @@ import adams.flow.core.AbstractActor;
  * @author fracpete
  * @version $Revision$
  */
-public class TimeseriesReportDbReaderTest
+public class TimeseriesReportDbUpdaterTest
   extends AbstractFlowTest {
 
   /**
@@ -43,7 +43,7 @@ public class TimeseriesReportDbReaderTest
    *
    * @param name	the name of the test
    */
-  public TimeseriesReportDbReaderTest(String name) {
+  public TimeseriesReportDbUpdaterTest(String name) {
     super(name);
   }
 
@@ -54,7 +54,7 @@ public class TimeseriesReportDbReaderTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(TimeseriesReportDbReaderTest.class);
+    return new TestSuite(TimeseriesReportDbUpdaterTest.class);
   }
 
   /**
