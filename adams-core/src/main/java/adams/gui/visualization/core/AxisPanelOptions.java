@@ -15,7 +15,7 @@
 
 /**
  * AxisPanelOptions.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -100,7 +100,8 @@ import adams.gui.visualization.core.plot.Axis;
  * @version $Revision$
  */
 public class AxisPanelOptions
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements PlotPanelAxisOptions {
 
   /** for serialization. */
   private static final long serialVersionUID = 1675594412675760089L;
