@@ -22,3 +22,12 @@ adams.data.timeseries.AbstractTimeseriesFeatureGenerator=\
 # the forecaster generators
 adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
   adams.flow.source.wekaforecastersetup
+
+# the axis panel options for timeseries (x axis)
+adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions=\
+  adams.gui.visualization.timeseries
+
+# the axis panel options for timeseries (y axis)
+adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions=\
+  adams.gui.visualization.timeseries
+  

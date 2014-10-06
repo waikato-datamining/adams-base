@@ -18,7 +18,7 @@ adams.flow.control.Flow
 			-writer
 				adams.gui.print.NullWriter
 			-axis-x
-				adams.gui.visualization.core.AxisPanelOptions
+				adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
 					-label
 					time
 					-tick-generator
@@ -26,7 +26,7 @@ adams.flow.control.Flow
 					-width
 					40
 			-axis-y
-				adams.gui.visualization.core.AxisPanelOptions
+				adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions
 					-label
 					value
 					-tick-generator

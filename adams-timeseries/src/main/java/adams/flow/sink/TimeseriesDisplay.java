@@ -26,20 +26,24 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import adams.data.DecimalFormatString;
 import adams.data.timeseries.PeriodicityType;
 import adams.data.timeseries.Timeseries;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
-import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
-import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions;
+import adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions;
 import adams.gui.visualization.timeseries.TimeseriesContainer;
 import adams.gui.visualization.timeseries.TimeseriesContainerManager;
 import adams.gui.visualization.timeseries.TimeseriesExplorer;
+import adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions;
+import adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions;
 
 /**
  <!-- globalinfo-start -->
@@ -119,19 +123,14 @@ import adams.gui.visualization.timeseries.TimeseriesExplorer;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
+ * <pre>-axis-x &lt;adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label time -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -width 40
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -width 40
  * </pre>
  * 
- * <pre>-axis-y &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisY)
+ * <pre>-axis-y &lt;adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions&gt; (property: axisY)
  * &nbsp;&nbsp;&nbsp;The setup for the Y axis.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60
- * </pre>
- * 
- * <pre>-periodicity &lt;NONE|YEARLY|QUARTERLY|MONTHLY|WEEKLY|DAILY|HALF_DAILY|HOURLY|HALF_HOURLY|PER_MINUTE&gt; (property: periodicity)
- * &nbsp;&nbsp;&nbsp;The type of periodicity to use for the background.
- * &nbsp;&nbsp;&nbsp;default: NONE
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
  * 
  * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
@@ -147,21 +146,6 @@ import adams.gui.visualization.timeseries.TimeseriesExplorer;
  * <pre>-zoom-overview &lt;boolean&gt; (property: zoomOverview)
  * &nbsp;&nbsp;&nbsp;If enabled, a zoom overview panel gets displayed as well.
  * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-fix-y &lt;boolean&gt; (property: fixY)
- * &nbsp;&nbsp;&nbsp;If enabled, fixed minimum&#47;maximum are used for the Y axis.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-min-y &lt;double&gt; (property: minY)
- * &nbsp;&nbsp;&nbsp;The minimum for the Y axis, if fixed.
- * &nbsp;&nbsp;&nbsp;default: 0.0
- * </pre>
- * 
- * <pre>-max-y &lt;double&gt; (property: maxY)
- * &nbsp;&nbsp;&nbsp;The maximum for the Y axis, if fixed.
- * &nbsp;&nbsp;&nbsp;default: 1.0
  * </pre>
  * 
  <!-- options-end -->
@@ -203,13 +187,6 @@ public class TimeseriesDisplay
       m_Panel.setZoomOverviewPanelVisible(m_ZoomOverview);
       m_AxisX.configure(m_Panel.getTimeseriesPanel().getPlot(), Axis.BOTTOM);
       m_AxisY.configure(m_Panel.getTimeseriesPanel().getPlot(), Axis.LEFT);
-      m_Panel.getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(m_Periodicity);
-      if (m_Panel.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
-	((PeriodicityTickGenerator) m_Panel.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(m_Periodicity);
-      if (m_FixY) {
-	m_Panel.getTimeseriesPanel().setMinY(m_MinY);
-	m_Panel.getTimeseriesPanel().setMaxY(m_MaxY);
-      }
       add(m_Panel, BorderLayout.CENTER);
     }
 
@@ -256,13 +233,10 @@ public class TimeseriesDisplay
   private static final long serialVersionUID = 2505818295695863125L;
 
   /** the options for the X axis. */
-  protected AxisPanelOptions m_AxisX;
+  protected TimeseriesXAxisPanelOptions m_AxisX;
 
   /** the options for the Y axis. */
-  protected AxisPanelOptions m_AxisY;
-
-  /** the periodicity to use. */
-  protected PeriodicityType m_Periodicity;
+  protected TimeseriesYAxisPanelOptions m_AxisY;
 
   /** the color provider to use. */
   protected AbstractColorProvider m_ColorProvider;
@@ -272,15 +246,6 @@ public class TimeseriesDisplay
 
   /** whether to display the zoom overview. */
   protected boolean m_ZoomOverview;
-  
-  /** whether to fix the Y axis. */
-  protected boolean m_FixY;
-
-  /** the minimum for the Y axis. */
-  protected double m_MinY;
-
-  /** the maximum for the Y axis. */
-  protected double m_MaxY;
   
   /**
    * Returns a string describing the object.
@@ -308,10 +273,6 @@ public class TimeseriesDisplay
 	    getDefaultAxisY());
 
     m_OptionManager.add(
-	    "periodicity", "periodicity",
-	    PeriodicityType.NONE);
-
-    m_OptionManager.add(
 	    "color-provider", "colorProvider",
 	    new DefaultColorProvider());
 
@@ -322,18 +283,6 @@ public class TimeseriesDisplay
     m_OptionManager.add(
 	    "zoom-overview", "zoomOverview",
 	    false);
-
-    m_OptionManager.add(
-	    "fix-y", "fixY",
-	    false);
-
-    m_OptionManager.add(
-	    "min-y", "minY",
-	    0.0);
-
-    m_OptionManager.add(
-	    "max-y", "maxY",
-	    1.0);
   }
 
   /**
@@ -361,11 +310,11 @@ public class TimeseriesDisplay
    *
    * @return 		the setup
    */
-  protected AxisPanelOptions getDefaultAxisX() {
-    AxisPanelOptions		result;
-    PeriodicityTickGenerator	tick;
+  protected TimeseriesXAxisPanelOptions getDefaultAxisX() {
+    DefaultTimeseriesXAxisPanelOptions	result;
+    PeriodicityTickGenerator		tick;
 
-    result = new AxisPanelOptions();
+    result = new DefaultTimeseriesXAxisPanelOptions();
     result.setType(Type.ABSOLUTE);
     result.setLabel("time");
     result.setShowGridLines(true);
@@ -385,19 +334,21 @@ public class TimeseriesDisplay
    *
    * @return 		the setup
    */
-  protected AxisPanelOptions getDefaultAxisY() {
-    AxisPanelOptions	result;
-    SimpleTickGenerator	tick;
+  protected TimeseriesYAxisPanelOptions getDefaultAxisY() {
+    DefaultTimeseriesYAxisPanelOptions	result;
+    FancyTickGenerator			tick;
 
-    result = new AxisPanelOptions();
+    result = new DefaultTimeseriesYAxisPanelOptions();
     result.setType(Type.ABSOLUTE);
     result.setLabel("value");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
+    result.setNthValueToShow(2);
     result.setWidth(60);
     result.setTopMargin(0.0);
     result.setBottomMargin(0.0);
-    tick = new SimpleTickGenerator();
+    result.setCustomFormat(new DecimalFormatString("0.0"));
+    tick = new FancyTickGenerator();
     tick.setNumTicks(10);
     result.setTickGenerator(tick);
 
@@ -409,7 +360,7 @@ public class TimeseriesDisplay
    *
    * @param value 	the setup
    */
-  public void setAxisX(AxisPanelOptions value) {
+  public void setAxisX(TimeseriesXAxisPanelOptions value) {
     m_AxisX = value;
     reset();
   }
@@ -419,7 +370,7 @@ public class TimeseriesDisplay
    *
    * @return 		the setup
    */
-  public AxisPanelOptions getAxisX() {
+  public TimeseriesXAxisPanelOptions getAxisX() {
     return m_AxisX;
   }
 
@@ -438,7 +389,7 @@ public class TimeseriesDisplay
    *
    * @param value 	the setup
    */
-  public void setAxisY(AxisPanelOptions value) {
+  public void setAxisY(TimeseriesYAxisPanelOptions value) {
     m_AxisY = value;
     reset();
   }
@@ -448,7 +399,7 @@ public class TimeseriesDisplay
    *
    * @return 		the setup
    */
-  public AxisPanelOptions getAxisY() {
+  public TimeseriesYAxisPanelOptions getAxisY() {
     return m_AxisY;
   }
 
@@ -460,35 +411,6 @@ public class TimeseriesDisplay
    */
   public String axisYTipText() {
     return "The setup for the Y axis.";
-  }
-
-  /**
-   * Sets the type of periodicity to use for the background.
-   *
-   * @param value	the type
-   */
-  public void setPeriodicity(PeriodicityType value) {
-    m_Periodicity = value;
-    reset();
-  }
-
-  /**
-   * Returns the type of periodicity to use for the background.
-   *
-   * @return		the type
-   */
-  public PeriodicityType getPeriodicity() {
-    return m_Periodicity;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String periodicityTipText() {
-    return "The type of periodicity to use for the background.";
   }
 
   /**
@@ -579,93 +501,6 @@ public class TimeseriesDisplay
   }
 
   /**
-   * Sets whether to fix the Y axis.
-   *
-   * @param value 	if true then the Y axis gets fixed
-   */
-  public void setFixY(boolean value) {
-    m_FixY = value;
-    reset();
-  }
-
-  /**
-   * Returns whether the Y axis is fixed.
-   *
-   * @return 		true if the Y axis is fixed
-   */
-  public boolean getFixY() {
-    return m_FixY;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String fixYTipText() {
-    return "If enabled, fixed minimum/maximum are used for the Y axis.";
-  }
-
-  /**
-   * Sets the minimum for the Y axis (if fixed).
-   *
-   * @param value 	the minimum
-   */
-  public void setMinY(double value) {
-    m_MinY = value;
-    reset();
-  }
-
-  /**
-   * Returns the minimum for the Y axis (if fixed).
-   *
-   * @return 		the minimum
-   */
-  public double getMinY() {
-    return m_MinY;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String minYTipText() {
-    return "The minimum for the Y axis, if fixed.";
-  }
-
-  /**
-   * Sets the maximum for the Y axis (if fixed).
-   *
-   * @param value 	the maximum
-   */
-  public void setMaxY(double value) {
-    m_MaxY = value;
-    reset();
-  }
-
-  /**
-   * Returns the maximum for the Y axis (if fixed).
-   *
-   * @return 		the maximum
-   */
-  public double getMaxY() {
-    return m_MaxY;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String maxYTipText() {
-    return "The maximum for the Y axis, if fixed.";
-  }
-
-  /**
    * Clears the content of the panel.
    */
   @Override
@@ -691,13 +526,6 @@ public class TimeseriesDisplay
     result.setZoomOverviewPanelVisible(m_ZoomOverview);
     m_AxisX.configure(result.getTimeseriesPanel().getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getTimeseriesPanel().getPlot(), Axis.LEFT);
-    result.getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(m_Periodicity);
-    if (result.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
-      ((PeriodicityTickGenerator) result.getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(m_Periodicity);
-    if (m_FixY) {
-      result.getTimeseriesPanel().setMinY(m_MinY);
-      result.getTimeseriesPanel().setMaxY(m_MaxY);
-    }
 
     return result;
   }

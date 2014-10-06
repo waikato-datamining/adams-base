@@ -42,7 +42,7 @@ adams.flow.control.Flow
 							-writer
 								adams.gui.print.NullWriter
 							-axis-x
-								adams.gui.visualization.core.AxisPanelOptions
+								adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
 									-label
 									time
 									-type
@@ -53,8 +53,10 @@ adams.flow.control.Flow
 									1
 									-width
 									40
+									-periodicity
+									YEARLY
 							-axis-y
-								adams.gui.visualization.core.AxisPanelOptions
+								adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions
 									-label
 									value
 									-tick-generator
@@ -63,8 +65,6 @@ adams.flow.control.Flow
 									100
 									-custom-format
 									0
-							-periodicity
-							YEARLY
 							-color-provider
 								adams.gui.visualization.core.DefaultColorProvider
 					-num-tokens
