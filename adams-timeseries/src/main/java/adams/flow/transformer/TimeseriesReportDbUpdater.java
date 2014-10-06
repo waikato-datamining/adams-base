@@ -14,7 +14,7 @@
  */
 
 /*
- * TimeseriesReportDbReader.java
+ * TimeseriesReportDbUpdater.java
  * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
@@ -102,7 +102,7 @@ import adams.data.timeseries.Timeseries;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TimeseriesReportDbReader
+public class TimeseriesReportDbUpdater
   extends AbstractReportDbUpdater {
 
   /** for serialization. */

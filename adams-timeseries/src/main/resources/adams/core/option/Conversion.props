@@ -1,0 +1,14 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 9394 $
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-transformer_timeseriesreportdbreader
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-transformer_timeseriesreportdbreader=adams.flow.transformer.TimeseriesReportDbReader-adams.flow.transformer.TimeseriesReportDbUpdater
