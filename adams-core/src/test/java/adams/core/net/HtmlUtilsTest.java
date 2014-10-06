@@ -15,15 +15,13 @@
 
 /*
  * HtmlUtilsTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.net.HtmlUtils;
-import adams.core.Utils;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
@@ -88,5 +86,24 @@ public class HtmlUtilsTest
 	"output differs", 
 	"a &lt; b and b &gt; c; first url <a href=\"http://www.waikato.ac.nz/\">http://www.waikato.ac.nz/</a> and the second url <a href=\"http://www.cs.waikato.ac.nz/\">http://www.cs.waikato.ac.nz/</a>", 
 	HtmlUtils.markUpURLs("a < b and b > c; first url http://www.waikato.ac.nz/ and the second url http://www.cs.waikato.ac.nz/", "<a href=\"$0\">$0</a>", true));
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(HtmlUtilsTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }
