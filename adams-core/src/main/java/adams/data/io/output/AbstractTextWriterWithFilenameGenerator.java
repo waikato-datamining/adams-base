@@ -58,9 +58,9 @@ public abstract class AbstractTextWriterWithFilenameGenerator
   }
 
   /**
-   * Sets the prefix for the filename in case of auto-generation.
+   * Sets the filename generator.
    *
-   * @param value	the prefix (just name, no path)
+   * @param value	the generator
    */
   public void setFilenameGenerator(AbstractFilenameGenerator value) {
     m_FilenameGenerator = value;
@@ -68,9 +68,9 @@ public abstract class AbstractTextWriterWithFilenameGenerator
   }
 
   /**
-   * Returns the prefix for the filename in case of auto-generation.
+   * Returns the filename generator.
    *
-   * @return		the panel provider in use
+   * @return		the generator
    */
   public AbstractFilenameGenerator getFilenameGenerator() {
     return m_FilenameGenerator;
