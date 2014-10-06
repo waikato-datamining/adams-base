@@ -15,7 +15,7 @@
 
 /**
  * AbstractFloatingPointNumberEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -66,6 +66,7 @@ public abstract class AbstractFloatingPointNumberEditor
    *
    * @see		#createCheckModel()
    */
+  @Override
   protected void updateBounds() {
     ((NumberTextField) m_CustomEditor).setCheckModel(createCheckModel());
   }
@@ -75,6 +76,7 @@ public abstract class AbstractFloatingPointNumberEditor
    *
    * @return		the custom editor
    */
+  @Override
   protected JComponent createCustomEditor() {
     final NumberTextField result = new NumberTextField(getType());
     result.setCheckModel(createCheckModel());
@@ -100,7 +102,7 @@ public abstract class AbstractFloatingPointNumberEditor
 	try {
 	  if (result.isValid()) {
 	    Object value = parse(doc.getText(0, doc.getLength()));
-	    if (!value.equals(getValue()))
+	    if ((value != null) && !value.equals(getValue()))
 	      setValue(value);
 	  }
 	}
