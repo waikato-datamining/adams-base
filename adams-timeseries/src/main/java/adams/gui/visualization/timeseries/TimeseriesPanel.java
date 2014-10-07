@@ -129,19 +129,19 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /** the zoom overview panel. */
   protected TimeseriesZoomOverviewPanel m_PanelZoomOverview;
-  
+
   /** the export dialog. */
   protected TimeseriesExportDialog m_ExportDialog;
-  
+
   /** the minimum Y to use. */
   protected Double m_MinY;
-  
+
   /** the maximum Y to use. */
   protected Double m_MaxY;
-  
+
   /** the minimum X to use. */
   protected BaseDateTime m_MinX;
-  
+
   /** the maximum X to use. */
   protected BaseDateTime m_MaxX;
 
@@ -198,7 +198,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Returns the paintlet used for painting the containers.
-   * 
+   *
    * @return		the paintlet
    */
   @Override
@@ -208,7 +208,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Returns the paintlet used for painting the periodicity background.
-   * 
+   *
    * @return		the paintlet
    */
   public PeriodicityPaintlet getPeriodicityPaintlet() {
@@ -247,10 +247,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_TimeseriesContainerList.setPopupMenuSupplier(this);
     m_TimeseriesContainerList.setDisplayDatabaseID(true);
     m_TimeseriesContainerList.addTableModelListener(new TableModelListener() {
+      @Override
       public void tableChanged(TableModelEvent e) {
 	final ContainerTable table = m_TimeseriesContainerList.getTable();
 	if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
 	  Runnable runnable = new Runnable() {
+	    @Override
 	    public void run() {
 	      table.getSelectionModel().addSelectionInterval(0, 0);
 	    }
@@ -281,13 +283,13 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     m_SelectedTimestampPaintlet = new SelectedTimestampPaintlet();
     m_SelectedTimestampPaintlet.setPanel(this);
-    
+
     m_CoordinatesPaintlet = new CoordinatesPaintlet();
     m_CoordinatesPaintlet.setYInvisible(true);
     m_CoordinatesPaintlet.setPanel(this);
     m_CoordinatesPaintlet.setXColor(props.getColor("Plot.CoordinatesColor." + Coordinates.X, Color.DARK_GRAY));
     m_CoordinatesPaintlet.setYColor(props.getColor("Plot.CoordinatesColor." + Coordinates.Y, Color.DARK_GRAY));
-    
+
     getPlot().setPopupMenuCustomizer(this);
 
     try {
@@ -350,16 +352,16 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Sets the zoom overview panel visible or hides it.
-   * 
+   *
    * @param value	if true then the panel is displayed
    */
   public void setZoomOverviewPanelVisible(boolean value) {
     m_PanelZoomOverview.setVisible(value);
   }
-  
+
   /**
    * Returns whether the zoom overview panel is visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isZoomOverviewPanelVisible() {
@@ -368,17 +370,17 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Sets the fixed minimum for the Y axis.
-   * 
+   *
    * @param value	the minimum, null to automatically calculate
    */
   public void setMinY(Double value) {
     m_MinY = value;
     update();
   }
-  
+
   /**
    * Returns the fixed minimum for the Y axis.
-   * 
+   *
    * @return		the minimum, null if automatically calculated
    */
   public Double getMinY() {
@@ -387,17 +389,17 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Sets the fixed maximum for the Y axis.
-   * 
+   *
    * @param value	the maximum, null to automatically calculate
    */
   public void setMaxY(Double value) {
     m_MaxY = value;
     update();
   }
-  
+
   /**
    * Returns the fixed maximum for the Y axis.
-   * 
+   *
    * @return		the maximum, null if automatically calculated
    */
   public Double getMaxY() {
@@ -406,17 +408,17 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Sets the fixed minimum for the X axis.
-   * 
+   *
    * @param value	the minimum, null to automatically calculate
    */
   public void setMinX(BaseDateTime value) {
     m_MinX = value;
     update();
   }
-  
+
   /**
    * Returns the fixed minimum for the X axis.
-   * 
+   *
    * @return		the minimum, null if automatically calculated
    */
   public BaseDateTime getMinX() {
@@ -425,23 +427,23 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /**
    * Sets the fixed maximum for the X axis.
-   * 
+   *
    * @param value	the maximum, null to automatically calculate
    */
   public void setMaxX(BaseDateTime value) {
     m_MaxX = value;
     update();
   }
-  
+
   /**
    * Returns the fixed maximum for the X axis.
-   * 
+   *
    * @return		the maximum, null if automatically calculated
    */
   public BaseDateTime getMaxX() {
     return m_MaxX;
   }
-  
+
   /**
    * Returns true if the paintlets can be executed.
    *
@@ -527,6 +529,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param row	the row the mouse is currently over
    * @return		the popup menu
    */
+  @Override
   public JPopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
     JPopupMenu		result;
     JMenuItem		item;
@@ -538,14 +541,14 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       indices = new int[]{row};
     else
       indices = table.getSelectedRows();
-    
+
     item = new JMenuItem("Toggle visibility");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	TIntArrayList visible = new TIntArrayList();
 	TIntArrayList invisible = new TIntArrayList();
-	for (int i = 0; i < indices.length; i++) {
-	  int index = indices[i];
+	for (int index: indices) {
 	  if (getContainerManager().get(index).isVisible())
 	    invisible.add(index);
 	  else
@@ -569,8 +572,51 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     });
     result.add(item);
 
+    item = new JMenuItem("Show all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	TIntArrayList list = new TIntArrayList();
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (!getContainerManager().get(i).isVisible())
+	    list.add(i);
+	}
+	if (list.size() > 0) {
+	  Range range = new Range();
+	  range.setMax(getContainerManager().count());
+	  range.setIndices(list.toArray());
+	  getScriptingEngine().add(
+	      TimeseriesPanel.this,
+	      Visible.ACTION + " " + range.getRange());
+	}
+      }
+    });
+    result.add(item);
+
+    item = new JMenuItem("Hide all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	TIntArrayList list = new TIntArrayList();
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (getContainerManager().get(i).isVisible())
+	    list.add(i);
+	}
+	if (list.size() > 0) {
+	  Range range = new Range();
+	  range.setMax(getContainerManager().count());
+	  range.setIndices(list.toArray());
+	  getScriptingEngine().add(
+	      TimeseriesPanel.this,
+	      Invisible.ACTION + " " + range.getRange());
+	}
+      }
+    });
+    result.add(item);
+
     item = new JMenuItem("Choose color...");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	Color c = null;
 	if (indices.length == 1) {
@@ -598,6 +644,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
       item = new JMenuItem("Remove");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_TimeseriesContainerList.getTable().removeContainers(indices);
 	}
@@ -606,6 +653,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
       item = new JMenuItem("Remove all");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_TimeseriesContainerList.getTable().removeAllContainers();
 	}
@@ -617,6 +665,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Information");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
 	for (int i = 0; i < indices.length; i++)
@@ -629,6 +678,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     item = new JMenuItem("Raw data");
     item.setEnabled(indices.length == 1);
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	showRawData(getContainerManager().get(row));
       }
@@ -637,6 +687,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Reports");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	List<TimeseriesContainer> data = new ArrayList<TimeseriesContainer>();
 	for (int i = 0; i < indices.length; i++)
@@ -648,6 +699,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Notes");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	List<TimeseriesContainer> data = new ArrayList<TimeseriesContainer>();
 	for (int i = 0; i < indices.length; i++)
@@ -666,6 +718,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param e		the mous event
    * @param menu	the menu to customize
    */
+  @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem	item;
 
@@ -677,6 +730,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     else
       item.setText("Enable markers");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	getTimeseriesPaintlet().setMarkersDisabled(!getTimeseriesPaintlet().isMarkersDisabled());
 	repaint();
@@ -690,6 +744,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     else
       item.setText("Show side panel");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	setSidePanelVisible(!isSidePanelVisible());
       }
@@ -702,6 +757,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     else
       item.setText("Adjust to visible data");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	setAdjustToVisibleData(!getAdjustToVisibleData());
       }
@@ -712,6 +768,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Series statistics");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
 	for (int i = 0; i < getContainerManager().count(); i++) {
@@ -727,6 +784,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Save visible series...");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	saveVisibleSeries();
       }
@@ -777,7 +835,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   protected void showRawData(TimeseriesContainer cont) {
     SpreadSheetDialog	dialog;
-    
+
     if (getParentDialog() != null)
       dialog = new SpreadSheetDialog(getParentDialog(), ModalityType.MODELESS);
     else
@@ -895,7 +953,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   @Override
   protected void postUpdate() {
     super.postUpdate();
-    
+
     if (m_PanelZoomOverview != null)
       m_PanelZoomOverview.update();
   }
@@ -909,6 +967,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param tiptext	the tiptext so far
    * @return		the processed tiptext
    */
+  @Override
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
     String			result;
     MouseEvent			event;
@@ -945,7 +1004,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     String[] 			ext;
     List<Timeseries> 		data;
     String 			prefix;
-    
+
     if (m_ExportDialog == null) {
       if (getParentDialog() != null)
 	m_ExportDialog = new TimeseriesExportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -996,7 +1055,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   @Override
   public void cleanUp() {
     m_TimeseriesContainerList.cleanUp();
-    
+
     if (m_ExportDialog != null) {
       m_ExportDialog.dispose();
       m_ExportDialog = null;

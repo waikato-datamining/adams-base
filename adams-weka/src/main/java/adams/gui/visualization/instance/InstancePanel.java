@@ -15,10 +15,12 @@
 
 /*
  * InstancePanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
+
+import weka.core.Instances;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +44,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import weka.core.Instances;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.data.instance.Instance;
@@ -112,7 +113,7 @@ public class InstancePanel
 
   /** the file chooser for saving a specific sequence. */
   protected SpreadSheetFileChooser m_FileChooser;
-  
+
   /** the dialog for displaying a sequence. */
   protected List<SpreadSheetDialog> m_ViewDialogs;
 
@@ -165,7 +166,7 @@ public class InstancePanel
 
   /**
    * Returns the paintlet used for painting the containers.
-   * 
+   *
    * @return		the paintlet
    */
   @Override
@@ -194,10 +195,12 @@ public class InstancePanel
     m_InstanceContainerList.setManager(getContainerManager());
     m_InstanceContainerList.setPopupMenuSupplier(this);
     m_InstanceContainerList.addTableModelListener(new TableModelListener() {
+      @Override
       public void tableChanged(TableModelEvent e) {
 	final ContainerTable table = m_InstanceContainerList.getTable();
 	if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
 	  Runnable runnable = new Runnable() {
+	    @Override
 	    public void run() {
 	      table.getSelectionModel().addSelectionInterval(0, 0);
 	    }
@@ -325,14 +328,14 @@ public class InstancePanel
 	continue;
 
       // determine min/max
-      if (InstancePoint.toDouble(((InstancePoint) points.get(0)).getX()) < minX)
-	minX = InstancePoint.toDouble(((InstancePoint) points.get(0)).getX());
-      if (InstancePoint.toDouble(((InstancePoint) points.get(points.size() - 1)).getX()) > maxX)
-	maxX = InstancePoint.toDouble(((InstancePoint) points.get(points.size() - 1)).getX());
+      if (InstancePoint.toDouble(points.get(0).getX()) < minX)
+	minX = InstancePoint.toDouble(points.get(0).getX());
+      if (InstancePoint.toDouble(points.get(points.size() - 1).getX()) > maxX)
+	maxX = InstancePoint.toDouble(points.get(points.size() - 1).getX());
 
       iter = points.iterator();
       while (iter.hasNext()) {
-	point = (InstancePoint) iter.next();
+	point = iter.next();
 	if (InstancePoint.toDouble(point.getY()) > maxY)
 	  maxY = InstancePoint.toDouble(point.getY());
 	if (InstancePoint.toDouble(point.getY()) < minY)
@@ -353,6 +356,7 @@ public class InstancePanel
    * @param e		the mous event
    * @param menu	the menu to customize
    */
+  @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem	item;
 
@@ -362,6 +366,7 @@ public class InstancePanel
     else
       item.setText("Enable markers");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	m_InstancePaintlet.setMarkersDisabled(
 	    !m_InstancePaintlet.isMarkersDisabled());
@@ -378,6 +383,7 @@ public class InstancePanel
     else
       item.setText("Show side panel");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	setSidePanelVisible(!isSidePanelVisible());
       }
@@ -390,6 +396,7 @@ public class InstancePanel
     else
       item.setText("Adjust to visible data");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	m_AdjustToVisibleData = !m_AdjustToVisibleData;
 	update();
@@ -405,6 +412,7 @@ public class InstancePanel
    * @param row	the row the mouse is currently over
    * @return		the popup menu
    */
+  @Override
   public JPopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
     JPopupMenu			result;
     JMenuItem			item;
@@ -418,8 +426,9 @@ public class InstancePanel
 
     item = new JMenuItem("Toggle visibility");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
-	for (int i = 0; i < indices.length; i++) {
+	for (int i = 0; i < getContainerManager().count(); i++) {
 	  InstanceContainer c = getContainerManager().get(indices[i]);
 	  c.setVisible(!c.isVisible());
 	}
@@ -427,8 +436,33 @@ public class InstancePanel
     });
     result.add(item);
 
+    item = new JMenuItem("Show all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (!getContainerManager().get(i).isVisible())
+	    getContainerManager().get(i).setVisible(true);
+	}
+      }
+    });
+    result.add(item);
+
+    item = new JMenuItem("Hide all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (getContainerManager().get(i).isVisible())
+	    getContainerManager().get(i).setVisible(false);
+	}
+      }
+    });
+    result.add(item);
+
     item = new JMenuItem("Choose color...");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	String msg = "Choose color";
 	InstanceContainer cont = null;
@@ -455,6 +489,7 @@ public class InstancePanel
 
       item = new JMenuItem("Remove");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_InstanceContainerList.getTable().removeContainers(indices);
 	}
@@ -463,6 +498,7 @@ public class InstancePanel
 
       item = new JMenuItem("Remove all");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_InstanceContainerList.getTable().removeAllContainers();
 	}
@@ -475,6 +511,7 @@ public class InstancePanel
     item = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	saveInstance(getContainerManager().get(indices[0]));
       }
@@ -484,6 +521,7 @@ public class InstancePanel
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	viewInstance(getContainerManager().get(indices[0]));
       }
@@ -495,21 +533,21 @@ public class InstancePanel
 
   /**
    * Saves the specified instance as spreadsheet file.
-   * 
+   *
    * @param cont	the instance to save
    */
   protected void saveInstance(InstanceContainer cont) {
     int			retVal;
     Instance 		inst;
     SpreadSheetWriter	writer;
-    
+
     if (m_FileChooser == null)
       m_FileChooser = new SpreadSheetFileChooser();
-    
+
     retVal = m_FileChooser.showSaveDialog(this);
     if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
       return;
-    
+
     inst   = cont.getData();
     writer = m_FileChooser.getWriter();
     if (!writer.write(inst.toSpreadSheet(), m_FileChooser.getSelectedFile()))
@@ -519,14 +557,14 @@ public class InstancePanel
 
   /**
    * Views the specified instance in a table.
-   * 
+   *
    * @param cont	the instance to view
    */
   protected void viewInstance(InstanceContainer cont) {
     Instance 		isnt;
     SpreadSheetDialog	dialog;
     SpreadSheet		sheet;
-    
+
     if (m_ViewDialogs == null)
       m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
 
@@ -546,25 +584,25 @@ public class InstancePanel
 
   /**
    * Sets the zoom overview panel visible or hides it.
-   * 
+   *
    * @param value	if true then the panel is displayed
    */
   public void setZoomOverviewPanelVisible(boolean value) {
     m_PanelZoomOverview.setVisible(value);
   }
-  
+
   /**
    * Returns whether the zoom overview panel is visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isZoomOverviewPanelVisible() {
     return m_PanelZoomOverview.isVisible();
   }
-  
+
   /**
    * Returns the zoom overview panel.
-   * 
+   *
    * @return		the panel
    */
   public InstanceZoomOverviewPanel getZoomOverviewPanel() {
@@ -632,7 +670,7 @@ public class InstancePanel
 
   /**
    * Returns the currently visible instances.
-   * 
+   *
    * @return		the instances, null if none visible
    */
   public Instances getInstances() {
@@ -640,9 +678,9 @@ public class InstancePanel
     Instance			inst;
     int				i;
     List<InstanceContainer>	list;
-    
+
     result = null;
-    
+
     list = getContainerManager().getAllVisible();
     for (i = 0; i < list.size(); i++) {
       inst = list.get(i).getData();
@@ -650,10 +688,10 @@ public class InstancePanel
 	result = inst.getDatasetHeader();
       result.add(inst.toInstance());
     }
-    
+
     return result;
   }
-  
+
   /**
    * Processes the given tip text. Among the current mouse position, the
    * panel that initiated the call are also provided.
@@ -663,6 +701,7 @@ public class InstancePanel
    * @param tiptext	the tiptext so far
    * @return		the processed tiptext
    */
+  @Override
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
     String	result;
     MouseEvent	event;
@@ -702,7 +741,7 @@ public class InstancePanel
   @Override
   protected void postUpdate() {
     super.postUpdate();
-    
+
     if (m_PanelZoomOverview != null)
       m_PanelZoomOverview.update();
   }

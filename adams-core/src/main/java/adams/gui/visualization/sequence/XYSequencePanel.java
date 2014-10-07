@@ -114,10 +114,10 @@ public class XYSequencePanel
 
   /** the file chooser for saving a specific sequence. */
   protected SpreadSheetFileChooser m_FileChooser;
-  
+
   /** the GOE dialog for saving the visible sequences. */
   protected XYSequenceExportDialog m_ExportDialog;
-  
+
   /** the dialog for displaying a sequence. */
   protected List<SpreadSheetDialog> m_ViewDialogs;
 
@@ -148,10 +148,10 @@ public class XYSequencePanel
 
     super.initialize();
   }
-  
+
   /**
    * Returns whether the panel can handle fixed lables for its axes.
-   * 
+   *
    * @return		true if panel can handle it
    */
   @Override
@@ -181,7 +181,7 @@ public class XYSequencePanel
 
   /**
    * Returns the paintlet used for painting the containers.
-   * 
+   *
    * @return		the paintlet
    */
   @Override
@@ -392,7 +392,7 @@ public class XYSequencePanel
 	}
       }
     }
-    
+
     if (!determineYRange && !isFixedY) {
       minY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMinY();
       maxY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMaxY();
@@ -445,6 +445,7 @@ public class XYSequencePanel
    * @param e		the mous event
    * @param menu	the menu to customize
    */
+  @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem	item;
 
@@ -456,6 +457,7 @@ public class XYSequencePanel
       else
 	item.setText("Enable markers");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  paintlet.setMarkersDisabled(
 	      !paintlet.isMarkersDisabled());
@@ -473,17 +475,19 @@ public class XYSequencePanel
       else
 	item.setText("Enable anti-aliasing");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  setAntiAliasingEnabled(!isAntiAliasingEnabled());
 	}
       });
       menu.add(item);
     }
-    
+
     if (getAllowResize()) {
       item = new JMenuItem("Resize...");
       item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+	public void actionPerformed(ActionEvent e) {
           showResizeDialog();
         }
       });
@@ -498,6 +502,7 @@ public class XYSequencePanel
     else
       item.setText("Show side panel");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	setSidePanelVisible(!isSidePanelVisible());
       }
@@ -510,6 +515,7 @@ public class XYSequencePanel
     else
       item.setText("Adjust to visible data");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	m_AdjustToVisibleData = !m_AdjustToVisibleData;
 	update();
@@ -522,6 +528,7 @@ public class XYSequencePanel
 
     item = new JMenuItem("Save visible sequences...");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	saveVisibleSequences();
       }
@@ -536,6 +543,7 @@ public class XYSequencePanel
    * @param row	the row the mouse is currently over
    * @return		the popup menu
    */
+  @Override
   public JPopupMenu getContainerListPopupMenu(final ContainerTable table, final int row) {
     JPopupMenu			result;
     JMenuItem			item;
@@ -549,6 +557,7 @@ public class XYSequencePanel
 
     item = new JMenuItem("Toggle visibility");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	for (int i = 0; i < indices.length; i++) {
 	  XYSequenceContainer c = getContainerManager().get(indices[i]);
@@ -558,8 +567,33 @@ public class XYSequencePanel
     });
     result.add(item);
 
+    item = new JMenuItem("Show all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (!getContainerManager().get(i).isVisible())
+	    getContainerManager().get(i).setVisible(true);
+	}
+      }
+    });
+    result.add(item);
+
+    item = new JMenuItem("Hide all");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	for (int i = 0; i < getContainerManager().count(); i++) {
+	  if (getContainerManager().get(i).isVisible())
+	    getContainerManager().get(i).setVisible(false);
+	}
+      }
+    });
+    result.add(item);
+
     item = new JMenuItem("Choose color...");
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	String msg = "Choose color";
 	XYSequenceContainer cont = null;
@@ -586,6 +620,7 @@ public class XYSequencePanel
 
       item = new JMenuItem("Remove");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_SequenceContainerList.getTable().removeContainers(indices);
 	}
@@ -594,6 +629,7 @@ public class XYSequencePanel
 
       item = new JMenuItem("Remove all");
       item.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
 	  m_SequenceContainerList.getTable().removeAllContainers();
 	}
@@ -606,6 +642,7 @@ public class XYSequencePanel
     item = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	saveSequence(getContainerManager().get(indices[0]));
       }
@@ -615,6 +652,7 @@ public class XYSequencePanel
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
     item.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
 	viewSequence(getContainerManager().get(indices[0]));
       }
@@ -644,7 +682,7 @@ public class XYSequencePanel
   public boolean isAntiAliasingEnabled() {
     if (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
       return ((AntiAliasingSupporter) m_XYSequencePaintlet).isAntiAliasingEnabled();
-    
+
     return false;
   }
 
@@ -673,8 +711,8 @@ public class XYSequencePanel
     m_ExportDialog.setVisible(true);
     if (m_ExportDialog.getOption() != XYSequenceExportDialog.APPROVE_OPTION)
       return;
-    
-    writer = (SpreadSheetWriter) m_ExportDialog.getExport();
+
+    writer = m_ExportDialog.getExport();
     if (writer instanceof MetaFileWriter)
       ext = ((MetaFileWriter) writer).getActualFormatExtensions();
     else
@@ -707,21 +745,21 @@ public class XYSequencePanel
 
   /**
    * Saves the specified sequence as spreadsheet file.
-   * 
+   *
    * @param cont	the sequence to save
    */
   protected void saveSequence(XYSequenceContainer cont) {
     int			retVal;
     XYSequence 		seq;
     SpreadSheetWriter	writer;
-    
+
     if (m_FileChooser == null)
       m_FileChooser = new SpreadSheetFileChooser();
-    
+
     retVal = m_FileChooser.showSaveDialog(this);
     if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
       return;
-    
+
     seq    = cont.getData();
     writer = m_FileChooser.getWriter();
     if (!writer.write(seq.toSpreadSheet(), m_FileChooser.getSelectedFile()))
@@ -731,14 +769,14 @@ public class XYSequencePanel
 
   /**
    * Views the specified sequence in a table.
-   * 
+   *
    * @param cont	the sequence to save
    */
   protected void viewSequence(XYSequenceContainer cont) {
     XYSequence 		seq;
     SpreadSheetDialog	dialog;
     SpreadSheet		sheet;
-    
+
     if (m_ViewDialogs == null)
       m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
 
@@ -768,6 +806,7 @@ public class XYSequencePanel
    * @param tiptext	the tiptext so far
    * @return		the processed tiptext
    */
+  @Override
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
     String			result;
     MouseEvent			event;
@@ -914,14 +953,14 @@ public class XYSequencePanel
 	getParentInternalFrame().setSize(newSize);
     }
   }
-  
+
   /**
    * Cleans up data structures, frees up memory.
    */
   @Override
   public void cleanUp() {
     super.cleanUp();
-    
+
     if (m_ExportDialog != null) {
       m_ExportDialog.dispose();
       m_ExportDialog = null;
