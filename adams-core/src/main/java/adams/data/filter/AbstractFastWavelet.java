@@ -35,6 +35,8 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.option.AbstractOption;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
+import adams.data.padding.PaddingHelper;
+import adams.data.padding.PaddingType;
 
 /**
  * Abstract ancestor for Wavelet filters based on the <a href="http://jsci.sourceforge.net/">JSci library</a>.
@@ -156,117 +158,6 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
       // try display
       if (result == null) {
         for (WaveletType f: values()) {
-  	if (f.toDisplay().equals(str)) {
-  	  result = f;
-  	  break;
-  	}
-        }
-      }
-
-      return result;
-    }
-  }
-
-  /**
-   * The type of available paddings.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum PaddingType
-    implements EnumWithCustomDisplay<PaddingType> {
-
-    /** pad with zeroes. */
-    ZERO("Zero");
-
-    /** the display value. */
-    private String m_Display;
-
-    /** the commandline string. */
-    private String m_Raw;
-
-    /**
-     * Initializes the element.
-     *
-     * @param display	the display value
-     */
-    private PaddingType(String display) {
-      m_Display = display;
-      m_Raw     = super.toString();
-    }
-
-    /**
-     * Returns the display string.
-     *
-     * @return		the display string
-     */
-    public String toDisplay() {
-      return m_Display;
-    }
-
-    /**
-     * Returns the raw enum string.
-     *
-     * @return		the raw enum string
-     */
-    public String toRaw() {
-      return m_Raw;
-    }
-
-    /**
-     * Parses the given string and returns the associated enum.
-     *
-     * @param s		the string to parse
-     * @return		the enum or null if not found
-     */
-    public PaddingType parse(String s) {
-      return (PaddingType) valueOf((AbstractOption) null, s);
-    }
-
-    /**
-     * Returns the displays string.
-     *
-     * @return		the display string
-     */
-    @Override
-    public String toString() {
-      return m_Display;
-    }
-
-    /**
-     * Returns the enum as string.
-     *
-     * @param option	the current option
-     * @param object	the enum object to convert
-     * @return		the generated string
-     */
-    public static String toString(AbstractOption option, Object object) {
-      return ((PaddingType) object).toRaw();
-    }
-
-    /**
-     * Returns an enum generated from the string.
-     *
-     * @param option	the current option
-     * @param str		the string to convert to an enum
-     * @return		the generated enum or null in case of error
-     */
-    public static PaddingType valueOf(AbstractOption option, String str) {
-      PaddingType	result;
-
-      result = null;
-
-      // default parsing
-      try {
-        result = valueOf(str);
-      }
-      catch (Exception e) {
-        // ignored
-      }
-
-      // try display
-      if (result == null) {
-        for (PaddingType f: values()) {
   	if (f.toDisplay().equals(str)) {
   	  result = f;
   	  break;
@@ -455,63 +346,6 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
   protected abstract DataPoint newDataPoint(List<DataPoint> points, int index, double x);
 
   /**
-   * returns the next bigger number that's a power of 2. If the number is
-   * already a power of 2 then this will be returned. The number will be at
-   * least 2^2..
-   *
-   * @param n		the number to start from
-   * @return		the next bigger number
-   */
-  protected static int nextPowerOf2(int n) {
-    int		exp;
-
-    exp = (int) StrictMath.ceil(StrictMath.log(n) / StrictMath.log(2.0));
-    exp = StrictMath.max(2, exp);
-
-    return (int) StrictMath.pow(2, exp);
-  }
-
-  /**
-   * pads the data to conform to the necessary number of data points.
-   *
-   * @param data	the data to pad
-   * @return		the padded data
-   */
-  protected float[] pad(float[] data) {
-    float[] 	result;
-    int 	i;
-    int		numPoints;
-
-    // determine number of padding attributes
-    switch (m_PaddingType) {
-      case ZERO:
-	numPoints = nextPowerOf2(data.length) - data.length;
-	if (m_WaveletType == WaveletType.CDF2_4)
-	  numPoints++;
-	break;
-      default:
-	throw new IllegalStateException(
-	    "Padding " + m_PaddingType  + " not implemented!");
-    }
-
-    result = new float[data.length + numPoints];
-    System.arraycopy(data, 0, result, 0, data.length);
-
-    // padding
-    switch (m_PaddingType) {
-      case ZERO:
-	for (i = 0; i < numPoints; i++)
-	  result[data.length + i] = 0;
-	break;
-      default:
-	throw new IllegalStateException(
-	    "Padding " + m_PaddingType  + " not implemented!");
-    }
-
-    return result;
-  }
-
-  /**
    * Performs the actual filtering.
    *
    * @param data	the data to filter
@@ -533,7 +367,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
     for (i = 0; i < points.size(); i++)
       values[i] = (float) getValue(points.get(i));
     if (!m_InverseTransform)
-      values = pad(values);
+      values = PaddingHelper.padPow2(values, m_PaddingType);
 
     // setup wavelet
     switch (m_WaveletType) {
