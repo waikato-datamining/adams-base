@@ -429,6 +429,13 @@ adams.gui.visualization.core.AbstractColorGradientGenerator=\
 adams.gui.visualization.core.MouseMovementTracker=\
   adams.gui.visualization.core
 
+# the paintlets
+adams.gui.visualization.core.Paintlet=\
+  adams.gui.visualization.core,\
+  adams.gui.visualization.report,\
+  adams.gui.visualization.sequence,\
+  adams.gui.visualization.container
+
 # the tick generators for the axes
 adams.gui.visualization.core.axis.TickGenerator=\
   adams.gui.visualization.core.axis
