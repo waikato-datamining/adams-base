@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.QuickInfoHelper;
+import adams.data.container.DataPoint;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 
@@ -193,7 +194,7 @@ public class FixedLengthSegments
 	result.add(current);
       }
       if (current.size() < m_NumPoints)
-	current.add(point.getClone());
+	current.add((DataPoint) point.getClone());
       if (current.size() == m_NumPoints)
 	current = null;
     }

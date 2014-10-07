@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.QuickInfoHelper;
+import adams.data.container.DataPoint;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 
@@ -155,7 +156,7 @@ public class FixedNumSegments
       result.add(current);
       for (n = offset; n < max; n++) {
 	point = (TimeseriesPoint) series.toList().get(n);
-	current.add(point.getClone());
+	current.add((DataPoint) point.getClone());
       }
       offset += current.size();
     }
