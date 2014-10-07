@@ -15,7 +15,7 @@
 
 /*
  * AbstractWavelet.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -29,9 +29,9 @@ import JSci.maths.wavelet.haar.FastHaar;
 import JSci.maths.wavelet.symmlet8.FastSymmlet8;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformationHandler;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.core.option.AbstractOption;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
@@ -117,6 +117,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
      *
      * @return		the display string
      */
+    @Override
     public String toString() {
       return m_Display;
     }
@@ -227,6 +228,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
      *
      * @return		the display string
      */
+    @Override
     public String toString() {
       return m_Display;
     }
@@ -290,6 +292,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "A filter that transforms the data with a wavelet.\n\n"
@@ -308,6 +311,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
     TechnicalInformation 	result;
 
     result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "Mark Hale");
     result.setValue(Field.YEAR, "2009");
     result.setValue(Field.TITLE, "JSci - A science API for Java");
     result.setValue(Field.HTTP, "http://jsci.sourceforge.net/");
@@ -318,6 +322,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -512,6 +517,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
    * @param data	the data to filter
    * @return		the filtered data
    */
+  @Override
   protected T processData(T data) {
     T			result;
     int			i;
