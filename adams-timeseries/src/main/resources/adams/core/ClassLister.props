@@ -23,6 +23,10 @@ adams.data.timeseries.AbstractTimeseriesFeatureGenerator=\
 adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
   adams.flow.source.wekaforecastersetup
 
+# split algorithms for timeseries
+adams.flow.transformer.timeseriessplit.AbstractTimeseriesSplitter=\
+  adams.flow.transformer.timeseriessplit
+
 # the paintlets
 adams.gui.visualization.core.Paintlet=\
   adams.gui.visualization.timeseries
@@ -34,4 +38,3 @@ adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions=\
 # the axis panel options for timeseries (y axis)
 adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions=\
   adams.gui.visualization.timeseries
-  
