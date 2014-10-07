@@ -33,6 +33,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
 import adams.gui.visualization.core.axis.Type;
@@ -148,6 +149,11 @@ import adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-overlay &lt;adams.gui.visualization.core.Paintlet&gt; [-overlay ...] (property: overlays)
+ * &nbsp;&nbsp;&nbsp;The paintlets to use for overlays.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -187,6 +193,11 @@ public class TimeseriesDisplay
       m_Panel.setZoomOverviewPanelVisible(m_ZoomOverview);
       m_AxisX.configure(m_Panel.getTimeseriesPanel().getPlot(), Axis.BOTTOM);
       m_AxisY.configure(m_Panel.getTimeseriesPanel().getPlot(), Axis.LEFT);
+      for (Paintlet p: m_Overlays) {
+	Paintlet overlay = p.shallowCopy(true);
+	overlay.setPanel(m_Panel.getTimeseriesPanel());
+	m_Panel.getTimeseriesPanel().addPaintlet(overlay);
+      }
       add(m_Panel, BorderLayout.CENTER);
     }
 
@@ -246,6 +257,9 @@ public class TimeseriesDisplay
 
   /** whether to display the zoom overview. */
   protected boolean m_ZoomOverview;
+
+  /** the paintlets to use as overlay. */
+  protected Paintlet[] m_Overlays;
   
   /**
    * Returns a string describing the object.
@@ -283,6 +297,10 @@ public class TimeseriesDisplay
     m_OptionManager.add(
 	    "zoom-overview", "zoomOverview",
 	    false);
+
+    m_OptionManager.add(
+	    "overlay", "overlays",
+	    new Paintlet[0]);
   }
 
   /**
@@ -501,6 +519,35 @@ public class TimeseriesDisplay
   }
 
   /**
+   * Sets the overlay paintlets.
+   *
+   * @param value 	the overlay paintlets
+   */
+  public void setOverlays(Paintlet[] value) {
+    m_Overlays = value;
+    reset();
+  }
+
+  /**
+   * Returns the overlay paintlets.
+   *
+   * @return 		the overlay paintlets
+   */
+  public Paintlet[] getOverlays() {
+    return m_Overlays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlaysTipText() {
+    return "The paintlets to use for overlays.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -517,6 +564,7 @@ public class TimeseriesDisplay
   @Override
   protected BasePanel newPanel() {
     TimeseriesExplorer		result;
+    Paintlet			overlay;
 
     result = new TimeseriesExplorer();
     ((TimeseriesContainerManager) result.getContainerManager()).setAllowRemoval(false);
@@ -526,6 +574,11 @@ public class TimeseriesDisplay
     result.setZoomOverviewPanelVisible(m_ZoomOverview);
     m_AxisX.configure(result.getTimeseriesPanel().getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getTimeseriesPanel().getPlot(), Axis.LEFT);
+    for (Paintlet p: m_Overlays) {
+      overlay = p.shallowCopy(true);
+      overlay.setPanel(result.getTimeseriesPanel());
+      result.getTimeseriesPanel().addPaintlet(overlay);
+    }
 
     return result;
   }

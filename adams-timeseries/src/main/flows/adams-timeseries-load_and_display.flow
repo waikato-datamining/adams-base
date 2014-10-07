@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:43:06
+# Date: 2014-10-07 14:32:23
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -21,10 +21,16 @@ adams.flow.control.Flow
 				adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
 					-label
 					time
+					-type
+					DATE
 					-tick-generator
 						adams.gui.visualization.core.axis.PeriodicityTickGenerator
+					-nth-value
+					2
 					-width
 					40
+					-periodicity
+					WEEKLY
 			-axis-y
 				adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions
 					-label
@@ -35,6 +41,12 @@ adams.flow.control.Flow
 					60
 			-color-provider
 				adams.gui.visualization.core.DefaultColorProvider
+			-overlay
+				adams.gui.visualization.report.ReportDateFieldPaintlet
+					-field
+					Date[S]
+					-prefix
+					Date: 
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

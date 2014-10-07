@@ -2,6 +2,9 @@
 # ID=1
 # ID\tDataType=S
 # Parent\ ID=-1
+# Parent\ ID\tDataType=N
+# Date=2011-05-24\ 00:03:00.0
+# Date\tDataType=S
 Timestamp,Value
 "2011-03-18 11:01:00.0",22.5
 "2011-03-18 12:01:00.0",22.3

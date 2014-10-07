@@ -23,6 +23,10 @@ adams.data.timeseries.AbstractTimeseriesFeatureGenerator=\
 adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
   adams.flow.source.wekaforecastersetup
 
+# the paintlets
+adams.gui.visualization.core.Paintlet=\
+  adams.gui.visualization.timeseries
+
 # the axis panel options for timeseries (x axis)
 adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions=\
   adams.gui.visualization.timeseries
