@@ -234,6 +234,7 @@ public abstract class AbstractDatabaseConnection
    * Adds options to the internal list of options. Derived classes must
    * override this method to add additional options.
    */
+  @Override
   public void defineOptions() {
     m_OptionManager = newOptionManager();
 
@@ -275,6 +276,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the manager
    */
+  @Override
   public OptionManager getOptionManager() {
     if (m_OptionManager == null)
       defineOptions();
@@ -285,6 +287,7 @@ public abstract class AbstractDatabaseConnection
   /**
    * Cleans up the options.
    */
+  @Override
   public void cleanUpOptions() {
     if (m_OptionManager != null) {
       m_OptionManager.cleanUp();
@@ -299,10 +302,11 @@ public abstract class AbstractDatabaseConnection
    *
    * @see	#cleanUpOptions()
    */
+  @Override
   public void destroy() {
     cleanUpOptions();
   }
-  
+
   /**
    * Returns the properties key to use for retrieving the properties.
    *
@@ -369,7 +373,7 @@ public abstract class AbstractDatabaseConnection
   public String loggingLevelTipText() {
     return "The logging level; use FINE or more to have the most detailed output.";
   }
-  
+
   /**
    * Initializes the logger.
    */
@@ -403,6 +407,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the current URL
    */
+  @Override
   public String getURL() {
     return m_URL;
   }
@@ -412,6 +417,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	the URL to use
    */
+  @Override
   public void setURL(String value) {
     if (isConnected())
       return;
@@ -431,6 +437,7 @@ public abstract class AbstractDatabaseConnection
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String URLTipText() {
     return "The JDBC database URL to connect to.";
   }
@@ -458,6 +465,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the current user
    */
+  @Override
   public String getUser() {
     return m_User;
   }
@@ -467,6 +475,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	the user to use
    */
+  @Override
   public void setUser(String value) {
     if (isConnected())
       return;
@@ -481,6 +490,7 @@ public abstract class AbstractDatabaseConnection
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String userTipText() {
     return "The name of the database user.";
   }
@@ -508,6 +518,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the current password
    */
+  @Override
   public BasePassword getPassword() {
     return m_Password;
   }
@@ -517,6 +528,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	the password to use
    */
+  @Override
   public void setPassword(BasePassword value) {
     if (isConnected())
       return;
@@ -531,6 +543,7 @@ public abstract class AbstractDatabaseConnection
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String passwordTipText() {
     return "The password of the database user.";
   }
@@ -958,31 +971,29 @@ public abstract class AbstractDatabaseConnection
 	return false;
       }
 
-      if (m_User.equals("")) {
-	m_Connection = DriverManager.getConnection(m_URL);
-      }
-      else {
-	try {
+      try {
+	if (m_User.equals(""))
+	  m_Connection = DriverManager.getConnection(m_URL);
+	else
 	  m_Connection = DriverManager.getConnection(m_URL,m_User,m_Password.getValue());
-	}
-	catch (CommunicationsException e) {
-	  m_Connection          = null;
-	  m_LastConnectionError = e.toString();
-	}
-	catch(Exception e) {
-	  m_Connection          = null;
-	  m_LastConnectionError = e.toString();
-	}
+      }
+      catch (CommunicationsException e) {
+	m_Connection          = null;
+	m_LastConnectionError = e.toString();
+      }
+      catch(Exception e) {
+	m_Connection          = null;
+	m_LastConnectionError = e.toString();
+      }
 
-	if (m_Connection == null) {
-	  getLogger().severe(
-	      "Cannot connect: " + m_LastConnectionError + "\n"
-		  + "- URL: " + m_URL + "\n"
-		  + "- user: " + m_User + "\n"
-		  + "- pw: " + m_Password.stringValue() + "\n");
-	  incFailedConnectAttempt(m_URL, m_User, m_Password);
-	  return false;
-	}
+      if (m_Connection == null) {
+	getLogger().severe(
+	    "Cannot connect: " + m_LastConnectionError + "\n"
+		+ "- URL: " + m_URL + "\n"
+		+ "- user: " + m_User + "\n"
+		+ "- pw: " + m_Password.stringValue() + "\n");
+	incFailedConnectAttempt(m_URL, m_User, m_Password);
+	return false;
       }
     }
 
@@ -995,7 +1006,7 @@ public abstract class AbstractDatabaseConnection
     catch(Exception e) {
       getLogger().log(Level.SEVERE, "Failed to set autocommit", e);
     }
-    
+
     m_ConnectionOK = isConnected();
     if (!m_ConnectionOK)
       incFailedConnectAttempt(m_URL, m_User, m_Password);
@@ -1246,7 +1257,7 @@ public abstract class AbstractDatabaseConnection
 	    + " (" + (System.currentTimeMillis() - start) + "ms)");
     }
   }
-  
+
   /**
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
@@ -1261,12 +1272,13 @@ public abstract class AbstractDatabaseConnection
    * @throws ClassCastException 	if the specified object's type prevents it
    *         				from being compared to this object.
    */
+  @Override
   public int compareTo(AbstractDatabaseConnection o) {
     int		result;
 
     if (o == null)
       return 1;
-    
+
     result = Utils.compare(getURL(), o.getURL());
 
     if (result == 0)
@@ -1306,6 +1318,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the clone
    */
+  @Override
   public synchronized AbstractDatabaseConnection getClone() {
     AbstractDatabaseConnection	result;
 
