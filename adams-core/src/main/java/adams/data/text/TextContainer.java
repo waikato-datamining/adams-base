@@ -35,7 +35,7 @@ public class TextContainer
 
   /** the ID. */
   protected String m_ID;
-  
+
   /**
    * Initializes the container.
    */
@@ -51,10 +51,10 @@ public class TextContainer
     super.initialize();
     m_ID = "";
   }
-  
+
   /**
-   * Returns a clone of the image.
-   * 
+   * Returns a clone of the content.
+   *
    * @return		the clone
    */
   @Override
@@ -64,7 +64,7 @@ public class TextContainer
 
   /**
    * Returns the ID.
-   * 
+   *
    * @return		the ID
    */
   @Override
@@ -81,7 +81,7 @@ public class TextContainer
   public void setID(String value) {
     m_ID = value;
   }
-  
+
   /**
    * Returns a string representation of the container.
    *
