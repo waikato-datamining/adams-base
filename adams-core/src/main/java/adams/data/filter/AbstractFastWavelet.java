@@ -91,6 +91,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
      *
      * @return		the display string
      */
+    @Override
     public String toDisplay() {
       return m_Display;
     }
@@ -100,6 +101,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
      *
      * @return		the raw enum string
      */
+    @Override
     public String toRaw() {
       return m_Raw;
     }
@@ -110,8 +112,9 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
      * @param s		the string to parse
      * @return		the enum or null if not found
      */
+    @Override
     public WaveletType parse(String s) {
-      return (WaveletType) valueOf((AbstractOption) null, s);
+      return valueOf((AbstractOption) null, s);
     }
 
     /**
@@ -198,6 +201,7 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
    *
    * @return 		the technical information about this class
    */
+  @Override
   public TechnicalInformation getTechnicalInformation() {
     TechnicalInformation 	result;
 
@@ -366,8 +370,12 @@ public abstract class AbstractFastWavelet<T extends DataContainer>
     values = new float[points.size()];
     for (i = 0; i < points.size(); i++)
       values[i] = (float) getValue(points.get(i));
-    if (!m_InverseTransform)
-      values = PaddingHelper.padPow2(values, m_PaddingType);
+    if (!m_InverseTransform) {
+      if (m_WaveletType == WaveletType.CDF2_4)
+	values = PaddingHelper.pad(values, PaddingHelper.nextPowerOf2(values.length) + 1, m_PaddingType);
+      else
+	values = PaddingHelper.padPow2(values, m_PaddingType);
+    }
 
     // setup wavelet
     switch (m_WaveletType) {
