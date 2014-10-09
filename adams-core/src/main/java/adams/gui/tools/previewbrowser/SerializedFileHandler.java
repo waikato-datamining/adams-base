@@ -15,7 +15,7 @@
 
 /**
  * SerializedFileHandler.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -28,7 +28,7 @@ import adams.gui.core.BaseTabbedPane;
 
 /**
  <!-- globalinfo-start -->
- * Displays serialized Java objects: model,model.gz
+ * Displays serialized Java objects: model,model.gz,ser
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -71,7 +71,7 @@ public class SerializedFileHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"model", "model.gz"};
+    return new String[]{"model", "model.gz", "ser"};
   }
 
   /**
