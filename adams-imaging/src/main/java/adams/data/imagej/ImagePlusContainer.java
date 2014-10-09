@@ -34,6 +34,9 @@ import adams.data.image.AbstractImageContainer;
 public class ImagePlusContainer
   extends AbstractImageContainer<ImagePlus> {
 
+  /** for serialization. */
+  private static final long serialVersionUID = -7113043385719138933L;
+
   /**
    * Returns the width of the image.
    * 

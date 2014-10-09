@@ -33,6 +33,9 @@ import adams.data.container.AbstractSimpleContainer;
 public abstract class AbstractImageContainer<T>
   extends AbstractSimpleContainer<T> {
 
+  /** for serialization. */
+  private static final long serialVersionUID = 2095394708673239275L;
+  
   /** the field for the filename. */
   public final static String FIELD_FILENAME = "Filename";
 

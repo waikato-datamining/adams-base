@@ -34,6 +34,9 @@ public class BlobContainer
   extends AbstractSimpleContainer<byte[]>
   implements MutableIDHandler {
 
+  /** for serialization. */
+  private static final long serialVersionUID = 4567572281060847914L;
+  
   /** the ID. */
   protected String m_ID;
   

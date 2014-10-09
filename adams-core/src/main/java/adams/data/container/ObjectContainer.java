@@ -33,6 +33,9 @@ public class ObjectContainer
   extends AbstractSimpleContainer<Object>
   implements MutableIDHandler {
 
+  /** for serialization. */
+  private static final long serialVersionUID = -3156993993662902048L;
+  
   /** the ID. */
   protected String m_ID;
 

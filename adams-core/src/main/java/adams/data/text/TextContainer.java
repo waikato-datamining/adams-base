@@ -33,6 +33,9 @@ public class TextContainer
   extends AbstractSimpleContainer<String>
   implements MutableIDHandler {
 
+  /** for serialization. */
+  private static final long serialVersionUID = 6738045477076146960L;
+  
   /** the ID. */
   protected String m_ID;
 

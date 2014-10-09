@@ -35,6 +35,9 @@ import boofcv.struct.image.ImageSingleBand;
 public class BoofCVImageContainer
   extends AbstractImageContainer<ImageBase> {
 
+  /** for serialization. */
+  private static final long serialVersionUID = 6674669743000941777L;
+
   /**
    * Returns the width of the image.
    * 

@@ -30,6 +30,9 @@ import java.awt.image.BufferedImage;
 public class BufferedImageContainer
   extends AbstractImageContainer<BufferedImage> {
 
+  /** for serialization. */
+  private static final long serialVersionUID = 740331649074560705L;
+
   /**
    * Returns the width of the image.
    * 

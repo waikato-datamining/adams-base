@@ -19,6 +19,8 @@
  */
 package adams.data.container;
 
+import java.io.Serializable;
+
 import adams.core.CloneHandler;
 import adams.data.MutableNotesHandler;
 import adams.data.Notes;
@@ -36,7 +38,11 @@ import adams.data.report.Report;
  * @param <T> the type of content to handle
  */
 public abstract class AbstractSimpleContainer<T>
-  implements CloneHandler<AbstractSimpleContainer<T>>, MutableNotesHandler, MutableReportHandler<Report> {
+  implements Serializable, CloneHandler<AbstractSimpleContainer<T>>, 
+             MutableNotesHandler, MutableReportHandler<Report> {
+
+  /** for serialization. */
+  private static final long serialVersionUID = -7088299534737380639L;
 
   /** the field for the filename. */
   public final static String FIELD_FILENAME = "Filename";
