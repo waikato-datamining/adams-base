@@ -37,6 +37,7 @@ import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 
@@ -79,6 +80,14 @@ public class FlowTabManager
     super();
     
     m_Owner = owner;
+    if (m_Owner != null) {
+      m_Owner.getFlowPanels().addChangeListener(new ChangeListener() {
+	@Override
+	public void stateChanged(ChangeEvent e) {
+	  notifyTabs(getOwner().getCurrentPanel());
+	}
+      });
+    }
   }
   
   /**
@@ -135,7 +144,7 @@ public class FlowTabManager
 	hideTab(tab);
     }
   }
-
+  
   /**
    * Returns the editor panel that owns this tab manager.
    * 
@@ -158,6 +167,21 @@ public class FlowTabManager
     for (i = 0; i < getTabCount(); i++) {
       if (getComponentAt(i) instanceof SelectionAwareEditorTab)
 	((SelectionAwareEditorTab) getComponentAt(i)).actorSelectionChanged(paths, actors);
+    }
+  }
+  
+  /**
+   * Notifies all the tab change aware tabs that a different flow panel was 
+   * selected.
+   *
+   * @param panel	the current panel
+   */
+  public void notifyTabs(FlowPanel panel) {
+    int		i;
+
+    for (i = 0; i < getTabCount(); i++) {
+      if (getComponentAt(i) instanceof TabChangeAwareEditorTab)
+	((TabChangeAwareEditorTab) getComponentAt(i)).flowPanelChanged(panel);
     }
   }
 

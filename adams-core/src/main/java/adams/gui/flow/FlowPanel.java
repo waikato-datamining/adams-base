@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -82,6 +83,7 @@ import adams.flow.processor.CheckVariableUsage;
 import adams.flow.processor.ManageInteractiveActors;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -420,6 +422,9 @@ public class FlowPanel
   /** whether to execute the flow in headless mode. */
   protected boolean m_Headless;
 
+  /** the registered panels: class of panel - (name of panel - panel instance). */
+  protected HashMap<Class,HashMap<String,BasePanel>> m_RegisteredPanels;
+  
   /**
    * Initializes the panel with no owner.
    */
@@ -458,6 +463,7 @@ public class FlowPanel
     m_TitleGenerator      = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
     m_FilenameProposer    = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title               = "";
+    m_RegisteredPanels    = new HashMap<Class,HashMap<String,BasePanel>>();
   }
 
   /**
@@ -1902,6 +1908,47 @@ public class FlowPanel
     m_Tree.redraw();
   }
 
+  /**
+   * Registers a panel.
+   * 
+   * @param cls		the class to register the panel for
+   * @param name	the name of the panel
+   * @param panel	the panel instance
+   * @return		the previously registered panel, if any
+   */
+  public BasePanel registerPanel(Class cls, String name, BasePanel panel) {
+    BasePanel			result;
+    HashMap<String,BasePanel>	panels;
+    
+    if (!m_RegisteredPanels.containsKey(cls))
+      m_RegisteredPanels.put(cls, new HashMap<String,BasePanel>());
+    
+    panels = m_RegisteredPanels.get(cls);
+    result = panels.put(name, panel);
+    
+    return result;
+  }
+
+  /**
+   * Deregisters a panel.
+   * 
+   * @param cls		the class to register the panel for
+   * @param name	the name of the panel
+   * @return		the deregistered panel, if any
+   */
+  public BasePanel registerPanel(Class cls, String name) {
+    if (!m_RegisteredPanels.containsKey(cls))
+      return null;
+    return m_RegisteredPanels.get(cls).remove(name);
+  }
+  
+  /**
+   * Removes all registered panels.
+   */
+  public void clearRegisteredPanels() {
+    m_RegisteredPanels.clear();
+  }
+  
   /**
    * Returns the properties that define the editor.
    *
