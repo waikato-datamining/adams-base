@@ -15,58 +15,46 @@
 
 /**
  * ExternalFlow.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
-import adams.flow.core.ExternalActorHandler;
-import adams.gui.core.BaseMenu;
-import adams.gui.flow.tree.StateContainer;
 
 /**
  * Submenu for handling external flows.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class ExternalFlow
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupSubMenuAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenu	result;
-    
-    if ((state.nodeAtMouseLoc != null) && (state.nodeAtMouseLoc.getActor() instanceof ExternalActorHandler)) {
-      result = new BaseMenu("External flow");
-      new EditExternalFlow().add(state, result);
-      new ExpandCollapseExternalFlow().add(state, result);
-    }
-    else {
-      result = null;
-    }
-    
-    return result;
+  protected String getTitle() {
+    return "External flow";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the sub menu actions.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the submenu items
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return null;
+  protected AbstractTreePopupAction[] getSubMenuActions() {
+    AbstractTreePopupAction[]	result;
+    
+    result = new AbstractTreePopupAction[]{
+	new EditExternalFlow(),
+	new ExpandCollapseExternalFlow(),
+    };
+    
+    return result;
   }
 }

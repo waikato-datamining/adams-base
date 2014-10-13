@@ -15,97 +15,81 @@
 
 /**
  * ExpandCollapseExternalFlow.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenuItem;
 
 import adams.core.io.FlowFile;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For expanding/collapsing of an external flow.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class ExpandCollapseExternalFlow
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    if ((state.selNode != null) && state.selNode.getExpansionOccurred()) {
-      result = new JMenuItem("Collapse");
-      result.setIcon(GUIHelper.getIcon("collapse.png"));
-      result.setEnabled(getShortcut().stateApplies(state));
-      result.setAccelerator(getShortcut().getKeyStroke());
-      result.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          getShortcut().execute(state);
-        }
-      });
-    }
-    else {
-      result = new JMenuItem("Expand");
-      result.setIcon(GUIHelper.getIcon("expand.png"));
-      result.setEnabled(getShortcut().stateApplies(state));
-      result.setAccelerator(getShortcut().getKeyStroke());
-      result.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          getShortcut().execute(state);
-        }
-      });
-    }
-    
-    return result;
+  protected String getTitle() {
+    return "Collapse/Expand";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the key for the tree shortcut in the properties file.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "ExternalFlow.CollapseExpand";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	boolean result = state.isSingleSel && (state.selNode.getActor() instanceof ExternalActorHandler);
-	if (result) {
-	  FlowFile file = ((ExternalActorHandler) state.selNode.getActor()).getActorFile();
-	  result = file.exists() && !file.isDirectory();
-	}
-	return result;
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	if (state.selNode.getExpansionOccurred())
-	  state.selNode.collapse();
-	else
-	  state.selNode.expand();
-      }
-    };
+  protected String getTreeShortCutKey() {
+    return "ExternalFlow.CollapseExpand";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    boolean enabled = m_State.isSingleSel && (m_State.selNode.getActor() instanceof ExternalActorHandler);
+    if (enabled) {
+      FlowFile file = ((ExternalActorHandler) m_State.selNode.getActor()).getActorFile();
+      enabled = file.exists() && !file.isDirectory();
+    }
+    setEnabled(enabled);
+    if ((m_State.selNode != null) && m_State.selNode.getExpansionOccurred()) {
+      setName("Collapse");
+      setIcon(GUIHelper.getIcon("collapse.png"));
+    }
+    else {
+      setName("Expand");
+      setIcon(GUIHelper.getIcon("expand.png"));
+    }
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (m_State.selNode.getExpansionOccurred())
+      m_State.selNode.collapse();
+    else
+      m_State.selNode.expand();
   }
 }

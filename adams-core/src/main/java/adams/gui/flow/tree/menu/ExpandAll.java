@@ -15,74 +15,72 @@
 
 /**
  * ExpandAll.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
-
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For expanding all actors below the currently selected one.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class ExpandAll
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Expand all");
-    result.setIcon(GUIHelper.getIcon("expand.png"));
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Expand all";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the name of the icon to use.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the name, null if not applicable
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "ExpandAll";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return state.isSingleSel && (state.nodeAtMouseLoc.getChildCount() > 0);
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	state.tree.expandAll(state.selPath);
-      }
-    };
+  protected String getIconName() {
+    return "expand.png";
+  }
+  
+  /**
+   * Returns the key for the tree shortcut in the properties file.
+   * 
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
+   */
+  @Override
+  protected String getTreeShortCutKey() {
+    return "ExpandAll";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled(m_State.isSingleSel && (m_State.nodeAtMouseLoc.getChildCount() > 0));
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.tree.expandAll(m_State.selPath);
   }
 }

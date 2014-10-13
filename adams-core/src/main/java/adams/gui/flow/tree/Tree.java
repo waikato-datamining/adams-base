@@ -116,8 +116,7 @@ import adams.gui.event.NodeDroppedListener;
 import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
-import adams.gui.flow.tree.menu.AbstractTreePopupMenuItem;
-import adams.gui.flow.tree.menu.AbstractTreeShortcut;
+import adams.gui.flow.tree.menu.AbstractTreePopupAction;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -240,8 +239,8 @@ public class Tree
   /** whether to ignore name changes of actors (suppressing application of post-processors). */
   protected boolean m_IgnoreNameChanges;
 
-  /** the keyshortcuts. */
-  protected Vector<AbstractTreeShortcut> m_ShortCuts;
+  /** the actions with shortcuts. */
+  protected List<AbstractTreePopupAction> m_Shortcuts;
 
   /** the dialog for processing actors. */
   protected GenericObjectEditorDialog m_DialogProcessActors;
@@ -298,7 +297,7 @@ public class Tree
   @Override
   protected void initialize() {
     String[]			classes;
-    AbstractTreePopupMenuItem	menuitem;
+    AbstractTreePopupAction	action;
 
     super.initialize();
 
@@ -338,16 +337,16 @@ public class Tree
       }
     });
 
-    m_ShortCuts = new Vector<AbstractTreeShortcut>();
-    classes     = AbstractTreePopupMenuItem.getMenuItems();
+    m_Shortcuts = new ArrayList<AbstractTreePopupAction>();
+    classes     = AbstractTreePopupAction.getActions();
     for (String cls: classes) {
       try {
-	menuitem = (AbstractTreePopupMenuItem) Class.forName(cls).newInstance();
-	if (menuitem.hasShortcut() && menuitem.getShortcut().hasKeyStroke())
-	  m_ShortCuts.add(menuitem.getShortcut());
+	action = (AbstractTreePopupAction) Class.forName(cls).newInstance();
+	if (action.hasAccelerator())
+	  m_Shortcuts.add(action);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(OutputType.ERROR, "Failed to instantiate menuitem '" + cls + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append(OutputType.ERROR, "Failed to instantiate action '" + cls + "':\n" + Utils.throwableToString(e));
       }
     }
     addKeyListener(new KeyAdapter() {
@@ -358,9 +357,10 @@ public class Tree
 	if (path != null) {
 	  StateContainer state = getTreeState(paths, (Node) path.getLastPathComponent());
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
-	  for (AbstractTreeShortcut shortcut: m_ShortCuts) {
-	    if (shortcut.applies(ks, state)) {
-	      shortcut.execute(e, state);
+	  for (AbstractTreePopupAction action: m_Shortcuts) {
+	    if (action.keyStrokeApplies(ks)) {
+	      action.update(state);
+	      action.actionPerformed(null);
 	      break;
 	    }
 	  }
@@ -1003,7 +1003,7 @@ public class Tree
     JPopupMenu			menu;
     StateContainer		state;
     String[]			items;
-    AbstractTreePopupMenuItem	menuitem;
+    AbstractTreePopupAction	action;
 
     state = getTreeState(e);
     if (state == null)
@@ -1019,8 +1019,9 @@ public class Tree
       }
       else {
 	try {
-	  menuitem = (AbstractTreePopupMenuItem) Class.forName(item).newInstance();
-	  menuitem.add(state, menu);
+	  action = (AbstractTreePopupAction) Class.forName(item).newInstance();
+	  action.update(state);
+	  menu.add(action.getMenuItem());
 	}
 	catch (Exception ex) {
 	  ConsolePanel.getSingleton().append(OutputType.ERROR, "Failed to instantiate tree popup menu item '" + item + "':\n" + Utils.throwableToString(ex));

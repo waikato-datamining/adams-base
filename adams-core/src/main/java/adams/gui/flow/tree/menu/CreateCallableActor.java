@@ -15,72 +15,62 @@
 
 /**
  * CreateCallableActor.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
-
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For turning an actor into a callable one.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class CreateCallableActor
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Create callable actor");
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Create callable actor";
+  }
+  
+  /**
+   * Returns the key for the tree shortcut in the properties file.
+   * 
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
+   */
+  @Override
+  protected String getTreeShortCutKey() {
+    return "CreateCallableActor";
   }
 
   /**
-   * Creates the associated shortcut.
-   * 
-   * @return		the shortcut, null if not used
+   * Updates the action using the current state information.
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "CreateCallableActor";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return state.editable && state.isSingleSel && (state.tree.getOwner() != null);
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	state.tree.createCallableActor(state.selPath);
-      }
-    };
+  protected void doUpdate() {
+    setEnabled(m_State.editable && m_State.isSingleSel && (m_State.tree.getOwner() != null));
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.tree.createCallableActor(m_State.selPath);
   }
 }

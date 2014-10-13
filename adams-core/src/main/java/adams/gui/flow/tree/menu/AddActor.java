@@ -15,55 +15,47 @@
 
 /**
  * AddActor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
-import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
-
 /**
- * Submenu for adding a new actor.
+ * Menu for adding actors.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class AddActor
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupSubMenuAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
+  private static final long serialVersionUID = 3991575839421394939L;
   
   /**
-   * Creates the associated shortcut.
+   * Returns the caption of this action.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the caption, null if not applicable
    */
-  protected AbstractTreeShortcut newShortcut() {
-    return null;
+  @Override
+  protected String getTitle() {
+    return "Actor";
   }
 
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the sub menu actions.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the submenu items
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenu	result;
+  protected AbstractTreePopupAction[] getSubMenuActions() {
+    AbstractTreePopupAction[]	result;
     
-    result = new BaseMenu("Actor");
-    result.setIcon(GUIHelper.getEmptyIcon());
-    result.setEnabled(state.isSingleSel);
-    new AddActorBeneath().add(state, result);
-    result.addSeparator();
-    new AddActorHere().add(state, result);
-    new AddActorAfter().add(state, result);
+    result = new AbstractTreePopupAction[]{
+	new AddActorBeneath(),
+	null,
+	new AddActorHere(),
+	new AddActorAfter(),
+    };
     
     return result;
   }

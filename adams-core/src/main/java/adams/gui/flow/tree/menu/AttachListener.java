@@ -15,16 +15,13 @@
 
 /**
  * AttachListener.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenuItem;
 
 import adams.core.Pausable;
 import adams.flow.core.ActorUtils;
@@ -32,95 +29,88 @@ import adams.flow.execution.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.PathBreakpoint;
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
- * Allows the ataching of flow execution listeners.
+ * Allows the attaching of flow execution listeners.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class AttachListener
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1359983192445709718L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Attach listener...");
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Attach listener...";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the key for the tree shortcut in the properties file.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "AttachListener";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return (state.numSel == 1) && (state.runningFlow != null) && (state.runningFlow instanceof Pausable) && (((Pausable) state.runningFlow).isPaused());
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	GenericObjectEditorDialog	dialog;
-	Debug				debug;
-	PathBreakpoint			pbreak;
-	
-	pbreak = new PathBreakpoint();
-	pbreak.setPath(state.selNode.getFullName());
-	if (ActorUtils.isSource(state.selNode.getActor()))
-	  pbreak.setOnPostOutput(true);
-	if (ActorUtils.isTransformer(state.selNode.getActor()))
-	  pbreak.setOnPreInput(true);
-	if (ActorUtils.isSink(state.selNode.getActor()))
-	  pbreak.setOnPreInput(true);
-	debug = new Debug();
-	debug.setBreakpoints(new AbstractBreakpoint[]{
-	    pbreak
-	});
-	
-	if ((state.tree != null) && (state.tree.getParentDialog() != null))
-	  dialog = new GenericObjectEditorDialog(state.tree.getParentDialog(), ModalityType.DOCUMENT_MODAL);
-	else if ((state.tree != null) && (state.tree.getParentFrame() != null))
-	  dialog = new GenericObjectEditorDialog(state.tree.getParentFrame(), true);
-	else
-	  dialog = new GenericObjectEditorDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
-	dialog.setTitle("Attach listener [" + state.selNode.getFullName() + "]");
-	dialog.getGOEEditor().setClassType(FlowExecutionListener.class);
-	dialog.getGOEEditor().setCanChangeClassInDialog(true);
-	dialog.setCurrent(debug);
-	dialog.setLocationRelativeTo(state.tree);
-	dialog.setVisible(true);
-	if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-	  return;
-	state.runningFlow.startListeningAtRuntime((FlowExecutionListener) dialog.getCurrent());
-      }
-    };
+  protected String getTreeShortCutKey() {
+    return "AttachListener";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled((m_State.numSel == 1) && (m_State.runningFlow != null) && (m_State.runningFlow instanceof Pausable) && (((Pausable) m_State.runningFlow).isPaused()));
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    GenericObjectEditorDialog	dialog;
+    Debug				debug;
+    PathBreakpoint			pbreak;
+
+    pbreak = new PathBreakpoint();
+    pbreak.setPath(m_State.selNode.getFullName());
+    if (ActorUtils.isSource(m_State.selNode.getActor()))
+      pbreak.setOnPostOutput(true);
+    if (ActorUtils.isTransformer(m_State.selNode.getActor()))
+      pbreak.setOnPreInput(true);
+    if (ActorUtils.isSink(m_State.selNode.getActor()))
+      pbreak.setOnPreInput(true);
+    debug = new Debug();
+    debug.setBreakpoints(new AbstractBreakpoint[]{
+	pbreak
+    });
+
+    if ((m_State.tree != null) && (m_State.tree.getParentDialog() != null))
+      dialog = new GenericObjectEditorDialog(m_State.tree.getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else if ((m_State.tree != null) && (m_State.tree.getParentFrame() != null))
+      dialog = new GenericObjectEditorDialog(m_State.tree.getParentFrame(), true);
+    else
+      dialog = new GenericObjectEditorDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
+    dialog.setTitle("Attach listener [" + m_State.selNode.getFullName() + "]");
+    dialog.getGOEEditor().setClassType(FlowExecutionListener.class);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.setCurrent(debug);
+    dialog.setLocationRelativeTo(m_State.tree);
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    m_State.runningFlow.startListeningAtRuntime((FlowExecutionListener) dialog.getCurrent());
   }
 }

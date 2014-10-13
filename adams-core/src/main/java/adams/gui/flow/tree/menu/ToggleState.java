@@ -15,81 +15,71 @@
 
 /**
  * ToggleState.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
-
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For enabling/disabling actors.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class ToggleState
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem();
-    if (!state.isSingleSel) {
-      result.setText("Toggle state");
-    }
-    else {
-      if (!state.nodeAtMouseLoc.getActor().getSkip())
-	result.setText("Disable");
-      else
-	result.setText("Enable");
-    }
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Toggle state";
+  }
+  
+  /**
+   * Returns the key for the tree shortcut in the properties file.
+   * 
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
+   */
+  @Override
+  protected String getTreeShortCutKey() {
+    return "ToggleState";
   }
 
   /**
-   * Creates the associated shortcut.
-   * 
-   * @return		the shortcut, null if not used
+   * Updates the action using the current state information.
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "ToggleState";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return state.editable && (state.numSel > 0);
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	state.tree.toggleEnabledState(state.selPaths);
-      }
-    };
+  protected void doUpdate() {
+    setEnabled(m_State.editable && (m_State.numSel > 0));
+    if (!m_State.isSingleSel) {
+      setName("Toggle state");
+    }
+    else {
+      if (!m_State.nodeAtMouseLoc.getActor().getSkip())
+	setName("Disable");
+      else
+	setName("Enable");
+    }
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.tree.toggleEnabledState(m_State.selPaths);
   }
 }

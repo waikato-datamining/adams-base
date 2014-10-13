@@ -15,7 +15,7 @@
 
 /**
  * EncloseActor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -32,37 +32,52 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
 
 /**
  * For enclosing the actors in an actor handler.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class EncloseActor
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
+  protected String getTitle() {
+    return "Enclose";
+  }
+  
+  /**
+   * Returns the name of the icon to use.
+   * 
+   * @return		the name, null if not applicable
+   */
+  @Override
+  protected String getIconName() {
+    return "properties.gif";
+  }
+  
+  /**
+   * Creates a new menuitem using itself.
+   */
+  @Override
+  public JMenuItem getMenuItem() {
     BaseMenu	result;
     JMenuItem	menuitem;
     String[]	actors;
     int		i;
     
-    result = new BaseMenu("Enclose");
-    result.setEnabled(state.editable && (state.parent != null) && (state.numSel > 0));
-    result.setIcon(GUIHelper.getEmptyIcon());
+    result = new BaseMenu(getName());
+    result.setEnabled(isEnabled());
+    result.setIcon(getIcon());
 
     actors = ClassLister.getSingleton().getClassnames(ActorHandler.class);
     for (i = 0; i < actors.length; i++) {
@@ -71,25 +86,27 @@ public class EncloseActor
 	continue;
       if (actor instanceof Flow)
 	continue;
-      if ((state.selPaths != null) && (state.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
+      if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
 	continue;
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
       result.add(menuitem);
       menuitem.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
-	  state.tree.encloseActor(state.selPaths, actor);
+	  m_State.tree.encloseActor(m_State.selPaths, actor);
 	}
       });
     }
     result.sort();
 
-    if (state.isSingleSel && (state.selNode.getActor() instanceof DisplayPanelProvider)) {
+    if (m_State.isSingleSel && (m_State.selNode.getActor() instanceof DisplayPanelProvider)) {
       result.addSeparator();
       menuitem = new JMenuItem(DisplayPanelManager.class.getSimpleName());
       result.add(menuitem);
       menuitem.addActionListener(new ActionListener() {
+	@Override
 	public void actionPerformed(ActionEvent e) {
-	  state.tree.encloseInDisplayPanelManager(state.selPaths[0]);
+	  m_State.tree.encloseInDisplayPanelManager(m_State.selPaths[0]);
 	}
       });
     }
@@ -98,12 +115,20 @@ public class EncloseActor
   }
 
   /**
-   * Creates the associated shortcut.
-   * 
-   * @return		the shortcut, null if not used
+   * Updates the action using the current state information.
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return null;
+  protected void doUpdate() {
+    setEnabled(m_State.editable && (m_State.parent != null) && (m_State.numSel > 0));
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.tree.editActor(m_State.selPath);
   }
 }

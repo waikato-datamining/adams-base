@@ -373,8 +373,8 @@ adams.gui.clipboard.AbstractClipboardData=\
 adams.gui.flow.menu.AbstractFlowEditorMenuItem=\
   adams.gui.flow.menu
 
-# the popup menu items in the flow editor
-adams.gui.flow.tree.menu.AbstractTreePopupMenuItem=\
+# the popup menu actions in the flow editor
+adams.gui.flow.tree.menu.AbstractTreePopupAction=\
   adams.gui.flow.tree.menu
 
 # the handlers for GenericObjectEditors

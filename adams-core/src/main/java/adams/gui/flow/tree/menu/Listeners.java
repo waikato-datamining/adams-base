@@ -15,57 +15,58 @@
 
 /**
  * Listeners.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import javax.swing.JMenuItem;
-
-import adams.core.Pausable;
-import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
 
 /**
  * Manages listeners (add/remove).
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class Listeners
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupSubMenuAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1359983192445709718L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    BaseMenu	result;
-    
-    result = new BaseMenu("Listeners");
-    result.setIcon(GUIHelper.getIcon("listen.png"));
-    result.setEnabled((state.runningFlow != null) && (state.runningFlow instanceof Pausable) && (((Pausable) state.runningFlow).isPaused()));
-    new AttachListener().add(state, result);
-    result.addSeparator();
-    new EditListeners().add(state, result);
-    new RemoveListeners().add(state, result);
-    
-    return result;
+  protected String getTitle() {
+    return "Listeners";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the name of the icon to use.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the name, null if not applicable
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return null;
+  protected String getIconName() {
+    return "listen.png";
+  }
+  
+  /**
+   * Returns the sub menu actions.
+   * 
+   * @return		the submenu items
+   */
+  @Override
+  protected AbstractTreePopupAction[] getSubMenuActions() {
+    AbstractTreePopupAction[]	result;
+    
+    result = new AbstractTreePopupAction[]{
+	new AddActorBeneath(),
+	null,
+	new AddActorHere(),
+	new AddActorAfter(),
+    };
+    
+    return result;
   }
 }

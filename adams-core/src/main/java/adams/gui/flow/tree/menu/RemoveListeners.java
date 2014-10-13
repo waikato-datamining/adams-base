@@ -15,74 +15,64 @@
 
 /**
  * RemoveListeners.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenuItem;
 
 import adams.core.Pausable;
 import adams.flow.execution.NullListener;
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
- * Allows the ataching of .
+ * Allows the removal of attached flow execution listeners.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class RemoveListeners
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1359983192445709718L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Remove listeners");
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Remove listeners";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the key for the tree shortcut in the properties file.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "RemoveListeners";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return (state.runningFlow != null) && (state.runningFlow instanceof Pausable) && (((Pausable) state.runningFlow).isPaused());
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	state.runningFlow.startListeningAtRuntime(new NullListener());
-      }
-    };
+  protected String getTreeShortCutKey() {
+    return "RemoveListeners";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled((m_State.runningFlow != null) && (m_State.runningFlow instanceof Pausable) && (((Pausable) m_State.runningFlow).isPaused()));
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.runningFlow.startListeningAtRuntime(new NullListener());
   }
 }

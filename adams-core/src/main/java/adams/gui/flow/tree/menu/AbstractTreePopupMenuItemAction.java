@@ -14,57 +14,41 @@
  */
 
 /**
- * AddActor.java
+ * AbstractTreePopupMenuItemAction.java
  * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.JMenuItem;
+
+import adams.gui.core.GUIHelper;
 
 /**
- * Submenu for adding/removing bookmarks.
+ * Ancestor for menu items in the popup menu of the flow tree.
  * 
  * @author fracpete
  * @version $Revision$
  */
-public class Bookmark
-  extends AbstractTreePopupSubMenuAction {
+public abstract class AbstractTreePopupMenuItemAction
+  extends AbstractTreePopupAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
+  private static final long serialVersionUID = -5921557331961517641L;
   
   /**
-   * Returns the caption of this action.
-   * 
-   * @return		the caption, null if not applicable
+   * Creates a new menuitem using itself.
    */
   @Override
-  protected String getTitle() {
-    return "Bookmark";
-  }
-  
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "bookmark.png";
-  }
-
-  /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
-   */
-  @Override
-  protected AbstractTreePopupAction[] getSubMenuActions() {
-    AbstractTreePopupAction[]	result;
+  public JMenuItem getMenuItem() {
+    JMenuItem	result;
     
-    result = new AbstractTreePopupAction[]{
-	new AddBookmark(),
-	new RemoveBookmark(),
-    };
+    result = new JMenuItem(this);
+    if (getIcon() != null)
+      result.setIcon(getIcon());
+    else
+      result.setIcon(GUIHelper.getEmptyIcon());
     
     return result;
   }
@@ -73,7 +57,13 @@ public class Bookmark
    * Updates the action using the current state information.
    */
   @Override
-  protected void doUpdate() {
-    setEnabled(m_State.numSel > 0);
-  }
+  protected abstract void doUpdate();
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public abstract void actionPerformed(ActionEvent e);
 }

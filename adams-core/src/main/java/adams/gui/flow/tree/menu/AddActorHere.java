@@ -15,75 +15,73 @@
 
 /**
  * AddActorHere.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
-
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.Tree.InsertPosition;
 
 /**
  * For adding an actor at the current position.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class AddActorHere
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Add here...");
-    result.setIcon(GUIHelper.getIcon("add.gif"));
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Add here...";
+  }
+  
+  /**
+   * Returns the name of the icon to use.
+   * 
+   * @return		the name, null if not applicable
+   */
+  @Override
+  protected String getIconName() {
+    return "add.gif";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the key for the tree shortcut in the properties file.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "AddActor.Here";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return state.editable && state.isSingleSel && state.isParentMutable;
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	state.tree.addActor(state.selPath, null, InsertPosition.HERE);
-      }
-    };
+  protected String getTreeShortCutKey() {
+    return "AddActor.Here";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled(m_State.editable && m_State.isSingleSel && m_State.isParentMutable);
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.tree.addActor(m_State.selPath, null, InsertPosition.HERE);
   }
 }

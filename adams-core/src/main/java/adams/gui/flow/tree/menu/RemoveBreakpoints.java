@@ -15,75 +15,66 @@
 
 /**
  * RemoveBreakpoints.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
 import javax.swing.tree.TreePath;
 
-import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For removing breakpoints either below currently selected node or everywhere
  * (if no actor selected).
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class RemoveBreakpoints
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = -5266406657520363873L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem("Remove Breakpoints");
-    result.setEnabled(getShortcut().stateApplies(state));
-    result.setAccelerator(getShortcut().getKeyStroke());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getShortcut().execute(state);
-      }
-    });
-    
-    return result;
+  protected String getTitle() {
+    return "Remove Breakpoints";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the key for the tree shortcut in the properties file.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the key, null if not applicable
+   * @see		FlowEditorPanel#getTreeShortcut(String)
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return new AbstractTreeShortcut() {
-      private static final long serialVersionUID = -7897333416159785241L;
-      @Override
-      protected String getTreeShortCutKey() {
-	return "RemoveBreakpoints";
-      }
-      @Override
-      public boolean stateApplies(StateContainer state) {
-	return state.editable;
-      }
-      @Override
-      protected void doExecute(StateContainer state) {
-	TreePath path = state.selPath;
-	state.tree.processActor(path, new adams.flow.processor.RemoveBreakpoints());
-      }
-    };
+  protected String getTreeShortCutKey() {
+    return "RemoveBreakpoints";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled(m_State.editable);
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    TreePath path = m_State.selPath;
+    m_State.tree.processActor(path, new adams.flow.processor.RemoveBreakpoints());
   }
 }

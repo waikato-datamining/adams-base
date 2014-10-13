@@ -15,51 +15,59 @@
 
 /**
  * MenuHeader.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import javax.swing.JMenuItem;
-
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.StateContainer;
+import java.awt.event.ActionEvent;
 
 /**
  * Adds a disabled menu item to the popup menu with the name of the current actor.
  * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete
  * @version $Revision$
  */
 public class MenuHeader
-  extends AbstractTreePopupMenuItem {
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2861368330653134074L;
-
+  private static final long serialVersionUID = 3991575839421394939L;
+  
   /**
-   * Creates the menuitem to add to the menus.
+   * Returns the caption of this action.
    * 
-   * @param state	the current state of the tree
-   * @return		the menu item, null if not possible to use
+   * @return		the caption, null if not applicable
    */
   @Override
-  protected JMenuItem getMenuItem(final StateContainer state) {
-    JMenuItem	result;
-    
-    result = new JMenuItem(state.nodeAtMouseLoc.getActor().getName());
-    result.setEnabled(false);
-    result.setIcon(GUIHelper.getIcon("flow.gif"));
-    
-    return result;
+  protected String getTitle() {
+    return "Menu header";
   }
 
   /**
-   * Creates the associated shortcut.
+   * Returns the name of the icon to use.
    * 
-   * @return		the shortcut, null if not used
+   * @return		the name, null if not applicable
    */
   @Override
-  protected AbstractTreeShortcut newShortcut() {
-    return null;
+  protected String getIconName() {
+    return "flow.gif";
+  }
+
+  /**
+   * Updates the action using the current state information.
+   */
+  @Override
+  protected void doUpdate() {
+    setName(m_State.nodeAtMouseLoc.getActor().getName());
+    setEnabled(false);
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
   }
 }
