@@ -166,6 +166,9 @@ public class AdamsTestCase
 
     super.setUp();
 
+    // SSL handling
+    System.setProperty("jsse.enableSNIExtension", "false");
+    
     // set up the correct environment
     clsname = System.getProperty(PROPERTY_ENV_CLASS);
     if (clsname != null)
