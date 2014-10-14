@@ -22,7 +22,6 @@ package adams.gui.flow.tree.menu;
 import java.awt.event.ActionEvent;
 
 import adams.flow.core.ActorWithConditionalEquivalent;
-import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For turning an actor into its conditonal equivalent.
@@ -44,17 +43,6 @@ public class MakeConditional
   @Override
   protected String getTitle() {
     return "Make conditional...";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "MakeConditional";
   }
 
   /**

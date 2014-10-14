@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.tree.TreePath;
 
-import adams.gui.flow.FlowEditorPanel;
-
 /**
  * For removing breakpoints either below currently selected node or everywhere
  * (if no actor selected).
@@ -46,17 +44,6 @@ public class RenameActor
   @Override
   protected String getTitle() {
     return "Rename...";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "Rename";
   }
 
   /**

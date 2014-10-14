@@ -21,7 +21,6 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.Tree.InsertPosition;
 
 /**
@@ -44,17 +43,6 @@ public class AddActorAfter
   @Override
   protected String getTitle() {
     return "Add after...";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "AddActor.After";
   }
 
   /**

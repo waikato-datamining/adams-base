@@ -21,8 +21,6 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.gui.flow.FlowEditorPanel;
-
 /**
  * For cutting out the currently selected actor(s) and placing them on the 
  * clipboard.
@@ -43,27 +41,6 @@ public class CutActor
    */
   @Override
   protected String getTitle() {
-    return "Cut";
-  }
-  
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "cut.gif";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
     return "Cut";
   }
 

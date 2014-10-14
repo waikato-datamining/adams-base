@@ -44,16 +44,6 @@ public class MenuHeader
   }
 
   /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "flow.gif";
-  }
-
-  /**
    * Updates the action using the current state information.
    */
   @Override

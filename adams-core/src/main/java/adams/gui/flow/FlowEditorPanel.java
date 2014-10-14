@@ -57,6 +57,7 @@ import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelShortcutsDefinition;
+import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorStatistic;
@@ -127,6 +128,9 @@ public class FlowEditorPanel
   /** the name of the props file with the shortcuts. */
   public final static String FILENAME_SHORTCUTS = "FlowEditorShortcuts.props";
 
+  /** the name of the props file with the tree menu. */
+  public final static String FILENAME_TREEPOPUPMENU = "FlowEditorTreePopupMenu.props";
+
   /** the file to store the recent files in. */
   public final static String SESSION_FILE = "FlowSession.props";
 
@@ -138,6 +142,9 @@ public class FlowEditorPanel
 
   /** the shortcut properties. */
   protected static Properties m_PropertiesShortcuts;
+
+  /** the tree popup menu properties. */
+  protected static Properties m_PropertiesTreePopup;
 
   /** the panel itself. */
   protected FlowEditorPanel m_Self;
@@ -1433,16 +1440,6 @@ public class FlowEditorPanel
   }
 
   /**
-   * Returns the shortcut for the tree stored in the props file.
-   *
-   * @param key		the key for the tree shortcut
-   * @return		the shortcut, empty string if not found or none defined
-   */
-  public static String getTreeShortcut(String key) {
-    return getPropertiesShortcuts().getProperty("Tree.Shortcuts." + key, "");
-  }
-
-  /**
    * Returns whether we can proceed with the operation or not, depending on
    * whether the user saved the flow or discarded the changes.
    *
@@ -2531,6 +2528,18 @@ public class FlowEditorPanel
       m_PropertiesShortcuts = Environment.getInstance().read(FlowEditorPanelShortcutsDefinition.KEY);
 
     return m_PropertiesShortcuts;
+  }
+
+  /**
+   * Returns the properties for the tree popup menu.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getPropertiesTreePopup() {
+    if (m_PropertiesTreePopup == null)
+      m_PropertiesTreePopup = Environment.getInstance().read(FlowEditorTreePopupMenuDefinition.KEY);
+
+    return m_PropertiesTreePopup;
   }
 
   /**

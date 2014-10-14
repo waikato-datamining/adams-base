@@ -50,15 +50,22 @@ public abstract class AbstractTreePopupAction
    */
   @Override
   protected void initialize() {
+    String	shortcut;
+    String	icon;
+    
     super.initialize();
     
     m_State = null;
     
     setName(getTitle());
-    if (getTreeShortCutKey() != null)
-      setAccelerator(FlowEditorPanel.getTreeShortcut(getTreeShortCutKey()));
-    if (getIconName() != null)
-      setIcon(GUIHelper.getIcon(getIconName()));
+
+    shortcut = FlowEditorPanel.getPropertiesTreePopup().getProperty(getClass().getName() + "-Shortcut");
+    if (shortcut != null)
+      setAccelerator(shortcut);
+    
+    icon = FlowEditorPanel.getPropertiesTreePopup().getProperty(getClass().getName() + "-Icon");
+    if (icon != null)
+      setIcon(GUIHelper.getIcon(icon));
   }
   
   /**
@@ -67,25 +74,6 @@ public abstract class AbstractTreePopupAction
    * @return		the caption, null if not applicable
    */
   protected abstract String getTitle();
-  
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  protected String getIconName() {
-    return null;
-  }
-  
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  protected String getTreeShortCutKey() {
-    return null;
-  }
   
   /**
    * Checks whether the keystroke matches.

@@ -40,16 +40,6 @@ public class Listeners
   protected String getTitle() {
     return "Listeners";
   }
-
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "listen.png";
-  }
   
   /**
    * Returns the sub menu actions.
@@ -61,10 +51,10 @@ public class Listeners
     AbstractTreePopupAction[]	result;
     
     result = new AbstractTreePopupAction[]{
-	new AddActorBeneath(),
+	new AttachListener(),
 	null,
-	new AddActorHere(),
-	new AddActorAfter(),
+	new EditListeners(),
+	new RemoveListeners(),
     };
     
     return result;

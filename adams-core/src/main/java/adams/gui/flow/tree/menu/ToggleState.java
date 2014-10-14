@@ -21,8 +21,6 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.gui.flow.FlowEditorPanel;
-
 /**
  * For enabling/disabling actors.
  * 
@@ -43,17 +41,6 @@ public class ToggleState
   @Override
   protected String getTitle() {
     return "Toggle state";
-  }
-  
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "ToggleState";
   }
 
   /**

@@ -41,16 +41,6 @@ public class Bookmark
   protected String getTitle() {
     return "Bookmark";
   }
-  
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "bookmark.png";
-  }
 
   /**
    * Returns the sub menu actions.

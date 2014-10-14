@@ -40,16 +40,6 @@ public class PasteActor
   protected String getTitle() {
     return "Paste";
   }
-
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "paste.gif";
-  }
   
   /**
    * Returns the sub menu actions.

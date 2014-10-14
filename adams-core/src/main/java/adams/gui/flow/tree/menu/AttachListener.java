@@ -29,7 +29,6 @@ import adams.flow.execution.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.PathBreakpoint;
-import adams.gui.flow.FlowEditorPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
@@ -52,17 +51,6 @@ public class AttachListener
   @Override
   protected String getTitle() {
     return "Attach listener...";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "AttachListener";
   }
 
   /**

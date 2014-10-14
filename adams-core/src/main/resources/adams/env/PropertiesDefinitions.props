@@ -16,6 +16,7 @@ Definitions=\
   adams.env.FlowControlCenterPanelDefinition,\
   adams.env.FlowEditorPanelDefinition,\
   adams.env.FlowEditorPanelShortcutsDefinition,\
+  adams.env.FlowEditorTreePopupMenuDefinition,\
   adams.env.FlowRunnerPanelDefinition,\
   adams.env.GOEBlacklistDefinition,\
   adams.env.GOEEditorsDefinition,\

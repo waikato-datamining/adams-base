@@ -21,8 +21,6 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.gui.flow.FlowEditorPanel;
-
 /**
  * For collapsing all actors below the currently selected one.
  * 
@@ -43,27 +41,6 @@ public class CollapseAll
   @Override
   protected String getTitle() {
     return "Collapse all";
-  }
-
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "collapse.png";
-  }
-  
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "CollapseAll";
   }
 
   /**

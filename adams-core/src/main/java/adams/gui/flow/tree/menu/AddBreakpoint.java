@@ -19,7 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.flow.control.Breakpoint;
 
 /**
  * Menu for adding breakpoints.
@@ -41,16 +40,6 @@ public class AddBreakpoint
   @Override
   protected String getTitle() {
     return "Breakpoint";
-  }
-  
-  /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return Breakpoint.class.getName() + ".gif";
   }
 
   /**

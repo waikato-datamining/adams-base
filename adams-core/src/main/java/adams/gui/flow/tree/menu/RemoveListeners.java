@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 
 import adams.core.Pausable;
 import adams.flow.execution.NullListener;
-import adams.gui.flow.FlowEditorPanel;
 
 /**
  * Allows the removal of attached flow execution listeners.
@@ -45,17 +44,6 @@ public class RemoveListeners
   @Override
   protected String getTitle() {
     return "Remove listeners";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "RemoveListeners";
   }
 
   /**

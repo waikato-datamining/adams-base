@@ -27,7 +27,6 @@ import adams.core.Pausable;
 import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
 import adams.flow.execution.FlowExecutionListener;
-import adams.gui.flow.FlowEditorPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
@@ -50,17 +49,6 @@ public class EditListeners
   @Override
   protected String getTitle() {
     return "Edit listeners...";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "EditListeners";
   }
 
   /**

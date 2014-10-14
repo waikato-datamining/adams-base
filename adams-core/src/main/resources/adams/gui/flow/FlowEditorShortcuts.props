@@ -1,4 +1,4 @@
-# Configuration file for the Flow Editor shortcuts (editor and tree).
+# Configuration file for the Flow Editor shortcuts.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
@@ -48,38 +48,3 @@ Shortcuts.View.Redraw=F5
 Shortcuts.Window.NewWindow=
 Shortcuts.Window.DuplicateInNewWindow=
 Shortcuts.Window.DuplicateInNewTab=
-
-# The keyboard shortcuts for the tree
-Tree.Shortcuts.Edit.Actor=F10
-Tree.Shortcuts.ExternalFlow.Edit=shift F10
-Tree.Shortcuts.ExternalFlow.CollapseExpand=
-Tree.Shortcuts.AddActor.Beneath=shift INSERT
-Tree.Shortcuts.AddActor.Here=INSERT
-Tree.Shortcuts.AddActor.After=alt INSERT
-Tree.Shortcuts.AttachListener=
-Tree.Shortcuts.EditListeners=
-Tree.Shortcuts.RemoveListeners=
-Tree.Shortcuts.AddBreakpoint.Beneath=
-Tree.Shortcuts.AddBreakpoint.Here=
-Tree.Shortcuts.AddBreakpoint.After=
-Tree.Shortcuts.RemoveBreakpoints=
-Tree.Shortcuts.Cut=control X
-Tree.Shortcuts.Copy=control C
-Tree.Shortcuts.Paste.Beneath=control shift V
-Tree.Shortcuts.Paste.Here=control V
-Tree.Shortcuts.Paste.After=control alt V
-Tree.Shortcuts.ToggleState=SPACE
-Tree.Shortcuts.Rename=F2
-Tree.Shortcuts.Remove=DELETE
-Tree.Shortcuts.Template.Beneath=
-Tree.Shortcuts.Template.Here=
-Tree.Shortcuts.Template.After=
-Tree.Shortcuts.Template.Last=
-Tree.Shortcuts.CreateCallableActor=control G
-Tree.Shortcuts.MakeConditional=
-Tree.Shortcuts.Externalize=
-Tree.Shortcuts.ExpandAll=
-Tree.Shortcuts.CollapseAll=
-Tree.Shortcuts.Help=F1
-Tree.Shortcuts.Bookmark.Add=control B
-Tree.Shortcuts.Bookmark.Remove=control shift B

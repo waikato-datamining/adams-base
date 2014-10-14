@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import adams.core.io.FlowFile;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.flow.FlowEditorPanel;
 
 /**
  * For expanding/collapsing of an external flow.
@@ -46,17 +45,6 @@ public class ExpandCollapseExternalFlow
   @Override
   protected String getTitle() {
     return "Collapse/Expand";
-  }
-
-  /**
-   * Returns the key for the tree shortcut in the properties file.
-   * 
-   * @return		the key, null if not applicable
-   * @see		FlowEditorPanel#getTreeShortcut(String)
-   */
-  @Override
-  protected String getTreeShortCutKey() {
-    return "ExternalFlow.CollapseExpand";
   }
 
   /**

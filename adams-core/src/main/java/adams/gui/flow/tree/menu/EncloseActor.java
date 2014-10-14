@@ -56,16 +56,6 @@ public class EncloseActor
   }
   
   /**
-   * Returns the name of the icon to use.
-   * 
-   * @return		the name, null if not applicable
-   */
-  @Override
-  protected String getIconName() {
-    return "properties.gif";
-  }
-  
-  /**
    * Creates a new menuitem using itself.
    */
   @Override
