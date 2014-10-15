@@ -15,7 +15,7 @@
 
 /*
  * GetReportValue.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -92,8 +92,9 @@ public class GetReportValue
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
-    return "Retrieves a value from a report.";
+    return "Retrieves a value from a report. Outputs nothing if value not present.";
   }
 
   /**
@@ -101,6 +102,7 @@ public class GetReportValue
    *
    * @return		the default field
    */
+  @Override
   protected Field getDefaultField() {
     return new Field("blah", DataType.NUMERIC);
   }
@@ -130,6 +132,7 @@ public class GetReportValue
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String fieldTipText() {
     return "The value of this field will be retrieved from the report.";
   }
@@ -139,6 +142,7 @@ public class GetReportValue
    *
    * @return		<!-- flow-accepts-start -->adams.data.report.ReportHandler.class, adams.data.report.Report.class<!-- flow-accepts-end -->
    */
+  @Override
   public Class[] accepts() {
     return new Class[]{ReportHandler.class, Report.class};
   }
