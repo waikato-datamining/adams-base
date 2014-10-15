@@ -30,8 +30,8 @@ import weka.core.Instances;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
 import weka.gui.visualize.VisualizePanel;
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.core.Range;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
@@ -43,74 +43,87 @@ import adams.gui.core.BasePanel;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
+ * Input&#47;output:<br/>
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br/>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
+ * <p/>
+ * Container information:<br/>
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: CostCurve
+ * &nbsp;&nbsp;&nbsp;default: WekaCostCurve
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 640
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 480
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
- * <pre>-writer &lt;adams.gui.print.JComponentWriter [options]&gt; (property: writer)
+ * 
+ * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- *
- * <pre>-index &lt;java.lang.String&gt; (property: classLabelIndex)
- * &nbsp;&nbsp;&nbsp;The 1-based index of the class label to use for the plot, 'first' and 'last'
- * &nbsp;&nbsp;&nbsp; are accepted as well.
+ * 
+ * <pre>-index &lt;adams.core.Range&gt; (property: classLabelRange)
+ * &nbsp;&nbsp;&nbsp;The indices of the class labels to use for the plot.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -126,8 +139,8 @@ public class WekaCostCurve
   /** the panel. */
   protected ThresholdVisualizePanel m_VisualizePanel;
 
-  /** the class label index. */
-  protected Index m_ClassLabelIndex;
+  /** the class label range. */
+  protected Range m_ClassLabelRange;
 
   /**
    * Returns a string describing the object.
@@ -147,8 +160,8 @@ public class WekaCostCurve
     super.defineOptions();
 
     m_OptionManager.add(
-	    "index", "classLabelIndex",
-	    new Index(Index.FIRST));
+	    "index", "classLabelRange",
+	    new Range(Range.FIRST));
   }
 
   /**
@@ -158,7 +171,7 @@ public class WekaCostCurve
   protected void initialize() {
     super.initialize();
 
-    m_ClassLabelIndex = new Index("first");
+    m_ClassLabelRange = new Range("first");
   }
 
   /**
@@ -182,22 +195,22 @@ public class WekaCostCurve
   }
 
   /**
-   * Sets the class label index (1-based index).
+   * Sets the class label indices.
    *
-   * @param value 	the index
+   * @param value 	the range
    */
-  public void setClassLabelIndex(Index value) {
-    m_ClassLabelIndex = value;
+  public void setClassLabelRange(Range value) {
+    m_ClassLabelRange = value;
     reset();
   }
 
   /**
-   * Returns the class label index (1-based index).
+   * Returns the class label indices.
    *
-   * @return 		the index
+   * @return 		the range
    */
-  public Index getClassLabelIndex() {
-    return m_ClassLabelIndex;
+  public Range getClassLabelRange() {
+    return m_ClassLabelRange;
   }
 
   /**
@@ -206,8 +219,8 @@ public class WekaCostCurve
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String classLabelIndexTipText() {
-    return "The index of the class label to use for the plot.";
+  public String classLabelRangeTipText() {
+    return "The indices of the class labels to use for the plot.";
   }
 
   /**
@@ -220,7 +233,7 @@ public class WekaCostCurve
     String	result;
 
     result  = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "classLabelIndex", m_ClassLabelIndex, ", class label: ");
+    result += QuickInfoHelper.toString(this, "classLabelRange", m_ClassLabelRange, ", class label: ");
     
     return result;
   }
@@ -253,7 +266,7 @@ public class WekaCostCurve
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class, adams.flow.container.WekaEvaluationContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Evaluation.class, WekaEvaluationContainer.class};
@@ -273,6 +286,7 @@ public class WekaCostCurve
     boolean[] 					connectPoints;
     int						cp;
     Instances 					data;
+    int[]					indices;
 
     try {
       if (token.getPayload() instanceof WekaEvaluationContainer)
@@ -283,16 +297,20 @@ public class WekaCostCurve
 	getLogger().severe("No predictions available from Evaluation object!");
 	return;
       }
-      m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-      curve = new weka.classifiers.evaluation.CostCurve();
-      data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-      plot = new PlotData2D(data);
-      plot.m_displayAllPoints = true;
-      connectPoints = new boolean [data.numInstances()];
-      for (cp = 1; cp < connectPoints.length; cp++)
-	connectPoints[cp] = true;
-      plot.setConnectPoints(connectPoints);
-      m_VisualizePanel.addPlot(plot);
+      m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
+      indices = m_ClassLabelRange.getIntIndices();
+      for (int index: indices) {
+	curve = new weka.classifiers.evaluation.CostCurve();
+	data = curve.getCurve(eval.predictions(), index);
+	plot = new PlotData2D(data);
+	plot.setPlotName(eval.getHeader().classAttribute().value(index));
+	plot.m_displayAllPoints = true;
+	connectPoints = new boolean [data.numInstances()];
+	for (cp = 1; cp < connectPoints.length; cp++)
+	  connectPoints[cp] = true;
+	plot.setConnectPoints(connectPoints);
+	m_VisualizePanel.addPlot(plot);
+      }
     }
     catch (Exception e) {
       handleException("Failed to display token: " + token, e);
@@ -354,16 +372,20 @@ public class WekaCostCurve
       public void display(Token token) {
 	try {
 	  Evaluation eval = getEvaluation(token);
-	  m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-	  weka.classifiers.evaluation.CostCurve curve = new weka.classifiers.evaluation.CostCurve();
-	  Instances data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-	  PlotData2D plot = new PlotData2D(data);
-	  plot.m_displayAllPoints = true;
-	  boolean[] connectPoints = new boolean [data.numInstances()];
-	  for (int cp = 1; cp < connectPoints.length; cp++)
-	    connectPoints[cp] = true;
-	  plot.setConnectPoints(connectPoints);
-	  m_VisualizePanel.addPlot(plot);
+	  m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
+	  int[] indices = m_ClassLabelRange.getIntIndices();
+	  for (int index: indices) {
+	    weka.classifiers.evaluation.CostCurve curve = new weka.classifiers.evaluation.CostCurve();
+	    Instances data = curve.getCurve(eval.predictions(), index);
+	    PlotData2D plot = new PlotData2D(data);
+	    plot.setPlotName(eval.getHeader().classAttribute().value(index));
+	    plot.m_displayAllPoints = true;
+	    boolean[] connectPoints = new boolean [data.numInstances()];
+	    for (int cp = 1; cp < connectPoints.length; cp++)
+	      connectPoints[cp] = true;
+	    plot.setConnectPoints(connectPoints);
+	    m_VisualizePanel.addPlot(plot);
+	  }
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to display token: " + token, e);

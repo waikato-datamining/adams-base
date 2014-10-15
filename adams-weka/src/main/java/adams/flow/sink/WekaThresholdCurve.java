@@ -32,8 +32,8 @@ import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
 import weka.gui.visualize.VisualizePanel;
 import adams.core.EnumWithCustomDisplay;
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.core.Range;
 import adams.core.option.AbstractOption;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
@@ -49,17 +49,17 @@ import adams.gui.core.BasePanel;
  * Input&#47;output:<br/>
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br/>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
+ * <p/>
+ * Container information:<br/>
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -67,36 +67,39 @@ import adams.gui.core.BasePanel;
  * &nbsp;&nbsp;&nbsp;default: WekaThresholdCurve
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-short-title (property: shortTitle)
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 640
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 480
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-x &lt;int&gt; (property: x)
@@ -118,19 +121,18 @@ import adams.gui.core.BasePanel;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-index &lt;adams.core.Index&gt; (property: classLabelIndex)
- * &nbsp;&nbsp;&nbsp;The index of the class label to use for the plot; An index i2s a number starting 
- * &nbsp;&nbsp;&nbsp;with 1; the following placeholders can be used as well: first, second, third,
- * &nbsp;&nbsp;&nbsp; last_2, last_1, last
+ * <pre>-index &lt;adams.core.Range&gt; (property: classLabelRange)
+ * &nbsp;&nbsp;&nbsp;The indices of the class labels to use for the plot.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
- * <pre>-attribute-x &lt;True Positives|False Negatives|False Positives|True Negatives|False Positive Rate|True Positive Rate|Precision|Recall|Fallout|FMeasure|Sample Size|Lift|Threshold&gt; (property: attributeX)
+ * <pre>-attribute-x &lt;TRUE_POS|FALSE_NEG|FALSE_POS|TRUE_NEG|FP_RATE|TP_RATE|PRECISION|RECALL|FALLOUT|FMEASURE|SAMPLE_SIZE|LIFT|THRESHOLD&gt; (property: attributeX)
  * &nbsp;&nbsp;&nbsp;The attribute to show on the X axis.
  * &nbsp;&nbsp;&nbsp;default: FP_RATE
  * </pre>
  * 
- * <pre>-attribute-y &lt;True Positives|False Negatives|False Positives|True Negatives|False Positive Rate|True Positive Rate|Precision|Recall|Fallout|FMeasure|Sample Size|Lift|Threshold&gt; (property: attributeY)
+ * <pre>-attribute-y &lt;TRUE_POS|FALSE_NEG|FALSE_POS|TRUE_NEG|FP_RATE|TP_RATE|PRECISION|RECALL|FALLOUT|FMEASURE|SAMPLE_SIZE|LIFT|THRESHOLD&gt; (property: attributeY)
  * &nbsp;&nbsp;&nbsp;The attribute to show on the Y axis.
  * &nbsp;&nbsp;&nbsp;default: TP_RATE
  * </pre>
@@ -273,8 +275,8 @@ public class WekaThresholdCurve
   /** the text area. */
   protected ThresholdVisualizePanel m_VisualizePanel;
 
-  /** the class label index. */
-  protected Index m_ClassLabelIndex;
+  /** the class label indices. */
+  protected Range m_ClassLabelRange;
   
   /** the attribute on the X axis. */
   protected AttributeName m_AttributeX;
@@ -300,8 +302,8 @@ public class WekaThresholdCurve
     super.defineOptions();
 
     m_OptionManager.add(
-	    "index", "classLabelIndex",
-	    new Index(Index.FIRST));
+	    "index", "classLabelRange",
+	    new Range(Range.FIRST));
 
     m_OptionManager.add(
 	    "attribute-x", "attributeX",
@@ -319,7 +321,7 @@ public class WekaThresholdCurve
   protected void initialize() {
     super.initialize();
 
-    m_ClassLabelIndex = new Index("first");
+    m_ClassLabelRange = new Range(Range.FIRST);
   }
 
   /**
@@ -343,22 +345,22 @@ public class WekaThresholdCurve
   }
 
   /**
-   * Sets the class label index (1-based index).
+   * Sets the class label indices.
    *
-   * @param value 	the index
+   * @param value 	the range
    */
-  public void setClassLabelIndex(Index value) {
-    m_ClassLabelIndex = value;
+  public void setClassLabelRange(Range value) {
+    m_ClassLabelRange = value;
     reset();
   }
 
   /**
-   * Returns the class label index (1-based index).
+   * Returns the class label indices.
    *
-   * @return 		the index
+   * @return 		the range
    */
-  public Index getClassLabelIndex() {
-    return m_ClassLabelIndex;
+  public Range getClassLabelRange() {
+    return m_ClassLabelRange;
   }
 
   /**
@@ -367,8 +369,8 @@ public class WekaThresholdCurve
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String classLabelIndexTipText() {
-    return "The index of the class label to use for the plot.";
+  public String classLabelRangeTipText() {
+    return "The indices of the class labels to use for the plot.";
   }
 
   /**
@@ -439,7 +441,7 @@ public class WekaThresholdCurve
     String	result;
 
     result = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "classLabelIndex", m_ClassLabelIndex, ", class label: ");
+    result += QuickInfoHelper.toString(this, "classLabelRange", m_ClassLabelRange, ", class label: ");
     result += QuickInfoHelper.toString(this, "attributeX", m_AttributeX, ", x-axis: ");
     result += QuickInfoHelper.toString(this, "attributeY", m_AttributeY, ", y-axis: ");
     
@@ -474,7 +476,7 @@ public class WekaThresholdCurve
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class, adams.flow.container.WekaEvaluationContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Evaluation.class, WekaEvaluationContainer.class};
@@ -494,6 +496,7 @@ public class WekaThresholdCurve
     boolean[] 		connectPoints;
     int			cp;
     Instances 		data;
+    int[]		indices;
     
     try {
       if (token.getPayload() instanceof WekaEvaluationContainer)
@@ -504,20 +507,24 @@ public class WekaThresholdCurve
 	getLogger().severe("No predictions available from Evaluation object!");
 	return;
       }
-      m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-      curve = new ThresholdCurve();
-      data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-      plot = new PlotData2D(data);
-      plot.m_displayAllPoints = true;
-      connectPoints = new boolean [data.numInstances()];
-      for (cp = 1; cp < connectPoints.length; cp++)
-	connectPoints[cp] = true;
-      plot.setConnectPoints(connectPoints);
-      m_VisualizePanel.addPlot(plot);
-      if (data.attribute(m_AttributeX.toDisplay()) != null)
-	m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
-      if (data.attribute(m_AttributeY.toDisplay()) != null)
-	m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
+      m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
+      indices = m_ClassLabelRange.getIntIndices();
+      for (int index: indices) {
+	curve = new ThresholdCurve();
+	data = curve.getCurve(eval.predictions(), index);
+	plot = new PlotData2D(data);
+	plot.setPlotName(eval.getHeader().classAttribute().value(index));
+	plot.m_displayAllPoints = true;
+	connectPoints = new boolean [data.numInstances()];
+	for (cp = 1; cp < connectPoints.length; cp++)
+	  connectPoints[cp] = true;
+	plot.setConnectPoints(connectPoints);
+	m_VisualizePanel.addPlot(plot);
+	if (data.attribute(m_AttributeX.toDisplay()) != null)
+	  m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
+	if (data.attribute(m_AttributeY.toDisplay()) != null)
+	  m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
+      }
     }
     catch (Exception e) {
       handleException("Failed to display token: " + token, e);
@@ -581,20 +588,24 @@ public class WekaThresholdCurve
       public void display(Token token) {
 	try {
 	  Evaluation eval = getEvaluation(token);
-	  m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-	  ThresholdCurve curve = new ThresholdCurve();
-	  Instances data = curve.getCurve(eval.predictions(), m_ClassLabelIndex.getIntIndex());
-	  PlotData2D plot = new PlotData2D(data);
-	  plot.m_displayAllPoints = true;
-	  boolean[] connectPoints = new boolean [data.numInstances()];
-	  for (int cp = 1; cp < connectPoints.length; cp++)
-	    connectPoints[cp] = true;
-	  plot.setConnectPoints(connectPoints);
-	  m_VisualizePanel.addPlot(plot);
-	  if (data.attribute(m_AttributeX.toDisplay()) != null)
-	    m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
-	  if (data.attribute(m_AttributeY.toDisplay()) != null)
-	    m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
+	  m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
+	  int[] indices = m_ClassLabelRange.getIntIndices();
+	  for (int index: indices) {
+	    ThresholdCurve curve = new ThresholdCurve();
+	    Instances data = curve.getCurve(eval.predictions(), index);
+	    PlotData2D plot = new PlotData2D(data);
+	    plot.setPlotName(eval.getHeader().classAttribute().value(index));
+	    plot.m_displayAllPoints = true;
+	    boolean[] connectPoints = new boolean [data.numInstances()];
+	    for (int cp = 1; cp < connectPoints.length; cp++)
+	      connectPoints[cp] = true;
+	    plot.setConnectPoints(connectPoints);
+	    m_VisualizePanel.addPlot(plot);
+	    if (data.attribute(m_AttributeX.toDisplay()) != null)
+	      m_VisualizePanel.setXIndex(data.attribute(m_AttributeX.toDisplay()).index());
+	    if (data.attribute(m_AttributeY.toDisplay()) != null)
+	      m_VisualizePanel.setYIndex(data.attribute(m_AttributeY.toDisplay()).index());
+	  }
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to display token: " + token, e);

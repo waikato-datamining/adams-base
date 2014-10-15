@@ -1,0 +1,36 @@
+# Project: adams
+# Date: 2014-10-15 13:44:51
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier no a dataset and displays the ROC curves.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.bayes.NaiveBayes
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+	-actor
+		adams.flow.sink.WekaThresholdCurve
+			-writer
+				adams.gui.print.NullWriter
+			-index
+			first-last
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
