@@ -86,6 +86,16 @@ public class HtmlUtilsTest
 	"output differs", 
 	"a &lt; b and b &gt; c; first url <a href=\"http://www.waikato.ac.nz/\">http://www.waikato.ac.nz/</a> and the second url <a href=\"http://www.cs.waikato.ac.nz/\">http://www.cs.waikato.ac.nz/</a>", 
 	HtmlUtils.markUpURLs("a < b and b > c; first url http://www.waikato.ac.nz/ and the second url http://www.cs.waikato.ac.nz/", "<a href=\"$0\">$0</a>", true));
+    
+    assertEquals(
+	"output differs", 
+	"a &lt; b and b &gt; c; first url <a href=\"https://adams.cms.waikato.ac.nz:8080/\">https://adams.cms.waikato.ac.nz:8080/</a> and the second url <a href=\"http://www.cs.waikato.ac.nz/\">http://www.cs.waikato.ac.nz/</a>", 
+	HtmlUtils.markUpURLs("a < b and b > c; first url https://adams.cms.waikato.ac.nz:8080/ and the second url http://www.cs.waikato.ac.nz/", "<a href=\"$0\">$0</a>", true));
+    
+    assertEquals(
+	"output differs", 
+	"first document <a href=\"file:///some/file.txt\">file:///some/file.txt</a> and a URL at <a href=\"ftp://ftp.suse.com/\">ftp://ftp.suse.com/</a>", 
+	HtmlUtils.markUpURLs("first document file:///some/file.txt and a URL at ftp://ftp.suse.com/", "<a href=\"$0\">$0</a>", true));
   }
 
   /**
