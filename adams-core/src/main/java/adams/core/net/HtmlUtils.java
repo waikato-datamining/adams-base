@@ -22,7 +22,6 @@ package adams.core.net;
 import adams.core.License;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
-import adams.env.Environment;
 
 /**
  * Utility functions regarding HTML.
@@ -172,26 +171,5 @@ public class HtmlUtils {
     result = result.replaceAll("\\b((file|ftps?|https?)\\:\\/\\/[\\w\\d:#@%/;$()~_?!+-=.,&]+)", "<a href=\"$0\">$0</a>");
     
     return result;
-  }
-  
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-    String url;
-    url = "http://localhost/";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "file:///some/where/example.com";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "https://localhost/";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "ftp://localhost/";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "http://localhost/hello.html";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "http://localhost:8080/";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "http://localhost:8080/hello.html";
-    System.out.println(url + " -> " + markUpURLs(url, false));
-    url = "some text here and http://localhost:8080/hello.html there is a url";
-    System.out.println(url + " -> " + markUpURLs(url, false));
   }
 }
