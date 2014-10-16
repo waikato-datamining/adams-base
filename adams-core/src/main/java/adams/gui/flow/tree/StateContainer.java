@@ -15,7 +15,7 @@
 
 /**
  * StateContainer.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -33,6 +33,7 @@ import adams.gui.flow.tree.Tree.InsertPosition;
  * @version $Revision$
  */
 public class StateContainer {
+  
   /** the tree this state is for. */
   public Tree tree;
   
@@ -80,4 +81,35 @@ public class StateContainer {
   
   /** the currently running flow. */
   public FlowExecutionListeningSupporter runningFlow;
+  
+  /**
+   * Returns a short description of the container's content.
+   */
+  @Override
+  public String toString() {
+    StringBuilder	result;
+    
+    result = new StringBuilder();
+    result.append("tree: @" + tree.hashCode() + "\n");
+    result.append("selPaths:\n");
+    for (TreePath path: selPaths)
+      result.append(" - " + path + "\n");
+    result.append("selPaths: " + numSel + "\n");
+    result.append("nodeAtMouseLoc: " + nodeAtMouseLoc + "\n");
+    result.append("isSingleSel: " + isSingleSel + "\n");
+    result.append("selPath: " + selPath + "\n");
+    result.append("selPath: " + selPath + "\n");
+    result.append("parent: " + parent + "\n");
+    result.append("editable: " + editable + "\n");
+    result.append("canRemove: " + canRemove + "\n");
+    result.append("canPaste: " + canPaste + "\n");
+    result.append("isMutable: " + isMutable + "\n");
+    result.append("isMutable: " + isMutable + "\n");
+    result.append("isParentMutable: " + isParentMutable + "\n");
+    result.append("lastTemplate: " + lastTemplate + "\n");
+    result.append("lastTemplateInsertPosition: " + lastTemplateInsertPosition + "\n");
+    result.append("runningFlow: " + runningFlow + "\n");
+        
+    return result.toString();
+  }
 }
