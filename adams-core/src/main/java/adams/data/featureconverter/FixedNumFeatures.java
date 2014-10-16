@@ -27,7 +27,8 @@ import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
- * Meta-feature-converter that ensures that the generated output has a fixed number of data points.
+ * Meta-feature-converter that ensures that the generated output has a fixed number of data points.<br/>
+ * In case of filler type FIRST, the data gets inserted at the start, as opposed to at the end when using LAST.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -57,7 +58,7 @@ import adams.data.report.DataType;
  * &nbsp;&nbsp;&nbsp;default: Filler-#
  * </pre>
  * 
- * <pre>-filler-type &lt;MISSING_NUMERIC|MISSING_STRING|MISSING_BOOLEAN|NUMERIC|STRING|BOOLEAN|LAST&gt; (property: fillerType)
+ * <pre>-filler-type &lt;MISSING_NUMERIC|MISSING_STRING|MISSING_BOOLEAN|NUMERIC|STRING|BOOLEAN|FIRST|LAST&gt; (property: fillerType)
  * &nbsp;&nbsp;&nbsp;The type of filler to use.
  * &nbsp;&nbsp;&nbsp;default: MISSING_NUMERIC
  * </pre>
@@ -108,6 +109,8 @@ public class FixedNumFeatures
     STRING,
     /** use a boolean value. */
     BOOLEAN,
+    /** uses the first value as template. */
+    FIRST,
     /** uses the last value as template. */
     LAST
   }
@@ -139,7 +142,10 @@ public class FixedNumFeatures
   public String globalInfo() {
     return 
 	"Meta-feature-converter that ensures that the generated output has "
-	+ "a fixed number of data points.";
+	+ "a fixed number of data points.\n"
+	+ "In case of filler type " + FillerType.FIRST + ", the data gets "
+	+ "inserted at the start, as opposed to at the end when using " 
+	+ FillerType.LAST + ".";
   }
 
   /**
@@ -452,6 +458,9 @@ public class FixedNumFeatures
 	case NUMERIC:
 	  fixed.add(name, DataType.NUMERIC);
 	  break;
+	case FIRST:
+	  fixed.add(0, name, fixed.getTypes().get(0));
+	  break;
 	case LAST:
 	  fixed.add(name, fixed.getTypes().get(fixed.size() - 1));
 	  break;
@@ -495,6 +504,9 @@ public class FixedNumFeatures
 	  break;
 	case NUMERIC:
 	  fixed.add(m_FillerNumeric);
+	  break;
+	case FIRST:
+	  fixed.add(0, fixed.get(0));
 	  break;
 	case LAST:
 	  fixed.add(fixed.get(fixed.size() - 1));
