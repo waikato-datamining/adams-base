@@ -341,6 +341,27 @@ public class FlowTabManager
   }
 
   /**
+   * Returns the tab instance of the given class.
+   * 
+   * @param cls		the class of tab to get the instance for
+   * @return		the tab instance
+   */
+  public synchronized AbstractEditorTab getTab(Class cls) {
+    AbstractEditorTab	result;
+    
+    result = null;
+    
+    for (AbstractEditorTab tab: m_TabList) {
+      if (tab.getClass() == cls) {
+	result = tab;
+	break;
+      }
+    }
+    
+    return result;
+  }
+  
+  /**
    * Saves the current properties.
    *
    * @return		true if successfully updated

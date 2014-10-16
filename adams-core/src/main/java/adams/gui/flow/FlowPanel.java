@@ -73,8 +73,10 @@ import adams.data.statistics.InformativeStatistic;
 import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
+import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorStatistic;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -83,7 +85,6 @@ import adams.flow.processor.CheckVariableUsage;
 import adams.flow.processor.ManageInteractiveActors;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
-import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -97,6 +98,8 @@ import adams.gui.dialog.TextDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeListener;
 import adams.gui.event.UndoEvent;
+import adams.gui.flow.tab.RegisteredBreakpointsTab;
+import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
@@ -249,6 +252,7 @@ public class FlowPanel
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
+      m_Owner.clearRegisteredBreapoints();
       if (getProperties().getBoolean("GarbageCollectAfterFinish", true))
 	System.gc();
 
@@ -422,8 +426,11 @@ public class FlowPanel
   /** whether to execute the flow in headless mode. */
   protected boolean m_Headless;
 
-  /** the registered panels: class of panel - (name of panel - panel instance). */
-  protected HashMap<Class,HashMap<String,BasePanel>> m_RegisteredPanels;
+  /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
+  protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
+
+  /** the registered breakpoints: class of panel - (name of panel - AbstractDisplay instance). */
+  protected HashMap<String,Breakpoint> m_RegisteredBreakpoints;
   
   /**
    * Initializes the panel with no owner.
@@ -454,16 +461,17 @@ public class FlowPanel
   protected void initialize() {
     super.initialize();
 
-    m_CurrentFlow         = null;
-    m_LastFlow            = null;
-    m_CurrentFile         = null;
-    m_RecentFilesHandler  = null;
-    m_CurrentWorker       = null;
-    m_LastVariableSearch  = "";
-    m_TitleGenerator      = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
-    m_FilenameProposer    = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
-    m_Title               = "";
-    m_RegisteredPanels    = new HashMap<Class,HashMap<String,BasePanel>>();
+    m_CurrentFlow           = null;
+    m_LastFlow              = null;
+    m_CurrentFile           = null;
+    m_RecentFilesHandler    = null;
+    m_CurrentWorker         = null;
+    m_LastVariableSearch    = "";
+    m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
+    m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
+    m_Title                 = "";
+    m_RegisteredDisplays      = new HashMap<Class,HashMap<String,AbstractDisplay>>();
+    m_RegisteredBreakpoints = new HashMap<String,Breakpoint>();
   }
 
   /**
@@ -1160,6 +1168,7 @@ public class FlowPanel
     if (m_LastFlow != null) {
       showStatus("Cleaning up");
       try {
+	clearRegisteredDisplays();
 	m_LastFlow.destroy();
 	m_LastFlow = null;
 	showStatus("");
@@ -1907,46 +1916,144 @@ public class FlowPanel
   public void redraw() {
     m_Tree.redraw();
   }
+  
+  /**
+   * Notifies the {@link RegisteredDisplaysTab} instance of a change. 
+   */
+  protected void updateRegisteredDisplays() {
+    RegisteredDisplaysTab			registered;
+
+    if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class))
+      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true);
+    registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
+    if (registered != null)
+      registered.update();
+  }
 
   /**
-   * Registers a panel.
+   * Registers a display.
    * 
-   * @param cls		the class to register the panel for
-   * @param name	the name of the panel
-   * @param panel	the panel instance
-   * @return		the previously registered panel, if any
+   * @param cls		the class to register the display for
+   * @param name	the name of the display
+   * @param panel	the AbstractDisplay instance
+   * @return		the previously registered display, if any
    */
-  public BasePanel registerPanel(Class cls, String name, BasePanel panel) {
-    BasePanel			result;
-    HashMap<String,BasePanel>	panels;
+  public AbstractDisplay registerDisplay(Class cls, String name, AbstractDisplay panel) {
+    AbstractDisplay			result;
+    HashMap<String,AbstractDisplay>	panels;
     
-    if (!m_RegisteredPanels.containsKey(cls))
-      m_RegisteredPanels.put(cls, new HashMap<String,BasePanel>());
+    if (!m_RegisteredDisplays.containsKey(cls))
+      m_RegisteredDisplays.put(cls, new HashMap<String,AbstractDisplay>());
     
-    panels = m_RegisteredPanels.get(cls);
+    panels = m_RegisteredDisplays.get(cls);
     result = panels.put(name, panel);
+    
+    // notify panel
+    updateRegisteredDisplays();
     
     return result;
   }
 
   /**
-   * Deregisters a panel.
+   * Deregisters a display.
    * 
-   * @param cls		the class to register the panel for
-   * @param name	the name of the panel
-   * @return		the deregistered panel, if any
+   * @param cls		the class to register the display for
+   * @param name	the name of the display
+   * @return		the deregistered display, if any
    */
-  public BasePanel registerPanel(Class cls, String name) {
-    if (!m_RegisteredPanels.containsKey(cls))
-      return null;
-    return m_RegisteredPanels.get(cls).remove(name);
+  public AbstractDisplay deregisterDisplay(Class cls, String name) {
+    AbstractDisplay	result;
+    
+    result = m_RegisteredDisplays.get(cls).remove(name);
+    
+    // notify panel
+    updateRegisteredDisplays();
+    
+    return result;
+  }
+  
+  /**
+   * Removes all registered displays.
+   */
+  public void clearRegisteredDisplays() {
+    m_RegisteredDisplays.clear();
+    // notify panel
+    updateRegisteredDisplays();
+  }
+  
+  /**
+   * Returns all currently registered displays.
+   * 
+   * @return		the displays
+   */
+  public HashMap<Class,HashMap<String,AbstractDisplay>> getRegisteredDisplays() {
+    return m_RegisteredDisplays;
+  }
+  
+  /**
+   * Notifies the {@link RegisteredBreakpointsTab} instance of a change. 
+   */
+  protected void updateRegisteredBreakpoints() {
+    RegisteredBreakpointsTab			registered;
+
+    if (!getEditor().getTabs().isVisible(RegisteredBreakpointsTab.class))
+      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, true);
+    registered = (RegisteredBreakpointsTab) getEditor().getTabs().getTab(RegisteredBreakpointsTab.class);
+    if (registered != null)
+      registered.update();
+  }
+
+  /**
+   * Registers a Breakpoint.
+   * 
+   * @param name	the name of the Breakpoint
+   * @param panel	the Breakpoint instance
+   * @return		the previously registered panel, if any
+   */
+  public Breakpoint registerBreakpoint(String name, Breakpoint panel) {
+    Breakpoint			result;
+    
+    result = m_RegisteredBreakpoints.put(name, panel);
+    
+    // notify panel
+    updateRegisteredBreakpoints();
+    
+    return result;
+  }
+
+  /**
+   * Deregisters a breakpoint.
+   * 
+   * @param name	the name of the breakpoint
+   * @return		the deregistered breakpoint, if any
+   */
+  public Breakpoint deregisterBreakpoint(String name) {
+    Breakpoint	result;
+    
+    result = m_RegisteredBreakpoints.remove(name);
+    
+    // notify panel
+    updateRegisteredBreakpoints();
+    
+    return result;
   }
   
   /**
    * Removes all registered panels.
    */
-  public void clearRegisteredPanels() {
-    m_RegisteredPanels.clear();
+  public void clearRegisteredBreapoints() {
+    m_RegisteredBreakpoints.clear();
+    // notify panel
+    updateRegisteredBreakpoints();
+  }
+  
+  /**
+   * Returns all currently registered breakpoints.
+   * 
+   * @return		the breakpoints
+   */
+  public HashMap<String,Breakpoint> getRegisteredBreakpoints() {
+    return m_RegisteredBreakpoints;
   }
   
   /**

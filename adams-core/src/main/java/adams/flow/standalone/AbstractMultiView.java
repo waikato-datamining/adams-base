@@ -697,6 +697,7 @@ public abstract class AbstractMultiView
       m_Wrappers = new ArrayList<ViewWrapper>();
       for (AbstractActor actor: m_Actors) {
 	((AbstractDisplay) actor).setCreateFrame(false);
+	((AbstractDisplay) actor).setDisplayInEditor(false);
 	wrapper = new ViewWrapper();
 	wrapper.setParent(this);
 	wrapper.setName(actor.getName());

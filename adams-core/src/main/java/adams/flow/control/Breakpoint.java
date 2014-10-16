@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -57,6 +57,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.TextEditorPanel;
+import adams.gui.flow.FlowPanel;
 import adams.gui.flow.StoragePanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.ExpressionWatchPanel;
@@ -71,76 +72,91 @@ import adams.parser.BooleanExpression;
  * It is possible to define watches as well.<br/>
  * <br/>
  * The expression has the following underlying grammar:<br/>
- *  expr_list ::= expr_list expr_part | expr_part ;<br/>
- *  expr_part ::= boolexpr ;<br/>
+ * expr_list ::= '=' expr_list expr_part | expr_part ;<br/>
+ * expr_part ::=  expr ;<br/>
  * <br/>
- *  boolexpr ::=    ( boolexpr )<br/>
- *                | true<br/>
- *                | false<br/>
- *                | bool ( VARIABLE (must represent a boolean string: true|false) )<br/>
- *                | numexpr &lt; numexpr<br/>
- *                | numexpr &lt;= numexpr<br/>
- *                | numexpr &gt; numexpr<br/>
- *                | numexpr &gt;= numexpr<br/>
- *                | numexpr = numexpr<br/>
- *                | numexpr != numexpr (or: numexpr &lt;&gt; numexpr)<br/>
- *                | strexpr &lt; strexpr<br/>
- *                | strexpr &lt;= strexpr<br/>
- *                | strexpr &gt; strexpr<br/>
- *                | strexpr &gt;= strexpr<br/>
- *                | strexpr = strexpr<br/>
- *                | strexpr != strexpr (or: strexpr &lt;&gt; strexpr)<br/>
- *                | matches ( strexpr , regexp )<br/>
- *                | ! boolexpr (or: not boolexpr)<br/>
- *                | boolexpr &amp; boolexpr (or: boolexpr and boolexpr)<br/>
- *                | boolexpr | boolexpr (or: boolexpr or boolexpr)<br/>
- *                ;<br/>
+ * expr      ::=   ( expr )<br/>
  * <br/>
- *  numexpr   ::=   ( numexpr )<br/>
- *                | NUMBER<br/>
- *                | -numexpr<br/>
- *                | constexpr<br/>
- *                | opexpr<br/>
- *                | funcexpr<br/>
- *                ;<br/>
+ * # data types<br/>
+ *               | number<br/>
+ *               | string<br/>
+ *               | boolean<br/>
+ *               | date<br/>
  * <br/>
- *  strexpr   ::=   substr ( strexpr , start )<br/>
- *                | substr ( strexpr , start , end )<br/>
- *                | lowercase ( strexpr )<br/>
- *                | uppercase ( strexpr )<br/>
- *                | trim ( strexpr )<br/>
- *                | string<br/>
- *                | str ( VARIABLE (must represent a string) )<br/>
- *                ;<br/>
+ * # constants<br/>
+ *               | true<br/>
+ *               | false<br/>
+ *               | pi<br/>
+ *               | e<br/>
+ *               | now()<br/>
+ *               | today()<br/>
  * <br/>
- *  constexpr ::=   PI<br/>
- *                | E<br/>
- *                ;<br/>
+ * # negating numeric value<br/>
+ *               | -expr<br/>
  * <br/>
- *  opexpr    ::=   numexpr + numexpr<br/>
- *                | numexpr - numexpr<br/>
- *                | numexpr * numexpr<br/>
- *                | numexpr &#47; numexpr<br/>
- *                | numexpr ^ numexpr (power of)<br/>
- *                | numexpr % numexpr (modulo)<br/>
- *                ;<br/>
+ * # comparisons<br/>
+ *               | expr &lt; expr<br/>
+ *               | expr &lt;= expr<br/>
+ *               | expr &gt; expr<br/>
+ *               | expr &gt;= expr<br/>
+ *               | expr = expr<br/>
+ *               | expr != expr (or: expr &lt;&gt; expr)<br/>
  * <br/>
- *  funcexpr ::=    abs ( numexpr )<br/>
- *                | sqrt ( numexpr )<br/>
- *                | log ( numexpr )<br/>
- *                | exp ( numexpr )<br/>
- *                | sin ( numexpr )<br/>
- *                | cos ( numexpr )<br/>
- *                | tan ( numexpr )<br/>
- *                | rint ( numexpr )<br/>
- *                | floor ( numexpr )<br/>
- *                | pow ( numexpr , numexpr )<br/>
- *                | ceil ( numexpr )<br/>
- *                | ifelse ( boolexpr , numexpr (if true) , numexpr (if false) )<br/>
- *                | ifmissing ( variable , numexpr (default value if variable is missing) )<br/>
- *                | num ( VARIABLE (must represent a number) )<br/>
- *                | length ( str )<br/>
- *                ;<br/>
+ * # boolean operations<br/>
+ *               | ! expr (or: not expr)<br/>
+ *               | expr &amp; expr (or: expr and expr)<br/>
+ *               | expr | expr (or: expr or expr)<br/>
+ *               | if[else] ( expr , expr (if true) , expr (if false) )<br/>
+ *               | ifmissing ( variable , expr (default value if variable is missing) )<br/>
+ *               | isNaN ( expr )<br/>
+ * <br/>
+ * # arithmetics<br/>
+ *               | expr + expr<br/>
+ *               | expr - expr<br/>
+ *               | expr * expr<br/>
+ *               | expr &#47; expr<br/>
+ *               | expr ^ expr (power of)<br/>
+ *               | expr % expr (modulo)<br/>
+ *               ;<br/>
+ * <br/>
+ * # numeric functions<br/>
+ *               | abs ( expr )<br/>
+ *               | sqrt ( expr )<br/>
+ *               | log ( expr )<br/>
+ *               | exp ( expr )<br/>
+ *               | sin ( expr )<br/>
+ *               | cos ( expr )<br/>
+ *               | tan ( expr )<br/>
+ *               | rint ( expr )<br/>
+ *               | floor ( expr )<br/>
+ *               | pow[er] ( expr , expr )<br/>
+ *               | ceil ( expr )<br/>
+ *               | year ( expr )<br/>
+ *               | month ( expr )<br/>
+ *               | day ( expr )<br/>
+ *               | hour ( expr )<br/>
+ *               | minute ( expr )<br/>
+ *               | second ( expr )<br/>
+ *               | weekday ( expr )<br/>
+ *               | weeknum ( expr )<br/>
+ * <br/>
+ * # string functions<br/>
+ *               | substr ( expr , start [, end] )<br/>
+ *               | left ( expr , len )<br/>
+ *               | mid ( expr , start , len )<br/>
+ *               | right ( expr , len )<br/>
+ *               | rept ( expr , count )<br/>
+ *               | concatenate ( expr1 , expr2 [, expr3-5] )<br/>
+ *               | lower[case] ( expr )<br/>
+ *               | upper[case] ( expr )<br/>
+ *               | trim ( expr )<br/>
+ *               | matches ( expr , regexp )<br/>
+ *               | trim ( expr )<br/>
+ *               | len[gth] ( str )<br/>
+ *               | find ( search , expr [, pos] )<br/>
+ *               | replace ( str , pos , len , newstr )<br/>
+ *               | substitute ( str , find , replace [, occurrences] )<br/>
+ *               ;<br/>
  * <br/>
  * Notes:<br/>
  * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br/>
@@ -149,17 +165,30 @@ import adams.parser.BooleanExpression;
  * - Line comments start with '#'<br/>
  * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br/>
  *   e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'<br/>
+ * - dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'<br/>
+ * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br/>
+ * - the characters in square brackets in function names are optional:<br/>
+ *   e.g. 'len("abc")' is the same as 'length("abc")'<br/>
+ * <br/>
+ * A lot of the functions have been modeled after LibreOffice:<br/>
+ *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br/>
+ * <br/>
+ * Additional functions:<br/>
+ * - env(String): String<br/>
+ * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br/>
+ * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br/>
+ * <br/>
+ * Additional procedures:<br/>
+ * - println(...)<br/>
+ * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br/>
+ * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -167,19 +196,27 @@ import adams.parser.BooleanExpression;
  * &nbsp;&nbsp;&nbsp;default: Breakpoint
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-x &lt;int&gt; (property: x)
@@ -226,8 +263,8 @@ import adams.parser.BooleanExpression;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-dialog &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|INSPECT_FLOW&gt; [-dialog ...] (property: dialogs)
- * &nbsp;&nbsp;&nbsp;The dialogs to display automatically when the breakpoint is reached.
+ * <pre>-view &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|INSPECT_FLOW&gt; [-view ...] (property: views)
+ * &nbsp;&nbsp;&nbsp;The views to display automatically when the breakpoint is reached.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -560,10 +597,12 @@ public class Breakpoint
     protected void stopFlowExecution() {
       Runnable	runnable;
 
-      if (getParentDialog() != null)
-	getParentDialog().setVisible(false);
-      else if (getParentFrame() != null)
-	getParentFrame().setVisible(false);
+      if (!m_DisplayInEditor) {
+	if (getParentDialog() != null)
+	  getParentDialog().setVisible(false);
+	else if (getParentFrame() != null)
+	  getParentFrame().setVisible(false);
+      }
 
       runnable = new Runnable() {
 	public void run() {
@@ -843,6 +882,9 @@ public class Breakpoint
   /** the watch expression types. */
   protected ExpressionType[] m_WatchTypes;
 
+  /** whether to display the panel in the editor rather than in a separate frame. */
+  protected boolean m_DisplayInEditor;
+
   /** the X position of the dialog. */
   protected int m_X;
 
@@ -897,6 +939,10 @@ public class Breakpoint
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+	    "display-in-editor", "displayInEditor",
+	    getDefaultDisplayInEditor());
 
     m_OptionManager.add(
 	    "x", "x",
@@ -989,6 +1035,49 @@ public class Breakpoint
     }
 
     return result;
+  }
+
+  /**
+   * Returns the default value for displaying the panel in the editor
+   * rather than in a separate frame.
+   * 
+   * @return		the default
+   */
+  protected boolean getDefaultDisplayInEditor() {
+    return false;
+  }
+
+  /**
+   * Sets whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @param value 	true if to display in editor
+   */
+  public void setDisplayInEditor(boolean value) {
+    m_DisplayInEditor = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @return 		true if to display in editor
+   */
+  public boolean getDisplayInEditor() {
+    return m_DisplayInEditor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayInEditorTipText() {
+    return 
+	"If enabled displays the panel in a tab in the flow editor rather "
+	+ "than in a separate frame.";
   }
 
   /**
@@ -1294,6 +1383,15 @@ public class Breakpoint
   }
   
   /**
+   * Returns the control panel.
+   * 
+   * @return		the panel, null if not available
+   */
+  public ControlPanel getPanel() {
+    return (ControlPanel) m_Panel;
+  }
+  
+  /**
    * Creates the panel to display in the dialog.
    *
    * @return		the panel
@@ -1395,6 +1493,16 @@ public class Breakpoint
 
     return result;
   }
+  
+  /**
+   * Registers the panel with the flow editor, if possible.
+   * 
+   * @param panel	the panel to register
+   */
+  protected void registerWithEditor() {
+    if (getParentComponent() instanceof FlowPanel)
+      ((FlowPanel) getParentComponent()).registerBreakpoint(getName(), this);
+  }
 
   /**
    * Executes the flow item.
@@ -1416,12 +1524,15 @@ public class Breakpoint
 
 	if (m_Panel == null) {
 	  m_Panel = newPanel();
-	  m_Frame = createFrame(m_Panel);
+	  if (m_DisplayInEditor)
+	    registerWithEditor();
+	  else
+	    m_Frame = createFrame(m_Panel);
 	}
 
 	run = new Runnable() {
 	  public void run() {
-	    if (!m_Frame.isVisible())
+	    if ((m_Frame != null) && !m_Frame.isVisible())
 	      m_Frame.setVisible(true);
 	    ((ControlPanel) m_Panel).breakpointReached();
 	  }

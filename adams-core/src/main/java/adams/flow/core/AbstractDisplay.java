@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -33,6 +33,7 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.flow.FlowPanel;
 
 /**
  * Ancestor for actors that display stuff.
@@ -67,6 +68,9 @@ public abstract class AbstractDisplay
   /** the Y position of the dialog. */
   protected int m_Y;
 
+  /** whether to display the panel in the editor rather than in a separate frame. */
+  protected boolean m_DisplayInEditor;
+  
   /** the panel to display. */
   protected BasePanel m_Panel;
 
@@ -88,7 +92,11 @@ public abstract class AbstractDisplay
 
     m_OptionManager.add(
 	    "short-title", "shortTitle",
-	    false);
+	    getDefaultShortTitle());
+
+    m_OptionManager.add(
+	    "display-in-editor", "displayInEditor",
+	    getDefaultDisplayInEditor());
 
     m_OptionManager.add(
 	    "width", "width",
@@ -195,6 +203,25 @@ public abstract class AbstractDisplay
     super.wrapUp();
 
     m_InputToken = null;
+  }
+
+  /**
+   * Returns the default value for short title.
+   * 
+   * @return		the default
+   */
+  protected boolean getDefaultShortTitle() {
+    return false;
+  }
+
+  /**
+   * Returns the default value for displaying the panel in the editor
+   * rather than in a separate frame.
+   * 
+   * @return		the default
+   */
+  protected boolean getDefaultDisplayInEditor() {
+    return false;
   }
 
   /**
@@ -379,6 +406,41 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Sets whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @param value 	true if to display in editor
+   */
+  public void setDisplayInEditor(boolean value) {
+    m_DisplayInEditor = value;
+    if (m_DisplayInEditor)
+      setCreateFrame(false);
+    reset();
+  }
+  
+  /**
+   * Returns whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @return 		true if to display in editor
+   */
+  public boolean getDisplayInEditor() {
+    return m_DisplayInEditor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayInEditorTipText() {
+    return 
+	"If enabled displays the panel in a tab in the flow editor rather "
+	+ "than in a separate frame.";
+  }
+
+  /**
    * Resets the object. Removes graphical components as well.
    */
   @Override
@@ -528,6 +590,14 @@ public abstract class AbstractDisplay
   public BaseFrame getFrame() {
     return m_Frame;
   }
+  
+  /**
+   * Registers the actor with the flow editor, if possible.
+   */
+  protected void registerWithEditor() {
+    if (getParentComponent() instanceof FlowPanel)
+      ((FlowPanel) getParentComponent()).registerDisplay(getClass(), getName(), this);
+  }
 
   /**
    * Returns a runnable that displays frame, etc.
@@ -552,6 +622,8 @@ public abstract class AbstractDisplay
 	m_Panel = newPanel();
 	if (m_CreateFrame)
 	  m_Frame = createFrame(m_Panel);
+	else if (m_DisplayInEditor)
+	  registerWithEditor();
       }
 
       m_Updating = true;
