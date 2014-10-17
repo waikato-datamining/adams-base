@@ -358,9 +358,10 @@ public class Tree
 	  StateContainer state = getTreeState(paths, (Node) path.getLastPathComponent());
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
 	  for (AbstractTreePopupAction action: m_Shortcuts) {
+	    action.update(state);
 	    if (action.keyStrokeApplies(ks)) {
-	      action.update(state);
 	      action.actionPerformed(null);
+	      e.consume();
 	      break;
 	    }
 	  }
