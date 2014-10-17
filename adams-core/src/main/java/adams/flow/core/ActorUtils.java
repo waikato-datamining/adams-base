@@ -704,6 +704,51 @@ public class ActorUtils {
   }
 
   /**
+   * Tries to find the closest types in the actor tree, starting with the current
+   * actor.
+   *
+   * @param actor		the actor to start from
+   * @param type		the type of actor to find the closest for
+   * @return			the closest actors or empty list if not found
+   */
+  public static List<Actor> findClosestTypes(Actor actor, Class type) {
+    return findClosestTypes(actor, type, false);
+  }
+
+  /**
+   * Tries to find the closest types in the actor tree, starting with the current
+   * actor.
+   *
+   * @param actor		the actor to start from
+   * @param type		the type of actor to find the closest for
+   * @param includeSameLevel	whether to include actor handlers that are on
+   * 				the same level as the actor, but with a lower
+   * 				index in the parent
+   * @return			the closest actors or empty list if not found
+   */
+  public static List<Actor> findClosestTypes(Actor actor, Class type, boolean includeSameLevel) {
+    List<Actor>			result;
+    List<ActorHandler>		handlers;
+    int				i;
+
+    result   = new ArrayList<Actor>();
+    handlers = ActorUtils.findActorHandlers((AbstractActor) actor, true, includeSameLevel);
+    for (i = 0; i < handlers.size(); i++) {
+      // check handlers themselves
+      if (type.isInstance(handlers.get(i)) && !handlers.get(i).getSkip()) {
+	result.add(handlers.get(i));
+	break;
+      }
+      // check children of handlers
+      result.addAll(findClosestTypes(handlers.get(i), type));
+      if (result != null)
+	break;
+    }
+
+    return result;
+  }
+
+  /**
    * Determines the initial location of the frame.
    *
    * @param window	the frame/dialog to determine the location for
