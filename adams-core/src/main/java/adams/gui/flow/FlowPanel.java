@@ -193,11 +193,11 @@ public class FlowPanel
 
       try {
 	showStatus("Initializing");
+	m_Flow = ActorUtils.removeDisabledActors(m_Flow);
+	m_Flow.setHeadless(m_Owner.isHeadless());
 	if (m_Flow instanceof Flow)
 	  ((Flow) m_Flow).setParentComponent(m_Owner);
-	m_Flow.setHeadless(m_Owner.isHeadless());
-	m_Flow = ActorUtils.removeDisabledActors(m_Flow);
-	m_Output      = m_Flow.setUp();
+	m_Output = m_Flow.setUp();
 	if ((m_Output == null) && !m_Flow.isStopped()) {
 	  if (m_Flow instanceof VariablesHandler) {
 	    if (ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_Flow, m_File)) {
