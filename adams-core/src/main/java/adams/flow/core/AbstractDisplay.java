@@ -202,6 +202,9 @@ public abstract class AbstractDisplay
   public void wrapUp() {
     super.wrapUp();
 
+    if (m_DisplayInEditor && deregisterInWrapUp())
+      deregisterWithEditor();
+    
     m_InputToken = null;
   }
 
@@ -598,6 +601,26 @@ public abstract class AbstractDisplay
     if (getParentComponent() instanceof FlowPanel)
       ((FlowPanel) getParentComponent()).registerDisplay(getClass(), getName(), this);
   }
+  
+  /**
+   * Deregisters the actor from the flow editor, if possible.
+   */
+  protected void deregisterWithEditor() {
+    if (getParentComponent() instanceof FlowPanel)
+      ((FlowPanel) getParentComponent()).deregisterDisplay(getClass(), getName());
+  }
+  
+  /**
+   * Returns whether to de-register in {@link #wrapUp()} or wait till 
+   * {@link #cleanUpGUI()}.
+   * <p/>
+   * Default returns false.
+   * 
+   * @return		true if to deregister already in {@link #wrapUp()}
+   */
+  protected boolean deregisterInWrapUp() {
+    return false;
+  }
 
   /**
    * Returns a runnable that displays frame, etc.
@@ -652,6 +675,9 @@ public abstract class AbstractDisplay
 	((CleanUpHandler) m_Panel).cleanUp();
       m_Panel = null;
     }
+    
+    if (m_Executed && m_DisplayInEditor)
+      deregisterWithEditor();
     
     if (m_Frame != null) {
       m_Frame.setVisible(false);
