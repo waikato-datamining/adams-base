@@ -693,7 +693,7 @@ public class PreviewBrowserPanel
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  protected AbstractContentHandler getPreferredContentHandler(File file) {
+  public static AbstractContentHandler getPreferredContentHandler(File file) {
     AbstractContentHandler	result;
     Properties			props;
     String			ext;
@@ -761,7 +761,7 @@ public class PreviewBrowserPanel
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  protected AbstractArchiveHandler getPreferredArchiveHandler(File file) {
+  public static AbstractArchiveHandler getPreferredArchiveHandler(File file) {
     AbstractArchiveHandler	result;
     Properties			props;
     String			ext;
