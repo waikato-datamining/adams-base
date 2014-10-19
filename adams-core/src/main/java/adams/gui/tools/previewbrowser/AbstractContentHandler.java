@@ -15,14 +15,15 @@
 
 /**
  * AbstractContentHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -46,7 +47,7 @@ public abstract class AbstractContentHandler
   public final static String MATCH_ALL = "*";
 
   /** the extenstion archive handlers relation. */
-  protected static Hashtable<String,Vector<Class>> m_Relation;
+  protected static Hashtable<String,List<Class>> m_Relation;
 
   /**
    * Returns the list of extensions (without dot) that this handler can
@@ -114,16 +115,16 @@ public abstract class AbstractContentHandler
    *
    * @return		the relation
    */
-  protected static synchronized Hashtable<String,Vector<Class>> getRelation() {
+  protected static synchronized Hashtable<String,List<Class>> getRelation() {
     String[]			handlers;
     int				i;
     int				n;
     AbstractContentHandler	handler;
     String[]			extensions;
-    Vector<Class>		classes;
+    List<Class>			classes;
 
     if (m_Relation == null) {
-      m_Relation = new Hashtable<String,Vector<Class>>();
+      m_Relation = new Hashtable<String,List<Class>>();
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
@@ -131,7 +132,7 @@ public abstract class AbstractContentHandler
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    if (!m_Relation.containsKey(extensions[n]))
-	      m_Relation.put(extensions[n], new Vector<Class>());
+	      m_Relation.put(extensions[n], new ArrayList<Class>());
 	    classes = m_Relation.get(extensions[n]);
 	    if (!classes.contains(handler.getClass()))
 	      classes.add(handler.getClass());
@@ -190,7 +191,7 @@ public abstract class AbstractContentHandler
    * @param file	the file to get the handlers for
    * @return		the handlers, null if none available
    */
-  public static Vector<Class> getHandlersForFile(File file) {
+  public static List<Class> getHandlersForFile(File file) {
     return getHandlersForFile(file.getAbsolutePath());
   }
 
@@ -200,8 +201,8 @@ public abstract class AbstractContentHandler
    * @param filename	the file to get the handlers for
    * @return		the handlers, null if none available
    */
-  public static Vector<Class> getHandlersForFile(String filename) {
-    Vector<Class>	result;
+  public static List<Class> getHandlersForFile(String filename) {
+    List<Class>		result;
     HashSet<Class>	set;
     String		extension;
 
@@ -220,7 +221,7 @@ public abstract class AbstractContentHandler
     if (set.size() == 0)
       result = null;
     else
-      result = new Vector<Class>(set);
+      result = new ArrayList<Class>(set);
 
     return result;
   }

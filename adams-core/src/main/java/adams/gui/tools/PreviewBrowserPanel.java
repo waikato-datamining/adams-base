@@ -15,7 +15,7 @@
 
 /**
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -493,7 +493,7 @@ public class PreviewBrowserPanel
    */
   protected synchronized void displayLocalFile() {
     PlaceholderFile[]	localFiles;
-    Vector<Class>	handlers;
+    List<Class>		handlers;
     String[]		files;
     int			n;
 
@@ -565,7 +565,7 @@ public class PreviewBrowserPanel
    */
   protected JPanel createPreview(final File[] localFiles) {
     JPanel 			result;
-    Vector<Class> 		handlers;
+    List<Class> 		handlers;
     AbstractContentHandler 	preferred;
     int				i;
     AbstractContentHandler 	contentHandler;
