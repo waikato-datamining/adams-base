@@ -52,7 +52,6 @@ import javax.swing.tree.TreeSelectionModel;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
 import adams.core.option.AbstractOptionProducer;
-import adams.core.option.HtmlHelpProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.condition.bool.BooleanCondition;
@@ -106,7 +105,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
-import adams.gui.dialog.HelpDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.event.ActorChangeListener;
@@ -2283,33 +2281,6 @@ public class Tree
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.REMOVE));
     else
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.REMOVE_RANGE));
-  }
-
-  /**
-   * Displays the help for the selected actor.
-   *
-   * @param path	the path to the actor
-   */
-  public void help(TreePath path) {
-    HelpDialog		dialog;
-    HtmlHelpProducer 	producer;
-    AbstractActor	actor;
-
-    actor = TreeHelper.pathToActor(path);
-    if (getParentDialog() != null)
-      dialog = new HelpDialog(getParentDialog());
-    else
-      dialog = new HelpDialog(getParentFrame());
-    producer = new HtmlHelpProducer();
-    producer.produce(actor);
-    dialog.setHelp(producer.getOutput(), true);
-    dialog.setTitle("Help on " + actor.getClass().getName());
-    dialog.setLocation(
-	getTopLevelAncestor().getLocationOnScreen().x + getTopLevelAncestor().getSize().width,
-	getTopLevelAncestor().getLocationOnScreen().y);
-    dialog.setSize(800, 600);
-    dialog.setVisible(true);
-
   }
 
   /**

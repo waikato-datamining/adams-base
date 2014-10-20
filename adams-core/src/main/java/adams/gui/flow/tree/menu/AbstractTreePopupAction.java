@@ -19,6 +19,8 @@
  */
 package adams.gui.flow.tree.menu;
 
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JMenuItem;
@@ -84,7 +86,31 @@ public abstract class AbstractTreePopupAction
   public boolean keyStrokeApplies(KeyStroke ks) {
     return hasAccelerator() && ks.equals(getAccelerator());
   }
+  
+  /**
+   * Tries to determine the frame this panel is part of.
+   *
+   * @return		the parent frame if one exists or null if not
+   */
+  protected Frame getParentFrame() {
+    if (m_State != null)
+      return m_State.tree.getParentFrame();
+    else
+      return null;
+  }
 
+  /**
+   * Tries to determine the dialog this panel is part of.
+   *
+   * @return		the parent dialog if one exists or null if not
+   */
+  protected Dialog getParentDialog() {
+    if (m_State != null)
+      return m_State.tree.getParentDialog();
+    else
+      return null;
+  }
+  
   /**
    * Adds an undo point with the given comment.
    *

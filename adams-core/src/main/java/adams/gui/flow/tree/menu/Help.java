@@ -21,6 +21,13 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.tree.TreePath;
+
+import adams.core.option.HtmlHelpProducer;
+import adams.flow.core.AbstractActor;
+import adams.gui.dialog.HelpDialog;
+import adams.gui.flow.tree.TreeHelper;
+
 /**
  * For showing the help dialog for an actor.
  * 
@@ -52,12 +59,39 @@ public class Help
   }
 
   /**
+   * Displays the help for the selected actor.
+   *
+   * @param path	the path to the actor
+   */
+  protected void help(TreePath path) {
+    HelpDialog		dialog;
+    HtmlHelpProducer 	producer;
+    AbstractActor	actor;
+
+    actor = TreeHelper.pathToActor(path);
+    if (getParentDialog() != null)
+      dialog = new HelpDialog(getParentDialog());
+    else
+      dialog = new HelpDialog(getParentFrame());
+    producer = new HtmlHelpProducer();
+    producer.produce(actor);
+    dialog.setHelp(producer.getOutput(), true);
+    dialog.setTitle("Help on " + actor.getClass().getName());
+    dialog.setLocation(
+	m_State.tree.getTopLevelAncestor().getLocationOnScreen().x + m_State.tree.getTopLevelAncestor().getSize().width,
+	m_State.tree.getTopLevelAncestor().getLocationOnScreen().y);
+    dialog.setSize(800, 600);
+    dialog.setVisible(true);
+
+  }
+
+  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.help(m_State.selPath);
+    help(m_State.selPath);
   }
 }
