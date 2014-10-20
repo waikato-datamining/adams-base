@@ -15,12 +15,13 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,8 +76,8 @@ public class ActorSuggestion {
    */
   protected void initialize() {
     String[]				parts;
-    Vector<AbstractActor>		actors;
-    Vector<String>			rules;
+    List<AbstractActor>			actors;
+    List<String>			rules;
     int					i;
     Enumeration<String>			names;
     String				name;
@@ -87,7 +88,7 @@ public class ActorSuggestion {
 
     // get the default(s)
     parts  = m_Properties.getProperty(KEY_DEFAULT, "adams.flow.transformer.PassThrough").split(",");
-    actors = new Vector<AbstractActor>();
+    actors = new ArrayList<AbstractActor>();
     for (i = 0; i < parts.length; i++)  {
       try {
 	actors.add((AbstractActor) Class.forName(parts[i]).newInstance());
@@ -104,7 +105,7 @@ public class ActorSuggestion {
     LOGGER.info("Defaults: " + Utils.arrayToString(m_Defaults, true));
 
     // get the rules
-    rules      = new Vector<String>();
+    rules      = new ArrayList<String>();
     names      = (Enumeration<String>) m_Properties.propertyNames();
     suggestion = new adams.parser.ActorSuggestion();
     suggestion.setParent(new adams.flow.control.Flow());
@@ -149,13 +150,13 @@ public class ActorSuggestion {
    */
   public AbstractActor[] suggest(AbstractActor parent, int position, AbstractActor[] actors) {
     AbstractActor[]		result;
-    Vector<AbstractActor>	suggestions;
+    List<AbstractActor>		suggestions;
     AbstractActor[]		suggested;
     int				i;
     Class[]			restrictions;
     boolean			match;
 
-    suggestions  = new Vector<AbstractActor>();
+    suggestions  = new ArrayList<AbstractActor>();
     restrictions = ((ActorHandler) parent).getActorHandlerInfo().getRestrictions();
 
     try {
@@ -167,17 +168,17 @@ public class ActorSuggestion {
 	    for (Class cls: restrictions) {
 	      try {
 		if (cls.isInterface())
-		  match = ClassLocator.hasInterface(cls, suggested[i].getClass());
+		  match = match || ClassLocator.hasInterface(cls, suggested[i].getClass());
 		else
-		  match = ClassLocator.isSubclass(cls, suggested[i].getClass());
-		if (!match)
-		  suggested[i] = null;
+		  match = match || ClassLocator.isSubclass(cls, suggested[i].getClass());
 	      }
 	      catch (Exception e) {
 		LOGGER.log(Level.SEVERE,
 		    "Failed to process suggestion ('" + parent.getClass().getName() + "'): " + cls.getName(), e);
 	      }
 	    }
+	    if (!match)
+	      suggested[i] = null;
 	  }
 	}
 	if (suggested[i] != null)
