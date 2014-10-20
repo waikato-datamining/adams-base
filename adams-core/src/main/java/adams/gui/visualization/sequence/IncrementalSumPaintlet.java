@@ -76,22 +76,24 @@ public class IncrementalSumPaintlet
     double			factor;
     AxisPanel			axisY;
 
+    axisY   = getPanel().getPlot().getAxis(Axis.LEFT);
     points  = data.toList();
     newList = (XYSequence) data.getHeader();
     sum     = 0;
     for (i = 0; i < points.size(); i++) {
       curr = (XYSequencePoint) points.get(i);
-      sum += curr.getY();
+      sum += curr.getY() - axisY.getMinimum();
       newPoint = (XYSequencePoint) curr.getClone();
       newPoint.setY(sum);
       newList.add(newPoint);
     }
     points = newList.toList();
-    axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
-    factor = 1 / sum * axisY.getMaximum();
+    if (sum == 0)
+      sum = 10e6;
+    factor = 1 / sum * (axisY.getMaximum() - axisY.getMinimum());
     for (i = 0; i < points.size(); i++) {
       curr = (XYSequencePoint) points.get(i);
-      curr.setY(curr.getY() * factor);
+      curr.setY((curr.getY() - axisY.getMinimum()) * factor + axisY.getMinimum());
     }
     
     super.drawData(g, moment, newList, color, marker);
