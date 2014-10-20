@@ -15,7 +15,7 @@
 
 /**
  * HorizontalIndicatorPaintlet.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -42,6 +42,9 @@ public class HorizontalIndicatorPaintlet
   
   /** the value where to paint the indicator. */
   protected double m_Value;
+  
+  /** whether the value represents a percentage (0-1). */
+  protected boolean m_Percentage;
 
   /**
    * Returns a string describing the object.
@@ -56,6 +59,7 @@ public class HorizontalIndicatorPaintlet
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -66,6 +70,10 @@ public class HorizontalIndicatorPaintlet
     m_OptionManager.add(
 	    "value", "value",
 	    1.0, null, null);
+
+    m_OptionManager.add(
+	    "percentage", "percentage",
+	    false);
   }
 
   /**
@@ -122,10 +130,43 @@ public class HorizontalIndicatorPaintlet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String subPaintletsTipText() {
-    return "The paintlets to combine.";
+  public String valueTipText() {
+    return "The y-value for the line.";
   }
-  
+
+  /**
+   * Sets whether the y-value represents a percentage (0-1) instead of
+   * an absolute value.
+   *
+   * @param value	true if percentage
+   */
+  public void setPercentage(boolean value) {
+    m_Percentage = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns whether the y-value represents a percentage (0-1) instead of
+   * an absolute value.
+   *
+   * @return		true if percentage
+   */
+  public boolean getPercentage() {
+    return m_Percentage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String percentageTipText() {
+    return 
+	"If enabled, the y-value gets interpreted as percentage (0-1) "
+	+ "instead of absolute value; this is based on the min/max of the y axis.";
+  }
+
   /**
    * Returns when this paintlet is to be executed.
    *
@@ -145,14 +186,25 @@ public class HorizontalIndicatorPaintlet
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
     AxisPanel	axis;
+    double	pos;
     
     axis = getPanel().getPlot().getAxis(Axis.LEFT);
     
     g.setColor(m_Color);
-    g.drawLine(
+    if (m_Percentage) {
+      pos = (axis.getMaximum() - axis.getMinimum()) * m_Value + axis.getMinimum();
+      g.drawLine(
+	  0,
+	  axis.valueToPos(pos),
+	  getPlot().getWidth() - 1,
+	  axis.valueToPos(pos));
+    }
+    else {
+      g.drawLine(
 	  0,
 	  axis.valueToPos(m_Value),
 	  getPlot().getWidth() - 1,
 	  axis.valueToPos(m_Value));
+    }
   }
 }
