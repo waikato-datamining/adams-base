@@ -84,7 +84,17 @@ public abstract class AbstractTreePopupAction
   public boolean keyStrokeApplies(KeyStroke ks) {
     return hasAccelerator() && ks.equals(getAccelerator());
   }
-  
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (m_State != null)
+      m_State.tree.addUndoPoint(comment);
+  }
+
   /**
    * Creates a new menuitem using itself.
    */
