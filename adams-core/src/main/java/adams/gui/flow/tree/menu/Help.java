@@ -82,7 +82,6 @@ public class Help
 	m_State.tree.getTopLevelAncestor().getLocationOnScreen().y);
     dialog.setSize(800, 600);
     dialog.setVisible(true);
-
   }
 
   /**
