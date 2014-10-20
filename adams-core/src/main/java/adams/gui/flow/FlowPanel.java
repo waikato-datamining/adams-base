@@ -1924,7 +1924,7 @@ public class FlowPanel
     RegisteredDisplaysTab			registered;
 
     if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class))
-      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true);
+      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
     registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
     if (registered != null)
       registered.update();
@@ -1997,7 +1997,7 @@ public class FlowPanel
     RegisteredBreakpointsTab			registered;
 
     if (!getEditor().getTabs().isVisible(RegisteredBreakpointsTab.class))
-      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, true);
+      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, true, false);
     registered = (RegisteredBreakpointsTab) getEditor().getTabs().getTab(RegisteredBreakpointsTab.class);
     if (registered != null)
       registered.update();

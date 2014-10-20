@@ -320,8 +320,20 @@ public class FlowTabManager
    * @param value	if true then the tab is made visible by default
    */
   public synchronized void setVisible(Class cls, boolean value) {
+    setVisible(cls, value, true);
+  }
+
+  /**
+   * Sets whether a tab should be visible or not.
+   *
+   * @param cls		the tab class
+   * @param value	if true then the tab is made visible by default
+   * @param update	whether to update the properties
+   */
+  public synchronized void setVisible(Class cls, boolean value, boolean update) {
     getProperties().setBoolean(createPropertyKey(cls), value);
-    updateProperties();
+    if (update)
+      updateProperties();
   }
 
   /**
