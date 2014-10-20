@@ -71,6 +71,11 @@ import adams.flow.container.SequencePlotterContainer;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-add-column-name &lt;boolean&gt; (property: addColumnName)
+ * &nbsp;&nbsp;&nbsp;If enabled, the column name gets added to the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -91,6 +96,9 @@ public class RowWisePlotGenerator
   /** the meta-data columns. */
   protected SpreadSheetColumnRange m_MetaDataColumns;
 
+  /** whether to add the column name as meta-data. */
+  protected boolean m_AddColumnName;
+  
   /**
    * Returns a string describing the object.
    *
@@ -123,6 +131,10 @@ public class RowWisePlotGenerator
     m_OptionManager.add(
 	    "meta-data-columns", "metaDataColumns",
 	    "");
+
+    m_OptionManager.add(
+	    "add-column-name", "addColumnName",
+	    false);
   }
 
   /**
@@ -145,10 +157,14 @@ public class RowWisePlotGenerator
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
     
     result  = QuickInfoHelper.toString(this, "IDColumn", (getIDColumn().isEmpty() ? "-none-" : getIDColumn()), "ID: ");
     result += QuickInfoHelper.toString(this, "dataColumns", (getDataColumns().isEmpty() ? "-none-" : getDataColumns()), ", data: ");
     result += QuickInfoHelper.toString(this, "metaDataColumns", (getMetaDataColumns().isEmpty() ? "-none-" : getMetaDataColumns()), ", meta-data: ");
+    value   = QuickInfoHelper.toString(this, "addColumnName", m_AddColumnName, "col name", ", ");
+    if (value != null)
+      result += value;
     
     return result;
   }
@@ -241,6 +257,35 @@ public class RowWisePlotGenerator
   }
 
   /**
+   * Sets whether to add the column name to the meta-data.
+   *
+   * @param value	true if to add column name
+   */
+  public void setAddColumnName(boolean value) {
+    m_AddColumnName = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the column name to the meta-data.
+   *
+   * @return		true if to add column name
+   */
+  public boolean getAddColumnName() {
+    return m_AddColumnName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addColumnNameTipText() {
+    return "If enabled, the column name gets added to the meta-data.";
+  }
+
+  /**
    * Checks the spreadsheet.
    * 
    * @param sheet	the sheet to check
@@ -296,6 +341,8 @@ public class RowWisePlotGenerator
 	// meta-data
 	for (m = 0; m < metaCols.length; m++)
 	  cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));
+	if (m_AddColumnName)
+	  cont.addMetaData("column", sheet.getColumnName(dataCols[n]));
 	// container
 	result.add(cont);
       }
