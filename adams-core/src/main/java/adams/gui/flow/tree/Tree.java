@@ -355,7 +355,7 @@ public class Tree
 	TreePath path = getSelectionPath();
 	TreePath[] paths = getSelectionPaths();
 	if (path != null) {
-	  StateContainer state = getTreeState(paths, pathToNode(path));
+	  StateContainer state = getTreeState(paths, TreeHelper.pathToNode(path));
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
 	  for (AbstractTreePopupAction action: m_Shortcuts) {
 	    action.update(state);
@@ -825,132 +825,6 @@ public class Tree
   }
 
   /**
-   * Converts the path to a node (the last component in a path).
-   *
-   * @param path	the path to the actor
-   * @return		the node
-   */
-  public Node pathToNode(TreePath path) {
-    if (path == null)
-      return null;
-
-    return (Node) path.getLastPathComponent();
-  }
-
-  /**
-   * Converts the paths to actors (the last component in a path).
-   *
-   * @param paths	the paths to the actors
-   * @return		the actors
-   */
-  public Node[] pathsToNodes(TreePath[] paths) {
-    Node[]	result;
-    int		i;
-
-    if (paths == null)
-      return null;
-    
-    result = new Node[paths.length];
-    for (i = 0; i < paths.length; i++)
-      result[i] = (Node) paths[i].getLastPathComponent();
-
-    return result;
-  }
-
-  /**
-   * Converts the path to an actor (the last component in a path).
-   * Does not return the "full" actor.
-   *
-   * @param path	the path to the actor
-   * @return		the actor
-   */
-  public AbstractActor pathToActor(TreePath path) {
-    return pathToActor(path, false);
-  }
-
-  /**
-   * Converts the path to an actor (the last component in a path).
-   * "Full" actor means including (potential) sub-tree.
-   *
-   * @param path	the path to the actor
-   * @param full	whether to return the full actor
-   * @return		the actor
-   */
-  public AbstractActor pathToActor(TreePath path, boolean full) {
-    AbstractActor	result;
-    Node		node;
-    
-    if (path == null)
-      return null;
-    
-    node = pathToNode(path);
-    if (full)
-      result = node.getFullActor();
-    else
-      result = node.getActor();
-    
-    return result;
-  }
-
-  /**
-   * Converts the paths to actors (the last component in a path).
-   * Does not return the "full" actor.
-   *
-   * @param paths	the paths to the actors
-   * @return		the actors
-   */
-  public AbstractActor[] pathsToActors(TreePath[] paths) {
-    return pathsToActors(paths, false);
-  }
-
-  /**
-   * Converts the paths to actors (the last component in a path).
-   * "Full" actor means including (potential) sub-tree.
-   *
-   * @param paths	the paths to the actors
-   * @param full	whether to return the full actor
-   * @return		the actors
-   */
-  public AbstractActor[] pathsToActors(TreePath[] paths, boolean full) {
-    AbstractActor[]	result;
-    Node[]		nodes;
-    int			i;
-
-    if (paths == null)
-      return null;
-    
-    result = new AbstractActor[paths.length];
-    nodes  = pathsToNodes(paths);
-    for (i = 0; i < nodes.length; i++) {
-      if (full)
-	result[i] = nodes[i].getFullActor();
-      else
-	result[i] = nodes[i].getActor();
-    }
-
-    return result;
-  }
-
-  /**
-   * Turns a {@link TreePath} into a {@link ActorPath}.
-   *
-   * @param path	the path to convert
-   * @return		the generated path
-   */
-  public ActorPath treePathToActorPath(TreePath path) {
-    Object[]	parts;
-    String[]	names;
-    int		i;
-
-    parts = path.getPath();
-    names = new String[parts.length];
-    for (i = 0; i < parts.length; i++)
-      names[i] = ((Node) parts[i]).getActor().getName();
-
-    return new ActorPath(names);
-  }
-
-  /**
    * Returns the actor stored on the clipboard.
    *
    * @return		the actor or null if none available
@@ -1025,7 +899,7 @@ public class Tree
     Node	parent;
 
     result = (paths.length > 0);
-    nodes  = pathsToNodes(paths);
+    nodes  = TreeHelper.pathsToNodes(paths);
     for (Node node: nodes) {
       parent = (Node) node.getParent();
       result =    (parent != null)
@@ -1073,7 +947,7 @@ public class Tree
     else
       result.selPath = null;
     if (result.numSel > 0) {
-      result.selNode = pathToNode(result.selPaths[0]);
+      result.selNode = TreeHelper.pathToNode(result.selPaths[0]);
       result.parent  = (Node) result.selNode.getParent();
     }
     else {
@@ -1174,7 +1048,7 @@ public class Tree
    * @param paths	the paths to the actors
    */
   public void cutActors(TreePath[] paths) {
-    putActorOnClipboard(pathsToActors(paths, true));
+    putActorOnClipboard(TreeHelper.pathsToActors(paths, true));
     removeActor(paths);
   }
 
@@ -1184,7 +1058,7 @@ public class Tree
    * @param paths	the paths to the actors
    */
   public void copyActors(TreePath[] paths) {
-    putActorOnClipboard(pathsToActors(paths, true));
+    putActorOnClipboard(TreeHelper.pathsToActors(paths, true));
   }
 
   /**
@@ -1197,7 +1071,7 @@ public class Tree
     AbstractActor	actor;
     int			i;
 
-    nodes = pathsToNodes(paths);
+    nodes = TreeHelper.pathsToNodes(paths);
     if (nodes.length == 1)
       addUndoPoint("Toggling enabled state of " + nodes[0].getFullName());
     else
@@ -1231,7 +1105,7 @@ public class Tree
     AbstractActor	actorNew;
     List<TreePath> 	exp;
 
-    node    = pathToNode(path);
+    node    = TreeHelper.pathToNode(path);
     oldName = node.getActor().getName();
     newName = JOptionPane.showInputDialog(GUIHelper.getParentComponent(this), "Please enter new name:", oldName);
     if (newName != null) {
@@ -1278,11 +1152,11 @@ public class Tree
 
     if (result == null) {
       if (position == InsertPosition.BENEATH) {
-	parentNode = pathToNode(path);
+	parentNode = TreeHelper.pathToNode(path);
 	pos        = parentNode.getChildCount();
       }
       else {
-	node       = pathToNode(path);
+	node       = TreeHelper.pathToNode(path);
 	parentNode = (Node) node.getParent();
 	pos        = parentNode.getIndex(node);
 	if (position == InsertPosition.AFTER)
@@ -1328,11 +1202,11 @@ public class Tree
 
     if (result == null) {
       if (position == InsertPosition.BENEATH) {
-	parentNode = pathToNode(path);
+	parentNode = TreeHelper.pathToNode(path);
 	pos        = parentNode.getChildCount();
       }
       else {
-	node       = pathToNode(path);
+	node       = TreeHelper.pathToNode(path);
 	parentNode = (Node) node.getParent();
 	pos        = parentNode.getIndex(node);
 	if (position == InsertPosition.AFTER)
@@ -1476,7 +1350,7 @@ public class Tree
 
     // edit/update current actor
     if (position == null) {
-      node       = pathToNode(path);
+      node       = TreeHelper.pathToNode(path);
       parentNode = (Node) node.getParent();
       if (parentNode != null) {
 	parent = parentNode.getActor();
@@ -1492,12 +1366,12 @@ public class Tree
     }
     // add beneath
     else if (position == InsertPosition.BENEATH) {
-      parentNode = pathToNode(path);
+      parentNode = TreeHelper.pathToNode(path);
       before     = getNearestActor(parentNode, parentNode.getChildCount(), false);
     }
     // add here
     else if (position == InsertPosition.HERE) {
-      node       = pathToNode(path);
+      node       = TreeHelper.pathToNode(path);
       parentNode = (Node) node.getParent();
       index      = parentNode.getIndex(node);
       before     = getNearestActor(parentNode, index, false);
@@ -1507,7 +1381,7 @@ public class Tree
     }
     // add after
     else if (position == InsertPosition.AFTER) {
-      node       = pathToNode(path);
+      node       = TreeHelper.pathToNode(path);
       parentNode = (Node) node.getParent();
       index      = parentNode.getIndex(node);
       after      = getNearestActor(parentNode, index, true);
@@ -1587,7 +1461,7 @@ public class Tree
     List<TreePath> 		exp;
 
     if (actor == null) {
-      node = pathToNode(path);
+      node = TreeHelper.pathToNode(path);
       if (position == InsertPosition.BENEATH)
 	m_CurrentEditingParent = node;
       else
@@ -1616,7 +1490,7 @@ public class Tree
     }
     else {
       if (position == InsertPosition.BENEATH) {
-	node = pathToNode(path);
+	node = TreeHelper.pathToNode(path);
 
 	// does actor handler allow standalones?
 	if (actor instanceof ClipboardActorContainer)
@@ -1644,7 +1518,7 @@ public class Tree
 	expand(node);
       }
       else {
-	node   = pathToNode(path);
+	node   = TreeHelper.pathToNode(path);
 	parent = (Node) node.getParent();
 	index  = node.getParent().getIndex(node);
 	if (position == InsertPosition.AFTER)
@@ -1762,7 +1636,7 @@ public class Tree
     if (path == null)
       return;
 
-    currNode               = pathToNode(path);
+    currNode               = TreeHelper.pathToNode(path);
     m_CurrentEditingNode   = currNode;
     m_CurrentEditingParent = (Node) currNode.getParent();
     actorOld               = currNode.getActor().shallowCopy();
@@ -1853,7 +1727,7 @@ public class Tree
     FlowEditorDialog 		dialog;
     ExternalActorHandler	actor;
 
-    node = pathToNode(path);
+    node = TreeHelper.pathToNode(path);
     if (node == null)
       return;
     actor = (ExternalActorHandler) node.getActor();
@@ -1900,7 +1774,7 @@ public class Tree
     parent    = null;
     currActor = new AbstractActor[paths.length];
     for (i = 0; i < paths.length; i++) {
-      currNode     = pathToNode(paths[i]);
+      currNode     = TreeHelper.pathToNode(paths[i]);
       currActor[i] = currNode.getFullActor().shallowCopy();
       if (parent == null)
 	parent = (Node) currNode.getParent();
@@ -1928,7 +1802,7 @@ public class Tree
     handler.setName(newName);
 
     if (paths.length == 1)
-      addUndoPoint("Enclosing node '" + pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
+      addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
     else
       addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
 
@@ -1944,7 +1818,7 @@ public class Tree
       }
       newNode = buildTree(null, (AbstractActor) handler, false);
       for (i = 0; i < paths.length; i++) {
-	currNode = pathToNode(paths[i]);
+	currNode = TreeHelper.pathToNode(paths[i]);
 	index    = parent.getIndex(currNode);
 	parent.remove(index);
 	if (i == 0)
@@ -1968,7 +1842,7 @@ public class Tree
     }
     catch (Exception e) {
       if (paths.length == 1)
-	msg = "Failed to enclose actor '" + pathToActor(paths[0]).getFullName() + "'";
+	msg = "Failed to enclose actor '" + TreeHelper.pathToActor(paths[0]).getFullName() + "'";
       else
 	msg = "Failed to enclose " + paths.length + " actors";
       msg += " in a " + handler.getClass().getSimpleName() + ": ";
@@ -1990,7 +1864,7 @@ public class Tree
     AbstractDisplay	display;
     List<TreePath>	exp;
 
-    currNode  = pathToNode(path);
+    currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
     manager   = new DisplayPanelManager();
     manager.setName(currActor.getName());
@@ -2034,7 +1908,7 @@ public class Tree
     List<TreePath>		exp;
     int				index;
 
-    currNode  = pathToNode(path);
+    currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
     if (ActorUtils.isStandalone(currActor)) {
       GUIHelper.showErrorMessage(
@@ -2134,7 +2008,7 @@ public class Tree
     boolean			defaultName;
     boolean			expanded;
     
-    currNode   = pathToNode(path);
+    currNode   = TreeHelper.pathToNode(path);
     parentNode = (Node) currNode.getParent();
     expanded   = isExpanded(path);
     currActor  = currNode.getFullActor().shallowCopy();
@@ -2250,7 +2124,7 @@ public class Tree
     actors = new AbstractActor[paths.length];
     parent = null;
     for (i = 0; i < paths.length; i++) {
-      currNode  = pathToNode(paths[i]);
+      currNode  = TreeHelper.pathToNode(paths[i]);
       actors[i] = currNode.getFullActor().shallowCopy();
       if (parent == null)
 	parent = (Node) currNode.getParent();
@@ -2269,7 +2143,7 @@ public class Tree
     // update tree
     newNode = buildTree(null, handler, false);
     for (i = 0; i < paths.length; i++) {
-      currNode = pathToNode(paths[i]);
+      currNode = TreeHelper.pathToNode(paths[i]);
       index    = parent.getIndex(currNode);
       parent.remove(index);
       if (i == 0)
@@ -2305,7 +2179,7 @@ public class Tree
     AbstractExternalActor	extActor;
     FlowEditorDialog		dialog;
 
-    currNode  = pathToNode(path);
+    currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
     if (getParentDialog() != null)
       dialog = new FlowEditorDialog(getParentDialog());
@@ -2362,7 +2236,7 @@ public class Tree
     Node[]		nodes;
     int			i;
 
-    nodes = pathsToNodes(paths);
+    nodes = TreeHelper.pathsToNodes(paths);
     if (nodes.length == 1)
       addUndoPoint("Removing node '" + nodes[0].getActor().getFullName() + "'");
     else
@@ -2421,7 +2295,7 @@ public class Tree
     HtmlHelpProducer 	producer;
     AbstractActor	actor;
 
-    actor = pathToActor(path);
+    actor = TreeHelper.pathToActor(path);
     if (getParentDialog() != null)
       dialog = new HelpDialog(getParentDialog());
     else
@@ -2631,7 +2505,7 @@ public class Tree
     result = null;
 
     if (getSelectionPath() != null)
-      result = pathToNode(getSelectionPath());
+      result = TreeHelper.pathToNode(getSelectionPath());
 
     return result;
   }
@@ -2663,7 +2537,7 @@ public class Tree
     AbstractActor[]	result;
 
     if (getSelectionPaths() != null)
-      result = pathsToActors(getSelectionPaths());
+      result = TreeHelper.pathsToActors(getSelectionPaths());
     else
       result = new AbstractActor[0];
 
@@ -2846,7 +2720,7 @@ public class Tree
 
     path = getSelectionPath();
     if (path != null)
-      node = pathToNode(path);
+      node = TreeHelper.pathToNode(path);
     else
       node = null;
 
@@ -3279,7 +3153,7 @@ public class Tree
     
     exp = new ArrayList<TreePath>();
     for (TreePath path: expanded) {
-      full = pathToNode(path).getFullName();
+      full = TreeHelper.pathToNode(path).getFullName();
       node = locate(full);
       if (node != null)
 	exp.add(new TreePath(node.getPath()));
@@ -3336,8 +3210,8 @@ public class Tree
       node     = (Node) getModel().getRoot();
     }
     else {
-      selected = ActorUtils.locate(treePathToActorPath(path).getChildPath(), flow);
-      node     = pathToNode(path);
+      selected = ActorUtils.locate(TreeHelper.treePathToActorPath(path).getChildPath(), flow);
+      node     = TreeHelper.pathToNode(path);
     }
 
     // prompt for processor?
