@@ -1163,7 +1163,7 @@ public class Tree
    *
    * @param comment	the comment for the undo point
    */
-  protected void addUndoPoint(String comment) {
+  public void addUndoPoint(String comment) {
     if (getOwner() != null)
       getOwner().addUndoPoint("Saving undo data...", comment);
   }
@@ -1239,7 +1239,7 @@ public class Tree
       // make sure name is not empty
       if (newName.length() == 0)
 	newName = actorOld.getDefaultName();
-      getOwner().addUndoPoint("Saving undo data...", "Renaming actor " + actorOld.getName() + " to " + newName);
+      addUndoPoint("Renaming actor " + actorOld.getName() + " to " + newName);
       exp = getExpandedNodes();
       actorNew = actorOld.shallowCopy();
       actorNew.setName(newName);
@@ -3371,7 +3371,7 @@ public class Tree
     if (processor instanceof ModifyingProcessor) {
       modifying = (ModifyingProcessor) processor;
       if (modifying.isModified()) {
-	getOwner().addUndoPoint("Saving undo data...", "Processing actors with " + processor.toString());
+	addUndoPoint("Processing actors with " + processor.toString());
 	exp = getExpandedNodes();
 	if (path == null) {
 	  buildTree(modifying.getModifiedActor());
