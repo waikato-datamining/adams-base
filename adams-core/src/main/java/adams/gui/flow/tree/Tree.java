@@ -1065,55 +1065,6 @@ public class Tree
   }
 
   /**
-   * Tries to figure what actor templates fit best in the tree at the given position.
-   *
-   * @param path	the path where to insert the actor templates
-   * @param position	how the actor templates are to be inserted
-   * @return		the actor templates
-   */
-  protected AbstractActorTemplate[] suggestActorTemplates(TreePath path, InsertPosition position) {
-    AbstractActorTemplate[]	result;
-    AbstractActor		parent;
-    Node			parentNode;
-    Node			node;
-    int				pos;
-    AbstractActor[]		actors;
-    int				i;
-    AbstractActorTemplate[]	suggestions;
-
-    result = null;
-
-    if (result == null) {
-      if (position == InsertPosition.BENEATH) {
-	parentNode = TreeHelper.pathToNode(path);
-	pos        = parentNode.getChildCount();
-      }
-      else {
-	node       = TreeHelper.pathToNode(path);
-	parentNode = (Node) node.getParent();
-	pos        = parentNode.getIndex(node);
-	if (position == InsertPosition.AFTER)
-	  pos++;
-      }
-
-      parent  = parentNode.getActor();
-      actors  = new AbstractActor[parentNode.getChildCount()];
-      for (i = 0; i < actors.length; i++)
-	actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
-
-      suggestions = ActorTemplateSuggestion.getSingleton().suggest(parent, pos, actors);
-      if (suggestions.length > 0)
-	result = suggestions;
-    }
-
-    // default is "Filter"
-    if (result == null)
-      result = ActorTemplateSuggestion.getSingleton().getDefaults();
-
-    return result;
-  }
-
-  /**
    * Checks whether standalones can be placed beneath the parent actor.
    * If the actor isn't a standalone, this method returns true, of course.
    * In case the actor is a standalone and the parent doesn't allow standalones
@@ -1443,58 +1394,6 @@ public class Tree
       // notify listeners
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
     }
-  }
-
-  /**
-   * Brings up the GOE dialog for adding a template.
-   *
-   * @param path	the path to the actor to add the new template sibling
-   * @param template	the template to use as default in dialog, use null to use suggestion
-   * @param position	where to insert the template
-   */
-  public void addFromTemplate(TreePath path, AbstractActorTemplate template, InsertPosition position) {
-    AbstractActor		actor;
-    AbstractActorTemplate[] 	templates;
-
-    if (m_TemplateDialog == null) {
-      m_TemplateDialog = GenericObjectEditorDialog.createDialog(this);
-      m_TemplateDialog.getGOEEditor().setCanChangeClassInDialog(true);
-      m_TemplateDialog.getGOEEditor().setClassType(AbstractActorTemplate.class);
-    }
-
-    if (template == null) {
-      templates = suggestActorTemplates(path, position);
-      template  = templates[0];
-    }
-    else {
-      templates = new AbstractActorTemplate[]{template};
-    }
-    m_TemplateDialog.setProposedClasses(templates);
-    m_TemplateDialog.setCurrent(template);
-    if (position == InsertPosition.HERE)
-      m_TemplateDialog.setTitle("Add from template here...");
-    else if (position == InsertPosition.AFTER)
-      m_TemplateDialog.setTitle("Add from template after...");
-    else if (position == InsertPosition.BENEATH)
-      m_TemplateDialog.setTitle("Add from template beneath...");
-    m_TemplateDialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-    m_TemplateDialog.setVisible(true);
-    if (m_TemplateDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-    template = (AbstractActorTemplate) m_TemplateDialog.getEditor().getValue();
-
-    try {
-      actor                        = template.generate();
-      m_LastTemplate               = template;
-      m_LastTemplateInsertPosition = position;
-    }
-    catch (Exception e) {
-      actor = null;
-      e.printStackTrace();
-      GUIHelper.showErrorMessage(this, "Failed to create actor from template: " + e);
-    }
-    if (actor != null)
-      addActor(path, actor, position);
   }
 
   /**
@@ -2704,5 +2603,16 @@ public class Tree
   public void refreshTabs() {
     if (getEditor() != null)
       getEditor().refreshTabs();
+  }
+  
+  /**
+   * Updates the last template that was used.
+   * 
+   * @param template	the template
+   * @param position	how the template was inserted
+   */
+  public void updateLastTemplate(AbstractActorTemplate template, InsertPosition position) {
+    m_LastTemplate               = template;
+    m_LastTemplateInsertPosition = position;
   }
 }

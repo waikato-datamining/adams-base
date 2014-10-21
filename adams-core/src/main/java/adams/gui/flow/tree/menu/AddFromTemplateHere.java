@@ -30,7 +30,7 @@ import adams.gui.flow.tree.Tree.InsertPosition;
  * @version $Revision$
  */
 public class AddFromTemplateHere
-  extends AbstractTreePopupMenuItemAction {
+  extends AbstractFromTemplateAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
@@ -60,6 +60,6 @@ public class AddFromTemplateHere
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.addFromTemplate(m_State.selPath, null, InsertPosition.HERE);
+    addFromTemplate(m_State.selPath, null, InsertPosition.HERE);
   }
 }
