@@ -21,8 +21,6 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.tree.TreePath;
-
 /**
  * For removing breakpoints either below currently selected node or everywhere
  * (if no actor selected).
@@ -61,8 +59,6 @@ public class RenameActor
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    for (TreePath path: m_State.selPaths) {
-      m_State.tree.renameActor(m_State.selPath);
-    }
+    m_State.tree.renameActor(m_State.selPath);
   }
 }
