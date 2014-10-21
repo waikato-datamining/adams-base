@@ -131,6 +131,6 @@ public class RemoveActor
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.removeActor(m_State.selPaths);
+    removeActor(m_State.selPaths);
   }
 }
