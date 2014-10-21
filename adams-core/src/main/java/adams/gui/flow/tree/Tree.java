@@ -90,7 +90,7 @@ import adams.gui.event.NodeDroppedListener;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.menu.AbstractTreePopupAction;
-import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
+import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
@@ -287,15 +287,15 @@ public class Tree
     addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        final TreePath selPath = m_Self.getPathForLocation(e.getX(), e.getY());
-
         if (m_Self.isEnabled() && MouseUtils.isRightClick(e)) {
           e.consume();
           showNodePopupMenu(e);
         }
         else if (m_Self.isEnabled() && MouseUtils.isDoubleClick(e)) {
           e.consume();
-          editActor(selPath);
+          EditActor action = new EditActor();
+          action.update(getTreeState(e));
+          action.actionPerformed(null);
         }
         else {
           super.mousePressed(e);
@@ -1071,7 +1071,7 @@ public class Tree
    * @param parent	the parent to place the actor beneath
    * @return		true if actor can be placed, false if not
    */
-  protected boolean checkForStandalones(AbstractActor actor, Node parent) {
+  public boolean checkForStandalones(AbstractActor actor, Node parent) {
     return checkForStandalones(new AbstractActor[]{actor}, parent);
   }
 
@@ -1085,7 +1085,7 @@ public class Tree
    * @param parent	the parent to place the actor beneath
    * @return		true if actor can be placed, false if not
    */
-  protected boolean checkForStandalones(AbstractActor[] actors, Node parent) {
+  public boolean checkForStandalones(AbstractActor[] actors, Node parent) {
     for (AbstractActor actor: actors) {
       if (    ActorUtils.isStandalone(actor)
 	  && (parent != null)
@@ -1163,7 +1163,7 @@ public class Tree
    * @param position	where to add the actor, if null "editing" an existing actor is assumed
    * @return		the configured filter
    */
-  protected AbstractItemFilter configureFilter(TreePath path, InsertPosition position) {
+  public AbstractItemFilter configureFilter(TreePath path, InsertPosition position) {
     ActorClassTreeFilter	result;
     AbstractActor		before;
     AbstractActor		after;
@@ -1390,109 +1390,6 @@ public class Tree
 
       // notify listeners
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-    }
-  }
-
-  /**
-   * Brings up the GOE dialog for editing the selected actor.
-   *
-   * @param path	the path to the actor
-   */
-  public void editActor(TreePath path) {
-    GenericObjectEditorDialog	dialog;
-    Node 			currNode;
-    Node			newNode;
-    Node			parent;
-    AbstractActor		actor;
-    AbstractActor		actorOld;
-    int				index;
-    boolean			changed;
-    ActorHandler		handler;
-    ActorHandler		handlerOld;
-    int				i;
-    boolean			editable;
-
-    if (path == null)
-      return;
-
-    currNode               = TreeHelper.pathToNode(path);
-    m_CurrentEditingNode   = currNode;
-    m_CurrentEditingParent = (Node) currNode.getParent();
-    actorOld               = currNode.getActor().shallowCopy();
-    dialog                 = GenericObjectEditorDialog.createDialog(this);
-    editable               = isEditable() && currNode.isEditable();
-    if (editable)
-      dialog.setTitle("Edit...");
-    else
-      dialog.setTitle("Show...");
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.getGOEEditor().setClassType(AbstractActor.class);
-    dialog.setProposedClasses(null);
-    dialog.setCurrent(currNode.getActor().shallowCopy());
-    dialog.getGOEEditor().setReadOnly(!editable);
-    dialog.getGOEEditor().setFilter(configureFilter(path, null));
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-    dialog.setVisible(true);
-    m_CurrentEditingNode   = null;
-    m_CurrentEditingParent = null;
-    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION) {
-      actor = (AbstractActor) dialog.getEditor().getValue();
-      // make sure name is not empty
-      if (actor.getName().length() == 0)
-	actor.setName(actor.getDefaultName());
-      if (actor.equals(actorOld)) {
-	actorOld.destroy();
-	return;
-      }
-      parent = (Node) currNode.getParent();
-
-      // does parent allow singletons?
-      if (!checkForStandalones(actor, parent))
-	return;
-
-      addUndoPoint("Updating node '" + currNode.getFullName() + "'");
-
-      // check whether actor class or actor structure (for ActorHandlers) has changed
-      changed = (actor.getClass() != actorOld.getClass());
-      if (!changed && (actor instanceof ActorHandler)) {
-	handler    = (ActorHandler) actor;
-	handlerOld = (ActorHandler) actorOld;
-	changed    = (handler.size() != handlerOld.size());
-	if (!changed) {
-	  for (i = 0; i < handler.size(); i++) {
-	    if (handler.get(i).getClass() != handlerOld.get(i).getClass()) {
-	      changed = true;
-	      break;
-	    }
-	  }
-	}
-      }
-
-      if (changed) {
-	if (parent == null) {
-	  buildTree(actor);
-	  currNode = (Node) getModel().getRoot();
-	}
-	else {
-	  newNode = buildTree(null, actor, false);
-	  index   = parent.getIndex(currNode);
-	  parent.remove(index);
-	  parent.insert(newNode, index);
-	  currNode = newNode;
-	}
-      }
-      else {
-	currNode.setActor(actor);
-      }
-      updateActorName(currNode);
-      setModified(true);
-      nodeStructureChanged(currNode);
-      notifyActorChangeListeners(new ActorChangeEvent(m_Self, currNode, Type.MODIFY));
-      locateAndDisplay(currNode.getFullName());
-      refreshTabs();
-      // update all occurrences, if necessary
-      if (!m_IgnoreNameChanges)
-	AbstractEditPostProcessor.apply(this, ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
     }
   }
 
@@ -2521,6 +2418,17 @@ public class Tree
     return m_CurrentEditingParent;
   }
 
+  /**
+   * Updates the current editing position.
+   * 
+   * @param parent	the parent of the current node
+   * @param node	the current node
+   */
+  public void updateCurrentEditing(Node parent, Node node) {
+    m_CurrentEditingParent = parent;
+    m_CurrentEditingNode   = node;
+  }
+  
   /**
    * Creates a new collection for transfer.
    *
