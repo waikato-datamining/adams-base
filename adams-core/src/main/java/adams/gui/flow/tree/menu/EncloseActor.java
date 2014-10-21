@@ -119,6 +119,6 @@ public class EncloseActor
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.editActor(m_State.selPath);
+    // obsolete
   }
 }
