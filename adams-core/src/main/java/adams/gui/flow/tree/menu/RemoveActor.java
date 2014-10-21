@@ -65,7 +65,7 @@ public class RemoveActor
    *
    * @param path	the paths of the nodes to remove
    */
-  public void removeActor(TreePath[] paths) {
+  protected void removeActor(TreePath[] paths) {
     Node		node;
     int			index;
     Node		parent;
