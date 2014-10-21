@@ -59,6 +59,14 @@ public class CutActor
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.cutActors(m_State.selPaths);
+    CopyActor 	copy;
+    RemoveActor	remove;
+    
+    copy = new CopyActor();
+    copy.update(m_State);
+    copy.actionPerformed(null);
+    remove = new RemoveActor();
+    remove.update(m_State);
+    remove.actionPerformed(null);
   }
 }

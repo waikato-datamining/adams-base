@@ -20,6 +20,15 @@
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.tree.TreePath;
+
+import adams.gui.event.ActorChangeEvent;
+import adams.gui.event.ActorChangeEvent.Type;
+import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
 
 /**
  * For removing actors.
@@ -49,6 +58,70 @@ public class RemoveActor
   @Override
   protected void doUpdate() {
     setEnabled(m_State.editable && m_State.canRemove);
+  }
+
+  /**
+   * Removes the nodes (incl. sub-tree).
+   *
+   * @param path	the paths of the nodes to remove
+   */
+  public void removeActor(TreePath[] paths) {
+    Node		node;
+    int			index;
+    Node		parent;
+    List<Boolean>	state;
+    int			row;
+    Node		selNode;
+    Node[]		nodes;
+    int			i;
+
+    nodes = TreeHelper.pathsToNodes(paths);
+    if (nodes.length == 1)
+      addUndoPoint("Removing node '" + nodes[0].getActor().getFullName() + "'");
+    else
+      addUndoPoint("Removing nodes");
+
+    // backup expanded state
+    state = new Vector<Boolean>(m_State.tree.getExpandedStateList());
+
+    selNode = null;
+    for (i = nodes.length - 1; i >= 0; i--) {
+      node   = nodes[i];
+      parent = (Node) node.getParent();
+      index  = parent.getIndex(node);
+      row    = m_State.tree.getRowForPath(paths[i]);
+
+      // remove node
+      parent.remove(index);
+      m_State.tree.nodeStructureChanged(parent);
+
+      // restore expanded state
+      state.remove(row);
+
+      // select appropriate node
+      if (parent.getChildCount() > index) {
+        selNode = (Node) parent.getChildAt(index);
+      }
+      else {
+	if ((parent.getChildCount() > 0) && (parent.getChildCount() > index - 1))
+	  selNode = (Node) parent.getChildAt(index - 1);
+	else
+	  selNode = parent;
+      }
+    }
+
+    m_State.tree.setExpandedStateList(state);
+
+    if (selNode != null)
+      m_State.tree.locateAndDisplay(selNode.getFullName());
+
+    m_State.tree.setModified(true);
+
+    // notify listeners
+    if (nodes.length == 1)
+      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, nodes[0], Type.REMOVE));
+    else
+      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, nodes, Type.REMOVE_RANGE));
   }
 
   /**

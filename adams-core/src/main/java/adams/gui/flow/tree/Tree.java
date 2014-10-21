@@ -51,7 +51,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import adams.core.Utils;
 import adams.core.io.FlowFile;
-import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.condition.bool.BooleanCondition;
@@ -849,33 +848,6 @@ public class Tree
   }
 
   /**
-   * Puts the actor in nested form on the clipboard.
-   *
-   * @param actor	the actor to put on the clipboard
-   */
-  protected void putActorOnClipboard(AbstractActor actor) {
-    putActorOnClipboard(new AbstractActor[]{actor});
-  }
-
-  /**
-   * Puts the actors in nested form on the clipboard.
-   *
-   * @param actors	the actors to put on the clipboard
-   */
-  protected void putActorOnClipboard(AbstractActor[] actors) {
-    ClipboardActorContainer	cont;
-
-    if (actors.length == 1) {
-      GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
-    }
-    else if (actors.length > 1) {
-      cont = new ClipboardActorContainer();
-      cont.setActors(actors);
-      GUIHelper.copyToClipboard(cont.toNestedString());
-    }
-  }
-
-  /**
    * Checks whether an actor can be pasted.
    *
    * @return		true if pasting is possible
@@ -1038,25 +1010,6 @@ public class Tree
   public void addUndoPoint(String comment) {
     if (getOwner() != null)
       getOwner().addUndoPoint("Saving undo data...", comment);
-  }
-
-  /**
-   * Cuts the selected actors and places them on the clipboard.
-   *
-   * @param paths	the paths to the actors
-   */
-  public void cutActors(TreePath[] paths) {
-    putActorOnClipboard(TreeHelper.pathsToActors(paths, true));
-    removeActor(paths);
-  }
-
-  /**
-   * Copies the selected actors and places them on the clipboard.
-   *
-   * @param paths	the paths to the actors
-   */
-  public void copyActors(TreePath[] paths) {
-    putActorOnClipboard(TreeHelper.pathsToActors(paths, true));
   }
 
   /**

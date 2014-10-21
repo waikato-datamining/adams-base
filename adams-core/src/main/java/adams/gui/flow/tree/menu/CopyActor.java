@@ -21,6 +21,13 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.NestedProducer;
+import adams.flow.core.AbstractActor;
+import adams.gui.core.GUIHelper;
+import adams.gui.flow.tree.ClipboardActorContainer;
+import adams.gui.flow.tree.TreeHelper;
+
 /**
  * For copying the currently selected actor(s) and placing them on the 
  * clipboard.
@@ -53,12 +60,39 @@ public class CopyActor
   }
 
   /**
+   * Puts the actor in nested form on the clipboard.
+   *
+   * @param actor	the actor to put on the clipboard
+   */
+  protected void putActorOnClipboard(AbstractActor actor) {
+    putActorOnClipboard(new AbstractActor[]{actor});
+  }
+
+  /**
+   * Puts the actors in nested form on the clipboard.
+   *
+   * @param actors	the actors to put on the clipboard
+   */
+  protected void putActorOnClipboard(AbstractActor[] actors) {
+    ClipboardActorContainer	cont;
+
+    if (actors.length == 1) {
+      GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
+    }
+    else if (actors.length > 1) {
+      cont = new ClipboardActorContainer();
+      cont.setActors(actors);
+      GUIHelper.copyToClipboard(cont.toNestedString());
+    }
+  }
+
+  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.tree.copyActors(m_State.selPaths);
+    putActorOnClipboard(TreeHelper.pathsToActors(m_State.selPaths, true));
   }
 }
