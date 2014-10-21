@@ -262,8 +262,28 @@ public class Tree
    */
   public Tree(FlowPanel owner, AbstractActor root) {
     super();
+    m_Owner = owner;
+    buildTree(root);
+  }
 
-    m_Owner                       = owner;
+  /**
+   * Further initialization of the tree.
+   */
+  @Override
+  protected void initialize() {
+    String[]			classes;
+    AbstractTreePopupAction	action;
+
+    super.initialize();
+
+    m_Self                        = this;
+    m_Modified                    = false;
+    m_ActorChangeListeners        = new HashSet<ActorChangeListener>();
+    m_LastSearchString            = "";
+    m_LastSearchNode              = null;
+    m_ShowQuickInfo               = true;
+    m_ShowAnnotations             = true;
+    m_ShowInputOutput             = false;
     m_ActorNameColor              = "black";
     m_ActorNameSize               = "3";
     m_QuickInfoColor              = "#008800";
@@ -280,32 +300,9 @@ public class Tree
     m_InputOutputPrefixes         = new String[0];
     m_CurrentEditingNode          = null;
     m_CurrentEditingParent        = null;
-    m_Modified                    = false;
     m_File                        = null;
     m_LastTemplate                = null;
     m_IgnoreNameChanges           = false;
-
-    buildTree(root);
-  }
-
-  /**
-   * Further initialization of the tree.
-   */
-  @Override
-  protected void initialize() {
-    String[]			classes;
-    AbstractTreePopupAction	action;
-
-    super.initialize();
-
-    m_Self                 = this;
-    m_Modified             = false;
-    m_ActorChangeListeners = new HashSet<ActorChangeListener>();
-    m_LastSearchString     = "";
-    m_LastSearchNode       = null;
-    m_ShowQuickInfo        = true;
-    m_ShowAnnotations      = true;
-    m_ShowInputOutput      = false;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -390,7 +387,7 @@ public class Tree
 	    addUndoPoint("Drag'n'Drop of " + nodes.size() + " actors");
 	}
 	else {
-	  m_Modified = true;
+	  setModified(true);
 	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[nodes.size()]), Type.MODIFY));
 	}
       }
@@ -497,7 +494,7 @@ public class Tree
    * @param node	the actor to check
    * @return		true if the actor's name was modified
    */
-  protected boolean updateActorName(Node node) {
+  public boolean updateActorName(Node node) {
     boolean		result;
     Node 		parent;
     AbstractActor	actor;
@@ -1035,51 +1032,11 @@ public class Tree
       ((DefaultTreeModel) getModel()).nodeChanged(nodes[i]);
     }
 
-    m_Modified = true;
+    setModified(true);
     if (nodes.length == 1)
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.MODIFY));
     else
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.MODIFY_RANGE));
-  }
-
-  /**
-   * Renames an actor.
-   *
-   * @param path	the path to the actor
-   */
-  public void renameActor(TreePath path) {
-    String		oldName;
-    String 		newName;
-    Node		node;
-    Node		parent;
-    AbstractActor	actorOld;
-    AbstractActor	actorNew;
-    List<TreePath> 	exp;
-
-    node    = TreeHelper.pathToNode(path);
-    oldName = node.getActor().getName();
-    newName = JOptionPane.showInputDialog(GUIHelper.getParentComponent(this), "Please enter new name:", oldName);
-    if (newName != null) {
-      actorOld = node.getActor();
-      // make sure name is not empty
-      if (newName.length() == 0)
-	newName = actorOld.getDefaultName();
-      addUndoPoint("Renaming actor " + actorOld.getName() + " to " + newName);
-      exp = getExpandedNodes();
-      actorNew = actorOld.shallowCopy();
-      actorNew.setName(newName);
-      node.setActor(actorNew);
-      updateActorName(node);
-      ((DefaultTreeModel) getModel()).nodeChanged(node);
-      m_Modified = m_Modified || !oldName.equals(node.getActor().getName());
-      notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-      setExpandedNodes(exp);
-      // update all occurrences, if necessary
-      parent = (Node) node.getParent();
-      if (!m_IgnoreNameChanges)
-	AbstractEditPostProcessor.apply(this, ((parent != null) ? parent.getActor() : null), actorOld, actorNew);
-      locateAndDisplay(node.getFullName());
-    }
   }
 
   /**
@@ -1506,7 +1463,7 @@ public class Tree
 	setExpandedNodes(exp);
       }
 
-      m_Modified = true;
+      setModified(true);
 
       // notify listeners
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
@@ -1657,7 +1614,7 @@ public class Tree
 	currNode.setActor(actor);
       }
       updateActorName(currNode);
-      m_Modified = true;
+      setModified(true);
       nodeStructureChanged(currNode);
       notifyActorChangeListeners(new ActorChangeEvent(m_Self, currNode, Type.MODIFY));
       locateAndDisplay(currNode.getFullName());
@@ -1694,7 +1651,7 @@ public class Tree
     if (dialog.getFlowEditorPanel().getCurrentFile() != null) {
       if ((actor.getActorFile() == null) || (!actor.getActorFile().equals(dialog.getFlowEditorPanel().getCurrentFile()))) {
 	actor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
-	m_Modified = true;
+	setModified(true);
       }
     }
 
@@ -1776,7 +1733,7 @@ public class Tree
 	  parent.insert(newNode, index);
       }
       updateActorName(newNode);
-      m_Modified = true;
+      setModified(true);
       if (paths.length == 1) {
 	nodeStructureChanged(newNode);
 	expand(newNode);
@@ -2101,7 +2058,7 @@ public class Tree
 	parent.insert(newNode, index);
     }
     updateActorName(newNode);
-    m_Modified = true;
+    setModified(true);
     if (paths.length == 1) {
       nodeStructureChanged(newNode);
       locateAndDisplay(newNode.getFullName());
@@ -2227,7 +2184,7 @@ public class Tree
     if (selNode != null)
       locateAndDisplay(selNode.getFullName());
 
-    m_Modified = true;
+    setModified(true);
 
     // notify listeners
     if (nodes.length == 1)
