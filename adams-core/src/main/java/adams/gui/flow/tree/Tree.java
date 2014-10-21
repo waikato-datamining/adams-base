@@ -2685,40 +2685,6 @@ public class Tree
   }
 
   /**
-   * Rebuilds the subtree, including the specified node, due to changes in the
-   * actor of this node.
-   *
-   * @param node	the node which actor changed
-   */
-  public void actorChanged(Node node) {
-    Node	newNode;
-    Node	parent;
-    int		index;
-
-    newNode = buildTree(null, node.getActor(), false);
-    parent  = (Node) node.getParent();
-
-    // already at root node?
-    if (parent == null) {
-      ((DefaultTreeModel) getModel()).setRoot(newNode);
-    }
-    else {
-      index = parent.getIndex(node);
-      if (index > -1) {
-	parent.insert(newNode, index);
-	parent.remove(index + 1);
-      }
-      else {
-	ConsolePanel.getSingleton().append(OutputType.ERROR, "Couldn't find node in parent's children??");
-      }
-    }
-
-    // notify about change
-    nodeStructureChanged(newNode);
-    notifyActorChangeListeners(new ActorChangeEvent(this, node, Type.MODIFY));
-  }
-
-  /**
    * Sets the current state of the tree (tree, expansions, modified).
    *
    * @param value	the state to use
