@@ -50,7 +50,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import adams.core.Utils;
-import adams.core.io.FlowFile;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.control.Breakpoint;
@@ -61,7 +60,6 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
@@ -89,7 +87,6 @@ import adams.gui.event.ActorChangeListener;
 import adams.gui.event.NodeDroppedEvent;
 import adams.gui.event.NodeDroppedEvent.NotificationTime;
 import adams.gui.event.NodeDroppedListener;
-import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.menu.AbstractTreePopupAction;
@@ -1497,43 +1494,6 @@ public class Tree
       if (!m_IgnoreNameChanges)
 	AbstractEditPostProcessor.apply(this, ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
     }
-  }
-
-  /**
-   * Brings up a flow window for editing the selected external actor's flow.
-   *
-   * @param path	the path to the node
-   */
-  public void editFlow(TreePath path) {
-    Node			node;
-    FlowEditorDialog 		dialog;
-    ExternalActorHandler	actor;
-
-    node = TreeHelper.pathToNode(path);
-    if (node == null)
-      return;
-    actor = (ExternalActorHandler) node.getActor();
-    if (actor == null)
-      return;
-
-    if (getParentDialog() != null)
-      dialog = new FlowEditorDialog(getParentDialog());
-    else
-      dialog = new FlowEditorDialog(getParentFrame());
-    dialog.getFlowEditorPanel().loadUnsafe(actor.getActorFile());
-    dialog.setVisible(true);
-    if (dialog.getFlowEditorPanel().getCurrentFile() != null) {
-      if ((actor.getActorFile() == null) || (!actor.getActorFile().equals(dialog.getFlowEditorPanel().getCurrentFile()))) {
-	actor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
-	setModified(true);
-      }
-    }
-
-    // external flow might have changed, discard any inlined actors
-    node.collapse();
-
-    // notify listeners
-    notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
   }
 
   /**
