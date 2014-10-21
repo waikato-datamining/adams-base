@@ -53,9 +53,6 @@ import adams.core.Utils;
 import adams.core.io.FlowFile;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
-import adams.flow.condition.bool.BooleanCondition;
-import adams.flow.condition.bool.BooleanConditionSupporter;
-import adams.flow.condition.bool.Expression;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
@@ -66,7 +63,6 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
@@ -237,9 +233,6 @@ public class Tree
 
   /** the dialog for processing actors. */
   protected GenericObjectEditorDialog m_DialogProcessActors;
-
-  /** the dialog for boolean conditions. */
-  protected GenericObjectEditorDialog m_DialogConditions;
 
   /**
    * Initializes the tree.
@@ -1756,112 +1749,6 @@ public class Tree
     notifyActorChangeListeners(new ActorChangeEvent(m_Self, currNode, Type.MODIFY));
     expand(callableNode);
     locateAndDisplay(currNode.getFullName());
-    redraw();
-  }
-
-  /**
-   * Turns the selected actor into its conditional equivalent.
-   *
-   * @param path	the (path to the) actor to turn into its conditional equivalent
-   */
-  public void makeConditional(TreePath path) {
-    AbstractActor		currActor;
-    Node 			currNode;
-    Node			parentNode;
-    Class			condEquiv;
-    Node			newNode;
-    AbstractActor		newActor;
-    boolean			noEquiv;
-    int				index;
-    boolean			defaultName;
-    boolean			expanded;
-    
-    currNode   = TreeHelper.pathToNode(path);
-    parentNode = (Node) currNode.getParent();
-    expanded   = isExpanded(path);
-    currActor  = currNode.getFullActor().shallowCopy();
-    noEquiv    = false;
-    condEquiv  = null;
-    
-    if (!(currActor instanceof ActorWithConditionalEquivalent))
-      noEquiv = true;
-
-    if (!noEquiv) {
-      condEquiv = ((ActorWithConditionalEquivalent) currActor).getConditionalEquivalent();
-      if (condEquiv == null)
-	noEquiv = true;
-    }
-    
-    if (noEquiv) {
-      GUIHelper.showErrorMessage(
-	  this,
-	  "Actor '" + currActor.getClass().getName() + "' does not have a conditional equivalent!");
-      return;
-    }
-
-    // instantiate equivalent
-    newNode  = null;
-    newActor = null;
-    try {
-      newActor = (AbstractActor) condEquiv.newInstance();
-      // transfer some basic options
-      newActor.setAnnotations(currActor.getAnnotations());
-      newActor.setSkip(currActor.getSkip());
-      newActor.setLoggingLevel(currActor.getLoggingLevel());
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(
-	  this,
-	  "Failed to instantiate conditional equivalent: " + condEquiv.getName());
-      return;
-    }
-    
-    // choose condition
-    if (m_DialogConditions == null) {
-      if (getParentDialog() != null)
-	m_DialogConditions = new GenericObjectEditorDialog(getParentDialog());
-      else
-	m_DialogConditions = new GenericObjectEditorDialog(getParentFrame());
-      m_DialogConditions.setTitle("Conditions");
-      m_DialogConditions.setModalityType(ModalityType.DOCUMENT_MODAL);
-      m_DialogConditions.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogConditions.getGOEEditor().setClassType(BooleanCondition.class);
-      m_DialogConditions.setCurrent(new Expression());
-    }
-    m_DialogConditions.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-    m_DialogConditions.setVisible(true);
-    if (m_DialogConditions.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    // create node
-    ((BooleanConditionSupporter) newActor).setCondition((BooleanCondition) m_DialogConditions.getCurrent());
-    newNode = new Node(this, newActor);
-    
-    addUndoPoint("Making conditional actor from '" + currNode.getActor().getFullName());
-
-    // move children
-    for (BaseTreeNode child: currNode.getChildren())
-      newNode.add(child);
-    
-    // replace node
-    defaultName = currActor.getName().equals(currActor.getDefaultName());
-    index       = parentNode.getIndex(currNode);
-    parentNode.insert(newNode, index);
-    parentNode.remove(currNode);
-    if (!defaultName) {
-      newActor.setName(currActor.getName());
-      newNode.setActor(newActor);
-      updateActorName(newNode);
-    }
-    if (expanded)
-      expand(newNode);
-
-    // update tree
-    setModified(true);
-    nodeStructureChanged(parentNode);
-    notifyActorChangeListeners(new ActorChangeEvent(m_Self, parentNode, Type.MODIFY));
-    nodeStructureChanged(parentNode);
-    locateAndDisplay(newNode.getFullName());
     redraw();
   }
 
