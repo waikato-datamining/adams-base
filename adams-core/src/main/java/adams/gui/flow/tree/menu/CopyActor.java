@@ -60,15 +60,6 @@ public class CopyActor
   }
 
   /**
-   * Puts the actor in nested form on the clipboard.
-   *
-   * @param actor	the actor to put on the clipboard
-   */
-  protected void putActorOnClipboard(AbstractActor actor) {
-    putActorOnClipboard(new AbstractActor[]{actor});
-  }
-
-  /**
    * Puts the actors in nested form on the clipboard.
    *
    * @param actors	the actors to put on the clipboard
