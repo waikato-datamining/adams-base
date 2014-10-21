@@ -1809,18 +1809,18 @@ public class Tree
 	GUIHelper.getParentComponent(this),
 	"Please enter the search string ("
 	+ ((node == null) ? ("whole flow") : ("below '" + node.getActor().getName()) + "'") + "):",
-	m_LastSearchString);
+	getLastSearchString());
     if (search == null)
       return;
 
-    m_LastSearchString = search;
-    m_LastSearchNode   = find(node, null, m_LastSearchString, false);
-    if (m_LastSearchNode == null) {
+    setLastSearchString(search);
+    setLastSearchNode(find(node, null, getLastSearchString(), false));
+    if (getLastSearchNode() == null) {
       GUIHelper.showErrorMessage(
-	  m_Self, "Search string '" + m_LastSearchString + "' not found!");
+	  m_Self, "Search string '" + getLastSearchString() + "' not found!");
     }
     else {
-      path = getPath(m_LastSearchNode);
+      path = getPath(getLastSearchNode());
       setSelectionPath(path);
       scrollPathToVisible(path);
     }
@@ -1832,16 +1832,25 @@ public class Tree
   public void findNext() {
     TreePath	path;
 
-    m_LastSearchNode = find(null, m_LastSearchNode, m_LastSearchString, false);
-    if (m_LastSearchNode == null) {
+    setLastSearchNode(find(null, getLastSearchNode(), getLastSearchString(), false));
+    if (getLastSearchNode() == null) {
       GUIHelper.showErrorMessage(
-	  m_Self, "Search string '" + m_LastSearchString + "' not found!");
+	  m_Self, "Search string '" + getLastSearchString() + "' not found!");
     }
     else {
-      path = getPath(m_LastSearchNode);
+      path = getPath(getLastSearchNode());
       setSelectionPath(path);
       scrollPathToVisible(path);
     }
+  }
+
+  /**
+   * Sets the last search string in use.
+   *
+   * @param value	the search string
+   */
+  public void setLastSearchString(String value) {
+    m_LastSearchString = value;
   }
 
   /**
@@ -1851,6 +1860,16 @@ public class Tree
    */
   public String getLastSearchString() {
     return m_LastSearchString;
+  }
+
+  /**
+   * Sets the node that was found in the last search.
+   *
+   * @param value	the node, can be null if no search performed yet or
+   * 			last search unsuccessful
+   */
+  public void setLastSearchNode(Node value) {
+    m_LastSearchNode = value;
   }
 
   /**
