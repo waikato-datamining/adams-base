@@ -60,7 +60,6 @@ import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
-import adams.flow.core.AbstractDisplay;
 import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -68,7 +67,6 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
@@ -80,8 +78,6 @@ import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.sink.CallableSink;
-import adams.flow.sink.DisplayPanelManager;
-import adams.flow.sink.DisplayPanelProvider;
 import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
 import adams.flow.source.ExternalSource;
@@ -453,7 +449,7 @@ public class Tree
    * 			return it (recursive calls always append the sub-tree!)
    * @return		the generated node
    */
-  protected Node buildTree(Node parent, AbstractActor actor, boolean append) {
+  public Node buildTree(Node parent, AbstractActor actor, boolean append) {
     return buildTree(parent, new AbstractActor[]{actor}, append)[0];
   }
 
@@ -1660,142 +1656,6 @@ public class Tree
 
     // notify listeners
     notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-  }
-
-  /**
-   * Encloses the currently selected actors in the specified actor handler.
-   *
-   * @param paths	the (paths to the) actors to wrap in the control actor
-   * @param handler	the handler to use
-   */
-  public void encloseActor(TreePath[] paths, ActorHandler handler) {
-    AbstractActor[]	currActor;
-    Node		parent;
-    Node 		currNode;
-    Node		newNode;
-    int			index;
-    String		msg;
-    MutableActorHandler	mutable;
-    int			i;
-    String		newName;
-
-    parent    = null;
-    currActor = new AbstractActor[paths.length];
-    for (i = 0; i < paths.length; i++) {
-      currNode     = TreeHelper.pathToNode(paths[i]);
-      currActor[i] = currNode.getFullActor().shallowCopy();
-      if (parent == null)
-	parent = (Node) currNode.getParent();
-
-      if (ActorUtils.isStandalone(currActor[i])) {
-	if (!handler.getActorHandlerInfo().canContainStandalones()) {
-	  GUIHelper.showErrorMessage(
-	      this,
-	      "You cannot enclose a standalone actor in a "
-	      + handler.getClass().getSimpleName() + "!");
-	  return;
-	}
-      }
-    }
-
-    // enter new name
-    newName = handler.getName();
-    if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
-      newName = currActor[0].getName();
-    newName = JOptionPane.showInputDialog(GUIHelper.getParentComponent(this), "Please enter name for enclosing actor (leave empty for default):", newName);
-    if (newName == null)
-      return;
-    if (newName.isEmpty())
-      newName = handler.getDefaultName();
-    handler.setName(newName);
-
-    if (paths.length == 1)
-      addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
-    else
-      addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
-
-    try {
-      if (handler instanceof MutableActorHandler) {
-	mutable = (MutableActorHandler) handler;
-	mutable.removeAll();
-	for (i = 0; i < currActor.length; i++)
-	  mutable.add(i, currActor[i]);
-      }
-      else {
-	handler.set(0, currActor[0]);
-      }
-      newNode = buildTree(null, (AbstractActor) handler, false);
-      for (i = 0; i < paths.length; i++) {
-	currNode = TreeHelper.pathToNode(paths[i]);
-	index    = parent.getIndex(currNode);
-	parent.remove(index);
-	if (i == 0)
-	  parent.insert(newNode, index);
-      }
-      updateActorName(newNode);
-      setModified(true);
-      if (paths.length == 1) {
-	nodeStructureChanged(newNode);
-	expand(newNode);
-	locateAndDisplay(newNode.getFullName());
-	notifyActorChangeListeners(new ActorChangeEvent(m_Self, newNode, Type.MODIFY));
-      }
-      else {
-	nodeStructureChanged(parent);
-	expand(parent);
-	locateAndDisplay(parent.getFullName());
-	notifyActorChangeListeners(new ActorChangeEvent(m_Self, parent, Type.MODIFY));
-      }
-      redraw();
-    }
-    catch (Exception e) {
-      if (paths.length == 1)
-	msg = "Failed to enclose actor '" + TreeHelper.pathToActor(paths[0]).getFullName() + "'";
-      else
-	msg = "Failed to enclose " + paths.length + " actors";
-      msg += " in a " + handler.getClass().getSimpleName() + ": ";
-      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n" + Utils.throwableToString(e));
-      GUIHelper.showErrorMessage(
-	  this, msg + "\n" + e.getMessage());
-    }
-  }
-
-  /**
-   * Encloses the specified actor in a DisplayPanelManager actor.
-   *
-   * @param path	the path of the actor to enclose
-   */
-  public void encloseInDisplayPanelManager(TreePath path) {
-    AbstractActor	currActor;
-    Node		currNode;
-    DisplayPanelManager	manager;
-    AbstractDisplay	display;
-    List<TreePath>	exp;
-
-    currNode  = TreeHelper.pathToNode(path);
-    currActor = currNode.getFullActor().shallowCopy();
-    manager   = new DisplayPanelManager();
-    manager.setName(currActor.getName());
-    manager.setPanelProvider((DisplayPanelProvider) currActor);
-    if (currActor instanceof AbstractDisplay) {
-      display = (AbstractDisplay) currActor;
-      manager.setWidth(display.getWidth() + 100);
-      manager.setHeight(display.getHeight());
-      manager.setX(display.getX());
-      manager.setY(display.getY());
-    }
-
-    addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
-
-    exp = getExpandedNodes();
-    currNode.setActor(manager);
-    setModified(true);
-    nodeStructureChanged((Node) currNode.getParent());
-    notifyActorChangeListeners(new ActorChangeEvent(m_Self, currNode, Type.MODIFY));
-    setExpandedNodes(exp);
-    expand(currNode);
-    locateAndDisplay(currNode.getFullName());
-    redraw();
   }
 
   /**
