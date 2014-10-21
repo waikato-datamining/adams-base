@@ -56,13 +56,11 @@ import adams.core.option.NestedProducer;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
@@ -72,13 +70,7 @@ import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
-import adams.flow.sink.CallableSink;
-import adams.flow.source.CallableSource;
-import adams.flow.standalone.CallableActors;
-import adams.flow.standalone.GridView;
-import adams.flow.standalone.TabView;
 import adams.flow.template.AbstractActorTemplate;
-import adams.flow.transformer.CallableTransformer;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTreeNode;
@@ -102,7 +94,6 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.menu.AbstractTreePopupAction;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
-import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
@@ -1644,107 +1635,6 @@ public class Tree
 
     // notify listeners
     notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-  }
-
-  /**
-   * Turns the selected actor into a callable actor.
-   *
-   * @param path	the (path to the) actor to turn into callable actor
-   */
-  public void createCallableActor(TreePath path) {
-    AbstractActor		currActor;
-    Node 			currNode;
-    Node			callableNode;
-    Node			root;
-    List<Node>			callable;
-    List<Node>			multiview;
-    CallableActors		callableActors;
-    Node			moved;
-    AbstractCallableActor	replacement;
-    List<TreePath>		exp;
-    int				index;
-
-    currNode  = TreeHelper.pathToNode(path);
-    currActor = currNode.getFullActor().shallowCopy();
-    if (ActorUtils.isStandalone(currActor)) {
-      GUIHelper.showErrorMessage(
-	  this,
-	  "Standalone actors cannot be turned into a callable actor!");
-      return;
-    }
-    if (currActor instanceof AbstractCallableActor) {
-      GUIHelper.showErrorMessage(
-	  this,
-	  "Actor points already to a callable actor!");
-      return;
-    }
-    if ((currNode.getParent() != null) && (((Node) currNode.getParent()).getActor() instanceof CallableActors)) {
-      GUIHelper.showErrorMessage(
-	  this,
-	  "Actor is already a callable actor!");
-      return;
-    }
-
-    addUndoPoint("Creating callable actor from '" + currNode.getActor().getFullName());
-
-    callable  = FlowHelper.findCallableActorsHandler(currNode, (Node) currNode.getParent(), new Class[]{CallableActors.class});
-    multiview = FlowHelper.findCallableActorsHandler(currNode, (Node) currNode.getParent(), new Class[]{GridView.class, TabView.class});  // TODO: superclass?
-
-    // no CallableActors available?
-    if (callable.size() == 0) {
-      root = (Node) currNode.getRoot();
-      if (!((ActorHandler) root.getActor()).getActorHandlerInfo().canContainStandalones()) {
-	GUIHelper.showErrorMessage(
-	    this,
-	    "Root actor '" + root.getActor().getName() + "' cannot contain standalones!");
-	return;
-      }
-      callableActors = new CallableActors();
-      callableNode   = new Node(this, callableActors);
-      index          = 0;
-      // TODO: more generic approach?
-      if (multiview.size() > 0) {
-	for (Node node: multiview) {
-	  if (node.getParent().getIndex(node) >= index)
-	    index = node.getParent().getIndex(node) + 1;
-	}
-      }
-      root.insert(callableNode, index);
-      updateActorName(callableNode);
-    }
-    else {
-      callableNode = callable.get(callable.size() - 1);
-    }
-
-    exp = getExpandedNodes();
-    
-    // move actor
-    moved = buildTree(callableNode, currActor, true);
-    updateActorName(moved);
-
-    // create replacement
-    replacement = null;
-    if (ActorUtils.isSource(currActor))
-      replacement = new CallableSource();
-    else if (ActorUtils.isTransformer(currActor))
-      replacement = new CallableTransformer();
-    else if (ActorUtils.isSink(currActor))
-      replacement = new CallableSink();
-    replacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
-    currNode.setActor(replacement);
-    currNode.removeAllChildren();
-    updateActorName(currNode);
-
-    // update tree
-    setModified(true);
-    nodeStructureChanged(callableNode);
-    setExpandedNodes(exp);
-    notifyActorChangeListeners(new ActorChangeEvent(m_Self, callableNode, Type.MODIFY));
-    nodeStructureChanged((Node) currNode.getParent());
-    notifyActorChangeListeners(new ActorChangeEvent(m_Self, currNode, Type.MODIFY));
-    expand(callableNode);
-    locateAndDisplay(currNode.getFullName());
-    redraw();
   }
 
   /**
