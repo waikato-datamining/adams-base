@@ -15,7 +15,7 @@
 
 /**
  * BaseMenu.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -25,6 +25,8 @@ import java.util.Collections;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+
+import adams.gui.action.PropertiesAction;
 
 /**
  * Extended JMenu class that also supports sorting of its menu items.
@@ -73,6 +75,39 @@ public class BaseMenu
    */
   public BaseMenu(String s, boolean b) {
     super(s, b);
+  }
+
+  /**
+   * Creates a new menu item attached to the specified
+   * <code>Action</code> object and appends it to the end of this menu.
+   *
+   * @param a the <code>Action</code> for the menu item to be added
+   * @see Action
+   */
+  @Override
+  public JMenuItem add(Action a) {
+    if (a instanceof PropertiesAction)
+      return add(((PropertiesAction) a).getMenuItem());
+    else
+      return super.add(a);
+  }
+
+  /**
+   * Inserts a new menu item attached to the specified <code>Action</code>
+   * object at a given position.
+   *
+   * @param a the <code>Action</code> object for the menu item to add
+   * @param pos an integer specifying the position at which to add the
+   *               new menu item
+   * @exception IllegalArgumentException if the value of
+   *                  <code>pos</code> < 0
+   */
+  @Override
+  public JMenuItem insert(Action a, int pos) {
+    if (a instanceof PropertiesAction)
+      return insert(((PropertiesAction) a).getMenuItem(), pos);
+    else
+      return super.insert(a, pos);
   }
 
   /**
