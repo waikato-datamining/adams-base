@@ -48,7 +48,7 @@ public class FileClose
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.getFlowPanels().removeSelectedTab();
+    m_State.close();
   }
 
   /**
