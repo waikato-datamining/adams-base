@@ -390,6 +390,7 @@ public class EnterManyValues
 
     // show dialog
     panel = new PropertiesParameterPanel();
+    panel.setButtonPanelVisible(true);
     order = new ArrayList<String>();
     for (ValueDefinition val: m_Values) {
       order.add(val.getName());

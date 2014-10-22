@@ -15,7 +15,7 @@
 
 /**
  * ParameterPanelPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -65,6 +65,7 @@ public class ParameterPanelPage
     super.initGUI();
     
     m_PanelParameter = new PropertiesParameterPanel();
+    m_PanelParameter.setButtonPanelVisible(true);
     add(m_PanelParameter, BorderLayout.CENTER);
   }
   
