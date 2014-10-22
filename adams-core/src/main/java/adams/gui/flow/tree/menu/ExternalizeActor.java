@@ -190,7 +190,7 @@ public class ExternalizeActor
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     externalizeActor(m_State.selPaths);
   }
 }

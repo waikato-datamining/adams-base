@@ -57,8 +57,8 @@ public class ExecutionHeadless
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
-    // nothing
+  protected void doActionPerformed(ActionEvent e) {
+    m_State.getCurrentPanel().setHeadless(isSelected());
   }
 
   /**

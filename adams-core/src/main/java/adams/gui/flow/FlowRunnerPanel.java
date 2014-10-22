@@ -260,7 +260,8 @@ public class FlowRunnerPanel
 
     // File/Open setup
     action = new AbstractBaseAction("Open...", "open.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	open();
       }
     };
@@ -270,7 +271,8 @@ public class FlowRunnerPanel
 
     // File/Close
     action = new AbstractBaseAction("Close", "exit.png") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	close();
       }
     };
@@ -280,7 +282,8 @@ public class FlowRunnerPanel
 
     // Execution/Run
     action = new AbstractBaseAction("Run", "run.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	run();
       }
     };
@@ -290,7 +293,8 @@ public class FlowRunnerPanel
 
     // Execution/Run
     action = new AbstractBaseAction("Pause", "pause.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	pauseAndResume();
       }
     };
@@ -300,7 +304,8 @@ public class FlowRunnerPanel
 
     // Execution/Stop
     action = new AbstractBaseAction("Stop", "stop_blue.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	stop();
       }
     };
@@ -310,7 +315,8 @@ public class FlowRunnerPanel
 
     // Execution/Log errors
     action = new AbstractBaseAction("Log errors") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	// nothing to do
       }
     };
@@ -320,7 +326,8 @@ public class FlowRunnerPanel
 
     // Execution/Display errors
     action = new AbstractBaseAction("Display errors", "log.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	displayErrors();
       }
     };
@@ -335,7 +342,8 @@ public class FlowRunnerPanel
 
     // Window/New Window
     action = new AbstractBaseAction("New window", "new.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	newWindow();
       }
     };
@@ -344,7 +352,8 @@ public class FlowRunnerPanel
 
     // Window/Duplicate Window
     action = new AbstractBaseAction("Duplicate window", "copy.gif") {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
 	duplicateWindow();
       }
     };

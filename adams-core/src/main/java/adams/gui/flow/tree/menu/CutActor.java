@@ -58,7 +58,7 @@ public class CutActor
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     CopyActor 	copy;
     RemoveActor	remove;
     

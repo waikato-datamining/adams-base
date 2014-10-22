@@ -67,7 +67,7 @@ public class AttachListener
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     GenericObjectEditorDialog	dialog;
     Debug				debug;
     PathBreakpoint			pbreak;

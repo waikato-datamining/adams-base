@@ -848,8 +848,7 @@ public class FlowEditorPanel
 	  prefixPrev = prefix;
 	}
 	if (actor instanceof Flow) {
-	  menuitem = m_ActionFileNew.getMenuItem();
-	  submenu.add(menuitem);
+	  submenu.add(m_ActionFileNew);
 	}
 	else {
 	  menuitem = new JMenuItem(actors[i].replaceAll(".*\\.", ""));
@@ -863,7 +862,7 @@ public class FlowEditorPanel
 	}
       }
 
-      menu.add(m_ActionFileLoad.getMenuItem());
+      menu.add(m_ActionFileLoad);
 
       // File/Recent files
       submenu = new JMenu("Open recent");
@@ -883,18 +882,18 @@ public class FlowEditorPanel
       });
       m_MenuFileLoadRecent = submenu;
 
-      menu.add(m_ActionFileSave.getMenuItem());
-      menu.add(m_ActionFileSaveAs.getMenuItem());
-      menu.add(m_ActionFileRevert.getMenuItem());
-      menu.add(m_ActionFileCloseTab.getMenuItem());
+      menu.add(m_ActionFileSave);
+      menu.add(m_ActionFileSaveAs);
+      menu.add(m_ActionFileRevert);
+      menu.add(m_ActionFileCloseTab);
       menu.addSeparator();
-      menu.add(m_ActionFileImport.getMenuItem());
-      menu.add(m_ActionFileExport.getMenuItem());
+      menu.add(m_ActionFileImport);
+      menu.add(m_ActionFileExport);
       SendToActionUtils.addSendToSubmenu(this, menu);
       menu.addSeparator();
-      menu.add(m_ActionFileProperties.getMenuItem());
+      menu.add(m_ActionFileProperties);
       menu.addSeparator();
-      menu.add(m_ActionFileClose.getMenuItem());
+      menu.add(m_ActionFileClose);
 
       // Edit
       menu = new JMenu(MENU_EDIT);
@@ -907,21 +906,21 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(m_ActionEditEnableUndo.getMenuItem());
-      menu.add(m_ActionEditUndo.getMenuItem());
-      menu.add(m_ActionEditRedo.getMenuItem());
-      menu.add(m_ActionEditDiff.getMenuItem());
+      menu.add(m_ActionEditEnableUndo);
+      menu.add(m_ActionEditUndo);
+      menu.add(m_ActionEditRedo);
+      menu.add(m_ActionEditDiff);
       menu.addSeparator();
-      menu.add(m_ActionEditFind.getMenuItem());
-      menu.add(m_ActionEditFindNext.getMenuItem());
-      menu.add(m_ActionEditLocateActor.getMenuItem());
+      menu.add(m_ActionEditFind);
+      menu.add(m_ActionEditFindNext);
+      menu.add(m_ActionEditLocateActor);
       menu.addSeparator();
-      menu.add(m_ActionEditCleanUpFlow.getMenuItem());
-      menu.add(m_ActionEditCheckVariables.getMenuItem());
+      menu.add(m_ActionEditCleanUpFlow);
+      menu.add(m_ActionEditCheckVariables);
       menu.add(m_ActionEditInteractiveActors.getMenuItem());
       menu.add(m_ActionEditIgnoreNameChanges.getMenuItem());
       menu.addSeparator();
-      menu.add(m_ActionEditProcessActors.getMenuItem());
+      menu.add(m_ActionEditProcessActors);
 
       // Debug
       menu = new JMenu(MENU_DEBUG);
@@ -934,11 +933,11 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(m_ActionDebugEnableAllBreakpoints.getMenuItem());
-      menu.add(m_ActionDebugDisableAllBreakpoints.getMenuItem());
-      menu.add(m_ActionDebugRemoveAllBreakpoints.getMenuItem());
-      menu.add(m_ActionDebugVariables.getMenuItem());
-      menu.add(m_ActionDebugStorage.getMenuItem());
+      menu.add(m_ActionDebugEnableAllBreakpoints);
+      menu.add(m_ActionDebugDisableAllBreakpoints);
+      menu.add(m_ActionDebugRemoveAllBreakpoints);
+      menu.add(m_ActionDebugVariables);
+      menu.add(m_ActionDebugStorage);
 
       // Execution
       menu = new JMenu(MENU_EXECUTION);
@@ -951,12 +950,12 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(m_ActionExecutionValidateSetup.getMenuItem());
-      menu.add(m_ActionExecutionRun.getMenuItem());
-      menu.add(m_ActionExecutionPauseAndResume.getMenuItem());
-      menu.add(m_ActionExecutionStop.getMenuItem());
-      menu.add(m_ActionExecutionDisplayErrors.getMenuItem());
-      menu.add(m_ActionExecutionClearGraphicalOutput.getMenuItem());
+      menu.add(m_ActionExecutionValidateSetup);
+      menu.add(m_ActionExecutionRun);
+      menu.add(m_ActionExecutionPauseAndResume);
+      menu.add(m_ActionExecutionStop);
+      menu.add(m_ActionExecutionDisplayErrors);
+      menu.add(m_ActionExecutionClearGraphicalOutput);
       menu.addSeparator();
       menu.add(m_ActionExecutionHeadless.getMenuItem());
 
@@ -977,12 +976,12 @@ public class FlowEditorPanel
       menu.add(m_ActionViewShowInputOutput.getMenuItem());
       m_Tabs.addTabsSubmenu(menu);
       menu.addSeparator();
-      menu.add(m_ActionViewHighlightVariables.getMenuItem());
-      menu.add(m_ActionViewRemoveVariableHighlights.getMenuItem());
-      menu.add(m_ActionViewRedraw.getMenuItem());
+      menu.add(m_ActionViewHighlightVariables);
+      menu.add(m_ActionViewRemoveVariableHighlights);
+      menu.add(m_ActionViewRedraw);
       menu.addSeparator();
-      menu.add(m_ActionViewShowSource.getMenuItem());
-      menu.add(m_ActionViewStatistics.getMenuItem());
+      menu.add(m_ActionViewShowSource);
+      menu.add(m_ActionViewStatistics);
 
       // Window
       if ((GUIHelper.getParent(m_Self, ChildFrame.class) != null) && (getParentDialog() == null)) {
@@ -996,9 +995,9 @@ public class FlowEditorPanel
 	  }
 	});
 
-	menu.add(m_ActionNewWindow.getMenuItem());
-	menu.add(m_ActionDuplicateTabInNewWindow.getMenuItem());
-	menu.add(m_ActionDuplicateTab.getMenuItem());
+	menu.add(m_ActionNewWindow);
+	menu.add(m_ActionDuplicateTabInNewWindow);
+	menu.add(m_ActionDuplicateTab);
       }
 
       m_MenuBar = result;
@@ -1581,18 +1580,6 @@ public class FlowEditorPanel
     }
 
     return result;
-  }
-
-  /**
-   * Pauses/resumes the flow.
-   */
-  public void pauseAndResume() {
-    if (!hasCurrentPanel())
-      return;
-
-    getCurrentPanel().closeStorage();
-    getCurrentPanel().pauseAndResume();
-    updateActions();
   }
 
   /**

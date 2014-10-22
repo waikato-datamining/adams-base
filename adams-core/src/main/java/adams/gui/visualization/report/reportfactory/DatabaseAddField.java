@@ -15,7 +15,7 @@
 
 /**
  * DatabaseAddField.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -54,7 +54,8 @@ public class DatabaseAddField
    * 
    * @param e		the event
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
     ReportProvider 	provider;
     Report 		report;
     String 		name;

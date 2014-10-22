@@ -60,7 +60,7 @@ public class AddBreakpointBeneath
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     m_State.tree.addActor(m_State.selPath, new Breakpoint(), InsertPosition.BENEATH);
   }
 }

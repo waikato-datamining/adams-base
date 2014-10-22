@@ -15,7 +15,7 @@
 
 /**
  * DatabaseRemoveField.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -51,6 +51,7 @@ public class DatabaseRemoveField
    * 
    * @param value	the fields
    */
+  @Override
   protected void setFields(AbstractField[] value) {
     super.setFields(value);
     setName(createName("Remove field", value, 50));
@@ -83,7 +84,8 @@ public class DatabaseRemoveField
    * 
    * @param e		the event
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
     ReportProvider 	provider;
     Report 		report;
     

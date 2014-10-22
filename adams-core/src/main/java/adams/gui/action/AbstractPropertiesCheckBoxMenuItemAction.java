@@ -19,6 +19,9 @@
  */
 package adams.gui.action;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 
@@ -62,11 +65,27 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T>
     JCheckBoxMenuItem	result;
     
     result = new JCheckBoxMenuItem(this);
+    result.setSelected(isSelected());
+    result.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	setSelected(!isSelected());
+      }
+    });
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
       result.setIcon(GUIHelper.getEmptyIcon());
     
     return result;
+  }
+
+  /**
+   * Invoked when an action occurs.
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    setSelected(!isSelected());
+    super.actionPerformed(e);
   }
 }

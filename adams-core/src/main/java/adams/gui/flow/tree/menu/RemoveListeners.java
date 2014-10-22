@@ -60,7 +60,7 @@ public class RemoveListeners
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     m_State.runningFlow.startListeningAtRuntime(new NullListener());
   }
 }

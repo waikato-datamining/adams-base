@@ -60,7 +60,7 @@ public class LastTemplate
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     addFromTemplate(m_State.selPath, m_State.lastTemplate, m_State.lastTemplateInsertPosition);
   }
 }

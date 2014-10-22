@@ -15,7 +15,7 @@
 
 /**
  * Separator.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -46,7 +46,8 @@ public class Separator
   /**
    * Does nothing.
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
   }
 
   /**
@@ -59,6 +60,7 @@ public class Separator
    * @param value	the current value
    * @return		always true
    */
+  @Override
   public boolean isApplicable(ReportFactory.Table table, int row, AbstractField field, String value) {
     return true;
   }

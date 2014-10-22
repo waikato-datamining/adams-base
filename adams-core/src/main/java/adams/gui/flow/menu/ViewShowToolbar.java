@@ -22,6 +22,7 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 import adams.gui.core.ToolBarPanel.ToolBarLocation;
+import adams.gui.flow.FlowEditorPanel;
 
 /**
  * Enables/disables toolbar visibility.
@@ -52,14 +53,14 @@ public class ViewShowToolbar
    */
   @Override
   protected boolean isInitiallySelected() {
-    return true;
+    return !FlowEditorPanel.getPropertiesEditor().getProperty("ToolBar.Location", "HIDDEN").equals("HIDDEN");
   }
   
   /**
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     if (m_State.getToolBarLocation() == ToolBarLocation.HIDDEN)
       m_State.setToolBarLocation(m_State.getPreferredToolBarLocation());
     else

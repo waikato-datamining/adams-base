@@ -53,7 +53,7 @@ public class ViewStatistics
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     ActorStatistic			stats;
     InformativeStatisticFactory.Dialog	dialog;
     Vector<InformativeStatistic>	statsList;

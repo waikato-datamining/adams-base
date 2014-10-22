@@ -74,7 +74,7 @@ public class ExpandCollapseExternalFlow
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     if (m_State.selNode.getExpansionOccurred())
       m_State.selNode.collapse();
     else

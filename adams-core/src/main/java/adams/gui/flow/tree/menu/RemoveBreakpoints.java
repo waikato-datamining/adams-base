@@ -60,7 +60,7 @@ public class RemoveBreakpoints
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     TreePath path = m_State.selPath;
     m_State.tree.processActor(path, new adams.flow.processor.RemoveBreakpoints());
   }

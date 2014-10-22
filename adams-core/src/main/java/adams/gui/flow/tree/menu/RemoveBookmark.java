@@ -62,7 +62,7 @@ public class RemoveBookmark
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     for (TreePath path: m_State.selPaths) {
       Node node = (Node) path.getLastPathComponent();
       node.setBookmarked(false);

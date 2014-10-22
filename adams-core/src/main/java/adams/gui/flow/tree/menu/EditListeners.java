@@ -65,7 +65,7 @@ public class EditListeners
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     GenericObjectEditorDialog	dialog;
 
     if ((m_State.tree != null) && (m_State.tree.getParentDialog() != null))

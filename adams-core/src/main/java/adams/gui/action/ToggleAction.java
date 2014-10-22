@@ -83,7 +83,8 @@ public class ToggleAction
    *
    * @param e		ignored
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
     // does nothing
   }
 }

@@ -49,7 +49,7 @@ public class EditLocateActor
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     String	path;
 
     path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):");

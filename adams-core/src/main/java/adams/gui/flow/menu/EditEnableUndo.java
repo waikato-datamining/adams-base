@@ -47,7 +47,7 @@ public class EditEnableUndo
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().getUndo().setEnabled(
 	!m_State.getCurrentPanel().getUndo().isEnabled());
   }

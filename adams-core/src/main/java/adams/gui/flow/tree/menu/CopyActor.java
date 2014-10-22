@@ -83,7 +83,7 @@ public class CopyActor
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     putActorOnClipboard(TreeHelper.pathsToActors(m_State.selPaths, true));
   }
 }

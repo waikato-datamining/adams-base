@@ -109,7 +109,7 @@ public class EditExternalFlow
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     editFlow(m_State.selPath);
   }
 }

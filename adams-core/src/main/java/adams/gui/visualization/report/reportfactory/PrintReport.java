@@ -15,7 +15,7 @@
 
 /**
  * PrintReport.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -55,6 +55,7 @@ public class PrintReport
    * @return		true if the action is applicable, i.e., should be 
    * 			included in the popup menu
    */
+  @Override
   public boolean isApplicable(ReportFactory.Table table, int row, AbstractField field, String value) {
     return true;
   }
@@ -64,7 +65,8 @@ public class PrintReport
    * 
    * @param e		the event
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
     try {
       getTable().print();
     }

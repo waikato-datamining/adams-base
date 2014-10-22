@@ -179,7 +179,7 @@ public class CreateCallableActor
    * @param e		the event
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     createCallableActor(m_State.selPath);
   }
 }

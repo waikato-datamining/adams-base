@@ -19,6 +19,7 @@
  */
 package adams.gui.action;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -239,5 +240,22 @@ public abstract class AbstractBaseAction
       return (String) getValue(SHORT_DESCRIPTION);
     else
       return null;
+  }
+
+  /**
+   * Invoked when an action occurs.
+   * 
+   * @param e		the event
+   */
+  protected abstract void doActionPerformed(ActionEvent e);
+
+  /**
+   * Invoked when an action occurs.
+   * 
+   * @param e		the event
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    doActionPerformed(e);
   }
 }

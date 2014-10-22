@@ -21,6 +21,8 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.gui.flow.FlowEditorPanel;
+
 /**
  * Enables/disables input/output hints visibility.
  * 
@@ -50,14 +52,14 @@ public class ViewShowInputOutput
    */
   @Override
   protected boolean isInitiallySelected() {
-    return getProperties().getBoolean("ShowInputOutput", true);
+    return FlowEditorPanel.getPropertiesEditor().getBoolean("ShowInputOutput", true);
   }
   
   /**
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().getTree().setShowInputOutput(isSelected());
   }
 

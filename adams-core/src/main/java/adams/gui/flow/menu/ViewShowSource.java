@@ -47,7 +47,7 @@ public class ViewShowSource
    * Invoked when an action occurs.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().showSource();
   }
 
