@@ -15,7 +15,7 @@
 
 /**
  * AbstractPixelSelectorAction.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
@@ -74,6 +74,7 @@ public abstract class AbstractPixelSelectorAction
   /**
    * Initializes the members.
    */
+  @Override
   protected void initialize() {
     setName(getTitle());
   }
@@ -155,6 +156,7 @@ public abstract class AbstractPixelSelectorAction
    *
    * @return		 a string representation
    */
+  @Override
   public String toString() {
     return OptionUtils.getCommandLine(this);
   }
@@ -263,7 +265,8 @@ public abstract class AbstractPixelSelectorAction
    * @param e		the action
    * @see		#doProcessAction(ActionEvent)
    */
-  public void actionPerformed(ActionEvent e) {
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
     if (!hasPanel() || (getPanel().getImage() == null))
       return;
     
