@@ -26,15 +26,15 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -42,18 +42,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JPopupMenu.Separator;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
 import adams.data.statistics.InformativeStatistic;
-import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelMenuDefinition;
@@ -64,8 +61,6 @@ import adams.flow.core.ActorStatistic;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.processor.RemoveBreakpoints;
-import adams.gui.action.AbstractBaseAction;
-import adams.gui.action.ToggleAction;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
@@ -84,10 +79,58 @@ import adams.gui.event.TabVisibilityChangeEvent;
 import adams.gui.event.TabVisibilityChangeListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
+import adams.gui.flow.menu.DebugDisableAllBreakpoints;
+import adams.gui.flow.menu.DebugEnableAllBreakpoints;
+import adams.gui.flow.menu.DebugRemoveAllBreakpoints;
+import adams.gui.flow.menu.DebugStorage;
+import adams.gui.flow.menu.DebugVariables;
+import adams.gui.flow.menu.EditCheckVariables;
+import adams.gui.flow.menu.EditCleanUpFlow;
+import adams.gui.flow.menu.EditDiff;
+import adams.gui.flow.menu.EditEnableUndo;
+import adams.gui.flow.menu.EditFind;
+import adams.gui.flow.menu.EditFindNext;
+import adams.gui.flow.menu.EditIgnoreNameChanges;
+import adams.gui.flow.menu.EditInteractiveActors;
+import adams.gui.flow.menu.EditLocateActor;
+import adams.gui.flow.menu.EditProcessActors;
+import adams.gui.flow.menu.EditRedo;
+import adams.gui.flow.menu.EditUndo;
+import adams.gui.flow.menu.ExecutionClearGraphicalOutput;
+import adams.gui.flow.menu.ExecutionDisplayErrors;
+import adams.gui.flow.menu.ExecutionHeadless;
+import adams.gui.flow.menu.ExecutionPauseResume;
+import adams.gui.flow.menu.ExecutionRun;
+import adams.gui.flow.menu.ExecutionStop;
+import adams.gui.flow.menu.ExecutionValidateSetup;
+import adams.gui.flow.menu.FileClose;
+import adams.gui.flow.menu.FileCloseTab;
+import adams.gui.flow.menu.FileExport;
+import adams.gui.flow.menu.FileImport;
+import adams.gui.flow.menu.FileNewFlow;
+import adams.gui.flow.menu.FileOpen;
+import adams.gui.flow.menu.FileProperties;
+import adams.gui.flow.menu.FileRevert;
+import adams.gui.flow.menu.FileSave;
+import adams.gui.flow.menu.FileSaveAs;
+import adams.gui.flow.menu.FlowEditorAction;
+import adams.gui.flow.menu.ViewHighlightVariables;
+import adams.gui.flow.menu.ViewRedraw;
+import adams.gui.flow.menu.ViewRemoveVariableHighlights;
+import adams.gui.flow.menu.ViewShowAnnotations;
+import adams.gui.flow.menu.ViewShowInputOutput;
+import adams.gui.flow.menu.ViewShowQuickInfo;
+import adams.gui.flow.menu.ViewShowSource;
+import adams.gui.flow.menu.ViewShowToolbar;
+import adams.gui.flow.menu.ViewStatistics;
+import adams.gui.flow.menu.WindowDuplicateInTab;
+import adams.gui.flow.menu.WindowDuplicateInWindow;
+import adams.gui.flow.menu.WindowNew;
 import adams.gui.flow.tab.FlowTabManager;
 import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+import adams.gui.visualization.report.reportfactory.Separator;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
@@ -156,151 +199,154 @@ public class FlowEditorPanel
   protected JMenu m_MenuFileNew;
 
   /** the "load" action. */
-  protected AbstractBaseAction m_ActionFileLoad;
+  protected FlowEditorAction m_ActionFileLoad;
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuFileLoadRecent;
 
   /** the "new" action. */
-  protected AbstractBaseAction m_ActionFileNew;
+  protected FlowEditorAction m_ActionFileNew;
 
   /** the "save" action. */
-  protected AbstractBaseAction m_ActionFileSave;
+  protected FlowEditorAction m_ActionFileSave;
 
   /** the "save as" action. */
-  protected AbstractBaseAction m_ActionFileSaveAs;
+  protected FlowEditorAction m_ActionFileSaveAs;
 
   /** the "revert" action. */
-  protected AbstractBaseAction m_ActionFileRevert;
+  protected FlowEditorAction m_ActionFileRevert;
 
   /** the "export" action. */
-  protected AbstractBaseAction m_ActionFileExport;
+  protected FlowEditorAction m_ActionFileExport;
 
   /** the "import" action. */
-  protected AbstractBaseAction m_ActionFileImport;
+  protected FlowEditorAction m_ActionFileImport;
 
   /** the "properties" action. */
-  protected AbstractBaseAction m_ActionFileProperties;
+  protected FlowEditorAction m_ActionFileProperties;
 
   /** the "close tab" action. */
-  protected AbstractBaseAction m_ActionFileCloseTab;
+  protected FlowEditorAction m_ActionFileCloseTab;
 
   /** the "close" action. */
-  protected AbstractBaseAction m_ActionFileClose;
+  protected FlowEditorAction m_ActionFileClose;
 
   /** the toggle undo action. */
-  protected AbstractBaseAction m_ActionEditEnableUndo;
+  protected FlowEditorAction m_ActionEditEnableUndo;
 
   /** the undo action. */
-  protected AbstractBaseAction m_ActionEditUndo;
+  protected FlowEditorAction m_ActionEditUndo;
 
   /** the redo action. */
-  protected AbstractBaseAction m_ActionEditRedo;
+  protected FlowEditorAction m_ActionEditRedo;
 
   /** the diff action. */
-  protected AbstractBaseAction m_ActionEditDiff;
+  protected FlowEditorAction m_ActionEditDiff;
 
   /** the find action. */
-  protected AbstractBaseAction m_ActionEditFind;
+  protected FlowEditorAction m_ActionEditFind;
 
   /** the find next action. */
-  protected AbstractBaseAction m_ActionEditFindNext;
+  protected FlowEditorAction m_ActionEditFindNext;
 
   /** the locate actor action. */
-  protected AbstractBaseAction m_ActionEditLocateActor;
+  protected FlowEditorAction m_ActionEditLocateActor;
 
   /** the remove disabled actors action. */
-  protected AbstractBaseAction m_ActionEditCleanUpFlow;
+  protected FlowEditorAction m_ActionEditCleanUpFlow;
 
   /** the check variables action. */
-  protected AbstractBaseAction m_ActionEditCheckVariables;
+  protected FlowEditorAction m_ActionEditCheckVariables;
 
   /** the interactive actors action. */
-  protected AbstractBaseAction m_ActionEditInteractiveActors;
+  protected FlowEditorAction m_ActionEditInteractiveActors;
 
   /** the ignore name changes action. */
-  protected AbstractBaseAction m_ActionEditIgnoreNameChanges;
+  protected FlowEditorAction m_ActionEditIgnoreNameChanges;
 
   /** the "process actors" action. */
-  protected AbstractBaseAction m_ActionEditProcessActors;
+  protected FlowEditorAction m_ActionEditProcessActors;
 
   /** the "enable all breakpoints" action. */
-  protected AbstractBaseAction m_ActionDebugEnableAllBreakpoints;
+  protected FlowEditorAction m_ActionDebugEnableAllBreakpoints;
 
   /** the "remove all breakpoints" action. */
-  protected AbstractBaseAction m_ActionDebugRemoveAllBreakpoints;
+  protected FlowEditorAction m_ActionDebugRemoveAllBreakpoints;
 
   /** the "disable all breakpoints" action. */
-  protected AbstractBaseAction m_ActionDebugDisableAllBreakpoints;
+  protected FlowEditorAction m_ActionDebugDisableAllBreakpoints;
 
   /** the "variables" action. */
-  protected AbstractBaseAction m_ActionDebugVariables;
+  protected FlowEditorAction m_ActionDebugVariables;
 
   /** the "storage" action. */
-  protected AbstractBaseAction m_ActionDebugStorage;
+  protected FlowEditorAction m_ActionDebugStorage;
 
   /** the "headless" action. */
-  protected AbstractBaseAction m_ActionExecutionHeadless;
+  protected FlowEditorAction m_ActionExecutionHeadless;
 
   /** the "check setup" action. */
-  protected AbstractBaseAction m_ActionExecutionValidateSetup;
+  protected FlowEditorAction m_ActionExecutionValidateSetup;
 
   /** the "run" action. */
-  protected AbstractBaseAction m_ActionExecutionRun;
+  protected FlowEditorAction m_ActionExecutionRun;
 
   /** the "pause" action. */
-  protected AbstractBaseAction m_ActionExecutionPauseAndResume;
+  protected FlowEditorAction m_ActionExecutionPauseAndResume;
 
   /** the "pause" menu item. */
-  protected JMenuItem m_MenuItemExecutionPauseAndResume;
+  protected FlowEditorAction m_MenuItemExecutionPauseAndResume;
 
   /** the "stop" action. */
-  protected AbstractBaseAction m_ActionExecutionStop;
+  protected FlowEditorAction m_ActionExecutionStop;
 
   /** the "display errors" action. */
-  protected AbstractBaseAction m_ActionExecutionDisplayErrors;
+  protected FlowEditorAction m_ActionExecutionDisplayErrors;
 
   /** the "Clear graphical output" action. */
-  protected AbstractBaseAction m_ActionExecutionClearGraphicalOutput;
+  protected FlowEditorAction m_ActionExecutionClearGraphicalOutput;
 
   /** the "show toolbar" action. */
-  protected AbstractBaseAction m_ActionViewShowToolbar;
+  protected FlowEditorAction m_ActionViewShowToolbar;
 
   /** the "show quick info" action. */
-  protected AbstractBaseAction m_ActionViewShowQuickInfo;
+  protected FlowEditorAction m_ActionViewShowQuickInfo;
 
   /** the "show annotations" action. */
-  protected AbstractBaseAction m_ActionViewShowAnnotations;
+  protected FlowEditorAction m_ActionViewShowAnnotations;
 
   /** the "show input/output" action. */
-  protected AbstractBaseAction m_ActionViewShowInputOutput;
+  protected FlowEditorAction m_ActionViewShowInputOutput;
 
   /** the highlight variables action. */
-  protected AbstractBaseAction m_ActionViewHighlightVariables;
+  protected FlowEditorAction m_ActionViewHighlightVariables;
 
   /** the remove variable highlights action. */
-  protected AbstractBaseAction m_ActionViewRemoveVariableHighlights;
+  protected FlowEditorAction m_ActionViewRemoveVariableHighlights;
 
   /** the "show source" action. */
-  protected AbstractBaseAction m_ActionViewShowSource;
+  protected FlowEditorAction m_ActionViewShowSource;
 
   /** the "statistic" action. */
-  protected AbstractBaseAction m_ActionViewStatistics;
+  protected FlowEditorAction m_ActionViewStatistics;
 
   /** the "redraw" action. */
-  protected AbstractBaseAction m_ActionViewRedraw;
+  protected FlowEditorAction m_ActionViewRedraw;
 
   /** the "new window" action. */
-  protected AbstractBaseAction m_ActionNewWindow;
+  protected FlowEditorAction m_ActionNewWindow;
 
   /** the "duplicate tab in new window" action. */
-  protected AbstractBaseAction m_ActionDuplicateTabInNewWindow;
+  protected FlowEditorAction m_ActionDuplicateTabInNewWindow;
 
   /** the "duplicate tab" action. */
-  protected AbstractBaseAction m_ActionDuplicateTab;
+  protected FlowEditorAction m_ActionDuplicateTab;
+
+  /** menu items. */
+  protected List<FlowEditorAction> m_MenuItems;
 
   /** additional menu items. */
-  protected Vector<AbstractFlowEditorMenuItem> m_AdditionalMenuItems;
+  protected List<AbstractFlowEditorMenuItem> m_AdditionalMenuItems;
 
   /** the filedialog for loading/saving flows. */
   protected FlowFileChooser m_FileChooser;
@@ -354,7 +400,8 @@ public class FlowEditorPanel
     m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_ExportDialog        = null;
 
-    m_AdditionalMenuItems = new Vector<AbstractFlowEditorMenuItem>();
+    m_MenuItems           = new ArrayList<FlowEditorAction>();
+    m_AdditionalMenuItems = new ArrayList<AbstractFlowEditorMenuItem>();
     additionals           = AbstractFlowEditorMenuItem.getMenuItems();
     for (String additional: additionals) {
       try {
@@ -431,528 +478,238 @@ public class FlowEditorPanel
    * Initializes the actions.
    */
   @Override
-  @SuppressWarnings("serial")
   protected void initActions() {
-    AbstractBaseAction	action;
-    Properties		props;
-
-    props = getProperties();
-
+    FlowEditorAction	action;
+    
     // File/New (flow)
-    action = new AbstractBaseAction("Flow", "new.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	newTab();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_N);
-    action.setAccelerator(getEditorShortcut("File.New"));
+    action = new FileNewFlow();
     m_ActionFileNew = action;
+    m_MenuItems.add(action);
 
     // File/Open
-    action = new AbstractBaseAction("Open...", "open.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	open();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_O);
-    action.setAccelerator(getEditorShortcut("File.Open"));
+    action = new FileOpen();
     m_ActionFileLoad = action;
+    m_MenuItems.add(action);
 
     // File/Save
-    action = new AbstractBaseAction("Save", "save.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	save();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_S);
-    action.setAccelerator(getEditorShortcut("File.Save"));
+    action = new FileSave();
     m_ActionFileSave = action;
+    m_MenuItems.add(action);
 
     // File/Save
-    action = new AbstractBaseAction("Save as...", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveAs();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_A);
-    action.setAccelerator(getEditorShortcut("File.SaveAs"));
+    action = new FileSaveAs();
     m_ActionFileSaveAs = action;
+    m_MenuItems.add(action);
 
     // File/Revert
-    action = new AbstractBaseAction("Revert", "refresh.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	revert();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("File.Revert"));
+    action = new FileRevert();
     m_ActionFileRevert = action;
+    m_MenuItems.add(action);
 
     // File/Close tab
-    action = new AbstractBaseAction("Close tab") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_FlowPanels.removeSelectedTab();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_T);
-    action.setAccelerator(getEditorShortcut("File.CloseTab"));
+    action = new FileCloseTab();
     m_ActionFileCloseTab = action;
+    m_MenuItems.add(action);
 
     // File/Import
-    action = new AbstractBaseAction("Import...", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	importFlow();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_I);
-    action.setAccelerator(getEditorShortcut("File.Import"));
+    action = new FileImport();
     m_ActionFileImport = action;
+    m_MenuItems.add(action);
 
     // File/Export
-    action = new AbstractBaseAction("Export...", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	exportFlow();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_E);
-    action.setAccelerator(getEditorShortcut("File.Export"));
+    action = new FileExport();
     m_ActionFileExport = action;
+    m_MenuItems.add(action);
 
     // File/Properties
-    action = new AbstractBaseAction("Properties...", GUIHelper.getIcon("properties.gif")) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showProperties();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("File.Properties"));
+    action = new FileProperties();
     m_ActionFileProperties = action;
+    m_MenuItems.add(action);
 
     // File/Close
-    action = new AbstractBaseAction("Close", "exit.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	close();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_C);
-    action.setAccelerator(getEditorShortcut("File.Exit"));
+    action = new FileClose();
     m_ActionFileClose = action;
+    m_MenuItems.add(action);
 
     // Edit/Enable Undo
-    action = new AbstractBaseAction("Undo enabled", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (hasCurrentPanel())
-	  getCurrentPanel().getUndo().setEnabled(!getCurrentPanel().getUndo().isEnabled());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_N);
-    action.setAccelerator(getEditorShortcut("Edit.ToggleUndo"));
-    action.setEnabled(false);
-    action.setSelected(true);
+    action = new EditEnableUndo();
     m_ActionEditEnableUndo = action;
+    m_MenuItems.add(action);
 
     // Edit/Undo
-    action = new AbstractBaseAction("Undo", "undo.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	undo();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_U);
-    action.setAccelerator(getEditorShortcut("Edit.Undo"));
-    action.setEnabled(false);
+    action = new EditUndo();
     m_ActionEditUndo = action;
+    m_MenuItems.add(action);
 
     // Edit/Redo
-    action = new AbstractBaseAction("Redo", "redo.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	redo();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("Edit.Redo"));
-    action.setEnabled(false);
+    action = new EditRedo();
     m_ActionEditRedo = action;
+    m_MenuItems.add(action);
 
     // Edit/Diff
-    action = new AbstractBaseAction("Show changes", "diff.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showDiff();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_D);
-    action.setAccelerator(getEditorShortcut("Edit.Diff"));
-    action.setEnabled(false);
+    action = new EditDiff();
     m_ActionEditDiff = action;
+    m_MenuItems.add(action);
 
     // Edit/Find
-    action = new AbstractBaseAction("Find", "find.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	find();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_F);
-    action.setAccelerator(getEditorShortcut("Edit.Find"));
+    action = new EditFind();
     m_ActionEditFind = action;
+    m_MenuItems.add(action);
 
     // Edit/Find next
-    action = new AbstractBaseAction("Find next", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	findNext();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_N);
-    action.setAccelerator(getEditorShortcut("Edit.FindNext"));
+    action = new EditFindNext();
     m_ActionEditFindNext = action;
+    m_MenuItems.add(action);
 
     // Edit/Locate actor
-    action = new AbstractBaseAction("Locate actor", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	locateActor();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_L);
-    action.setAccelerator(getEditorShortcut("Edit.LocateActor"));
+    action = new EditLocateActor();
     m_ActionEditLocateActor = action;
+    m_MenuItems.add(action);
 
     // Edit/Clean up flow
-    action = new AbstractBaseAction("Clean up flow", "delete.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	cleanUpFlow();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_C);
+    action = new EditCleanUpFlow();
     m_ActionEditCleanUpFlow = action;
+    m_MenuItems.add(action);
 
     // Edit/Check variables
-    action = new AbstractBaseAction("Check variables", "check_variables.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	checkVariables();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_V);
+    action = new EditCheckVariables();
     m_ActionEditCheckVariables = action;
+    m_MenuItems.add(action);
 
     // Edit/Interactive actors (checkbox)
-    action = new AbstractBaseAction("Interactive actors", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	manageInteractiveActors(!m_ActionEditInteractiveActors.isSelected());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_I);
-    action.setSelected(true);
+    action = new EditInteractiveActors();
     m_ActionEditInteractiveActors = action;
+    m_MenuItems.add(action);
 
     // Edit/Ignore name changes (checkbox)
-    action = new AbstractBaseAction("Ignore name changes", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setIgnoreNameChanges(m_ActionEditIgnoreNameChanges.isSelected());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_G);
-    action.setSelected(true);
+    action = new EditIgnoreNameChanges();
     m_ActionEditIgnoreNameChanges = action;
+    m_MenuItems.add(action);
 
     // Edit/Process actors
-    action = new AbstractBaseAction("Process actors...", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	processActorsPrompt();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_P);
-    action.setAccelerator(getEditorShortcut("Edit.ProcessActors"));
+    action = new EditProcessActors();
     m_ActionEditProcessActors = action;
+    m_MenuItems.add(action);
 
     // Debug/Enable all breakpoints
-    action = new AbstractBaseAction("Enable all breakpoints", "debug.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	enableBreakpoints(true);
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_E);
-    action.setAccelerator(getEditorShortcut("Debug.EnableAllBreakpoints"));
+    action = new DebugEnableAllBreakpoints();
     m_ActionDebugEnableAllBreakpoints = action;
+    m_MenuItems.add(action);
 
     // Debug/Disable all breakpoints
-    action = new AbstractBaseAction("Disable all breakpoints", "debug_off.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	enableBreakpoints(false);
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_D);
-    action.setAccelerator(getEditorShortcut("Debug.DisableAllBreakpoints"));
+    action = new DebugDisableAllBreakpoints();
     m_ActionDebugDisableAllBreakpoints = action;
+    m_MenuItems.add(action);
 
     // Debug/Remove all breakpoints
-    action = new AbstractBaseAction("Remove all breakpoints", "debug_delete.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	removeAllBreakpoints();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_E);
-    action.setAccelerator(getEditorShortcut("Debug.RemoveAllBreakpoints"));
+    action = new DebugRemoveAllBreakpoints();
     m_ActionDebugRemoveAllBreakpoints = action;
+    m_MenuItems.add(action);
 
     // Debug/Variables
-    action = new AbstractBaseAction("Variables", "variable.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showVariables();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_V);
-    action.setAccelerator(getEditorShortcut("Debug.Variables"));
+    action = new DebugVariables();
     m_ActionDebugVariables = action;
+    m_MenuItems.add(action);
 
     // Debug/Storage
-    action = new AbstractBaseAction("Storage", "storage.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showStorage();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_S);
-    action.setAccelerator(getEditorShortcut("Debug.Storage"));
+    action = new DebugStorage();
     m_ActionDebugStorage = action;
+    m_MenuItems.add(action);
 
     // Execution/Validate setup
-    action = new AbstractBaseAction("Validate setup", "validate.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	validateSetup();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_V);
-    action.setAccelerator(getEditorShortcut("Execution.ValidateSetup"));
+    action = new ExecutionValidateSetup();
     m_ActionExecutionValidateSetup = action;
+    m_MenuItems.add(action);
 
     // Execution/Run
-    action = new AbstractBaseAction("Run", "run.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	run();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("Execution.Run"));
+    action = new ExecutionRun();
     m_ActionExecutionRun = action;
+    m_MenuItems.add(action);
 
     // Execution/Pause+Resume
-    action = new AbstractBaseAction("Pause", "pause.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	pauseAndResume();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_U);
-    action.setAccelerator(getEditorShortcut("Execution.PauseResume"));
+    action = new ExecutionPauseResume();
     m_ActionExecutionPauseAndResume = action;
+    m_MenuItems.add(action);
 
     // Execution/Stop
-    action = new AbstractBaseAction("Stop", "stop_blue.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	stop();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_S);
-    action.setAccelerator(getEditorShortcut("Execution.Stop"));
+    action = new ExecutionStop();
     m_ActionExecutionStop = action;
+    m_MenuItems.add(action);
 
     // Execution/Display errors
-    action = new AbstractBaseAction("Display errors...", "log.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	displayErrors();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_D);
+    action = new ExecutionDisplayErrors();
     m_ActionExecutionDisplayErrors = action;
+    m_MenuItems.add(action);
 
     // Execution/Clear graphical output
-    action = new AbstractBaseAction("Clear graphical output", "close_window.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	cleanUp();
-	update();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_C);
-    action.setAccelerator(getEditorShortcut("Execution.ClearGraphicalOutput"));
+    action = new ExecutionClearGraphicalOutput();
     m_ActionExecutionClearGraphicalOutput = action;
+    m_MenuItems.add(action);
 
     // Execution/Headless
-    action = new ToggleAction("Headless", GUIHelper.getEmptyIcon());
-    action.setMnemonic(KeyEvent.VK_H);
-    action.setAccelerator(getEditorShortcut("Execution.ToggleHeadless"));
+    action = new ExecutionHeadless();
     m_ActionExecutionHeadless = action;
+    m_MenuItems.add(action);
 
     // View/Show toolbar
-    action = new AbstractBaseAction("Show toolbar", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (getToolBarLocation() == ToolBarLocation.HIDDEN)
-	  setToolBarLocation(m_PreferredToolBarLocation);
-	else
-	  setToolBarLocation(ToolBarLocation.HIDDEN);
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_T);
-    action.setAccelerator(getEditorShortcut("View.ShowToolbar"));
-    action.setSelected(getToolBarLocation() != ToolBarLocation.HIDDEN);
+    action = new ViewShowToolbar();
     m_ActionViewShowToolbar = action;
+    m_MenuItems.add(action);
 
     // View/Show quick info
-    action = new AbstractBaseAction("Show quick info", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (hasCurrentPanel())
-	  getCurrentPanel().getTree().setShowQuickInfo(m_ActionViewShowQuickInfo.isSelected());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_Q);
-    action.setAccelerator(getEditorShortcut("View.ShowQuickInfo"));
-    action.setSelected(props.getBoolean("ShowQuickInfo", true));
+    action = new ViewShowQuickInfo();
     m_ActionViewShowQuickInfo = action;
+    m_MenuItems.add(action);
 
     // View/Show annotations
-    action = new AbstractBaseAction("Show annotations", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (hasCurrentPanel())
-	  getCurrentPanel().getTree().setShowAnnotations(m_ActionViewShowAnnotations.isSelected());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_A);
-    action.setAccelerator(getEditorShortcut("View.ShowAnnotations"));
-    action.setSelected(props.getBoolean("ShowAnnotations", false));
+    action = new ViewShowAnnotations();
     m_ActionViewShowAnnotations = action;
+    m_MenuItems.add(action);
 
     // View/Show input/output info
-    action = new AbstractBaseAction("Show input/output", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (hasCurrentPanel())
-	  getCurrentPanel().getTree().setShowInputOutput(m_ActionViewShowInputOutput.isSelected());
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_P);
-    action.setAccelerator(getEditorShortcut("View.ShowInputOutput"));
-    action.setSelected(props.getBoolean("ShowInputOutput", false));
+    action = new ViewShowInputOutput();
     m_ActionViewShowInputOutput = action;
+    m_MenuItems.add(action);
 
     // View/Highlight variables
-    action = new AbstractBaseAction("Highlight variables...", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	highlightVariables(true);
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_V);
-    action.setAccelerator(getEditorShortcut("View.HighlightVariables"));
+    action = new ViewHighlightVariables();
     m_ActionViewHighlightVariables = action;
+    m_MenuItems.add(action);
 
     // View/Remove variable highlights
-    action = new AbstractBaseAction("Remove variable highlights", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	highlightVariables(false);
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("View.RemoveVariableHighlights"));
+    action = new ViewRemoveVariableHighlights();
     m_ActionViewRemoveVariableHighlights = action;
+    m_MenuItems.add(action);
 
     // View/Show source
-    action = new AbstractBaseAction("Show source...", "source.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showSource();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_S);
-    action.setAccelerator(getEditorShortcut("View.ShowSource"));
+    action = new ViewShowSource();
     m_ActionViewShowSource = action;
+    m_MenuItems.add(action);
 
     // View/Statistics
-    action = new AbstractBaseAction("Statistics...", "statistics.png") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showStatistics();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_T);
-    action.setAccelerator(getEditorShortcut("View.Statistics"));
+    action = new ViewStatistics();
     m_ActionViewStatistics = action;
+    m_MenuItems.add(action);
 
     // View/Redraw
-    action = new AbstractBaseAction("Redraw", GUIHelper.getEmptyIcon()) {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (hasCurrentPanel())
-	  getCurrentPanel().redraw();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_R);
-    action.setAccelerator(getEditorShortcut("View.Redraw"));
+    action = new ViewRedraw();
     m_ActionViewRedraw = action;
+    m_MenuItems.add(action);
 
     // Window/New Window
-    action = new AbstractBaseAction("New window") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	newWindow();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_W);
-    action.setAccelerator(getEditorShortcut("Window.NewWindow"));
+    action = new WindowNew();
     m_ActionNewWindow = action;
+    m_MenuItems.add(action);
 
     // Window/Duplicate in new window
-    action = new AbstractBaseAction("Duplicate in new window") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	duplicateTabInNewWindow();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_D);
-    action.setAccelerator(getEditorShortcut("Window.DuplicateInNewWindow"));
+    action = new WindowDuplicateInWindow();
     m_ActionDuplicateTabInNewWindow = action;
+    m_MenuItems.add(action);
 
     // Window/Duplicate in new tab
-    action = new AbstractBaseAction("Duplicate in new tab", "copy.gif") {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	duplicateTab();
-      }
-    };
-    action.setMnemonic(KeyEvent.VK_D);
-    action.setAccelerator(getEditorShortcut("Window.DuplicateInNewWindow"));
+    action = new WindowDuplicateInTab();
     m_ActionDuplicateTab = action;
+    m_MenuItems.add(action);
   }
 
   /**
@@ -1010,7 +767,7 @@ public class FlowEditorPanel
 	if (menu.getItem(index - 1) != null) {
 	  if (!separatorAdded.contains(item.getMenu())) {
 	    separatorAdded.add(item.getMenu());
-	    menu.add(new Separator(), index);
+	    menu.add(new JMenuItem(new Separator()), index);
 	    index++;
 	  }
 	}
@@ -1098,7 +855,7 @@ public class FlowEditorPanel
 	  prefixPrev = prefix;
 	}
 	if (actor instanceof Flow) {
-	  menuitem = new JMenuItem(m_ActionFileNew);
+	  menuitem = m_ActionFileNew.getMenuItem();
 	  submenu.add(menuitem);
 	}
 	else {
@@ -1113,7 +870,7 @@ public class FlowEditorPanel
 	}
       }
 
-      menu.add(new JMenuItem(m_ActionFileLoad));
+      menu.add(m_ActionFileLoad.getMenuItem());
 
       // File/Recent files
       submenu = new JMenu("Open recent");
@@ -1133,18 +890,18 @@ public class FlowEditorPanel
       });
       m_MenuFileLoadRecent = submenu;
 
-      menu.add(new JMenuItem(m_ActionFileSave));
-      menu.add(new JMenuItem(m_ActionFileSaveAs));
-      menu.add(new JMenuItem(m_ActionFileRevert));
-      menu.add(new JMenuItem(m_ActionFileCloseTab));
+      menu.add(m_ActionFileSave.getMenuItem());
+      menu.add(m_ActionFileSaveAs.getMenuItem());
+      menu.add(m_ActionFileRevert.getMenuItem());
+      menu.add(m_ActionFileCloseTab.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionFileImport));
-      menu.add(new JMenuItem(m_ActionFileExport));
+      menu.add(m_ActionFileImport.getMenuItem());
+      menu.add(m_ActionFileExport.getMenuItem());
       SendToActionUtils.addSendToSubmenu(this, menu);
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionFileProperties));
+      menu.add(m_ActionFileProperties.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionFileClose));
+      menu.add(m_ActionFileClose.getMenuItem());
 
       // Edit
       menu = new JMenu(MENU_EDIT);
@@ -1157,21 +914,21 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(new JCheckBoxMenuItem(m_ActionEditEnableUndo));
-      menu.add(new JMenuItem(m_ActionEditUndo));
-      menu.add(new JMenuItem(m_ActionEditRedo));
-      menu.add(new JMenuItem(m_ActionEditDiff));
+      menu.add(m_ActionEditEnableUndo.getMenuItem());
+      menu.add(m_ActionEditUndo.getMenuItem());
+      menu.add(m_ActionEditRedo.getMenuItem());
+      menu.add(m_ActionEditDiff.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionEditFind));
-      menu.add(new JMenuItem(m_ActionEditFindNext));
-      menu.add(new JMenuItem(m_ActionEditLocateActor));
+      menu.add(m_ActionEditFind.getMenuItem());
+      menu.add(m_ActionEditFindNext.getMenuItem());
+      menu.add(m_ActionEditLocateActor.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionEditCleanUpFlow));
-      menu.add(new JMenuItem(m_ActionEditCheckVariables));
-      menu.add(new JCheckBoxMenuItem(m_ActionEditInteractiveActors));
-      menu.add(new JCheckBoxMenuItem(m_ActionEditIgnoreNameChanges));
+      menu.add(m_ActionEditCleanUpFlow.getMenuItem());
+      menu.add(m_ActionEditCheckVariables.getMenuItem());
+      menu.add(m_ActionEditInteractiveActors.getMenuItem());
+      menu.add(m_ActionEditIgnoreNameChanges.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionEditProcessActors));
+      menu.add(m_ActionEditProcessActors.getMenuItem());
 
       // Debug
       menu = new JMenu(MENU_DEBUG);
@@ -1184,11 +941,11 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(new JMenuItem(m_ActionDebugEnableAllBreakpoints));
-      menu.add(new JMenuItem(m_ActionDebugDisableAllBreakpoints));
-      menu.add(new JMenuItem(m_ActionDebugRemoveAllBreakpoints));
-      menu.add(new JMenuItem(m_ActionDebugVariables));
-      menu.add(new JMenuItem(m_ActionDebugStorage));
+      menu.add(m_ActionDebugEnableAllBreakpoints.getMenuItem());
+      menu.add(m_ActionDebugDisableAllBreakpoints.getMenuItem());
+      menu.add(m_ActionDebugRemoveAllBreakpoints.getMenuItem());
+      menu.add(m_ActionDebugVariables.getMenuItem());
+      menu.add(m_ActionDebugStorage.getMenuItem());
 
       // Execution
       menu = new JMenu(MENU_EXECUTION);
@@ -1201,15 +958,14 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(new JMenuItem(m_ActionExecutionValidateSetup));
-      menu.add(new JMenuItem(m_ActionExecutionRun));
-      m_MenuItemExecutionPauseAndResume = new JMenuItem(m_ActionExecutionPauseAndResume);
-      menu.add(m_MenuItemExecutionPauseAndResume);
-      menu.add(new JMenuItem(m_ActionExecutionStop));
-      menu.add(new JMenuItem(m_ActionExecutionDisplayErrors));
-      menu.add(new JMenuItem(m_ActionExecutionClearGraphicalOutput));
+      menu.add(m_ActionExecutionValidateSetup.getMenuItem());
+      menu.add(m_ActionExecutionRun.getMenuItem());
+      menu.add(m_ActionExecutionPauseAndResume.getMenuItem());
+      menu.add(m_ActionExecutionStop.getMenuItem());
+      menu.add(m_ActionExecutionDisplayErrors.getMenuItem());
+      menu.add(m_ActionExecutionClearGraphicalOutput.getMenuItem());
       menu.addSeparator();
-      menu.add(new JCheckBoxMenuItem(m_ActionExecutionHeadless));
+      menu.add(m_ActionExecutionHeadless.getMenuItem());
 
       // View
       menu = new JMenu(MENU_VIEW);
@@ -1222,18 +978,18 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(new JCheckBoxMenuItem(m_ActionViewShowToolbar));
-      menu.add(new JCheckBoxMenuItem(m_ActionViewShowQuickInfo));
-      menu.add(new JCheckBoxMenuItem(m_ActionViewShowAnnotations));
-      menu.add(new JCheckBoxMenuItem(m_ActionViewShowInputOutput));
+      menu.add(m_ActionViewShowToolbar.getMenuItem());
+      menu.add(m_ActionViewShowQuickInfo.getMenuItem());
+      menu.add(m_ActionViewShowAnnotations.getMenuItem());
+      menu.add(m_ActionViewShowInputOutput.getMenuItem());
       m_Tabs.addTabsSubmenu(menu);
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionViewHighlightVariables));
-      menu.add(new JMenuItem(m_ActionViewRemoveVariableHighlights));
-      menu.add(new JMenuItem(m_ActionViewRedraw));
+      menu.add(m_ActionViewHighlightVariables.getMenuItem());
+      menu.add(m_ActionViewRemoveVariableHighlights.getMenuItem());
+      menu.add(m_ActionViewRedraw.getMenuItem());
       menu.addSeparator();
-      menu.add(new JMenuItem(m_ActionViewShowSource));
-      menu.add(new JMenuItem(m_ActionViewStatistics));
+      menu.add(m_ActionViewShowSource.getMenuItem());
+      menu.add(m_ActionViewStatistics.getMenuItem());
 
       // Window
       if ((GUIHelper.getParent(m_Self, ChildFrame.class) != null) && (getParentDialog() == null)) {
@@ -1247,9 +1003,9 @@ public class FlowEditorPanel
 	  }
 	});
 
-	menu.add(new JMenuItem(m_ActionNewWindow));
-	menu.add(new JMenuItem(m_ActionDuplicateTabInNewWindow));
-	menu.add(new JMenuItem(m_ActionDuplicateTab));
+	menu.add(m_ActionNewWindow.getMenuItem());
+	menu.add(m_ActionDuplicateTabInNewWindow.getMenuItem());
+	menu.add(m_ActionDuplicateTab.getMenuItem());
       }
 
       m_MenuBar = result;
@@ -1290,118 +1046,10 @@ public class FlowEditorPanel
    */
   @Override
   protected void updateActions() {
-    boolean		inputEnabled;
-    Pausable		pausable;
-    boolean		hasCurrent;
-    AbstractActor	root;
-
-    hasCurrent = hasCurrentPanel();
-    if (hasCurrent)
-      getCurrentPanel().updateTitle();
-
-    if (m_MenuBar == null)
-      return;
-
-    inputEnabled = !isRunning() && !isStopping() && !isSwingWorkerRunning();
-
-    root = getRunningFlow();
-    if ((root != null) && (root instanceof Pausable))
-      pausable = (Pausable) root;
-    else
-      pausable = null;
-
-    // File
-    m_MenuFileNew.setEnabled(true);
-    m_ActionFileNew.setEnabled(true);
-    m_ActionFileLoad.setEnabled(true);
-    m_MenuFileLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
-    m_ActionFileSave.setEnabled(inputEnabled && hasCurrent);
-    m_ActionFileSaveAs.setEnabled(inputEnabled && hasCurrent);
-    m_ActionFileImport.setEnabled(true);
-    m_ActionFileExport.setEnabled(inputEnabled && hasCurrent);
-    m_ActionFileRevert.setEnabled(inputEnabled && hasCurrent && (getCurrentPanel().getCurrentFile() != null) && getCurrentPanel().getTree().isModified());
-    m_ActionFileCloseTab.setEnabled(hasCurrent);
-    m_ActionFileClose.setEnabled(!isAnyRunning() && !isAnyStopping() && !isAnySwingWorkerRunning());
-    m_ActionFileProperties.setEnabled(hasCurrent);
-
-    // Edit
-    m_ActionEditEnableUndo.setEnabled(inputEnabled && hasCurrent);
-    m_ActionEditEnableUndo.setSelected(hasCurrent && getCurrentPanel().getUndo().isEnabled());
-    m_ActionEditUndo.setEnabled(inputEnabled && hasCurrent && getCurrentPanel().getUndo().canUndo());
-    if (hasCurrent && getCurrentPanel().getUndo().canUndo()) {
-      m_ActionEditUndo.setName("Undo - " + getCurrentPanel().getUndo().peekUndoComment(true));
-      m_ActionEditUndo.setToolTipText(getCurrentPanel().getUndo().peekUndoComment());
-    }
-    else {
-      m_ActionEditUndo.setName("Undo");
-      m_ActionEditUndo.setToolTipText(null);
-    }
-    m_ActionEditRedo.setEnabled(inputEnabled && hasCurrent && getCurrentPanel().getUndo().canRedo());
-    if (hasCurrent && getCurrentPanel().getUndo().canRedo()) {
-      m_ActionEditRedo.setName("Redo - " + getCurrentPanel().getUndo().peekRedoComment(true));
-      m_ActionEditRedo.setToolTipText(getCurrentPanel().getUndo().peekRedoComment());
-    }
-    else {
-      m_ActionEditRedo.setName("Redo");
-      m_ActionEditRedo.setToolTipText(null);
-    }
-    m_ActionEditDiff.setEnabled(inputEnabled && hasCurrent && getCurrentPanel().canDiff());
-    m_ActionEditCleanUpFlow.setEnabled(inputEnabled && hasCurrent);
-    m_ActionEditCheckVariables.setEnabled(inputEnabled && hasCurrent);
-    m_ActionEditInteractiveActors.setEnabled(inputEnabled && hasCurrent);
-    m_ActionEditIgnoreNameChanges.setSelected(hasCurrent && getCurrentPanel().getIgnoreNameChanges());
-    m_ActionEditProcessActors.setEnabled(inputEnabled && hasCurrent);
-    m_ActionEditFind.setEnabled(hasCurrent && !isSwingWorkerRunning());
-    m_ActionEditFindNext.setEnabled(hasCurrent && (getCurrentPanel().getTree().getLastSearchNode() != null));
-    m_ActionEditLocateActor.setEnabled(hasCurrent && !isSwingWorkerRunning());
-
-    // Debug
-    m_ActionDebugEnableAllBreakpoints.setEnabled(inputEnabled && hasCurrent);
-    m_ActionDebugDisableAllBreakpoints.setEnabled(inputEnabled && hasCurrent);
-    m_ActionDebugRemoveAllBreakpoints.setEnabled(inputEnabled && hasCurrent);
-    m_ActionDebugVariables.setEnabled(isRunning());
-    m_ActionDebugStorage.setEnabled(isPaused());
-
-    // Execution
-    m_ActionExecutionValidateSetup.setEnabled(inputEnabled && hasCurrent);
-    m_ActionExecutionRun.setEnabled(inputEnabled && hasCurrent && getCurrentPanel().getTree().isFlow());
-    if ((pausable != null) && pausable.isPaused()) {
-      m_ActionExecutionPauseAndResume.setIcon(GUIHelper.getIcon("resume.gif"));
-      m_ActionExecutionPauseAndResume.setName("Resume");
-    }
-    else {
-      m_ActionExecutionPauseAndResume.setIcon(GUIHelper.getIcon("pause.gif"));
-      m_ActionExecutionPauseAndResume.setName("Pause");
-    }
-    m_ActionExecutionPauseAndResume.setEnabled(isRunning());
-    m_ActionExecutionStop.setEnabled(isRunning());
-    m_ActionExecutionHeadless.setEnabled(inputEnabled);
-    m_ActionExecutionDisplayErrors.setEnabled(
-	inputEnabled && (getLastFlow() != null)
-	&& (getLastFlow() instanceof LogEntryHandler)
-	&& (((LogEntryHandler) getLastFlow()).countLogEntries() > 0));
-    m_ActionExecutionClearGraphicalOutput.setEnabled(inputEnabled && (getLastFlow() != null));
-
-    // View
-    m_ActionViewShowQuickInfo.setEnabled(hasCurrent);
-    m_ActionViewShowAnnotations.setEnabled(hasCurrent);
-    m_ActionViewShowInputOutput.setEnabled(hasCurrent);
-    m_ActionViewStatistics.setEnabled(hasCurrent && !isSwingWorkerRunning());
-    m_ActionViewRedraw.setEnabled(hasCurrent);
-    m_ActionViewShowSource.setEnabled(hasCurrent && !isSwingWorkerRunning());
-    m_ActionViewHighlightVariables.setEnabled(hasCurrent && !isSwingWorkerRunning());
-    m_ActionViewRemoveVariableHighlights.setEnabled(hasCurrent && !isSwingWorkerRunning());
-    if (hasCurrent) {
-      m_ActionViewShowQuickInfo.setSelected(getCurrentPanel().getTree().getShowQuickInfo());
-      m_ActionViewShowAnnotations.setSelected(getCurrentPanel().getTree().getShowAnnotations());
-      m_ActionViewShowInputOutput.setSelected(getCurrentPanel().getTree().getShowInputOutput());
-    }
-
-    // Window
-    m_ActionNewWindow.setEnabled(true);
-    m_ActionDuplicateTabInNewWindow.setEnabled(hasCurrent);
-    m_ActionDuplicateTab.setEnabled(hasCurrent);
-
+    // regular menu items
+    for (FlowEditorAction action: m_MenuItems)
+      action.update(m_Self);
+    
     // additional menu items
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems)
       item.updateAction();
@@ -2013,7 +1661,7 @@ public class FlowEditorPanel
    * Closes the dialog or frame. But only if no flows are running, being stopped
    * or are modified (in the latter, the user can choose to save the flow).
    */
-  protected void close() {
+  public void close() {
     if (isAnyRunning()) {
       GUIHelper.showErrorMessage(this, "Flows are being executed - closing cancelled!");
       setVisibleAgain();
