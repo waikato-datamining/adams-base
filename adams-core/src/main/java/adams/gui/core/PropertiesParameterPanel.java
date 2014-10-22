@@ -20,6 +20,7 @@
 package adams.gui.core;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,12 +32,15 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 import adams.core.EnumHelper;
@@ -554,7 +558,6 @@ public class PropertiesParameterPanel
    */
   public void setProperties(Properties value) {
     List<String>		keys;
-    JTextField			textfield;
     JCheckBox			checkbox;
     JSpinner			spinner;
     PropertyType		type;
@@ -619,10 +622,40 @@ public class PropertiesParameterPanel
 	  addProperty(key, label, dateTimePanel);
 	  break;
 	case DOUBLE:
-	case STRING:
-	  textfield = new JTextField(20);
+	{
+	  final JTextField textfield = new JTextField(20);
 	  textfield.setText(value.getProperty(key));
 	  textfield.setToolTipText(help);
+	  textfield.setBorder(BorderFactory.createEtchedBorder());
+	  textfield.getDocument().addDocumentListener(new DocumentListener() {
+	    @Override
+	    public void removeUpdate(DocumentEvent e) {
+	      check(e);
+	    }
+	    @Override
+	    public void insertUpdate(DocumentEvent e) {
+	      check(e);
+	    }
+	    @Override
+	    public void changedUpdate(DocumentEvent e) {
+	      check(e);
+	    }
+	    protected void check(DocumentEvent e) {
+	      String text = textfield.getText();
+	      if ((text.length() == 0) || Utils.isDouble(text))
+		textfield.setBorder(BorderFactory.createEtchedBorder());
+	      else
+		textfield.setBorder(BorderFactory.createLineBorder(Color.RED));
+	    }
+	  });
+	  addProperty(key, label, textfield);
+	  break;
+	}
+	case STRING:
+	  final JTextField textfield = new JTextField(20);
+	  textfield.setText(value.getProperty(key));
+	  textfield.setToolTipText(help);
+	  textfield.setBorder(BorderFactory.createEtchedBorder());
 	  addProperty(key, label, textfield);
 	  break;
 	case BOOLEAN:
