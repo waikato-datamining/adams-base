@@ -58,7 +58,7 @@ public class EditInteractiveActors
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.manageInteractiveActors(!isSelected());
+    m_State.getCurrentPanel().manageInteractiveActors(!isSelected());
   }
 
   /**

@@ -48,7 +48,7 @@ public class DebugDisableAllBreakpoints
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.enableBreakpoints(false);
+    m_State.getCurrentPanel().getTree().enableBreakpoints(false);
   }
 
   /**

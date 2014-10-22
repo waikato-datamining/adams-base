@@ -52,7 +52,9 @@ public class ExecutionPauseResume
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.pauseAndResume();
+    m_State.getCurrentPanel().closeStorage();
+    m_State.getCurrentPanel().pauseAndResume();
+    m_State.updateActions();
   }
 
   /**

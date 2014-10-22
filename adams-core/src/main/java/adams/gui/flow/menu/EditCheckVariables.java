@@ -48,7 +48,7 @@ public class EditCheckVariables
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.checkVariables();
+    m_State.getCurrentPanel().checkVariables();
   }
 
   /**

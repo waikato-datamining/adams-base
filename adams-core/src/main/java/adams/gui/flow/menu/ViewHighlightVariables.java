@@ -21,6 +21,10 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
+
+import adams.gui.core.GUIHelper;
+
 /**
  * Highlights the variables.
  * 
@@ -48,7 +52,17 @@ public class ViewHighlightVariables
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.highlightVariables(true);
+    String	regexp;
+    
+    regexp = JOptionPane.showInputDialog(
+	  GUIHelper.getParentComponent(m_State),
+	  "Enter the regular expression for the variable name ('.*' matches all):",
+	  m_State.getLastVariableSearch());
+    if (regexp == null)
+	return;
+
+    m_State.setLastVariableSearch(regexp);
+    m_State.getCurrentPanel().getTree().highlightVariables(m_State.getLastVariableSearch());
   }
 
   /**

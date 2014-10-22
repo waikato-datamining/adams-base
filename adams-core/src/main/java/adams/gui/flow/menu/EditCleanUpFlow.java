@@ -48,7 +48,7 @@ public class EditCleanUpFlow
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.cleanUpFlow();
+    m_State.getCurrentPanel().cleanUpFlow();
   }
 
   /**

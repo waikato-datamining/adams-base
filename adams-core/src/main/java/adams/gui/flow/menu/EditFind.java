@@ -48,7 +48,7 @@ public class EditFind
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.find();
+    m_State.getCurrentPanel().getTree().find();
   }
 
   /**

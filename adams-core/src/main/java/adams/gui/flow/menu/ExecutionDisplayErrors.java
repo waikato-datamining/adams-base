@@ -50,7 +50,7 @@ public class ExecutionDisplayErrors
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.displayErrors();
+    m_State.getCurrentPanel().displayErrors();
   }
 
   /**

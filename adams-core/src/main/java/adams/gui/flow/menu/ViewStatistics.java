@@ -19,7 +19,13 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
+
+import adams.data.statistics.InformativeStatistic;
+import adams.flow.core.ActorStatistic;
+import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
  * Displays statistics about the flow.
@@ -48,7 +54,27 @@ public class ViewStatistics
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.showStatistics();
+    ActorStatistic			stats;
+    InformativeStatisticFactory.Dialog	dialog;
+    Vector<InformativeStatistic>	statsList;
+
+    stats = null;
+    if (m_State.getCurrentPanel().getTree().getSelectedNode() != null)
+      stats = new ActorStatistic(m_State.getCurrentPanel().getTree().getSelectedNode().getFullActor());
+    else if (m_State.getCurrentRoot() != null)
+      stats = new ActorStatistic(m_State.getCurrentFlow());
+    statsList = new Vector<InformativeStatistic>();
+    statsList.add(stats);
+
+    if (m_State.getParentDialog() != null)
+      dialog = InformativeStatisticFactory.getDialog(m_State.getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = InformativeStatisticFactory.getDialog(m_State.getParentFrame(), true);
+    dialog.setStatistics(statsList);
+    dialog.setTitle("Actor statistics");
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
   }
 
   /**

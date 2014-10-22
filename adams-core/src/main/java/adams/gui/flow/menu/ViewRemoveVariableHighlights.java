@@ -48,7 +48,7 @@ public class ViewRemoveVariableHighlights
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.highlightVariables(false);
+    m_State.getCurrentPanel().getTree().highlightVariables(null);
   }
 
   /**

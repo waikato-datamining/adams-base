@@ -48,7 +48,7 @@ public class DebugStorage
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.showVariables();
+    m_State.getCurrentPanel().showStorage();
   }
 
   /**

@@ -48,7 +48,7 @@ public class FileProperties
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.showProperties();
+    m_State.getCurrentPanel().showProperties();
   }
 
   /**

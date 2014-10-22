@@ -21,6 +21,8 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
+
 /**
  * Opens dialog for locating actor.
  * 
@@ -48,7 +50,13 @@ public class EditLocateActor
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.locateActor();
+    String	path;
+
+    path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):");
+    if (path == null)
+      return;
+
+    m_State.getCurrentPanel().getTree().locateAndDisplay(path);
   }
 
   /**

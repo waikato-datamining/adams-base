@@ -1440,7 +1440,7 @@ public class FlowPanel
    * Checks the variable usage, i.e., all variables must at least be set
    * once somewhere in the flow.
    */
-  protected void checkVariables() {
+  public void checkVariables() {
     CheckVariableUsage	processor;
     final BaseDialog	dialog;
     JPanel		panel;

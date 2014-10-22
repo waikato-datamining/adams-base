@@ -40,7 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
@@ -50,17 +49,12 @@ import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
-import adams.data.statistics.InformativeStatistic;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorStatistic;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.AutomatableInteractiveActor;
-import adams.flow.processor.RemoveBreakpoints;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
@@ -131,7 +125,6 @@ import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.report.reportfactory.Separator;
-import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -1045,7 +1038,7 @@ public class FlowEditorPanel
    * updates the enabled state of the menu items.
    */
   @Override
-  protected void updateActions() {
+  public void updateActions() {
     // regular menu items
     for (FlowEditorAction action: m_MenuItems)
       action.update(m_Self);
@@ -1621,27 +1614,10 @@ public class FlowEditorPanel
   }
 
   /**
-   * Displays the errors from the last run.
-   */
-  public void displayErrors() {
-    if (hasCurrentPanel())
-      getCurrentPanel().displayErrors();
-  }
-
-  /**
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
     m_FlowPanels.cleanUp();
-  }
-
-  /**
-   * Shows the properties of the flow.
-   */
-  public void showProperties() {
-    if (!hasCurrentPanel())
-      return;
-    getCurrentPanel().showProperties();
   }
 
   /**
@@ -1685,203 +1661,6 @@ public class FlowEditorPanel
       ((JFrame) getParentFrame()).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     closeParent();
-  }
-
-  /**
-   * Displays statistics about the current flow.
-   */
-  public void showStatistics() {
-    ActorStatistic			stats;
-    InformativeStatisticFactory.Dialog	dialog;
-    Vector<InformativeStatistic>	statsList;
-
-    if (!hasCurrentPanel())
-      return;
-
-    stats = null;
-    if (getCurrentPanel().getTree().getSelectedNode() != null)
-      stats = new ActorStatistic(getCurrentPanel().getTree().getSelectedNode().getFullActor());
-    else if (getCurrentRoot() != null)
-      stats = new ActorStatistic(getCurrentFlow());
-    statsList = new Vector<InformativeStatistic>();
-    statsList.add(stats);
-
-    if (getParentDialog() != null)
-      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
-    dialog.setStatistics(statsList);
-    dialog.setTitle("Actor statistics");
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-  }
-
-  /**
-   * peforms an undo if possible.
-   */
-  public void undo() {
-    FlowPanel	panel;
-
-    panel = getCurrentPanel();
-    if (panel == null)
-      return;
-
-    panel.undo();
-  }
-
-  /**
-   * peforms a redo if possible.
-   */
-  public void redo() {
-    FlowPanel	panel;
-
-    panel = getCurrentPanel();
-    if (panel == null)
-      return;
-
-    panel.redo();
-  }
-
-  /**
-   * Searches for actor names in the tree.
-   */
-  public void find() {
-    if (hasCurrentPanel())
-      getCurrentPanel().getTree().find();
-  }
-
-  /**
-   * Searches for the next actor in the tree.
-   */
-  public void findNext() {
-    if (hasCurrentPanel())
-      getCurrentPanel().getTree().findNext();
-  }
-
-  /**
-   * Locates an actor based on the full actor name.
-   */
-  public void locateActor() {
-    String	path;
-
-    path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow[0].Sequence[3].Display'):");
-    if (path == null)
-      return;
-
-    if (hasCurrentPanel())
-      getCurrentPanel().getTree().locateAndDisplay(path);
-  }
-
-  /**
-   * Highlights variables in the tree (or hides the highlights again).
-   *
-   * @param highlight	whether to turn the highlights on or off
-   */
-  public void highlightVariables(boolean highlight) {
-    String	regexp;
-
-    if (!hasCurrentPanel())
-      return;
-
-    if (highlight) {
-      regexp = JOptionPane.showInputDialog(
-	  GUIHelper.getParentComponent(this),
-	  "Enter the regular expression for the variable name ('.*' matches all):",
-	  m_LastVariableSearch);
-      if (regexp == null)
-	return;
-
-      m_LastVariableSearch = regexp;
-      getCurrentPanel().getTree().highlightVariables(m_LastVariableSearch);
-    }
-    else {
-      getCurrentPanel().getTree().highlightVariables(null);
-    }
-  }
-
-  /**
-   * Cleans up the flow, e.g., removing disabled actors, unused global actors.
-   *
-   * @see		ActorUtils#cleanUpFlow(AbstractActor)
-   */
-  public void cleanUpFlow() {
-    if (hasCurrentPanel())
-      getCurrentPanel().cleanUpFlow();
-  }
-
-  /**
-   * Checks the variable usage, i.e., all variables must at least be set
-   * once somewhere in the flow.
-   */
-  public void checkVariables() {
-    if (hasCurrentPanel())
-      getCurrentPanel().checkVariables();
-  }
-
-  /**
-   * Enables/disables the interactive behaviour of {@link AutomatableInteractiveActor}
-   * actors.
-   *
-   * @param enable	true if to enable the interactive behaviour
-   */
-  public void manageInteractiveActors(boolean enable) {
-    if (hasCurrentPanel())
-      getCurrentPanel().manageInteractiveActors(enable);
-  }
-
-  /**
-   * Sets whether to ignore name changes of actors or to prompt the user with
-   * a dialog for propagating the changes throughout the tree.
-   *
-   * @param ignore	true if to ignore the changes and suppress dialog
-   */
-  public void setIgnoreNameChanges(boolean ignore) {
-    if (hasCurrentPanel())
-      getCurrentPanel().setIgnoreNameChanges(ignore);
-  }
-
-  /**
-   * If a single actor is selected, user gets prompted whether to only
-   * process below this actor instead of full flow.
-   */
-  public void processActorsPrompt() {
-    if (hasCurrentPanel())
-      getCurrentPanel().processActorsPrompt();
-  }
-
-  /**
-   * Enables/disables all breakpoints in the flow (before execution).
-   *
-   * @param enable	if true then breakpoints get enabled
-   */
-  public void enableBreakpoints(boolean enable) {
-    if (hasCurrentPanel())
-      getCurrentPanel().getTree().enableBreakpoints(enable);
-  }
-
-  /**
-   * Removes all breakpoints in the flow.
-   */
-  public void removeAllBreakpoints() {
-    if (hasCurrentPanel())
-      getCurrentPanel().getTree().processActor(null, new RemoveBreakpoints());
-  }
-
-  /**
-   * Displays the variables in the currently running flow.
-   */
-  public void showVariables() {
-    if (hasCurrentPanel())
-      getCurrentPanel().showVariables();
-  }
-
-  /**
-   * Displays the storage in the currently running flow.
-   */
-  public void showStorage() {
-    if (hasCurrentPanel())
-      getCurrentPanel().showStorage();
   }
 
   /**
@@ -1933,22 +1712,6 @@ public class FlowEditorPanel
     }
 
     return result;
-  }
-
-  /**
-   * Displays the source code (in nested format) of the current flow.
-   */
-  public void showSource() {
-    if (hasCurrentPanel())
-      getCurrentPanel().showSource();
-  }
-
-  /**
-   * Displays a diff between current and last item in undo list.
-   */
-  public void showDiff() {
-    if (hasCurrentPanel())
-      getCurrentPanel().showDiff();
   }
 
   /**
@@ -2155,6 +1918,55 @@ public class FlowEditorPanel
   }
 
   /**
+   * For customizing the popup menu.
+   *
+   * @param source	the source statusbar
+   * @param menu	the menu to customize
+   */
+  @Override
+  public void customizePopupMenu(final BaseStatusBar source, JPopupMenu menu) {
+    JMenuItem	menuitem;
+    
+    if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
+      menuitem = new JMenuItem("Copy");
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          GUIHelper.copyToClipboard(source.getStatus());
+        }
+      });
+      menu.add(menuitem);
+    }
+  }
+  
+  /**
+   * Returns the preferred toolbar location.
+   * 
+   * @return		the location
+   */
+  public ToolBarLocation getPreferredToolBarLocation() {
+    return m_PreferredToolBarLocation;
+  }
+  
+  /**
+   * Sets the last variable search term.
+   * 
+   * @param value	the search term
+   */
+  public void setLastVariableSearch(String value) {
+    m_LastVariableSearch = value;
+  }
+  
+  /**
+   * Returns the last variable search term.
+   * 
+   * @return		the search, null if none available
+   */
+  public String getLastVariableSearch() {
+    return m_LastVariableSearch;
+  }
+
+  /**
    * Returns the properties that define the editor.
    *
    * @return		the properties
@@ -2188,36 +2000,5 @@ public class FlowEditorPanel
       m_PropertiesTreePopup = Environment.getInstance().read(FlowEditorTreePopupMenuDefinition.KEY);
 
     return m_PropertiesTreePopup;
-  }
-
-  /**
-   * For customizing the popup menu.
-   *
-   * @param source	the source statusbar
-   * @param menu	the menu to customize
-   */
-  @Override
-  public void customizePopupMenu(final BaseStatusBar source, JPopupMenu menu) {
-    JMenuItem	menuitem;
-    
-    if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
-      menuitem = new JMenuItem("Copy");
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          GUIHelper.copyToClipboard(source.getStatus());
-        }
-      });
-      menu.add(menuitem);
-    }
-  }
-  
-  /**
-   * Returns the preferred toolbar location.
-   * 
-   * @return		the location
-   */
-  public ToolBarLocation getPreferredToolBarLocation() {
-    return m_PreferredToolBarLocation;
   }
 }

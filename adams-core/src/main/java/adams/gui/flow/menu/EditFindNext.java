@@ -48,7 +48,7 @@ public class EditFindNext
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.findNext();
+    m_State.getCurrentPanel().getTree().findNext();
   }
 
   /**

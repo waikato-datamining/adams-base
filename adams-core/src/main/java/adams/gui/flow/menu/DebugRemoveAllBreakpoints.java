@@ -21,6 +21,8 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.flow.processor.RemoveBreakpoints;
+
 /**
  * Removes all breakpoints.
  * 
@@ -48,7 +50,7 @@ public class DebugRemoveAllBreakpoints
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.removeAllBreakpoints();
+    m_State.getCurrentPanel().getTree().processActor(null, new RemoveBreakpoints());
   }
 
   /**

@@ -48,7 +48,7 @@ public class ViewShowSource
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.showSource();
+    m_State.getCurrentPanel().showSource();
   }
 
   /**

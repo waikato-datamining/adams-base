@@ -48,7 +48,7 @@ public class EditDiff
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.showDiff();
+    m_State.getCurrentPanel().showDiff();
   }
 
   /**

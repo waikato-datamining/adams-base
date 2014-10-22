@@ -48,7 +48,7 @@ public class EditRedo
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.undo();
+    m_State.getCurrentPanel().redo();
   }
 
   /**

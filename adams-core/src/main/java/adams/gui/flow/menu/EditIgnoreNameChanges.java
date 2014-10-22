@@ -58,7 +58,7 @@ public class EditIgnoreNameChanges
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    m_State.setIgnoreNameChanges(isSelected());
+    m_State.getCurrentPanel().setIgnoreNameChanges(isSelected());
   }
 
   /**
