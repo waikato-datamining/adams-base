@@ -493,7 +493,7 @@ public class FlowControlCenterPanel
     else
       dialog = new BaseDialog(getParentFrame(), true);
     panel     = new FlowEditorPanel();
-    classname = FlowEditorPanel.getProperties().getPath(
+    classname = FlowEditorPanel.getPropertiesEditor().getPath(
 	"FlowEditorClass", FlowEditorPanel.class.getName());
     try {
       panel = (FlowEditorPanel) Class.forName(classname).newInstance();

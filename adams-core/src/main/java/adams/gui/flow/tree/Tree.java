@@ -953,7 +953,7 @@ public class Tree
       return null;
 
     menu  = new JPopupMenu();
-    items = FlowEditorPanel.getProperties().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
+    items = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
     for (String item: items) {
       if (item.trim().length() == 0)
 	continue;

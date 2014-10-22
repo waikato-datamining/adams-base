@@ -71,7 +71,7 @@ public class FlowEditorDialog
     setTitle("Flow editor");
 
     m_FlowEditorPanel = new FlowEditorPanel();
-    classname = FlowEditorPanel.getProperties().getPath(
+    classname = FlowEditorPanel.getPropertiesEditor().getPath(
 	"FlowEditorClass", FlowEditorPanel.class.getName());
     try {
       m_FlowEditorPanel = (FlowEditorPanel) Class.forName(classname).newInstance();

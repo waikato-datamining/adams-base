@@ -99,7 +99,7 @@ public class FlowTabbedPane
     Class	cls;
     Constructor	constr;
     
-    props   = FlowEditorPanel.getProperties();
+    props   = FlowEditorPanel.getPropertiesEditor();
     clsname = props.getProperty("FlowPanelClass", FlowPanel.class.getName());
     try {
       cls    = Class.forName(clsname);

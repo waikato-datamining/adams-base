@@ -84,7 +84,7 @@ public class ActorTreePanel
 
     m_ClassTree = new ClassTree();
     m_ClassTree.setCompress(true);
-    if (FlowEditorPanel.getProperties().getBoolean("ClassTree.ShowGlobalInfo", true))
+    if (FlowEditorPanel.getPropertiesEditor().getBoolean("ClassTree.ShowGlobalInfo", true))
       m_ClassTree.addInfoNodeGenerator(new GlobalInfoNodeGenerator());
     m_ClassTree.setItems(Arrays.asList(AbstractActor.getFlowActors()));
     m_ClassTree.setPopupMenuHandler(this);

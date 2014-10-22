@@ -389,8 +389,8 @@ public class FlowEditorPanel
     m_LastVariableSearch  = "";
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")));
-    m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")));
+    m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
     m_ExportDialog        = null;
 
     m_MenuItems           = new ArrayList<FlowEditorAction>();
@@ -419,7 +419,7 @@ public class FlowEditorPanel
 
     super.initGUI();
 
-    props = getProperties();
+    props = getPropertiesEditor();
 
     getContentPanel().setLayout(new BorderLayout());
 
@@ -828,7 +828,7 @@ public class FlowEditorPanel
       submenu.setMnemonic('N');
       submenu.setIcon(GUIHelper.getIcon("new.gif"));
       m_MenuFileNew = submenu;
-      actors = getProperties().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
+      actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
       prefixes = new Vector<String>();
       for (i = 0; i < actors.length; i++) {
 	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
@@ -869,7 +869,7 @@ public class FlowEditorPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<JMenu>(
-	  SESSION_FILE, getProperties().getInteger("MaxRecentFlows", 5), submenu);
+	  SESSION_FILE, getPropertiesEditor().getInteger("MaxRecentFlows", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	@Override
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
@@ -1068,16 +1068,6 @@ public class FlowEditorPanel
     updateWidgets();
     if (hasCurrentPanel())
       getCurrentPanel().updateTitle();
-  }
-
-  /**
-   * Returns the shortcut stored in the props file.
-   *
-   * @param key		the key for the shortcut
-   * @return		the shortcut, empty string if not found or none defined
-   */
-  public static String getEditorShortcut(String key) {
-    return getPropertiesMenu().getProperty("Shortcuts." + key, "");
   }
 
   /**
@@ -1971,7 +1961,7 @@ public class FlowEditorPanel
    *
    * @return		the properties
    */
-  public static synchronized Properties getProperties() {
+  public static synchronized Properties getPropertiesEditor() {
     if (m_Properties == null)
       m_Properties = Environment.getInstance().read(FlowEditorPanelDefinition.KEY);
 
