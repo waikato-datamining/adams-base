@@ -15,14 +15,14 @@
 
 /**
  * ToolBarPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 
-import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 
@@ -72,6 +72,7 @@ public abstract class ToolBarPanel
   /**
    * Initializes the members.
    */
+  @Override
   protected void initialize() {
     super.initialize();
 
@@ -81,6 +82,7 @@ public abstract class ToolBarPanel
   /**
    * Initializes the widgets.
    */
+  @Override
   protected void initGUI() {
     super.initGUI();
 
@@ -115,6 +117,7 @@ public abstract class ToolBarPanel
    * @see		#initToolBar()
    * @see		#updateActions()
    */
+  @Override
   protected void finishInit() {
     super.finishInit();
 
@@ -173,7 +176,7 @@ public abstract class ToolBarPanel
    *
    * @param action	the action to add
    */
-  public void addToToolBar(AbstractAction action) {
+  public void addToToolBar(Action action) {
     m_ToolBar.add(action);
   }
 
