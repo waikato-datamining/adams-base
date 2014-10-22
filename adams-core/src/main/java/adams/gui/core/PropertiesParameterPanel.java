@@ -96,8 +96,12 @@ public class PropertiesParameterPanel
     FONT,
     /** file. */
     FILE,
+    /** file (absolute path). */
+    FILE_ABSOLUTE,
     /** directory. */
     DIRECTORY,
+    /** directory (absolute path). */
+    DIRECTORY_ABSOLUTE,
     /** enumeration. */
     ENUM,
     /** manually maintained list of string values. */
@@ -585,6 +589,7 @@ public class PropertiesParameterPanel
 	  addProperty(key, label, fontPanel);
 	  break;
 	case DIRECTORY:
+	case DIRECTORY_ABSOLUTE:
 	  dirPanel = new DirectoryChooserPanel();
 	  dirPanel.setCurrent(new PlaceholderDirectory(value.getPath(key)));
 	  dirPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, dirPanel.getPreferredSize().height));
@@ -592,6 +597,7 @@ public class PropertiesParameterPanel
 	  addProperty(key, label, dirPanel);
 	  break;
 	case FILE:
+	case FILE_ABSOLUTE:
 	  filePanel = new FileChooserPanel();
 	  filePanel.setCurrent(new PlaceholderFile(value.getPath(key)));
 	  filePanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, filePanel.getPreferredSize().height));
@@ -723,9 +729,17 @@ public class PropertiesParameterPanel
 	  dirPanel = (DirectoryChooserPanel) comp;
 	  result.setPath(key, dirPanel.getCurrent().getAbsolutePath());
 	  break;
+	case DIRECTORY_ABSOLUTE:
+	  dirPanel = (DirectoryChooserPanel) comp;
+	  result.setProperty(key, dirPanel.getCurrent().getAbsolutePath());
+	  break;
 	case FILE:
 	  filePanel = (FileChooserPanel) comp;
 	  result.setPath(key, filePanel.getCurrent().getAbsolutePath());
+	  break;
+	case FILE_ABSOLUTE:
+	  filePanel = (FileChooserPanel) comp;
+	  result.setProperty(key, filePanel.getCurrent().getAbsolutePath());
 	  break;
 	case COLOR:
 	  colorPanel = (ColorChooserPanel) comp;
