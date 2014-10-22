@@ -59,6 +59,7 @@ import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
+import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
@@ -777,7 +778,7 @@ public class FlowEditorPanel
   @Override
   public JMenuBar getMenuBar() {
     JMenuBar		result;
-    JMenu		menu;
+    BaseMenu		menu;
     JMenu		submenu;
     JMenuItem		menuitem;
     String[]		actors;
@@ -812,7 +813,7 @@ public class FlowEditorPanel
       result = new JMenuBar();
 
       // File
-      menu = new JMenu(MENU_FILE);
+      menu = new BaseMenu(MENU_FILE);
       result.add(menu);
       menu.setMnemonic('F');
       menu.addChangeListener(new ChangeListener() {
@@ -896,7 +897,7 @@ public class FlowEditorPanel
       menu.add(m_ActionFileClose);
 
       // Edit
-      menu = new JMenu(MENU_EDIT);
+      menu = new BaseMenu(MENU_EDIT);
       result.add(menu);
       menu.setMnemonic('E');
       menu.addChangeListener(new ChangeListener() {
@@ -917,13 +918,13 @@ public class FlowEditorPanel
       menu.addSeparator();
       menu.add(m_ActionEditCleanUpFlow);
       menu.add(m_ActionEditCheckVariables);
-      menu.add(m_ActionEditInteractiveActors.getMenuItem());
-      menu.add(m_ActionEditIgnoreNameChanges.getMenuItem());
+      menu.add(m_ActionEditInteractiveActors);
+      menu.add(m_ActionEditIgnoreNameChanges);
       menu.addSeparator();
       menu.add(m_ActionEditProcessActors);
 
       // Debug
-      menu = new JMenu(MENU_DEBUG);
+      menu = new BaseMenu(MENU_DEBUG);
       result.add(menu);
       menu.setMnemonic('D');
       menu.addChangeListener(new ChangeListener() {
@@ -940,7 +941,7 @@ public class FlowEditorPanel
       menu.add(m_ActionDebugStorage);
 
       // Execution
-      menu = new JMenu(MENU_EXECUTION);
+      menu = new BaseMenu(MENU_EXECUTION);
       result.add(menu);
       menu.setMnemonic('E');
       menu.addChangeListener(new ChangeListener() {
@@ -957,10 +958,10 @@ public class FlowEditorPanel
       menu.add(m_ActionExecutionDisplayErrors);
       menu.add(m_ActionExecutionClearGraphicalOutput);
       menu.addSeparator();
-      menu.add(m_ActionExecutionHeadless.getMenuItem());
+      menu.add(m_ActionExecutionHeadless);
 
       // View
-      menu = new JMenu(MENU_VIEW);
+      menu = new BaseMenu(MENU_VIEW);
       result.add(menu);
       menu.setMnemonic('V');
       menu.addChangeListener(new ChangeListener() {
@@ -970,10 +971,10 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(m_ActionViewShowToolbar.getMenuItem());
-      menu.add(m_ActionViewShowQuickInfo.getMenuItem());
-      menu.add(m_ActionViewShowAnnotations.getMenuItem());
-      menu.add(m_ActionViewShowInputOutput.getMenuItem());
+      menu.add(m_ActionViewShowToolbar);
+      menu.add(m_ActionViewShowQuickInfo);
+      menu.add(m_ActionViewShowAnnotations);
+      menu.add(m_ActionViewShowInputOutput);
       m_Tabs.addTabsSubmenu(menu);
       menu.addSeparator();
       menu.add(m_ActionViewHighlightVariables);
@@ -985,7 +986,7 @@ public class FlowEditorPanel
 
       // Window
       if ((GUIHelper.getParent(m_Self, ChildFrame.class) != null) && (getParentDialog() == null)) {
-	menu = new JMenu(MENU_WINDOW);
+	menu = new BaseMenu(MENU_WINDOW);
 	result.add(menu);
 	menu.setMnemonic('W');
 	menu.addChangeListener(new ChangeListener() {
