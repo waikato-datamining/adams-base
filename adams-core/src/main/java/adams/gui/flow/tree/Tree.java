@@ -294,6 +294,9 @@ public class Tree
         }
         else if (m_Self.isEnabled() && MouseUtils.isDoubleClick(e)) {
           e.consume();
+          StateContainer state = getTreeState(e);
+          if (state == null)
+            return;
           EditActor action = new EditActor();
           action.update(getTreeState(e));
           action.actionPerformed(null);
