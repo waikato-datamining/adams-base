@@ -14,33 +14,34 @@
  */
 
 /**
- * FlowEditorPanelShortcutsDefinition.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * FlowEditorPanelMenuDefinition.java
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
 import adams.gui.flow.FlowEditorPanel;
 
 /**
- * Definition for the FlowEditorPanel props file containing the shortcuts.
+ * Definition for the FlowEditorPanel props file containing the menu.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FlowEditorPanelShortcutsDefinition
+public class FlowEditorPanelMenuDefinition
   extends AbstractPropertiesDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 288970991741946271L;
 
   /** the key as constant. */
-  public final static String KEY = "flow editor panel shortcuts";
+  public final static String KEY = "flow editor panel menu";
 
   /**
    * Returns the key this definition is for.
    *
    * @return		the key
    */
+  @Override
   public String getKey() {
     return KEY;
   }
@@ -50,8 +51,9 @@ public class FlowEditorPanelShortcutsDefinition
    *
    * @return		the key
    */
+  @Override
   public String getFile() {
-    return FlowEditorPanel.FILENAME_SHORTCUTS;
+    return FlowEditorPanel.FILENAME_MENU;
   }
 
   /**
@@ -60,7 +62,8 @@ public class FlowEditorPanelShortcutsDefinition
    *
    * @param env		the environment object to update
    */
+  @Override
   public void update(AbstractEnvironment env) {
-    add(env, Project.NAME + "/gui/flow", new String[0]);
+    add(env, Project.NAME + "/gui/flow/menu", new String[0]);
   }
 }

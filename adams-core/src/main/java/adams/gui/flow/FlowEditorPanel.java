@@ -56,7 +56,7 @@ import adams.data.statistics.InformativeStatistic;
 import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
-import adams.env.FlowEditorPanelShortcutsDefinition;
+import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
@@ -125,8 +125,8 @@ public class FlowEditorPanel
   /** the name of the props file with the general properties. */
   public final static String FILENAME = "FlowEditor.props";
 
-  /** the name of the props file with the shortcuts. */
-  public final static String FILENAME_SHORTCUTS = "FlowEditorShortcuts.props";
+  /** the name of the props file with the menu. */
+  public final static String FILENAME_MENU = "FlowEditorMenu.props";
 
   /** the name of the props file with the tree menu. */
   public final static String FILENAME_TREEPOPUPMENU = "FlowEditorTreePopupMenu.props";
@@ -140,8 +140,8 @@ public class FlowEditorPanel
   /** the general properties. */
   protected static Properties m_Properties;
 
-  /** the shortcut properties. */
-  protected static Properties m_PropertiesShortcuts;
+  /** the menu properties. */
+  protected static Properties m_PropertiesMenu;
 
   /** the tree popup menu properties. */
   protected static Properties m_PropertiesTreePopup;
@@ -333,7 +333,7 @@ public class FlowEditorPanel
   protected ExportDialog m_ExportDialog;
 
   /** the default toolbar location to use. */
-  protected ToolBarLocation m_ToolBarLocation;
+  protected ToolBarLocation m_PreferredToolBarLocation;
 
   /**
    * Initializes the members.
@@ -383,9 +383,9 @@ public class FlowEditorPanel
 
     getContentPanel().setLayout(new BorderLayout());
 
-    m_ToolBarLocation = ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH"));
-    if (m_ToolBarLocation == ToolBarLocation.HIDDEN)
-      m_ToolBarLocation = ToolBarLocation.NORTH;
+    m_PreferredToolBarLocation = ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH"));
+    if (m_PreferredToolBarLocation == ToolBarLocation.HIDDEN)
+      m_PreferredToolBarLocation = ToolBarLocation.NORTH;
     setToolBarLocation(ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH")));
 
     m_SplitPane = new BaseSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
@@ -816,7 +816,7 @@ public class FlowEditorPanel
       @Override
       public void actionPerformed(ActionEvent e) {
 	if (getToolBarLocation() == ToolBarLocation.HIDDEN)
-	  setToolBarLocation(m_ToolBarLocation);
+	  setToolBarLocation(m_PreferredToolBarLocation);
 	else
 	  setToolBarLocation(ToolBarLocation.HIDDEN);
       }
@@ -1436,7 +1436,7 @@ public class FlowEditorPanel
    * @return		the shortcut, empty string if not found or none defined
    */
   public static String getEditorShortcut(String key) {
-    return getPropertiesShortcuts().getProperty("Shortcuts." + key, "");
+    return getPropertiesMenu().getProperty("Shortcuts." + key, "");
   }
 
   /**
@@ -1674,7 +1674,7 @@ public class FlowEditorPanel
   /**
    * Opens a flow.
    */
-  protected void open() {
+  public void open() {
     int			retVal;
     FlowPanel		panel;
 
@@ -1703,7 +1703,7 @@ public class FlowEditorPanel
   /**
    * Saves the flow.
    */
-  protected void save() {
+  public void save() {
     FlowPanel	panel;
 
     panel = getCurrentPanel();
@@ -1721,7 +1721,7 @@ public class FlowEditorPanel
   /**
    * Saves the flow.
    */
-  protected void saveAs() {
+  public void saveAs() {
     int			retVal;
     File		file;
     FlowPanel		panel;
@@ -1750,7 +1750,7 @@ public class FlowEditorPanel
   /**
    * Imports a flow.
    */
-  protected void importFlow() {
+  public void importFlow() {
     FlowPanel	panel;
 
     if (m_ImportDialog == null) {
@@ -1772,7 +1772,7 @@ public class FlowEditorPanel
   /**
    * Exports the flow.
    */
-  protected void exportFlow() {
+  public void exportFlow() {
     FlowPanel	panel;
 
     panel = getCurrentPanel();
@@ -1797,7 +1797,7 @@ public class FlowEditorPanel
   /**
    * Validates the current setup.
    */
-  protected void validateSetup() {
+  public void validateSetup() {
     if (hasCurrentPanel())
       getCurrentPanel().validateSetup();
   }
@@ -1955,7 +1955,7 @@ public class FlowEditorPanel
   /**
    * Pauses/resumes the flow.
    */
-  protected void pauseAndResume() {
+  public void pauseAndResume() {
     if (!hasCurrentPanel())
       return;
 
@@ -1990,7 +1990,7 @@ public class FlowEditorPanel
   /**
    * Shows the properties of the flow.
    */
-  protected void showProperties() {
+  public void showProperties() {
     if (!hasCurrentPanel())
       return;
     getCurrentPanel().showProperties();
@@ -2042,7 +2042,7 @@ public class FlowEditorPanel
   /**
    * Displays statistics about the current flow.
    */
-  protected void showStatistics() {
+  public void showStatistics() {
     ActorStatistic			stats;
     InformativeStatisticFactory.Dialog	dialog;
     Vector<InformativeStatistic>	statsList;
@@ -2098,7 +2098,7 @@ public class FlowEditorPanel
   /**
    * Searches for actor names in the tree.
    */
-  protected void find() {
+  public void find() {
     if (hasCurrentPanel())
       getCurrentPanel().getTree().find();
   }
@@ -2106,7 +2106,7 @@ public class FlowEditorPanel
   /**
    * Searches for the next actor in the tree.
    */
-  protected void findNext() {
+  public void findNext() {
     if (hasCurrentPanel())
       getCurrentPanel().getTree().findNext();
   }
@@ -2114,7 +2114,7 @@ public class FlowEditorPanel
   /**
    * Locates an actor based on the full actor name.
    */
-  protected void locateActor() {
+  public void locateActor() {
     String	path;
 
     path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow[0].Sequence[3].Display'):");
@@ -2130,7 +2130,7 @@ public class FlowEditorPanel
    *
    * @param highlight	whether to turn the highlights on or off
    */
-  protected void highlightVariables(boolean highlight) {
+  public void highlightVariables(boolean highlight) {
     String	regexp;
 
     if (!hasCurrentPanel())
@@ -2157,7 +2157,7 @@ public class FlowEditorPanel
    *
    * @see		ActorUtils#cleanUpFlow(AbstractActor)
    */
-  protected void cleanUpFlow() {
+  public void cleanUpFlow() {
     if (hasCurrentPanel())
       getCurrentPanel().cleanUpFlow();
   }
@@ -2166,7 +2166,7 @@ public class FlowEditorPanel
    * Checks the variable usage, i.e., all variables must at least be set
    * once somewhere in the flow.
    */
-  protected void checkVariables() {
+  public void checkVariables() {
     if (hasCurrentPanel())
       getCurrentPanel().checkVariables();
   }
@@ -2177,7 +2177,7 @@ public class FlowEditorPanel
    *
    * @param enable	true if to enable the interactive behaviour
    */
-  protected void manageInteractiveActors(boolean enable) {
+  public void manageInteractiveActors(boolean enable) {
     if (hasCurrentPanel())
       getCurrentPanel().manageInteractiveActors(enable);
   }
@@ -2188,7 +2188,7 @@ public class FlowEditorPanel
    *
    * @param ignore	true if to ignore the changes and suppress dialog
    */
-  protected void setIgnoreNameChanges(boolean ignore) {
+  public void setIgnoreNameChanges(boolean ignore) {
     if (hasCurrentPanel())
       getCurrentPanel().setIgnoreNameChanges(ignore);
   }
@@ -2197,7 +2197,7 @@ public class FlowEditorPanel
    * If a single actor is selected, user gets prompted whether to only
    * process below this actor instead of full flow.
    */
-  protected void processActorsPrompt() {
+  public void processActorsPrompt() {
     if (hasCurrentPanel())
       getCurrentPanel().processActorsPrompt();
   }
@@ -2207,7 +2207,7 @@ public class FlowEditorPanel
    *
    * @param enable	if true then breakpoints get enabled
    */
-  protected void enableBreakpoints(boolean enable) {
+  public void enableBreakpoints(boolean enable) {
     if (hasCurrentPanel())
       getCurrentPanel().getTree().enableBreakpoints(enable);
   }
@@ -2215,7 +2215,7 @@ public class FlowEditorPanel
   /**
    * Removes all breakpoints in the flow.
    */
-  protected void removeAllBreakpoints() {
+  public void removeAllBreakpoints() {
     if (hasCurrentPanel())
       getCurrentPanel().getTree().processActor(null, new RemoveBreakpoints());
   }
@@ -2223,7 +2223,7 @@ public class FlowEditorPanel
   /**
    * Displays the variables in the currently running flow.
    */
-  protected void showVariables() {
+  public void showVariables() {
     if (hasCurrentPanel())
       getCurrentPanel().showVariables();
   }
@@ -2231,7 +2231,7 @@ public class FlowEditorPanel
   /**
    * Displays the storage in the currently running flow.
    */
-  protected void showStorage() {
+  public void showStorage() {
     if (hasCurrentPanel())
       getCurrentPanel().showStorage();
   }
@@ -2290,7 +2290,7 @@ public class FlowEditorPanel
   /**
    * Displays the source code (in nested format) of the current flow.
    */
-  protected void showSource() {
+  public void showSource() {
     if (hasCurrentPanel())
       getCurrentPanel().showSource();
   }
@@ -2298,7 +2298,7 @@ public class FlowEditorPanel
   /**
    * Displays a diff between current and last item in undo list.
    */
-  protected void showDiff() {
+  public void showDiff() {
     if (hasCurrentPanel())
       getCurrentPanel().showDiff();
   }
@@ -2519,15 +2519,15 @@ public class FlowEditorPanel
   }
 
   /**
-   * Returns the properties that define the shortcuts in the editor and tree.
+   * Returns the properties that define the menu in the editor.
    *
    * @return		the properties
    */
-  public static synchronized Properties getPropertiesShortcuts() {
-    if (m_PropertiesShortcuts == null)
-      m_PropertiesShortcuts = Environment.getInstance().read(FlowEditorPanelShortcutsDefinition.KEY);
+  public static synchronized Properties getPropertiesMenu() {
+    if (m_PropertiesMenu == null)
+      m_PropertiesMenu = Environment.getInstance().read(FlowEditorPanelMenuDefinition.KEY);
 
-    return m_PropertiesShortcuts;
+    return m_PropertiesMenu;
   }
 
   /**
@@ -2562,5 +2562,14 @@ public class FlowEditorPanel
       });
       menu.add(menuitem);
     }
+  }
+  
+  /**
+   * Returns the preferred toolbar location.
+   * 
+   * @return		the location
+   */
+  public ToolBarLocation getPreferredToolBarLocation() {
+    return m_PreferredToolBarLocation;
   }
 }

@@ -19,12 +19,18 @@
  */
 package adams.gui.flow.tree.menu;
 
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
+import adams.core.Properties;
+import adams.gui.action.AbstractPropertiesAction;
+import adams.gui.action.AbstractPropertiesSubMenuAction;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.StateContainer;
 
 /**
@@ -34,10 +40,65 @@ import adams.gui.flow.tree.StateContainer;
  * @version $Revision$
  */
 public abstract class AbstractTreePopupSubMenuAction
-  extends AbstractTreePopupAction {
+  extends AbstractPropertiesSubMenuAction<StateContainer>
+  implements TreePopupAction {
 
   /** for serialization. */
   private static final long serialVersionUID = -5921557331961517641L;
+  
+  /**
+   * Returns the underlying properties.
+   * 
+   * @return		the properties
+   */
+  @Override
+  protected Properties getProperties() {
+    return FlowEditorPanel.getPropertiesTreePopup();
+  }
+  
+  /**
+   * Checks whether the keystroke matches.
+   * 
+   * @param ks		the keystroke to match
+   * @return		true if a match
+   */
+  public boolean keyStrokeApplies(KeyStroke ks) {
+    return hasAccelerator() && ks.equals(getAccelerator());
+  }
+  
+  /**
+   * Tries to determine the frame this panel is part of.
+   *
+   * @return		the parent frame if one exists or null if not
+   */
+  protected Frame getParentFrame() {
+    if (m_State != null)
+      return m_State.tree.getParentFrame();
+    else
+      return null;
+  }
+
+  /**
+   * Tries to determine the dialog this panel is part of.
+   *
+   * @return		the parent dialog if one exists or null if not
+   */
+  protected Dialog getParentDialog() {
+    if (m_State != null)
+      return m_State.tree.getParentDialog();
+    else
+      return null;
+  }
+  
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (m_State != null)
+      m_State.tree.addUndoPoint(comment);
+  }
 
   /**
    * Returns any sub menu actions. By default, this method returns null.
@@ -46,15 +107,15 @@ public abstract class AbstractTreePopupSubMenuAction
    * 
    * @return		the submenu actions
    */
-  protected abstract AbstractTreePopupAction[] getSubMenuActions();
+  protected abstract AbstractPropertiesAction[] getSubMenuActions();
   
   /**
-   * Creates a new menuitem using itself.
+   * Creates a new menu.
    */
   @Override
-  public JMenuItem getMenuItem() {
+  public JMenu createMenu() {
     JMenu			result;
-    AbstractTreePopupAction[]	subitems;
+    AbstractPropertiesAction[]	subitems;
 
     subitems = getSubMenuActions();
     
@@ -63,7 +124,7 @@ public abstract class AbstractTreePopupSubMenuAction
       result.setIcon(getIcon());
     else
       result.setIcon(GUIHelper.getEmptyIcon());
-    for (AbstractTreePopupAction action: subitems) {
+    for (AbstractPropertiesAction action: subitems) {
       if (action == null) {
 	result.addSeparator();
       }

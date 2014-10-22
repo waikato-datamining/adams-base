@@ -14,25 +14,25 @@
  */
 
 /**
- * PasteActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * ExecutionStop.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.flow.tree.menu;
+package adams.gui.flow.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import java.awt.event.ActionEvent;
 
 /**
- * Menu for adding actors.
+ * Stops the flow.
  * 
- * @author fracpete
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PasteActor
-  extends AbstractTreePopupSubMenuAction {
+public class ExecutionStop
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
-  
+  private static final long serialVersionUID = 5235570137451285010L;
+
   /**
    * Returns the caption of this action.
    * 
@@ -40,25 +40,22 @@ public class PasteActor
    */
   @Override
   protected String getTitle() {
-    return "Paste";
+    return "Stop";
   }
-  
+
   /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
+   * Invoked when an action occurs.
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new PasteActorBeneath(),
-	null,
-	new PasteActorHere(),
-	new PasteActorAfter(),
-    };
-    
-    return result;
+  public void actionPerformed(ActionEvent e) {
+    m_State.stop();
+  }
+
+  /**
+   * Performs the actual update of the state of the action.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled(m_State.isRunning());
   }
 }

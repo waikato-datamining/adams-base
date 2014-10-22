@@ -49,6 +49,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -89,8 +90,8 @@ import adams.gui.event.NodeDroppedEvent.NotificationTime;
 import adams.gui.event.NodeDroppedListener;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
-import adams.gui.flow.tree.menu.AbstractTreePopupAction;
 import adams.gui.flow.tree.menu.EditActor;
+import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
@@ -212,7 +213,7 @@ public class Tree
   protected boolean m_IgnoreNameChanges;
 
   /** the actions with shortcuts. */
-  protected List<AbstractTreePopupAction> m_Shortcuts;
+  protected List<TreePopupAction> m_Shortcuts;
 
   /** the dialog for processing actors. */
   protected GenericObjectEditorDialog m_DialogProcessActors;
@@ -243,8 +244,8 @@ public class Tree
    */
   @Override
   protected void initialize() {
-    String[]			classes;
-    AbstractTreePopupAction	action;
+    String[]		classes;
+    TreePopupAction	action;
 
     super.initialize();
 
@@ -303,11 +304,11 @@ public class Tree
       }
     });
 
-    m_Shortcuts = new ArrayList<AbstractTreePopupAction>();
-    classes     = AbstractTreePopupAction.getActions();
+    m_Shortcuts = new ArrayList<TreePopupAction>();
+    classes     = ClassLister.getSingleton().getClassnames(TreePopupAction.class);
     for (String cls: classes) {
       try {
-	action = (AbstractTreePopupAction) Class.forName(cls).newInstance();
+	action = (TreePopupAction) Class.forName(cls).newInstance();
 	if (action.hasAccelerator())
 	  m_Shortcuts.add(action);
       }
@@ -323,7 +324,7 @@ public class Tree
 	if (path != null) {
 	  StateContainer state = getTreeState(paths, TreeHelper.pathToNode(path));
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
-	  for (AbstractTreePopupAction action: m_Shortcuts) {
+	  for (TreePopupAction action: m_Shortcuts) {
 	    action.update(state);
 	    if (action.keyStrokeApplies(ks)) {
 	      action.actionPerformed(null);
@@ -939,10 +940,10 @@ public class Tree
    * @return		the popup menu, null if not possible
    */
   public JPopupMenu createNodePopupMenu(MouseEvent e) {
-    JPopupMenu			menu;
-    StateContainer		state;
-    String[]			items;
-    AbstractTreePopupAction	action;
+    JPopupMenu		menu;
+    StateContainer	state;
+    String[]		items;
+    TreePopupAction	action;
 
     state = getTreeState(e);
     if (state == null)
@@ -958,7 +959,7 @@ public class Tree
       }
       else {
 	try {
-	  action = (AbstractTreePopupAction) Class.forName(item).newInstance();
+	  action = (TreePopupAction) Class.forName(item).newInstance();
 	  action.update(state);
 	  menu.add(action.getMenuItem());
 	}

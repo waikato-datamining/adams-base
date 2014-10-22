@@ -14,26 +14,25 @@
  */
 
 /**
- * AddActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * ViewShowQuickInfo.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.flow.tree.menu;
+package adams.gui.flow.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
-
+import java.awt.event.ActionEvent;
 
 /**
- * Submenu for adding/removing bookmarks.
+ * Enables/disables quickinfo visibility.
  * 
- * @author fracpete
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Bookmark
-  extends AbstractTreePopupSubMenuAction {
+public class ViewShowQuickInfo
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
-  
+  private static final long serialVersionUID = 5235570137451285010L;
+
   /**
    * Returns the caption of this action.
    * 
@@ -41,31 +40,32 @@ public class Bookmark
    */
   @Override
   protected String getTitle() {
-    return "Bookmark";
+    return "Show quick info";
   }
 
   /**
-   * Returns the sub menu actions.
+   * Returns the initial selected state of the menu item.
    * 
-   * @return		the submenu items
+   * @return		true if selected initially
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new AddBookmark(),
-	new RemoveBookmark(),
-    };
-    
-    return result;
+  protected boolean isInitiallySelected() {
+    return getProperties().getBoolean("ShowQuickInfo", true);
   }
   
   /**
-   * Updates the action using the current state information.
+   * Invoked when an action occurs.
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    m_State.getCurrentPanel().getTree().setShowQuickInfo(isSelected());
+  }
+
+  /**
+   * Performs the actual update of the state of the action.
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.numSel > 0);
+    setEnabled(m_State.hasCurrentPanel());
   }
 }

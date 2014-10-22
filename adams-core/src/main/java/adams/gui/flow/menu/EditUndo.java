@@ -14,26 +14,25 @@
  */
 
 /**
- * AddActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * EditUndo.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.flow.tree.menu;
+package adams.gui.flow.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
-
+import java.awt.event.ActionEvent;
 
 /**
- * Submenu for adding/removing bookmarks.
+ * Performs undo.
  * 
- * @author fracpete
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Bookmark
-  extends AbstractTreePopupSubMenuAction {
+public class EditUndo
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
-  
+  private static final long serialVersionUID = 5235570137451285010L;
+
   /**
    * Returns the caption of this action.
    * 
@@ -41,31 +40,33 @@ public class Bookmark
    */
   @Override
   protected String getTitle() {
-    return "Bookmark";
+    return "Undo";
   }
 
   /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
+   * Invoked when an action occurs.
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new AddBookmark(),
-	new RemoveBookmark(),
-    };
-    
-    return result;
+  public void actionPerformed(ActionEvent e) {
+    m_State.undo();
   }
-  
+
   /**
-   * Updates the action using the current state information.
+   * Performs the actual update of the state of the action.
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.numSel > 0);
+    setEnabled(
+	   m_State.hasCurrentPanel() 
+	&& isInputEnabled());
+    
+    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().getUndo().canUndo()) {
+      setName("Undo - " + m_State.getCurrentPanel().getUndo().peekUndoComment(true));
+      setToolTipText(m_State.getCurrentPanel().getUndo().peekUndoComment());
+    }
+    else {
+      setName("Undo");
+      setToolTipText(null);
+    }
   }
 }

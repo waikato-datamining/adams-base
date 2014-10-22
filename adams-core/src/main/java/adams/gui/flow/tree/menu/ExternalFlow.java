@@ -19,6 +19,8 @@
  */
 package adams.gui.flow.tree.menu;
 
+import adams.gui.action.AbstractPropertiesAction;
+
 /**
  * Submenu for handling external flows.
  * 
@@ -47,10 +49,10 @@ public class ExternalFlow
    * @return		the submenu items
    */
   @Override
-  protected AbstractTreePopupAction[] getSubMenuActions() {
-    AbstractTreePopupAction[]	result;
+  protected AbstractPropertiesAction[] getSubMenuActions() {
+    AbstractPropertiesAction[]	result;
     
-    result = new AbstractTreePopupAction[]{
+    result = new AbstractPropertiesAction[]{
 	new EditExternalFlow(),
 	new ExpandCollapseExternalFlow(),
     };

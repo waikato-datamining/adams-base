@@ -14,25 +14,27 @@
  */
 
 /**
- * PasteActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * FileNewFlow.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.flow.tree.menu;
+package adams.gui.flow.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import java.awt.event.ActionEvent;
+
+import adams.flow.control.Flow;
 
 /**
- * Menu for adding actors.
+ * Opens a new tab with an empty {@link Flow}.
  * 
- * @author fracpete
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PasteActor
-  extends AbstractTreePopupSubMenuAction {
+public class FileNewFlow
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
-  
+  private static final long serialVersionUID = 5235570137451285010L;
+
   /**
    * Returns the caption of this action.
    * 
@@ -40,25 +42,22 @@ public class PasteActor
    */
   @Override
   protected String getTitle() {
-    return "Paste";
+    return "Flow";
   }
-  
+
   /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
+   * Invoked when an action occurs.
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new PasteActorBeneath(),
-	null,
-	new PasteActorHere(),
-	new PasteActorAfter(),
-    };
-    
-    return result;
+  public void actionPerformed(ActionEvent e) {
+    m_State.newTab();
+  }
+
+  /**
+   * Performs the actual update of the state of the action.
+   */
+  @Override
+  protected void doUpdate() {
+    setEnabled(true);
   }
 }

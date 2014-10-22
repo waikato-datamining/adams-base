@@ -14,51 +14,37 @@
  */
 
 /**
- * PasteActor.java
+ * TreePopupAction.java
  * Copyright (C) 2014 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import javax.swing.KeyStroke;
+
+import adams.gui.action.PropertiesAction;
+import adams.gui.flow.tree.StateContainer;
 
 /**
- * Menu for adding actors.
+ * Interface for menu items in the popup menu of the flow tree.
  * 
  * @author fracpete
- * @version $Revision$
+ * @version $Revision: 9881 $
  */
-public class PasteActor
-  extends AbstractTreePopupSubMenuAction {
-
-  /** for serialization. */
-  private static final long serialVersionUID = 3991575839421394939L;
+public interface TreePopupAction
+  extends PropertiesAction<StateContainer> {
   
   /**
-   * Returns the caption of this action.
+   * Checks whether the keystroke matches.
    * 
-   * @return		the caption, null if not applicable
+   * @param ks		the keystroke to match
+   * @return		true if a match
    */
-  @Override
-  protected String getTitle() {
-    return "Paste";
-  }
+  public boolean keyStrokeApplies(KeyStroke ks);
   
   /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
    */
-  @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new PasteActorBeneath(),
-	null,
-	new PasteActorHere(),
-	new PasteActorAfter(),
-    };
-    
-    return result;
-  }
+  public void addUndoPoint(String comment);
 }

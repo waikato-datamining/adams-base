@@ -19,11 +19,15 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
+import java.awt.Dialog;
+import java.awt.Frame;
 
-import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
-import adams.gui.core.GUIHelper;
+import adams.core.Properties;
+import adams.gui.action.AbstractPropertiesMenuItemAction;
+import adams.gui.flow.FlowEditorPanel;
+import adams.gui.flow.tree.StateContainer;
 
 /**
  * Ancestor for menu items in the popup menu of the flow tree.
@@ -32,38 +36,63 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public abstract class AbstractTreePopupMenuItemAction
-  extends AbstractTreePopupAction {
+  extends AbstractPropertiesMenuItemAction<StateContainer>
+  implements TreePopupAction {
 
   /** for serialization. */
   private static final long serialVersionUID = -5921557331961517641L;
   
   /**
-   * Creates a new menuitem using itself.
+   * Returns the underlying properties.
+   * 
+   * @return		the properties
    */
   @Override
-  public JMenuItem getMenuItem() {
-    JMenuItem	result;
-    
-    result = new JMenuItem(this);
-    if (getIcon() != null)
-      result.setIcon(getIcon());
-    else
-      result.setIcon(GUIHelper.getEmptyIcon());
-    
-    return result;
+  protected Properties getProperties() {
+    return FlowEditorPanel.getPropertiesTreePopup();
   }
   
   /**
-   * Updates the action using the current state information.
+   * Checks whether the keystroke matches.
+   * 
+   * @param ks		the keystroke to match
+   * @return		true if a match
    */
-  @Override
-  protected abstract void doUpdate();
+  public boolean keyStrokeApplies(KeyStroke ks) {
+    return hasAccelerator() && ks.equals(getAccelerator());
+  }
+  
+  /**
+   * Tries to determine the frame this panel is part of.
+   *
+   * @return		the parent frame if one exists or null if not
+   */
+  protected Frame getParentFrame() {
+    if (m_State != null)
+      return m_State.tree.getParentFrame();
+    else
+      return null;
+  }
 
   /**
-   * The action to execute.
+   * Tries to determine the dialog this panel is part of.
    *
-   * @param e		the event
+   * @return		the parent dialog if one exists or null if not
    */
-  @Override
-  public abstract void actionPerformed(ActionEvent e);
+  protected Dialog getParentDialog() {
+    if (m_State != null)
+      return m_State.tree.getParentDialog();
+    else
+      return null;
+  }
+  
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (m_State != null)
+      m_State.tree.addUndoPoint(comment);
+  }
 }
