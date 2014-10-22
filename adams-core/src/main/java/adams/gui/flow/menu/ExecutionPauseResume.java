@@ -21,8 +21,6 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.core.Pausable;
-import adams.flow.core.AbstractActor;
 import adams.gui.core.GUIHelper;
 
 /**
@@ -62,16 +60,7 @@ public class ExecutionPauseResume
    */
   @Override
   protected void doUpdate() {
-    Pausable		pausable;
-    AbstractActor	root;
-
-    root = m_State.getRunningFlow();
-    if ((root != null) && (root instanceof Pausable))
-      pausable = (Pausable) root;
-    else
-      pausable = null;
-
-    if ((pausable != null) && pausable.isPaused()) {
+    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().isPaused()) {
       setIcon(GUIHelper.getIcon("resume.gif"));
       setName("Resume");
     }
