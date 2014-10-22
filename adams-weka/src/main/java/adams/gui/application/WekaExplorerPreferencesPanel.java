@@ -15,7 +15,7 @@
 
 /**
  * WekaExplorerPreferencesPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -45,9 +45,9 @@ public class WekaExplorerPreferencesPanel
     super.initGUI();
 
     addPropertyType("Tabs", PropertyType.STRING);
-    addPropertyType("InitialDirectory", PropertyType.DIRECTORY);
+    addPropertyType("InitialDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("enableUndo", PropertyType.BOOLEAN);
-    addPropertyType("undoDirectory", PropertyType.DIRECTORY);
+    addPropertyType("undoDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Filter", PropertyType.OBJECT_EDITOR);
     setChooser("Filter", new WekaGenericObjectEditorPanel(weka.filters.Filter.class, new weka.filters.AllFilter(), true));
     addPropertyType("Classifier", PropertyType.OBJECT_EDITOR);
