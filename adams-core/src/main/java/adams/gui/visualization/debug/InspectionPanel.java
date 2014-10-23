@@ -15,7 +15,7 @@
 
 /**
  * InspectionPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -183,6 +183,8 @@ public class InspectionPanel
     updateSize(null);
     if (m_LastPath.length > 0)
       m_Tree.selectPropertyPath(m_LastPath);
+    else
+      m_Tree.setSelectionInterval(0, 0);  // root
   }
 
   /**
