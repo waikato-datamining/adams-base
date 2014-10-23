@@ -139,7 +139,7 @@ public class ChangeResolution
    * @param value	the polynomial
    */
   public void setPolynomial(int value) {
-    m_Polynomial= value;
+    m_Polynomial = value;
     reset();
   }
 
@@ -191,18 +191,18 @@ public class ChangeResolution
       minusposdiff = Double.MAX_VALUE;
       plusposdiff  = Double.MAX_VALUE;
       
-      if (foundmin -1 > 0)
-	minusposdiff=Math.abs(timestamp-data.get(foundmin-1).getTimestamp().getTime());
+      if (foundmin - 1 > 0)
+	minusposdiff = Math.abs(timestamp - data.get(foundmin - 1).getTimestamp().getTime());
       
-      if ( foundmax+1 < data.size())
-	plusposdiff=Math.abs(timestamp-data.get(foundmax+1).getTimestamp().getTime());
+      if (foundmax + 1 < data.size())
+	plusposdiff = Math.abs(timestamp - data.get(foundmax + 1).getTimestamp().getTime());
       
-      if (minusposdiff < plusposdiff){
-	result.add((TimeseriesPoint)data.get(foundmin-1).getClone());
+      if (minusposdiff < plusposdiff) {
+	result.add((TimeseriesPoint) data.get(foundmin - 1).getClone());
 	foundmin--;
       } 
       else {
-	result.add((TimeseriesPoint)data.get(foundmax+1).getClone());
+	result.add((TimeseriesPoint) data.get(foundmax + 1).getClone());
 	foundmax++;
       }
       
