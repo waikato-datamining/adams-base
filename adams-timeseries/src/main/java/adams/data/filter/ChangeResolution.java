@@ -22,6 +22,7 @@ package adams.data.filter;
 import java.util.Date;
 import java.util.List;
 
+import adams.data.SortedList;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 import adams.data.timeseries.TimeseriesUtils;
@@ -171,15 +172,15 @@ public class ChangeResolution
    * @return		the list of closest points
    */
   protected List<TimeseriesPoint> getClosestPoints(long timestamp,List<TimeseriesPoint> data, int numpoints) {
-    Timeseries 	result;
-    int 	found;
-    int 	pos;
-    int 	foundmin;
-    int		foundmax;
-    double 	minusposdiff;
-    double 	plusposdiff;
+    List<TimeseriesPoint> 	result;
+    int 			found;
+    int 			pos;
+    int 			foundmin;
+    int				foundmax;
+    double 			minusposdiff;
+    double 			plusposdiff;
     
-    result = new Timeseries();
+    result = new SortedList<TimeseriesPoint>();
     found  = 0;
     pos    = TimeseriesUtils.findClosestTimestamp(data, new Date(timestamp));
     result.add((TimeseriesPoint)data.get(pos).getClone());
@@ -208,8 +209,8 @@ public class ChangeResolution
       
       found++;
     }
-
-    return(result.toList());
+    
+    return result;
   }
 
   protected double L(double timestamp, List<TimeseriesPoint> closest, int m) {
