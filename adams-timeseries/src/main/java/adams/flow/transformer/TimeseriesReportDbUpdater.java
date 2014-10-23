@@ -42,8 +42,6 @@ import adams.data.timeseries.Timeseries;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -51,10 +49,10 @@ import adams.data.timeseries.Timeseries;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: TimeseriesReportDbReader
+ * &nbsp;&nbsp;&nbsp;default: TimeseriesReportDbUpdater
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -72,9 +70,9 @@ import adams.data.timeseries.Timeseries;
  * </pre>
  * 
  * <pre>-sql &lt;adams.db.SQLStatement&gt; (property: SQL)
- * &nbsp;&nbsp;&nbsp;The SQL statement that selects the key-value pairs for the timeseries report;
- * &nbsp;&nbsp;&nbsp; you can use the {ID} placeholder for the current timeseries' ID in your 
- * &nbsp;&nbsp;&nbsp;SQL statement.
+ * &nbsp;&nbsp;&nbsp;The SQL statement that selects the key-value pairs for the report; you can 
+ * &nbsp;&nbsp;&nbsp;use the {ID} placeholder for the current handler's ID in your SQL statement 
+ * &nbsp;&nbsp;&nbsp;(if it is an adams.data.id.IDHandler).
  * &nbsp;&nbsp;&nbsp;default: select key,value from table where id = \\\"{ID}\\\"
  * </pre>
  * 
@@ -87,14 +85,19 @@ import adams.data.timeseries.Timeseries;
  * 
  * <pre>-column-key &lt;java.lang.String&gt; (property: columnKey)
  * &nbsp;&nbsp;&nbsp;The name of the column containing the key for the key-value pairs to be 
- * &nbsp;&nbsp;&nbsp;added to the timeseries report.
+ * &nbsp;&nbsp;&nbsp;added to the report.
  * &nbsp;&nbsp;&nbsp;default: key
  * </pre>
  * 
  * <pre>-column-value &lt;java.lang.String&gt; (property: columnValue)
  * &nbsp;&nbsp;&nbsp;The name of the column containing the value for the key-value pairs to be 
- * &nbsp;&nbsp;&nbsp;added to the timeseries report.
+ * &nbsp;&nbsp;&nbsp;added to the report.
  * &nbsp;&nbsp;&nbsp;default: value
+ * </pre>
+ * 
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, error messages are suppressed in case empty resultsets are encountered.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
