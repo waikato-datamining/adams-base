@@ -76,6 +76,9 @@ public abstract class AbstractReportDbUpdater
   /** the value column. */
   protected String m_ColumnValue;
   
+  /** whether to be lenient, ie accept empyt resultsets. */
+  protected boolean m_Lenient;
+  
   /** the database connection. */
   protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
 
@@ -101,6 +104,10 @@ public abstract class AbstractReportDbUpdater
     m_OptionManager.add(
 	    "column-value", "columnValue",
 	    "value");
+
+    m_OptionManager.add(
+	    "lenient", "lenient",
+	    false);
   }
 
   /**
@@ -231,6 +238,37 @@ public abstract class AbstractReportDbUpdater
   }
 
   /**
+   * Sets whether to be lenient, i.e., quietly handle empty resultsets.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to be lenient, i.e., quietly handle empty resultsets.
+   *
+   * @return 		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return 
+	"If enabled, error messages are suppressed in case empty resultsets "
+	+ "are encountered.";
+  }
+
+  /**
    * Returns the class of objects that it accepts.
    *
    * @return		the data type
@@ -258,9 +296,13 @@ public abstract class AbstractReportDbUpdater
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
     
     result  = QuickInfoHelper.toString(this, "queryType", m_QueryType, "type: ");
     result += QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ", query: ");
+    value   = QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
+    if (value != null)
+      result += value;
     
     return result;
   }
@@ -405,7 +447,7 @@ public abstract class AbstractReportDbUpdater
 	  throw new IllegalStateException("Unhandled query type: " + m_QueryType);
       }
       SQL.closeAll(rs);
-      if (!dataRead)
+      if (!dataRead && !m_Lenient)
 	result = "No data found: " + query;
       
       if (isHandler) {
