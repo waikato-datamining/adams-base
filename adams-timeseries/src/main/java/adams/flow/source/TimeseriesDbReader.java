@@ -617,9 +617,12 @@ public class TimeseriesDbReader
     Token	result;
     Timeseries	series;
     
+    result = null;
+    
     try {
       series = read();
-      result = new Token(series);
+      if (series != null)
+	result = new Token(series);
     }
     catch (Exception e) {
       handleException("Failed to read timeseries data!", e);
