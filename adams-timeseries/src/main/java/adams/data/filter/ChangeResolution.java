@@ -171,7 +171,7 @@ public class ChangeResolution
    * @param numpoints	the number of points to find
    * @return		the list of closest points
    */
-  protected List<TimeseriesPoint> getClosestPoints(long timestamp,List<TimeseriesPoint> data, int numpoints) {
+  protected List<TimeseriesPoint> getClosestPoints(long timestamp, List<TimeseriesPoint> data, int numpoints) {
     List<TimeseriesPoint> 	result;
     int 			found;
     int 			pos;
