@@ -31,6 +31,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.flow.tree.Tree;
 
 /**
@@ -40,7 +41,7 @@ import adams.gui.flow.tree.Tree;
  * @version $Revision$
  */
 public class FlowTabbedPane
-  extends BaseTabbedPane
+  extends DragAndDropTabbedPane
   implements CleanUpHandler {
 
   /** for serialization. */
