@@ -485,8 +485,12 @@ public class FixedNumFeatures
     fixed = new ArrayList(data);
     
     // trim to size
-    while (fixed.size() > m_NumFeatures)
-      fixed.remove(fixed.size() - 1);
+    while (fixed.size() > m_NumFeatures) {
+      if (m_FillerType == FillerType.FIRST)
+	fixed.remove(0);
+      else
+	fixed.remove(fixed.size() - 1);
+    }
     
     // fill to size
     while (fixed.size() < m_NumFeatures) {
