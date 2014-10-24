@@ -22,6 +22,7 @@ package adams.gui.tools;
 import java.io.File;
 
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
 
 /**
@@ -31,7 +32,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class ImageProcessorTabbedPane
-  extends BaseTabbedPane {
+  extends DragAndDropTabbedPane {
 
   /** for serialization. */
   private static final long serialVersionUID = 4949565559707097445L;
