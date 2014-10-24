@@ -29,7 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
@@ -40,7 +40,7 @@ import adams.gui.tools.SpreadSheetViewerPanel;
  * @version $Revision$
  */
 public class TabbedPane
-  extends BaseTabbedPane {
+  extends DragAndDropTabbedPane {
 
   /** for serialization. */
   private static final long serialVersionUID = -2048229771213837710L;
