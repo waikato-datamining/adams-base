@@ -108,7 +108,7 @@ public abstract class AbstractRowScoreTestCase
    * @param row		the row to use
    * @return		the processed data
    */
-  protected Double process(SpreadSheet data, int row, AbstractRowScore scheme) {
+  protected Double[] process(SpreadSheet data, int row, AbstractRowScore scheme) {
     return scheme.calculateScore(data, row);
   }
 
@@ -146,11 +146,23 @@ public abstract class AbstractRowScoreTestCase
    * @param filename	the filename to save to (without path)
    * @return		true if successfully saved
    */
-  protected boolean save(Double data, String filename) {
-    if (data == null)
-      return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), data);
-    else
-      return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), Utils.doubleToStringFixed(data, 6));
+  protected boolean save(Double[] data, String filename) {
+    String	dataStr;
+    int		i;
+    
+    if (data == null) {
+      dataStr = "" + data;
+    }
+    else {
+      dataStr = "";
+      for (i = 0; i < data.length; i++) {
+	if (i > 0)
+	  dataStr += ",";
+	dataStr += Utils.doubleToStringFixed(data[i], 6);
+      }
+    }
+
+    return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), dataStr);
   }
 
   /**
@@ -158,7 +170,7 @@ public abstract class AbstractRowScoreTestCase
    */
   public void testRegression() {
     SpreadSheet		data;
-    Double		processed;
+    Double[]		processed;
     boolean		ok;
     String		regression;
     int			i;

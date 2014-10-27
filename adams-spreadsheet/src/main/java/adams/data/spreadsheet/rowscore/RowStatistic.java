@@ -195,6 +195,16 @@ public class RowStatistic
   }
 
   /**
+   * Returns how many score values will get generated.
+   * 
+   * @return		the number of scores
+   */
+  @Override
+  public int getNumScores() {
+    return 1;
+  }
+
+  /**
    * Performs the actual calculation of the row score.
    *
    * @param sheet	the spreadsheet to generate the score for
@@ -202,8 +212,8 @@ public class RowStatistic
    * @return		the generated score, null in case of an error
    */
   @Override
-  protected Double doCalculateScore(SpreadSheet sheet, int rowIndex) {
-    Double	result;
+  protected Double[] doCalculateScore(SpreadSheet sheet, int rowIndex) {
+    Double[]	result;
     SpreadSheet	stats;
     int		col;
     int		row;
@@ -235,7 +245,7 @@ public class RowStatistic
 	else if (!cell.isNumeric())
 	  m_LastError = "Cell at " + m_Row + "/" + m_Column + " is not numeric!";
 	else
-	  result = cell.toDouble();
+	  result = new Double[]{cell.toDouble()};
       }
     }
     

@@ -166,7 +166,7 @@ public class SpreadSheetInsertRowScore
 
     m_OptionManager.add(
 	    "header", "header",
-	    "Score");
+	    "Score-#");
 
     m_OptionManager.add(
 	    "score", "score",
@@ -289,7 +289,11 @@ public class SpreadSheetInsertRowScore
    * 			displaying in the GUI or for listing the options.
    */
   public String headerTipText() {
-    return "The name of the score column.";
+    return "The name of the score column; '#' is 1-based index for "
+	+ "filled in score value, '$' is 1-based, absolute column index; "
+	+ "Using a header definition of 'Att-1,Att-2,Att-3' with a size of 5 "
+	+ "will give you: 'Score-#' -> 'Att-1,Att-2,Att-3,Score-1,Score-2', "
+	+ "'Score-$' -> 'Att-1,Att-2,Att-3,Score-4,Score-5'";
   }
 
   /**
@@ -329,19 +333,23 @@ public class SpreadSheetInsertRowScore
   @Override
   protected String doExecute() {
     String		result;
-    List<Double>	scores;
+    List<Double[]>	scores;
     SpreadSheet		sheetOld;
     SpreadSheet		sheetNew;
     int			pos;
+    int			currPos;
     int			row;
-    Double		score;
+    int			i;
+    int			numScores;
+    String		header;
+    Double[]		score;
     Cell		cell;
 
     result   = null;
     sheetOld = (SpreadSheet) m_InputToken.getPayload();
 
     // calc scores
-    scores = new ArrayList<Double>();
+    scores = new ArrayList<Double[]>();
     for (row = 0; row < sheetOld.getRowCount(); row++)
       scores.add(m_Score.calculateScore(sheetOld, row));
     
@@ -356,17 +364,28 @@ public class SpreadSheetInsertRowScore
       sheetNew = sheetOld;
     else
       sheetNew = sheetOld.getClone();
-    sheetNew.insertColumn(pos, m_Header);
+    numScores = m_Score.getNumScores();
+    currPos   = pos;
+    for (i = 0; i < numScores; i++) {
+      header = m_Header;
+      header = header.replace("#", "" + i).replace("$", "" + (currPos + 1));
+      sheetNew.insertColumn(pos, m_Header);
+      currPos++;
+    }
 
     // set scores
     for (row = 0; row < sheetNew.getRowCount(); row++) {
       score = scores.get(row);
       if (score != null) {
-	cell  = sheetNew.getCell(row, pos);
-	if (cell != null)
-	  cell.setContent(score);
-	if (isLoggingEnabled())
-	  getLogger().info(SpreadSheet.getCellPosition(row, pos) + ": " + score + " " + (cell == null ? "failed to set" : "set"));
+	currPos = pos;
+	for (i = 0; i < numScores; i++) {
+	  cell = sheetNew.getCell(row, currPos);
+	  if (cell != null)
+	    cell.setContent(score[i]);
+	  if (isLoggingEnabled())
+	    getLogger().info(SpreadSheet.getCellPosition(row, currPos) + ": " + score + " " + (cell == null ? "failed to set" : "set"));
+	  currPos++;
+	}
       }
       else {
 	if (isLoggingEnabled())

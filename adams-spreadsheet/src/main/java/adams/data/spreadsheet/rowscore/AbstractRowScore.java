@@ -58,6 +58,13 @@ public abstract class AbstractRowScore
   }
 
   /**
+   * Returns how many score values will get generated.
+   * 
+   * @return		the number of scores
+   */
+  public abstract int getNumScores();
+  
+  /**
    * Checks whether the spreadsheet can be handled.
    *
    * @param sheet	the spreadsheet to check
@@ -81,23 +88,23 @@ public abstract class AbstractRowScore
   }
 
   /**
-   * Performs the actual calculation of the row score.
+   * Performs the actual calculation of the row score(s).
    *
    * @param sheet	the spreadsheet to generate the score for
    * @param rowIndex	the row index
-   * @return		the generated score, null in case of an error
+   * @return		the generated score(s), null in case of an error
    */
-  protected abstract Double doCalculateScore(SpreadSheet sheet, int rowIndex);
+  protected abstract Double[] doCalculateScore(SpreadSheet sheet, int rowIndex);
 
   /**
-   * Performs the calculation of the row score.
+   * Performs the calculation of the row score(s).
    *
    * @param sheet	the spreadsheet to generate the score for
    * @param rowIndex	the row index
-   * @return		the generated score, null in case of an error
+   * @return		the generated score(s), null in case of an error
    */
-  public Double calculateScore(SpreadSheet sheet, int rowIndex) {
-    Double 	result;
+  public Double[] calculateScore(SpreadSheet sheet, int rowIndex) {
+    Double[] 	result;
 
     result = null;
 
