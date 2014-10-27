@@ -109,6 +109,16 @@ public class DistanceFromConstant
   }
 
   /**
+   * Returns how many score values will get generated.
+   * 
+   * @return		the number of scores
+   */
+  @Override
+  public int getNumScores() {
+    return 1;
+  }
+
+  /**
    * Performs the actual calculation of the row score.
    *
    * @param sheet	the spreadsheet to generate the score for
@@ -116,17 +126,17 @@ public class DistanceFromConstant
    * @return		the generated score, null in case of an error
    */
   @Override
-  protected Double doCalculateScore(SpreadSheet sheet, int rowIndex) {
-    double	result;
+  protected Double[] doCalculateScore(SpreadSheet sheet, int rowIndex) {
+    Double[]	result;
     Row		row;
     
-    result = 0;
+    result = new Double[]{0.0};
     row    = sheet.getRow(rowIndex);
     for (Cell cell: row.cells()) {
       if (cell.isNumeric())
-	result += Math.pow(cell.toDouble() - m_Constant, 2);
+	result[0] += Math.pow(cell.toDouble() - m_Constant, 2);
     }
-    result = Math.sqrt(result);
+    result[0] = Math.sqrt(result[0]);
     
     return result;
   }
