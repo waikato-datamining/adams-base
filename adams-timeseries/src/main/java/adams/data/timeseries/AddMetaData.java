@@ -14,23 +14,19 @@
  */
 
 /**
- * Values.java
+ * AddMetaData.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.timeseries;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import adams.core.Constants;
-import adams.core.DateFormat;
-import adams.data.DateFormatString;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
- * Simple feature generator that just outputs all the values of a timeseries.
+ * Meta-generator that can add database ID and container ID.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -56,15 +52,19 @@ import adams.data.report.DataType;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-add-timestamp &lt;boolean&gt; (property: addTimestamp)
- * &nbsp;&nbsp;&nbsp;If enabled, the timestamp gets added as well, preceding the value.
+ * <pre>-generator &lt;adams.data.timeseries.AbstractTimeseriesFeatureGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The base generator to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.timeseries.Values -converter \"adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet\"
+ * </pre>
+ * 
+ * <pre>-add-database-id &lt;boolean&gt; (property: addDatabaseID)
+ * &nbsp;&nbsp;&nbsp;If enabled, the database ID of the container gets added to the data.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-timestamp-format &lt;adams.data.DateFormatString&gt; (property: timestampFormat)
- * &nbsp;&nbsp;&nbsp;The format to use for the timestamp strings.
- * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * <pre>-add-id &lt;boolean&gt; (property: addID)
+ * &nbsp;&nbsp;&nbsp;If enabled, the ID of the container gets added to the data.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -72,18 +72,18 @@ import adams.data.report.DataType;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Values
-  extends AbstractTimeseriesFeatureGenerator<Timeseries> {
-
+public class AddMetaData
+  extends AbstractMetaTimeseriesFeatureGenerator {
+  
   /** for serialization. */
-  private static final long serialVersionUID = 9084280445189495060L;
+  private static final long serialVersionUID = 8819500364007702561L;
 
-  /** whether to include the timestamp. */
-  protected boolean m_AddTimestamp;
+  /** whether to add the database ID. */
+  protected boolean m_AddDatabaseID;
   
-  /** the timestamp format. */
-  protected DateFormatString m_TimestampFormat;
-  
+  /** whether to add the container ID. */
+  protected boolean m_AddID;
+
   /**
    * Returns a string describing the object.
    *
@@ -91,7 +91,7 @@ public class Values
    */
   @Override
   public String globalInfo() {
-    return "Simple feature generator that just outputs all the values of a timeseries.";
+    return "Meta-generator that can add database ID and container ID.";
   }
 
   /**
@@ -102,31 +102,41 @@ public class Values
     super.defineOptions();
 
     m_OptionManager.add(
-	    "add-timestamp", "addTimestamp",
+	    "add-database-id", "addDatabaseID",
 	    false);
 
     m_OptionManager.add(
-	    "timestamp-format", "timestampFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+	    "add-id", "addID",
+	    false);
   }
-  
+
   /**
-   * Sets whether to add the timestamp as well (preceding the value).
-   *
-   * @param value	true if to add timestamp
+   * Returns the default generator to use.
+   * 
+   * @return		the generator
    */
-  public void setAddTimestamp(boolean value) {
-    m_AddTimestamp = value;
+  @Override
+  protected AbstractTimeseriesFeatureGenerator getDefaultGenerator() {
+    return new Values();
+  }
+
+  /**
+   * Sets whether to add the database ID.
+   *
+   * @param value	true if to add database ID
+   */
+  public void setAddDatabaseID(boolean value) {
+    m_AddDatabaseID = value;
     reset();
   }
 
   /**
-   * Returns whether to add the timestamp as well (preceding the value).
+   * Returns whether to add the database ID.
    *
-   * @return		true if to add timestamp
+   * @return		true if to add database ID
    */
-  public boolean getAddTimestamp() {
-    return m_AddTimestamp;
+  public boolean getAddDatabaseID() {
+    return m_AddDatabaseID;
   }
 
   /**
@@ -135,27 +145,27 @@ public class Values
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String addTimestampTipText() {
-    return "If enabled, the timestamp gets added as well, preceding the value.";
+  public String addDatabaseIDTipText() {
+    return "If enabled, the database ID of the container gets added to the data.";
   }
-  
+
   /**
-   * Sets the format string to use for the timestamp strings.
+   * Sets whether to add the ID.
    *
-   * @param value	the format
+   * @param value	true if to add ID
    */
-  public void setTimestampFormat(DateFormatString value) {
-    m_TimestampFormat = value;
+  public void setAddID(boolean value) {
+    m_AddID = value;
     reset();
   }
 
   /**
-   * Returns the format string to use for the timestamp strings.
+   * Returns whether to add the ID.
    *
-   * @return		the format
+   * @return		true if to add ID
    */
-  public DateFormatString getTimestampFormat() {
-    return m_TimestampFormat;
+  public boolean getAddID() {
+    return m_AddID;
   }
 
   /**
@@ -164,8 +174,8 @@ public class Values
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String timestampFormatTipText() {
-    return "The format to use for the timestamp strings.";
+  public String addIDTipText() {
+    return "If enabled, the ID of the container gets added to the data.";
   }
 
   /**
@@ -177,15 +187,17 @@ public class Values
   @Override
   public HeaderDefinition createHeader(Timeseries timeseries) {
     HeaderDefinition	result;
-    int			i;
     
-    result = new HeaderDefinition();
-    for (i = 0; i < timeseries.size(); i++) {
-      if (m_AddTimestamp)
-	result.add("Timestamp-" + (i+1), DataType.STRING);
-      result.add("Value-" + (i+1), DataType.NUMERIC);
-    }
+    result = m_Generator.createHeader(timeseries);
     
+    // ID
+    if (m_AddID)
+      result.add(0, "ID", DataType.STRING);
+    
+    // database ID
+    if (m_AddDatabaseID)
+      result.add(0, "DatabaseID", DataType.NUMERIC);
+
     return result;
   }
 
@@ -198,20 +210,19 @@ public class Values
   @Override
   public List<Object>[] generateRows(Timeseries timeseries) {
     List<Object>[]	result;
-    int			i;
-    TimeseriesPoint	point;
-    DateFormat		tsformat;
     
-    result    = new ArrayList[1];
-    result[0] = new ArrayList();
-    tsformat  = m_TimestampFormat.toDateFormat();
-    for (i = 0; i < timeseries.size(); i++) {
-      point = (TimeseriesPoint) timeseries.toList().get(i);
-      if (m_AddTimestamp)
-	result[0].add(tsformat.format(point.getTimestamp()));
-      result[0].add(point.getValue());
+    result = m_Generator.generateRows(timeseries);
+
+    for (List<Object> row: result) {
+      // ID
+      if (m_AddID)
+	row.add(0, timeseries.getID());
+
+      // database ID
+      if (m_AddDatabaseID)
+	row.add(0, timeseries.getDatabaseID());
     }
-    
+
     return result;
   }
 }
