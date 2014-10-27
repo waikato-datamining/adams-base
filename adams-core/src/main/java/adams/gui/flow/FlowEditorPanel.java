@@ -93,6 +93,7 @@ import adams.gui.flow.menu.EditRedo;
 import adams.gui.flow.menu.EditUndo;
 import adams.gui.flow.menu.ExecutionClearGraphicalOutput;
 import adams.gui.flow.menu.ExecutionDisplayErrors;
+import adams.gui.flow.menu.ExecutionGC;
 import adams.gui.flow.menu.ExecutionHeadless;
 import adams.gui.flow.menu.ExecutionPauseResume;
 import adams.gui.flow.menu.ExecutionRun;
@@ -278,6 +279,9 @@ public class FlowEditorPanel
 
   /** the "headless" action. */
   protected FlowEditorAction m_ActionExecutionHeadless;
+
+  /** the "gc" action. */
+  protected FlowEditorAction m_ActionExecutionGC;
 
   /** the "check setup" action. */
   protected FlowEditorAction m_ActionExecutionValidateSetup;
@@ -645,6 +649,11 @@ public class FlowEditorPanel
     m_ActionExecutionHeadless = action;
     m_MenuItems.add(action);
 
+    // Execution/GC
+    action = new ExecutionGC();
+    m_ActionExecutionGC = action;
+    m_MenuItems.add(action);
+
     // View/Show toolbar
     action = new ViewShowToolbar();
     m_ActionViewShowToolbar = action;
@@ -959,6 +968,7 @@ public class FlowEditorPanel
       menu.add(m_ActionExecutionClearGraphicalOutput);
       menu.addSeparator();
       menu.add(m_ActionExecutionHeadless);
+      menu.add(m_ActionExecutionGC);
 
       // View
       menu = new BaseMenu(MENU_VIEW);

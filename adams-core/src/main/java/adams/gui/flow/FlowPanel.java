@@ -253,7 +253,7 @@ public class FlowPanel
       showStatus("Finishing up");
       m_Flow.wrapUp();
       m_Owner.clearRegisteredBreapoints();
-      if (getProperties().getBoolean("GarbageCollectAfterFinish", true))
+      if (m_Owner.getRunGC())
 	System.gc();
 
       m_Owner.setLastFlow(m_Flow);
@@ -426,6 +426,9 @@ public class FlowPanel
   /** whether to execute the flow in headless mode. */
   protected boolean m_Headless;
 
+  /** whether to perform a GC after the flow execution. */
+  protected boolean m_RunGC;
+
   /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
   protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
 
@@ -570,6 +573,25 @@ public class FlowPanel
    */
   public boolean isHeadless() {
     return m_Headless;
+  }
+
+  /**
+   * Sets whether to run the GC after the flow finished executing.
+   *
+   * @param value	if true GC gets called
+   */
+  public void setRunGC(boolean value) {
+    if (!isRunning() && !isStopping())
+      m_RunGC = value;
+  }
+
+  /**
+   * Returns whether the GC gets called after the flow execution.
+   *
+   * @return		true if to run GC
+   */
+  public boolean getRunGC() {
+    return m_RunGC;
   }
 
   /**

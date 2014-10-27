@@ -114,6 +114,9 @@ adams.gui.flow.menu.ExecutionClearGraphicalOutput-Shortcut=
 adams.gui.flow.menu.ExecutionHeadless-Icon=
 adams.gui.flow.menu.ExecutionHeadless-Mnemonic=H
 adams.gui.flow.menu.ExecutionHeadless-Shortcut=control H
+adams.gui.flow.menu.ExecutionGC-Icon=duke.png
+adams.gui.flow.menu.ExecutionGC-Mnemonic=G
+adams.gui.flow.menu.ExecutionGC-Shortcut=
 
 # View
 adams.gui.flow.menu.ViewShowToolbar-Icon=
