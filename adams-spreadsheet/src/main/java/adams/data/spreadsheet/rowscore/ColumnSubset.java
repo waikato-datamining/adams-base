@@ -25,9 +25,27 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 
 /**
  <!-- globalinfo-start -->
+ * Applies the specified base row score algorithm to the specified subset of columns and returns the calculated score.
+ * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-row-score &lt;adams.data.spreadsheet.rowscore.AbstractRowScore&gt; (property: rowScore)
+ * &nbsp;&nbsp;&nbsp;The row score algorithm to apply to the column subset.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.rowscore.ArrayStatistic -statistic adams.data.statistics.ArrayMean
+ * </pre>
+ * 
+ * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to apply the specified row score algorithm to.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
