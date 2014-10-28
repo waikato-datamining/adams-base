@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -46,6 +47,7 @@ import javax.swing.filechooser.FileFilter;
 import adams.core.EnumHelper;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.base.BasePassword;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -95,6 +97,8 @@ public class PropertiesParameterPanel
     DOUBLE,
     /** string. */
     STRING,
+    /** password. */
+    PASSWORD,
     /** time. */
     TIME,
     /** date. */
@@ -126,7 +130,7 @@ public class PropertiesParameterPanel
     /** string representing a blank-separated list (fixed list). */
     BLANK_SEPARATED_LIST_FIXED,
     /** Object editor. */
-    OBJECT_EDITOR
+    OBJECT_EDITOR,
   }
   
   /** the panel for the properties. */
@@ -658,6 +662,13 @@ public class PropertiesParameterPanel
 	  textfield.setBorder(BorderFactory.createEtchedBorder());
 	  addProperty(key, label, textfield);
 	  break;
+	case PASSWORD:
+	  final JPasswordField pwfield = new JPasswordField(20);
+	  pwfield.setText(value.getProperty(key));
+	  pwfield.setToolTipText(help);
+	  pwfield.setBorder(BorderFactory.createEtchedBorder());
+	  addProperty(key, label, pwfield);
+	  break;
 	case BOOLEAN:
 	  checkbox = new JCheckBox();
 	  checkbox.setSelected(value.getBoolean(key));
@@ -765,6 +776,7 @@ public class PropertiesParameterPanel
     Component			comp;
     PropertyType		type;
     JTextField			textfield;
+    JPasswordField		pwfield;
     JCheckBox			checkbox;
     JSpinner			spinner;
     FontChooserPanel		fontPanel;
@@ -803,6 +815,10 @@ public class PropertiesParameterPanel
 	case STRING:
 	  textfield = (JTextField) comp;
 	  result.setProperty(key, textfield.getText());
+	  break;
+	case PASSWORD:
+	  pwfield = (JPasswordField) comp;
+	  result.setPassword(key, new BasePassword(pwfield.getText()));
 	  break;
 	case BOOLEAN:
 	  checkbox = (JCheckBox) comp;
