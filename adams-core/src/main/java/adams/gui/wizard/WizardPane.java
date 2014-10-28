@@ -15,7 +15,7 @@
 
 /**
  * WizardPane.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -166,6 +166,10 @@ public class WizardPane
     m_ButtonNext.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+	AbstractWizardPage currPage = getPageAt(getSelectedIndex());
+	AbstractWizardPage nextPage = getPageAt(getSelectedIndex() + 1);
+	if (currPage.getProceedAction() != null)
+	  currPage.getProceedAction().performProceedAction(currPage, nextPage);
 	setSelectedPage(getSelectedIndex() + 1);
       }
     });
@@ -218,6 +222,7 @@ public class WizardPane
    * @param page	the page
    */
   public void addPage(AbstractWizardPage page) {
+    page.setOwner(this);
     m_PageLookup.put(page.getPageName(), page);
     if (m_PageOrder.contains(page.getPageName()))
       m_PageOrder.remove(page.getPageName());
@@ -238,7 +243,8 @@ public class WizardPane
    * @param index	the index of the page to remove
    */
   public void removePageAt(int index) {
-    String	name;
+    String		name;
+    AbstractWizardPage	page;
     
     if ((index < 0) || (index >= m_PageOrder.size()))
       return;
@@ -246,7 +252,9 @@ public class WizardPane
     name = m_PageOrder.get(index);
     m_PageComponent.removeAll();
     m_PageOrder.remove(index);
-    m_PageLookup.remove(name);
+    page = m_PageLookup.remove(name);
+    if (page != null)
+      page.setOwner(null);
     m_ModelNames.removeElement(name);
     
     if (index == m_SelectedPage) {
@@ -345,7 +353,7 @@ public class WizardPane
   /**
    * Updates the status of the buttons.
    */
-  protected void updateButtons() {
+  public void updateButtons() {
     AbstractWizardPage	current;
     
     current = getSelectedPage();

@@ -15,7 +15,7 @@
 
 /**
  * AbstractWizardPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -42,6 +42,9 @@ public abstract class AbstractWizardPage
   /** for serialization. */
   private static final long serialVersionUID = 391442213775313771L;
   
+  /** the wizard this page belongs to. */
+  protected WizardPane m_Owner;
+  
   /** the name of the page. */
   protected String m_PageName;
 
@@ -54,6 +57,9 @@ public abstract class AbstractWizardPage
   /** the page check to perform. */
   protected PageCheck m_PageCheck;
   
+  /** the action to perform when proceeding. */
+  protected ProceedAction m_ProceedAction;
+  
   /**
    * Initializes the members.
    */
@@ -61,8 +67,10 @@ public abstract class AbstractWizardPage
   protected void initialize() {
     super.initialize();
     
-    m_PageName  = "Page";
-    m_PageCheck = new DummyPageCheck();
+    m_PageName      = "Page";
+    m_PageCheck     = new DummyPageCheck();
+    m_ProceedAction = new DummyProceedAction();
+    m_Owner         = null;
   }
 
   /**
@@ -82,6 +90,24 @@ public abstract class AbstractWizardPage
     add(m_ScrollPaneDescription, BorderLayout.NORTH);
   }
 
+  /**
+   * Sets the wizard this page belongs to.
+   * 
+   * @param value	the owner
+   */
+  public void setOwner(WizardPane value) {
+    m_Owner = value;
+  }
+  
+  /**
+   * Returns the wizard this page belongs to.
+   * 
+   * @return		the owner, null if none set
+   */
+  public WizardPane getOwner() {
+    return m_Owner;
+  }
+  
   /**
    * Sets the page name.
    * 
@@ -170,6 +196,24 @@ public abstract class AbstractWizardPage
   }
   
   /**
+   * Sets the proceed action instance to use.
+   * 
+   * @param value	the action to use
+   */
+  public void setProceedAction(ProceedAction value) {
+    m_ProceedAction = value;
+  }
+  
+  /**
+   * Returns the proceed action instance in use.
+   * 
+   * @return		the action in use
+   */
+  public ProceedAction getProceedAction() {
+    return m_ProceedAction;
+  }
+  
+  /**
    * Returns whether we can proceed with the next page.
    * 
    * @return		true if we can proceed
@@ -177,6 +221,14 @@ public abstract class AbstractWizardPage
    */
   public boolean canProceed() {
     return m_PageCheck.checkPage(this);
+  }
+  
+  /**
+   * Updates the wizard's buttons.
+   */
+  public void updateButtons() {
+    if (m_Owner != null)
+      m_Owner.updateButtons();
   }
   
   /**
