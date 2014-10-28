@@ -177,6 +177,9 @@ public class PropertiesParameterPanel
   
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
+
+  /** the default size for SQL fields. */
+  protected Dimension m_DefaultSQLDimension;
   
   /**
    * Initializes the members.
@@ -195,6 +198,7 @@ public class PropertiesParameterPanel
     m_Label               = new Hashtable<String,String>();
     m_Order               = new ArrayList<String>();
     m_FileChooser         = null;
+    m_DefaultSQLDimension = new Dimension(200, 70);
   }
 
   /**
@@ -243,6 +247,35 @@ public class PropertiesParameterPanel
   protected void finishInit() {
     super.finishInit();
     setButtonPanelVisible(false);
+  }
+
+  /**
+   * Sets the default dimension to use for SQL query fields.
+   * 
+   * @param value	the preferred size
+   */
+  public void setDefaultSQLDimension(Dimension value) {
+    int				i;
+    SQLSyntaxEditorPanel	query;
+    
+    m_DefaultSQLDimension = value;
+    
+    // update fields
+    for (i = 0; i < m_PanelProperties.getParameterCount(); i++) {
+      if (m_PanelProperties.getParameter(i) instanceof SQLSyntaxEditorPanel) {
+	query = (SQLSyntaxEditorPanel) m_PanelProperties.getParameter(i);
+	query.setPreferredSize(m_DefaultSQLDimension);
+      }
+    }
+  }
+  
+  /**
+   * Returns the dimension to use for SQL query fields.
+   * 
+   * @return		the preferred size
+   */
+  public Dimension getDefaultSQLDimension() {
+    return m_DefaultSQLDimension;
   }
   
   /**
@@ -683,6 +716,8 @@ public class PropertiesParameterPanel
 	  break;
 	case SQL:
 	  final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
+	  query.setWordWrap(true);
+	  query.setPreferredSize(m_DefaultSQLDimension);
 	  query.setContent(value.getProperty(key));
 	  query.setToolTipText(help);
 	  addProperty(key, label, query);
