@@ -62,7 +62,7 @@ public class StartPage
   protected void finishInit() {
     super.finishInit();
     setPageName("Welcome");
-    setDescription("<html><h2>Welcome</h2>This wizard will guide you through the process.<br>Please click on <b>Next</b> to continue.</html>", true);
+    setDescription("<html><h2>Welcome</h2>This wizard will guide you through the process.<br>Please click on <b>Next</b> to continue.</html>");
   }
   
   /**

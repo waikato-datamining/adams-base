@@ -101,6 +101,16 @@ public abstract class AbstractWizardPage
   }
   
   /**
+   * Sets the description of the page. Checks for "html" tag to determine
+   * whether the content is HTML or plain-text.
+   * 
+   * @param value	the description (plain-text or html)
+   */
+  public void setDescription(String value) {
+    setDescription(value, (value.toLowerCase().indexOf("<html>") > -1));
+  }
+  
+  /**
    * Sets the description of the page.
    * 
    * @param value	the description

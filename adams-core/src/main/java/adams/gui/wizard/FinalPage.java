@@ -62,7 +62,7 @@ public class FinalPage
   protected void finishInit() {
     super.finishInit();
     setPageName("Finish");
-    setDescription("<html><h2>Finished</h2>Please click on <b>Finish</b> to finish up.</html>", true);
+    setDescription("<html><h2>Finished</h2>Please click on <b>Finish</b> to finish up.</html>");
   }
   
   /**
