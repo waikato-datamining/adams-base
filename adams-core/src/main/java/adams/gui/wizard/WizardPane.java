@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -433,6 +434,13 @@ public class WizardPane
     shpage.setDescription("<html><h3>Object properties</h3>Here you can change all properties of the " + CsvSpreadSheetReader.class.getName() + ".", true);
     shpage.setTarget(new CsvSpreadSheetReader());
     wizard.addPage(shpage);
+    ListPage lpage = new ListPage();
+    lpage.setPageName("List");
+    lpage.setDescription("Select any number of items from the list below", false);
+    lpage.setValues(new String[]{"1", "2", "3", "4", "5"});
+    lpage.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    lpage.setSelectedValues(new String[]{"3", "5"});
+    wizard.addPage(lpage);
     wizard.addPage(new FinalPage());
     final BaseFrame frame = new BaseFrame("Example Wizard");
     wizard.addActionListener(new ActionListener() {
