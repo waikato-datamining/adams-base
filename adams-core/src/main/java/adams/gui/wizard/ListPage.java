@@ -36,7 +36,8 @@ import adams.gui.core.BaseScrollPane;
  * Wizard page that use a {@link BaseList} for displaying a list of values.
  * The selected values are available in the properties object using the
  * key {@link #KEY_SELECTED}, all available values using the key 
- * {@link #KEY_LIST} (both lists are comma-separated).
+ * {@link #KEY_LIST} (both lists are comma-separated). The latter is optional
+ * and not stored by default.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9915 $
