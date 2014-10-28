@@ -52,13 +52,10 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * @version $Revision$
  */
 public class ColumnSubset
-  extends AbstractRowScore {
+  extends AbstractMetaRowScore {
 
   /** for serialization. */
   private static final long serialVersionUID = -9037884201569670797L;
-
-  /** the row score to use on the subset. */
-  protected AbstractRowScore m_RowScore;
   
   /** the subset of columns to use. */
   protected SpreadSheetColumnRange m_Columns;
@@ -86,10 +83,6 @@ public class ColumnSubset
     super.defineOptions();
 
     m_OptionManager.add(
-	    "row-score", "rowScore",
-	    new ArrayStatistic());
-
-    m_OptionManager.add(
 	    "columns", "columns",
 	    new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
   }
@@ -103,25 +96,6 @@ public class ColumnSubset
     
     m_Header = null;
   }
-  
-  /**
-   * Sets the row score algorithm to use.
-   *
-   * @param value	the algorithm
-   */
-  public void setRowScore(AbstractRowScore value) {
-    m_RowScore = value;
-    reset();
-  }
-
-  /**
-   * Returns the row score algorithm in use.
-   *
-   * @return		the algorithm
-   */
-  public AbstractRowScore getRowScore() {
-    return m_RowScore;
-  }
 
   /**
    * Returns the tip text for this property.
@@ -129,6 +103,7 @@ public class ColumnSubset
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String rowScoreTipText() {
     return "The row score algorithm to apply to the column subset.";
   }
@@ -160,16 +135,6 @@ public class ColumnSubset
    */
   public String columnsTipText() {
     return "The range of columns to apply the specified row score algorithm to.";
-  }
-
-  /**
-   * Returns how many score values will get generated.
-   * 
-   * @return		the number of scores
-   */
-  @Override
-  public int getNumScores() {
-    return m_RowScore.getNumScores();
   }
 
   /**
