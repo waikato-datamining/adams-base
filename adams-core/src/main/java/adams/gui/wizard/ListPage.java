@@ -56,6 +56,9 @@ public class ListPage
   /** the parameter panel for displaying the parameters. */
   protected BaseList m_List;
   
+  /** whether to use store the full list of items in the properties as well. */
+  protected boolean m_AddFullList;
+  
   /**
    * Default constructor.
    */
@@ -71,6 +74,16 @@ public class ListPage
   public ListPage(String pageName) {
     this();
     setPageName(pageName);
+  }
+  
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_AddFullList = false;
   }
   
   /**
@@ -164,6 +177,26 @@ public class ListPage
   }
   
   /**
+   * Sets whether to store the full list of items (not just selected ones) 
+   * in the properties as well.
+   * 
+   * @param value	true if to add
+   */
+  public void setAddFullList(boolean value) {
+    m_AddFullList = value;
+  }
+
+  /**
+   * Returns whether to store the full list of items (not just selected ones) 
+   * in the properties as well.
+   * 
+   * @param return	true if to add
+   */
+  public boolean getAddFullList() {
+    return m_AddFullList;
+  }
+  
+  /**
    * Returns the content of the page (ie parameters) as properties.
    * 
    * @return		the parameters as properties
@@ -173,8 +206,9 @@ public class ListPage
     Properties	result;
     
     result = new Properties();
-    
-    result.setProperty(KEY_LIST,     Utils.flatten(((DefaultListModel) m_List.getModel()).toArray(), ","));
+
+    if (m_AddFullList)
+      result.setProperty(KEY_LIST, Utils.flatten(((DefaultListModel) m_List.getModel()).toArray(), ","));
     result.setProperty(KEY_SELECTED, Utils.flatten(m_List.getSelectedValuesList(), ","));
     
     return result;
