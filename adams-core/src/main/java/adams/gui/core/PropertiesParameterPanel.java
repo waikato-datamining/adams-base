@@ -99,6 +99,8 @@ public class PropertiesParameterPanel
     STRING,
     /** password. */
     PASSWORD,
+    /** SQL query. */
+    SQL,
     /** time. */
     TIME,
     /** date. */
@@ -664,10 +666,16 @@ public class PropertiesParameterPanel
 	  break;
 	case PASSWORD:
 	  final JPasswordField pwfield = new JPasswordField(20);
-	  pwfield.setText(value.getProperty(key));
+	  pwfield.setText(value.getPassword(key).getValue());
 	  pwfield.setToolTipText(help);
 	  pwfield.setBorder(BorderFactory.createEtchedBorder());
 	  addProperty(key, label, pwfield);
+	  break;
+	case SQL:
+	  final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
+	  query.setContent(value.getProperty(key));
+	  query.setToolTipText(help);
+	  addProperty(key, label, query);
 	  break;
 	case BOOLEAN:
 	  checkbox = new JCheckBox();
@@ -777,6 +785,7 @@ public class PropertiesParameterPanel
     PropertyType		type;
     JTextField			textfield;
     JPasswordField		pwfield;
+    SQLSyntaxEditorPanel	query;
     JCheckBox			checkbox;
     JSpinner			spinner;
     FontChooserPanel		fontPanel;
@@ -819,6 +828,10 @@ public class PropertiesParameterPanel
 	case PASSWORD:
 	  pwfield = (JPasswordField) comp;
 	  result.setPassword(key, new BasePassword(pwfield.getText()));
+	  break;
+	case SQL:
+	  query = (SQLSyntaxEditorPanel) comp;
+	  result.setProperty(key, query.getContent());
 	  break;
 	case BOOLEAN:
 	  checkbox = (JCheckBox) comp;
