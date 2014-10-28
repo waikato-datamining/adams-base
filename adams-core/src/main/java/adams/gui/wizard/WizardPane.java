@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import adams.core.Properties;
+import adams.core.base.BasePassword;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
@@ -407,10 +408,16 @@ public class WizardPane
     page.getParameterPanel().addPropertyType("stringlist", PropertyType.LIST);
     page.getParameterPanel().setLabel("stringlist", "String list");
     page.getParameterPanel().setList("stringlist", new String[]{"A", "B", "C"});
+    page.getParameterPanel().addPropertyType("passwordvalue", PropertyType.PASSWORD);
+    page.getParameterPanel().setLabel("passwordvalue", "Password value");
+    page.getParameterPanel().addPropertyType("sqlvalue", PropertyType.SQL);
+    page.getParameterPanel().setLabel("sqlvalue", "SQL value");
     Properties props = new Properties();
     props.setDouble("doublevalue", 1.234);
     props.setBoolean("booleanvalue", true);
     props.setProperty("stringlist", "B");
+    props.setPassword("passwordvalue", new BasePassword("secret"));
+    props.setProperty("sqlvalue", "select * from table1 where a < b");
     page.setProperties(props);
     page.setDescription("Here is the description of the first parameter page.\n\nAnother line.", false);
     wizard.addPage(page);
