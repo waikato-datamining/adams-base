@@ -119,7 +119,11 @@ public abstract class AbstractDatabaseConnectionPage
     super.initGUI();
     
     setDescription(
-	"Please enter the database connection parameters.\n");
+	"Please enter the database connection parameters.\n"
+	+ "A JDBC connection URL has the following format:\n"
+	+ "  jdbc:<protocol>://<url or ip>[:port]/[database]\n"
+	+ "For instance, a MySQL database looks like this:\n"
+	+ "  jdbc:mysql://localhost:3306/cms");
     getParameterPanel().addPropertyType(CONNECTION_URL, PropertyType.STRING);
     getParameterPanel().setLabel(CONNECTION_URL, "JDBC URL");
     getParameterPanel().addPropertyType(CONNECTION_USER, PropertyType.STRING);
