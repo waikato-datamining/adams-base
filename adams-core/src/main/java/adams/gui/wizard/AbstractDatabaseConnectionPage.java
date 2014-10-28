@@ -36,6 +36,13 @@ public abstract class AbstractDatabaseConnectionPage
   /** for serialization. */
   private static final long serialVersionUID = -7633802524155866313L;
 
+  /**
+   * Ancestor for page checks that check the connection with the current
+   * connection parameters.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision: 9915 $
+   */
   public static abstract class AbstractDatabaseConnectionPageCheck 
     implements PageCheck<AbstractDatabaseConnectionPage> {
     

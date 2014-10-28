@@ -35,6 +35,13 @@ public class DatabaseConnectionPage
   /** for serialization. */
   private static final long serialVersionUID = -7633802524155866313L;
 
+  /**
+   * Page check for checking the connection with the current
+   * connection parameters.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision: 9915 $
+   */
   public static class DatabaseConnectionPageCheck 
     extends AbstractDatabaseConnectionPageCheck {
     
