@@ -39,5 +39,5 @@ public interface ProceedAction<C extends AbstractWizardPage, N extends AbstractW
    * @param currPage	the current page that is about to be left
    * @param nextPage	the next page that will get accessed
    */
-  public void performProceedAction(C currPage, N nextPage);
+  public void onProceed(C currPage, N nextPage);
 }

@@ -38,6 +38,6 @@ public class DummyProceedAction
    * @param nextPage	the next page that will get accessed
    */
   @Override
-  public void performProceedAction(AbstractWizardPage currPage, AbstractWizardPage nextPage) {
+  public void onProceed(AbstractWizardPage currPage, AbstractWizardPage nextPage) {
   }
 }

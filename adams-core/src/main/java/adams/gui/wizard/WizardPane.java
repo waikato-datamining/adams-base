@@ -169,7 +169,7 @@ public class WizardPane
 	AbstractWizardPage currPage = getPageAt(getSelectedIndex());
 	AbstractWizardPage nextPage = getPageAt(getSelectedIndex() + 1);
 	if (currPage.getProceedAction() != null)
-	  currPage.getProceedAction().performProceedAction(currPage, nextPage);
+	  currPage.getProceedAction().onProceed(currPage, nextPage);
 	setSelectedPage(getSelectedIndex() + 1);
       }
     });
