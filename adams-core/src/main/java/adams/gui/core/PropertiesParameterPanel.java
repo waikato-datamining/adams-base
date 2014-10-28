@@ -28,6 +28,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -376,6 +377,15 @@ public class PropertiesParameterPanel
       return m_ActualPropertyTypes.get(property);
     else
       return PropertyType.STRING;
+  }
+
+  /**
+   * Sets the order for the properties.
+   * 
+   * @param value	the ordered property names
+   */
+  public void setPropertyOrder(String[] value) {
+    setPropertyOrder(Arrays.asList(value));
   }
 
   /**
