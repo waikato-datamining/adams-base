@@ -24,6 +24,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.Date;
 
+import adams.core.Constants;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.timeseries.Timeseries;
@@ -113,7 +114,7 @@ public class TimeseriesDbReader
   private static final long serialVersionUID = -1030024345072684197L;
   
   /** the placeholder for the ID. */
-  public final static String PLACEHOLDER_ID = "{ID}";
+  public final static String PLACEHOLDER_ID = Constants.PLACEHOLDER_ID;
 
   /** the SQL statement to execute. */
   protected SQLStatement m_SQL;

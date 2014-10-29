@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.Constants;
 import adams.data.timeseries.Timeseries;
 
 /**
@@ -121,7 +122,7 @@ public class TimeseriesReportDbUpdater
     return
         "Adds all the data to the report of the timeseries "
 	+ "passing through that the SQL statement returns.\n"
-        + "The " + PLACEHOLDER_ID + " placeholder can be used in the SQL "
+        + "The " + Constants.PLACEHOLDER_ID + " placeholder can be used in the SQL "
         + "statement to represent the current timeseries' ID.\n"
         + "The following types of SQL statements are supported:\n"
         + "- multiple rows of key-value pairs.\n"
