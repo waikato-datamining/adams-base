@@ -152,6 +152,9 @@ data, as well as make future predictions. \\
 	\item \textit{SpreadSheetToTimeseries} -- similar to the 
 	\textit{TimeseriesDbReader} source, this transformer generates one or more
 	timeseries containers from specified columns in a spreadsheet.
+	\item \textit{TimeseriesDbReader} -- reads timeseries data from any
+	JDBC database (required columns: timestamp, value) using the incoming 
+	token as identifier for the timeseries.
 	\item \textit{TimeseriesFeatureGenerator} -- extracts features from a
 	timeseries and generates, e.g., spreadsheet data from it.
 	\item \textit{TimeseriesFileReader} -- loads timeseries data from 
