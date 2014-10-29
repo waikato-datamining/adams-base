@@ -108,6 +108,9 @@ public class WizardPane
   /** the action listeners (ie hitting cancel/finish). */
   protected HashSet<ActionListener> m_ActionListeners;
   
+  /** the custom text for the "finish" button. */
+  protected String m_CustomFinishText;
+  
   /**
    * Initializes the members.
    */
@@ -115,10 +118,11 @@ public class WizardPane
   protected void initialize() {
     super.initialize();
     
-    m_PageLookup      = new HashMap<String, AbstractWizardPage>();
-    m_PageOrder       = new ArrayList<String>();
-    m_SelectedPage    = -1;
-    m_ActionListeners = new HashSet<ActionListener>();
+    m_PageLookup       = new HashMap<String, AbstractWizardPage>();
+    m_PageOrder        = new ArrayList<String>();
+    m_SelectedPage     = -1;
+    m_ActionListeners  = new HashSet<ActionListener>();
+    m_CustomFinishText = null;
   }
   
   /**
@@ -179,7 +183,12 @@ public class WizardPane
     m_ButtonCancelFinish.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	notifyActionListeners(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, m_ButtonCancelFinish.getText()));
+	String action;
+	if (m_ButtonCancelFinish.getText().equals(ACTION_CANCEL))
+	  action = ACTION_CANCEL;
+	else
+	  action = ACTION_FINISH;
+	notifyActionListeners(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, action));
       }
     });
     m_PanelButtons.add(m_ButtonCancelFinish);
@@ -362,7 +371,7 @@ public class WizardPane
     m_ButtonNext.setEnabled((current != null) && (m_SelectedPage < getPageCount() - 1) && current.canProceed());
     m_ButtonCancelFinish.setEnabled(true);
     if (m_SelectedPage == getPageCount() - 1)
-      m_ButtonCancelFinish.setText(ACTION_FINISH);
+      m_ButtonCancelFinish.setText((m_CustomFinishText == null) ?  ACTION_FINISH : m_CustomFinishText);
     else
       m_ButtonCancelFinish.setText(ACTION_CANCEL);
   }
@@ -396,6 +405,26 @@ public class WizardPane
     listeners = m_ActionListeners.toArray(new ActionListener[m_ActionListeners.size()]);
     for (ActionListener listener: listeners)
       listener.actionPerformed(e);
+  }
+  
+  /**
+   * Sets custom text to use for the "finish" button.
+   * 
+   * @param value	the text, null or empty string to use default
+   */
+  public void setCustomFinishText(String value) {
+    if ((value != null) && (value.trim().length() == 0))
+	value = null;
+    m_CustomFinishText = value;
+  }
+  
+  /**
+   * Returns the custom text to use for the "finish" button, if any.
+   * 
+   * @return		the text, null if not used
+   */
+  public String getCustomFinishText() {
+    return m_CustomFinishText;
   }
   
   /**
