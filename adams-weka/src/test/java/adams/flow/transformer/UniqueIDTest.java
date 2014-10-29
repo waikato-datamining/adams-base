@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.Constants;
 import adams.core.io.PlaceholderFile;
 import adams.data.conversion.WekaInstanceToAdamsInstance;
 import adams.data.id.SimpleIDGenerator;
@@ -57,6 +58,7 @@ public class UniqueIDTest
    *
    * @throws Exception if an error occurs
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -69,6 +71,7 @@ public class UniqueIDTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("vote.arff");
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
@@ -81,6 +84,7 @@ public class UniqueIDTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new PlaceholderFile[]{new TmpFile("vote.arff")});
@@ -98,7 +102,7 @@ public class UniqueIDTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     SimpleIDGenerator simple = new SimpleIDGenerator();
-    simple.setFormat(SimpleIDGenerator.PLACEHOLDER_ID);
+    simple.setFormat(Constants.PLACEHOLDER_ID);
     IDGenerator idg = new IDGenerator();
     idg.setGenerator(simple);
 
