@@ -34,34 +34,6 @@ public class DatabaseConnectionPage
 
   /** for serialization. */
   private static final long serialVersionUID = -7633802524155866313L;
-
-  /**
-   * Page check for checking the connection with the current
-   * connection parameters.
-   * 
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 9915 $
-   */
-  public static class DatabaseConnectionPageCheck 
-    extends AbstractDatabaseConnectionPageCheck {
-    
-    /** for serialization. */
-    private static final long serialVersionUID = 5859663043469959157L;
-
-    /**
-     * Creates a new connection object (not connected).
-     * 
-     * @param props	the connection parameters
-     * @return		the connection
-     */
-    @Override
-    protected AbstractDatabaseConnection newDatabaseConnection(Properties props) {
-      return new DatabaseConnection(
-	  props.getProperty(CONNECTION_URL), 
-	  props.getProperty(CONNECTION_USER), 
-	  props.getPassword(CONNECTION_PASSWORD));
-    }
-  }
   
   /**
    * Default constructor.
@@ -88,5 +60,21 @@ public class DatabaseConnectionPage
   @Override
   protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
     return DatabaseConnection.getSingleton();
+  }
+  
+  /**
+   * Returns a database connection using the user-supplied parameters.
+   * 
+   * @return		the connection
+   */
+  @Override
+  public AbstractDatabaseConnection getDatabaseConnection() {
+    Properties	props;
+    
+    props = getProperties();
+    return new DatabaseConnection(
+	props.getProperty(CONNECTION_URL), 
+	props.getProperty(CONNECTION_USER), 
+	props.getPassword(CONNECTION_PASSWORD));
   }
 }

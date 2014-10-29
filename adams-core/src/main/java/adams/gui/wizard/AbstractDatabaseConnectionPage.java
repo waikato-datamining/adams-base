@@ -43,19 +43,11 @@ public abstract class AbstractDatabaseConnectionPage
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision: 9915 $
    */
-  public static abstract class AbstractDatabaseConnectionPageCheck 
+  public static class DatabaseConnectionPageCheck 
     implements PageCheck<AbstractDatabaseConnectionPage> {
     
     /** for serialization. */
     private static final long serialVersionUID = 5859663043469959157L;
-
-    /**
-     * Creates a new connection object (not connected).
-     * 
-     * @param props	the connection parameters
-     * @return		the connection
-     */
-    protected abstract AbstractDatabaseConnection newDatabaseConnection(Properties props);
     
     /**
      * Checks the page.
@@ -65,11 +57,9 @@ public abstract class AbstractDatabaseConnectionPage
      */
     @Override
     public boolean checkPage(AbstractDatabaseConnectionPage page) {
-      Properties 			props;
       AbstractDatabaseConnection 	conn;
       
-      props = page.getProperties();
-      conn  = newDatabaseConnection(props);
+      conn = page.getDatabaseConnection();
       
       try {
 	return conn.connect();
@@ -151,4 +141,11 @@ public abstract class AbstractDatabaseConnectionPage
    * @return		the default connection
    */
   protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
+  
+  /**
+   * Returns a database connection using the user-supplied parameters.
+   * 
+   * @return		the connection
+   */
+  protected abstract AbstractDatabaseConnection getDatabaseConnection();
 }
