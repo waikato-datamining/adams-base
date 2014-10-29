@@ -15,9 +15,11 @@
 
 /**
  * SimpleIDGenerator.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-20914 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.id;
+
+import adams.core.Constants;
 
 /**
  <!-- globalinfo-start -->
@@ -60,12 +62,6 @@ public class SimpleIDGenerator
   /** for serialization. */
   private static final long serialVersionUID = -3963694054822483252L;
 
-  /** the placeholder for the ID. */
-  public static final String PLACEHOLDER_ID = "{ID}";
-
-  /** the placeholder for the database ID. */
-  public static final String PLACEHOLDER_DATABASEID = "{DBID}";
-
   /** the missing string, if the object doesn't implement a certain interface. */
   public static final String MISSING = "MISSING";
 
@@ -77,6 +73,7 @@ public class SimpleIDGenerator
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return
         "A simple ID generator that can make use of data provided by classes "
@@ -86,12 +83,13 @@ public class SimpleIDGenerator
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
     m_OptionManager.add(
 	    "format", "format",
-	    PLACEHOLDER_DATABASEID + "-" + PLACEHOLDER_ID);
+	    Constants.PLACEHOLDER_DATABASEID + "-" + Constants.PLACEHOLDER_ID);
   }
 
   /**
@@ -121,8 +119,8 @@ public class SimpleIDGenerator
    */
   public String formatTipText() {
     return
-        "The format for the ID (" + PLACEHOLDER_ID + " = ID of IDHandler, " +
-        PLACEHOLDER_DATABASEID + " = database ID of DatabaseIDHandler).";
+        "The format for the ID (" + Constants.PLACEHOLDER_ID + " = ID of IDHandler, " +
+        Constants.PLACEHOLDER_DATABASEID + " = database ID of DatabaseIDHandler).";
   }
 
   /**
@@ -131,6 +129,7 @@ public class SimpleIDGenerator
    * @param o		the object to generate the ID for
    * @return		the generated ID
    */
+  @Override
   protected String assemble(Object o) {
     String	result;
 
@@ -138,15 +137,15 @@ public class SimpleIDGenerator
 
     // ID
     if (o instanceof IDHandler)
-      result = result.replace(PLACEHOLDER_ID, ((IDHandler) o).getID().replace("'", ""));
+      result = result.replace(Constants.PLACEHOLDER_ID, ((IDHandler) o).getID().replace("'", ""));
     else
-      result = result.replace(PLACEHOLDER_ID, MISSING);
+      result = result.replace(Constants.PLACEHOLDER_ID, MISSING);
 
     // DB-ID
     if (o instanceof DatabaseIDHandler)
-      result = result.replace(PLACEHOLDER_DATABASEID, "" + ((DatabaseIDHandler) o).getDatabaseID());
+      result = result.replace(Constants.PLACEHOLDER_DATABASEID, "" + ((DatabaseIDHandler) o).getDatabaseID());
     else
-      result = result.replace(PLACEHOLDER_DATABASEID, MISSING);
+      result = result.replace(Constants.PLACEHOLDER_DATABASEID, MISSING);
 
     return result;
   }

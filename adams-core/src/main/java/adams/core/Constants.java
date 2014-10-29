@@ -15,7 +15,7 @@
 
 /*
  * Constants.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -39,6 +39,12 @@ public class Constants
 
   /** the dummy ID. */
   public final static String DUMMY_ID = "dummy";
+
+  /** the placeholder for the ID. */
+  public static final String PLACEHOLDER_ID = "{ID}";
+
+  /** the placeholder for the database ID. */
+  public static final String PLACEHOLDER_DATABASEID = "{DBID}";
 
   /** the date format for timestamps. */
   public final static String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";

@@ -19,6 +19,8 @@
  */
 package adams.flow.transformer;
 
+import adams.core.Constants;
+
 /**
  <!-- globalinfo-start -->
  * Adds all the data to the report (or reporthandler's report) passing through that the SQL statement returns.<br/>
@@ -115,7 +117,7 @@ public class ReportDbUpdater
     return
 	"Adds all the data to the report (or reporthandler's report) passing "
 	+ "through that the SQL statement returns.\n"
-	+ "The " + PLACEHOLDER_ID + " placeholder can be used in the SQL "
+	+ "The " + Constants.PLACEHOLDER_ID + " placeholder can be used in the SQL "
 	+ "statement to represent the current handler's ID.\n"
 	+ "The following types of SQL statements are supported:\n"
 	+ "- multiple rows of key-value pairs.\n"

@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
+import adams.core.Constants;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.id.IDHandler;
@@ -47,9 +48,6 @@ public abstract class AbstractReportDbUpdater
 
   /** for serialization. */
   private static final long serialVersionUID = 1429977151568224156L;
-  
-  /** the placeholder for the ID. */
-  public final static String PLACEHOLDER_ID = "{ID}";
 
   /**
    * Enumeration for the supported types of queries.
@@ -91,7 +89,7 @@ public abstract class AbstractReportDbUpdater
 
     m_OptionManager.add(
 	    "sql", "SQL",
-	    new SQLStatement("select key,value from table where id = \"" + PLACEHOLDER_ID + "\""));
+	    new SQLStatement("select key,value from table where id = \"" + Constants.PLACEHOLDER_ID + "\""));
 
     m_OptionManager.add(
 	    "query-type", "queryType",
@@ -138,7 +136,7 @@ public abstract class AbstractReportDbUpdater
   public String SQLTipText() {
     return 
 	"The SQL statement that selects the key-value pairs for the "
-	+ "report; you can use the " + PLACEHOLDER_ID + " placeholder for the "
+	+ "report; you can use the " + Constants.PLACEHOLDER_ID + " placeholder for the "
 	+ "current handler's ID in your SQL statement (if it is an " 
 	+ IDHandler.class.getName() + ").";
   }
@@ -411,7 +409,7 @@ public abstract class AbstractReportDbUpdater
     try {
       query = m_SQL.getValue();
       if (isHandler && (handler instanceof IDHandler))
-	query = query.replace(PLACEHOLDER_ID, ((IDHandler) handler).getID());
+	query = query.replace(Constants.PLACEHOLDER_ID, ((IDHandler) handler).getID());
       query = getVariables().expand(query);
       if (isLoggingEnabled())
 	getLogger().fine("query: " + query);
