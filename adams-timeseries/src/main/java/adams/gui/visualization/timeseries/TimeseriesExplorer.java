@@ -44,7 +44,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import adams.core.CleanUpHandler;
+import adams.core.Properties;
 import adams.core.StatusMessageHandler;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.filter.AbstractFilter;
@@ -57,17 +60,23 @@ import adams.data.timeseries.TimeseriesUtils;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.SQLStatement;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
 import adams.flow.control.Flow;
 import adams.flow.core.Token;
 import adams.flow.source.SequenceSource;
-import adams.flow.source.TimeseriesDbReader;
+import adams.flow.source.StringConstants;
+import adams.flow.transformer.AbstractReportDbUpdater.QueryType;
+import adams.flow.transformer.TimeseriesDbReader;
+import adams.flow.transformer.TimeseriesReportDbUpdater;
 import adams.gui.chooser.TimeseriesFileChooser;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SearchPanel;
@@ -84,7 +93,6 @@ import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.menu.ConnectToDatabases;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.AddDataFile;
 import adams.gui.scripting.ClearData;
@@ -107,6 +115,8 @@ import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
+import adams.gui.wizard.DatabaseConnectionPage;
+import adams.gui.wizard.ListPage;
 
 /**
  * A panel for exploring Timeseries, manipulating them with filters, etc.
@@ -212,8 +222,8 @@ public class TimeseriesExplorer
   /** the database connection. */
   protected AbstractDatabaseConnection m_DatabaseConnection;
   
-  /** the dialog for loading timeseries using a custom SQL statement. */
-  protected SQLStatementDialog m_DialogSQL;
+  /** the dialog for loading timeseries using custom SQL statements. */
+  protected TimeseriesImportDatabaseDialog m_DialogSQL;
   
   /** the dialog for selecting the color provider. */
   protected GenericObjectEditorDialog m_DialogColorProvider;
@@ -979,25 +989,21 @@ public class TimeseriesExplorer
    */
   public void loadDataFromDatabase() {
     SequenceSource				seq;
-    adams.flow.standalone.DatabaseConnection	dbcon;
-    TimeseriesDbReader				reader;
     String					msg;
     List<Token>					tokens;
     TimeseriesContainerManager			manager;
     TimeseriesContainer				cont;
-    
-    if (!getDatabaseConnection().isConnected()) {
-      GUIHelper.showErrorMessage(this, "No active database connection available!");
-      GUIHelper.launchMenuItem(this, ConnectToDatabases.class);
-      return;
-    }
+    Properties					props;
+    String					query;
     
     if (m_DialogSQL == null) {
       if (getParentDialog() != null)
-	m_DialogSQL = new SQLStatementDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+	m_DialogSQL = new TimeseriesImportDatabaseDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
       else
-	m_DialogSQL = new SQLStatementDialog(getParentFrame(), true);
+	m_DialogSQL = new TimeseriesImportDatabaseDialog(getParentFrame(), true);
+      m_DialogSQL.setDefaultCloseOperation(TimeseriesImportDatabaseDialog.HIDE_ON_CLOSE);
       m_DialogSQL.setTitle("Load timeseries from database");
+      m_DialogSQL.setSize(800, 600);
     }
     m_DialogSQL.setLocationRelativeTo(this);
     m_DialogSQL.setVisible(true);
@@ -1007,16 +1013,36 @@ public class TimeseriesExplorer
     // load timeseries from DB
     seq = new SequenceSource();
     
-    dbcon = new adams.flow.standalone.DatabaseConnection();
-    dbcon.setURL(getDatabaseConnection().getURL());
-    dbcon.setUser(getDatabaseConnection().getUser());
-    dbcon.setPassword(getDatabaseConnection().getPassword());
+    props = m_DialogSQL.getProperties(false);
+    adams.flow.standalone.DatabaseConnection dbcon = new adams.flow.standalone.DatabaseConnection();
+    dbcon.setURL(props.getProperty(DatabaseConnectionPage.CONNECTION_URL));
+    dbcon.setUser(props.getProperty(DatabaseConnectionPage.CONNECTION_USER));
+    dbcon.setPassword(props.getPassword(DatabaseConnectionPage.CONNECTION_PASSWORD));
     seq.add(dbcon);
     
-    reader = new TimeseriesDbReader();
-    reader.setSQL(m_DialogSQL.getStatement());
+    String[] ids = props.getProperty(ListPage.KEY_SELECTED).split(",");
+    StringConstants sconst = new StringConstants();
+    sconst.setStrings((BaseString[]) BaseObject.toObjectArray(ids, BaseString.class));
+    seq.add(sconst);
+
+    TimeseriesDbReader reader = new TimeseriesDbReader();
+    query = props.getProperty(TimeseriesImportDatabaseDialog.QUERY_DATA, "");
+    reader.setSQL(new SQLStatement(query));
     seq.add(reader);
 
+    TimeseriesReportDbUpdater upd = new TimeseriesReportDbUpdater();
+    upd.setLenient(true);
+    if (props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_KEYVALUE, "").trim().length() > 0) {
+      upd.setQueryType(QueryType.KEY_VALUE);
+      upd.setSQL(new SQLStatement(props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_KEYVALUE)));
+      seq.add(upd);
+    }
+    else if (props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_ROW, "").trim().length() > 0) {
+      upd.setQueryType(QueryType.COLUMN_AS_KEY);
+      upd.setSQL(new SQLStatement(props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_ROW)));
+      seq.add(upd);
+    }
+    
     // execute flow
     msg = seq.setUp();
     if (msg != null) {
@@ -1042,6 +1068,9 @@ public class TimeseriesExplorer
       manager.add(cont);
     }
     manager.finishUpdate();
+
+    ConsolePanel.getSingleton().append(
+	OutputType.INFO, "Timeseries from database:\n" + seq.toCommandLine());
   }
 
   /**
