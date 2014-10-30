@@ -28,7 +28,9 @@ import adams.data.report.DataType;
 /**
  <!-- globalinfo-start -->
  * Meta-feature-converter that ensures that the generated output has a fixed number of data points.<br/>
- * In case of filler type FIRST, the data gets inserted at the start, as opposed to at the end when using LAST.
+ * In case of filler type FIRST, the data gets inserted at the start, as opposed to at the end when using LAST.<br/>
+ * NUMERIC&#47;STRING&#47;BOOLEAN use the appropriate filler value that the user specified.<br/>
+ * The MISSING_* types just add a missing value of the appropriate data type.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -145,7 +147,10 @@ public class FixedNumFeatures
 	+ "a fixed number of data points.\n"
 	+ "In case of filler type " + FillerType.FIRST + ", the data gets "
 	+ "inserted at the start, as opposed to at the end when using " 
-	+ FillerType.LAST + ".";
+	+ FillerType.LAST + ".\n"
+	+ FillerType.NUMERIC + "/" + FillerType.STRING + "/" + FillerType.BOOLEAN + " "
+	+ "use the appropriate filler value that the user specified.\n"
+	+ "The MISSING_* types just add a missing value of the appropriate data type.";
   }
 
   /**
