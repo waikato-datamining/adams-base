@@ -19,8 +19,11 @@
  */
 package adams.gui.core;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -124,5 +127,60 @@ public class BaseMenu
     removeAll();
     for (JMenuItem item: items)
       add(item);
+  }
+  
+  /**
+   * Creates a cascading menu that has at most "max entries". Ones the
+   * threshold is reached, a new submenu with the "more" label is introduced
+   * and subsequent entries are placed in their.
+   * 
+   * @param menuitems	the menuitems to create the menu from
+   * @param max		the maximum number of items (+ one for the "more") to show
+   * @param more	the text label for the sub-menu
+   * @return		the menu
+   */
+  public static BaseMenu createCascadingMenu(JMenuItem[] menuitems, int max, String more) {
+    return createCascadingMenu(Arrays.asList(menuitems), max, more);
+  }
+  
+  /**
+   * Creates a cascading menu that has at most "max entries". Ones the
+   * threshold is reached, a new submenu with the "more" label is introduced
+   * and subsequent entries are placed in their.
+   * 
+   * @param menuitems	the menuitems to create the menu from
+   * @param max		the maximum number of items (+ one for the "more") to 
+   * 			show, use -1 for automatic maximum based on screen size
+   * @param more	the text label for the sub-menu
+   * @return		the menu
+   */
+  public static BaseMenu createCascadingMenu(List<JMenuItem> menuitems, int max, String more) {
+    BaseMenu	result;
+    BaseMenu	submenu;
+    BaseMenu	current;
+    int		count;
+    
+    result  = new BaseMenu();
+    current = result;
+    count   = 0;
+    
+    if (max == -1) {
+      max = (int) Math.floor(
+	  GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getHeight() 
+	  / (result.getFontMetrics(result.getFont()).getHeight() * 1.5));
+    }
+    
+    for (JMenuItem menuitem: menuitems) {
+      count++;
+      current.add(menuitem);
+      if (count >= max) {
+	count = 0;
+	submenu = new BaseMenu(more);
+	current.add(submenu);
+	current = submenu;
+      }
+    }
+    
+    return result;
   }
 }
