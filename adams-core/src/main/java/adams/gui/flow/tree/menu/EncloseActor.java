@@ -21,6 +21,8 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -42,6 +44,7 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuItemComparator;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -172,16 +175,14 @@ public class EncloseActor
    */
   @Override
   public JMenuItem getMenuItem() {
-    BaseMenu	result;
-    JMenuItem	menuitem;
-    String[]	actors;
-    int		i;
+    BaseMenu		result;
+    JMenuItem		menuitem;
+    String[]		actors;
+    int			i;
+    List<JMenuItem>	menuitems;
     
-    result = new BaseMenu(getName());
-    result.setEnabled(isEnabled());
-    result.setIcon(getIcon());
-
-    actors = ClassLister.getSingleton().getClassnames(ActorHandler.class);
+    menuitems = new ArrayList<JMenuItem>();
+    actors    = ClassLister.getSingleton().getClassnames(ActorHandler.class);
     for (i = 0; i < actors.length; i++) {
       final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0]);
       if (!actor.getActorHandlerInfo().canEncloseActors())
@@ -191,7 +192,7 @@ public class EncloseActor
       if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
 	continue;
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
-      result.add(menuitem);
+      menuitems.add(menuitem);
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -199,7 +200,11 @@ public class EncloseActor
 	}
       });
     }
-    result.sort();
+    Collections.sort(menuitems, new MenuItemComparator());
+    result = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
+    result.setText(getName());
+    result.setEnabled(isEnabled());
+    result.setIcon(getIcon());
 
     if (m_State.isSingleSel && (m_State.selNode.getActor() instanceof DisplayPanelProvider)) {
       result.addSeparator();
