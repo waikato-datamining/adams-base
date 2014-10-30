@@ -41,14 +41,14 @@ public class BaseMenu
   private static final long serialVersionUID = -4652341738136722664L;
 
   /**
-   * Constructs a new <code>JMenu</code> with no text.
+   * Constructs a new <code>BaseMenu</code> with no text.
    */
   public BaseMenu() {
     super();
   }
 
   /**
-   * Constructs a new <code>JMenu</code> with the supplied string
+   * Constructs a new <code>BaseMenu</code> with the supplied string
    * as its text.
    *
    * @param s  the text for the menu label
@@ -67,7 +67,7 @@ public class BaseMenu
   }
 
   /**
-   * Constructs a new <code>JMenu</code> with the supplied string as
+   * Constructs a new <code>BaseMenu</code> with the supplied string as
    * its text and specified as a tear-off menu or not.
    *
    * @param s the text for the menu label
