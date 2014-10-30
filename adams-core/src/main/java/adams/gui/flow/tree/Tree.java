@@ -121,7 +121,7 @@ public class Tree
     /** after this position. */
     AFTER
   }
-
+  
   /** the tree itself. */
   protected Tree m_Self;
 
@@ -218,6 +218,9 @@ public class Tree
   /** the dialog for processing actors. */
   protected GenericObjectEditorDialog m_DialogProcessActors;
 
+  /** whether to record the adding of actors to improve suggestions. */
+  protected boolean m_RecordAdd;
+
   /**
    * Initializes the tree.
    *
@@ -276,6 +279,7 @@ public class Tree
     m_File                        = null;
     m_LastTemplate                = null;
     m_IgnoreNameChanges           = false;
+    m_RecordAdd                   = false;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -784,6 +788,26 @@ public class Tree
   }
 
   /**
+   * Sets whether to record the adding of actors in order to improve the
+   * suggestions.
+   *
+   * @param value	true if to record
+   */
+  public void setRecordAdd(boolean value) {
+    m_RecordAdd = value;
+  }
+
+  /**
+   * Returns whether to record the adding of actors in order to improve the
+   * suggestions.
+   *
+   * @return		true if to record
+   */
+  public boolean getRecordAdd() {
+    return m_RecordAdd;
+  }
+
+  /**
    * Shortcut method for notifying model about node structure change.
    *
    * @param node	the node the triggered the structural change
@@ -1275,7 +1299,7 @@ public class Tree
 
     return result;
   }
-
+  
   /**
    * Brings up the GOE dialog for adding an actor if no actor supplied,
    * otherwise just adds the given actor at the position specified
@@ -1286,6 +1310,20 @@ public class Tree
    * @param position	where to insert the actor
    */
   public void addActor(TreePath path, AbstractActor actor, InsertPosition position) {
+    addActor(path, actor, position, false);
+  }
+
+  /**
+   * Brings up the GOE dialog for adding an actor if no actor supplied,
+   * otherwise just adds the given actor at the position specified
+   * by the path.
+   *
+   * @param path	the path to the actor to add the new actor sibling
+   * @param actor	the actor to add, if null a GOE dialog is presented
+   * @param position	where to insert the actor
+   * @param record	whether to record the addition
+   */
+  public void addActor(TreePath path, AbstractActor actor, InsertPosition position, boolean record) {
     GenericObjectEditorDialog	dialog;
     Node			node;
     Node			parent;
@@ -1321,7 +1359,7 @@ public class Tree
       dialog.setVisible(true);
       m_CurrentEditingParent = null;
       if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-        addActor(path, (AbstractActor) dialog.getEditor().getValue(), position);
+        addActor(path, (AbstractActor) dialog.getEditor().getValue(), position, record);
     }
     else {
       if (position == InsertPosition.BENEATH) {
@@ -1351,6 +1389,14 @@ public class Tree
 	nodeStructureChanged(node);
 	setExpandedNodes(exp);
 	expand(node);
+	
+	// record
+	if (m_RecordAdd && (actors.length == 1)) {
+	  ActorSuggestion.getSingleton().record(
+	      children[0], 
+	      node, 
+	      position);
+	}
       }
       else {
 	node   = TreeHelper.pathToNode(path);
@@ -1388,6 +1434,14 @@ public class Tree
 	}
 	nodeStructureChanged(parent);
 	setExpandedNodes(exp);
+	
+	// record
+	if (m_RecordAdd && (actors.length == 1)) {
+	  ActorSuggestion.getSingleton().record(
+	      children[0], 
+	      parent, 
+	      position);
+	}
       }
 
       setModified(true);

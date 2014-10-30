@@ -60,6 +60,6 @@ public class AddActorHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.addActor(m_State.selPath, null, InsertPosition.HERE);
+    m_State.tree.addActor(m_State.selPath, null, InsertPosition.HERE, true);
   }
 }

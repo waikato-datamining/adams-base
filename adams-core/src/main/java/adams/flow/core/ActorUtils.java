@@ -80,6 +80,27 @@ public class ActorUtils {
   /** the variable for the directory the flow is located in. */
   public final static String FLOW_DIR = "flow_dir";
 
+  /** functional type: primitive. */
+  public final static String FUNCTIONAL_PRIMITIVE = "primitive";
+
+  /** functional type: handler. */
+  public final static String FUNCTIONAL_HANDLER = "handler";
+
+  /** functional type: control. */
+  public final static String FUNCTIONAL_CONTROL = "control";
+
+  /** procedural type: standalone. */
+  public final static String PROCEDURAL_STANDALONE = "standalone";
+
+  /** procedural type: source. */
+  public final static String PROCEDURAL_SOURCE = "source";
+
+  /** procedural type: transformer. */
+  public final static String PROCEDURAL_TRANSFORMER = "transformer";
+
+  /** procedural type: sink. */
+  public final static String PROCEDURAL_SINK = "sink";
+  
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(ActorUtils.class);
 
@@ -480,7 +501,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if standalone
    */
-  public static boolean isStandalone(AbstractActor actor) {
+  public static boolean isStandalone(Actor actor) {
     return (!(actor instanceof InputConsumer)) && (!(actor instanceof OutputProducer));
   }
 
@@ -490,7 +511,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if source
    */
-  public static boolean isSource(AbstractActor actor) {
+  public static boolean isSource(Actor actor) {
     return (!(actor instanceof InputConsumer)) && (actor instanceof OutputProducer);
   }
 
@@ -500,7 +521,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if sink
    */
-  public static boolean isSink(AbstractActor actor) {
+  public static boolean isSink(Actor actor) {
     return (actor instanceof InputConsumer) && (!(actor instanceof OutputProducer));
   }
 
@@ -510,7 +531,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if transformer
    */
-  public static boolean isTransformer(AbstractActor actor) {
+  public static boolean isTransformer(Actor actor) {
     return (actor instanceof InputConsumer) && (actor instanceof OutputProducer);
   }
 
@@ -520,7 +541,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if control actor
    */
-  public static boolean isControlActor(AbstractActor actor) {
+  public static boolean isControlActor(Actor actor) {
     return (actor instanceof ControlActor);
   }
 
@@ -530,7 +551,7 @@ public class ActorUtils {
    * @param actor	the actor to check
    * @return		true if actor handler
    */
-  public static boolean isActorHandler(AbstractActor actor) {
+  public static boolean isActorHandler(Actor actor) {
     return (actor instanceof ActorHandler);
   }
 
@@ -1262,5 +1283,37 @@ public class ActorUtils {
         return canRecurse(obj.getClass());
       }
     });
+  }
+
+  /**
+   * Determines the functional aspect of an actor.
+   * 
+   * @param actor	the actor to investigate
+   * @return		the functional description
+   */
+  public static String getFunctionalAspect(Actor actor) {
+    if (isActorHandler(actor))
+      return FUNCTIONAL_HANDLER;
+    else
+      return FUNCTIONAL_PRIMITIVE;
+  }
+
+  /**
+   * Determines the procedural aspect of an actor.
+   * 
+   * @param actor	the actor to investigate
+   * @return		the procedural description
+   */
+  public static String getProceduralAspect(Actor actor) {
+    if (isStandalone(actor))
+      return PROCEDURAL_STANDALONE;
+    else if (isSource(actor))
+      return PROCEDURAL_SOURCE;
+    else if (isTransformer(actor))
+      return PROCEDURAL_TRANSFORMER;
+    else if (isSink(actor))
+      return PROCEDURAL_SINK;
+    else
+      throw new IllegalStateException("Neither standalone/source/transformer/sink??");
   }
 }

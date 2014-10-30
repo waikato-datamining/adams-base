@@ -148,3 +148,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.CollapseAll,\
   -,\
   adams.gui.flow.tree.menu.Help
+
+# Whether to record the actors that the user adds, to improve suggestions
+# (true|false)
+Tree.RecordAdd=false

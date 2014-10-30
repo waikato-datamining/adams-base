@@ -60,6 +60,6 @@ public class AddActorAfter
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.addActor(m_State.selPath, null, InsertPosition.AFTER);
+    m_State.tree.addActor(m_State.selPath, null, InsertPosition.AFTER, true);
   }
 }

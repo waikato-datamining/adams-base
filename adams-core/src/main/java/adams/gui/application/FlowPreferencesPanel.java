@@ -64,6 +64,7 @@ public class FlowPreferencesPanel
     addPropertyType("Tree.StateUsesNested", PropertyType.BOOLEAN);
     addPropertyType("Tree.IgnoreNameChanges", PropertyType.BOOLEAN);
     addPropertyType("Tree.IconScaleFactor", PropertyType.DOUBLE);
+    addPropertyType("Tree.RecordActor", PropertyType.BOOLEAN);
     addPropertyType("ClassTree.ShowGlobalInfo", PropertyType.BOOLEAN);
     addPropertyType("StatusBar.Width", PropertyType.INTEGER);
     addPropertyType("StatusBar.Height", PropertyType.INTEGER);

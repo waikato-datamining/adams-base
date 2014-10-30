@@ -60,6 +60,6 @@ public class AddActorBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.addActor(m_State.selPath, null, InsertPosition.BENEATH);
+    m_State.tree.addActor(m_State.selPath, null, InsertPosition.BENEATH, true);
   }
 }
