@@ -92,6 +92,12 @@ public class DefaultPropertyExtractor
     
     if (Editors.isBlacklisted(m_Current.getClass(), m_Properties[index].getDisplayName()))
       return result;
+
+    // common back-referencing properties
+    if (m_Properties[index].getDisplayName().equals("parent"))
+      return result;
+    if (m_Properties[index].getDisplayName().equals("owner"))
+      return result;
     
     if ((m_Properties[index].getReadMethod() != null) && (m_Properties[index].getWriteMethod() != null)) {
       try {
