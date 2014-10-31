@@ -198,11 +198,13 @@ public class SpreadSheetFeatureConverter
   @Override
   protected Row doGenerateRow(List<Object> data) {
     Row		result;
+    SpreadSheet	sheet;
     int		i;
     Object	obj;
     Cell	cell;
     
-    result = m_Header.addRow();
+    sheet  = m_Header.getClone();
+    result = sheet.addRow();
     
     for (i = 0; i < data.size(); i++) {
       obj  = data.get(i);
