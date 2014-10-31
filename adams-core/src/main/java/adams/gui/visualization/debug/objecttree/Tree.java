@@ -20,7 +20,6 @@
 package adams.gui.visualization.debug.objecttree;
 
 import java.lang.reflect.Array;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -56,9 +55,6 @@ public class Tree
   /** the current object. */
   protected transient Object m_Object;
 
-  /** the objects that have been inspected already. */
-  protected HashSet<Object> m_Inspected;
-
   /** the search string. */
   protected String m_SearchString;
   
@@ -92,8 +88,6 @@ public class Tree
     DefaultTreeModel		model;
     Node		rootNode;
 
-    m_Inspected = new HashSet<Object>();
-
     if (root == null) {
       model = new DefaultTreeModel(null);
     }
@@ -101,8 +95,6 @@ public class Tree
       rootNode = buildTree(null, null, root, NodeType.NORMAL);
       model    = new DefaultTreeModel(rootNode);
     }
-
-    m_Inspected.clear();
 
     setModel(model);
   }
@@ -205,8 +197,6 @@ public class Tree
     if (parent != null)
       parent.add(result);
 
-    m_Inspected.add(obj);
-
     // Object's hashcode
     if (!isPrimitive(obj) && matches(LABEL_HASHCODE))
       result.add(new Node(LABEL_HASHCODE, obj.hashCode(), NodeType.HASHCODE));
@@ -221,7 +211,7 @@ public class Tree
       extractor.setCurrent(obj);
       for (i = 0; i < extractor.size(); i++) {
 	current = extractor.getValue(i);
-	if ((current != null) && !m_Inspected.contains(current)) {
+	if (current != null) {
 	  label = extractor.getLabel(i);
 	  add   =    matches(label) 
 	          || (current instanceof OptionHandler) 
