@@ -15,7 +15,7 @@
 
 /**
  * Tree.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -221,7 +221,7 @@ public class Tree
       extractor.setCurrent(obj);
       for (i = 0; i < extractor.size(); i++) {
 	current = extractor.getValue(i);
-	if (current != null) {
+	if ((current != null) && !m_Inspected.contains(current)) {
 	  label = extractor.getLabel(i);
 	  add   =    matches(label) 
 	          || (current instanceof OptionHandler) 
