@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -96,25 +96,25 @@ public class PropertySheetPanel extends BasePanel
   protected List<AbstractOption> m_Options;
 
   /** Holds properties of the target. */
-  protected PropertyDescriptor m_Properties[];
+  protected PropertyDescriptor[] m_Properties;
 
   /** Holds the methods of the target. */
-  protected MethodDescriptor m_Methods[];
+  protected MethodDescriptor[] m_Methods;
 
   /** Holds property editors of the object. */
-  protected PropertyEditor m_Editors[];
+  protected PropertyEditor[] m_Editors;
 
   /** Holds current object values for each property. */
-  protected Object m_Values[];
+  protected Object[] m_Values;
 
   /** the panel for the parameters. */
   protected ParameterPanel m_ParameterPanel;
 
   /** Stores GUI components containing each editing component. */
-  protected JComponent m_Views[];
+  protected JComponent[] m_Views;
 
   /** The tool tip text for each property. */
-  protected String m_TipTexts[];
+  protected String[] m_TipTexts;
 
   /** StringBuilder containing help text for the object being edited. */
   protected StringBuilder m_HelpText;
