@@ -402,8 +402,6 @@ public class TimeseriesDbReader
       result.add(point);
     }
     
-    SQL.closeAll(rs);
-    
     return result;
   }
   
@@ -489,6 +487,7 @@ public class TimeseriesDbReader
     
     query = null;
     id    = m_InputToken.getPayload().toString();
+    rs    = null;
     try {
       query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
       query = getVariables().expand(query);
@@ -503,6 +502,10 @@ public class TimeseriesDbReader
     }
     catch (Exception e) {
       result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
+    }
+    finally {
+      if (rs != null)
+	SQL.closeAll(rs);
     }
     
     return result;
