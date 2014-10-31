@@ -495,7 +495,8 @@ public class TimeseriesDbReader
       rs    = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
       if (isLoggingEnabled())
 	getLogger().fine("SQL: " + query);
-      analyzeColumns(rs);
+      if (m_ColumnTimestampIndex== -1)
+	analyzeColumns(rs);
       ts = read(rs);
       ts.setID(id);
       m_OutputToken = new Token(ts);
