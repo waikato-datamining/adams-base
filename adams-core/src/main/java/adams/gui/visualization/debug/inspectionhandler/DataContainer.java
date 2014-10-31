@@ -15,7 +15,7 @@
 
 /**
  * DataContainer.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
@@ -38,8 +38,9 @@ public class DataContainer
    * @param cls		the class to check
    * @return		true if the handler can handle this type of object
    */
+  @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(adams.data.container.DataContainer.class, cls);
+    return ClassLocator.hasInterface(adams.data.container.DataContainer.class, cls);
   }
 
   /**
@@ -48,6 +49,7 @@ public class DataContainer
    * @param obj		the object to further inspect
    * @return		the named inspected values
    */
+  @Override
   public Hashtable<String,Object> inspect(Object obj) {
     Hashtable<String,Object>	result;
 
