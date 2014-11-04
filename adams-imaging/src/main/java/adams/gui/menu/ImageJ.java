@@ -21,7 +21,7 @@
 
 package adams.gui.menu;
 
-import adams.core.ImageJHelper;
+import adams.data.imagej.ImageJHelper;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;

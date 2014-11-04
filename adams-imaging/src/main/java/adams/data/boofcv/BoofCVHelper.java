@@ -17,13 +17,11 @@
  * BoofCVHelper.java
  * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.boofcv;
 
 import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
-import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import boofcv.core.image.ConvertBufferedImage;

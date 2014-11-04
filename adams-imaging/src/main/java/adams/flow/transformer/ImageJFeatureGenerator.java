@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import adams.core.ImageJHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
 import adams.data.imagej.features.Pixels;

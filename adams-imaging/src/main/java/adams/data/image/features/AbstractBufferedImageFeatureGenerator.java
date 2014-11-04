@@ -20,9 +20,9 @@
 
 package adams.data.image.features;
 
-import adams.core.JAIHelper;
 import adams.data.image.AbstractImageFeatureGenerator;
 import adams.data.image.BufferedImageContainer;
+import adams.data.jai.JAIHelper;
 
 /**
  * Abstract base class for BufferedImage feature generators.

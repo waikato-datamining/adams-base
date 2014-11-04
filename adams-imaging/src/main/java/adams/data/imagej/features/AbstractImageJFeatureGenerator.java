@@ -20,8 +20,8 @@
 
 package adams.data.imagej.features;
 
-import adams.core.ImageJHelper;
 import adams.data.image.AbstractImageFeatureGenerator;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 
 /**

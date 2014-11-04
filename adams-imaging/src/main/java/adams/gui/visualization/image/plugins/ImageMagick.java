@@ -25,9 +25,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import adams.core.ImageMagickHelper;
 import adams.core.base.BaseText;
 import adams.data.image.BufferedImageContainer;
+import adams.data.imagemagick.ImageMagickHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.ImageMagickTransformer;
 import adams.gui.core.TextEditorPanel;

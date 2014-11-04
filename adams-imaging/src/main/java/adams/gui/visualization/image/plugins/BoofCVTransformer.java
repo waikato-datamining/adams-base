@@ -21,8 +21,8 @@ package adams.gui.visualization.image.plugins;
 
 import java.awt.image.BufferedImage;
 
-import adams.core.BoofCVHelper;
 import adams.core.option.OptionUtils;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.transformer.AbstractBoofCVTransformer;
 import adams.data.boofcv.transformer.PassThrough;

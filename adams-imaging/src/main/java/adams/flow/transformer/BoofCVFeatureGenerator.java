@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import adams.core.BoofCVHelper;
 import adams.core.QuickInfoHelper;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.features.AbstractBoofCVFeatureGenerator;
 import adams.data.boofcv.features.Pixels;
 import adams.data.image.AbstractImageContainer;

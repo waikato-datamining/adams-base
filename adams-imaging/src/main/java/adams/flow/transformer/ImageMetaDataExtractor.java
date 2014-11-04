@@ -21,8 +21,8 @@ package adams.flow.transformer;
 
 import java.io.File;
 
-import adams.core.ImageMetaDataHelper;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.ImageMetaDataHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 

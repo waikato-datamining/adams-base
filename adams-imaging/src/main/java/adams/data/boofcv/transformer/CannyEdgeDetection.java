@@ -23,13 +23,13 @@ package adams.data.boofcv.transformer;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.feature.detect.edge.CannyEdge;

@@ -22,9 +22,9 @@ package adams.data.boofcv.transformer;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import adams.core.BoofCVHelper;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;

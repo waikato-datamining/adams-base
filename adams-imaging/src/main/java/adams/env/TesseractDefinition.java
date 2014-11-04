@@ -19,7 +19,7 @@
  */
 package adams.env;
 
-import adams.core.TesseractHelper;
+import adams.data.tesseract.TesseractHelper;
 
 /**
  * Definition for the Tesseract props file.

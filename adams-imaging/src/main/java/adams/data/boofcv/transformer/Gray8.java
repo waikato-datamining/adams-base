@@ -20,7 +20,7 @@
 
 package adams.data.boofcv.transformer;
 
-import adams.core.BoofCVHelper;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.struct.image.ImageUInt8;

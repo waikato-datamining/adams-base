@@ -25,9 +25,9 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-import adams.core.ImageJHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.transformer.AbstractImageJTransformer;
 import adams.flow.core.Token;

@@ -21,9 +21,9 @@
 package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
-import adams.core.TesseractHelper;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.OS;
+import adams.data.tesseract.TesseractHelper;
 import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
 

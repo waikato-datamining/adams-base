@@ -17,11 +17,12 @@
  * TesseractHelper.java
  * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.tesseract;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOption;
 import adams.env.Environment;

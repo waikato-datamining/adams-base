@@ -17,7 +17,7 @@
  * JAIHelper.java
  * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.jai;
 
 import java.io.File;
 

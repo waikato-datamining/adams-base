@@ -50,7 +50,7 @@ public class ImageJHelper
    */
   @Override
   public boolean initialize(AbstractApplicationFrame parent) {
-    adams.core.ImageJHelper.setPluginsDirectory();
+    adams.data.imagej.ImageJHelper.setPluginsDirectory();
     return true;
   }
 }

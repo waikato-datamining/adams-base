@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.image.features.Pixels;
+import adams.data.jai.JAIHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;

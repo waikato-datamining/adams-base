@@ -27,12 +27,12 @@ import javax.media.jai.RenderedOp;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.JAIHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.jai.JAIHelper;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;

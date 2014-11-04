@@ -19,9 +19,9 @@
  */
 package adams.data.conversion;
 
-import adams.core.ImageJHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 
 /**

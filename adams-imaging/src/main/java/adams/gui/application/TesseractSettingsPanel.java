@@ -23,8 +23,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JComboBox;
 
-import adams.core.TesseractHelper;
 import adams.core.io.PlaceholderFile;
+import adams.data.tesseract.TesseractHelper;
 import adams.flow.core.TesseractLanguage;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.ParameterPanel;

@@ -19,10 +19,10 @@
  */
 package adams.data.conversion;
 
-import adams.core.JAIHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagej.ImagePlusContainer;
+import adams.data.jai.JAIHelper;
 
 /**
  <!-- globalinfo-start -->

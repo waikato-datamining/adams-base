@@ -26,10 +26,10 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 
 import adams.core.EnumWithCustomDisplay;
-import adams.core.ImageMagickHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.option.AbstractOption;
 import adams.data.image.AbstractImageContainer;
+import adams.data.imagemagick.ImageMagickHelper;
 
 /**
  <!-- globalinfo-start -->

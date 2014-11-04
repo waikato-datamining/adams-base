@@ -21,7 +21,6 @@ package adams.data.boofcv;
 
 import java.awt.image.BufferedImage;
 
-import adams.core.BoofCVHelper;
 import adams.data.image.AbstractImageContainer;
 import boofcv.struct.image.ImageBase;
 import boofcv.struct.image.ImageSingleBand;

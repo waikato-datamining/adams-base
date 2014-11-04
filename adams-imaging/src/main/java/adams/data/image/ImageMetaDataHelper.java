@@ -17,7 +17,7 @@
  * ImageMetaDataHelper.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.image;
 
 import java.io.File;
 import java.util.HashSet;
@@ -26,6 +26,7 @@ import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.common.ImageMetadata;
 
+import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 

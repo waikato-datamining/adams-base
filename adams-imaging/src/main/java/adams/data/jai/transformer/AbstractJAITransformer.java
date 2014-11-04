@@ -20,8 +20,8 @@
 
 package adams.data.jai.transformer;
 
-import adams.core.JAIHelper;
 import adams.data.image.transformer.AbstractBufferedImageTransformer;
+import adams.data.jai.JAIHelper;
 
 /**
  * Abstract base class for JAI transformations.

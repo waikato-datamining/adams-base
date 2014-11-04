@@ -25,8 +25,8 @@ import ij.ImagePlus;
 
 import java.io.File;
 
-import adams.core.ImageJHelper;
 import adams.core.io.PlaceholderFile;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;

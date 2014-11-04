@@ -24,9 +24,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 
-import adams.core.ImageMagickHelper;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
+import adams.data.imagemagick.ImageMagickHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;

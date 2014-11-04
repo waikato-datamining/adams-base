@@ -25,11 +25,11 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.AbstractBufferedImageTransformer;
+import adams.data.jai.JAIHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;

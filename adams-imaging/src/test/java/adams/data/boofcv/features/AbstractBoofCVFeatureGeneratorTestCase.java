@@ -25,10 +25,10 @@ import javax.media.jai.RenderedOp;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.JAIHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.jai.JAIHelper;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.test.AbstractTestHelper;

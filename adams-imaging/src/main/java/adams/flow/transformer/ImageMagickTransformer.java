@@ -26,14 +26,14 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Stream2BufferedImage;
 
-import adams.core.ImageMagickHelper;
-import adams.core.JAIHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.imagemagick.ImageMagickHelper;
+import adams.data.jai.JAIHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;

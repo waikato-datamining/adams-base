@@ -24,13 +24,13 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import adams.core.TesseractHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
+import adams.data.tesseract.TesseractHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
 

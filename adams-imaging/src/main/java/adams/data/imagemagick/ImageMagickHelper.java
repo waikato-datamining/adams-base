@@ -17,7 +17,7 @@
  * ImageMagickHelper.java
  * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.imagemagick;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

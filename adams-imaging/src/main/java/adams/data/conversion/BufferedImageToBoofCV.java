@@ -19,7 +19,7 @@
  */
 package adams.data.conversion;
 
-import adams.core.BoofCVHelper;
+import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImageContainer;

@@ -21,11 +21,11 @@
 package adams.data.imagej.transformer;
 
 import adams.core.ClassLister;
-import adams.core.ImageJHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageTransformer;
+import adams.data.imagej.ImageJHelper;
 import adams.data.imagej.ImagePlusContainer;
 
 /**

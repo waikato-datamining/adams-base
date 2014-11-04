@@ -17,7 +17,7 @@
  * ImageJHelper.java
  * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
  */
-package adams.core;
+package adams.data.imagej;
 
 import ij.ImagePlus;
 
@@ -26,7 +26,6 @@ import java.util.Date;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
-import adams.data.imagej.ImagePlusContainer;
 import adams.data.report.Report;
 import adams.env.Environment;
 
