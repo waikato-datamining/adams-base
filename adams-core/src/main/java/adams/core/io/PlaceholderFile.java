@@ -25,6 +25,8 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -988,5 +990,15 @@ public class PlaceholderFile
    */
   public PlaceholderFile changeExtension(String oldExt, String newExt) {
     return new PlaceholderFile(getPath() + separator + getName().replaceAll(oldExt + "$", newExt));
+  }
+  
+  /**
+   * Turns the file object into a {@link Path} object.
+   * 
+   * @return		the path object
+   */
+  @Override
+  public Path toPath() {
+    return Paths.get(toURI());
   }
 }
