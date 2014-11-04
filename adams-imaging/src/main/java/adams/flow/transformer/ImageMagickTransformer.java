@@ -15,7 +15,7 @@
 
 /*
  * ImageMagickTransformer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -263,6 +263,7 @@ public class ImageMagickTransformer
       cont = (BufferedImageContainer) img.getHeader();
       cont.setImage(s2b.getImage());
       m_OutputToken = new Token(cont);
+      updateProvenance(m_OutputToken);
     }
     catch (Exception e) {
       result = handleException("Failed to transform image: ", e);
