@@ -47,6 +47,18 @@ adams-imaging.ImageMagickReader3=\
 adams-imaging.ImageMagickReader4=\
   IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickReader
 
+adams-imaging.UFRawReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.UFRawReader
+
+adams-imaging.UFRawReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.UFRawReader
+
+adams-imaging.UFRawReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.UFRawReader
+
+adams-imaging.UFRawReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.UFRawReader
+
 adams-imaging.ImageJTransformer=\
   IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
 
