@@ -60,7 +60,7 @@ public class NoOp
    * 
    * @param input	the input file
    * @param output	the output file
-   * @return		null if successfull, otherwise error message
+   * @return		null if successful, otherwise error message
    */
   @Override
   protected String doApply(PlaceholderFile input, PlaceholderFile output) {
