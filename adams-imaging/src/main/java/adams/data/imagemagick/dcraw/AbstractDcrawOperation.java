@@ -23,7 +23,7 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.imagemagick.AbstractImageOperation;
-import adams.data.imagemagick.ImageMagickHelper;
+import adams.data.imagemagick.DCRawHelper;
 
 /**
  * Ancestor for DCRaw operations.
@@ -46,8 +46,8 @@ public abstract class AbstractDcrawOperation
    */
   @Override
   protected String check(PlaceholderFile input, PlaceholderFile output) {
-    if (!ImageMagickHelper.isDcrawAvailable())
-      return ImageMagickHelper.getMissingDcrawErrorMessage();
+    if (!DCRawHelper.isDcrawAvailable())
+      return DCRawHelper.getMissingDcrawErrorMessage();
     else
       return super.check(input, output);
   }

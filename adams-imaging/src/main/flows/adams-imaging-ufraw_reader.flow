@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-11-05 23:13:55
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow uses ufraw to load an image.\nNB: ufraw must be installed and available on the PATH.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/canon_eos_450d_03.cr2
+	-actor
+		adams.flow.transformer.UFRawReader
+	-actor
+		adams.flow.sink.ImageViewer
+			-writer
+				adams.gui.print.NullWriter
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

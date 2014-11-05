@@ -219,8 +219,10 @@ follows:
 \chapter[ImageMagick]{\parbox[b]{1.2cm}{\includegraphics[width=1cm]{images/imagemagick.png}}\parbox[c]{14cm}{ImageMagick}}
 ImageMagick$\textsuperscript{\textregistered}$ is a software suite to create,
 edit, compose, or convert bitmap images (\cite{imagemagick}). On Windows, in order to
-process images with ImageMagick, you need to set the \texttt{IM4JAVA\_TOOLPATH} 
-environment variable, pointing to the installation.
+process images with ImageMagick, you need to set the \texttt{IM\_TOOLPATH} 
+environment variable, pointing to the installation. Similar, for dcraw, you 
+need to defined the \texttt{DCRAW\_TOOLPATH} variable and, for ufraw, the
+\texttt{UFRAW\_TOOLPATH} one.
 
 There are three ImageMagick actors available:
 \begin{tight_itemize}
@@ -232,6 +234,8 @@ There are three ImageMagick actors available:
 	\item \texttt{transformer.ImageMagickTransformer} -- performs any ImageMagick
 	command on the incoming image that the \texttt{convert} tool\footnote{\url{http://www.imagemagick.org/script/convert.php}{}} supports and
 	outputs another image again.
+	\item \texttt{transformer.UFRawReader} -- for reading any image file that
+	ufraw supports (namely RAW files) and forwarding a \texttt{BufferedImageContainer} object.
 	\item \texttt{sink.ImageMagickWriter} -- for writing a \texttt{BufferedImageContainer}
 	to a file format that ImageMagick supports. If the image type cannot be
 	determined based on the extension, you can also specify which type to generate.

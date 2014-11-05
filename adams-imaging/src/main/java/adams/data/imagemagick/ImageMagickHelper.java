@@ -15,7 +15,7 @@
 
 /**
  * ImageMagickHelper.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.imagemagick;
 
@@ -42,22 +42,10 @@ import adams.env.Environment;
 public class ImageMagickHelper {
   
   /** the environment variable to check for imagemagick. */
-  public final static String IM_PATH = "IM4JAVA_TOOLPATH";
-  
-  /** the environment variable to check for dcraw. */
-  public final static String DCRAW_PATH = "DCRAW_TOOLPATH";
-  
-  /** the environment variable to check for ufraw. */
-  public final static String UFRAW_PATH = "UFRAW_TOOLPATH";
+  public final static String ENV_PATH = "IM_TOOLPATH";
 
   /** whether "convert" is present. */
   protected static Boolean m_ConvertPresent;
-
-  /** whether "dcraw" is present. */
-  protected static Boolean m_DcrawPresent;
-
-  /** whether "ufraw" is present. */
-  protected static Boolean m_UfrawPresent;
 
   /**
    * Checks whether the "convert" utility is available.
@@ -71,7 +59,7 @@ public class ImageMagickHelper {
 
     if (m_ConvertPresent == null) {
       exec = FileUtils.fixExecutable("convert");
-      path = System.getenv(IM_PATH);
+      path = System.getenv(ENV_PATH);
       if (path != null)
         exec = path + File.separator + exec;
       try {
@@ -89,63 +77,6 @@ public class ImageMagickHelper {
   }
 
   /**
-   * Checks whether the "dcraw" utility is available.
-   *
-   * @return		true if "dcraw" is available (on PATH)
-   */
-  public static boolean isDcrawAvailable() {
-    String	path;
-    String	exec;
-
-    if (m_DcrawPresent == null) {
-      exec = FileUtils.fixExecutable("dcraw");
-      path = System.getenv(DCRAW_PATH);
-      if (path != null)
-        exec = path + File.separator + exec;
-      try {
-	Runtime.getRuntime().exec(new String[]{exec});
-	m_DcrawPresent = true;
-      }
-      catch (Exception e) {
-        System.err.println("Failed to execute '" + exec + "':");
-        e.printStackTrace();
-	m_DcrawPresent = false;
-      }
-    }
-
-    return m_DcrawPresent;
-  }
-
-  /**
-   * Checks whether the "ufraw" utility is available.
-   *
-   * @return		true if "ufraw" is available (on PATH)
-   */
-  public static boolean isUfrawAvailable() {
-    Process	proc;
-    String	path;
-    String	exec;
-
-    if (m_UfrawPresent == null) {
-      exec = FileUtils.fixExecutable("ufraw");
-      path = System.getenv(UFRAW_PATH);
-      if (path != null)
-        exec = path + File.separator + exec;
-      try {
-	proc = Runtime.getRuntime().exec(new String[]{exec, "--version"});
-	m_UfrawPresent = (proc.waitFor() == 0);
-      }
-      catch (Exception e) {
-        System.err.println("Failed to execute '" + exec + "':");
-        e.printStackTrace();
-	m_UfrawPresent = false;
-      }
-    }
-
-    return m_UfrawPresent;
-  }
-
-  /**
    * Returns a standard error message if specifiec command is not available.
    *
    * @param cmd		the command to use in error message, e.g., "convert"
@@ -153,7 +84,7 @@ public class ImageMagickHelper {
    */
   protected static String getMissingCommandErrorMessage(String cmd) {
     return "ImageMagick (i.e., '" + cmd + "' command) not installed or " 
-           + IM_PATH + " environment variable not pointing to installation!";
+           + ENV_PATH + " environment variable not pointing to installation!";
   }
 
   /**
@@ -163,24 +94,6 @@ public class ImageMagickHelper {
    */
   public static String getMissingConvertErrorMessage() {
     return getMissingCommandErrorMessage("convert");
-  }
-
-  /**
-   * Returns a standard error message if "dcraw" is not available.
-   *
-   * @return		the error message
-   */
-  public static String getMissingDcrawErrorMessage() {
-    return "dcraw not installed or " + DCRAW_PATH + " environment variable not pointing to installation!";
-  }
-
-  /**
-   * Returns a standard error message if "ufraw" is not available.
-   *
-   * @return		the error message
-   */
-  public static String getMissingUfrawErrorMessage() {
-    return "ufraw not installed or " + UFRAW_PATH + " environment variable not pointing to installation!";
   }
 
   /**
@@ -294,7 +207,5 @@ public class ImageMagickHelper {
     Environment.setEnvironmentClass(Environment.class);
     System.out.println("Tool availability:");
     System.out.println("- convert? " + isConvertAvailable());
-    System.out.println("- dcraw? " + isDcrawAvailable());
-    System.out.println("- ufraw? " + isUfrawAvailable());
   }
 }

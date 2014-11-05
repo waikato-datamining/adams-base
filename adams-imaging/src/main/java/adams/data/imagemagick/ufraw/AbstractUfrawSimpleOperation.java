@@ -85,15 +85,11 @@ public abstract class AbstractUfrawSimpleOperation
     
     result = null;
 
-    if (output.exists()) {
-      if (!FileUtils.delete(output))
-	result = "Failed to delete existing output: " + output;
-    }
-
     if (result == null) {
       try {
 	cmd = new UFRawCmd(true);
 	op  = new UFRawOperation();
+	op.overwrite();
 	op.addImage(input.getAbsolutePath());
 	addOperation(op);
 	op.output(output.getAbsolutePath());

@@ -21,7 +21,7 @@ package adams.data.imagemagick.ufraw;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.imagemagick.AbstractImageOperation;
-import adams.data.imagemagick.ImageMagickHelper;
+import adams.data.imagemagick.UFRawHelper;
 
 /**
  * Ancestor for UFRaw operations.
@@ -47,8 +47,8 @@ public abstract class AbstractUfrawOperation
    */
   @Override
   protected String check(PlaceholderFile input, PlaceholderFile output) {
-    if (!ImageMagickHelper.isUfrawAvailable())
-      return ImageMagickHelper.getMissingUfrawErrorMessage();
+    if (!UFRawHelper.isUfrawAvailable())
+      return UFRawHelper.getMissingUfrawErrorMessage();
     else
       return super.check(input, output);
   }
