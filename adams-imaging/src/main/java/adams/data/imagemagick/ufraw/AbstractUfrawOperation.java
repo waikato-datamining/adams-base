@@ -35,6 +35,9 @@ public abstract class AbstractUfrawOperation
   /** for serialization. */
   private static final long serialVersionUID = 4447009209054143230L;
 
+  /** the supported output file types. */
+  public final static String[] OUT_TYPES = new String[]{"ppm", "tiff", "tif", "png", "jpeg", "jpg", "fits"};
+  
   /**
    * Hook method for performing checks before applying the operation.
    * 
