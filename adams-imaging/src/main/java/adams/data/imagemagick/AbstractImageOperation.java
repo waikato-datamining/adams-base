@@ -52,7 +52,7 @@ public abstract class AbstractImageOperation
    * 
    * @param input	the input file
    * @param output	the output file
-   * @return		null if successfull, otherwise error message
+   * @return		null if successful, otherwise error message
    */
   protected String check(PlaceholderFile input, PlaceholderFile output) {
     if (!input.exists())
@@ -70,7 +70,7 @@ public abstract class AbstractImageOperation
    * 
    * @param input	the input file
    * @param output	the output file
-   * @return		null if successfull, otherwise error message
+   * @return		null if successful, otherwise error message
    */
   protected abstract String doApply(PlaceholderFile input, PlaceholderFile output);
   
@@ -80,7 +80,7 @@ public abstract class AbstractImageOperation
    * 
    * @param input	the input file
    * @param output	the output file
-   * @return		null if successfull, otherwise error message
+   * @return		null if successful, otherwise error message
    */
   public String apply(PlaceholderFile input, PlaceholderFile output) {
     String	result;
