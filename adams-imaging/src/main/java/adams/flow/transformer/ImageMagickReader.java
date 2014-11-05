@@ -15,7 +15,7 @@
 
 /*
  * ImageMagickReader.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -37,7 +37,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Reads any file format that ImageMagick can read.<br/>
- * NB: Uses im4java, i.e., ImageMagick (http:&#47;&#47;www.imagemagick.org&#47;) executables must be available on the PATH.
+ * NB: Uses the im4java wrapper around the ImageMagick executables, which must be available on the PATH or the IM_TOOLPATH environment variable set.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -48,40 +48,38 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;java.io.File<br/>
  * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
  * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ImageMagickReader
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -103,8 +101,9 @@ public class ImageMagickReader
   public String globalInfo() {
     return
         "Reads any file format that ImageMagick can read.\n"
-      + "NB: Uses im4java, i.e., ImageMagick (http://www.imagemagick.org/) "
-      + "executables must be available on the PATH.";
+      + "NB: Uses the im4java wrapper around the ImageMagick "
+      + "executables, which must be available on the PATH or the " 
+      + ImageMagickHelper.ENV_PATH + " environment variable set.";
   }
 
   /**
@@ -119,7 +118,7 @@ public class ImageMagickReader
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.awt.image.BufferedImage.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.data.image.BufferedImageContainer.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
     return new Class[]{BufferedImageContainer.class};
