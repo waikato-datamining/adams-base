@@ -94,10 +94,6 @@ adams.data.imagemagick.AbstractImageOperation=\
 adams.data.imagemagick.im.AbstractIMOperation=\
   adams.data.imagemagick.im
 
-# ImageMagick (IM) operations (simple)
-adams.data.imagemagick.im.AbstractIMSimpleOperation=\
-  adams.data.imagemagick.im
-
 # Dcraw operations
 adams.data.imagemagick.dcraw.AbstractDcrawOperation=\
   adams.data.imagemagick.dcraw
