@@ -195,7 +195,7 @@ public class AdaptiveBlur
    * @param op		the operation object to update
    */
   @Override
-  public void addOperation(IMOperation op) {
+  protected void addOperation(IMOperation op) {
     if (m_Sigma == 0.0)
       op.adaptiveBlur(m_Radius);
     else

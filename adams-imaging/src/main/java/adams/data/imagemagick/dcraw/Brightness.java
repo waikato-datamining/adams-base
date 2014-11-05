@@ -127,7 +127,7 @@ public class Brightness
    * @param op		the operation object to update
    */
   @Override
-  public void addOperation(DCRAWOperation op) {
+  protected void addOperation(DCRAWOperation op) {
     op.brightness(m_Level);
   }
 }

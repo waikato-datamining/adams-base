@@ -237,7 +237,7 @@ public class AdaptiveResize
    * @param op		the operation object to update
    */
   @Override
-  public void addOperation(IMOperation op) {
+  protected void addOperation(IMOperation op) {
     if (m_Height == -1) {
       if (m_Width == -1)
 	op.adaptiveResize();

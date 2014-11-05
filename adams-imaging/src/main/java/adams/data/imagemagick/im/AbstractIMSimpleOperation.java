@@ -42,7 +42,7 @@ public abstract class AbstractIMSimpleOperation
    * 
    * @param op		the operation object to update
    */
-  public abstract void addOperation(IMOperation op);
+  protected abstract void addOperation(IMOperation op);
   
   /**
    * Applies the actual operation to the input file and stores the result in the 

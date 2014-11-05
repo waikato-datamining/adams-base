@@ -42,7 +42,7 @@ public abstract class AbstractDcrawSimpleOperation
    * 
    * @param op		the operation object to update
    */
-  public abstract void addOperation(DCRAWOperation op);
+  protected abstract void addOperation(DCRAWOperation op);
   
   /**
    * Applies the actual operation to the input file and stores the result in the 
