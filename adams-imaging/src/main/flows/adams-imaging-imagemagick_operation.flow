@@ -1,8 +1,10 @@
 # Project: adams
-# Date: 2014-11-05 15:51:17
+# Date: 2014-11-05 21:26:30
 # User: fracpete
 #
 adams.flow.control.Flow
+	-annotation
+	Processes one or more image, apply the resizing and blurring operations.
 	-actor
 		adams.flow.source.SelectFile
 			-stop-if-canceled
