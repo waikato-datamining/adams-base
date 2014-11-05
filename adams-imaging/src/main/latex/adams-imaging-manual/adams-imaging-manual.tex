@@ -226,6 +226,9 @@ There are three ImageMagick actors available:
 \begin{tight_itemize}
 	\item \texttt{transformer.ImageMagickReader} -- for reading any image file that
 	ImageMagick supports and forwarding a \texttt{BufferedImageContainer} object.
+	\item \texttt{transformer.ImageMagickOperation} -- performs the ImageMagick
+	(convert, dcraw, ufraw) operations that the user selected from the class
+	hierarchy.
 	\item \texttt{transformer.ImageMagickTransformer} -- performs any ImageMagick
 	command on the incoming image that the \texttt{convert} tool\footnote{\url{http://www.imagemagick.org/script/convert.php}{}} supports and
 	outputs another image again.

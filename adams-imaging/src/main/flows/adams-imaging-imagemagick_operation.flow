@@ -1,0 +1,64 @@
+# Project: adams
+# Date: 2014-11-05 15:51:17
+# User: fracpete
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-initial-dir
+			${EXAMPLE_FLOWS}/data
+	-actor
+		adams.flow.control.Tee
+			-name
+			output filename
+			-tee
+				adams.flow.transformer.BaseName
+			-tee
+				adams.flow.transformer.PrependDir
+					-prefix
+					${EXAMPLE_FLOWS}/output
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					outfile
+	-actor
+		adams.flow.control.Tee
+			-name
+			temp filename
+			-tee
+				adams.flow.transformer.BaseName
+			-tee
+				adams.flow.transformer.PrependDir
+					-prefix
+					${TMP}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					tmpfile
+	-actor
+		adams.flow.transformer.ImageMagickOperation
+			-name
+			resize
+			-operation
+				adams.data.imagemagick.im.AdaptiveResize
+					-width
+					400
+			-output
+			@{tmpfile}
+	-actor
+		adams.flow.transformer.ImageMagickOperation
+			-name
+			blur
+			-operation
+				adams.data.imagemagick.im.AdaptiveBlur
+			-output
+			@{outfile}
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

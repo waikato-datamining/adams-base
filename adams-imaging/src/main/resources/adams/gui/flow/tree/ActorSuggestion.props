@@ -59,6 +59,12 @@ adams-imaging.BufferedImageTransformer2=\
 adams-imaging.ImageMagickTransformer=\
   IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.ImageMagickTransformer
 
+adams-imaging.ImageMagickOperation1=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickOperation
+
+adams-imaging.ImageMagickOperation2=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickOperation
+
 adams-imaging.ImageJFeatureGenerator=\
   IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
 
