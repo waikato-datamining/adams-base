@@ -19,6 +19,8 @@
  */
 package adams.data.imagemagick.dcraw;
 
+import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.imagemagick.AbstractImageOperation;
 import adams.data.imagemagick.ImageMagickHelper;
@@ -40,7 +42,7 @@ public abstract class AbstractDcrawOperation
    * 
    * @param input	the input file
    * @param output	the output file
-   * @return		null if successfull, otherwise error message
+   * @return		null if successful, otherwise error message
    */
   @Override
   protected String check(PlaceholderFile input, PlaceholderFile output) {
@@ -48,5 +50,37 @@ public abstract class AbstractDcrawOperation
       return ImageMagickHelper.getMissingDcrawErrorMessage();
     else
       return super.check(input, output);
+  }
+  
+  /**
+   * Moves the temporary file to its final location.
+   * 
+   * @param input	the input file (used to determine tmp file name)
+   * @param output	the output file
+   * @return		null if successful, otherwise error message
+   */
+  protected String move(PlaceholderFile input, PlaceholderFile output) {
+    String		result;
+    PlaceholderFile	tmp;
+    
+    result = null;
+    
+    tmp = FileUtils.replaceExtension(input, ".ppm");
+    if (isLoggingEnabled())
+      getLogger().info("Moving tmp file '" + tmp + "' to '" + output + "'...");
+    
+    try {
+      if (!FileUtils.move(tmp, output))
+	result = "Failed to move file '" + tmp + "' to '" + output + "'!";
+    }
+    catch (Exception e) {
+      result = Utils.handleException(
+	  this, "Failed to move file '" + tmp + "' to '" + output + "'!", e);
+    }
+    
+    if ((result == null) && isLoggingEnabled())
+      getLogger().info("Moved tmp file '" + tmp + "' successfully to '" + output + "'.");
+    
+    return result;
   }
 }
