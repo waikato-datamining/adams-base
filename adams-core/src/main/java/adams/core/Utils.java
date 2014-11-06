@@ -1033,7 +1033,7 @@ public class Utils {
     boolean	serializable;
 
     serializable = (defValue instanceof Serializable);
-    result       = Array.newInstance(defValue.getClass(), newLen);
+    result       = Array.newInstance((array != null ? array.getClass().getComponentType() : defValue.getClass()), newLen);
     for (i = 0; i < Array.getLength(result); i++) {
       if (serializable)
 	Array.set(result, i, deepCopy(defValue));
