@@ -1432,7 +1432,7 @@ public class Breakpoint
 
     if (result == null) {
       if (m_Watches.length != m_WatchTypes.length)
-	Utils.adjustArray(m_WatchTypes, m_Watches.length, ExpressionType.STRING);
+	m_WatchTypes = (ExpressionType[]) Utils.adjustArray(m_WatchTypes, m_Watches.length, ExpressionType.STRING);
     }
 
     return result;
