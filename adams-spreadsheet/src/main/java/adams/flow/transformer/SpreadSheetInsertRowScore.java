@@ -369,7 +369,7 @@ public class SpreadSheetInsertRowScore
     for (i = 0; i < numScores; i++) {
       header = m_Header;
       header = header.replace("#", "" + i).replace("$", "" + (currPos + 1));
-      sheetNew.insertColumn(pos, m_Header);
+      sheetNew.insertColumn(pos, header);
       currPos++;
     }
 
