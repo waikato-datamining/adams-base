@@ -105,7 +105,7 @@ public class MathExpression
   }
 
   /**
-   * Sets the range of columns to apply the row score algorithm to.
+   * Sets the mathematical expression.
    *
    * @param value	the expression
    */
