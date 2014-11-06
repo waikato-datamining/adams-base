@@ -162,7 +162,7 @@ public abstract class AbstractRowScoreTestCase
       }
     }
 
-    return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), dataStr);
+    return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), dataStr, false);
   }
 
   /**
