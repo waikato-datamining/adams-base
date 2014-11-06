@@ -223,6 +223,10 @@ The following conversion schemes are available:
 	formula.
 	\item \textit{SpreadSheetAnyColumnToString} -- converts any data types in 
 	a column to strings.
+	\item \textit{SpreadSheetCellFinderToPositions} -- outputs a string array
+	of the cell positions (eg 'A2') that the cell finder generates.
+	\item \textit{SpreadSheetColumnFinderToRange} -- outputs a range string
+	of the columns that the finder located (eg '1-6,8').
 	\item \textit{SpreadSheetDoubleColumnToLong} -- converts any floating values
 	to integer (= long) values.
 	\item \textit{SpreadSheetDoubleColumnToString} -- converts any floating values
@@ -237,6 +241,8 @@ The following conversion schemes are available:
 	column to double objects.
 	\item \textit{SpreadSheetMaterializeFormulas} -- replaces formulas in cells
 	with the current value of the formula.
+	\item \textit{SpreadSheetRowFinderToRange} -- outputs a range string
+	of the rows that the finder located (eg '1-6,8').
 	\item \textit{SpreadSheetStringSplitColumn} -- splits the string representation 
 	of a column into multiple columns using a regular expression.
 	\item \textit{SpreadSheetStringColumnToBoolean} -- converts strings values in a 
