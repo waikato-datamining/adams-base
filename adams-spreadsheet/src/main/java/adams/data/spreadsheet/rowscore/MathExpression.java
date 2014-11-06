@@ -107,7 +107,7 @@ public class MathExpression
   /**
    * Sets the range of columns to apply the row score algorithm to.
    *
-   * @param value	the range
+   * @param value	the expression
    */
   public void setExpression(MathematicalExpressionText value) {
     m_Expression = value;
