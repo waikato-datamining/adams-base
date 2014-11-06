@@ -1,1 +1,1 @@
-row finder: NullFinder
+row finder: NullFinder, type: range, separator: ','

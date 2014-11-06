@@ -1,1 +1,1 @@
-column finder: NullFinder
+column finder: NullFinder, type: range, separator: ','
