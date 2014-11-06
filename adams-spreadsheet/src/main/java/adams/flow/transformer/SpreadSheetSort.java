@@ -15,12 +15,11 @@
 
 /*
  * SpreadSheetSort.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseBoolean;
@@ -194,7 +193,7 @@ public class SpreadSheetSort
   public void setSortColumn(SpreadSheetColumnIndex[] value) {
     m_SortColumn = value;
     if (m_SortColumn.length != m_SortOrder.length)
-      Utils.adjustArray(m_SortOrder, m_SortColumn.length, new BaseBoolean(true));
+      m_SortOrder = (BaseBoolean[]) Utils.adjustArray(m_SortOrder, m_SortColumn.length, new BaseBoolean(true));
     reset();
   }
 
@@ -225,7 +224,7 @@ public class SpreadSheetSort
   public void setSortOrder(BaseBoolean[] value) {
     m_SortOrder = value;
     if (m_SortColumn.length != m_SortOrder.length)
-      Utils.adjustArray(m_SortColumn, m_SortOrder.length, new Index("first"));
+      m_SortColumn = (SpreadSheetColumnIndex[]) Utils.adjustArray(m_SortColumn, m_SortOrder.length, new SpreadSheetColumnIndex(SpreadSheetColumnIndex.FIRST));
     reset();
   }
 
@@ -297,15 +296,19 @@ public class SpreadSheetSort
     if (!m_NoCopy)
       sheet = sheet.getClone();
     
-    // set up comparator
+    // columns
     indices = new int[m_SortColumn.length];
     for (i = 0; i < m_SortColumn.length; i++) {
       m_SortColumn[i].setSpreadSheet(sheet);
       indices[i] = m_SortColumn[i].getIntIndex();
     }
+    
+    // order
     order = new boolean[m_SortOrder.length];
     for (i = 0; i < m_SortOrder.length; i++)
       order[i] = m_SortOrder[i].booleanValue();
+
+    // set up comparator
     comp = new RowComparator(indices, order);
 
     sheet.sort(comp, m_Unique);
