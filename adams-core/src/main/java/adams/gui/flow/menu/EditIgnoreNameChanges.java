@@ -67,6 +67,8 @@ public class EditIgnoreNameChanges
   @Override
   protected void doUpdate() {
     setEnabled(
+  	m_State.hasCurrentPanel());
+    setSelected(
 	   m_State.hasCurrentPanel() 
 	&& m_State.getCurrentPanel().getIgnoreNameChanges());
   }
