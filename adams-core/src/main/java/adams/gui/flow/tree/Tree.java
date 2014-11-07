@@ -333,7 +333,7 @@ public class Tree
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
 	  for (TreePopupAction action: m_Shortcuts) {
 	    action.update(state);
-	    if (action.keyStrokeApplies(ks)) {
+	    if (action.keyStrokeApplies(ks) && action.isEnabled()) {
 	      action.actionPerformed(null);
 	      e.consume();
 	      break;
