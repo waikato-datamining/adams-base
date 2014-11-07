@@ -15,7 +15,7 @@
 
 /*
  * AbstractFFmpegPluginWithOptions.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.ffmpeg;
@@ -55,11 +55,11 @@ public abstract class AbstractFFmpegPluginWithOptions
 
     m_OptionManager.add(
 	    "additional-input-options", "additionalInputOptions",
-	    "");
+	    getDefaultAdditionalInputOptions());
 
     m_OptionManager.add(
 	    "additional-output-options", "additionalOutputOptions",
-	    "");
+	    getDefaultAdditionalOutputOptions());
   }
 
   /**
@@ -77,6 +77,16 @@ public abstract class AbstractFFmpegPluginWithOptions
     
     return result;
   }
+  
+  /**
+   * Returns the default value for the additional input options.
+   * 
+   * @return		the default
+   */
+  protected String getDefaultAdditionalInputOptions() {
+    return "";
+  }
+  
   /**
    * Sets the additional input options to use.
    *
@@ -104,6 +114,15 @@ public abstract class AbstractFFmpegPluginWithOptions
    */
   public String additionalInputOptionsTipText() {
     return "The additional output options for ffmpeg to use.";
+  }
+  
+  /**
+   * Returns the default value for the additional output options.
+   * 
+   * @return		the default
+   */
+  protected String getDefaultAdditionalOutputOptions() {
+    return "";
   }
 
   /**

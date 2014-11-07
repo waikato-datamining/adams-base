@@ -15,7 +15,7 @@
 
 /*
  * MovieFromImages.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.ffmpeg;
@@ -45,7 +45,17 @@ public class MovieFromImages
 	+ "'img%04d.png'. This will use all images that have 4 digits, "
 	+ "i.e., 'img0001.png, img0002.png, ...'.";
   }
-  
+
+  /**
+   * Returns the default value for the additional output options.
+   * 
+   * @return		the default
+   */
+  @Override
+  protected String getDefaultAdditionalOutputOptions() {
+    return "-c:v libx264 -r 30 -pix_fmt yuv420p -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\"";
+  }
+
   /**
    * Assembles the command-line, excluding additional options 
    * and executable.

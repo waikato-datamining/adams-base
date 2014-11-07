@@ -15,7 +15,7 @@
 
 /*
  * GenericPlugin.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.ffmpeg;
@@ -57,13 +57,22 @@ public class GenericPlugin
 
     m_OptionManager.add(
 	    "input-options", "inputOptions",
-	    "");
+	    getDefaultInputOptions());
 
     m_OptionManager.add(
 	    "output-options", "outputOptions",
-	    "");
+	    getDefaultOutputOptions());
   }
 
+  /**
+   * Returns the default input options.
+   * 
+   * @return		the default
+   */
+  protected String getDefaultInputOptions() {
+    return "";
+  }
+  
   /**
    * Sets the input options to use.
    *
@@ -91,6 +100,15 @@ public class GenericPlugin
    */
   public String inputOptionsTipText() {
     return "The output options for ffmpeg to use.";
+  }
+
+  /**
+   * Returns the default output options.
+   * 
+   * @return		the default
+   */
+  protected String getDefaultOutputOptions() {
+    return "";
   }
 
   /**

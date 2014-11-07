@@ -15,7 +15,7 @@
 
 /*
  * AbstractFFmpegPlugin.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.ffmpeg;
@@ -71,11 +71,11 @@ public abstract class AbstractFFmpegPlugin
 
     m_OptionManager.add(
 	    "bit-rate", "bitRate",
-	    64, 1, null);
+	    getDefaultBitRate(), 1, null);
 
     m_OptionManager.add(
 	    "fps", "framesPerSecond",
-	    25, 1, null);
+	    getDefaultFramesPerSecond(), 1, null);
   }
   
   /**
@@ -131,6 +131,15 @@ public abstract class AbstractFFmpegPlugin
   }
 
   /**
+   * The default setting for fps.
+   * 
+   * @return		the default
+   */
+  protected int getDefaultFramesPerSecond() {
+    return 25;
+  }
+  
+  /**
    * Sets the frames per second to use.
    *
    * @param value	the fps
@@ -157,6 +166,15 @@ public abstract class AbstractFFmpegPlugin
    */
   public String framesPerSecondTipText() {
     return "The frames per second (in Hz).";
+  }
+
+  /**
+   * The default setting for fps.
+   * 
+   * @return		the default
+   */
+  protected int getDefaultBitRate() {
+    return 64000;
   }
 
   /**
