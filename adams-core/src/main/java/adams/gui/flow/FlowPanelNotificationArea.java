@@ -30,7 +30,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
 /**
@@ -118,18 +117,6 @@ public class FlowPanelNotificationArea
   }
   
   /**
-   * Returns the tabbed pane that this notification area belongs to.
-   * 
-   * @return		the tabbed pane, null if not available
-   */
-  public FlowTabbedPane getTabbedPane() {
-    if (getOwner() != null)
-      return getOwner().getOwner();
-    else
-      return null;
-  }
-  
-  /**
    * Adds the listener to the list of listeners waiting for the "Close"
    * button to be pressed.
    * 
@@ -168,16 +155,12 @@ public class FlowPanelNotificationArea
    */
   public void showNotification(String msg, boolean error) {
     String[]	lines;
-    int		index;
     
     lines = msg.split("\n");
     setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20)));
     m_TextNotification.setContent(msg);
-    if (getTabbedPane() != null) {
-      index = getTabbedPane().indexOfComponent(getOwner());
-      if (index != -1)
-	getTabbedPane().setIconAt(index, error ? GUIHelper.getIcon("stop.gif") : GUIHelper.getIcon("validate.png"));
-    }
+    if (getOwner() != null)
+      getOwner().setTabIcon(error ? "stop.gif" : "validate_blue.png");
     setVisible(true);
   }
   
@@ -185,14 +168,9 @@ public class FlowPanelNotificationArea
    * Removes the notification.
    */
   public void clearNotification() {
-    int		index;
-
     setVisible(false);
     m_TextNotification.setContent("");
-    if (getTabbedPane() != null) {
-      index = getTabbedPane().indexOfComponent(getOwner());
-      if (index != -1)
-	getTabbedPane().setIconAt(index, null);
-    }
+    if (getOwner() != null)
+      getOwner().setTabIcon(null);
   }
 }

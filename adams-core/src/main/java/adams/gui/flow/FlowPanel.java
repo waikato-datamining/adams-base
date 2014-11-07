@@ -188,6 +188,7 @@ public class FlowPanel
       m_Owner.update();
       m_Owner.cleanUp();
       m_Owner.clearNotification();
+      m_Owner.setTabIcon("run.gif");
       
       m_Running = true;
       m_Owner.update();
@@ -301,6 +302,7 @@ public class FlowPanel
     public void pauseExecution() {
       showStatus("Pausing");
       ((Pausable) m_Flow).pauseExecution();
+      m_Owner.setTabIcon("pause.gif");
       m_Owner.update();
     }
 
@@ -321,6 +323,7 @@ public class FlowPanel
     public void resumeExecution() {
       showStatus("Resuming");
       ((Pausable) m_Flow).resumeExecution();
+      m_Owner.setTabIcon("run.gif");
       m_Owner.update();
     }
 
@@ -563,6 +566,21 @@ public class FlowPanel
    */
   public FlowTabbedPane getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Sets the tab icon.
+   * 
+   * @param icon	the name of the icon, null to unset it
+   */
+  public void setTabIcon(String icon) {
+    int		index;
+    
+    if (getOwner() != null) {
+      index = getOwner().indexOfComponent(this);
+      if (index != -1)
+	getOwner().setIconAt(index, (icon == null) ? null : GUIHelper.getIcon(icon));
+    }
   }
 
   /**
