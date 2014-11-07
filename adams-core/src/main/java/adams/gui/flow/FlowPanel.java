@@ -187,7 +187,7 @@ public class FlowPanel
     protected Object doInBackground() throws Exception {
       m_Owner.update();
       m_Owner.cleanUp();
-      m_Owner.setFinished(false);
+      m_Owner.clearNotification();
       
       m_Running = true;
       m_Owner.update();
@@ -253,7 +253,6 @@ public class FlowPanel
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
-      m_Owner.setFinished(true);
       m_Owner.clearRegisteredBreapoints();
       if (m_Owner.getRunGC())
 	System.gc();
@@ -436,9 +435,6 @@ public class FlowPanel
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
   
-  /** whether the flow execution has finished. */
-  protected boolean m_Finished;
-  
   /**
    * Initializes the panel with no owner.
    */
@@ -479,7 +475,6 @@ public class FlowPanel
     m_Title                 = "";
     m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
     m_RegisteredBreakpoints = new HashMap<String,Breakpoint>();
-    m_Finished              = false;
   }
 
   /**
@@ -2086,15 +2081,6 @@ public class FlowPanel
   public HashMap<String,Breakpoint> getRegisteredBreakpoints() {
     return m_RegisteredBreakpoints;
   }
-
-  /**
-   * Sets the "finished" state.
-   * 
-   * @param value	true if finished
-   */
-  protected void setFinished(boolean value) {
-    m_Finished = value;
-  }
   
   /**
    * Displays the notification text.
@@ -2110,7 +2096,6 @@ public class FlowPanel
    * Removes the notification.
    */
   public void clearNotification() {
-    m_Finished = false;
     m_PanelNotification.clearNotification();
   }
   
