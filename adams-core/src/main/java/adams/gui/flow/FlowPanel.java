@@ -187,6 +187,7 @@ public class FlowPanel
     protected Object doInBackground() throws Exception {
       m_Owner.update();
       m_Owner.cleanUp();
+      m_Owner.setFinished(false);
       
       m_Running = true;
       m_Owner.update();
@@ -252,6 +253,7 @@ public class FlowPanel
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
+      m_Owner.setFinished(true);
       m_Owner.clearRegisteredBreapoints();
       if (m_Owner.getRunGC())
 	System.gc();
@@ -272,7 +274,7 @@ public class FlowPanel
 	  msg += "(" + errors + ")";
 	showStatus(msg);
 	if (m_ShowNotification)
-	  showMessage(m_Output, true);
+	  showNotification(m_Output, true);
       }
       else {
 	if (m_Running)
@@ -282,12 +284,8 @@ public class FlowPanel
 	if (errors != null)
 	  msg += " " + errors + ".";
 	showStatus(msg);
-	if (m_ShowNotification) {
-	  if (m_Running)
-	    GUIHelper.showInformationMessage(m_Owner.getOwner(), msg);
-	  else
-	    GUIHelper.showErrorMessage(m_Owner.getOwner(), msg);
-	}
+	if (m_ShowNotification)
+	  m_Owner.showNotification(msg, !m_Running);
       }
 
       m_Running  = false;
@@ -373,8 +371,8 @@ public class FlowPanel
      * @param msg		the message to display
      * @param isError	whether it is an error message
      */
-    public void showMessage(String msg, boolean isError) {
-      m_Owner.showMessage(msg, isError);
+    public void showNotification(String msg, boolean isError) {
+      m_Owner.showNotification(msg, isError);
     }
   }
   
@@ -435,6 +433,12 @@ public class FlowPanel
   /** the registered breakpoints: class of panel - (name of panel - AbstractDisplay instance). */
   protected HashMap<String,Breakpoint> m_RegisteredBreakpoints;
   
+  /** the panel for showing notifications. */
+  protected FlowPanelNotificationArea m_PanelNotification;
+  
+  /** whether the flow execution has finished. */
+  protected boolean m_Finished;
+  
   /**
    * Initializes the panel with no owner.
    */
@@ -473,8 +477,9 @@ public class FlowPanel
     m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
     m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
-    m_RegisteredDisplays      = new HashMap<Class,HashMap<String,AbstractDisplay>>();
+    m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
     m_RegisteredBreakpoints = new HashMap<String,Breakpoint>();
+    m_Finished              = false;
   }
 
   /**
@@ -482,7 +487,7 @@ public class FlowPanel
    */
   @Override
   protected void initGUI() {
-    Properties			props;
+    Properties		props;
 
     super.initGUI();
 
@@ -534,8 +539,28 @@ public class FlowPanel
 	  getEditor().getTabs().notifyTabs(m_Tree.getSelectionPaths(), m_Tree.getSelectedActors());
       }
     });
+    
+    m_PanelNotification = new FlowPanelNotificationArea();
+    m_PanelNotification.setOwner(this);
+    m_PanelNotification.addCloseListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	clearNotification();
+      }
+    });
+    add(m_PanelNotification, BorderLayout.SOUTH);
   }
 
+  /**
+   * Finishes up the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    
+    clearNotification();
+  }
+  
   /**
    * Returns the editor this panel belongs to.
    *
@@ -967,15 +992,15 @@ public class FlowPanel
 
     actor = (AbstractActor) consumer.fromFile(file);
     if (actor == null) {
-      showMessage("Failed to load flow from:\n" + file, true);
+      showNotification("Failed to load flow from:\n" + file, true);
     }
     else {
       getTree().setActor(actor);
       setCurrentFile(new PlaceholderFile(file.getAbsolutePath() + "." + AbstractActor.FILE_EXTENSION));
       if (!consumer.hasErrors())
-	showMessage("Flow successfully imported from:\n" + file, false);
+	showNotification("Flow successfully imported from:\n" + file, false);
       else
-	showMessage("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), true);
+	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), true);
     }
   }
 
@@ -988,10 +1013,10 @@ public class FlowPanel
   public void exportFlow(OptionProducer producer, File file) {
     producer.produce(getCurrentFlow());
     if (!FileUtils.writeToFile(file.getAbsolutePath(), producer.toString(), false)) {
-      showMessage("Failed to export flow to:\n" + file, true);
+      showNotification("Failed to export flow to:\n" + file, true);
     }
     else {
-      showMessage("Flow successfully exported to:\n" + file, false);
+      showNotification("Flow successfully exported to:\n" + file, false);
     }
   }
 
@@ -1030,11 +1055,11 @@ public class FlowPanel
     if (msg == null) {
       msg = "The flow passed validation!";
       showStatus(msg);
-      showMessage(msg, false);
+      showNotification(msg, false);
     }
     else {
       showStatus(msg);
-      showMessage("The flow setup failed validation:\n" + msg, true);
+      showNotification("The flow setup failed validation:\n" + msg, true);
     }
   }
 
@@ -1495,7 +1520,7 @@ public class FlowPanel
       dialog.setVisible(true);
     }
     else {
-      showMessage("Basic check passed!\nAll variables get at least set once in the flow.", false);
+      showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
     }
   }
 
@@ -1597,7 +1622,7 @@ public class FlowPanel
    */
   public void processActors(AbstractActorProcessor processor) {
     if (getTree().processActor(null, processor))
-      showMessage("Actors processed!", false);
+      showNotification("Actors processed!", false);
   }
 
   /**
@@ -1624,7 +1649,7 @@ public class FlowPanel
     path = getTree().getSelectionPath();
     node = (Node) path.getLastPathComponent();
     if (getTree().processActor(path, processor))
-      showMessage("Actor " + node.getActor().getName() + " processed!", false);
+      showNotification("Actor " + node.getActor().getName() + " processed!", false);
   }
 
   /**
@@ -1718,23 +1743,6 @@ public class FlowPanel
     dialog.setContent(buffer);
     dialog.setLocationRelativeTo(getTree());
     dialog.setVisible(true);
-  }
-
-  /**
-   * Displays the given message in a separate dialog.
-   *
-   * @param msg		the message to display
-   * @param isError	whether it is an error message
-   */
-  protected void showMessage(String msg, boolean isError) {
-    String	status;
-
-    status = msg.replaceAll(": ", ":\n");
-
-    if (isError)
-      GUIHelper.showErrorMessage(m_Owner, status, "Error");
-    else
-      GUIHelper.showInformationMessage(m_Owner, status, "Status");
   }
 
   /**
@@ -2077,6 +2085,33 @@ public class FlowPanel
    */
   public HashMap<String,Breakpoint> getRegisteredBreakpoints() {
     return m_RegisteredBreakpoints;
+  }
+
+  /**
+   * Sets the "finished" state.
+   * 
+   * @param value	true if finished
+   */
+  protected void setFinished(boolean value) {
+    m_Finished = value;
+  }
+  
+  /**
+   * Displays the notification text.
+   * 
+   * @param msg		the text to display
+   * @param error	true if error message
+   */
+  public void showNotification(String msg, boolean error) {
+    m_PanelNotification.showNotification(msg, error);
+  }
+  
+  /**
+   * Removes the notification.
+   */
+  public void clearNotification() {
+    m_Finished = false;
+    m_PanelNotification.clearNotification();
   }
   
   /**
