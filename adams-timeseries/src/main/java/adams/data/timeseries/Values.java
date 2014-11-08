@@ -56,9 +56,19 @@ import adams.data.report.DataType;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-prefix-value &lt;java.lang.String&gt; (property: prefixValue)
+ * &nbsp;&nbsp;&nbsp;The prefix to use for the values.
+ * &nbsp;&nbsp;&nbsp;default: Value-
+ * </pre>
+ * 
  * <pre>-add-timestamp &lt;boolean&gt; (property: addTimestamp)
  * &nbsp;&nbsp;&nbsp;If enabled, the timestamp gets added as well, preceding the value.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-prefix-timestamp &lt;java.lang.String&gt; (property: prefixTimestamp)
+ * &nbsp;&nbsp;&nbsp;The prefix to use for the timestamps.
+ * &nbsp;&nbsp;&nbsp;default: Timestamp-
  * </pre>
  * 
  * <pre>-timestamp-format &lt;adams.data.DateFormatString&gt; (property: timestampFormat)
@@ -78,6 +88,12 @@ public class Values
   /** for serialization. */
   private static final long serialVersionUID = 9084280445189495060L;
 
+  /** the prefix to use for values. */
+  protected String m_PrefixValue;
+
+  /** the prefix to use for timestamps. */
+  protected String m_PrefixTimestamp;
+  
   /** whether to include the timestamp. */
   protected boolean m_AddTimestamp;
   
@@ -102,12 +118,49 @@ public class Values
     super.defineOptions();
 
     m_OptionManager.add(
+	    "prefix-value", "prefixValue",
+	    "Value-");
+
+    m_OptionManager.add(
 	    "add-timestamp", "addTimestamp",
 	    false);
 
     m_OptionManager.add(
+	    "prefix-timestamp", "prefixTimestamp",
+	    "Timestamp-");
+
+    m_OptionManager.add(
 	    "timestamp-format", "timestampFormat",
 	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+  }
+  
+  /**
+   * Sets the prefix for the values.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefixValue(String value) {
+    m_PrefixValue = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix for the values.
+   *
+   * @return		the prefix
+   */
+  public String getPrefixValue() {
+    return m_PrefixValue;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixValueTipText() {
+    return "The prefix to use for the values.";
   }
   
   /**
@@ -139,6 +192,35 @@ public class Values
     return "If enabled, the timestamp gets added as well, preceding the value.";
   }
   
+  /**
+   * Sets the prefix for the timestamps.
+   *
+   * @param timestamp	the prefix
+   */
+  public void setPrefixTimestamp(String timestamp) {
+    m_PrefixTimestamp = timestamp;
+    reset();
+  }
+
+  /**
+   * Returns the prefix for the timestamps.
+   *
+   * @return		the prefix
+   */
+  public String getPrefixTimestamp() {
+    return m_PrefixTimestamp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTimestampTipText() {
+    return "The prefix to use for the timestamps.";
+  }
+
   /**
    * Sets the format string to use for the timestamp strings.
    *
@@ -182,8 +264,8 @@ public class Values
     result = new HeaderDefinition();
     for (i = 0; i < timeseries.size(); i++) {
       if (m_AddTimestamp)
-	result.add("Timestamp-" + (i+1), DataType.STRING);
-      result.add("Value-" + (i+1), DataType.NUMERIC);
+	result.add(m_PrefixTimestamp + (i+1), DataType.STRING);
+      result.add(m_PrefixValue + (i+1), DataType.NUMERIC);
     }
     
     return result;
