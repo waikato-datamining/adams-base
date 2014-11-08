@@ -35,8 +35,8 @@ import weka.core.MOAUtils;
 import weka.core.Utils;
 import adams.core.MOAHelper;
 import adams.core.QuickInfoHelper;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -181,6 +181,16 @@ public class MOAClassifierEvaluation
     m_Count            = 0;
     m_ActualClassifier = null;
   }
+  
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Evaluator = getDefaultOption();
+  }
 
   /**
    * Sets the callable classifier to use.
@@ -241,7 +251,7 @@ public class MOAClassifierEvaluation
    * @param value	the evaluator
    */
   public void setEvaluator(ClassOption value) {
-    m_Evaluator = (ClassOption) value.copy();
+    m_Evaluator.setValueViaCLIString(value.getValueAsCLIString());
     reset();
   }
 

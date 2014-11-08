@@ -15,7 +15,7 @@
 
 /**
  * MOACommandLineHandler.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -126,7 +126,7 @@ public class MOACommandLineHandler
       System.arraycopy(all, 1, result, 0, all.length - 1);
     }
     else {
-      result = all;
+      result = new String[0];
     }
     
     return result;
@@ -141,7 +141,14 @@ public class MOACommandLineHandler
    */
   @Override
   public boolean setOptions(Object obj, String[] args) {
-    // TODO can we simply just set the options?
+    moa.options.OptionHandler	handler;
+    
+    if (obj instanceof moa.options.OptionHandler) {
+      handler = (moa.options.OptionHandler) obj;
+      handler.getOptions().setViaCLIString(joinOptions(args));
+      return true;
+    }
+    
     return false;
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * MOAClustererSetup.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -114,6 +114,16 @@ public class MOAClustererSetup
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Clusterer = getDefaultOption();
+  }
+  
+  /**
    * Returns the default clusterer.
    *
    * @return		the clusterer
@@ -143,7 +153,7 @@ public class MOAClustererSetup
    * @param value	the clusterer
    */
   public void setClusterer(ClassOption value) {
-    m_Clusterer = (ClassOption) value.copy();
+    m_Clusterer.setValueViaCLIString(value.getValueAsCLIString());
     reset();
   }
 

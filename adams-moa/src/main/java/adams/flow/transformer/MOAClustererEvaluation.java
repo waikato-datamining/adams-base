@@ -33,8 +33,8 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.MOAUtils;
 import adams.core.QuickInfoHelper;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -179,6 +179,16 @@ public class MOAClustererEvaluation
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Evaluator = getDefaultOption();
+  }
+  
+  /**
    * Sets the callable clusterer to use.
    *
    * @param value	the clusterer name
@@ -237,7 +247,7 @@ public class MOAClustererEvaluation
    * @param value	the evaluator
    */
   public void setEvaluator(ClassOption value) {
-    m_Evaluator = (ClassOption) value.copy();
+    m_Evaluator.setValueViaCLIString(value.getValueAsCLIString());
     reset();
   }
 

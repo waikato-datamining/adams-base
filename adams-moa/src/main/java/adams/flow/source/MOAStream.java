@@ -162,6 +162,16 @@ public class MOAStream
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_StreamGenerator = getDefaultOption();
+  }
+  
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -207,7 +217,7 @@ public class MOAStream
    * @param value	the stream generator
    */
   public void setStreamGenerator(ClassOption value) {
-    m_StreamGenerator = (ClassOption) value.copy();
+    m_StreamGenerator.setValueViaCLIString(value.getValueAsCLIString());
     reset();
   }
 

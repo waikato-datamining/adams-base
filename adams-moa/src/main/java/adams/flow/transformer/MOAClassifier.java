@@ -15,7 +15,7 @@
 
 /*
  * MOAClassifier.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -163,6 +163,16 @@ public class MOAClassifier
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Classifier = getDefaultOption();
+  }
+  
+  /**
    * Returns the default classifier.
    *
    * @return		the classifier
@@ -192,7 +202,7 @@ public class MOAClassifier
    * @param value	the classifier
    */
   public void setClassifier(ClassOption value) {
-    m_Classifier = (ClassOption) value.copy();
+    m_Classifier.setValueViaCLIString(value.getValueAsCLIString());
     reset();
   }
 
