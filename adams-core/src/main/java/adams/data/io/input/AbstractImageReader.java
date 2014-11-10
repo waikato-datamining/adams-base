@@ -107,8 +107,8 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
     
     if (cont.hasReport()) {
       report = cont.getReport();
-      report.addField(new Field("File", DataType.STRING));
-      report.setStringValue("File", file.getAbsolutePath());
+      report.addField(new Field(AbstractImageContainer.FIELD_FILENAME, DataType.STRING));
+      report.setStringValue(AbstractImageContainer.FIELD_FILENAME, file.getAbsolutePath());
     }
     
     return cont;
