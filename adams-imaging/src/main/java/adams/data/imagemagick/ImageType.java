@@ -32,98 +32,103 @@ import adams.core.option.AbstractOption;
  */
 public enum ImageType
   implements EnumWithCustomDisplay<ImageType> {
-  AUTO("AUTO", "", "Automatic"),
-  AAI("AAI", "aai", "AAI Dune image"),
-  AVS("AVS", "avs", "AVS X image"),
-  BMP("BMP", "bmp", "Microsoft Windows bitmap"),
-  CIN("CIN", "cin", "Kodak Cineon Image Format"),
-  CMYK("CMYK", "cmyk", "Raw cyan, magenta, yellow, and black samples"),
-  CMYKA("CMYKA", "cmyka", "Raw cyan, magenta, yellow, black, and alpha samples"),
-  DCX("DCX", "dcx", "ZSoft IBM PC multi-page Paintbrush image"),
-  DIB("DIB", "dib", "Microsoft Windows Device Independent Bitmap"),
-  DPX("DPX", "dpx", "SMPTE Digital Moving Picture Exchange 2.0 (SMPTE 268M-2003)"),
-  EPDF("EPDF", "epdf", "Encapsulated Portable Document Format"),
-  EPI("EPI", "epi", "Adobe Encapsulated PostScript Interchange format"),
-  EPS("EPS", "eps", "Adobe Encapsulated PostScript"),
-  EPS2("EPS2", "eps", "Adobe Level II Encapsulated PostScript"),
-  EPS3("EPS3", "eps", "Adobe Level III Encapsulated PostScript"),
-  EPSF("EPSF", "epsf", "Adobe Encapsulated PostScript"),
-  EPSI("EPSI", "epsi", "Adobe Encapsulated PostScript Interchange format"),
-  EPT("EPT", "ept", "Adobe Encapsulated PostScript Interchange format with TIFF preview"),
-  EXR("EXR", "exr", "High dynamic-range (HDR) file format developed by Industrial Light & Magic"),
-  FAX("FAX", "fax", "Group 3 TIFF"),
-  FITS("FITS", "fits", "Flexible Image Transport System"),
-  FPX("FPX", "fpx", "FlashPix Format"),
-  GIF("GIF", "gif", "CompuServe Graphics Interchange Format"),
-  GRAY("GRAY", "gray", "Raw gray samples"),
-  HDR("HDR", "hdr", "Radiance RGBE image format"),
-  HRZ("HRZ", "hrz", "Slow Scane TeleVision"),
-  HTML("HTML", "html", "Hypertext Markup Language with a client-side image map"),
-  INFO("INFO", "info", "Format and characteristics of the image"),
-  JBIG("JBIG", "jbig", "Joint Bi-level Image experts Group file interchange format"),
-  JNG("JNG", "jng", "Multiple-image Network Graphics"),
-  JP2("JP2", "jp2", "JPEG-2000 JP2 File Format Syntax"),
-  JPC("JPC", "jpc", "JPEG-2000 Code Stream Syntax"),
-  JPEG("JPEG", "jpg", "Joint Photographic Experts Group JFIF format"),
-  MIFF("MIFF", "miff", "Magick image file format"),
-  MONO("MONO", "mono", "Bi-level bitmap in least-significant-byte first order"),
-  MNG("MNG", "mng", "Multiple-image Network Graphics"),
-  M2V("M2V", "", "Motion Picture Experts Group file interchange format (version 2)"),
-  MPEG("MPEG", "mpg", "Motion Picture Experts Group file interchange format (version 1)"),
-  MPC("MPC", "mpc", "Magick Persistent Cache image file format"),
-  MPR("MPR", "mpr", "Magick Persistent Registry"),
-  MSL("MSL", "msl", "Magick Scripting Language"),
-  MTV("MTV", "mtv", "MTV Raytracing image format"),
-  MVG("MVG", "mvg", "Magick Vector Graphics."),
-  OTB("OTB", "otb", "On-the-air Bitmap"),
-  P7("P7", "p7", "Xv's Visual Schnauzer thumbnail format"),
-  PALM("PALM", "palm", "Palm pixmap"),
-  PAM("PAM", "pam", "Common 2-dimensional bitmap format"),
-  PBM("PBM", "pbm", "Portable bitmap format (black and white)"),
-  PCD("PCD", "pcd", "Photo CD"),
-  PCDS("PCDS", "pcds", "Photo CD"),
-  PCL("PCL", "pcl", "HP Page Control Language"),
-  PCX("PCX", "pcx", "ZSoft IBM PC Paintbrush file"),
-  PDB("PDB", "pdb", "Palm Database ImageViewer Format"),
-  PDF("PDF", "pdf", "Portable Document Format"),
-  PFM("PFM", "pfm", "Portable float map format"),
-  PGM("PGM", "pgm", "Portable graymap format (gray scale)"),
-  PICON("PICON", "picon", "Personal Icon"),
-  PICT("PICT", "pict", "Apple Macintosh QuickDraw/PICT file"),
-  PNG("PNG", "png", "Portable Network Graphics"),
-  PNG8("PNG8", "png", "Portable Network Graphics"),
-  PNG24("PNG24", "png", "Portable Network Graphics"),
-  PNG32("PNG32", "png", "Portable Network Graphics"),
-  PNM("PNM", "pnm", "Portable anymap"),
-  PPM("PPM", "ppm", "Portable pixmap format (color)"),
-  PS("PS", "ps", "Adobe PostScript file"),
-  PS2("PS2", "ps", "Adobe Level II PostScript file"),
-  PS3("PS3", "ps", "Adobe Level III PostScript file"),
-  PSB("PSB", "psb", "Adobe Large Document Format"),
-  PSD("PSD", "psd", "Adobe Photoshop bitmap file"),
-  PTIF("PTIF", "ptif", "Pyramid encoded TIFF"),
-  RGB("RGB", "rgb", "Raw red, green, and blue samples"),
-  RGBA("RGBA", "rgba", "Raw red, green, blue, and alpha samples"),
-  SGI("SGI", "sgi", "Irix RGB image"),
-  SHTML("SHTML", "shtml", "Hypertext Markup Language client-side image map"),
-  SUN("SUN", "sun", "SUN Rasterfile"),
-  SVG("SVG", "svg", "Scalable Vector Graphics"),
-  TGA("TGA", "tga", "Truevision Targa image"),
-  TIFF("TIFF", "tiff", "Tagged Image File Format"),
-  TXT("TXT", "txt", "Raw text file"),
-  UIL("UIL", "uil", "X-Motif UIL table"),
-  UYVY("UYVY", "uyvy", "Interleaved YUV raw image"),
-  VICAR("VICAR", "vicar", "VICAR rasterfile format"),
-  VIFF("VIFF", "viff", "Khoros Visualization Image File Format"),
-  WBMP("WBMP", "wbmp", "Wireless bitmap"),
-  WEBP("WEBP", "webp", "Weppy image format"),
-  X("X", "x", "display or import an image to or from an X11 server"),
-  XBM("XBM", "xbm", "X Windows system bitmap, black and white only"),
-  XPM("XPM", "xpm", "X Windows system pixmap"),
-  XWD("XWD", "xwd", "X Windows system window dump"),
-  YCbCr("YCbCr", "ycbcr", "Raw Y, Cb, and Cr samples"),
-  YCbCrA("YCbCrA", "ycbcra", "Raw Y, Cb, Cr, and alpha samples"),
-  YUV("YUV", "yuv", "CCIR 601 4:1:1");
+  
+  AUTO("AUTO", "", "Automatic", true, true),
+  THREEFR("3FR", "3fr", "Hasselblad CFV/H3D39II", true, false),
+  AAI("AAI", "aai", "AAI Dune image", true, true),
+  AVS("AVS", "avs", "AVS X image", true, true),
+  BMP("BMP", "bmp", "Microsoft Windows bitmap", true, true),
+  CIN("CIN", "cin", "Kodak Cineon Image Format", true, true),
+  CIP("CIP", "cip", "Cisco IP phone image format", false, true),
+  CMYK("CMYK", "cmyk", "Raw cyan, magenta, yellow, and black samples", true, true),
+  CMYKA("CMYKA", "cmyka", "Raw cyan, magenta, yellow, black, and alpha samples", true, true),
+  CUR("CUR", "cur", "Microsoft icon", true, true),
+  CUT("CUT", "cut", "DR Halo", true, false),
+  DCM("DCM", "dcm", "Digital Imaging and Communications in Medicine image", true, false),
+  DCX("DCX", "dcx", "ZSoft IBM PC multi-page Paintbrush image", true, true),
+  DDS("DDS", "dds", "Microsoft DirectDraw Surface", true, false),
+  DPX("DPX", "dpx", "SMPTE Digital Moving Picture Exchange 2.0 (SMPTE 268M-2003)", true, true),
+  EPS2("EPS2", "eps", "Adobe Level II Encapsulated PostScript", false, true),
+  EPS3("EPS3", "eps", "Adobe Level III Encapsulated PostScript", false, true),
+  FAX("FAX", "fax", "Group 3 TIFF", true, true),
+  FITS("FITS", "fits", "Flexible Image Transport System", true, true),
+  FTS("FTS", "fts", "Flexible Image Transport System", true, true),
+  G3("G3", "g3", "Group 3 FAX", true, true),
+  GIF("GIF", "gif", "CompuServe Graphics Interchange Format", true, true),
+  GIF87("GIF87", "gif87", "CompuServe Graphics Interchange Format (version 87a)", true, true),
+  GRAY("GRAY", "gray", "Raw gray samples", true, true),
+  GROUP4("GROUP4", "group4", "Raw CCITT Group4", true, true),
+  HDR("HDR", "hdr", "Radiance RGBE image format", true, true),
+  HRZ("HRZ", "hrz", "Slow Scane TeleVision", true, true),
+  HTM("HTM", "htm", "Hypertext Markup Language with a client-side image map", false, true),
+  HTML("HTML", "html", "Hypertext Markup Language with a client-side image map", false, true),
+  ICB("ICB", "icb", "Truevision Targa image", true, true),
+  ICO("ICO", "ico", "Microsoft icon", true, true),
+  ICON("ICON", "icon", "Microsoft icon", true, true),
+  INLINE("INLINE", "inline", "Base64-encoded inline images", true, false),
+  J2C("J2C", "j2k", "JPEG-2000 Code Stream Syntax", true, true),
+  J2K("J2K", "j2c", "JPEG-2000 Code Stream Syntax", true, true),
+  JBG("JBG", "jbg", "Joint Bi-level Image experts Group file interchange format", true, true),
+  JBIG("JBIG", "jbig", "Joint Bi-level Image experts Group file interchange format", true, true),
+  JNG("JNG", "jng", "Multiple-image Network Graphics", true, true),
+  JP2("JP2", "jp2", "JPEG-2000 JP2 File Format Syntax", true, true),
+  JPC("JPC", "jpc", "JPEG-2000 Code Stream Syntax", true, true),
+  JPEG("JPEG", "jpeg", "Joint Photographic Experts Group JFIF format", true, true),
+  JPG("JPG", "jpg", "Joint Photographic Experts Group JFIF format", true, true),
+  JPX("JPX", "jpx", "JPEG-2000 File Format Syntax", true, true),
+  MAC("MAC", "mac", "MAC Paint", true, false),
+  MATTE("MATTE", "matte", "Matte format", false, true),
+  MIFF("MIFF", "miff", "Magick image file format", true, true),
+  MNG("MNG", "mng", "Multiple-image Network Graphics", true, true),
+  MONO("MONO", "mono", "Bi-level bitmap in least-significant-byte first order", true, true),
+  MPC("MPC", "mpc", "Magick Persistent Cache image file format", true, true),
+  MSL("MSL", "msl", "Magick Scripting Language", true, true),
+  MTV("MTV", "mtv", "MTV Raytracing image format", true, true),
+  MVG("MVG", "mvg", "Magick Vector Graphics.", true, true),
+  OTB("OTB", "otb", "On-the-air Bitmap", true, true),
+  PALM("PALM", "palm", "Palm pixmap", true, true),
+  PAM("PAM", "pam", "Common 2-dimensional bitmap format", true, true),
+  PBM("PBM", "pbm", "Portable bitmap format (black and white)", true, true),
+  PCD("PCD", "pcd", "Photo CD", true, true),
+  PCDS("PCDS", "pcds", "Photo CD", true, true),
+  PCT("PCT", "pct", "Apple Macintosh QuickDraw/PICT", true, true),
+  PCX("PCX", "pcx", "ZSoft IBM PC Paintbrush file", true, true),
+  PDB("PDB", "pdb", "Palm Database ImageViewer Format", true, true),
+  PFM("PFM", "pfm", "Portable float map format", true, true),
+  PGM("PGM", "pgm", "Portable graymap format (gray scale)", true, true),
+  PICON("PICON", "picon", "Personal Icon", true, true),
+  PICT("PICT", "pict", "Apple Macintosh QuickDraw/PICT file", true, true),
+  PNG("PNG", "png", "Portable Network Graphics", true, true),
+  PNG8("PNG8", "png", "Portable Network Graphics", true, true),
+  PNG24("PNG24", "png", "Portable Network Graphics", true, true),
+  PNG32("PNG32", "png", "Portable Network Graphics", true, true),
+  PNM("PNM", "pnm", "Portable anymap", true, true),
+  PPM("PPM", "ppm", "Portable pixmap format (color)", true, true),
+  PS2("PS2", "ps", "Adobe Level II PostScript file", false, true),
+  PS3("PS3", "ps", "Adobe Level III PostScript file", false, true),
+  PSB("PSB", "psb", "Adobe Large Document Format", true, true),
+  PSD("PSD", "psd", "Adobe Photoshop bitmap file", true, true),
+  PTIF("PTIF", "ptif", "Pyramid encoded TIFF", true, true),
+  RGB("RGB", "rgb", "Raw red, green, and blue samples", true, true),
+  RGBA("RGBA", "rgba", "Raw red, green, blue, and alpha samples", true, true),
+  SGI("SGI", "sgi", "Irix RGB image", true, true),
+  SHTML("SHTML", "shtml", "Hypertext Markup Language client-side image map", false, true),
+  SUN("SUN", "sun", "SUN Rasterfile", true, true),
+  TGA("TGA", "tga", "Truevision Targa image", true, true),
+  TIFF("TIFF", "tiff", "Tagged Image File Format", true, true),
+  TXT("TXT", "txt", "Raw text file", true, true),
+  UIL("UIL", "uil", "X-Motif UIL table", false, true),
+  UYVY("UYVY", "uyvy", "Interleaved YUV raw image", true, true),
+  VICAR("VICAR", "vicar", "VICAR rasterfile format", true, true),
+  VIFF("VIFF", "viff", "Khoros Visualization Image File Format", true, true),
+  WBMP("WBMP", "wbmp", "Wireless bitmap", true, true),
+  X("X", "x", "display or import an image to or from an X11 server", true, true),
+  XBM("XBM", "xbm", "X Windows system bitmap, black and white only", true, true),
+  XPM("XPM", "xpm", "X Windows system pixmap", true, true),
+  XWD("XWD", "xwd", "X Windows system window dump", true, true),
+  YCbCr("YCbCr", "ycbcr", "Raw Y, Cb, and Cr samples", true, true),
+  YCbCrA("YCbCrA", "ycbcra", "Raw Y, Cb, Cr, and alpha samples", true, true),
+  YUV("YUV", "yuv", "CCIR 601 4:1:1", true, true);
 
   /** the raw string. */
   private String m_Raw;
@@ -136,18 +141,28 @@ public enum ImageType
 
   /** the description. */
   private String m_Description;
+  
+  /** whether reader is supported. */
+  private boolean m_Read;
+  
+  /** whether write is supported. */
+  private boolean m_Write;
 
   /**
    * Initializes the image type.
    *
-   * @param ext	the extension
+   * @param ext		the extension
    * @param desc	the description
+   * @param read	true if read supported
+   * @param write	true if write supported
    */
-  private ImageType(String type, String ext, String desc) {
+  private ImageType(String type, String ext, String desc, boolean read, boolean write) {
     m_Raw         = super.toString();
     m_Type        = type;
     m_Extension   = ext;
     m_Description = desc;
+    m_Read        = read;
+    m_Write       = write;
   }
 
   /**
@@ -194,6 +209,24 @@ public enum ImageType
    */
   public String getExtension() {
     return m_Extension;
+  }
+
+  /**
+   * Returns whether format can be read.
+   *
+   * @return		true if can be read
+   */
+  public boolean canRead() {
+    return m_Read;
+  }
+
+  /**
+   * Returns whether format can be written.
+   *
+   * @return		true if can be written
+   */
+  public boolean canWrite() {
+    return m_Write;
   }
 
   /**
