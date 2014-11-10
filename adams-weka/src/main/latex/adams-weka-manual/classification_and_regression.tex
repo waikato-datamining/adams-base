@@ -1,4 +1,4 @@
-% Copyright (c) 20090-2012 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 20090-2014 by the University of Waikato, Hamilton, NZ. 
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -426,6 +426,45 @@ name in the container).
     \label{basic-traintestseteval-output}
   \end{minipage}
 \end{figure}
+
+\heading{Stream evaluation}
+Though WEKA is usually used for batch-training, it is also possible to perform
+incremental training and evaluation, as long as the classifier in use is an
+\textit{updateable} one (i.e., it implements the \textit{weka.classifiers.Updateable}
+interface). In such a scenario, you only have to read in the data incrementally
+(changing the set up in the \textit{WekaFileReader} to \textit{INCREMENTAL})
+and use the \textit{WekaStreamEvaluator} transformer for performing the
+evaluation. The \textit{WekaStreamEvaluator} actor use prequential evaluation,
+i.e., first evaluate, then train. Figure \ref{basic-streameval-flow} shows a 
+flow that evaluates a \textit{NaiveBayesUpdateable} on a stream of data, 
+displaying the textual evaluation summary and ROC (receiver operator curve) 
+every 100 instances that come through.
+
+\begin{figure}[ht]
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=10.0cm]{images/basic-streameval-flow.png}
+    \caption{Flow for evaluating updateable classifier on data stream.}
+    \label{basic-streameval-flow}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=5.5cm]{images/basic-streameval-output.png}
+    \caption{Summary output of classifier evaluated on data stream.}
+    \label{basic-streameval-output}
+  \end{minipage}
+  \hspace{0.5cm}
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=5.5cm]{images/basic-streameval-output2.png}
+    \caption{ROC curves of classifier evaluated on data stream.}
+    \label{basic-streameval-output2}
+  \end{minipage}
+\end{figure}
+
 
 \heading{Visualization}
 You have already encountered the display of the classifier errors (in Figure
