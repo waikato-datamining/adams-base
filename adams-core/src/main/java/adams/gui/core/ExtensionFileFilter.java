@@ -15,7 +15,7 @@
 
 /*
  * ExtensionFileFilter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -161,7 +161,11 @@ public class ExtensionFileFilter
     for (i = 0; i < m_Extensions.length; i++) {
       if (i > 0)
 	result += ", ";
-      result += "*." + m_Extensions[i];
+      if (i == 9) {
+	result += "...";
+	break;
+      }
+      result += m_Extensions[i];
     }
     result += ")";
 
