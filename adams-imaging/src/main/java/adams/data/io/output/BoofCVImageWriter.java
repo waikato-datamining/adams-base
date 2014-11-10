@@ -96,7 +96,7 @@ public class BoofCVImageWriter
    */
   @Override
   public String getFormatDescription() {
-    return "BoofCV image writer";
+    return "BoofCV";
   }
 
   /**

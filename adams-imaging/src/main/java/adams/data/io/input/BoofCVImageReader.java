@@ -97,7 +97,7 @@ public class BoofCVImageReader
    */
   @Override
   public String getFormatDescription() {
-    return "BoofCV image reader";
+    return "BoofCV";
   }
 
   /**

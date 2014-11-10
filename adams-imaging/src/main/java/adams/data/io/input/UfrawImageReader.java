@@ -68,7 +68,7 @@ public class UfrawImageReader
    */
   @Override
   public String getFormatDescription() {
-    return "UFraw image reader";
+    return "UFraw";
   }
 
   /**
