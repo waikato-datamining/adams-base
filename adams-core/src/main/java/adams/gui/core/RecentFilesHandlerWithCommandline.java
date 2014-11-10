@@ -15,7 +15,7 @@
 
 /**
  * RecentFilesHandlerWithCommandline.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -120,7 +120,10 @@ public class RecentFilesHandlerWithCommandline<M>
      */
     @Override
     public String toString() {
-      return m_File.getAbsolutePath() + "\t" + OptionUtils.getCommandLine(m_Handler);
+      if (m_Handler != null)
+	return m_File.getAbsolutePath() + "\t" + OptionUtils.getCommandLine(m_Handler);
+      else
+	return m_File.getAbsolutePath() + "\t";
     }
     
     /**

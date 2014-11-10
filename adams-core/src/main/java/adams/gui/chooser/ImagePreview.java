@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- * Copyright (C) 2013 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, NZ
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,10 @@ import javax.swing.JFileChooser;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
-import adams.data.image.BufferedImageContainer;
+import adams.core.io.PlaceholderFile;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
@@ -151,7 +153,8 @@ public class ImagePreview
    * Loads the image.
    */
   protected void loadImage() {
-    BufferedImageContainer	cont;
+    AbstractImageContainer	cont;
+    AbstractImageReader		reader;
     ImageIcon 			tmpIcon;
     
     if (m_File == null) {
@@ -162,9 +165,18 @@ public class ImagePreview
     // fallback method
     tmpIcon = null;
     if (m_File.exists() && !m_File.isDirectory()) {
-      cont = BufferedImageHelper.read(m_File);
+      cont = null;
+      // TODO limit size?
+      if (m_Owner instanceof ImageFileChooser) {
+	reader = ((ImageFileChooser) m_Owner).getReaderForFile(m_File);
+	if (reader != null)
+	  cont = reader.read(new PlaceholderFile(m_File));
+      }
+      if (cont == null) {
+	cont = BufferedImageHelper.read(m_File);
+      }
       if (cont != null)
-	tmpIcon = new ImageIcon(cont.getImage());
+	tmpIcon = new ImageIcon(cont.toBufferedImage());
     }
     
     if (tmpIcon != null) {

@@ -46,6 +46,7 @@ import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.AbstractImageTransformer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.io.input.AbstractImageReader;
 import adams.env.Environment;
 import adams.env.ImageViewerPanelDefinition;
 import adams.env.Modules;
@@ -57,7 +58,8 @@ import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.event.RecentItemEvent;
@@ -171,7 +173,7 @@ public class ImageViewerPanel
   protected ImageTabbedPane m_TabbedPane;
 
   /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** for generating the title. */
   protected TitleGenerator m_TitleGenerator;
@@ -446,14 +448,14 @@ public class ImageViewerPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<JMenu>(
 	  SESSION_FILE, getProperties().getInteger("MaxRecentImages", 5), submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
-	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
 	}
-	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
-	  load(e.getItem());
+	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
+	  load(e.getItem().getFile(), (AbstractImageReader) e.getItem().getHandler());
 	}
       });
       m_MenuItemFileLoadRecent = submenu;
@@ -833,7 +835,7 @@ public class ImageViewerPanel
 
     files = m_FileChooser.getSelectedFiles();
     for (File file: files)
-      load(file);
+      load(file, m_FileChooser.getImageReader());
   }
 
   /**
@@ -842,9 +844,19 @@ public class ImageViewerPanel
    * @param file	the file to load
    */
   public void load(File file) {
-    if (m_TabbedPane.load(file)) {
+    load(file, null);
+  }
+
+  /**
+   * Loads the specified file in a new panel.
+   *
+   * @param file	the file to load
+   * @param reader	the reader to use, null for auto-detection
+   */
+  public void load(File file, AbstractImageReader reader) {
+    if (m_TabbedPane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(file);
+	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
     }
     update();
   }
@@ -871,14 +883,15 @@ public class ImageViewerPanel
       return;
 
     file = m_FileChooser.getSelectedFile();
-    if (!panel.save(file)) {
+    if (!panel.save(file, m_FileChooser.getImageWriter())) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to write image to '" + file + "'!");
     }
     else {
       m_TabbedPane.setTitleAt(index, file.getName());
       if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(file);
+	m_RecentFilesHandler.addRecentItem(
+	    new Setup(file, m_FileChooser.getImageWriter().getCorrespondingReader()));
     }
 
     update();

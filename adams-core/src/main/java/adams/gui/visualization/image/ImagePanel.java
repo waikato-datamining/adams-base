@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -61,6 +60,8 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.io.input.AbstractImageReader;
+import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -74,6 +75,8 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -835,6 +838,9 @@ public class ImagePanel
   /** the scale that the user chose. */
   protected double m_Scale;
   
+  /** for determining readers and writers. */
+  protected ImageFileChooser m_FileChooser;
+  
   /**
    * Initializes the panel.
    */
@@ -856,6 +862,7 @@ public class ImagePanel
     m_DependentDialogs     = new ArrayList<Dialog>();
     m_DependentFlows       = new ArrayList<Flow>();
     m_Scale                = -1;
+    m_FileChooser          = new ImageFileChooser();
   }
 
   /**
@@ -1267,21 +1274,45 @@ public class ImagePanel
    * @return		true if successfully read
    */
   public boolean load(File file) {
+    return load(file, null);
+  }
+
+  /**
+   * Opens the file with the specified image reader.
+   *
+   * @param file	the file to open
+   * @param reader	the reader to use, null for auto-detection
+   * @return		true if successfully read
+   */
+  public boolean load(File file, AbstractImageReader reader) {
     boolean			result;
-    BufferedImageContainer	cont;
+    AbstractImageContainer	cont;
 
     addUndoPoint("Saving undo data...", "Loading file '" + file + "'");
     try {
-      cont = BufferedImageHelper.read(file);
-      m_PaintPanel.setCurrentImage(cont.toBufferedImage());
-      m_CurrentFile = new PlaceholderFile(file);
-      result        = true;
-      updateImageProperties(cont.getReport());
-      repaint();
-      log("load: " + file);
+      if (reader == null)
+	reader = m_FileChooser.getReaderForFile(file);
+      if (reader != null)
+	cont = reader.read(new PlaceholderFile(file));
+      else
+	cont = BufferedImageHelper.read(file);
+      if (cont != null) {
+	m_PaintPanel.setCurrentImage(cont.toBufferedImage());
+	m_CurrentFile = new PlaceholderFile(file);
+	result        = true;
+	updateImageProperties(cont.getReport());
+	repaint();
+	log("load: " + file);
+      }
+      else {
+	result = false;
+	log("load failed: " + file);
+      }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      ConsolePanel.getSingleton().append(
+	  OutputType.ERROR, 
+	  "Failed to read '" + file + "':\n" + Utils.throwableToString(e));
       clear();
       result = false;
     }
@@ -1298,26 +1329,50 @@ public class ImagePanel
    * @see		#isModified()
    */
   public boolean save(File file) {
-    boolean	result;
-    String	formatName;
+    return save(file, null);
+  }
+
+  /**
+   * Writes the current image to the given file.
+   * Sets the modified flag to false if successfully saved.
+   *
+   * @param file	the file to write to
+   * @param writer	the writer to use for writing the file, null for auto-detect
+   * @return		true if successfully written, false if not or no image
+   * @see		#isModified()
+   */
+  public boolean save(File file, AbstractImageWriter<AbstractImageContainer> writer) {
+    boolean			result;
+    BufferedImageContainer	cont;
+    String			msg;
 
     result = false;
 
     if (m_PaintPanel.getCurrentImage() != null) {
       try {
+	msg  = null;
 	file = new File(file.getAbsolutePath());
-	formatName = ImageFileChooser.getWriterFormatName(file);
-	if (formatName != null) {
-	  ImageIO.write(m_PaintPanel.getCurrentImage(), formatName, file);
-	  m_CurrentFile = new PlaceholderFile(file);
+	if (writer == null)
+	  writer = m_FileChooser.getWriterForFile(file);
+	if (writer == null) {
+	  msg = BufferedImageHelper.write(m_PaintPanel.getCurrentImage(), file);
 	}
 	else {
-	  System.err.println("Failed to find format name for '" + file + "'!");
+	  cont = new BufferedImageContainer();
+	  cont.setImage(m_PaintPanel.getCurrentImage());
+	  msg = writer.write(new PlaceholderFile(file), cont);
 	}
-	result = true;
+	m_CurrentFile = new PlaceholderFile(file);
+	result        = (msg != null);
+	if (msg != null)
+	  log("save failed: " + file);
+	else
+	  log("saved: " + file);
       }
       catch (Exception e) {
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	    OutputType.ERROR, 
+	    "Failed to save image to '" + file + "':\n" + Utils.throwableToString(e));
 	result = false;
       }
     }

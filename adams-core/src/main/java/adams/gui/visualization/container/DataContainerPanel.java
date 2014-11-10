@@ -15,7 +15,7 @@
 
 /*
  * DataContainerPanel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -28,7 +28,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
@@ -38,11 +37,11 @@ import adams.core.StatusMessageHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOption;
 import adams.data.container.DataContainer;
+import adams.data.image.BufferedImageHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeListener;
-import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
@@ -454,7 +453,6 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
    */
   public Object getSendToItem(Class[] cls) {
     Object		result;
-    String		formatName;
     BufferedImage	bi;
     Graphics		g;
 
@@ -462,23 +460,13 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       result = SendToActionUtils.nextTmpFile(getClass().getName().toLowerCase(), "png");
-      formatName = ImageFileChooser.getWriterFormatName(((File) result).getAbsoluteFile());
-      if (formatName != null) {
-	bi = new BufferedImage(getPlot().getWidth(), getPlot().getHeight(), BufferedImage.TYPE_INT_RGB);
-	g  = bi.getGraphics();
-	g.setPaintMode();
-	g.setColor(getBackground());
-	g.fillRect(0, 0, getPlot().getWidth(), getPlot().getHeight());
-	getPlot().printAll(g);
-	try {
-	  ImageIO.write(bi, formatName, ((File) result).getAbsoluteFile());
-	}
-	catch (Exception e) {
-	  System.err.println("Failed to create PNG file '" + result + "':");
-	  e.printStackTrace();
-	  result = null;
-	}
-      }
+      bi = new BufferedImage(getPlot().getWidth(), getPlot().getHeight(), BufferedImage.TYPE_INT_RGB);
+      g  = bi.getGraphics();
+      g.setPaintMode();
+      g.setColor(getBackground());
+      g.fillRect(0, 0, getPlot().getWidth(), getPlot().getHeight());
+      getPlot().printAll(g);
+      BufferedImageHelper.write(bi, ((File) result).getAbsoluteFile());
     }
     else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
       result = this;

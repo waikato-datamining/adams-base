@@ -26,6 +26,7 @@ import java.io.File;
 import javax.swing.SwingUtilities;
 
 import adams.core.Properties;
+import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -257,6 +258,17 @@ public class ImageTabbedPane
    * @return		true if successfully loaded
    */
   public boolean load(File file) {
+    return load(file, null);
+  }
+
+  /**
+   * Loads the specified file in a new panel.
+   *
+   * @param file	the file to load
+   * @param reader	the reader to use, null for auto-detection
+   * @return		true if successfully loaded
+   */
+  public boolean load(File file, AbstractImageReader reader) {
     final ImagePanel	panel;
     final double	zoom;
     Properties		props;
@@ -264,7 +276,7 @@ public class ImageTabbedPane
 
     panel = new ImagePanel();
     panel.setSelectionEnabled(true);
-    if (!panel.load(file)) {
+    if (!panel.load(file, reader)) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to open image '" + file + "'!");
       return false;

@@ -22,7 +22,6 @@ package adams.gui.chooser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.nio.charset.Charset;
 
@@ -98,9 +97,9 @@ public class TextFileChooser
       m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
       add(m_PanelBookmarks, BorderLayout.CENTER);
       
-      m_PanelEncoding = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      m_PanelEncoding = new JPanel(new BorderLayout(0, 5));
+      m_PanelEncoding.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 0));
       add(m_PanelEncoding, BorderLayout.NORTH);
-      m_PanelEncoding.setBorder(BorderFactory.createLineBorder(m_DefaultBackground));
 
       m_ComboBoxEncoding = new JComboBox(CharsetHelper.getIDs());
       m_ComboBoxEncoding.setSelectedItem(CharsetHelper.getSingleton().getCharset().name());
@@ -108,8 +107,8 @@ public class TextFileChooser
       m_LabelEncoding = new JLabel("Encoding");
       m_LabelEncoding.setLabelFor(m_ComboBoxEncoding);
       
-      m_PanelEncoding.add(m_LabelEncoding);
-      m_PanelEncoding.add(m_ComboBoxEncoding);
+      m_PanelEncoding.add(m_LabelEncoding, BorderLayout.NORTH);
+      m_PanelEncoding.add(m_ComboBoxEncoding, BorderLayout.CENTER);
     }
 
     /**

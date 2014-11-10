@@ -29,13 +29,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-
 import adams.core.DateFormat;
 import adams.core.Utils;
+import adams.data.image.BufferedImageContainer;
+import adams.data.io.output.AbstractImageWriter;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -86,21 +83,24 @@ public class TakeScreenshot
    */
   @Override
   public void launch() {
-    Dimension 		size;
-    Rectangle 		rect;
-    Robot 		robot;
-    BufferedImage 	image;
-    String		file;
-    ImageFileChooser	filechooser;
-    int			retVal;
-    ImageWriter		writer;
-    ImageOutputStream 	ios;
+    Dimension 			size;
+    Rectangle 			rect;
+    Robot 			robot;
+    BufferedImage 		image;
+    BufferedImageContainer	cont;
+    String			file;
+    ImageFileChooser		filechooser;
+    int				retVal;
+    AbstractImageWriter		writer;
+    String			msg;
     
     try {
       size  = Toolkit.getDefaultToolkit().getScreenSize();
       rect  = new Rectangle(size);
       robot = new Robot();
       image = robot.createScreenCapture(rect);
+      cont  = new BufferedImageContainer();
+      cont.setImage(image);
       file  = "ADAMS-" + new DateFormat("yyyyMMdd_HHmmss").format(new Date());
       filechooser = new ImageFileChooser();
       filechooser.setSelectedFile(new File(file));
@@ -108,12 +108,11 @@ public class TakeScreenshot
       if (retVal != JComponentWriterFileChooser.APPROVE_OPTION)
 	return;
       writer = filechooser.getImageWriter();
-      ios    = ImageIO.createImageOutputStream(filechooser.getSelectedFile().getAbsoluteFile());
-      writer.setOutput(ios);
-      writer.write(null, new IIOImage(image, null, null), null);
-      ios.flush();
-      writer.dispose();
-      ios.close();
+      msg = writer.write(filechooser.getSelectedPlaceholderFile(), cont);
+      if (msg != null)
+	GUIHelper.showErrorMessage(
+	    getOwner(), 
+	    "Failed to save screenshot to '" + filechooser.getSelectedPlaceholderFile() + "':\n" + msg);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(

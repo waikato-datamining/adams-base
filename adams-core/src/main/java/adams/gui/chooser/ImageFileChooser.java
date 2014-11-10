@@ -26,19 +26,16 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import adams.data.image.BufferedImageHelper;
-import adams.gui.core.ExtensionFileFilter;
+import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.JAIImageReader;
+import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.JAIImageWriter;
 import adams.gui.core.GUIHelper;
 
 /**
@@ -48,7 +45,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class ImageFileChooser
-  extends AbstractExtensionFileFilterFileChooser<ExtensionFileFilter> {
+  extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractImageReader,AbstractImageWriter> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4519042048473978377L;
@@ -58,145 +55,12 @@ public class ImageFileChooser
 
   /** the image preview. */
   protected ImagePreview m_ImagePreview;
-  
-  /**
-   * A simple container for image formats.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class ImageFormat
-    implements Comparable<ImageFormat> {
 
-    /** the format name. */
-    protected String m_FormatName;
+  /** the file filters for the readers. */
+  protected static List<ExtensionFileFilterWithClass> m_ReaderFileFilters;
 
-    /** the display name. */
-    protected String m_DisplayName;
-
-    /** the extensions. */
-    protected List<String> m_Extensions;
-
-    /**
-     * Initializes the image format container.
-     *
-     * @param format	the format of this
-     */
-    public ImageFormat(String format) {
-      this(format, format.toUpperCase() + " image");
-    }
-
-    /**
-     * Initializes the image format container.
-     *
-     * @param format	the format of this
-     * @param display	the display string to be used in the dialog
-     */
-    public ImageFormat(String format, String display) {
-      super();
-
-      m_FormatName  = format;
-      m_DisplayName = display;
-      m_Extensions  = new ArrayList<String>();
-    }
-
-    /**
-     * Returns the format name.
-     *
-     * @return		the format name
-     */
-    public String getFormatName() {
-      return m_FormatName;
-    }
-
-    /**
-     * Returns the display name of the format.
-     *
-     * @return		the display name
-     */
-    public String getDisplayName() {
-      return m_DisplayName;
-    }
-
-    /**
-     * Adds an extension to the internal list.
-     *
-     * @param value	the extension to add
-     */
-    public void addExtension(String value) {
-      if (!m_Extensions.contains(value)) {
-	m_Extensions.add(value);
-	Collections.sort(m_Extensions);
-      }
-    }
-
-    /**
-     * Returns the list of extensions currently stored.
-     *
-     * @return		the extensions
-     */
-    public List<String> getExtensions() {
-      return m_Extensions;
-    }
-
-    /**
-     * Compares this image format with the specified image format for order. Returns a
-     * negative integer, zero, or a positive integer as this image format is less
-     * than, equal to, or greater than the specified image format.
-     *
-     * @param   o the image format to be compared.
-     * @return  a negative integer, zero, or a positive integer as this object
-     *		is less than, equal to, or greater than the specified object.
-     */
-    public int compareTo(ImageFormat o) {
-      return m_FormatName.toLowerCase().compareTo(o.getFormatName().toLowerCase());
-    }
-
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     *
-     * @param obj	the reference object with which to compare.
-     * @return		true if this object is the same as the obj argument;
-     * 			false otherwise.
-     */
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof ImageFormat))
-	return false;
-      else
-	return (compareTo((ImageFormat) obj) == 0);
-    }
-
-    /**
-     * Hashcode so can be used as hashtable key. Returns the hashcode of the
-     * commandline string.
-     *
-     * @return		the hashcode
-     */
-    @Override
-    public int hashCode() {
-      return m_FormatName.hashCode();
-    }
-
-    /**
-     * Returns a string representation of the format.
-     *
-     * @return		the string representation
-     */
-    @Override
-    public String toString() {
-      return
-            "format=" + getFormatName() + ", "
-          + "display=" + getDisplayName() + ", "
-          + "ext=" + getExtensions();
-    }
-  }
-
-  /** the image readers (format name &lt-gt; format container). */
-  protected static Hashtable<String,ImageFormat> m_ImageReaders;
-
-  /** the image writers (format name &lt-gt; format container). */
-  protected static Hashtable<String,ImageFormat> m_ImageWriters;
+  /** the file filters for the writers. */
+  protected static List<ExtensionFileFilterWithClass> m_WriterFileFilters;
 
   /**
    * Constructs a <code>ImageFileChooser</code> pointing to the user's
@@ -246,13 +110,15 @@ public class ImageFileChooser
   @Override
   protected JComponent createAccessoryPanel() {
     JPanel	result;
+    JPanel	config;
     JPanel	panel;
     Dimension	dim;
 
-    super.createAccessoryPanel();
+    config = (JPanel) super.createAccessoryPanel();
 
     m_CheckBoxPreview = new JCheckBox("Preview");
     m_CheckBoxPreview.setMnemonic('P');
+    m_CheckBoxPreview.setSelected(false);
     m_CheckBoxPreview.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -266,7 +132,8 @@ public class ImageFileChooser
     result.add(panel, BorderLayout.CENTER);
     
     m_ImagePreview = new ImagePreview(this);
-    panel.add(m_PanelBookmarks, BorderLayout.CENTER);
+    m_ImagePreview.setVisible(false);
+    panel.add(config, BorderLayout.CENTER);
     panel.add(m_ImagePreview, BorderLayout.SOUTH);
     
     dim = getDefaultAccessoryDimension();
@@ -286,23 +153,21 @@ public class ImageFileChooser
    * @return		the default file filter, null if unable find default one
    */
   @Override
-  protected ExtensionFileFilter getDefaultFileFilter(int dialogType) {
-    ExtensionFileFilter	result;
-    boolean		found;
-    String		preferred;
+  protected ExtensionFileFilterWithClass getDefaultFileFilter(int dialogType) {
+    ExtensionFileFilterWithClass	result;
+    boolean				found;
+    String				preferred;
     
     result = null;
     found  = false;
     
     if (dialogType == OPEN_DIALOG) {
       preferred = GUIHelper.getString("PreferredImageReader", "png");
-      for (ImageFormat format: m_ImageReaders.values()) {
-	for (String ext: format.getExtensions()) {
+      for (ExtensionFileFilterWithClass reader: m_ReaderFileFilters) {
+	for (String ext: reader.getExtensions()) {
 	  if (ext.equalsIgnoreCase(preferred)) {
-	    found = true;
-	    result = new ExtensionFileFilter(
-		format.getDisplayName(),
-		format.getExtensions().toArray(new String[0]));
+	    found  = true;
+	    result = reader;
 	    break;
 	  }
 	}
@@ -312,13 +177,11 @@ public class ImageFileChooser
     }
     else if (dialogType == SAVE_DIALOG) {
       preferred = GUIHelper.getString("PreferredImageWriter", "png");
-      for (ImageFormat format: m_ImageWriters.values()) {
-	for (String ext: format.getExtensions()) {
+      for (ExtensionFileFilterWithClass writer: m_WriterFileFilters) {
+	for (String ext: writer.getExtensions()) {
 	  if (ext.equalsIgnoreCase(preferred)) {
-	    found = true;
-	    result = new ExtensionFileFilter(
-		format.getDisplayName(),
-		format.getExtensions().toArray(new String[0]));
+	    found  = true;
+	    result = writer;
 	    break;
 	  }
 	}
@@ -326,9 +189,9 @@ public class ImageFileChooser
 	  break;
       }
     }
-    else {
+    
+    if (!found)
       result = super.getDefaultFileFilter(dialogType);
-    }
     
     return result;
   }
@@ -339,24 +202,8 @@ public class ImageFileChooser
    * @return		the file filters
    */
   @Override
-  protected List<ExtensionFileFilter> getOpenFileFilters() {
-    List<ExtensionFileFilter>	result;
-    List<String>		keys;
-    ImageFormat			format;
-
-    result = new ArrayList<ExtensionFileFilter>();
-
-    keys   = new ArrayList<String>(m_ImageReaders.keySet());
-    for (String key: keys) {
-      format = m_ImageReaders.get(key);
-      result.add(
-	  new ExtensionFileFilter(
-	      format.getDisplayName(),
-	      format.getExtensions().toArray(new String[0])));
-    }
-    Collections.sort(result);
-
-    return result;
+  protected List<ExtensionFileFilterWithClass> getOpenFileFilters() {
+    return m_ReaderFileFilters;
   }
 
   /**
@@ -365,55 +212,8 @@ public class ImageFileChooser
    * @return		the file filters
    */
   @Override
-  protected List<ExtensionFileFilter> getSaveFileFilters() {
-    List<ExtensionFileFilter>	result;
-    List<String>		keys;
-    ImageFormat			format;
-
-    result = new ArrayList<ExtensionFileFilter>();
-
-    keys   = new ArrayList<String>(m_ImageWriters.keySet());
-    for (String key: keys) {
-      format = m_ImageWriters.get(key);
-      result.add(
-	  new ExtensionFileFilter(
-	      format.getDisplayName(),
-	      format.getExtensions().toArray(new String[0])));
-    }
-    Collections.sort(result);
-
-    return result;
-  }
-
-  /**
-   * sets the current converter according to the current filefilter.
-   */
-  @Override
-  protected void updateCurrentHandlerHook() {
-    String	suffix;
-    Object	newHandler;
-
-    try {
-      suffix = ((ExtensionFileFilter) getFileFilter()).getExtensions()[0];
-      if (m_DialogType == OPEN_DIALOG)
-	newHandler = BufferedImageHelper.getReaderForExtension(suffix);
-      else
-	newHandler = BufferedImageHelper.getWriterForExtension(suffix);
-      if (newHandler == null)
-	return;
-
-      if (m_CurrentHandler == null) {
-	m_CurrentHandler = newHandler;
-      }
-      else {
-	if (!m_CurrentHandler.getClass().equals(newHandler.getClass()))
-	  m_CurrentHandler = newHandler;
-      }
-    }
-    catch (Exception e) {
-      m_CurrentHandler = null;
-      e.printStackTrace();
-    }
+  protected List<ExtensionFileFilterWithClass> getSaveFileFilters() {
+    return m_WriterFileFilters;
   }
 
   /**
@@ -421,11 +221,11 @@ public class ImageFileChooser
    *
    * @return		the image reader, null if not applicable
    */
-  public ImageReader getImageReader() {
+  public AbstractImageReader getImageReader() {
     configureCurrentHandlerHook(OPEN_DIALOG);
 
-    if (m_CurrentHandler instanceof ImageReader)
-      return (ImageReader) m_CurrentHandler;
+    if (m_CurrentHandler instanceof AbstractImageReader)
+      return (AbstractImageReader) m_CurrentHandler;
     else
       return null;
   }
@@ -435,11 +235,11 @@ public class ImageFileChooser
    *
    * @return		the image writer, null if not applicable
    */
-  public ImageWriter getImageWriter() {
+  public AbstractImageWriter getImageWriter() {
     configureCurrentHandlerHook(SAVE_DIALOG);
 
-    if (m_CurrentHandler instanceof ImageWriter)
-      return (ImageWriter) m_CurrentHandler;
+    if (m_CurrentHandler instanceof AbstractImageWriter)
+      return (AbstractImageWriter) m_CurrentHandler;
     else
       return null;
   }
@@ -451,7 +251,7 @@ public class ImageFileChooser
    */
   @Override
   protected boolean getFiltersInitialized() {
-    return (m_ImageReaders != null);
+    return (m_ReaderFileFilters != null);
   }
 
   /**
@@ -459,111 +259,164 @@ public class ImageFileChooser
    */
   @Override
   protected void doInitializeFilters() {
-    m_ImageReaders = new Hashtable<String,ImageFormat>();
-    m_ImageWriters = new Hashtable<String,ImageFormat>();
+    initFilters(true, AbstractImageReader.getReaders());
+    initFilters(false, AbstractImageWriter.getWriters());
+  }
 
-    // readers
-    String[] suffixes = ImageIO.getReaderFileSuffixes();
-    for (int i = 0; i < suffixes.length; i++) {
-      Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(suffixes[i]);
-      while (readers.hasNext()) {
-	ImageReader reader = readers.next();
+  /**
+   * initializes the Filters.
+   *
+   * @param reader	if true then the reader filters are initialized
+   * @param classnames	the classnames of the converters
+   */
+  protected static void initFilters(boolean reader, String[] classnames) {
+    int					i;
+    String 				classname;
+    Class 				cls;
+    String[] 				ext;
+    String 				desc;
+    Object		 		converter;
+    ExtensionFileFilterWithClass 	filter;
+
+    if (reader)
+      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+    else
+      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+
+    for (i = 0; i < classnames.length; i++) {
+      classname = (String) classnames[i];
+
+      // get data from converter
+      try {
+	cls       = Class.forName(classname);
+	converter = cls.newInstance();
+	if (reader) {
+	  desc = ((AbstractImageReader) converter).getFormatDescription();
+	  ext  = ((AbstractImageReader) converter).getFormatExtensions();
+	}
+	else {
+	  desc = ((AbstractImageWriter) converter).getFormatDescription();
+	  ext  = ((AbstractImageWriter) converter).getFormatExtensions();
+	}
+      }
+      catch (Exception e) {
+	System.err.println("Failed to set up '" + classname + "':");
+	e.printStackTrace();
+	cls       = null;
+	converter = null;
+	ext       = new String[0];
+	desc      = "";
+      }
+
+      if (converter == null)
+	continue;
+
+      // reader?
+      if (reader) {
+	filter = new ExtensionFileFilterWithClass(classname, desc, ext);
+	m_ReaderFileFilters.add(filter);
+      }
+      else {
+	filter = new ExtensionFileFilterWithClass(classname, desc, ext);
+	m_WriterFileFilters.add(filter);
+      }
+    }
+
+    if (reader)
+      Collections.sort(m_ReaderFileFilters);
+    else
+      Collections.sort(m_WriterFileFilters);
+  }
+
+  /**
+   * Returns the default reader.
+   *
+   * @return		the default reader
+   */
+  @Override
+  protected AbstractImageReader getDefaultReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Returns the default writer.
+   *
+   * @return		the default writer
+   */
+  @Override
+  protected AbstractImageWriter getDefaultWriter() {
+    return new JAIImageWriter();
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public AbstractImageReader getReaderForFile(File file) {
+    AbstractImageReader	result;
+
+    result = null;
+
+    for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
+      if (filter.accept(file)) {
 	try {
-	  String formatName = reader.getFormatName();
-	  if (!m_ImageReaders.containsKey(formatName))
-	    m_ImageReaders.put(formatName, new ImageFormat(formatName));
-	  m_ImageReaders.get(formatName).addExtension(suffixes[i]);
+	  result = (AbstractImageReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  // ignored
+	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
+	  e.printStackTrace();
 	}
       }
-    }
-
-    // writers
-    suffixes = ImageIO.getWriterFileSuffixes();
-    for (int i = 0; i < suffixes.length; i++) {
-      // ImageWriters don't support "getFormatName()" so we'll just try and
-      // find the suffix in the readers and use the first occurence for the
-      // format name.
-      String formatName = getReaderFormatName(suffixes[i]);
-      if (formatName != null) {
-	if (!m_ImageWriters.containsKey(formatName))
-	  m_ImageWriters.put(formatName, new ImageFormat(formatName));
-	m_ImageWriters.get(formatName).addExtension(suffixes[i]);
-      }
-    }
-  }
-
-  /**
-   * Returns the reader format name for the file.
-   *
-   * @param file	the file to determine the format name for
-   * @return		the reader format name, null if not found
-   */
-  public static String getReaderFormatName(File file) {
-    return getReaderFormatName(file.getName().replaceAll(".*\\.", ""));
-  }
-
-  /**
-   * Returns the reader format name for the suffix.
-   *
-   * @param suffix	the suffix to determine the format name for
-   * @return		the reader format name, null if not found
-   */
-  public static String getReaderFormatName(String suffix) {
-    String	result;
-
-    result = null;
-
-    for (String format: m_ImageReaders.keySet()) {
-      List<String> exts = m_ImageReaders.get(format).getExtensions();
-      for (String ext: exts) {
-	if (ext.equals(suffix)) {
-	  result = format;
-	  break;
-	}
-      }
-      if (result != null)
-	break;
     }
 
     return result;
   }
 
   /**
-   * Returns the writer format name for the file.
+   * Returns the writer for the specified file.
    *
-   * @param file	the file to determine the format name for
-   * @return		the writer format name, null if not found
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
    */
-  public static String getWriterFormatName(File file) {
-    return getWriterFormatName(file.getName().replaceAll(".*\\.", ""));
-  }
-
-  /**
-   * Returns the writer format name for the suffix.
-   *
-   * @param suffix	the suffix to determine the format name for
-   * @return		the writer format name, null if not found
-   */
-  public static String getWriterFormatName(String suffix) {
-    String	result;
+  public AbstractImageWriter getWriterForFile(File file) {
+    AbstractImageWriter	result;
 
     result = null;
 
-    for (String format: m_ImageWriters.keySet()) {
-      List<String> exts = m_ImageWriters.get(format).getExtensions();
-      for (String ext: exts) {
-	if (ext.equals(suffix)) {
-	  result = format;
-	  break;
+    for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
+      if (filter.accept(file)) {
+	try {
+	  result = (AbstractImageWriter) Class.forName(filter.getClassname()).newInstance();
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
+	  e.printStackTrace();
 	}
       }
-      if (result != null)
-	break;
     }
 
     return result;
+  }
+
+  /**
+   * Returns the reader superclass for the GOE.
+   *
+   * @return		the reader class
+   */
+  @Override
+  protected Class getReaderClass() {
+    return AbstractImageReader.class;
+  }
+
+  /**
+   * Returns the writer superclass for the GOE.
+   *
+   * @return		the writer class
+   */
+  @Override
+  protected Class getWriterClass() {
+    return AbstractImageWriter.class;
   }
 }
