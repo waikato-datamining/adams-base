@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -749,7 +750,7 @@ public class WekaInstanceDumper
 	  writer.close();
 	}
 	catch (Exception e) {
-	  // ignored
+	  getLogger().log(Level.SEVERE, "Failed to close writer for '" + outputFile + "'!", e);
 	}
       }
     }
