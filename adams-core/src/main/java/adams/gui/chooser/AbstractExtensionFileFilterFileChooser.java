@@ -188,26 +188,34 @@ public abstract class AbstractExtensionFileFilterFileChooser<F extends Extension
    * Attempts to restore the last filter in use.
    *
    * @param dialogType	the dialog type: open/save
+   * @return		the filter that was selected, null if none
    */
-  protected void restoreLastFilter(int dialogType) {
+  protected F restoreLastFilter(int dialogType) {
+    F		result;
     List<F>	list;
     int		i;
 
+    result = null;
+    
     if (dialogType == OPEN_DIALOG)
       list = getOpenFileFilters();
     else
       list = getSaveFileFilters();
     if (list.size() > 0) {
-      setFileFilter(getDefaultFileFilter(dialogType));
+      result = getDefaultFileFilter(dialogType);
+      setFileFilter(result);
       if (m_LastFilter != null) {
 	for (i = 0; i < list.size(); i++) {
 	  if (list.get(i).compareTo(m_LastFilter) == 0) {
+	    result = (F) m_LastFilter;
 	    setFileFilter(m_LastFilter);
 	    break;
 	  }
 	}
       }
     }
+    
+    return result;
   }
 
   /**
