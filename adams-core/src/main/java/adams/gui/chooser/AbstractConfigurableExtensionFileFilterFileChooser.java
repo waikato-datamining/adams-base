@@ -212,6 +212,8 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
    */
   @Override
   protected void initGUI(int dialogType) {
+    ExtensionFileFilterWithClass	filter;
+    
     super.initGUI(dialogType);
 
     if (dialogType == OPEN_DIALOG) {
@@ -223,13 +225,29 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       getEditor().setValue(getDefaultWriter());
     }
     
-    restoreLastFilter(dialogType);
+    filter = restoreLastFilter(dialogType);
 
     if (dialogType == OPEN_DIALOG) {
+      if ((filter != null) && (m_LastOpenHandler == null)) {
+	try {
+	  m_LastOpenHandler = Class.forName(filter.getClassname()).newInstance();
+	}
+	catch (Exception e) {
+	  e.printStackTrace();
+	}
+      }
       m_CurrentHandler = (m_LastOpenHandler == null) ? getDefaultReader() : m_LastOpenHandler;
       getEditor().setValue(m_CurrentHandler);
     }
     else {
+      if ((filter != null) && (m_LastSaveHandler == null)) {
+	try {
+	  m_LastSaveHandler = Class.forName(filter.getClassname()).newInstance();
+	}
+	catch (Exception e) {
+	  e.printStackTrace();
+	}
+      }
       m_CurrentHandler = (m_LastSaveHandler == null) ? getDefaultWriter() : m_LastSaveHandler;
       getEditor().setValue(m_CurrentHandler);
     }
