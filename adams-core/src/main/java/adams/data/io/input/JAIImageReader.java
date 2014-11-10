@@ -82,7 +82,7 @@ public class JAIImageReader
    */
   @Override
   public String getFormatDescription() {
-    return "JAI image reader";
+    return "JAI";
   }
 
   /**

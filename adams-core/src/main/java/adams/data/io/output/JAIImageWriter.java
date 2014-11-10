@@ -82,7 +82,7 @@ public class JAIImageWriter
    */
   @Override
   public String getFormatDescription() {
-    return "JAI image writer";
+    return "JAI";
   }
 
   /**
