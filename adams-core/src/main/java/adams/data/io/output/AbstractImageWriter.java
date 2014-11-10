@@ -98,7 +98,7 @@ public abstract class AbstractImageWriter<T extends AbstractImageContainer>
    */
   public String write(PlaceholderFile file, T cont) {
     check(cont);
-    return write(file, cont);
+    return doWrite(file, cont);
   }
 
   /**
