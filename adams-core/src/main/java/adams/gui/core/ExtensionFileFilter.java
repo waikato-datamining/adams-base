@@ -165,7 +165,7 @@ public class ExtensionFileFilter
 	result += "...";
 	break;
       }
-      result += m_Extensions[i];
+      result += "." + m_Extensions[i];
     }
     result += ")";
 
