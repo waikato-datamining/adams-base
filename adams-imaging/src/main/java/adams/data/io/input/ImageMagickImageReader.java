@@ -20,16 +20,20 @@
 package adams.data.io.input;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagemagick.ImageMagickHelper;
+import adams.data.imagemagick.ImageType;
 import adams.data.io.output.AbstractImageWriter;
 
 /**
  <!-- globalinfo-start -->
- * ImageMagick image reader for: a, aai, art, avs, b, bgr, bgra, bie, bmp, bmp2, bmp3, brf, c, cal, cals, canvas, caption, cin, cip, clip, cmyk, cmyka, cur, cut, dcm, dcx, dds, dfont, dpx, eps2, eps3, fax, fits, fractal, fts, g, g3, gif, gif87, gradient, gray, group4, hald, hdr, histogram, hrz, htm, html, icb, ico, icon, inline, ipl, isobrl, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, k, label, m, mac, map, matte, miff, mng, mono, mpc, msl, mtv, mvg, null, o, otb, otf, pal, palm, pam, pattern, pbm, pcd, pcds, pct, pcx, pdb, pes, pfa, pfb, pfm, pgm, pgx, picon, pict, pix, pjpeg, plasma, png, png24, png32, png8, pnm, ppm, preview, ps2, ps3, psb, psd, ptif, pwp, r, radial-gradient, ras, rgb, rgba, rgbo, rla, rle, scr, sct, sfw, sgi, shtml, stegano, sun, text, tga, thumbnail, tiff, tiff64, tile, tim, ttc, ttf, txt, ubrl, uil, uyvy, vda, vicar, vid, viff, vst, wbmp, wpg, x, xbm, xc, xcf, xpm, xv, xwd, y, ycbcr, ycbcra, yuv
+ * ImageMagick image reader for: 3fr, aai, avs, bmp, cin, cmyk, cmyka, cur, cut, dcm, dcx, dds, dpx, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, icb, ico, icon, inline, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, mac, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, psb, psd, ptif, rgb, rgba, sgi, sun, tga, tiff, txt, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -78,26 +82,19 @@ public class ImageMagickImageReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{
-	"a", "aai", "art", "avs", "b", "bgr", "bgra", "bie", "bmp", "bmp2", 
-	"bmp3", "brf", "c", "cal", "cals", "canvas", "caption", "cin", "cip", 
-	"clip", "cmyk", "cmyka", "cur", "cut", "dcm", "dcx", "dds", "dfont", 
-	"dpx", "eps2", "eps3", "fax", "fits", "fractal", "fts", "g", "g3", 
-	"gif", "gif87", "gradient", "gray", "group4", "hald", "hdr", 
-	"histogram", "hrz", "htm", "html", "icb", "ico", "icon", "inline", 
-	"ipl", "isobrl", "j2c", "j2k", "jbg", "jbig", "jng", "jp2", "jpc", 
-	"jpeg", "jpg", "jpx", "k", "label", "m", "mac", "map", "matte", 
-	"miff", "mng", "mono", "mpc", "msl", "mtv", "mvg", "null", "o", 
-	"otb", "otf", "pal", "palm", "pam", "pattern", "pbm", "pcd", "pcds", 
-	"pct", "pcx", "pdb", "pes", "pfa", "pfb", "pfm", "pgm", "pgx", "picon", 
-	"pict", "pix", "pjpeg", "plasma", "png", "png24", "png32", "png8", 
-	"pnm", "ppm", "preview", "ps2", "ps3", "psb", "psd", "ptif", "pwp", 
-	"r", "radial-gradient", "ras", "rgb", "rgba", "rgbo", "rla", "rle", 
-	"scr", "sct", "sfw", "sgi", "shtml", "stegano", "sun", "text", "tga", 
-	"thumbnail", "tiff", "tiff64", "tile", "tim", "ttc", "ttf", "txt", 
-	"ubrl", "uil", "uyvy", "vda", "vicar", "vid", "viff", "vst", "wbmp", 
-	"wpg", "x", "xbm", "xc", "xcf", "xpm", "xv", "xwd", "y", "ycbcr", 
-	"ycbcra", "yuv"};
+    List<String>	result;
+    
+    result = new ArrayList<String>();
+    
+    for (ImageType it: ImageType.values()) {
+      if (it == ImageType.AUTO)
+	continue;
+      if (it.canRead())
+	result.add(it.getExtension());
+    }
+    Collections.sort(result);
+    
+    return result.toArray(new String[result.size()]);
   }
 
   /**
