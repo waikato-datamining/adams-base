@@ -1363,7 +1363,7 @@ public class ImagePanel
 	  msg = writer.write(new PlaceholderFile(file), cont);
 	}
 	m_CurrentFile = new PlaceholderFile(file);
-	result        = (msg != null);
+	result        = (msg == null);
 	if (msg != null)
 	  log("save failed: " + file);
 	else
