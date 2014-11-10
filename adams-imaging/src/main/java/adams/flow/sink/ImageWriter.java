@@ -14,31 +14,27 @@
  */
 
 /*
- * ImageMagickWriter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * ImageWriter.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IMOperation;
-
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
-import adams.data.imagemagick.ImageMagickHelper;
-import adams.data.imagemagick.ImageType;
-import adams.data.io.output.ImageMagickImageWriter;
+import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.JAIImageWriter;
 
 /**
  <!-- globalinfo-start -->
- * Writes an image to disk using ImageMagick (http:&#47;&#47;www.imagemagick.org&#47;).
+ * Writes the image to disk using the specified writer.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
@@ -50,10 +46,10 @@ import adams.data.io.output.ImageMagickImageWriter;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: ImageMagickWriter
+ * &nbsp;&nbsp;&nbsp;default: ImageWriter
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -75,25 +71,24 @@ import adams.data.io.output.ImageMagickImageWriter;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-image-type &lt;AUTO|AAI|AVS|BMP|CIN|CMYK|CMYKA|DCX|DIB|DPX|EPDF|EPI|EPS|EPS2|EPS3|EPSF|EPSI|EPT|EXR|FAX|FITS|FPX|GIF|GRAY|HDR|HRZ|HTML|INFO|JBIG|JNG|JP2|JPC|JPEG|MIFF|MONO|MNG|M2V|MPEG|MPC|MPR|MSL|MTV|MVG|OTB|P7|PALM|PAM|PBM|PCD|PCDS|PCL|PCX|PDB|PDF|PFM|PGM|PICON|PICT|PNG|PNG8|PNG24|PNG32|PNM|PPM|PS|PS2|PS3|PSB|PSD|PTIF|RGB|RGBA|SGI|SHTML|SUN|SVG|TGA|TIFF|TXT|UIL|UYVY|VICAR|VIFF|WBMP|WEBP|X|XBM|XPM|XWD|YCbCr|YCbCrA|YUV&gt; (property: imageType)
- * &nbsp;&nbsp;&nbsp;The type of image to create.
- * &nbsp;&nbsp;&nbsp;default: AUTO
+ * <pre>-writer &lt;adams.data.io.output.AbstractImageWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.JAIImageWriter
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 9700 $
  */
-@Deprecated
-public class ImageMagickWriter
+public class ImageWriter
   extends AbstractFileWriter {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1264554670448330464L;
+  private static final long serialVersionUID = 1824012225640852716L;
 
-  /** the image type to create. */
-  protected ImageType m_ImageType;
+  /** the writer to use. */
+  protected AbstractImageWriter m_Writer;
 
   /**
    * Returns a string describing the object.
@@ -102,12 +97,7 @@ public class ImageMagickWriter
    */
   @Override
   public String globalInfo() {
-    return 
-	"Writes an image to disk using ImageMagick (http://www.imagemagick.org/).\n"
-	+ "\n"
-	+ "DEPRECATED\n"
-	+ "Use " + ImageWriter.class.getName() + " in conjunctiuon with the " 
-	+ ImageMagickImageWriter.class.getName() + " instead.";
+    return "Writes the image to disk using the specified writer.";
   }
 
   /**
@@ -118,8 +108,8 @@ public class ImageMagickWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "image-type", "imageType",
-	    ImageType.AUTO);
+	    "writer", "writer",
+	    new JAIImageWriter());
   }
 
   /**
@@ -129,7 +119,12 @@ public class ImageMagickWriter
    */
   @Override
   public String getQuickInfo() {
-    return super.getQuickInfo() + QuickInfoHelper.toString(this, "imageType", m_ImageType, ", image type: ");
+    String	result;
+    
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "writer", m_Writer, ", writer: ");
+    
+    return result;
   }
 
   /**
@@ -144,22 +139,22 @@ public class ImageMagickWriter
   }
 
   /**
-   * Sets the type of image to create.
+   * Sets the writer to use.
    *
-   * @param value 	the image type
+   * @param value 	the writer
    */
-  public void setImageType(ImageType value) {
-    m_ImageType = value;
+  public void setWriter(AbstractImageWriter value) {
+    m_Writer = value;
     reset();
   }
 
   /**
-   * Returns the type of image to create.
+   * Returns the writer to use.
    *
-   * @return 		the image type
+   * @return 		the writer
    */
-  public ImageType getImageType() {
-    return m_ImageType;
+  public AbstractImageWriter getWriter() {
+    return m_Writer;
   }
 
   /**
@@ -168,60 +163,17 @@ public class ImageMagickWriter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String imageTypeTipText() {
-    return "The type of image to create.";
+  public String writerTipText() {
+    return "The writer to use.";
   }
 
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.image.AbstractImageContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{AbstractImageContainer.class};
-  }
-
-  /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      if (!ImageMagickHelper.isConvertAvailable())
-	result = ImageMagickHelper.getMissingConvertErrorMessage();
-    }
-
-    return result;
-  }
-
-  /**
-   * Determines the image type for the given filename.
-   *
-   * @param filename	the file to determine the image type for
-   * @return		the determine image type, default is PNG
-   */
-  protected ImageType determineImageType(String filename) {
-    ImageType	result;
-
-    result = null;
-
-    for (ImageType type: ImageType.values()) {
-      if (type.matches(filename)) {
-	result = type;
-	break;
-      }
-    }
-
-    if (result == null)
-      throw new IllegalStateException("Failed to determine image type for '" + filename + "'!");
-
-    return result;
   }
 
   /**
@@ -231,30 +183,15 @@ public class ImageMagickWriter
    */
   @Override
   protected String doExecute() {
-    String		result;
+    String			result;
     AbstractImageContainer	img;
-    String		filename;
-    ImageType		type;
-    ConvertCmd		cmd;
-    IMOperation		op;
 
     result = null;
 
-    img      = (AbstractImageContainer) m_InputToken.getPayload();
-    filename = m_OutputFile.getAbsolutePath();
+    img = (AbstractImageContainer) m_InputToken.getPayload();
 
     try {
-      // determine image type
-      if (m_ImageType == ImageType.AUTO)
-        type = determineImageType(filename);
-      else
-        type = m_ImageType;
-
-      op = new IMOperation();
-      op.addImage();  // input
-      op.addImage(type.getType() + ":" + filename);  // output
-      cmd = new ConvertCmd();
-      cmd.run(op, img.toBufferedImage());
+      result = m_Writer.write(m_OutputFile, img);
     }
     catch (Exception e) {
       result = handleException("Failed to write image to: " + m_OutputFile, e);

@@ -20,14 +20,12 @@
 
 package adams.flow.sink;
 
-import java.io.File;
-
 import javax.media.jai.JAI;
 
-import adams.core.EnumWithCustomDisplay;
 import adams.core.QuickInfoHelper;
-import adams.core.option.AbstractOption;
 import adams.data.image.AbstractImageContainer;
+import adams.data.io.output.JAIImageWriter;
+import adams.data.jai.ImageType;
 
 /**
  <!-- globalinfo-start -->
@@ -85,173 +83,12 @@ import adams.data.image.AbstractImageContainer;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class JAIWriter
   extends AbstractFileWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1824012225640852716L;
-
-  /**
-   * The type of the image to create.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum ImageType
-    implements EnumWithCustomDisplay<ImageType> {
-    
-    AUTO("AUTO", "", "Automatic"),
-    BMP("BMP", "bmp", "Microsoft Windows bitmap"),
-    JPEG("JPEG", "jpg", "Joint Photographic Experts Group JFIF format"),
-    PNG("PNG", "png", "Portable Network Graphics"),
-    PNM("PNM", "pnm", "Portable anymap"),
-    TIFF("TIFF", "tiff", "Tagged Image File Format");
-
-    /** the raw string. */
-    private String m_Raw;
-
-    /** the type. */
-    private String m_Type;
-
-    /** the extension. */
-    private String m_Extension;
-
-    /** the description. */
-    private String m_Description;
-
-    /**
-     * Initializes the image type.
-     *
-     * @param ext	the extension
-     * @param desc	the description
-     */
-    private ImageType(String type, String ext, String desc) {
-      m_Raw         = super.toString();
-      m_Type        = type;
-      m_Extension   = ext;
-      m_Description = desc;
-    }
-
-    /**
-     * Returns the display string.
-     *
-     * @return		the display string
-     */
-    public String toDisplay() {
-      return m_Type + " - " + m_Description;
-    }
-
-    /**
-     * Returns the raw enum string.
-     *
-     * @return		the raw enum string
-     */
-    public String toRaw() {
-      return m_Raw;
-    }
-
-    /**
-     * Returns the display string.
-     *
-     * @return		the display string
-     */
-    @Override
-    public String toString() {
-      return toDisplay();
-    }
-
-    /**
-     * Returns the ImageMagick type.
-     *
-     * @return		the type
-     */
-    public String getType() {
-      return m_Type;
-    }
-
-    /**
-     * Returns the associated extension.
-     *
-     * @return		the extension
-     */
-    public String getExtension() {
-      return m_Extension;
-    }
-
-    /**
-     * Checks whether the file matches the extension of this item.
-     *
-     * @param file	the file to check
-     * @return		true if the extensions match
-     */
-    public boolean matches(File file) {
-      return matches(file.getPath());
-    }
-
-    /**
-     * Checks whether the file matches the extension of this item.
-     *
-     * @param filename	the file to check
-     * @return		true if the extensions match
-     */
-    public boolean matches(String filename) {
-      return filename.toLowerCase().endsWith("." + m_Extension);
-    }
-
-    /**
-     * Parses the given string and returns the associated enum.
-     *
-     * @param s		the string to parse
-     * @return		the enum or null if not found
-     */
-    public ImageType parse(String s) {
-      return (ImageType) valueOf((AbstractOption) null, s);
-    }
-
-    /**
-     * Returns the enum as string.
-     *
-     * @param option	the current option
-     * @param object	the enum object to convert
-     * @return		the generated string
-     */
-    public static String toString(AbstractOption option, Object object) {
-      return ((ImageType) object).toRaw();
-    }
-
-    /**
-     * Returns an enum generated from the string.
-     *
-     * @param option	the current option
-     * @param str	the string to convert to an enum
-     * @return		the generated enum or null in case of error
-     */
-    public static ImageType valueOf(AbstractOption option, String str) {
-      ImageType	result;
-
-      result = null;
-
-      // default parsing
-      try {
-        result = valueOf(str);
-      }
-      catch (Exception e) {
-        // ignored
-      }
-
-      // try display
-      if (result == null) {
-        for (ImageType dt: values()) {
-  	if (dt.toDisplay().equals(str)) {
-  	  result = dt;
-  	  break;
-  	}
-        }
-      }
-
-      return result;
-    }
-  }
 
   /** the image type to create. */
   protected ImageType m_ImageType;
@@ -263,7 +100,12 @@ public class JAIWriter
    */
   @Override
   public String globalInfo() {
-    return "Writes an image to disk using Java Advanced Imaging (JAI).";
+    return 
+	"Writes an image to disk using Java Advanced Imaging (JAI).\n"
+	+ "\n"
+	+ "DEPRECATED\n"
+	+ "Use " + ImageWriter.class.getName() + " in conjunctiuon with the " 
+	+ JAIImageWriter.class.getName() + " instead.";
   }
 
   /**

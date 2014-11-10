@@ -30,6 +30,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.imagemagick.ImageMagickHelper;
 import adams.data.imagemagick.ImageType;
 import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageMagickImageWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -104,9 +105,22 @@ public class ImageMagickImageReader
    */
   @Override
   public AbstractImageWriter getCorrespondingWriter() {
-    return null;
+    return new ImageMagickImageWriter();
   }
 
+  /**
+   * Returns, if available, the corresponding writer.
+   * 
+   * @return		the writer, null if none available
+   */
+  @Override
+  protected void check(PlaceholderFile file) {
+    super.check(file);
+    
+    if (!ImageMagickHelper.isConvertAvailable())
+      throw new IllegalStateException(ImageMagickHelper.getMissingConvertErrorMessage());
+  }
+  
   /**
    * Performs the actual reading of the image file.
    * 

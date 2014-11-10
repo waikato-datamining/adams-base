@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-07-31 12:20:06
+# Date: 2014-11-11 11:59:42
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -16,7 +16,9 @@ adams.flow.control.Flow
 							-file
 							${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
 					-actor
-						adams.flow.transformer.JAIReader
+						adams.flow.transformer.ImageReader
+							-reader
+								adams.data.io.input.JAIImageReader
 					-actor
 						adams.flow.transformer.BufferedImageTransformer
 							-transformer

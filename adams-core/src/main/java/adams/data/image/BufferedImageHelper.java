@@ -30,7 +30,6 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -489,15 +488,8 @@ public class BufferedImageHelper {
    * @return		null if successful, otherwise error message
    */
   public static String write(BufferedImage img, File file) {
-    ImageWriter	writer;
-    
-    writer = getWriterForFile(file);
-    if (writer == null)
-      return "No image writer found (based on extension) for file: " + file;
-    
     try {
-      writer.write(new IIOImage(img, null, null));
-      writer.dispose();
+      ImageIO.write(img, FileUtils.getExtension(file).substring(1), file.getAbsoluteFile());
     }
     catch (Exception e) {
       return "Failed to write image to '" + file + "': " + Utils.throwableToString(e);

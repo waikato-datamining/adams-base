@@ -27,12 +27,14 @@ import java.net.URL;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagemagick.ImageMagickHelper;
+import adams.data.io.output.JAIImageWriter;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.flow.sink.ImageWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -85,6 +87,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class ImageMagickReader
   extends AbstractTransformer
   implements ProvenanceSupporter {
@@ -103,7 +106,11 @@ public class ImageMagickReader
         "Reads any file format that ImageMagick can read.\n"
       + "NB: Uses the im4java wrapper around the ImageMagick "
       + "executables, which must be available on the PATH or the " 
-      + ImageMagickHelper.ENV_PATH + " environment variable set.";
+      + ImageMagickHelper.ENV_PATH + " environment variable set.\n"
+      + "\n"
+      + "DEPRECATED\n"
+      + "Use " + ImageWriter.class.getName() + " in conjunctiuon with the " 
+      + JAIImageWriter.class.getName() + " instead.";
   }
 
   /**

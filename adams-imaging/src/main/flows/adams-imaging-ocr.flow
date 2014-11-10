@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-08-27 14:21:25
+# Date: 2014-11-11 12:00:43
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -50,7 +50,9 @@ adams.flow.control.Flow
 									-var-name
 									image
 					-tee
-						adams.flow.transformer.JAIReader
+						adams.flow.transformer.ImageReader
+							-reader
+								adams.data.io.input.JAIImageReader
 					-tee
 						adams.flow.sink.CallableSink
 							-callable

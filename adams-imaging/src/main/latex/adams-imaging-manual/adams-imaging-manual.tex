@@ -68,6 +68,8 @@ ADAMS has custom image processing support that does not rely on other libraries.
 
 The following actors are available:
 \begin{tight_itemize}
+	\item \texttt{sink.ImageWriter} -- writes an image container to a file
+	using the specified writer.
 	\item \texttt{transformer.BufferedImageTransformer} -- performs a transformation
 	using an existing transformer class on the incoming image and
 	outputs another image again.
@@ -75,6 +77,8 @@ The following actors are available:
 	\texttt{BufferedImageContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
+	\item \texttt{transformer.ImageReader} -- reads an image file using the 
+	specified image reader.
 \end{tight_itemize}
 
 Figure \ref{adams-blur-flow} shows a
@@ -119,14 +123,16 @@ The following actors are available:
 \begin{tight_itemize}
     \item \texttt{source.JAICreateImage} -- for creating an empty image to be 
     forwarded.
-	\item \texttt{transformer.JAIReader} -- for reading any image file that	JAI
-	supports\footnote{\url{http://java.sun.com/products/java-media/jai/iio.html}{}} and forwarding a \texttt{BufferedImageContainer} object.
-	\item \texttt{sink.JAIWriter} -- for writing a \texttt{BufferedImageContainer}
-	to a file format that JAI supports. If the image type cannot be
-	determined based on the extension, you can also specify which type to generate.
 \end{tight_itemize}
 
-Since the JAI actors use \texttt{BufferedImageContainer}, the 
+Reading and writing images are done using the \textit{ImageReader} transformer
+and \textit{ImageWriter} sink:
+\begin{tight_itemize}
+	\item \texttt{ImageReader} -- use the \textit{JAIImageReader}
+	\item \texttt{ImageWriter} -- use the \textit{JAIImageWriter}
+\end{tight_itemize}
+
+Since the JAI actors, readers and writers use \texttt{BufferedImageContainer}, the 
 \texttt{BufferedImageTransformer} and \texttt{BufferedImageFeatureGenerator}
 transformers can be used.
 
@@ -226,24 +232,24 @@ need to defined the \texttt{DCRAW\_TOOLPATH} variable and, for ufraw, the
 
 There are three ImageMagick actors available:
 \begin{tight_itemize}
-	\item \texttt{transformer.ImageMagickReader} -- for reading any image file that
-	ImageMagick supports and forwarding a \texttt{BufferedImageContainer} object.
 	\item \texttt{transformer.ImageMagickOperation} -- performs the ImageMagick
 	(convert, dcraw, ufraw) operations that the user selected from the class
 	hierarchy.
 	\item \texttt{transformer.ImageMagickTransformer} -- performs any ImageMagick
 	command on the incoming image that the \texttt{convert} tool\footnote{\url{http://www.imagemagick.org/script/convert.php}{}} supports and
 	outputs another image again.
-	\item \texttt{transformer.UFRawReader} -- for reading any image file that
-	ufraw supports (namely RAW files) and forwarding a \texttt{BufferedImageContainer} object.
-	\item \texttt{sink.ImageMagickWriter} -- for writing a \texttt{BufferedImageContainer}
-	to a file format that ImageMagick supports. If the image type cannot be
-	determined based on the extension, you can also specify which type to generate.
+\end{tight_itemize}
+
+Reading and writing images are done using the \textit{ImageReader} transformer
+and \textit{ImageWriter} sink:
+\begin{tight_itemize}
+	\item \texttt{ImageReader} -- use the \textit{ImageMagickImageReader} or \textit{UIfrawImageReader}
+	\item \texttt{ImageWriter} -- use the \textit{ImageMagickImageWriter}
 \end{tight_itemize}
 
 There is no separate transformer for generating a WEKA instance, since the
 ImageMagick actors process and output \texttt{BufferedImageContainer} objects as
-well, just like the JAI actors. You can use the \texttt{JAIFeatureGenerator} for
+well, just like the JAI actors. You can use the \texttt{BufferedImageFeatureGenerator} for
 generating WEKA output.
 
 The example flow\footnote{adams-imaging-imagemagick\_script.flow} in Figure

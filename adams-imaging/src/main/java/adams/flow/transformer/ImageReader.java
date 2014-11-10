@@ -14,18 +14,19 @@
  */
 
 /*
- * UFRawReader.java
+ * ImageReader.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.BufferedImageContainer;
-import adams.data.imagemagick.UFRawHelper;
+import adams.data.image.AbstractImageContainer;
+import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.JAIImageReader;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -35,11 +36,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Reads any file format that ufraw can read.<br/>
- * NB: Uses the im4java wrapper around the ufraw executable, which must be available on the PATH or the UFRAW_TOOLPATH environment variable set.<br/>
- * <br/>
- * For more information see:<br/>
- * http:&#47;&#47;ufraw.sourceforge.net&#47;
+ * Reads any file format that the specified image reader supports.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -48,9 +45,8 @@ import adams.flow.provenance.ProvenanceSupporter;
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
  * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
  * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
@@ -62,7 +58,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: UFRawReader
+ * &nbsp;&nbsp;&nbsp;default: ImageReader
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -82,18 +78,26 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9987 $
+ * @version $Revision: 7706 $
  */
-public class UFRawReader
+public class ImageReader
   extends AbstractTransformer
   implements ProvenanceSupporter {
 
   /** for serialization. */
-  private static final long serialVersionUID = 275040379368744L;
+  private static final long serialVersionUID = 7466006970025235243L;
 
+  /** the image reader to use. */
+  protected AbstractImageReader m_Reader;
+  
   /**
    * Returns a string describing the object.
    *
@@ -101,13 +105,48 @@ public class UFRawReader
    */
   @Override
   public String globalInfo() {
-    return
-        "Reads any file format that ufraw can read.\n"
-      + "NB: Uses the im4java wrapper around the ufraw "
-      + "executable, which must be available on the PATH or the " 
-      + UFRawHelper.ENV_PATH + " environment variable set.\n\n"
-      + "For more information see:\n"
-      + "http://ufraw.sourceforge.net/";
+    return "Reads any file format that the specified image reader supports.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	"reader", "reader",
+	new JAIImageReader());
+  }
+
+  /**
+   * Sets the reader to use.
+   *
+   * @param value 	the reader
+   */
+  public void setReader(AbstractImageReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the reader to use.
+   *
+   * @return 		the reader
+   */
+  public AbstractImageReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readerTipText() {
+    return "The image reader to use.";
   }
 
   /**
@@ -122,31 +161,22 @@ public class UFRawReader
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.data.image.BufferedImageContainer.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.data.image.AbstractImageContainer.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{BufferedImageContainer.class};
+    return new Class[]{AbstractImageContainer.class};
   }
 
   /**
-   * Initializes the item for flow execution.
+   * Returns a quick info about the actor, which will be displayed in the GUI.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @return		null if no info available, otherwise short string
    */
   @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      if (!UFRawHelper.isUfrawAvailable())
-	result = UFRawHelper.getMissingUfrawErrorMessage();
-    }
-
-    return result;
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "reader", m_Reader);
   }
-
+  
   /**
    * Executes the flow item.
    *
@@ -155,27 +185,25 @@ public class UFRawReader
   @Override
   protected String doExecute() {
     String			result;
-    BufferedImage		image;
-    BufferedImageContainer	cont;
+    PlaceholderFile		file;
+    AbstractImageContainer	cont;
 
     result = null;
 
     if (m_InputToken.getPayload() instanceof String)
-      image = UFRawHelper.read(new PlaceholderFile((String) m_InputToken.getPayload()));
+      file = new PlaceholderFile((String) m_InputToken.getPayload());
     else
-      image = UFRawHelper.read((File) m_InputToken.getPayload());
-
-    if (image != null) {
-      cont = new BufferedImageContainer();
-      cont.setImage(image);
-      if (m_InputToken.getPayload() instanceof File)
-	cont.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, ((File) m_InputToken.getPayload()).getAbsolutePath());
+      file = new PlaceholderFile((File) m_InputToken.getPayload());
+    
+    try {
+      cont = m_Reader.read(file);
+      if (cont != null)
+	m_OutputToken = new Token(cont);
       else
-	cont.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, m_InputToken.getPayload().toString());
-      m_OutputToken = new Token(cont);
+	result = "Failed to read image: " + file;
     }
-    else {
-      result = "Failed to read image from: " + m_InputToken.getPayload();
+    catch (Exception e) {
+      result = handleException("Failed to read image: " + file, e);
     }
 
     if (m_OutputToken != null)

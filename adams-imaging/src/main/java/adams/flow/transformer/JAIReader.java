@@ -28,12 +28,14 @@ import javax.media.jai.RenderedOp;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
+import adams.data.io.input.JAIImageReader;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.flow.sink.ImageWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -86,6 +88,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class JAIReader
   extends AbstractTransformer
   implements ProvenanceSupporter {
@@ -101,7 +104,11 @@ public class JAIReader
   @Override
   public String globalInfo() {
     return
-        "Reads any file format that Java Advanced Imaging (JAI) can read.";
+        "Reads any file format that Java Advanced Imaging (JAI) can read.\n"
+	+ "\n"
+	+ "DEPRECATED\n"
+	+ "Use " + ImageWriter.class.getName() + " in conjunctiuon with the " 
+	+ JAIImageReader.class.getName() + " instead.";
   }
 
   /**

@@ -10,7 +10,9 @@ adams.flow.control.Flow
 			-file
 			${EXAMPLE_FLOWS}/data/canon_eos_450d_03.cr2
 	-actor
-		adams.flow.transformer.UFRawReader
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.UfrawImageReader
 	-actor
 		adams.flow.sink.ImageViewer
 			-writer

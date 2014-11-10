@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-07-31 12:21:12
+# Date: 2014-11-11 12:03:07
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -16,7 +16,9 @@ adams.flow.control.Flow
 			-sorting
 			SORT_BY_NAME
 	-actor
-		adams.flow.transformer.ImageMagickReader
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.ImageMagickImageReader
 	-actor
 		adams.flow.transformer.ImageMagickTransformer
 			-commands
@@ -43,18 +45,26 @@ adams.flow.control.Flow
 		adams.flow.transformer.BufferedImageFeatureGenerator
 			-algorithm
 				adams.data.image.features.PixelClassifications
+					-converter
+						adams.data.featureconverter.SpreadSheetFeatureConverter
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
 					-width
 					5
 					-height
 					5
 					-anchor
-					CENTER
+					MIDDLE_CENTER
 					-pixel-type
 					RGB_SEPARATE
 	-actor
 		adams.flow.sink.SpreadSheetFileWriter
 			-output
 			${EXAMPLE_FLOWS}/output/pixelselector.csv
+			-writer
+				adams.data.io.output.CsvSpreadSheetWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
