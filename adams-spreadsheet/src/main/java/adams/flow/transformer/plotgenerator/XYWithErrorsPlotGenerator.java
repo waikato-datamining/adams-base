@@ -354,8 +354,6 @@ public class XYWithErrorsPlotGenerator
       throw new IllegalStateException("No Y column defined/available?");
     
     m_XColumn.setSpreadSheet(sheet);
-    if (m_XColumn.getIntIndex() == -1)
-      throw new IllegalStateException("No X column defined/available?");
 
     m_YErrorColumns.setSpreadSheet(sheet);
     cols = m_YErrorColumns.getIntIndices();
