@@ -15,21 +15,24 @@
 
 /*
  * SAXUtils.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.utils;
 
-import weka.core.Statistics;
+import adams.data.statistics.StatUtils;
 
 /**
- * A helper class for SAX
+ * A helper class for SAX.
  *
  * @author  dale (dale at waikato dot ac dot nz)
+ * @version $Revision$
  */
 
 public class SAXUtils {
+  
   /**
    * Piecewise Aggregate Approximation.
+   * 
    * @param inarray	input array
    * @param numwindows	number of pieces
    * @return		PAA
@@ -86,36 +89,6 @@ public class SAXUtils {
     }
     return(sax);
   }
-
-  
-  /**
-   * Returns the maximum Z number for the given bin and breakpoints.
-   * Assumes bins numbered from -infinity, starting from 0.
-   * @param bin		bin number
-   * @param bps		breakpoints
-   * @return
-   */
-  private static double max(int bin, double[] bps){
-    if (bin>=bps.length){
-      return(Double.POSITIVE_INFINITY);
-    }
-    return(bps[bin]);
-  }
-  
-  
-  /**
-   * Returns the minimum Z number for the given bin and breakpoints.
-   * Assumes bins numbered from -infinity, starting from 0.
-   * @param bin		bin number
-   * @param bps		breakpoints
-   * @return
-   */
-  private static double min(int bin, double[] bps){
-    if (bin==0){
-      return(Double.NEGATIVE_INFINITY);
-    }
-    return(bps[bin-1]);
-  }
   
   /**
    * Calculate the distance matrix for use in the MINDIST function.
@@ -167,32 +140,19 @@ public class SAXUtils {
       double width=0.5/(dbins/2.0);
       ret[(int)((dbins-2.0)/2.0)]=0;
       for (int i=1;i<=num;i++){
-	ret[(int)((dbins-2.0)/2.0) + i]=Statistics.normalInverse(0.5+(i*width));
+	ret[(int)((dbins-2.0)/2.0) + i]=StatUtils.normalInverse(0.5+(i*width));
 	ret[(int)((dbins-2.0)/2.0) - i]=-ret[(int)((dbins-2.0)/2.0) + i];
       }      
     } else { //odd
       int num=(int)(dbins-3)/2;
       double width=1/dbins;
-      ret[(int)((dbins-1.0)/2.0)]=Statistics.normalInverse(0.5+(width/2.0));
+      ret[(int)((dbins-1.0)/2.0)]=StatUtils.normalInverse(0.5+(width/2.0));
       ret[(int)((dbins-1.0)/2.0)-1]=-ret[(int)((dbins-1.0)/2.0)];
       for (int i=1;i<=num;i++){
-	ret[(int)((dbins-1.0)/2.0) + (i)]=Statistics.normalInverse(0.5+(width/2.0)+(i*width));
+	ret[(int)((dbins-1.0)/2.0) + (i)]=StatUtils.normalInverse(0.5+(width/2.0)+(i*width));
 	ret[(int)((dbins-1.0)/2.0) - (i+1)]=-ret[(int)((dbins-1.0)/2.0) + i];
       }      
     }
     return(ret);
-  }
-  /**
-   * Runs the algorithm from commandline.
-   *
-   * @param args	the options
-   */
-  public static void main(String[] args) {
-    double[] get=calcBreakPoints(3);
-    get=calcBreakPoints(4);
-    //get=calcBreakPoints(7);
-    //get=calcBreakPoints(9);
-    double[][] get2=calcDistMatrix(get);
-    get=calcBreakPoints(5);
   }
 }
