@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesStatistic.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -36,6 +36,14 @@ public class TimeseriesStatistic<T extends Timeseries>
 
   /** for serialization. */
   private static final long serialVersionUID = -2482267274581297567L;
+
+  public static final String DATABASE_ID = "Database ID";
+  public static final String NUMBER_OF_POINTS = "Number of points";
+  public static final String MIN_VALUE = "min Value";
+  public static final String MAX_VALUE = "max Value";
+  public static final String MEAN_VALUE = "mean Value";
+  public static final String STDEV_VALUE = "stdev Value";
+  public static final String MEDIAN_VALUE = "median Value";
 
   /**
    * Initializes the statistic.
@@ -126,13 +134,13 @@ public class TimeseriesStatistic<T extends Timeseries>
 	values[i] = points.get(i).getValue();
     }
 
-    add("Database ID", m_Data.getDatabaseID());
-    add("Number of points", points.size());
-    add("min Value", (m_Data.getMinValue() != null) ? m_Data.getMinValue().getValue() : Double.NaN);
-    add("max Value", (m_Data.getMaxValue() != null) ? m_Data.getMaxValue().getValue() : Double.NaN);
-    add("mean Value", numberToDouble(StatUtils.mean(values)));
-    add("stdev Value", numberToDouble(StatUtils.stddev(values, true)));
-    add("median Value", numberToDouble(StatUtils.median(values)));
+    add(DATABASE_ID, m_Data.getDatabaseID());
+    add(NUMBER_OF_POINTS, points.size());
+    add(MIN_VALUE, (m_Data.getMinValue() != null) ? m_Data.getMinValue().getValue() : Double.NaN);
+    add(MAX_VALUE, (m_Data.getMaxValue() != null) ? m_Data.getMaxValue().getValue() : Double.NaN);
+    add(MEAN_VALUE, numberToDouble(StatUtils.mean(values)));
+    add(STDEV_VALUE, numberToDouble(StatUtils.stddev(values, true)));
+    add(MEDIAN_VALUE, numberToDouble(StatUtils.median(values)));
 
     values = null;
   }
