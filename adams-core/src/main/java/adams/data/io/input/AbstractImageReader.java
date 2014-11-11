@@ -72,6 +72,15 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    * @return		the writer, null if none available
    */
   public abstract AbstractImageWriter getCorrespondingWriter();
+  
+  /**
+   * Returns whether the reader is actually available.
+   * 
+   * @return		true if available and ready to use
+   */
+  public boolean isAvailable() {
+    return true;
+  }
 
   /**
    * Performs checks.

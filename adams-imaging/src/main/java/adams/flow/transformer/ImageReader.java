@@ -178,6 +178,25 @@ public class ImageReader
   }
   
   /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+    
+    result = super.setUp();
+    
+    if (result == null) {
+      if (!m_Reader.isAvailable())
+	result = "Reader '" + m_Reader.getClass().getName() + "' is not available - check setup!";
+    }
+    
+    return result;
+  }
+  
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message

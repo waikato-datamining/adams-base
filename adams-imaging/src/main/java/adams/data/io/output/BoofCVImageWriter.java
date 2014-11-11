@@ -35,7 +35,9 @@ import boofcv.io.image.UtilImageIO;
 
 /**
  <!-- globalinfo-start -->
- * BoofCV image writer for: bmp, gif, jpeg, jpg, pgm, png, ppm, wbmp
+ * BoofCV image writer for: bmp, gif, jpeg, jpg, pgm, png, ppm, wbmp<br/>
+ * For more information see:<br/>
+ * http:&#47;&#47;boofcv.org&#47;
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -66,7 +68,11 @@ public class BoofCVImageWriter
    */
   @Override
   public String globalInfo() {
-    return "BoofCV image writer for: " + Utils.flatten(getFormatExtensions(), ", ");
+    return 
+	"BoofCV image writer for: " + Utils.flatten(getFormatExtensions(), ", ")
+	+ "\n"
+	+ "For more information see:\n"
+	+ "http://boofcv.org/";
   }
 
   /**

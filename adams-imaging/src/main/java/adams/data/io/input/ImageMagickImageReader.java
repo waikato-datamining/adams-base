@@ -34,7 +34,10 @@ import adams.data.io.output.ImageMagickImageWriter;
 
 /**
  <!-- globalinfo-start -->
- * ImageMagick image reader for: 3fr, aai, avs, bmp, cin, cmyk, cmyka, cur, cut, dcm, dcx, dds, dpx, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, icb, ico, icon, inline, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, mac, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, psb, psd, ptif, rgb, rgba, sgi, sun, tga, tiff, txt, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv
+ * ImageMagick image reader for: 3fr, aai, avs, bmp, cin, cmyk, cmyka, cur, cut, dcm, dcx, dds, dpx, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, icb, ico, icon, inline, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, mac, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, psb, psd, ptif, rgb, rgba, sgi, sun, tga, tiff, txt, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv<br/>
+ * <br/>
+ * For more information see:<br/>
+ * http:&#47;&#47;www.imagemagick.org&#47;<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -62,7 +65,12 @@ public class ImageMagickImageReader
    */
   @Override
   public String globalInfo() {
-    return "ImageMagick image reader for: " + Utils.flatten(getFormatExtensions(), ", ");
+    return 
+	"ImageMagick image reader for: " + Utils.flatten(getFormatExtensions(), ", ") + "\n"
+	+ "\n"
+	+ "For more information see:\n"
+	+ "http://www.imagemagick.org/\n"
+	+ (ImageMagickHelper.isConvertAvailable() ? "" : "\n" + ImageMagickHelper.getMissingConvertErrorMessage());
   }
 
   /**
@@ -106,6 +114,16 @@ public class ImageMagickImageReader
   @Override
   public AbstractImageWriter getCorrespondingWriter() {
     return new ImageMagickImageWriter();
+  }
+  
+  /**
+   * Returns whether the reader is actually available.
+   * 
+   * @return		true if available and ready to use
+   */
+  @Override
+  public boolean isAvailable() {
+    return ImageMagickHelper.isConvertAvailable();
   }
 
   /**

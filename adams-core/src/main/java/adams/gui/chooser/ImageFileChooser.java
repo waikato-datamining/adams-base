@@ -291,10 +291,14 @@ public class ImageFileChooser
 	cls       = Class.forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
+	  if (!((AbstractImageReader) converter).isAvailable())
+	    continue;
 	  desc = ((AbstractImageReader) converter).getFormatDescription();
 	  ext  = ((AbstractImageReader) converter).getFormatExtensions();
 	}
 	else {
+	  if (!((AbstractImageWriter) converter).isAvailable())
+	    continue;
 	  desc = ((AbstractImageWriter) converter).getFormatDescription();
 	  ext  = ((AbstractImageWriter) converter).getFormatExtensions();
 	}
