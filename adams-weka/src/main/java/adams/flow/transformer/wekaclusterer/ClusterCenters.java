@@ -19,7 +19,10 @@
  */
 package adams.flow.transformer.wekaclusterer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 
 import weka.clusterers.Clusterer;
 import weka.core.Attribute;
@@ -112,6 +115,7 @@ public class ClusterCenters
   protected Instances calculateCenters(Instances data, Clusterer clusterer, Instances outputFormat) {
     Instances				result;
     Hashtable<Integer,Instances>	clusters;
+    List<Integer>			indices;
     int					i;
     int					cluster;
     boolean				error;
@@ -144,7 +148,9 @@ public class ClusterCenters
     
     // process clusters
     if (!error) {
-      for (Integer cl: clusters.keySet()) {
+      indices = new ArrayList<Integer>(clusters.keySet());
+      Collections.sort(indices);
+      for (Integer cl: indices) {
 	subset = clusters.get(cl);
 	inst   = new DenseInstance(result.numAttributes());
 	inst.setValue(0, cl);
@@ -156,7 +162,6 @@ public class ClusterCenters
 	}
 	result.add(inst);
       }
-      result.sort(0);
     }
     else {
       getLogger().severe("At least one error occurred: " + errorMsg);
