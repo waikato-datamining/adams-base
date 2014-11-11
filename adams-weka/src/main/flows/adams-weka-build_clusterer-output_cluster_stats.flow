@@ -1,0 +1,100 @@
+# Project: adams
+# Date: 2014-11-11 14:38:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Builds a clusterer on a dataset with the class attribute removed\nand outputs the computed cluster centers and statistics (only numeric attributes).
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClustererSetup
+					-clusterer
+						weka.clusterers.SimpleKMeans
+							-init
+							0
+							-max-candidates
+							100
+							-periodic-pruning
+							10000
+							-min-density
+							2.0
+							-t1
+							-1.25
+							-t2
+							-1.0
+							-N
+							2
+							-A
+							weka.core.EuclideanDistance -R first-last
+							-I
+							500
+							-num-slots
+							1
+							-S
+							10
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bodyfat.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaFilter
+			-filter
+				weka.filters.unsupervised.attribute.Remove
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					centers
+					-actor
+						adams.flow.transformer.WekaTrainClusterer
+							-name
+							WekaClusterer
+							-post-processor
+								adams.flow.transformer.wekaclusterer.ClusterCenters
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-tee
+								adams.flow.sink.WekaInstancesDisplay
+									-name
+									centers
+									-short-title
+									true
+									-writer
+										adams.gui.print.NullWriter
+							-value
+							Clustered dataset
+			-branch
+				adams.flow.control.Sequence
+					-name
+					statistics
+					-actor
+						adams.flow.transformer.WekaTrainClusterer
+							-name
+							WekaClusterer
+							-post-processor
+								adams.flow.transformer.wekaclusterer.ClusterStatistics
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-tee
+								adams.flow.sink.WekaInstancesDisplay
+									-name
+									statistics
+									-short-title
+									true
+									-x
+									-3
+									-writer
+										adams.gui.print.NullWriter
+							-value
+							Clustered dataset
+			-num-threads
+			1
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
