@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-11-11 14:38:08
+# Date: 2014-11-11 14:43:37
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -93,8 +93,6 @@ adams.flow.control.Flow
 										adams.gui.print.NullWriter
 							-value
 							Clustered dataset
-			-num-threads
-			1
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
