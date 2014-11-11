@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-11-11 16:26:05
+# Date: 2014-11-11 16:45:07
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -112,6 +112,8 @@ adams.flow.control.Flow
 													-spreadsheet-type
 														adams.data.spreadsheet.SpreadSheet
 									-actor
+										adams.flow.transformer.SpreadSheetSort
+									-actor
 										adams.flow.transformer.Convert
 											-name
 											Convert-1
@@ -126,67 +128,109 @@ adams.flow.control.Flow
 													-reg-exp
 													.*(Min|Max|Mean)
 									-actor
-										adams.flow.transformer.SpreadSheetPlotGenerator
-											-generator
-												adams.flow.transformer.plotgenerator.SimplePlotGenerator
-													-columns
-													first-last
+										adams.flow.transformer.SetStorageValue
+											-storage-name
+											sheet
 									-actor
-										adams.flow.sink.SequencePlotter
-											-x
-											-3
-											-y
-											-3
-											-writer
-												adams.gui.print.NullWriter
-											-paintlet
-												adams.gui.visualization.sequence.LinePaintlet
-													-paint-all
-													true
-											-overlay-paintlet
-												adams.gui.visualization.sequence.CirclePaintlet
-											-marker-paintlet
-												adams.flow.sink.sequenceplotter.NoMarkers
-											-error-paintlet
-												adams.flow.sink.sequenceplotter.NoErrorPaintlet
-											-mouse-click-action
-												adams.flow.sink.sequenceplotter.NullClickAction
-											-color-provider
-												adams.gui.visualization.core.DefaultColorProvider
-											-overlay-color-provider
-												adams.gui.visualization.core.DefaultColorProvider
-											-title
-											Clusters
-											-axis-x
-												adams.gui.visualization.core.AxisPanelOptions
-													-label
-													attribute
-													-tick-generator
-														adams.gui.visualization.core.axis.FancyTickGenerator
-													-nth-value
-													2
-													-width
-													40
-													-custom-format
+										adams.flow.control.Trigger
+											-name
+											loop over clusters
+											-tee
+												adams.flow.source.ForLoop
+													-lower
 													0
-											-axis-y
-												adams.gui.visualization.core.AxisPanelOptions
-													-label
-													value
-													-tick-generator
-														adams.gui.visualization.core.axis.FancyTickGenerator
-													-nth-value
-													2
-													-width
-													60
-													-custom-format
-													0.0
-											-plot-updater
-												adams.flow.sink.sequenceplotter.SimplePlotUpdater
-													-update-interval
-													-1
-											-post-processor
-												adams.flow.sink.sequenceplotter.PassThrough
+													-upper
+													1
+											-tee
+												adams.flow.transformer.Convert
+													-conversion
+														adams.data.conversion.IntToString
+											-tee
+												adams.flow.transformer.StringInsert
+													-after
+													true
+													-value
+													-.*
+											-tee
+												adams.flow.transformer.SetVariable
+													-var-name
+													regexp
+											-tee
+												adams.flow.control.Trigger
+													-name
+													plot current cluster
+													-tee
+														adams.flow.source.StorageValue
+															-storage-name
+															sheet
+													-tee
+														adams.flow.transformer.SpreadSheetColumnFilter
+															-finder
+																adams.data.spreadsheet.columnfinder.ByName
+																	-reg-exp
+																	@{regexp}
+													-tee
+														adams.flow.transformer.SpreadSheetPlotGenerator
+															-generator
+																adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator
+																	-y-column
+																	2
+																	-y-error-columns
+																	3,1
+													-tee
+														adams.flow.sink.SequencePlotter
+															-x
+															-3
+															-y
+															-3
+															-writer
+																adams.gui.print.NullWriter
+															-paintlet
+																adams.gui.visualization.sequence.LinePaintlet
+															-overlay-paintlet
+																adams.gui.visualization.sequence.CirclePaintlet
+															-marker-paintlet
+																adams.flow.sink.sequenceplotter.NoMarkers
+															-error-paintlet
+																adams.flow.sink.sequenceplotter.SimpleErrorPaintlet
+															-mouse-click-action
+																adams.flow.sink.sequenceplotter.NullClickAction
+															-color-provider
+																adams.gui.visualization.core.DefaultColorProvider
+															-overlay-color-provider
+																adams.gui.visualization.core.DefaultColorProvider
+															-title
+															Clusters
+															-axis-x
+																adams.gui.visualization.core.AxisPanelOptions
+																	-label
+																	attribute
+																	-tick-generator
+																		adams.gui.visualization.core.axis.FancyTickGenerator
+																	-nth-value
+																	2
+																	-width
+																	40
+																	-custom-format
+																	0
+															-axis-y
+																adams.gui.visualization.core.AxisPanelOptions
+																	-label
+																	value
+																	-tick-generator
+																		adams.gui.visualization.core.axis.FancyTickGenerator
+																	-nth-value
+																	2
+																	-width
+																	60
+																	-custom-format
+																	0.0
+															-plot-updater
+																adams.flow.sink.sequenceplotter.SimplePlotUpdater
+																	-update-interval
+																	-1
+															-post-processor
+																adams.flow.sink.sequenceplotter.PassThrough
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
