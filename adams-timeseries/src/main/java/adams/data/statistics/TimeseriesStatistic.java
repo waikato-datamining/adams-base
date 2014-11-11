@@ -44,6 +44,11 @@ public class TimeseriesStatistic<T extends Timeseries>
   public static final String MEAN_VALUE = "mean Value";
   public static final String STDEV_VALUE = "stdev Value";
   public static final String MEDIAN_VALUE = "median Value";
+  public static final String MEDIAN_DELTA_TIMESTAMP = "median delta Timestamp";
+  public static final String STDEV_DELTA_TIMESTAMP = "stdev delta Timestamp";
+  public static final String MEAN_DELTA_TIMESTAMP = "mean delta Timestamp";
+  public static final String MAX_DELTA_TIMESTAMP = "max delta Timestamp";
+  public static final String MIN_DELTA_TIMESTAMP = "min delta Timestamp";
 
   /**
    * Initializes the statistic.
@@ -118,20 +123,26 @@ public class TimeseriesStatistic<T extends Timeseries>
     List<TimeseriesPoint>	points;
     int				i;
     Double[]			values;
+    Double[]			deltaTime;
 
     super.calculate();
 
     if (m_Data == null)
       return;
 
-    points = m_Data.toList();
-    values = new Double[0];
+    points    = m_Data.toList();
+    values    = new Double[0];
+    deltaTime = new Double[0];
 
     // gather statistics
     if (points.size() > 0) {
-      values = new Double[points.size()];
-      for (i = 0; i < points.size(); i++)
+      values    = new Double[points.size()];
+      deltaTime = new Double[points.size() - 1];
+      for (i = 0; i < points.size(); i++) {
 	values[i] = points.get(i).getValue();
+	if (i > 0)
+	  deltaTime[i - 1] = (double) points.get(i).getTimestamp().getTime() - (double) points.get(i - 1).getTimestamp().getTime();
+      }
     }
 
     add(DATABASE_ID, m_Data.getDatabaseID());
@@ -141,6 +152,11 @@ public class TimeseriesStatistic<T extends Timeseries>
     add(MEAN_VALUE, numberToDouble(StatUtils.mean(values)));
     add(STDEV_VALUE, numberToDouble(StatUtils.stddev(values, true)));
     add(MEDIAN_VALUE, numberToDouble(StatUtils.median(values)));
+    add(MIN_DELTA_TIMESTAMP, numberToDouble(StatUtils.min(deltaTime)));
+    add(MAX_DELTA_TIMESTAMP, numberToDouble(StatUtils.max(deltaTime)));
+    add(MEAN_DELTA_TIMESTAMP, numberToDouble(StatUtils.mean(deltaTime)));
+    add(STDEV_DELTA_TIMESTAMP, numberToDouble(StatUtils.stddev(deltaTime, true)));
+    add(MEDIAN_DELTA_TIMESTAMP, numberToDouble(StatUtils.median(deltaTime)));
 
     values = null;
   }
