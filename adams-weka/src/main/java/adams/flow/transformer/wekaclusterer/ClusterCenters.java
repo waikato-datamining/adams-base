@@ -15,7 +15,7 @@
 
 /**
  * ClusterCenters.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.wekaclusterer;
 
@@ -102,7 +102,12 @@ public class ClusterCenters
   }
   
   /**
-   * Calculates the centers 
+   * Calculates the centers.
+   * 
+   *  @param data		the input data used for training the clusterer
+   *  @param clusterer		the built clusterer
+   *  @param outputFormat	the format to use for the output
+   *  @return			the generated output
    */
   protected Instances calculateCenters(Instances data, Clusterer clusterer, Instances outputFormat) {
     Instances				result;
