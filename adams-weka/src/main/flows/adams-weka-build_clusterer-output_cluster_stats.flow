@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-11-11 14:43:37
+# Date: 2014-11-11 16:26:05
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -59,16 +59,18 @@ adams.flow.control.Flow
 								adams.flow.transformer.wekaclusterer.ClusterCenters
 					-actor
 						adams.flow.control.ContainerValuePicker
-							-tee
-								adams.flow.sink.WekaInstancesDisplay
-									-name
-									centers
-									-short-title
-									true
-									-writer
-										adams.gui.print.NullWriter
 							-value
 							Clustered dataset
+							-switch-outputs
+							true
+					-actor
+						adams.flow.sink.WekaInstancesDisplay
+							-name
+							centers
+							-short-title
+							true
+							-writer
+								adams.gui.print.NullWriter
 			-branch
 				adams.flow.control.Sequence
 					-name
@@ -81,7 +83,13 @@ adams.flow.control.Flow
 								adams.flow.transformer.wekaclusterer.ClusterStatistics
 					-actor
 						adams.flow.control.ContainerValuePicker
-							-tee
+							-value
+							Clustered dataset
+							-switch-outputs
+							true
+					-actor
+						adams.flow.control.Branch
+							-branch
 								adams.flow.sink.WekaInstancesDisplay
 									-name
 									statistics
@@ -91,8 +99,94 @@ adams.flow.control.Flow
 									-3
 									-writer
 										adams.gui.print.NullWriter
-							-value
-							Clustered dataset
+							-branch
+								adams.flow.control.Sequence
+									-name
+									plot min/max/mean
+									-actor
+										adams.flow.transformer.Convert
+											-conversion
+												adams.data.conversion.WekaInstancesToSpreadSheet
+													-data-row-type
+														adams.data.spreadsheet.DenseDataRow
+													-spreadsheet-type
+														adams.data.spreadsheet.SpreadSheet
+									-actor
+										adams.flow.transformer.Convert
+											-name
+											Convert-1
+											-conversion
+												adams.data.conversion.TransposeSpreadSheet
+													-use-first-column-as-header
+													true
+									-actor
+										adams.flow.transformer.SpreadSheetColumnFilter
+											-finder
+												adams.data.spreadsheet.columnfinder.ByName
+													-reg-exp
+													.*(Min|Max|Mean)
+									-actor
+										adams.flow.transformer.SpreadSheetPlotGenerator
+											-generator
+												adams.flow.transformer.plotgenerator.SimplePlotGenerator
+													-columns
+													first-last
+									-actor
+										adams.flow.sink.SequencePlotter
+											-x
+											-3
+											-y
+											-3
+											-writer
+												adams.gui.print.NullWriter
+											-paintlet
+												adams.gui.visualization.sequence.LinePaintlet
+													-paint-all
+													true
+											-overlay-paintlet
+												adams.gui.visualization.sequence.CirclePaintlet
+											-marker-paintlet
+												adams.flow.sink.sequenceplotter.NoMarkers
+											-error-paintlet
+												adams.flow.sink.sequenceplotter.NoErrorPaintlet
+											-mouse-click-action
+												adams.flow.sink.sequenceplotter.NullClickAction
+											-color-provider
+												adams.gui.visualization.core.DefaultColorProvider
+											-overlay-color-provider
+												adams.gui.visualization.core.DefaultColorProvider
+											-title
+											Clusters
+											-axis-x
+												adams.gui.visualization.core.AxisPanelOptions
+													-label
+													attribute
+													-tick-generator
+														adams.gui.visualization.core.axis.FancyTickGenerator
+													-nth-value
+													2
+													-width
+													40
+													-custom-format
+													0
+											-axis-y
+												adams.gui.visualization.core.AxisPanelOptions
+													-label
+													value
+													-tick-generator
+														adams.gui.visualization.core.axis.FancyTickGenerator
+													-nth-value
+													2
+													-width
+													60
+													-custom-format
+													0.0
+											-plot-updater
+												adams.flow.sink.sequenceplotter.SimplePlotUpdater
+													-update-interval
+													-1
+											-post-processor
+												adams.flow.sink.sequenceplotter.PassThrough
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
