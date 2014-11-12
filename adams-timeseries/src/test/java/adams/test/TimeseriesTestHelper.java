@@ -15,12 +15,14 @@
 
 /**
  * TimeseriesTestHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.test;
 
+import adams.core.Constants;
 import adams.core.base.BasePassword;
+import adams.data.DateFormatString;
 import adams.data.io.input.SimpleTimeseriesReader;
 import adams.data.io.output.SimpleTimeseriesWriter;
 import adams.data.timeseries.Timeseries;
@@ -36,6 +38,12 @@ import adams.db.DatabaseConnection;
 public class TimeseriesTestHelper
   extends AbstractTestHelper<Timeseries, Timeseries> {
 
+  /** the format for the timestamps in the regression tests (read). */
+  protected DateFormatString m_RegressionTimestampFormatRead;
+
+  /** the format for the timestamps in the regression tests (write). */
+  protected DateFormatString m_RegressionTimestampFormatWrite;
+  
   /**
    * Initializes the helper class.
    *
@@ -44,6 +52,9 @@ public class TimeseriesTestHelper
    */
   public TimeseriesTestHelper(AdamsTestCase owner, String dataDir) {
     super(owner, dataDir);
+    
+    m_RegressionTimestampFormatRead  = new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS);
+    m_RegressionTimestampFormatWrite = new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS);
   }
 
   /**
@@ -59,6 +70,46 @@ public class TimeseriesTestHelper
     return m_DatabaseConnection;
   }
 
+  /**
+   * Sets the timestamp format when reading input files for the regression
+   * tests.
+   * 
+   * @param value	the format
+   */
+  public void setRegressionTimestampFormatRead(DateFormatString value) {
+    m_RegressionTimestampFormatRead = value;
+  }
+
+  /**
+   * Returns the timestamp format when reading input files for the regression
+   * tests.
+   * 
+   * @return		the format
+   */
+  public DateFormatString getRegressionTimestampFormatRead() {
+    return m_RegressionTimestampFormatRead;
+  }
+
+  /**
+   * Sets the timestamp format when saving output files in the regression
+   * tests.
+   * 
+   * @param value	the format
+   */
+  public void setRegressionTimestampFormatWrite(DateFormatString value) {
+    m_RegressionTimestampFormatWrite = value;
+  }
+
+  /**
+   * Returns the timestamp format when saving output files in the regression
+   * tests.
+   * 
+   * @return		the format
+   */
+  public DateFormatString getRegressionTimestampFormatWrite() {
+    return m_RegressionTimestampFormatWrite;
+  }
+  
   /**
    * Tries to connect to the database.
    *
@@ -106,6 +157,7 @@ public class TimeseriesTestHelper
 
     result = null;
     reader = new SimpleTimeseriesReader();
+    reader.setTimestampFormat(m_RegressionTimestampFormatRead);
     reader.setInput(new TmpFile(filename));
     if (reader.read().size() > 0)
       result = reader.read().get(0);
@@ -131,6 +183,7 @@ public class TimeseriesTestHelper
     TmpFile			output;
 
     writer = new SimpleTimeseriesWriter();
+    writer.setTimestampFormat(m_RegressionTimestampFormatWrite);
     output = new TmpFile(filename);
     writer.setOutput(output);
     writer.write(data);
