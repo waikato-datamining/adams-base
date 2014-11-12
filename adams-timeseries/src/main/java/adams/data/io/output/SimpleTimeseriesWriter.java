@@ -15,7 +15,7 @@
 
 /**
  * SimpleTimeseriesWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -29,9 +29,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
+import adams.core.Constants;
 import adams.core.DateFormat;
-import adams.core.DateUtils;
 import adams.core.Utils;
+import adams.data.DateFormatString;
 import adams.data.io.input.SimpleTimeseriesReader;
 import adams.data.report.Report;
 import adams.data.timeseries.Timeseries;
@@ -49,6 +50,9 @@ public class SimpleTimeseriesWriter
   /** for serialization. */
   private static final long serialVersionUID = 2779645040618901178L;
 
+  /** the date format string to use for formatting the timestamp. */
+  protected DateFormatString m_TimestampFormat;
+  
   /**
    * Returns a string describing the object.
    *
@@ -58,7 +62,19 @@ public class SimpleTimeseriesWriter
   public String globalInfo() {
     return "Writer for the simple timeseries format.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "timestamp-format", "timestampFormat",
+	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+  }
+
   /**
    * Returns a string describing the format (used in the file chooser).
    *
@@ -81,6 +97,35 @@ public class SimpleTimeseriesWriter
   }
 
   /**
+   * Sets the format to use for the timestamps.
+   *
+   * @param value 	the format
+   */
+  public void setTimestampFormat(DateFormatString value) {
+    m_TimestampFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format to use for the timestamps.
+   *
+   * @return 		the format
+   */
+  public DateFormatString getTimestampFormat() {
+    return m_TimestampFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String timestampFormatTipText() {
+    return "The format to use for the timestamps.";
+  }
+
+  /**
    * Performs the actual writing.
    * <p/>
    * Writes only the first timeseries to the file.
@@ -100,7 +145,7 @@ public class SimpleTimeseriesWriter
     Report			report;
 
     writer  = null;
-    dformat = DateUtils.getTimestampFormatterMsecs();
+    dformat = m_TimestampFormat.toDateFormat();
     
     try {
       series = data.get(0);

@@ -15,7 +15,7 @@
 
 /**
  * SimpleTimeseriesReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -28,10 +28,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
+import adams.core.Constants;
 import adams.core.DateFormat;
-import adams.core.DateUtils;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.data.DateFormatString;
 import adams.data.report.Report;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
@@ -53,7 +54,10 @@ public class SimpleTimeseriesReader
 
   /** the file format extension (gzipped). */
   public final static String FILE_FORMAT_GZ = "sts.gz";
-  
+
+  /** the date format string to use for formatting the timestamp. */
+  protected DateFormatString m_TimestampFormat;
+
   /**
    * Returns a string describing the object.
    *
@@ -62,6 +66,18 @@ public class SimpleTimeseriesReader
   @Override
   public String globalInfo() {
     return "Reader for the simple timeseries format.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "timestamp-format", "timestampFormat",
+	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
   }
 
   /**
@@ -86,6 +102,35 @@ public class SimpleTimeseriesReader
   }
 
   /**
+   * Sets the format to use for the timestamps.
+   *
+   * @param value 	the format
+   */
+  public void setTimestampFormat(DateFormatString value) {
+    m_TimestampFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format to use for the timestamps.
+   *
+   * @return 		the format
+   */
+  public DateFormatString getTimestampFormat() {
+    return m_TimestampFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String timestampFormatTipText() {
+    return "The format to use for the timestamps.";
+  }
+
+  /**
    * Performs the actual reading.
    */
   @Override
@@ -101,7 +146,7 @@ public class SimpleTimeseriesReader
     DateFormat		dformat;
 
     reader  = null;
-    dformat = DateUtils.getTimestampFormatterMsecs();
+    dformat = m_TimestampFormat.toDateFormat();
     series  = new Timeseries();
     
     try {
