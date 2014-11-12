@@ -21,8 +21,11 @@ package adams.data.filter;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.Constants;
+import adams.data.DateFormatString;
 import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
+import adams.test.TimeseriesTestHelper;
 
 /**
  * Test class for the SAX filter. Run from the command line with: <p/>
@@ -44,6 +47,19 @@ public class SAXTest
   }
 
   /**
+   * Called by JUnit before each test method.
+   *
+   * @throws Exception if an error occurs
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    
+    ((TimeseriesTestHelper) m_TestHelper).setRegressionTimestampFormatWrite(
+	new DateFormatString(Constants.TIMESTAMP_FORMAT));
+  }
+  
+  /**
    * Returns the configured filter.
    *
    * @return		the filter
@@ -64,6 +80,7 @@ public class SAXTest
 	"wine_mod.sts",
 	"wine_mod.sts",
 	"wine_mod.sts",
+	"wine_mod.sts",
     };
   }
 
@@ -78,7 +95,7 @@ public class SAXTest
     RowNorm		row;
     SAX			sax;
 
-    result = new MultiFilter[3];
+    result = new MultiFilter[4];
 
     row = new RowNorm();
     
@@ -103,6 +120,14 @@ public class SAXTest
     sax.setNumBins(5);
     sax.setNumWindows(5);
     result[2].setSubFilters(new AbstractFilter[]{
+	row,
+	sax
+    });
+    
+    result[3] = new MultiFilter();
+    sax       = new SAX();
+    sax.setOutputLabels(false);
+    result[3].setSubFilters(new AbstractFilter[]{
 	row,
 	sax
     });
