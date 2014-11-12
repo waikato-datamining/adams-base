@@ -1310,6 +1310,43 @@ public class StatUtils {
   public static double signalToNoiseRatio(double[] x) {
     return mean(x) / stddev(x, true);
   }
+  
+  /**
+   * Applies row-wise normalization to the data.
+   * 
+   * @param x		the input data
+   * @return		the normalize data
+   */
+  public static double[] rowNorm(Number[] x) {
+    return rowNorm(toDoubleArray(x));
+  }
+  
+  /**
+   * Applies row-wise normalization to the data.
+   * 
+   * @param x		the input data
+   * @return		the normalize data
+   */
+  public static double[] rowNorm(double[] x) {
+    double[]	result;
+    StatCalc 	sc;
+    double 	mn;
+    double 	sd;
+    int		i;
+    
+    result = new double[x.length];
+    sc     = new StatCalc();
+    for (i = 0; i < x.length; i++)
+      sc.enter(x[i]);
+
+    mn = sc.getMean();
+    sd = sc.getStandardDeviation();
+
+    for (i = 0; i < x.length; i++)
+      result[i] = (x[i] - mn) / sd;
+    
+    return result;
+  }
 
   /**
    * Returns the area under the Normal (Gaussian) probability density function,

@@ -22,7 +22,7 @@ package adams.data.filter;
 
 import java.util.List;
 
-import adams.data.statistics.StatCalc;
+import adams.data.statistics.StatUtils;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 
@@ -75,21 +75,18 @@ public class RowNorm
   protected Timeseries processData(Timeseries data) {
     Timeseries			result;
     List<TimeseriesPoint>	points;
-    StatCalc 			sc;
-    double 			mn;
-    double 			sd;
+    double[]			x;
+    double[]			norm;
+    int				i;
 
     result = data.getHeader();
     points = data.toList();
-    sc     = new StatCalc();
-    for (TimeseriesPoint p: points)
-      sc.enter(p.getValue());
-
-    mn = sc.getMean();
-    sd = sc.getStandardDeviation();
-
-    for (TimeseriesPoint p:points)
-      result.add(new TimeseriesPoint(p.getTimestamp(), (p.getValue() - mn)/sd));
+    x      = new double[points.size()];
+    for (i = 0; i < points.size(); i++)
+      x[i] = points.get(i).getValue();
+    norm   = StatUtils.rowNorm(x);
+    for (i = 0; i < points.size(); i++)
+      result.add(new TimeseriesPoint(points.get(i).getTimestamp(), norm[i]));
 
     return result;
   }
