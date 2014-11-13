@@ -73,6 +73,25 @@ import adams.core.Utils;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-use-fixed-min-max &lt;boolean&gt; (property: useFixedMinMax)
+ * &nbsp;&nbsp;&nbsp;If enabled, then the user-specified min&#47;max values are used for the bin 
+ * &nbsp;&nbsp;&nbsp;calculation rather than the min&#47;max from the data (allows comparison of 
+ * &nbsp;&nbsp;&nbsp;histograms when generating histograms over a range of arrays).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-manual-min &lt;double&gt; (property: manualMin)
+ * &nbsp;&nbsp;&nbsp;The minimum to use when using manual binning with user-supplied min&#47;max 
+ * &nbsp;&nbsp;&nbsp;enabled.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * </pre>
+ * 
+ * <pre>-manual-max &lt;double&gt; (property: manualMax)
+ * &nbsp;&nbsp;&nbsp;The maximum to use when using manual binning with user-supplied max&#47;max 
+ * &nbsp;&nbsp;&nbsp;enabled.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * </pre>
+ * 
  * <pre>-display-ranges &lt;boolean&gt; (property: displayRanges)
  * &nbsp;&nbsp;&nbsp;If enabled, the bins get description according to their range, rather than 
  * &nbsp;&nbsp;&nbsp;a simple index.
@@ -107,6 +126,12 @@ public class ArrayHistogram<T extends Number>
   /** the key for the x-values for all the bins in the meta-data. */
   public final static String METADATA_BINX = "bin-x";
 
+  /** the key for the minimum used in the meta-data. */
+  public final static String METADATA_MINIMUM = "minimum";
+
+  /** the key for the maximum used in the meta-data. */
+  public final static String METADATA_MAXIMUM = "maximum";
+
   /**
    * Enumeration for the bin calculation.
    *
@@ -137,6 +162,15 @@ public class ArrayHistogram<T extends Number>
 
   /** whether to normalize the data. */
   protected boolean m_Normalize;
+
+  /** whether to use fixed min/max for manual bin calculation. */
+  protected boolean m_UseFixedMinMax;
+
+  /** the manual minimum. */
+  protected double m_ManualMin;
+
+  /** the manual maximum. */
+  protected double m_ManualMax;
 
   /** whether to use the ranges as bin description. */
   protected boolean m_DisplayRanges;
@@ -198,6 +232,18 @@ public class ArrayHistogram<T extends Number>
     m_OptionManager.add(
 	    "normalize", "normalize",
 	    false);
+
+    m_OptionManager.add(
+	    "use-fixed-min-max", "useFixedMinMax",
+	    false);
+
+    m_OptionManager.add(
+	    "manual-min", "manualMin",
+	    0.0);
+
+    m_OptionManager.add(
+	    "manual-max", "manualMax",
+	    1.0);
 
     m_OptionManager.add(
 	    "display-ranges", "displayRanges",
@@ -325,6 +371,103 @@ public class ArrayHistogram<T extends Number>
   }
 
   /**
+   * Sets whether to use user-supplied min/max for bin calculation rather
+   * than obtain min/max from data.
+   *
+   * @param value 	true if to use user-supplied min/max
+   */
+  public void setUseFixedMinMax(boolean value) {
+    m_UseFixedMinMax = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use user-supplied min/max for bin calculation rather
+   * than obtain min/max from data.
+   *
+   * @return 		true if to use user-supplied min/max
+   */
+  public boolean getUseFixedMinMax() {
+    return m_UseFixedMinMax;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useFixedMinMaxTipText() {
+    return 
+	"If enabled, then the user-specified min/max values are used for the "
+	+ "bin calculation rather than the min/max from the data (allows "
+	+ "comparison of histograms when generating histograms over a range "
+	+ "of arrays).";
+  }
+
+  /**
+   * Sets the minimum to use when using manual binning with user-supplied 
+   * min/max enabled.
+   *
+   * @param value 	the minimum
+   */
+  public void setManualMin(double value) {
+    m_ManualMin = value;
+    reset();
+  }
+
+  /**
+   * Returns the minimum to use when using manual binning with user-supplied 
+   * min/max enabled.
+   *
+   * @return 		the minimum
+   */
+  public double getManualMin() {
+    return m_ManualMin;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String manualMinTipText() {
+    return "The minimum to use when using manual binning with user-supplied min/max enabled.";
+  }
+
+  /**
+   * Sets the maximum to use when using manual binning with user-supplied 
+   * max/max enabled.
+   *
+   * @param value 	the maximum
+   */
+  public void setManualMax(double value) {
+    m_ManualMax = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum to use when using manual binning with user-supplied 
+   * max/max enabled.
+   *
+   * @return 		the maximum
+   */
+  public double getManualMax() {
+    return m_ManualMax;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String manualMaxTipText() {
+    return "The maximum to use when using manual binning with user-supplied max/max enabled.";
+  }
+
+  /**
    * Sets whether to use the bin ranges as their description rather than a 
    * simple index.
    *
@@ -439,8 +582,14 @@ public class ArrayHistogram<T extends Number>
 
     switch (m_BinCalculation) {
       case MANUAL:
-	min = StatUtils.min(array).doubleValue();
-	max = StatUtils.max(array).doubleValue();
+	if (m_UseFixedMinMax) {
+	  min = m_ManualMin;
+	  max = m_ManualMax;
+	}
+	else {
+	  min = StatUtils.min(array).doubleValue();
+	  max = StatUtils.max(array).doubleValue();
+	}
 	return (max - min) / m_NumBins;
 
       case DENSITY:
@@ -529,8 +678,14 @@ public class ArrayHistogram<T extends Number>
     prefix   = "bin";
     binWidth = calcBinWidth(array);
     numBins  = calcNumBins(array, binWidth);
-    min      = StatUtils.min(array).doubleValue();
-    max      = StatUtils.max(array).doubleValue();
+    if ((m_BinCalculation == BinCalculation.MANUAL) && m_UseFixedMinMax) {
+      min = m_ManualMin;
+      max = m_ManualMax;
+    }
+    else {
+      min = StatUtils.min(array).doubleValue();
+      max = StatUtils.max(array).doubleValue();
+    }
     binWidth = (max - min) / numBins;
     bins     = new int[numBins];
     result   = new StatisticContainer<Double>(size(), numBins);
@@ -569,6 +724,8 @@ public class ArrayHistogram<T extends Number>
     result.setMetaData(METADATA_NUMBINS,  numBins);
     result.setMetaData(METADATA_BINWIDTH, binWidth);
     result.setMetaData(METADATA_BINX,     binX);
+    result.setMetaData(METADATA_MINIMUM,  min);
+    result.setMetaData(METADATA_MAXIMUM,  max);
 
     return result;
   }
