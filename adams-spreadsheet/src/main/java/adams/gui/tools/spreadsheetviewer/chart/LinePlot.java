@@ -26,11 +26,13 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
+import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.LinePaintlet;
 
 /**
@@ -282,6 +284,8 @@ public class LinePlot
     SimplePlotUpdater		updater;
     AxisPanelOptions		axis;
     int[]			indices;
+    ViewDataClickAction		action;
+    LinePaintlet		paintlet;
 
     m_XColumn.setData(sheet);
     m_YColumns.setData(sheet);
@@ -302,11 +306,16 @@ public class LinePlot
       plotter.setName("Line plot");
     plotter.setTitle("Line plot");
     plotter.setShortTitle(true);
-    plotter.setPaintlet(new LinePaintlet());
+    paintlet = new LinePaintlet();
+    plotter.setPaintlet(paintlet);
     plotter.setColorProvider(m_ColorProvider.shallowCopy());
     plotter.setPlotUpdater(updater);
     plotter.setWidth(m_Width);
     plotter.setHeight(m_Height);
+
+    action = new ViewDataClickAction();
+    action.setHitDetector(((AbstractXYSequencePaintlet) paintlet).getHitDetector());
+    plotter.setMouseClickAction(action);
 
     axis = plotter.getAxisX();
     axis.setLabel(sheet.getColumnName(m_XColumn.getIntIndex()));

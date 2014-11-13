@@ -24,6 +24,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
+import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.plotgenerator.AbstractPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
@@ -32,6 +33,7 @@ import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.TickGenerator;
+import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 
@@ -360,6 +362,7 @@ public class GenericPlot
     SequencePlotter		plotter;
     SimplePlotUpdater		updater;
     AxisPanelOptions		axis;
+    ViewDataClickAction		action;
     
     pg = new SpreadSheetPlotGenerator();
     pg.setGenerator(m_Generator);
@@ -367,6 +370,11 @@ public class GenericPlot
     
     updater = new SimplePlotUpdater();
     updater.setUpdateInterval(0);
+    action = null;
+    if (m_Paintlet instanceof AbstractXYSequencePaintlet) {
+      action = new ViewDataClickAction();
+      action.setHitDetector(((AbstractXYSequencePaintlet) m_Paintlet).getHitDetector());
+    }
     plotter = new SequencePlotter();
     if (name != null)
       plotter.setName(name);
@@ -379,6 +387,8 @@ public class GenericPlot
     plotter.setPlotUpdater(updater);
     plotter.setWidth(m_Width);
     plotter.setHeight(m_Height);
+    if (action != null)
+      plotter.setMouseClickAction(action);
 
     axis = plotter.getAxisX();
     axis.setLabel("X");
