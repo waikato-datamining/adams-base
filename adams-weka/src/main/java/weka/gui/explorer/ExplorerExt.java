@@ -607,6 +607,7 @@ public class ExplorerExt
       loader.setFile(e.getItem());
       getPreprocessPanel().setInstancesFromFile(loader);
       m_CurrentFile = e.getItem();
+      m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
       update();
     }
     catch (Exception ex) {
