@@ -678,13 +678,19 @@ public class ArrayHistogram<T extends Number>
     prefix   = "bin";
     binWidth = calcBinWidth(array);
     numBins  = calcNumBins(array, binWidth);
+    min      = StatUtils.min(array).doubleValue();
+    max      = StatUtils.max(array).doubleValue();
     if ((m_BinCalculation == BinCalculation.MANUAL) && m_UseFixedMinMax) {
+      if (min < m_ManualMin)
+	throw new IllegalStateException(
+	    "Manual min larger than smallest value: " + m_ManualMin + " > " + min + "\n" 
+		+ Utils.arrayToString(array));
+      if (max > m_ManualMax)
+	throw new IllegalStateException(
+	    "Manual max smaller than largest value: " + m_ManualMax + " < " + max + "\n" 
+		+ Utils.arrayToString(array));
       min = m_ManualMin;
       max = m_ManualMax;
-    }
-    else {
-      min = StatUtils.min(array).doubleValue();
-      max = StatUtils.max(array).doubleValue();
     }
     binWidth = (max - min) / numBins;
     bins     = new int[numBins];
