@@ -145,7 +145,7 @@ adams.gui.flow.menu.ViewStatistics-Mnemonic=T
 adams.gui.flow.menu.ViewStatistics-Shortcut=
 adams.gui.flow.menu.ViewRedraw-Icon=
 adams.gui.flow.menu.ViewRedraw-Mnemonic=R
-adams.gui.flow.menu.ViewRedraw-Shortcut=
+adams.gui.flow.menu.ViewRedraw-Shortcut=F5
 
 # Window
 adams.gui.flow.menu.WindowNew-Icon=
