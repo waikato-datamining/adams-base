@@ -9,7 +9,7 @@ Header=@relation iris-weka.filters.unsupervised.attribute.Remove-Rlast
 @data
 , Model=Model type: moa.clusterers.CobWeb
 model training instances = 150
-model serialized size (bytes) = 0
+model serialized size (bytes) = 0.0
 Model description:
 CobWeb - Number of merges: 0
 Number of splits: 0

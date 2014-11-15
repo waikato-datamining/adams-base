@@ -1,29 +1,14 @@
 --> dumpfile.txt
-001-016 | 63 6C 61 73 73 69 66 69 65 64 20 69 6E 73 74 61 | classified insta
-017-032 | 6E 63 65 73 20 3D 20 35 30 0A 63 6C 61 73 73 69 | nces = 50.classi
-033-048 | 66 69 63 61 74 69 6F 6E 73 20 63 6F 72 72 65 63 | fications correc
-049-064 | 74 20 28 70 65 72 63 65 6E 74 29 20 3D 20 31 30 | t (percent) = 10
-065-080 | 30 0A 4B 61 70 70 61 20 53 74 61 74 69 73 74 69 | 0.Kappa Statisti
-081-096 | 63 20 28 70 65 72 63 65 6E 74 29 20 3D 20 EF BF | c (percent) = ..
-097-112 | BD 0A 4B 61 70 70 61 20 54 65 6D 70 6F 72 61 6C | ..Kappa Temporal
-113-128 | 20 53 74 61 74 69 73 74 69 63 20 28 70 65 72 63 |  Statistic (perc
-129-144 | 65 6E 74 29 20 3D 20 EF BF BD 0A 63 6C 61 73 73 | ent) = ....class
-145-160 | 69 66 69 65 64 20 69 6E 73 74 61 6E 63 65 73 20 | ified instances 
-161-176 | 3D 20 31 30 30 0A 63 6C 61 73 73 69 66 69 63 61 | = 100.classifica
-177-192 | 74 69 6F 6E 73 20 63 6F 72 72 65 63 74 20 28 70 | tions correct (p
-193-208 | 65 72 63 65 6E 74 29 20 3D 20 35 30 0A 4B 61 70 | ercent) = 50.Kap
-209-224 | 70 61 20 53 74 61 74 69 73 74 69 63 20 28 70 65 | pa Statistic (pe
-225-240 | 72 63 65 6E 74 29 20 3D 20 30 0A 4B 61 70 70 61 | rcent) = 0.Kappa
-241-256 | 20 54 65 6D 70 6F 72 61 6C 20 53 74 61 74 69 73 |  Temporal Statis
-257-272 | 74 69 63 20 28 70 65 72 63 65 6E 74 29 20 3D 20 | tic (percent) = 
-273-288 | 2D 34 2C 39 30 30 0A 63 6C 61 73 73 69 66 69 65 | -4,900.classifie
-289-304 | 64 20 69 6E 73 74 61 6E 63 65 73 20 3D 20 31 35 | d instances = 15
-305-320 | 30 0A 63 6C 61 73 73 69 66 69 63 61 74 69 6F 6E | 0.classification
-321-336 | 73 20 63 6F 72 72 65 63 74 20 28 70 65 72 63 65 | s correct (perce
-337-352 | 6E 74 29 20 3D 20 33 33 2E 33 33 33 0A 4B 61 70 | nt) = 33.333.Kap
-353-368 | 70 61 20 53 74 61 74 69 73 74 69 63 20 28 70 65 | pa Statistic (pe
-369-384 | 72 63 65 6E 74 29 20 3D 20 30 0A 4B 61 70 70 61 | rcent) = 0.Kappa
-385-400 | 20 54 65 6D 70 6F 72 61 6C 20 53 74 61 74 69 73 |  Temporal Statis
-401-416 | 74 69 63 20 28 70 65 72 63 65 6E 74 29 20 3D 20 | tic (percent) = 
-417-432 | 2D 34 2C 39 30 30 0A
+classified instances = 50
+classifications correct (percent) = 100
+Kappa Statistic (percent) = NaN
+Kappa Temporal Statistic (percent) = NaN
+classified instances = 100
+classifications correct (percent) = 50
+Kappa Statistic (percent) = 0.0
+Kappa Temporal Statistic (percent) = -4899.999999999995
+classified instances = 150
+classifications correct (percent) = 33.333
+Kappa Statistic (percent) = 0.0
+Kappa Temporal Statistic (percent) = -4900.000000000009
 

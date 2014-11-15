@@ -10,7 +10,7 @@ Header=@relation iris
 @data
 , Model=Model type: moa.classifiers.trees.DecisionStump
 model training instances = 150
-model serialized size (bytes) = 0
+model serialized size (bytes) = 0.0
 Model description:
 
 

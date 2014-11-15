@@ -10,7 +10,7 @@ Header=@relation iris
 @data
 , Model=Model type: moa.classifiers.bayes.NaiveBayes
 model training instances = 150
-model serialized size (bytes) = 0
+model serialized size (bytes) = 0.0
 Model description:
 Observations for [class] = <class 1>:
  Total observed weight = 50.0 / prob = 0.3333333333333333
