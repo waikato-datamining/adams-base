@@ -107,6 +107,8 @@ public class EmailAddress
     String	result;
     
     result = getValue();
+    if (result == null)
+      return "";
     if (getValue().indexOf('<') == -1)
       return result;
     else
