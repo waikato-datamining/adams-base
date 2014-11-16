@@ -26,6 +26,11 @@ import java.util.HashMap;
 import javax.swing.JComponent;
 
 import adams.core.NamedCounter;
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.io.FileWriter;
+import adams.core.io.PlaceholderFile;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
@@ -104,6 +109,12 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -203,6 +214,13 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.PassThrough
  * </pre>
  * 
+ * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
+ * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store 
+ * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if 
+ * &nbsp;&nbsp;&nbsp;pointing to a directory.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -210,7 +228,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  */
 public class SequencePlotter
   extends AbstractGraphicalDisplay 
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, FileWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
@@ -256,6 +274,12 @@ public class SequencePlotter
 
   /** for keeping track of the tokens. */
   protected NamedCounter m_Counter;
+  
+  /** the file to save the plot containers to. */
+  protected PlaceholderFile m_OutputFile;
+  
+  /** whether to use an output file. */
+  protected Boolean m_UseOutputFile;
 
   /**
    * Returns a string describing the object.
@@ -325,6 +349,10 @@ public class SequencePlotter
     m_OptionManager.add(
 	    "post-processor", "postProcessor",
 	    new PassThrough());
+
+    m_OptionManager.add(
+	    "output", "outputFile",
+	    getDefaultOutputFile());
   }
 
   /**
@@ -345,6 +373,7 @@ public class SequencePlotter
     super.reset();
 
     m_Counter.clear();
+    m_UseOutputFile = null;
   }
 
   /**
@@ -793,6 +822,57 @@ public class SequencePlotter
   }
 
   /**
+   * Returns the default output file.
+   *
+   * @return		the file
+   */
+  protected PlaceholderFile getDefaultOutputFile() {
+    return new PlaceholderFile(".");
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "outputFile", m_OutputFile);
+  }
+
+  /**
+   * Sets the output file.
+   *
+   * @param value	file
+   */
+  public void setOutputFile(PlaceholderFile value) {
+    m_OutputFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the output file.
+   *
+   * @return	file
+   */
+  public PlaceholderFile getOutputFile() {
+    return m_OutputFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputFileTipText() {
+    return 
+	"The file to write the plot containers to (in CSV format); does not "
+	+ "store the meta-data, as it can change from container to container; "
+	+ "ignored if pointing to a directory.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -835,6 +915,107 @@ public class SequencePlotter
   public Class[] accepts() {
     return new Class[]{SequencePlotterContainer.class};
   }
+  
+  /**
+   * Writes the plot container to the output file.
+   * 
+   * @param name	the name of the plot
+   * @param type	the type of plot
+   * @param x		the X value
+   * @param y		the Y value
+   * @param dX		the numerix X value
+   * @param dY		the numeric Y value
+   * @param errorX	the X error(s)
+   * @param errorY	the Y error(s)
+   * @return		true if successfully written
+   */
+  protected boolean writePlotContainer(String name, ContentType type, Comparable x, Comparable y, double dX, double dY, Double[] errorX, Double[] errorY) {
+    boolean		result;
+    StringBuilder	line;
+    int			decimals;
+    
+    result = true;
+    
+    // header?
+    if (!m_OutputFile.exists()) {
+      line = new StringBuilder();
+      line.append("Plot");
+      line.append(",");
+      line.append("Type");
+      line.append(",");
+      line.append("X");
+      line.append(",");
+      line.append("Y");
+      line.append(",");
+      line.append("X-numeric");
+      line.append(",");
+      line.append("Y-numeric");
+      line.append(",");
+      line.append("X-error-low");
+      line.append(",");
+      line.append("X-error-high");
+      line.append(",");
+      line.append("Y-error-low");
+      line.append(",");
+      line.append("Y-error-high");
+      result = FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), line.toString(), false);
+    }
+    
+    // data
+    if (result) {
+      decimals = 12;
+      line     = new StringBuilder();
+      line.append(Utils.doubleQuote(name));
+      line.append(",");
+      line.append(Utils.doubleQuote(type.toString()));
+      line.append(",");
+      line.append(x);
+      line.append(",");
+      line.append(y);
+      line.append(",");
+      line.append(Utils.doubleToString(dX, decimals));
+      line.append(",");
+      line.append(Utils.doubleToString(dY, decimals));
+      line.append(",");
+      if ((errorX != null) && ((errorX.length == 1) || (errorX.length == 2))) {
+	if (errorX.length == 1) {
+	  line.append(Utils.doubleToString(errorX[0], decimals));
+	  line.append(",");
+	  line.append(",");
+	}
+	else {
+	  line.append(Utils.doubleToString(errorX[0], decimals));
+	  line.append(",");
+	  line.append(Utils.doubleToString(errorX[1], decimals));
+	  line.append(",");
+	}
+      }
+      else {
+	line.append(",");
+	line.append(",");
+      }
+      if ((errorY != null) && ((errorY.length == 1) || (errorY.length == 2))) {
+	if (errorY.length == 1) {
+	  line.append(Utils.doubleToString(errorY[0], decimals));
+	  line.append(",");
+	  //line.append(",");
+	}
+	else {
+	  line.append(Utils.doubleToString(errorY[0], decimals));
+	  line.append(",");
+	  line.append(Utils.doubleToString(errorY[1], decimals));
+	  //line.append(",");
+	}
+      }
+      else {
+	line.append(",");
+	//line.append(",");
+      }
+      result = FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), line.toString(), true);
+    }
+    
+    return result;
+  }
 
   /**
    * Displays the token (the panel and dialog have already been created at
@@ -858,6 +1039,7 @@ public class SequencePlotter
     Double[]			errorY;
     ContentType			type;
     HashMap<String,Object>	meta;
+    
 
     plotCont = (SequencePlotterContainer) token.getPayload();
     plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
@@ -882,7 +1064,7 @@ public class SequencePlotter
 	throw new IllegalStateException("Unhandled plot container content type: " + type);
     }
     manager.startUpdate();
-
+    
     // find or create new plot
     if (manager.indexOf(plotName) == -1) {
       seq  = new SequencePlotSequence();
@@ -911,6 +1093,12 @@ public class SequencePlotter
     if (meta != null)
       point.setMetaData(meta);
     seq.add(point);
+
+    // save container?
+    if (m_UseOutputFile == null)
+      m_UseOutputFile = !m_OutputFile.isDirectory();
+    if (m_UseOutputFile)
+      writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
 
     // limit size of sequence?
     if (type != ContentType.MARKER)
