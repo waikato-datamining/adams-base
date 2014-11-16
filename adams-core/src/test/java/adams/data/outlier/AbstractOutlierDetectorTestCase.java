@@ -15,7 +15,7 @@
 
 /**
  * AbstractOutlierDetectorTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.outlier;
 
@@ -109,6 +109,15 @@ public abstract class AbstractOutlierDetectorTestCase<T extends DataContainer>
   protected abstract AbstractOutlierDetector[] getRegressionSetups();
 
   /**
+   * Returns the ignored line indices to use in the regression test.
+   *
+   * @return		the setups
+   */
+  protected int[] getRegressionIgnoredLineIndices() {
+    return new int[0];
+  }
+
+  /**
    * Creates an output filename based on the input filename.
    *
    * @param input	the input filename (no path)
@@ -146,6 +155,7 @@ public abstract class AbstractOutlierDetectorTestCase<T extends DataContainer>
     int				i;
     String[]			input;
     AbstractOutlierDetector[]	setups;
+    int[]			ignored;
     String[]			output;
     TmpFile[]			outputFiles;
 
@@ -155,7 +165,9 @@ public abstract class AbstractOutlierDetectorTestCase<T extends DataContainer>
     input   = getRegressionInputFiles();
     output  = new String[input.length];
     setups  = getRegressionSetups();
+    ignored = getRegressionIgnoredLineIndices();
     assertEquals("Number of files and setups differ!", input.length, setups.length);
+    assertEquals("Number of setups and ignored lines differ!", setups.length, ignored.length);
 
     // process data
     for (i = 0; i < input.length; i++) {
@@ -177,7 +189,7 @@ public abstract class AbstractOutlierDetectorTestCase<T extends DataContainer>
     outputFiles = new TmpFile[output.length];
     for (i = 0; i < output.length; i++)
       outputFiles[i] = new TmpFile(output[i]);
-    regression = m_Regression.compare(outputFiles);
+    regression = m_Regression.compare(outputFiles, ignored);
     assertNull("Output differs:\n" + regression, regression);
 
     // remove output, clean up scheme
