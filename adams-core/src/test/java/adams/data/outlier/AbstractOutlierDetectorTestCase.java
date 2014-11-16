@@ -167,7 +167,6 @@ public abstract class AbstractOutlierDetectorTestCase<T extends DataContainer>
     setups  = getRegressionSetups();
     ignored = getRegressionIgnoredLineIndices();
     assertEquals("Number of files and setups differ!", input.length, setups.length);
-    assertEquals("Number of setups and ignored lines differ!", setups.length, ignored.length);
 
     // process data
     for (i = 0; i < input.length; i++) {
