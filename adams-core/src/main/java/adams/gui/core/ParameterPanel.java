@@ -86,7 +86,7 @@ public class ParameterPanel
    * @param useCheckBoxes	whether to use checkboxes
    */
   public ParameterPanel(boolean useCheckBoxes) {
-    this(0, 0, useCheckBoxes);
+    this(5, 2, useCheckBoxes);
   }
 
   /**
@@ -273,7 +273,7 @@ public class ParameterPanel
       con.anchor = GridBagConstraints.WEST;
       con.gridy  = 0;
       con.gridx  = 0;
-      con.insets = new Insets(2, 5, 2, 5);
+      con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
       layout.setConstraints(check, con);
       panel.add(check);
     }
@@ -285,7 +285,7 @@ public class ParameterPanel
     if (m_UseCheckBoxes)
       con.gridx++;
     con.ipadx  = 20;
-    con.insets = new Insets(2, 5, 2, 5);
+    con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
     layout.setConstraints(lbl, con);
     panel.add(lbl);
     
@@ -298,7 +298,7 @@ public class ParameterPanel
       con.gridx++;
     con.weightx = 100;
     con.ipadx   = 20;
-    con.insets  = new Insets(2, 5, 2, 5);
+    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
     layout.setConstraints(comp, con);
     panel.add(comp);
 
@@ -360,7 +360,7 @@ public class ParameterPanel
       con.anchor    = GridBagConstraints.WEST;
       con.gridy     = 0;
       con.gridx     = 0;
-      con.insets    = new Insets(3, 5, 3, 5);
+      con.insets    = new Insets(m_GapVertical + 1, m_GapHorizontal, m_GapVertical + 1, m_GapHorizontal);
       layout.setConstraints(check, con);
       add(check);
     }
@@ -372,7 +372,7 @@ public class ParameterPanel
     con.gridx   = 0;
     con.weightx = 100;
     con.ipadx   = 20;
-    con.insets  = new Insets(2, 5, 2, 5);
+    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
     layout.setConstraints(chooser, con);
     panel.add(chooser);
 
@@ -521,7 +521,7 @@ public class ParameterPanel
 	con.anchor    = GridBagConstraints.WEST;
 	con.gridy     = i;
 	con.gridx     = 0;
-	con.insets    = new Insets(3, 5, 3, 5);
+	con.insets    = new Insets(m_GapVertical + 1, m_GapHorizontal, m_GapVertical + 1, m_GapHorizontal);
 	layout.setConstraints(m_CheckBoxes.get(i), con);
 	add(m_CheckBoxes.get(i));
       }
@@ -533,7 +533,7 @@ public class ParameterPanel
       if (m_UseCheckBoxes)
 	con.gridx++;
       con.ipadx  = 20;
-      con.insets = new Insets(3, 5, 3, 5);
+      con.insets = new Insets(m_GapVertical + 1, 5, m_GapVertical + 1, 5);
       layout.setConstraints(m_Labels.get(i), con);
       add(m_Labels.get(i));
 
@@ -547,7 +547,7 @@ public class ParameterPanel
       con.weightx   = 100;
       con.ipadx     = 20;
       con.gridwidth = GridBagConstraints.REMAINDER;
-      con.insets    = new Insets(3, 5, 3, 5);
+      con.insets    = new Insets(m_GapVertical + 1, 5, m_GapVertical + 1, 5);
       layout.setConstraints(m_Parameters.get(i), con);
       add(m_Parameters.get(i));
     }
