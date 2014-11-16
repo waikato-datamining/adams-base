@@ -573,7 +573,7 @@ public class PropertySheetPanel extends BasePanel
       }
 
       if (m_ParameterPanel == null) {
-	m_ParameterPanel = new ParameterPanel();
+	m_ParameterPanel = new ParameterPanel(3, 1);
 	scrollablePanel.add(m_ParameterPanel, BorderLayout.CENTER);
       }
 
