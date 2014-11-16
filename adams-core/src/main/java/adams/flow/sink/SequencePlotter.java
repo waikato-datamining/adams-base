@@ -26,7 +26,6 @@ import java.util.HashMap;
 import javax.swing.JComponent;
 
 import adams.core.NamedCounter;
-import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
@@ -828,16 +827,6 @@ public class SequencePlotter
    */
   protected PlaceholderFile getDefaultOutputFile() {
     return new PlaceholderFile(".");
-  }
-
-  /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "outputFile", m_OutputFile);
   }
 
   /**
