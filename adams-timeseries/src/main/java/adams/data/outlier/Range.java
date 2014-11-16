@@ -61,10 +61,10 @@ public class Range
   /** for serialization. */
   private static final long serialVersionUID = -5300001549269138646L;
 
-  /** the minimum acceptable temperature (incl). */
+  /** the minimum acceptable value (incl). */
   protected double m_Min;
 
-  /** the maximum acceptable temperature (incl). */
+  /** the maximum acceptable value (incl). */
   protected double m_Max;
 
   /**
