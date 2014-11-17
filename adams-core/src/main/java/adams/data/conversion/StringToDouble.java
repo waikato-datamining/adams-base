@@ -15,7 +15,7 @@
 
 /**
  * StringToDouble.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -135,8 +135,14 @@ public class StringToDouble
    */
   @Override
   protected Object doConvert() throws Exception {
+    String	input;
+    
     try {
-      return LocaleHelper.getSingleton().getNumberFormat(m_Locale).parse((String) m_Input).doubleValue();
+      input = (String) m_Input;
+      if (input.equalsIgnoreCase("nan"))
+	return Double.NaN;
+      else
+	return LocaleHelper.getSingleton().getNumberFormat(m_Locale).parse(input).doubleValue();
     }
     catch (Exception e) {
       throw new Exception("Failed to parse: " + m_Input, e);

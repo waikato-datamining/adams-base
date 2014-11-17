@@ -15,11 +15,10 @@
 
 /**
  * StringToDoubleTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
-
 
 /**
  * Tests the StringToDouble conversion.
@@ -44,6 +43,7 @@ public class StringToDoubleTest
    *
    * @return		the objects
    */
+  @Override
   protected Object[] getRegressionInput() {
     return new String[]{
 	"1.0",
@@ -53,7 +53,8 @@ public class StringToDoubleTest
 	"1E6",
 	"-1E2",
 	"1.34E2",
-	"-4.67E3"
+	"-4.67E3",
+	"NaN"
     };
   }
 
@@ -62,6 +63,7 @@ public class StringToDoubleTest
    *
    * @return		the setups
    */
+  @Override
   protected Conversion[] getRegressionSetups() {
     return new Conversion[]{
 	new StringToDouble()
@@ -73,6 +75,7 @@ public class StringToDoubleTest
    *
    * @return		the setups
    */
+  @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
   }
