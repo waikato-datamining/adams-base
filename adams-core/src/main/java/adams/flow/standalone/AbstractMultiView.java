@@ -45,7 +45,6 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
-import adams.flow.sink.AbstractSink;
 import adams.flow.sink.ComponentSupplier;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.TextSupplier;
@@ -78,17 +77,14 @@ public abstract class AbstractMultiView
    * @version $Revision$
    */
   public static class ViewWrapper
-    extends AbstractSink
-    implements ComponentSupplier, TextSupplier, Flushable {
+    extends AbstractDisplay
+    implements InputConsumer, ComponentSupplier, TextSupplier, Flushable {
     
     /** for serialization. */
     private static final long serialVersionUID = -1571827759359015717L;
     
     /** the actor to wrap. */
     protected AbstractDisplay m_Wrapped;
-
-    /** the panel to use. */
-    protected BasePanel m_Panel;
     
     /**
      * Returns a string describing the object.
@@ -239,6 +235,7 @@ public abstract class AbstractMultiView
     /**
      * Clears the panel.
      */
+    @Override
     public void clearPanel() {
       if (m_Panel != null)
 	m_Wrapped.clearPanel();
@@ -287,6 +284,27 @@ public abstract class AbstractMultiView
 	return ((ComponentSupplier) getParent()).supplyComponent();
       else
 	return null;
+    }
+
+    /**
+     * Creates the panel to display in the dialog.
+     *
+     * @return		null, m_Panel gets generated in execute
+     */
+    @Override
+    protected BasePanel newPanel() {
+      return null;
+    }
+
+    /**
+     * Returns a runnable that displays frame, etc.
+     * Must call notifyAll() on the m_Self object and set m_Updating to false.
+     *
+     * @return		null, as not necessary
+     */
+    @Override
+    protected Runnable newDisplayRunnable() {
+      return null;
     }
   }
   
