@@ -20,10 +20,10 @@
 
 package adams.data.conversion;
 
-import adams.data.conversion.AggregateSpreadSheet.Aggregate;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
 import adams.test.TmpFile;
 
 /**

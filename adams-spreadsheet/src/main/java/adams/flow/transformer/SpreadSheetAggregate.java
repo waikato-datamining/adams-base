@@ -14,10 +14,10 @@
  */
 
 /**
- * AggregateSpreadSheet.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * SpreadSheetAggregate.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.conversion;
+package adams.flow.transformer;
 
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.hash.TIntHashSet;
@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
@@ -33,8 +34,7 @@ import adams.data.spreadsheet.RowIdentifier;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.statistics.StatUtils;
-import adams.flow.transformer.SpreadSheetAggregate;
-import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
+import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -43,10 +43,41 @@ import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
  * <p/>
  <!-- globalinfo-end -->
  *
+ <!-- flow-summary-start -->
+ * Input&#47;output:<br/>
+ * - accepts:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
+ * - generates:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
+ * <p/>
+ <!-- flow-summary-end -->
+ *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: SpreadSheetAggregate
+ * </pre>
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-key-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: keyColumns)
@@ -77,14 +108,40 @@ import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 8336 $
  */
-@Deprecated
-public class AggregateSpreadSheet
-  extends AbstractSpreadSheetConversion {
+public class SpreadSheetAggregate
+  extends AbstractSpreadSheetTransformer {
 
   /** for serialization. */
-  private static final long serialVersionUID = -1789320708357341617L;
+  private static final long serialVersionUID = 444466366407383727L;
+
+  /**
+   * The types of aggregates to generate.
+   * 
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision: 10093 $
+   */
+  public enum Aggregate {
+    /** the count. */
+    COUNT,
+    /** the sum. */
+    SUM,
+    /** the minimum. */
+    MIN,
+    /** the maximum. */
+    MAX,
+    /** the average. */
+    AVERAGE,
+    /** the median. */
+    MEDIAN,
+    /** the std deviation (sample). */
+    STDEV,
+    /** the std deviation (population). */
+    STDEVP,
+    /** the interquartile (IQR3 - IQR1). */
+    INTERQUARTILE,
+  }
 
   /** the range of column indices to use as key for identifying a row. */
   protected SpreadSheetColumnRange m_KeyColumns;
@@ -107,9 +164,7 @@ public class AggregateSpreadSheet
 	+ "columns.\n"
 	+ "All numeric columns in the specified aggregrate range (excluding the "
 	+ "key columns) get aggregated. For each of the specified aggregates a "
-	+ "new column is generated.\n\n"
-	+ "DEPRECATED:\n"
-	+ "Use " + SpreadSheetAggregate.class.getName() + " instead!";
+	+ "new column is generated.";
   }
 
   /**
@@ -223,6 +278,22 @@ public class AggregateSpreadSheet
   }
 
   /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "aggregateColumns", m_AggregateColumns, "cols: ");
+    result += QuickInfoHelper.toString(this, "keyColumns", m_KeyColumns, ", key: ");
+    result += QuickInfoHelper.toString(this, "aggregates", m_Aggregates, ", agg: ");
+
+    return result;
+  }
+
+  /**
    * Computes the aggregates.
    * 
    * @param input	the original sheet
@@ -286,17 +357,17 @@ public class AggregateSpreadSheet
     
     return result;
   }
-  
+
   /**
-   * Generates the new spreadsheet from the input.
-   * 
-   * @param input	the incoming spreadsheet
-   * @return		the generated spreadsheet
-   * @throws Exception	if conversion fails for some reason
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected SpreadSheet convert(SpreadSheet input) throws Exception {
-    SpreadSheet			result;
+  protected String doExecute() {
+    String			result;
+    SpreadSheet			input;
+    SpreadSheet			aggregated;
     int[]			keys;
     int[]			agg;
     TIntHashSet			numeric;
@@ -306,67 +377,76 @@ public class AggregateSpreadSheet
     Row				rowNew;
     HashMap<Aggregate,Number>	aggs;
     
+    result     = null;
+    input      = (SpreadSheet) m_InputToken.getPayload();
+    aggregated = null;
+    
     // columns to use as key
     m_KeyColumns.setSpreadSheet(input);
     keys = m_KeyColumns.getIntIndices();
     if (keys.length == 0)
-      throw new IllegalStateException("No key columns defined!");
+      result = "No key columns defined!";
     rows = new RowIdentifier(m_KeyColumns);
 
-    // determine columns to aggregate
-    m_AggregateColumns.setSpreadSheet(input);
-    agg     = m_AggregateColumns.getIntIndices();
-    numeric = new TIntHashSet();
-    for (int index: agg) {
-      if (m_KeyColumns.isInRange(index))
-	continue;
-      if (!input.isNumeric(index))
-	continue;
-      numeric.add(index);
-    }
-    agg = numeric.toArray();
-    Arrays.sort(agg);
-    
-    // create output
-    rows.identify(input);
-    result = input.newInstance();
-    result.setDataRowClass(input.getDataRowClass());
-    
-    // header
-    row = result.getHeaderRow();
-    for (int index: keys) {
-      row.addCell("" + index).setContent(
-	  input.getHeaderRow().getCell(index).getContent());
-    }
-    for (int index: agg) {
-      for (Aggregate a: m_Aggregates) {
-	row.addCell("" + index + "-" + a).setContent(
-	    input.getHeaderRow().getCell(index).getContent() + "-" + a);
-      }
-    }
-    
-    // data
-    for (String key: rows.getKeys()) {
-      rowNew = result.addRow();
-      subset = rows.getRows(key);
-      // keys
-      for (int index: keys) {
-	rowNew.addCell("" + index).setContent(
-	    input.getRow(subset.get(0)).getCell(index).getContent());
-      }
-      // aggregates
+    if (result == null) {
+      // determine columns to aggregate
+      m_AggregateColumns.setSpreadSheet(input);
+      agg     = m_AggregateColumns.getIntIndices();
+      numeric = new TIntHashSet();
       for (int index: agg) {
-	aggs = computeAggregates(input, subset, index); 
+	if (m_KeyColumns.isInRange(index))
+	  continue;
+	if (!input.isNumeric(index))
+	  continue;
+	numeric.add(index);
+      }
+      agg = numeric.toArray();
+      Arrays.sort(agg);
+
+      // create output
+      rows.identify(input);
+      aggregated = input.newInstance();
+      aggregated.setDataRowClass(input.getDataRowClass());
+
+      // header
+      row = aggregated.getHeaderRow();
+      for (int index: keys) {
+	row.addCell("" + index).setContent(
+	    input.getHeaderRow().getCell(index).getContent());
+      }
+      for (int index: agg) {
 	for (Aggregate a: m_Aggregates) {
-	  if (aggs.get(agg) instanceof Integer)
-	    rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
-	  else if (aggs.get(agg) instanceof Long)
-	    rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
-	  else
-	    rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+	  row.addCell("" + index + "-" + a).setContent(
+	      input.getHeaderRow().getCell(index).getContent() + "-" + a);
+	}
+      }
+
+      // data
+      for (String key: rows.getKeys()) {
+	rowNew = aggregated.addRow();
+	subset = rows.getRows(key);
+	// keys
+	for (int index: keys) {
+	  rowNew.addCell("" + index).setContent(
+	      input.getRow(subset.get(0)).getCell(index).getContent());
+	}
+	// aggregates
+	for (int index: agg) {
+	  aggs = computeAggregates(input, subset, index); 
+	  for (Aggregate a: m_Aggregates) {
+	    if (aggs.get(agg) instanceof Integer)
+	      rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+	    else if (aggs.get(agg) instanceof Long)
+	      rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+	    else
+	      rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+	  }
 	}
       }
     }
+
+    if (aggregated != null)
+      m_OutputToken = new Token(aggregated);
     
     return result;
   }

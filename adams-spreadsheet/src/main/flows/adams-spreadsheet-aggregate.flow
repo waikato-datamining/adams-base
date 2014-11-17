@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-11-18 11:48:49
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	For each of the class label subsets (setosa, versicolor, virginica),\nthe following statistics are calculated for each of the attributes:\n  min, max, mean, stdev\nThe resulting spreadsheet is then displayed.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+					-missing
+					
+	-actor
+		adams.flow.transformer.SpreadSheetAggregate
+			-key-columns
+			last
+			-aggregate
+			MIN
+			-aggregate
+			MAX
+			-aggregate
+			AVERAGE
+			-aggregate
+			STDEV
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

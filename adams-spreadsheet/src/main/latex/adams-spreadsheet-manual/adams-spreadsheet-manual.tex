@@ -99,6 +99,8 @@ The following transformers are available:
 	value.\footnote{adams-spreadsheet-lookup.flow}
 	\item \textit{LookUpRemove} -- removes a key/value pair from a lookup 
 	table.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{SpreadSheetAggregate} -- aggregates rows in a spreadsheet
+	(min, max, average, standard deviation, etc).\footnote{adams-spreadsheet-aggregate.flow}
 	\item \textit{SpreadSheetAnonymize} -- for anonymizing 
 	columns.\footnote{adams-spreadsheet-anonymize\_columns.flow}
 	\item \textit{SpreadSheetColumnFilter} -- filters columns using a column 
@@ -196,8 +198,6 @@ The following boolean conditions are available:
 \end{tight_itemize}
 The following conversion schemes are available:
 \begin{tight_itemize}
-	\item \textit{AggregateSpreadSheet} -- aggregates rows in a spreadsheet
-	(min, max, average, standard deviation, etc).
 	\item \textit{ContainerToSpreadSheet} -- for converting any flow container 
 	(e.g., a prediction container) into a spreadsheet for better visualization.
 	\item \textit{ConvertSpreadSheetRows} -- converts the data rows in a spreadsheet
