@@ -1051,6 +1051,9 @@ public class SequencePlotter
       case OVERLAY:
 	manager = ((SequencePlotterPanel) m_Panel).getOverlayContainerManager();
 	break;
+      case UPDATE:
+	m_PlotUpdater.update((SequencePlotterPanel) getPanel());
+	return;
       default:
 	throw new IllegalStateException("Unhandled plot container content type: " + type);
     }

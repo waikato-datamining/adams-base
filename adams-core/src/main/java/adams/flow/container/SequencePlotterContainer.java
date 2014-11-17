@@ -49,7 +49,9 @@ public class SequencePlotterContainer
     /** marker. */
     MARKER,
     /** overlay. */
-    OVERLAY
+    OVERLAY,
+    /** whether to force an update. */
+    UPDATE
   }
   
   /** the identifier for the PlotName. */

@@ -15,7 +15,7 @@
 
 /*
  * MakePlotContainer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,13 +26,16 @@ import adams.core.QuickInfoHelper;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
+import adams.flow.source.Start;
 
 /**
  <!-- globalinfo-start -->
  * Creates a named container for the SequencePlotter actor.<br/>
  * In case of Double arrays arriving at the input, they must have length 2 for X and Y, 4 for X&#47;Y&#47;Y-Error (low&#47;high) or 6 X&#47;Y&#47;X-Error (low-high)&#47;Y-Error (low-high).<br/>
  * Integer arrays can only have the length 2.<br/>
- * It is also possible, depending on the plotter sink setup, to use strings for x and&#47;or y.
+ * It is also possible, depending on the plotter sink setup, to use strings for x and&#47;or y.<br/>
+ * In order to force an update of the plot, overriding the current plot-updater setup, you can create a special plot container of type UPDATE and send that to the plot (can be triggered with a null-token, e.g., from a adams.flow.source.Start source). Useful if you want to take a screenshot at a specific time, but avoid costly screen refreshs.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -50,7 +53,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
  * <p/>
  * Container information:<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
  * <p/>
  <!-- flow-summary-end -->
  *
@@ -65,7 +68,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: MakePlotContainer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -87,7 +90,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
  * 
- * <pre>-type &lt;PLOT|MARKER|OVERLAY&gt; (property: type)
+ * <pre>-type &lt;PLOT|MARKER|OVERLAY|UPDATE&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of plot container to create.
  * &nbsp;&nbsp;&nbsp;default: PLOT
  * </pre>
@@ -122,7 +125,14 @@ public class MakePlotContainer
 	+ "length 2 for X and Y, 4 for X/Y/Y-Error (low/high) or "
 	+ "6 X/Y/X-Error (low-high)/Y-Error (low-high).\n"
 	+ "Integer arrays can only have the length 2.\n"
-	+ "It is also possible, depending on the plotter sink setup, to use strings for x and/or y.";
+	+ "It is also possible, depending on the plotter sink setup, to use "
+	+ "strings for x and/or y.\n"
+	+ "In order to force an update of the plot, overriding the current "
+	+ "plot-updater setup, you can create a special plot container of "
+	+ "type " + ContentType.UPDATE + " and send that to the plot (can be "
+	+ "triggered with a null-token, e.g., from a " + Start.class.getName() + " "
+	+ "source). Useful if you want to take a screenshot at a specific time, "
+	+ "but avoid costly screen refreshs.";
   }
 
   /**
@@ -220,7 +230,10 @@ public class MakePlotContainer
    * @return		<!-- flow-accepts-start -->java.lang.Double.class, java.lang.Double[].class, java.lang.Integer.class, java.lang.Integer[].class, java.lang.String.class, java.lang.String[].class, java.lang.Object[].class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Double.class, Double[].class, Integer.class, Integer[].class, String.class, String[].class, Object[].class};
+    if (m_Type == ContentType.UPDATE)
+      return new Class[]{Unknown.class};
+    else
+      return new Class[]{Double.class, Double[].class, Integer.class, Integer[].class, String.class, String[].class, Object[].class};
   }
 
   /**
@@ -238,44 +251,49 @@ public class MakePlotContainer
     result = null;
 
     cont = null;
-    
-    if (m_InputToken.getPayload().getClass().isArray()) {
-      array = m_InputToken.getPayload();
-      len   = Array.getLength(array);
-      if (len == 2) {
-	cont = new SequencePlotterContainer(
-	    m_PlotName,
-	    (Comparable) Array.get(array, 0),
-	    (Comparable) Array.get(array, 1),
-	    m_Type);
-      }
-      else if (len == 4) {
-	cont = new SequencePlotterContainer(
-	    m_PlotName,
-	    (Comparable) Array.get(array, 0),
-	    (Comparable) Array.get(array, 1),
-	    null,
-	    new Double[]{(Double) Array.get(array, 2), (Double) Array.get(array, 3)},
-	    m_Type);
-      }
-      else if (len == 6) {
-	cont = new SequencePlotterContainer(
-	    m_PlotName,
-	    (Comparable) Array.get(array, 0),
-	    (Comparable) Array.get(array, 1),
-	    new Double[]{(Double) Array.get(array, 2), (Double) Array.get(array, 3)},
-	    new Double[]{(Double) Array.get(array, 4), (Double) Array.get(array, 5)},
-	    m_Type);
-      }
-      else {
-	result = "Array must have length 2, 4 or 6 (provided: " + Array.getLength(array) + ")!";
-      }
+
+    if (m_Type == ContentType.UPDATE) {
+      cont = new SequencePlotterContainer(m_PlotName, null, m_Type);
     }
     else {
-      cont = new SequencePlotterContainer(
-	  m_PlotName,
-	  (Comparable) m_InputToken.getPayload(),
-	  m_Type);
+      if (m_InputToken.getPayload().getClass().isArray()) {
+	array = m_InputToken.getPayload();
+	len   = Array.getLength(array);
+	if (len == 2) {
+	  cont = new SequencePlotterContainer(
+	      m_PlotName,
+	      (Comparable) Array.get(array, 0),
+	      (Comparable) Array.get(array, 1),
+	      m_Type);
+	}
+	else if (len == 4) {
+	  cont = new SequencePlotterContainer(
+	      m_PlotName,
+	      (Comparable) Array.get(array, 0),
+	      (Comparable) Array.get(array, 1),
+	      null,
+	      new Double[]{(Double) Array.get(array, 2), (Double) Array.get(array, 3)},
+	      m_Type);
+	}
+	else if (len == 6) {
+	  cont = new SequencePlotterContainer(
+	      m_PlotName,
+	      (Comparable) Array.get(array, 0),
+	      (Comparable) Array.get(array, 1),
+	      new Double[]{(Double) Array.get(array, 2), (Double) Array.get(array, 3)},
+	      new Double[]{(Double) Array.get(array, 4), (Double) Array.get(array, 5)},
+	      m_Type);
+	}
+	else {
+	  result = "Array must have length 2, 4 or 6 (provided: " + Array.getLength(array) + ")!";
+	}
+      }
+      else {
+	cont = new SequencePlotterContainer(
+	    m_PlotName,
+	    (Comparable) m_InputToken.getPayload(),
+	    m_Type);
+      }
     }
 
     if (cont != null)
