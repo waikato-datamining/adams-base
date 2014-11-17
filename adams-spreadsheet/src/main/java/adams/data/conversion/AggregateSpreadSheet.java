@@ -19,9 +19,11 @@
  */
 package adams.data.conversion;
 
+import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import adams.core.Range;
@@ -243,62 +245,64 @@ public class AggregateSpreadSheet
   }
 
   /**
-   * Computes the aggregate.
+   * Computes the aggregates.
    * 
    * @param input	the original sheet
    * @param subset	the subset of rows to use for the computation
-   * @param rowNew	the row to add the aggregate to
    * @param index	the column in the original spreadsheet
-   * @param agg		the aggregate to compute
-   * @return		the computed value
+   * @return		the computed values
    */
-  protected double computeAggregate(SpreadSheet input, List<Integer> subset, Row rowNew, int index, Aggregate agg) {
-    double	result;
-    double[]	values;
-    int		i;
-    Cell	cell;
+  protected HashMap<Aggregate,Number> computeAggregates(SpreadSheet input, List<Integer> subset, int index) {
+    HashMap<Aggregate,Number>	result;
+    TDoubleArrayList		list;
+    double[]			values;
+    int				i;
+    Cell			cell;
     
-    result = Double.NaN;
-    values = new double[subset.size()];
+    result = new HashMap<Aggregate,Number>();
+    for (Aggregate agg: m_Aggregates)
+      result.put(agg, Double.NaN);
+    list = new TDoubleArrayList();
     for (i = 0; i < subset.size(); i++) {
       cell = input.getCell(subset.get(i), index);
       if ((cell != null) && (cell.isNumeric()))
-	values[i] = cell.toDouble();
-      else
-	values[i] = 0;
+	list.add(cell.toDouble());
     }
+    values = list.toArray();
     
     if (values.length > 0) {
-      switch (agg) {
-	case COUNT:
-	  result = values.length;
-	  break;
-	case SUM:
-	  result = StatUtils.sum(values);
-	  break;
-	case MIN:
-	  result = StatUtils.min(values);
-	  break;
-	case MAX:
-	  result = StatUtils.max(values);
-	  break;
-	case AVERAGE:
-	  result = StatUtils.mean(values);
-	  break;
-	case MEDIAN:
-	  result = StatUtils.median(values);
-	  break;
-	case STDEV:
-	  result = StatUtils.stddev(values, true);
-	  break;
-	case STDEVP:
-	  result = StatUtils.stddev(values, false);
-	  break;
-	case INTERQUARTILE:
-	  result = StatUtils.iqr(values);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled aggregate: " + agg);
+      for (Aggregate agg: m_Aggregates) {
+	switch (agg) {
+	  case COUNT:
+	    result.put(agg, values.length);
+	    break;
+	  case SUM:
+	    result.put(agg, StatUtils.sum(values));
+	    break;
+	  case MIN:
+	    result.put(agg, StatUtils.min(values));
+	    break;
+	  case MAX:
+	    result.put(agg, StatUtils.max(values));
+	    break;
+	  case AVERAGE:
+	    result.put(agg, StatUtils.mean(values));
+	    break;
+	  case MEDIAN:
+	    result.put(agg, StatUtils.median(values));
+	    break;
+	  case STDEV:
+	    result.put(agg, StatUtils.stddev(values, true));
+	    break;
+	  case STDEVP:
+	    result.put(agg, StatUtils.stddev(values, false));
+	    break;
+	  case INTERQUARTILE:
+	    result.put(agg, StatUtils.iqr(values));
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled aggregate: " + agg);
+	}
       }
     }
     
@@ -314,14 +318,15 @@ public class AggregateSpreadSheet
    */
   @Override
   protected SpreadSheet convert(SpreadSheet input) throws Exception {
-    SpreadSheet		result;
-    int[]		keys;
-    int[]		agg;
-    TIntHashSet		numeric;
-    RowIdentifier	rows;
-    List<Integer>	subset;
-    Row			row;
-    Row			rowNew;
+    SpreadSheet			result;
+    int[]			keys;
+    int[]			agg;
+    TIntHashSet			numeric;
+    RowIdentifier		rows;
+    List<Integer>		subset;
+    Row				row;
+    Row				rowNew;
+    HashMap<Aggregate,Number>	aggs;
     
     // columns to use as key
     m_KeyColumns.setSpreadSheet(input);
@@ -373,9 +378,14 @@ public class AggregateSpreadSheet
       }
       // aggregates
       for (int index: agg) {
+	aggs = computeAggregates(input, subset, index); 
 	for (Aggregate a: m_Aggregates) {
-	  rowNew.addCell("" + index + "-" + a).setContent(
-	      computeAggregate(input, subset, rowNew, index, a));
+	  if (aggs.get(agg) instanceof Integer)
+	    rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+	  else if (aggs.get(agg) instanceof Long)
+	    rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+	  else
+	    rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
 	}
       }
     }
