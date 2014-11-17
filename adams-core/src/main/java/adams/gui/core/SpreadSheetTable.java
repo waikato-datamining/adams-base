@@ -297,7 +297,7 @@ public class SpreadSheetTable
     menu = new JPopupMenu();
     col  = columnAtPoint(e.getPoint());
     
-    menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy column name", GUIHelper.getEmptyIcon());
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -306,6 +306,29 @@ public class SpreadSheetTable
 	if (getShowRowColumn())
 	  actCol--;
 	GUIHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol));
+      }
+    });
+    menu.add(menuitem);
+    
+    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy.gif"));
+    menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	int actCol = col;
+	if (getShowRowColumn())
+	  actCol--;
+	SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+	StringBuilder content = new StringBuilder();
+	String sep = System.getProperty("line.separator");
+	content.append(sheet.getColumnName(actCol) + sep);
+	for (int i = 0; i < sheet.getRowCount(); i++) {
+	  if (!sheet.hasCell(i, actCol) || sheet.getCell(i, actCol).isMissing())
+	    content.append(sep);
+	  else
+	    content.append(sheet.getCell(i, actCol).getContent() + sep);
+	}
+	GUIHelper.copyToClipboard(content.toString());
       }
     });
     menu.add(menuitem);
