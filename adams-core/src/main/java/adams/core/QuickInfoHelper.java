@@ -20,6 +20,7 @@
 package adams.core;
 
 import java.awt.Color;
+import java.lang.reflect.Array;
 import java.util.List;
 
 import adams.core.base.BaseRegExp;
@@ -87,6 +88,52 @@ public class QuickInfoHelper {
   }
 
   /**
+   * Generates a string representation from the object (non-array).
+   * 
+   * @param current	the object to turn into a string
+   * @return		the generated string
+   */
+  protected static String toString(Object current) {
+    String	result;
+    
+    if (current instanceof String) {
+      if (((String) current).length() == 0)
+	result = null;
+      else
+	result = (String) current;
+    }
+    else if (current instanceof Range) {
+      result = ((Range) current).getRange();
+    }
+    else if (current instanceof Index) {
+      result = ((Index) current).getIndex();
+    }
+    else if (current instanceof OptionHandler) {
+      result = current.getClass().getSimpleName();
+    }
+    else if (current instanceof EnumWithCustomDisplay) {
+      result = ((EnumWithCustomDisplay) current).toDisplay();
+    }
+    else if (current instanceof Class) {
+      result = ((Class) current).getSimpleName();
+    }
+    else if (current instanceof OptionProducer) {
+      result = current.getClass().getSimpleName();
+    }
+    else if (current instanceof OptionConsumer) {
+      result = current.getClass().getSimpleName();
+    }
+    else if (current instanceof Color) {
+      result = ColorHelper.toHex((Color) current);
+    }
+    else {
+      result = current.toString();
+    }
+    
+    return result;
+  }
+  
+  /**
    * Returns either the variable name attached to optionhandler's property or
    * the current value as string. <p/>
    * Special handling:
@@ -107,6 +154,8 @@ public class QuickInfoHelper {
     String	result;
     String	variable;
     String	info;
+    int		dim;
+    int		i;
     
     variable = getVariable(handler, property);
     if (variable != null) {
@@ -122,38 +171,24 @@ public class QuickInfoHelper {
 	if (info != null)
 	  result += " (" + info + ")";
       }
-      else if (current instanceof String) {
-	if (((String) current).length() == 0)
-	  result = null;
-	else
-	  result = (String) current;
-      }
-      else if (current instanceof Range) {
-	result = ((Range) current).getRange();
-      }
-      else if (current instanceof Index) {
-	result = ((Index) current).getIndex();
-      }
-      else if (current instanceof OptionHandler) {
-	result = current.getClass().getSimpleName();
-      }
-      else if (current instanceof EnumWithCustomDisplay) {
-	result = ((EnumWithCustomDisplay) current).toDisplay();
-      }
-      else if (current instanceof Class) {
-	result = ((Class) current).getSimpleName();
-      }
-      else if (current instanceof OptionProducer) {
-	result = current.getClass().getSimpleName();
-      }
-      else if (current instanceof OptionConsumer) {
-	result = current.getClass().getSimpleName();
-      }
-      else if (current instanceof Color) {
-	result = ColorHelper.toHex((Color) current);
+      else if (current.getClass().isArray()) {
+	dim = Utils.getArrayDimensions(current);
+	if (dim > 1) {
+	  result = current.getClass().getSimpleName();
+	  for (i = 1; i < dim; i++)
+	    result += "[]";
+	}
+	else {
+	  result = "";
+	  for (i = 0; i < Array.getLength(current); i++) {
+	    if (result.length() > 0)
+	      result += "|";
+	    result += toString(Array.get(current, i));
+	  }
+	}
       }
       else {
-	result = current.toString();
+	result = toString(current);
       }
     }
 
