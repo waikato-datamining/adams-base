@@ -15,7 +15,7 @@
 
 /**
  * AggregateSpreadSheet.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -40,32 +40,32 @@ import adams.data.statistics.StatUtils;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-key-columns &lt;adams.core.Range&gt; (property: keyColumns)
+ * <pre>-key-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: keyColumns)
  * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; A range 
  * &nbsp;&nbsp;&nbsp;is a comma-separated list of single 1-based indices or sub-ranges of indices 
- * &nbsp;&nbsp;&nbsp;('start-en2d'); 'inv(...)' inverts the range '...'; the following placeholders 
- * &nbsp;&nbsp;&nbsp;can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive
+ * &nbsp;&nbsp;&nbsp;) as well as the following placeholders can be used: first, second, third,
+ * &nbsp;&nbsp;&nbsp; last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
- * <pre>-aggregate-columns &lt;adams.core.Range&gt; (property: aggregateColumns)
+ * <pre>-aggregate-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: aggregateColumns)
  * &nbsp;&nbsp;&nbsp;The columns to aggregate (only numeric ones will be used); A range is a 
  * &nbsp;&nbsp;&nbsp;comma-separated list of single 1-based indices or sub-ranges of indices 
- * &nbsp;&nbsp;&nbsp;('start-end'); 'inv(...)' inverts the range '...'; the following placeholders 
- * &nbsp;&nbsp;&nbsp;can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive
+ * &nbsp;&nbsp;&nbsp;) as well as the following placeholders can be used: first, second, third,
+ * &nbsp;&nbsp;&nbsp; last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
- * <pre>-aggregate &lt;SUM|MIN|MAX|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE&gt; [-aggregate ...] (property: aggregates)
+ * <pre>-aggregate &lt;COUNT|SUM|MIN|MAX|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE&gt; [-aggregate ...] (property: aggregates)
  * &nbsp;&nbsp;&nbsp;The aggregates to calculate and introduce as columns.
  * &nbsp;&nbsp;&nbsp;default: SUM
  * </pre>
@@ -88,6 +88,8 @@ public class AggregateSpreadSheet
    * @version $Revision$
    */
   public enum Aggregate {
+    /** the count. */
+    COUNT,
     /** the sum. */
     SUM,
     /** the minimum. */
@@ -268,6 +270,9 @@ public class AggregateSpreadSheet
     
     if (values.length > 0) {
       switch (agg) {
+	case COUNT:
+	  result = values.length;
+	  break;
 	case SUM:
 	  result = StatUtils.sum(values);
 	  break;
