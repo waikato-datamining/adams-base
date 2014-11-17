@@ -1,0 +1,7 @@
+--> dumpfile.csv
+class,sepallength-MIN,sepallength-MAX,sepallength-AVERAGE,sepallength-STDEV,sepalwidth-MIN,sepalwidth-MAX,sepalwidth-AVERAGE,sepalwidth-STDEV,petallength-MIN,petallength-MAX,petallength-AVERAGE,petallength-STDEV,petalwidth-MIN,petalwidth-MAX,petalwidth-AVERAGE,petalwidth-STDEV
+Iris-setosa,4.3,5.8,5.006,0.352489687213,2.3,4.4,3.418,0.381024397955,1,1.9,1.464,0.173511159436,0.1,0.6,0.244,0.107209503082
+Iris-versicolor,4.9,7,5.936,0.516171147064,2,3.4,2.77,0.313798323378,3,5.1,4.26,0.46991097724,1,1.8,1.326,0.197752680005
+Iris-virginica,4.9,7.9,6.588,0.635879593274,2.2,3.8,2.974,0.322496638173,4.5,6.9,5.552,0.551894695664,1.4,2.5,2.026,0.274650055637
+
+
