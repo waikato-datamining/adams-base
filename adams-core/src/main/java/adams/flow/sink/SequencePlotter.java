@@ -928,6 +928,8 @@ public class SequencePlotter
     // header?
     if (!m_OutputFile.exists()) {
       line = new StringBuilder();
+      line.append("# " + toCommandLine());
+      line.append("\n");
       line.append("Plot");
       line.append(",");
       line.append("Type");
