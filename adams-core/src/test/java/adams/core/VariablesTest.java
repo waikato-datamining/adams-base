@@ -15,7 +15,7 @@
 
 /*
  * VariablesTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -223,6 +223,8 @@ public class VariablesTest
     assertEquals(s, " world2 / world3", v.expand(s));
     s = " @{hello2} / @{hello3} / @ {hello2} / {hello3} / @{hello / @hello3";
     assertEquals(s, " world2 / world3 / @ {hello2} / {hello3} / @{hello / @hello3", v.expand(s));
+    s = "@{hello2}@{hello3}";
+    assertEquals(s, "world2world3", v.expand(s));
   }
 
   /**
