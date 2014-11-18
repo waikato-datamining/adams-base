@@ -26,21 +26,19 @@ adams.flow.control.Flow
 			-force-string
 			true
 	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.AggregateSpreadSheet
-					-key-columns
-					1
-					-aggregate-columns
-					2
-					-aggregate
-					MIN
-					-aggregate
-					MAX
-					-aggregate
-					AVERAGE
-					-aggregate
-					STDEV
+		adams.flow.transformer.SpreadSheetAggregate
+			-key-columns
+			1
+			-aggregate-columns
+			2
+			-aggregate
+			MIN
+			-aggregate
+			MAX
+			-aggregate
+			AVERAGE
+			-aggregate
+			STDEV
 	-actor
 		adams.flow.control.Tee
 			-name
