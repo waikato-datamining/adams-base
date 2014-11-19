@@ -156,7 +156,7 @@ public class TimeseriesFeatureGeneratorTest
       argOption = (AbstractArgumentOption) fixednumfeatures20.getOptionManager().findByProperty("numFeatures");
       fixednumfeatures20.setNumFeatures((Integer) argOption.valueOf("200"));
       argOption = (AbstractArgumentOption) fixednumfeatures20.getOptionManager().findByProperty("fillerType");
-      fixednumfeatures20.setFillerType((adams.data.featureconverter.FixedNumFeatures.FillerType) argOption.valueOf("LAST"));
+      fixednumfeatures20.setFillerType((adams.data.featureconverter.FixedNumFeatures.FillerType) argOption.valueOf("LAST_VALUE"));
       values18.setConverter(fixednumfeatures20);
 
       timeseriesfeaturegenerator16.setAlgorithm(values18);
