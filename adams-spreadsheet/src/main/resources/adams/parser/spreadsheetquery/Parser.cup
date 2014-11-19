@@ -305,7 +305,7 @@ cond      ::=   COLUMN:c LT NUMBER:n
                   rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
                   MultiRowFinder multi = new MultiRowFinder();
                   multi.setFinders(new RowFinder[]{rf1, rf2});
-                  multi.setCombination(MultiRowFinder.Combination.INTERSECT);
+                  multi.setCombination(MultiRowFinder.Combination.JOIN);
                   RESULT = parser.getHelper().applyRowFinder(multi, c + " <> " + n);
                 :}
               | COLUMN:c GE NUMBER:n
@@ -331,12 +331,62 @@ cond      ::=   COLUMN:c LT NUMBER:n
                   rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                   RESULT = parser.getHelper().applyRowFinder(rf, c + " regexp " + s);
                 :}
+              | COLUMN:c LT STRING:s
+                {: 
+                  ByStringComparison rf = new ByStringComparison();
+                  rf.setMaximum(s);
+                  rf.setMaximumIncluded(false);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " < " + s);
+                :}
+              | COLUMN:c LE STRING:s
+                {: 
+                  ByStringComparison rf = new ByStringComparison();
+                  rf.setMaximum(s);
+                  rf.setMaximumIncluded(true);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " <= " + s);
+                :}
               | COLUMN:c EQ STRING:s
                 {: 
-                  ByValue rf = new ByValue();
-                  rf.setRegExp(new BaseRegExp(s));
+                  ByStringComparison rf = new ByStringComparison();
+                  rf.setMinimum(s);
+                  rf.setMinimumIncluded(true);
+                  rf.setMaximum(s);
+                  rf.setMaximumIncluded(true);
                   rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                   RESULT = parser.getHelper().applyRowFinder(rf, c + " = " + s);
+                :}
+              | COLUMN:c NOT_EQ STRING:s
+                {: 
+                  ByStringComparison rf1 = new ByStringComparison();
+                  rf1.setMinimum(s);
+                  rf1.setMinimumIncluded(false);
+                  rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  ByStringComparison rf2 = new ByStringComparison();
+                  rf2.setMaximum(s);
+                  rf2.setMaximumIncluded(false);
+                  rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  MultiRowFinder multi = new MultiRowFinder();
+                  multi.setFinders(new RowFinder[]{rf1, rf2});
+                  multi.setCombination(MultiRowFinder.Combination.JOIN);
+                  RESULT = parser.getHelper().applyRowFinder(multi, c + " <> " + s);
+                :}
+              | COLUMN:c GE STRING:s
+                {: 
+                  ByStringComparison rf = new ByStringComparison();
+                  rf.setMinimum(s);
+                  rf.setMinimumIncluded(true);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " >= " + s);
+                :}
+              | COLUMN:c GT STRING:s
+                {: 
+                  ByStringComparison rf = new ByStringComparison();
+                  rf.setMinimum(s);
+                  rf.setMinimumIncluded(false);
+                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                  RESULT = parser.getHelper().applyRowFinder(rf, c + " > " + s);
                 :}
               | COLUMN:c IS NULL
                 {: 

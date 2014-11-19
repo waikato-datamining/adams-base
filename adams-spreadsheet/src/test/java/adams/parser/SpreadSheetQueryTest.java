@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetQueryTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -88,6 +88,9 @@ public class SpreadSheetQueryTest
 	  {/** no symbols. */},	// 11
 	  {/** no symbols. */},	// 12
 	  {/** no symbols. */},	// 13
+	  {/** no symbols. */},	// 14
+	  {/** no symbols. */},	// 15
+	  {/** no symbols. */},	// 16
 	}
     };
   }
@@ -114,6 +117,9 @@ public class SpreadSheetQueryTest
 	  "SELECT duration LIMIT 2",					//  11
 	  "SELECT duration LIMIT 10,2",					//  12
 	  "SELECT duration WHERE bereavement-assistance = \"yes\"",	//  13
+	  "SELECT * WHERE vacation > \"average\"",	//  14
+	  "SELECT * WHERE vacation >= \"average\"",	//  15
+	  "SELECT * WHERE vacation <> \"below_average\"",	//  16
 	}
     };
   }

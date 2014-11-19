@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetQuery.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -38,10 +38,10 @@ import adams.parser.SpreadSheetQueryText;
  * <br/>
  * expr_part ::= select | update | delete;<br/>
  * <br/>
- * select    ::=   SELECT col_list<br/>
- *               | SELECT col_list WHERE cond_list<br/>
- *               | SELECT col_list ORDER BY order_list<br/>
- *               | SELECT col_list WHERE cond_list ORDER BY order_list<br/>
+ * select    ::=   SELECT col_list [limit]<br/>
+ *               | SELECT col_list WHERE cond_list [limit]<br/>
+ *               | SELECT col_list ORDER BY order_list [limit]<br/>
+ *               | SELECT col_list WHERE cond_list ORDER BY order_list [limit]<br/>
  *               ;<br/>
  * <br/>
  * update    ::=   UPDATE SET upd_list<br/>
@@ -53,43 +53,53 @@ import adams.parser.SpreadSheetQueryText;
  * <br/>
  * col_list  ::= col_list COMMA col | col;<br/>
  * <br/>
- * col       ::=   ALL <br/>
- *               | COLUMN:c<br/>
- *               | COLUMN:c AS COLUMN:newc<br/>
+ * col       ::=   * <br/>
+ *               | COLUMN<br/>
+ *               | COLUMN AS COLUMN<br/>
  *               ;<br/>
  * <br/>
  * upd_list  ::= upd_list COMMA upd | upd;<br/>
  * <br/>
- * upd       ::=   COLUMN:c EQ value:v<br/>
+ * upd       ::=   COLUMN = value<br/>
  *               ;<br/>
  * <br/>
  * order_list::= order_list COMMA order | order;<br/>
  * <br/>
- * order     ::=   COLUMN:c<br/>
- *               | COLUMN:c ASC<br/>
- *               | COLUMN:c DESC<br/>
+ * order     ::=   COLUMN<br/>
+ *               | COLUMN ASC<br/>
+ *               | COLUMN DESC<br/>
  *               ;<br/>
  *               <br/>
  * cond_list ::=   cond_list cond <br/>
- *               | cond:c<br/>
+ *               | cond<br/>
  *               ;<br/>
  * <br/>
- * cond      ::=   COLUMN:c LT NUMBER:n<br/>
- *               | COLUMN:c LE NUMBER:n<br/>
- *               | COLUMN:c EQ NUMBER:n<br/>
- *               | COLUMN:c NOT_EQ NUMBER:n<br/>
- *               | COLUMN:c GE NUMBER:n<br/>
- *               | COLUMN:c GT NUMBER:n<br/>
- *               | COLUMN:c REGEXP STRING:s<br/>
- *               | COLUMN:c IS NULL<br/>
- *               | LPAREN cond:c RPAREN<br/>
+ * cond      ::=   COLUMN &lt; NUMBER<br/>
+ *               | COLUMN &lt;= NUMBER<br/>
+ *               | COLUMN = NUMBER<br/>
+ *               | COLUMN &lt;&gt; NUMBER<br/>
+ *               | COLUMN &gt;= NUMBER<br/>
+ *               | COLUMN &gt; NUMBER<br/>
+ *               | COLUMN REGEXP STRING<br/>
+ *               | COLUMN &lt; STRING<br/>
+ *               | COLUMN &lt;= STRING<br/>
+ *               | COLUMN = STRING<br/>
+ *               | COLUMN &lt;&gt; STRING<br/>
+ *               | COLUMN &gt;= STRING<br/>
+ *               | COLUMN &gt; STRING<br/>
+ *               | COLUMN IS NULL<br/>
+ *               | ( cond )<br/>
  *               | cond:c1 AND cond:c2<br/>
  *               | cond:c1 OR cond:c2<br/>
- *               | NOT cond:c<br/>
+ *               | NOT cond<br/>
  *               ;<br/>
- *               <br/>
- * value     ::=   NUMBER:n<br/>
- *               | STRING:s<br/>
+ * <br/>
+ * value     ::=   NUMBER<br/>
+ *               | STRING<br/>
+ *               ;<br/>
+ * <br/>
+ * limit     ::=   LIMIT NUMBER:max<br/>
+ *               | LIMIT NUMBER:offset , NUMBER:max<br/>
  *               ;<br/>
  * <p/>
  <!-- globalinfo-end -->
@@ -104,8 +114,6 @@ import adams.parser.SpreadSheetQueryText;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -116,7 +124,7 @@ import adams.parser.SpreadSheetQueryText;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetQuery
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>

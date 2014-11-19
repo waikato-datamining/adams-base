@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetQuery.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -86,7 +86,12 @@ import adams.parser.spreadsheetquery.Scanner;
  *               | COLUMN &gt;= NUMBER<br/>
  *               | COLUMN &gt; NUMBER<br/>
  *               | COLUMN REGEXP STRING<br/>
+ *               | COLUMN &lt; STRING<br/>
+ *               | COLUMN &lt;= STRING<br/>
  *               | COLUMN = STRING<br/>
+ *               | COLUMN &lt;&gt; STRING<br/>
+ *               | COLUMN &gt;= STRING<br/>
+ *               | COLUMN &gt; STRING<br/>
  *               | COLUMN IS NULL<br/>
  *               | ( cond )<br/>
  *               | cond:c1 AND cond:c2<br/>
@@ -105,8 +110,6 @@ import adams.parser.spreadsheetquery.Scanner;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -129,7 +132,7 @@ import adams.parser.spreadsheetquery.Scanner;
  * 
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The spreadsheet reader for loading the spreadsheet to work on.
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
@@ -241,7 +244,12 @@ public class SpreadSheetQuery
 	  + "              | COLUMN >= NUMBER\n"
 	  + "              | COLUMN > NUMBER\n"
 	  + "              | COLUMN REGEXP STRING\n"
+	  + "              | COLUMN < STRING\n"
+	  + "              | COLUMN <= STRING\n"
 	  + "              | COLUMN = STRING\n"
+	  + "              | COLUMN <> STRING\n"
+	  + "              | COLUMN >= STRING\n"
+	  + "              | COLUMN > STRING\n"
 	  + "              | COLUMN IS NULL\n"
 	  + "              | ( cond )\n"
 	  + "              | cond:c1 AND cond:c2\n"
