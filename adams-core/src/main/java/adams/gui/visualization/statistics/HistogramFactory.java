@@ -36,7 +36,10 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.visualization.sequence.StickPaintlet;
+import adams.gui.visualization.core.TranslucentColorProvider;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.BarPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 
@@ -47,9 +50,6 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
  * @version $Revision$
  */
 public class HistogramFactory {
-
-  /** the default number of bins. */
-  public final static int NUM_BINS = 50;
 
   /** whether to use JMathPlot's BarPlot instead of HistogramPlot. */
   public final static boolean USE_BARPLOT = false;
@@ -74,11 +74,20 @@ public class HistogramFactory {
      */
     @Override
     protected void initGUI() {
+      BarPaintlet	paintlet;
+      
       super.initGUI();
 
       setLayout(new BorderLayout());
+      paintlet = new BarPaintlet();
+      paintlet.setWidth(10);
       m_PlotPanel = new SequencePlotterPanel("Histogram");
-      m_PlotPanel.setPaintlet(new StickPaintlet());
+      m_PlotPanel.setColorProvider(new TranslucentColorProvider());
+      m_PlotPanel.setPaintlet(paintlet);
+      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setTickGenerator(new FancyTickGenerator());
+      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setNumberFormat("0");
+      m_PlotPanel.getPlot().getAxis(Axis.LEFT).setTickGenerator(new FancyTickGenerator());
+      m_PlotPanel.getPlot().getAxis(Axis.LEFT).setNumberFormat("0.0");
       add(m_PlotPanel, BorderLayout.CENTER);
     }
 
