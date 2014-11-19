@@ -79,9 +79,9 @@ import adams.flow.core.Token;
  * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
  * &nbsp;&nbsp;&nbsp;The rows to retrieve the values from; A range is a comma-separated list 
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; apart from column names (case-sensitive), the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp; last
  * &nbsp;&nbsp;&nbsp;default: first-last
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
@@ -89,11 +89,11 @@ import adams.flow.core.Token;
  * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
  * &nbsp;&nbsp;&nbsp;The columns to retrieve the values from; A range is a comma-separated list 
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; apart from column names (case-sensitive), the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp; last
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-variable-prefix &lt;java.lang.String&gt; (property: variablePrefix)
@@ -109,6 +109,11 @@ import adams.flow.core.Token;
  * <pre>-output-modified &lt;boolean&gt; (property: outputModified)
  * &nbsp;&nbsp;&nbsp;If enabled, the modified spreadsheet (current row with subset of columns
  * &nbsp;&nbsp;&nbsp;) is output instead of the full dataset (computationally expensive).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no error message is generated if no rows are found.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -156,6 +161,9 @@ public class SpreadSheetVariableRowIterator
   /** whether to output the modified spreadsheet. */
   protected boolean m_OutputModified;
 
+  /** whether to suppress the error message if no rows selected. */
+  protected boolean m_Lenient;
+
   /**
    * Returns a string describing the object.
    *
@@ -199,6 +207,10 @@ public class SpreadSheetVariableRowIterator
 
     m_OptionManager.add(
 	    "output-modified", "outputModified",
+	    false);
+
+    m_OptionManager.add(
+	    "lenient", "lenient",
 	    false);
   }
 
@@ -435,6 +447,35 @@ public class SpreadSheetVariableRowIterator
   }
 
   /**
+   * Sets whether to suppress error message if no rows found.
+   *
+   * @param value	true if to suppress
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress error message if no rows found.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then no error message is generated if no rows are found.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -453,6 +494,9 @@ public class SpreadSheetVariableRowIterator
     if (value != null)
       result += value;
     value = QuickInfoHelper.toString(this, "outputModified", m_OutputModified, ", output modified");
+    if (value != null)
+      result += value;
+    value = QuickInfoHelper.toString(this, "lenient", m_Lenient, ", lenient");
     if (value != null)
       result += value;
 
@@ -499,7 +543,7 @@ public class SpreadSheetVariableRowIterator
     
     if (result == null) {
       m_Rows.setMax(m_Sheet.getRowCount());
-      if (m_Rows.getIntIndices().length == 0)
+      if ((m_Rows.getIntIndices().length == 0) && !m_Lenient)
 	result = "No rows available with range '" + m_Rows.getRange() + "'?";
     }
     
