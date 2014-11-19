@@ -132,43 +132,43 @@
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>feature</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>geo</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>io</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>ip</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>recognition</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>sfm</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>visualize</artifactId>
-      <version>0.17</version>
+      <version>0.18</version>
     </dependency>
     
     <dependency>
