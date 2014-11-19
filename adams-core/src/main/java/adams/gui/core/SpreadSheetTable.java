@@ -19,7 +19,10 @@
  */
 package adams.gui.core;
 
+import gnu.trove.list.array.TDoubleArrayList;
+
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -39,9 +42,12 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.data.statistics.ArrayHistogram;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.event.PopupMenuListener;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.PopupMenuCustomizer;
+import adams.gui.visualization.statistics.HistogramFactory;
 
 /**
  * A specialized table for displaying a SpreadSheet table model.
@@ -64,6 +70,9 @@ public class SpreadSheetTable
 
   /** the file chooser for saving the spreadsheet. */
   protected SpreadSheetFileChooser m_FileChooser;
+  
+  /** the last {@link ArrayHistogram} setup. */
+  protected ArrayHistogram m_Histogram;
   
   /**
    * Initializes the table.
@@ -92,6 +101,7 @@ public class SpreadSheetTable
 
     m_HeaderPopupMenuCustomizer = null;
     m_CellPopupMenuCustomizer   = null;
+    m_Histogram                 = new ArrayHistogram();
 
     addHeaderPopupMenuListener(new PopupMenuListener() {
       @Override
@@ -366,6 +376,16 @@ public class SpreadSheetTable
     });
     menu.addSeparator();
     menu.add(menuitem);
+    
+    menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	histogram(toSpreadSheet(), true, getShowRowColumn() ? col - 1 : col);
+      }
+    });
+    menu.addSeparator();
+    menu.add(menuitem);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -446,6 +466,19 @@ public class SpreadSheetTable
       }
     });
     submenu.add(menuitem);
+
+    menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+	int row = rowAtPoint(e.getPoint());
+	if (row == -1)
+	  return;
+	histogram(toSpreadSheet(), false, row);
+      }
+    });
+    menu.addSeparator();
+    menu.add(menuitem);
 
     menuitem = new JCheckBoxMenuItem("Show formulas");
     menuitem.setIcon(GUIHelper.getIcon("formula.png"));
@@ -600,6 +633,62 @@ public class SpreadSheetTable
   public void sort(RowComparator comparator) {
     toSpreadSheet().sort(comparator);
     ((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
+  }
+
+  /**
+   * Allows the user to generate a histogram from either a row or a column.
+   * 
+   * @param sheet	the spreadsheet to use
+   * @param isColumn	whether the to use column or row
+   * @param index	the index of the row/column
+   */
+  protected void histogram(SpreadSheet sheet, boolean isColumn, int index) {
+    TDoubleArrayList			list;
+    HistogramFactory.SetupDialog	setup;
+    HistogramFactory.Dialog		dialog;
+    int					i;
+    
+    // let user customize histogram
+    if (GUIHelper.getParentDialog(this) != null)
+      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
+    else
+      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentFrame(this), true);
+    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.setCurrent(m_Histogram);
+    setup.setVisible(true);
+    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    m_Histogram = (ArrayHistogram) setup.getCurrent();
+
+    // get data from spreadsheet
+    list = new TDoubleArrayList();
+    if (isColumn) {
+      for (i = 0; i < sheet.getRowCount(); i++) {
+	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
+	  list.add(sheet.getCell(i, index).toDouble());
+      }
+    }
+    else {
+      for (i = 0; i < sheet.getColumnCount(); i++) {
+	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
+	  list.add(sheet.getCell(index, i).toDouble());
+      }
+    }
+    
+    // calculate histogram
+    m_Histogram.clear();
+    
+    // display histogram
+    if (GUIHelper.getParentDialog(this) != null)
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentDialog(this), ModalityType.MODELESS);
+    else
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(this), false);
+    dialog.setDefaultCloseOperation(HistogramFactory.Dialog.DISPOSE_ON_CLOSE);
+    if (isColumn)
+      dialog.add(m_Histogram, list.toArray(), "Column " + (index + 1) + "/" + sheet.getColumnName(index));
+    else
+      dialog.add(m_Histogram, list.toArray(), "Row " + (index + 1));
+    dialog.setVisible(true);
   }
 
   /**
