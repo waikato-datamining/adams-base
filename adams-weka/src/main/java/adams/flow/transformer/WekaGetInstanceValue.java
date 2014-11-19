@@ -15,7 +15,7 @@
 
 /*
  * WekaGetInstanceValue.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -282,7 +282,7 @@ public class WekaGetInstanceValue
       }
     }
     catch (Exception e) {
-      result = handleException("Failed to obtain value from instance:", e);
+      result = handleException("Failed to obtain value from instance:\n" + inst, e);
     }
 
     return result;
