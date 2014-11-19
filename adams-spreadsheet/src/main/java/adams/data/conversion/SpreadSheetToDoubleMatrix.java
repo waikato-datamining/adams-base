@@ -99,7 +99,7 @@ public class SpreadSheetToDoubleMatrix
     sheet   = (SpreadSheet) m_Input;
     numeric = new ArrayList<Integer>();
     for (i = 0; i < sheet.getColumnCount(); i++) {
-      if (sheet.isNumeric(i))
+      if (sheet.isNumeric(i, true))
 	numeric.add(i);
     }
     if (numeric.size() == 0)

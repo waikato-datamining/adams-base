@@ -302,7 +302,7 @@ public class WekaExtractArray
 
       if (index == -1)
 	result = "Invalid index: " + m_Index + " (max=" + m_Index.getMax() + ")";
-      else if ((m_Type == ExtractionType.COLUMN) && !sheet.isNumeric(index))
+      else if ((m_Type == ExtractionType.COLUMN) && !sheet.isNumeric(index, true))
 	result = "Column " + m_Index + " is not numeric!";
 
       if (result == null) {

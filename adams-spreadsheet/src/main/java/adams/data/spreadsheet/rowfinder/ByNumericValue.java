@@ -285,7 +285,7 @@ public class ByNumericValue
     index = m_AttributeIndex.getIntIndex();
     if (index == -1)
       throw new IllegalStateException("Invalid index '" + m_AttributeIndex.getIndex() + "'?");
-    if (!data.isNumeric(index))
+    if (!data.isNumeric(index, true))
       throw new IllegalStateException("Column at index '" + m_AttributeIndex.getIndex() + "' is not numeric!");
     
     for (i = 0; i < data.getRowCount(); i++) {

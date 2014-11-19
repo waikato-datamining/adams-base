@@ -209,7 +209,7 @@ public class SpreadSheetTableModel
    */
   protected ContentType determineContentType(int columnIndex) {
     if (m_ColumnType[columnIndex] == null) {
-      if (m_Sheet.isNumeric(columnIndex))
+      if (m_Sheet.isNumeric(columnIndex, true))
 	m_ColumnType[columnIndex] = ContentType.DOUBLE;
       else
 	m_ColumnType[columnIndex] = m_Sheet.getContentType(columnIndex);

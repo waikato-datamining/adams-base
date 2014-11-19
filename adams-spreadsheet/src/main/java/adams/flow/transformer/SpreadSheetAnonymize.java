@@ -299,7 +299,7 @@ public class SpreadSheetAnonymize
 	colName = row.getCell(i).getContent();
 	if (m_ColumnsRegExp.isMatch(colName)) {
 	  names.add(colName);
-	  numeric.add(sheet.isNumeric(i));
+	  numeric.add(sheet.isNumeric(i, true));
 	  id.add(row.getCellKey(i));
 	  if (!m_Mapping.containsKey(colName)) {
 	    if (numeric.get(numeric.size() - 1))

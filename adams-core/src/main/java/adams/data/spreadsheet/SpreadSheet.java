@@ -1090,13 +1090,26 @@ public class SpreadSheet
   }
 
   /**
-   * Checks whether the given column is numeric or not.
+   * Checks whether the given column is numeric or not. Does not accept
+   * missing values.
    *
    * @param columnIndex	the index of the column to check
    * @return		true if purely numeric
-   * @see		#getContentType(int)
+   * @see		#getContentTypes(int)
    */
   public boolean isNumeric(int columnIndex) {
+    return isNumeric(columnIndex, false);
+  }
+
+  /**
+   * Checks whether the given column is numeric or not. Can accept missing
+   * values.
+   *
+   * @param columnIndex	the index of the column to check
+   * @return		true if purely numeric
+   * @see		#getContentTypes(int)
+   */
+  public boolean isNumeric(int columnIndex, boolean allowMissing) {
     boolean			result;
     Collection<ContentType>	found;
 
@@ -1105,6 +1118,8 @@ public class SpreadSheet
     if (found.size() > 0) {
       found.remove(ContentType.DOUBLE);
       found.remove(ContentType.LONG);
+      if (allowMissing)
+	found.remove(ContentType.MISSING);
       result = (found.size() == 0);
     }
 

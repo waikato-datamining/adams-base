@@ -297,7 +297,7 @@ public class SpreadSheetBinarize
   
     mapping = new HashMap<Integer,List<String>>();
     for (i = 0; i < indices.length; i++) {
-      if (input.isNumeric(indices[i]))
+      if (input.isNumeric(indices[i], true))
 	continue;
       labels = input.getCellValues(indices[i]);
       if (!mapping.containsKey(indices[i]))

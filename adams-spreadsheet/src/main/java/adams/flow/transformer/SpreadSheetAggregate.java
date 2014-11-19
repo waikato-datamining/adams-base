@@ -396,7 +396,7 @@ public class SpreadSheetAggregate
       for (int index: agg) {
 	if (m_KeyColumns.isInRange(index))
 	  continue;
-	if (!input.isNumeric(index))
+	if (!input.isNumeric(index, true))
 	  continue;
 	numeric.add(index);
       }
