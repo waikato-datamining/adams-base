@@ -92,10 +92,10 @@ public class FixedNumFeaturesTest
     result[1].setNumFeatures(50);
     result[2] = new FixedNumFeatures();
     result[2].setNumFeatures(300);
-    result[2].setFillerType(FillerType.LAST);
+    result[2].setFillerType(FillerType.LAST_VALUE);
     result[3] = new FixedNumFeatures();
     result[3].setNumFeatures(300);
-    result[3].setFillerType(FillerType.FIRST);
+    result[3].setFillerType(FillerType.FIRST_VALUE);
     
     return result;
   }

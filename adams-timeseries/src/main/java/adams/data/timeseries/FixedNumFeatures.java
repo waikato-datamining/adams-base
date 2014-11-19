@@ -123,15 +123,15 @@ public class FixedNumFeatures
     /** missing boolean value. */
     MISSING_BOOLEAN,
     /** use a numeric value. */
-    NUMERIC,
+    FILLER_NUMERIC,
     /** use a string value. */
-    STRING,
+    FILLER_STRING,
     /** use a boolean value. */
-    BOOLEAN,
+    FILLER_BOOLEAN,
     /** uses the first value as template. */
-    FIRST,
+    FIRST_VALUE,
     /** uses the last value as template. */
-    LAST
+    LAST_VALUE
   }
   
   /** the number of features to guarantee. */
@@ -162,10 +162,10 @@ public class FixedNumFeatures
     return 
 	"Meta-feature-generator that ensures that the generated output has "
 	+ "a fixed number of data points.\n"
-	+ "In case of filler type " + FillerType.FIRST + ", the data gets "
+	+ "In case of filler type " + FillerType.FIRST_VALUE + ", the data gets "
 	+ "inserted at the start, as opposed to at the end when using " 
-	+ FillerType.LAST + ".\n"
-	+ FillerType.NUMERIC + "/" + FillerType.STRING + "/" + FillerType.BOOLEAN + " "
+	+ FillerType.LAST_VALUE + ".\n"
+	+ FillerType.FILLER_NUMERIC + "/" + FillerType.FILLER_STRING + "/" + FillerType.FILLER_BOOLEAN + " "
 	+ "use the appropriate filler value that the user specified.\n"
 	+ "The MISSING_* types just add a missing value of the appropriate data type.";
   }
@@ -459,7 +459,7 @@ public class FixedNumFeatures
     
     // trim to size
     while (fixed.size() > m_NumFeatures) {
-      if (m_FillerType == FillerType.FIRST)
+      if (m_FillerType == FillerType.FIRST_VALUE)
 	fixed.remove(0);
       else
 	fixed.remove(fixed.size() - 1);
@@ -472,21 +472,21 @@ public class FixedNumFeatures
       name = m_HeaderTemplate.replace("#", "" + count).replace("$", "" + (fixed.size() + 1));
       switch (m_FillerType) {
 	case MISSING_BOOLEAN:
-	case BOOLEAN:
+	case FILLER_BOOLEAN:
 	  fixed.add(name, DataType.BOOLEAN);
 	  break;
 	case MISSING_STRING:
-	case STRING:
+	case FILLER_STRING:
 	  fixed.add(name, DataType.STRING);
 	  break;
 	case MISSING_NUMERIC:
-	case NUMERIC:
+	case FILLER_NUMERIC:
 	  fixed.add(name, DataType.NUMERIC);
 	  break;
-	case FIRST:
+	case FIRST_VALUE:
 	  fixed.add(0, name, fixed.getTypes().get(0));
 	  break;
-	case LAST:
+	case LAST_VALUE:
 	  fixed.add(name, fixed.getTypes().get(fixed.size() - 1));
 	  break;
 	default:
@@ -518,7 +518,7 @@ public class FixedNumFeatures
 
       // trim to size
       while (fixed.size() > m_NumFeatures) {
-	if (m_FillerType == FillerType.FIRST)
+	if (m_FillerType == FillerType.FIRST_VALUE)
 	  fixed.remove(0);
 	else
 	  fixed.remove(fixed.size() - 1);
@@ -532,22 +532,22 @@ public class FixedNumFeatures
 	  case MISSING_NUMERIC:
 	    fixed.add(null);
 	    break;
-	  case BOOLEAN:
+	  case FILLER_BOOLEAN:
 	    fixed.add(m_FillerBoolean);
 	    break;
-	  case STRING:
+	  case FILLER_STRING:
 	    fixed.add(m_FillerString);
 	    break;
-	  case NUMERIC:
+	  case FILLER_NUMERIC:
 	    fixed.add(m_FillerNumeric);
 	    break;
-	  case FIRST:
+	  case FIRST_VALUE:
 	    if (fixed.size() > 0)
 	      fixed.add(0, fixed.get(0));
 	    else
 	      fixed.add(null);
 	    break;
-	  case LAST:
+	  case LAST_VALUE:
 	    if (fixed.size() > 0)
 	      fixed.add(fixed.get(fixed.size() - 1));
 	    else
