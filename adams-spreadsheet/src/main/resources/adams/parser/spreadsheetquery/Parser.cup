@@ -48,6 +48,7 @@ import adams.data.spreadsheet.rowfinder.*;
 import adams.flow.core.*;
 import adams.flow.control.*;
 import adams.flow.transformer.*;
+import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
 import adams.parser.spreadsheetquery.ParserHelper;
 
 /**
@@ -142,6 +143,7 @@ parser code {:
 :}
 
 terminal SELECT, UPDATE, DELETE, WHERE, SET, ORDER, BY, IS, NULL, REGEXP, AS, LIMIT;
+terminal GROUP, HAVING, COUNT, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, SUM, IQR;
 terminal COMMA, LPAREN, RPAREN;
 terminal ALL;
 terminal LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
@@ -156,6 +158,8 @@ non terminal col_list, col;
 non terminal order_list, order;
 non terminal upd_list, upd;
 non terminal cond_list;
+non terminal agg_list, agg;
+non terminal groupby_list, groupby;
 non terminal int[] cond;
 non terminal Object value;
 non terminal limit;
@@ -200,6 +204,22 @@ select    ::=   SELECT col_list
               | SELECT col_list WHERE cond_list ORDER BY order_list limit
                 {: 
                   parser.getHelper().select(); 
+                :}
+              | SELECT agg_list
+                {: 
+                  parser.getHelper().aggregate(); 
+                :}
+              | SELECT agg_list HAVING cond_list
+                {: 
+                  parser.getHelper().aggregate(); 
+                :}
+              | SELECT agg_list GROUP BY groupby_list
+                {: 
+                  parser.getHelper().aggregate(); 
+                :}
+              | SELECT agg_list GROUP BY groupby_list HAVING cond_list
+                {: 
+                  parser.getHelper().aggregate(); 
                 :}
               ;
 
@@ -432,4 +452,51 @@ limit     ::=   LIMIT NUMBER:max
                   parser.getHelper().setLimit(offset.intValue(), max.intValue());
                 :}
                 ;
-                
+
+agg_list  ::= agg_list COMMA agg | agg;
+
+agg       ::=   COUNT
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.COUNT, null); 
+                :}
+              | MIN LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MIN, c); 
+                :}
+              | MAX LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MAX, c); 
+                :}
+              | AVERAGE LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.AVERAGE, c); 
+                :}
+              | MEDIAN LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MEDIAN, c); 
+                :}
+              | STDEV LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.STDEV, c); 
+                :}
+              | STDEVP LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.STDEVP, c); 
+                :}
+              | IQR LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.INTERQUARTILE, c); 
+                :}
+              | SUM LPAREN COLUMN:c RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.SUM, c); 
+                :}
+              ;
+
+groupby_list ::= groupby_list COMMA groupby | groupby;
+
+groupby      ::=   COLUMN:c
+                   {: 
+                     parser.getHelper().addGroupByColumn(c); 
+                   :}
+                   ;

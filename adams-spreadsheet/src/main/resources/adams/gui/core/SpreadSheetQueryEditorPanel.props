@@ -107,7 +107,9 @@ Keywords=\
     delete,\
     where,\
     order,\
+    group,\
     by,\
+    having,\
     set,\
     is,\
     null,\
@@ -115,4 +117,15 @@ Keywords=\
     as,\
     asc,\
     desc,\
-    limit
+    limit,\
+    count,\
+    min,\
+    max,\
+    sum,\
+    mean,\
+    average,\
+    stdev,\
+    stdevp,\
+    iqr,\
+    interquartile
+    

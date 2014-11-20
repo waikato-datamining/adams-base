@@ -15,7 +15,7 @@
 
 /**
  * ParserHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetquery;
 
@@ -24,7 +24,9 @@ import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import adams.core.Range;
@@ -41,6 +43,9 @@ import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.control.SubProcess;
 import adams.flow.core.Token;
 import adams.flow.transformer.Convert;
+import adams.flow.transformer.SpreadSheetAggregate;
+import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
+import adams.flow.transformer.SpreadSheetRemoveColumn;
 import adams.flow.transformer.SpreadSheetReorderColumns;
 import adams.flow.transformer.SpreadSheetRowFilter;
 import adams.flow.transformer.SpreadSheetSetCell;
@@ -74,6 +79,9 @@ public class ParserHelper
   /** whether to update cells. */
   protected boolean m_Update;
 
+  /** whether to aggregate. */
+  protected boolean m_Aggregate;
+
   /** the columns to retrieve. */
   protected List<String> m_Columns;
 
@@ -103,7 +111,13 @@ public class ParserHelper
   
   /** the offset for the limit. */
   protected int m_LimitOffset;
-  
+
+  /** the aggregates to generate (aggregate - list of columns). */
+  protected HashMap<Aggregate,List<String>> m_Aggregates;
+
+  /** the group by columns to retrieve. */
+  protected List<String> m_GroupByColumns;
+
   /**
    * Initializes the members.
    */
@@ -111,21 +125,24 @@ public class ParserHelper
   protected void initialize() {
     super.initialize();
     
-    m_Sheet         = null;
-    m_AllColumns    = false;
-    m_Select        = false;
-    m_Delete        = false;
-    m_Update        = false;
-    m_Columns       = new ArrayList<String>();
-    m_RenameColumns = new HashMap<String,String>();
-    m_UpdateColumns = new HashMap<String,Object>();
-    m_SortColumns   = new ArrayList<String>();
-    m_SortAsc       = new ArrayList<Boolean>();
-    m_RowFinders    = new ArrayList<RowFinder>();
-    m_SubProcess    = null;
-    m_Rows          = null;
-    m_LimitOffset   = 0;
-    m_LimitMax      = -1;
+    m_Sheet          = null;
+    m_AllColumns     = false;
+    m_Select         = false;
+    m_Delete         = false;
+    m_Update         = false;
+    m_Aggregate      = false;
+    m_Columns        = new ArrayList<String>();
+    m_RenameColumns  = new HashMap<String,String>();
+    m_UpdateColumns  = new HashMap<String,Object>();
+    m_SortColumns    = new ArrayList<String>();
+    m_SortAsc        = new ArrayList<Boolean>();
+    m_RowFinders     = new ArrayList<RowFinder>();
+    m_Aggregates     = new HashMap<Aggregate,List<String>>();
+    m_GroupByColumns = new ArrayList<String>();
+    m_SubProcess     = null;
+    m_Rows           = null;
+    m_LimitOffset    = 0;
+    m_LimitMax       = -1;
   }
 
   /**
@@ -207,6 +224,41 @@ public class ParserHelper
   }
 
   /**
+   * Adds the aggregate to generate from a column.
+   *
+   * @param aggregate the aggregate
+   * @param col the column name, null if COUNT
+   */
+  public void addAggregate(Aggregate agg, String col) {
+    List<String>	cols;
+    
+    if (!m_Aggregates.containsKey(agg))
+      m_Aggregates.put(agg, new ArrayList<String>());
+    
+    if (agg != Aggregate.COUNT) {
+      col  = SpreadSheetColumnRange.escapeColumnName(col);
+      cols = m_Aggregates.get(agg);
+      if (!cols.contains(col))
+	cols.add(col);
+    }
+    if (isLoggingEnabled())
+      getLogger().fine("aggregate: " + agg + "/" + col);
+  }
+
+  /**
+   * Adds the name of a group by column.
+   *
+   * @param col the column name
+   * @param value the new value
+   */
+  public void addGroupByColumn(String col) {
+    m_GroupByColumns.add(SpreadSheetColumnRange.escapeColumnName(col));
+    
+    if (isLoggingEnabled())
+      getLogger().fine("group by: " + col);
+  }
+
+  /**
    * Applies the row finder.
    *
    * @param finder the row finder to apply
@@ -249,7 +301,16 @@ public class ParserHelper
     if (isLoggingEnabled())
       getLogger().fine("update");
   }
-  
+
+  /**
+   * Sets to create subset from aggregates.
+   */
+  public void aggregate() {
+    m_Aggregate = true;
+    if (isLoggingEnabled())
+      getLogger().fine("aggregate");
+  }
+
   /**
    * Combines the row finders with logical AND.
    * 
@@ -397,6 +458,7 @@ public class ParserHelper
           cols[i]  = new SpreadSheetColumnIndex(m_SortColumns.get(i));
           order[i] = new BaseBoolean("" + m_SortAsc.get(i));
         }
+        sort.setNoCopy(true);
         sort.setSortColumn(cols);
         sort.setSortOrder(order);
         sub.add(sort);
@@ -414,6 +476,7 @@ public class ParserHelper
 	List<Conversion> list = new ArrayList<Conversion>();
 	for (String col: m_RenameColumns.keySet()) {
 	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
+	  ren.setNoCopy(true);
 	  ren.setColumn(new SpreadSheetColumnIndex(col));
 	  ren.setNewName(m_RenameColumns.get(col));
           list.add(ren);
@@ -435,6 +498,7 @@ public class ParserHelper
     else if (m_Update) {
       for (String col: m_UpdateColumns.keySet()) {
 	SpreadSheetSetCell setcell = new SpreadSheetSetCell();
+	setcell.setNoCopy(true);
 	setcell.setRow(rows);
 	setcell.setColumn(new SpreadSheetColumnRange(col));
 	setcell.setValue(m_UpdateColumns.get(col).toString());
@@ -445,6 +509,66 @@ public class ParserHelper
       rows.setInverted(true);
       byIndex.setRows(rows);
       sub.add(rowFilter);
+    }
+    else if (m_Aggregate) {
+      sub.add(rowFilter);
+      // create aggregate column range
+      HashSet<String> cols = new HashSet<String>();
+      for (Aggregate a: m_Aggregates.keySet())
+	cols.addAll(m_Aggregates.get(a));
+      List<String> all = new ArrayList<String>(cols);
+      Collections.sort(all);
+      SpreadSheetColumnRange aggRange = new SpreadSheetColumnRange();
+      aggRange.setRange(Utils.flatten(all, ","));
+      // create group by range
+      SpreadSheetColumnRange keyRange = new SpreadSheetColumnRange();
+      if (m_GroupByColumns.size() > 0)
+	keyRange.setRange(Utils.flatten(m_GroupByColumns, ","));
+      // aggregates
+      List<Aggregate> aggs = new ArrayList<Aggregate>(m_Aggregates.keySet());
+      Collections.sort(aggs);
+      if (aggs.contains(Aggregate.COUNT)) {
+	aggs.remove(Aggregate.COUNT);
+	aggs.add(0, Aggregate.COUNT);
+      }
+      // aggregate
+      SpreadSheetAggregate agg = new SpreadSheetAggregate();
+      agg.setAggregateColumns(aggRange);
+      agg.setKeyColumns(keyRange);
+      agg.setAggregates(aggs.toArray(new Aggregate[aggs.size()]));
+      sub.add(agg);
+      // delete columns
+      List<String> remove;
+      for (Aggregate a: m_Aggregates.keySet()) {
+	if (a == Aggregate.COUNT) {
+	  remove = new ArrayList<String>(all);
+	  remove.remove(0);
+	  if (remove.size() > 0) {
+	    SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
+	    remRange.setRange(Utils.flatten(remove, ","));
+	    SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
+	    remCol.setPosition(remRange);
+	    sub.add(remCol);
+	  }
+	  Convert conv = new Convert();
+	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
+	  ren.setColumn(new SpreadSheetColumnIndex("" + (m_GroupByColumns.size() + 1)));
+	  ren.setNewName(Aggregate.COUNT.toString());
+	  conv.setConversion(ren);
+	  sub.add(conv);
+	}
+	else {
+	  remove = new ArrayList<String>(all);
+	  remove.removeAll(m_Aggregates.get(a));
+	  if (remove.size() > 0) {
+	    SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
+	    remRange.setRange(Utils.flatten(remove, ","));
+	    SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
+	    remCol.setPosition(remRange);
+	    sub.add(remCol);
+	  }
+	}
+      }
     }
     
     // transform spreadsheet

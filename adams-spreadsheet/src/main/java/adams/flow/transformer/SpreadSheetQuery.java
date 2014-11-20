@@ -42,6 +42,10 @@ import adams.parser.SpreadSheetQueryText;
  *               | SELECT col_list WHERE cond_list [limit]<br/>
  *               | SELECT col_list ORDER BY order_list [limit]<br/>
  *               | SELECT col_list WHERE cond_list ORDER BY order_list [limit]<br/>
+ *               | SELECT agg_list<br/>
+ *               | SELECT agg_list GROUP BY col_list<br/>
+ *               | SELECT agg_list HAVING cond_list<br/>
+ *               | SELECT agg_list GROUP BY col_list HAVING cond_list<br/>
  *               ;<br/>
  * <br/>
  * update    ::=   UPDATE SET upd_list<br/>
@@ -101,6 +105,20 @@ import adams.parser.SpreadSheetQueryText;
  * limit     ::=   LIMIT NUMBER:max<br/>
  *               | LIMIT NUMBER:offset , NUMBER:max<br/>
  *               ;<br/>
+ * agg_list  ::=   agg_list agg <br/>
+ *               | agg<br/>
+ *               ;<br/>
+ * <br/>
+ * agg       ::=   COUNT<br/>
+ *               | MIN ( COLUMN )<br/>
+ *               | MAX ( COLUMN )<br/>
+ *               | MEAN ( COLUMN )<br/>
+ *               | AVERAGE ( COLUMN )<br/>
+ *               | STDEV ( COLUMN )<br/>
+ *               | STDEVP ( COLUMN )<br/>
+ *               | SUM ( COLUMN )<br/>
+ *               | IQR ( COLUMN )<br/>
+ *               | INTERQUARTILE ( COLUMN )<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
