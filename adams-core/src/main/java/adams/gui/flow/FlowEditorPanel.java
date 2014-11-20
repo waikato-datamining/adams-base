@@ -95,6 +95,7 @@ import adams.gui.flow.menu.ExecutionClearGraphicalOutput;
 import adams.gui.flow.menu.ExecutionDisplayErrors;
 import adams.gui.flow.menu.ExecutionGC;
 import adams.gui.flow.menu.ExecutionHeadless;
+import adams.gui.flow.menu.ExecutionKill;
 import adams.gui.flow.menu.ExecutionPauseResume;
 import adams.gui.flow.menu.ExecutionRun;
 import adams.gui.flow.menu.ExecutionStop;
@@ -297,6 +298,9 @@ public class FlowEditorPanel
 
   /** the "stop" action. */
   protected FlowEditorAction m_ActionExecutionStop;
+
+  /** the "kill" action. */
+  protected FlowEditorAction m_ActionExecutionKill;
 
   /** the "display errors" action. */
   protected FlowEditorAction m_ActionExecutionDisplayErrors;
@@ -634,6 +638,11 @@ public class FlowEditorPanel
     m_ActionExecutionStop = action;
     m_MenuItems.add(action);
 
+    // Execution/Kill
+    action = new ExecutionKill();
+    m_ActionExecutionKill = action;
+    m_MenuItems.add(action);
+
     // Execution/Display errors
     action = new ExecutionDisplayErrors();
     m_ActionExecutionDisplayErrors = action;
@@ -733,6 +742,7 @@ public class FlowEditorPanel
     addToToolBar(m_ActionExecutionRun);
     addToToolBar(m_ActionExecutionPauseAndResume);
     addToToolBar(m_ActionExecutionStop);
+    addToToolBar(m_ActionExecutionKill);
   }
 
   /**
@@ -964,6 +974,8 @@ public class FlowEditorPanel
       menu.add(m_ActionExecutionRun);
       menu.add(m_ActionExecutionPauseAndResume);
       menu.add(m_ActionExecutionStop);
+      menu.add(m_ActionExecutionKill);
+      menu.addSeparator();
       menu.add(m_ActionExecutionDisplayErrors);
       menu.add(m_ActionExecutionClearGraphicalOutput);
       menu.addSeparator();
@@ -1599,6 +1611,14 @@ public class FlowEditorPanel
   public void stop() {
     if (hasCurrentPanel())
       getCurrentPanel().stop();
+  }
+
+  /**
+   * Kills the flow.
+   */
+  public void kill() {
+    if (hasCurrentPanel())
+      getCurrentPanel().kill();
   }
 
   /**

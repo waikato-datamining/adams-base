@@ -141,8 +141,7 @@ public class FlowPanel
    * @version $Revision$
    */
   public static class FlowWorker
-    extends SwingWorker
-    implements Pausable, Stoppable, StatusMessageHandler {
+    implements Runnable, Pausable, Stoppable, StatusMessageHandler {
 
     /** the panel this flow belongs to. */
     protected FlowPanel m_Owner;
@@ -183,7 +182,6 @@ public class FlowPanel
      * @return always null
      * @throws Exception if unable to compute a result
      */
-    @Override
     protected Object doInBackground() throws Exception {
       m_Owner.update();
       m_Owner.cleanUp();
@@ -244,13 +242,10 @@ public class FlowPanel
      * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
      * method is finished. 
      */
-    @Override
     protected void done() {
       String	msg;
       String	errors;
       int	countErrors;
-
-      super.done();
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
@@ -295,6 +290,22 @@ public class FlowPanel
       m_Owner.finishedExecution();
     }
 
+    /**
+     * Execute the flow.
+     */
+    @Override
+    public void run() {
+      try {
+	doInBackground();
+      }
+      catch (Throwable t) {
+	m_Output = Utils.throwableToString(t);
+      }
+      finally {
+	done();
+      }
+    }
+    
     /**
      * Pauses the execution.
      */
@@ -393,8 +404,11 @@ public class FlowPanel
   /** the filename of the current flow. */
   protected File m_CurrentFile;
 
-  /** the current worker thread. */
+  /** the current worker. */
   protected FlowWorker m_CurrentWorker;
+
+  /** the current worker thread. */
+  protected Thread m_CurrentThread;
   
   /** whether a swingworker is currently running. */
   protected boolean m_RunningSwingWorker;
@@ -1091,7 +1105,8 @@ public class FlowPanel
    */
   public void run(boolean showNotification) {
     m_CurrentWorker = new FlowWorker(this, getCurrentFlow(), getCurrentFile(), showNotification);
-    m_CurrentWorker.execute();
+    m_CurrentThread = new Thread(m_CurrentWorker);
+    m_CurrentThread.start();
   }
 
   /**
@@ -1099,6 +1114,7 @@ public class FlowPanel
    */
   protected void finishedExecution() {
     m_CurrentWorker = null;
+    m_CurrentThread = null;
     update();
   }
   
@@ -1185,10 +1201,28 @@ public class FlowPanel
 	@Override
 	protected Object doInBackground() throws Exception {
 	  m_CurrentWorker.stopExecution();
+	  if (cleanUp)
+	    cleanUp();
 	  return null;
 	}
       };
       worker.execute();
+    }
+  }
+
+  /**
+   * Kills the flow.
+   */
+  @SuppressWarnings("deprecation")
+  public void kill() {
+    if (m_CurrentThread != null) {
+      try {
+	m_CurrentThread.interrupt();
+	m_CurrentThread.stop();
+      }
+      finally {
+	finishedExecution();
+      }
     }
   }
 
