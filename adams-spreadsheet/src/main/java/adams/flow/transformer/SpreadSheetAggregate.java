@@ -39,7 +39,8 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br/>
- * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.
+ * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.<br/>
+ * If no key column(s) provided, the complete spreadsheet is used for aggregation.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -81,21 +82,14 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-key-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: keyColumns)
- * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; A range 
- * &nbsp;&nbsp;&nbsp;is a comma-separated list of single 1-based indices or sub-ranges of indices 
- * &nbsp;&nbsp;&nbsp;('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;) as well as the following placeholders can be used: first, second, third,
- * &nbsp;&nbsp;&nbsp; last_2, last_1, last
- * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; if 
+ * &nbsp;&nbsp;&nbsp;left empty, all rows are used.
+ * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-aggregate-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: aggregateColumns)
- * &nbsp;&nbsp;&nbsp;The columns to aggregate (only numeric ones will be used); A range is a 
- * &nbsp;&nbsp;&nbsp;comma-separated list of single 1-based indices or sub-ranges of indices 
- * &nbsp;&nbsp;&nbsp;('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;) as well as the following placeholders can be used: first, second, third,
- * &nbsp;&nbsp;&nbsp; last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The columns to aggregate (only numeric ones will be used).
  * &nbsp;&nbsp;&nbsp;default: first-last
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
@@ -164,7 +158,8 @@ public class SpreadSheetAggregate
 	+ "columns.\n"
 	+ "All numeric columns in the specified aggregrate range (excluding the "
 	+ "key columns) get aggregated. For each of the specified aggregates a "
-	+ "new column is generated.";
+	+ "new column is generated.\n"
+	+ "If no key column(s) provided, the complete spreadsheet is used for aggregation.";
   }
 
   /**
@@ -176,7 +171,7 @@ public class SpreadSheetAggregate
 
     m_OptionManager.add(
 	    "key-columns", "keyColumns",
-	    new SpreadSheetColumnRange("first"));
+	    new SpreadSheetColumnRange());
 
     m_OptionManager.add(
 	    "aggregate-columns", "aggregateColumns",
@@ -214,7 +209,8 @@ public class SpreadSheetAggregate
    */
   public String keyColumnsTipText() {
     return
-        "The columns to use as keys for identifying rows in the spreadsheets; " + m_KeyColumns.getExample();
+        "The columns to use as keys for identifying rows in the spreadsheets; "
+	+ "if left empty, all rows are used.";
   }
 
   /**
@@ -243,8 +239,7 @@ public class SpreadSheetAggregate
    * 			displaying in the GUI or for listing the options.
    */
   public String aggregateColumnsTipText() {
-    return
-        "The columns to aggregate (only numeric ones will be used); " + m_KeyColumns.getExample();
+    return "The columns to aggregate (only numeric ones will be used).";
   }
 
   /**
@@ -273,8 +268,7 @@ public class SpreadSheetAggregate
    * 			displaying in the GUI or for listing the options.
    */
   public String aggregatesTipText() {
-    return
-        "The aggregates to calculate and introduce as columns.";
+    return "The aggregates to calculate and introduce as columns.";
   }
 
   /**
@@ -287,7 +281,7 @@ public class SpreadSheetAggregate
     String	result;
 
     result  = QuickInfoHelper.toString(this, "aggregateColumns", m_AggregateColumns, "cols: ");
-    result += QuickInfoHelper.toString(this, "keyColumns", m_KeyColumns, ", key: ");
+    result += QuickInfoHelper.toString(this, "keyColumns", (m_KeyColumns.isEmpty() ? "-none-" : m_KeyColumns), ", key: ");
     result += QuickInfoHelper.toString(this, "aggregates", m_Aggregates, ", agg: ");
 
     return result;
@@ -297,7 +291,7 @@ public class SpreadSheetAggregate
    * Computes the aggregates.
    * 
    * @param input	the original sheet
-   * @param subset	the subset of rows to use for the computation
+   * @param subset	the subset of rows to use for the computation, null if all rows
    * @param index	the column in the original spreadsheet
    * @return		the computed values
    */
@@ -312,10 +306,19 @@ public class SpreadSheetAggregate
     for (Aggregate agg: m_Aggregates)
       result.put(agg, Double.NaN);
     list = new TDoubleArrayList();
-    for (i = 0; i < subset.size(); i++) {
-      cell = input.getCell(subset.get(i), index);
-      if ((cell != null) && (cell.isNumeric()))
-	list.add(cell.toDouble());
+    if (subset != null) {
+      for (i = 0; i < subset.size(); i++) {
+	cell = input.getCell(subset.get(i), index);
+	if ((cell != null) && (cell.isNumeric()))
+	  list.add(cell.toDouble());
+      }
+    }
+    else {
+      for (i = 0; i < input.getRowCount(); i++) {
+	cell = input.getCell(i, index);
+	if ((cell != null) && (cell.isNumeric()))
+	  list.add(cell.toDouble());
+      }
     }
     values = list.toArray();
     
@@ -382,11 +385,17 @@ public class SpreadSheetAggregate
     aggregated = null;
     
     // columns to use as key
-    m_KeyColumns.setSpreadSheet(input);
-    keys = m_KeyColumns.getIntIndices();
-    if (keys.length == 0)
-      result = "No key columns defined!";
-    rows = new RowIdentifier(m_KeyColumns);
+    if (!m_KeyColumns.isEmpty()) {
+      m_KeyColumns.setSpreadSheet(input);
+      keys = m_KeyColumns.getIntIndices();
+      if (keys.length == 0)
+	result = "No key columns defined!";
+      rows = new RowIdentifier(m_KeyColumns);
+    }
+    else {
+      keys = new int[0];
+      rows = null;
+    }
 
     if (result == null) {
       // determine columns to aggregate
@@ -394,7 +403,7 @@ public class SpreadSheetAggregate
       agg     = m_AggregateColumns.getIntIndices();
       numeric = new TIntHashSet();
       for (int index: agg) {
-	if (m_KeyColumns.isInRange(index))
+	if ((keys.length > 0) && m_KeyColumns.isInRange(index))
 	  continue;
 	if (!input.isNumeric(index, true))
 	  continue;
@@ -404,7 +413,8 @@ public class SpreadSheetAggregate
       Arrays.sort(agg);
 
       // create output
-      rows.identify(input);
+      if (rows != null)
+	rows.identify(input);
       aggregated = input.newInstance();
       aggregated.setDataRowClass(input.getDataRowClass());
 
@@ -422,17 +432,39 @@ public class SpreadSheetAggregate
       }
 
       // data
-      for (String key: rows.getKeys()) {
+      if (rows != null) {
+	for (String key: rows.getKeys()) {
+	  rowNew = aggregated.addRow();
+	  subset = rows.getRows(key);
+	  // keys
+	  for (int index: keys) {
+	    rowNew.addCell("" + index).setContent(
+		input.getRow(subset.get(0)).getCell(index).getContent());
+	  }
+	  // aggregates
+	  for (int index: agg) {
+	    aggs = computeAggregates(input, subset, index); 
+	    for (Aggregate a: m_Aggregates) {
+	      if (aggs.get(agg) instanceof Integer)
+		rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+	      else if (aggs.get(agg) instanceof Long)
+		rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+	      else
+		rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+	    }
+	  }
+	}
+      }
+      else {
 	rowNew = aggregated.addRow();
-	subset = rows.getRows(key);
 	// keys
 	for (int index: keys) {
 	  rowNew.addCell("" + index).setContent(
-	      input.getRow(subset.get(0)).getCell(index).getContent());
+	      input.getRow(0).getCell(index).getContent());
 	}
 	// aggregates
 	for (int index: agg) {
-	  aggs = computeAggregates(input, subset, index); 
+	  aggs = computeAggregates(input, null, index); 
 	  for (Aggregate a: m_Aggregates) {
 	    if (aggs.get(agg) instanceof Integer)
 	      rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
