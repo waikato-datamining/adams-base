@@ -56,6 +56,6 @@ public class ExecutionKill
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning());
+    setEnabled(m_State.isRunning() || m_State.isStopping());
   }
 }
