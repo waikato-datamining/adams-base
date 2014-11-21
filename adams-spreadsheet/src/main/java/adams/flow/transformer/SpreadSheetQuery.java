@@ -105,20 +105,20 @@ import adams.parser.SpreadSheetQueryText;
  * limit     ::=   LIMIT NUMBER:max<br/>
  *               | LIMIT NUMBER:offset , NUMBER:max<br/>
  *               ;<br/>
- * agg_list  ::=   agg_list agg <br/>
+ * agg_list  ::=   agg_list COMMA agg <br/>
  *               | agg<br/>
  *               ;<br/>
  * <br/>
- * agg       ::=   COUNT<br/>
- *               | MIN ( COLUMN )<br/>
- *               | MAX ( COLUMN )<br/>
- *               | MEAN ( COLUMN )<br/>
- *               | AVERAGE ( COLUMN )<br/>
- *               | STDEV ( COLUMN )<br/>
- *               | STDEVP ( COLUMN )<br/>
- *               | SUM ( COLUMN )<br/>
- *               | IQR ( COLUMN )<br/>
- *               | INTERQUARTILE ( COLUMN )<br/>
+ * agg       ::=   COUNT [(*)] [AS COLUMN]<br/>
+ *               | MIN ( COLUMN ) [AS COLUMN]<br/>
+ *               | MAX ( COLUMN ) [AS COLUMN]<br/>
+ *               | MEAN ( COLUMN ) [AS COLUMN]<br/>
+ *               | AVERAGE ( COLUMN ) [AS COLUMN]<br/>
+ *               | STDEV ( COLUMN ) [AS COLUMN]<br/>
+ *               | STDEVP ( COLUMN ) [AS COLUMN]<br/>
+ *               | SUM ( COLUMN ) [AS COLUMN]<br/>
+ *               | IQR ( COLUMN ) [AS COLUMN]<br/>
+ *               | INTERQUARTILE ( COLUMN ) [AS COLUMN]<br/>
  * <p/>
  <!-- globalinfo-end -->
  *

@@ -91,6 +91,8 @@ public class SpreadSheetQueryTest
 	  {/** no symbols. */},	// 14
 	  {/** no symbols. */},	// 15
 	  {/** no symbols. */},	// 16
+	  {/** no symbols. */},	// 17
+	  {/** no symbols. */},	// 18
 	}
     };
   }
@@ -120,6 +122,8 @@ public class SpreadSheetQueryTest
 	  "SELECT * WHERE vacation > \"average\"",	//  14
 	  "SELECT * WHERE vacation >= \"average\"",	//  15
 	  "SELECT * WHERE vacation <> \"below_average\"",	//  16
+	  "SELECT MIN(duration), MAX(duration), MEAN(duration), STDEV(duration) HAVING duration >= 0",	//  17
+	  "SELECT MIN(duration) AS dur_min, MAX(duration) AS dur_max, MEAN(duration) AS dur_mean, STDEV(duration) AS dur_stdev HAVING duration >= 0",	//  18
 	}
     };
   }

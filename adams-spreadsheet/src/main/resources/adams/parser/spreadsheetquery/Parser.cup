@@ -459,37 +459,91 @@ agg       ::=   COUNT
                 {: 
                   parser.getHelper().addAggregate(Aggregate.COUNT, null); 
                 :}
+              |  COUNT AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.COUNT, null); 
+                  parser.getHelper().renameAggregate(Aggregate.COUNT, null, newc); 
+                :}
+              |  COUNT LPAREN ALL RPAREN
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.COUNT, null); 
+                :}
+              |  COUNT LPAREN ALL RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.COUNT, null); 
+                  parser.getHelper().renameAggregate(Aggregate.COUNT, null, newc); 
+                :}
               | MIN LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.MIN, c); 
+                :}
+              | MIN LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MIN, c); 
+                  parser.getHelper().renameAggregate(Aggregate.MIN, c, newc); 
                 :}
               | MAX LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.MAX, c); 
                 :}
+              | MAX LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MAX, c); 
+                  parser.getHelper().renameAggregate(Aggregate.MAX, c, newc); 
+                :}
               | AVERAGE LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.AVERAGE, c); 
+                :}
+              | AVERAGE LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.AVERAGE, c); 
+                  parser.getHelper().renameAggregate(Aggregate.AVERAGE, c, newc); 
                 :}
               | MEDIAN LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.MEDIAN, c); 
                 :}
+              | MEDIAN LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.MEDIAN, c); 
+                  parser.getHelper().renameAggregate(Aggregate.MEDIAN, c, newc); 
+                :}
               | STDEV LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.STDEV, c); 
+                :}
+              | STDEV LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.STDEV, c); 
+                  parser.getHelper().renameAggregate(Aggregate.STDEV, c, newc); 
                 :}
               | STDEVP LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.STDEVP, c); 
                 :}
+              | STDEVP LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.STDEVP, c); 
+                  parser.getHelper().renameAggregate(Aggregate.STDEVP, c, newc); 
+                :}
               | IQR LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.INTERQUARTILE, c); 
                 :}
+              | IQR LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.INTERQUARTILE, c); 
+                  parser.getHelper().renameAggregate(Aggregate.INTERQUARTILE, c, newc); 
+                :}
               | SUM LPAREN COLUMN:c RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.SUM, c); 
+                :}
+              | SUM LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {: 
+                  parser.getHelper().addAggregate(Aggregate.SUM, c); 
+                  parser.getHelper().renameAggregate(Aggregate.SUM, c, newc); 
                 :}
               ;
 

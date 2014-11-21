@@ -114,6 +114,9 @@ public class ParserHelper
 
   /** the aggregates to generate (aggregate - list of columns). */
   protected HashMap<Aggregate,List<String>> m_Aggregates;
+  
+  /** the new names for the aggregates (old - new). */
+  protected HashMap<String,String> m_RenamedAggregates;
 
   /** the group by columns to retrieve. */
   protected List<String> m_GroupByColumns;
@@ -125,24 +128,25 @@ public class ParserHelper
   protected void initialize() {
     super.initialize();
     
-    m_Sheet          = null;
-    m_AllColumns     = false;
-    m_Select         = false;
-    m_Delete         = false;
-    m_Update         = false;
-    m_Aggregate      = false;
-    m_Columns        = new ArrayList<String>();
-    m_RenameColumns  = new HashMap<String,String>();
-    m_UpdateColumns  = new HashMap<String,Object>();
-    m_SortColumns    = new ArrayList<String>();
-    m_SortAsc        = new ArrayList<Boolean>();
-    m_RowFinders     = new ArrayList<RowFinder>();
-    m_Aggregates     = new HashMap<Aggregate,List<String>>();
-    m_GroupByColumns = new ArrayList<String>();
-    m_SubProcess     = null;
-    m_Rows           = null;
-    m_LimitOffset    = 0;
-    m_LimitMax       = -1;
+    m_Sheet             = null;
+    m_AllColumns        = false;
+    m_Select            = false;
+    m_Delete            = false;
+    m_Update            = false;
+    m_Aggregate         = false;
+    m_Columns           = new ArrayList<String>();
+    m_RenameColumns     = new HashMap<String,String>();
+    m_UpdateColumns     = new HashMap<String,Object>();
+    m_SortColumns       = new ArrayList<String>();
+    m_SortAsc           = new ArrayList<Boolean>();
+    m_RowFinders        = new ArrayList<RowFinder>();
+    m_Aggregates        = new HashMap<Aggregate,List<String>>();
+    m_RenamedAggregates = new HashMap<String,String>();
+    m_GroupByColumns    = new ArrayList<String>();
+    m_SubProcess        = null;
+    m_Rows              = null;
+    m_LimitOffset       = 0;
+    m_LimitMax          = -1;
   }
 
   /**
@@ -243,6 +247,22 @@ public class ParserHelper
     }
     if (isLoggingEnabled())
       getLogger().fine("aggregate: " + agg + "/" + col);
+  }
+
+  /**
+   * Sets the new column name for the aggregate generated from a column.
+   *
+   * @param aggregate the aggregate
+   * @param col the column name, null if COUNT
+   * @param newCol the new column name
+   */
+  public void renameAggregate(Aggregate agg, String col, String newCol) {
+    if (agg == Aggregate.COUNT)
+      m_RenamedAggregates.put(agg.toString(), newCol);
+    else
+      m_RenamedAggregates.put(col + "-" + agg, newCol);
+    if (isLoggingEnabled())
+      getLogger().fine("rename aggregate: " + agg + "/" + col + " -> " + newCol);
   }
 
   /**
@@ -568,6 +588,22 @@ public class ParserHelper
 	    sub.add(remCol);
 	  }
 	}
+      }
+      // rename aggregates
+      if (m_RenamedAggregates.size() > 0) {
+	Convert conv = new Convert();
+	MultiConversion multi = new MultiConversion();
+	List<Conversion> list = new ArrayList<Conversion>();
+	for (String col: m_RenamedAggregates.keySet()) {
+	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
+	  ren.setNoCopy(true);
+	  ren.setColumn(new SpreadSheetColumnIndex(col));
+	  ren.setNewName(m_RenamedAggregates.get(col));
+          list.add(ren);
+        }
+        multi.setSubConversions(list.toArray(new Conversion[list.size()]));
+        conv.setConversion(multi);
+        sub.add(conv);
       }
     }
     
