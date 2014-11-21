@@ -575,7 +575,7 @@ public class ParserHelper
     m_SubProcess = (SubProcess) sub.shallowCopy();
     msg = sub.setUp();
     if (msg == null) {
-      sub.input(new Token(getSheet()));
+      sub.input(new Token(getSheet().getClone()));
       msg = sub.execute();
       if ((msg == null) && (sub.hasPendingOutput()))
         result = (SpreadSheet) sub.output().getPayload();

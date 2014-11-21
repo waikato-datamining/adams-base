@@ -106,9 +106,9 @@ public class SpreadSheetQueryTest
 	{
 	  "SELECT duration",					//  1
 	  "SELECT duration as dur",				//  2
-	  "SELECT duration ORDER by class",			//  3
+	  "SELECT duration,class ORDER by class",			//  3
 	  "SELECT duration,wage-increase-first-year,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE (duration >= 2)",			//  4
-	  "SELECT duration as dur,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\") ORDER by class",			//  5
+	  "SELECT duration as dur,working-hours,bereavement-assistance,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\") ORDER by class",			//  5
 	  "UPDATE SET duration = 3.5",				//  6
 	  "UPDATE SET duration = 3.5 WHERE (duration >= 2)",	//  7
 	  "UPDATE SET duration = 3.5 WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\")",			//  8
@@ -116,7 +116,7 @@ public class SpreadSheetQueryTest
 	  "DELETE WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\")",			//  10
 	  "SELECT duration LIMIT 2",					//  11
 	  "SELECT duration LIMIT 10,2",					//  12
-	  "SELECT duration WHERE bereavement-assistance = \"yes\"",	//  13
+	  "SELECT duration,bereavement-assistance WHERE bereavement-assistance = \"yes\"",	//  13
 	  "SELECT * WHERE vacation > \"average\"",	//  14
 	  "SELECT * WHERE vacation >= \"average\"",	//  15
 	  "SELECT * WHERE vacation <> \"below_average\"",	//  16
