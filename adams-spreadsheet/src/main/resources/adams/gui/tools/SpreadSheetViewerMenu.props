@@ -1,0 +1,71 @@
+# Configuration file for the SpreadSheet File Viewer menu.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 5288 $
+
+# Format:
+# <action-classname>-Shortcut=<empty or shortcut definition>
+# <action-classname>-Mnemonic=<empty or image filename without path>
+# <action-classname>-Icon=<empty or image filename without path>
+
+# File
+adams.gui.tools.spreadsheetviewer.menu.FileOpen-Icon=open.gif
+adams.gui.tools.spreadsheetviewer.menu.FileOpen-Mnemonic=O
+adams.gui.tools.spreadsheetviewer.menu.FileOpen-Shortcut=control O
+adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Icon=save.gif
+adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Mnemonic=S
+adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Shortcut=ctrl shift pressed S
+adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Icon=
+adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Mnemonic=t
+adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Shortcut=ctrl pressed W
+adams.gui.tools.spreadsheetviewer.menu.FileClose-Icon=exit.png
+adams.gui.tools.spreadsheetviewer.menu.FileClose-Mnemonic=C
+adams.gui.tools.spreadsheetviewer.menu.FileClose-Shortcut=ctrl pressed Q
+
+# Data
+adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Icon=filter_columns.gif
+adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Mnemonic=C
+adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataFilterRows-Icon=filter_rows.gif
+adams.gui.tools.spreadsheetviewer.menu.DataFilterRows-Mnemonic=R
+adams.gui.tools.spreadsheetviewer.menu.DataFilterRows-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataConvert-Icon=convert_sheet.gif
+adams.gui.tools.spreadsheetviewer.menu.DataConvert-Mnemonic=v
+adams.gui.tools.spreadsheetviewer.menu.DataConvert-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataTransform-Icon=flow.gif
+adams.gui.tools.spreadsheetviewer.menu.DataTransform-Mnemonic=T
+adams.gui.tools.spreadsheetviewer.menu.DataTransform-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataSort-Icon=sort-ascending.png
+adams.gui.tools.spreadsheetviewer.menu.DataSort-Mnemonic=S
+adams.gui.tools.spreadsheetviewer.menu.DataSort-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataChart-Icon=chart.gif
+adams.gui.tools.spreadsheetviewer.menu.DataChart-Mnemonic=C
+adams.gui.tools.spreadsheetviewer.menu.DataChart-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference-Icon=diff.png
+adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference-Mnemonic=D
+adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference-Shortcut=
+
+# View
+adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll-Icon=
+adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll-Mnemonic=a
+adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.ViewDecimals-Icon=decimal-place.png
+adams.gui.tools.spreadsheetviewer.menu.ViewDecimals-Mnemonic=d
+adams.gui.tools.spreadsheetviewer.menu.ViewDecimals-Shortcut=ctrl pressed D
+adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground-Icon=
+adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground-Mnemonic=n
+adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground-Icon=
+adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground-Mnemonic=p
+adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Icon=formula.png
+adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Mnemonic=f
+adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Shortcut=
+
+# Help
+adams.gui.tools.spreadsheetviewer.menu.HelpFormulas-Icon=formula.png
+adams.gui.tools.spreadsheetviewer.menu.HelpFormulas-Mnemonic=F
+adams.gui.tools.spreadsheetviewer.menu.HelpFormulas-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.HelpQuery-Icon=query.gif
+adams.gui.tools.spreadsheetviewer.menu.HelpQuery-Mnemonic=Q
+adams.gui.tools.spreadsheetviewer.menu.HelpQuery-Shortcut=

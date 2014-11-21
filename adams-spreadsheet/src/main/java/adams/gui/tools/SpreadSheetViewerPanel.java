@@ -30,7 +30,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -61,8 +60,6 @@ import adams.data.spreadsheet.columnfinder.ByName;
 import adams.data.spreadsheet.columnfinder.ColumnFinder;
 import adams.data.spreadsheet.rowfinder.ByValue;
 import adams.data.spreadsheet.rowfinder.RowFinder;
-import adams.env.Environment;
-import adams.env.SpreadSheetViewerPanelDefinition;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.transformer.AbstractSpreadSheetTransformer;
@@ -100,9 +97,26 @@ import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 import adams.gui.tools.spreadsheetviewer.TabbedPane;
 import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
 import adams.gui.tools.spreadsheetviewer.chart.ScatterPlot;
+import adams.gui.tools.spreadsheetviewer.menu.DataChart;
+import adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference;
+import adams.gui.tools.spreadsheetviewer.menu.DataConvert;
+import adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns;
+import adams.gui.tools.spreadsheetviewer.menu.DataFilterRows;
+import adams.gui.tools.spreadsheetviewer.menu.DataSort;
+import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
+import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
+import adams.gui.tools.spreadsheetviewer.menu.FileExit;
+import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
+import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
+import adams.gui.tools.spreadsheetviewer.menu.HelpFormulas;
+import adams.gui.tools.spreadsheetviewer.menu.HelpQuery;
+import adams.gui.tools.spreadsheetviewer.menu.SpreadSheetViewerAction;
+import adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll;
+import adams.gui.tools.spreadsheetviewer.menu.ViewDecimals;
+import adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground;
+import adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground;
+import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
-import adams.parser.SpreadSheetFormula;
-import adams.parser.SpreadSheetQuery;
 
 /**
  * A panel for viewing SpreadSheet files.
@@ -120,11 +134,17 @@ public class SpreadSheetViewerPanel
   /** the name of the props file. */
   public final static String FILENAME = "SpreadSheetViewer.props";
 
+  /** the name of the menu props file. */
+  public final static String FILENAME_MENU = "SpreadSheetViewerMenu.props";
+
   /** the file to store the recent files in. */
   public final static String SESSION_FILE = "SpreadSheetViewerSession.props";
 
   /** the properties. */
   protected static Properties m_Properties;
+
+  /** the menu properties. */
+  protected static Properties m_PropertiesMenu;
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -139,55 +159,61 @@ public class SpreadSheetViewerPanel
   protected JMenuBar m_MenuBar;
 
   /** the "open" menu item. */
-  protected JMenuItem m_MenuItemFileOpen;
+  protected SpreadSheetViewerAction m_MenuItemFileOpen;
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuItemFileOpenRecent;
 
   /** the "save as" menu item. */
-  protected JMenuItem m_MenuItemFileSaveAs;
+  protected SpreadSheetViewerAction m_MenuItemFileSaveAs;
 
   /** the "close" menu item. */
-  protected JMenuItem m_MenuItemFileClose;
+  protected SpreadSheetViewerAction m_MenuItemFileClose;
 
   /** the "exit" menu item. */
-  protected JMenuItem m_MenuItemFileExit;
+  protected SpreadSheetViewerAction m_MenuItemFileExit;
 
   /** the "filter columns" menu item. */
-  protected JMenuItem m_MenuItemDataFilterColumns;
+  protected SpreadSheetViewerAction m_MenuItemDataFilterColumns;
 
   /** the "filter rows" menu item. */
-  protected JMenuItem m_MenuItemDataFilterRows;
+  protected SpreadSheetViewerAction m_MenuItemDataFilterRows;
 
   /** the "compute difference" menu item. */
-  protected JMenuItem m_MenuItemDataComputeDifference;
+  protected SpreadSheetViewerAction m_MenuItemDataComputeDifference;
 
   /** the "Convert" menu item. */
-  protected JMenuItem m_MenuItemDataConvert;
+  protected SpreadSheetViewerAction m_MenuItemDataConvert;
 
   /** the "Transform" menu item. */
-  protected JMenuItem m_MenuItemDataTransform;
+  protected SpreadSheetViewerAction m_MenuItemDataTransform;
 
   /** the "Sort" menu item. */
-  protected JMenuItem m_MenuItemDataSort;
+  protected SpreadSheetViewerAction m_MenuItemDataSort;
 
   /** the "Chart" menu item. */
-  protected JMenuItem m_MenuItemDataChart;
+  protected SpreadSheetViewerAction m_MenuItemDataChart;
 
   /** the "apply to all" menu item. */
-  protected JCheckBoxMenuItem m_MenuItemViewApplyToAll;
+  protected SpreadSheetViewerAction m_MenuItemViewApplyToAll;
 
   /** the "displayed decimals" menu item. */
-  protected JMenuItem m_MenuItemViewDisplayedDecimals;
+  protected SpreadSheetViewerAction m_MenuItemViewDisplayedDecimals;
 
   /** the "negative background" menu item. */
-  protected JMenuItem m_MenuItemViewNegativeBackground;
+  protected SpreadSheetViewerAction m_MenuItemViewNegativeBackground;
 
   /** the "positive background" menu item. */
-  protected JMenuItem m_MenuItemViewPositiveBackground;
+  protected SpreadSheetViewerAction m_MenuItemViewPositiveBackground;
 
   /** the "show formulas" menu item. */
-  protected JMenuItem m_MenuItemViewShowFormulas;
+  protected SpreadSheetViewerAction m_MenuItemViewShowFormulas;
+
+  /** the "formulas" help menu item. */
+  protected SpreadSheetViewerAction m_MenuItemHelpFormulas;
+
+  /** the "query" help menu item. */
+  protected SpreadSheetViewerAction m_MenuItemHelpQuery;
 
   /** the data plugin menu items. */
   protected List<JMenuItem> m_MenuItemDataPlugins;
@@ -225,6 +251,12 @@ public class SpreadSheetViewerPanel
   /** the sort panel. */
   protected SortPanel m_SortPanel;
 
+  /** whether to apply settings to all tabs or just current one. */
+  protected boolean m_ApplyToAll;
+
+  /** menu items. */
+  protected List<SpreadSheetViewerAction> m_MenuItems;
+
   /**
    * Initializes the members.
    */
@@ -236,6 +268,11 @@ public class SpreadSheetViewerPanel
     m_FileChooser.setMultiSelectionEnabled(true);
 
     m_RecentFilesHandler = null;
+    m_ApplyToAll         = false;
+    m_MenuItems          = new ArrayList<SpreadSheetViewerAction>();
+    
+    // TODO make it derived from ToolBarPane
+    initActions();
   }
 
   /**
@@ -269,6 +306,103 @@ public class SpreadSheetViewerPanel
   }
 
   /**
+   * Initializes the actions.
+   */
+  protected void initActions() {
+    SpreadSheetViewerAction	action;
+
+    // File/Open
+    action = new FileOpen();
+    m_MenuItemFileOpen = action;
+    m_MenuItems.add(action);
+
+    // File/Save as
+    action = new FileSaveAs();
+    m_MenuItemFileSaveAs = action;
+    m_MenuItems.add(action);
+
+    // File/Close tab
+    action = new FileCloseTab();
+    m_MenuItemFileClose = action;
+    m_MenuItems.add(action);
+
+    // File/Exit
+    action = new FileExit();
+    m_MenuItemFileExit = action;
+    m_MenuItems.add(action);
+
+    // Data/Filter columns
+    action = new DataFilterColumns();
+    m_MenuItemDataFilterColumns = action;
+    m_MenuItems.add(action);
+
+    // Data/Filter rows
+    action = new DataFilterRows();
+    m_MenuItemDataFilterRows = action;
+    m_MenuItems.add(action);
+
+    // Data/Convert
+    action = new DataConvert();
+    m_MenuItemDataConvert = action;
+    m_MenuItems.add(action);
+
+    // Data/Transform
+    action = new DataTransform();
+    m_MenuItemDataTransform = action;
+    m_MenuItems.add(action);
+
+    // Data/Sort
+    action = new DataSort();
+    m_MenuItemDataSort = action;
+    m_MenuItems.add(action);
+
+    // Data/Chart
+    action = new DataChart();
+    m_MenuItemDataChart = action;
+    m_MenuItems.add(action);
+
+    // Data/Compute difference
+    action = new DataComputeDifference();
+    m_MenuItemDataComputeDifference = action;
+    m_MenuItems.add(action);
+
+    // View/Apply to all
+    action = new ViewApplyToAll();
+    m_MenuItemViewApplyToAll = action;
+    m_MenuItems.add(action);
+
+    // View/Decimals
+    action = new ViewDecimals();
+    m_MenuItemViewDisplayedDecimals = action;
+    m_MenuItems.add(action);
+
+    // View/Negative background
+    action = new ViewNegativeBackground();
+    m_MenuItemViewNegativeBackground = action;
+    m_MenuItems.add(action);
+
+    // View/Positive background
+    action = new ViewPositiveBackground();
+    m_MenuItemViewPositiveBackground = action;
+    m_MenuItems.add(action);
+
+    // View/Show formulas
+    action = new ViewShowFormulas();
+    m_MenuItemViewShowFormulas = action;
+    m_MenuItems.add(action);
+
+    // Help/Formulas
+    action = new HelpFormulas();
+    m_MenuItemHelpFormulas = action;
+    m_MenuItems.add(action);
+
+    // Help/Query
+    action = new HelpQuery();
+    m_MenuItemHelpQuery = action;
+    m_MenuItems.add(action);
+  }
+
+  /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
    *
    * @return		the menu bar
@@ -295,20 +429,8 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      // File/Open
-      menuitem = new JMenuItem("Open...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('O');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  open();
-	}
-      });
-      m_MenuItemFileOpen = menuitem;
-
+      menu.add(m_MenuItemFileOpen);
+      
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
@@ -326,52 +448,15 @@ public class SpreadSheetViewerPanel
       });
       m_MenuItemFileOpenRecent = submenu;
 
-      // File/Save as
-      menuitem = new JMenuItem("Save as...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('S');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  saveAs();
-	}
-      });
-      m_MenuItemFileSaveAs = menuitem;
-
-      // File/Close tab
-      menuitem = new JMenuItem("Close tab");
-      menu.add(menuitem);
-      menuitem.setMnemonic('t');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  closeFile();
-	}
-      });
-      m_MenuItemFileClose = menuitem;
+      menu.add(m_MenuItemFileSaveAs);
+      menu.add(m_MenuItemFileClose);
 
       // File/Send to
       menu.addSeparator();
       if (SendToActionUtils.addSendToSubmenu(this, menu))
 	menu.addSeparator();
 
-      // File/Close
-      menuitem = new JMenuItem("Close");
-      menu.add(menuitem);
-      menuitem.setMnemonic('C');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
-      m_MenuItemFileExit = menuitem;
+      menu.add(m_MenuItemFileExit);
 
       // Data
       menu = new JMenu("Data");
@@ -384,96 +469,13 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      // Data/Columns
-      menuitem = new JMenuItem("Filter columns...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('C');
-      menuitem.setIcon(GUIHelper.getIcon("filter_columns.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  findColumns();
-	}
-      });
-      m_MenuItemDataFilterColumns = menuitem;
-
-      // Data/Rows
-      menuitem = new JMenuItem("Filter rows...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("filter_rows.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  findRows();
-	}
-      });
-      m_MenuItemDataFilterRows = menuitem;
-
-      // Data/Convert
-      menuitem = new JMenuItem("Convert...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('v');
-      menuitem.setIcon(GUIHelper.getIcon("convert_sheet.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  convert();
-	}
-      });
-      m_MenuItemDataConvert = menuitem;
-
-      // Data/Transform
-      menuitem = new JMenuItem("Transform...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('T');
-      menuitem.setIcon(GUIHelper.getIcon("flow.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  transform();
-	}
-      });
-      m_MenuItemDataTransform = menuitem;
-
-      // Data/Sort
-      menuitem = new JMenuItem("Sort...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('S');
-      menuitem.setIcon(GUIHelper.getIcon("sort-ascending.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  sort();
-	}
-      });
-      m_MenuItemDataSort = menuitem;
-
-      // Data/Chart
-      menuitem = new JMenuItem("Chart...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('C');
-      menuitem.setIcon(GUIHelper.getIcon("chart.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  generateChart();
-	}
-      });
-      m_MenuItemDataChart = menuitem;
-
-      // Data/Compute difference
-      menuitem = new JMenuItem("Compute difference...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('C');
-      menuitem.setIcon(GUIHelper.getIcon("diff.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  computeDifference();
-	}
-      });
-      m_MenuItemDataComputeDifference = menuitem;
+      menu.add(m_MenuItemDataFilterColumns);
+      menu.add(m_MenuItemDataFilterRows);
+      menu.add(m_MenuItemDataConvert);
+      menu.add(m_MenuItemDataTransform);
+      menu.add(m_MenuItemDataSort);
+      menu.add(m_MenuItemDataChart);
+      menu.add(m_MenuItemDataComputeDifference);
 
       // Data/Plugin
       classes = AbstractDataPlugin.getPlugins();
@@ -516,68 +518,11 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      // View/Displayed decimals
-      menuitem = new JCheckBoxMenuItem("Apply to all");
-      menu.add(menuitem);
-      menuitem.setMnemonic('a');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      m_MenuItemViewApplyToAll = (JCheckBoxMenuItem) menuitem;
-
-      // View/Displayed decimals
-      menuitem = new JMenuItem("Decimals...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('d');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed D"));
-      menuitem.setIcon(GUIHelper.getIcon("decimal-place.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  enterNumDecimals(m_MenuItemViewApplyToAll.isSelected());
-	}
-      });
-      m_MenuItemViewDisplayedDecimals = menuitem;
-
-      // View/Negative background
-      menuitem = new JMenuItem("Negative background...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('n');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  selectBackground(true, m_MenuItemViewApplyToAll.isSelected());
-	}
-      });
-      m_MenuItemViewNegativeBackground = menuitem;
-
-      // View/Positive background
-      menuitem = new JMenuItem("Positive background...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('p');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  selectBackground(false, m_MenuItemViewApplyToAll.isSelected());
-	}
-      });
-      m_MenuItemViewPositiveBackground = menuitem;
-
-      // View/Show formulas
-      menuitem = new JCheckBoxMenuItem("Show formulas");
-      menu.add(menuitem);
-      menuitem.setMnemonic('f');
-      menuitem.setIcon(GUIHelper.getIcon("formula.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  if (m_MenuItemViewApplyToAll.isSelected())
-	    m_TabbedPane.setShowFormulas(m_MenuItemViewShowFormulas.isSelected());
-	  else
-	    m_TabbedPane.setShowFormulasAt(m_TabbedPane.getSelectedIndex(), m_MenuItemViewShowFormulas.isSelected());
-	}
-      });
-      m_MenuItemViewShowFormulas = menuitem;
+      menu.add(m_MenuItemViewApplyToAll.getMenuItem());
+      menu.add(m_MenuItemViewDisplayedDecimals);
+      menu.add(m_MenuItemViewNegativeBackground);
+      menu.add(m_MenuItemViewPositiveBackground);
+      menu.add(m_MenuItemViewShowFormulas.getMenuItem());
 
       // View/Tabs
       m_ViewerTabs.addTabsSubmenu(menu);
@@ -623,29 +568,8 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      // Help/Formulas
-      menuitem = new JMenuItem("Formulas");
-      menu.add(menuitem);
-      menuitem.setMnemonic('F');
-      menuitem.setIcon(GUIHelper.getIcon("formula.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  showHelpText("Formulas", new SpreadSheetFormula().getGrammar());
-	}
-      });
-
-      // Help/Query
-      menuitem = new JMenuItem("Query");
-      menu.add(menuitem);
-      menuitem.setMnemonic('Q');
-      menuitem.setIcon(GUIHelper.getIcon("query.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  showHelpText("Query", new SpreadSheetQuery().getGrammar());
-	}
-      });
+      menu.add(m_MenuItemHelpFormulas);
+      menu.add(m_MenuItemHelpQuery);
 
       // update menu
       m_MenuBar = result;
@@ -682,7 +606,7 @@ public class SpreadSheetViewerPanel
    * @param title	the title for the help
    * @param content	the text to display
    */
-  protected void showHelpText(String title, String content) {
+  public void showHelpText(String title, String content) {
     TextDialog 	dialog;
     
     if (getParentDialog() != null)
@@ -703,7 +627,7 @@ public class SpreadSheetViewerPanel
    *
    * @param applyAll	whether to apply the setting to all open tabs
    */
-  protected void enterNumDecimals(boolean applyAll) {
+  public void enterNumDecimals(boolean applyAll) {
     String 	valueStr;
     int 	decimals;
 
@@ -729,7 +653,7 @@ public class SpreadSheetViewerPanel
    * @param negative	whether to select negative or positive background
    * @param applyAll	whether to apply background to all open tabs
    */
-  protected void selectBackground(boolean negative, boolean applyAll) {
+  public void selectBackground(boolean negative, boolean applyAll) {
     Color	color;
 
     if (applyAll)
@@ -765,7 +689,7 @@ public class SpreadSheetViewerPanel
   /**
    * updates the enabled state of the menu items.
    */
-  protected void updateMenu() {
+  public void updateMenu() {
     boolean		sheetSelected;
     SpreadSheetPanel	panel;
     int			i;
@@ -776,30 +700,18 @@ public class SpreadSheetViewerPanel
     sheetSelected = (m_TabbedPane.getTabCount() > 0) && (m_TabbedPane.getSelectedIndex() != -1);
     panel         = m_TabbedPane.getCurrentPanel();
 
-    // File
-    m_MenuItemFileSaveAs.setEnabled(sheetSelected);
-    m_MenuItemFileClose.setEnabled(sheetSelected);
+    for (SpreadSheetViewerAction action: m_MenuItems)
+      action.update(this);
 
     // Data
-    m_MenuItemDataFilterColumns.setEnabled(sheetSelected);
-    m_MenuItemDataFilterRows.setEnabled(sheetSelected);
-    m_MenuItemDataConvert.setEnabled(sheetSelected);
-    m_MenuItemDataTransform.setEnabled(sheetSelected);
-    m_MenuItemDataSort.setEnabled(sheetSelected);
-    m_MenuItemDataChart.setEnabled(sheetSelected);
-    m_MenuItemDataComputeDifference.setEnabled(m_TabbedPane.getTabCount() >= 2);
     if (m_MenuItemDataPlugins != null) {
       for (i = 0; i < m_DataPlugins.size(); i++) {
 	m_MenuItemDataPlugins.get(i).setEnabled(
 	    sheetSelected && m_DataPlugins.get(i).canProcess(panel));
       }
     }
-
+    
     // View
-    m_MenuItemViewDisplayedDecimals.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_MenuItemViewNegativeBackground.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_MenuItemViewPositiveBackground.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_MenuItemViewShowFormulas.setEnabled(m_TabbedPane.getTabCount() > 0);
     if (m_MenuItemViewPlugins != null) {
       for (i = 0; i < m_ViewPlugins.size(); i++) {
 	m_MenuItemViewPlugins.get(i).setEnabled(
@@ -811,7 +723,7 @@ public class SpreadSheetViewerPanel
   /**
    * Opens one or more CSV files.
    */
-  protected void open() {
+  public void open() {
     int			retVal;
     PlaceholderFile[]	files;
 
@@ -908,7 +820,7 @@ public class SpreadSheetViewerPanel
   /**
    * Saves the current sheet.
    */
-  protected void saveAs() {
+  public void saveAs() {
     int			retVal;
     PlaceholderFile	file;
 
@@ -925,7 +837,7 @@ public class SpreadSheetViewerPanel
   /**
    * Closes the current active tab.
    */
-  protected void closeFile() {
+  public void closeFile() {
     int		index;
 
     index = m_TabbedPane.getSelectedIndex();
@@ -938,7 +850,7 @@ public class SpreadSheetViewerPanel
   /**
    * Closes the dialog or frame.
    */
-  protected void close() {
+  public void close() {
     closeParent();
   }
 
@@ -1149,7 +1061,7 @@ public class SpreadSheetViewerPanel
   /**
    * Filters the spreadsheet using a column finder.
    */
-  protected void findColumns() {
+  public void findColumns() {
     SpreadSheet			sheet;
     ColumnFinder		finder;
     SpreadSheetColumnFilter	filter;
@@ -1172,7 +1084,7 @@ public class SpreadSheetViewerPanel
   /**
    * Filters the spreadsheet using a row finder.
    */
-  protected void findRows() {
+  public void findRows() {
     SpreadSheet			sheet;
     RowFinder			finder;
     SpreadSheetRowFilter	filter;
@@ -1195,7 +1107,7 @@ public class SpreadSheetViewerPanel
   /**
    * Filters the spreadsheet using a conversion.
    */
-  protected void convert() {
+  public void convert() {
     SpreadSheet		sheet;
     Conversion		conversion;
     Convert		filter;
@@ -1218,7 +1130,7 @@ public class SpreadSheetViewerPanel
   /**
    * Filters the spreadsheet using the selected transformer.
    */
-  protected void transform() {
+  public void transform() {
     SpreadSheet		sheet;
     AbstractTransformer	transformer;
 
@@ -1252,7 +1164,7 @@ public class SpreadSheetViewerPanel
   /**
    * Shows a short dialog.
    */
-  protected void sort() {
+  public void sort() {
     final ApprovalDialog	dialog;
 
     if (getParentDialog() != null)
@@ -1287,7 +1199,7 @@ public class SpreadSheetViewerPanel
    * Pops up a dialog allowing the user to generate a chart from the current
    * spreadsheet.
    */
-  protected void generateChart() {
+  public void generateChart() {
     SpreadSheetPanel		panel;
     AbstractChartGenerator	generator;
 
@@ -1307,7 +1219,7 @@ public class SpreadSheetViewerPanel
    * Computes the difference between two sheets that the user selects and
    * inserts it as new tab.
    */
-  protected void computeDifference() {
+  public void computeDifference() {
     ApprovalDialog	dialog;
     ParameterPanel	params;
     final JComboBox	sheet1;
@@ -1456,14 +1368,60 @@ public class SpreadSheetViewerPanel
   }
 
   /**
+   * Sets whether to apply settings to all tabs or just current one.
+   * 
+   * @param value	true if to apply to all
+   */
+  public void setApplyToAll(boolean value) {
+    m_ApplyToAll = value;
+  }
+  
+  /**
+   * Returns whether to apply settings to all tabs or just current one.
+   * 
+   * @return		true if to apply to all
+   */
+  public boolean getApplyToAll() {
+    return m_ApplyToAll;
+  }
+  
+  /**
    * Returns the properties that define the editor.
    *
    * @return		the properties
    */
   public static synchronized Properties getProperties() {
-    if (m_Properties == null)
-      m_Properties = Environment.getInstance().read(SpreadSheetViewerPanelDefinition.KEY);
+    if (m_Properties == null) {
+      try {
+	m_Properties = Properties.read("adams/gui/tools/" + FILENAME);
+      }
+      catch (Exception e) {
+	m_Properties = new Properties();
+	System.err.println("Failed to load properties: " + FILENAME);
+	e.printStackTrace();
+      }
+    }
 
     return m_Properties;
+  }
+
+  /**
+   * Returns the properties that define the menu.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getPropertiesMenu() {
+    if (m_PropertiesMenu == null) {
+      try {
+	m_PropertiesMenu = Properties.read("adams/gui/tools/" + FILENAME_MENU);
+      }
+      catch (Exception e) {
+	m_PropertiesMenu = new Properties();
+	System.err.println("Failed to load properties: " + FILENAME_MENU);
+	e.printStackTrace();
+      }
+    }
+
+    return m_PropertiesMenu;
   }
 }
