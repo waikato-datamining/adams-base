@@ -15,7 +15,7 @@
 
 /*
  * PaintablePanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -209,5 +209,21 @@ public abstract class PaintablePanel
 
     // execute paintlets
     paint(g, e.getPaintMoment());
+  }
+  
+  /**
+   * Invoke this method to print the component. This method invokes
+   * <code>print</code> on the component.
+   *
+   * @param g the <code>Graphics</code> context in which to paint
+   */
+  @Override
+  public void printAll(Graphics g) {
+    check();
+    prepareUpdate();
+    validate();
+    repaint();
+    postUpdate();
+    super.printAll(g);
   }
 }
