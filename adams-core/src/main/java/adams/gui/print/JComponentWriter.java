@@ -313,10 +313,6 @@ public abstract class JComponentWriter
     if (getComponent() == null)
       throw new Exception("The component is not set!");
 
-    // ignore call if pointing to a directory
-    if (getFile().isDirectory())
-      return;
-
     // backup original dimensions and set custom ones if necessary
     oldWidth  = getComponent().getWidth();
     oldHeight = getComponent().getHeight();
