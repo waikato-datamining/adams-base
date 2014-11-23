@@ -22,6 +22,7 @@ package adams.gui.flow.menu;
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesCheckBoxMenuItemAction;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Ancestor for checkbox menu item actions in the flow editor.
@@ -30,7 +31,7 @@ import adams.gui.flow.FlowEditorPanel;
  * @version $Revision$
  */
 public abstract class AbstractFlowEditorCheckBoxMenuItemAction
-  extends AbstractPropertiesCheckBoxMenuItemAction<FlowEditorPanel>
+  extends AbstractPropertiesCheckBoxMenuItemAction<FlowEditorPanel, GenericObjectEditorDialog>
   implements FlowEditorAction {
   
   /** for serialization. */

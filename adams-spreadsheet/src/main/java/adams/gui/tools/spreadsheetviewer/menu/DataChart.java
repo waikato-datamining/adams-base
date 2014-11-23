@@ -19,7 +19,13 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
+import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
+import adams.gui.tools.spreadsheetviewer.chart.ScatterPlot;
 
 /**
  * Generates a chart from the spreadsheet.
@@ -44,11 +50,45 @@ public class DataChart
   }
 
   /**
+   * Creates a new dialog.
+   * 
+   * @return		the dialog
+   */
+  @Override
+  protected GenericObjectEditorDialog createDialog() {
+    GenericObjectEditorDialog	result;
+    
+    if (getParentDialog() != null)
+      result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      result = new GenericObjectEditorDialog(getParentFrame(), true);
+    result.setTitle("Chart");
+    result.getGOEEditor().setClassType(AbstractChartGenerator.class);
+    result.getGOEEditor().setCanChangeClassInDialog(true);
+    result.getGOEEditor().setValue(new ScatterPlot());
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
+  
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.generateChart();
+    SpreadSheetPanel		panel;
+    AbstractChartGenerator	generator;
+
+    panel = getTabbedPane().getCurrentPanel();
+    if (panel == null)
+      return;
+
+    getDialog().setVisible(true);
+    if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    generator = (AbstractChartGenerator) getDialog().getGOEEditor().getValue();
+    panel.generateChart(generator);
   }
 
   /**

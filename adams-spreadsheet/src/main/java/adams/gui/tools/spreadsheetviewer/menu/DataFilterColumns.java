@@ -19,7 +19,14 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.columnfinder.ByName;
+import adams.data.spreadsheet.columnfinder.ColumnFinder;
+import adams.flow.transformer.SpreadSheetColumnFilter;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Filters the columns.
@@ -44,11 +51,49 @@ public class DataFilterColumns
   }
 
   /**
+   * Creates a new dialog.
+   * 
+   * @return		the dialog
+   */
+  @Override
+  protected GenericObjectEditorDialog createDialog() {
+    GenericObjectEditorDialog result;
+    
+    if (getParentDialog() != null)
+      result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      result = new GenericObjectEditorDialog(getParentFrame(), true);
+    result.setTitle("Column finder");
+    result.getGOEEditor().setClassType(ColumnFinder.class);
+    result.getGOEEditor().setCanChangeClassInDialog(true);
+    result.getGOEEditor().setValue(new ByName());
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
+  
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.findColumns();
+    SpreadSheet			sheet;
+    ColumnFinder		finder;
+    SpreadSheetColumnFilter	filter;
+
+    sheet = getTabbedPane().getCurrentSheet();
+    if (sheet == null)
+      return;
+
+    getDialog().setVisible(true);
+    if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    finder = (ColumnFinder) getDialog().getGOEEditor().getValue();
+    filter = new SpreadSheetColumnFilter();
+    filter.setFinder(finder);
+
+    m_State.filterData(getTabbedPane().getTitleAt(getTabbedPane().getSelectedIndex()), sheet, filter);
   }
 
   /**

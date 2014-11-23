@@ -19,7 +19,15 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.data.conversion.AbstractSpreadSheetConversion;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.TransposeSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.flow.transformer.Convert;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Converts the spreadsheet.
@@ -42,13 +50,51 @@ public class DataConvert
   protected String getTitle() {
     return "Convert...";
   }
+  
+  /**
+   * Creates a new dialog.
+   * 
+   * @return		the dialog
+   */
+  @Override
+  protected GenericObjectEditorDialog createDialog() {
+    GenericObjectEditorDialog	result;
+    
+    if (getParentDialog() != null)
+      result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      result = new GenericObjectEditorDialog(getParentFrame(), true);
+    result.setTitle("Conversion");
+    result.getGOEEditor().setClassType(AbstractSpreadSheetConversion.class);
+    result.getGOEEditor().setCanChangeClassInDialog(true);
+    result.getGOEEditor().setValue(new TransposeSpreadSheet());
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
 
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.convert();
+    SpreadSheet		sheet;
+    Conversion		conversion;
+    Convert		filter;
+
+    sheet = getTabbedPane().getCurrentSheet();
+    if (sheet == null)
+      return;
+
+    getDialog().setVisible(true);
+    if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    conversion = (Conversion) getDialog().getGOEEditor().getValue();
+    filter = new Convert();
+    filter.setConversion(conversion);
+
+    m_State.filterData(getTabbedPane().getTitleAt(getTabbedPane().getSelectedIndex()), sheet, filter);
   }
 
   /**

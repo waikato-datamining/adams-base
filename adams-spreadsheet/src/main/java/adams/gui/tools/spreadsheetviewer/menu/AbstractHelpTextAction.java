@@ -14,35 +14,35 @@
  */
 
 /**
- * AbstractSpreadSheetViewerSubMenuAction.java
+ * AbstractHelpTextAction.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 import adams.core.Properties;
-import adams.gui.action.AbstractPropertiesSubMenuAction;
+import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.TextDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
-import adams.gui.tools.spreadsheetviewer.TabbedPane;
 
 /**
- * Ancestor for actions in the spreadsheet viewer that generate a submenu.
+ * Ancestor for help dialogs that display simple text content.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractSpreadSheetViewerSubMenuAction
-  extends AbstractPropertiesSubMenuAction<SpreadSheetViewerPanel, GenericObjectEditorDialog>
+public abstract class AbstractHelpTextAction
+  extends AbstractPropertiesMenuItemAction<SpreadSheetViewerPanel, TextDialog>
   implements SpreadSheetViewerAction {
-
-  /** for serialization. */
-  private static final long serialVersionUID = 1168747259624542350L;
   
+  /** for serialization. */
+  private static final long serialVersionUID = -4567753721410600783L;
+
   /**
    * Returns the underlying properties.
    * 
@@ -81,20 +81,43 @@ public abstract class AbstractSpreadSheetViewerSubMenuAction
   }
 
   /**
-   * Returns the tabbed pane of the viewer.
+   * Returns the help text to display.
    * 
-   * @return		the tabbed pane
+   * @return		the help content
    */
-  protected TabbedPane getTabbedPane() {
-    return m_State.getTabbedPane();
-  }
-
+  protected abstract String getHelpContent();
+  
   /**
-   * Returns whether a sheet is selected.
+   * Creates a new dialog.
    * 
-   * @return		true if selected
+   * @return		the dialog
    */
-  protected boolean isSheetSelected() {
-    return (getTabbedPane().getTabCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
+  @Override
+  protected TextDialog createDialog() {
+    TextDialog 	result;
+    
+    if (getParentDialog() != null)
+      result = new TextDialog(getParentDialog());
+    else
+      result = new TextDialog(getParentFrame());
+    result.setDialogTitle(getTitle().replaceAll("\\.$", ""));
+    result.setContent(getHelpContent());
+    result.setEditable(false);
+    result.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
+    result.setSize(800, 600);
+    GUIHelper.setSizeAndLocation(result);
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
+  
+  /**
+   * Invoked when an action occurs.
+   * 
+   * @param e		the event
+   */
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
+    getDialog().setVisible(true);
   }
 }

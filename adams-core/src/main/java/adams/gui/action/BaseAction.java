@@ -25,6 +25,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
+import adams.core.CleanUpHandler;
+
 /**
  * Extended interface for actions.
  * 
@@ -32,7 +34,7 @@ import javax.swing.KeyStroke;
  * @version $Revision$
  */
 public interface BaseAction
-  extends Action {
+  extends Action, CleanUpHandler {
 
   /**
    * Sets the name of the action, i.e., the menuitem/button caption.
@@ -144,4 +146,9 @@ public interface BaseAction
    * @see		#hasToolTipText()
    */
   public String getToolTipText();
+  
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp();
 }

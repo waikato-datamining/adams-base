@@ -19,7 +19,14 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.rowfinder.ByValue;
+import adams.data.spreadsheet.rowfinder.RowFinder;
+import adams.flow.transformer.SpreadSheetRowFilter;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Filters the rows.
@@ -44,11 +51,49 @@ public class DataFilterRows
   }
 
   /**
+   * Creates a new dialog.
+   * 
+   * @return		the dialog
+   */
+  @Override
+  protected GenericObjectEditorDialog createDialog() {
+    GenericObjectEditorDialog	result;
+
+    if (getParentDialog() != null)
+      result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      result = new GenericObjectEditorDialog(getParentFrame(), true);
+    result.setTitle("Row finder");
+    result.getGOEEditor().setClassType(RowFinder.class);
+    result.getGOEEditor().setCanChangeClassInDialog(true);
+    result.getGOEEditor().setValue(new ByValue());
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
+  
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.findRows();
+    SpreadSheet			sheet;
+    RowFinder			finder;
+    SpreadSheetRowFilter	filter;
+
+    sheet = getTabbedPane().getCurrentSheet();
+    if (sheet == null)
+      return;
+
+    getDialog().setVisible(true);
+    if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    finder = (RowFinder) getDialog().getGOEEditor().getValue();
+    filter = new SpreadSheetRowFilter();
+    filter.setFinder(finder);
+
+    m_State.filterData(getTabbedPane().getTitleAt(getTabbedPane().getSelectedIndex()), sheet, filter);
   }
 
   /**

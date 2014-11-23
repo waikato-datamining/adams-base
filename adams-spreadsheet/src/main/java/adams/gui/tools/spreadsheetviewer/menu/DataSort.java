@@ -19,7 +19,14 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.event.SortSetupEvent;
+import adams.gui.event.SortSetupListener;
+import adams.gui.tools.spreadsheetviewer.SortPanel;
 
 /**
  * Sorts the spreadsheet.
@@ -32,6 +39,9 @@ public class DataSort
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+  
+  /** the sort panel. */
+  protected SortPanel m_SortPanel;
 
   /**
    * Returns the caption of this action.
@@ -48,7 +58,34 @@ public class DataSort
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.sort();
+    final ApprovalDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Sort");
+    dialog.getApproveButton().setEnabled(false);
+    if (m_SortPanel == null) {
+      m_SortPanel = new SortPanel();
+      m_SortPanel.addSortSetupListener(new SortSetupListener() {
+	@Override
+	public void sortSetupChanged(SortSetupEvent e) {
+	  dialog.getApproveButton().setEnabled(e.getSortPanel().isValidSetup());
+	}
+      });
+    }
+    if (m_SortPanel.setSpreadSheet(getTabbedPane().getCurrentSheet()))
+      m_SortPanel.addDefinition();
+    dialog.getApproveButton().setEnabled(m_SortPanel.isValidSetup());
+    dialog.getContentPane().add(m_SortPanel, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+    getTabbedPane().getCurrentTable().sort(m_SortPanel.getComparator());
   }
 
   /**

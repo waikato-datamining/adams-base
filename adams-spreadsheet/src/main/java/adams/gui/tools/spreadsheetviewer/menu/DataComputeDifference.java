@@ -19,7 +19,21 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.flow.transformer.SpreadSheetDifference;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
 
 /**
  * Computes the difference between two spreadsheets.
@@ -44,11 +58,65 @@ public class DataComputeDifference
   }
 
   /**
+   * Computes the difference between the two sheets and inserts it as new tab.
+   */
+  protected void computeDifference(SpreadSheet sheet1, SpreadSheet sheet2, SpreadSheetColumnRange keyCols) {
+    SpreadSheetDifference	filter;
+
+    if ((sheet1 == null) || (sheet2 == null))
+      return;
+
+    filter = new SpreadSheetDifference();
+    filter.setKeyColumns(keyCols);
+    m_State.filterData(getTabbedPane().newTitle(), new SpreadSheet[]{sheet1, sheet2}, filter);
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.computeDifference();
+    ApprovalDialog	dialog;
+    ParameterPanel	params;
+    final JComboBox	sheet1;
+    final JComboBox	sheet2;
+    List<String>	titles;
+    final JTextField	range;
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setTitle("Compute difference");
+    params = new ParameterPanel();
+    dialog.getContentPane().add(params, BorderLayout.CENTER);
+    titles = getTabbedPane().getTabTitles();
+    sheet1 = new JComboBox(titles.toArray(new String[titles.size()]));
+    params.addParameter("First sheet", sheet1);
+    params.addParameter("", new JLabel("minus"));
+    sheet2 = new JComboBox(titles.toArray(new String[titles.size()]));
+    params.addParameter("Second sheet", sheet2);
+    params.addParameter("", new JLabel("using"));
+    range = new JTextField(10);
+    range.setText("");
+    range.setToolTipText(new SpreadSheetColumnRange().getExample());
+    params.addParameter("Key columns", range);
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
+
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    if (sheet1.getSelectedIndex() == sheet2.getSelectedIndex()) {
+      GUIHelper.showErrorMessage(m_State, "You must select two different spreadsheets!");
+      return;
+    }
+
+    computeDifference(
+	getTabbedPane().getSheetAt(sheet1.getSelectedIndex()),
+	getTabbedPane().getSheetAt(sheet2.getSelectedIndex()),
+	new SpreadSheetColumnRange(range.getText()));
   }
 
   /**

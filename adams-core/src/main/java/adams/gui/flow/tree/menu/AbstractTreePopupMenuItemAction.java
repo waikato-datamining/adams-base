@@ -28,6 +28,7 @@ import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.StateContainer;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Ancestor for menu items in the popup menu of the flow tree.
@@ -36,7 +37,7 @@ import adams.gui.flow.tree.StateContainer;
  * @version $Revision$
  */
 public abstract class AbstractTreePopupMenuItemAction
-  extends AbstractPropertiesMenuItemAction<StateContainer>
+  extends AbstractPropertiesMenuItemAction<StateContainer, GenericObjectEditorDialog>
   implements TreePopupAction {
 
   /** for serialization. */

@@ -258,4 +258,12 @@ public abstract class AbstractBaseAction
   public void actionPerformed(ActionEvent e) {
     doActionPerformed(e);
   }
+  
+  /**
+   * Cleans up data structures, frees up memory.
+   * <p/>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
+  }
 }

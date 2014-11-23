@@ -19,8 +19,6 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.parser.SpreadSheetFormula;
 
 /**
@@ -30,7 +28,7 @@ import adams.parser.SpreadSheetFormula;
  * @version $Revision$
  */
 public class HelpFormulas
-  extends AbstractSpreadSheetViewerMenuItemAction {
+  extends AbstractHelpTextAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -46,11 +44,13 @@ public class HelpFormulas
   }
 
   /**
-   * Invoked when an action occurs.
+   * Returns the help text to display.
+   * 
+   * @return		the help content
    */
   @Override
-  protected void doActionPerformed(ActionEvent e) {
-    m_State.showHelpText("Formulas", new SpreadSheetFormula().getGrammar());
+  protected String getHelpContent() {
+    return new SpreadSheetFormula().getGrammar();
   }
 
   /**

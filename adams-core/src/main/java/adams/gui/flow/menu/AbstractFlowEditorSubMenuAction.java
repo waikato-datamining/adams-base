@@ -22,6 +22,7 @@ package adams.gui.flow.menu;
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesSubMenuAction;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Ancestor for actions in the flow editor that generate a submenu.
@@ -30,7 +31,7 @@ import adams.gui.flow.FlowEditorPanel;
  * @version $Revision$
  */
 public abstract class AbstractFlowEditorSubMenuAction
-  extends AbstractPropertiesSubMenuAction<FlowEditorPanel>
+  extends AbstractPropertiesSubMenuAction<FlowEditorPanel, GenericObjectEditorDialog>
   implements FlowEditorAction {
 
   /** for serialization. */

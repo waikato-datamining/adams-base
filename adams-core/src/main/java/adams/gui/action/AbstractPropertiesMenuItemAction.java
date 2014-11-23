@@ -19,6 +19,8 @@
  */
 package adams.gui.action;
 
+import java.awt.Dialog;
+
 import javax.swing.JMenuItem;
 
 import adams.gui.core.GUIHelper;
@@ -29,9 +31,10 @@ import adams.gui.core.GUIHelper;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of state
+ * @param <D> the type of dialog
  */
-public abstract class AbstractPropertiesMenuItemAction<T>
-  extends AbstractPropertiesAction<T> {
+public abstract class AbstractPropertiesMenuItemAction<T, D extends Dialog>
+  extends AbstractPropertiesAction<T, D> {
   
   /** for serialization. */
   private static final long serialVersionUID = -6842831257705457783L;

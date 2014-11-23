@@ -19,8 +19,14 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
+import adams.gui.application.Child;
+import adams.gui.core.GUIHelper;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
 import adams.gui.tools.spreadsheetviewer.TabbedPane;
 
@@ -31,7 +37,7 @@ import adams.gui.tools.spreadsheetviewer.TabbedPane;
  * @version $Revision$
  */
 public abstract class AbstractSpreadSheetViewerMenuItemAction
-  extends AbstractPropertiesMenuItemAction<SpreadSheetViewerPanel>
+  extends AbstractPropertiesMenuItemAction<SpreadSheetViewerPanel, GenericObjectEditorDialog>
   implements SpreadSheetViewerAction {
   
   /** for serialization. */
@@ -46,7 +52,34 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
   protected Properties getProperties() {
     return SpreadSheetViewerPanel.getPropertiesMenu();
   }
-  
+
+  /**
+   * Tries to determine the parent frame.
+   *
+   * @return		the parent frame if one exists or null if not
+   */
+  protected Frame getParentFrame() {
+    return GUIHelper.getParentFrame(m_State);
+  }
+
+  /**
+   * Tries to determine the parent dialog.
+   *
+   * @return		the parent dialog if one exists or null if not
+   */
+  protected Dialog getParentDialog() {
+    return GUIHelper.getParentDialog(m_State);
+  }
+
+  /**
+   * Tries to determine the parent child window/frame.
+   *
+   * @return		the parent child window/frame if one exists or null if not
+   */
+  protected Child getParentChild() {
+    return GUIHelper.getParentChild(m_State);
+  }
+
   /**
    * Returns the tabbed pane of the viewer.
    * 

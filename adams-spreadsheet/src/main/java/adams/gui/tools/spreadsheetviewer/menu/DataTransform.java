@@ -19,7 +19,14 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.data.spreadsheet.SpreadSheet;
+import adams.flow.transformer.AbstractSpreadSheetTransformer;
+import adams.flow.transformer.AbstractTransformer;
+import adams.flow.transformer.SpreadSheetSubset;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Filters the columns.
@@ -44,11 +51,46 @@ public class DataTransform
   }
 
   /**
+   * Creates a new dialog.
+   * 
+   * @return		the dialog
+   */
+  @Override
+  protected GenericObjectEditorDialog createDialog() {
+    GenericObjectEditorDialog	result;
+    
+    if (getParentDialog() != null)
+      result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      result = new GenericObjectEditorDialog(getParentFrame(), true);
+    result.setTitle("Transformer");
+    result.getGOEEditor().setClassType(AbstractSpreadSheetTransformer.class);
+    result.getGOEEditor().setCanChangeClassInDialog(true);
+    result.getGOEEditor().setValue(new SpreadSheetSubset());
+    result.setLocationRelativeTo(m_State);
+    
+    return result;
+  }
+  
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.transform();
+    SpreadSheet		sheet;
+    AbstractTransformer	transformer;
+
+    sheet = getTabbedPane().getCurrentSheet();
+    if (sheet == null)
+      return;
+
+    getDialog().setVisible(true);
+    if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    transformer = (AbstractTransformer) getDialog().getGOEEditor().getValue();
+
+    m_State.filterData(getTabbedPane().getTitleAt(getTabbedPane().getSelectedIndex()), sheet, transformer);
   }
 
   /**

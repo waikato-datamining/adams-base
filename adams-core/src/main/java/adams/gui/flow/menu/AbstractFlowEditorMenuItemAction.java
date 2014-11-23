@@ -22,6 +22,7 @@ package adams.gui.flow.menu;
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * Ancestor for simple menu item actions in the flow editor.
@@ -30,7 +31,7 @@ import adams.gui.flow.FlowEditorPanel;
  * @version $Revision$
  */
 public abstract class AbstractFlowEditorMenuItemAction
-  extends AbstractPropertiesMenuItemAction<FlowEditorPanel>
+  extends AbstractPropertiesMenuItemAction<FlowEditorPanel, GenericObjectEditorDialog>
   implements FlowEditorAction {
   
   /** for serialization. */

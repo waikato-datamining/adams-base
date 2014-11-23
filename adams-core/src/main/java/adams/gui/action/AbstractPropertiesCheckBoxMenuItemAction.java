@@ -19,6 +19,7 @@
  */
 package adams.gui.action;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,9 +34,10 @@ import adams.gui.core.GUIHelper;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of state
+ * @param <D> the type of dialog
  */
-public abstract class AbstractPropertiesCheckBoxMenuItemAction<T>
-  extends AbstractPropertiesAction<T> {
+public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dialog>
+  extends AbstractPropertiesAction<T, D> {
   
   /** for serialization. */
   private static final long serialVersionUID = -6842831257705457783L;

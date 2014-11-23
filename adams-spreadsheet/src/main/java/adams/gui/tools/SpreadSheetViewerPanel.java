@@ -31,14 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -46,57 +43,34 @@ import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.data.conversion.AbstractSpreadSheetConversion;
-import adams.data.conversion.Conversion;
-import adams.data.conversion.TransposeSpreadSheet;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.MultiSheetSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.data.spreadsheet.columnfinder.ByName;
-import adams.data.spreadsheet.columnfinder.ColumnFinder;
-import adams.data.spreadsheet.rowfinder.ByValue;
-import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
-import adams.flow.transformer.AbstractSpreadSheetTransformer;
-import adams.flow.transformer.AbstractTransformer;
-import adams.flow.transformer.Convert;
-import adams.flow.transformer.SpreadSheetColumnFilter;
-import adams.flow.transformer.SpreadSheetDifference;
-import adams.flow.transformer.SpreadSheetRowFilter;
-import adams.flow.transformer.SpreadSheetSubset;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.core.ParameterPanel;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.TextDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
-import adams.gui.event.SortSetupEvent;
-import adams.gui.event.SortSetupListener;
 import adams.gui.event.TabVisibilityChangeEvent;
 import adams.gui.event.TabVisibilityChangeListener;
-import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.spreadsheetviewer.AbstractDataPlugin;
 import adams.gui.tools.spreadsheetviewer.AbstractViewPlugin;
-import adams.gui.tools.spreadsheetviewer.SortPanel;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 import adams.gui.tools.spreadsheetviewer.TabbedPane;
-import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
-import adams.gui.tools.spreadsheetviewer.chart.ScatterPlot;
 import adams.gui.tools.spreadsheetviewer.menu.DataChart;
 import adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference;
 import adams.gui.tools.spreadsheetviewer.menu.DataConvert;
@@ -159,58 +133,58 @@ public class SpreadSheetViewerPanel
   protected JMenuBar m_MenuBar;
 
   /** the "open" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemFileOpen;
+  protected SpreadSheetViewerAction m_ActionFileOpen;
 
   /** the "load recent" submenu. */
-  protected JMenu m_MenuItemFileOpenRecent;
+  protected JMenu m_MenuFileOpenRecent;
 
   /** the "save as" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemFileSaveAs;
+  protected SpreadSheetViewerAction m_ActionFileSaveAs;
 
   /** the "close" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemFileClose;
+  protected SpreadSheetViewerAction m_ActionFileCloseTab;
 
   /** the "exit" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemFileExit;
+  protected SpreadSheetViewerAction m_ActionFileExit;
 
   /** the "filter columns" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataFilterColumns;
+  protected SpreadSheetViewerAction m_ActionDataFilterColumns;
 
   /** the "filter rows" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataFilterRows;
+  protected SpreadSheetViewerAction m_ActionDataFilterRows;
 
   /** the "compute difference" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataComputeDifference;
+  protected SpreadSheetViewerAction m_ActionDataComputeDifference;
 
   /** the "Convert" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataConvert;
+  protected SpreadSheetViewerAction m_ActionDataConvert;
 
   /** the "Transform" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataTransform;
+  protected SpreadSheetViewerAction m_ActionDataTransform;
 
   /** the "Sort" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataSort;
+  protected SpreadSheetViewerAction m_ActionDataSort;
 
   /** the "Chart" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemDataChart;
+  protected SpreadSheetViewerAction m_ActionDataChart;
 
   /** the "apply to all" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemViewApplyToAll;
+  protected SpreadSheetViewerAction m_ActionViewApplyToAll;
 
   /** the "displayed decimals" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemViewDisplayedDecimals;
+  protected SpreadSheetViewerAction m_ActionViewDisplayedDecimals;
 
   /** the "negative background" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemViewNegativeBackground;
+  protected SpreadSheetViewerAction m_ActionViewNegativeBackground;
 
   /** the "positive background" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemViewPositiveBackground;
+  protected SpreadSheetViewerAction m_ActionViewPositiveBackground;
 
   /** the "show formulas" menu item. */
-  protected SpreadSheetViewerAction m_MenuItemViewShowFormulas;
+  protected SpreadSheetViewerAction m_ActionViewShowFormulas;
 
   /** the "formulas" help menu item. */
-  protected SpreadSheetViewerAction m_MenuItemHelpFormulas;
+  protected SpreadSheetViewerAction m_ActionHelpFormulas;
 
   /** the "query" help menu item. */
   protected SpreadSheetViewerAction m_MenuItemHelpQuery;
@@ -232,24 +206,6 @@ public class SpreadSheetViewerPanel
 
   /** the recent files handler. */
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
-
-  /** the dialog for column finders. */
-  protected GenericObjectEditorDialog m_GOEColumnFinder;
-
-  /** the dialog for row finders. */
-  protected GenericObjectEditorDialog m_GOERowFinder;
-
-  /** the dialog for spreadsheet conversions. */
-  protected GenericObjectEditorDialog m_GOEConversion;
-
-  /** the dialog for spreadsheet transformers. */
-  protected GenericObjectEditorDialog m_GOETransformer;
-
-  /** the dialog for spreadsheet chart generators. */
-  protected GenericObjectEditorDialog m_GOEChart;
-  
-  /** the sort panel. */
-  protected SortPanel m_SortPanel;
 
   /** whether to apply settings to all tabs or just current one. */
   protected boolean m_ApplyToAll;
@@ -313,87 +269,87 @@ public class SpreadSheetViewerPanel
 
     // File/Open
     action = new FileOpen();
-    m_MenuItemFileOpen = action;
+    m_ActionFileOpen = action;
     m_MenuItems.add(action);
 
     // File/Save as
     action = new FileSaveAs();
-    m_MenuItemFileSaveAs = action;
+    m_ActionFileSaveAs = action;
     m_MenuItems.add(action);
 
     // File/Close tab
     action = new FileCloseTab();
-    m_MenuItemFileClose = action;
+    m_ActionFileCloseTab = action;
     m_MenuItems.add(action);
 
     // File/Exit
     action = new FileExit();
-    m_MenuItemFileExit = action;
+    m_ActionFileExit = action;
     m_MenuItems.add(action);
 
     // Data/Filter columns
     action = new DataFilterColumns();
-    m_MenuItemDataFilterColumns = action;
+    m_ActionDataFilterColumns = action;
     m_MenuItems.add(action);
 
     // Data/Filter rows
     action = new DataFilterRows();
-    m_MenuItemDataFilterRows = action;
+    m_ActionDataFilterRows = action;
     m_MenuItems.add(action);
 
     // Data/Convert
     action = new DataConvert();
-    m_MenuItemDataConvert = action;
+    m_ActionDataConvert = action;
     m_MenuItems.add(action);
 
     // Data/Transform
     action = new DataTransform();
-    m_MenuItemDataTransform = action;
+    m_ActionDataTransform = action;
     m_MenuItems.add(action);
 
     // Data/Sort
     action = new DataSort();
-    m_MenuItemDataSort = action;
+    m_ActionDataSort = action;
     m_MenuItems.add(action);
 
     // Data/Chart
     action = new DataChart();
-    m_MenuItemDataChart = action;
+    m_ActionDataChart = action;
     m_MenuItems.add(action);
 
     // Data/Compute difference
     action = new DataComputeDifference();
-    m_MenuItemDataComputeDifference = action;
+    m_ActionDataComputeDifference = action;
     m_MenuItems.add(action);
 
     // View/Apply to all
     action = new ViewApplyToAll();
-    m_MenuItemViewApplyToAll = action;
+    m_ActionViewApplyToAll = action;
     m_MenuItems.add(action);
 
     // View/Decimals
     action = new ViewDecimals();
-    m_MenuItemViewDisplayedDecimals = action;
+    m_ActionViewDisplayedDecimals = action;
     m_MenuItems.add(action);
 
     // View/Negative background
     action = new ViewNegativeBackground();
-    m_MenuItemViewNegativeBackground = action;
+    m_ActionViewNegativeBackground = action;
     m_MenuItems.add(action);
 
     // View/Positive background
     action = new ViewPositiveBackground();
-    m_MenuItemViewPositiveBackground = action;
+    m_ActionViewPositiveBackground = action;
     m_MenuItems.add(action);
 
     // View/Show formulas
     action = new ViewShowFormulas();
-    m_MenuItemViewShowFormulas = action;
+    m_ActionViewShowFormulas = action;
     m_MenuItems.add(action);
 
     // Help/Formulas
     action = new HelpFormulas();
-    m_MenuItemHelpFormulas = action;
+    m_ActionHelpFormulas = action;
     m_MenuItems.add(action);
 
     // Help/Query
@@ -429,7 +385,7 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      menu.add(m_MenuItemFileOpen);
+      menu.add(m_ActionFileOpen);
       
       // File/Recent files
       submenu = new JMenu("Open recent");
@@ -446,17 +402,17 @@ public class SpreadSheetViewerPanel
 	  load((SpreadSheetReader) e.getItem().getHandler(), e.getItem().getFile());
 	}
       });
-      m_MenuItemFileOpenRecent = submenu;
+      m_MenuFileOpenRecent = submenu;
 
-      menu.add(m_MenuItemFileSaveAs);
-      menu.add(m_MenuItemFileClose);
+      menu.add(m_ActionFileSaveAs);
+      menu.add(m_ActionFileCloseTab);
 
       // File/Send to
       menu.addSeparator();
       if (SendToActionUtils.addSendToSubmenu(this, menu))
 	menu.addSeparator();
 
-      menu.add(m_MenuItemFileExit);
+      menu.add(m_ActionFileExit);
 
       // Data
       menu = new JMenu("Data");
@@ -469,13 +425,13 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      menu.add(m_MenuItemDataFilterColumns);
-      menu.add(m_MenuItemDataFilterRows);
-      menu.add(m_MenuItemDataConvert);
-      menu.add(m_MenuItemDataTransform);
-      menu.add(m_MenuItemDataSort);
-      menu.add(m_MenuItemDataChart);
-      menu.add(m_MenuItemDataComputeDifference);
+      menu.add(m_ActionDataFilterColumns);
+      menu.add(m_ActionDataFilterRows);
+      menu.add(m_ActionDataConvert);
+      menu.add(m_ActionDataTransform);
+      menu.add(m_ActionDataSort);
+      menu.add(m_ActionDataChart);
+      menu.add(m_ActionDataComputeDifference);
 
       // Data/Plugin
       classes = AbstractDataPlugin.getPlugins();
@@ -518,11 +474,11 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      menu.add(m_MenuItemViewApplyToAll.getMenuItem());
-      menu.add(m_MenuItemViewDisplayedDecimals);
-      menu.add(m_MenuItemViewNegativeBackground);
-      menu.add(m_MenuItemViewPositiveBackground);
-      menu.add(m_MenuItemViewShowFormulas.getMenuItem());
+      menu.add(m_ActionViewApplyToAll.getMenuItem());
+      menu.add(m_ActionViewDisplayedDecimals);
+      menu.add(m_ActionViewNegativeBackground);
+      menu.add(m_ActionViewPositiveBackground);
+      menu.add(m_ActionViewShowFormulas.getMenuItem());
 
       // View/Tabs
       m_ViewerTabs.addTabsSubmenu(menu);
@@ -568,7 +524,7 @@ public class SpreadSheetViewerPanel
 	}
       });
 
-      menu.add(m_MenuItemHelpFormulas);
+      menu.add(m_ActionHelpFormulas);
       menu.add(m_MenuItemHelpQuery);
 
       // update menu
@@ -598,28 +554,6 @@ public class SpreadSheetViewerPanel
    */
   public ViewerTabManager getViewerTabs() {
     return m_ViewerTabs;
-  }
-
-  /**
-   * Displays a help text in a dialog.
-   * 
-   * @param title	the title for the help
-   * @param content	the text to display
-   */
-  public void showHelpText(String title, String content) {
-    TextDialog 	dialog;
-    
-    if (getParentDialog() != null)
-      dialog = new TextDialog(getParentDialog());
-    else
-      dialog = new TextDialog(getParentFrame());
-    dialog.setDialogTitle(title);
-    dialog.setContent(content);
-    dialog.setEditable(false);
-    dialog.setSize(800, 600);
-    GUIHelper.setSizeAndLocation(dialog);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
   }
   
   /**
@@ -928,111 +862,6 @@ public class SpreadSheetViewerPanel
   }
 
   /**
-   * Returns the dialog for column finders.
-   *
-   * @return		the dialog
-   */
-  protected GenericObjectEditorDialog getColumnFinderDialog() {
-    if (m_GOEColumnFinder == null) {
-      if (getParentDialog() != null)
-	m_GOEColumnFinder = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_GOEColumnFinder = new GenericObjectEditorDialog(getParentFrame(), true);
-      m_GOEColumnFinder.setTitle("Column finder");
-      m_GOEColumnFinder.getGOEEditor().setClassType(ColumnFinder.class);
-      m_GOEColumnFinder.getGOEEditor().setCanChangeClassInDialog(true);
-      m_GOEColumnFinder.getGOEEditor().setValue(new ByName());
-      m_GOEColumnFinder.setLocationRelativeTo(this);
-    }
-
-    return m_GOEColumnFinder;
-  }
-
-  /**
-   * Returns the dialog for row finders.
-   *
-   * @return		the dialog
-   */
-  protected GenericObjectEditorDialog getRowFinderDialog() {
-    if (m_GOERowFinder == null) {
-      if (getParentDialog() != null)
-	m_GOERowFinder = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_GOERowFinder = new GenericObjectEditorDialog(getParentFrame(), true);
-      m_GOERowFinder.setTitle("Row finder");
-      m_GOERowFinder.getGOEEditor().setClassType(RowFinder.class);
-      m_GOERowFinder.getGOEEditor().setCanChangeClassInDialog(true);
-      m_GOERowFinder.getGOEEditor().setValue(new ByValue());
-      m_GOERowFinder.setLocationRelativeTo(this);
-    }
-
-    return m_GOERowFinder;
-  }
-
-  /**
-   * Returns the dialog for conversion schemes.
-   *
-   * @return		the dialog
-   */
-  protected GenericObjectEditorDialog getConversionDialog() {
-    if (m_GOEConversion == null) {
-      if (getParentDialog() != null)
-	m_GOEConversion = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_GOEConversion = new GenericObjectEditorDialog(getParentFrame(), true);
-      m_GOEConversion.setTitle("Conversion");
-      m_GOEConversion.getGOEEditor().setClassType(AbstractSpreadSheetConversion.class);
-      m_GOEConversion.getGOEEditor().setCanChangeClassInDialog(true);
-      m_GOEConversion.getGOEEditor().setValue(new TransposeSpreadSheet());
-      m_GOEConversion.setLocationRelativeTo(this);
-    }
-
-    return m_GOEConversion;
-  }
-
-  /**
-   * Returns the dialog for transformers.
-   *
-   * @return		the dialog
-   */
-  protected GenericObjectEditorDialog getTransformerDialog() {
-    if (m_GOETransformer == null) {
-      if (getParentDialog() != null)
-	m_GOETransformer = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_GOETransformer = new GenericObjectEditorDialog(getParentFrame(), true);
-      m_GOETransformer.setTitle("Transformer");
-      m_GOETransformer.getGOEEditor().setClassType(AbstractSpreadSheetTransformer.class);
-      m_GOETransformer.getGOEEditor().setCanChangeClassInDialog(true);
-      m_GOETransformer.getGOEEditor().setValue(new SpreadSheetSubset());
-      m_GOETransformer.setLocationRelativeTo(this);
-    }
-
-    return m_GOETransformer;
-  }
-
-  /**
-   * Returns the dialog for chart generators.
-   *
-   * @return		the dialog
-   */
-  protected GenericObjectEditorDialog getChartGeneratorDialog() {
-    if (m_GOEChart == null) {
-      if (getParentDialog() != null)
-	m_GOEChart = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_GOEChart = new GenericObjectEditorDialog(getParentFrame(), true);
-      m_GOEChart.setTitle("Chart");
-      m_GOEChart.getGOEEditor().setClassType(AbstractChartGenerator.class);
-      m_GOEChart.getGOEEditor().setCanChangeClassInDialog(true);
-      m_GOEChart.getGOEEditor().setValue(new ScatterPlot());
-      m_GOEChart.setLocationRelativeTo(this);
-    }
-
-    return m_GOEChart;
-  }
-
-  /**
    * Filters the data with the transformer and adds the generated
    * output as new tab.
    *
@@ -1040,7 +869,7 @@ public class SpreadSheetViewerPanel
    * @param input	the spreadsheet to process
    * @param filter	the transformer
    */
-  protected void filterData(String oldTitle, Object input, AbstractActor filter) {
+  public void filterData(String oldTitle, Object input, AbstractActor filter) {
     List	processed;
 
     try {
@@ -1056,211 +885,6 @@ public class SpreadSheetViewerPanel
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to filter data:\n" + Utils.throwableToString(e));
     }
-  }
-
-  /**
-   * Filters the spreadsheet using a column finder.
-   */
-  public void findColumns() {
-    SpreadSheet			sheet;
-    ColumnFinder		finder;
-    SpreadSheetColumnFilter	filter;
-
-    sheet = m_TabbedPane.getCurrentSheet();
-    if (sheet == null)
-      return;
-
-    getColumnFinderDialog().setVisible(true);
-    if (getColumnFinderDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    finder = (ColumnFinder) getColumnFinderDialog().getGOEEditor().getValue();
-    filter = new SpreadSheetColumnFilter();
-    filter.setFinder(finder);
-
-    filterData(m_TabbedPane.getTitleAt(m_TabbedPane.getSelectedIndex()), sheet, filter);
-  }
-
-  /**
-   * Filters the spreadsheet using a row finder.
-   */
-  public void findRows() {
-    SpreadSheet			sheet;
-    RowFinder			finder;
-    SpreadSheetRowFilter	filter;
-
-    sheet = m_TabbedPane.getCurrentSheet();
-    if (sheet == null)
-      return;
-
-    getRowFinderDialog().setVisible(true);
-    if (getRowFinderDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    finder = (RowFinder) getRowFinderDialog().getGOEEditor().getValue();
-    filter = new SpreadSheetRowFilter();
-    filter.setFinder(finder);
-
-    filterData(m_TabbedPane.getTitleAt(m_TabbedPane.getSelectedIndex()), sheet, filter);
-  }
-
-  /**
-   * Filters the spreadsheet using a conversion.
-   */
-  public void convert() {
-    SpreadSheet		sheet;
-    Conversion		conversion;
-    Convert		filter;
-
-    sheet = m_TabbedPane.getCurrentSheet();
-    if (sheet == null)
-      return;
-
-    getConversionDialog().setVisible(true);
-    if (getConversionDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    conversion = (Conversion) getConversionDialog().getGOEEditor().getValue();
-    filter = new Convert();
-    filter.setConversion(conversion);
-
-    filterData(m_TabbedPane.getTitleAt(m_TabbedPane.getSelectedIndex()), sheet, filter);
-  }
-
-  /**
-   * Filters the spreadsheet using the selected transformer.
-   */
-  public void transform() {
-    SpreadSheet		sheet;
-    AbstractTransformer	transformer;
-
-    sheet = m_TabbedPane.getCurrentSheet();
-    if (sheet == null)
-      return;
-
-    getTransformerDialog().setVisible(true);
-    if (getTransformerDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    transformer = (AbstractTransformer) getTransformerDialog().getGOEEditor().getValue();
-
-    filterData(m_TabbedPane.getTitleAt(m_TabbedPane.getSelectedIndex()), sheet, transformer);
-  }
-
-  /**
-   * Computes the difference between the two sheets and inserts it as new tab.
-   */
-  protected void computeDifference(SpreadSheet sheet1, SpreadSheet sheet2, SpreadSheetColumnRange keyCols) {
-    SpreadSheetDifference	filter;
-
-    if ((sheet1 == null) || (sheet2 == null))
-      return;
-
-    filter = new SpreadSheetDifference();
-    filter.setKeyColumns(keyCols);
-    filterData(m_TabbedPane.newTitle(), new SpreadSheet[]{sheet1, sheet2}, filter);
-  }
-
-  /**
-   * Shows a short dialog.
-   */
-  public void sort() {
-    final ApprovalDialog	dialog;
-
-    if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = new ApprovalDialog(getParentFrame(), true);
-    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
-    dialog.setTitle("Sort");
-    dialog.getApproveButton().setEnabled(false);
-    if (m_SortPanel == null) {
-      m_SortPanel = new SortPanel();
-      m_SortPanel.addSortSetupListener(new SortSetupListener() {
-	@Override
-	public void sortSetupChanged(SortSetupEvent e) {
-	  dialog.getApproveButton().setEnabled(e.getSortPanel().isValidSetup());
-	}
-      });
-    }
-    if (m_SortPanel.setSpreadSheet(m_TabbedPane.getCurrentSheet()))
-      m_SortPanel.addDefinition();
-    dialog.getApproveButton().setEnabled(m_SortPanel.isValidSetup());
-    dialog.getContentPane().add(m_SortPanel, BorderLayout.CENTER);
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
-      return;
-    m_TabbedPane.getCurrentTable().sort(m_SortPanel.getComparator());
-  }
-
-  /**
-   * Pops up a dialog allowing the user to generate a chart from the current
-   * spreadsheet.
-   */
-  public void generateChart() {
-    SpreadSheetPanel		panel;
-    AbstractChartGenerator	generator;
-
-    panel = m_TabbedPane.getCurrentPanel();
-    if (panel == null)
-      return;
-
-    getChartGeneratorDialog().setVisible(true);
-    if (getChartGeneratorDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-
-    generator = (AbstractChartGenerator) getChartGeneratorDialog().getGOEEditor().getValue();
-    panel.generateChart(generator);
-  }
-
-  /**
-   * Computes the difference between two sheets that the user selects and
-   * inserts it as new tab.
-   */
-  public void computeDifference() {
-    ApprovalDialog	dialog;
-    ParameterPanel	params;
-    final JComboBox	sheet1;
-    final JComboBox	sheet2;
-    List<String>	titles;
-    final JTextField	range;
-
-    if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = new ApprovalDialog(getParentFrame(), true);
-    dialog.setTitle("Compute difference");
-    params = new ParameterPanel();
-    dialog.getContentPane().add(params, BorderLayout.CENTER);
-    titles = m_TabbedPane.getTabTitles();
-    sheet1 = new JComboBox(titles.toArray(new String[titles.size()]));
-    params.addParameter("First sheet", sheet1);
-    params.addParameter("", new JLabel("minus"));
-    sheet2 = new JComboBox(titles.toArray(new String[titles.size()]));
-    params.addParameter("Second sheet", sheet2);
-    params.addParameter("", new JLabel("using"));
-    range = new JTextField(10);
-    range.setText("");
-    range.setToolTipText(new SpreadSheetColumnRange().getExample());
-    params.addParameter("Key columns", range);
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-
-    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
-      return;
-
-    if (sheet1.getSelectedIndex() == sheet2.getSelectedIndex()) {
-      GUIHelper.showErrorMessage(this, "You must select two different spreadsheets!");
-      return;
-    }
-
-    computeDifference(
-	m_TabbedPane.getSheetAt(sheet1.getSelectedIndex()),
-	m_TabbedPane.getSheetAt(sheet2.getSelectedIndex()),
-	new SpreadSheetColumnRange(range.getText()));
   }
 
   /**
@@ -1345,25 +969,10 @@ public class SpreadSheetViewerPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    if (m_GOEChart != null) {
-      m_GOEChart.dispose();
-      m_GOEChart = null;
-    }
-    if (m_GOEColumnFinder != null) {
-      m_GOEColumnFinder.dispose();
-      m_GOEColumnFinder = null;
-    }
-    if (m_GOEConversion != null) {
-      m_GOEConversion.dispose();
-      m_GOEConversion = null;
-    }
-    if (m_GOERowFinder != null) {
-      m_GOERowFinder.dispose();
-      m_GOERowFinder = null;
-    }
-    if (m_GOETransformer != null) {
-      m_GOETransformer.dispose();
-      m_GOETransformer = null;
+    if (m_MenuItems != null) {
+      for (SpreadSheetViewerAction action: m_MenuItems)
+	action.cleanUp();
+      m_MenuItems = null;
     }
   }
 
