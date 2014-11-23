@@ -243,11 +243,31 @@ public abstract class AbstractBaseAction
   }
 
   /**
+   * Invoked when an action occurs (hook method before executing the actual action code).
+   * <p/>
+   * Default implementation does nothing.
+   * 
+   * @param e		the event
+   */
+  protected void preActionPerformed(ActionEvent e) {
+  }
+
+  /**
    * Invoked when an action occurs.
    * 
    * @param e		the event
    */
   protected abstract void doActionPerformed(ActionEvent e);
+
+  /**
+   * Invoked when an action occurs (hook method after executing the actual action code).
+   * <p/>
+   * Default implementation does nothing.
+   * 
+   * @param e		the event
+   */
+  protected void postActionPerformed(ActionEvent e) {
+  }
 
   /**
    * Invoked when an action occurs.
@@ -256,7 +276,9 @@ public abstract class AbstractBaseAction
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    preActionPerformed(e);
     doActionPerformed(e);
+    postActionPerformed(e);
   }
   
   /**
