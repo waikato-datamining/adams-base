@@ -18,9 +18,9 @@ adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Shortcut=ctrl shift pressed S
 adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Icon=
 adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Mnemonic=t
 adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Shortcut=ctrl pressed W
-adams.gui.tools.spreadsheetviewer.menu.FileClose-Icon=exit.png
-adams.gui.tools.spreadsheetviewer.menu.FileClose-Mnemonic=C
-adams.gui.tools.spreadsheetviewer.menu.FileClose-Shortcut=ctrl pressed Q
+adams.gui.tools.spreadsheetviewer.menu.FileExit-Icon=exit.png
+adams.gui.tools.spreadsheetviewer.menu.FileExit-Mnemonic=C
+adams.gui.tools.spreadsheetviewer.menu.FileExit-Shortcut=ctrl pressed Q
 
 # Data
 adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Icon=filter_columns.gif
