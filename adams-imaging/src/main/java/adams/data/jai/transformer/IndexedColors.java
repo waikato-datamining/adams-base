@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.ColorQuantizerDescriptor;
+import javax.media.jai.operator.ColorQuantizerType;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -69,9 +70,30 @@ public class IndexedColors
    * @version $Revision$
    */
   public enum ColorQuantizer {
-    MEDIANCUT,
-    NEUQUANT,
-    OCTTREE
+    MEDIANCUT(ColorQuantizerDescriptor.MEDIANCUT),
+    NEUQUANT(ColorQuantizerDescriptor.NEUQUANT),
+    OCTTREE(ColorQuantizerDescriptor.OCTTREE);
+    
+    /** associated type. */
+    private ColorQuantizerType m_Type;
+    
+    /**
+     * Initializes the enum.
+     * 
+     * @param type	the associated type
+     */
+    private ColorQuantizer(ColorQuantizerType type) {
+      m_Type = type;
+    }
+    
+    /**
+     * Returns the associated type.
+     * 
+     * @return		the type
+     */
+    public ColorQuantizerType getType() {
+      return m_Type;
+    }
   }
 
   /** the number of colors. */
@@ -186,7 +208,7 @@ public class IndexedColors
     image      = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
     renderedOp = ColorQuantizerDescriptor.create(
 	image, 
-	ColorQuantizerDescriptor.MEDIANCUT, 
+	m_ColorQuantizer.getType(), 
 	m_NumColors, 
 	null, 
 	null, 
