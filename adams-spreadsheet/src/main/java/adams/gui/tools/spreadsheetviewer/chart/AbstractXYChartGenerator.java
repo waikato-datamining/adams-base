@@ -41,7 +41,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
  * @version $Revision$
  */
 public abstract class AbstractXYChartGenerator
-  extends AbstractChartGenerator {
+  extends AbstractRowBasedChartGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -3167297287561137402L;

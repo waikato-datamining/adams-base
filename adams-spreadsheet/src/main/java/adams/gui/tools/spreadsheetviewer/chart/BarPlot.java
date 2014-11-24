@@ -223,6 +223,8 @@ public class BarPlot
     ViewDataClickAction		action;
     BarPaintlet			paintlet;
 
+    super.addChartGeneration(flow, name, sheet);
+    
     pg = configureGenerator(sheet);
     flow.add(pg);
     

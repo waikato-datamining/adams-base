@@ -114,6 +114,8 @@ public class ScatterPlot
     ViewDataClickAction		action;
     CirclePaintlet		paintlet;
 
+    super.addChartGeneration(flow, name, sheet);
+    
     pg = configureGenerator(sheet);
     flow.add(pg);
     

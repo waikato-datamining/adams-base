@@ -114,6 +114,8 @@ public class LinePlot
     ViewDataClickAction		action;
     LinePaintlet		paintlet;
 
+    super.addChartGeneration(flow, name, sheet);
+    
     pg = configureGenerator(sheet);
     flow.add(pg);
     

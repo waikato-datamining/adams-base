@@ -98,7 +98,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * @version $Revision: 9429 $
  */
 public class GenericPlot
-  extends AbstractChartGenerator {
+  extends AbstractRowBasedChartGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -2088311829009151566L;
@@ -334,6 +334,8 @@ public class GenericPlot
     SimplePlotUpdater		updater;
     AxisPanelOptions		axis;
     ViewDataClickAction		action;
+    
+    super.addChartGeneration(flow, name, sheet);
     
     pg = new SpreadSheetPlotGenerator();
     pg.setGenerator(m_Generator);

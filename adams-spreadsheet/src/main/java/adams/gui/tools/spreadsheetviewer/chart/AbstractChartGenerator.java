@@ -30,12 +30,9 @@ import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.rowfinder.ByIndex;
-import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.source.StorageValue;
-import adams.flow.transformer.SpreadSheetRowFilter;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.SimpleFixedLabelTickGenerator;
 import adams.gui.visualization.core.axis.TickGenerator;
@@ -62,9 +59,6 @@ public abstract class AbstractChartGenerator
 
   /** the height of the dialog. */
   protected int m_Height;
-  
-  /** the row finder to use. */
-  protected RowFinder m_RowFinder;
 
   /**
    * Adds options to the internal list of options.
@@ -80,10 +74,6 @@ public abstract class AbstractChartGenerator
     m_OptionManager.add(
 	    "height", "height",
 	    getDefaultHeight(), -1, null);
-
-    m_OptionManager.add(
-	    "row-finder", "rowFinder",
-	    new ByIndex());
   }
 
   /**
@@ -160,35 +150,6 @@ public abstract class AbstractChartGenerator
    */
   public String heightTipText() {
     return "The height of the chart dialog.";
-  }
-
-  /**
-   * Sets the row finder to use for restricting the rows used for the chart.
-   *
-   * @param value	the row finder
-   */
-  public void setRowFinder(RowFinder value) {
-    m_RowFinder = value;
-    reset();
-  }
-
-  /**
-   * Returns the row finder to use for restricting the rows used for the chart.
-   *
-   * @return		the row finder
-   */
-  public RowFinder getRowFinder() {
-    return m_RowFinder;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String rowFinderTipText() {
-    return "The row finder to use for restricting the rows used for the chart.";
   }
 
   /**
@@ -371,9 +332,8 @@ public abstract class AbstractChartGenerator
    * @return		the generated flow
    */
   protected Flow doGenerate(String name, SpreadSheet sheet) {
-    Flow			result;
-    StorageValue		sv;
-    SpreadSheetRowFilter	rf;
+    Flow		result;
+    StorageValue	sv;
     
     result = new Flow();
     if (sheet.getName() != null)
@@ -382,10 +342,6 @@ public abstract class AbstractChartGenerator
     sv = new StorageValue();
     sv.setStorageName(new StorageName(STORAGE_NAME));
     result.add(sv);
-    
-    rf = new SpreadSheetRowFilter();
-    rf.setFinder(m_RowFinder);
-    result.add(rf);
 
     addChartGeneration(result, name, sheet);
     
