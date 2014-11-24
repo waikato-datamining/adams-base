@@ -1281,23 +1281,9 @@ public class FlowPanel
 
   /**
    * If a single actor is selected, user gets prompted whether to only
-   * process below this actor instead of full flow (user gets prompted
-   * by GOE dialog).
-   *
-   * @see	#processActors()
-   * @see	#processSelectedActor()
-   */
-  public void processActorsPrompt() {
-    processActorsPrompt(null);
-  }
-
-  /**
-   * If a single actor is selected, user gets prompted whether to only
    * process below this actor instead of full flow.
    *
    * @param processor	the processor to use, null if to prompt user
-   * @see		#processActors()
-   * @see		#processSelectedActor()
    */
   public void processActorsPrompt(AbstractActorProcessor processor) {
     boolean 	selected;
@@ -1322,14 +1308,6 @@ public class FlowPanel
   }
 
   /**
-   * Processes the actors with a user-specified actor processor
-   * (user gets prompted with GOE dialog).
-   */
-  public void processActors() {
-    processActors(null);
-  }
-
-  /**
    * Processes the actors with the specified actor processor.
    *
    * @param processor	the processor to use, null if to prompt user
@@ -1337,15 +1315,6 @@ public class FlowPanel
   public void processActors(AbstractActorProcessor processor) {
     if (getTree().processActor(null, processor))
       showNotification("Actors processed!", false);
-  }
-
-  /**
-   * Processes the selected actor with a user-specified actor processor
-   * (the user gets prompted with GOE dialog).
-   * NB: The options of the selected actor will get processed.
-   */
-  public void processSelectedActor() {
-    processSelectedActor(null);
   }
 
   /**

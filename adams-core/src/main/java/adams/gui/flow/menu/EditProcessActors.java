@@ -48,7 +48,7 @@ public class EditProcessActors
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().processActorsPrompt();
+    m_State.getCurrentPanel().processActorsPrompt(null);
   }
 
   /**
