@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
+import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
@@ -141,23 +142,10 @@ public class BarPlot
   @Override
   public String getQuickInfo() {
     String	result;
-    String	variable;
 
-    result = super.getQuickInfo();
-    
-    result   += ", bar: ";
-    variable = getOptionManager().getVariableForProperty("barWidth");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_BarWidth;
-    
-    result   += ", offset: ";
-    variable = getOptionManager().getVariableForProperty("offset");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_Offset;
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "barWidth", m_BarWidth, ", bar: ");
+    result += QuickInfoHelper.toString(this, "offset", m_Offset, ", offset: ");
     
     return result;
   }

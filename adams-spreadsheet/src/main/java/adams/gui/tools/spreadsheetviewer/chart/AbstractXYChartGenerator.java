@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
+import adams.core.QuickInfoHelper;
 import adams.data.DecimalFormatString;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -93,28 +94,10 @@ public abstract class AbstractXYChartGenerator
   @Override
   public String getQuickInfo() {
     String	result;
-    String	variable;
 
-    result = "x: ";
-    variable = getOptionManager().getVariableForProperty("XColumn");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_XColumn.getIndex();
-    
-    result   += ", y: ";
-    variable = getOptionManager().getVariableForProperty("YColumns");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_YColumns.getRange();
-    
-    result   += ", color: ";
-    variable = getOptionManager().getVariableForProperty("colorProvider");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_ColorProvider.getClass().getSimpleName();
+    result  = QuickInfoHelper.toString(this, "XColumn", (m_XColumn.isEmpty() ? "-none-" : m_XColumn), "x: ");
+    result += QuickInfoHelper.toString(this, "YColumn", (m_YColumns.isEmpty() ? "-none-" : m_YColumns), ", y: ");
+    result += QuickInfoHelper.toString(this, "colorProvider", m_ColorProvider, ", color: ");
 
     return result;
   }

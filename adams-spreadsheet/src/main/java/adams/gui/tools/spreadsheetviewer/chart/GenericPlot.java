@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
+import adams.core.QuickInfoHelper;
 import adams.data.DecimalFormatString;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
@@ -163,42 +164,12 @@ public class GenericPlot
   @Override
   public String getQuickInfo() {
     String	result;
-    String	variable;
 
-    result = "generator: ";
-    variable = getOptionManager().getVariableForProperty("generator");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_Generator.getClass().getSimpleName();
-    
-    result   += ", paintlet: ";
-    variable = getOptionManager().getVariableForProperty("paintlet");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_Paintlet.getClass().getSimpleName();
-    
-    result   += ", color: ";
-    variable = getOptionManager().getVariableForProperty("colorProvider");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_ColorProvider.getClass().getSimpleName();
-    
-    result   += ", x-ticks: ";
-    variable = getOptionManager().getVariableForProperty("XTickGenerator");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_XTickGenerator.getClass().getSimpleName();
-    
-    result   += ", y-ticks: ";
-    variable = getOptionManager().getVariableForProperty("YTickGenerator");
-    if (variable != null)
-      result += variable;
-    else
-      result += m_YTickGenerator.getClass().getSimpleName();
+    result  = QuickInfoHelper.toString(this, "generator", m_Generator, "generator: ");
+    result += QuickInfoHelper.toString(this, "paintlet", m_Paintlet, ", paintlet: ");
+    result += QuickInfoHelper.toString(this, "colorProvider", m_ColorProvider, ", color: ");
+    result += QuickInfoHelper.toString(this, "XTickGenerator", m_XTickGenerator, ", x-ticks: ");
+    result += QuickInfoHelper.toString(this, "YTickGenerator", m_YTickGenerator, ", y-ticks: ");
     
     return result;
   }
@@ -380,7 +351,7 @@ public class GenericPlot
       plotter.setName(name);
     else
       plotter.setName("Plot");
-    plotter.setTitle("Plot");
+    plotter.setTitle(plotter.getName());
     plotter.setShortTitle(true);
     plotter.setPaintlet(m_Paintlet);
     plotter.setColorProvider(m_ColorProvider.shallowCopy());
