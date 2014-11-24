@@ -20,6 +20,7 @@
 
 package adams.flow.control;
 
+import adams.core.Utils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.InputConsumer;
@@ -44,21 +45,7 @@ public abstract class AbstractConnectedControlActor
    * @return		the generated string
    */
   protected String classesToString(Class[] classes) {
-    String	result;
-    int		i;
-
-    result = "[";
-    for (i = 0; i < classes.length; i++) {
-      if (i > 0)
-	result += ", ";
-      if (classes[i].isArray())
-	result += classes[i].getComponentType() + "[]";
-      else
-	result += classes[i].getName();
-    }
-    result += "]";
-
-    return result;
+    return "[" + Utils.classesToString(classes) + "]";
   }
 
   /**
