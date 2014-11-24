@@ -19,8 +19,13 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesCheckBoxMenuItemAction;
+import adams.gui.application.Child;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
@@ -45,6 +50,33 @@ public abstract class AbstractFlowEditorCheckBoxMenuItemAction
   @Override
   protected Properties getProperties() {
     return FlowEditorPanel.getPropertiesMenu();
+  }
+
+  /**
+   * Tries to determine the parent frame.
+   *
+   * @return		the parent frame if one exists or null if not
+   */
+  protected Frame getParentFrame() {
+    return GUIHelper.getParentFrame(m_State);
+  }
+
+  /**
+   * Tries to determine the parent dialog.
+   *
+   * @return		the parent dialog if one exists or null if not
+   */
+  protected Dialog getParentDialog() {
+    return GUIHelper.getParentDialog(m_State);
+  }
+
+  /**
+   * Tries to determine the parent child window/frame.
+   *
+   * @return		the parent child window/frame if one exists or null if not
+   */
+  protected Child getParentChild() {
+    return GUIHelper.getParentChild(m_State);
   }
 
   /**
