@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:41:17
+# Date: 2014-11-24 17:29:10
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -13,6 +13,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.SpreadSheetFileReader
 			-reader
 				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
 					-spreadsheet-type
 						adams.data.spreadsheet.SpreadSheet
 	-actor
@@ -44,17 +46,19 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.control.Trigger
 			-name
-			iterate over cells
+			iterate over rows
 			-tee
 				adams.flow.source.ForLoop
 					-upper
-					@{storage:rows}
+					@{rows}
 			-tee
 				adams.flow.transformer.SetVariable
 					-var-name
 					row
 			-tee
 				adams.flow.control.Trigger
+					-name
+					iterate over cells in row
 					-tee
 						adams.flow.source.ForLoop
 							-upper
@@ -65,6 +69,8 @@ adams.flow.control.Flow
 							col
 					-tee
 						adams.flow.control.Trigger
+							-name
+							output cell
 							-tee
 								adams.flow.source.StorageValue
 									-storage-name
@@ -91,6 +97,8 @@ adams.flow.control.Flow
 									true
 							-tee
 								adams.flow.sink.Display
+									-writer
+										adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
