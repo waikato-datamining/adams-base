@@ -15,7 +15,7 @@
 
 /**
  * WekaAttributeIndex.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka;
 
@@ -61,6 +61,16 @@ public class WekaAttributeIndex
    */
   public WekaAttributeIndex(String index, int max) {
     super(index, max);
+  }
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  @Override
+  public WekaAttributeIndex getClone() {
+    return (WekaAttributeIndex) super.getClone();
   }
 
   /**

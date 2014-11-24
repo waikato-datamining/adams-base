@@ -97,6 +97,16 @@ public class SpreadSheetColumnRange
   }
 
   /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  @Override
+  public SpreadSheetColumnRange getClone() {
+    return (SpreadSheetColumnRange) super.getClone();
+  }
+
+  /**
    * Returns the number of columns the dataset has.
    * 
    * @param data	the dataset to retrieve the number of columns

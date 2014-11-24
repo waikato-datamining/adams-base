@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 public class Index
   implements Serializable, CustomDisplayStringProvider, Comparable<Index>, 
-             ExampleProvider, HelpProvider {
+             ExampleProvider, HelpProvider, CloneHandler<Index> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4295722716846349301L;
@@ -178,6 +178,27 @@ public class Index
    */
   public boolean isEmpty() {
     return !hasIndex();
+  }
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public Index getClone() {
+    Index	result;
+    
+    try {
+      result = getClass().newInstance();
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to create new instance of " + getClass().getName(), e);
+    }
+    
+    result.setMax(getMax());
+    result.setIndex(getIndex());
+    
+    return result;
   }
 
   /**

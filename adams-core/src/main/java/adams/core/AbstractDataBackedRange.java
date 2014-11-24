@@ -133,7 +133,22 @@ public abstract class AbstractDataBackedRange<T>
     m_Names   = null;
     m_Indices = null;
   }
-  
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  @Override
+  public AbstractDataBackedRange<T> getClone() {
+    AbstractDataBackedRange<T>	result;
+    
+    result = (AbstractDataBackedRange<T>) super.getClone();
+    result.setData(getData());
+    
+    return result;
+  }
+
   /**
    * Sets the dataset to use for interpreting the column name.
    * 

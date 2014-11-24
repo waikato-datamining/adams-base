@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Range
   implements Serializable, CustomDisplayStringProvider, Comparable<Range>, 
-             ExampleProvider, HelpProvider {
+             ExampleProvider, HelpProvider, CloneHandler<Range> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7995710565507092711L;
@@ -948,6 +948,27 @@ public class Range
   @Override
   public int hashCode() {
     return getRange().hashCode();
+  }
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public Range getClone() {
+    Range	result;
+    
+    try {
+      result = getClass().newInstance();
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to create new instance of " + getClass().getName(), e);
+    }
+    
+    result.setMax(getMax());
+    result.setRange(getRange());
+    
+    return result;
   }
 
   /**

@@ -110,6 +110,21 @@ public abstract class AbstractDataBackedIndex<T>
   }
 
   /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  @Override
+  public AbstractDataBackedIndex<T> getClone() {
+    AbstractDataBackedIndex<T>	result;
+    
+    result = (AbstractDataBackedIndex<T>) super.getClone();
+    result.setData(getData());
+    
+    return result;
+  }
+
+  /**
    * Returns the number of columns the dataset has.
    * 
    * @param data	the dataset to retrieve the number of columns

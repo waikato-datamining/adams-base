@@ -15,7 +15,7 @@
 
 /**
  * WekaAttributeRange.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka;
 
@@ -75,6 +75,16 @@ public class WekaAttributeRange
   @Override
   protected Comparator newComparator() {
     return new InvertedStringLengthComparator();
+  }
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  @Override
+  public WekaAttributeRange getClone() {
+    return (WekaAttributeRange) super.getClone();
   }
 
   /**
