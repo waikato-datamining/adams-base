@@ -71,7 +71,7 @@ public class DownSampleTest
     result[1] = new DownSample();
     result[1].setNthColumn(2);
     result[2] = new DownSample();
-    result[2].setNthColumn(5);;
+    result[2].setNthColumn(5);
 
     return result;
   }
