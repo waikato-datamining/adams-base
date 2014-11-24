@@ -21,6 +21,8 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.flow.processor.ManageInteractiveActors;
+
 /**
  * Enables/disables interactive actors.
  * 
@@ -58,7 +60,17 @@ public class EditInteractiveActors
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().manageInteractiveActors(!isSelected());
+    ManageInteractiveActors	processor;
+
+    processor = new ManageInteractiveActors();
+    processor.setEnable(!isSelected());
+    processor.process(m_State.getCurrentFlow());
+    if (processor.isModified()) {
+      m_State.getCurrentPanel().addUndoPoint("Saving undo data...", (!isSelected() ? "Enable" : "Disable") + " interactive behaviour");
+      m_State.getCurrentPanel().getTree().buildTree(processor.getModifiedActor());
+      m_State.getCurrentPanel().getTree().setModified(true);
+      m_State.update();
+    }
   }
 
   /**

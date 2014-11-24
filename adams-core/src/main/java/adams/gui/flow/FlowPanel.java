@@ -21,36 +21,22 @@
 package adams.gui.flow;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import adams.core.ByteFormat;
-import adams.core.DiffUtils;
-import adams.core.DiffUtils.SideBySideDiff;
 import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -60,16 +46,11 @@ import adams.core.VariablesHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.NestedConsumer;
-import adams.core.option.NestedProducer;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
 import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
-import adams.data.statistics.InformativeStatistic;
 import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
@@ -77,24 +58,16 @@ import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
-import adams.flow.core.ActorStatistic;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.processor.AbstractActorProcessor;
-import adams.flow.processor.CheckVariableUsage;
-import adams.flow.processor.ManageInteractiveActors;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.ParameterPanel;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoPanel;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.TextDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeListener;
 import adams.gui.event.UndoEvent;
@@ -104,10 +77,7 @@ import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
-import adams.gui.tools.LogEntryViewerPanel;
 import adams.gui.tools.VariableManagementPanel;
-import adams.gui.visualization.debug.SideBySideDiffPanel;
-import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -1048,49 +1018,6 @@ public class FlowPanel
   }
 
   /**
-   * Validates the current setup.
-   */
-  public void validateSetup() {
-    AbstractActor	actor;
-    StringBuilder	errors;
-    String		msg;
-
-    msg    = null;
-    errors = new StringBuilder();
-    actor  = getCurrentFlow(errors);
-    if (errors.length() > 0)
-      msg = errors.toString();
-
-    if (msg == null) {
-      try {
-	msg = actor.setUp();
-	actor.wrapUp();
-	actor.cleanUp();
-      }
-      catch (Exception e) {
-	msg = "Actor generated exception: ";
-	System.err.println(msg);
-	e.printStackTrace();
-	msg += e;
-      }
-    }
-
-    // perform some checks
-    if (msg == null)
-      msg = ActorUtils.checkFlow(actor);
-
-    if (msg == null) {
-      msg = "The flow passed validation!";
-      showStatus(msg);
-      showNotification(msg, false);
-    }
-    else {
-      showStatus(msg);
-      showNotification("The flow setup failed validation:\n" + msg, true);
-    }
-  }
-
-  /**
    * Executes the flow.
    */
   public void run() {
@@ -1227,36 +1154,6 @@ public class FlowPanel
   }
 
   /**
-   * Displays the errors from the last run.
-   */
-  public void displayErrors() {
-    BaseDialog		dialog;
-    LogEntryHandler	handler;
-    LogEntryViewerPanel	panel;
-
-    if (m_LastFlow == null)
-      return;
-    if (!(m_LastFlow instanceof LogEntryHandler))
-      return;
-    handler = (LogEntryHandler) m_LastFlow;
-    if (handler.getLogEntries().size() == 0)
-      return;
-
-    if (getParentDialog() != null)
-      dialog = new BaseDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = new BaseDialog(getParentFrame(), false);
-    dialog.setTitle("Flow execution errors");
-    panel = new LogEntryViewerPanel();
-    panel.display(handler.getLogEntries());
-    dialog.getContentPane().setLayout(new BorderLayout());
-    dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(new Dimension(800, 600));
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-  }
-
-  /**
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
@@ -1282,106 +1179,6 @@ public class FlowPanel
     cleanUp();
     if (m_Owner != null)
       m_Owner.remove(this);
-  }
-
-  /**
-   * Displays statistics about the current flow.
-   */
-  public void showStatistics() {
-    ActorStatistic			stats;
-    InformativeStatisticFactory.Dialog	dialog;
-    Vector<InformativeStatistic>	statsList;
-
-    if (getTree().getSelectedNode() != null)
-      stats = new ActorStatistic(getTree().getSelectedNode().getFullActor());
-    else if (m_CurrentFlow != null)
-      stats = new ActorStatistic(m_CurrentFlow);
-    else
-      stats = new ActorStatistic(getCurrentFlow());
-    statsList = new Vector<InformativeStatistic>();
-    statsList.add(stats);
-
-    if (getParentDialog() != null)
-      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
-    dialog.setStatistics(statsList);
-    dialog.setTitle("Actor statistics");
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Shows the properties of the flow.
-   */
-  public void showProperties() {
-    ApprovalDialog	dialog;
-    ParameterPanel	params;
-    String		file;
-    String		size;
-    JButton		buttonStats;
-    final JTextField	textFile;
-    JTextField		textSize;
-
-    if (getCurrentFile() != null)
-      file = getCurrentFile().toString();
-    else
-      file = "N/A";
-    if ((getCurrentFile() != null) && !isModified())
-      size = ByteFormat.toKiloBytes(getCurrentFile().length(), 1);
-    else
-      size = "N/A";
-    buttonStats = new JButton("Display", GUIHelper.getIcon("statistics.png"));
-    buttonStats.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showStatistics();
-      }
-    });
-
-    params = new ParameterPanel();
-    textFile = new JTextField(file, 20);
-    textFile.setEditable(false);
-    textFile.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-	if (MouseUtils.isRightClick(e)) {
-	  e.consume();
-	  JPopupMenu menu = new JPopupMenu();
-	  JMenuItem menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
-	  menuitem.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	      GUIHelper.copyToClipboard(textFile.getText());
-	    }
-	  });
-	  menu.add(menuitem);
-	  menu.show(textFile, e.getX(), e.getY());
-	}
-	else {
-	  super.mouseClicked(e);
-	}
-      }
-    });
-    params.addParameter("File", textFile);
-    textSize = new JTextField(size, 7);
-    textSize.setEditable(false);
-    params.addParameter("Size", textSize);
-    params.addParameter("Statistics", buttonStats);
-
-    if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog());
-    else
-      dialog = new ApprovalDialog(getParentFrame());
-    dialog.setTitle("Properties");
-    dialog.setCancelVisible(false);
-    dialog.setApproveVisible(true);
-    dialog.setDiscardVisible(false);
-    dialog.getContentPane().add(params, BorderLayout.CENTER);
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
   }
 
   /**
@@ -1460,136 +1257,6 @@ public class FlowPanel
       }
     };
     worker.execute();
-  }
-
-  /**
-   * Searches for actor names in the tree.
-   */
-  public void find() {
-    getTree().find();
-  }
-
-  /**
-   * Searches for the next actor in the tree.
-   */
-  public void findNext() {
-    getTree().findNext();
-  }
-
-  /**
-   * Locates an actor based on the full actor name.
-   */
-  public void locateActor() {
-    String	path;
-
-    path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow[0].Sequence[3].Display'):");
-    if (path == null)
-      return;
-
-    getTree().locateAndDisplay(path);
-  }
-
-  /**
-   * Highlights variables in the tree (or hides the highlights again).
-   *
-   * @param highlight	whether to turn the highlights on or off
-   */
-  public void highlightVariables(boolean highlight) {
-    String	regexp;
-
-    if (highlight) {
-      regexp = JOptionPane.showInputDialog(
-	  GUIHelper.getParentComponent(this),
-	  "Enter the regular expression for the variable name ('.*' matches all):",
-	  m_LastVariableSearch);
-      if (regexp == null)
-	return;
-
-      m_LastVariableSearch = regexp;
-      getTree().highlightVariables(m_LastVariableSearch);
-    }
-    else {
-      getTree().highlightVariables(null);
-    }
-  }
-
-  /**
-   * Cleans up the flow, e.g., removing disabled actors, unused global actors.
-   *
-   * @see		ActorUtils#cleanUpFlow(AbstractActor)
-   */
-  public void cleanUpFlow() {
-    AbstractActor	cleaned;
-
-    cleaned = ActorUtils.cleanUpFlow(getCurrentFlow());
-
-    if (cleaned != null) {
-      addUndoPoint("Saving undo data...", "Cleaning up");
-      getTree().buildTree(cleaned);
-      getTree().setModified(true);
-      update();
-    }
-  }
-
-  /**
-   * Checks the variable usage, i.e., all variables must at least be set
-   * once somewhere in the flow.
-   */
-  public void checkVariables() {
-    CheckVariableUsage	processor;
-    final BaseDialog	dialog;
-    JPanel		panel;
-    JButton		button;
-
-    processor = new CheckVariableUsage();
-    processor.process(getCurrentFlow());
-    if (processor.hasGraphicalOutput()) {
-      if (getParentDialog() != null)
-	dialog = new BaseDialog(getParentDialog());
-      else
-	dialog = new BaseDialog(getParentFrame());
-      dialog.setTitle(processor.getClass().getSimpleName());
-      dialog.getContentPane().setLayout(new BorderLayout());
-      dialog.getContentPane().add(processor.getGraphicalOutput(), BorderLayout.CENTER);
-      button = new JButton("Close");
-      button.setMnemonic('C');
-      button.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          dialog.setVisible(false);
-        }
-      });
-      panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      panel.add(button);
-      dialog.getContentPane().add(panel, BorderLayout.SOUTH);
-      dialog.pack();
-      dialog.setLocationRelativeTo(this);
-      dialog.setVisible(true);
-    }
-    else {
-      showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
-    }
-  }
-
-  /**
-   * Enables/disables the interactive behaviour of {@link AutomatableInteractiveActor}
-   * actors.
-   *
-   * @param enable	true if to enable the interactive behaviour
-   * @see		AutomatableInteractiveActor
-   */
-  public void manageInteractiveActors(boolean enable) {
-    ManageInteractiveActors	processor;
-
-    processor = new ManageInteractiveActors();
-    processor.setEnable(enable);
-    processor.process(getCurrentFlow());
-    if (processor.isModified()) {
-      addUndoPoint("Saving undo data...", (enable ? "Enable" : "Disable") + " interactive behaviour");
-      getTree().buildTree(processor.getModifiedActor());
-      getTree().setModified(true);
-      update();
-    }
   }
 
   /**
@@ -1773,26 +1440,6 @@ public class FlowPanel
   }
 
   /**
-   * Displays the source code (in nested format) of the current flow.
-   */
-  public void showSource() {
-    TextDialog 	dialog;
-    String 	buffer;
-
-    buffer = AbstractOptionProducer.toString(NestedProducer.class, getCurrentFlow());
-
-    if (getParentDialog() != null)
-      dialog = new TextDialog(getParentDialog());
-    else
-      dialog = new TextDialog(getParentFrame());
-    dialog.setTitle(m_TitleGenerator.generate(getCurrentFile(), getTree().isModified()) + " [Source]");
-    dialog.setTabSize(2);
-    dialog.setContent(buffer);
-    dialog.setLocationRelativeTo(getTree());
-    dialog.setVisible(true);
-  }
-
-  /**
    * Displays a message.
    *
    * @param msg		the message to display
@@ -1911,81 +1558,6 @@ public class FlowPanel
     }
 
     return result;
-  }
-
-  /**
-   * Whether a diff between current flow and undo-flow can be generated.
-   *
-   * @return		true if diff can be generated
-   */
-  public boolean canDiff() {
-    return m_Undo.isEnabled() && !m_Undo.isWorking() && m_Undo.canUndo();
-  }
-
-  /**
-   * Generates a diff between the current flow and the closest undo step.
-   *
-   * @return		the diff, null if failed to generate
-   */
-  public SideBySideDiff getDiff() {
-    SideBySideDiff	result;
-    String		current;
-    String		prev;
-    Vector		state;
-    AbstractActor	actor;
-
-    if (!canDiff())
-      return null;
-
-    // current flow
-    current = AbstractOptionProducer.toString(NestedProducer.class, getCurrentFlow()).replace("\t", "  ");
-
-    // undo step
-    state = (Vector) m_Undo.peekUndo().getData();
-    if (state.get(0) == null)
-      return null;
-    if (state.get(0) instanceof AbstractActor)
-      actor = (AbstractActor) state.get(0);
-    else
-      actor = (AbstractActor) AbstractOptionConsumer.consume(NestedConsumer.class, state.get(0));
-    prev = AbstractOptionProducer.toString(NestedProducer.class, actor).replace("\t", "  ");
-
-    // generate diff
-    result = DiffUtils.sideBySide(prev.split("\n"), current.split("\n"));
-
-    return result;
-  }
-
-  /**
-   * Displays (if possible) a diff between current flow and last item in undo list.
-   */
-  public void showDiff() {
-    SideBySideDiff	diff;
-    ApprovalDialog	dialog;
-    SideBySideDiffPanel	panel;
-
-    if (!canDiff())
-      return;
-
-    diff = getDiff();
-    if (diff == null) {
-      GUIHelper.showErrorMessage(this, "Failed to compute differences!");
-      return;
-    }
-
-    if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = new ApprovalDialog(getParentFrame(), true);
-    dialog.setTitle("Differences");
-    panel = new SideBySideDiffPanel();
-    panel.setLabelText(true, "Previous");
-    panel.setLabelText(false, "Current");
-    panel.display(diff);
-    dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 600);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
   }
 
   /**

@@ -21,6 +21,9 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorUtils;
+
 /**
  * Cleans up the flow.
  * 
@@ -48,7 +51,16 @@ public class EditCleanUpFlow
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().cleanUpFlow();
+    AbstractActor	cleaned;
+
+    cleaned = ActorUtils.cleanUpFlow(m_State.getCurrentFlow());
+
+    if (cleaned != null) {
+      m_State.getCurrentPanel().addUndoPoint("Saving undo data...", "Cleaning up");
+      m_State.getCurrentPanel().getTree().buildTree(cleaned);
+      m_State.getCurrentPanel().getTree().setModified(true);
+      m_State.update();
+    }
   }
 
   /**

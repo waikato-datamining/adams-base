@@ -19,7 +19,27 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+
+import adams.core.ByteFormat;
+import adams.data.statistics.InformativeStatistic;
+import adams.flow.core.ActorStatistic;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
  * Displays properties of a flow.
@@ -44,11 +64,104 @@ public class FileProperties
   }
 
   /**
+   * Displays statistics about the current flow.
+   */
+  protected void showStatistics() {
+    ActorStatistic			stats;
+    InformativeStatisticFactory.Dialog	dialog;
+    Vector<InformativeStatistic>	statsList;
+
+    if (m_State.getCurrentTree().getSelectedNode() != null)
+      stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
+    else if (m_State.getCurrentFlow() != null)
+      stats = new ActorStatistic(m_State.getCurrentFlow());
+    else
+      stats = new ActorStatistic(m_State.getCurrentFlow());
+    statsList = new Vector<InformativeStatistic>();
+    statsList.add(stats);
+
+    if (getParentDialog() != null)
+      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
+    dialog.setStatistics(statsList);
+    dialog.setTitle("Actor statistics");
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().showProperties();
+    ApprovalDialog	dialog;
+    ParameterPanel	params;
+    String		file;
+    String		size;
+    JButton		buttonStats;
+    final JTextField	textFile;
+    JTextField		textSize;
+
+    if (m_State.getCurrentFile() != null)
+      file = m_State.getCurrentFile().toString();
+    else
+      file = "N/A";
+    if ((m_State.getCurrentFile() != null) && !m_State.isModified())
+      size = ByteFormat.toKiloBytes(m_State.getCurrentFile().length(), 1);
+    else
+      size = "N/A";
+    buttonStats = new JButton("Display", GUIHelper.getIcon("statistics.png"));
+    buttonStats.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	showStatistics();
+      }
+    });
+
+    params = new ParameterPanel();
+    textFile = new JTextField(file, 20);
+    textFile.setEditable(false);
+    textFile.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  e.consume();
+	  JPopupMenu menu = new JPopupMenu();
+	  JMenuItem menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+	  menuitem.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	      GUIHelper.copyToClipboard(textFile.getText());
+	    }
+	  });
+	  menu.add(menuitem);
+	  menu.show(textFile, e.getX(), e.getY());
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
+    params.addParameter("File", textFile);
+    textSize = new JTextField(size, 7);
+    textSize.setEditable(false);
+    params.addParameter("Size", textSize);
+    params.addParameter("Statistics", buttonStats);
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog());
+    else
+      dialog = new ApprovalDialog(getParentFrame());
+    dialog.setTitle("Properties");
+    dialog.setCancelVisible(false);
+    dialog.setApproveVisible(true);
+    dialog.setDiscardVisible(false);
+    dialog.getContentPane().add(params, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
   }
 
   /**

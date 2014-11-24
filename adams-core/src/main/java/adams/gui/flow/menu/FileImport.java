@@ -19,7 +19,11 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+
+import adams.gui.flow.FlowPanel;
+import adams.gui.flow.ImportDialog;
 
 /**
  * Lets user import a flow.
@@ -32,6 +36,9 @@ public class FileImport
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  /** the dialog for importing the flow. */
+  protected ImportDialog m_ImportDialog;
 
   /**
    * Returns the caption of this action.
@@ -48,7 +55,22 @@ public class FileImport
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.importFlow();
+    FlowPanel	panel;
+
+    if (m_ImportDialog == null) {
+      if (getParentDialog() != null)
+	m_ImportDialog = new ImportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      else
+	m_ImportDialog = new ImportDialog(getParentFrame(), true);
+    }
+
+    m_ImportDialog.setLocationRelativeTo(m_State);
+    m_ImportDialog.setVisible(true);
+    if (m_ImportDialog.getOption() != ImportDialog.APPROVE_OPTION)
+      return;
+
+    panel = m_State.getFlowPanels().newPanel();
+    panel.importFlow(m_ImportDialog.getImport(), m_ImportDialog.getFile());
   }
 
   /**
@@ -57,5 +79,18 @@ public class FileImport
   @Override
   protected void doUpdate() {
     setEnabled(true);
+  }
+  
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    
+    if (m_ImportDialog != null) {
+      m_ImportDialog.dispose();
+      m_ImportDialog = null;
+    }
   }
 }

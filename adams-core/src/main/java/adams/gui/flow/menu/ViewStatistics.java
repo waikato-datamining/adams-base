@@ -59,17 +59,17 @@ public class ViewStatistics
     Vector<InformativeStatistic>	statsList;
 
     stats = null;
-    if (m_State.getCurrentPanel().getTree().getSelectedNode() != null)
-      stats = new ActorStatistic(m_State.getCurrentPanel().getTree().getSelectedNode().getFullActor());
+    if (m_State.getCurrentTree().getSelectedNode() != null)
+      stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
     else if (m_State.getCurrentRoot() != null)
       stats = new ActorStatistic(m_State.getCurrentFlow());
     statsList = new Vector<InformativeStatistic>();
     statsList.add(stats);
 
     if (m_State.getParentDialog() != null)
-      dialog = InformativeStatisticFactory.getDialog(m_State.getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = InformativeStatisticFactory.getDialog(m_State.getParentFrame(), true);
+      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
     dialog.setStatistics(statsList);
     dialog.setTitle("Actor statistics");
     dialog.pack();

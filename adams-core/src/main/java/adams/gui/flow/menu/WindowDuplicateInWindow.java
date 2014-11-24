@@ -21,6 +21,11 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.gui.application.ChildFrame;
+import adams.gui.application.ChildWindow;
+import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowEditorPanel;
+
 /**
  * Duplicates the flow in a new window.
  * 
@@ -48,7 +53,37 @@ public class WindowDuplicateInWindow
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.duplicateTabInNewWindow();
+    FlowEditorPanel 	panel;
+    ChildFrame 		oldFrame;
+    ChildFrame 		newFrame;
+    ChildWindow 	oldWindow;
+    ChildWindow 	newWindow;
+
+    panel    = null;
+    oldFrame = (ChildFrame) GUIHelper.getParent(m_State, ChildFrame.class);
+    if (oldFrame != null) {
+      newFrame = oldFrame.getNewWindow();
+      newFrame.setVisible(true);
+      panel  = (FlowEditorPanel) newFrame.getContentPane().getComponent(0);
+    }
+    else {
+      oldWindow = (ChildWindow) GUIHelper.getParent(m_State, ChildWindow.class);
+      if (oldWindow != null) {
+	newWindow = oldWindow.getNewWindow();
+	newWindow.setVisible(true);
+	panel  = (FlowEditorPanel) newWindow.getContentPane().getComponent(0);
+      }
+    }
+
+    // copy information
+    if (panel != null) {
+      panel.setCurrentDirectory(m_State.getCurrentDirectory());
+      panel.newTab();
+      panel.setCurrentFlow(m_State.getCurrentFlow());
+      panel.setCurrentFile(m_State.getCurrentFile());
+      panel.setModified(m_State.isModified());
+      panel.update();
+    }
   }
 
   /**

@@ -19,9 +19,14 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 import adams.db.LogEntryHandler;
+import adams.gui.core.BaseDialog;
+import adams.gui.tools.LogEntryViewerPanel;
 
 /**
  * Displays errors from last run.
@@ -50,7 +55,30 @@ public class ExecutionDisplayErrors
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().displayErrors();
+    BaseDialog		dialog;
+    LogEntryHandler	handler;
+    LogEntryViewerPanel	panel;
+
+    if (m_State.getLastFlow() == null)
+      return;
+    if (!(m_State.getLastFlow() instanceof LogEntryHandler))
+      return;
+    handler = (LogEntryHandler) m_State.getLastFlow();
+    if (handler.getLogEntries().size() == 0)
+      return;
+
+    if (getParentDialog() != null)
+      dialog = new BaseDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new BaseDialog(getParentFrame(), false);
+    dialog.setTitle("Flow execution errors");
+    panel = new LogEntryViewerPanel();
+    panel.display(handler.getLogEntries());
+    dialog.getContentPane().setLayout(new BorderLayout());
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setSize(new Dimension(800, 600));
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
   }
 
   /**

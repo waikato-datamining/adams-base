@@ -19,7 +19,16 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import adams.flow.processor.CheckVariableUsage;
+import adams.gui.core.BaseDialog;
 
 /**
  * Checks the variable usage.
@@ -48,7 +57,39 @@ public class EditCheckVariables
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().checkVariables();
+    CheckVariableUsage	processor;
+    final BaseDialog	dialog;
+    JPanel		panel;
+    JButton		button;
+
+    processor = new CheckVariableUsage();
+    processor.process(m_State.getCurrentFlow());
+    if (processor.hasGraphicalOutput()) {
+      if (getParentDialog() != null)
+	dialog = new BaseDialog(getParentDialog());
+      else
+	dialog = new BaseDialog(getParentFrame());
+      dialog.setTitle(processor.getClass().getSimpleName());
+      dialog.getContentPane().setLayout(new BorderLayout());
+      dialog.getContentPane().add(processor.getGraphicalOutput(), BorderLayout.CENTER);
+      button = new JButton("Close");
+      button.setMnemonic('C');
+      button.addActionListener(new ActionListener() {
+        @Override
+	public void actionPerformed(ActionEvent e) {
+          dialog.setVisible(false);
+        }
+      });
+      panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      panel.add(button);
+      dialog.getContentPane().add(panel, BorderLayout.SOUTH);
+      dialog.pack();
+      dialog.setLocationRelativeTo(m_State);
+      dialog.setVisible(true);
+    }
+    else {
+      m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
+    }
   }
 
   /**

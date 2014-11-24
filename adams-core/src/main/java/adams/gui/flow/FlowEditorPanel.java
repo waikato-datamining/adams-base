@@ -21,9 +21,7 @@
 package adams.gui.flow;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -371,15 +369,6 @@ public class FlowEditorPanel
   /** the tabbedpane for the tabs. */
   protected FlowTabManager m_Tabs;
 
-  /** the last variable search performed. */
-  protected String m_LastVariableSearch;
-
-  /** the dialog for importing the flow. */
-  protected ImportDialog m_ImportDialog;
-
-  /** the dialog for exporting the flow. */
-  protected ExportDialog m_ExportDialog;
-
   /** the default toolbar location to use. */
   protected ToolBarLocation m_PreferredToolBarLocation;
 
@@ -395,12 +384,10 @@ public class FlowEditorPanel
 
     m_Self                = this;
     m_RecentFilesHandler  = null;
-    m_LastVariableSearch  = "";
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")));
     m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
-    m_ExportDialog        = null;
 
     m_MenuItems           = new ArrayList<FlowEditorAction>();
     m_AdditionalMenuItems = new ArrayList<AbstractFlowEditorMenuItem>();
@@ -1165,7 +1152,7 @@ public class FlowEditorPanel
    *
    * @param value	the file
    */
-  protected void setCurrentFile(File value) {
+  public void setCurrentFile(File value) {
     if (hasCurrentPanel())
       getCurrentPanel().setCurrentFile(value);
   }
@@ -1401,61 +1388,6 @@ public class FlowEditorPanel
   }
 
   /**
-   * Imports a flow.
-   */
-  public void importFlow() {
-    FlowPanel	panel;
-
-    if (m_ImportDialog == null) {
-      if (getParentDialog() != null)
-	m_ImportDialog = new ImportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_ImportDialog = new ImportDialog(getParentFrame(), true);
-    }
-
-    m_ImportDialog.setLocationRelativeTo(this);
-    m_ImportDialog.setVisible(true);
-    if (m_ImportDialog.getOption() != ImportDialog.APPROVE_OPTION)
-      return;
-
-    panel = m_FlowPanels.newPanel();
-    panel.importFlow(m_ImportDialog.getImport(), m_ImportDialog.getFile());
-  }
-
-  /**
-   * Exports the flow.
-   */
-  public void exportFlow() {
-    FlowPanel	panel;
-
-    panel = getCurrentPanel();
-    if (panel == null)
-      return;
-
-    if (m_ExportDialog == null) {
-      if (getParentDialog() != null)
-	m_ExportDialog = new ExportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_ExportDialog = new ExportDialog(getParentFrame(), true);
-    }
-
-    m_ExportDialog.setLocationRelativeTo(this);
-    m_ExportDialog.setVisible(true);
-    if (m_ExportDialog.getOption() != ExportDialog.APPROVE_OPTION)
-      return;
-
-    panel.exportFlow(m_ExportDialog.getExport(), m_ExportDialog.getFile());
-  }
-
-  /**
-   * Validates the current setup.
-   */
-  public void validateSetup() {
-    if (hasCurrentPanel())
-      getCurrentPanel().validateSetup();
-  }
-
-  /**
    * Executes the flow.
    */
   public void run() {
@@ -1626,6 +1558,8 @@ public class FlowEditorPanel
    */
   public void cleanUp() {
     m_FlowPanels.cleanUp();
+    for (FlowEditorAction action: m_MenuItems)
+      action.cleanUp();
   }
 
   /**
@@ -1717,73 +1651,6 @@ public class FlowEditorPanel
 	result.getCurrentPanel().getTree().setModified(true);
       }
       result.update();
-    }
-
-    return result;
-  }
-
-  /**
-   * Duplicates the current window/frame, including the current flow.
-   *
-   * @return		the new window
-   */
-  public Window duplicateTabInNewWindow() {
-    Window		result;
-    FlowEditorPanel 	panel;
-    ChildFrame 		oldFrame;
-    ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
-
-    result   = null;
-    panel    = null;
-    oldFrame = (ChildFrame) GUIHelper.getParent(m_Self, ChildFrame.class);
-    if (oldFrame != null) {
-      newFrame = oldFrame.getNewWindow();
-      newFrame.setVisible(true);
-      panel  = (FlowEditorPanel) newFrame.getContentPane().getComponent(0);
-      result = newFrame;
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(m_Self, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	panel  = (FlowEditorPanel) newWindow.getContentPane().getComponent(0);
-	result = newWindow;
-      }
-    }
-
-    // copy information
-    if (panel != null) {
-      panel.setCurrentDirectory(getCurrentDirectory());
-      panel.newTab();
-      panel.setCurrentFlow(getCurrentPanel().getCurrentFlow());
-      panel.setCurrentFile(getCurrentPanel().getCurrentFile());
-      panel.setModified(getCurrentPanel().isModified());
-      panel.update();
-    }
-
-    return result;
-  }
-
-  /**
-   * Duplicates the current tab.
-   *
-   * @return		the new panel
-   */
-  public FlowPanel duplicateTab() {
-    FlowPanel	result;
-    FlowPanel 	current;
-
-    result  = null;
-    current = getCurrentPanel();
-
-    if (current != null) {
-      result = m_FlowPanels.newPanel();
-      result.setCurrentFlow(current.getCurrentFlow());
-      result.setCurrentFile(current.getCurrentFile());
-      result.setModified(current.isModified());
     }
 
     return result;
@@ -1954,24 +1821,6 @@ public class FlowEditorPanel
    */
   public ToolBarLocation getPreferredToolBarLocation() {
     return m_PreferredToolBarLocation;
-  }
-  
-  /**
-   * Sets the last variable search term.
-   * 
-   * @param value	the search term
-   */
-  public void setLastVariableSearch(String value) {
-    m_LastVariableSearch = value;
-  }
-  
-  /**
-   * Returns the last variable search term.
-   * 
-   * @return		the search, null if none available
-   */
-  public String getLastVariableSearch() {
-    return m_LastVariableSearch;
   }
 
   /**

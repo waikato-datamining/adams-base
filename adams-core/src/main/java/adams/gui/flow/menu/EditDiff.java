@@ -19,7 +19,21 @@
  */
 package adams.gui.flow.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
+
+import adams.core.DiffUtils;
+import adams.core.DiffUtils.SideBySideDiff;
+import adams.core.option.AbstractOptionConsumer;
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.NestedConsumer;
+import adams.core.option.NestedProducer;
+import adams.flow.core.AbstractActor;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.debug.SideBySideDiffPanel;
 
 /**
  * Shows differences between versions of flows.
@@ -44,11 +58,86 @@ public class EditDiff
   }
 
   /**
+   * Generates a diff between the current flow and the closest undo step.
+   *
+   * @return		the diff, null if failed to generate
+   */
+  protected SideBySideDiff getDiff() {
+    SideBySideDiff	result;
+    String		current;
+    String		prev;
+    Vector		state;
+    AbstractActor	actor;
+
+    if (!canDiff())
+      return null;
+
+    // current flow
+    current = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow()).replace("\t", "  ");
+
+    // undo step
+    state = (Vector) m_State.getCurrentPanel().getUndo().peekUndo().getData();
+    if (state.get(0) == null)
+      return null;
+    if (state.get(0) instanceof AbstractActor)
+      actor = (AbstractActor) state.get(0);
+    else
+      actor = (AbstractActor) AbstractOptionConsumer.consume(NestedConsumer.class, state.get(0));
+    prev = AbstractOptionProducer.toString(NestedProducer.class, actor).replace("\t", "  ");
+
+    // generate diff
+    result = DiffUtils.sideBySide(prev.split("\n"), current.split("\n"));
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().showDiff();
+    SideBySideDiff	diff;
+    ApprovalDialog	dialog;
+    SideBySideDiffPanel	panel;
+
+    if (!canDiff())
+      return;
+
+    diff = getDiff();
+    if (diff == null) {
+      GUIHelper.showErrorMessage(m_State, "Failed to compute differences!");
+      return;
+    }
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Differences");
+    dialog.setCancelVisible(false);
+    dialog.setApproveCaption("Close");
+    dialog.setApproveMnemonic('l');
+    panel = new SideBySideDiffPanel();
+    panel.setLabelText(true, "Previous");
+    panel.setLabelText(false, "Current");
+    panel.display(diff);
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setSize(800, 600);
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
+  }
+
+  /**
+   * Whether a diff between current flow and undo-flow can be generated.
+   *
+   * @return		true if diff can be generated
+   */
+  protected boolean canDiff() {
+    return 
+	   m_State.getCurrentPanel().getUndo().isEnabled() 
+	&& !m_State.getCurrentPanel().getUndo().isWorking() 
+	&& m_State.getCurrentPanel().getUndo().canUndo();
   }
 
   /**
@@ -59,6 +148,6 @@ public class EditDiff
     setEnabled(
 	   m_State.hasCurrentPanel() 
 	&& isInputEnabled() 
-	&& m_State.getCurrentPanel().canDiff());
+	&& canDiff());
   }
 }

@@ -21,6 +21,10 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.NestedProducer;
+import adams.gui.dialog.TextDialog;
+
 /**
  * Displays the source of the flow.
  * 
@@ -48,7 +52,22 @@ public class ViewShowSource
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().showSource();
+    TextDialog 	dialog;
+    String 	buffer;
+
+    buffer = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow());
+
+    if (getParentDialog() != null)
+      dialog = new TextDialog(getParentDialog());
+    else
+      dialog = new TextDialog(getParentFrame());
+    dialog.setDialogTitle(
+	m_State.getCurrentPanel().getTitleGenerator().generate(
+	    m_State.getCurrentFile(), m_State.getCurrentTree().isModified()) + " [Source]");
+    dialog.setTabSize(2);
+    dialog.setContent(buffer);
+    dialog.setLocationRelativeTo(m_State);
+    dialog.setVisible(true);
   }
 
   /**

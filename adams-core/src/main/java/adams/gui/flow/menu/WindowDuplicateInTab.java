@@ -21,6 +21,8 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
+import adams.gui.flow.FlowPanel;
+
 /**
  * Duplicates the flow in a new tab.
  * 
@@ -48,7 +50,18 @@ public class WindowDuplicateInTab
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.duplicateTab();
+    FlowPanel	result;
+    FlowPanel 	current;
+
+    result  = null;
+    current = m_State.getCurrentPanel();
+
+    if (current != null) {
+      result = m_State.getFlowPanels().newPanel();
+      result.setCurrentFlow(current.getCurrentFlow());
+      result.setCurrentFile(current.getCurrentFile());
+      result.setModified(current.isModified());
+    }
   }
 
   /**

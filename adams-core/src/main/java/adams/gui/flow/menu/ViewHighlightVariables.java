@@ -37,6 +37,18 @@ public class ViewHighlightVariables
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
 
+  /** the last variable search performed. */
+  protected String m_LastVariableSearch;
+
+  /**
+   * Initializes the action.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    m_LastVariableSearch = "";    
+  }
+  
   /**
    * Returns the caption of this action.
    * 
@@ -57,12 +69,12 @@ public class ViewHighlightVariables
     regexp = JOptionPane.showInputDialog(
 	  GUIHelper.getParentComponent(m_State),
 	  "Enter the regular expression for the variable name ('.*' matches all):",
-	  m_State.getLastVariableSearch());
+	  m_LastVariableSearch);
     if (regexp == null)
 	return;
 
-    m_State.setLastVariableSearch(regexp);
-    m_State.getCurrentPanel().getTree().highlightVariables(m_State.getLastVariableSearch());
+    m_LastVariableSearch = regexp;
+    m_State.getCurrentPanel().getTree().highlightVariables(m_LastVariableSearch);
   }
 
   /**
