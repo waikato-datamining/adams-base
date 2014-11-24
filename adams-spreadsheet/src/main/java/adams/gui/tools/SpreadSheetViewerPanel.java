@@ -983,9 +983,6 @@ public class SpreadSheetViewerPanel
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.addWindowListener(new WindowAdapter() {
-      /* (non-Javadoc)
-       * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
-       */
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
