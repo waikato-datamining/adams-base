@@ -42,7 +42,7 @@ public class ExecutionGC
    */
   @Override
   protected String getTitle() {
-    return "GC";
+    return "GC after execution";
   }
 
   /**
