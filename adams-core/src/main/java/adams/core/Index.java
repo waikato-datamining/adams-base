@@ -170,6 +170,15 @@ public class Index
   public boolean hasIndex() {
     return (getIndex().length() > 0);
   }
+  
+  /**
+   * Returns whether the index is empty.
+   * 
+   * @return		true if empty
+   */
+  public boolean isEmpty() {
+    return !hasIndex();
+  }
 
   /**
    * Checks whether the string represents a placeholder.
