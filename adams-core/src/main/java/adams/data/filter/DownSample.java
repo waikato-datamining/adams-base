@@ -58,7 +58,7 @@ public class DownSample<T extends DataContainer>
   /** for serialization. */
   private static final long serialVersionUID = -7633117391523711914L;
 
-  /** the n-th spectrum point to use. */
+  /** the n-th point to use. */
   protected int m_NthPoint;
 
   /**
