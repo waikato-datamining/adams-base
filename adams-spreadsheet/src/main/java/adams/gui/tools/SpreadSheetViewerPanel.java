@@ -60,6 +60,7 @@ import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.core.ToolBarPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
@@ -99,7 +100,7 @@ import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
  * @version $Revision$
  */
 public class SpreadSheetViewerPanel
-  extends BasePanel
+  extends ToolBarPanel
   implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
 
   /** for serialization. */
@@ -211,7 +212,7 @@ public class SpreadSheetViewerPanel
   protected boolean m_ApplyToAll;
 
   /** menu items. */
-  protected List<SpreadSheetViewerAction> m_MenuItems;
+  protected List<SpreadSheetViewerAction> m_Actions;
 
   /**
    * Initializes the members.
@@ -225,10 +226,7 @@ public class SpreadSheetViewerPanel
 
     m_RecentFilesHandler = null;
     m_ApplyToAll         = false;
-    m_MenuItems          = new ArrayList<SpreadSheetViewerAction>();
-    
-    // TODO make it derived from ToolBarPane
-    initActions();
+    m_Actions          = new ArrayList<SpreadSheetViewerAction>();
   }
 
   /**
@@ -239,6 +237,8 @@ public class SpreadSheetViewerPanel
     super.initGUI();
 
     setLayout(new BorderLayout());
+
+    setToolBarLocation(ToolBarLocation.NORTH);
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT, true);
     m_SplitPane.setOneTouchExpandable(true);
@@ -264,100 +264,121 @@ public class SpreadSheetViewerPanel
   /**
    * Initializes the actions.
    */
+  @Override
   protected void initActions() {
     SpreadSheetViewerAction	action;
 
     // File/Open
     action = new FileOpen();
     m_ActionFileOpen = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // File/Save as
     action = new FileSaveAs();
     m_ActionFileSaveAs = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // File/Close tab
     action = new FileCloseTab();
     m_ActionFileCloseTab = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // File/Exit
     action = new FileExit();
     m_ActionFileExit = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Filter columns
     action = new DataFilterColumns();
     m_ActionDataFilterColumns = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Filter rows
     action = new DataFilterRows();
     m_ActionDataFilterRows = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Convert
     action = new DataConvert();
     m_ActionDataConvert = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Transform
     action = new DataTransform();
     m_ActionDataTransform = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Sort
     action = new DataSort();
     m_ActionDataSort = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Chart
     action = new DataChart();
     m_ActionDataChart = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Data/Compute difference
     action = new DataComputeDifference();
     m_ActionDataComputeDifference = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // View/Apply to all
     action = new ViewApplyToAll();
     m_ActionViewApplyToAll = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // View/Decimals
     action = new ViewDecimals();
     m_ActionViewDisplayedDecimals = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // View/Negative background
     action = new ViewNegativeBackground();
     m_ActionViewNegativeBackground = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // View/Positive background
     action = new ViewPositiveBackground();
     m_ActionViewPositiveBackground = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // View/Show formulas
     action = new ViewShowFormulas();
     m_ActionViewShowFormulas = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Help/Formulas
     action = new HelpFormulas();
     m_ActionHelpFormulas = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
 
     // Help/Query
     action = new HelpQuery();
     m_MenuItemHelpQuery = action;
-    m_MenuItems.add(action);
+    m_Actions.add(action);
   }
 
+  /**
+   * Sets up the toolbar, using the actions.
+   *
+   * @see		#initActions()
+   */
+  @Override
+  protected void initToolBar() {
+    addToToolBar(m_ActionFileOpen);
+    addToToolBar(m_ActionFileSaveAs);
+    addSeparator();
+    addToToolBar(m_ActionDataFilterColumns);
+    addToToolBar(m_ActionDataFilterRows);
+    addToToolBar(m_ActionDataConvert);
+    addToToolBar(m_ActionDataTransform);
+    addToToolBar(m_ActionDataSort);
+    addToToolBar(m_ActionDataChart);
+    addSeparator();
+    addToToolBar(m_ActionViewDisplayedDecimals);
+  }
+  
   /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
    *
@@ -400,6 +421,7 @@ public class SpreadSheetViewerPanel
 	@Override
 	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
 	  load((SpreadSheetReader) e.getItem().getHandler(), e.getItem().getFile());
+	  updateMenu();
 	}
       });
       m_MenuFileOpenRecent = submenu;
@@ -619,7 +641,16 @@ public class SpreadSheetViewerPanel
 	m_TabbedPane.setPositiveBackgroundAt(m_TabbedPane.getSelectedIndex(), color);
     }
   }
-
+  
+  /**
+   * Updates the enabled state of the actions.
+   */
+  @Override
+  protected void updateActions() {
+    for (SpreadSheetViewerAction action: m_Actions)
+      action.update(this);
+  }
+  
   /**
    * updates the enabled state of the menu items.
    */
@@ -634,9 +665,8 @@ public class SpreadSheetViewerPanel
     sheetSelected = (m_TabbedPane.getTabCount() > 0) && (m_TabbedPane.getSelectedIndex() != -1);
     panel         = m_TabbedPane.getCurrentPanel();
 
-    for (SpreadSheetViewerAction action: m_MenuItems)
-      action.update(this);
-
+    updateActions();
+    
     // Data
     if (m_MenuItemDataPlugins != null) {
       for (i = 0; i < m_DataPlugins.size(); i++) {
@@ -969,10 +999,10 @@ public class SpreadSheetViewerPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    if (m_MenuItems != null) {
-      for (SpreadSheetViewerAction action: m_MenuItems)
+    if (m_Actions != null) {
+      for (SpreadSheetViewerAction action: m_Actions)
 	action.cleanUp();
-      m_MenuItems = null;
+      m_Actions = null;
     }
   }
 

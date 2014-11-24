@@ -20,6 +20,7 @@
 package adams.gui.tools.spreadsheetviewer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import adams.core.CleanUpHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
@@ -104,6 +106,23 @@ public class TabbedPane
    */
   public SpreadSheetViewerPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Hook method that gets executed after a tab was successfully removed with
+   * a middle mouse button click.
+   * <p/>
+   * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
+   * instances.
+   * 
+   * @param index	the original index
+   * @param comp	the component that was removed
+   */
+  @Override
+  protected void afterTabClosedWithMiddleMouseButton(int index, Component comp) {
+    super.afterTabClosedWithMiddleMouseButton(index, comp);
+    if (getOwner() != null)
+      getOwner().updateMenu();
   }
 
   /**

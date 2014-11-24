@@ -100,7 +100,7 @@ public abstract class AbstractHelpTextAction
       result = new TextDialog(getParentDialog());
     else
       result = new TextDialog(getParentFrame());
-    result.setDialogTitle(getTitle().replaceAll("\\.$", ""));
+    result.setDialogTitle(getTitle().replaceAll("[.]*$", ""));
     result.setContent(getHelpContent());
     result.setEditable(false);
     result.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
@@ -119,5 +119,18 @@ public abstract class AbstractHelpTextAction
   @Override
   protected void doActionPerformed(ActionEvent e) {
     getDialog().setVisible(true);
+  }
+  
+  /**
+   * Invoked when an action occurs (hook method after executing the actual action code).
+   * <p/>
+   * Updates the menu.
+   * 
+   * @param e		the event
+   */
+  @Override
+  protected void postActionPerformed(ActionEvent e) {
+    super.postActionPerformed(e);
+    m_State.updateMenu();
   }
 }

@@ -21,6 +21,7 @@ package adams.gui.tools.spreadsheetviewer.menu;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
@@ -96,5 +97,18 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
    */
   protected boolean isSheetSelected() {
     return (getTabbedPane().getTabCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
+  }
+  
+  /**
+   * Invoked when an action occurs (hook method after executing the actual action code).
+   * <p/>
+   * Updates the menu.
+   * 
+   * @param e		the event
+   */
+  @Override
+  protected void postActionPerformed(ActionEvent e) {
+    super.postActionPerformed(e);
+    m_State.updateMenu();
   }
 }
