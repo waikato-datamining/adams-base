@@ -48,7 +48,7 @@ public class FileRevert
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.save();
+    m_State.getCurrentPanel().revert();
   }
 
   /**
@@ -59,7 +59,7 @@ public class FileRevert
     setEnabled(
 	   m_State.hasCurrentPanel() 
 	&& isInputEnabled() 
-	&& (m_State.getCurrentPanel().getCurrentFile() != null) 
-	&& m_State.getCurrentPanel().getTree().isModified());
+	&& (m_State.getCurrentFile() != null) 
+	&& m_State.getCurrentTree().isModified());
   }
 }
