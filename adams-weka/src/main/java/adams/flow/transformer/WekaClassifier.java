@@ -26,6 +26,7 @@ import weka.classifiers.UpdateableClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -101,6 +102,7 @@ import adams.flow.source.WekaClassifierSetup;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {WekaClassifierSetup.class, WekaTrainClassifier.class})
 public class WekaClassifier
   extends AbstractTransformer {
 

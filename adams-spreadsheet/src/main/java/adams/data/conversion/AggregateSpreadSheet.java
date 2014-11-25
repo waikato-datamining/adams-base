@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import adams.core.Range;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.RowIdentifier;
@@ -80,6 +81,7 @@ import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {SpreadSheetAggregate.class})
 public class AggregateSpreadSheet
   extends AbstractSpreadSheetConversion {
 

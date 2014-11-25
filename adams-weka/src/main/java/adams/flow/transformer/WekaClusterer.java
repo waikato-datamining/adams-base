@@ -27,6 +27,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -87,6 +88,7 @@ import adams.flow.transformer.wekaclusterer.PassThrough;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {WekaClustererSetup.class, WekaTrainClusterer.class})
 public class WekaClusterer
   extends AbstractTransformer {
 

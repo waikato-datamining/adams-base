@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import java.awt.Color;
 
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
@@ -109,6 +110,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {adams.flow.transformer.Draw.class, adams.flow.transformer.draw.Pixel.class})
 public class SetImagePixel
   extends AbstractTransformer {
 

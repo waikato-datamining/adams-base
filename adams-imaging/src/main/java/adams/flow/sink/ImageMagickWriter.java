@@ -24,6 +24,7 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
 import adams.data.imagemagick.ImageMagickHelper;
 import adams.data.imagemagick.ImageType;
@@ -86,6 +87,7 @@ import adams.data.io.output.ImageMagickImageWriter;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {ImageWriter.class, ImageMagickImageWriter.class})
 public class ImageMagickWriter
   extends AbstractFileWriter {
 
@@ -106,7 +108,7 @@ public class ImageMagickWriter
 	"Writes an image to disk using ImageMagick (http://www.imagemagick.org/).\n"
 	+ "\n"
 	+ "DEPRECATED\n"
-	+ "Use " + ImageWriter.class.getName() + " in conjunctiuon with the " 
+	+ "Use " + ImageWriter.class.getName() + " in conjunction with the " 
 	+ ImageMagickImageWriter.class.getName() + " instead.";
   }
 

@@ -21,6 +21,7 @@ package adams.flow.transformer;
 
 import java.io.StringReader;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -78,6 +79,8 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {adams.data.conversion.StringToSpreadSheet.class})
+
 public class StringToSpreadSheet
   extends AbstractTransformer {
 

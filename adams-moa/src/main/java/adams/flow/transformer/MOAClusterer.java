@@ -28,6 +28,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.MOAUtils;
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -100,6 +101,7 @@ import adams.flow.source.MOAClustererSetup;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {MOAClustererSetup.class, MOATrainClusterer.class})
 public class MOAClusterer
   extends AbstractTransformer {
 

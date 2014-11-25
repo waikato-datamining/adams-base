@@ -23,6 +23,7 @@ package adams.flow.sink;
 import javax.media.jai.JAI;
 
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.output.JAIImageWriter;
 import adams.data.jai.ImageType;
@@ -84,6 +85,7 @@ import adams.data.jai.ImageType;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {ImageWriter.class, JAIImageWriter.class})
 public class JAIWriter
   extends AbstractFileWriter {
 

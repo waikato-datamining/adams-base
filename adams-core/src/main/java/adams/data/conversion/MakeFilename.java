@@ -19,6 +19,7 @@
  */
 package adams.data.conversion;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileUtils;
 
 /**
@@ -48,6 +49,7 @@ import adams.core.io.FileUtils;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {StringToValidFileName.class})
 public class MakeFilename
   extends AbstractStringConversion {
 

@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import java.io.File;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
@@ -78,6 +79,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {FileInfo.class})
 public class FileSize
   extends AbstractTransformer {
 

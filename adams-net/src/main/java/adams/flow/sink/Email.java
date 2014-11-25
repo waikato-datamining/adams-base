@@ -28,6 +28,7 @@ import javax.swing.SwingWorker;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -129,6 +130,7 @@ import adams.flow.transformer.CreateEmail;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {CreateEmail.class, SendEmail.class})
 public class Email
   extends AbstractSink {
 

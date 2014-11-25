@@ -21,6 +21,7 @@ package adams.data.conversion;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
+import adams.core.annotation.DeprecatedClass;
 
 /**
  <!-- globalinfo-start -->
@@ -51,6 +52,7 @@ import adams.core.DateFormat;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {StringToDateTimeType.class})
 public class TimestampToDouble
   extends AbstractConversion {
 

@@ -26,6 +26,7 @@ import java.io.File;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.JAIImageReader;
@@ -89,6 +90,7 @@ import adams.flow.sink.ImageWriter;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {ImageWriter.class, JAIImageReader.class})
 public class JAIReader
   extends AbstractTransformer
   implements ProvenanceSupporter {

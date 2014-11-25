@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagemagick.ImageMagickHelper;
@@ -88,6 +89,7 @@ import adams.flow.sink.ImageWriter;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {ImageWriter.class, JAIImageWriter.class})
 public class ImageMagickReader
   extends AbstractTransformer
   implements ProvenanceSupporter {

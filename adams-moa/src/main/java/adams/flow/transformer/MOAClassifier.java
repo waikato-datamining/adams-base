@@ -28,10 +28,11 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.MOAUtils;
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.flow.source.WekaClassifierSetup;
+import adams.flow.source.MOAClassifierSetup;
 
 /**
  <!-- globalinfo-start -->
@@ -100,6 +101,7 @@ import adams.flow.source.WekaClassifierSetup;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {MOAClassifierSetup.class, MOATrainClassifier.class})
 public class MOAClassifier
   extends AbstractTransformer {
 
@@ -131,8 +133,8 @@ public class MOAClassifier
     return
         "Trains a MOA classifier based on the incoming data.\n\n"
         + "DEPRECATED\n\n"
-        + "- Use " + WekaClassifierSetup.class.getName() + " for definined a classifier setup.\n"
-        + "- Use " + WekaTrainClassifier.class.getName() + " for building a classifier.";
+        + "- Use " + MOAClassifierSetup.class.getName() + " for definined a classifier setup.\n"
+        + "- Use " + MOATrainClassifier.class.getName() + " for building a classifier.";
   }
 
   /**

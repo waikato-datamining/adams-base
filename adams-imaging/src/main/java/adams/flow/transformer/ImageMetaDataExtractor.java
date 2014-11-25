@@ -21,6 +21,7 @@ package adams.flow.transformer;
 
 import java.io.File;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.ImageMetaDataHelper;
 import adams.data.spreadsheet.SpreadSheet;
@@ -77,6 +78,7 @@ import adams.flow.transformer.metadata.MetaDataExtractor;
  * @version $Revision: 9194 $
  */
 @Deprecated
+@DeprecatedClass(useInstead = {ImageMetaData.class, MetaDataExtractor.class})
 public class ImageMetaDataExtractor
   extends AbstractTransformer {
 

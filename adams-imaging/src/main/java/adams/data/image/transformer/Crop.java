@@ -23,6 +23,7 @@ package adams.data.image.transformer;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.CropAlgorithm;
 import adams.data.image.ImageAnchor;
@@ -82,6 +83,7 @@ import adams.data.report.Report;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {Cropping.class, RelativeCrop.class})
 public class Crop
   extends AbstractBufferedImageTransformer {
 

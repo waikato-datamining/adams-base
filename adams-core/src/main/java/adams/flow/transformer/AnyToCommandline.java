@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 
@@ -69,6 +70,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 @Deprecated
+@DeprecatedClass(useInstead = {adams.data.conversion.AnyToCommandline.class})
 public class AnyToCommandline
   extends AbstractTransformer {
 
