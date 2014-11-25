@@ -55,10 +55,6 @@ adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
 adams.flow.sink.ffmpeg.AbstractFFmpegPlugin=\
   adams.flow.sink.ffmpeg
 
-# the image meta-data extractors
-adams.flow.transformer.ImageMetaDataExtraction=\
-  adams.flow.transformer
-
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
@@ -66,6 +62,10 @@ adams.flow.transformer.draw.AbstractDrawOperation=\
 # the algorithms for locating objects
 adams.flow.transformer.locateobjects.AbstractObjectLocator=\
   adams.flow.transformer.locateobjects
+
+# the meta-data extractors
+adams.flow.transformer.metadata.AbstractMetaDataExtractor=\
+  adams.flow.transformer.metadata
   
 # the actions for the PixelSelector transformer
 adams.flow.transformer.pixelselector.AbstractPixelSelectorAction=\

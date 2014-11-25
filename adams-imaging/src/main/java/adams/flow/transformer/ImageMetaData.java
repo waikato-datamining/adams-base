@@ -21,10 +21,12 @@ package adams.flow.transformer;
 
 import java.io.File;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.ImageMetaDataHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
+import adams.flow.transformer.metadata.Sanselan;
 
 /**
  <!-- globalinfo-start -->
@@ -53,7 +55,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: ImageMetaData
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -70,18 +72,25 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-extractor &lt;adams.flow.transformer.metadata.AbstractMetaDataExtractor&gt; (property: extractor)
+ * &nbsp;&nbsp;&nbsp;The meta-data extrator to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.metadata.Sanselan
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class ImageMetaData
-  extends AbstractTransformer
-  implements ImageMetaDataExtraction {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 8005075286840278197L;
 
+  /** the extractor to use. */
+  protected AbstractMetaDataExtractor m_Extractor;
+  
   /**
    * Returns a string describing the object.
    *
@@ -92,6 +101,57 @@ public class ImageMetaData
     return "Returns any EXIF or IPTC and basic image information as a spreadsheet.";
   }
 
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "extractor", "extractor",
+	    new Sanselan());
+  }
+
+  /**
+   * Sets the extractor to use.
+   *
+   * @param value	the extractor
+   */
+  public void setExtractor(AbstractMetaDataExtractor value) {
+    m_Extractor = value;
+    reset();
+  }
+
+  /**
+   * Returns the extractor in use.
+   *
+   * @return		the extractor
+   */
+  public AbstractMetaDataExtractor getExtractor() {
+    return m_Extractor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String extractorTipText() {
+    return "The meta-data extrator to use.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "extractor", m_Extractor, "extractor: ");
+  }
+  
   /**
    * Returns the class that the consumer accepts.
    * 
@@ -131,7 +191,7 @@ public class ImageMetaData
       file = new File(((File) m_InputToken.getPayload()).getAbsolutePath());
     
     try {
-      sheet         = ImageMetaDataHelper.getMetaData(file);
+      sheet         = m_Extractor.extract(file);
       m_OutputToken = new Token(sheet);
     }
     catch (Exception e) {

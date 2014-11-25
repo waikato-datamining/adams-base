@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.ImageMetaDataHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import adams.flow.transformer.metadata.MetaDataExtractor;
 
 /**
  <!-- globalinfo-start -->
@@ -75,9 +76,9 @@ import adams.flow.core.Token;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9194 $
  */
+@Deprecated
 public class ImageMetaDataExtractor
-  extends AbstractTransformer
-  implements ImageMetaDataExtraction {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 8005075286840278197L;
@@ -89,7 +90,10 @@ public class ImageMetaDataExtractor
    */
   @Override
   public String globalInfo() {
-    return "Returns any image meta-data information as a spreadsheet.";
+    return 
+	"Returns any image meta-data information as a spreadsheet.\n\n"
+	+ "DEPRECATED\n\n"
+	+ "Use " + ImageMetaData.class.getName() + " in conjunction with " + MetaDataExtractor.class.getName() + " instead.";
   }
 
   /**

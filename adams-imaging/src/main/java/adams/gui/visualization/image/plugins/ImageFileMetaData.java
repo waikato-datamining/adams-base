@@ -19,13 +19,10 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import java.io.File;
-
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.core.Token;
-import adams.flow.transformer.ImageMetaData;
-import adams.flow.transformer.ImageMetaDataExtraction;
+import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
+import adams.flow.transformer.metadata.Sanselan;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -89,7 +86,7 @@ public class ImageFileMetaData
    */
   @Override
   protected Class getEditorType() {
-    return ImageMetaDataExtraction.class;
+    return AbstractMetaDataExtractor.class;
   }
   
   /**
@@ -100,45 +97,7 @@ public class ImageFileMetaData
    */
   @Override
   protected Object getDefaultValue() {
-    return new ImageMetaData();
-  }
-  
-  /**
-   * Obtains the meta-data from the specified file.
-   * 
-   * @param file	the file to get the meta-data form
-   * @param extractor	the extractor to use
-   * @return		the meta-data, null if failed
-   * @throws Exception	if extraction failed
-   */
-  protected SpreadSheet process(File file, ImageMetaDataExtraction extractor) throws Exception {
-    Token		token;
-    SpreadSheet		sheet;
-    String		msg;
-    
-    sheet = null;
-    token = new Token(m_CurrentPanel.getCurrentFile());
-    extractor.input(token);
-    try {
-      msg = extractor.execute();
-      if (msg == null) {
-	if (extractor.hasPendingOutput()) {
-	  token = extractor.output();
-	  sheet = (SpreadSheet) token.getPayload();
-	}
-	else {
-	  throw new Exception("Extractor did not generate any output!");
-	}
-      }
-      else {
-	throw new Exception(msg);
-      }
-    }
-    finally {
-      extractor.cleanUp();
-    }
-    
-    return sheet;
+    return new Sanselan();
   }
 
   /**
@@ -146,9 +105,10 @@ public class ImageFileMetaData
    */
   @Override
   protected String process() {
-    String		result;
-    SpreadSheet		sheet;
-    SpreadSheetDialog	dialog;
+    String			result;
+    SpreadSheet			sheet;
+    SpreadSheetDialog		dialog;
+    AbstractMetaDataExtractor	extractor;
     
     result = null;
     
@@ -156,7 +116,8 @@ public class ImageFileMetaData
       return result;
     
     try {
-      sheet = process(m_CurrentPanel.getCurrentFile(), (ImageMetaDataExtraction) getLastSetup());
+      extractor = (AbstractMetaDataExtractor) getLastSetup();
+      sheet     = extractor.extract(m_CurrentPanel.getCurrentFile());
       if (m_CurrentPanel.getParentDialog() != null)
 	dialog = new SpreadSheetDialog(m_CurrentPanel.getParentDialog());
       else

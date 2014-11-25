@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-08-27 14:20:40
+# Date: 2014-11-25 14:37:12
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -17,6 +17,8 @@ adams.flow.control.Flow
 					ImageMetaData
 					-actor
 						adams.flow.transformer.ImageMetaData
+							-extractor
+								adams.flow.transformer.metadata.Sanselan
 					-actor
 						adams.flow.sink.Display
 							-writer
@@ -26,7 +28,9 @@ adams.flow.control.Flow
 					-name
 					ImageMetaDataExtractor
 					-actor
-						adams.flow.transformer.ImageMetaDataExtractor
+						adams.flow.transformer.ImageMetaData
+							-extractor
+								adams.flow.transformer.metadata.MetaDataExtractor
 					-actor
 						adams.flow.sink.Display
 							-x
