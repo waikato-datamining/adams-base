@@ -143,6 +143,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.CreateCallableActor,\
   adams.gui.flow.tree.menu.MakeConditional,\
   adams.gui.flow.tree.menu.ExternalizeActor,\
+  adams.gui.flow.tree.menu.MaterializeExternalActor,\
   -,\
   adams.gui.flow.tree.menu.ExpandAll,\
   adams.gui.flow.tree.menu.CollapseAll,\
