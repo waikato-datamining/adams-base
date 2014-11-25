@@ -729,7 +729,6 @@ public class FlowEditorPanel
     addToToolBar(m_ActionExecutionRun);
     addToToolBar(m_ActionExecutionPauseAndResume);
     addToToolBar(m_ActionExecutionStop);
-    addToToolBar(m_ActionExecutionKill);
   }
 
   /**
