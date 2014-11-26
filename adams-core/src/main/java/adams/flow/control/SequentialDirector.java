@@ -309,7 +309,7 @@ public class SequentialDirector
 	actorResult = doExecute(curr);
 	if (actorResult == null)
 	  actorResult = checkActorHasStopped(curr);
-	if (actorResult != null) {
+	if ((actorResult != null) && !m_ControlActor.getSilent()) {
 	  getLogger().severe(
 	      curr.getFullName() + " generated following error output:\n"
 		  + actorResult);
