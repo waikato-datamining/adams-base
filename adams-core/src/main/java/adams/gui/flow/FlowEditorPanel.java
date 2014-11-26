@@ -125,7 +125,6 @@ import adams.gui.flow.tab.FlowTabManager;
 import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
-import adams.gui.visualization.report.reportfactory.Separator;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -766,7 +765,7 @@ public class FlowEditorPanel
 	if (menu.getItem(index - 1) != null) {
 	  if (!separatorAdded.contains(item.getMenu())) {
 	    separatorAdded.add(item.getMenu());
-	    menu.add(new JMenuItem(new Separator()), index);
+	    menu.insertSeparator(index);
 	    index++;
 	  }
 	}
