@@ -105,6 +105,9 @@ public abstract class AbstractActor
 
   /** whether to stop the flow in case of an error. */
   protected boolean m_StopFlowOnError;
+  
+  /** whether to suppress output in the console. */
+  protected boolean m_Silent;
 
   /** the variable names that are used within this actor. */
   protected HashSet<String> m_DetectedVariables;
@@ -286,6 +289,10 @@ public abstract class AbstractActor
     m_OptionManager.add(
 	    "stop-flow-on-error", "stopFlowOnError",
 	    false);
+
+    m_OptionManager.add(
+	    "silent", "silent",
+	    false);
   }
 
   /**
@@ -443,6 +450,35 @@ public abstract class AbstractActor
   }
 
   /**
+   * Sets whether to suppress output in the console.
+   *
+   * @param value 	true if to suppress output in the console
+   */
+  public void setSilent(boolean value) {
+    m_Silent = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress output in the console.
+   *
+   * @return 		true if to suppress output in the console
+   */
+  public boolean getSilent() {
+    return m_Silent;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String silentTipText() {
+    return "If enabled, then no errors are output in the console.";
+  }
+
+  /**
    * Handles the given error message with the flow that this actor belongs to,
    * if the flow has error logging turned on. Might stop the flow as well.
    *
@@ -532,7 +568,7 @@ public abstract class AbstractActor
    * @return		the full error message (message + stacktrace)
    */
   protected String handleException(String msg, Throwable t) {
-    return Utils.handleException(this, msg, t);
+    return Utils.handleException(this, msg, t, m_Silent);
   }
   
   /**

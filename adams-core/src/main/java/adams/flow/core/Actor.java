@@ -141,6 +141,20 @@ public interface Actor
   public boolean getStopFlowOnError();
 
   /**
+   * Sets whether to suppress output in the console.
+   *
+   * @param value 	true if to suppress output in the console
+   */
+  public void setSilent(boolean value);
+
+  /**
+   * Returns whether to suppress output in the console.
+   *
+   * @return 		true if to suppress output in the console
+   */
+  public boolean getSilent();
+
+  /**
    * Handles the given error message with the flow that this actor belongs to,
    * if the flow has error logging turned on. Might stop the flow as well.
    *

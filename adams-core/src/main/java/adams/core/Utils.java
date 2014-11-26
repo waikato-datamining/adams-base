@@ -1892,10 +1892,27 @@ public class Utils {
    * @return		the full error message (message + stacktrace)
    */
   public static String handleException(LoggingObject source, String msg, Throwable t) {
+    return handleException(source, msg, t, false);
+  }
+
+  /**
+   * Generates a string from the stacktrace along with the message and returns
+   * that. Depending on the silent flag, this string is also forwarded to the
+   * source's logger.
+   * 
+   * @param source	the object that generated the exception
+   * @param msg		the message for the exception
+   * @param t		the exception
+   * @param silent	if true then the generated message is not forwarded
+   * 			to the source's logger
+   * @return		the full error message (message + stacktrace)
+   */
+  public static String handleException(LoggingObject source, String msg, Throwable t, boolean silent) {
     String	result;
 
     result = msg.trim() + "\n" + Utils.throwableToString(t);
-    source.getLogger().log(Level.SEVERE, msg, t);
+    if (!silent)
+      source.getLogger().log(Level.SEVERE, msg, t);
     
     return result;
   }
