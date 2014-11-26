@@ -15,7 +15,7 @@
 
 /*
  * AbstractDirector.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -119,7 +119,7 @@ public abstract class AbstractDirector
    * @return		the full error message (message + stacktrace)
    */
   protected String handleException(String msg, Throwable t) {
-    return Utils.handleException(this, msg, t);
+    return Utils.handleException(this, msg, t, m_ControlActor.getSilent());
   }
 
   /**

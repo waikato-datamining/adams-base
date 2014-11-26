@@ -122,7 +122,7 @@ public class SequentialDirector
    * @return		the combined error string
    */
   protected String handleException(AbstractActor actor, String msg, Throwable t) {
-    return Utils.handleException(actor, msg, t);
+    return Utils.handleException(actor, msg, t, m_ControlActor.getSilent());
   }
   
   /**
