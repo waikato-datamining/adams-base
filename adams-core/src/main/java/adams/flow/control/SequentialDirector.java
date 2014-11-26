@@ -398,7 +398,7 @@ public class SequentialDirector
 	  }
 	  else {
 	    actorResult = doExecute(curr);
-	    if (actorResult != null) {
+	    if ((actorResult != null) && !m_ControlActor.getSilent()) {
 	      getLogger().severe(
 		  curr.getFullName() + " generated following error output:\n"
 		  + actorResult);
@@ -431,7 +431,7 @@ public class SequentialDirector
 	  // process token
 	  doInput(curr, token);
 	  actorResult = doExecute(curr);
-	  if (actorResult != null) {
+	  if ((actorResult != null) && !m_ControlActor.getSilent()) {
 	    getLogger().severe(
 		curr.getFullName() + " generated following error output:\n"
 		+ actorResult);
