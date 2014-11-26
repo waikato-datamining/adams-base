@@ -20,9 +20,11 @@
 package adams.flow.control;
 
 import java.util.Hashtable;
+import java.util.logging.Level;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.VariableName;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
@@ -105,6 +107,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: trycatch
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -143,6 +150,9 @@ public class TryCatch
 
   /** the variable to store the error in. */
   protected VariableName m_ErrorVariable;
+  
+  /** whether to suppress output in the console. */
+  protected boolean m_Silent;
 
   /**
    * Returns a string describing the object.
@@ -212,6 +222,10 @@ public class TryCatch
     m_OptionManager.add(
 	    "error-variable", "errorVariable",
 	    new VariableName("trycatch"));
+
+    m_OptionManager.add(
+	    "silent", "silent",
+	    false);
   }
 
   /**
@@ -386,6 +400,35 @@ public class TryCatch
   }
 
   /**
+   * Sets whether to suppress output in the console.
+   *
+   * @param value 	true if to suppress output in the console
+   */
+  public void setSilent(boolean value) {
+    m_Silent = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress output in the console.
+   *
+   * @return 		true if to suppress output in the console
+   */
+  public boolean getSilent() {
+    return m_Silent;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String silentTipText() {
+    return "If enabled, then no errors are output in the console.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -552,6 +595,25 @@ public class TryCatch
     if (m_Try instanceof ActorHandler)
       ((ActorHandler) m_Try).flushExecution();
     return m_ErrorOccurred;
+  }
+
+  /**
+   * Outputs the stacktrace along with the message on stderr and returns a 
+   * combination of both of them as string.
+   * 
+   * @param msg		the message for the exception
+   * @param t		the exception
+   * @return		the full error message (message + stacktrace)
+   */
+  @Override
+  protected String handleException(String msg, Throwable t) {
+    String	result;
+
+    result = msg.trim() + "\n" + Utils.throwableToString(t);
+    if (!m_Silent)
+      getLogger().log(Level.SEVERE, msg, t);
+    
+    return result;
   }
 
   /**
