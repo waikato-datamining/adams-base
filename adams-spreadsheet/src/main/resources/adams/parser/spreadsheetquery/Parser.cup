@@ -162,6 +162,7 @@ non terminal agg_list, agg;
 non terminal groupby_list, groupby;
 non terminal int[] cond;
 non terminal Object value;
+non terminal Object comp_arg;
 non terminal limit;
 
 precedence left AND, OR;
@@ -280,6 +281,16 @@ order     ::=   COLUMN:c
                 :}
               ;
               
+comp_arg  ::=   NUMBER:n
+                {:
+                  RESULT = n;
+                :}
+              | STRING:s
+                {:
+                  RESULT = s;
+                :}
+              ;
+
 cond_list ::=   cond_list cond 
               | cond:c
                 {:
@@ -287,62 +298,173 @@ cond_list ::=   cond_list cond
                 :}
               ;
 
-cond      ::=   COLUMN:c LT NUMBER:n
+cond      ::=   COLUMN:c LT comp_arg:a
                 {: 
-                  ByNumericValue rf = new ByNumericValue();
-                  rf.setMaximum(n);
-                  rf.setMaximumIncluded(false);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " < " + n);
+                  String comp = " < ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf = new ByNumericValue();
+                    rf.setMaximum(n);
+                    rf.setMaximumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf = new ByStringComparison();
+                    rf.setMaximum(s);
+                    rf.setMaximumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
-              | COLUMN:c LE NUMBER:n
+              | COLUMN:c LE comp_arg:a
                 {: 
-                  ByNumericValue rf = new ByNumericValue();
-                  rf.setMaximum(n);
-                  rf.setMaximumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " <= " + n);
+                  String comp = " <= ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf = new ByNumericValue();
+                    rf.setMaximum(n);
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf = new ByStringComparison();
+                    rf.setMaximum(s);
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
-              | COLUMN:c EQ NUMBER:n
+              | COLUMN:c EQ comp_arg:a
                 {: 
-                  ByNumericValue rf = new ByNumericValue();
-                  rf.setMinimum(n);
-                  rf.setMinimumIncluded(true);
-                  rf.setMaximum(n);
-                  rf.setMaximumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " = " + n);
+                  String comp = " = ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf = new ByNumericValue();
+                    rf.setMinimum(n);
+                    rf.setMinimumIncluded(true);
+                    rf.setMaximum(n);
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf = new ByStringComparison();
+                    rf.setMinimum(s);
+                    rf.setMinimumIncluded(true);
+                    rf.setMaximum(s);
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
-              | COLUMN:c NOT_EQ NUMBER:n
+              | COLUMN:c NOT_EQ comp_arg:a
                 {: 
-                  ByNumericValue rf1 = new ByNumericValue();
-                  rf1.setMinimum(n);
-                  rf1.setMinimumIncluded(false);
-                  rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  ByNumericValue rf2 = new ByNumericValue();
-                  rf2.setMaximum(n);
-                  rf2.setMaximumIncluded(false);
-                  rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  MultiRowFinder multi = new MultiRowFinder();
-                  multi.setFinders(new RowFinder[]{rf1, rf2});
-                  multi.setCombination(MultiRowFinder.Combination.JOIN);
-                  RESULT = parser.getHelper().applyRowFinder(multi, c + " <> " + n);
+                  String comp = " <> ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf1 = new ByNumericValue();
+                    rf1.setMinimum(n);
+                    rf1.setMinimumIncluded(false);
+                    rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    ByNumericValue rf2 = new ByNumericValue();
+                    rf2.setMaximum(n);
+                    rf2.setMaximumIncluded(false);
+                    rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    MultiRowFinder multi = new MultiRowFinder();
+                    multi.setFinders(new RowFinder[]{rf1, rf2});
+                    multi.setCombination(MultiRowFinder.Combination.JOIN);
+                    RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf1 = new ByStringComparison();
+                    rf1.setMinimum(s);
+                    rf1.setMinimumIncluded(false);
+                    rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    ByStringComparison rf2 = new ByStringComparison();
+                    rf2.setMaximum(s);
+                    rf2.setMaximumIncluded(false);
+                    rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    MultiRowFinder multi = new MultiRowFinder();
+                    multi.setFinders(new RowFinder[]{rf1, rf2});
+                    multi.setCombination(MultiRowFinder.Combination.JOIN);
+                    RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
-              | COLUMN:c GE NUMBER:n
+              | COLUMN:c GE comp_arg:a
                 {: 
-                  ByNumericValue rf = new ByNumericValue();
-                  rf.setMinimum(n);
-                  rf.setMinimumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " >= " + n);
+                  String comp = " >= ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf = new ByNumericValue();
+                    rf.setMinimum(n);
+                    rf.setMinimumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf = new ByStringComparison();
+                    rf.setMinimum(s);
+                    rf.setMinimumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
-              | COLUMN:c GT NUMBER:n
+              | COLUMN:c GT comp_arg:a
                 {: 
-                  ByNumericValue rf = new ByNumericValue();
-                  rf.setMinimum(n);
-                  rf.setMinimumIncluded(false);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " > " + n);
+                  String comp = " > ";
+                  if (a instanceof Double) {
+                    Double n = (Double) a;
+                    ByNumericValue rf = new ByNumericValue();
+                    rf.setMinimum(n);
+                    rf.setMinimumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof String) {
+                    String s = (String) a;
+                    ByStringComparison rf = new ByStringComparison();
+                    rf.setMinimum(s);
+                    rf.setMinimumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else {
+                    throw new IllegalStateException(
+                        "Unhandled comparison class ('" + comp + "'): " 
+                        + a.getClass().getName() + " (" + a + ")");
+                  }
                 :}
               | COLUMN:c REGEXP STRING:s
                 {: 
@@ -350,63 +472,6 @@ cond      ::=   COLUMN:c LT NUMBER:n
                   rf.setRegExp(new BaseRegExp(s));
                   rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                   RESULT = parser.getHelper().applyRowFinder(rf, c + " regexp " + s);
-                :}
-              | COLUMN:c LT STRING:s
-                {: 
-                  ByStringComparison rf = new ByStringComparison();
-                  rf.setMaximum(s);
-                  rf.setMaximumIncluded(false);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " < " + s);
-                :}
-              | COLUMN:c LE STRING:s
-                {: 
-                  ByStringComparison rf = new ByStringComparison();
-                  rf.setMaximum(s);
-                  rf.setMaximumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " <= " + s);
-                :}
-              | COLUMN:c EQ STRING:s
-                {: 
-                  ByStringComparison rf = new ByStringComparison();
-                  rf.setMinimum(s);
-                  rf.setMinimumIncluded(true);
-                  rf.setMaximum(s);
-                  rf.setMaximumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " = " + s);
-                :}
-              | COLUMN:c NOT_EQ STRING:s
-                {: 
-                  ByStringComparison rf1 = new ByStringComparison();
-                  rf1.setMinimum(s);
-                  rf1.setMinimumIncluded(false);
-                  rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  ByStringComparison rf2 = new ByStringComparison();
-                  rf2.setMaximum(s);
-                  rf2.setMaximumIncluded(false);
-                  rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  MultiRowFinder multi = new MultiRowFinder();
-                  multi.setFinders(new RowFinder[]{rf1, rf2});
-                  multi.setCombination(MultiRowFinder.Combination.JOIN);
-                  RESULT = parser.getHelper().applyRowFinder(multi, c + " <> " + s);
-                :}
-              | COLUMN:c GE STRING:s
-                {: 
-                  ByStringComparison rf = new ByStringComparison();
-                  rf.setMinimum(s);
-                  rf.setMinimumIncluded(true);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " >= " + s);
-                :}
-              | COLUMN:c GT STRING:s
-                {: 
-                  ByStringComparison rf = new ByStringComparison();
-                  rf.setMinimum(s);
-                  rf.setMinimumIncluded(false);
-                  rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                  RESULT = parser.getHelper().applyRowFinder(rf, c + " > " + s);
                 :}
               | COLUMN:c IS NULL
                 {: 
