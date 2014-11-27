@@ -24,6 +24,7 @@ import java.util.Date;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
+import adams.core.DateValueSupporter;
 import adams.parser.BaseDateTimeExpression;
 import adams.parser.GrammarSupplier;
 
@@ -53,7 +54,7 @@ import adams.parser.GrammarSupplier;
  */
 public class BaseDateTime
   extends BaseObject
-  implements GrammarSupplier {
+  implements GrammarSupplier, DateValueSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5853830144343397434L;
