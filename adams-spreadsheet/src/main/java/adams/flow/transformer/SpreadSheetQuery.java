@@ -78,24 +78,26 @@ import adams.parser.SpreadSheetQueryText;
  *               | cond<br/>
  *               ;<br/>
  * <br/>
- * cond      ::=   COLUMN &lt; NUMBER<br/>
- *               | COLUMN &lt;= NUMBER<br/>
- *               | COLUMN = NUMBER<br/>
- *               | COLUMN &lt;&gt; NUMBER<br/>
- *               | COLUMN &gt;= NUMBER<br/>
- *               | COLUMN &gt; NUMBER<br/>
+ * cond      ::=   COLUMN &lt; comp_arg<br/>
+ *               | COLUMN &lt;= comp_arg<br/>
+ *               | COLUMN = comp_arg<br/>
+ *               | COLUMN &lt;&gt; comp_arg<br/>
+ *               | COLUMN &gt;= comp_arg<br/>
+ *               | COLUMN &gt; comp_arg<br/>
  *               | COLUMN REGEXP STRING<br/>
- *               | COLUMN &lt; STRING<br/>
- *               | COLUMN &lt;= STRING<br/>
- *               | COLUMN = STRING<br/>
- *               | COLUMN &lt;&gt; STRING<br/>
- *               | COLUMN &gt;= STRING<br/>
- *               | COLUMN &gt; STRING<br/>
  *               | COLUMN IS NULL<br/>
  *               | ( cond )<br/>
  *               | cond:c1 AND cond:c2<br/>
  *               | cond:c1 OR cond:c2<br/>
  *               | NOT cond<br/>
+ *               ;<br/>
+ * <br/>
+ * comp_arg  ::=   NUMBER<br/>
+ *               | STRING<br/>
+ *               | PARSE ( "number" , STRING )<br/>
+ *               | PARSE ( "date" , STRING )<br/>
+ *               | PARSE ( "time" , STRING )<br/>
+ *               | PARSE ( "timestamp" , STRING )<br/>
  *               ;<br/>
  * <br/>
  * value     ::=   NUMBER<br/>
@@ -119,6 +121,12 @@ import adams.parser.SpreadSheetQueryText;
  *               | SUM ( COLUMN ) [AS COLUMN]<br/>
  *               | IQR ( COLUMN ) [AS COLUMN]<br/>
  *               | INTERQUARTILE ( COLUMN ) [AS COLUMN]<br/>
+ * <br/>
+ * Notes:<br/>
+ * - time format: 'HH:mm'<br/>
+ * - date format: 'yyyy-MM-dd'<br/>
+ * - timestamp format: 'yyyy-MM-dd HH:mm'<br/>
+ * - STRING is referring to characters enclosed by double quotes<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -156,6 +164,11 @@ import adams.parser.SpreadSheetQueryText;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 

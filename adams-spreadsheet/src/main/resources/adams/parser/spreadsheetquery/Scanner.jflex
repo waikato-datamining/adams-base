@@ -59,33 +59,34 @@ import java.io.*;
 %%
 <YYINITIAL> {
   // key words
-  "select"  { return sf.newSymbol("Select",  sym.SELECT); }
-  "as"      { return sf.newSymbol("As",      sym.AS); }
-  "update"  { return sf.newSymbol("Update",  sym.UPDATE); }
-  "delete"  { return sf.newSymbol("Delete",  sym.DELETE); }
-  "where"   { return sf.newSymbol("Where",   sym.WHERE); }
-  "order"   { return sf.newSymbol("Order",   sym.ORDER); }
-  "by"      { return sf.newSymbol("By",      sym.BY); }
-  "asc"     { return sf.newSymbol("Asc",     sym.ASC); }
-  "desc"    { return sf.newSymbol("Desc",    sym.DESC); }
-  "set"     { return sf.newSymbol("Set",     sym.SET); }
-  "is"      { return sf.newSymbol("Is",      sym.IS); }
-  "null"    { return sf.newSymbol("Null",    sym.NULL); }
-  "regexp"  { return sf.newSymbol("RegExp",  sym.REGEXP); }
-  "limit"   { return sf.newSymbol("Limit",   sym.LIMIT); }
-  "group"   { return sf.newSymbol("Group",   sym.GROUP); }
-  "having"  { return sf.newSymbol("Having",  sym.HAVING); }
-  "count"   { return sf.newSymbol("Count",   sym.COUNT); }
-  "min"     { return sf.newSymbol("Min",     sym.MIN); }
-  "max"     { return sf.newSymbol("Max",     sym.MAX); }
-  "mean"    { return sf.newSymbol("Mean",    sym.AVERAGE); }
-  "average" { return sf.newSymbol("Average", sym.AVERAGE); }
-  "median"  { return sf.newSymbol("Median",  sym.MEDIAN); }
-  "stdev"   { return sf.newSymbol("StdDev",  sym.STDEV); }
-  "stdevp"  { return sf.newSymbol("StDevP",  sym.STDEVP); }
-  "sum"     { return sf.newSymbol("Sum",     sym.SUM); }
-  "iqr"     { return sf.newSymbol("IQR",     sym.IQR); }
-  "interquartile" { return sf.newSymbol("IQR", sym.IQR); }
+  "select"    { return sf.newSymbol("Select",    sym.SELECT); }
+  "as"        { return sf.newSymbol("As",        sym.AS); }
+  "update"    { return sf.newSymbol("Update",    sym.UPDATE); }
+  "delete"    { return sf.newSymbol("Delete",    sym.DELETE); }
+  "where"     { return sf.newSymbol("Where",     sym.WHERE); }
+  "order"     { return sf.newSymbol("Order",     sym.ORDER); }
+  "by"        { return sf.newSymbol("By",        sym.BY); }
+  "asc"       { return sf.newSymbol("Asc",       sym.ASC); }
+  "desc"      { return sf.newSymbol("Desc",      sym.DESC); }
+  "set"       { return sf.newSymbol("Set",       sym.SET); }
+  "is"        { return sf.newSymbol("Is",        sym.IS); }
+  "null"      { return sf.newSymbol("Null",      sym.NULL); }
+  "regexp"    { return sf.newSymbol("RegExp",    sym.REGEXP); }
+  "limit"     { return sf.newSymbol("Limit",     sym.LIMIT); }
+  "group"     { return sf.newSymbol("Group",     sym.GROUP); }
+  "having"    { return sf.newSymbol("Having",    sym.HAVING); }
+  "count"     { return sf.newSymbol("Count",     sym.COUNT); }
+  "min"       { return sf.newSymbol("Min",       sym.MIN); }
+  "max"       { return sf.newSymbol("Max",       sym.MAX); }
+  "mean"      { return sf.newSymbol("Mean",      sym.AVERAGE); }
+  "average"   { return sf.newSymbol("Average",   sym.AVERAGE); }
+  "median"    { return sf.newSymbol("Median",    sym.MEDIAN); }
+  "stdev"     { return sf.newSymbol("StdDev",    sym.STDEV); }
+  "stdevp"    { return sf.newSymbol("StDevP",    sym.STDEVP); }
+  "sum"       { return sf.newSymbol("Sum",       sym.SUM); }
+  "iqr"       { return sf.newSymbol("IQR",       sym.IQR); }
+  "interquartile" { return sf.newSymbol("IQR",   sym.IQR); }
+  "parse"     { return sf.newSymbol("Parse",     sym.PARSE); }
   
   // operands
   "*" { return sf.newSymbol("All", sym.ALL); }

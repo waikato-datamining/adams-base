@@ -144,10 +144,12 @@ parser code {:
 
 terminal SELECT, UPDATE, DELETE, WHERE, SET, ORDER, BY, IS, NULL, REGEXP, AS, LIMIT;
 terminal GROUP, HAVING, COUNT, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, SUM, IQR;
+terminal PARSE;
 terminal COMMA, LPAREN, RPAREN;
 terminal ALL;
 terminal LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal ASC, DESC;
+terminal Date DATE;
 terminal Double NUMBER;
 terminal String COLUMN;
 terminal String STRING;
@@ -289,6 +291,28 @@ comp_arg  ::=   NUMBER:n
                 {:
                   RESULT = s;
                 :}
+              | DATE:d
+                {:
+                  RESULT = d;
+                :}
+              | PARSE LPAREN STRING:type COMMA STRING:arg RPAREN
+                {:
+                  if (type.equals("number")) {
+                    RESULT = new Double(arg);
+                  }
+                  else if (type.equals("date")) {
+                    RESULT = new BaseDate(arg).dateValue();
+                  }
+                  else if (type.equals("time")) {
+                    RESULT = new BaseTime(arg).dateValue();
+                  }
+                  else if (type.equals("timestamp")) {
+                    RESULT = new BaseDateTime(arg).dateValue();
+                  }
+                  else {
+                    throw new IllegalStateException("Unhandled parse type: " + type);
+                  }
+                :}
               ;
 
 cond_list ::=   cond_list cond 
@@ -313,6 +337,15 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     String s = (String) a;
                     ByStringComparison rf = new ByStringComparison();
                     rf.setMaximum(s);
+                    rf.setMaximumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf = new ByDateValue();
+                    rf.setFormat(parser.getHelper().getDateFormatString());
+                    rf.setMaximum(parser.getHelper().getDateFormat().format(d));
                     rf.setMaximumIncluded(false);
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
@@ -342,6 +375,15 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf = new ByDateValue();
+                    rf.setFormat(parser.getHelper().getDateFormatString());
+                    rf.setMaximum(parser.getHelper().getDateFormat().format(d));
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
                   else {
                     throw new IllegalStateException(
                         "Unhandled comparison class ('" + comp + "'): " 
@@ -367,6 +409,17 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setMinimum(s);
                     rf.setMinimumIncluded(true);
                     rf.setMaximum(s);
+                    rf.setMaximumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf = new ByDateValue();
+                    rf.setFormat(parser.getHelper().getDateFormatString());
+                    rf.setMinimum(parser.getHelper().getDateFormat().format(d));
+                    rf.setMinimumIncluded(true);
+                    rf.setMaximum(parser.getHelper().getDateFormat().format(d));
                     rf.setMaximumIncluded(true);
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
@@ -410,6 +463,23 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     multi.setCombination(MultiRowFinder.Combination.JOIN);
                     RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
                   }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf1 = new ByDateValue();
+                    rf1.setFormat(parser.getHelper().getDateFormatString());
+                    rf1.setMinimum(parser.getHelper().getDateFormat().format(d));
+                    rf1.setMinimumIncluded(false);
+                    rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    ByDateValue rf2 = new ByDateValue();
+                    rf2.setFormat(parser.getHelper().getDateFormatString());
+                    rf2.setMaximum(parser.getHelper().getDateFormat().format(d));
+                    rf2.setMaximumIncluded(false);
+                    rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    MultiRowFinder multi = new MultiRowFinder();
+                    multi.setFinders(new RowFinder[]{rf1, rf2});
+                    multi.setCombination(MultiRowFinder.Combination.JOIN);
+                    RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
+                  }
                   else {
                     throw new IllegalStateException(
                         "Unhandled comparison class ('" + comp + "'): " 
@@ -435,6 +505,15 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf = new ByDateValue();
+                    rf.setFormat(parser.getHelper().getDateFormatString());
+                    rf.setMinimum(parser.getHelper().getDateFormat().format(d));
+                    rf.setMinimumIncluded(true);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
                   else {
                     throw new IllegalStateException(
                         "Unhandled comparison class ('" + comp + "'): " 
@@ -456,6 +535,15 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     String s = (String) a;
                     ByStringComparison rf = new ByStringComparison();
                     rf.setMinimum(s);
+                    rf.setMinimumIncluded(false);
+                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                  }
+                  else if (a instanceof Date) {
+                    Date d = (Date) a;
+                    ByDateValue rf = new ByDateValue();
+                    rf.setFormat(parser.getHelper().getDateFormatString());
+                    rf.setMinimum(parser.getHelper().getDateFormat().format(d));
                     rf.setMinimumIncluded(false);
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);

@@ -29,9 +29,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.core.base.BaseBoolean;
+import adams.data.DateFormatString;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.MultiConversion;
 import adams.data.conversion.RenameSpreadSheetColumn;
@@ -121,6 +124,9 @@ public class ParserHelper
   /** the group by columns to retrieve. */
   protected List<String> m_GroupByColumns;
 
+  /** for formatting dates. */
+  protected DateFormat m_DateFormat;
+  
   /**
    * Initializes the members.
    */
@@ -147,6 +153,7 @@ public class ParserHelper
     m_Rows              = null;
     m_LimitOffset       = 0;
     m_LimitMax          = -1;
+    m_DateFormat        = DateUtils.getTimestampFormatterMsecs();
   }
 
   /**
@@ -167,6 +174,25 @@ public class ParserHelper
     return m_Sheet;
   }
 
+  /**
+   * Returns the date formatter.
+   *
+   * @return 		the formatter
+   */
+  public DateFormat getDateFormat() {
+    return m_DateFormat;
+  }
+
+  /**
+   * Returns the format string of the current date/time format.
+   * 
+   * @return		the format string
+   * @see		#getDateFormat()
+   */
+  public DateFormatString getDateFormatString() {
+    return new DateFormatString(m_DateFormat.toPattern());
+  }
+  
   /**
    * Sets to return all columns.
    */
