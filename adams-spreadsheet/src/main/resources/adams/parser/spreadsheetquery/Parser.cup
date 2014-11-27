@@ -149,7 +149,6 @@ terminal COMMA, LPAREN, RPAREN;
 terminal ALL;
 terminal LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal ASC, DESC;
-terminal Date DATE;
 terminal Double NUMBER;
 terminal String COLUMN;
 terminal String STRING;
@@ -291,23 +290,19 @@ comp_arg  ::=   NUMBER:n
                 {:
                   RESULT = s;
                 :}
-              | DATE:d
-                {:
-                  RESULT = d;
-                :}
               | PARSE LPAREN STRING:type COMMA STRING:arg RPAREN
                 {:
                   if (type.equals("number")) {
                     RESULT = new Double(arg);
                   }
                   else if (type.equals("date")) {
-                    RESULT = new BaseDate(arg).dateValue();
+                    RESULT = new BaseDate(arg);
                   }
                   else if (type.equals("time")) {
-                    RESULT = new BaseTime(arg).dateValue();
+                    RESULT = new BaseTime(arg);
                   }
                   else if (type.equals("timestamp")) {
-                    RESULT = new BaseDateTime(arg).dateValue();
+                    RESULT = new BaseDateTime(arg);
                   }
                   else {
                     throw new IllegalStateException("Unhandled parse type: " + type);
@@ -341,8 +336,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf = new ByDateValue();
                     rf.setFormat(parser.getHelper().getDateFormatString());
                     rf.setMaximum(parser.getHelper().getDateFormat().format(d));
@@ -375,8 +370,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf = new ByDateValue();
                     rf.setFormat(parser.getHelper().getDateFormatString());
                     rf.setMaximum(parser.getHelper().getDateFormat().format(d));
@@ -413,8 +408,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf = new ByDateValue();
                     rf.setFormat(parser.getHelper().getDateFormatString());
                     rf.setMinimum(parser.getHelper().getDateFormat().format(d));
@@ -463,8 +458,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     multi.setCombination(MultiRowFinder.Combination.JOIN);
                     RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf1 = new ByDateValue();
                     rf1.setFormat(parser.getHelper().getDateFormatString());
                     rf1.setMinimum(parser.getHelper().getDateFormat().format(d));
@@ -505,8 +500,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf = new ByDateValue();
                     rf.setFormat(parser.getHelper().getDateFormatString());
                     rf.setMinimum(parser.getHelper().getDateFormat().format(d));
@@ -539,8 +534,8 @@ cond      ::=   COLUMN:c LT comp_arg:a
                     rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
                     RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
                   }
-                  else if (a instanceof Date) {
-                    Date d = (Date) a;
+                  else if (a instanceof DateValueSupporter) {
+                    Date d = ((DateValueSupporter) a).dateValue();
                     ByDateValue rf = new ByDateValue();
                     rf.setFormat(parser.getHelper().getDateFormatString());
                     rf.setMinimum(parser.getHelper().getDateFormat().format(d));
