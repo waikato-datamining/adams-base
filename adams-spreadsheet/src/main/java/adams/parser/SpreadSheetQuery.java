@@ -83,12 +83,12 @@ import adams.parser.spreadsheetquery.Scanner;
  *               | cond<br/>
  *               ;<br/>
  * <br/>
- * cond      ::=   COLUMN &lt; comp_arg<br/>
- *               | COLUMN &lt;= comp_arg<br/>
- *               | COLUMN = comp_arg<br/>
- *               | COLUMN &lt;&gt; comp_arg<br/>
- *               | COLUMN &gt;= comp_arg<br/>
- *               | COLUMN &gt; comp_arg<br/>
+ * cond      ::=   COLUMN &lt; value<br/>
+ *               | COLUMN &lt;= value<br/>
+ *               | COLUMN = value<br/>
+ *               | COLUMN &lt;&gt; value<br/>
+ *               | COLUMN &gt;= value<br/>
+ *               | COLUMN &gt; value<br/>
  *               | COLUMN REGEXP STRING<br/>
  *               | COLUMN IS NULL<br/>
  *               | ( cond )<br/>
@@ -97,16 +97,12 @@ import adams.parser.spreadsheetquery.Scanner;
  *               | NOT cond<br/>
  *               ;<br/>
  * <br/>
- * comp_arg  ::=   NUMBER<br/>
+ * value     ::=   NUMBER<br/>
  *               | STRING<br/>
  *               | PARSE ( "number" , STRING )<br/>
  *               | PARSE ( "date" , STRING )<br/>
  *               | PARSE ( "time" , STRING )<br/>
  *               | PARSE ( "timestamp" , STRING )<br/>
- *               ;<br/>
- * <br/>
- * value     ::=   NUMBER<br/>
- *               | STRING<br/>
  *               ;<br/>
  * <br/>
  * limit     ::=   LIMIT NUMBER:max<br/>
@@ -267,12 +263,12 @@ public class SpreadSheetQuery
 	  + "              | cond\n"
 	  + "              ;\n"
 	  + "\n"
-	  + "cond      ::=   COLUMN < comp_arg\n"
-	  + "              | COLUMN <= comp_arg\n"
-	  + "              | COLUMN = comp_arg\n"
-	  + "              | COLUMN <> comp_arg\n"
-	  + "              | COLUMN >= comp_arg\n"
-	  + "              | COLUMN > comp_arg\n"
+	  + "cond      ::=   COLUMN < value\n"
+	  + "              | COLUMN <= value\n"
+	  + "              | COLUMN = value\n"
+	  + "              | COLUMN <> value\n"
+	  + "              | COLUMN >= value\n"
+	  + "              | COLUMN > value\n"
 	  + "              | COLUMN REGEXP STRING\n"
 	  + "              | COLUMN IS NULL\n"
 	  + "              | ( cond )\n"
@@ -281,16 +277,12 @@ public class SpreadSheetQuery
 	  + "              | NOT cond\n"
 	  + "              ;\n"
 	  + "\n"
-	  + "comp_arg  ::=   NUMBER\n"
+	  + "value     ::=   NUMBER\n"
 	  + "              | STRING\n"
 	  + "              | PARSE ( \"number\" , STRING )\n"
 	  + "              | PARSE ( \"date\" , STRING )\n"
 	  + "              | PARSE ( \"time\" , STRING )\n"
 	  + "              | PARSE ( \"timestamp\" , STRING )\n"
-	  + "              ;\n"
-	  + "\n"
-	  + "value     ::=   NUMBER\n"
-	  + "              | STRING\n"
 	  + "              ;\n"
 	  + "\n"
 	  + "limit     ::=   LIMIT NUMBER:max\n"

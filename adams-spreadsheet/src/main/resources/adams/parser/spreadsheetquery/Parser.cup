@@ -163,7 +163,6 @@ non terminal agg_list, agg;
 non terminal groupby_list, groupby;
 non terminal int[] cond;
 non terminal Object value;
-non terminal Object comp_arg;
 non terminal limit;
 
 precedence left AND, OR;
@@ -282,27 +281,33 @@ order     ::=   COLUMN:c
                 :}
               ;
               
-comp_arg  ::=   NUMBER:n
+value     ::=   NUMBER:n
                 {:
                   RESULT = n;
+                  parser.getHelper().getLogger().fine("number: " + n); 
                 :}
               | STRING:s
                 {:
                   RESULT = s;
+                  parser.getHelper().getLogger().fine("string: " + s); 
                 :}
               | PARSE LPAREN STRING:type COMMA STRING:arg RPAREN
                 {:
                   if (type.equals("number")) {
                     RESULT = new Double(arg);
+                    parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else if (type.equals("date")) {
                     RESULT = new BaseDate(arg);
+                    parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else if (type.equals("time")) {
                     RESULT = new BaseTime(arg);
+                    parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else if (type.equals("timestamp")) {
                     RESULT = new BaseDateTime(arg);
+                    parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else {
                     throw new IllegalStateException("Unhandled parse type: " + type);
@@ -317,7 +322,7 @@ cond_list ::=   cond_list cond
                 :}
               ;
 
-cond      ::=   COLUMN:c LT comp_arg:a
+cond      ::=   COLUMN:c LT value:a
                 {: 
                   String comp = " < ";
                   if (a instanceof Double) {
@@ -351,7 +356,7 @@ cond      ::=   COLUMN:c LT comp_arg:a
                         + a.getClass().getName() + " (" + a + ")");
                   }
                 :}
-              | COLUMN:c LE comp_arg:a
+              | COLUMN:c LE value:a
                 {: 
                   String comp = " <= ";
                   if (a instanceof Double) {
@@ -385,7 +390,7 @@ cond      ::=   COLUMN:c LT comp_arg:a
                         + a.getClass().getName() + " (" + a + ")");
                   }
                 :}
-              | COLUMN:c EQ comp_arg:a
+              | COLUMN:c EQ value:a
                 {: 
                   String comp = " = ";
                   if (a instanceof Double) {
@@ -425,7 +430,7 @@ cond      ::=   COLUMN:c LT comp_arg:a
                         + a.getClass().getName() + " (" + a + ")");
                   }
                 :}
-              | COLUMN:c NOT_EQ comp_arg:a
+              | COLUMN:c NOT_EQ value:a
                 {: 
                   String comp = " <> ";
                   if (a instanceof Double) {
@@ -481,7 +486,7 @@ cond      ::=   COLUMN:c LT comp_arg:a
                         + a.getClass().getName() + " (" + a + ")");
                   }
                 :}
-              | COLUMN:c GE comp_arg:a
+              | COLUMN:c GE value:a
                 {: 
                   String comp = " >= ";
                   if (a instanceof Double) {
@@ -515,7 +520,7 @@ cond      ::=   COLUMN:c LT comp_arg:a
                         + a.getClass().getName() + " (" + a + ")");
                   }
                 :}
-              | COLUMN:c GT comp_arg:a
+              | COLUMN:c GT value:a
                 {: 
                   String comp = " > ";
                   if (a instanceof Double) {
@@ -577,17 +582,6 @@ cond      ::=   COLUMN:c LT comp_arg:a
               | NOT cond:c
                 {: 
                   RESULT = parser.getHelper().invert(c); 
-                :}
-              ;
-              
-value     ::=   NUMBER:n
-                {: 
-                  parser.getHelper().getLogger().fine("number: " + n); 
-                  RESULT = n; 
-                :}
-              | STRING:s
-                {: 
-                  parser.getHelper().getLogger().fine("string: " + s); RESULT = s; 
                 :}
               ;
               

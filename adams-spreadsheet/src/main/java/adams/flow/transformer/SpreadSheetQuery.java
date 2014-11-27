@@ -78,12 +78,12 @@ import adams.parser.SpreadSheetQueryText;
  *               | cond<br/>
  *               ;<br/>
  * <br/>
- * cond      ::=   COLUMN &lt; comp_arg<br/>
- *               | COLUMN &lt;= comp_arg<br/>
- *               | COLUMN = comp_arg<br/>
- *               | COLUMN &lt;&gt; comp_arg<br/>
- *               | COLUMN &gt;= comp_arg<br/>
- *               | COLUMN &gt; comp_arg<br/>
+ * cond      ::=   COLUMN &lt; value<br/>
+ *               | COLUMN &lt;= value<br/>
+ *               | COLUMN = value<br/>
+ *               | COLUMN &lt;&gt; value<br/>
+ *               | COLUMN &gt;= value<br/>
+ *               | COLUMN &gt; value<br/>
  *               | COLUMN REGEXP STRING<br/>
  *               | COLUMN IS NULL<br/>
  *               | ( cond )<br/>
@@ -92,16 +92,12 @@ import adams.parser.SpreadSheetQueryText;
  *               | NOT cond<br/>
  *               ;<br/>
  * <br/>
- * comp_arg  ::=   NUMBER<br/>
+ * value     ::=   NUMBER<br/>
  *               | STRING<br/>
  *               | PARSE ( "number" , STRING )<br/>
  *               | PARSE ( "date" , STRING )<br/>
  *               | PARSE ( "time" , STRING )<br/>
  *               | PARSE ( "timestamp" , STRING )<br/>
- *               ;<br/>
- * <br/>
- * value     ::=   NUMBER<br/>
- *               | STRING<br/>
  *               ;<br/>
  * <br/>
  * limit     ::=   LIMIT NUMBER:max<br/>
