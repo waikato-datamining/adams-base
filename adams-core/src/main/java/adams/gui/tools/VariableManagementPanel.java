@@ -15,7 +15,7 @@
 
 /*
  * VariableManagementPanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -65,7 +65,7 @@ import adams.gui.event.SearchListener;
  */
 public class VariableManagementPanel
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, VariableChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 8289824326163269560L;
@@ -445,7 +445,7 @@ public class VariableManagementPanel
   protected void finishInit() {
     super.finishInit();
 
-    m_Model.getVariables().addVariableChangeListener(m_Model);
+    m_Model.getVariables().addVariableChangeListener(this);
   }
 
   /**
@@ -521,9 +521,9 @@ public class VariableManagementPanel
    * @param value	the instance to use
    */
   public void setVariables(Variables value) {
-    m_Model.getVariables().removeVariableChangeListener(m_Model);
+    m_Model.getVariables().removeVariableChangeListener(this);
     m_Model = new VariableTableModel(value);
-    m_Model.getVariables().addVariableChangeListener(m_Model);
+    m_Model.getVariables().addVariableChangeListener(this);
     m_Table.setModel(m_Model);
     m_Table.setOptimalColumnWidth();
   }
@@ -538,9 +538,20 @@ public class VariableManagementPanel
   }
 
   /**
+   * Gets triggered when a variable changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  public void variableChanged(VariableChangeEvent e) {
+    m_Model.variableChanged(e);
+    if (m_PanelSearch.getSearchText().length() > 0)
+      m_PanelSearch.search();
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    m_Model.getVariables().removeVariableChangeListener(m_Model);
+    m_Model.getVariables().removeVariableChangeListener(this);
   }
 }
