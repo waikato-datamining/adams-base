@@ -15,7 +15,7 @@
 
 /*
  * BaseObjectEditor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -81,7 +81,7 @@ public class BaseObjectEditor
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
-    return ((BaseObject) object).getValue();
+    return Utils.backQuoteChars(((BaseObject) object).getValue());
   }
 
   /**
@@ -120,7 +120,7 @@ public class BaseObjectEditor
     try {
       cls    = determineClass(option.getDefaultValue());
       result = (BaseObject) cls.newInstance();
-      result.setValue(str);
+      result.setValue(Utils.unbackQuoteChars(str));
     }
     catch (Exception e) {
       result = null;
