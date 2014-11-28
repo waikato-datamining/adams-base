@@ -15,7 +15,7 @@
 
 /*
  * ReportField.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -205,14 +205,10 @@ public class ReportField
    */
   @Override
   public String getQuickInfo() {
-    String		result;
-    List<String>	options;
+    String	result;
 
-    result = QuickInfoHelper.toString(this, "regExp", m_RegExp);
-
-    options = new ArrayList<String>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputNameOnly", (m_OutputNameOnly ? "name only" : "name + type"), "recursive"));
-    result += QuickInfoHelper.flatten(options);
+    result  = QuickInfoHelper.toString(this, "regExp", m_RegExp, "regexp: ");
+    result += QuickInfoHelper.toString(this, "outputNameOnly", (m_OutputNameOnly ? "name only" : "name + type"), ", output: ");
 
     return result;
   }
