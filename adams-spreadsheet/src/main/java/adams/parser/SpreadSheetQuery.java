@@ -60,7 +60,10 @@ import adams.parser.spreadsheetquery.Scanner;
  * delete    ::=   DELETE WHERE cond_list<br/>
  *               ;<br/>
  * <br/>
- * col_list  ::= col_list COMMA col | col;<br/>
+ * col_list  ::=   col_list COMMA col<br/>
+ *               | col<br/>
+ *               | SELECT NUMBER [subsample: &lt;1 = percent; &gt;= 1 number of rows]<br/>
+ *               ;<br/>
  * <br/>
  * col       ::=   * <br/>
  *               | COLUMN<br/>
@@ -241,7 +244,10 @@ public class SpreadSheetQuery
 	  + "delete    ::=   DELETE WHERE cond_list\n"
 	  + "              ;\n"
 	  + "\n"
-	  + "col_list  ::= col_list COMMA col | col;\n"
+	  + "col_list  ::=   col_list COMMA col\n"
+	  + "              | col\n"
+	  + "              | SELECT NUMBER [subsample: <1 = percent; >= 1 number of rows]\n"
+	  + "              ;\n"
 	  + "\n"
 	  + "col       ::=   * \n"
 	  + "              | COLUMN\n"

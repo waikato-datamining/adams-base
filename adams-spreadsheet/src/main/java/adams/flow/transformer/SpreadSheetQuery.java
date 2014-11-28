@@ -55,7 +55,10 @@ import adams.parser.SpreadSheetQueryText;
  * delete    ::=   DELETE WHERE cond_list<br/>
  *               ;<br/>
  * <br/>
- * col_list  ::= col_list COMMA col | col;<br/>
+ * col_list  ::=   col_list COMMA col<br/>
+ *               | col<br/>
+ *               | SELECT NUMBER [subsample: &lt;1 = percent; &gt;= 1 number of rows]<br/>
+ *               ;<br/>
  * <br/>
  * col       ::=   * <br/>
  *               | COLUMN<br/>

@@ -147,7 +147,7 @@ terminal SELECT, UPDATE, DELETE, WHERE, SET, ORDER, BY, IS, NULL, REGEXP, AS, LI
 terminal GROUP, HAVING, COUNT, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, SUM, IQR;
 terminal PARSE, CELLTYPE;
 terminal COMMA, LPAREN, RPAREN;
-terminal ALL;
+terminal STAR, PERCENT;
 terminal LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal ASC, DESC;
 terminal Double NUMBER;
@@ -241,9 +241,18 @@ delete    ::=   DELETE WHERE cond_list
                 :}
               ;
 
-col_list  ::= col_list COMMA col | col;
+col_list  ::=   col_list COMMA col 
+              | col
+              | NUMBER:n
+                {: 
+                  parser.getHelper().useAllColumns(); 
+                  adams.data.spreadsheet.rowfinder.SubSample rf = new adams.data.spreadsheet.rowfinder.SubSample();
+                  rf.setSize(n);
+                  parser.getHelper().setSubsampleRowFinder(rf, "subsample: " + n);
+                :}
+              ;
 
-col       ::=   ALL 
+col       ::=   STAR 
                 {: 
                   parser.getHelper().useAllColumns(); 
                 :}
@@ -685,11 +694,11 @@ agg       ::=   COUNT
                   parser.getHelper().addAggregate(Aggregate.COUNT, null); 
                   parser.getHelper().renameAggregate(Aggregate.COUNT, null, newc); 
                 :}
-              |  COUNT LPAREN ALL RPAREN
+              |  COUNT LPAREN STAR RPAREN
                 {: 
                   parser.getHelper().addAggregate(Aggregate.COUNT, null); 
                 :}
-              |  COUNT LPAREN ALL RPAREN AS COLUMN:newc
+              |  COUNT LPAREN STAR RPAREN AS COLUMN:newc
                 {: 
                   parser.getHelper().addAggregate(Aggregate.COUNT, null); 
                   parser.getHelper().renameAggregate(Aggregate.COUNT, null, newc); 

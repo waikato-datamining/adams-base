@@ -22,11 +22,15 @@ package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import adams.core.VariableName;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.CallableActorReference;
+import adams.parser.SpreadSheetQueryText;
 import adams.test.Regression;
 import adams.test.TmpFile;
 
@@ -197,7 +201,7 @@ public class SpreadSheetQuery3Test
       // Flow.Branch
       adams.flow.control.Branch branch25 = new adams.flow.control.Branch();
       argOption = (AbstractArgumentOption) branch25.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] branches26 = new adams.flow.core.AbstractActor[12];
+      adams.flow.core.AbstractActor[] branches26 = new adams.flow.core.AbstractActor[14];
 
       // Flow.Branch.original
       adams.flow.control.Sequence sequence27 = new adams.flow.control.Sequence();
@@ -550,8 +554,39 @@ public class SpreadSheetQuery3Test
       callablesink143.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("output"));
       actors137[2] = callablesink143;
       sequence135.setActors(actors137);
-
+      
       branches26[11] = sequence135;
+
+      // sample (percent)
+      adams.flow.control.Sequence ssp = new adams.flow.control.Sequence();
+      ssp.setName("sample (percent)");
+      adams.flow.transformer.SetVariable svsp = new adams.flow.transformer.SetVariable();
+      svsp.setVariableName(new VariableName("name"));
+      svsp.setVariableValue(new BaseText("sample (percent)"));
+      ssp.add(svsp);
+      adams.flow.transformer.SpreadSheetQuery sqsp = new adams.flow.transformer.SpreadSheetQuery();
+      sqsp.setQuery(new SpreadSheetQueryText("SELECT 0.5"));
+      ssp.add(sqsp);
+      adams.flow.sink.CallableSink cssp = new adams.flow.sink.CallableSink();
+      cssp.setCallableName(new CallableActorReference("output"));
+      ssp.add(cssp);
+      branches26[12] = ssp;
+
+      // sample (absolute)
+      adams.flow.control.Sequence ssa = new adams.flow.control.Sequence();
+      ssa.setName("sample (absolute)");
+      adams.flow.transformer.SetVariable svsa = new adams.flow.transformer.SetVariable();
+      svsa.setVariableName(new VariableName("name"));
+      svsa.setVariableValue(new BaseText("sample (absolute)"));
+      ssa.add(svsa);
+      adams.flow.transformer.SpreadSheetQuery sqsa = new adams.flow.transformer.SpreadSheetQuery();
+      sqsa.setQuery(new SpreadSheetQueryText("SELECT 3"));
+      ssa.add(sqsa);
+      adams.flow.sink.CallableSink cssa = new adams.flow.sink.CallableSink();
+      cssa.setCallableName(new CallableActorReference("output"));
+      ssa.add(cssa);
+      branches26[13] = ssa;
+      
       branch25.setBranches(branches26);
 
       argOption = (AbstractArgumentOption) branch25.getOptionManager().findByProperty("numThreads");

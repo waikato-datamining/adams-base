@@ -103,6 +103,9 @@ public class ParserHelper
   /** the row finders to use. */
   protected List<RowFinder> m_RowFinders;
   
+  /** the rowfinder to use for generating a subsample. */
+  protected RowFinder m_Subsample;
+  
   /** the partial flow for converting the spreadsheet. */
   protected SubProcess m_SubProcess;
   
@@ -146,6 +149,7 @@ public class ParserHelper
     m_SortColumns       = new ArrayList<String>();
     m_SortAsc           = new ArrayList<Boolean>();
     m_RowFinders        = new ArrayList<RowFinder>();
+    m_Subsample         = null;
     m_Aggregates        = new HashMap<Aggregate,List<String>>();
     m_RenamedAggregates = new HashMap<String,String>();
     m_GroupByColumns    = new ArrayList<String>();
@@ -319,6 +323,19 @@ public class ParserHelper
       getLogger().fine(log + ": " + Utils.arrayToString(result));
     
     return result;
+  }
+
+  /**
+   * Sets the row finder to generate a subsample.
+   *
+   * @param finder the row finder to apply
+   * @param log a logging message
+   * @return the selected rows
+   */
+  public void setSubsampleRowFinder(RowFinder finder, String log) {
+    m_Subsample = finder;
+    if (isLoggingEnabled())
+      getLogger().fine(log);
   }
 
   /**
@@ -532,6 +549,12 @@ public class ParserHelper
         sub.add(conv);
       }
       sub.add(rowFilter);
+      // subsample?
+      if (m_Subsample != null) {
+	SpreadSheetRowFilter subsample = new SpreadSheetRowFilter();
+	subsample.setFinder(m_Subsample);
+	sub.add(subsample);
+      }
       // limit?
       if (m_LimitMax > 0) {
 	Range limit = new Range((m_LimitOffset + 1) + Range.RANGE + (m_LimitOffset + m_LimitMax));

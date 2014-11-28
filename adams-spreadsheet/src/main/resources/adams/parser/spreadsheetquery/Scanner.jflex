@@ -89,8 +89,9 @@ import java.io.*;
   "parse"     { return sf.newSymbol("Parse",     sym.PARSE); }
   "celltype"  { return sf.newSymbol("CellType",  sym.CELLTYPE); }
   
-  // operands
-  "*" { return sf.newSymbol("All", sym.ALL); }
+  // symbols
+  "*" { return sf.newSymbol("Star",    sym.STAR); }
+  "%" { return sf.newSymbol("Percent", sym.PERCENT); }
 
   // boolean stuff
   "<" { return sf.newSymbol("Less than", sym.LT); }
