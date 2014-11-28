@@ -727,7 +727,12 @@ public class WekaInstanceDumper
 
     result     = null;
     outputFile = createFilename(m_Buffer.get(0).dataset());
-    ok         = true;
+    if (!outputFile.getParentFile().exists()) {
+      result = "Parent directory does not exist: " + outputFile.getParentFile();
+      return result;
+    }
+    
+    ok = true;
     if (!outputFile.exists() || !append)
       ok = FileUtils.writeToFile(outputFile.getAbsolutePath(), createHeader(m_Buffer.get(0).dataset()), false);
 
