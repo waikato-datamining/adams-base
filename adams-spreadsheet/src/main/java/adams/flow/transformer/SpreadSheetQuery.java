@@ -86,6 +86,7 @@ import adams.parser.SpreadSheetQueryText;
  *               | COLUMN &gt; value<br/>
  *               | COLUMN REGEXP STRING<br/>
  *               | COLUMN IS NULL<br/>
+ *               | CELLTYPE ( COLUMN ) = "numeric|long|double|boolean|string|time|date|datetime|timestamp|object|missing"<br/>
  *               | ( cond )<br/>
  *               | cond:c1 AND cond:c2<br/>
  *               | cond:c1 OR cond:c2<br/>

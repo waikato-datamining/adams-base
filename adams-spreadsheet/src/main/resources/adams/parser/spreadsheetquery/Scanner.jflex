@@ -87,6 +87,7 @@ import java.io.*;
   "iqr"       { return sf.newSymbol("IQR",       sym.IQR); }
   "interquartile" { return sf.newSymbol("IQR",   sym.IQR); }
   "parse"     { return sf.newSymbol("Parse",     sym.PARSE); }
+  "celltype"  { return sf.newSymbol("CellType",  sym.CELLTYPE); }
   
   // operands
   "*" { return sf.newSymbol("All", sym.ALL); }

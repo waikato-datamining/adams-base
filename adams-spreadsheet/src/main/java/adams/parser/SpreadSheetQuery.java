@@ -91,6 +91,7 @@ import adams.parser.spreadsheetquery.Scanner;
  *               | COLUMN &gt; value<br/>
  *               | COLUMN REGEXP STRING<br/>
  *               | COLUMN IS NULL<br/>
+ *               | CELLTYPE ( COLUMN ) = "numeric|long|double|boolean|string|time|date|datetime|timestamp|object|missing"<br/>
  *               | ( cond )<br/>
  *               | cond:c1 AND cond:c2<br/>
  *               | cond:c1 OR cond:c2<br/>
@@ -271,6 +272,7 @@ public class SpreadSheetQuery
 	  + "              | COLUMN > value\n"
 	  + "              | COLUMN REGEXP STRING\n"
 	  + "              | COLUMN IS NULL\n"
+	  + "              | CELLTYPE ( COLUMN ) = \"numeric|long|double|boolean|string|time|date|datetime|timestamp|object|missing\"\n"
 	  + "              | ( cond )\n"
 	  + "              | cond:c1 AND cond:c2\n"
 	  + "              | cond:c1 OR cond:c2\n"
