@@ -1,1 +1,1 @@
-.* [recursivename + type]
+regexp: .*, output: name + type
