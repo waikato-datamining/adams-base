@@ -172,7 +172,7 @@ public class SpreadSheetQuery2Test
       adams.flow.source.FileSupplier filesupplier15 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) filesupplier15.getOptionManager().findByProperty("files");
       adams.core.io.PlaceholderFile[] files16 = new adams.core.io.PlaceholderFile[1];
-      files16[0] = (adams.core.io.PlaceholderFile) argOption.valueOf("${HOME}/temp/dates.csv");
+      files16[0] = (adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dates.csv");
       filesupplier15.setFiles(files16);
       actors1[1] = filesupplier15;
 
