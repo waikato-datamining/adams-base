@@ -127,5 +127,7 @@ Keywords=\
     stdev,\
     stdevp,\
     iqr,\
-    interquartile
+    interquartile,\
+    parse,\
+    celltype
     
