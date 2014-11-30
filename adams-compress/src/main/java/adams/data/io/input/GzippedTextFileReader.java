@@ -23,7 +23,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCharset;
@@ -189,10 +191,10 @@ public class GzippedTextFileReader
    */
   @Override
   public void initialize(InputStream stream) {
-    GZIPInputStream	gis;
+    CompressorInputStream	gis;
     
     try {
-      gis = new GZIPInputStream(stream);
+      gis = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, stream);
       super.initialize(gis);
       m_TextReader.initialize(new BufferedReader(new InputStreamReader(gis, m_Encoding.charsetValue())));
     }
