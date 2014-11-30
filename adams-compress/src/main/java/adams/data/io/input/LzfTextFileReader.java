@@ -14,7 +14,7 @@
  */
 
 /**
- * GzippedTextFileReader.java
+ * LzfTextFileReader.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
@@ -23,11 +23,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.zip.GZIPInputStream;
+
+import com.ning.compress.lzf.LZFInputStream;
 
 /**
  <!-- globalinfo-start -->
- * Reads content from gzipped text files.
+ * Reads content from LZF compressed text files.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -53,11 +54,14 @@ import java.util.zip.GZIPInputStream;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GzippedTextFileReader
+public class LzfTextFileReader
   extends AbstractCompressedTextReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 35626483638973054L;
+  
+  /** the reader for reading the decompressed content. */
+  protected AbstractTextReader m_TextReader;
 
   /**
    * Returns a string describing the object.
@@ -66,7 +70,7 @@ public class GzippedTextFileReader
    */
   @Override
   public String globalInfo() {
-    return "Reads content from gzipped text files.";
+    return "Reads content from LZF compressed text files.";
   }
 
   /**
@@ -86,15 +90,15 @@ public class GzippedTextFileReader
    */
   @Override
   public void initialize(InputStream stream) {
-    GZIPInputStream	gis;
+    LZFInputStream	lis;
     
     try {
-      gis = new GZIPInputStream(stream);
-      super.initialize(gis);
-      m_TextReader.initialize(new BufferedReader(new InputStreamReader(gis, m_Encoding.charsetValue())));
+      lis = new LZFInputStream(stream);
+      super.initialize(lis);
+      m_TextReader.initialize(new BufferedReader(new InputStreamReader(lis, m_Encoding.charsetValue())));
     }
     catch (Exception e) {
-      throw new IllegalStateException("Failed to initialize gzip stream!", e);
+      throw new IllegalStateException("Failed to initialize lzf stream!", e);
     }
   }
 }

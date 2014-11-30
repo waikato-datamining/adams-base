@@ -14,20 +14,22 @@
  */
 
 /**
- * GzippedTextFileReader.java
+ * Bzip2TextFileReader.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 /**
  <!-- globalinfo-start -->
- * Reads content from gzipped text files.
+ * Reads content from bzip2 compressed text files.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -53,7 +55,7 @@ import java.util.zip.GZIPInputStream;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GzippedTextFileReader
+public class Bzip2TextFileReader
   extends AbstractCompressedTextReader {
 
   /** for serialization. */
@@ -66,7 +68,7 @@ public class GzippedTextFileReader
    */
   @Override
   public String globalInfo() {
-    return "Reads content from gzipped text files.";
+    return "Reads content from bzip2 compressed text files.";
   }
 
   /**
@@ -86,15 +88,15 @@ public class GzippedTextFileReader
    */
   @Override
   public void initialize(InputStream stream) {
-    GZIPInputStream	gis;
+    BZip2CompressorInputStream	bis;
     
     try {
-      gis = new GZIPInputStream(stream);
-      super.initialize(gis);
-      m_TextReader.initialize(new BufferedReader(new InputStreamReader(gis, m_Encoding.charsetValue())));
+      bis = new BZip2CompressorInputStream(new BufferedInputStream(stream));
+      super.initialize(bis);
+      m_TextReader.initialize(new BufferedReader(new InputStreamReader(bis, m_Encoding.charsetValue())));
     }
     catch (Exception e) {
-      throw new IllegalStateException("Failed to initialize gzip stream!", e);
+      throw new IllegalStateException("Failed to initialize bzip2 stream!", e);
     }
   }
 }
