@@ -98,6 +98,7 @@ import adams.gui.flow.menu.ExecutionPauseResume;
 import adams.gui.flow.menu.ExecutionRun;
 import adams.gui.flow.menu.ExecutionStop;
 import adams.gui.flow.menu.ExecutionValidateSetup;
+import adams.gui.flow.menu.FileCheckOnSave;
 import adams.gui.flow.menu.FileClose;
 import adams.gui.flow.menu.FileCloseTab;
 import adams.gui.flow.menu.FileExport;
@@ -205,6 +206,9 @@ public class FlowEditorPanel
 
   /** the "save as" action. */
   protected FlowEditorAction m_ActionFileSaveAs;
+
+  /** the "check on save" action. */
+  protected FlowEditorAction m_ActionFileCheckOnSave;
 
   /** the "revert" action. */
   protected FlowEditorAction m_ActionFileRevert;
@@ -484,9 +488,14 @@ public class FlowEditorPanel
     m_ActionFileSave = action;
     m_MenuItems.add(action);
 
-    // File/Save
+    // File/Save as
     action = new FileSaveAs();
     m_ActionFileSaveAs = action;
+    m_MenuItems.add(action);
+
+    // File/Check on save
+    action = new FileCheckOnSave();
+    m_ActionFileCheckOnSave = action;
     m_MenuItems.add(action);
 
     // File/Revert
@@ -889,6 +898,7 @@ public class FlowEditorPanel
 
       menu.add(m_ActionFileSave);
       menu.add(m_ActionFileSaveAs);
+      menu.add(m_ActionFileCheckOnSave);
       menu.add(m_ActionFileRevert);
       menu.add(m_ActionFileCloseTab);
       menu.addSeparator();

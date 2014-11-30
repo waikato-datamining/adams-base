@@ -42,6 +42,7 @@ public class FlowPreferencesPanel
 
     addPropertyType("InitialDir", PropertyType.DIRECTORY);
     addPropertyType("MaxRecentFlows", PropertyType.INTEGER);
+    addPropertyType("CheckOnSave", PropertyType.BOOLEAN);
     addPropertyType("ShowQuickInfo", PropertyType.BOOLEAN);
     addPropertyType("ShowAnnotations", PropertyType.BOOLEAN);
     addPropertyType("ShowInputOutput", PropertyType.BOOLEAN);

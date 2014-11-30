@@ -54,6 +54,8 @@ import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.CheckProcessor;
+import adams.flow.processor.CheckStorageUsage;
+import adams.flow.processor.CheckVariableUsage;
 import adams.flow.processor.CleanUpProcessor;
 import adams.flow.processor.MultiProcessor;
 import adams.flow.processor.RemoveDisabledActors;
@@ -1130,28 +1132,54 @@ public class ActorUtils {
    * @see		CheckProcessor
    */
   public static String checkFlow(AbstractActor actor) {
-    String			result;
-    MultiProcessor		processor;
-    String[]			names;
-    AbstractActorProcessor[]	procs;
-    int				i;
+    return checkFlow(actor, true, true);
+  }
 
-    processor = new MultiProcessor();
-    names     = ClassLister.getSingleton().getClassnames(CheckProcessor.class);
-    procs     = new AbstractActorProcessor[names.length];
-    for (i = 0; i < names.length; i++) {
-      try {
-	procs[i] = (AbstractActorProcessor) Class.forName(names[i]).newInstance();
+  /**
+   * Checks the flow.
+   *
+   * @param actor	the flow to check
+   * @param variables	whether the check variable usage
+   * @param storage	whether to check storage usage
+   * @return		null if all checks passed, otherwise the warnings
+   * @see		CheckProcessor
+   */
+  public static String checkFlow(AbstractActor actor, boolean variables, boolean storage) {
+    String				result;
+    MultiProcessor			processor;
+    String[]				names;
+    List<AbstractActorProcessor>	procs;
+    AbstractActorProcessor		proc;
+    int					i;
+
+    // general check
+    actor  = actor.shallowCopy();
+    result = actor.setUp();
+    actor.destroy();
+    
+    if (result == null) {
+      processor = new MultiProcessor();
+      names     = ClassLister.getSingleton().getClassnames(CheckProcessor.class);
+      procs     = new ArrayList<AbstractActorProcessor>();
+      for (i = 0; i < names.length; i++) {
+	try {
+	  proc = (AbstractActorProcessor) Class.forName(names[i]).newInstance();
+	  if (!variables && (proc instanceof CheckVariableUsage))
+	    continue;
+	  if (!storage && (proc instanceof CheckStorageUsage))
+	    continue;
+	  procs.add(proc);
+	}
+	catch (Exception e) {
+	  LOGGER.log(Level.SEVERE,
+	      "Failed to instantiate check processor: " + names[i], e);
+	  return null;
+	}
       }
-      catch (Exception e) {
-	LOGGER.log(Level.SEVERE,
-	    "Failed to instantiate check processor: " + names[i], e);
-	return null;
-      }
+      processor.setSubProcessors(procs.toArray(new AbstractActorProcessor[procs.size()]));
+      processor.process(actor);
+      result = processor.getWarnings();
     }
-    processor.setSubProcessors(procs);
-    processor.process(actor);
-    result = processor.getWarnings();
 
     return result;
   }

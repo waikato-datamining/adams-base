@@ -18,6 +18,9 @@ MaxRecentFlows=5
 # The panel class to use
 FlowPanelClass=adams.gui.flow.FlowPanel
 
+# Whether to check the flow before saving (true|false)
+CheckOnSave=true
+
 # Whether to show the quick info (true|false)
 ShowQuickInfo=true
 

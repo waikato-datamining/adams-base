@@ -68,6 +68,7 @@ import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoPanel;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeListener;
 import adams.gui.event.UndoEvent;
@@ -413,6 +414,9 @@ public class FlowPanel
   /** whether to perform a GC after the flow execution. */
   protected boolean m_RunGC;
 
+  /** whether to check before saving. */
+  protected boolean m_CheckOnSave;
+
   /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
   protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
 
@@ -462,6 +466,7 @@ public class FlowPanel
     m_Title                 = "";
     m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
     m_RegisteredBreakpoints = new HashMap<String,Breakpoint>();
+    m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
   }
 
   /**
@@ -615,6 +620,24 @@ public class FlowPanel
    */
   public boolean getRunGC() {
     return m_RunGC;
+  }
+
+  /**
+   * Sets whether to perform a check before saving the flow.
+   *
+   * @param value	true if to check before saving
+   */
+  public void setCheckOnSave(boolean value) {
+    m_CheckOnSave = value;
+  }
+
+  /**
+   * Returns whether to perform a check before saving the flow.
+   *
+   * @return		true if to check before saving
+   */
+  public boolean getCheckOnSave() {
+    return m_CheckOnSave;
   }
 
   /**
@@ -945,14 +968,30 @@ public class FlowPanel
    */
   public void save(final FlowWriter writer, final File file) {
     SwingWorker		worker;
-
+    String		check;
+    final AbstractActor	flow;
+    int			retVal;
+    
+    flow = getCurrentFlow();
+    if (getCheckOnSave()) {
+      check = ActorUtils.checkFlow(flow, false, false);
+      if (check != null) {
+	retVal = GUIHelper.showConfirmMessage(
+	    m_Owner, "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check);
+	if (retVal != ApprovalDialog.APPROVE_OPTION) {
+	  showStatus("Cancelled saving!");
+	  return;
+	}
+      }
+    }
+    
     worker = new SwingWorker() {
       boolean m_Result;
 
       @Override
       protected Object doInBackground() throws Exception {
 	showStatus("Saving '" + file + "'...");
-	m_Result = writer.write(getCurrentFlow(), file);
+	m_Result = writer.write(flow, file);
 	showStatus("");
         return null;
       }
