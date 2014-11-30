@@ -20,8 +20,10 @@
 package adams.data.io.input;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.Reader;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 
 /**
@@ -32,20 +34,47 @@ import adams.core.option.AbstractOptionHandler;
  * @param <T> the type of data to return
  */
 public abstract class AbstractTextReader<T>
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1002106529556316198L;
 
   /** the reader in use. */
   protected BufferedReader m_Reader;
-  
+
+  /** the stream in use. */
+  protected InputStream m_Stream;
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   * <p/>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return null;
+  }
+
   /**
    * Returns the class of the data that it returns.
    * 
    * @return		the generated data type
    */
   public abstract Class generates();
+  
+  /**
+   * Whether to use a {@link Reader} or an {@link InputStream}.
+   * <p/>
+   * Default implementation returns true.
+   * 
+   * @return		true if using reader
+   */
+  public boolean useReader() {
+    return true;
+  }
   
   /**
    * Initializes the reader to use the provided reader to read the content
@@ -61,11 +90,21 @@ public abstract class AbstractTextReader<T>
   }
   
   /**
+   * Initializes the input stream to read the content from.
+   * 
+   * @param stream	the input stream to use
+   */
+  public void initialize(InputStream stream) {
+    m_Stream = stream;
+  }
+  
+  /**
    * Resets the reader.
    */
   @Override
   public void reset() {
     m_Reader = null;
+    m_Stream = null;
   }
   
   /**
@@ -74,7 +113,7 @@ public abstract class AbstractTextReader<T>
    * @return		true if more data is available 
    */
   public boolean hasNext() {
-    return (m_Reader != null);
+    return (m_Reader != null) || (m_Stream != null);
   }
   
   /**
@@ -90,7 +129,7 @@ public abstract class AbstractTextReader<T>
    * @return		the next amount of data, null if failed to read
    */
   public T next() {
-    if (m_Reader == null)
+    if ((m_Reader == null) && (m_Stream == null))
       return null;
     else
       return doNext();

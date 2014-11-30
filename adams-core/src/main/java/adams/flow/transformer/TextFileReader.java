@@ -258,7 +258,10 @@ public class TextFileReader
       file = new PlaceholderFile((String) fileObj);
 
     try {
-      m_Reader.initialize(new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), m_Encoding.charsetValue())));
+      if (m_Reader.useReader())
+	m_Reader.initialize(new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), m_Encoding.charsetValue())));
+      else
+	m_Reader.initialize(new FileInputStream(file.getAbsolutePath()));
     }
     catch (Exception e) {
       result = handleException("Failed to read text from: " + file, e);
