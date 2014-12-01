@@ -15,12 +15,14 @@
 
 /**
  * FlowTabManager.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +39,7 @@ import adams.core.Properties;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
+import adams.gui.core.MouseUtils;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Node;
@@ -117,8 +120,14 @@ public class FlowTabManager
 	m_TabList.add(tab);
 	key = createPropertyKey(tab.getClass());
 	if (!props.hasKey(key)) {
-	  props.setBoolean(key, !ClassLocator.hasInterface(RuntimeTab.class, tab.getClass()));
+	  props.setBoolean(key, !(tab instanceof RuntimeTab));
 	  update = true;
+	}
+	else if (tab instanceof RuntimeTab) {
+	  if (props.getBoolean(key)) {
+	    props.setBoolean(key, false);
+	    update = true;
+	  }
 	}
       }
     }
@@ -153,6 +162,24 @@ public class FlowTabManager
    */
   public FlowEditorPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Gets called when the user clicks on a tab.
+   */
+  @Override
+  protected void tabClicked(MouseEvent e) {
+    int		index;
+    Component	comp;
+
+    super.tabClicked(e);
+    
+    index = indexAtLocation(e.getX(), e.getY());
+    if ((index >= 0) && MouseUtils.isMiddleClick(e) && canCloseTabWithMiddleMouseButton(index)) {
+      comp = getComponentAt(index);
+      if (comp instanceof RuntimeTab)
+	setVisible(comp.getClass(), false);
+    }
   }
   
   /**
@@ -249,6 +276,8 @@ public class FlowTabManager
 
     first = true;
     for (final AbstractEditorTab tab: m_TabList) {
+      if (tab instanceof RuntimeTab)
+	continue;
       if (first) {
 	first = false;
 	submenu.addSeparator();
@@ -259,10 +288,6 @@ public class FlowTabManager
         @Override
 	public void actionPerformed(ActionEvent e) {
           setVisible(tab.getClass(), !isVisible(tab.getClass()));
-          if (isVisible(tab.getClass()))
-            displayTab(tab);
-          else
-            hideTab(tab);
         }
       });
       submenu.add(menuitem);
@@ -333,6 +358,17 @@ public class FlowTabManager
    */
   public synchronized void setVisible(Class cls, boolean value, boolean update) {
     getProperties().setBoolean(createPropertyKey(cls), value);
+    for (AbstractEditorTab tab: m_TabList) {
+      if (tab.getClass() == cls) {
+	if (value) {
+	  displayTab(tab);
+	  setSelectedComponent(tab);
+	}
+	else {
+	  hideTab(tab);
+	}
+      }
+    }
     if (update)
       updateProperties();
   }

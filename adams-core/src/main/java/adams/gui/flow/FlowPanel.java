@@ -1577,11 +1577,13 @@ public class FlowPanel
   
   /**
    * Notifies the {@link RegisteredDisplaysTab} instance of a change. 
+   * 
+   * @param show	whether to show the tab or leave as is
    */
-  protected void updateRegisteredDisplays() {
+  protected void updateRegisteredDisplays(boolean show) {
     RegisteredDisplaysTab			registered;
 
-    if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class))
+    if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
       getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
     registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
     if (registered != null)
@@ -1607,7 +1609,7 @@ public class FlowPanel
     result = panels.put(name, panel);
     
     // notify panel
-    updateRegisteredDisplays();
+    updateRegisteredDisplays(true);
     
     return result;
   }
@@ -1629,7 +1631,7 @@ public class FlowPanel
     
     // notify panel
     if (result != null)
-      updateRegisteredDisplays();
+      updateRegisteredDisplays(false);
     
     return result;
   }
@@ -1640,7 +1642,7 @@ public class FlowPanel
   public void clearRegisteredDisplays() {
     m_RegisteredDisplays.clear();
     // notify panel
-    updateRegisteredDisplays();
+    updateRegisteredDisplays(false);
   }
   
   /**
@@ -1654,11 +1656,13 @@ public class FlowPanel
   
   /**
    * Notifies the {@link RegisteredBreakpointsTab} instance of a change. 
+   * 
+   * @param show	whether to show the tab or leave as is
    */
-  protected void updateRegisteredBreakpoints() {
+  protected void updateRegisteredBreakpoints(boolean show) {
     RegisteredBreakpointsTab			registered;
 
-    if (!getEditor().getTabs().isVisible(RegisteredBreakpointsTab.class))
+    if (!getEditor().getTabs().isVisible(RegisteredBreakpointsTab.class) && show)
       getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, true, false);
     registered = (RegisteredBreakpointsTab) getEditor().getTabs().getTab(RegisteredBreakpointsTab.class);
     if (registered != null)
@@ -1678,7 +1682,7 @@ public class FlowPanel
     result = m_RegisteredBreakpoints.put(name, panel);
     
     // notify panel
-    updateRegisteredBreakpoints();
+    updateRegisteredBreakpoints(true);
     
     return result;
   }
@@ -1695,7 +1699,7 @@ public class FlowPanel
     result = m_RegisteredBreakpoints.remove(name);
     
     // notify panel
-    updateRegisteredBreakpoints();
+    updateRegisteredBreakpoints(false);
     
     return result;
   }
@@ -1706,7 +1710,7 @@ public class FlowPanel
   public void clearRegisteredBreapoints() {
     m_RegisteredBreakpoints.clear();
     // notify panel
-    updateRegisteredBreakpoints();
+    updateRegisteredBreakpoints(false);
   }
   
   /**
