@@ -1622,10 +1622,14 @@ public class FlowPanel
   public AbstractDisplay deregisterDisplay(Class cls, String name) {
     AbstractDisplay	result;
     
-    result = m_RegisteredDisplays.get(cls).remove(name);
+    if (m_RegisteredDisplays.containsKey(cls))
+      result = m_RegisteredDisplays.get(cls).remove(name);
+    else
+      result = null;
     
     // notify panel
-    updateRegisteredDisplays();
+    if (result != null)
+      updateRegisteredDisplays();
     
     return result;
   }
