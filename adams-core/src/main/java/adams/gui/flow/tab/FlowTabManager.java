@@ -32,6 +32,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreePath;
 
+import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
@@ -116,7 +117,7 @@ public class FlowTabManager
 	m_TabList.add(tab);
 	key = createPropertyKey(tab.getClass());
 	if (!props.hasKey(key)) {
-	  props.setBoolean(key, true);
+	  props.setBoolean(key, !ClassLocator.hasInterface(RuntimeTab.class, tab.getClass()));
 	  update = true;
 	}
       }
@@ -307,10 +308,10 @@ public class FlowTabManager
    * Returns whether a tab should be visible or not.
    *
    * @param cls		the tab class
-   * @return		true if the tab is visible by default
+   * @return		true if the tab is visible by default (if not a {@link RuntimeTab} tab)
    */
   public synchronized boolean isVisible(Class cls) {
-    return getProperties().getBoolean(createPropertyKey(cls), true);
+    return getProperties().getBoolean(createPropertyKey(cls), !ClassLocator.hasInterface(RuntimeTab.class, cls));
   }
 
   /**

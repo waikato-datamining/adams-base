@@ -33,7 +33,8 @@ import adams.gui.flow.FlowPanel;
  * @version $Revision$
  */
 public class RegisteredBreakpointsTab
-  extends AbstractTabChangeAwareEditorTab {
+  extends AbstractTabChangeAwareEditorTab
+  implements RuntimeTab {
 
   /** for serialization. */
   private static final long serialVersionUID = 3636125950515045125L;
