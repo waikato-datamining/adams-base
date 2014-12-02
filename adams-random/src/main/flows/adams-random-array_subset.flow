@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-12-03 11:19:09
+# Date: 2014-12-03 11:37:20
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -14,17 +14,51 @@ adams.flow.control.Flow
 			-reader
 				adams.data.io.input.LineArrayTextReader
 	-actor
-		adams.flow.transformer.ArraySubSample
-			-size
-			30.0
-			-generator
-				adams.data.random.JavaRandomInt
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					normal
+					-actor
+						adams.flow.transformer.ArraySubSample
+							-size
+							30.0
+							-generator
+								adams.data.random.JavaRandomInt
+					-actor
+						adams.flow.transformer.ArrayToSequence
+					-actor
+						adams.flow.sink.Display
+							-name
+							Normal
+							-short-title
+							true
+							-writer
+								adams.data.io.output.NullWriter
+			-branch
+				adams.flow.control.Sequence
+					-name
+					inverted
+					-actor
+						adams.flow.transformer.ArraySubSample
+							-size
+							30.0
+							-generator
+								adams.data.random.JavaRandomInt
+							-invert
+							true
+					-actor
+						adams.flow.transformer.ArrayToSequence
+					-actor
+						adams.flow.sink.Display
+							-name
+							Inverted
+							-short-title
+							true
+							-x
+							-3
+							-writer
+								adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

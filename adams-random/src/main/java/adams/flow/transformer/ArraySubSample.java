@@ -90,6 +90,11 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomInt
  * </pre>
  * 
+ * <pre>-invert &lt;boolean&gt; (property: invert)
+ * &nbsp;&nbsp;&nbsp;If enabled, the inverse of the elements is returned.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -107,6 +112,9 @@ public class ArraySubSample
   /** the random number generator. */
   protected RandomIntegerRangeGenerator m_Generator;
 
+  /** whether to invert the selection. */
+  protected boolean m_Invert;
+  
   /**
    * Returns a string describing the object.
    *
@@ -132,6 +140,10 @@ public class ArraySubSample
     m_OptionManager.add(
 	    "generator", "generator",
 	    new JavaRandomInt());
+
+    m_OptionManager.add(
+	    "invert", "invert",
+	    false);
   }
 
   /**
@@ -198,6 +210,35 @@ public class ArraySubSample
   }
 
   /**
+   * Sets whether to invert the matching.
+   *
+   * @param value	true if to invert
+   */
+  public void setInvert(boolean value) {
+    m_Invert = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to invert the matching.
+   *
+   * @return		true if to invert
+   */
+  public boolean getInvert() {
+    return m_Invert;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String invertTipText() {
+    return "If enabled, the inverse of the elements is returned.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -208,6 +249,7 @@ public class ArraySubSample
     
     result  = QuickInfoHelper.toString(this, "size", m_Size, "size: ");
     result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
+    result += QuickInfoHelper.toString(this, "invert", m_Invert, "inverted", ", ");
     
     return result;
   }
@@ -271,7 +313,11 @@ public class ArraySubSample
       available.removeAt(i);
       size--;
     }
-    indices.sort();
+    
+    if (m_Invert)
+      indices = available;
+    else
+      indices.sort();
     if (isLoggingEnabled())
       getLogger().info("Indices: " + indices);
     
