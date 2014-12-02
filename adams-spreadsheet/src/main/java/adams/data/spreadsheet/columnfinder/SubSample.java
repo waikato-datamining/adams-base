@@ -100,7 +100,7 @@ public class SubSample
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String sieColumnTipText() {
+  public String sizeTipText() {
     return "The size of the sample: 0-1 = percentage, >1 absolute number of columns.";
   }
 
