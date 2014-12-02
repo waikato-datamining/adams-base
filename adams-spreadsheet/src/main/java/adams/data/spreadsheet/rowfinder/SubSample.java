@@ -20,10 +20,9 @@
 package adams.data.spreadsheet.rowfinder;
 
 import gnu.trove.list.array.TIntArrayList;
-
-import java.util.Random;
-
 import adams.core.QuickInfoHelper;
+import adams.data.random.JavaRandomInt;
+import adams.data.random.RandomIntegerRangeGenerator;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -40,9 +39,12 @@ public class SubSample
 
   /** the size of the sample (0-1: percent, >1: absolute number). */
   protected double m_Size;
+  
+  /** the random number generator. */
+  protected RandomIntegerRangeGenerator m_Generator;
 
-  /** the seed value. */
-  protected long m_Seed;
+  /** whether to invert the selection. */
+  protected boolean m_Invert;
 
   /**
    * Returns a string describing the object.
@@ -66,8 +68,12 @@ public class SubSample
 	    1.0, 0.0, null);
 
     m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
+	    "generator", "generator",
+	    new JavaRandomInt());
+
+    m_OptionManager.add(
+	    "invert", "invert",
+	    false);
   }
 
   /**
@@ -105,22 +111,22 @@ public class SubSample
   }
 
   /**
-   * Sets the seed value.
+   * Sets the random number generator.
    *
-   * @param value	the seed
+   * @param value	the generator
    */
-  public void setSeed(long value) {
-    m_Seed = value;
+  public void setGenerator(RandomIntegerRangeGenerator value) {
+    m_Generator = value;
     reset();
   }
 
   /**
-   * Returns the seed value.
+   * Returns the random number generator.
    *
-   * @return  		the seed
+   * @return		the generator
    */
-  public long getSeed() {
-    return m_Seed;
+  public RandomIntegerRangeGenerator getGenerator() {
+    return m_Generator;
   }
 
   /**
@@ -129,8 +135,37 @@ public class SubSample
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String seedTipText() {
-    return "The seed value for the random number generator.";
+  public String generatorTipText() {
+    return "The random number generator to use for selecting the elements.";
+  }
+
+  /**
+   * Sets whether to invert the matching.
+   *
+   * @param value	true if to invert
+   */
+  public void setInvert(boolean value) {
+    m_Invert = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to invert the matching.
+   *
+   * @return		true if to invert
+   */
+  public boolean getInvert() {
+    return m_Invert;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String invertTipText() {
+    return "If enabled, the inverse of the elements is returned.";
   }
 
   /**
@@ -140,7 +175,13 @@ public class SubSample
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "size", m_Size, "size: ");
+    String	result;
+    
+    result  = QuickInfoHelper.toString(this, "size", m_Size, "size: ");
+    result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
+    result += QuickInfoHelper.toString(this, "invert", m_Invert, "inverted", ", ");
+
+    return result;
   }
 
   /**
@@ -152,27 +193,41 @@ public class SubSample
   @Override
   protected int[] doFindRows(SpreadSheet data) {
     TIntArrayList	result;
-    TIntArrayList	indices;
     int			i;
     int			size;
-    Random		rand;
+    TIntArrayList	available;
     
     if (m_Size > 1)
       size = (int) Math.round(m_Size);
     else
       size = (int) Math.round((double) data.getRowCount() * m_Size);
-    
-    indices = new TIntArrayList();
+    if (isLoggingEnabled())
+      getLogger().info("Size of sample: " + size);
+
+    available = new TIntArrayList();
     for (i = 0; i < data.getRowCount(); i++)
-      indices.add(i);
-    
-    rand   = new Random(m_Seed);
+      available.add(i);
     result = new TIntArrayList();
-    while ((result.size() < size) && (indices.size() > 0)) {
-      i = rand.nextInt(indices.size());
-      result.add(indices.removeAt(i));
+    m_Generator.setMinValue(0);
+    while (size > 0) {
+      if (available.size() == 1) {
+	i = 0;
+      }
+      else {
+	m_Generator.setMaxValue(available.size() - 1);
+	i = m_Generator.next().intValue();
+      }
+      result.add(available.get(i));
+      available.removeAt(i);
+      size--;
     }
-    result.sort();
+    
+    if (m_Invert)
+      result = available;
+    else
+      result.sort();
+    if (isLoggingEnabled())
+      getLogger().info("Indices: " + result);
 
     return result.toArray();
   }
