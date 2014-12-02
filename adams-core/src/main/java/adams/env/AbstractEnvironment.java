@@ -310,9 +310,14 @@ public abstract class AbstractEnvironment
    * @param overrides	the keys (or regular expression of keys) to override with the values from props files added later on
    */
   public void add(String key, String propsfile, List<String> dirs, String[] overrides) {
+    Setup	setup;
+    
+    setup = new Setup(propsfile, dirs, overrides);
+    
     if (!m_Properties.containsKey(key))
       m_Properties.put(key, new ArrayList<Setup>());
-    m_Properties.get(key).add(new Setup(propsfile, dirs, overrides));
+    if (!m_Properties.get(key).contains(setup))
+      m_Properties.get(key).add(setup);
   }
 
   /**
