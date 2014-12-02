@@ -48,7 +48,7 @@ public class Well19937aTest
    * @return		the setups
    */
   @Override
-  protected AbstractRandomNumberGenerator[] getRegressionSetups() {
+  protected RandomNumberGenerator[] getRegressionSetups() {
     Well19937a[]	result;
 
     result = new Well19937a[3];

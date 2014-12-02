@@ -58,7 +58,8 @@ package adams.data.random;
  * @see Random#uniform(double, double)
  */
 public class Uniform
-  extends AbstractSeededRandomNumberGenerator<Double> {
+  extends AbstractSeededRandomNumberGenerator<Double>
+  implements RandomDoubleRangeGenerator<Double> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8058404120296659028L;
@@ -77,6 +78,7 @@ public class Uniform
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Generates random numbers from a uniform random variable.";
   }
@@ -84,6 +86,7 @@ public class Uniform
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -99,6 +102,7 @@ public class Uniform
   /**
    * Resets the generator.
    */
+  @Override
   public void reset() {
     super.reset();
 
@@ -168,6 +172,7 @@ public class Uniform
    * <p/>
    * Initializes the random number generator.
    */
+  @Override
   protected void check() {
     super.check();
 
@@ -185,6 +190,7 @@ public class Uniform
    *
    * @return		the next number
    */
+  @Override
   protected Double doNext() {
     return m_Random.uniform(m_MinValue, m_MaxValue);
   }

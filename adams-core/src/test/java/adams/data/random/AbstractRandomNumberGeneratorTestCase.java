@@ -15,7 +15,7 @@
 
 /**
  * AbstractRandomNumberGeneratorTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
@@ -59,7 +59,7 @@ public abstract class AbstractRandomNumberGeneratorTestCase
    * @param scheme	the scheme to generate the data with
    * @return		the generated data
    */
-  protected Number[] generate(AbstractRandomNumberGenerator scheme) {
+  protected Number[] generate(RandomNumberGenerator scheme) {
     Number[]	result;
     int		i;
 
@@ -100,7 +100,7 @@ public abstract class AbstractRandomNumberGeneratorTestCase
    *
    * @return		the setups
    */
-  protected abstract AbstractRandomNumberGenerator[] getRegressionSetups();
+  protected abstract RandomNumberGenerator[] getRegressionSetups();
 
   /**
    * Creates an output filename based on the input filename.
@@ -116,13 +116,13 @@ public abstract class AbstractRandomNumberGeneratorTestCase
    * Compares the generated data against previously saved output data.
    */
   public void testRegression() {
-    Number[]				data;
-    boolean				ok;
-    String				regression;
-    int					i;
-    AbstractRandomNumberGenerator[]	setups;
-    String[]				output;
-    TmpFile[]				outputFiles;
+    Number[]			data;
+    boolean			ok;
+    String			regression;
+    int				i;
+    RandomNumberGenerator[]	setups;
+    String[]			output;
+    TmpFile[]			outputFiles;
 
     if (m_NoRegressionTest)
       return;

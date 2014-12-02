@@ -14,58 +14,36 @@
  */
 
 /**
- * AbstractSeededRandomNumberGenerator.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * SeededRandomNumberGenerator.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
+import adams.core.Randomizable;
+
 /**
- * Ancestor for seeded random number generators.
+ * Interface for seeded random number generators.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 4584 $
  * @param <T> the type of random number to return
  */
-public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
-  extends AbstractRandomNumberGenerator<T>
-  implements SeededRandomNumberGenerator<T> {
-
-  /** for serialization. */
-  private static final long serialVersionUID = -8175994712205719647L;
-
-  /** the seed value. */
-  protected long m_Seed;
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
-  }
+public interface SeededRandomNumberGenerator<T extends Number>
+  extends RandomNumberGenerator<T>, Randomizable {
 
   /**
    * Sets the seed value.
    *
    * @param value	the seed
    */
-  public void setSeed(long value) {
-    m_Seed = value;
-    reset();
-  }
+  public void setSeed(long value);
 
   /**
    * Returns the seed value.
    *
    * @return  		the seed
    */
-  public long getSeed() {
-    return m_Seed;
-  }
+  public long getSeed();
 
   /**
    * Returns the tip text for this property.
@@ -73,7 +51,5 @@ public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String seedTipText() {
-    return "The seed value for the random number generator.";
-  }
+  public String seedTipText();
 }

@@ -14,15 +14,13 @@
  */
 
 /**
- * AbstractSeededRandomNumberGenerator.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractDistributionBasedRandomNumberGenerator.java
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
-import adams.core.Randomizable;
-
 /**
- * Ancestor for seeded random number generators.
+ * Ancestor for distribution-based random number generators.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -30,7 +28,7 @@ import adams.core.Randomizable;
  */
 public abstract class AbstractDistributionBasedRandomNumberGenerator<T extends Number>
   extends AbstractSeededRandomNumberGenerator<T>
-  implements Randomizable {
+  implements DistributionBasedRandomNumberGenerator<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4193009658719437993L;

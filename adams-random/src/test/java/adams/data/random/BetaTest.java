@@ -15,7 +15,7 @@
 
 /**
  * BetaTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
@@ -47,7 +47,8 @@ public class BetaTest
    *
    * @return		the setups
    */
-  protected AbstractRandomNumberGenerator[] getRegressionSetups() {
+  @Override
+  protected RandomNumberGenerator[] getRegressionSetups() {
     Beta[]	result;
 
     result = new Beta[4];

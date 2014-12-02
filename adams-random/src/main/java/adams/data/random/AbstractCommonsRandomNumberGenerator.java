@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.RandomGenerator;
  */
 public abstract class AbstractCommonsRandomNumberGenerator
   extends AbstractSeededRandomNumberGenerator<Number>
-  implements CommonsRandomNumberGenerator {
+  implements CommonsRandomNumberGenerator, RandomIntegerRangeGenerator<Number> {
 
   /** for serialization. */
   private static final long serialVersionUID = 5972847638157742849L;

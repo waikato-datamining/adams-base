@@ -14,58 +14,34 @@
  */
 
 /**
- * AbstractSeededRandomNumberGenerator.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * DistributionBasedRandomNumberGenerator.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
 /**
- * Ancestor for seeded random number generators.
+ * Interface for distribution-based random number generators.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 7171 $
  * @param <T> the type of random number to return
  */
-public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
-  extends AbstractRandomNumberGenerator<T>
-  implements SeededRandomNumberGenerator<T> {
-
-  /** for serialization. */
-  private static final long serialVersionUID = -8175994712205719647L;
-
-  /** the seed value. */
-  protected long m_Seed;
+public interface DistributionBasedRandomNumberGenerator<T extends Number>
+  extends SeededRandomNumberGenerator<T> {
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
-  }
-
-  /**
-   * Sets the seed value.
+   * Sets the mean to use.
    *
-   * @param value	the seed
+   * @param value	the mean
    */
-  public void setSeed(long value) {
-    m_Seed = value;
-    reset();
-  }
+  public void setMean(double value);
 
   /**
-   * Returns the seed value.
+   * Returns the mean to use.
    *
-   * @return  		the seed
+   * @return  		the mean
    */
-  public long getSeed() {
-    return m_Seed;
-  }
+  public double getMean();
 
   /**
    * Returns the tip text for this property.
@@ -73,7 +49,27 @@ public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String seedTipText() {
-    return "The seed value for the random number generator.";
-  }
+  public String meanTipText();
+
+  /**
+   * Sets the stdev to use.
+   *
+   * @param value	the stdev
+   */
+  public void setStdev(double value);
+
+  /**
+   * Returns the stdev to use.
+   *
+   * @return  		the stdev
+   */
+  public double getStdev();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stdevTipText();
 }

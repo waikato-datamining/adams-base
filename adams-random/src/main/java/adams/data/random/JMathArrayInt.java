@@ -15,10 +15,9 @@
 
 /**
  * JMathArrayInt.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
-
 
 /**
  <!-- globalinfo-start -->
@@ -58,7 +57,8 @@ package adams.data.random;
  * @see Random#randInt(int, int)
  */
 public class JMathArrayInt
-  extends AbstractSeededRandomNumberGenerator<Integer> {
+  extends AbstractSeededRandomNumberGenerator<Integer>
+  implements RandomIntegerRangeGenerator<Integer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8058404120296659028L;
@@ -77,6 +77,7 @@ public class JMathArrayInt
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Random generator that generates random integers using JMathArray's randInt method.";
   }
@@ -84,6 +85,7 @@ public class JMathArrayInt
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -99,6 +101,7 @@ public class JMathArrayInt
   /**
    * Resets the generator.
    */
+  @Override
   public void reset() {
     super.reset();
 
@@ -168,6 +171,7 @@ public class JMathArrayInt
    * <p/>
    * Initializes the random number generator.
    */
+  @Override
   protected void check() {
     super.check();
 
@@ -185,6 +189,7 @@ public class JMathArrayInt
    *
    * @return		the next number
    */
+  @Override
   protected Integer doNext() {
     return m_Random.randInt(m_MinValue, m_MaxValue);
   }

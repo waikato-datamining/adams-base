@@ -15,15 +15,15 @@
 
 /**
  * RandomNumberExpression.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import java.util.HashMap;
 
 import adams.core.QuickInfoHelper;
-import adams.data.random.AbstractRandomNumberGenerator;
 import adams.data.random.JavaRandomInt;
+import adams.data.random.RandomNumberGenerator;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.parser.BooleanExpressionText;
@@ -153,7 +153,7 @@ import adams.parser.BooleanExpressionText;
  * &nbsp;&nbsp;&nbsp;default: X &lt; 500
  * </pre>
  * 
- * <pre>-generator &lt;adams.data.random.AbstractRandomNumberGenerator&gt; (property: generator)
+ * <pre>-generator &lt;adams.data.random.RandomNumberGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The generator that generates a new random number each time a token arrives.
  * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomInt
  * </pre>
@@ -170,7 +170,7 @@ public class RandomNumberExpression
   private static final long serialVersionUID = 5195367806715940844L;
   
   /** the random number generator. */
-  protected AbstractRandomNumberGenerator m_Generator;
+  protected RandomNumberGenerator m_Generator;
   
   /**
    * Returns a string describing the object.
@@ -239,7 +239,7 @@ public class RandomNumberExpression
    *
    * @param value	the generator
    */
-  public void setGenerator(AbstractRandomNumberGenerator value) {
+  public void setGenerator(RandomNumberGenerator value) {
     m_Generator = value;
     reset();
   }
@@ -249,7 +249,7 @@ public class RandomNumberExpression
    *
    * @return		the generator
    */
-  public AbstractRandomNumberGenerator getGenerator() {
+  public RandomNumberGenerator getGenerator() {
     return m_Generator;
   }
 

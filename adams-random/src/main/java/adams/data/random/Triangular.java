@@ -58,7 +58,8 @@ package adams.data.random;
  * @see Random#triangular(double, double)
  */
 public class Triangular
-  extends AbstractSeededRandomNumberGenerator<Double> {
+  extends AbstractSeededRandomNumberGenerator<Double>
+  implements RandomDoubleRangeGenerator<Double> {
 
   /** for serialization. */
   private static final long serialVersionUID = 1479146610833401651L;
@@ -77,6 +78,7 @@ public class Triangular
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Generates random numbers from a symetric triangular random variable.";
   }
@@ -84,6 +86,7 @@ public class Triangular
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -99,6 +102,7 @@ public class Triangular
   /**
    * Resets the generator.
    */
+  @Override
   public void reset() {
     super.reset();
 
@@ -168,6 +172,7 @@ public class Triangular
    * <p/>
    * Initializes the random number generator.
    */
+  @Override
   protected void check() {
     super.check();
 
@@ -180,6 +185,7 @@ public class Triangular
    *
    * @return		the next number
    */
+  @Override
   protected Double doNext() {
     return m_Random.triangular(m_MinValue, m_MaxValue);
   }

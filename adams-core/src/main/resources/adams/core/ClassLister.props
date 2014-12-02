@@ -142,7 +142,23 @@ adams.data.noise.AbstractDenoiser=\
   adams.data.noise
 
 # random number generators
-adams.data.random.AbstractRandomNumberGenerator=\
+adams.data.random.RandomNumberGenerator=\
+  adams.data.random
+
+# seeded random number generators
+adams.data.random.SeededRandomNumberGenerator=\
+  adams.data.random
+
+# distribution-based random number generators
+adams.data.random.DistributionBasedRandomNumberGenerator=\
+  adams.data.random
+
+# random integer generators
+adams.data.random.RandomIntegerRangeGenerator=\
+  adams.data.random
+
+# random double generators
+adams.data.random.RandomDoubleRangeGenerator=\
   adams.data.random
 
 # filters for the reports

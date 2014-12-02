@@ -15,10 +15,9 @@
 
 /**
  * JavaRandomInt.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
-
 
 /**
  <!-- globalinfo-start -->
@@ -58,7 +57,8 @@ package adams.data.random;
  * @see java.util.Random#nextInt(int)
  */
 public class JavaRandomInt
-  extends AbstractSeededRandomNumberGenerator<Integer> {
+  extends AbstractSeededRandomNumberGenerator<Integer>
+  implements RandomIntegerRangeGenerator<Integer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8754317840175980117L;
@@ -77,6 +77,7 @@ public class JavaRandomInt
    *
    * @return 			a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return "Random generator that generates random integers using Java's java.util.Random class.";
   }
@@ -84,6 +85,7 @@ public class JavaRandomInt
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -99,6 +101,7 @@ public class JavaRandomInt
   /**
    * Resets the generator.
    */
+  @Override
   public void reset() {
     super.reset();
 
@@ -168,6 +171,7 @@ public class JavaRandomInt
    * <p/>
    * Initializes the random number generator.
    */
+  @Override
   protected void check() {
     super.check();
 
@@ -185,6 +189,7 @@ public class JavaRandomInt
    *
    * @return		the next number
    */
+  @Override
   protected Integer doNext() {
     return m_Random.nextInt(m_MaxValue - m_MinValue + 1) + m_MinValue;
   }

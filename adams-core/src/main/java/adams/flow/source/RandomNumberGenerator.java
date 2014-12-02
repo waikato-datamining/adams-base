@@ -15,13 +15,12 @@
 
 /*
  * RandomNumberGenerator.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.data.random.AbstractRandomNumberGenerator;
 import adams.data.random.JavaRandomDouble;
 import adams.flow.core.Token;
 
@@ -66,7 +65,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-generator &lt;adams.data.random.AbstractRandomNumberGenerator&gt; (property: generator)
+ * <pre>-generator &lt;adams.data.random.RandomNumberGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The random number generator to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomDouble
  * </pre>
@@ -89,7 +88,7 @@ public class RandomNumberGenerator
   private static final long serialVersionUID = 6216146938771296415L;
 
   /** the random number generator to use. */
-  protected AbstractRandomNumberGenerator m_Generator;
+  protected adams.data.random.RandomNumberGenerator m_Generator;
 
   /** the maximum number of random numbers to generate. */
   protected int m_MaxNum;
@@ -143,7 +142,7 @@ public class RandomNumberGenerator
    *
    * @param value	the generator
    */
-  public void setGenerator(AbstractRandomNumberGenerator value) {
+  public void setGenerator(adams.data.random.RandomNumberGenerator value) {
     m_Generator = value;
     reset();
   }
@@ -153,7 +152,7 @@ public class RandomNumberGenerator
    *
    * @return		the generator
    */
-  public AbstractRandomNumberGenerator getGenerator() {
+  public adams.data.random.RandomNumberGenerator getGenerator() {
     return m_Generator;
   }
 

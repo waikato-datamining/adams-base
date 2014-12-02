@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2014-12-03 11:19:09
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Extracts a random subset of rows from a text file.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/numbers.txt
+	-actor
+		adams.flow.transformer.TextFileReader
+			-reader
+				adams.data.io.input.LineArrayTextReader
+	-actor
+		adams.flow.transformer.ArraySubSample
+			-size
+			30.0
+			-generator
+				adams.data.random.JavaRandomInt
+	-actor
+		adams.flow.transformer.ArrayToSequence
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -48,7 +48,7 @@ public class ISAACRandomTest
    * @return		the setups
    */
   @Override
-  protected AbstractRandomNumberGenerator[] getRegressionSetups() {
+  protected RandomNumberGenerator[] getRegressionSetups() {
     ISAACRandom[]	result;
 
     result = new ISAACRandom[3];

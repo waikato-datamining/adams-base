@@ -48,7 +48,7 @@ public class MersenneTwisterTest
    * @return		the setups
    */
   @Override
-  protected AbstractRandomNumberGenerator[] getRegressionSetups() {
+  protected RandomNumberGenerator[] getRegressionSetups() {
     MersenneTwister[]	result;
 
     result = new MersenneTwister[3];

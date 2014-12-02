@@ -15,15 +15,14 @@
 
 /**
  * AbstractRandomNumberGenerator.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
 import adams.core.ClassLister;
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 
 /**
@@ -35,7 +34,7 @@ import adams.core.option.OptionUtils;
  */
 public abstract class AbstractRandomNumberGenerator<T extends Number>
   extends AbstractOptionHandler
-  implements ShallowCopySupporter<AbstractRandomNumberGenerator> {
+  implements RandomNumberGenerator<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 5803268124112742362L;
@@ -43,6 +42,7 @@ public abstract class AbstractRandomNumberGenerator<T extends Number>
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
   }
@@ -50,6 +50,7 @@ public abstract class AbstractRandomNumberGenerator<T extends Number>
   /**
    * Resets the generator.
    */
+  @Override
   public void reset() {
     super.reset();
   }

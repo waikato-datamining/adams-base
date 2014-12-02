@@ -14,58 +14,35 @@
  */
 
 /**
- * AbstractSeededRandomNumberGenerator.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * RandomDoubleRangeGenerator.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.random;
 
 /**
- * Ancestor for seeded random number generators.
- *
+ * Interface for random number generators that support returning random
+ * doubles within a certain range.
+ * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of random number to return
  */
-public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
-  extends AbstractRandomNumberGenerator<T>
-  implements SeededRandomNumberGenerator<T> {
-
-  /** for serialization. */
-  private static final long serialVersionUID = -8175994712205719647L;
-
-  /** the seed value. */
-  protected long m_Seed;
+public interface RandomDoubleRangeGenerator<T extends Number>
+  extends RandomNumberGenerator<T> {
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
-  }
-
-  /**
-   * Sets the seed value.
+   * Sets the minimum value of the numbers to generate.
    *
-   * @param value	the seed
+   * @param value	the minimum
    */
-  public void setSeed(long value) {
-    m_Seed = value;
-    reset();
-  }
+  public void setMinValue(double value);
 
   /**
-   * Returns the seed value.
+   * Returns the minimum value of the numbers to generate.
    *
-   * @return  		the seed
+   * @return		the minimum
    */
-  public long getSeed() {
-    return m_Seed;
-  }
+  public double getMinValue();
 
   /**
    * Returns the tip text for this property.
@@ -73,7 +50,27 @@ public abstract class AbstractSeededRandomNumberGenerator<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String seedTipText() {
-    return "The seed value for the random number generator.";
-  }
+  public String minValueTipText();
+
+  /**
+   * Sets the maximum value of the numbers to generate.
+   *
+   * @param value	the maximum
+   */
+  public void setMaxValue(double value);
+
+  /**
+   * Returns the maximum value of the numbers to generate.
+   *
+   * @return		the maximum
+   */
+  public double getMaxValue();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxValueTipText();
 }
