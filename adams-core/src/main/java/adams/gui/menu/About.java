@@ -15,7 +15,7 @@
 
 /*
  * About.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -72,7 +72,7 @@ public class About
   public void launch() {
     AboutBoxPanel panel = new AboutBoxPanel();
     panel.addInfo("<html><font color='red'>A</font>dvanced <font color='red'>D</font>ata mining and <font color='red'>M</font>achine learning <font color='red'>S</font>ystem</html>");
-    panel.addInfo("(c) 2009-2013 University of Waikato");
+    panel.addInfo("(c) 2009-2014 University of Waikato");
     panel.addInfo("Hamilton, New Zealand");
     ChildFrame frame = createChildFrame(panel);
     frame.setResizable(false);
