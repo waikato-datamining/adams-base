@@ -33,7 +33,7 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Generates a subset of the array, using the specified array elements.
+ * Generates a subset of the array, using a random sub-sample.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -47,13 +47,9 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -61,27 +57,37 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: ArraySubSample
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-elements &lt;adams.core.Range&gt; (property: elements)
- * &nbsp;&nbsp;&nbsp;The range of elements to pick from the array; A range is a comma-separated 
- * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; the following placeholders can be used 
- * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last
- * &nbsp;&nbsp;&nbsp;default: first-last
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-size &lt;double&gt; (property: size)
+ * &nbsp;&nbsp;&nbsp;The size of the sample: 0-1 = percentage, &gt;1 absolute number of elements.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
+ * <pre>-generator &lt;adams.data.random.RandomIntegerRangeGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The random number generator to use for selecting the elements.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomInt
  * </pre>
  * 
  <!-- options-end -->
