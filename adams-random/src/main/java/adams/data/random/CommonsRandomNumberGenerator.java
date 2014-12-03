@@ -29,9 +29,10 @@ import adams.core.option.OptionHandler;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @param <T> the type of random number to return
  */
-public interface CommonsRandomNumberGenerator
-  extends OptionHandler {
+public interface CommonsRandomNumberGenerator<T extends Number>
+  extends RandomNumberGenerator<T>, OptionHandler {
 
   /**
    * Sets whether to return doubles or integers.
