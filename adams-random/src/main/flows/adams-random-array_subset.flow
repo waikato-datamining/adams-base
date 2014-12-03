@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-12-03 11:37:20
+# Date: 2014-12-03 14:44:20
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -45,8 +45,8 @@ adams.flow.control.Flow
 							30.0
 							-generator
 								adams.data.random.JavaRandomInt
-							-invert
-							true
+							-split-result
+							INVERSE
 					-actor
 						adams.flow.transformer.ArrayToSequence
 					-actor

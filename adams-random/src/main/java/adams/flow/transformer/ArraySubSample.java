@@ -26,6 +26,7 @@ import java.lang.reflect.Array;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.SplitResultType;
 import adams.data.random.JavaRandomInt;
 import adams.data.random.RandomIntegerRangeGenerator;
 import adams.flow.core.Token;
@@ -90,9 +91,10 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomInt
  * </pre>
  * 
- * <pre>-invert &lt;boolean&gt; (property: invert)
- * &nbsp;&nbsp;&nbsp;If enabled, the inverse of the elements is returned.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-split-result &lt;SPLIT|INVERSE|BOTH&gt; (property: splitResult)
+ * &nbsp;&nbsp;&nbsp;The type of data to return: e.g., the sample, the inverse of the sample 
+ * &nbsp;&nbsp;&nbsp;or both (split and inverse).
+ * &nbsp;&nbsp;&nbsp;default: SPLIT
  * </pre>
  * 
  <!-- options-end -->
@@ -112,8 +114,8 @@ public class ArraySubSample
   /** the random number generator. */
   protected RandomIntegerRangeGenerator m_Generator;
 
-  /** whether to invert the selection. */
-  protected boolean m_Invert;
+  /** the type of data to return. */
+  protected SplitResultType m_SplitResult;
   
   /**
    * Returns a string describing the object.
@@ -142,8 +144,8 @@ public class ArraySubSample
 	    new JavaRandomInt());
 
     m_OptionManager.add(
-	    "invert", "invert",
-	    false);
+	    "split-result", "splitResult",
+	    SplitResultType.SPLIT);
   }
 
   /**
@@ -210,22 +212,22 @@ public class ArraySubSample
   }
 
   /**
-   * Sets whether to invert the matching.
+   * Sets what type of the split to return, e.g., sample or inverse of sample.
    *
-   * @param value	true if to invert
+   * @param value	the type
    */
-  public void setInvert(boolean value) {
-    m_Invert = value;
+  public void setSplitResult(SplitResultType value) {
+    m_SplitResult = value;
     reset();
   }
 
   /**
-   * Returns whether to invert the matching.
+   * Returns what type of the split to return, e.g., sample or inverse of sample.
    *
-   * @return		true if to invert
+   * @return		the type
    */
-  public boolean getInvert() {
-    return m_Invert;
+  public SplitResultType getSplitResult() {
+    return m_SplitResult;
   }
 
   /**
@@ -234,8 +236,8 @@ public class ArraySubSample
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String invertTipText() {
-    return "If enabled, the inverse of the elements is returned.";
+  public String splitResultTipText() {
+    return "The type of data to return: e.g., the sample, the inverse of the sample or both (split and inverse).";
   }
 
   /**
@@ -249,7 +251,7 @@ public class ArraySubSample
     
     result  = QuickInfoHelper.toString(this, "size", m_Size, "size: ");
     result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
-    result += QuickInfoHelper.toString(this, "invert", m_Invert, "inverted", ", ");
+    result += QuickInfoHelper.toString(this, "splitResult", m_SplitResult, ", result: ");
     
     return result;
   }
@@ -272,6 +274,28 @@ public class ArraySubSample
     return new Class[]{Unknown[].class};
   }
 
+  /**
+   * Creates a new array from the old and the given indices.
+   * 
+   * @param arrayOld	the old array
+   * @param indices	the indices to grab from the old array
+   * @param log		the info for the logger
+   * @return		the new array
+   */
+  protected Object newArray(Object arrayOld, TIntArrayList indices, String log) {
+    Object	result;
+    int		i;
+
+    if (isLoggingEnabled())
+      getLogger().info("Indices (" + log + "): " + indices);
+    
+    result = Array.newInstance(arrayOld.getClass().getComponentType(), indices.size());
+    for (i = 0; i < indices.size(); i++)
+      Array.set(result, i, Utils.deepCopy(Array.get(arrayOld, indices.get(i))));
+    
+    return result;
+  }
+  
   /**
    * Executes the flow item.
    *
@@ -314,16 +338,26 @@ public class ArraySubSample
       size--;
     }
     
-    if (m_Invert)
-      indices = available;
-    else
-      indices.sort();
-    if (isLoggingEnabled())
-      getLogger().info("Indices: " + indices);
-    
-    arrayNew = Array.newInstance(arrayOld.getClass().getComponentType(), indices.size());
-    for (i = 0; i < indices.size(); i++)
-      Array.set(arrayNew, i, Utils.deepCopy(Array.get(arrayOld, indices.get(i))));
+    switch (m_SplitResult) {
+      case SPLIT:
+	indices.sort();
+	arrayNew = newArray(arrayOld, indices, "split");
+	m_OutputToken = new Token(arrayNew);
+	break;
+      case INVERSE:
+	arrayNew = newArray(arrayOld, available, "inverse");
+	m_OutputToken = new Token(arrayNew);
+	break;
+      case BOTH:
+	indices.sort();
+	arrayNew = Array.newInstance(arrayOld.getClass(), 2);
+	Array.set(arrayNew, 0, newArray(arrayOld, indices, "split"));
+	Array.set(arrayNew, 1, newArray(arrayOld, available, "inverse"));
+	m_OutputToken = new Token(arrayNew);
+	break;
+      default:
+	throw new IllegalStateException("Unhandled split result: " + m_SplitResult);
+    }
 
     m_OutputToken = new Token(arrayNew);
     
