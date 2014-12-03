@@ -32,11 +32,14 @@ public class BaseCharacter
   /** for serialization. */
   private static final long serialVersionUID = 7599320288778710037L;
 
+  /** the default value. */
+  public final static String DEFAULT = "\u0000";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseCharacter() {
-    this("\u0000");
+    this(DEFAULT);
   }
 
   /**
@@ -46,6 +49,16 @@ public class BaseCharacter
    */
   public BaseCharacter(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   * <p/>
+   * Uses \u0000.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = "\u0000";
   }
 
   /**

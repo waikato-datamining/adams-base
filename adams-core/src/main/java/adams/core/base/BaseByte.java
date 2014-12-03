@@ -32,11 +32,14 @@ public class BaseByte
   /** for serialization. */
   private static final long serialVersionUID = -3504062141216626521L;
 
+  /** the default value. */
+  public final static String DEFAULT = "0";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseByte() {
-    this("0");
+    this(DEFAULT);
   }
 
   /**
@@ -46,6 +49,14 @@ public class BaseByte
    */
   public BaseByte(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

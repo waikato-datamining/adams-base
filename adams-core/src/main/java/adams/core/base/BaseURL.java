@@ -59,6 +59,14 @@ public class BaseURL
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT_URL;
+  }
+
+  /**
    * Initializes the object with the given value.
    *
    * @param value	the value to use

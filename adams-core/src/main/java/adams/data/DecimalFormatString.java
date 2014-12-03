@@ -35,11 +35,14 @@ public class DecimalFormatString
   /** for serialization. */
   private static final long serialVersionUID = -7134897961930112280L;
   
+  /** the default value. */
+  public final static String DEFAULT = "0";
+  
   /**
    * Initializes the string with "0".
    */
   public DecimalFormatString() {
-    this("0");
+    this(DEFAULT);
   }
 
   /**
@@ -49,6 +52,14 @@ public class DecimalFormatString
    */
   public DecimalFormatString(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

@@ -68,6 +68,14 @@ public class BaseURI
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT_URI;
+  }
+
+  /**
    * Checks whether the string value is a valid presentation for this class.
    *
    * @param value	the string value to check

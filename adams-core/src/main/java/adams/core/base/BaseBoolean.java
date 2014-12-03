@@ -33,11 +33,14 @@ public class BaseBoolean
   /** for serialization. */
   private static final long serialVersionUID = -3504062141216626521L;
 
+  /** the default value. */
+  public final static String DEFAULT = "false";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseBoolean() {
-    this("false");
+    this(DEFAULT);
   }
 
   /**
@@ -47,6 +50,14 @@ public class BaseBoolean
    */
   public BaseBoolean(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

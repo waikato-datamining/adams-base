@@ -40,6 +40,9 @@ public class TwitterFilterExpression
   /** for serialization. */
   private static final long serialVersionUID = -5853830144343397434L;
 
+  /** the default expression. */
+  public final static String DEFAULT= "";
+  
   /** the default symbols. */
   protected static HashMap m_Symbols;
   
@@ -47,7 +50,7 @@ public class TwitterFilterExpression
    * Initializes using an empty string.
    */
   public TwitterFilterExpression() {
-    this("");
+    this(DEFAULT);
   }
 
   /**
@@ -58,7 +61,15 @@ public class TwitterFilterExpression
   public TwitterFilterExpression(String s) {
     super(s);
   }
-  
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
+  }
+
   /**
    * Returns the default symbols to use.
    *  

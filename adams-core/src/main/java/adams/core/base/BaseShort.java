@@ -32,11 +32,14 @@ public class BaseShort
   /** for serialization. */
   private static final long serialVersionUID = -4419336990700334068L;
 
+  /** the default value. */
+  public final static String DEFAULT = "0";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseShort() {
-    this("0");
+    this(DEFAULT);
   }
 
   /**
@@ -55,6 +58,14 @@ public class BaseShort
    */
   public BaseShort(Short value) {
     this(value.toString());
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

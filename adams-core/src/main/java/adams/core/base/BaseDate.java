@@ -121,6 +121,14 @@ public class BaseDate
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = NOW;
+  }
+
+  /**
    * Sets the optional start date.
    *
    * @param value 	the start date

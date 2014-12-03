@@ -46,9 +46,18 @@ public abstract class BaseObject
    * @param s		the string to parse
    */
   public BaseObject(String s) {
+    initialize();
     setValue(s);
   }
 
+  /**
+   * Initializes the internal object.
+   * <p/>
+   * Default implementation does nothing.
+   */
+  protected void initialize() {
+  }
+  
   /**
    * Returns a clone of itself.
    *

@@ -49,6 +49,16 @@ public abstract class AbstractBaseString
   }
 
   /**
+   * Initializes the internal object.
+   * <p/>
+   * Uses empty string.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = "";
+  }
+
+  /**
    * Checks whether the string value is a valid presentation for this class.
    *
    * @param value	the string value to check

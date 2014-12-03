@@ -33,11 +33,14 @@ public class VariableName
   /** for serialization. */
   private static final long serialVersionUID = -5338530688258339927L;
 
+  /** the default value. */
+  public final static String DEFAULT = "variable";
+  
   /**
    * Initializes the name with a default value.
    */
   public VariableName() {
-    this("variable");
+    this(DEFAULT);
   }
 
   /**
@@ -47,6 +50,14 @@ public class VariableName
    */
   public VariableName(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

@@ -62,6 +62,14 @@ public class BaseCharset
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = CharsetHelper.CHARSET_DEFAULT;
+  }
+
+  /**
    * Checks whether the string value is a valid presentation for this class.
    *
    * @param value	the string value to check

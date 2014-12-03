@@ -122,6 +122,14 @@ public class BaseTime
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = NOW;
+  }
+
+  /**
    * Sets the optional start time.
    *
    * @param value 	the start time

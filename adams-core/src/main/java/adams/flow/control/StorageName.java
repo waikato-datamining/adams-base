@@ -33,11 +33,14 @@ public class StorageName
   /** for serialization. */
   private static final long serialVersionUID = 3909330668809621538L;
 
+  /** the default value. */
+  public final static String DEFAULT = "storage";
+  
   /**
    * Initializes the name with a default value.
    */
   public StorageName() {
-    this("storage");
+    this(DEFAULT);
   }
 
   /**
@@ -47,6 +50,14 @@ public class StorageName
    */
   public StorageName(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

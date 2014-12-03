@@ -35,6 +35,9 @@ public class ArrayDimensions
   /** for serialization. */
   private static final long serialVersionUID = 7100089984419357692L;
   
+  /** the default value. */
+  public final static String DEFAULT = "[2]";
+  
   /** the parsed dimensions. */
   protected int[] m_Dimensions;
   
@@ -42,7 +45,7 @@ public class ArrayDimensions
    * Initializes the string with length 0.
    */
   public ArrayDimensions() {
-    this("[2]");
+    this(DEFAULT);
   }
 
   /**
@@ -52,6 +55,14 @@ public class ArrayDimensions
    */
   public ArrayDimensions(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

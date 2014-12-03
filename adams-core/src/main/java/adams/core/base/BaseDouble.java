@@ -34,11 +34,14 @@ public class BaseDouble
   /** for serialization. */
   private static final long serialVersionUID = 2527493071384732090L;
 
+  /** the default value. */
+  public final static String DEFAULT = "0.0";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseDouble() {
-    this("0.0");
+    this(DEFAULT);
   }
 
   /**
@@ -57,6 +60,14 @@ public class BaseDouble
    */
   public BaseDouble(BaseDouble value) {
     this(value.toString());
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

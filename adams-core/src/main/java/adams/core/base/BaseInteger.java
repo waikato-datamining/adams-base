@@ -32,11 +32,14 @@ public class BaseInteger
   /** for serialization. */
   private static final long serialVersionUID = 4461135181234402629L;
 
+  /** the default value. */
+  public final static String DEFAULT = "0";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseInteger() {
-    this("0");
+    this(DEFAULT);
   }
 
   /**
@@ -55,6 +58,14 @@ public class BaseInteger
    */
   public BaseInteger(Integer value) {
     this(value.toString());
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**

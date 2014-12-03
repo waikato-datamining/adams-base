@@ -56,6 +56,14 @@ public class CronSchedule
   }
 
   /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
+  }
+
+  /**
    * Checks whether the string value is a valid presentation for this class.
    *
    * @param value	the string value to check

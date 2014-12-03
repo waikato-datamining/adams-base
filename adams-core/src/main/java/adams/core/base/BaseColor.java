@@ -36,11 +36,14 @@ public class BaseColor
   /** for serialization. */
   private static final long serialVersionUID = -5853830144343397434L;
 
+  /** the default value. */
+  public final static String DEFAULT = "#000000";
+  
   /**
    * Initializes the string with length 0.
    */
   public BaseColor() {
-    this("#000000");
+    this(DEFAULT);
   }
 
   /**
@@ -59,6 +62,14 @@ public class BaseColor
    */
   public BaseColor(Color color) {
     super(ColorHelper.toHex(color));
+  }
+
+  /**
+   * Initializes the internal object.
+   */
+  @Override
+  protected void initialize() {
+    m_Internal = DEFAULT;
   }
 
   /**
