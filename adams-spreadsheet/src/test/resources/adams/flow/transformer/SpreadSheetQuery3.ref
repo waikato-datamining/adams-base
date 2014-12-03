@@ -83,13 +83,13 @@ anyvalue,numericvalue
 
 sample (percent)
 anyvalue,numericvalue
-2013-11-01,1
-"2013-11-02 07:31:01",2
-true,4
 false,5
 "",5.5
+1,6
+2,7
+"hello world",7.1
+"",7.5
 1.1,8
-"a string",10
 
 sample (absolute)
 anyvalue,numericvalue
