@@ -14,7 +14,7 @@
  */
 
 /*
- * ArraySubSample.java
+ * ArrayFolds.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
@@ -23,13 +23,16 @@ package adams.flow.transformer;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Generates a subset of the array, using a random sub-sample.
+ * Generates a subset of the array, using folds similar to cross-validation.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -50,7 +53,7 @@ import adams.flow.core.Token;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: ArraySubSample
+ * &nbsp;&nbsp;&nbsp;default: ArrayFolds
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -75,12 +78,6 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-size &lt;double&gt; (property: size)
- * &nbsp;&nbsp;&nbsp;The size of the sample: 0-1 = percentage, &gt;1 absolute number of elements.
- * &nbsp;&nbsp;&nbsp;default: 1.0
- * &nbsp;&nbsp;&nbsp;minimum: 0.0
- * </pre>
- * 
  * <pre>-generator &lt;adams.data.random.RandomIntegerRangeGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The random number generator to use for selecting the elements.
  * &nbsp;&nbsp;&nbsp;default: adams.data.random.JavaRandomInt
@@ -92,19 +89,31 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SPLIT
  * </pre>
  * 
+ * <pre>-folds &lt;int&gt; (property: folds)
+ * &nbsp;&nbsp;&nbsp;The number of folds to generate.
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7732 $
  */
-public class ArraySubSample
+public class ArrayFolds
   extends AbstractArraySplitter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8536100625511019961L;
 
-  /** the size of the sub-sample. */
-  protected double m_Size;
+  /** the key for storing the input token in the backup. */
+  public final static String BACKUP_QUEUE = "queue";
+
+  /** the number of folds. */
+  protected int m_Folds;
+  
+  /** the queue of folds. */
+  protected List<TIntArrayList> m_Queue;
   
   /**
    * Returns a string describing the object.
@@ -114,7 +123,8 @@ public class ArraySubSample
   @Override
   public String globalInfo() {
     return
-        "Generates a subset of the array, using a random sub-sample.";
+        "Generates a subset of the array, using folds similar to "
+	+ "cross-validation.";
   }
 
   /**
@@ -125,18 +135,38 @@ public class ArraySubSample
     super.defineOptions();
 
     m_OptionManager.add(
-	    "size", "size",
-	    1.0, 0.0, null);
+	    "folds", "folds",
+	    10, 1, null);
   }
 
   /**
-   * Sets the size of the sample (0-1: percentage, >1: absolute number).
-   *
-   * @param value 	the size
+   * Initializes the members.
    */
-  public void setSize(double value) {
+  @Override
+  protected void initialize() {
+    super.initialize();
+    
+    m_Queue = new ArrayList<TIntArrayList>();
+  }
+  
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    
+    m_Queue.clear();
+  }
+  
+  /**
+   * Sets the number of folds.
+   *
+   * @param value 	the folds
+   */
+  public void setFolds(int value) {
     if (value > 0) {
-      m_Size = value;
+      m_Folds = value;
       reset();
     }
     else {
@@ -145,12 +175,12 @@ public class ArraySubSample
   }
 
   /**
-   * Returns the size of the sample (0-1: percentage, >1: absolute number).
+   * Returns the number of folds.
    *
-   * @return 		the size
+   * @return 		the folds
    */
-  public double getSize() {
-    return m_Size;
+  public int getFolds() {
+    return m_Folds;
   }
 
   /**
@@ -159,8 +189,8 @@ public class ArraySubSample
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String sizeTipText() {
-    return "The size of the sample: 0-1 = percentage, >1 absolute number of elements.";
+  public String foldsTipText() {
+    return "The number of folds to generate.";
   }
 
   /**
@@ -172,12 +202,54 @@ public class ArraySubSample
   public String getQuickInfo() {
     String	result;
     
-    result  = QuickInfoHelper.toString(this, "size", m_Size, "size: ");
+    result  = QuickInfoHelper.toString(this, "folds", m_Folds, "folds: ");
     result += ", " + super.getQuickInfo();
     
     return result;
   }
+
+  /* (non-Javadoc)
+   * @see adams.flow.core.AbstractActor#pruneBackup()
+   */
+  @Override
+  protected void pruneBackup() {
+    super.pruneBackup();
+    
+    pruneBackup(BACKUP_QUEUE);
+  }
   
+  /**
+   * Backs up the current state of the actor before update the variables.
+   *
+   * @return		the backup
+   */
+  @Override
+  protected Hashtable<String,Object> backupState() {
+    Hashtable<String,Object>	result;
+
+    result = super.backupState();
+
+    if (m_Queue != null)
+      result.put(BACKUP_QUEUE, m_Queue);
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the actor before the variables got updated.
+   *
+   * @param state	the backup of the state to restore from
+   */
+  @Override
+  protected void restoreState(Hashtable<String,Object> state) {
+    if (state.containsKey(BACKUP_QUEUE)) {
+      m_Queue = (List<TIntArrayList>) state.get(BACKUP_QUEUE);
+      state.remove(BACKUP_QUEUE);
+    }
+
+    super.restoreState(state);
+  }
+
   /**
    * Executes the flow item.
    *
@@ -187,9 +259,10 @@ public class ArraySubSample
   protected String doExecute() {
     String		result;
     Object		arrayOld;
-    Object		arrayNew;
     int			i;
-    int			size;
+    int			n;
+    int			from;
+    int			to;
     TIntArrayList	available;
     TIntArrayList	indices;
     
@@ -197,18 +270,12 @@ public class ArraySubSample
     
     // randomize indices
     arrayOld = m_InputToken.getPayload();
-    if (m_Size <= 1)
-      size = (int) Math.round(Array.getLength(arrayOld) * m_Size);
-    else
-      size = (int) m_Size;
-    if (isLoggingEnabled())
-      getLogger().info("Size of sample: " + size);
     available = new TIntArrayList();
     for (i = 0; i < Array.getLength(arrayOld); i++)
       available.add(i);
     indices = new TIntArrayList();
     m_Generator.setMinValue(0);
-    while (size > 0) {
+    while (available.size() > 0) {
       if (available.size() == 1) {
 	i = 0;
       }
@@ -218,34 +285,78 @@ public class ArraySubSample
       }
       indices.add(available.get(i));
       available.removeAt(i);
-      size--;
     }
     
-    // create array(s)
+    // create folds
+    m_Queue.clear();
+    for (n = 0; n < m_Folds; n++) {
+      from = (int) Math.round(n * ((double) indices.size() / (double) m_Folds));
+      to   = (int) Math.round((n + 1) * ((double) indices.size() / (double) m_Folds));
+      available = new TIntArrayList();
+      for (i = from; i < to; i++)
+	available.add(indices.get(i));
+      available.sort();
+      m_Queue.add(available);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Checks whether there is pending output to be collected after
+   * executing the flow item.
+   *
+   * @return		true if there is pending output
+   */
+  @Override
+  public boolean hasPendingOutput() {
+    return (m_Queue.size() > 0);
+  }
+  
+  /**
+   * Returns the generated token.
+   *
+   * @return		the generated token
+   */
+  @Override
+  public Token output() {
+    TIntArrayList	indices;
+    TIntArrayList	available;
+    Object		arrayOld;
+    Object		arrayNew;
+    int			i;
+    String		suffix;
+    
+    indices   = m_Queue.remove(0);
+    arrayOld  = m_InputToken.getPayload();
+    available = new TIntArrayList();
+    for (i = 0; i < Array.getLength(arrayOld); i++) {
+      if (!indices.contains(i))
+	available.add(i);
+    }
+
+    suffix = " " + (m_Folds - m_Queue.size()) + "/" + m_Folds;
     switch (m_SplitResult) {
       case SPLIT:
-	indices.sort();
-	arrayNew = newArray(arrayOld, indices, "split");
+	arrayNew = newArray(arrayOld, indices, "split" + suffix);
 	m_OutputToken = new Token(arrayNew);
 	break;
       case INVERSE:
-	arrayNew = newArray(arrayOld, available, "inverse");
+	arrayNew = newArray(arrayOld, available, "inverse" + suffix);
 	m_OutputToken = new Token(arrayNew);
 	break;
       case BOTH:
-	indices.sort();
 	arrayNew = Array.newInstance(arrayOld.getClass(), 2);
-	Array.set(arrayNew, 0, newArray(arrayOld, indices, "split"));
-	Array.set(arrayNew, 1, newArray(arrayOld, available, "inverse"));
+	Array.set(arrayNew, 0, newArray(arrayOld, indices, "split" + suffix));
+	Array.set(arrayNew, 1, newArray(arrayOld, available, "inverse" + suffix));
 	m_OutputToken = new Token(arrayNew);
 	break;
       default:
 	throw new IllegalStateException("Unhandled split result: " + m_SplitResult);
     }
-
-    m_OutputToken = new Token(arrayNew);
+    
     updateProvenance(m_OutputToken);
     
-    return result;
+    return m_OutputToken;
   }
 }
