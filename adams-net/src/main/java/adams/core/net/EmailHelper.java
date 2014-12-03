@@ -143,7 +143,7 @@ public class EmailHelper {
    * @return		the server
    */
   public static String getSmtpServer() {
-    return getProperties().getPath(SMTP_SERVER, "somehost");
+    return getProperties().getProperty(SMTP_SERVER, "somehost");
   }
 
   /**
@@ -197,7 +197,7 @@ public class EmailHelper {
    * @return		the user
    */
   public static String getSmtpUser() {
-    return getProperties().getPath(SMTP_USER, "john.doe");
+    return getProperties().getProperty(SMTP_USER, "john.doe");
   }
 
   /**
@@ -206,7 +206,7 @@ public class EmailHelper {
    * @return		the password
    */
   public static BasePassword getSmtpPassword() {
-    return new BasePassword(getProperties().getPath(SMTP_PASSWORD, "password"));
+    return getProperties().getPassword(SMTP_PASSWORD, new BasePassword("password"));
   }
 
   /**
@@ -215,7 +215,13 @@ public class EmailHelper {
    * @return		the default address
    */
   public static String getDefaultFromAddress() {
-    return getProperties().getPath(DEFAULT_ADDRESS_FROM, "john.doe@nowhere.org");
+    String	result;
+    
+    result = getProperties().getProperty(DEFAULT_ADDRESS_FROM, EmailAddress.DUMMY_ADDRESS);
+    if (result.trim().isEmpty() || !(new EmailAddress().isValid(result)))
+      result = EmailAddress.DUMMY_ADDRESS;
+    
+    return result;
   }
 
   /**
@@ -225,7 +231,7 @@ public class EmailHelper {
    * @see		Utils#backQuoteChars(String)
    */
   public static String getDefaultSignature() {
-    return getProperties().getPath(DEFAULT_SIGNATURE, "");
+    return getProperties().getProperty(DEFAULT_SIGNATURE, "");
   }
 
   /**
