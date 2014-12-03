@@ -63,6 +63,7 @@ import adams.flow.processor.AbstractActorProcessor;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -384,6 +385,9 @@ public class FlowPanel
   /** whether a swingworker is currently running. */
   protected boolean m_RunningSwingWorker;
   
+  /** the split pane to use for tree and notification area. */
+  protected BaseSplitPane m_SplitPane;
+  
   /** the tree displaying the flow structure. */
   protected Tree m_Tree;
 
@@ -482,6 +486,11 @@ public class FlowPanel
 
     setLayout(new BorderLayout());
 
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setResizeWeight(1.0);
+    m_SplitPane.setOneTouchExpandable(true);
+    add(m_SplitPane, BorderLayout.CENTER);
+    
     // the tree
     m_Tree = new Tree(this);
     m_Tree.setActorNameColor(props.getProperty("Tree.ActorName.Color", "black"));
@@ -516,7 +525,7 @@ public class FlowPanel
 	  showStatus(m_Tree.getSelectedFullName());
       }
     });
-    add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
+    m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
 
     // the tabs
     m_Tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
@@ -535,7 +544,8 @@ public class FlowPanel
 	clearNotification();
       }
     });
-    add(m_PanelNotification, BorderLayout.SOUTH);
+    m_SplitPane.setBottomComponent(m_PanelNotification);
+    m_SplitPane.setBottomComponentHidden(true);
   }
 
   /**
@@ -1487,6 +1497,15 @@ public class FlowPanel
     SwingUtilities.invokeLater(runnable);
   }
 
+  /**
+   * Returns the split pane.
+   * 
+   * @return		the split pane
+   */
+  public BaseSplitPane getSplitPane() {
+    return m_SplitPane;
+  }
+  
   /**
    * Returns the tree.
    *

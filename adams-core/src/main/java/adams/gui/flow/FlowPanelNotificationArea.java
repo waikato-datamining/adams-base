@@ -21,15 +21,17 @@ package adams.gui.flow;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
 /**
@@ -53,6 +55,9 @@ public class FlowPanelNotificationArea
   /** the close button. */
   protected JButton m_ButtonClose;
   
+  /** the copy button. */
+  protected JButton m_ButtonCopy;
+  
   /** the close listeners. */
   protected HashSet<ActionListener> m_CloseListeners;
   
@@ -72,7 +77,8 @@ public class FlowPanelNotificationArea
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
+    JPanel	panelRight;
+    JPanel	panelButtons;
     
     super.initGUI();
     
@@ -84,10 +90,15 @@ public class FlowPanelNotificationArea
     m_TextNotification.setLineWrap(true);
     add(m_TextNotification, BorderLayout.CENTER);
     
-    panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    add(panel, BorderLayout.EAST);
+    panelRight = new JPanel(new BorderLayout());
+    panelRight.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    add(panelRight, BorderLayout.EAST);
+    
+    panelButtons = new JPanel(new GridLayout(2, 1, 5, 5));
+    panelRight.add(panelButtons, BorderLayout.NORTH);
     
     m_ButtonClose = new JButton("Close");
+    m_ButtonClose.setIcon(GUIHelper.getIcon("delete.gif"));
     m_ButtonClose.addActionListener(new ActionListener() {      
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -95,7 +106,17 @@ public class FlowPanelNotificationArea
         notifyCloseListeners();
       }
     });
-    panel.add(m_ButtonClose);
+    panelButtons.add(m_ButtonClose);
+    
+    m_ButtonCopy = new JButton("Copy");
+    m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy.addActionListener(new ActionListener() {      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	GUIHelper.copyToClipboard(m_TextNotification.getContent());
+      }
+    });
+    panelButtons.add(m_ButtonCopy);
   }
   
   /**
@@ -157,20 +178,22 @@ public class FlowPanelNotificationArea
     String[]	lines;
     
     lines = msg.split("\n");
-    setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20)));
+    setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
     m_TextNotification.setContent(msg);
-    if (getOwner() != null)
+    if (getOwner() != null) {
       getOwner().setTabIcon(error ? "stop.gif" : "validate_blue.png");
-    setVisible(true);
+      getOwner().getSplitPane().setBottomComponentHidden(false);
+    }
   }
   
   /**
    * Removes the notification.
    */
   public void clearNotification() {
-    setVisible(false);
     m_TextNotification.setContent("");
-    if (getOwner() != null)
+    if (getOwner() != null) {
       getOwner().setTabIcon(null);
+      getOwner().getSplitPane().setBottomComponentHidden(true);
+    }
   }
 }
