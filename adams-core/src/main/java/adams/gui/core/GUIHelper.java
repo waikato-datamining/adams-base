@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -37,6 +38,8 @@ import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -48,12 +51,15 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -1431,9 +1437,9 @@ public class GUIHelper {
    */
   public static int showConfirmMessage(Component parent, String header, String msg, String title) {
     final ApprovalDialog	dlg;
-    String[]				lines;
-    int					height;
-    TextPanel				editor;
+    String[]			lines;
+    int				height;
+    TextPanel			editor;
     
     parent = GUIHelper.getParentComponent(parent);
     
@@ -1498,8 +1504,72 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title) {
-    // TODO
-    return (String) JOptionPane.showInputDialog(parent, msg, title, JOptionPane.QUESTION_MESSAGE, null, null, initial);
+    JPanel			panelAll;
+    JPanel			panel;
+    JLabel			label;
+    BaseTextArea		textValue;
+    final ApprovalDialog	dialog;
+    Component			pparent;
+
+    if (initial == null)
+      initial = "";
+    if ((title == null) || (title.isEmpty()))
+      title = "Enter value";
+    
+    pparent = GUIHelper.getParentComponent(parent);
+    if (pparent instanceof Dialog)
+      dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    dialog.setTitle(title);
+    
+    textValue = new BaseTextArea(1, 20);
+    textValue.setText(initial);
+    if (!initial.isEmpty()) {
+      textValue.setSelectionStart(0);
+      textValue.setSelectionEnd(initial.length());
+    }
+    ((BaseTextArea) textValue).setLineWrap(true);
+    textValue.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	  e.consume();
+	  dialog.getApproveButton().doClick();
+	}
+	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	  e.consume();
+	  dialog.getCancelButton().doClick();
+	}
+	else {
+	  super.keyPressed(e);
+	}
+      }
+    });
+
+    panelAll = new JPanel(new BorderLayout());
+
+    label = new JLabel("Value");
+    label.setDisplayedMnemonic('V');
+    label.setLabelFor(textValue);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(label);
+    panelAll.add(panel, BorderLayout.WEST);
+    
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
+    panel.add(new BaseScrollPane(textValue), BorderLayout.CENTER);
+    panelAll.add(panel, BorderLayout.CENTER);
+
+    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(parent);
+    dialog.setVisible(true);
+
+    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
+      return textValue.getText();
+    else
+      return null;
   }
 
   /**
