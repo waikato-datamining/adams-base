@@ -1478,7 +1478,7 @@ public class GUIHelper {
    * A simple dialog for entering a string.
    * 
    * @param parent	the parent for this dialog
-   * @param msg		the message to display
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg) {
@@ -1489,7 +1489,7 @@ public class GUIHelper {
    * A simple dialog for entering a string.
    * 
    * @param parent	the parent for this dialog
-   * @param msg		the message to display
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
    * @return		the value entered, null if cancelled
    */
@@ -1501,9 +1501,9 @@ public class GUIHelper {
    * A simple dialog for entering a string.
    * 
    * @param parent	the parent for this dialog
-   * @param msg		the message to display
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
-   * @param title	the title of the input dialog, can be null
+   * @param title	the title of the input dialog, can be null (uses "Enter value" in that case)
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title) {
@@ -1518,6 +1518,8 @@ public class GUIHelper {
       initial = "";
     if ((title == null) || (title.isEmpty()))
       title = "Enter value";
+    if ((msg == null) || (msg.isEmpty()))
+      msg = "Enter value";
     
     pparent = GUIHelper.getParentComponent(parent);
     if (pparent instanceof Dialog)
@@ -1550,17 +1552,13 @@ public class GUIHelper {
       }
     });
 
-    panelAll = new JPanel(new BorderLayout());
+    panelAll = new JPanel(new BorderLayout(5, 5));
+    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    label = new JLabel("Value");
-    label.setDisplayedMnemonic('V');
-    label.setLabelFor(textValue);
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(label);
-    panelAll.add(panel, BorderLayout.WEST);
+    label = new JLabel(msg);
+    panelAll.add(label, BorderLayout.NORTH);
     
     panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
     panel.add(new BaseScrollPane(textValue), BorderLayout.CENTER);
     panelAll.add(panel, BorderLayout.CENTER);
 
@@ -1576,10 +1574,10 @@ public class GUIHelper {
   }
 
   /**
-   * A simple dialog for entering a string.
+   * A simple dialog for selecting a string.
    * 
    * @param parent	the parent for this dialog
-   * @param msg		the message to display
+   * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
    * @return		the value entered, null if cancelled
@@ -1589,13 +1587,13 @@ public class GUIHelper {
   }
 
   /**
-   * A simple dialog for entering a string.
+   * A simple dialog for selecting a string.
    * 
    * @param parent	the parent for this dialog
-   * @param msg		the message to display
+   * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
-   * @param title	the title of the input dialog, can be null
+   * @param title	the title of the input dialog, can be null (uses "Select value" in that case)
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String[] options, String title) {
@@ -1603,11 +1601,11 @@ public class GUIHelper {
   }
 
   /**
-   * A simple dialog for entering a string.
+   * A simple dialog for selecting a string.
    * 
    * @param parent	the parent for this dialog
-   * @param title	the title of the input dialog, can be null
-   * @param msg		the message to display
+   * @param title	the title of the input dialog, can be null (uses "Select value" in that case)
+   * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
    * @return		the value entered, null if cancelled
@@ -1624,7 +1622,9 @@ public class GUIHelper {
     if (initial == null)
       initial = "";
     if ((title == null) || (title.isEmpty()))
-      title = "Enter value";
+      title = "Select value";
+    if ((msg == null) || (msg.isEmpty()))
+      msg = "Select value";
     
     pparent = GUIHelper.getParentComponent(parent);
     if (pparent instanceof Dialog)
@@ -1657,18 +1657,17 @@ public class GUIHelper {
     panelCombo = new JPanel(new BorderLayout());
     panelCombo.add(combobox, BorderLayout.NORTH);
 
-    panelAll = new JPanel(new BorderLayout());
+    panelAll = new JPanel(new BorderLayout(5, 0));
+    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    label = new JLabel("Value");
-    label.setDisplayedMnemonic('V');
-    label.setLabelFor(combobox);
+    label = new JLabel(msg);
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(label);
-    panelAll.add(panel, BorderLayout.WEST);
+    panelAll.add(panel, BorderLayout.NORTH);
     
     panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
     panel.add(panelCombo, BorderLayout.CENTER);
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panelAll.add(panel, BorderLayout.CENTER);
 
     dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
@@ -1683,11 +1682,11 @@ public class GUIHelper {
   }
 
   /**
-   * A simple dialog for entering a string.
+   * A simple dialog for selecting a string by clicking on a button.
    * 
    * @param parent	the parent for this dialog
-   * @param title	the title of the input dialog, can be null
-   * @param msg		the message to display
+   * @param title	the title of the input dialog, can be null (uses "Select value" in that case)
+   * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
    * @return		the value entered, null if cancelled
@@ -1696,12 +1695,17 @@ public class GUIHelper {
     Component		pparent;
     final BaseDialog	dialog;
     JPanel		panelButtons;
+    JPanel		panel;
+    JPanel		panelAll;
+    JLabel		label;
     final StringBuilder	result;
     
     if (initial == null)
       initial = "";
     if ((title == null) || (title.isEmpty()))
-      title = "Enter value";
+      title = "Select value";
+    if ((msg == null) || (msg.isEmpty()))
+      msg = "Select alue";
     
     pparent = GUIHelper.getParentComponent(parent);
     if (pparent instanceof Dialog)
@@ -1709,6 +1713,14 @@ public class GUIHelper {
     else
       dialog = new BaseDialog((Frame) pparent, true);
     dialog.setTitle(title);
+
+    panelAll = new JPanel(new BorderLayout(5, 5));
+    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+    label = new JLabel(msg);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(label);
+    panelAll.add(panel, BorderLayout.NORTH);
     
     result = new StringBuilder();
 
@@ -1724,8 +1736,10 @@ public class GUIHelper {
       });
       panelButtons.add(button);
     }
+    panelAll.add(panelButtons, BorderLayout.CENTER);
+    
     dialog.getContentPane().setLayout(new BorderLayout());
-    dialog.getContentPane().add(panelButtons, BorderLayout.CENTER);
+    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
