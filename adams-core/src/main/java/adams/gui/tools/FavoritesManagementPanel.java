@@ -40,7 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -635,7 +634,7 @@ public class FavoritesManagementPanel
       return;
 
     // name favorite
-    name = JOptionPane.showInputDialog("Please input name for favorite:");
+    name = GUIHelper.showInputDialog(this, "Please input name for favorite:");
     if (name == null)
       return;
 
@@ -693,7 +692,7 @@ public class FavoritesManagementPanel
     favorite = m_Favorites.getFavorite(cls, name);
 
     // input new name
-    newName = JOptionPane.showInputDialog("Please input new name:", name);
+    newName = GUIHelper.showInputDialog(this, "Please input new name:", name);
     if (newName == null)
       return;
 

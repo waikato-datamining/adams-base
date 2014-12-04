@@ -21,12 +21,11 @@ package adams.flow.transformer.pixelselector;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
-
 import adams.core.base.BaseString;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -79,6 +78,7 @@ public class AddClassification
    *
    * @return 		a description suitable for displaying in the gui
    */
+  @Override
   public String globalInfo() {
     return 
 	"Allows the user to select a pixel location and add a corresponding "
@@ -92,6 +92,7 @@ public class AddClassification
    * 
    * @return		the title
    */
+  @Override
   protected String getTitle() {
     return "Add classification";
   }
@@ -99,6 +100,7 @@ public class AddClassification
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
@@ -193,25 +195,24 @@ public class AddClassification
    * @param e		the event
    * @return		true if to update the report table
    */
+  @Override
   protected boolean doProcessAction(ActionEvent e) {
     Report	report;
     Field	field;
-    BaseString	label;
+    String	label;
+    String[]	labels;
+    int		i;
     int		index;
     
     if (m_RememberLastSelection && getPanel().hasLastActionResult(getClass()))
-      label = (BaseString) getPanel().getLastActionResult(getClass());
+      label = (String) getPanel().getLastActionResult(getClass());
     else
-      label = m_Labels[0];
+      label = m_Labels[0].getValue();
+    labels = new String[m_Labels.length];
+    for (i = 0; i < m_Labels.length; i++)
+      labels[i] = m_Labels[i].getValue();
     
-    label = (BaseString) JOptionPane.showInputDialog(
-	getPanel(), 
-	"Please select classification", 
-	getName(), 
-	JOptionPane.QUESTION_MESSAGE, 
-	null, 
-	m_Labels, 
-	label);
+    label = GUIHelper.showInputDialog(getPanel(), "Please select classification", label, labels, getName());
     if (label == null)
       return false;
     
@@ -231,7 +232,7 @@ public class AddClassification
 
     field = new Field(CLASSIFICATION + index, DataType.STRING);
     report.addField(field);
-    report.setValue(field, label.getValue());
+    report.setValue(field, label);
     
     return true;
   }
@@ -241,6 +242,7 @@ public class AddClassification
    * 
    * @return		null if check passed, otherwise the error message
    */
+  @Override
   public String check() {
     if (m_Labels.length < 1)
       return "At least one label must be defined!";

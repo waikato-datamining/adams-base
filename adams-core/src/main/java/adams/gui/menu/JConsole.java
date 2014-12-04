@@ -21,10 +21,9 @@
 
 package adams.gui.menu;
 
-import javax.swing.JOptionPane;
-
 import adams.core.management.ProcessUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.GUIHelper;
 
 /**
  * Starts up jconsole.
@@ -61,8 +60,8 @@ public class JConsole
   @Override
   protected void doLaunch() {
     // query for options
-    String options = JOptionPane.showInputDialog(
-	null, "Enter the options for " + adams.core.management.JConsole.EXECUTABLE + ":",
+    String options = GUIHelper.showInputDialog(
+	getOwner(), "Enter the options for " + adams.core.management.JConsole.EXECUTABLE + ":",
 	adams.core.management.JConsole.getDefaultOptions());
     if (options == null)
       return;

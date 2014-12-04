@@ -37,7 +37,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -341,7 +340,7 @@ public class VariableSupport {
 	item = new JMenuItem("Set variable...", GUIHelper.getIcon("variable.gif"));
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
-	    String name = JOptionPane.showInputDialog(fParent, "Please enter the variable name:");
+	    String name = GUIHelper.showInputDialog(fParent, "Please enter the variable name:", "", "Set variable");
 	    if (name == null)
 	      return;
 	    if (!Variables.isValidName(name)) {
@@ -377,7 +376,7 @@ public class VariableSupport {
 	item = new JMenuItem("Attach storage value...", GUIHelper.getIcon(StorageValue.class.getName() + ".gif"));
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
-	    String name = JOptionPane.showInputDialog(fParent, "Please enter the storage name:");
+	    String name = GUIHelper.showInputDialog(fParent, "Please enter the storage name:", "", "Attach storage value");
 	    if (name == null)
 	      return;
 	    StorageName sn = new StorageName();
@@ -415,7 +414,7 @@ public class VariableSupport {
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      String oldName = fArgOption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length());
-	      String name = JOptionPane.showInputDialog(GUIHelper.getParentComponent(fParent), "Please enter the new storage value name:", oldName);
+	      String name = GUIHelper.showInputDialog(GUIHelper.getParentComponent(fParent), "Please enter the new storage value name:", oldName, "Re-attach storage value");
 	      if (name == null)
 		return;
 	      StorageName sn = new StorageName();
@@ -437,7 +436,7 @@ public class VariableSupport {
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      String oldName = fArgOption.getVariableName();
-	      String name = JOptionPane.showInputDialog(GUIHelper.getParentComponent(fParent), "Please enter the new variable name:", oldName);
+	      String name = GUIHelper.showInputDialog(GUIHelper.getParentComponent(fParent), "Please enter the new variable name:", oldName, "Change variable");
 	      if (name == null)
 		return;
 	      if (!Variables.isValidName(name)) {

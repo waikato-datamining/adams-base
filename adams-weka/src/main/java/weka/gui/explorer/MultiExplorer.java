@@ -28,7 +28,6 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -140,7 +139,7 @@ public class MultiExplorer
       @Override
       public void actionPerformed(ActionEvent e) {
 	String initial = m_History.newEntryName(DEFAULT_NAME);
-	String name = JOptionPane.showInputDialog(
+	String name = GUIHelper.showInputDialog(
 	    MultiExplorer.this, 
 	    "Please enter the name for the Explorer panel:", 
 	    initial);
@@ -389,7 +388,7 @@ public class MultiExplorer
       menuitem.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          String newName = JOptionPane.showInputDialog(
+          String newName = GUIHelper.showInputDialog(
               MultiExplorer.this, "Please enter the new name:", entries[0]);
           if (newName == null)
             return;

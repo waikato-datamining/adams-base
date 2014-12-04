@@ -24,8 +24,6 @@ package adams.gui.menu;
 import java.awt.BorderLayout;
 import java.awt.Container;
 
-import javax.swing.JOptionPane;
-
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -66,12 +64,13 @@ public class ContainerNesting
   /**
    * Launches the functionality of the menu item.
    */
+  @Override
   public void launch() {
     String	classname;
     BaseTree	tree;
     BasePanel	panel;
     
-    classname = JOptionPane.showInputDialog("Please enter class name of Swing container:");
+    classname = GUIHelper.showInputDialog(getOwner(), "Please enter class name of Swing container:");
     if (classname == null)
       return;
     
@@ -96,6 +95,7 @@ public class ContainerNesting
    *
    * @return 		the title
    */
+  @Override
   public String getTitle() {
     return "Container nesting";
   }
@@ -105,6 +105,7 @@ public class ContainerNesting
    *
    * @return		true if the panel can only be displayed once
    */
+  @Override
   public boolean isSingleton() {
     return false;
   }
@@ -114,6 +115,7 @@ public class ContainerNesting
    *
    * @return		the user mode
    */
+  @Override
   public UserMode getUserMode() {
     return UserMode.DEVELOPER;
   }
@@ -124,6 +126,7 @@ public class ContainerNesting
    *
    * @return		the category/menu name
    */
+  @Override
   public String getCategory() {
     return CATEGORY_MAINTENANCE;
   }

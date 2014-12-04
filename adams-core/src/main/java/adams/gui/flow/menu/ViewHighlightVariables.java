@@ -21,8 +21,6 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
-
 import adams.gui.core.GUIHelper;
 
 /**
@@ -66,7 +64,7 @@ public class ViewHighlightVariables
   protected void doActionPerformed(ActionEvent e) {
     String	regexp;
     
-    regexp = JOptionPane.showInputDialog(
+    regexp = GUIHelper.showInputDialog(
 	  GUIHelper.getParentComponent(m_State),
 	  "Enter the regular expression for the variable name ('.*' matches all):",
 	  m_LastVariableSearch);

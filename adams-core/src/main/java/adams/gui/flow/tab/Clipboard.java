@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -198,7 +197,7 @@ public class Clipboard
       @Override
       public void actionPerformed(ActionEvent e) {
 	AbstractActor actor = getCurrentPanel().getTree().getSelectedNode().getFullActor();
-	String name = JOptionPane.showInputDialog(GUIHelper.getParentComponent(m_ListItems), "Please enter name for clipboard item:", actor.getName());
+	String name = GUIHelper.showInputDialog(GUIHelper.getParentComponent(m_ListItems), "Please enter name for clipboard item:", actor.getName());
 	if (name == null)
 	  return;
 	m_ListItemsModel.addElement(new ClipboardItem(name, actor));

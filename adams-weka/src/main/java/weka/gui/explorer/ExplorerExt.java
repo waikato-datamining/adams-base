@@ -838,7 +838,7 @@ public class ExplorerExt
       return;
     data = getPreprocessPanel().getInstances();
     
-    rangeStr = JOptionPane.showInputDialog(this, "Enter range of rows to display:", Range.ALL);
+    rangeStr = GUIHelper.showInputDialog(this, "Enter range of rows to display:", Range.ALL);
     if (rangeStr == null)
       return;
     if (!Range.isValid(rangeStr, data.numInstances()))

@@ -29,7 +29,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -269,7 +268,7 @@ public class OpenStreetMapViewerPanel
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	  String coords = JOptionPane.showInputDialog(
+	  String coords = GUIHelper.showInputDialog(
 	      OpenStreetMapViewerPanel.this, 
 	      "Please enter coordinates for centering the map in decimal notation ('lat [,] lon'):", 
 	      m_LastCoordinates);

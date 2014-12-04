@@ -21,7 +21,7 @@ package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
+import adams.gui.core.GUIHelper;
 
 /**
  * Opens dialog for locating actor.
@@ -52,7 +52,7 @@ public class EditLocateActor
   protected void doActionPerformed(ActionEvent e) {
     String	path;
 
-    path = JOptionPane.showInputDialog("Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):");
+    path = GUIHelper.showInputDialog(m_State, "Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):");
     if (path == null)
       return;
 

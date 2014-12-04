@@ -32,7 +32,6 @@ import java.util.logging.Level;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import adams.core.CloneHandler;
@@ -613,7 +612,7 @@ public class Favorites
       public void actionPerformed(ActionEvent e) {
 	String name = null;
 	do {
-	  name = JOptionPane.showInputDialog("Please enter name for favorite:");
+	  name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
 	  if (name == null)
 	    return;
 	  name = name.trim();

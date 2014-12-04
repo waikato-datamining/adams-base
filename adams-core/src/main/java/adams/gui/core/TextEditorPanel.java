@@ -33,7 +33,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
@@ -793,7 +792,7 @@ public class TextEditorPanel
     String	search;
     int		index;
 
-    search = JOptionPane.showInputDialog(GUIHelper.getParentComponent(this), "Enter search string", m_LastFind);
+    search = GUIHelper.showInputDialog(GUIHelper.getParentComponent(this), "Enter search string", m_LastFind);
     if (search == null)
       return;
 

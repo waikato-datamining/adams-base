@@ -21,13 +21,12 @@ package adams.gui.visualization.report.reportfactory;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
-
 import adams.core.option.AbstractOption;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
+import adams.gui.core.GUIHelper;
 
 /**
  * Allows the user to add a new field to the report. The updated report gets 
@@ -63,15 +62,18 @@ public class DatabaseAddField
     String 		value;
     Field 		field;
     
-    name = JOptionPane.showInputDialog(
+    name = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the name of the field");
     if ((name == null) || (name.length() == 0))
       return;
-    type = JOptionPane.showInputDialog(
+    type = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the type of the field (N=numeric, B=boolean, S=string, U=unknown)", "S");
     if ((type == null) || (type.length() != 1))
       return;
-    value = JOptionPane.showInputDialog(
+    value = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the initial value for the field");
     if (value == null)
       return;

@@ -40,7 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -155,6 +154,7 @@ public class PlaceholderManagementPanel
      * @param columnIndex	the index of the column
      * @return			the class of the column
      */
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
       if (columnIndex == 0)
 	return String.class;
@@ -170,6 +170,7 @@ public class PlaceholderManagementPanel
      * @param column	the index of the column
      * @return		the name
      */
+    @Override
     public String getColumnName(int column) {
       if (column == 0)
 	return "Key";
@@ -202,6 +203,7 @@ public class PlaceholderManagementPanel
      * @param columnIndex	the column of the cell
      * @return			always true
      */
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
       return true;
     }
@@ -213,6 +215,7 @@ public class PlaceholderManagementPanel
      * @param rowIndex		the row of the cell
      * @param columnIndex	the column of the cell
      */
+    @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
       String	newKey;
       String	oldKey;
@@ -373,6 +376,7 @@ public class PlaceholderManagementPanel
       m_TextPath = (JTextField) getComponent();
       m_TextPath.setToolTipText("Double-click to bring up a dialog to select a directory");
       m_TextPath.addMouseListener(new MouseAdapter() {
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isDoubleClick(e)) {
 	    e.consume();
@@ -424,6 +428,7 @@ public class PlaceholderManagementPanel
   /**
    * Initializes the members.
    */
+  @Override
   protected void initialize() {
     super.initialize();
 
@@ -434,6 +439,7 @@ public class PlaceholderManagementPanel
   /**
    * Initializes the widgets.
    */
+  @Override
   protected void initGUI() {
     super.initGUI();
 
@@ -470,7 +476,7 @@ public class PlaceholderManagementPanel
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	String key = JOptionPane.showInputDialog(PlaceholderManagementPanel.this, "Please add new placeholder");
+	String key = GUIHelper.showInputDialog(PlaceholderManagementPanel.this, "Please add new placeholder");
 	if (key == null)
 	  return;
 
@@ -513,6 +519,7 @@ public class PlaceholderManagementPanel
 	final JFrame frame = (JFrame) getParentFrame();
 	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	frame.addWindowListener(new WindowAdapter() {
+	  @Override
 	  public void windowClosing(WindowEvent e) {
 	    close();
 	  }
@@ -522,6 +529,7 @@ public class PlaceholderManagementPanel
 	final JDialog dialog = (JDialog) getParentDialog();
 	dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	dialog.addWindowListener(new WindowAdapter() {
+	  @Override
 	  public void windowClosing(WindowEvent e) {
 	    close();
 	  }

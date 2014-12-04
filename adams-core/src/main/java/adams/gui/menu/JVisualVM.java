@@ -21,10 +21,9 @@
 
 package adams.gui.menu;
 
-import javax.swing.JOptionPane;
-
 import adams.core.management.ProcessUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.GUIHelper;
 
 /**
  * Starts up jvisualvm.
@@ -61,8 +60,8 @@ public class JVisualVM
   @Override
   protected void doLaunch() {
     // query for options
-    String options = JOptionPane.showInputDialog(
-	null, "Enter the options for " + adams.core.management.JVisualVM.EXECUTABLE + ":",
+    String options = GUIHelper.showInputDialog(
+	getOwner(), "Enter the options for " + adams.core.management.JVisualVM.EXECUTABLE + ":",
 	adams.core.management.JVisualVM.getDefaultOptions());
     if (options == null)
       return;

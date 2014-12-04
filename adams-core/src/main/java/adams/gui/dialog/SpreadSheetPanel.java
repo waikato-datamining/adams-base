@@ -31,7 +31,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
@@ -349,8 +348,8 @@ public class SpreadSheetPanel
     int 	decimals;
 
     decimals = m_Table.getNumDecimals();
-    valueStr = JOptionPane.showInputDialog(
-	"Please enter the number of decimals to display (-1 to display all):", decimals);
+    valueStr = GUIHelper.showInputDialog(
+	this, "Please enter the number of decimals to display (-1 to display all):", "" + decimals);
     if (valueStr == null)
       return;
 

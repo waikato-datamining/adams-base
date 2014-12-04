@@ -21,12 +21,11 @@ package adams.gui.visualization.report.reportfactory;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
-
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
 
 /**
@@ -127,7 +126,8 @@ public class DatabaseModifyValue
 	    valueDbl = 0.0;
 	  String valueInit = valueDbl.toString();
 	  do {
-	    String newValue = JOptionPane.showInputDialog(
+	    String newValue = GUIHelper.showInputDialog(
+		getTable(),
 		"Enter numeric value for '" + field.toDisplayString() + "'", valueInit);
 	    if (newValue == null)
 	      return;
@@ -139,7 +139,8 @@ public class DatabaseModifyValue
 	  break;
 
 	case STRING:
-	  String newValue = JOptionPane.showInputDialog(
+	  String newValue = GUIHelper.showInputDialog(
+	      getTable(),
 	      "Enter value for '" + field.toDisplayString() + "'", value);
 	  if (newValue == null)
 	    return;

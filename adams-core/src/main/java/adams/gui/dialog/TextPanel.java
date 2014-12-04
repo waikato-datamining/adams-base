@@ -32,7 +32,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -639,8 +638,8 @@ public class TextPanel
       menuitem.setIcon(GUIHelper.getIcon("text_indent.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  String size = JOptionPane.showInputDialog(
-	      "Please enter new tab size (> 0)", "" + m_TextPanel.getTabSize());
+	  String size = GUIHelper.showInputDialog(
+	      TextPanel.this, "Please enter new tab size (> 0)", "" + m_TextPanel.getTabSize());
 	  if (size == null)
 	    return;
 	  try {

@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
@@ -1863,7 +1862,7 @@ public class Tree
     else
       node = null;
 
-    search = JOptionPane.showInputDialog(
+    search = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(this),
 	"Please enter the search string ("
 	+ ((node == null) ? ("whole flow") : ("below '" + node.getActor().getName()) + "'") + "):",

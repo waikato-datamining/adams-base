@@ -23,9 +23,8 @@ package adams.flow.source;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
@@ -330,8 +329,6 @@ public class EnterValue
   @Override
   public boolean doInteract() {
     String	value;
-    String[]	options;
-    int		i;
     String	msg;
     String	initial;
     
@@ -345,15 +342,11 @@ public class EnterValue
       return true;
     }
     
-    if (m_SelectionValues.length > 0) {
-      options = new String[m_SelectionValues.length];
-      for (i = 0; i < options.length; i++)
-	options[i] = m_SelectionValues[i].getValue();
-      value = (String) JOptionPane.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, getName(), JOptionPane.QUESTION_MESSAGE, null, options, initial);
-    }
-    else {
-      value = JOptionPane.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial);
-    }
+    if (m_SelectionValues.length > 0)
+      value = (String) GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, BaseObject.toStringArray(m_SelectionValues), getName());
+    else
+      value = GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, getName());
+
     if ((value != null) && (value.length() > 0))
       m_OutputToken = new Token(value);
 

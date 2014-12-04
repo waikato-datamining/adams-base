@@ -21,13 +21,12 @@ package adams.gui.visualization.report.reportfactory;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
-
 import adams.core.option.AbstractOption;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory.Table;
 
 /**
@@ -62,15 +61,18 @@ public class AddField
     String 	value;
     Field 	field;
     
-    name = JOptionPane.showInputDialog(
+    name = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the name of the field");
     if ((name == null) || (name.length() == 0))
       return;
-    type = JOptionPane.showInputDialog(
+    type = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the type of the field (N=numeric, B=boolean, S=string, U=unknown)", "S");
     if ((type == null) || (type.length() != 1))
       return;
-    value = JOptionPane.showInputDialog(
+    value = GUIHelper.showInputDialog(
+	getTable(),
 	"Enter the initial value for the field");
     if (value == null)
       return;

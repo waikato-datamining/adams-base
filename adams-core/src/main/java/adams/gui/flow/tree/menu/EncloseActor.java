@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 
 import adams.core.ClassLister;
@@ -112,7 +111,7 @@ public class EncloseActor
     newName = handler.getName();
     if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
       newName = currActor[0].getName();
-    newName = JOptionPane.showInputDialog(GUIHelper.getParentComponent(m_State.tree), "Please enter name for enclosing actor (leave empty for default):", newName);
+    newName = GUIHelper.showInputDialog(GUIHelper.getParentComponent(m_State.tree), "Please enter name for enclosing actor (leave empty for default):", newName);
     if (newName == null)
       return;
     if (newName.isEmpty())

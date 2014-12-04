@@ -53,6 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -1464,6 +1465,86 @@ public class GUIHelper {
     return dlg.getOption();
   }
 
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg) {
+    return showInputDialog(parent, null, msg);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial) {
+    return showInputDialog(parent, msg, initial, (String) null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param title	the title of the input dialog, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String title) {
+    // TODO
+    return (String) JOptionPane.showInputDialog(parent, msg, title, JOptionPane.QUESTION_MESSAGE, null, null, initial);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options) {
+    return showInputDialog(parent, msg, initial, options, null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @param title	the title of the input dialog, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, String title) {
+    return showInputDialog(parent, msg, initial, options, true, title);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param title	the title of the input dialog, can be null
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @param usecombo	whether to use a combobox or buttons
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean usecombo, String title) {
+    // TODO
+    return (String) JOptionPane.showInputDialog(parent, msg, title, JOptionPane.QUESTION_MESSAGE, null, options, initial);
+  }
+  
   /**
    * Parses the tool tip and breaks it up into multiple lines if longer
    * than width characters.

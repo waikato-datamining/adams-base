@@ -22,7 +22,6 @@ package adams.gui.flow.tree.menu;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -81,7 +80,7 @@ public class RenameActor
 
     node    = TreeHelper.pathToNode(path);
     oldName = node.getActor().getName();
-    newName = JOptionPane.showInputDialog(
+    newName = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(m_State.tree), 
 	"Please enter new name:", oldName);
     if (newName != null) {

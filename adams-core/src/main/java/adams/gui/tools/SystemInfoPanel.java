@@ -317,7 +317,7 @@ public class SystemInfoPanel
     String 		options;
 
     // query for options
-    options = JOptionPane.showInputDialog(
+    options = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(this), "Enter the options for " + JMap.EXECUTABLE + ":",
 	JMap.getDefaultOptions());
     if (options == null)
@@ -356,7 +356,7 @@ public class SystemInfoPanel
     String 	options;
 
     // query for options
-    options = JOptionPane.showInputDialog(
+    options = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(this), "Enter the options for " + JVisualVM.EXECUTABLE + ":",
 	JVisualVM.getDefaultOptions());
     if (options == null)
@@ -382,7 +382,7 @@ public class SystemInfoPanel
     String 	options;
 
     // query for options
-    options = JOptionPane.showInputDialog(
+    options = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(this), "Enter the options for " + JConsole.EXECUTABLE + ":",
 	JConsole.getDefaultOptions());
     if (options == null)

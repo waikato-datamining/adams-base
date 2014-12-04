@@ -36,7 +36,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -525,14 +524,12 @@ public class NamedSetupManagementPanel
       superclasses.add(enm.nextElement().toString());
     Collections.sort(superclasses);
 
-    selected = (String) JOptionPane.showInputDialog(
+    selected = GUIHelper.showInputDialog(
 	this,
 	"Please select type of setup",
-	"Type",
-	JOptionPane.PLAIN_MESSAGE,
 	null,
 	superclasses.toArray(new String[superclasses.size()]),
-	null);
+	"Type");
     if (selected == null)
       return;
 
@@ -576,7 +573,7 @@ public class NamedSetupManagementPanel
       return;
 
     // third: nickname for setup
-    name = JOptionPane.showInputDialog(
+    name = GUIHelper.showInputDialog(
 	GUIHelper.getParentComponent(this),
 	"Please enter 'nickname' for the setup:",
 	"name_for_setup");

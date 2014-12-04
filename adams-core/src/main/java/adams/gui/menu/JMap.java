@@ -21,11 +21,11 @@
 
 package adams.gui.menu;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import adams.core.management.ProcessUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 
 /**
@@ -63,8 +63,8 @@ public class JMap
   @Override
   protected void doLaunch() {
     // query for options
-    String options = JOptionPane.showInputDialog(
-	null, "Enter the options for " + adams.core.management.JMap.EXECUTABLE + ":",
+    String options = GUIHelper.showInputDialog(
+	getOwner(), "Enter the options for " + adams.core.management.JMap.EXECUTABLE + ":",
 	adams.core.management.JMap.getDefaultOptions());
     if (options == null)
       return;
@@ -74,10 +74,12 @@ public class JMap
     final String fOptions = options;
     SwingWorker worker = new SwingWorker() {
       protected String m_Output = null;
+      @Override
       protected Object doInBackground() throws Exception {
 	m_Output = adams.core.management.JMap.execute(fOptions, fPid);
 	return null;
       }
+      @Override
       protected void done() {
 	TextDialog dialog = new TextDialog();
 	dialog.setTitle(adams.core.management.JMap.EXECUTABLE + " (" + fPid + ")");

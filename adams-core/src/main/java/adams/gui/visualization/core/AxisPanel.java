@@ -43,7 +43,6 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
@@ -894,7 +893,7 @@ public class AxisPanel
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String pattern = getNumberFormat();
-	pattern = JOptionPane.showInputDialog(
+	pattern = GUIHelper.showInputDialog(
 	    GUIHelper.getParentComponent(m_Self),
 	    "Please enter format (empty format resets to default again):",
 	    pattern);
