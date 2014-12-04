@@ -156,7 +156,8 @@ public class BoofCVDetectLinesImageOverlay
       y  = row.getCell(4).toDouble().floatValue();
       lp = new LineParametric2D_F32(x, y, sx, sy);
       ls = LineImageOps.convert(lp, panel.getWidth(), panel.getHeight());
-      g2.drawLine((int) ls.a.x, (int) ls.a.y, (int) ls.b.x, (int) ls.b.y);
+      if (ls != null)
+	g2.drawLine((int) ls.a.x, (int) ls.a.y, (int) ls.b.x, (int) ls.b.y);
     }
   }
 }
