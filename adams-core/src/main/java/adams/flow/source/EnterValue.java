@@ -54,7 +54,7 @@ import adams.gui.core.GUIHelper;
  * &nbsp;&nbsp;&nbsp;default: EnterValue
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -68,6 +68,11 @@ import adams.gui.core.GUIHelper;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -99,6 +104,12 @@ import adams.gui.core.GUIHelper;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-use-buttons &lt;boolean&gt; (property: useButtons)
+ * &nbsp;&nbsp;&nbsp;If enabled and selection values are available, then instead of a dropdown 
+ * &nbsp;&nbsp;&nbsp;list a button per selection value is displayed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -127,6 +138,9 @@ public class EnterValue
 
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
+
+  /** whether to use buttons instead of a dropdown list. */
+  protected boolean m_UseButtons;
   
   /** the output token to broadcast. */
   protected Token m_OutputToken;
@@ -162,6 +176,10 @@ public class EnterValue
 	    new BaseString[0]);
 
     m_OptionManager.add(
+	    "use-buttons", "useButtons",
+	    false);
+
+    m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
   }
@@ -181,6 +199,7 @@ public class EnterValue
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useButtons", m_UseButtons, "buttons"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -274,6 +293,37 @@ public class EnterValue
   }
 
   /**
+   * Sets whether to use buttons or a drop-down list for the selection values.
+   *
+   * @param value	true if to use buttons
+   */
+  public void setUseButtons(boolean value) {
+    m_UseButtons = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use buttons or a drop-down list for the selection values.
+   *
+   * @return 		true if to use buttons
+   */
+  public boolean getUseButtons() {
+    return m_UseButtons;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String useButtonsTipText() {
+    return 
+	"If enabled and selection values are available, then instead of a "
+	+ "dropdown list a button per selection value is displayed.";
+  }
+
+  /**
    * Sets whether to enable/disable interactiveness.
    *
    * @param value	if true actor is not interactive, but automated
@@ -343,7 +393,7 @@ public class EnterValue
     }
     
     if (m_SelectionValues.length > 0)
-      value = (String) GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, BaseObject.toStringArray(m_SelectionValues), getName());
+      value = (String) GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, BaseObject.toStringArray(m_SelectionValues), !m_UseButtons, getName());
     else
       value = GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, getName());
 
