@@ -38,6 +38,8 @@ import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -53,12 +55,13 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -1529,7 +1532,7 @@ public class GUIHelper {
       textValue.setSelectionStart(0);
       textValue.setSelectionEnd(initial.length());
     }
-    ((BaseTextArea) textValue).setLineWrap(true);
+    textValue.setLineWrap(true);
     textValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -1607,12 +1610,148 @@ public class GUIHelper {
    * @param msg		the message to display
    * @param initial	the initial selection, can be null
    * @param options	the available options
-   * @param usecombo	whether to use a combobox or buttons
    * @return		the value entered, null if cancelled
    */
-  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean usecombo, String title) {
-    // TODO
-    return (String) JOptionPane.showInputDialog(parent, msg, title, JOptionPane.QUESTION_MESSAGE, null, options, initial);
+  protected static String showInputDialogComboBox(Component parent, String msg, String initial, String[] options, String title) {
+    JPanel			panelAll;
+    JPanel			panelCombo;
+    JPanel			panel;
+    JLabel			label;
+    JComboBox			combobox;
+    final ApprovalDialog	dialog;
+    Component			pparent;
+    
+    if (initial == null)
+      initial = "";
+    if ((title == null) || (title.isEmpty()))
+      title = "Enter value";
+    
+    pparent = GUIHelper.getParentComponent(parent);
+    if (pparent instanceof Dialog)
+      dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    dialog.setTitle(title);
+    
+    combobox = new JComboBox(options);
+    if (!initial.isEmpty())
+      combobox.setSelectedItem(initial);
+    else
+      combobox.setSelectedIndex(0);
+    combobox.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	  e.consume();
+	  dialog.getApproveButton().doClick();
+	}
+	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	  e.consume();
+	  dialog.getCancelButton().doClick();
+	}
+	else {
+	  super.keyPressed(e);
+	}
+      }
+    });
+    panelCombo = new JPanel(new BorderLayout());
+    panelCombo.add(combobox, BorderLayout.NORTH);
+
+    panelAll = new JPanel(new BorderLayout());
+
+    label = new JLabel("Value");
+    label.setDisplayedMnemonic('V');
+    label.setLabelFor(combobox);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(label);
+    panelAll.add(panel, BorderLayout.WEST);
+    
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
+    panel.add(panelCombo, BorderLayout.CENTER);
+    panelAll.add(panel, BorderLayout.CENTER);
+
+    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(parent);
+    dialog.setVisible(true);
+
+    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
+      return (String) combobox.getSelectedItem();
+    else
+      return null;
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param title	the title of the input dialog, can be null
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @return		the value entered, null if cancelled
+   */
+  protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title) {
+    Component		pparent;
+    final BaseDialog	dialog;
+    JPanel		panelButtons;
+    final StringBuilder	result;
+    
+    if (initial == null)
+      initial = "";
+    if ((title == null) || (title.isEmpty()))
+      title = "Enter value";
+    
+    pparent = GUIHelper.getParentComponent(parent);
+    if (pparent instanceof Dialog)
+      dialog = new BaseDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new BaseDialog((Frame) pparent, true);
+    dialog.setTitle(title);
+    
+    result = new StringBuilder();
+
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    for (String option: options) {
+      final JButton button = new JButton(option);
+      button.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          result.append(button.getText());
+          dialog.setVisible(false);
+        }
+      });
+      panelButtons.add(button);
+    }
+    dialog.getContentPane().setLayout(new BorderLayout());
+    dialog.getContentPane().add(panelButtons, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(parent);
+    dialog.setVisible(true);
+
+    if (result.length() == 0)
+      return null;
+    else
+      return result.toString();
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * 
+   * @param parent	the parent for this dialog
+   * @param title	the title of the input dialog, can be null
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @param useComboBox	whether to use a combobox or buttons
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean useComboBox, String title) {
+    if (useComboBox)
+      return showInputDialogComboBox(parent, msg, initial, options, title);
+    else
+      return showInputDialogButtons(parent, msg, initial, options, title);
   }
   
   /**
