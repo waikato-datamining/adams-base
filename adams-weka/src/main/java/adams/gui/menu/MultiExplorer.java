@@ -14,29 +14,24 @@
  */
 
 /*
- * Explorer.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * MultiExplorer.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
-import adams.gui.core.GUIHelper;
-
-import com.googlecode.jfilechooserbookmarks.core.Utils;
 
 /**
- * Opens the WEKA Explorer.
+ * Opens the (multi-version of the) WEKA Explorer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 7213 $
  */
-public class Explorer
+public class MultiExplorer
   extends AbstractParameterHandlingWekaMenuItemDefinition {
 
   /** for serialization. */
@@ -45,7 +40,7 @@ public class Explorer
   /**
    * Initializes the menu item with no owner.
    */
-  public Explorer() {
+  public MultiExplorer() {
     this(null);
   }
 
@@ -54,7 +49,7 @@ public class Explorer
    *
    * @param owner	the owning application
    */
-  public Explorer(AbstractApplicationFrame owner) {
+  public MultiExplorer(AbstractApplicationFrame owner) {
     super(owner);
   }
 
@@ -63,20 +58,13 @@ public class Explorer
    */
   @Override
   public void launch() {
-    weka.gui.explorer.Explorer explorer = new weka.gui.explorer.Explorer();
-    createChildFrame(explorer, 800, 600);
+    weka.gui.explorer.MultiExplorer explorer = new weka.gui.explorer.MultiExplorer();
+    createChildFrame(explorer, 1050, 700);
     if (m_Parameters.length > 0) {
       PlaceholderFile[] files = new PlaceholderFile[m_Parameters.length];
       for (int i = 0; i < m_Parameters.length; i++)
 	files[i] = new PlaceholderFile(m_Parameters[i]);
-      try {
-	AbstractFileLoader loader = ConverterUtils.getLoaderForFile(files[0]);
-	loader.setFile(files[0].getAbsoluteFile());
-	explorer.getPreprocessPanel().setInstancesFromFile(loader);
-      }
-      catch (Exception e) {
-	GUIHelper.showErrorMessage(getOwner(), "Failed to load: " + files[0] + "\n" + Utils.throwableToString(e));
-      }
+      explorer.load(files);
     }
   }
 
@@ -87,7 +75,7 @@ public class Explorer
    */
   @Override
   public String getTitle() {
-    return "Explorer";
+    return "Multi-Explorer";
   }
 
   /**
