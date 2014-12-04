@@ -100,7 +100,7 @@ Shortcut-adamsgui.menu.ProgramExit=alt pressed F4
 # Tools
 Shortcut-adams.gui.menu.FlowEditor=ctrl pressed F
 Shortcut-adams.gui.menu.FlowControlCenter=ctrl shift pressed F
-Shortcut-adams.gui.menu.Explorer=ctrl pressed X
+Shortcut-adams.gui.menu.MultiExplorer=ctrl pressed X
 Shortcut-adams.gui.menu.Experimenter=ctrl pressed P
 
 ##########################
