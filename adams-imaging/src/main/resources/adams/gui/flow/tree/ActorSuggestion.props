@@ -11,53 +11,17 @@
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
-adams-imaging.ImageJReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
+adams-imaging.ImageReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageReader
 
-adams-imaging.ImageJReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
+adams-imaging.ImageReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageReader
 
-adams-imaging.ImageJReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
+adams-imaging.ImageReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageReader
 
-adams-imaging.ImageJReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
-
-adams-imaging.JAIReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.JAIReader
-
-adams-imaging.JAIReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.JAIReader
-
-adams-imaging.JAIReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.JAIReader
-
-adams-imaging.JAIReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.JAIReader
-
-adams-imaging.ImageMagickReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickReader
-
-adams-imaging.ImageMagickReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickReader
-
-adams-imaging.ImageMagickReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageMagickReader
-
-adams-imaging.ImageMagickReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickReader
-
-adams-imaging.UFRawReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.UFRawReader
-
-adams-imaging.UFRawReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.UFRawReader
-
-adams-imaging.UFRawReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.UFRawReader
-
-adams-imaging.UFRawReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.UFRawReader
+adams-imaging.ImageReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageReader
 
 adams-imaging.ImageJTransformer=\
   IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
