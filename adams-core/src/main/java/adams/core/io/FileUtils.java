@@ -759,7 +759,7 @@ public class FileUtils {
    * Returns the extension of the file, if any.
    *
    * @param file	the file to get the extension from
-   * @return		the extension, null if none available
+   * @return		the extension (no dot), null if none available
    */
   public static String getExtension(File file) {
     return getExtension(file.getAbsolutePath());
@@ -769,7 +769,7 @@ public class FileUtils {
    * Returns the extension of the file, if any.
    *
    * @param filename	the file to get the extension from
-   * @return		the extension, null if none available
+   * @return		the extension (no dot), null if none available
    */
   public static String getExtension(String filename) {
     String[]	result;
@@ -784,11 +784,11 @@ public class FileUtils {
 
   /**
    * Returns the extensions of the file, if any.
-   * Returns ".txt.gz" and ".gz", for instance, for file "hello_world.txt.gz".
+   * Returns "txt.gz" and "gz", for instance, for file "hello_world.txt.gz".
    * The longer extension always comes first.
    *
    * @param file	the file to get the extensions from
-   * @return		the extensions, null if none available
+   * @return		the extensions (no dot), null if none available
    */
   public static String[] getExtensions(File file) {
     return getExtensions(file.getAbsolutePath());
@@ -796,10 +796,10 @@ public class FileUtils {
 
   /**
    * Returns the extensions of the file, if any.
-   * Removs ignored file extension suffixes like "gz" first.
+   * Removes ignored file extension suffixes like "gz" first.
    *
    * @param filename	the file to get the extensions from
-   * @return		the extensions, null if none available
+   * @return		the extensions (no dot), null if none available
    * @see		#getIgnoredExtensionSuffixes()
    */
   public static String[] getExtensions(String filename) {
