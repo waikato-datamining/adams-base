@@ -489,7 +489,7 @@ public class BufferedImageHelper {
    */
   public static String write(BufferedImage img, File file) {
     try {
-      ImageIO.write(img, FileUtils.getExtension(file).substring(1), file.getAbsoluteFile());
+      ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile());
     }
     catch (Exception e) {
       return "Failed to write image to '" + file + "': " + Utils.throwableToString(e);
