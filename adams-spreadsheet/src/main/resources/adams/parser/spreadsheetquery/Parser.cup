@@ -415,13 +415,21 @@ cond      ::=   COLUMN:c LT value:a
                   }
                   else if (a instanceof String) {
                     String s = (String) a;
-                    ByStringComparison rf = new ByStringComparison();
-                    rf.setMinimum(s);
-                    rf.setMinimumIncluded(true);
-                    rf.setMaximum(s);
-                    rf.setMaximumIncluded(true);
-                    rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                    RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                    if (s.isEmpty()) {
+                      ByValue rf = new ByValue();
+                      rf.setRegExp(new BaseRegExp("^$"));
+                      rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                      RESULT = parser.getHelper().applyRowFinder(rf, c + " comp " + s);
+                    }
+                    else {
+                      ByStringComparison rf = new ByStringComparison();
+                      rf.setMinimum(s);
+                      rf.setMinimumIncluded(true);
+                      rf.setMaximum(s);
+                      rf.setMaximumIncluded(true);
+                      rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                      RESULT = parser.getHelper().applyRowFinder(rf, c + comp + a);
+                    }
                   }
                   else if (a instanceof DateValueSupporter) {
                     Date d = ((DateValueSupporter) a).dateValue();
@@ -460,18 +468,26 @@ cond      ::=   COLUMN:c LT value:a
                   }
                   else if (a instanceof String) {
                     String s = (String) a;
-                    ByStringComparison rf1 = new ByStringComparison();
-                    rf1.setMinimum(s);
-                    rf1.setMinimumIncluded(false);
-                    rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                    ByStringComparison rf2 = new ByStringComparison();
-                    rf2.setMaximum(s);
-                    rf2.setMaximumIncluded(false);
-                    rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
-                    MultiRowFinder multi = new MultiRowFinder();
-                    multi.setFinders(new RowFinder[]{rf1, rf2});
-                    multi.setCombination(MultiRowFinder.Combination.JOIN);
-                    RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
+                    if (s.isEmpty()) {
+                      ByValue rf = new ByValue();
+                      rf.setRegExp(new BaseRegExp("^.+$"));
+                      rf.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                      RESULT = parser.getHelper().applyRowFinder(rf, c + " comp " + s);
+                    }
+                    else {
+                      ByStringComparison rf1 = new ByStringComparison();
+                      rf1.setMinimum(s);
+                      rf1.setMinimumIncluded(false);
+                      rf1.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                      ByStringComparison rf2 = new ByStringComparison();
+                      rf2.setMaximum(s);
+                      rf2.setMaximumIncluded(false);
+                      rf2.setAttributeIndex(new SpreadSheetColumnIndex(c));
+                      MultiRowFinder multi = new MultiRowFinder();
+                      multi.setFinders(new RowFinder[]{rf1, rf2});
+                      multi.setCombination(MultiRowFinder.Combination.JOIN);
+                      RESULT = parser.getHelper().applyRowFinder(multi, c + comp + a);
+                    }
                   }
                   else if (a instanceof DateValueSupporter) {
                     Date d = ((DateValueSupporter) a).dateValue();
