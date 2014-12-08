@@ -102,6 +102,7 @@ import java.io.*;
   "isnan" { return sf.newSymbol("IsNaN", sym.ISNAN); }
   "length" { return sf.newSymbol("Length", sym.LENGTH); }
   "len" { return sf.newSymbol("Length", sym.LENGTH); }
+  "get" { return sf.newSymbol("Get", sym.GET); }
   "trim" { return sf.newSymbol("Trim", sym.TRIM); }
   "substr" { return sf.newSymbol("Substr", sym.SUBSTR); }
   "left" { return sf.newSymbol("Left", sym.LEFT); }

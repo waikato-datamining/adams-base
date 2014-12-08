@@ -122,11 +122,16 @@ import adams.parser.booleanexpression.Scanner;
  *               | find ( search , expr [, pos] )<br/>
  *               | replace ( str , pos , len , newstr )<br/>
  *               | substitute ( str , find , replace [, occurrences] )<br/>
+ * <br/>
+ * # array functions<br/>
+ *               | len[gth] ( array )<br/>
+ *               | get ( array , index )<br/>
  *               ;<br/>
  * <br/>
  * Notes:<br/>
  * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br/>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br/>
+ * - 'index' for function 'get' starts at 1.<br/>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br/>
  * - Line comments start with '#'<br/>
  * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br/>
@@ -287,12 +292,17 @@ public class BooleanExpression
       + "              | find ( search , expr [, pos] )\n"
       + "              | replace ( str , pos , len , newstr )\n"
       + "              | substitute ( str , find , replace [, occurrences] )\n"
+      + "\n"
+      + "# array functions\n"
+      + "              | len[gth] ( array )\n"
+      + "              | get ( array , index )\n"
       + "              ;\n"
       + "\n"
       + "Notes:\n"
       + "- Variables are either all upper case letters (e.g., \"ABC\") or any character "
       + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\").\n"
       + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
+      + "- 'index' for function 'get' starts at 1.\n"
       + "- Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)\n"
       + "- Line comments start with '#'\n"
       + "- Semi-colons (';') or commas (',') can be used as separator in the formulas,\n"

@@ -35,6 +35,7 @@ package adams.parser.booleanexpression;
 import java_cup.runtime.*;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import adams.core.*;
@@ -169,7 +170,7 @@ parser code {:
 terminal COMMA, SEMICOLON, LPAREN, RPAREN;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
 terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, ISNAN;
-terminal IFMISSING, LENGTH, TRIM;
+terminal IFMISSING, LENGTH, GET, TRIM;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
 terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
@@ -192,7 +193,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, IFMISSING, ISNAN, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -306,7 +307,14 @@ expr      ::=
               | ISNAN LPAREN expr:e RPAREN
                 {: RESULT = parser.getHelper().toDouble(e).isNaN(); :}
               | LENGTH LPAREN expr:s RPAREN
-                {: RESULT = new Double(parser.getHelper().toString(s).length()); :}
+                {: 
+                   if (s.getClass().isArray())
+                     RESULT = new Double(Array.getLength(s));
+                   else
+                     RESULT = new Double(parser.getHelper().toString(s).length());
+                :}
+              | GET LPAREN expr:a semi_or_comma expr:index  RPAREN
+                {: RESULT = Array.get(a, parser.getHelper().toDouble(index).intValue() - 1); :}
                                 
               | FUNCTION:f LPAREN RPAREN
                 {: RESULT = parser.getHelper().callFunction(f, new Object[]{}); :}

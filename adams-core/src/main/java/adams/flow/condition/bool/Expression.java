@@ -120,11 +120,16 @@ import adams.parser.BooleanExpressionText;
  *               | find ( search , expr [, pos] )<br/>
  *               | replace ( str , pos , len , newstr )<br/>
  *               | substitute ( str , find , replace [, occurrences] )<br/>
+ * <br/>
+ * # array functions<br/>
+ *               | len[gth] ( array )<br/>
+ *               | get ( array , index )<br/>
  *               ;<br/>
  * <br/>
  * Notes:<br/>
  * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br/>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br/>
+ * - 'index' for function 'get' starts at 1.<br/>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br/>
  * - Line comments start with '#'<br/>
  * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br/>
@@ -238,6 +243,8 @@ public class Expression
 	symbols.put("X", ((Integer) token.getPayload()).doubleValue());
       else if (token.getPayload() instanceof Double)
 	symbols.put("X", ((Double) token.getPayload()).doubleValue());
+      else if (token.getPayload().getClass().isArray())
+	symbols.put("X", token.getPayload());
       else if ((token.getPayload() instanceof String) && hasString)
 	exp = exp.replace("\"X\"", "\"" + token.getPayload() + "\"");
       else if (token.getPayload() instanceof Report)
