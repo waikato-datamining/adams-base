@@ -132,6 +132,7 @@ import adams.parser.spreadsheetquery.Scanner;
  * - date format: 'yyyy-MM-dd'<br/>
  * - timestamp format: 'yyyy-MM-dd HH:mm'<br/>
  * - STRING is referring to characters enclosed by double quotes<br/>
+ * - COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -316,6 +317,7 @@ public class SpreadSheetQuery
 	  + "- date format: 'yyyy-MM-dd'\n"
 	  + "- timestamp format: 'yyyy-MM-dd HH:mm'\n"
 	  + "- STRING is referring to characters enclosed by double quotes\n"
+	  + "- COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')\n"
 	  ;
   }
 
