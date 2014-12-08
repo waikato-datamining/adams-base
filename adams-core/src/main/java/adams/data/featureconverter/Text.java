@@ -14,7 +14,7 @@
  */
 
 /**
- * TextualFeatureConverter.java
+ * Text.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
@@ -51,7 +51,7 @@ import adams.core.Utils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TextualFeatureConverter
+public class Text
   extends AbstractFeatureConverter<String,String> {
 
   /** for serialization. */

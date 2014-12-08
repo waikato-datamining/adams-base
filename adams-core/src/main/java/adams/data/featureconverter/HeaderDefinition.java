@@ -38,6 +38,12 @@ public class HeaderDefinition
   /** for serialization. */
   private static final long serialVersionUID = 3616920834737849123L;
 
+  /** the default dataset name. */
+  public final static String DEFAULT_DATASET_NAME = "Dataset";
+  
+  /** the name of the "dataset". */
+  protected String m_Dataset;
+  
   /** the names. */
   protected List<String> m_Names;
   
@@ -48,24 +54,39 @@ public class HeaderDefinition
   protected Integer m_HashCode;
   
   /**
-   * Initializes the header.
+   * Initializes the header with default dataset name {@link #DEFAULT_DATASET_NAME}
+   * and empty set of features.
    */
   public HeaderDefinition() {
-    this(new ArrayList<String>(), new ArrayList<DataType>());
+    this(null);
+  }
+  
+  /**
+   * Initializes the header with the given dataset name and empty set of features.
+   * 
+   * @param dataset	the name of the dataset, uses {@link #DEFAULT_DATASET_NAME} if null
+   */
+  public HeaderDefinition(String dataset) {
+    this(dataset, new ArrayList<String>(), new ArrayList<DataType>());
   }
   
   /**
    * Initializes the header.
    * 
+   * @param dataset	the name of the dataset, uses {@link #DEFAULT_DATASET_NAME} if null
    * @param names	the names of the fields
    * @param types	the types of the fields
    */
-  public HeaderDefinition(List<String> names, List<DataType> types) {
+  public HeaderDefinition(String dataset, List<String> names, List<DataType> types) {
+    if (dataset == null)
+      dataset = DEFAULT_DATASET_NAME;
+    
     if (names.size() != types.size())
       throw new IllegalArgumentException("Number of names and types vary: " + names.size() + " != " + types.size());
     
-    m_Names = new ArrayList<String>(names);
-    m_Types = new ArrayList<DataType>(types);
+    m_Dataset = dataset;
+    m_Names   = new ArrayList<String>(names);
+    m_Types   = new ArrayList<DataType>(types);
   }
 
   /**
@@ -74,9 +95,29 @@ public class HeaderDefinition
    * @return		the clone
    */
   public HeaderDefinition getClone() {
-    return new HeaderDefinition(m_Names, m_Types);
+    return new HeaderDefinition(m_Dataset, m_Names, m_Types);
   }
 
+  /**
+   * Sets the name of the dataset.
+   * 
+   * @param value	the name, uses {@link #DEFAULT_DATASET_NAME} if null
+   */
+  public void setDataset(String value) {
+    if (value == null)
+      value = DEFAULT_DATASET_NAME;
+    m_Dataset = value;
+  }
+  
+  /**
+   * Returns the name of the dataset.
+   * 
+   * @return		the name
+   */
+  public String getDataset() {
+    return m_Dataset;
+  }
+  
   /**
    * Returns the names.
    * 
@@ -202,7 +243,10 @@ public class HeaderDefinition
     int		result;
     int		i;
 
-    result = new Integer(m_Names.size()).compareTo(o.m_Names.size());
+    result = m_Dataset.compareTo(o.getDataset());
+    
+    if (result == 0)
+      result = new Integer(m_Names.size()).compareTo(o.m_Names.size());
 
     if (result == 0) {
       for (i = 0; i < m_Names.size(); i++) {
@@ -248,6 +292,7 @@ public class HeaderDefinition
     int			i;
     
     result = new StringBuilder();
+    result.append(m_Dataset + "|");
     
     for (i = 0; i < size(); i++) {
       if (i > 0)

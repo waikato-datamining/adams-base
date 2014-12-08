@@ -31,7 +31,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.data.featureconverter.AbstractFeatureConverter;
 import adams.data.featureconverter.HeaderDefinition;
-import adams.data.featureconverter.SpreadSheetFeatureConverter;
+import adams.data.featureconverter.SpreadSheet;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -69,7 +69,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
 
     m_OptionManager.add(
 	    "converter", "converter",
-	    new SpreadSheetFeatureConverter());
+	    new SpreadSheet());
 
     m_OptionManager.add(
 	    "field", "fields",

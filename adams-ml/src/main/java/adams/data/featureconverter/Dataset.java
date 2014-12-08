@@ -14,13 +14,10 @@
  */
 
 /**
- * DatasetFeatureConverter.java
+ * Dataset.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
-
-import adams.data.spreadsheet.SpreadSheet;
-import adams.ml.data.Dataset;
 
 /**
  * Turns the features into ADAMS dataset format.
@@ -28,8 +25,8 @@ import adams.ml.data.Dataset;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DatasetFeatureConverter
-  extends SpreadSheetFeatureConverter {
+public class Dataset
+  extends SpreadSheet {
 
   /** for serialization. */
   private static final long serialVersionUID = 2655075828639195810L;
@@ -50,7 +47,7 @@ public class DatasetFeatureConverter
    * @return		the spreadsheet
    */
   @Override
-  protected SpreadSheet getDefaultSpreadSheetType() {
-    return new Dataset();
+  protected adams.data.spreadsheet.SpreadSheet getDefaultSpreadSheetType() {
+    return new adams.ml.data.Dataset();
   }
 }

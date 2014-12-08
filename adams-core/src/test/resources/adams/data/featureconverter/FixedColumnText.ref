@@ -1,0 +1,7 @@
+--> out-0.txt
+string     | boolean    | number    
+---------------------------------------------------------
+hello worl | true       |     3.1415
+bye bye    | false      |        2.7
+           |            |           
+

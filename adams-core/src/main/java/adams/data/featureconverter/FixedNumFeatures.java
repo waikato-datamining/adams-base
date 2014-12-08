@@ -192,7 +192,7 @@ public class FixedNumFeatures
    */
   @Override
   protected AbstractFeatureConverter getDefaultConverter() {
-    return new TextualFeatureConverter();
+    return new Text();
   }
   
   /**

@@ -150,7 +150,7 @@ public class TimeseriesFeatureGeneratorTest
       argOption = (AbstractArgumentOption) values18.getOptionManager().findByProperty("converter");
       adams.data.featureconverter.FixedNumFeatures fixednumfeatures20 = new adams.data.featureconverter.FixedNumFeatures();
       argOption = (AbstractArgumentOption) fixednumfeatures20.getOptionManager().findByProperty("converter");
-      adams.data.featureconverter.TextualFeatureConverter textualfeatureconverter22 = new adams.data.featureconverter.TextualFeatureConverter();
+      adams.data.featureconverter.Text textualfeatureconverter22 = new adams.data.featureconverter.Text();
       fixednumfeatures20.setConverter(textualfeatureconverter22);
 
       argOption = (AbstractArgumentOption) fixednumfeatures20.getOptionManager().findByProperty("numFeatures");

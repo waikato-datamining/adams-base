@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
 import adams.data.conversion.BufferedImageToImageJ;
-import adams.data.featureconverter.SpreadSheetFeatureConverter;
+import adams.data.featureconverter.SpreadSheet;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
@@ -116,7 +116,7 @@ public class ImageJFeatureGenerator
     if ((m_FilterError = conv.convert()) == null) {
       setLastSetup(m_Editor.getValue());
       generator = (AbstractImageJFeatureGenerator) m_Editor.getValue();
-      generator.setConverter(new SpreadSheetFeatureConverter());
+      generator.setConverter(new SpreadSheet());
       features = (Row[]) generator.generate((ImagePlusContainer) conv.getOutput());
       if (features.length == 0)
         m_FilterError = "No features generated!";

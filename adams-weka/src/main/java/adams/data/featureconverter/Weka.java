@@ -34,7 +34,7 @@ import weka.core.Utils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class WekaFeatureConverter
+public class Weka
   extends AbstractFeatureConverter<Instances,Instance> {
 
   /** for serialization. */
@@ -102,7 +102,7 @@ public class WekaFeatureConverter
       }
     }
     
-    result = new Instances(getClass().getName(), atts, 0);
+    result = new Instances(header.getDataset(), atts, 0);
     
     return result;
   }

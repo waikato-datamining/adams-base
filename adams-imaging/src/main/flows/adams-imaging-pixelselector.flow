@@ -46,7 +46,7 @@ adams.flow.control.Flow
 			-algorithm
 				adams.data.image.features.PixelClassifications
 					-converter
-						adams.data.featureconverter.SpreadSheetFeatureConverter
+						adams.data.featureconverter.SpreadSheet
 							-data-row-type
 								adams.data.spreadsheet.DenseDataRow
 							-spreadsheet-type

@@ -14,7 +14,7 @@
  */
 
 /**
- * FixedColumnTextualFeatureConverter.java
+ * FixedColumnText.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
@@ -62,7 +62,7 @@ import adams.data.report.DataType;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FixedColumnTextualFeatureConverter
+public class FixedColumnText
   extends AbstractFeatureConverter<String,String> {
 
   /** for serialization. */

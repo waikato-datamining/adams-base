@@ -1,0 +1,6 @@
+--> out-0.txt
+string,boolean,number
+"hello world",true,3.1415
+"bye bye",false,2.7
+"","",""
+

@@ -14,7 +14,7 @@
  */
 
 /**
- * SpreadSheetFeatureConverter.java
+ * SpreadSheet.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
@@ -25,7 +25,6 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Generates features in spreadsheet format.
@@ -33,8 +32,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SpreadSheetFeatureConverter
-  extends AbstractFeatureConverter<SpreadSheet,Row> {
+public class SpreadSheet
+  extends AbstractFeatureConverter<adams.data.spreadsheet.SpreadSheet,Row> {
 
   /** for serialization. */
   private static final long serialVersionUID = -1696817128027564877L;
@@ -43,7 +42,7 @@ public class SpreadSheetFeatureConverter
   protected DataRow m_DataRowType;
 
   /** the type of spreadsheet to use. */
-  protected SpreadSheet m_SpreadSheetType;
+  protected adams.data.spreadsheet.SpreadSheet m_SpreadSheetType;
 
   /**
    * Returns a string describing the object.
@@ -114,8 +113,8 @@ public class SpreadSheetFeatureConverter
    * 
    * @return		the spreadsheet
    */
-  protected SpreadSheet getDefaultSpreadSheetType() {
-    return new SpreadSheet();
+  protected adams.data.spreadsheet.SpreadSheet getDefaultSpreadSheetType() {
+    return new adams.data.spreadsheet.SpreadSheet();
   }
   
   /**
@@ -123,7 +122,7 @@ public class SpreadSheetFeatureConverter
    *
    * @param value	the type
    */
-  public void setSpreadSheetType(SpreadSheet value) {
+  public void setSpreadSheetType(adams.data.spreadsheet.SpreadSheet value) {
     m_SpreadSheetType = value;
     reset();
   }
@@ -133,7 +132,7 @@ public class SpreadSheetFeatureConverter
    *
    * @return		the type
    */
-  public SpreadSheet getSpreadSheetType() {
+  public adams.data.spreadsheet.SpreadSheet getSpreadSheetType() {
     return m_SpreadSheetType;
   }
 
@@ -174,13 +173,13 @@ public class SpreadSheetFeatureConverter
    * @return		the dataset structure
    */
   @Override
-  protected SpreadSheet doGenerateHeader(HeaderDefinition header) {
-    SpreadSheet	result;
-    Row		row;
+  protected adams.data.spreadsheet.SpreadSheet doGenerateHeader(HeaderDefinition header) {
+    adams.data.spreadsheet.SpreadSheet	result;
+    Row					row;
     
     result = m_SpreadSheetType.getClone();
     result.setDataRowClass(m_DataRowType.getClass());
-    result.setName(getClass().getName());
+    result.setName(header.getDataset());
     
     row = result.getHeaderRow();
     for (String name: header.getNames())
@@ -197,11 +196,11 @@ public class SpreadSheetFeatureConverter
    */
   @Override
   protected Row doGenerateRow(List<Object> data) {
-    Row		result;
-    SpreadSheet	sheet;
-    int		i;
-    Object	obj;
-    Cell	cell;
+    Row					result;
+    adams.data.spreadsheet.SpreadSheet	sheet;
+    int					i;
+    Object				obj;
+    Cell				cell;
     
     sheet  = m_Header.getClone();
     result = sheet.addRow();

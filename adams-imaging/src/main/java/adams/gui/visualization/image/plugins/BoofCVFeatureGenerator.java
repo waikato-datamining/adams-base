@@ -25,7 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.features.AbstractBoofCVFeatureGenerator;
-import adams.data.featureconverter.SpreadSheetFeatureConverter;
+import adams.data.featureconverter.SpreadSheet;
 import adams.data.spreadsheet.Row;
 
 /**
@@ -108,7 +108,7 @@ public class BoofCVFeatureGenerator
 
     setLastSetup(m_Editor.getValue());
     generator = (AbstractBoofCVFeatureGenerator) m_Editor.getValue();
-    generator.setConverter(new SpreadSheetFeatureConverter());
+    generator.setConverter(new SpreadSheet());
     input     = new BoofCVImageContainer();
     input.setImage(BoofCVHelper.toBoofCVImage(image));
     features = (Row[]) generator.generate(input);

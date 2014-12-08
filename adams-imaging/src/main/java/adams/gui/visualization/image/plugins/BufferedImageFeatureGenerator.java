@@ -22,7 +22,7 @@ package adams.gui.visualization.image.plugins;
 import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
-import adams.data.featureconverter.SpreadSheetFeatureConverter;
+import adams.data.featureconverter.SpreadSheet;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.jai.features.Histogram;
@@ -108,7 +108,7 @@ public class BufferedImageFeatureGenerator
 
     setLastSetup(m_Editor.getValue());
     generator = (AbstractBufferedImageFeatureGenerator) m_Editor.getValue();
-    generator.setConverter(new SpreadSheetFeatureConverter());
+    generator.setConverter(new SpreadSheet());
     input     = new BufferedImageContainer();
     input.setImage(image);
     features = (Row[]) generator.generate(input);

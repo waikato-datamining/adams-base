@@ -45,6 +45,21 @@ public abstract class AbstractFeatureConverter<D,R>
   /** the data types. */
   protected HeaderDefinition m_HeaderDefinition;
   
+  /** the name of the dataset. */
+  protected String m_Dataset;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "dataset", "dataset",
+	    HeaderDefinition.DEFAULT_DATASET_NAME);
+  }
+  
   /**
    * Resets the scheme.
    */
@@ -54,6 +69,35 @@ public abstract class AbstractFeatureConverter<D,R>
     
     m_Header           = null;
     m_HeaderDefinition = null;
+  }
+
+  /**
+   * Sets the dataset name to use.
+   *
+   * @param value	the dataset name
+   */
+  public void setDataset(String value) {
+    m_Dataset = value;
+    reset();
+  }
+
+  /**
+   * Returns the dataset name in use.
+   *
+   * @return		the dataset name
+   */
+  public String getDataset() {
+    return m_Dataset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String datasetTipText() {
+    return "The dataset name to use.";
   }
 
   /**
