@@ -342,6 +342,26 @@ public class SpreadSheetTable
       }
     });
     menu.add(menuitem);
+    
+    menuitem = new JMenuItem("Rename column", GUIHelper.getEmptyIcon());
+    menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	int actCol = col;
+	if (getShowRowColumn())
+	  actCol--;
+	SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+	String newName = sheet.getColumnName(actCol);
+	newName = GUIHelper.showInputDialog(getParent(), "Please enter new column name", newName);
+	if (newName == null)
+	  return;
+	sheet = sheet.getClone();
+	sheet.getHeaderRow().getCell(actCol).setContent(newName);
+	setModel(new SpreadSheetTableModel(sheet));
+      }
+    });
+    menu.add(menuitem);
 
     asc  = !e.isShiftDown();
     if (asc)
