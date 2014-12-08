@@ -22,6 +22,7 @@ package adams.flow.control;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -43,6 +44,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
+import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -134,6 +136,12 @@ public class Branch
   /** whether to finish execution first before stopping. */
   protected boolean m_FinishBeforeStopping;
 
+  /** whether to collect the output of the branches. */
+  protected boolean m_CollectOutput;
+  
+  /** the collected output. */
+  protected HashMap<Integer,Token> m_CollectedOutput;
+  
   /**
    * Returns a string describing the object.
    *
@@ -298,6 +306,34 @@ public class Branch
   }
 
   /**
+   * Whether to collect the output of the branches.
+   * 
+   * @param value	true if to collect the output
+   */
+  public void setCollectOutput(boolean value) {
+    m_CollectOutput = value;
+    reset();
+  }
+  
+  /**
+   * Returns whether the output of the branches is collected.
+   * 
+   * @return		true if output collected
+   */
+  public boolean getCollectOutput() {
+    return m_CollectOutput;
+  }
+  
+  /**
+   * Returns the collected output from the branches, if any.
+   * 
+   * @return		the collected output, null if not available
+   */
+  public HashMap<Integer,Token> getCollectedOutput() {
+    return m_CollectedOutput;
+  }
+  
+  /**
    * Initializes the sub-actors for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -318,6 +354,9 @@ public class Branch
 
       if (m_ActualNumThreads > 0)
 	m_HasGlobalTransformers = hasGlobalTransformers();
+
+      if (m_CollectOutput)
+	m_CollectedOutput = new HashMap<Integer,Token>();
     }
 
     return result;
@@ -745,6 +784,9 @@ public class Branch
 	      result += ", ";
 	    result += "Branch #" + (i+1) + ": " + jobResult;
 	  }
+	  // collect output?
+	  if (m_CollectOutput && ((OutputProducer) get(i)).hasPendingOutput())
+	    m_CollectedOutput.put(i, ((OutputProducer) get(i)).output());
 	}
 	catch (InterruptedException e) {
 	  // ignored
@@ -798,6 +840,9 @@ public class Branch
 	result = actor.execute();
 	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	  getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(actor);
+	// collect output?
+	if (m_CollectOutput && ((OutputProducer) actor).hasPendingOutput())
+	  m_CollectedOutput.put(i, ((OutputProducer) actor).output());
       }
       catch (Exception e) {
 	msg    = "Failed to execute branch #" + (i+1) + ": ";
@@ -827,6 +872,9 @@ public class Branch
    */
   @Override
   protected String doExecute() {
+    if (m_CollectOutput)
+      m_CollectedOutput.clear();
+    
     if (m_ActualNumThreads == 0)
       return executeSequential();
     else
