@@ -15,7 +15,7 @@
 
 /**
  * ArrayToCollectionTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -23,6 +23,9 @@ package adams.data.conversion;
 import java.util.Stack;
 import java.util.Vector;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
 
 /**
  * Tests the ArrayToCollection conversion.
@@ -47,6 +50,7 @@ public class ArrayToCollectionTest
    *
    * @return		the objects
    */
+  @Override
   protected Object[] getRegressionInput() {
     return new Double[][]{
 	{
@@ -67,6 +71,7 @@ public class ArrayToCollectionTest
    *
    * @return		the setups
    */
+  @Override
   protected Conversion[] getRegressionSetups() {
     ArrayToCollection[]		result;
     
@@ -87,7 +92,27 @@ public class ArrayToCollectionTest
    *
    * @return		the setups
    */
+  @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(ArrayToCollectionTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

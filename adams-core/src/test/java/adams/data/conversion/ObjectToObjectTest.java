@@ -15,11 +15,14 @@
 
 /**
  * ObjectToObjectTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
 
 /**
  * Tests the ObjectToObject conversion.
@@ -44,6 +47,7 @@ public class ObjectToObjectTest
    *
    * @return		the objects
    */
+  @Override
   protected Object[] getRegressionInput() {
     return new String[]{
 	"1",
@@ -58,6 +62,7 @@ public class ObjectToObjectTest
    *
    * @return		the setups
    */
+  @Override
   protected Conversion[] getRegressionSetups() {
     return new Conversion[]{
 	new ObjectToObject()
@@ -69,7 +74,27 @@ public class ObjectToObjectTest
    *
    * @return		the setups
    */
+  @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(ObjectToObjectTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

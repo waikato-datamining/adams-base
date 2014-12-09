@@ -15,17 +15,18 @@
 
 /**
  * WekaInstanceToAdamsInstanceTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import adams.data.conversion.WekaInstanceToAdamsInstance;
-import adams.test.TmpFile;
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import adams.env.Environment;
+import adams.test.TmpFile;
 
 /**
  * Tests the WekaInstanceToAdamsInstance conversion.
@@ -50,6 +51,7 @@ public class WekaInstanceToAdamsInstanceTest
    *
    * @throws Exception if an error occurs.
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -61,6 +63,7 @@ public class WekaInstanceToAdamsInstanceTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("vote.arff");
 
@@ -72,6 +75,7 @@ public class WekaInstanceToAdamsInstanceTest
    *
    * @return		the objects
    */
+  @Override
   protected Object[] getRegressionInput() {
     Instance[]	result;
     Instances	data;
@@ -100,6 +104,7 @@ public class WekaInstanceToAdamsInstanceTest
    *
    * @return		the setups
    */
+  @Override
   protected Conversion[] getRegressionSetups() {
     return new Conversion[]{
 	new WekaInstanceToAdamsInstance()
@@ -111,6 +116,7 @@ public class WekaInstanceToAdamsInstanceTest
    *
    * @return		the setups
    */
+  @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
   }
@@ -121,7 +127,27 @@ public class WekaInstanceToAdamsInstanceTest
    * @param data	the object to convert
    * @return		the string representation
    */
+  @Override
   protected String toString(Object data) {
     return "" + ((adams.data.instance.Instance) data).toInstance();
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(WekaInstanceToAdamsInstanceTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

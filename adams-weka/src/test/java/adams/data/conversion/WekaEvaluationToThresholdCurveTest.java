@@ -23,6 +23,8 @@ package adams.data.conversion;
 import java.io.StringWriter;
 import java.util.Random;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -30,8 +32,8 @@ import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Utils;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.env.Environment;
 import adams.test.TmpFile;
-
 
 /**
  * Tests the WekaEvaluationToThresholdCurve conversion.
@@ -168,5 +170,24 @@ public class WekaEvaluationToThresholdCurveTest
   @Override
   public void testRegression() {
     // TODO completely different results on 32bit??
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(WekaEvaluationToThresholdCurveTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

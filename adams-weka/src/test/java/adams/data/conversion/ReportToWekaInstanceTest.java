@@ -15,11 +15,13 @@
 
 /**
  * ReportToWekaInstanceTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Range;
@@ -27,6 +29,7 @@ import adams.data.instance.Instance;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
@@ -52,6 +55,7 @@ public class ReportToWekaInstanceTest
    *
    * @throws Exception if an error occurs.
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -64,6 +68,7 @@ public class ReportToWekaInstanceTest
    *
    * @throws Exception	if tear-down fails
    */
+  @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("bolts.arff");
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
@@ -76,6 +81,7 @@ public class ReportToWekaInstanceTest
    *
    * @return		the objects
    */
+  @Override
   protected Object[] getRegressionInput() {
     Report[]	result;
     Instances	data;
@@ -107,6 +113,7 @@ public class ReportToWekaInstanceTest
    *
    * @return		the setups
    */
+  @Override
   protected Conversion[] getRegressionSetups() {
     ReportToWekaInstance[]	result;
 
@@ -126,7 +133,27 @@ public class ReportToWekaInstanceTest
    *
    * @return		the setups
    */
+  @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(ReportToWekaInstanceTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

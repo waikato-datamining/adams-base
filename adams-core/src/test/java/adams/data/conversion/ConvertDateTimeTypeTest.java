@@ -15,14 +15,17 @@
 
 /**
  * ConvertDateTimeTypeTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
 import java.util.Date;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.DateTimeType;
+import adams.env.Environment;
 
 /**
  * Tests the ConvertDateTimeType conversion.
@@ -89,5 +92,24 @@ public class ConvertDateTimeTypeTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(ConvertDateTimeTypeTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

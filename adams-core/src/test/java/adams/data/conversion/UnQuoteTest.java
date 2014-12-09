@@ -15,13 +15,15 @@
 
 /**
  * UnQuoteTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.data.conversion.Quote.QuoteType;
-
+import adams.env.Environment;
 
 /**
  * Tests the UnQuote conversion.
@@ -91,5 +93,24 @@ public class UnQuoteTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(UnQuoteTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

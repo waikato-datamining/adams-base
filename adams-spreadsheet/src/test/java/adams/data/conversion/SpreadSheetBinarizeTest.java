@@ -20,9 +20,12 @@
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
@@ -119,5 +122,24 @@ public class SpreadSheetBinarizeTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(SpreadSheetBinarizeTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

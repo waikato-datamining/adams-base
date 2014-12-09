@@ -15,10 +15,14 @@
 
 /**
  * DOMToPropertiesTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
 
 /**
  * Tests the DOMToProperties conversion.
@@ -68,5 +72,24 @@ public class DOMToPropertiesTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(DOMToPropertiesTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

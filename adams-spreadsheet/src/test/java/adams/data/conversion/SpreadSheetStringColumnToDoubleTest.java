@@ -15,16 +15,19 @@
 
 /**
  * SpreadSheetStringColumnToDoubleTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.Range;
 import adams.data.DecimalFormatString;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
@@ -125,5 +128,24 @@ public class SpreadSheetStringColumnToDoubleTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(SpreadSheetStringColumnToDoubleTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

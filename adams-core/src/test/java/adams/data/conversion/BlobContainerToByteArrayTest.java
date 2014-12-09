@@ -20,7 +20,10 @@
 
 package adams.data.conversion;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.data.blob.BlobContainer;
+import adams.env.Environment;
 
 /**
  * Tests the BlobContainerToByteArray conversion.
@@ -79,5 +82,24 @@ public class BlobContainerToByteArrayTest
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
     return new int[0];
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(BlobContainerToByteArrayTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }
