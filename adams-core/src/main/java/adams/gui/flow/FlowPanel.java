@@ -1601,7 +1601,6 @@ public class FlowPanel
    */
   protected void updateRegisteredDisplays(boolean show) {
     RegisteredDisplaysTab	registered;
-    int				count;
 
     if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
       getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
@@ -1610,10 +1609,7 @@ public class FlowPanel
       registered.update();
     
     // close displays?
-    count = 0;
-    for (Class cls: m_RegisteredDisplays.keySet())
-      count += m_RegisteredDisplays.get(cls).size();
-    if (count == 0)
+    if (!hasRegisteredDisplays())
       getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, false, false);
   }
 
@@ -1682,6 +1678,21 @@ public class FlowPanel
   }
   
   /**
+   * Returns whether there are any registered displays open.
+   * 
+   * @return		true if at least one open
+   */
+  public boolean hasRegisteredDisplays() {
+    int		count;
+    
+    count = 0;
+    for (Class cls: m_RegisteredDisplays.keySet())
+      count += m_RegisteredDisplays.get(cls).size();
+
+    return (count > 0);
+  }
+  
+  /**
    * Notifies the {@link RegisteredBreakpointsTab} instance of a change. 
    * 
    * @param show	whether to show the tab or leave as is
@@ -1696,7 +1707,7 @@ public class FlowPanel
       registered.update();
     
     // close display?
-    if (m_RegisteredBreakpoints.size() == 0)
+    if (!hasRegisteredBreakpoints())
       getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, false, false);
   }
 
@@ -1751,6 +1762,15 @@ public class FlowPanel
    */
   public HashMap<String,Breakpoint> getRegisteredBreakpoints() {
     return m_RegisteredBreakpoints;
+  }
+  
+  /**
+   * Returns whether there are still active breakpoints.
+   * 
+   * @return		if active breakpoints
+   */
+  public boolean hasRegisteredBreakpoints() {
+    return (m_RegisteredBreakpoints.size() > 0);
   }
   
   /**

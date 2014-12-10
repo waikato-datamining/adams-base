@@ -32,6 +32,8 @@ import adams.core.Properties;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
+import adams.gui.flow.tab.RegisteredBreakpointsTab;
+import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
 /**
@@ -252,6 +254,12 @@ public class FlowTabbedPane
       getOwner().showStatus("Running");
     else
       getOwner().showStatus("");
+
+    // ensure that tabs are visible
+    if (hasCurrentPanel()) {
+      getOwner().getTabs().setVisible(RegisteredBreakpointsTab.class, getCurrentPanel().hasRegisteredBreakpoints(), false);
+      getOwner().getTabs().setVisible(RegisteredDisplaysTab.class, getCurrentPanel().hasRegisteredDisplays(), false);
+    }
     
     // current directory
     updateCurrentDirectory();
