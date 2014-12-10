@@ -1600,13 +1600,21 @@ public class FlowPanel
    * @param show	whether to show the tab or leave as is
    */
   protected void updateRegisteredDisplays(boolean show) {
-    RegisteredDisplaysTab			registered;
+    RegisteredDisplaysTab	registered;
+    int				count;
 
     if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
       getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
     registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
     if (registered != null)
       registered.update();
+    
+    // close displays?
+    count = 0;
+    for (Class cls: m_RegisteredDisplays.keySet())
+      count += m_RegisteredDisplays.get(cls).size();
+    if (count == 0)
+      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, false, false);
   }
 
   /**
@@ -1686,6 +1694,10 @@ public class FlowPanel
     registered = (RegisteredBreakpointsTab) getEditor().getTabs().getTab(RegisteredBreakpointsTab.class);
     if (registered != null)
       registered.update();
+    
+    // close display?
+    if (m_RegisteredBreakpoints.size() == 0)
+      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, false, false);
   }
 
   /**
