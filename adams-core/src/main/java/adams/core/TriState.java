@@ -125,7 +125,7 @@ public enum TriState
     // try display
     if (result == null) {
       for (TriState dt: values()) {
-	if (dt.toDisplay().equals(str)) {
+	if (dt.toDisplay().equalsIgnoreCase(str)) {
 	  result = dt;
 	  break;
 	}
