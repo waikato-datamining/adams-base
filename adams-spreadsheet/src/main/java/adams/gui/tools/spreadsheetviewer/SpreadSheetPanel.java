@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -104,6 +105,7 @@ public class SpreadSheetPanel
   @Override
   protected void initGUI() {
     JPanel	panel;
+    JLabel	label;
 
     super.initGUI();
 
@@ -121,6 +123,10 @@ public class SpreadSheetPanel
     
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_ColumnComboBox = new SpreadSheetColumnComboBox(m_Table);
+    label = new JLabel("Jump to");
+    label.setLabelFor(m_ColumnComboBox);
+    label.setDisplayedMnemonic('J');
+    panel.add(label);
     panel.add(m_ColumnComboBox);
     add(panel, BorderLayout.NORTH);
 
