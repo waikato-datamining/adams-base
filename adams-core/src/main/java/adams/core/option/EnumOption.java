@@ -15,10 +15,11 @@
 
 /**
  * ClassOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
@@ -75,7 +76,8 @@ public class EnumOption
     super(owner, commandline, property, defValue, outputDefValue);
 
     // register enums automatically with the GOE
-    Editors.registerCustomEditor(getBaseClass(), EnumEditor.class);
+    if (PropertyEditorManager.findEditor(getBaseClass()) == null)
+      Editors.registerCustomEditor(getBaseClass(), EnumEditor.class);
     m_CustomDisplayInstance = null;
   }
 
@@ -86,6 +88,7 @@ public class EnumOption
    * @param defValue	the default value to compare against
    * @return		true if both are equal
    */
+  @Override
   protected boolean compareValues(Object value, Object defValue) {
     return toString(value).equals(toString(defValue));
   }
@@ -134,6 +137,7 @@ public class EnumOption
    * @return		the generated object
    * @throws Exception	if parsing of string fails
    */
+  @Override
   public Object valueOf(String s) throws Exception {
     Object			result;
     Class			cl;
@@ -160,6 +164,7 @@ public class EnumOption
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
+  @Override
   public String toString(Object obj) {
     String	result;
 
@@ -199,6 +204,7 @@ public class EnumOption
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
     super.cleanUp();
 

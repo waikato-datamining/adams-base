@@ -15,7 +15,7 @@
 
 /**
  * Editors.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -109,8 +109,10 @@ public class Editors {
     while (iter.hasNext()) {
       pkg   = iter.next();
       enums = ClassLocator.getSingleton().findInPackage(Enum.class, pkg);
-      for (String cname: enums)
-        result.setProperty(cname, enmEditor);
+      for (String cname: enums) {
+	if (!result.hasKey(cname))
+	  result.setProperty(cname, enmEditor);
+      }
     }
 
     return result;

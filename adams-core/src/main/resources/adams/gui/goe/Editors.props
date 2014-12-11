@@ -21,6 +21,7 @@ java.awt.Font=adams.gui.goe.FontEditor
 java.util.TimeZone=adams.gui.goe.TimeZoneEditor
 java.util.Locale=adams.gui.goe.LocaleEditor
 adams.core.NamedSetup=adams.gui.goe.NamedSetupEditor
+adams.core.TriState=adams.gui.goe.TriStateEditor
 adams.core.base.BaseBoolean=adams.gui.goe.BaseBooleanEditor
 adams.core.base.BaseCharacter=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseString=adams.gui.goe.BaseObjectEditor

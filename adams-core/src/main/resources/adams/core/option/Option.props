@@ -61,6 +61,11 @@ adams.core.NamedSetup=true
 adams.core.NamedSetup#toString=adams.gui.goe.NamedSetupEditor#toString
 adams.core.NamedSetup#valueOf=adams.gui.goe.NamedSetupEditor#valueOf
 
+# TriState objects
+adams.core.TriState=true
+adams.core.TriState#toString=adams.gui.goe.TriStateEditor#toString
+adams.core.TriState#valueOf=adams.gui.goe.TriStateEditor#valueOf
+
 # BaseObject (and derived) objects
 #adams.core.base.BaseObject=true
 #adams.core.base.BaseObject#toString=adams.gui.goe.BaseObjectEditor#toString
