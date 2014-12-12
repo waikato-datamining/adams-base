@@ -7,6 +7,14 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
+# converting from BufferedImage to other format
+adams.data.conversion.BufferedImageToOtherFormatConversion=\
+  adams.data.conversion
+
+# converting from other format to BufferedImage
+adams.data.conversion.OtherFormatToBufferedImageConversion=\
+  adams.data.conversion
+
 # the BufferedImage feature generators
 adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
   adams.data.image.features,\

@@ -166,7 +166,7 @@ adams.flow.control.Flow
 			-name
 			create image
 			-tee
-				adams.flow.source.JAICreateImage
+				adams.flow.source.NewImage
 					-width
 					@{num_x}
 					-height

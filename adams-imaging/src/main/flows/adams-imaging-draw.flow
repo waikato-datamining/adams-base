@@ -28,7 +28,7 @@ adams.flow.control.Flow
 									-height
 									100.0
 	-actor
-		adams.flow.source.JAICreateImage
+		adams.flow.source.NewImage
 			-width
 			600
 			-height

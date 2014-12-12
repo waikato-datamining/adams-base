@@ -15,7 +15,7 @@
 
 /**
  * BufferedImageToImageJ.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -46,7 +46,8 @@ import adams.data.imagej.ImagePlusContainer;
  * @version $Revision$
  */
 public class BufferedImageToImageJ
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements BufferedImageToOtherFormatConversion {
 
   /** for serialization. */
   private static final long serialVersionUID = 267299130050379610L;

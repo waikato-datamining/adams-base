@@ -30,7 +30,8 @@ Rename=\
   Rename-transformer_boofcvflattener,\
   Rename-transformer_imagejflattener,\
   Rename-transformer_jaiflattener,\
-  Rename-transformer_jaitransformer
+  Rename-transformer_jaitransformer,\
+  Rename-source-jaicreateimage
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
@@ -59,6 +60,7 @@ Rename-transformer_boofcvflattener=adams.flow.transformer.BoofCVFlattener-adams.
 Rename-transformer_imagejflattener=adams.flow.transformer.ImageJFlattener-adams.flow.transformer.ImageJFeatureGenerator
 Rename-transformer_jaiflattener=adams.flow.transformer.JAIFlattener-adams.flow.transformer.BufferedImageFeatureGenerator
 Rename-transformer_jaitransformer=adams.flow.transformer.JAITransformer-adams.flow.transformer.BufferedImageTransformer
+Rename-source-jaicreateimage=adams.flow.source.JAICreateImage-adams.flow.source.NewImage
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\

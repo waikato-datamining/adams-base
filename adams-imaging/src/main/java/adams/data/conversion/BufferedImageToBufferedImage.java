@@ -14,50 +14,36 @@
  */
 
 /**
- * BufferedImageToBoofCV.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * BufferedImageToBufferedImage.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.data.boofcv.BoofCVHelper;
-import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.boofcv.BoofCVImageType;
-import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Turns a BufferedImage container into a BoofCV one.
+ * Dummy conversion, performs no conversion at all.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-image-type &lt;FLOAT_32|FLOAT_64|SIGNED_INT_8|UNSIGNED_INT_8|SIGNED_INT_16|UNSIGNED_INT_16|SIGNED_INT_32|SIGNED_INT_64&gt; (property: imageType)
- * &nbsp;&nbsp;&nbsp;The BoofCV image type to convert to.
- * &nbsp;&nbsp;&nbsp;default: FLOAT_32
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 9987 $
  */
-public class BufferedImageToBoofCV
+public class BufferedImageToBufferedImage
   extends AbstractConversion
-  implements BufferedImageToOtherFormatConversion {
+  implements BufferedImageToOtherFormatConversion, OtherFormatToBufferedImageConversion {
 
   /** for serialization. */
   private static final long serialVersionUID = 267299130050379610L;
-
-  /** the image type to generate. */
-  protected BoofCVImageType m_ImageType;
   
   /**
    * Returns a string describing the object.
@@ -66,48 +52,7 @@ public class BufferedImageToBoofCV
    */
   @Override
   public String globalInfo() {
-    return "Turns a BufferedImage container into a BoofCV one.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "image-type", "imageType",
-	    BoofCVImageType.FLOAT_32);
-  }
-
-  /**
-   * Sets the image type to convert to.
-   *
-   * @param value 	the image type
-   */
-  public void setImageType(BoofCVImageType value) {
-    m_ImageType = value;
-    reset();
-  }
-
-  /**
-   * Returns the image type to conver to.
-   *
-   * @return 		the type
-   */
-  public BoofCVImageType getImageType() {
-    return m_ImageType;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String imageTypeTipText() {
-    return "The BoofCV image type to convert to.";
+    return "Dummy conversion, performs no conversion at all.";
   }
 
   /**
@@ -127,7 +72,7 @@ public class BufferedImageToBoofCV
    */
   @Override
   public Class generates() {
-    return BoofCVImageContainer.class;
+    return BufferedImageContainer.class;
   }
 
   /**
@@ -138,6 +83,6 @@ public class BufferedImageToBoofCV
    */
   @Override
   protected Object doConvert() throws Exception {
-    return BoofCVHelper.toBoofCVImageContainer((AbstractImageContainer) m_Input, m_ImageType);
+    return m_Input;
   }
 }

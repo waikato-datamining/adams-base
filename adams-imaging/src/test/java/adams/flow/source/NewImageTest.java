@@ -14,8 +14,8 @@
  */
 
 /*
- * JAICreateImageTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * NewImageTest.java
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -35,7 +35,7 @@ import adams.flow.core.AbstractActor;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  * @version $Revision$
  */
-public class JAICreateImageTest
+public class NewImageTest
   extends AbstractFlowTest {
 
   /**
@@ -43,7 +43,7 @@ public class JAICreateImageTest
    *
    * @param name	the name of the test
    */
-  public JAICreateImageTest(String name) {
+  public NewImageTest(String name) {
     super(name);
   }
 
@@ -54,7 +54,7 @@ public class JAICreateImageTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(JAICreateImageTest.class);
+    return new TestSuite(NewImageTest.class);
   }
 
   /**
@@ -62,6 +62,7 @@ public class JAICreateImageTest
    *
    * @return a suitably configured <code>AbstractActor</code> value
    */
+  @Override
   public AbstractActor getActor() {
     AbstractArgumentOption    argOption;
     
@@ -70,7 +71,7 @@ public class JAICreateImageTest
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[2];
-      adams.flow.source.JAICreateImage tmp2 = new adams.flow.source.JAICreateImage();
+      adams.flow.source.NewImage tmp2 = new adams.flow.source.NewImage();
       tmp1[0] = tmp2;
       adams.flow.sink.ImageViewer tmp3 = new adams.flow.sink.ImageViewer();
       argOption = (AbstractArgumentOption) tmp3.getOptionManager().findByProperty("writer");

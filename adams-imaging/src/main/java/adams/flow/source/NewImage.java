@@ -14,8 +14,8 @@
  */
 
 /**
- * JAICreateImage.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * NewImage.java
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -24,50 +24,56 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.BufferedImageToBufferedImage;
+import adams.data.conversion.BufferedImageToOtherFormatConversion;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Generates an empty image with the specified dimensions.
+ * Generates an empty image with the specified dimensions (Type: RGB or ARBG).
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.jai.BufferedImageContainer<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: JAICreateImage
+ * &nbsp;&nbsp;&nbsp;default: NewImage
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-width &lt;int&gt; (property: width)
@@ -82,9 +88,21 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-alpha-channel &lt;boolean&gt; (property: alphaChannel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the alpha channel gets added as well (type is then ARGB instead 
+ * &nbsp;&nbsp;&nbsp;of RGB).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-background &lt;java.awt.Color&gt; (property: background)
  * &nbsp;&nbsp;&nbsp;The background color of the image.
  * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.BufferedImageToOtherFormatConversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The conversion for turning the adams.data.image.BufferedImageContainer into 
+ * &nbsp;&nbsp;&nbsp;another format if necessary.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.BufferedImageToBufferedImage
  * </pre>
  * 
  <!-- options-end -->
@@ -92,7 +110,7 @@ import adams.flow.core.Token;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class JAICreateImage
+public class NewImage
   extends AbstractSource {
 
   /** for serialization. */
@@ -107,12 +125,18 @@ public class JAICreateImage
   /** the background color. */
   protected Color m_Background;
   
+  /** whether to add Alpha channel. */
+  protected boolean m_AlphaChannel;
+  
+  /** the conversion to perform. */
+  protected BufferedImageToOtherFormatConversion m_Conversion;
+  
   /** the generated image token. */
   protected Token m_OutputToken;
   
   @Override
   public String globalInfo() {
-    return "Generates an empty image with the specified dimensions.";
+    return "Generates an empty image with the specified dimensions (Type: RGB or ARBG).";
   }
 
   /**
@@ -131,8 +155,16 @@ public class JAICreateImage
 	    getDefaultHeight(), 1, null);
 
     m_OptionManager.add(
+	    "alpha-channel", "alphaChannel",
+	    false);
+
+    m_OptionManager.add(
 	    "background", "background",
 	    getDefaultBackground());
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new BufferedImageToBufferedImage());
   }
 
   /**
@@ -143,10 +175,16 @@ public class JAICreateImage
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
     result  = QuickInfoHelper.toString(this, "width", m_Width);
     result += " x ";
     result += QuickInfoHelper.toString(this, "height", m_Height);
+    value = QuickInfoHelper.toString(this, "alphaChannel", m_AlphaChannel, "alpha", ", ");
+    if (value != null)
+      result += value;
+    result += QuickInfoHelper.toString(this, "background", m_Background, ", background: ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -228,6 +266,35 @@ public class JAICreateImage
   }
 
   /**
+   * Sets whether to add the alpha channel.
+   *
+   * @param value	true if alpha channel
+   */
+  public void setAlphaChannel(boolean value) {
+    m_AlphaChannel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add alpha channel.
+   *
+   * @return		true if alpha channel
+   */
+  public boolean getAlphaChannel() {
+    return m_AlphaChannel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alphaChannelTipText() {
+    return "If enabled, the alpha channel gets added as well (type is then ARGB instead of RGB).";
+  }
+
+  /**
    * Returns the default backrgound color of the image.
    *
    * @return		the default color
@@ -266,13 +333,46 @@ public class JAICreateImage
   }
 
   /**
+   * Sets the conversion for converting the {@link BufferedImageContainer} 
+   * into another format if necessary.
+   *
+   * @param value	the conversion
+   */
+  public void setConversion(BufferedImageToOtherFormatConversion value) {
+    m_Conversion = value;
+    reset();
+  }
+
+  /**
+   * Returns the conversion for converting the {@link BufferedImageContainer} 
+   * into another format if necessary.
+   *
+   * @return		the conversion
+   */
+  public BufferedImageToOtherFormatConversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return 
+	"The conversion for turning the " + BufferedImageContainer.class.getName() 
+	+ " into another format if necessary.";
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
    */
   @Override
   public Class[] generates() {
-    return new Class[]{BufferedImageContainer.class};
+    return new Class[]{m_Conversion.generates()};
   }
 
   /**
@@ -282,21 +382,37 @@ public class JAICreateImage
    */
   @Override
   protected String doExecute() {
-    BufferedImageContainer	cont;
+    String			result;
+    AbstractImageContainer	cont;
     BufferedImage		image;
     Graphics2D			g;
     
-    image = new BufferedImage(m_Width, m_Height, BufferedImage.TYPE_INT_RGB);
-    g     = image.createGraphics();
+    result = null;
+    
+    if (m_AlphaChannel)
+      image = new BufferedImage(m_Width, m_Height, BufferedImage.TYPE_INT_ARGB);
+    else
+      image = new BufferedImage(m_Width, m_Height, BufferedImage.TYPE_INT_RGB);
+    g = image.createGraphics();
+    g.setColor(m_Background);
     g.fillRect(0, 0, m_Width, m_Height);
     g.dispose();
     
     cont = new BufferedImageContainer();
     cont.setImage(image);
     
-    m_OutputToken = new Token(cont);
+    if (!(m_Conversion instanceof BufferedImageToBufferedImage)) {
+      m_Conversion.setInput(cont);
+      result = m_Conversion.convert();
+      if (result == null)
+	m_OutputToken = new Token(m_Conversion.getOutput());
+      m_Conversion.cleanUp();
+    }
+    else {
+      m_OutputToken = new Token(cont);
+    }
     
-    return null;
+    return result;
   }
 
   /**
