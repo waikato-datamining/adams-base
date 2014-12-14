@@ -79,18 +79,6 @@ import adams.core.Utils;
  * &nbsp;&nbsp;&nbsp;default: FIELD_DELIMITED
  * </pre>
  * 
- * <pre>-char-start-pos &lt;int&gt; (property: characterStartPos)
- * &nbsp;&nbsp;&nbsp;The position of the first character to include in case fixed character positions 
- * &nbsp;&nbsp;&nbsp;are used (1-based).
- * &nbsp;&nbsp;&nbsp;default: 1
- * </pre>
- * 
- * <pre>-char-end-pos &lt;int&gt; (property: characterEndPos)
- * &nbsp;&nbsp;&nbsp;The position of the last character to include in case fixed character positions 
- * &nbsp;&nbsp;&nbsp;are used (1-based).
- * &nbsp;&nbsp;&nbsp;default: 10
- * </pre>
- * 
  * <pre>-field-delimiter &lt;java.lang.String&gt; (property: fieldDelimiter)
  * &nbsp;&nbsp;&nbsp;The field delimiter to use; \t gets automatically converted into its character 
  * &nbsp;&nbsp;&nbsp;counterpart.
@@ -101,6 +89,18 @@ import adams.core.Utils;
  * &nbsp;&nbsp;&nbsp;The 1-based index of the field to cut from the string(s).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-char-start-pos &lt;int&gt; (property: characterStartPos)
+ * &nbsp;&nbsp;&nbsp;The position of the first character to include in case fixed character positions 
+ * &nbsp;&nbsp;&nbsp;are used (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * </pre>
+ * 
+ * <pre>-char-end-pos &lt;int&gt; (property: characterEndPos)
+ * &nbsp;&nbsp;&nbsp;The position of the last character to include in case fixed character positions 
+ * &nbsp;&nbsp;&nbsp;are used (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 10
  * </pre>
  * 
  <!-- options-end -->
@@ -161,20 +161,20 @@ public class StringCut
 	    CutType.FIELD_DELIMITED);
 
     m_OptionManager.add(
-	    "char-start-pos", "characterStartPos",
-	    1);
-
-    m_OptionManager.add(
-	    "char-end-pos", "characterEndPos",
-	    10);
-
-    m_OptionManager.add(
 	    "field-delimiter", "fieldDelimiter",
 	    "\\t");
 
     m_OptionManager.add(
 	    "field-index", "fieldIndex",
 	    new Index("1"));
+
+    m_OptionManager.add(
+	    "char-start-pos", "characterStartPos",
+	    1);
+
+    m_OptionManager.add(
+	    "char-end-pos", "characterEndPos",
+	    10);
   }
 
   /**
