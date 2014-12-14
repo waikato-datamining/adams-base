@@ -44,7 +44,8 @@ import adams.data.jai.JAIHelper;
  * @version $Revision$
  */
 public class BoofCVToBufferedImage
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements OtherFormatToBufferedImageConversion {
 
   /** for serialization. */
   private static final long serialVersionUID = -6909862341852136089L;
