@@ -26,10 +26,6 @@ import adams.data.image.AbstractImageFeatureGenerator;
 /**
  * Abstract base class for BoofCV feature generation.
  *
- * Derived classes only have to override the <code>doProcess(BoofCVImageSingleBandContainer)</code>
- * method. The <code>reset()</code> method can be used to reset an
- * algorithms internal state, e.g., after setting options.
- *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */

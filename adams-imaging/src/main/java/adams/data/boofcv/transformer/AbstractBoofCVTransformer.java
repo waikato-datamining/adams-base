@@ -15,7 +15,7 @@
 
 /*
  * AbstractBoofCVTransformer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -29,10 +29,6 @@ import adams.data.image.AbstractImageTransformer;
 
 /**
  * Abstract base class for BoofCV transformations.
- *
- * Derived classes only have to override the <code>doTransform(BoofCVImageSingleBandContainer)</code>
- * method. The <code>reset()</code> method can be used to reset an
- * algorithms internal state, e.g., after setting options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

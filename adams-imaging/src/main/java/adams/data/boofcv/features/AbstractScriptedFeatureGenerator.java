@@ -14,7 +14,7 @@
  */
 
 /*
- * AbstractScriptedFlattener.java
+ * AbstractScriptedFeatureGenerator.java
  * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  *
  */
