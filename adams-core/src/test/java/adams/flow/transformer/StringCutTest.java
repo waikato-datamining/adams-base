@@ -15,7 +15,7 @@
 
 /*
  * StringCutTest.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,6 +31,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.Token;
 import adams.flow.sink.Null;
 import adams.flow.source.StringConstants;
+import adams.flow.transformer.StringCut.CutType;
 
 /**
  * Tests the StringCut actor.
@@ -55,6 +56,7 @@ public class StringCutTest
    *
    * @return a suitably configured <code>Flow</code>
    */
+  @Override
   public AbstractActor getActor() {
     StringConstants con = new StringConstants();
     con.setStrings(new BaseString[]{
@@ -91,12 +93,12 @@ public class StringCutTest
     if ((start > -1) && (end > -1)) {
       actor.setCharacterStartPos(start);
       actor.setCharacterEndPos(end);
-      actor.setUseCharacterPos(true);
+      actor.setType(CutType.CHARACTER_POSITIONS);
     }
     else {
       actor.setFieldDelimiter(delim);
       actor.setFieldIndex(new Index("" + field));
-      actor.setUseCharacterPos(false);
+      actor.setType(CutType.FIELD_DELIMITED);
     }
     assertNull("problem with setUp()", actor.setUp());
 

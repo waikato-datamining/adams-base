@@ -15,7 +15,7 @@
 
 /*
  * StringCut.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,66 +31,78 @@ import adams.core.Utils;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
+ * Input&#47;output:<br/>
  * - accepts:<br/>
- * <pre>   java.lang.String</pre>
- * <pre>   java.lang.String[]</pre>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
  * - generates:<br/>
- * <pre>   java.lang.String</pre>
- * <pre>   java.lang.String[]</pre>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D (property: debug)
- *         If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
- *         The name of the actor.
- *         default: StringCut
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: StringCut
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
- *         The annotations to attach to this actor.
- *         default:
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- *         If set to true, transformation is skipped and the input token is just forwarded
- *          as it is.
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-use-char-pos (property: useCharacterPos)
- *         If true then fixed character positions are used to extract the data instead
- *          of delimited fields.
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-type &lt;FIELD_DELIMITED|CHARACTER_POSITIONS&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;Determines what type of cut to perform.
+ * &nbsp;&nbsp;&nbsp;default: FIELD_DELIMITED
+ * </pre>
+ * 
  * <pre>-char-start-pos &lt;int&gt; (property: characterStartPos)
- *         The position of the first character to include in case fixed character positions
- *          are used.
- *         default: 1
+ * &nbsp;&nbsp;&nbsp;The position of the first character to include in case fixed character positions 
+ * &nbsp;&nbsp;&nbsp;are used (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- *
+ * 
  * <pre>-char-end-pos &lt;int&gt; (property: characterEndPos)
- *         The position of the last character to include in case fixed character positions
- *          are used.
- *         default: 10
+ * &nbsp;&nbsp;&nbsp;The position of the last character to include in case fixed character positions 
+ * &nbsp;&nbsp;&nbsp;are used (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 10
  * </pre>
- *
+ * 
  * <pre>-field-delimiter &lt;java.lang.String&gt; (property: fieldDelimiter)
- *         The field delimiter to use; \t gets automatically converted into its character
- *          counterpart.
- *         default: \\t
+ * &nbsp;&nbsp;&nbsp;The field delimiter to use; \t gets automatically converted into its character 
+ * &nbsp;&nbsp;&nbsp;counterpart.
+ * &nbsp;&nbsp;&nbsp;default: \\t
  * </pre>
- *
- * <pre>-field-index &lt;java.lang.String&gt; (property: fieldIndex)
- *         The 1-based index of the field to cut from the string(s).
- *         default: 1
+ * 
+ * <pre>-field-index &lt;adams.core.Index&gt; (property: fieldIndex)
+ * &nbsp;&nbsp;&nbsp;The 1-based index of the field to cut from the string(s).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -102,9 +114,17 @@ public class StringCut
   /** for serialization. */
   private static final long serialVersionUID = -3687113148170774846L;
 
-  /** whether to use character positions or fields. */
-  protected boolean m_UseCharacterPos;
+  /**
+   * How to cut the string.
+   */
+  public enum CutType {
+    FIELD_DELIMITED,
+    CHARACTER_POSITIONS
+  }
 
+  /** the cut type. */
+  protected CutType m_Type;
+  
   /** the character starting position. */
   protected int m_CharacterStartPos;
 
@@ -137,8 +157,8 @@ public class StringCut
     super.defineOptions();
 
     m_OptionManager.add(
-	    "use-char-pos", "useCharacterPos",
-	    false);
+	    "type", "type",
+	    CutType.FIELD_DELIMITED);
 
     m_OptionManager.add(
 	    "char-start-pos", "characterStartPos",
@@ -168,22 +188,22 @@ public class StringCut
   }
 
   /**
-   * Sets whether to use fixed character positions instead of delimited fields.
+   * Sets the type of cut to perform.
    *
-   * @param value	if true then character positions will be used
+   * @param value	the type of cut
    */
-  public void setUseCharacterPos(boolean value) {
-    m_UseCharacterPos = value;
+  public void setType(CutType value) {
+    m_Type = value;
     reset();
   }
 
   /**
-   * Returns whether to use fixed character positions instead of delimited fields.
+   * Returns the type of cut to perform.
    *
-   * @return		true if character possitions are used
+   * @return		the type of cut
    */
-  public boolean getUseCharacterPos() {
-    return m_UseCharacterPos;
+  public CutType getType() {
+    return m_Type;
   }
 
   /**
@@ -192,10 +212,8 @@ public class StringCut
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String useCharacterPosTipText() {
-    return
-        "If true then fixed character positions are used to extract the data "
-      + "instead of delimited fields.";
+  public String typeTipText() {
+    return "Determines what type of cut to perform.";
   }
 
   /**
@@ -329,7 +347,7 @@ public class StringCut
   public String getQuickInfo() {
     String	result;
 
-    if (QuickInfoHelper.hasVariable(this, "useCharacterPos") || m_UseCharacterPos) {
+    if (QuickInfoHelper.hasVariable(this, "type") || (m_Type == CutType.CHARACTER_POSITIONS)) {
       result  = QuickInfoHelper.toString(this, "characterStartPos", m_CharacterStartPos);
       result += QuickInfoHelper.toString(this, "characterEndPos", m_CharacterEndPos, "-");
     }
@@ -354,7 +372,7 @@ public class StringCut
     int		to;
     String[]	parts;
 
-    if (m_UseCharacterPos) {
+    if (m_Type == CutType.CHARACTER_POSITIONS) {
       from = m_CharacterStartPos - 1;
       to   = m_CharacterEndPos;
       if (to > s.length())
