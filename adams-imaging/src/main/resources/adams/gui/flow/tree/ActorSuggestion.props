@@ -11,6 +11,7 @@
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
+# read file
 adams-imaging.ImageReader1=\
   IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageReader
 
@@ -23,17 +24,17 @@ adams-imaging.ImageReader3=\
 adams-imaging.ImageReader4=\
   IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageReader
 
-adams-imaging.ImageJTransformer=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
+adams-imaging.ImageJReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
 
-adams-imaging.BufferedImageTransformer1=\
-  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.BufferedImageTransformer
+adams-imaging.ImageJReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
 
-adams-imaging.BufferedImageTransformer2=\
-  IF AFTER adams.flow.transformer.JAIReader THEN adams.flow.transformer.BufferedImageTransformer
+adams-imaging.ImageJReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
 
-adams-imaging.ImageMagickTransformer=\
-  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.ImageMagickTransformer
+adams-imaging.ImageJReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
 
 adams-imaging.ImageMagickOperation1=\
   IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickOperation
@@ -41,23 +42,72 @@ adams-imaging.ImageMagickOperation1=\
 adams-imaging.ImageMagickOperation2=\
   IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickOperation
 
-adams-imaging.ImageJFeatureGenerator=\
+adams-imaging.ImageMagickOperation3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageMagickOperation
+
+adams-imaging.ImageMagickOperation4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickOperation
+
+# transformers
+adams-imaging.BufferedImageTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageTransformer
+
+adams-imaging.BufferedImageTransformer2=\
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageTransformer
+
+adams-imaging.BoofCVTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging.BoofCVTransformer2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging.ImageMagickTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.ImageMagickTransformer
+
+adams-imaging.ImageMagickTransformer2=\
+  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.transformer.ImageMagickTransformer
+
+adams-imaging.ImageJTransformer1=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
+
+adams-imaging.ImageJTransformer2=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJTransformer
+
+# features
+adams-imaging.BufferedImageFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
+  
+adams-imaging.BufferedImageFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageFeatureGenerator
+
+adams-imaging.BoofCVFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVFeatureGenerator
+
+adams-imaging.BoofCVFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVFeatureGenerator
+  
+adams-imaging.ImageJFeatureGenerator1=\
   IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
-
-adams-imaging.BufferedImageFeatureGenerator=\
-  IF AFTER adams.flow.transformer.ImageMagickReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
-
-adams-imaging.WekaInstanceDumper1=\
-  IF AFTER adams.flow.transformer.BufferedImageFeatureGenerator THEN adams.flow.transformer.WekaInstanceDumper
-
-adams-imaging.WekaInstanceDumper2=\
-  IF AFTER adams.flow.transformer.ImageJFeatureGenerator THEN adams.flow.transformer.WekaInstanceDumper
+  
+adams-imaging.ImageJFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJFeatureGenerator
 
 adams-imaging.Convert=\
   IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
 
+# viewer
 adams-imaging.ImageViewer1=\
   IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.sink.ImageViewer
-
+  
 adams-imaging.ImageViewer2=\
-  IF AFTER adams.flow.transformer.Convert THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer3=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer4=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer5=\
+  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.sink.ImageViewer
+  
