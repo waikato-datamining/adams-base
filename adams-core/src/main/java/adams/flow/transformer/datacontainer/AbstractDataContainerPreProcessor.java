@@ -15,12 +15,13 @@
 
 /**
  * AbstractDataContainerPreProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.datacontainer;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.container.DataContainer;
+import adams.flow.transformer.AbstractDataContainerDbWriter;
 
 /**
  * Ancestor for {@link DataContainer} pre-processors.
@@ -34,6 +35,27 @@ public abstract class AbstractDataContainerPreProcessor<T extends DataContainer>
   /** for serialization. */
   private static final long serialVersionUID = 4489141650668803307L;
 
+  /** the owning transformer of this preprocessor. */
+  protected AbstractDataContainerDbWriter m_Owner;
+  
+  /**
+   * Sets the owner of this preprocessor.
+   * 
+   * @param value	the owner
+   */
+  public void setOwner(AbstractDataContainerDbWriter value) {
+    m_Owner = value;
+  }
+  
+  /**
+   * Returns the current owner.
+   * 
+   * @return		the owner, null if none set
+   */
+  public AbstractDataContainerDbWriter getOwner() {
+    return m_Owner;
+  }
+  
   /**
    * Checks the data to pre-process.
    * <p/>
@@ -42,6 +64,8 @@ public abstract class AbstractDataContainerPreProcessor<T extends DataContainer>
    * @param data	the data to check
    */
   protected void check(T data) {
+    if (m_Owner == null)
+      throw new IllegalStateException("No owning transformer set!");
     if (data == null)
       throw new IllegalStateException("No data provided!");
   }
