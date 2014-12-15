@@ -176,6 +176,26 @@ adams.core.base.BaseColor=true
 adams.core.base.BaseColor#toString=adams.gui.goe.BaseColorEditor#toString
 adams.core.base.BaseColor#valueOf=adams.gui.goe.BaseColorEditor#valueOf
 
+# BaseDimension objects
+adams.core.base.BaseDimension=true
+adams.core.base.BaseDimension#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseDimension#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointInt objects
+adams.core.base.BasePointInt=true
+adams.core.base.BasePointInt#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointInt#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointFloat objects
+adams.core.base.BasePointFloat=true
+adams.core.base.BasePointFloat#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointFloat#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointDouble objects
+adams.core.base.BasePointDouble=true
+adams.core.base.BasePointDouble#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointDouble#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # ArrayDimensions objects
 adams.core.base.ArrayDimensions=true
 adams.core.base.ArrayDimensions#toString=adams.gui.goe.BaseObjectEditor#toString
