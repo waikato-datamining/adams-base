@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerDbWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.Constants;
 import adams.core.QuickInfoHelper;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
+import adams.data.id.MutableDatabaseIDHandler;
 import adams.db.DataProvider;
 import adams.flow.core.Token;
 import adams.flow.transformer.datacontainer.AbstractDataContainerPreProcessor;
@@ -48,6 +49,9 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   /** whether to replace existing containers with the new one (otherwise, nothing happens). */
   protected boolean m_OverwriteExisting;
   
+  /** whether to output the container rather then the ID. */
+  protected boolean m_OutputContainer;
+  
   /**
    * Adds options to the internal list of options.
    */
@@ -62,6 +66,10 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
     m_OptionManager.add(
 	"overwrite-existing", "overwriteExisting",
 	false);
+    
+    m_OptionManager.add(
+	"output-container", "outputContainer",
+	false);
   }
 
   /**
@@ -71,6 +79,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
    */
   public void setPreProcessor(AbstractDataContainerPreProcessor value) {
     m_PreProcessor = value;
+    m_PreProcessor.setOwner(this);
     reset();
   }
 
@@ -121,6 +130,33 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   public abstract String overwriteExistingTipText();
 
   /**
+   * Sets whether to output the container rather than the ID.
+   *
+   * @param value 	true if to output the container
+   */
+  public void setOutputContainer(boolean value) {
+    m_OutputContainer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the container rather than the ID.
+   *
+   * @return 		true if to output the container
+   */
+  public boolean getOutputContainer() {
+    return m_OutputContainer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public abstract String outputContainerTipText();
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the type of data to store
@@ -131,12 +167,10 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.lang.Integer.class<!-- flow-generates-end -->
+   * @return		the classes
    */
   @Override
-  public Class[] generates() {
-    return new Class[]{Integer.class};
-  }
+  public abstract Class[] generates();
 
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
@@ -152,6 +186,9 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
     value  = QuickInfoHelper.toString(this, "overwriteExisting", m_OverwriteExisting, "overwrite", ", ");
     if (value != null)    
       result += value;
+    value  = QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
+    if (value != null)    
+      result += value;
     
     return result;
   }
@@ -162,7 +199,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
    * @param cont	the current container
    * @return		the data provider
    */
-  protected abstract DataProvider<T> getDataProvider(T cont);
+  public abstract DataProvider<T> getDataProvider(T cont);
 
   /**
    * Returns whether the container already exists in the database.
@@ -171,7 +208,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
    * @param cont	the container to look for
    * @return		true if already stored in database
    */
-  protected boolean exists(DataProvider provider, T cont) {
+  public boolean exists(DataProvider provider, T cont) {
     return provider.exists(cont.getID());
   }
 
@@ -182,7 +219,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
    * @param cont	the container to remove
    * @return		true if successfully removed
    */
-  protected boolean remove(DataProvider provider, T cont) {
+  public boolean remove(DataProvider provider, T cont) {
     return provider.remove(cont.getID());
   }
 
@@ -193,8 +230,19 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
    * @param cont	the container to store
    * @return		the database ID, {@link Constants#NO_ID} if failed
    */
-  protected Integer add(DataProvider provider, T cont) {
+  public Integer add(DataProvider provider, T cont) {
     return provider.add(cont);
+  }
+
+  /**
+   * Loads the container from the database.
+   * 
+   * @param provider	the provider to use
+   * @param cont	the container to store
+   * @return		the container, null if failed to load
+   */
+  public T load(DataProvider provider, T cont) {
+    return (T) provider.load(cont.getID());
   }
   
   /**
@@ -260,11 +308,32 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
     cont = (T) m_InputToken.getPayload();
     id   = store(preProcess(cont));
-    if (id == null)
+    if (id == null) {
       result = "Error saving container: " + m_InputToken;
-    else
-      m_OutputToken = new Token(id);
+    }
+    else {
+      if (m_OutputContainer) {
+	if ((id != Constants.NO_ID) && (cont instanceof MutableDatabaseIDHandler))
+	  ((MutableDatabaseIDHandler) cont).setDatabaseID(id);
+	m_OutputToken = new Token(cont);
+      }
+      else {
+	m_OutputToken = new Token(id);
+      }
+    }
 
     return result;
+  }
+  
+  /**
+   * Cleans up after the execution has finished. Also removes graphical
+   * components.
+   */
+  @Override
+  public void cleanUp() {
+    if (m_PreProcessor != null)
+      m_PreProcessor.setOwner(null);
+    
+    super.cleanUp();
   }
 }
