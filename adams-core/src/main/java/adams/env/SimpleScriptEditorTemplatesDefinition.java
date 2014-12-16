@@ -14,12 +14,12 @@
  */
 
 /**
- * ScriptEditorTemplatesDefinition.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * SimpleScriptEditorTemplatesDefinition.java
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
-import adams.gui.goe.AbstractScriptEditorWithTemplates;
+import adams.gui.goe.AbstractSimpleScriptEditorWithTemplates;
 
 /**
  * Definition for the ScriptEditor templates props file.
@@ -27,14 +27,14 @@ import adams.gui.goe.AbstractScriptEditorWithTemplates;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ScriptEditorTemplatesDefinition
+public class SimpleScriptEditorTemplatesDefinition
   extends AbstractPropertiesDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 288970991741946271L;
 
   /** the key as constant. */
-  public final static String KEY = "script editor templates";
+  public final static String KEY = "simple script editor templates";
 
   /**
    * Returns the key this definition is for.
@@ -53,7 +53,7 @@ public class ScriptEditorTemplatesDefinition
    */
   @Override
   public String getFile() {
-    return AbstractScriptEditorWithTemplates.FILENAME;
+    return AbstractSimpleScriptEditorWithTemplates.FILENAME;
   }
 
   /**

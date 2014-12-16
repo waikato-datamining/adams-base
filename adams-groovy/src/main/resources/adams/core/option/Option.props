@@ -19,5 +19,5 @@
 
 # Groovy script objects
 adams.core.scripting.GroovyScript=true
-adams.core.scripting.GroovyScript#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.core.scripting.GroovyScript#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.core.scripting.GroovyScript#toString=adams.gui.goe.AbstractAdvancedScriptEditor#toString
+adams.core.scripting.GroovyScript#valueOf=adams.gui.goe.AbstractAdvancedScriptEditor#valueOf

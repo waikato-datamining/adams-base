@@ -15,14 +15,14 @@
 
 /**
  * ScriptingTextEditorPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.env.ScriptingDialogDefinition;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 
 /**
  * A text editor panel with syntax highlighting for the scripting commands
@@ -32,7 +32,7 @@ import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
  * @version $Revision$
  */
 public class ScriptingTextEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting {
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = 2811465827523143114L;
@@ -42,6 +42,7 @@ public class ScriptingTextEditorPanel
    *
    * @return		the props file with the definitions
    */
+  @Override
   protected Properties getStyleProperties() {
     return Environment.getInstance().read(ScriptingDialogDefinition.KEY);
   }

@@ -5,6 +5,7 @@
 
 Definitions=\
   adams.env.ActorSuggestionDefinition,\
+  adams.env.AdvancedScriptEditorTemplatesDefinition,\
   adams.env.BrowserDefinition,\
   adams.env.CharsetDefinition,\
   adams.env.ClassListerBlacklistDefinition,\
@@ -36,11 +37,11 @@ Definitions=\
   adams.env.ProvenanceDefinition,\
   adams.env.ProvenanceTreeDefinition,\
   adams.env.ProxyDefinition,\
-  adams.env.ScriptEditorTemplatesDefinition,\
   adams.env.ScriptingDialogDefinition,\
   adams.env.ScriptingEngineDefinition,\
   adams.env.ScriptingLoggerDefinition,\
   adams.env.SequenceViewerDefinition,\
+  adams.env.SimpleScriptEditorTemplatesDefinition,\
   adams.env.TimeZoneDefinition,\
   adams.env.TableDefinition,\
   adams.env.WineDefinition

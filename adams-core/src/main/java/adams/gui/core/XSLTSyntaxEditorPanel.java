@@ -19,39 +19,31 @@
  */
 package adams.gui.core;
 
-import adams.core.Properties;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
 import adams.core.base.XSLTStyleSheet;
 
 /**
- * Text editor pane with XSLT syntax highlighting.
+ * Text editor pane with XSLT syntax highlighting (actually XML).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class XSLTSyntaxEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting {
+  extends AbstractTextAreaPanelWithAdvancedSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = -6311158717675828816L;
 
-  /** the props file with the style definitions. */
-  public final static String FILENAME = "adams/gui/core/XSLTSyntaxEditorPanel.props";
-
   /**
-   * Returns the syntax style definition.
-   *
-   * @return		the props file with the definitions
+   * Returns the syntax style to use.
+   * 
+   * @return		style
+   * @see		RSyntaxTextArea
    */
   @Override
-  protected Properties getStyleProperties() {
-    try {
-      return Properties.read(FILENAME);
-    }
-    catch (Exception e) {
-      System.err.println("Failed to load style definitions '" + FILENAME + "': ");
-      e.printStackTrace();
-      return new Properties();
-    }
+  protected String getSyntaxStyle() {
+    return RSyntaxTextArea.SYNTAX_STYLE_XML;
   }
   
   /**
@@ -60,6 +52,6 @@ public class XSLTSyntaxEditorPanel
    * @return		the stylesheet
    */
   public XSLTStyleSheet getScript() {
-    return new XSLTStyleSheet(getTextPane().getText());
+    return new XSLTStyleSheet(getTextArea().getText());
   }
 }

@@ -21,8 +21,8 @@
 package adams.parser;
 
 import adams.core.Utils;
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 import adams.gui.core.MathematicalExpressionEditorPanel;
 
 /**
@@ -34,7 +34,7 @@ import adams.gui.core.MathematicalExpressionEditorPanel;
  * @version $Revision$
  */
 public class MathematicalExpressionText
-  extends AbstractScript {
+  extends AbstractSimpleScript {
 
   /** for serialization. */
   private static final long serialVersionUID = -7223597009565454854L;
@@ -78,7 +78,7 @@ public class MathematicalExpressionText
    *
    * @return		the text editor panel
    */
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
     return new MathematicalExpressionEditorPanel();
   }
   

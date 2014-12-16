@@ -19,8 +19,8 @@
  */
 package adams.core.scripting;
 
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 import adams.gui.core.RSyntaxEditorPanel;
 
 /**
@@ -31,7 +31,7 @@ import adams.gui.core.RSyntaxEditorPanel;
  * @version $Revision$
  */
 public class RScript
-  extends AbstractScript {
+  extends AbstractSimpleScript {
 
   /** for serialization. */
   private static final long serialVersionUID = -7498853966972856458L;
@@ -68,7 +68,7 @@ public class RScript
    * @return the text editor panel
    */
   @Override
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
     return new RSyntaxEditorPanel();
   }
 

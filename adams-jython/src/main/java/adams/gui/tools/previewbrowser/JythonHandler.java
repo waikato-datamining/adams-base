@@ -86,6 +86,6 @@ public class JythonHandler
     panel.open(file);
     panel.setEditable(false);
 
-    return new PreviewPanel(panel, panel.getTextPane());
+    return new PreviewPanel(panel, panel.getTextArea());
   }
 }

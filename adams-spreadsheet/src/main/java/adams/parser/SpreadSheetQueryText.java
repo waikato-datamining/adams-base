@@ -21,8 +21,8 @@
 package adams.parser;
 
 import adams.core.Utils;
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 
 /**
@@ -34,7 +34,7 @@ import adams.gui.core.SpreadSheetQueryEditorPanel;
  * @version $Revision$
  */
 public class SpreadSheetQueryText
-  extends AbstractScript {
+  extends AbstractSimpleScript {
 
   /** for serialization. */
   private static final long serialVersionUID = 2838204291702277799L;
@@ -81,7 +81,7 @@ public class SpreadSheetQueryText
    * @return		the text editor panel
    */
   @Override
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
     return new SpreadSheetQueryEditorPanel();
   }
   

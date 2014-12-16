@@ -14,22 +14,25 @@
  */
 
 /*
- * AbstractScript.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * AbstractAdvancedScript.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 import adams.core.Utils;
 import adams.core.base.AbstractBaseString;
 
 /**
- * Ancestor for scripts with syntax highlighting in the GOE.
+ * Ancestor for scripts with syntax highlighting in the GOE using the 
+ * {@link RSyntaxTextArea} component.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 5730 $
  */
-public abstract class AbstractScript
+public abstract class AbstractAdvancedScript
   extends AbstractBaseString {
 
   /** for serialization. */
@@ -38,7 +41,7 @@ public abstract class AbstractScript
   /**
    * Initializes the string with length 0.
    */
-  public AbstractScript() {
+  public AbstractAdvancedScript() {
     this("");
   }
 
@@ -47,7 +50,7 @@ public abstract class AbstractScript
    *
    * @param s		the string to parse
    */
-  public AbstractScript(String s) {
+  public AbstractAdvancedScript(String s) {
     super(s);
   }
 
@@ -79,11 +82,11 @@ public abstract class AbstractScript
   }
 
   /**
-   * Returns the configured text editor panel to use in the GOE.
+   * Returns the configured text area panel to use in the GOE.
    *
-   * @return		the text editor panel
+   * @return		the text area panel
    */
-  public abstract AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel();
+  public abstract AbstractTextAreaPanelWithAdvancedSyntaxHighlighting getTextAreaPanel();
   
   /**
    * Returns whether inline editing in the GOE is allowed.

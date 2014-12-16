@@ -20,8 +20,8 @@
 
 package adams.parser;
 
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 import adams.gui.core.BooleanExpressionEditorPanel;
 
 /**
@@ -33,7 +33,7 @@ import adams.gui.core.BooleanExpressionEditorPanel;
  * @version $Revision$
  */
 public class BooleanExpressionText
-  extends AbstractScript {
+  extends AbstractSimpleScript {
 
   /** for serialization. */
   private static final long serialVersionUID = -7223597009565454854L;
@@ -68,7 +68,7 @@ public class BooleanExpressionText
    *
    * @return		the text editor panel
    */
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
     return new BooleanExpressionEditorPanel();
   }
   

@@ -15,13 +15,13 @@
 
 /*
  * GroovyScript.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
 
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractAdvancedScript;
+import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GroovySyntaxEditorPanel;
 
 /**
@@ -31,7 +31,7 @@ import adams.gui.core.GroovySyntaxEditorPanel;
  * @version $Revision$
  */
 public class GroovyScript
-  extends AbstractScript {
+  extends AbstractAdvancedScript {
 
   /** for serialization. */
   private static final long serialVersionUID = 4309078655122480376L;
@@ -57,6 +57,7 @@ public class GroovyScript
    *
    * @return		the tool tip
    */
+  @Override
   protected String getScriptTipText() {
     return "Groovy script";
   }
@@ -66,7 +67,8 @@ public class GroovyScript
    *
    * @return		the text editor panel
    */
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  @Override
+  public AbstractTextAreaPanelWithAdvancedSyntaxHighlighting getTextAreaPanel() {
     return new GroovySyntaxEditorPanel();
   }
   
@@ -75,6 +77,7 @@ public class GroovyScript
    * 
    * @return		true if inline editing is allowed
    */
+  @Override
   public boolean allowsInlineEditing() {
     return false;
   }

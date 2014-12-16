@@ -31,7 +31,7 @@ import adams.parser.MathematicalExpressionText;
  * @version $Revision$
  */
 public class MathematicalExpressionEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting
   implements AdditionalInformationHandler {
 
   /** for serialization. */

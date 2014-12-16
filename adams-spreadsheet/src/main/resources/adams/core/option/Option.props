@@ -29,5 +29,5 @@ adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.gui.goe.SpreadSheetC
 
 # SpreadSheetQueryText objects
 adams.parser.SpreadSheetQueryText=true
-adams.parser.SpreadSheetQueryText#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.parser.SpreadSheetQueryText#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.parser.SpreadSheetQueryText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.SpreadSheetQueryText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf

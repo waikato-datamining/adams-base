@@ -31,7 +31,7 @@ import adams.parser.SpreadSheetFormulaText;
  * @version $Revision$
  */
 public class SpreadSheetFormulaEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting
   implements AdditionalInformationHandler {
 
   /** for serialization. */

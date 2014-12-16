@@ -14,24 +14,23 @@
  */
 
 /*
- * JythonScript.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * AbstractSimpleScript.java
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.core.scripting;
+package adams.gui.core;
 
-import adams.gui.core.AbstractAdvancedScript;
-import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
-import adams.gui.core.JythonSyntaxEditorPanel;
+import adams.core.Utils;
+import adams.core.base.AbstractBaseString;
 
 /**
- * Wrapper for a Jython scripts to be editable in the GOE.
+ * Ancestor for scripts with syntax highlighting in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class JythonScript
-  extends AbstractAdvancedScript {
+public abstract class AbstractSimpleScript
+  extends AbstractBaseString {
 
   /** for serialization. */
   private static final long serialVersionUID = 4309078655122480376L;
@@ -39,7 +38,7 @@ public class JythonScript
   /**
    * Initializes the string with length 0.
    */
-  public JythonScript() {
+  public AbstractSimpleScript() {
     this("");
   }
 
@@ -48,8 +47,18 @@ public class JythonScript
    *
    * @param s		the string to parse
    */
-  public JythonScript(String s) {
+  public AbstractSimpleScript(String s) {
     super(s);
+  }
+
+  /**
+   * Returns the backquoted String value.
+   *
+   * @return		the backquoted String value
+   */
+  @Override
+  public String stringValue() {
+    return Utils.backQuoteChars(getValue());
   }
 
   /**
@@ -57,28 +66,29 @@ public class JythonScript
    *
    * @return		the tool tip
    */
+  protected abstract String getScriptTipText();
+
+  /**
+   * Returns a tool tip for the GUI editor (ignored if null is returned).
+   *
+   * @return		the tool tip
+   */
   @Override
-  protected String getScriptTipText() {
-    return "Jython script";
+  public String getTipText() {
+    return getScriptTipText();
   }
 
   /**
-   * Returns the configured text area panel to use in the GOE.
+   * Returns the configured text editor panel to use in the GOE.
    *
-   * @return		the text area panel
+   * @return		the text editor panel
    */
-  @Override
-  public AbstractTextAreaPanelWithAdvancedSyntaxHighlighting getTextAreaPanel() {
-    return new JythonSyntaxEditorPanel();
-  }
+  public abstract AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel();
   
   /**
    * Returns whether inline editing in the GOE is allowed.
    * 
    * @return		true if inline editing is allowed
    */
-  @Override
-  public boolean allowsInlineEditing() {
-    return false;
-  }
+  public abstract boolean allowsInlineEditing();
 }

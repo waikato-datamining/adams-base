@@ -26,7 +26,7 @@ package adams.gui.goe;
  * @version $Revision$
  */
 public class JythonScriptEditor
-  extends AbstractScriptEditorWithTemplates {
+  extends AbstractAdvancedScriptEditorWithTemplates {
 
   /**
    * Returns the key in the props file to retrieve.

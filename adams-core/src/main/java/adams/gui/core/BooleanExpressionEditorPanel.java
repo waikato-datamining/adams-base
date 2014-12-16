@@ -31,7 +31,7 @@ import adams.parser.BooleanExpressionText;
  * @version $Revision$
  */
 public class BooleanExpressionEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting
   implements AdditionalInformationHandler {
 
   /** for serialization. */

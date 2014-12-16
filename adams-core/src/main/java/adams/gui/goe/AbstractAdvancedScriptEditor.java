@@ -14,8 +14,8 @@
  */
 
 /*
- * AbstractScriptEditor.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * AbstractAdvancedScriptEditor.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -42,24 +42,26 @@ import adams.core.AdditionalInformationHandler;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
-import adams.gui.core.AbstractScript;
+import adams.gui.core.AbstractAdvancedScript;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
+import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.StyledTextEditorPanel;
 import adams.gui.dialog.TextDialog;
 
 /**
  * A PropertyEditor for AbstractScript-derived objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @see adams.gui.core.AbstractScript
+ * @version $Revision: 9417 $
+ * @see adams.gui.core.AbstractSimpleScript
  */
-public class AbstractScriptEditor
+public class AbstractAdvancedScriptEditor
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler, InlineEditorSupport {
 
   /** The text area with the script. */
-  protected StyledTextEditorPanel m_TextStatement;
+  protected AbstractTextAreaPanelWithAdvancedSyntaxHighlighting m_TextStatement;
 
   /**
    * Returns the script as string.
@@ -69,7 +71,7 @@ public class AbstractScriptEditor
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
-    return ((AbstractScript) object).stringValue();
+    return ((AbstractAdvancedScript) object).stringValue();
   }
 
   /**
@@ -80,12 +82,12 @@ public class AbstractScriptEditor
    * @return		the generated Compound
    */
   public static Object valueOf(Class cls, String str) {
-    AbstractScript	result;
+    AbstractAdvancedScript	result;
 
     try {
       if (cls.isArray())
 	cls = cls.getComponentType();
-      result = (AbstractScript) cls.newInstance();
+      result = (AbstractAdvancedScript) cls.newInstance();
       result.setValue(Utils.unbackQuoteChars(str));
     }
     catch (Exception e) {
@@ -194,10 +196,9 @@ public class AbstractScriptEditor
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     if (getValue() == null)
-      m_TextStatement = new StyledTextEditorPanel();
+      m_TextStatement = new DefaultTextAreaPanelWithAdvancedSyntaxHighlighting();
     else
-      m_TextStatement = ((AbstractScript) getValue()).getTextEditorPanel();
-    m_TextStatement.setWordWrap(true);
+      m_TextStatement = ((AbstractAdvancedScript) getValue()).getTextAreaPanel();
     panelAll.add(m_TextStatement, BorderLayout.CENTER);
 
     panelBottom = new JPanel(new BorderLayout());
@@ -241,9 +242,9 @@ public class AbstractScriptEditor
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String s = m_TextStatement.getContent();
-	if (((AbstractScript) getValue()).isValid(s) && !s.equals(((AbstractScript) getValue()).getValue())) {
+	if (((AbstractSimpleScript) getValue()).isValid(s) && !s.equals(((AbstractSimpleScript) getValue()).getValue())) {
 	  try {
-	    AbstractScript newValue = (AbstractScript) getValue().getClass().newInstance();
+	    AbstractSimpleScript newValue = (AbstractSimpleScript) getValue().getClass().newInstance();
 	    newValue.setValue(s);
 	    setValue(newValue);
 	  }
@@ -340,15 +341,15 @@ public class AbstractScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setIcon(GUIHelper.getIcon("linewrap.png"));
-    menuitem.setSelected(m_TextStatement.getWordWrap());
+    menuitem.setSelected(m_TextStatement.getLineWrap());
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	m_TextStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected());
+	m_TextStatement.setLineWrap(((JMenuItem) e.getSource()).isSelected());
       }
     });
     result.addSeparator();

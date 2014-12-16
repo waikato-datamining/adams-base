@@ -19,7 +19,8 @@
  */
 package adams.gui.core;
 
-import adams.core.Properties;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
 import adams.core.scripting.GroovyScript;
 
 /**
@@ -29,37 +30,28 @@ import adams.core.scripting.GroovyScript;
  * @version $Revision$
  */
 public class GroovySyntaxEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting {
+  extends AbstractTextAreaPanelWithAdvancedSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = -6311158717675828816L;
-
-  /** the props file with the style definitions. */
-  public final static String FILENAME = "adams/gui/core/GroovySyntaxEditorPanel.props";
-
+  
   /**
-   * Returns the syntax style definition.
-   *
-   * @return		the props file with the definitions
+   * Returns the syntax style to use.
+   * 
+   * @return		style
+   * @see		RSyntaxTextArea
    */
   @Override
-  protected Properties getStyleProperties() {
-    try {
-      return Properties.read(FILENAME);
-    }
-    catch (Exception e) {
-      System.err.println("Failed to load style definitions '" + FILENAME + "': ");
-      e.printStackTrace();
-      return new Properties();
-    }
+  protected String getSyntaxStyle() {
+    return RSyntaxTextArea.SYNTAX_STYLE_GROOVY;
   }
-  
+
   /**
    * Returns the current script.
    * 
    * @return		the script
    */
   public GroovyScript getScript() {
-    return new GroovyScript(getTextPane().getText());
+    return new GroovyScript(getTextArea().getText());
   }
 }

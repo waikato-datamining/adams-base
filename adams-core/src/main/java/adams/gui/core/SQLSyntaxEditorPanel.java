@@ -29,7 +29,7 @@ import adams.db.SQLStatement;
  * @version $Revision$
  */
 public class SQLSyntaxEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting {
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = -6311158717675828816L;

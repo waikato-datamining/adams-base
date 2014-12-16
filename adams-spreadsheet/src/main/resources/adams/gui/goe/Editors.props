@@ -17,4 +17,4 @@
 
 adams.data.spreadsheet.SpreadSheetColumnIndex=adams.gui.goe.SpreadSheetColumnIndexEditor
 adams.data.spreadsheet.SpreadSheetColumnRange=adams.gui.goe.SpreadSheetColumnRangeEditor
-adams.parser.SpreadSheetQueryText=adams.gui.goe.AbstractScriptEditor
+adams.parser.SpreadSheetQueryText=adams.gui.goe.AbstractSimpleScriptEditor

@@ -19,5 +19,5 @@
 
 # Jython script objects
 adams.core.scripting.JythonScript=true
-adams.core.scripting.JythonScript#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.core.scripting.JythonScript#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.core.scripting.JythonScript#toString=adams.gui.goe.AbstractAdvancedScriptEditor#toString
+adams.core.scripting.JythonScript#valueOf=adams.gui.goe.AbstractAdvancedScriptEditor#valueOf

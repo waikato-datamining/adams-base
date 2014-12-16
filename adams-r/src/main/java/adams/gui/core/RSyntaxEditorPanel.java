@@ -30,7 +30,7 @@ import adams.core.scripting.RScript;
  * @version $Revision$
  */
 public class RSyntaxEditorPanel 
-  extends AbstractTextEditorPanelWithSyntaxHighlighting {
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = -4836522671525894328L;

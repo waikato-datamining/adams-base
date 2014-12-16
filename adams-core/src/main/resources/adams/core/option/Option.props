@@ -253,23 +253,23 @@ adams.data.DecimalFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
 # SQLStatement objects
 adams.db.SQLStatement=true
-adams.db.SQLStatement#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.db.SQLStatement#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.db.SQLStatement#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.db.SQLStatement#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
 
 # BooleanExpressionText objects
 adams.parser.BooleanExpressionText=true
-adams.parser.BooleanExpressionText#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.parser.BooleanExpressionText#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.parser.BooleanExpressionText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.BooleanExpressionText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
 
 # MathematicalExpressionText objects
 adams.parser.MathematicalExpressionText=true
-adams.parser.MathematicalExpressionText#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.parser.MathematicalExpressionText#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.parser.MathematicalExpressionText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.MathematicalExpressionText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
 
 # SpreadSheetFormulaText objects
 adams.parser.SpreadSheetFormulaText=true
-adams.parser.SpreadSheetFormulaText#toString=adams.gui.goe.AbstractScriptEditor#toString
-adams.parser.SpreadSheetFormulaText#valueOf=adams.gui.goe.AbstractScriptEditor#valueOf
+adams.parser.SpreadSheetFormulaText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.SpreadSheetFormulaText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
 
 # StorageName objects
 adams.flow.control.StorageName=true

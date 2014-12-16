@@ -14,8 +14,8 @@
  */
 
 /**
- * AbstractTextEditorPanelWithSyntaxHighlighting.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractTextEditorPanelWithSimpleSyntaxHighlighting.java
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -24,7 +24,6 @@ import javax.swing.text.Document;
 import adams.core.Properties;
 import adams.gui.scripting.SyntaxDocument;
 
-
 /**
  * A panel that allows the editing of text, including undo/redo support,
  * and custom syntax highlighting.
@@ -32,7 +31,7 @@ import adams.gui.scripting.SyntaxDocument;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractTextEditorPanelWithSyntaxHighlighting
+public abstract class AbstractTextEditorPanelWithSimpleSyntaxHighlighting
   extends StyledTextEditorPanel {
 
   /** for serialization. */

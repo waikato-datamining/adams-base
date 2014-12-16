@@ -14,27 +14,33 @@
  */
 
 /**
- * GroovyScriptEditor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * DefaultTextAreaPanelWithAdvancedSyntaxHighlighting.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.goe;
+package adams.gui.core;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- * Editor for groovy scripts.
+ * Text area with no syntax highlighting by default.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GroovyScriptEditor
-  extends AbstractAdvancedScriptEditorWithTemplates {
+public class DefaultTextAreaPanelWithAdvancedSyntaxHighlighting
+  extends AbstractTextAreaPanelWithAdvancedSyntaxHighlighting {
+
+  /** for serialization. */
+  private static final long serialVersionUID = -7436330527814666077L;
 
   /**
-   * Returns the key in the props file to retrieve.
+   * Returns the syntax style to use.
    * 
-   * @return		the key
+   * @return		style
+   * @see		RSyntaxTextArea
    */
   @Override
-  protected String getKey() {
-    return "Groovy";
+  protected String getSyntaxStyle() {
+    return RSyntaxTextArea.SYNTAX_STYLE_NONE;
   }
 }

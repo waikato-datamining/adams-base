@@ -15,13 +15,13 @@
 
 /**
  * XSLTStyleSheet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.base;
 
 import adams.core.HelpProvider;
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractAdvancedScript;
+import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.XSLTSyntaxEditorPanel;
 
 /**
@@ -31,7 +31,7 @@ import adams.gui.core.XSLTSyntaxEditorPanel;
  * @version $Revision$
  */
 public class XSLTStyleSheet
-  extends AbstractScript
+  extends AbstractAdvancedScript
   implements HelpProvider {
 
   /** for serialization. */
@@ -115,7 +115,7 @@ public class XSLTStyleSheet
    * @return		the text editor panel
    */
   @Override
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextAreaPanelWithAdvancedSyntaxHighlighting getTextAreaPanel() {
     return new XSLTSyntaxEditorPanel();
   }
 

@@ -14,8 +14,8 @@
  */
 
 /**
- * AbstractScriptEditorWithTemplates.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * AbstractAdvancedScriptEditorWithTemplates.java
+ * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -32,21 +32,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import adams.core.Properties;
+import adams.env.AdvancedScriptEditorTemplatesDefinition;
 import adams.env.Environment;
-import adams.env.ScriptEditorTemplatesDefinition;
 import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for script editors that support text templates.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 9417 $
  */
-public abstract class AbstractScriptEditorWithTemplates
-  extends AbstractScriptEditor {
+public abstract class AbstractAdvancedScriptEditorWithTemplates
+  extends AbstractAdvancedScriptEditor {
 
   /** the name of the props file. */
-  public final static String FILENAME = "AbstractScriptEditorTemplates.props";
+  public final static String FILENAME = "AbstractAdvancedScriptEditorTemplates.props";
 
   /** the general properties. */
   protected static Properties m_Properties;
@@ -155,7 +155,7 @@ public abstract class AbstractScriptEditorWithTemplates
    */
   public static synchronized Properties getProperties() {
     if (m_Properties == null)
-      m_Properties = Environment.getInstance().read(ScriptEditorTemplatesDefinition.KEY);
+      m_Properties = Environment.getInstance().read(AdvancedScriptEditorTemplatesDefinition.KEY);
 
     return m_Properties;
   }

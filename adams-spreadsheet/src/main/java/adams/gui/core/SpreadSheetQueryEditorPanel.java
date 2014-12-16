@@ -31,7 +31,7 @@ import adams.parser.SpreadSheetQueryText;
  * @version $Revision$
  */
 public class SpreadSheetQueryEditorPanel
-  extends AbstractTextEditorPanelWithSyntaxHighlighting
+  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting
   implements AdditionalInformationHandler {
 
   /** for serialization. */

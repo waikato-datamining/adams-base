@@ -20,8 +20,8 @@
 
 package adams.db;
 
-import adams.gui.core.AbstractScript;
-import adams.gui.core.AbstractTextEditorPanelWithSyntaxHighlighting;
+import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
 import adams.gui.core.SQLSyntaxEditorPanel;
 
 /**
@@ -31,7 +31,7 @@ import adams.gui.core.SQLSyntaxEditorPanel;
  * @version $Revision$
  */
 public class SQLStatement
-  extends AbstractScript {
+  extends AbstractSimpleScript {
 
   /** for serialization. */
   private static final long serialVersionUID = 4309078655122480376L;
@@ -66,7 +66,7 @@ public class SQLStatement
    *
    * @return		the text editor panel
    */
-  public AbstractTextEditorPanelWithSyntaxHighlighting getTextEditorPanel() {
+  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
     return new SQLSyntaxEditorPanel();
   }
   
