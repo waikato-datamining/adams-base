@@ -1,7 +1,7 @@
 /**
  * DatePanel.java
  * Copyright 2004 Juan Heyns. (original code)
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -37,12 +37,13 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.jdatepicker.DateModel;
-import net.sourceforge.jdatepicker.JDatePanel;
-import net.sourceforge.jdatepicker.graphics.JNextIcon;
-import net.sourceforge.jdatepicker.graphics.JPreviousIcon;
-import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
-import net.sourceforge.jdatepicker.util.JDatePickerUtil;
+import org.jdatepicker.DateModel;
+import org.jdatepicker.JDatePanel;
+import org.jdatepicker.graphics.JNextIcon;
+import org.jdatepicker.graphics.JPreviousIcon;
+import org.jdatepicker.impl.UtilCalendarModel;
+import org.jdatepicker.util.JDatePickerUtil;
+
 import adams.core.DateUtils;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
@@ -79,6 +80,7 @@ public class DatePanel
   /**
    * Initializes the members.
    */
+  @Override
   protected void initialize() {
     super.initialize();
     
@@ -91,6 +93,7 @@ public class DatePanel
   /**
    * Initializes the widgets.
    */
+  @Override
   protected void initGUI() {
     super.initGUI();
 
@@ -105,6 +108,7 @@ public class DatePanel
   /**
    * Sets the current time.
    */
+  @Override
   protected void finishInit() {
     super.finishInit();
     
@@ -193,6 +197,7 @@ public class DatePanel
    * 
    * @param b		if true then the panel is enabled
    */
+  @Override
   public void setEnabled(boolean b) {
     super.setEnabled(b);
     internalView.setEnabled(b);
@@ -597,6 +602,7 @@ public class DatePanel
      * 
      * @param b		if true then the panel gets enabled
      */
+    @Override
     public void setEnabled(boolean b) {
       super.setEnabled(b);
       dayTable.setEnabled(b);
@@ -621,6 +627,7 @@ public class DatePanel
 
     protected static final long serialVersionUID = -2341614459632756921L;
 
+    @Override
     public Component getTableCellRendererComponent(JTable arg0, Object arg1, boolean isSelected, boolean hasFocus, int row, int col) {
       JLabel label = (JLabel) super.getTableCellRendererComponent(arg0, arg1, isSelected, hasFocus, row, col);
       label.setHorizontalAlignment(JLabel.CENTER);
