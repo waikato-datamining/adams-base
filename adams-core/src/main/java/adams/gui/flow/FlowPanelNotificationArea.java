@@ -28,9 +28,12 @@ import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import adams.gui.core.BasePanel;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
@@ -58,6 +61,9 @@ public class FlowPanelNotificationArea
   /** the copy button. */
   protected JButton m_ButtonCopy;
   
+  /** the checkbox for including the console output. */
+  protected JCheckBox m_CheckBoxConsole;
+
   /** the close listeners. */
   protected HashSet<ActionListener> m_CloseListeners;
   
@@ -102,7 +108,7 @@ public class FlowPanelNotificationArea
     panelRight.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(panelRight, BorderLayout.EAST);
     
-    panelButtons = new JPanel(new GridLayout(2, 1, 5, 5));
+    panelButtons = new JPanel(new GridLayout(3, 1, 5, 5));
     panelRight.add(panelButtons, BorderLayout.NORTH);
     
     m_ButtonClose = new JButton("Close");
@@ -125,6 +131,15 @@ public class FlowPanelNotificationArea
       }
     });
     panelButtons.add(m_ButtonCopy);
+    
+    m_CheckBoxConsole = new JCheckBox("Console output");
+    m_CheckBoxConsole.setSelected(false);
+    m_CheckBoxConsole.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	update();
+      }
+    });
+    panelButtons.add(m_CheckBoxConsole);
   }
   
   /**
@@ -181,14 +196,20 @@ public class FlowPanelNotificationArea
    */
   protected void update() {
     String[]	lines;
+    String	msg;
     
     if (m_Notification == null) {
       m_TextNotification.setContent("");
     }
     else {
-      lines  = m_Notification.split("\n");
+      msg = m_Notification;
+      if (m_CheckBoxConsole.isSelected()) {
+	msg += "\n\n--- Console output ---\n\n" 
+	    + ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
+      }
+      lines  = msg.split("\n");
       setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
-      m_TextNotification.setContent(m_Notification);
+      m_TextNotification.setContent(msg);
     }
 
     if (getOwner() != null) {
