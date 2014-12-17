@@ -74,6 +74,12 @@
       <artifactId>moa</artifactId>
       <version>${moa.version}</version>
       <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>nz.ac.waikato.cms.weka</groupId>
+          <artifactId>weka-dev</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
