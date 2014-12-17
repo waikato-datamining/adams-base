@@ -48,9 +48,20 @@ import boofcv.struct.image.ImageUInt8;
  <!-- globalinfo-start -->
  * Performs edge detection using the Canny Edge detection algorithm.<br/>
  * For more information on the algorithm, see:<br/>
- * . Canny edge detector.
+ * WikiPedia. Canny edge detector.
  * <p/>
  <!-- globalinfo-end -->
+ *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;misc{missing_id,
+ *    author = {WikiPedia},
+ *    title = {Canny edge detector},
+ *    HTTP = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Canny_edge_detector}
+ * }
+ * </pre>
+ * <p/>
+ <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
@@ -136,6 +147,7 @@ public class CannyEdgeDetection
     TechnicalInformation 	result;
 
     result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "WikiPedia");
     result.setValue(Field.TITLE, "Canny edge detector");
     result.setValue(Field.HTTP, "http://en.wikipedia.org/wiki/Canny_edge_detector");
 
