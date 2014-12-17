@@ -61,6 +61,12 @@ public class FlowPanelNotificationArea
   /** the close listeners. */
   protected HashSet<ActionListener> m_CloseListeners;
   
+  /** the notification string. */
+  protected String m_Notification;
+  
+  /** whether it was an error. */
+  protected boolean m_IsError;
+  
   /**
    * Initializes the members.
    */
@@ -70,6 +76,8 @@ public class FlowPanelNotificationArea
     
     m_Owner          = null;
     m_CloseListeners = new HashSet<ActionListener>();
+    m_Notification   = null;
+    m_IsError        = false;
   }
   
   /**
@@ -169,31 +177,50 @@ public class FlowPanelNotificationArea
   }
   
   /**
+   * Updates the notification area.
+   */
+  protected void update() {
+    String[]	lines;
+    
+    if (m_Notification == null) {
+      m_TextNotification.setContent("");
+    }
+    else {
+      lines  = m_Notification.split("\n");
+      setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
+      m_TextNotification.setContent(m_Notification);
+    }
+
+    if (getOwner() != null) {
+      if (m_Notification == null) {
+	getOwner().setTabIcon(null);
+	getOwner().getSplitPane().setBottomComponentHidden(true);
+      }
+      else {
+	getOwner().setTabIcon(m_IsError ? "stop.gif" : "validate_blue.png");
+	getOwner().getSplitPane().setBottomComponentHidden(false);
+      }
+    }
+  }
+  
+  /**
    * Displays the notification text.
    * 
    * @param msg		the text to display
    * @param error	true if an error message
    */
   public void showNotification(String msg, boolean error) {
-    String[]	lines;
-    
-    lines = msg.split("\n");
-    setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
-    m_TextNotification.setContent(msg);
-    if (getOwner() != null) {
-      getOwner().setTabIcon(error ? "stop.gif" : "validate_blue.png");
-      getOwner().getSplitPane().setBottomComponentHidden(false);
-    }
+    m_Notification = msg;
+    m_IsError      = error;
+    update();
   }
   
   /**
    * Removes the notification.
    */
   public void clearNotification() {
-    m_TextNotification.setContent("");
-    if (getOwner() != null) {
-      getOwner().setTabIcon(null);
-      getOwner().getSplitPane().setBottomComponentHidden(true);
-    }
+    m_Notification = null;
+    m_IsError      = false;
+    update();
   }
 }
