@@ -14,7 +14,7 @@
  */
 
 /**
- * BufferedImageTransformer.java
+ * BoofCVImageTransformer.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
