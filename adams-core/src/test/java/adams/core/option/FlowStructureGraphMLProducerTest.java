@@ -19,9 +19,12 @@
  */
 package adams.core.option;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.data.io.input.SingleStringTextReader;
+import adams.env.Environment;
 import adams.flow.control.Flow;
 
 /**
@@ -166,5 +169,24 @@ public class FlowStructureGraphMLProducerTest
 	"toString() differs",
 	"" + producer.getOutput(),
 	producer.toString());
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(FlowStructureGraphMLProducerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

@@ -22,10 +22,13 @@ package adams.core.option;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedFormatHelper.Line;
+import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.parser.MathematicalExpressionText;
 
@@ -271,5 +274,24 @@ public class NestedConsumerTest
 	+ "\t\t\t-append\n"
 	+ "\t\t\ttrue\n",
 	handler);
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(NestedConsumerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

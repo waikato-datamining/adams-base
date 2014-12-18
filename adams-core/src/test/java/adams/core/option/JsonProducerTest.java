@@ -19,8 +19,11 @@
  */
 package adams.core.option;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.env.Environment;
 
 /**
  * Tests the JsonProducer class.
@@ -108,5 +111,24 @@ public class JsonProducerTest
 	"toString() differs",
 	"{\"loggingLevel\":\"WARNING\",\"baselineCorrection\":{\"loggingLevel\":\"FINE\",\"baselineCorrection\":{\"loggingLevel\":\"WARNING\",\"class\":\"adams.data.baseline.PassThrough\"},\"numRight\":30,\"class\":\"adams.data.baseline.SlidingWindow\",\"numLeft\":30},\"class\":\"adams.data.filter.BaselineCorrection\",\"dontUpdateID\":false}",
 	producer.toString());
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(JsonProducerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

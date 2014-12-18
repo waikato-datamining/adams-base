@@ -15,13 +15,16 @@
 
 /**
  * ArrayConsumerTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.parser.MathematicalExpressionText;
 
@@ -191,5 +194,24 @@ public class ArrayConsumerTest
 	ArrayConsumer.class,
 	"adams.flow.control.Flow -actor \"adams.flow.source.StringConstants -string 1 -string 2 -string 3\" -actor \"adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble\" -actor \"adams.flow.transformer.MathExpression -expression X^2\" -actor \"adams.flow.sink.DumpFile -output ${TMP}/dumpfile.txt -append true\"",
 	handler);
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(ArrayConsumerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

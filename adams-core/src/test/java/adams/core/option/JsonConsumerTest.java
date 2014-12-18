@@ -15,15 +15,18 @@
 
 /**
  * JsonConsumerTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.parser.MathematicalExpressionText;
 
@@ -270,5 +273,24 @@ public class JsonConsumerTest
 	JsonConsumer.class,
 	input.toJSONString(),
 	handler);
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(JsonConsumerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

@@ -15,13 +15,16 @@
 
 /**
  * ArrayProducerTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.env.Environment;
 
 /**
  * Tests the ArrayProducer class.
@@ -109,5 +112,24 @@ public class ArrayProducerTest
 	"toString() differs",
 	"adams.data.filter.BaselineCorrection -baseline \"adams.data.baseline.SlidingWindow -logging-level FINE -baseline adams.data.baseline.PassThrough\"",
 	producer.toString());
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(ArrayProducerTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }
