@@ -457,6 +457,7 @@ public class TimedTee
       m_StopWatch = new StopWatch();
 
     // time execution
+    m_StopWatch.reset();
     m_StopWatch.start();
     result = super.doExecute();
     m_StopWatch.stop();
