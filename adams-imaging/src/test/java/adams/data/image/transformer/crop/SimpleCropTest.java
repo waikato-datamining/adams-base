@@ -19,6 +19,10 @@
  */
 package adams.data.image.transformer.crop;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
+
 /**
  * Tests the SimpleCrop cropping algorithm.
  * 
@@ -69,5 +73,24 @@ public class SimpleCropTest
     result[1].setBottom(45);
     
     return result;
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(SimpleCropTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

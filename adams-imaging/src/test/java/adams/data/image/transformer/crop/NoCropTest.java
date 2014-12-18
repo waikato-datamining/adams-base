@@ -19,6 +19,10 @@
  */
 package adams.data.image.transformer.crop;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import adams.env.Environment;
+
 /**
  * Tests the NoCrop cropping algorithm.
  * 
@@ -60,5 +64,24 @@ public class NoCropTest
     return new NoCrop[]{
 	new NoCrop()
     };
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(NoCropTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

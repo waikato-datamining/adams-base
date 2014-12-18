@@ -19,7 +19,10 @@
  */
 package adams.data.image.transformer.crop;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import adams.data.image.ImageAnchor;
+import adams.env.Environment;
 
 /**
  * Tests the RelativeCrop cropping algorithm.
@@ -96,5 +99,24 @@ public class RelativeCropTest
     result[6].setAnchor(ImageAnchor.BOTTOM_RIGHT);
 
     return result;
+  }
+
+  /**
+   * Returns the test suite.
+   *
+   * @return		the suite
+   */
+  public static Test suite() {
+    return new TestSuite(RelativeCropTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }
