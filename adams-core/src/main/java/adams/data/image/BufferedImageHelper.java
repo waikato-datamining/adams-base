@@ -570,4 +570,38 @@ public class BufferedImageHelper {
     
     return result;
   }
+  
+  /**
+   * Returns the pixel depth in bits.
+   * 
+   * @param img		the image to analyze
+   * @return		the number of bits, -1 if unknown type
+   */
+  public static int getPixelDepth(BufferedImage img) {
+    switch (img.getType()) {
+      case BufferedImage.TYPE_3BYTE_BGR:
+	return 24;
+      case BufferedImage.TYPE_4BYTE_ABGR:
+      case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+	return 32;
+      case BufferedImage.TYPE_BYTE_BINARY:
+      case BufferedImage.TYPE_BYTE_GRAY:
+      case BufferedImage.TYPE_BYTE_INDEXED:
+	return 8;
+      case BufferedImage.TYPE_INT_ARGB:
+      case BufferedImage.TYPE_INT_ARGB_PRE:
+	return 32;
+      case BufferedImage.TYPE_INT_BGR:
+      case BufferedImage.TYPE_INT_RGB:
+	return 24;
+      case BufferedImage.TYPE_USHORT_555_RGB:
+	return 15;
+      case BufferedImage.TYPE_USHORT_565_RGB:
+	return 16;
+      case BufferedImage.TYPE_USHORT_GRAY:
+	return 16;
+      default:
+	return -1;
+    }
+  }
 }
