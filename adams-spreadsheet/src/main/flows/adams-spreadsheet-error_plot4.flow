@@ -1,14 +1,14 @@
 # Project: adams
-# Date: 2014-09-29 12:57:50
+# Date: 2014-12-24 10:11:09
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Plots data points from a spreadsheet in CSV format.\nEach row in the CSV file is treated as separate plot.
+	Plots data points from a spreadsheet in CSV format.\nWith each data point there is an error-delta attached\nfor the y-value, represented by the \"error band\" around the \ndata line plot.
 	-actor
 		adams.flow.source.FileSupplier
 			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
+			${EXAMPLE_FLOWS}/data/errors2.csv
 	-actor
 		adams.flow.transformer.SpreadSheetFileReader
 			-reader
@@ -20,27 +20,31 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.SpreadSheetPlotGenerator
 			-generator
-				adams.flow.transformer.plotgenerator.RowWisePlotGenerator
-					-data-columns
-					first-last_1
-					-meta-data-columns
-					last
+				adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator
+					-y-column
+					2
+					-x-column
+					1
+					-y-error-columns
+					3,4
 	-actor
 		adams.flow.sink.SequencePlotter
 			-writer
 				adams.gui.print.NullWriter
-			-comparison
-			X_AND_Y
 			-paintlet
-				adams.gui.visualization.sequence.LinePaintlet
+				adams.gui.visualization.sequence.PaintletWithFixedXYRange
+					-max-y
+					3.0
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-max-x
+					4.0
 			-overlay-paintlet
 				adams.gui.visualization.sequence.CirclePaintlet
 			-marker-paintlet
 				adams.flow.sink.sequenceplotter.NoMarkers
 			-error-paintlet
-				adams.flow.sink.sequenceplotter.SimpleErrorPaintlet
-					-plot-type
-					BOX
+				adams.flow.sink.sequenceplotter.ErrorBandPaintlet
 			-mouse-click-action
 				adams.flow.sink.sequenceplotter.NullClickAction
 			-color-provider
@@ -48,27 +52,23 @@ adams.flow.control.Flow
 			-overlay-color-provider
 				adams.gui.visualization.core.DefaultColorProvider
 			-title
-			bolts
+			Y Error plot
 			-axis-x
 				adams.gui.visualization.core.AxisPanelOptions
 					-label
-					attributes
+					x
 					-tick-generator
 						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
 					-width
 					40
 					-custom-format
-					0
+					0.0
 			-axis-y
 				adams.gui.visualization.core.AxisPanelOptions
 					-label
-					values
+					y
 					-tick-generator
 						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
 					-width
 					60
 					-custom-format
