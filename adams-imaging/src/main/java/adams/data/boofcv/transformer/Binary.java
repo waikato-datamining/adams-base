@@ -15,7 +15,7 @@
 
 /*
  * Binary.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -26,6 +26,7 @@ import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
+import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
 import boofcv.struct.image.ImageFloat32;
@@ -43,7 +44,7 @@ import boofcv.struct.image.ImageUInt8;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-threshold-type &lt;MANUAL|MEAN|ADAPTIVE_GAUSSIAN|ADAPTIVE_SQUARE&gt; (property: thresholdType)
+ * <pre>-threshold-type &lt;MANUAL|MEAN|ADAPTIVE_GAUSSIAN|ADAPTIVE_SQUARE|OTSU&gt; (property: thresholdType)
  * &nbsp;&nbsp;&nbsp;The type of threshold to apply.
  * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
@@ -111,7 +112,9 @@ public class Binary
     /** using adaptive gaussian. */
     ADAPTIVE_GAUSSIAN,
     /** using adaptive square. */
-    ADAPTIVE_SQUARE
+    ADAPTIVE_SQUARE,
+    /** using Otsu's method. */
+    OTSU
   }
 
   /** the type of threshold to apply. */
@@ -413,18 +416,24 @@ public class Binary
 
     switch (m_ThresholdType) {
       case MANUAL:
-	ThresholdImageOps.threshold(input, binary, m_Threshold, true);
+	ThresholdImageOps.threshold(input, binary, m_Threshold, m_ThresholdDown);
 	break;
       case MEAN:
 	threshold = ImageStatistics.mean(input);
 	getLogger().info("mean: " + threshold);
-	ThresholdImageOps.threshold(input, binary, (float) threshold, true);
+	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);
 	break;
       case ADAPTIVE_GAUSSIAN:
 	ThresholdImageOps.adaptiveGaussian(input, binary, m_GaussianRadius, m_Bias, m_ThresholdDown, null, null);
 	break;
       case ADAPTIVE_SQUARE:
 	ThresholdImageOps.adaptiveSquare(input, binary, m_SquareRadius, m_Bias, m_ThresholdDown, null, null);
+	break;
+      case OTSU:
+	binary    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+	threshold = GThresholdImageOps.computeOtsu((ImageUInt8) binary, 0, 255);
+	getLogger().info("otsu: " + threshold);
+	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);
 	break;
       default:
 	throw new IllegalStateException("Unhandled threshold type: " + m_ThresholdType);
