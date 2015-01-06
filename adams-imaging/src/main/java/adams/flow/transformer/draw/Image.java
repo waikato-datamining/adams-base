@@ -15,7 +15,7 @@
 
 /**
  * Image.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -24,8 +24,8 @@ import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 
 /**
  <!-- globalinfo-start -->
@@ -67,10 +67,10 @@ public class Image
   /** for serialization. */
   private static final long serialVersionUID = -1242368406478391978L;
 
-  /** the X position of the text (1-based). */
+  /** the X position of the image (1-based). */
   protected int m_X;
 
-  /** the Y position of the text (1-based). */
+  /** the Y position of the image (1-based). */
   protected int m_Y;
 
   /** the callable actor to get the image from. */
