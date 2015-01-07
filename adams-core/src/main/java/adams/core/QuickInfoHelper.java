@@ -295,7 +295,7 @@ public class QuickInfoHelper {
     if (variable != null) {
       if (prefix != null)
 	result += prefix;
-      result = variable;
+      result += variable;
     }
     else if (current) {
       if (prefix != null)
