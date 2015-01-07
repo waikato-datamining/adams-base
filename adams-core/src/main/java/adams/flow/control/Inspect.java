@@ -15,7 +15,7 @@
 
 /**
  * Inspect.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -67,7 +67,7 @@ import adams.gui.core.GUIHelper;
  * &nbsp;&nbsp;&nbsp;default: Inspect
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -81,6 +81,11 @@ import adams.gui.core.GUIHelper;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -129,7 +134,19 @@ import adams.gui.core.GUIHelper;
  * 
  * <pre>-provider &lt;adams.flow.sink.DisplayPanelProvider&gt; (property: panelProvider)
  * &nbsp;&nbsp;&nbsp;The actor for generating the viewer.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Display
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ * </pre>
+ * 
+ * <pre>-label-skip &lt;java.lang.String&gt; (property: labelSkip)
+ * &nbsp;&nbsp;&nbsp;The label to use for the skip button; let '_' precede the character that 
+ * &nbsp;&nbsp;&nbsp;should trigger the button via 'Alt+&lt;char&gt;' (Windows&#47;Linux).
+ * &nbsp;&nbsp;&nbsp;default: _Skip
+ * </pre>
+ * 
+ * <pre>-label-accept &lt;java.lang.String&gt; (property: labelAccept)
+ * &nbsp;&nbsp;&nbsp;The label to use for the accept button; let '_' precede the character that 
+ * &nbsp;&nbsp;&nbsp;should trigger the button via 'Alt+&lt;char&gt;' (Windows&#47;Linux).
+ * &nbsp;&nbsp;&nbsp;default: _Accept
  * </pre>
  * 
  <!-- options-end -->
@@ -152,6 +169,12 @@ public class Inspect
   /** the actor to use for generating panels. */
   protected DisplayPanelProvider m_PanelProvider;
 
+  /** the label for the skip button. */
+  protected String m_LabelSkip;
+
+  /** the label for the accept button. */
+  protected String m_LabelAccept;
+  
   /** the button for turning on/off the interactive state of the viewer. */
   protected JButton m_ButtonToggle;
 
@@ -197,6 +220,14 @@ public class Inspect
     m_OptionManager.add(
 	    "provider", "panelProvider",
 	    new Display());
+
+    m_OptionManager.add(
+	    "label-skip", "labelSkip",
+	    "_Skip");
+
+    m_OptionManager.add(
+	    "label-accept", "labelAccept",
+	    "_Accept");
   }
 
   /**
@@ -229,6 +260,72 @@ public class Inspect
   }
 
   /**
+   * Sets the label to use for the skip button ('_' precedes the character 
+   * to use as accelerator).
+   *
+   * @param value	the label
+   */
+  public void setLabelSkip(String value) {
+    m_LabelSkip = value;
+    reset();
+  }
+
+  /**
+   * Returns the label to use for the skip button ('_' precedes the character 
+   * to use as accelerator).
+   *
+   * @return		the label
+   */
+  public String getLabelSkip() {
+    return m_LabelSkip;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelSkipTipText() {
+    return 
+	"The label to use for the skip button; let '_' precede the character "
+	+ "that should trigger the button via 'Alt+<char>' (Windows/Linux).";
+  }
+
+  /**
+   * Sets the label to use for the accept button ('_' precedes the character 
+   * to use as accelerator).
+   *
+   * @param value	the label
+   */
+  public void setLabelAccept(String value) {
+    m_LabelAccept = value;
+    reset();
+  }
+
+  /**
+   * Returns the label to use for the accept button ('_' precedes the character 
+   * to use as accelerator).
+   *
+   * @return		the label
+   */
+  public String getLabelAccept() {
+    return m_LabelAccept;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAcceptTipText() {
+    return 
+	"The label to use for the accept button; let '_' precede the character "
+	+ "that should trigger the button via 'Alt+<char>' (Windows/Linux).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -239,6 +336,8 @@ public class Inspect
 
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "panelProvider", m_PanelProvider, ", provider: ");
+    result += QuickInfoHelper.toString(this, "labelSkip", m_LabelSkip, ", skip: ");
+    result += QuickInfoHelper.toString(this, "labelAccept", m_LabelAccept, ", accept: ");
 
     return result;
   }
@@ -338,8 +437,9 @@ public class Inspect
     panelPart = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panelPart, BorderLayout.EAST);
     
-    m_ButtonSkip = new JButton("Skip");
-    m_ButtonSkip.setMnemonic('S');
+    m_ButtonSkip = new JButton(GUIHelper.stripMnemonic(m_LabelSkip));
+    if (GUIHelper.hasMnemonic(m_LabelSkip))
+      m_ButtonSkip.setMnemonic(GUIHelper.getMnemonic(m_LabelSkip));
     m_ButtonSkip.setIcon(GUIHelper.getIcon("delete.gif"));
     m_ButtonSkip.addActionListener(new ActionListener() {
       @Override
@@ -350,8 +450,9 @@ public class Inspect
     });
     panelPart.add(m_ButtonSkip);
     
-    m_ButtonAccept = new JButton("Accept");
-    m_ButtonAccept.setMnemonic('A');
+    m_ButtonAccept = new JButton(GUIHelper.stripMnemonic(m_LabelAccept));
+    if (GUIHelper.hasMnemonic(m_LabelAccept))
+      m_ButtonAccept.setMnemonic(GUIHelper.getMnemonic(m_LabelAccept));
     m_ButtonAccept.setIcon(GUIHelper.getIcon("accept.png"));
     m_ButtonAccept.addActionListener(new ActionListener() {
       @Override
