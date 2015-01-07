@@ -15,7 +15,7 @@
 
 /*
  * InstanceExplorer.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -956,7 +956,7 @@ public class InstanceExplorer
       dialog = HistogramFactory.getDialog(getParentFrame(), false);
     for (i = 0; i < data.size(); i++) {
       inst = data.get(i).getData();
-      dialog.add((ArrayHistogram) m_HistogramSetup.getCurrent(), inst, "" + inst.getID());
+      dialog.add((ArrayHistogram) m_HistogramSetup.getCurrent(), inst, data.get(i).getID());
     }
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
