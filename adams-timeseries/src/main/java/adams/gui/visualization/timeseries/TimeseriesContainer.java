@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesContainer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -26,8 +26,8 @@ import adams.core.Constants;
 import adams.data.timeseries.Timeseries;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
-import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.AbstractContainer;
+import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.DatabaseContainer;
 import adams.gui.visualization.container.NamedContainer;
 import adams.gui.visualization.container.VisibilityContainer;
@@ -44,9 +44,6 @@ public class TimeseriesContainer
 
   /** for serialization. */
   private static final long serialVersionUID = -2589474045543243525L;
-
-  /** the ID to use for display. */
-  protected String m_ID;
 
   /** whether the timeseries is visible. */
   protected boolean m_Visible;
@@ -81,7 +78,7 @@ public class TimeseriesContainer
    * @param value	the ID
    */
   public void setID(String value) {
-    m_ID = value;
+    getData().setID(value);
   }
 
   /**
@@ -90,7 +87,7 @@ public class TimeseriesContainer
    * @return		the ID
    */
   public String getID() {
-    return m_ID;
+    return getData().getID();
   }
 
   /**
@@ -101,18 +98,6 @@ public class TimeseriesContainer
    */
   public String getDisplayID() {
     return getID();
-  }
-
-  /**
-   * For post-processing the payload, just after it got set.
-   * <p/>
-   * Sets the ID.
-   */
-  @Override
-  protected void postProcessPayload() {
-    super.postProcessPayload();
-    if (getData() != null)
-      setID(getData().getID());
   }
 
   /**
