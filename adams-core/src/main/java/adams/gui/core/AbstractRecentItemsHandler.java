@@ -15,7 +15,7 @@
 
 /*
  * AbstractRecentItemsHandler.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -390,6 +390,8 @@ public abstract class AbstractRecentItemsHandler<M, T>
    * @param item	the item to add to the list
    */
   public synchronized void addRecentItem(T item) {
+    int		index;
+    
     item = fromString(toString(item));
 
     // is it the first item again? -> ignore it
@@ -398,8 +400,13 @@ public abstract class AbstractRecentItemsHandler<M, T>
 	return;
     }
 
-    m_RecentItems.remove(item);
-    m_RecentItems.add(0, item);
+    if (!m_RecentItems.contains(item)) {
+      m_RecentItems.add(0, item);
+    }
+    else {
+      index = m_RecentItems.indexOf(item);
+      m_RecentItems.set(index, item);
+    }
     while (m_RecentItems.size() > m_MaxCount)
       m_RecentItems.remove(m_RecentItems.size() - 1);
 
