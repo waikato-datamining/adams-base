@@ -15,7 +15,7 @@
 
 /**
  * TimedSubProcess.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -30,9 +30,9 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallableActorUser;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.TimedActor;
 import adams.flow.core.Token;
 
 /**
@@ -112,7 +112,7 @@ import adams.flow.core.Token;
  */
 public class TimedSubProcess
   extends SubProcess
-  implements CallableActorUser {
+  implements TimedActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 85320778988733777L;
