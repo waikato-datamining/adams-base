@@ -83,7 +83,6 @@ import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
-import adams.gui.visualization.statistics.HistogramFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
@@ -117,9 +116,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /** the panel listing the spectra. */
   protected TimeseriesContainerList m_TimeseriesContainerList;
-
-  /** the dialog for the histogram setup. */
-  protected HistogramFactory.SetupDialog m_HistogramSetup;
 
   /** for detecting hits. */
   protected TimeseriesPointHitDetector m_TimeseriesPointHitDetector;
@@ -169,7 +165,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     super.initialize();
 
     m_AdjustToVisibleData = true;
-    m_HistogramSetup      = null;
     m_MinY                = null;
     m_MaxY                = null;
     m_MinX                = null;
