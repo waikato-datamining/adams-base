@@ -15,7 +15,7 @@
 
 /*
  * MoveFile.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -76,7 +76,7 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-file &lt;adams.core.io.PlaceholderFile&gt; (property: file)
- * &nbsp;&nbsp;&nbsp;The target file.
+ * &nbsp;&nbsp;&nbsp;The target file or directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
@@ -177,7 +177,7 @@ public class MoveFile
    * 			displaying in the GUI or for listing the options.
    */
   public String fileTipText() {
-    return "The target file.";
+    return "The target file or directory.";
   }
 
   /**
