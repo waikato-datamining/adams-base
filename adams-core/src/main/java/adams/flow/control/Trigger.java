@@ -15,7 +15,7 @@
 
 /*
  * Trigger.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,6 +25,7 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
+import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.Token;
 
 /**
@@ -84,7 +85,7 @@ import adams.flow.core.Token;
  */
 public class Trigger
   extends AbstractTee
-  implements ActorWithConditionalEquivalent {
+  implements ActorWithConditionalEquivalent, ActorWithTimedEquivalent {
 
   /** for serialization. */
   private static final long serialVersionUID = 4690934665757923783L;
@@ -120,6 +121,15 @@ public class Trigger
    */
   public Class getConditionalEquivalent() {
     return ConditionalTrigger.class;
+  }
+
+  /**
+   * Returns the class that is the corresponding timed equivalent.
+   * 
+   * @return		the class, null if none available
+   */
+  public Class getTimedEquivalent() {
+    return TimedTrigger.class;
   }
 
   /**

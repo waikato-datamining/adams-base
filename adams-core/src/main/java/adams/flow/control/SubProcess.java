@@ -15,7 +15,7 @@
 
 /*
  * SubProcess.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,6 +26,7 @@ import java.util.List;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorWithConditionalEquivalent;
+import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PauseStateHandler;
@@ -84,7 +85,8 @@ import adams.flow.core.Unknown;
  */
 public class SubProcess
   extends Sequence
-  implements OutputProducer, PauseStateHandler, ActorWithConditionalEquivalent {
+  implements OutputProducer, PauseStateHandler, ActorWithConditionalEquivalent,
+             ActorWithTimedEquivalent {
 
   /** for serialization. */
   private static final long serialVersionUID = 7433940498896052594L;
@@ -182,6 +184,15 @@ public class SubProcess
    */
   public Class getConditionalEquivalent() {
     return ConditionalSubProcess.class;
+  }
+
+  /**
+   * Returns the class that is the corresponding timed equivalent.
+   * 
+   * @return		the class, null if none available
+   */
+  public Class getTimedEquivalent() {
+    return TimedSubProcess.class;
   }
 
   /**

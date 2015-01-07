@@ -100,6 +100,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-timing-enabled &lt;boolean&gt; (property: timingEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, then the actors performs timing on its execution.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor to use.
  * &nbsp;&nbsp;&nbsp;default: unknown
@@ -128,6 +133,9 @@ public class TimedTrigger
 
   /** the key for backing up the configured state. */
   public final static String BACKUP_CONFIGURED = "configured";
+
+  /** whether timing is enabled. */
+  protected boolean m_TimingEnabled;
 
   /** the callable name. */
   protected CallableActorReference m_CallableName;
@@ -178,6 +186,10 @@ public class TimedTrigger
     super.defineOptions();
 
     m_OptionManager.add(
+	    "timing-enabled", "timingEnabled",
+	    true);
+
+    m_OptionManager.add(
 	    "callable", "callableName",
 	    new CallableActorReference("unknown"));
 
@@ -206,6 +218,35 @@ public class TimedTrigger
     super.initialize();
 
     m_Helper = new CallableActorHelper();
+  }
+
+  /**
+   * Sets whether to perform timing on its execution.
+   *
+   * @param value 	true if timing enabled
+   */
+  public void setTimingEnabled(boolean value) {
+    m_TimingEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to perform timing on its execution.
+   *
+   * @return 		true if timing enabled
+   */
+  public boolean getTimingEnabled() {
+    return m_TimingEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String timingEnabledTipText() {
+    return "If enabled, then the actors performs timing on its execution.";
   }
 
   /**
@@ -279,7 +320,8 @@ public class TimedTrigger
     
     result  = QuickInfoHelper.toString(this, "callableName", m_CallableName);
     result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
-    
+    result += QuickInfoHelper.toString(this, "timingEnabled", m_TimingEnabled, "enabled", ", ");
+
     return result;
   }
 
@@ -373,8 +415,11 @@ public class TimedTrigger
 
     result = null;
 
+    m_Configured = true;
+    if (!m_TimingEnabled)
+      return result;
+    
     m_CallableActor = findCallableActor();
-    m_Configured    = true;
     if (m_CallableActor == null) {
       if (!m_Optional)
 	result = "Couldn't find callable actor '" + getCallableName() + "'!";
@@ -453,28 +498,38 @@ public class TimedTrigger
 
     result = null;
 
-    if (m_StopWatch == null)
-      m_StopWatch = new StopWatch();
+    if (m_TimingEnabled) {
+      if (m_StopWatch == null)
+	m_StopWatch = new StopWatch();
+    }
 
     // time execution
-    m_StopWatch.reset();
-    m_StopWatch.start();
+    if (m_TimingEnabled) {
+      m_StopWatch.reset();
+      m_StopWatch.start();
+    }
+
     result = super.doExecute();
-    m_StopWatch.stop();
+
+    if (m_TimingEnabled) {
+      m_StopWatch.stop();
+    }
     
     // is variable attached?
     if (!m_Configured)
       result = setUpCallableActor();
 
     if (result == null) {
-      if (m_CallableActor != null) {
-	if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
-	  synchronized(m_CallableActor) {
-	    if (isLoggingEnabled())
-	      getLogger().info("Executing callable actor - start: " + m_CallableActor);
-	    result = executeCallableActor(m_StopWatch.getTime());
-	    if (isLoggingEnabled())
-	      getLogger().info("Executing callable actor - end: " + result);
+      if (m_TimingEnabled) {
+	if (m_CallableActor != null) {
+	  if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
+	    synchronized(m_CallableActor) {
+	      if (isLoggingEnabled())
+		getLogger().info("Executing callable actor - start: " + m_CallableActor);
+	      result = executeCallableActor(m_StopWatch.getTime());
+	      if (isLoggingEnabled())
+		getLogger().info("Executing callable actor - end: " + result);
+	    }
 	  }
 	}
       }

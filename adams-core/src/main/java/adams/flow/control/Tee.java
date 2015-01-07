@@ -15,7 +15,7 @@
 
 /*
  * Tee.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,6 +24,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
+import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 
@@ -96,7 +97,7 @@ import adams.flow.core.InputConsumer;
  */
 public class Tee
   extends AbstractTee
-  implements ActorWithConditionalEquivalent {
+  implements ActorWithConditionalEquivalent, ActorWithTimedEquivalent{
 
   /** for serialization. */
   private static final long serialVersionUID = -7489525518244336025L;
@@ -118,6 +119,15 @@ public class Tee
    */
   public Class getConditionalEquivalent() {
     return ConditionalTee.class;
+  }
+
+  /**
+   * Returns the class that is the corresponding timed equivalent.
+   * 
+   * @return		the class, null if none available
+   */
+  public Class getTimedEquivalent() {
+    return TimedTee.class;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -88,6 +88,7 @@ import adams.gui.flow.menu.EditInteractiveActors;
 import adams.gui.flow.menu.EditLocateActor;
 import adams.gui.flow.menu.EditProcessActors;
 import adams.gui.flow.menu.EditRedo;
+import adams.gui.flow.menu.EditTimedActors;
 import adams.gui.flow.menu.EditUndo;
 import adams.gui.flow.menu.ExecutionClearGraphicalOutput;
 import adams.gui.flow.menu.ExecutionDisplayErrors;
@@ -257,6 +258,9 @@ public class FlowEditorPanel
 
   /** the interactive actors action. */
   protected FlowEditorAction m_ActionEditInteractiveActors;
+
+  /** the timed actors action. */
+  protected FlowEditorAction m_ActionEditTimedActors;
 
   /** the ignore name changes action. */
   protected FlowEditorAction m_ActionEditIgnoreNameChanges;
@@ -576,6 +580,11 @@ public class FlowEditorPanel
     // Edit/Interactive actors (checkbox)
     action = new EditInteractiveActors();
     m_ActionEditInteractiveActors = action;
+    m_MenuItems.add(action);
+
+    // Edit/Timed actors (checkbox)
+    action = new EditTimedActors();
+    m_ActionEditTimedActors = action;
     m_MenuItems.add(action);
 
     // Edit/Ignore name changes (checkbox)
@@ -933,6 +942,7 @@ public class FlowEditorPanel
       menu.add(m_ActionEditCleanUpFlow);
       menu.add(m_ActionEditCheckVariables);
       menu.add(m_ActionEditInteractiveActors);
+      menu.add(m_ActionEditTimedActors);
       menu.add(m_ActionEditIgnoreNameChanges);
       menu.addSeparator();
       menu.add(m_ActionEditProcessActors);
