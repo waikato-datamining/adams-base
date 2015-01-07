@@ -15,7 +15,7 @@
 
 /**
  * QuickInfoHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -293,6 +293,8 @@ public class QuickInfoHelper {
     
     variable = getVariable(handler, property);
     if (variable != null) {
+      if (prefix != null)
+	result += prefix;
       result = variable;
     }
     else if (current) {
