@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2015 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -92,11 +92,13 @@ fi
 # check options
 MEMORY=512m
 MAIN=adams.gui.Main
+JVM=
+CPA=
 ARGS=
 OPTION=
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ]
   then
   	OPTION=$ARG
   	continue
@@ -112,6 +114,16 @@ do
     MAIN=$ARG
     OPTION=""
     continue
+  elif [ "$OPTION" = "-jvm" ]
+  then
+    JVM="$JVM -jvm \"$ARG\""
+    OPTION=""
+    continue
+  elif [ "$OPTION" = "-cpa" ]
+  then
+    CPA="-cpa \"$ARG\""
+    OPTION=""
+    continue
   fi
 
   ARGS="$ARGS \"$ARG\""
@@ -124,6 +136,8 @@ done
   adams.core.management.Launcher \
   -memory $MEMORY \
   -javaagent "$AGENT" \
+  $JVM \
+  $CPA \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
   $ARGS

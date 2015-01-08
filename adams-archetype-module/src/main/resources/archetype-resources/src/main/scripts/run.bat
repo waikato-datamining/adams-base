@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2015 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -28,6 +28,8 @@ set ERROR_CODE=0
 set CMD_LINE_ARGS=
 set MEMORY=512m
 set MAIN=adams.gui.Main
+set JVM=
+set CPA=
 set OPTION=
 set BASEDIR=%~dp0\..
 :Loop
@@ -41,6 +43,14 @@ set BASEDIR=%~dp0\..
     set OPTION=%~1
     goto next
   )
+  if "%~1"=="-jvm" (
+    set OPTION=%~1
+    goto next
+  )
+  if "%~1"=="-cpa" (
+    set OPTION=%~1
+    goto next
+  )
 
   if "%OPTION%"=="-memory" (
     set MEMORY=%~1
@@ -49,6 +59,16 @@ set BASEDIR=%~dp0\..
   )
   if "%OPTION%"=="-main" (
     set MAIN=%~1
+    set OPTION=
+    goto next
+  )
+  if "%OPTION%"=="-jvm" (
+    set JVM=%JVM% -jvm %~1
+    set OPTION=
+    goto next
+  )
+  if "%OPTION%"=="-cpa" (
+    set CPA=-cpa %~1
     set OPTION=
     goto next
   )
@@ -73,7 +93,7 @@ goto endInit
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
+%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
