@@ -160,7 +160,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
     if (output != null)
       output = getOutputFile(output);
 
-    for (Element el: roundEnv.getElementsAnnotatedWith(getAnnotationClass())) {
+    for (Element el: (Set<? extends Element>)roundEnv.getElementsAnnotatedWith(getAnnotationClass())) {
       copyright = (T) el.getAnnotation(getAnnotationClass());
 
       if (el.getKind() == ElementKind.CLASS) {
