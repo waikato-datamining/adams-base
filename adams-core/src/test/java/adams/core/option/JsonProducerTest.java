@@ -15,7 +15,7 @@
 
 /**
  * JsonProducerTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -57,11 +57,11 @@ public class JsonProducerTest
 
     assertEquals(
 	"getOutput() differs",
-	"{\"silent\":false,\"append\":true,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"loggingLevel\":\"INFO\",\"name\":\"DumpFile\",\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"annotations\":\"\",\"skip\":false,\"stopFlowOnError\":false}",
+	"{\"stopFlowOnError\":false,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"silent\":false,\"name\":\"DumpFile\",\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
 	"" + producer.getOutput());
     assertEquals(
 	"toString() differs",
-	"{\"silent\":false,\"append\":true,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"loggingLevel\":\"INFO\",\"name\":\"DumpFile\",\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"annotations\":\"\",\"skip\":false,\"stopFlowOnError\":false}",
+	"{\"stopFlowOnError\":false,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"silent\":false,\"name\":\"DumpFile\",\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
 	producer.toString());
   }
 
@@ -83,11 +83,11 @@ public class JsonProducerTest
 
     assertEquals(
 	"getOutput() differs",
-	"{\"loggingLevel\":\"INFO\",\"subFilters\":[{\"loggingLevel\":\"FINE\",\"class\":\"adams.data.filter.PassThrough\",\"dontUpdateID\":false},{\"loggingLevel\":\"FINEST\",\"subFilters\":[{\"loggingLevel\":\"WARNING\",\"class\":\"adams.data.filter.PassThrough\",\"dontUpdateID\":false}],\"class\":\"adams.data.filter.MultiFilter\",\"dontUpdateID\":false}],\"class\":\"adams.data.filter.MultiFilter\",\"dontUpdateID\":false}",
+	"{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
 	"" + producer.getOutput());
     assertEquals(
 	"toString() differs",
-	"{\"loggingLevel\":\"INFO\",\"subFilters\":[{\"loggingLevel\":\"FINE\",\"class\":\"adams.data.filter.PassThrough\",\"dontUpdateID\":false},{\"loggingLevel\":\"FINEST\",\"subFilters\":[{\"loggingLevel\":\"WARNING\",\"class\":\"adams.data.filter.PassThrough\",\"dontUpdateID\":false}],\"class\":\"adams.data.filter.MultiFilter\",\"dontUpdateID\":false}],\"class\":\"adams.data.filter.MultiFilter\",\"dontUpdateID\":false}",
+	"{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
 	producer.toString());
   }
 
@@ -105,11 +105,11 @@ public class JsonProducerTest
 
     assertEquals(
 	"getOutput() differs",
-	"{\"loggingLevel\":\"WARNING\",\"baselineCorrection\":{\"loggingLevel\":\"FINE\",\"baselineCorrection\":{\"loggingLevel\":\"WARNING\",\"class\":\"adams.data.baseline.PassThrough\"},\"numRight\":30,\"class\":\"adams.data.baseline.SlidingWindow\",\"numLeft\":30},\"class\":\"adams.data.filter.BaselineCorrection\",\"dontUpdateID\":false}",
+	"{\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
 	"" + producer.getOutput());
     assertEquals(
 	"toString() differs",
-	"{\"loggingLevel\":\"WARNING\",\"baselineCorrection\":{\"loggingLevel\":\"FINE\",\"baselineCorrection\":{\"loggingLevel\":\"WARNING\",\"class\":\"adams.data.baseline.PassThrough\"},\"numRight\":30,\"class\":\"adams.data.baseline.SlidingWindow\",\"numLeft\":30},\"class\":\"adams.data.filter.BaselineCorrection\",\"dontUpdateID\":false}",
+	"{\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
 	producer.toString());
   }
 

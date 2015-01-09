@@ -15,7 +15,7 @@
 
 /**
  * StringToJsonTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
