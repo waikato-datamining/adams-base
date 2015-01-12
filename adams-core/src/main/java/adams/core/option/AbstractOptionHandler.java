@@ -20,6 +20,7 @@
 
 package adams.core.option;
 
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingObject;
@@ -31,8 +32,8 @@ import adams.core.logging.LoggingObject;
  * @version $Revision$
  */
 public abstract class AbstractOptionHandler
-  extends LoggingObject
-  implements OptionHandler, LoggingLevelHandler {
+  extends CustomLoggingLevelObject
+  implements OptionHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4086279255884465893L;
@@ -150,8 +151,7 @@ public abstract class AbstractOptionHandler
    * @param value 	the level
    */
   public synchronized void setLoggingLevel(LoggingLevel value) {
-    m_LoggingLevel = value;
-    m_Logger       = null;
+    super.setLoggingLevel(value);
     reset();
   }
 

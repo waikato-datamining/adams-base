@@ -15,18 +15,18 @@
 
 /*
  * SerializableObjectHelper.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
-import java.util.HashSet;
-import java.util.logging.Level;
-
-import adams.core.logging.LoggingObject;
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.option.ArrayProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
+
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  * Helper class for serializing an object's member variables.
@@ -35,7 +35,7 @@ import adams.core.option.OptionUtils;
  * @version $Revision$
  */
 public class SerializableObjectHelper
-  extends LoggingObject 
+  extends CustomLoggingLevelObject
   implements Destroyable {
 
   /** for serialization. */
