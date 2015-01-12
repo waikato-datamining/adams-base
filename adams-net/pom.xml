@@ -139,6 +139,12 @@
       <artifactId>jodd-mail</artifactId>
       <version>${jodd.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>com.turn</groupId>
+      <artifactId>ttorrent</artifactId>
+      <version>1.4</version>
+    </dependency>
   </dependencies>
   
   <build>
