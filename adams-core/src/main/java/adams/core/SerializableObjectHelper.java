@@ -188,7 +188,7 @@ public class SerializableObjectHelper
             if (m_Strict)
               getLogger().log(Level.SEVERE, "Options differ --> generate");
             else
-              getLogger().log(Level.INFO, "Options differ");
+              getLogger().log(Level.WARNING, "Options differ");
 	  }
 	}
 	else {
