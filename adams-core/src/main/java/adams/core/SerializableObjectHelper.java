@@ -47,6 +47,9 @@ public class SerializableObjectHelper
   /** whether the setup got loaded or generated already. */
   protected boolean m_SetupLoadedOrGenerated;
 
+  /** whether to enforce strict option checks (ie rebuild if different) or just warn. */
+  protected boolean m_Strict;
+
   /**
    * Initializes the helper.
    *
@@ -57,6 +60,7 @@ public class SerializableObjectHelper
 
     m_Owner                  = owner;
     m_SetupLoadedOrGenerated = false;
+    m_Strict                 = false;
   }
 
   /**
@@ -73,6 +77,25 @@ public class SerializableObjectHelper
    */
   public void reset() {
     m_SetupLoadedOrGenerated = false;
+  }
+
+  /**
+   * Sets whether to use strict mode (options HAVE to be the same) or
+   * not (simply output warning that options changed).
+   *
+   * @param value whether options have changed
+   */
+  public void setStrict(boolean value) {
+    m_Strict = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use strict mode (options HAVE to be the same) or
+   * not (simple warning then).
+   */
+  public boolean isStrict() {
+    return m_Strict;
   }
 
   /**
@@ -160,10 +183,12 @@ public class SerializableObjectHelper
 	options = (String) fullSetup[0];
 	// options different? -> regenerate setup!
 	if (!options.equals(getCommandLine(m_Owner))) {
-	  generate = true;
+	  generate = m_Strict;
 	  if (isLoggingEnabled()) {
-	    getLogger().log(Level.INFO,
-		"Options differ --> generate");
+            if (m_Strict)
+              getLogger().log(Level.SEVERE, "Options differ --> generate");
+            else
+              getLogger().log(Level.INFO, "Options differ");
 	  }
 	}
 	else {
