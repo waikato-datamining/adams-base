@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -395,6 +395,8 @@ public class EnterManyValues
     for (ValueDefinition val: m_Values) {
       order.add(val.getName());
       panel.addPropertyType(val.getName(), val.getType());
+      if (!val.getDisplay().trim().isEmpty())
+        panel.setLabel(val.getName(), val.getDisplay());
     }
     panel.setPropertyOrder(order);
     panel.setProperties(getDefaultProperties());

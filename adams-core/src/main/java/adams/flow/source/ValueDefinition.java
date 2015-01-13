@@ -15,7 +15,7 @@
 
 /*
  * ValueDefinition.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -38,7 +38,10 @@ public class ValueDefinition
 
   /** the name of the value. */
   protected String m_Name;
-  
+
+  /** the display text. */
+  protected String m_Display;
+
   /** the type of the value. */
   protected PropertyType m_Type;
   
@@ -64,6 +67,10 @@ public class ValueDefinition
 
     m_OptionManager.add(
 	    "name", "name",
+	    "");
+
+    m_OptionManager.add(
+	    "display", "display",
 	    "");
 
     m_OptionManager.add(
@@ -102,6 +109,35 @@ public class ValueDefinition
    */
   public String nameTipText() {
     return "The name of the value.";
+  }
+
+  /**
+   * Sets the display text for the value.
+   *
+   * @param value	the display text
+   */
+  public void setDisplay(String value) {
+    m_Display = value;
+    reset();
+  }
+
+  /**
+   * Returns the display text for the value.
+   *
+   * @return 		the display text
+   */
+  public String getDisplay() {
+    return m_Display;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String displayTipText() {
+    return "The text to use as label for the value.";
   }
 
   /**
