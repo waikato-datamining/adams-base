@@ -44,8 +44,6 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -56,7 +54,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SubStringCount
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -73,8 +71,13 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-find &lt;java.lang.String&gt; (property: find)
- * &nbsp;&nbsp;&nbsp;The string to look for.
+ * &nbsp;&nbsp;&nbsp;The sub-string to look for.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
