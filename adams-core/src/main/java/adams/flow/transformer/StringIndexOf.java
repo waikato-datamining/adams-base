@@ -15,7 +15,7 @@
 
 /*
  * StringIndexOf.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -178,7 +178,7 @@ public class StringIndexOf
   }
 
   /**
-   * Sets the regular expression used for splitting the string.
+   * Sets the string to find.
    *
    * @param value	the expression
    */
@@ -188,7 +188,7 @@ public class StringIndexOf
   }
 
   /**
-   * Returns the regular expression for splitting the string.
+   * Returns the string to find.
    *
    * @return		the expression
    */
