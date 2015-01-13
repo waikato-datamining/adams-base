@@ -482,7 +482,7 @@ kMeans
 Number of iterations: 3
 Within cluster sum of squared errors: 1510.0
 
-Initial staring points (random):
+Initial starting points (random):
 
 Cluster 0: n,n,y,y,y,y,n,n,y,n,n,n,y,y,y,y,democrat
 Cluster 1: n,n,y,n,y,n,y,y,y,n,n,n,n,y,n,y,democrat
@@ -492,7 +492,7 @@ Missing values globally replaced with mean/mode
 Final cluster centroids:
                                                       Cluster#
 Attribute                                 Full Data          0          1
-                                              (435)      (214)      (221)
+                                            (435.0)    (214.0)    (221.0)
 =========================================================================
 handicapped-infants                               n          n          y
 water-project-cost-sharing                        y          y          n

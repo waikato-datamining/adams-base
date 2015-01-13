@@ -1,6 +1,6 @@
 --> dumpfile.txt
 weka.classifiers.trees.J48 -C 0.25 -M 2
-weka.classifiers.trees.RandomForest -I 10 -K 0 -S 1 -num-slots 1
+weka.classifiers.trees.RandomForest -I 100 -K 0 -S 1 -num-slots 1
 weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007"
 weka.classifiers.functions.SMOreg -C 1.0 -N 0 -I "weka.classifiers.functions.supportVector.RegSMOImproved -T 0.001 -V -P 1.0E-12 -L 0.001 -W 1" -K "weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007"
 
