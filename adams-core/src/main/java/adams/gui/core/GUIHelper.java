@@ -1852,7 +1852,8 @@ public class GUIHelper {
     JLabel		label;
     final StringBuilder	result;
     Boolean             sync;
-    
+    JButton             initialFocus;
+
     if (initial == null)
       initial = "";
     if ((title == null) || (title.isEmpty()))
@@ -1886,6 +1887,7 @@ public class GUIHelper {
     result = new StringBuilder();
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    initialFocus = null;
     for (String option: options) {
       final JButton button = new JButton(option);
       button.addActionListener(new ActionListener() {
@@ -1896,7 +1898,7 @@ public class GUIHelper {
         }
       });
       if (option.equals(initial))
-        button.grabFocus();
+        initialFocus = button;
       panelButtons.add(button);
     }
     panelAll.add(panelButtons, BorderLayout.CENTER);
@@ -1905,6 +1907,8 @@ public class GUIHelper {
     dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
+    if (initialFocus != null)
+      initialFocus.requestFocusInWindow();
     dialog.setVisible(true);
 
     if (comm != null) {
