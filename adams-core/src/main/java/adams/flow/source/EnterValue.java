@@ -15,13 +15,10 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseObject;
@@ -29,6 +26,9 @@ import adams.core.base.BaseString;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -144,6 +144,9 @@ public class EnterValue
   
   /** the output token to broadcast. */
   protected Token m_OutputToken;
+
+  /** for communicating with the input dialog. */
+  protected GUIHelper.DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
@@ -378,14 +381,15 @@ public class EnterValue
    */
   @Override
   public boolean doInteract() {
-    String	value;
-    String	msg;
-    String	initial;
-    
+    String	                  value;
+    String	                  msg;
+    String	                  initial;
+
     msg     = m_Message;
     msg     = getVariables().expand(msg);
     initial = m_InitialValue;
     initial = getVariables().expand(initial);
+    m_Comm  = new GUIHelper.DialogCommunication();
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(initial);
@@ -393,12 +397,19 @@ public class EnterValue
     }
     
     if (m_SelectionValues.length > 0)
-      value = (String) GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, BaseObject.toStringArray(m_SelectionValues), !m_UseButtons, getName());
+      value = GUIHelper.showInputDialog(
+        GUIHelper.getParentComponent(getParentComponent()),
+        msg, initial, BaseObject.toStringArray(m_SelectionValues),
+        !m_UseButtons, getName(), m_Comm);
     else
-      value = GUIHelper.showInputDialog(GUIHelper.getParentComponent(getParentComponent()), msg, initial, getName());
+      value = GUIHelper.showInputDialog(
+        GUIHelper.getParentComponent(getParentComponent()),
+        msg, initial, getName(), m_Comm);
 
     if ((value != null) && (value.length() > 0))
       m_OutputToken = new Token(value);
+
+    m_Comm = null;
 
     return ((value != null) && (value.length() > 0));
   }
@@ -425,5 +436,18 @@ public class EnterValue
    */
   public boolean hasPendingOutput() {
     return (m_OutputToken != null);
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Comm != null) {
+      synchronized(m_Comm) {
+        m_Comm.requestClose();
+      }
+    }
+    super.stopExecution();
   }
 }
