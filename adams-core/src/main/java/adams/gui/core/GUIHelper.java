@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -46,6 +46,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -114,6 +115,56 @@ public class GUIHelper {
 
   /** the screen boundaries. */
   protected static Rectangle m_ScreenBoundaries;
+
+  /**
+   * Helper class that allows external callers to communicate with input
+   * dialogs, enabling them to schedule closing of the dialog.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class DialogCommunication
+    implements Serializable {
+
+    private static final long serialVersionUID = -7319896279709161892L;
+
+    /** whether the dialog should get closed. */
+    protected boolean m_CloseDialogRequested;
+
+    /**
+     * Default constructor.
+     */
+    public DialogCommunication() {
+      super();
+      m_CloseDialogRequested = false;
+    }
+
+    /**
+     * Requests to close the dialog.
+     */
+    public void requestClose() {
+      m_CloseDialogRequested = true;
+    }
+
+    /**
+     * Returns whether closing of the dialog was requested.
+     *
+     * @return true if to close dialog requested
+     */
+    public boolean isCloseRequested() {
+      return m_CloseDialogRequested;
+    }
+
+    /**
+     * Returns a short description of object.
+     *
+     * @return the description
+     */
+    @Override
+    public String toString() {
+      return "closeDialog=" + m_CloseDialogRequested;
+    }
+  }
 
   /**
    * Initializes the properties if necessary.
@@ -1093,15 +1144,18 @@ public class GUIHelper {
    */
   public static String pasteSetupFromClipboard() {
     StringBuilder	result;
+    String              pasted;
     String[]		parts;
     List<String>	lines;
     String		line;
     int			i;
     boolean		formatOK;
 
-    result = new StringBuilder(pasteStringFromClipboard());
+    result = null;
+    pasted = pasteStringFromClipboard();
 
-    if (result != null) {
+    if (pasted != null) {
+      result = new StringBuilder(pasted);
       parts = result.toString().replaceAll("\r", "").split("\n");
       if (parts.length > 1) {
 	// preprocess string
@@ -1140,7 +1194,10 @@ public class GUIHelper {
       }
     }
 
-    return result.toString();
+    if (result == null)
+      return null;
+    else
+      return result.toString();
   }
 
   /**
@@ -1499,7 +1556,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for entering a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
@@ -1507,12 +1564,29 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title) {
+    return showInputDialog(parent, msg, initial, title, null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
+   * @param initial	the initial selection, can be null
+   * @param title	the title of the input dialog, can be null (uses "Enter value" in that case)
+   * @param comm        for communicating with the dialog, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm) {
     JPanel			panelAll;
     JPanel			panel;
     JLabel			label;
     BaseTextArea		textValue;
     final ApprovalDialog	dialog;
     Component			pparent;
+    Boolean                     sync;
 
     if (initial == null)
       initial = "";
@@ -1522,10 +1596,18 @@ public class GUIHelper {
       msg = "Enter value";
     
     pparent = GUIHelper.getParentComponent(parent);
-    if (pparent instanceof Dialog)
-      dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    if (comm == null) {
+      if (pparent instanceof Dialog)
+        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+      else
+        dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    }
+    else {
+      if (pparent instanceof Dialog)
+        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+      else
+        dialog = ApprovalDialog.getDialog((Frame) pparent, false);
+    }
     dialog.setTitle(title);
     
     textValue = new BaseTextArea(1, 20);
@@ -1567,6 +1649,32 @@ public class GUIHelper {
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
+    if (comm != null) {
+      sync = new Boolean(true);
+      // wait till dialog visible
+      while (!dialog.isVisible()) {
+        try {
+          synchronized (sync) {
+            sync.wait(10);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+      // wait till dialog closed
+      while (dialog.isVisible() && !comm.isCloseRequested()) {
+        try {
+          synchronized (sync) {
+            sync.wait(100);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+    }
+
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
       return textValue.getText();
     else
@@ -1602,15 +1710,18 @@ public class GUIHelper {
 
   /**
    * A simple dialog for selecting a string.
-   * 
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   *
    * @param parent	the parent for this dialog
    * @param title	the title of the input dialog, can be null (uses "Select value" in that case)
    * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
+   * @param comm        for communicating with the caller, can be null
    * @return		the value entered, null if cancelled
    */
-  protected static String showInputDialogComboBox(Component parent, String msg, String initial, String[] options, String title) {
+  protected static String showInputDialogComboBox(Component parent, String msg, String initial, String[] options, String title, DialogCommunication comm) {
     JPanel			panelAll;
     JPanel			panelCombo;
     JPanel			panel;
@@ -1618,7 +1729,8 @@ public class GUIHelper {
     JComboBox			combobox;
     final ApprovalDialog	dialog;
     Component			pparent;
-    
+    Boolean                     sync;
+
     if (initial == null)
       initial = "";
     if ((title == null) || (title.isEmpty()))
@@ -1627,10 +1739,18 @@ public class GUIHelper {
       msg = "Select value";
     
     pparent = GUIHelper.getParentComponent(parent);
-    if (pparent instanceof Dialog)
-      dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    if (comm == null) {
+      if (pparent instanceof Dialog)
+        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+      else
+        dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+    }
+    else {
+      if (pparent instanceof Dialog)
+        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+      else
+        dialog = ApprovalDialog.getDialog((Frame) pparent, false);
+    }
     dialog.setTitle(title);
     
     combobox = new JComboBox(options);
@@ -1675,6 +1795,35 @@ public class GUIHelper {
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
+    if (comm != null) {
+      sync = new Boolean(true);
+      // wait till dialog visible
+      while (!dialog.isVisible()) {
+        try {
+          synchronized (sync) {
+            sync.wait(10);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+      // wait till dialog closed
+      while (dialog.isVisible() && !comm.isCloseRequested()) {
+        try {
+          synchronized (sync) {
+            sync.wait(100);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+
+      if (comm.isCloseRequested())
+        dialog.setVisible(false);
+    }
+
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
       return (String) combobox.getSelectedItem();
     else
@@ -1683,15 +1832,18 @@ public class GUIHelper {
 
   /**
    * A simple dialog for selecting a string by clicking on a button.
-   * 
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   *
    * @param parent	the parent for this dialog
    * @param title	the title of the input dialog, can be null (uses "Select value" in that case)
    * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
+   * @param comm        for communicating with the caller, can be null
    * @return		the value entered, null if cancelled
    */
-  protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title) {
+  protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title, DialogCommunication comm) {
     Component		pparent;
     final BaseDialog	dialog;
     JPanel		panelButtons;
@@ -1699,6 +1851,7 @@ public class GUIHelper {
     JPanel		panelAll;
     JLabel		label;
     final StringBuilder	result;
+    Boolean             sync;
     
     if (initial == null)
       initial = "";
@@ -1708,10 +1861,18 @@ public class GUIHelper {
       msg = "Select alue";
     
     pparent = GUIHelper.getParentComponent(parent);
-    if (pparent instanceof Dialog)
-      dialog = new BaseDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = new BaseDialog((Frame) pparent, true);
+    if (comm == null) {
+      if (pparent instanceof Dialog)
+        dialog = new BaseDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+      else
+        dialog = new BaseDialog((Frame) pparent, true);
+    }
+    else {
+      if (pparent instanceof Dialog)
+        dialog = new BaseDialog((Dialog) pparent, ModalityType.MODELESS);
+      else
+        dialog = new BaseDialog((Frame) pparent, false);
+    }
     dialog.setTitle(title);
 
     panelAll = new JPanel(new BorderLayout(5, 5));
@@ -1734,6 +1895,8 @@ public class GUIHelper {
           dialog.setVisible(false);
         }
       });
+      if (option.equals(initial))
+        button.grabFocus();
       panelButtons.add(button);
     }
     panelAll.add(panelButtons, BorderLayout.CENTER);
@@ -1744,6 +1907,35 @@ public class GUIHelper {
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
+    if (comm != null) {
+      sync = new Boolean(true);
+      // wait till dialog visible
+      while (!dialog.isVisible()) {
+        try {
+          synchronized (sync) {
+            sync.wait(10);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+      // wait till dialog closed
+      while (dialog.isVisible() && !comm.isCloseRequested()) {
+        try {
+          synchronized (sync) {
+            sync.wait(100);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+
+      if (comm.isCloseRequested())
+        dialog.setVisible(false);
+    }
+
     if (result.length() == 0)
       return null;
     else
@@ -1752,7 +1944,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for entering a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param title	the title of the input dialog, can be null
    * @param msg		the message to display
@@ -1762,10 +1954,28 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean useComboBox, String title) {
+    return showInputDialog(parent, msg, initial, options, useComboBox, title, null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   *
+   * @param parent	the parent for this dialog
+   * @param title	the title of the input dialog, can be null
+   * @param msg		the message to display
+   * @param initial	the initial selection, can be null
+   * @param options	the available options
+   * @param useComboBox	whether to use a combobox or buttons
+   * @param comm        for communicating with the dialog, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean useComboBox, String title, DialogCommunication comm) {
     if (useComboBox)
-      return showInputDialogComboBox(parent, msg, initial, options, title);
+      return showInputDialogComboBox(parent, msg, initial, options, title, comm);
     else
-      return showInputDialogButtons(parent, msg, initial, options, title);
+      return showInputDialogButtons(parent, msg, initial, options, title, comm);
   }
   
   /**
