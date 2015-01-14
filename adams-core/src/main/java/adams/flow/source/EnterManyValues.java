@@ -435,6 +435,9 @@ public class EnterManyValues
       }
     }
 
+    if (isStopped())
+      dialog.setVisible(false);
+
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       props         = panel.getProperties();
       m_OutputToken = new Token(propertiesToSpreadSheet(props));
