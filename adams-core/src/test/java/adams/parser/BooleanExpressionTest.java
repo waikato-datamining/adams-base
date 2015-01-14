@@ -15,7 +15,7 @@
 
 /**
  * BooleanExpressionTest.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -141,6 +141,8 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 87
 	  {/** no symbols necessary */},		// 88
 	  {/** no symbols necessary */},		// 89
+	  {/** no symbols necessary */},		// 90
+	  {/** no symbols necessary */},		// 91
 	}
     };
   }
@@ -243,6 +245,8 @@ public class BooleanExpressionTest
 	  "isnan(NaN)", 	// 87
 	  "isnan(1.0)", 	// 88
 	  "isnan(0.0 / 0.0)", 	// 89
+	  "min(2.0, 1.0) = 1.0", 	// 90
+	  "max(2.0, 1.0) = 2.0", 	// 91
 	}
     };
   }

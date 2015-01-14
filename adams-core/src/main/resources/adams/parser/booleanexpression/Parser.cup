@@ -169,7 +169,7 @@ parser code {:
 
 terminal COMMA, SEMICOLON, LPAREN, RPAREN;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
-terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, ISNAN;
+terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, ISNAN;
 terminal IFMISSING, LENGTH, GET, TRIM;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
 terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT;
@@ -193,7 +193,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -292,6 +292,10 @@ expr      ::=
                 {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
               | CEIL LPAREN expr:e RPAREN
                 {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+              | MIN LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
+                {: RESULT = new Double(Math.min(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
+              | MAX LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
+                {: RESULT = new Double(Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
               | IFELSE LPAREN expr:b semi_or_comma expr:e_true semi_or_comma expr:e_false RPAREN
                 {: if (parser.getHelper().toBoolean(b))
                      RESULT = e_true;
