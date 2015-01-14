@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.mathematicalexpression;
@@ -96,6 +96,8 @@ import java.io.*;
   "power" { return sf.newSymbol("Pow", sym.POW); }
   "pow" { return sf.newSymbol("Pow", sym.POW); }
   "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
+  "min" { return sf.newSymbol("Min", sym.MIN); }
+  "max" { return sf.newSymbol("Max", sym.MAX); }
   "ifelse" { return sf.newSymbol("IfElse", sym.IFELSE); }
   "if" { return sf.newSymbol("IfElse", sym.IFELSE); }
   "ifmissing" { return sf.newSymbol("IfMissing", sym.IFMISSING); }

@@ -15,7 +15,7 @@
 
 /**
  * MathematicalExpressionTest.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -124,6 +124,8 @@ public class MathematicalExpressionTest
 	  {/** no symbols necessary */},		// 70
 	  {/** no symbols necessary */},		// 71
 	  {/** no symbols necessary */},		// 72
+	  {/** no symbols necessary */},		// 73
+	  {/** no symbols necessary */},		// 74
 	}
     };
   }
@@ -209,6 +211,8 @@ public class MathematicalExpressionTest
 	  "if(isnan(NaN), 1.0, 0.0)", 		// 70
 	  "if(isnan(1.0), 1.0, 0.0)", 		// 71
 	  "if(isnan(0.0 / 0.0), 1.0, 0.0)", 	// 72
+	  "min(1.1, 0.1)", 	// 73
+	  "max(1.1, 0.1)", 	// 74
 	}
     };
   }

@@ -15,7 +15,7 @@
 
 /*
  * MathematicalExpression.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -97,6 +97,8 @@ import adams.parser.mathematicalexpression.Scanner;
  *               | floor ( expr )<br/>
  *               | pow[er] ( expr , expr )<br/>
  *               | ceil ( expr )<br/>
+ *               | min ( expr1 , expr2 )<br/>
+ *               | max ( expr1 , expr2 )<br/>
  *               | year ( expr )<br/>
  *               | month ( expr )<br/>
  *               | day ( expr )<br/>
@@ -286,6 +288,8 @@ public class MathematicalExpression
       + "              | floor ( expr )\n"
       + "              | pow[er] ( expr , expr )\n"
       + "              | ceil ( expr )\n"
+      + "              | min ( expr1 , expr2 )\n"
+      + "              | max ( expr1 , expr2 )\n"
       + "              | year ( expr )\n"
       + "              | month ( expr )\n"
       + "              | day ( expr )\n"
