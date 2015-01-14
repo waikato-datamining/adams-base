@@ -382,6 +382,7 @@ public class EnterManyValues
     PropertiesParameterPanel	panel;
     JPanel			panelMsg;
     List<String>		order;
+    Boolean                     sync;
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(propertiesToSpreadSheet(getDefaultProperties()));
@@ -402,13 +403,38 @@ public class EnterManyValues
     panel.setProperties(getDefaultProperties());
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelMsg.add(new JLabel(m_Message));
-    dialog = new ApprovalDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
+    dialog = new ApprovalDialog((Dialog) null, ModalityType.MODELESS);
     dialog.setTitle(getName());
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
+
+    sync = new Boolean(true);
+    // wait till dialog visible
+    while (!dialog.isVisible()) {
+      try {
+        synchronized (sync) {
+          sync.wait(10);
+        }
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+    // wait till dialog closed
+    while (dialog.isVisible() && !isStopped()) {
+      try {
+        synchronized (sync) {
+          sync.wait(100);
+        }
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       props         = panel.getProperties();
       m_OutputToken = new Token(propertiesToSpreadSheet(props));
