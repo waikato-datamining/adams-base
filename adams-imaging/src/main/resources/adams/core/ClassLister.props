@@ -91,6 +91,10 @@ adams.flow.transformer.imagepreparation.AbstractImagePreparation=\
 adams.data.imagefilter.AbstractImageFilterProvider=\
   adams.data.imagefilter
 
+# imagesharpness algorithms
+adams.data.imagesharpness.AbstractImageSharpness=\
+  adams.data.imagesharpness
+
 # ImageMagick operations
 adams.data.imagemagick.AbstractImageOperation=\
   adams.data.imagemagick,\
