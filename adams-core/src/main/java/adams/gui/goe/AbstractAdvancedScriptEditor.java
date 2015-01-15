@@ -15,46 +15,33 @@
 
 /*
  * AbstractAdvancedScriptEditor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import adams.core.AdditionalInformationHandler;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.AbstractAdvancedScript;
-import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
- * A PropertyEditor for AbstractScript-derived objects.
+ * A PropertyEditor for AbstractAdvancedScript-derived objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9417 $
- * @see adams.gui.core.AbstractSimpleScript
+ * @see adams.gui.core.AbstractAdvancedScript
  */
 public class AbstractAdvancedScriptEditor
   extends AbstractPropertyEditorSupport
@@ -242,9 +229,9 @@ public class AbstractAdvancedScriptEditor
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String s = m_TextStatement.getContent();
-	if (((AbstractSimpleScript) getValue()).isValid(s) && !s.equals(((AbstractSimpleScript) getValue()).getValue())) {
+	if (((AbstractAdvancedScript) getValue()).isValid(s) && !s.equals(((AbstractAdvancedScript) getValue()).getValue())) {
 	  try {
-	    AbstractSimpleScript newValue = (AbstractSimpleScript) getValue().getClass().newInstance();
+	    AbstractAdvancedScript newValue = (AbstractAdvancedScript) getValue().getClass().newInstance();
 	    newValue.setValue(s);
 	    setValue(newValue);
 	  }
