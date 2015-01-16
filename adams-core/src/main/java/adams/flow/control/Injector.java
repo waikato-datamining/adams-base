@@ -15,7 +15,7 @@
 
 /*
  * Injector.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,6 +26,8 @@ import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.conversion.ConversionFromString;
+import adams.data.conversion.StringToString;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Token;
 import adams.flow.transformer.AbstractTransformer;
@@ -47,8 +49,6 @@ import adams.flow.transformer.AbstractTransformer;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -59,7 +59,7 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;default: Injector
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -73,6 +73,11 @@ import adams.flow.transformer.AbstractTransformer;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -91,6 +96,11 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;The number of tokens after which the injection takes place.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The conversion to apply to the string before injecting it.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
  * 
  <!-- options-end -->
@@ -133,6 +143,9 @@ public class Injector
   /** every nth token the string will get injected. */
   protected int m_EveryNth;
 
+  /** the conversion for turning the string into another object type. */
+  protected ConversionFromString m_Conversion;
+
   /** the strings to output. */
   protected List m_Queue;
 
@@ -170,6 +183,10 @@ public class Injector
     m_OptionManager.add(
 	    "nth", "everyNth",
 	    1, 1, null);
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new StringToString());
   }
 
   /**
@@ -179,7 +196,14 @@ public class Injector
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "injection", (m_Injection.length() > 0 ? m_Injection : null));
+    String    result;
+
+    result  = QuickInfoHelper.toString(this, "injection", (m_Injection.length() > 0 ? m_Injection : "-none-"));
+    result += QuickInfoHelper.toString(this, "location", m_Location, ", location: ");
+    result += QuickInfoHelper.toString(this, "everyNth", m_EveryNth, ", every: ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+
+    return result;
   }
 
   /**
@@ -271,7 +295,7 @@ public class Injector
    *
    * @return		the number of tokens
    */
- public int getEveryNth() {
+  public int getEveryNth() {
     return m_EveryNth;
   }
 
@@ -283,6 +307,35 @@ public class Injector
    */
   public String everyNthTipText() {
     return "The number of tokens after which the injection takes place.";
+  }
+
+  /**
+   * Sets the conversion to apply to the string.
+   *
+   * @param value	the conversion
+   */
+  public void setConversion(ConversionFromString value) {
+    m_Conversion = value;
+    reset();
+  }
+
+  /**
+   * Returns the conversion to apply to the string.
+   *
+   * @return		the conversion
+   */
+  public ConversionFromString getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The conversion to apply to the string before injecting it.";
   }
 
   /**
@@ -369,6 +422,7 @@ public class Injector
   @Override
   protected String doExecute() {
     String	result;
+    Object      obj;
 
     result = null;
 
@@ -377,12 +431,22 @@ public class Injector
     m_Queue.add(m_InputToken.getPayload());
 
     if (m_Counter % m_EveryNth == 0) {
-      if (m_Location == Location.BEFORE)
-	m_Queue.add(0, m_Injection);
-      else if (m_Location == Location.AFTER)
-	m_Queue.add(m_Injection);
-      else
-	result = "Unhandled location: " + m_Location;
+      obj = m_Injection;
+      if (!(m_Conversion instanceof StringToString)) {
+        m_Conversion.setInput(obj);
+        result = m_Conversion.convert();
+        if (result == null)
+          obj = m_Conversion.getOutput();
+        m_Conversion.cleanUp();
+      }
+      if (result == null) {
+        if (m_Location == Location.BEFORE)
+          m_Queue.add(0, obj);
+        else if (m_Location == Location.AFTER)
+          m_Queue.add(obj);
+        else
+          result = "Unhandled location: " + m_Location;
+      }
     }
 
     return result;

@@ -1,1 +1,1 @@
-inject_me
+inject_me, location: AFTER, every: 1, conversion: StringToString
