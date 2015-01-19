@@ -38,56 +38,56 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <!-- globalinfo-start -->
- * * Decode the data in a barcode.
- * * <p/>
- * <!-- globalinfo-end -->
+ <!-- globalinfo-start -->
+ * Decode the data in a barcode.
  * <p/>
- * <!-- options-start -->
- * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * * &nbsp;&nbsp;&nbsp;default: WARNING
- * * </pre>
- * * 
- * * <pre>-name &lt;java.lang.String&gt; (property: name)
- * * &nbsp;&nbsp;&nbsp;The name of the actor.
- * * &nbsp;&nbsp;&nbsp;default: DecodeBarcode
- * * </pre>
- * * 
- * * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
- * * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * * &nbsp;&nbsp;&nbsp;default: 
- * * </pre>
- * * 
- * * <pre>-skip &lt;boolean&gt; (property: skip)
- * * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
- * * &nbsp;&nbsp;&nbsp;as it is.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * * 
- * * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * * &nbsp;&nbsp;&nbsp; useful for critical actors.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * * 
- * * <pre>-silent &lt;boolean&gt; (property: silent)
- * * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * * 
- * * <pre>-autoDetect &lt;boolean&gt; (property: autoDetect)
- * * &nbsp;&nbsp;&nbsp;Enable or disable barcode format auto-detection. If disabled, it will attempt 
- * * &nbsp;&nbsp;&nbsp;to decode using the specified format.
- * * &nbsp;&nbsp;&nbsp;default: true
- * * </pre>
- * * 
- * * <pre>-format &lt;AZTEC|CODABAR|CODE_39|CODE_93|CODE_128|DATA_MATRIX|EAN_8|EAN_13|ITF|MAXICODE|PDF_417|QR_CODE|RSS_14|RSS_EXPANDED|UPC_A|UPC_E|UPC_EAN_EXTENSION&gt; (property: format)
- * * &nbsp;&nbsp;&nbsp;Barcode format type to expect.
- * * &nbsp;&nbsp;&nbsp;default: QR_CODE
- * * </pre>
- * * 
- * <!-- options-end -->
+ <!-- globalinfo-end -->
+ * <p/>
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: DecodeBarcode
+ * </pre>
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-autoDetect &lt;boolean&gt; (property: autoDetect)
+ * &nbsp;&nbsp;&nbsp;Enable or disable barcode format auto-detection; if disabled, it will attempt 
+ * &nbsp;&nbsp;&nbsp;to decode using the specified format.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-format &lt;AZTEC|CODABAR|CODE_39|CODE_93|CODE_128|DATA_MATRIX|EAN_8|EAN_13|ITF|MAXICODE|PDF_417|QR_CODE|RSS_14|RSS_EXPANDED|UPC_A|UPC_E|UPC_EAN_EXTENSION&gt; [-format ...] (property: format)
+ * &nbsp;&nbsp;&nbsp;Barcode format type to expect.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
  * @version $Revision$
