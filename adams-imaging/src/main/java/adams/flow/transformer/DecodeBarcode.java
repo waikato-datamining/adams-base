@@ -20,8 +20,11 @@
 
 package adams.flow.transformer;
 
+import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.text.TextContainer;
 import adams.flow.core.Token;
@@ -29,6 +32,7 @@ import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,7 +101,7 @@ public class DecodeBarcode extends AbstractTransformer {
   /**
    * Key name prefix for ZXing result metadata.
    */
-  private static final String REPORT_PARAM_METADATA_PREFIX = "Metadata_";
+  private static final String REPORT_PARAM_METADATA_PREFIX = "Metadata-";
 
   /**
    * Key name for barcode format in the report.
@@ -255,9 +259,31 @@ public class DecodeBarcode extends AbstractTransformer {
       TextContainer container = new TextContainer();
       container.setContent(data.getText());
       Report report = container.getReport();
+      report.addField(new Field(REPORT_PARAM_FORMAT, DataType.STRING));
       report.setStringValue(REPORT_PARAM_FORMAT, data.getBarcodeFormat().toString());
-      for (Map.Entry<ResultMetadataType, ?> d : data.getResultMetadata().entrySet())
-        report.addParameter(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), d.getValue().toString());
+      for (Map.Entry<ResultMetadataType, ?> d : data.getResultMetadata().entrySet()) {
+        report.addField(new Field(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), DataType.STRING));
+        if (d.getValue() instanceof Collection) {
+          StringBuilder sb = new StringBuilder();
+          if (sb.length() > 0)
+            sb.append(",");
+          for (Object o: ((Collection) d.getValue())) {
+            if (o.getClass().isArray()) {
+              sb.append("[");
+              sb.append(Utils.arrayToString(o));
+              sb.append("]");
+            }
+            else {
+              sb.append(o.toString());
+            }
+          }
+          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), sb.toString());
+        }
+        else if (d.getValue().getClass().isArray())
+          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), Utils.arrayToString(d.getValue()));
+        else
+          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), d.getValue().toString());
+      }
       ResultPoint[] points = data.getResultPoints();
       report.setNumericValue(REPORT_PARAM_X, points[0].getX());
       report.setNumericValue(REPORT_PARAM_Y, points[0].getY());
