@@ -15,38 +15,10 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog.ModalityType;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
@@ -54,32 +26,14 @@ import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorExecution;
-import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorHandlerInfo;
-import adams.flow.core.ActorPath;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.FixedNameActorHandler;
-import adams.flow.core.InputConsumer;
-import adams.flow.core.MutableActorHandler;
-import adams.flow.core.OutputProducer;
+import adams.flow.core.*;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.template.AbstractActorTemplate;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.ConsolePanel;
+import adams.gui.core.*;
 import adams.gui.core.ConsolePanel.OutputType;
-import adams.gui.core.DragAndDropTree;
-import adams.gui.core.DragAndDropTreeNodeCollection;
-import adams.gui.core.ErrorMessagePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
-import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -93,6 +47,21 @@ import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.Dialog.ModalityType;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.*;
+import java.util.List;
 
 /**
  * A custom tree for displaying the structure of a flow.
@@ -2262,7 +2231,7 @@ public class Tree
    * meantime. This method uses the actor names to locate them in the tree.
    * This means, that this method is more expensive.
    * 
-   * @param exp		the list of expanded nodes
+   * @param expanded	the list of expanded nodes
    * @return		true if successfully restored
    * @see		#setExpandedNodes(List)
    */
