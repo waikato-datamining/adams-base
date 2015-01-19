@@ -113,3 +113,7 @@ adams.data.imagemagick.dcraw.AbstractDcrawOperation=\
 # Ufraw operations
 adams.data.imagemagick.ufraw.AbstractUfrawOperation=\
   adams.data.imagemagick.ufraw
+
+# ZXing barcode encoder
+adams.data.barcode.encode.AbstractBarcodeEncoder=\
+  adams.data.barcode.encode
