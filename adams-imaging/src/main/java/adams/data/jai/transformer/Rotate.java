@@ -15,20 +15,19 @@
 
 /*
  * Rotate.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
 
-import java.awt.Color;
+import adams.data.image.BufferedImageContainer;
 
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
-import adams.data.image.BufferedImageContainer;
+import java.awt.Color;
 
 /**
  <!-- globalinfo-start -->
@@ -340,7 +339,7 @@ public class Rotate
     if (m_OriginX == -1)
       x = 0.0f;
     else if (m_OriginX == -2)
-      x = (float) ((int) img.getWidth() / 2);
+      x = (float) (img.getWidth() / 2);
     else if (m_OriginX == -3)
       x = (float) img.getWidth() - 1;
     else
@@ -349,7 +348,7 @@ public class Rotate
     if (m_OriginY == -1)
       y = 0.0f;
     else if (m_OriginY == -2)
-      y = (float) ((int) img.getHeight() / 2);
+      y = (float) (img.getHeight() / 2);
     else if (m_OriginY == -3)
       y = (float) img.getHeight() - 1;
     else
