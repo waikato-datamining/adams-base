@@ -485,8 +485,11 @@ The imaging module offers some more actors that have not been introduced yet.
 
 \noindent Available transformers:
 \begin{tight_itemize}
-	\item \textit{Draw} -- Performs draw operations on images, like setting 
-	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}.
+	\item \textit{DecodeBarcode} -- allows extracting of barcodes like
+	EAN and QRCode from images\footnote{adams-imaging-barcode.flow}.
+	\item \textit{Draw} -- Performs draw operations on images, like setting
+	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
+	and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
 	\item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
 	\textit{height} information from an image.
 	\item \textit{ImageMetaData} -- Extracts meta-data (EXIF or IPTC) from an
