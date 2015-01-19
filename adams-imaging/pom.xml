@@ -52,6 +52,15 @@
       </roles>
       <timezone>+12</timezone>
     </developer>
+    <developer>
+      <id>lx51</id>
+      <name>Leo Xiong</name>
+      <email>lx51@students.waikato.ac.nz</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+12</timezone>
+    </developer>
   </developers>
 
   <dependencies>
