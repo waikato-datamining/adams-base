@@ -19,13 +19,13 @@
  */
 package adams.flow.transformer.draw;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -220,6 +220,27 @@ public class Image
   }
 
   /**
+   * Checks the image.
+   *
+   * @param image	the image to check
+   * @return		null if OK, otherwise error message
+   */
+  protected String check(BufferedImage image) {
+    String        result;
+
+    result = super.check(image);
+
+    if (result == null) {
+      if (m_X > image.getWidth())
+        result = "X is larger than image width: " + m_X + " > " + image.getWidth();
+      else if (m_Y > image.getHeight())
+        result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual draw operation.
    * 
    * @param image	the image to draw on
@@ -232,11 +253,6 @@ public class Image
     BufferedImage	todraw;
 
     result = null;
-
-    if (m_X > image.getWidth())
-      result = "X is larger than image width: " + m_X + " > " + image.getWidth();
-    else if (m_Y > image.getHeight())
-      result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
 
     obj    = CallableActorHelper.getSetupFromSource(Object.class, m_ImageActor, m_Owner);
     todraw = null;

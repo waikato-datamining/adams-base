@@ -15,18 +15,16 @@
 
 /**
  * Line.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
-
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -296,35 +294,46 @@ public class Line
   }
 
   /**
+   * Checks the image.
+   *
+   * @param image	the image to check
+   * @return		null if OK, otherwise error message
+   */
+  protected String check(BufferedImage image) {
+    String        result;
+
+    result = super.check(image);
+
+    if (result == null) {
+      if (m_X1 > image.getWidth())
+        result = "X1 is larger than image width: " + m_X1 + " > " + image.getWidth();
+      else if (m_Y1 > image.getHeight())
+        result = "Y1 is larger than image height: " + m_Y1 + " > " + image.getHeight();
+      else if (m_X2 > image.getWidth())
+        result = "X2 is larger than image width: " + m_X2 + " > " + image.getWidth();
+      else if (m_Y2 > image.getHeight())
+        result = "Y2 is larger than image height: " + m_Y2 + " > " + image.getHeight();
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual draw operation.
    * 
    * @param image	the image to draw on
    */
   @Override
   protected String doDraw(BufferedImage image) {
-    String	result;
     Graphics	g;
 
-    result = null;
+    g = image.getGraphics();
+    g.setColor(m_Color);
+    GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
+    if (g instanceof Graphics2D)
+      ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
+    g.drawLine(m_X1, m_Y1, m_X2, m_Y2);
 
-    if (m_X1 > image.getWidth())
-      result = "X1 is larger than image width: " + m_X1 + " > " + image.getWidth();
-    else if (m_Y1 > image.getHeight())
-      result = "Y1 is larger than image height: " + m_Y1 + " > " + image.getHeight();
-    else if (m_X2 > image.getWidth())
-      result = "X2 is larger than image width: " + m_X2 + " > " + image.getWidth();
-    else if (m_Y2 > image.getHeight())
-      result = "Y2 is larger than image height: " + m_Y2 + " > " + image.getHeight();
-    
-    if (result == null) {
-      g = image.getGraphics();
-      g.setColor(m_Color);
-      GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
-      if (g instanceof Graphics2D)
-	((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
-      g.drawLine(m_X1, m_Y1, m_X2, m_Y2);
-    }
-    
-    return result;
+    return null;
   }
 }

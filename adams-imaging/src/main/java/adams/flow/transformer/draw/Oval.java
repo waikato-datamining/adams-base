@@ -15,18 +15,16 @@
 
 /**
  * Oval.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
-
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -339,37 +337,48 @@ public class Oval
   }
 
   /**
+   * Checks the image.
+   *
+   * @param image	the image to check
+   * @return		null if OK, otherwise error message
+   */
+  protected String check(BufferedImage image) {
+    String        result;
+
+    result = super.check(image);
+
+    if (result == null) {
+      if (m_X > image.getWidth())
+        result = "X is larger than image width: " + m_X + " > " + image.getWidth();
+      else if (m_Y > image.getHeight())
+        result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
+      else if (m_X + m_Width > image.getWidth())
+        result = "X+Width is larger than image width: " + (m_X+m_Width) + " > " + image.getWidth();
+      else if (m_Y + m_Height > image.getHeight())
+        result = "Y+Height is larger than image height: " + (m_Y+m_Height) + " > " + image.getHeight();
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual draw operation.
    * 
    * @param image	the image to draw on
    */
   @Override
   protected String doDraw(BufferedImage image) {
-    String	result;
     Graphics	g;
 
-    result = null;
+    g = image.getGraphics();
+    g.setColor(m_Color);
+    GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
+    ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
+    if (m_Fill)
+      g.fillOval(m_X, m_Y, m_Width, m_Height);
+    else
+      g.drawOval(m_X, m_Y, m_Width, m_Height);
 
-    if (m_X > image.getWidth())
-      result = "X is larger than image width: " + m_X + " > " + image.getWidth();
-    else if (m_Y > image.getHeight())
-      result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
-    else if (m_X + m_Width > image.getWidth())
-      result = "X+Width is larger than image width: " + (m_X+m_Width) + " > " + image.getWidth();
-    else if (m_Y + m_Height > image.getHeight())
-      result = "Y+Height is larger than image height: " + (m_Y+m_Height) + " > " + image.getHeight();
-    
-    if (result == null) {
-      g = image.getGraphics();
-      g.setColor(m_Color);
-      GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
-      ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
-      if (m_Fill)
-	g.fillOval(m_X, m_Y, m_Width, m_Height);
-      else
-	g.drawOval(m_X, m_Y, m_Width, m_Height);
-    }
-    
-    return result;
+    return null;
   }
 }

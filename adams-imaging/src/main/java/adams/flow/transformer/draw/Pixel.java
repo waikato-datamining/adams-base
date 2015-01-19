@@ -15,14 +15,14 @@
 
 /**
  * Pixel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
-import java.awt.image.BufferedImage;
-
 import adams.core.QuickInfoHelper;
 import adams.gui.core.ColorHelper;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -299,6 +299,27 @@ public class Pixel
   }
 
   /**
+   * Checks the image.
+   *
+   * @param image	the image to check
+   * @return		null if OK, otherwise error message
+   */
+  protected String check(BufferedImage image) {
+    String        result;
+
+    result = super.check(image);
+
+    if (result == null) {
+      if (m_X > image.getWidth())
+        result = "X is larger than image width: " + m_X + " > " + image.getWidth();
+      else if (m_Y > image.getHeight())
+        result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual draw operation.
    * 
    * @param image	the image to draw on
@@ -309,27 +330,20 @@ public class Pixel
 
     result = null;
 
-    if (m_X > image.getWidth())
-      result = "X is larger than image width: " + m_X + " > " + image.getWidth();
-    else if (m_Y > image.getHeight())
-      result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
-    
-    if (result == null) {
-      switch (m_Type) {
-	case RGBA:
-	  image.setRGB(m_X - 1, m_Y - 1, m_RGBA);
-	  break;
-	case COLOR:
-	  image.setRGB(m_X - 1, m_Y - 1, m_Color.getRGB());
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled pixel value type: " + m_Type);
-      }
-      
-      if (isLoggingEnabled())
-	getLogger().info("X=" + m_X + ", Y=" + m_Y + " -> " + m_RGBA);
+    switch (m_Type) {
+      case RGBA:
+        image.setRGB(m_X - 1, m_Y - 1, m_RGBA);
+        break;
+      case COLOR:
+        image.setRGB(m_X - 1, m_Y - 1, m_Color.getRGB());
+        break;
+      default:
+        throw new IllegalStateException("Unhandled pixel value type: " + m_Type);
     }
-    
+
+    if (isLoggingEnabled())
+      getLogger().info("X=" + m_X + ", Y=" + m_Y + " -> " + m_RGBA);
+
     return result;
   }
 }
