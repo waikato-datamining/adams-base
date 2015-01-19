@@ -32,6 +32,7 @@ import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class DecodeBarcode extends AbstractTransformer {
   /**
    * Expected barcode format.
    */
-  protected BarcodeFormat m_Format;
+  protected BarcodeFormat[] m_Format;
 
   /**
    * Returns a string describing the object.
@@ -155,8 +156,13 @@ public class DecodeBarcode extends AbstractTransformer {
   public void defineOptions() {
     super.defineOptions();
 
-    m_OptionManager.add("autoDetect", "autoDetect", true);
-    m_OptionManager.add("format", "format", BarcodeFormat.QR_CODE);
+    m_OptionManager.add(
+      "autoDetect", "autoDetect",
+      true);
+
+    m_OptionManager.add(
+      "format", "format",
+      new BarcodeFormat[0]);
   }
 
   /**
@@ -166,15 +172,7 @@ public class DecodeBarcode extends AbstractTransformer {
    */
   public void setAutoDetect(boolean value) {
     m_AutoDetect = value;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
-   */
-  public String autoDetectTipText() {
-    return "Enable or disable barcode format auto-detection; if disabled, it will attempt to decode using the specified format.";
+    reset();
   }
 
   /**
@@ -187,12 +185,12 @@ public class DecodeBarcode extends AbstractTransformer {
   }
 
   /**
-   * Gets the barcode format hint.
+   * Returns the tip text for this property.
    *
-   * @return barcode format
+   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
    */
-  public BarcodeFormat getFormat() {
-    return m_Format;
+  public String autoDetectTipText() {
+    return "Enable or disable barcode format auto-detection; if disabled, it will attempt to decode using the specified format.";
   }
 
   /**
@@ -200,8 +198,18 @@ public class DecodeBarcode extends AbstractTransformer {
    *
    * @param value barcode format
    */
-  public void setFormat(BarcodeFormat value) {
+  public void setFormat(BarcodeFormat[] value) {
     m_Format = value;
+    reset();
+  }
+
+  /**
+   * Gets the barcode format hint.
+   *
+   * @return barcode format
+   */
+  public BarcodeFormat[] getFormat() {
+    return m_Format;
   }
 
   /**
@@ -253,7 +261,7 @@ public class DecodeBarcode extends AbstractTransformer {
       Reader reader = new MultiFormatReader();
       Map<DecodeHintType, Object> hints = new HashMap<>();
       if (!m_AutoDetect)
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, m_Format);
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(m_Format));
       Result data = reader.decode(bitmap, hints);
 
       TextContainer container = new TextContainer();
