@@ -15,14 +15,9 @@
 
 /**
  * BinaryContours.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
-
-import georegression.struct.point.Point2D_I32;
-
-import java.awt.image.BufferedImage;
-import java.util.List;
 
 import adams.core.License;
 import adams.core.QuickInfoHelper;
@@ -35,6 +30,10 @@ import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
+import georegression.struct.point.Point2D_I32;
+
+import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -137,11 +136,11 @@ public class BinaryContours
   /**
    * Returns the input image as output.
    * 
-   * @param image	the image with the bugs
-   * @return		the original image
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  @Override
-  protected LocatedObjects doLocate(BufferedImage image) {
+  protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects	result;
     ImageFloat32 	input;
     ImageUInt8 		binary;
@@ -189,7 +188,7 @@ public class BinaryContours
       }
       result.add(
 	  new LocatedObject(
-	      image.getSubimage(left, top, right - left + 1, bottom - top + 1), 
+	      annotateOnly ? null : image.getSubimage(left, top, right - left + 1, bottom - top + 1),
 	      left, top, right - left + 1, bottom - top + 1));
     }
     

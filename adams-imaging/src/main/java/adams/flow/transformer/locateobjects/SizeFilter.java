@@ -15,14 +15,14 @@
 
 /*
  * SizeFilter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.locateobjects;
 
-import java.awt.image.BufferedImage;
-
 import adams.core.QuickInfoHelper;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -278,16 +278,16 @@ public class SizeFilter
   /**
    * Performs the actual locating of the objects.
    *
-   * @param imp	        the image to process
-   * @return		the containers of located objects
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  @Override
-  protected LocatedObjects doLocate(BufferedImage image) {
+  protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects	result;
     LocatedObjects	base;
 
     result = new LocatedObjects();
-    base   = m_Locator.locate(image);
+    base   = m_Locator.doLocate(image, annotateOnly);
 
     for (LocatedObject obj: base) {
       if (m_MinWidth > 0) {

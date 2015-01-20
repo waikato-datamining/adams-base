@@ -15,15 +15,15 @@
 
 /**
  * CroppedLocator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
-
-import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.transformer.crop.AbstractCropAlgorithm;
 import adams.data.image.transformer.crop.NoCrop;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -132,11 +132,11 @@ public class CroppedLocator
   /**
    * Performs the actual locating of the objects.
    * 
-   * @param imp	        the image to process
-   * @return		the containers of located objects
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  @Override
-  protected LocatedObjects doLocate(BufferedImage image) {
+  protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects		result;
     LocatedObjects		base;
     BufferedImage		cropped;
@@ -163,7 +163,7 @@ public class CroppedLocator
     result = new LocatedObjects();
     for (LocatedObject obj: base) {
       adjusted = new LocatedObject(
-	  obj.getImage(), 
+	  annotateOnly ? null : obj.getImage(),
 	  left + obj.getX(), top + obj.getY(), 
 	  obj.getWidth(), obj.getHeight());
       result.add(adjusted);

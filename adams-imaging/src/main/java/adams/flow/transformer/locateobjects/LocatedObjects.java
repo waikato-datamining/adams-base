@@ -15,15 +15,15 @@
 
 /**
  * LocatedObjects.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
-
-import java.util.ArrayList;
 
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+
+import java.util.ArrayList;
 
 /**
  * Container for located objects.
@@ -48,6 +48,9 @@ public class LocatedObjects
 
   /** the key for the height. */
   public final static String KEY_HEIGHT = ".height";
+
+  /** the key for the overall count. */
+  public final static String KEY_COUNT = "count";
 
   /**
    * Turns the located objects into a report.
@@ -90,7 +93,11 @@ public class LocatedObjects
       result.addField(field);
       result.setValue(field, obj.getHeight());
     }
-    
+    // count
+    field = new Field(prefix + KEY_COUNT, DataType.NUMERIC);
+    result.addField(field);
+    result.setValue(field, size());
+
     return result;
   }
 }

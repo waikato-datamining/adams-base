@@ -15,7 +15,7 @@
 
 /**
  * PassThrough.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -46,15 +46,15 @@ public class PassThrough
   /**
    * Returns the input image as output.
    * 
-   * @param image	the image with the bugs
-   * @return		the original image
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  @Override
-  protected LocatedObjects doLocate(BufferedImage image) {
+  protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects	result;
     
     result = new LocatedObjects();
-    result.add(new LocatedObject(image, 0, 0, image.getWidth(), image.getHeight()));
+    result.add(new LocatedObject(annotateOnly ? null : image, 0, 0, image.getWidth(), image.getHeight()));
     
     return result;
   }

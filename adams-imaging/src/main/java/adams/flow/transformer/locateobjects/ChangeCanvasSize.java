@@ -15,19 +15,19 @@
 
 /*
  * ChangeCanvasSize.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.locateobjects;
+
+import adams.core.QuickInfoHelper;
+import adams.data.image.ImageAnchor;
+import adams.data.image.ImageAnchorHelper;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-
-import adams.core.QuickInfoHelper;
-import adams.data.image.ImageAnchor;
-import adams.data.image.ImageAnchorHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -273,11 +273,11 @@ public class ChangeCanvasSize
   /**
    * Performs the actual locating of the objects.
    *
-   * @param imp	        the image to process
-   * @return		the containers of located objects
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  @Override
-  protected LocatedObjects doLocate(BufferedImage image) {
+  protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects	result;
     LocatedObjects	base;
     Point[]		corners;
@@ -324,7 +324,9 @@ public class ChangeCanvasSize
 	}
       }
       
-      result.add(new LocatedObject(modified, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
+      result.add(
+          new LocatedObject(
+              annotateOnly ? null : modified, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
     }
 
     return result;

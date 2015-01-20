@@ -15,11 +15,9 @@
 
 /**
  * LocateObjects.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
@@ -29,6 +27,8 @@ import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -124,7 +124,7 @@ public class LocateObjects
   /** the algorithm to use. */
   protected AbstractObjectLocator m_Locator;
 
-  /** whether to generate a report rather than single image objects. */
+  /** whether to generate an annotated image rather than single image objects. */
   protected boolean m_GenerateReport;
   
   /** the prefix to use when generating a report. */
@@ -137,7 +137,11 @@ public class LocateObjects
    */
   @Override
   public String globalInfo() {
-    return "Locates objects in an image and forwards an image per located object, cropped around the object.";
+    return
+        "Locates objects in an image and forwards an image per located object, "
+            + "cropped around the object.\n"
+            + "It is also possible to simply annotate the image by storing the "
+            + "locations of the located objects in the report.";
   }
 
   /**
@@ -201,7 +205,8 @@ public class LocateObjects
   }
 
   /**
-   * Sets whether to generate a report instead of separate image objects.
+   * Sets whether to generate an annotated image with a report of all positions
+   * instead of separate image objects.
    *
    * @param value 	true of to generate report
    */
@@ -211,7 +216,8 @@ public class LocateObjects
   }
 
   /**
-   * Returns whether to generate a report instead of separate image objects.
+   * Returns whether to generate an annotated image with a report of all
+   * positions instead of separate image objects.
    *
    * @return 		true if to generate report
    */
@@ -226,7 +232,7 @@ public class LocateObjects
    * 			displaying in the GUI or for listing the options.
    */
   public String generateReportTipText() {
-    return "If enabled, a report with all the locations is generated instead of separate image objects.";
+    return "If enabled, an annotated image containing a report with all the locations is generated instead of separate image objects.";
   }
 
   /**
@@ -295,10 +301,7 @@ public class LocateObjects
    */
   @Override
   protected Class getItemClass() {
-    if (m_GenerateReport)
-      return Report.class;
-    else
-      return BufferedImageContainer.class;
+    return BufferedImageContainer.class;
   }
 
   /**
@@ -342,7 +345,10 @@ public class LocateObjects
     }
 
     try {
-      objects = m_Locator.locate(image);
+      if (m_GenerateReport)
+        objects = m_Locator.annotate(image);
+      else
+        objects = m_Locator.locate(image);
       // any errors encountered?
       if (m_Locator.hasErrors()) {
 	if (notes == null)
@@ -359,7 +365,10 @@ public class LocateObjects
       }
       m_Queue.clear();
       if (m_GenerateReport) {
-	m_Queue.add(objects.toReport(m_Prefix));
+        cont = new BufferedImageContainer();
+        cont.setImage(image);
+        cont.getReport().mergeWith(objects.toReport(m_Prefix));
+	m_Queue.add(cont);
       }
       else {
 	for (LocatedObject object: objects) {

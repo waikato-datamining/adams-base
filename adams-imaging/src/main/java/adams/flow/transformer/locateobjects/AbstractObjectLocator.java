@@ -15,20 +15,21 @@
 
 /**
  * AbstractObjectLocator.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
+
+import adams.core.CleanUpHandler;
+import adams.core.QuickInfoSupporter;
+import adams.core.Stoppable;
+import adams.core.option.AbstractOptionHandler;
+import adams.data.report.Report;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.CleanUpHandler;
-import adams.core.QuickInfoSupporter;
-import adams.core.Stoppable;
-import adams.core.option.AbstractOptionHandler;
 
 /**
  * Ancestor for algorithms that locate objects in images.
@@ -72,8 +73,8 @@ public abstract class AbstractObjectLocator
     super.defineOptions();
 
     m_OptionManager.add(
-	"center-on-canvas", "centerOnCanvas",
-	getDefaultCenterOnCanvas());
+        "center-on-canvas", "centerOnCanvas",
+        getDefaultCenterOnCanvas());
 
     m_OptionManager.add(
 	"canvas-width", "canvasWidth",
@@ -405,10 +406,11 @@ public abstract class AbstractObjectLocator
   /**
    * Performs the actual locating of the objects.
    * 
-   * @param imp	        the image to process
-   * @return		the containers of located objects
+   * @param image	  the image to process
+   * @param annotateOnly  whether to annotate only
+   * @return		  the containers of located objects
    */
-  protected abstract LocatedObjects doLocate(BufferedImage image);
+  protected abstract LocatedObjects doLocate(BufferedImage image, boolean annotateOnly);
   
   /**
    * Locates the objects in the image.
@@ -429,7 +431,7 @@ public abstract class AbstractObjectLocator
    
     check(image);
     
-    result = doLocate(image);
+    result = doLocate(image, false);
     if (m_Stopped) {
       result = new LocatedObjects();
     }
@@ -444,6 +446,31 @@ public abstract class AbstractObjectLocator
       }
     }
     
+    return result;
+  }
+
+  /**
+   * Only annotates the objects in the image, does not output any sub-images.
+   *
+   * @param image	the image to process
+   * @return		the annotated objects
+   */
+  public LocatedObjects annotate(BufferedImage image) {
+    LocatedObjects	    result;
+    Report                  report;
+    LocatedObject           current;
+    int			    i;
+
+    m_Stopped = false;
+    m_Errors.clear();
+    m_Warnings.clear();
+
+    check(image);
+
+    result = doLocate(image, true);
+    if (m_Stopped)
+      result = new LocatedObjects();
+
     return result;
   }
 

@@ -59,7 +59,7 @@ public class LocatedObject
    * @param height	the height of the object sub-image
    */
   public LocatedObject(BufferedImage image, int x, int y, int width, int height) {
-    m_Image    = image;
+    m_Image  = image;
     m_X      = x;
     m_Y      = y;
     m_Width  = width;

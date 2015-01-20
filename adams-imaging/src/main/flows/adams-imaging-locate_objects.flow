@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-11-11 12:00:25
+# Date: 2015-01-21 12:46:33
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -7,6 +7,10 @@ adams.flow.control.Flow
 	Locates objects in an image and displays them.
 	-actor
 		adams.flow.standalone.TabView
+			-name
+			Objects
+			-short-title
+			true
 			-actor
 				adams.flow.sink.DisplayPanelManager
 					-name
@@ -51,6 +55,22 @@ adams.flow.control.Flow
 								adams.gui.visualization.image.selection.NullProcessor
 							-image-overlay
 								adams.gui.visualization.image.NullOverlay
+	-actor
+		adams.flow.standalone.TabView
+			-name
+			Reports
+			-short-title
+			true
+			-x
+			-3
+			-actor
+				adams.flow.sink.ReportDisplay
+					-name
+					binary contours (report)
+			-actor
+				adams.flow.sink.ReportDisplay
+					-name
+					canny edges (report)
 	-actor
 		adams.flow.source.FileSupplier
 			-file
@@ -66,31 +86,77 @@ adams.flow.control.Flow
 					-name
 					binary contours
 					-actor
-						adams.flow.transformer.LocateObjects
-							-locator
-								adams.flow.transformer.locateobjects.BinaryContours
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							binary contours
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									objects
+									-actor
+										adams.flow.transformer.LocateObjects
+											-locator
+												adams.flow.transformer.locateobjects.BinaryContours
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											binary contours
+							-branch
+								adams.flow.control.Sequence
+									-name
+									report
+									-actor
+										adams.flow.transformer.LocateObjects
+											-locator
+												adams.flow.transformer.locateobjects.BinaryContours
+											-generate-report
+											true
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											binary contours (report)
 			-branch
 				adams.flow.control.Sequence
 					-name
 					canny edges
 					-actor
-						adams.flow.transformer.LocateObjects
-							-locator
-								adams.flow.transformer.locateobjects.SizeFilter
-									-locator
-										adams.flow.transformer.locateobjects.CannyEdges
-									-min-width
-									10
-									-min-height
-									10
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							canny edges
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									objects
+									-actor
+										adams.flow.transformer.LocateObjects
+											-locator
+												adams.flow.transformer.locateobjects.SizeFilter
+													-locator
+														adams.flow.transformer.locateobjects.CannyEdges
+													-min-width
+													10
+													-min-height
+													10
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											canny edges
+							-branch
+								adams.flow.control.Sequence
+									-name
+									report
+									-actor
+										adams.flow.transformer.LocateObjects
+											-locator
+												adams.flow.transformer.locateobjects.SizeFilter
+													-locator
+														adams.flow.transformer.locateobjects.CannyEdges
+													-min-width
+													10
+													-min-height
+													10
+											-generate-report
+											true
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											canny edges (report)
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
