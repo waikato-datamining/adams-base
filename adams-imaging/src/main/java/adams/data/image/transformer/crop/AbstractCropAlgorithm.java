@@ -15,15 +15,15 @@
 
 /**
  * AbstractCropAlgorithm.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.crop;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-
 import adams.core.option.AbstractOptionHandler;
 import adams.data.image.CropAlgorithm;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 /**
  * Ancestor to cropping algorithms.
@@ -68,6 +68,8 @@ public abstract class AbstractCropAlgorithm
   protected void preCrop(BufferedImage img) {
     m_TopLeft     = new Point(0, 0);
     m_BottomRight = new Point(img.getWidth(), img.getHeight());
+    if (isLoggingEnabled())
+      getLogger().info("imgWidth=" + img.getWidth() + ", imgHeight=" + img.getHeight());
   }
 
   /**
