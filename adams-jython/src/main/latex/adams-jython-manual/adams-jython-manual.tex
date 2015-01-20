@@ -243,19 +243,6 @@ class SimpleConversion(AbstractScript):
 As in how to use parameters, see section \ref{parameters} as it works the
 same way as for actors.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Throubleshooting}
-\begin{itemize}
-	\item \textbf{Problem:} Unit tests fail with \texttt{"AttributeError: '...py'
-	object has no attribute '...'"} \\
-	\textbf{Solution:} Create a file called \texttt{'.jython'} in your home
-	directory and add the following content to it: \\
-	\begin{verbatim}
-    python.security.respectJavaAccessibility=false
-	\end{verbatim}
-\end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
 

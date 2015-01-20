@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -54,6 +55,12 @@ public class Jython
   /** the classname of the Python ObjectInputStream. */
   public final static String CLASS_PYTHONOBJECTINPUTSTREAM = "org.python.util.PythonObjectInputStream";
 
+  /** the registry file name (without path). */
+  public final static String REGISTRY_FILE = ".jython";
+
+  /** the registry key for the Java accessibility. */
+  public final static String REGISTRY_JAVAACCESSIBILITY = "python.security.respectJavaAccessibility";
+
   /** whether the Jython classes are in the Classpath. */
   protected boolean m_Present;
 
@@ -69,12 +76,49 @@ public class Jython
   protected Jython() {
     try {
       Class.forName(CLASS_PYTHONINERPRETER);
+      checkRegistry();
       m_Present = true;
     }
     catch (Exception e) {
       m_Present = false;
     }
     m_Interpreter = newInterpreter();
+  }
+
+  /**
+   * Makes sure that the jython registry ($HOME/.jython) is present and
+   * contains the "python.security.respectJavaAccessibility" property.
+   */
+  protected void checkRegistry() {
+    File          registry;
+    List<String>  lines;
+    int           i;
+
+    registry = new File(System.getProperty("user.home") + File.separator + REGISTRY_FILE);
+
+    // create?
+    if (!registry.exists()) {
+      if (!FileUtils.writeToFile(registry.getAbsolutePath(), REGISTRY_JAVAACCESSIBILITY + "=false", false))
+        System.err.println("Failed to initialize Jython registry: " + registry);
+      else
+        System.err.println("Jython registry initialized: " + registry);
+    }
+    // check whether Java accessibility is set
+    else {
+      lines = FileUtils.loadFromFile(registry);
+      for (i = 0; i < lines.size(); i++) {
+        if (lines.get(i).startsWith(REGISTRY_JAVAACCESSIBILITY + "=")) {
+          if (!lines.get(i).contains("=false")) {
+            lines.set(i, REGISTRY_JAVAACCESSIBILITY + "=false");
+            if (!FileUtils.writeToFile(registry.getAbsolutePath(), Utils.flatten(lines, System.getProperty("line.separator")), false))
+              System.err.println("Failed to update Jython registry: " + registry);
+            else
+              System.err.println("Jython registry updated: " + registry);
+            break;
+          }
+        }
+      }
+    }
   }
 
   /**
