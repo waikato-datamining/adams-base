@@ -15,17 +15,10 @@
 
 /*
  * Jython.java
- * Copyright (C) 2007-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
-
-import java.io.File;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.logging.Level;
 
 import adams.core.Utils;
 import adams.core.Variables;
@@ -35,6 +28,13 @@ import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.flow.core.AdditionalOptionsHandler;
 import adams.flow.core.AdditionalOptionsHandlerUtils;
+
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  * A helper class for <a href="http://www.jython.org/" target="_blank">Jython</a>.
@@ -208,7 +208,7 @@ public class Jython
     // get object
     filename      = file.getAbsolutePath();
     invoke(interpreter, "execfile", new Class[]{String.class}, new Object[]{filename});
-    tempName      = filename.substring(filename.lastIndexOf("/") + 1);
+    tempName      = filename.substring(filename.lastIndexOf(File.separator) + 1);
     tempName      = tempName.substring(0, tempName.indexOf("."));
     instanceName  = tempName.toLowerCase();
     javaClassName = tempName.substring(0,1).toUpperCase() + tempName.substring(1);
