@@ -15,9 +15,11 @@
 
 /**
  * FileToString.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.core.io.FileUtils;
 
 import java.io.File;
 
@@ -169,13 +171,9 @@ public class FileToString
     else
       result = ((File) m_Input).getPath();
     
-    if (m_UseForwardSlashes) {
-      if (result.startsWith("\\\\"))
-	result = "\\\\" + result.substring(2).replace("\\", "/");
-      else
-	result = result.replace("\\", "/");
-    }
-    
+    if (m_UseForwardSlashes)
+      result = FileUtils.useForwardSlashes(result);
+
     return result;
   }
 }

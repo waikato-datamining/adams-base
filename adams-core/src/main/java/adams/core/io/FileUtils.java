@@ -15,10 +15,15 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
+
+import adams.core.Placeholders;
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.management.OS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -34,11 +39,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.Placeholders;
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.management.OS;
 
 /**
  * Utility class for I/O related actions.
@@ -1078,6 +1078,24 @@ public class FileUtils {
       throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
     }
     
+    return result;
+  }
+
+  /**
+   * Converts backslashes in a path to forwards slashes. However, leaves
+   * UNC path prefix "\\" intact.
+   *
+   * @param path      the path/filename to convert
+   * @return          the path/filename with forward slashes
+   */
+  public static String useForwardSlashes(String path) {
+    String      result;
+
+    if (path.startsWith("\\\\"))
+      result = "\\\\" + path.substring(2).replace("\\", "/");
+    else
+      result = path.replace("\\", "/");
+
     return result;
   }
 }
