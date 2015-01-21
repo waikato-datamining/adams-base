@@ -20,26 +20,14 @@
 
 package adams.flow.transformer;
 
-import adams.core.Utils;
+import adams.data.barcode.decode.AbstractBarcodeDecoder;
 import adams.data.image.AbstractImageContainer;
-import adams.data.image.BufferedImageHelper;
-import adams.data.report.DataType;
-import adams.data.report.Field;
-import adams.data.report.Report;
 import adams.data.text.TextContainer;
 import adams.flow.core.Token;
-import com.google.zxing.*;
-import com.google.zxing.common.HybridBinarizer;
-
-import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Decode the data in a barcode.
+ * Decodes the data in a barcode using the specified decoder.
  * <p/>
  <!-- globalinfo-end -->
  * <p/>
@@ -76,15 +64,9 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-autoDetect &lt;boolean&gt; (property: autoDetect)
- * &nbsp;&nbsp;&nbsp;Enable or disable barcode format auto-detection; if disabled, it will attempt 
- * &nbsp;&nbsp;&nbsp;to decode using the specified format.
- * &nbsp;&nbsp;&nbsp;default: true
- * </pre>
- * 
- * <pre>-format &lt;AZTEC|CODABAR|CODE_39|CODE_93|CODE_128|DATA_MATRIX|EAN_8|EAN_13|ITF|MAXICODE|PDF_417|QR_CODE|RSS_14|RSS_EXPANDED|UPC_A|UPC_E|UPC_EAN_EXTENSION&gt; [-format ...] (property: format)
- * &nbsp;&nbsp;&nbsp;Barcode format type to expect.
- * &nbsp;&nbsp;&nbsp;default: 
+ * <pre>-decoder &lt;adams.data.barcode.decode.AbstractBarcodeDecoder&gt; (property: decoder)
+ * &nbsp;&nbsp;&nbsp;The decoder algorithm to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.barcode.decode.PassThrough
  * </pre>
  * 
  <!-- options-end -->
@@ -92,7 +74,8 @@ import java.util.Map;
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DecodeBarcode extends AbstractTransformer {
+public class DecodeBarcode
+  extends AbstractTransformer {
 
   /**
    * For serialization.
@@ -100,44 +83,9 @@ public class DecodeBarcode extends AbstractTransformer {
   private static final long serialVersionUID = 6149942254926179607L;
 
   /**
-   * Key name prefix for ZXing result metadata.
+   * The decoder.
    */
-  private static final String REPORT_PARAM_METADATA_PREFIX = "Metadata-";
-
-  /**
-   * Key name for barcode format in the report.
-   */
-  private static final String REPORT_PARAM_FORMAT = "Format";
-
-  /**
-   * Key name for barcode top-left x in report.
-   */
-  private static final String REPORT_PARAM_X = "X";
-
-  /**
-   * Key name for barcode top-left y in report.
-   */
-  private static final String REPORT_PARAM_Y = "Y";
-
-  /**
-   * Key name for barcode width in report.
-   */
-  private static final String REPORT_PARAM_WIDTH = "Width";
-
-  /**
-   * Key name for barcode height in report.
-   */
-  private static final String REPORT_PARAM_HEIGHT = "Height";
-
-  /**
-   * Barcode format auto-detection.
-   */
-  protected boolean m_AutoDetect;
-
-  /**
-   * Expected barcode format.
-   */
-  protected BarcodeFormat[] m_Format;
+  protected AbstractBarcodeDecoder m_Decoder;
 
   /**
    * Returns a string describing the object.
@@ -146,7 +94,7 @@ public class DecodeBarcode extends AbstractTransformer {
    */
   @Override
   public String globalInfo() {
-    return "Decode the data in a barcode.";
+    return "Decodes the data in a barcode using the specified decoder.";
   }
 
   /**
@@ -157,31 +105,27 @@ public class DecodeBarcode extends AbstractTransformer {
     super.defineOptions();
 
     m_OptionManager.add(
-      "autoDetect", "autoDetect",
-      true);
-
-    m_OptionManager.add(
-      "format", "format",
-      new BarcodeFormat[0]);
+        "decoder", "decoder",
+        new adams.data.barcode.decode.PassThrough());
   }
 
   /**
-   * Enables or disables barcode format auto-detection.
+   * Sets the decoder to use.
    *
-   * @param value enable auto-detection?
+   * @param value the decoder to use
    */
-  public void setAutoDetect(boolean value) {
-    m_AutoDetect = value;
+  public void setDecoder(AbstractBarcodeDecoder value) {
+    m_Decoder = value;
     reset();
   }
 
   /**
-   * Gets whether barcode format auto-detection is enabled.
+   * Returns the decoder in use.
    *
-   * @return enable auto-detection?
+   * @return the decoder in use
    */
-  public boolean getAutoDetect() {
-    return m_AutoDetect;
+  public AbstractBarcodeDecoder getDecoder() {
+    return m_Decoder;
   }
 
   /**
@@ -189,36 +133,8 @@ public class DecodeBarcode extends AbstractTransformer {
    *
    * @return tip text for this property suitable for displaying in the GUI or for listing the options.
    */
-  public String autoDetectTipText() {
-    return "Enable or disable barcode format auto-detection; if disabled, it will attempt to decode using the specified format.";
-  }
-
-  /**
-   * Set barcode format hint.
-   *
-   * @param value barcode format
-   */
-  public void setFormat(BarcodeFormat[] value) {
-    m_Format = value;
-    reset();
-  }
-
-  /**
-   * Gets the barcode format hint.
-   *
-   * @return barcode format
-   */
-  public BarcodeFormat[] getFormat() {
-    return m_Format;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
-   */
-  public String formatTipText() {
-    return "Barcode format type to expect.";
+  public String decoderTipText() {
+    return "The decoder algorithm to use.";
   }
 
   /**
@@ -248,62 +164,19 @@ public class DecodeBarcode extends AbstractTransformer {
    */
   @Override
   protected String doExecute() {
-    String out = null;
-    BufferedImage image = BufferedImageHelper.deepCopy((BufferedImage) ((AbstractImageContainer) m_InputToken.getPayload()).getImage());
+    String          result;
+    TextContainer   cont;
+
+    result = null;
 
     try {
-      int width = image.getWidth();
-      int height = image.getHeight();
-
-      LuminanceSource source = new RGBLuminanceSource(width, height, image.getRGB(0, 0, width, height, null, 0, width));
-      BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-      Reader reader = new MultiFormatReader();
-      Map<DecodeHintType, Object> hints = new HashMap<>();
-      if (!m_AutoDetect)
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(m_Format));
-      Result data = reader.decode(bitmap, hints);
-
-      TextContainer container = new TextContainer();
-      container.setContent(data.getText());
-      Report report = container.getReport();
-      report.addField(new Field(REPORT_PARAM_FORMAT, DataType.STRING));
-      report.setStringValue(REPORT_PARAM_FORMAT, data.getBarcodeFormat().toString());
-      for (Map.Entry<ResultMetadataType, ?> d : data.getResultMetadata().entrySet()) {
-        report.addField(new Field(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), DataType.STRING));
-        if (d.getValue() instanceof Collection) {
-          StringBuilder sb = new StringBuilder();
-          if (sb.length() > 0)
-            sb.append(",");
-          for (Object o: ((Collection) d.getValue())) {
-            if (o.getClass().isArray()) {
-              sb.append("[");
-              sb.append(Utils.arrayToString(o));
-              sb.append("]");
-            }
-            else {
-              sb.append(o.toString());
-            }
-          }
-          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), sb.toString());
-        }
-        else if (d.getValue().getClass().isArray())
-          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), Utils.arrayToString(d.getValue()));
-        else
-          report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), d.getValue().toString());
-      }
-      ResultPoint[] points = data.getResultPoints();
-      report.setNumericValue(REPORT_PARAM_X, points[0].getX());
-      report.setNumericValue(REPORT_PARAM_Y, points[0].getY());
-      report.setNumericValue(REPORT_PARAM_WIDTH, points[2].getX() - points[0].getX());
-      report.setNumericValue(REPORT_PARAM_HEIGHT, points[1].getY() - points[0].getY());
-
-      m_OutputToken = new Token(container);
+      cont = m_Decoder.decode((AbstractImageContainer) m_InputToken.getPayload());
+      m_OutputToken = new Token(cont);
     }
     catch (Exception e) {
-      out = handleException("Failed to extract barcode!", e);
+      result = handleException("Failed to extract barcode!", e);
     }
 
-    return out;
+    return result;
   }
 }
