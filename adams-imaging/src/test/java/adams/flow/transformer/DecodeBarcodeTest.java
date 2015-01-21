@@ -20,15 +20,15 @@
 
 package adams.flow.transformer;
 
-import adams.env.Environment;
 import adams.core.option.AbstractArgumentOption;
-import adams.core.option.OptionUtils;
+import adams.data.barcode.decode.ZXing;
+import adams.env.Environment;
+import adams.flow.AbstractFlowTest;
+import adams.flow.control.Flow;
+import adams.flow.core.AbstractActor;
+import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.flow.core.AbstractActor;
-import adams.flow.control.Flow;
-import adams.flow.AbstractFlowTest;
-import adams.test.TmpFile;
 
 /**
  * Test for DecodeBarcode actor.
@@ -149,6 +149,7 @@ public class DecodeBarcodeTest
 
       // Flow.DecodeBarcode
       adams.flow.transformer.DecodeBarcode decodebarcode18 = new adams.flow.transformer.DecodeBarcode();
+      decodebarcode18.setDecoder(new ZXing());
       actors1[3] = decodebarcode18;
 
       // Flow.Convert

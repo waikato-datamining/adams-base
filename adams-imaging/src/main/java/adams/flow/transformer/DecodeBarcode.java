@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.barcode.decode.AbstractBarcodeDecoder;
 import adams.data.image.AbstractImageContainer;
 import adams.data.text.TextContainer;
@@ -135,6 +136,16 @@ public class DecodeBarcode
    */
   public String decoderTipText() {
     return "The decoder algorithm to use.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "decoder", m_Decoder);
   }
 
   /**
