@@ -20,23 +20,6 @@
 
 package adams.gui.flow;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-
 import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -80,6 +63,22 @@ import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.VariableManagementPanel;
+
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -1197,6 +1196,7 @@ public class FlowPanel
 	m_CurrentThread.stop();
       }
       finally {
+	setTabIcon(null);
 	finishedExecution();
       }
     }
