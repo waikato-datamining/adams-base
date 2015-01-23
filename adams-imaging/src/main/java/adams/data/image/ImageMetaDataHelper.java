@@ -19,21 +19,19 @@
  */
 package adams.data.image;
 
-import java.io.File;
-import java.util.HashSet;
-
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.IImageMetadata;
-import org.apache.sanselan.common.ImageMetadata;
-
 import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.IImageMetadata;
+import org.apache.sanselan.common.ImageMetadata;
+
+import java.io.File;
+import java.util.HashSet;
 
 /**
  * Helper class for reading meta-data from images.

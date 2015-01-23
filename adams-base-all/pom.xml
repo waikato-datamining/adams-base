@@ -67,6 +67,21 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- access -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-access</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-access</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
     <!-- core -->
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>

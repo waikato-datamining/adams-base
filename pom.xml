@@ -33,6 +33,7 @@
     <module>adams-base-all</module>
 
     <!-- dependent modules -->
+    <module>adams-access</module>
     <module>adams-compress</module>
     <module>adams-event</module>
     <module>adams-excel</module>

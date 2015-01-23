@@ -15,9 +15,14 @@
 
 /**
  * Storage.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
+
+import adams.core.CloneHandler;
+import adams.core.LRUCache;
+import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,11 +31,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import adams.core.CloneHandler;
-import adams.core.LRUCache;
-import adams.core.Utils;
-import adams.core.base.BaseRegExp;
 
 /**
  * Used for temporary storage during flow execution.
@@ -67,7 +67,7 @@ public class Storage
   /**
    * Empties the storage. Also removes all the LRU caches.
    */
-  public void clear() {
+  public synchronized void clear() {
     m_Data.clear();
     m_Caches.clear();
   }
@@ -77,7 +77,7 @@ public class Storage
    *
    * @return 		the names of the LRU caches
    */
-  public Iterator<String> caches() {
+  public synchronized Iterator<String> caches() {
     List<String>	result;
 
     result = new ArrayList<String>(m_Caches.keySet());
@@ -92,7 +92,7 @@ public class Storage
    * @param name	the name of the cache
    * @param size	the size of the cache
    */
-  public void addCache(String name, int size) {
+  public synchronized void addCache(String name, int size) {
     m_Caches.put(name, new LRUCache<String,Object>(size));
   }
 
@@ -103,7 +103,7 @@ public class Storage
    * @param value	the value to store
    * @return		any previous value stored under the same name
    */
-  public Object put(StorageName name, Object value) {
+  public synchronized Object put(StorageName name, Object value) {
     return m_Data.put(name.getValue(), value);
   }
 
@@ -114,9 +114,8 @@ public class Storage
    * @param cache	the name of the cache to add it to
    * @param name	the name to store the value under
    * @param value	the value to store
-   * @return		any previous value stored under the same name
    */
-  public void put(String cache, StorageName name, Object value) {
+  public synchronized void put(String cache, StorageName name, Object value) {
     if (m_Caches.containsKey(cache))
       m_Caches.get(cache).put(name.getValue(), value);
   }
@@ -127,7 +126,7 @@ public class Storage
    * @param name	the name to check
    * @return		true if a value is stored under the name
    */
-  public boolean has(StorageName name) {
+  public synchronized boolean has(StorageName name) {
     return m_Data.containsKey(name.getValue());
   }
 
@@ -139,7 +138,7 @@ public class Storage
    * @param name	the name to check
    * @return		true if a value is stored under the name
    */
-  public boolean has(String cache, StorageName name) {
+  public synchronized boolean has(String cache, StorageName name) {
     if (m_Caches.containsKey(cache))
       return m_Caches.get(cache).contains(name.getValue());
     else
@@ -152,7 +151,7 @@ public class Storage
    * @param name	the name of the value to retrieve
    * @return		the associated value, or null if not found
    */
-  public Object get(StorageName name) {
+  public synchronized Object get(StorageName name) {
     return m_Data.get(name.getValue());
   }
 
@@ -163,7 +162,7 @@ public class Storage
    * @param name	the name of the value to retrieve
    * @return		the associated value, or null if not found
    */
-  public Object get(String cache, StorageName name) {
+  public synchronized Object get(String cache, StorageName name) {
     if (m_Caches.containsKey(cache))
       return m_Caches.get(cache).get(name.getValue());
     else
@@ -176,7 +175,7 @@ public class Storage
    * @param name	the name of the value to remove
    * @return		the previously associated value, or null if none present
    */
-  public Object remove(StorageName name) {
+  public synchronized Object remove(StorageName name) {
     return m_Data.remove(name.getValue());
   }
 
@@ -187,7 +186,7 @@ public class Storage
    * @param name	the name of the value to remove
    * @return		the previously associated value, or null if none present
    */
-  public Object remove(String cache, StorageName name) {
+  public synchronized Object remove(String cache, StorageName name) {
     if (m_Caches.containsKey(cache))
       return m_Caches.get(cache).remove(name.getValue());
     else
@@ -199,7 +198,7 @@ public class Storage
    *
    * @return		the number of stored values
    */
-  public int size() {
+  public synchronized int size() {
     return m_Data.size();
   }
 
@@ -209,7 +208,7 @@ public class Storage
    * @param cache	the cache to get the size for
    * @return		the number of stored values, 0 if cache not available
    */
-  public int size(String cache) {
+  public synchronized int size(String cache) {
     if (m_Caches.containsKey(cache))
       return m_Caches.get(cache).sizeUsed();
     else
@@ -221,7 +220,7 @@ public class Storage
    *
    * @return		the set
    */
-  public Set<StorageName> keySet() {
+  public synchronized Set<StorageName> keySet() {
     HashSet<StorageName>	result;
     Set<String>			set;
 
@@ -239,7 +238,7 @@ public class Storage
    * @param cache	the cache to query
    * @return		the set, emoty set if cache not available
    */
-  public Set<StorageName> keySet(String cache) {
+  public synchronized Set<StorageName> keySet(String cache) {
     HashSet<StorageName>	result;
     Set<String>			set;
 
@@ -259,7 +258,7 @@ public class Storage
    *
    * @return		the clone
    */
-  public Storage getClone() {
+  public synchronized Storage getClone() {
     return getClone(null);
   }
 
@@ -270,7 +269,7 @@ public class Storage
    * 			must match (not applied to caches!), null to ignore
    * @return		the clone
    */
-  public Storage getClone(BaseRegExp filter) {
+  public synchronized Storage getClone(BaseRegExp filter) {
     Storage			result;
     LRUCache<String,Object>	cache;
 
@@ -292,7 +291,7 @@ public class Storage
    *
    * @return		the shallow copy
    */
-  public Storage getShallowCopy() {
+  public synchronized Storage getShallowCopy() {
     Storage			result;
     LRUCache<String,Object>	cache;
 
@@ -312,7 +311,7 @@ public class Storage
    * @return		the string representation
    */
   @Override
-  public String toString() {
+  public synchronized String toString() {
     StringBuilder	result;
     Iterator<String>	names;
     String		name;
@@ -353,61 +352,12 @@ public class Storage
   }
 
   /**
-   * Turns any string into a valid storage name, 
-   * by replacing invalid characters with underscores ("_").
-   * 
-   * @param s		the string to convert into a valid storage name
-   * @return		the (potentially) fixed name
-   */
-  public static String toValidName(String s) {
-    return toValidName(s, "_");
-  }
-
-  /**
-   * Turns any string into a valid storage name, 
-   * by replacing invalid characters with the specified replacement string.
-   * 
-   * @param s		the string to convert into a valid storage name
-   * @param replace	the replacement string for invalida chars
-   * @return		the (potentially) fixed name
-   */
-  public static String toValidName(String s, String replace) {
-    StringBuilder	result;
-    int			i;
-    char		chr;
-    
-    result = new StringBuilder();
-    
-    for (i = 0; i < s.length(); i++) {
-      chr = s.charAt(i);
-      if ((chr >= '0') && (chr <= '9'))
-	result.append(chr);
-      else if ((chr >= 'a') && (chr <= 'z'))
-	result.append(chr);
-      else if ((chr >= 'A') && (chr <= 'Z'))
-	result.append(chr);
-      else if (chr == '_')
-	result.append(chr);
-      else if (chr == '-')
-	result.append(chr);
-      else if (chr == ':')
-	result.append(chr);
-      else if (chr == '.')
-	result.append(chr);
-      else
-	result.append(replace);
-    }
-    
-    return result.toString();
-  }
-  
-  /**
    * Replaces all storage placeholders in the string with the currently stored values.
    *
    * @param s		the string to process
    * @return		the processed string
    */
-  public String expand(String s) {
+  public synchronized String expand(String s) {
     return expand(s, (s.indexOf(START + START) > -1));
   }
 
@@ -437,7 +387,7 @@ public class Storage
   }
 
   /**
-   * Replaces all storage placeholders in the string with the currently 
+   * Replaces all storage placeholders in the string with the currently
    * stored values (ie string representation).
    *
    * @param s		the string to process
@@ -452,5 +402,54 @@ public class Storage
       result = expand(result);
 
     return result;
+  }
+
+  /**
+   * Turns any string into a valid storage name,
+   * by replacing invalid characters with underscores ("_").
+   *
+   * @param s		the string to convert into a valid storage name
+   * @return		the (potentially) fixed name
+   */
+  public static String toValidName(String s) {
+    return toValidName(s, "_");
+  }
+
+  /**
+   * Turns any string into a valid storage name,
+   * by replacing invalid characters with the specified replacement string.
+   *
+   * @param s		the string to convert into a valid storage name
+   * @param replace	the replacement string for invalida chars
+   * @return		the (potentially) fixed name
+   */
+  public static String toValidName(String s, String replace) {
+    StringBuilder	result;
+    int			i;
+    char		chr;
+
+    result = new StringBuilder();
+
+    for (i = 0; i < s.length(); i++) {
+      chr = s.charAt(i);
+      if ((chr >= '0') && (chr <= '9'))
+        result.append(chr);
+      else if ((chr >= 'a') && (chr <= 'z'))
+        result.append(chr);
+      else if ((chr >= 'A') && (chr <= 'Z'))
+        result.append(chr);
+      else if (chr == '_')
+        result.append(chr);
+      else if (chr == '-')
+        result.append(chr);
+      else if (chr == ':')
+        result.append(chr);
+      else if (chr == '.')
+        result.append(chr);
+      else
+        result.append(replace);
+    }
+
+    return result.toString();
   }
 }
