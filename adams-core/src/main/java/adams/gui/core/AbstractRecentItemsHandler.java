@@ -20,6 +20,16 @@
 
 package adams.gui.core;
 
+import adams.core.Properties;
+import adams.core.logging.LoggingObject;
+import adams.env.Environment;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,17 +38,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-
-import adams.core.Properties;
-import adams.core.logging.LoggingObject;
-import adams.env.Environment;
-import adams.gui.event.RecentItemEvent;
-import adams.gui.event.RecentItemListener;
 
 /**
  * Ancestor for classes that handle a list of recent items. Reads/writes them from/to
@@ -390,8 +389,6 @@ public abstract class AbstractRecentItemsHandler<M, T>
    * @param item	the item to add to the list
    */
   public synchronized void addRecentItem(T item) {
-    int		index;
-    
     item = fromString(toString(item));
 
     // is it the first item again? -> ignore it
@@ -400,13 +397,8 @@ public abstract class AbstractRecentItemsHandler<M, T>
 	return;
     }
 
-    if (!m_RecentItems.contains(item)) {
-      m_RecentItems.add(0, item);
-    }
-    else {
-      index = m_RecentItems.indexOf(item);
-      m_RecentItems.set(index, item);
-    }
+    m_RecentItems.remove(item);
+    m_RecentItems.add(0, item);
     while (m_RecentItems.size() > m_MaxCount)
       m_RecentItems.remove(m_RecentItems.size() - 1);
 
