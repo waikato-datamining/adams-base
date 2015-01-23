@@ -15,7 +15,7 @@
 
 /**
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -1410,7 +1410,7 @@ public class CsvSpreadSheetReader
   /**
    * Returns the current chunk size.
    *
-   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   * @return	the size of the chunks, &lt; 1 denotes infinity
    */
   @Override
   public int getChunkSize() {
@@ -1441,7 +1441,7 @@ public class CsvSpreadSheetReader
   /**
    * Returns whether to trim the cell content.
    *
-   * @param value	true if to trim content
+   * @return	true if to trim content
    */
   public boolean getTrim() {
     return m_Trim;
