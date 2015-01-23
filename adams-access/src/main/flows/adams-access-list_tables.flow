@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2015-01-23 17:18:03
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Prompts the user to select a MS Access database\nand then outputs the available tables.
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-file-chooser-title
+			Select Access database
+			-extension
+			mdb
+			-extension
+			accdb
+	-actor
+		adams.flow.transformer.AccessDatabaseInfo
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
