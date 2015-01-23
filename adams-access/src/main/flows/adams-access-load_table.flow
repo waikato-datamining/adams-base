@@ -1,0 +1,76 @@
+# Project: adams
+# Date: 2015-01-23 17:29:09
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Prompts the user to select a MS Access database,\noutputs the available tables from which the user\nselects one and then this table gets loaded and\ndisplayed.
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-file-chooser-title
+			Select Access database
+			-extension
+			mdb
+			-extension
+			accdb
+	-actor
+		adams.flow.control.Tee
+			-name
+			determine tables
+			-tee
+				adams.flow.transformer.AccessDatabaseInfo
+					-output-array
+					true
+			-tee
+				adams.flow.control.ArrayProcess
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.Quote
+			-tee
+				adams.flow.transformer.StringJoin
+					-glue
+					 
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					tables
+	-actor
+		adams.flow.control.Trigger
+			-name
+			which table?
+			-tee
+				adams.flow.source.EnterValue
+					-stop-if-canceled
+					true
+					-message
+					Please select table to load
+					-selection-values
+					@{tables}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					table
+	-actor
+		adams.flow.control.Tee
+			-name
+			load/display table
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.AccessSpreadSheetReader
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+							-table
+							@{table}
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+					-writer
+						adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
