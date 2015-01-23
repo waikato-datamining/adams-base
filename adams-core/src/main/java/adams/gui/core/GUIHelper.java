@@ -20,6 +20,35 @@
 
 package adams.gui.core;
 
+import adams.core.ClassLocator;
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.management.OS;
+import adams.core.net.HtmlUtils;
+import adams.core.option.OptionHandler;
+import adams.core.option.OptionUtils;
+import adams.env.Environment;
+import adams.env.GUIHelperDefinition;
+import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.Child;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.TextDialog;
+import adams.gui.dialog.TextPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -53,36 +82,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import adams.core.ClassLocator;
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.management.OS;
-import adams.core.net.HtmlUtils;
-import adams.core.option.OptionHandler;
-import adams.core.option.OptionUtils;
-import adams.env.Environment;
-import adams.env.GUIHelperDefinition;
-import adams.gui.application.AbstractMenuItemDefinition;
-import adams.gui.application.Child;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.TextDialog;
-import adams.gui.dialog.TextPanel;
 
 /**
  * A little helper class for GUI related stuff.
@@ -1886,7 +1885,7 @@ public class GUIHelper {
     
     result = new StringBuilder();
 
-    panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
     initialFocus = null;
     for (String option: options) {
       final JButton button = new JButton(option);
