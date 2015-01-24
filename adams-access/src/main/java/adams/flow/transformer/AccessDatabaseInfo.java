@@ -23,8 +23,10 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.DataInfoActor;
+import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
+import com.healthmarketscience.jackcess.Table;
 
 import java.io.File;
 import java.util.Arrays;
@@ -85,9 +87,14 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-type &lt;FILE|FILE_FORMAT|TABLES|COLUMN_ORDER&gt; (property: type)
+ * <pre>-type &lt;FILE|FILE_FORMAT|TABLES|COLUMN_ORDER|COLUMN_NAMES&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: TABLES
+ * </pre>
+ * 
+ * <pre>-table &lt;java.lang.String&gt; (property: table)
+ * &nbsp;&nbsp;&nbsp;The table to read from the database.
+ * &nbsp;&nbsp;&nbsp;default: MyTable
  * </pre>
  * 
  * <pre>-sort &lt;boolean&gt; (property: sort)
@@ -121,10 +128,15 @@ public class AccessDatabaseInfo
     TABLES,
     /** the column order. */
     COLUMN_ORDER,
+    /** the column names. */
+    COLUMN_NAMES,
   }
 
   /** the type of information to generate. */
   protected InfoType m_Type;
+
+  /** the table to use. */
+  protected String m_Table;
 
   /** whether to sort lists. */
   protected boolean m_Sort;
@@ -147,12 +159,16 @@ public class AccessDatabaseInfo
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    InfoType.TABLES);
+      "type", "type",
+      InfoType.TABLES);
 
     m_OptionManager.add(
-	    "sort", "sort",
-	    true);
+      "table", "table",
+      "MyTable");
+
+    m_OptionManager.add(
+      "sort", "sort",
+      true);
   }
 
   /**
@@ -219,6 +235,35 @@ public class AccessDatabaseInfo
   }
 
   /**
+   * Sets the table to read from.
+   *
+   * @param value	the table
+   */
+  public void setTable(String value) {
+    m_Table = value;
+    reset();
+  }
+
+  /**
+   * Returns the table to read from.
+   *
+   * @return		the table
+   */
+  public String getTable() {
+    return m_Table;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String tableTipText() {
+    return "The table to read from the database.";
+  }
+
+  /**
    * Sets whether to sort lists (eg names, values).
    *
    * @param value	true if to sort
@@ -269,6 +314,7 @@ public class AccessDatabaseInfo
       case FILE_FORMAT:
       case TABLES:
       case COLUMN_ORDER:
+      case COLUMN_NAMES:
 	return String.class;
       default:
 	throw new IllegalStateException("Unhandled info type: " + m_Type);
@@ -285,6 +331,7 @@ public class AccessDatabaseInfo
     String		result;
     File		file;
     Database		db;
+    Table               table;
 
     result = null;
 
@@ -311,6 +358,16 @@ public class AccessDatabaseInfo
 	case COLUMN_ORDER:
 	  m_Queue.add(db.getColumnOrder().toString());
 	  break;
+        case COLUMN_NAMES:
+          table = db.getTable(m_Table);
+          if (table != null) {
+            for (Column col : table.getColumns())
+              m_Queue.add(col.getName());
+          }
+          else {
+            result = "Table '" + m_Table + "' not found?";
+          }
+          break;
 	default:
 	  throw new IllegalStateException("Unhandled info type: " + m_Type);
       }
