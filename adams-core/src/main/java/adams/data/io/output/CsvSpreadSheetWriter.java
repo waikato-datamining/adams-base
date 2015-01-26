@@ -15,17 +15,9 @@
 
 /**
  * CsvSpreadSheetWriter.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.logging.Level;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
@@ -38,6 +30,14 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -800,13 +800,13 @@ public class CsvSpreadSheetWriter
   }
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
   @Override
-  protected boolean getUseOutputStream() {
-    return false;
+  protected OutputType getOutputType() {
+    return OutputType.WRITER;
   }
 
   /**

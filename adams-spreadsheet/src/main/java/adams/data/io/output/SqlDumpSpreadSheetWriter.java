@@ -15,12 +15,9 @@
 
 /**
  * SqlDumpSpreadSheetWriter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import java.io.Writer;
-import java.util.logging.Level;
 
 import adams.core.DateFormat;
 import adams.core.Utils;
@@ -33,6 +30,9 @@ import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SqlUtils;
+
+import java.io.Writer;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -561,14 +561,13 @@ public class SqlDumpSpreadSheetWriter
   }
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer when
-   * using a file name.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
   @Override
-  protected boolean getUseOutputStream() {
-    return false;
+  protected OutputType getOutputType() {
+    return OutputType.WRITER;
   }
 
   /**

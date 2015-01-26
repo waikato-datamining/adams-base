@@ -15,9 +15,17 @@
 
 /**
  * AbstractSpreadSheetWriter.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
+
+import adams.core.ClassLister;
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
+import adams.core.option.AbstractOptionHandler;
+import adams.data.spreadsheet.SpreadSheet;
+import org.apache.commons.io.output.WriterOutputStream;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,15 +34,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
-
-import org.apache.commons.io.output.WriterOutputStream;
-import org.codehaus.plexus.util.FileUtils;
-
-import adams.core.ClassLister;
-import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
-import adams.core.option.AbstractOptionHandler;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Ancestor for classes that can write spreadsheet objects.
@@ -48,6 +47,21 @@ public abstract class AbstractSpreadSheetWriter
 
   /** for serialization. */
   private static final long serialVersionUID = -3547064795252689769L;
+
+  /**
+   * How to write the data.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum OutputType {
+    /** write to a file. */
+    FILE,
+    /** write using a writer. */
+    WRITER,
+    /** write to a stream. */
+    STREAM
+  }
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
@@ -129,12 +143,11 @@ public abstract class AbstractSpreadSheetWriter
   }
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer when
-   * using a file name.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
-  protected abstract boolean getUseOutputStream();
+  protected abstract OutputType getOutputType();
 
   /**
    * Returns whether to automatically compress.
@@ -206,25 +219,32 @@ public abstract class AbstractSpreadSheetWriter
     }
 
     try {
-      if (getUseOutputStream()) {
-	output = new FileOutputStream(filename, append);
-	if (!append && canCompress(filename))
-	  output = new GZIPOutputStream(output);
-	result = doWrite(content, output);
-	output.flush();
-	output.close();
-      }
-      else {
-	output = new FileOutputStream(filename, append);
-	if (!append && canCompress(filename))
-	  output = new GZIPOutputStream(output);
-	if (m_Encoding != null)
-	  writer = new BufferedWriter(new OutputStreamWriter(output, m_Encoding.charsetValue()));
-	else
-	  writer = new BufferedWriter(new OutputStreamWriter(output));
-	result = doWrite(content, writer);
-	writer.flush();
-	writer.close();
+      switch (getOutputType()) {
+        case FILE:
+          result = doWrite(content, filename);
+          break;
+        case STREAM:
+          output = new FileOutputStream(filename, append);
+          if (!append && canCompress(filename))
+            output = new GZIPOutputStream(output);
+          result = doWrite(content, output);
+          output.flush();
+          output.close();
+          break;
+        case WRITER:
+          output = new FileOutputStream(filename, append);
+          if (!append && canCompress(filename))
+            output = new GZIPOutputStream(output);
+          if (m_Encoding != null)
+            writer = new BufferedWriter(new OutputStreamWriter(output, m_Encoding.charsetValue()));
+          else
+            writer = new BufferedWriter(new OutputStreamWriter(output));
+          result = doWrite(content, writer);
+          writer.flush();
+          writer.close();
+          break;
+        default:
+          throw new IllegalStateException("Unhandled output type: " + getOutputType());
       }
     }
     catch (Exception e) {
@@ -245,10 +265,16 @@ public abstract class AbstractSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet content, OutputStream stream) {
-    if (getUseOutputStream())
-      return doWrite(content, stream);
-    else
-      return doWrite(content, new OutputStreamWriter(stream));
+    switch (getOutputType()) {
+      case FILE:
+        throw new IllegalStateException("Only supports writing to files, not output streams!");
+      case STREAM:
+        return doWrite(content, stream);
+      case WRITER:
+        return doWrite(content, new OutputStreamWriter(stream));
+      default:
+        throw new IllegalStateException("Unhandled output type: " + getOutputType());
+    }
   }
 
   /**
@@ -261,10 +287,30 @@ public abstract class AbstractSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet content, Writer writer) {
-    if (getUseOutputStream())
-      return doWrite(content, new WriterOutputStream(writer));
-    else
-      return doWrite(content, writer);
+    switch (getOutputType()) {
+      case FILE:
+        throw new IllegalStateException("Only supports writing to files, not output streams!");
+      case STREAM:
+        return doWrite(content, new WriterOutputStream(writer));
+      case WRITER:
+        return doWrite(content, writer);
+      default:
+        throw new IllegalStateException("Unhandled output type: " + getOutputType());
+    }
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the writer gets
+   * closed.
+   * <p/>
+   * Default implementation returns always false.
+   *
+   * @param content	the spreadsheet to write
+   * @param filename	the file to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(SpreadSheet content, String filename) {
+    return false;
   }
 
   /**

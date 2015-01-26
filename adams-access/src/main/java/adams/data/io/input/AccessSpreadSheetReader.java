@@ -93,7 +93,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class AccessSpreadSheetReader
-  extends AbstractSpreadSheetReaderWithMissingValueSupport
+  extends AbstractSpreadSheetReader
   implements ChunkedSpreadSheetReader, WindowedSpreadSheetReader {
 
   private static final long serialVersionUID = 1822931227110464391L;
@@ -115,9 +115,6 @@ public class AccessSpreadSheetReader
 
     /** the header. */
     protected SpreadSheet m_Header;
-
-    /** the missing value. */
-    protected String m_MissingValue;
 
     /** the chunk size. */
     protected int m_ChunkSize;
@@ -292,11 +289,9 @@ public class AccessSpreadSheetReader
      * @return		the spreadsheet or null in case of an error
      */
     public SpreadSheet read(Table table) {
-      m_Table = table;
-
+      m_Table           = table;
       m_Header          = null;
       m_ChunkSize       = m_Owner.getChunkSize();
-      m_MissingValue    = m_Owner.getMissingValue();
       m_FirstRow        = m_Owner.getFirstRow();
       m_NumRows         = m_Owner.getNumRows();
       m_RowCount        = 0;

@@ -32,7 +32,7 @@ import adams.core.net.TwitterHelper;
  * Provides access to various twitter services.<br/>
  * For your own twitter account, you can obtain consumer key and access token for ADAMS (= application trying to access twitter) here:<br/>
  *   https:&#47;&#47;dev.twitter.com&#47;apps&#47;<br/>
- * And make sure that ADAMS has READ and WRITE access.
+ * And make sure that ADAMS has READ and WRITER access.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -125,7 +125,7 @@ public class TwitterConnection
 	+ "For your own twitter account, you can obtain consumer key and "
 	+ "access token for ADAMS (= application trying to access twitter) here:\n"
 	+ "  https://dev.twitter.com/apps/\n"
-	+ "And make sure that ADAMS has READ and WRITE access.";
+	+ "And make sure that ADAMS has READ and WRITER access.";
   }
 
   /**

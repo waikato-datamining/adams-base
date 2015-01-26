@@ -15,15 +15,13 @@
 
 /*
  * SpreadSheetFileReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.ChunkedSpreadSheetReader;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -31,6 +29,9 @@ import adams.data.io.input.MultiSheetSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+
+import java.io.File;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -216,6 +217,7 @@ public class SpreadSheetFileReader
     SpreadSheet		sheet;
     List<SpreadSheet>	sheets;
     boolean		added;
+    int                 i;
 
     result = null;
 
@@ -229,12 +231,20 @@ public class SpreadSheetFileReader
     if (m_Reader instanceof MultiSheetSpreadSheetReader) {
       sheets = ((MultiSheetSpreadSheetReader) m_Reader).readRange(file);
       if (sheets != null) {
+        i = 0;
+        for (SpreadSheet sh: sheets) {
+          i++;
+          if (!sh.hasName())
+            sh.setName(FileUtils.replaceExtension(file, "").getName() + "-" + i);
+        }
 	m_Queue.addAll(sheets);
 	added = true;
       }
     }
     else if (m_Reader instanceof ChunkedSpreadSheetReader) {
       sheet = m_Reader.read(file);
+      if (!sheet.hasName())
+        sheet.setName(FileUtils.replaceExtension(file, "").getName());
       if (sheet != null) {
 	if (m_OutputArray)
 	  m_OutputToken = new Token(new SpreadSheet[]{sheet});

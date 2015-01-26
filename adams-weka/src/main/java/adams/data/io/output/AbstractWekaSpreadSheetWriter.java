@@ -15,17 +15,17 @@
 
 /**
  * AbstractWekaSpreadSheetWriter.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
-import java.io.OutputStream;
-import java.util.logging.Level;
-
-import weka.core.Instances;
-import weka.core.converters.AbstractFileSaver;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.spreadsheet.SpreadSheet;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileSaver;
+
+import java.io.OutputStream;
+import java.util.logging.Level;
 
 /**
  * Ancestor for WEKA file format readers.
@@ -60,14 +60,13 @@ public abstract class AbstractWekaSpreadSheetWriter
   protected abstract AbstractFileSaver newSaver();
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer when
-   * using a file name.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
   @Override
-  protected boolean getUseOutputStream() {
-    return true;
+  protected OutputType getOutputType() {
+    return OutputType.STREAM;
   }
 
   /**

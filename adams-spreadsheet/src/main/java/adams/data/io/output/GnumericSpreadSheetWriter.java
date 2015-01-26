@@ -15,14 +15,9 @@
 
 /**
  * GnumericSpreadSheetWriter.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.zip.GZIPOutputStream;
 
 import adams.core.DateFormat;
 import adams.core.Utils;
@@ -33,6 +28,11 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.zip.GZIPOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -219,13 +219,13 @@ public class GnumericSpreadSheetWriter
   }
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
   @Override
-  protected boolean getUseOutputStream() {
-    return true;
+  protected OutputType getOutputType() {
+    return OutputType.STREAM;
   }
 
   /**

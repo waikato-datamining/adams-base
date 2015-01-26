@@ -15,9 +15,12 @@
 
 /**
  * AbstractMultiSheetSpreadSheetWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
+
+import adams.data.spreadsheet.SpreadSheet;
+import org.apache.commons.io.output.WriterOutputStream;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,10 +29,6 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
-import org.apache.commons.io.output.WriterOutputStream;
-
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Ancestor for spreadsheet writers that can write multiple sheets into
@@ -140,6 +139,20 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
    * Default implementation returns always false.
    *
    * @param content	the spreadsheet to write
+   * @param filename	the file to write the spreadsheet to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(SpreadSheet[] content, String filename) {
+    return false;
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the writer gets
+   * closed.
+   * <p/>
+   * Default implementation returns always false.
+   *
+   * @param content	the spreadsheet to write
    * @param writer	the writer to write the spreadsheet to
    * @return		true if successfully written
    */
@@ -189,15 +202,22 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
     result = true;
 
     try {
-      if (getUseOutputStream()) {
-	output = new FileOutputStream(filename, false);
-	result = doWrite(content, output);
-	output.close();
-      }
-      else {
-	writer = new BufferedWriter(new FileWriter(filename, false));
-	result = doWrite(content, writer);
-	writer.close();
+      switch (getOutputType()) {
+        case FILE:
+          result = doWrite(content, filename);
+          break;
+        case STREAM:
+          output = new FileOutputStream(filename, false);
+          result = doWrite(content, output);
+          output.close();
+          break;
+        case WRITER:
+          writer = new BufferedWriter(new FileWriter(filename, false));
+          result = doWrite(content, writer);
+          writer.close();
+          break;
+        default:
+          throw new IllegalStateException("Unhandled output type: " + getOutputType());
       }
     }
     catch (Exception e) {
@@ -218,10 +238,16 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet[] content, OutputStream stream) {
-    if (getUseOutputStream())
-      return doWrite(content, stream);
-    else
-      return doWrite(content, new OutputStreamWriter(stream));
+    switch (getOutputType()) {
+      case FILE:
+        throw new IllegalStateException("Can only write to files!");
+      case STREAM:
+        return doWrite(content, stream);
+      case WRITER:
+        return doWrite(content, new OutputStreamWriter(stream));
+      default:
+        throw new IllegalStateException("Unhandled output type: " + getOutputType());
+    }
   }
 
   /**
@@ -234,9 +260,15 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet[] content, Writer writer) {
-    if (getUseOutputStream())
-      return doWrite(content, new WriterOutputStream(writer));
-    else
-      return doWrite(content, writer);
+    switch (getOutputType()) {
+      case FILE:
+        throw new IllegalStateException("Can only write to files!");
+      case STREAM:
+        return doWrite(content, new WriterOutputStream(writer));
+      case WRITER:
+        return doWrite(content, writer);
+      default:
+        throw new IllegalStateException("Unhandled output type: " + getOutputType());
+    }
   }
 }

@@ -15,14 +15,16 @@
 
 /**
  * ExcelSpreadSheetWriter.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
-import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.logging.Level;
-
+import adams.core.Constants;
+import adams.core.ExcelHelper;
+import adams.core.Utils;
+import adams.data.io.input.ExcelSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -31,12 +33,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import adams.core.Constants;
-import adams.core.ExcelHelper;
-import adams.core.Utils;
-import adams.data.io.input.ExcelSpreadSheetReader;
-import adams.data.io.input.SpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
+import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -146,13 +145,13 @@ public class ExcelSpreadSheetWriter
   }
 
   /**
-   * Returns whether to write to an OutputStream rather than a Writer.
+   * Returns how the data is written.
    *
-   * @return		true if to write to an OutputStream
+   * @return		the type
    */
   @Override
-  protected boolean getUseOutputStream() {
-    return true;
+  protected OutputType getOutputType() {
+    return OutputType.STREAM;
   }
 
   /**
