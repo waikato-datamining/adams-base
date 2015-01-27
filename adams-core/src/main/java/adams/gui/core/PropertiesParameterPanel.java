@@ -657,18 +657,21 @@ public class PropertiesParameterPanel
 	  timePanel = new TimeChooserPanel();
 	  timePanel.setCurrent(value.getTime(key));
 	  timePanel.setToolTipText(help);
+          timePanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, timePanel);
 	  break;
 	case DATE:
 	  datePanel = new DateChooserPanel();
 	  datePanel.setCurrent(value.getDate(key));
 	  datePanel.setToolTipText(help);
+          datePanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, datePanel);
 	  break;
 	case DATETIME:
 	  dateTimePanel = new DateTimeChooserPanel();
 	  dateTimePanel.setCurrent(value.getDateTime(key));
 	  dateTimePanel.setToolTipText(help);
+          dateTimePanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, dateTimePanel);
 	  break;
 	case DOUBLE:
@@ -747,6 +750,7 @@ public class PropertiesParameterPanel
 	  dirPanel.setCurrent(new PlaceholderDirectory(value.getPath(key)));
 	  dirPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, dirPanel.getPreferredSize().height));
 	  dirPanel.setToolTipText(help);
+          dirPanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, dirPanel);
 	  break;
 	case FILE:
@@ -755,12 +759,14 @@ public class PropertiesParameterPanel
 	  filePanel.setCurrent(new PlaceholderFile(value.getPath(key)));
 	  filePanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, filePanel.getPreferredSize().height));
 	  filePanel.setToolTipText(help);
+          filePanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, filePanel);
 	  break;
 	case COLOR:
 	  colorPanel = new ColorChooserPanel();
 	  colorPanel.setCurrent(value.getColor(key));
 	  colorPanel.setToolTipText(help);
+          colorPanel.setInlineEditingEnabled(true);
 	  addProperty(key, label, colorPanel);
 	  break;
 	case ENUM:
