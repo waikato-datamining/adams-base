@@ -117,7 +117,7 @@ public class AccessDatabaseInfo
    * The type of information to generate.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 8197 $
+   * @version $Revision$
    */
   public enum InfoType {
     /** the file. */

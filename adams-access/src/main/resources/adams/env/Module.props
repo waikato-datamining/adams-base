@@ -1,7 +1,7 @@
 # Contains information about the module.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 8629 $
+# Version: $Revision$
 
 # The name of the module
 Name=adams-access
