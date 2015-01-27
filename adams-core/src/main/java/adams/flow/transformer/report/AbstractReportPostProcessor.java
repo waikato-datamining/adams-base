@@ -15,12 +15,13 @@
 
 /**
  * AbstractReportPostProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.report;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.report.Report;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for {@link Report} post-processors.
@@ -34,6 +35,27 @@ public abstract class AbstractReportPostProcessor<T extends Report>
   /** for serialization. */
   private static final long serialVersionUID = 4489141650668803307L;
 
+  /** the owning actor. */
+  protected Actor m_Owner;
+
+  /**
+   * Sets the owner for this preprocessor.
+   *
+   * @param value   the owning actor
+   */
+  public void setOwner(Actor value) {
+    m_Owner = value;
+  }
+
+  /**
+   * Returns the current owner of this preprocessor.
+   *
+   * @return        the owning actor, null if not available
+   */
+  public Actor getOwner() {
+    return m_Owner;
+  }
+
   /**
    * Checks the data to post-process.
    * <p/>
@@ -42,6 +64,8 @@ public abstract class AbstractReportPostProcessor<T extends Report>
    * @param data	the data to check
    */
   protected void check(T data) {
+    if (m_Owner == null)
+      throw new IllegalStateException("No owner set!");
     if (data == null)
       throw new IllegalStateException("No data provided!");
   }

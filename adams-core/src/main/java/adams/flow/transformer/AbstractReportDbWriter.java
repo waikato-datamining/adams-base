@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportDbWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -219,6 +219,7 @@ public abstract class AbstractReportDbWriter<T extends Report>
    */
   public void setPreProcessor(AbstractReportPreProcessor value) {
     m_PreProcessor = value;
+    m_PreProcessor.setOwner(this);
     reset();
   }
 
