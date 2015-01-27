@@ -15,19 +15,19 @@
 
 /*
  * BaseTextChooserPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Dialog.ModalityType;
 
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 
 /**
  * A panel that contains a text field with the current text and a button
@@ -126,9 +126,9 @@ public class BaseTextChooserPanel
     else
       dialog = ApprovalDialog.getDialog(getParentFrame());
     dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.setTitle(m_DialogTitle);
     textPanel = new TextPanel();
     textPanel.setContent(getCurrent().getValue());
+    textPanel.setTitle(m_DialogTitle);
     dialog.getContentPane().add(textPanel, BorderLayout.CENTER);
     dialog.setSize(m_DialogSize);
     dialog.setLocationRelativeTo(null);
