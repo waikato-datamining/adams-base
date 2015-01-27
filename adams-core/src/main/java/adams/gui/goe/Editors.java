@@ -15,16 +15,9 @@
 
 /**
  * Editors.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
-
-import java.beans.PropertyEditorManager;
-import java.lang.reflect.Array;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
 import adams.core.ClassLister;
 import adams.core.ClassLocator;
@@ -32,6 +25,13 @@ import adams.core.Properties;
 import adams.env.Environment;
 import adams.env.GOEBlacklistDefinition;
 import adams.env.GOEEditorsDefinition;
+
+import java.beans.PropertyEditorManager;
+import java.lang.reflect.Array;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Registers all the editors for the GenericObjectEditor/GenericArrayEditor.
@@ -110,8 +110,10 @@ public class Editors {
       pkg   = iter.next();
       enums = ClassLocator.getSingleton().findInPackage(Enum.class, pkg);
       for (String cname: enums) {
-	if (!result.hasKey(cname))
-	  result.setProperty(cname, enmEditor);
+	if (!result.hasKey(cname)) {
+          result.setProperty(cname, enmEditor);
+          result.setProperty(cname + "[]", arrEditor);
+        }
       }
     }
 
