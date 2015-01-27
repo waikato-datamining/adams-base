@@ -15,21 +15,16 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Iterator;
+import adams.core.CleanUpHandler;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.KeyUtils;
+import adams.gui.core.MouseUtils;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -39,12 +34,18 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import adams.core.CleanUpHandler;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.KeyUtils;
-import adams.gui.core.MouseUtils;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * A panel that contains a text field with the current choice and a
@@ -103,6 +104,9 @@ public abstract class AbstractChooserPanel<T>
   /** whether the chooser is editable. */
   protected boolean m_Editable;
 
+  /** whether inline editing is enabled. */
+  protected boolean m_InlineEditingEnabled;
+
   /**
    * Initializes the panel with no value.
    */
@@ -117,9 +121,10 @@ public abstract class AbstractChooserPanel<T>
   protected void initialize() {
     super.initialize();
 
-    m_Self            = this;
-    m_ChangeListeners = new HashSet<ChangeListener>();
-    m_Editable        = true;
+    m_Self                 = this;
+    m_ChangeListeners      = new HashSet<ChangeListener>();
+    m_Editable             = true;
+    m_InlineEditingEnabled = false;
   }
 
   /**
@@ -142,37 +147,45 @@ public abstract class AbstractChooserPanel<T>
     m_TextSelection.setText(getDefaultString());
     m_TextSelection.setEditable(false);
     m_TextSelection.setPreferredSize(
-	new Dimension(
-	    m_TextSelection.getPreferredSize().width,
-	    m_TextSelection.getPreferredSize().height + 4));
+      new Dimension(
+        m_TextSelection.getPreferredSize().width,
+        m_TextSelection.getPreferredSize().height + 4));
     m_TextSelection.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-	if (MouseUtils.isDoubleClick(e)) {
-	  e.consume();
-	  choose();
-	}
-	else if (MouseUtils.isRightClick(e)) {
-	  e.consume();
-	  JPopupMenu menu = getPopupMenu();
-	  if (menu != null)
-	    menu.show(m_TextSelection, e.getX(), e.getY());
-	}
-	else {
-	  super.mouseClicked(e);
-	}
+        if (MouseUtils.isDoubleClick(e)) {
+          e.consume();
+          choose();
+        }
+        else if (MouseUtils.isRightClick(e)) {
+          e.consume();
+          JPopupMenu menu = getPopupMenu();
+          if (menu != null)
+            menu.show(m_TextSelection, e.getX(), e.getY());
+        }
+        else {
+          super.mouseClicked(e);
+        }
       }
     });
     m_TextSelection.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-	if (KeyUtils.isCopy(e))
-	  copyToClipboard();
-	else if (KeyUtils.isPaste(e) && GUIHelper.canPasteStringFromClipboard())
-	  pasteFromClipboard();
+        if (KeyUtils.isCopy(e))
+          copyToClipboard();
+        else if (KeyUtils.isPaste(e) && GUIHelper.canPasteStringFromClipboard())
+          pasteFromClipboard();
 
-	if (!e.isConsumed())
-	  super.keyPressed(e);
+        if (!e.isConsumed())
+          super.keyPressed(e);
+      }
+    });
+    m_TextSelection.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusLost(FocusEvent e) {
+        super.focusLost(e);
+        if (isInlineEditingEnabled())
+          setCurrent(fromString(m_TextSelection.getText()));
       }
     });
     add(m_TextSelection, BorderLayout.CENTER);
@@ -399,7 +412,39 @@ public abstract class AbstractChooserPanel<T>
   public boolean isEditable() {
     return m_Editable;
   }
-  
+
+  /**
+   * Sets whether inline editing is enabled, i.e., editing without bringing
+   * up chooser.
+   *
+   * @param value         true if inlined editing enabled
+   */
+  public void setInlineEditingEnabled(boolean value) {
+    m_InlineEditingEnabled = value;
+    m_TextSelection.setEditable(value);
+  }
+
+  /**
+   * Returns whether inline editing is enabled, i.e., editing without having
+   * to bring up the chooser.
+   *
+   * @return              true if inline editing enabled
+   */
+  public boolean isInlineEditingEnabled() {
+    return m_InlineEditingEnabled;
+  }
+
+  /**
+   * Sets the tool tip, displayed when hovering with the mouse.
+   *
+   * @param text         the text, null to turn off
+   */
+  @Override
+  public void setToolTipText(String text) {
+    super.setToolTipText(text);
+    m_TextSelection.setToolTipText(text);
+  }
+
   /**
    * Performs the actual choosing of an object.
    *
