@@ -15,10 +15,44 @@
 
 /**
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.EnumHelper;
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.base.BasePassword;
+import adams.core.base.BaseString;
+import adams.core.base.BaseText;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.BaseTextChooserPanel;
+import adams.gui.chooser.ColorChooserPanel;
+import adams.gui.chooser.DateChooserPanel;
+import adams.gui.chooser.DateTimeChooserPanel;
+import adams.gui.chooser.DirectoryChooserPanel;
+import adams.gui.chooser.FileChooserPanel;
+import adams.gui.chooser.FontChooserPanel;
+import adams.gui.chooser.TimeChooserPanel;
+import adams.gui.goe.FontEditor;
+import adams.gui.goe.GenericArrayEditorPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -32,39 +66,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileFilter;
-
-import adams.core.EnumHelper;
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.base.BasePassword;
-import adams.core.base.BaseString;
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
-import adams.core.option.OptionUtils;
-import adams.data.spreadsheet.SpreadSheetUtils;
-import adams.gui.chooser.AbstractChooserPanel;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.ColorChooserPanel;
-import adams.gui.chooser.DateChooserPanel;
-import adams.gui.chooser.DateTimeChooserPanel;
-import adams.gui.chooser.DirectoryChooserPanel;
-import adams.gui.chooser.FileChooserPanel;
-import adams.gui.chooser.FontChooserPanel;
-import adams.gui.chooser.TimeChooserPanel;
-import adams.gui.goe.FontEditor;
-import adams.gui.goe.GenericArrayEditorPanel;
 
 /**
  * Displays all properties in a props file as parameters (alphabetically
@@ -701,10 +702,10 @@ public class PropertiesParameterPanel
 	  break;
 	}
 	case STRING:
-	  final JTextField textfield = new JTextField(20);
-	  textfield.setText(value.getProperty(key));
+	  final BaseTextChooserPanel textfield = new BaseTextChooserPanel();
+	  textfield.setCurrent(new BaseText(value.getProperty(key)));
 	  textfield.setToolTipText(help);
-	  textfield.setBorder(BorderFactory.createEtchedBorder());
+          textfield.setInlineEditingEnabled(true);
 	  addProperty(key, label, textfield);
 	  break;
 	case PASSWORD:
@@ -841,6 +842,7 @@ public class PropertiesParameterPanel
     DateChooserPanel		datePanel;
     DateTimeChooserPanel	dateTimePanel;
     AbstractChooserPanel	chooserPanel;
+    BaseTextChooserPanel        textPanel;
     JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
@@ -866,9 +868,12 @@ public class PropertiesParameterPanel
 	  result.setDateTime(key, dateTimePanel.getCurrent());
 	  break;
 	case DOUBLE:
-	case STRING:
 	  textfield = (JTextField) comp;
 	  result.setProperty(key, textfield.getText());
+	  break;
+	case STRING:
+	  textPanel = (BaseTextChooserPanel) comp;
+	  result.setProperty(key, textPanel.getCurrent().getValue());
 	  break;
 	case PASSWORD:
 	  pwfield = (JPasswordField) comp;
