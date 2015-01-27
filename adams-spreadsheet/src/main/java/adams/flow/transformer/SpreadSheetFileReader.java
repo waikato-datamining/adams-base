@@ -243,9 +243,9 @@ public class SpreadSheetFileReader
     }
     else if (m_Reader instanceof ChunkedSpreadSheetReader) {
       sheet = m_Reader.read(file);
-      if (!sheet.hasName())
-        sheet.setName(FileUtils.replaceExtension(file, "").getName());
       if (sheet != null) {
+        if (!sheet.hasName())
+          sheet.setName(FileUtils.replaceExtension(file, "").getName());
 	if (m_OutputArray)
 	  m_OutputToken = new Token(new SpreadSheet[]{sheet});
 	else
