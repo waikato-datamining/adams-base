@@ -1,0 +1,104 @@
+% Copyright (c) 2015 by the University of Waikato, Hamilton, NZ.
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision: 6368 $
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-access} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/access-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2015} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+The \textit{access} module extends the spreadsheet capabilities of ADAMS by read
+and write support for Microsoft Access databases. This is possible thanks to the
+Jackcess library \cite{jackcess}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+The additional read and write support is immediately available in the 
+\textit{SpreadSheetReader} and \textit{SpreadSheetWriter} actors.
+Figures \ref{spreadsheet-display-flow} and \ref{spreadsheet-display-output}
+display a flow\footnote{adams-excel-multiple\_sheets.flow} and its associated
+output that loads a table from a MS Access database.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/spreadsheet-display-flow.png}
+  \caption{Flow for loading table from MS Access database.}
+  \label{spreadsheet-display-flow}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/spreadsheet-display-output.png}
+  \caption{The table loaded from MS Access database.}
+  \label{spreadsheet-display-output}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Tools}
+The \textit{Spreadsheet file viewer} automatically picks up the new file format
+and allows the user to load tables from MS Access databases. Figure \ref{spreadsheet-viewer}
+shows a screenshot of the viewer with a MS Access table loaded.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/spreadsheet-viewer.png}
+  \caption{Viewer for spreadsheet files.}
+  \label{spreadsheet-viewer}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}
