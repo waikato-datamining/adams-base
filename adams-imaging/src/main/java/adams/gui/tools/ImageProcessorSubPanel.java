@@ -15,30 +15,15 @@
 
 /**
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.io.input.AbstractImageReader;
 import adams.flow.control.SubProcess;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Compatibility;
@@ -56,6 +41,21 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Iterator;
 
 /**
  * A panel with three panes: original image, processed image and flow for
@@ -399,18 +399,29 @@ public class ImageProcessorSubPanel
   }
   
   /**
-   * Opens the file with the specified image reader.
+   * Opens the file.
    *
    * @param file	the file to open
    * @return		true if successfully read
    */
   public boolean load(File file) {
+    return load(file, null);
+  }
+
+  /**
+   * Opens the file with the specified image reader.
+   *
+   * @param file	the file to open
+   * @param reader	the reader to use, null for auto-detection
+   * @return		true if successfully read
+   */
+  public boolean load(File file, AbstractImageReader reader) {
     boolean	result;
-    
-    result = m_PanelOriginal.load(file);
+
+    result = m_PanelOriginal.load(file, reader);
     if (result)
       m_PanelProcessed.setCurrentImage(m_PanelOriginal.getCurrentImage());
-    
+
     return result;
   }
 

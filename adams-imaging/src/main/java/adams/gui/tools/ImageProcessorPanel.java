@@ -15,14 +15,22 @@
 
 /**
  * ImageProcessorPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.data.io.input.AbstractImageReader;
+import adams.gui.chooser.ImageFileChooser;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
+import adams.gui.core.TitleGenerator;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
+import adams.gui.tools.ImageProcessorSubPanel.LayoutType;
+import adams.gui.visualization.image.ImageViewerPanel;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -31,17 +39,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import adams.gui.chooser.ImageFileChooser;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
-import adams.gui.core.RecentFilesHandler;
-import adams.gui.core.TitleGenerator;
-import adams.gui.event.RecentItemEvent;
-import adams.gui.event.RecentItemListener;
-import adams.gui.tools.ImageProcessorSubPanel.LayoutType;
-import adams.gui.visualization.image.ImageViewerPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Interface for processing images using a flow snippet.
@@ -93,7 +94,7 @@ public class ImageProcessorPanel
   protected JMenuItem m_MenuViewRemoveOverlays;
 
   /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** for generating the title. */
   protected TitleGenerator m_TitleGenerator;
@@ -264,13 +265,13 @@ public class ImageProcessorPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(SESSION_FILE, 5, submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
-	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<JMenu>(SESSION_FILE, 5, submenu);
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
 	}
-	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
-	  load(e.getItem());
+	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
+	  load(e.getItem().getFile(), (AbstractImageReader) e.getItem().getHandler());
 	}
       });
       m_MenuItemFileLoadRecent = submenu;
@@ -503,18 +504,28 @@ public class ImageProcessorPanel
 
     files = m_FileChooser.getSelectedFiles();
     for (File file: files)
-      load(file);
+      load(file, m_FileChooser.getImageReader());
+  }
+
+  /**
+   * Loads the specified file in a new panel. Uses default reader.
+   *
+   * @param file	the file to load
+   */
+  public void load(File file) {
+    load(file, m_FileChooser.getReaderForFile(file));
   }
 
   /**
    * Loads the specified file in a new panel.
    *
    * @param file	the file to load
+   * @param reader      the reader to use
    */
-  public void load(File file) {
-    if (m_TabbedPane.load(file)) {
+  public void load(File file, AbstractImageReader reader) {
+    if (m_TabbedPane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(file);
+	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
     }
     update();
   }

@@ -15,15 +15,16 @@
 
 /**
  * ImageProcessorTabbedPane.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
-import java.io.File;
-
+import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+
+import java.io.File;
 
 /**
  * Specialized {@link BaseTabbedPane} for managing images.
@@ -131,10 +132,21 @@ public class ImageProcessorTabbedPane
    * @return		true if successfully loaded
    */
   public boolean load(File file) {
+    return load(file, null);
+  }
+
+  /**
+   * Opens the file with the specified image reader.
+   *
+   * @param file	the file to open
+   * @param reader	the reader to use, null for auto-detection
+   * @return		true if successfully read
+   */
+  public boolean load(File file, AbstractImageReader reader) {
     ImageProcessorSubPanel	panel;
 
     panel = new ImageProcessorSubPanel();
-    if (!panel.load(file)) {
+    if (!panel.load(file, reader)) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to open image '" + file + "'!");
       return false;
