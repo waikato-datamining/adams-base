@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-01-23 17:18:03
+# Date: 2015-01-28 13:06:22
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -11,10 +11,14 @@ adams.flow.control.Flow
 			true
 			-file-chooser-title
 			Select Access database
+			-initial-dir
+			${EXAMPLE_FLOWS}/data
 			-extension
 			mdb
 			-extension
 			accdb
+			-initial-file
+			${EXAMPLE_FLOWS}/data/labor.mdb
 	-actor
 		adams.flow.transformer.AccessDatabaseInfo
 	-actor

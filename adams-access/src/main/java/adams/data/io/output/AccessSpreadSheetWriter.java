@@ -28,6 +28,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.DataType;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Database.FileFormat;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
@@ -38,7 +39,6 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -111,7 +111,7 @@ public class AccessSpreadSheetWriter
   protected transient Table m_Table;
 
   /** the column types. */
-  protected HashMap<Integer,Integer> m_ColumnTypes;
+  protected HashMap<Integer,DataType> m_ColumnTypes;
 
   /**
    * Returns a string describing the object.
@@ -410,7 +410,7 @@ public class AccessSpreadSheetWriter
     String                name;
     HashSet<ContentType>  types;
     ContentType           type;
-    Integer               colType;
+    DataType              colType;
 
     result = true;
     
@@ -436,26 +436,26 @@ public class AccessSpreadSheetWriter
 
           switch (type) {
             case BOOLEAN:
-              colType = Types.BOOLEAN;
+              colType = DataType.BOOLEAN;
               break;
             case TIME:
             case DATE:
             case DATETIME:
-              colType = Types.DATE;
+              colType = DataType.SHORT_DATE_TIME;
               break;
             case DOUBLE:
-              colType = Types.DOUBLE;
+              colType = DataType.DOUBLE;
               break;
             case LONG:
-              colType = Types.BIGINT;
+              colType = DataType.LONG;
               break;
             default:
-              colType = Types.LONGNVARCHAR;
+              colType = DataType.TEXT;
               break;
           }
 
           m_ColumnTypes.put(i, colType);
-          builder.addColumn(new ColumnBuilder(sheet.getColumnName(i)).setSQLType(colType));
+          builder.addColumn(new ColumnBuilder(sheet.getColumnName(i), colType));
         }
         m_Table = builder.toTable(m_Database);
       }
@@ -521,19 +521,19 @@ public class AccessSpreadSheetWriter
         cells[i] = null;
 	if ((cell != null) && (cell.getContent() != null) && !cell.isMissing()) {
           switch (m_ColumnTypes.get(i)) {
-            case Types.BOOLEAN:
+            case BOOLEAN:
               cells[i] = cell.toBoolean();
               break;
-            case Types.BIGINT:
+            case LONG:
               cells[i] = cell.toLong();
               break;
-            case Types.DOUBLE:
+            case DOUBLE:
               cells[i] = cell.toDouble();
               break;
-            case Types.DATE:
+            case SHORT_DATE_TIME:
               cells[i] = cell.toAnyDateType();
               break;
-            case Types.LONGNVARCHAR:
+            case TEXT:
               cells[i] = cell.toString();
               break;
             default:
