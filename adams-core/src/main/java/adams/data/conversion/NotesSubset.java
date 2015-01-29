@@ -15,7 +15,7 @@
 
 /**
  * NotesToString.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -28,29 +28,34 @@ import adams.data.Notes;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-output-errors (property: outputErrors)
+ * <pre>-output-errors &lt;boolean&gt; (property: outputErrors)
  * &nbsp;&nbsp;&nbsp;If set to true, then the errors will be output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-output-warnings (property: outputWarnings)
+ * <pre>-output-warnings &lt;boolean&gt; (property: outputWarnings)
  * &nbsp;&nbsp;&nbsp;If set to true, then the warnings will be output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-output-process-info (property: outputProcessInformation)
+ * <pre>-output-process-info &lt;boolean&gt; (property: outputProcessInformation)
  * &nbsp;&nbsp;&nbsp;If set to true, then the process information will be output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-output-all (property: outputAll)
+ * <pre>-output-other &lt;boolean&gt; (property: outputOther)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the other notes will be output.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-all &lt;boolean&gt; (property: outputAll)
  * &nbsp;&nbsp;&nbsp;If set to true, then everything will be output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -72,6 +77,9 @@ public class NotesSubset
 
   /** whether to output the process information. */
   protected boolean m_OutputProcessInformation;
+
+  /** whether to output all other notes. */
+  protected boolean m_OutputOther;
 
   /** whether to output everything. */
   protected boolean m_OutputAll;
@@ -103,6 +111,10 @@ public class NotesSubset
 
     m_OptionManager.add(
 	    "output-process-info", "outputProcessInformation",
+	    false);
+
+    m_OptionManager.add(
+	    "output-other", "outputOther",
 	    false);
 
     m_OptionManager.add(
@@ -198,6 +210,35 @@ public class NotesSubset
   }
 
   /**
+   * Sets whether to output the other notes.
+   *
+   * @param value 	if true then the other notes will be output
+   */
+  public void setOutputOther(boolean value) {
+    m_OutputOther = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the other notes.
+   *
+   * @return 		true if the other notes will be output
+   */
+  public boolean getOutputOther() {
+    return m_OutputOther;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputOtherTipText() {
+    return "If set to true, then the other notes will be output.";
+  }
+
+  /**
    * Sets whether to output everything.
    *
    * @param value 	if true then everything will be output
@@ -260,7 +301,7 @@ public class NotesSubset
     result = new Notes();
     input  = (Notes) m_Input;
 
-    if (m_OutputAll || m_OutputErrors || m_OutputWarnings || m_OutputProcessInformation) {
+    if (m_OutputAll || m_OutputErrors || m_OutputWarnings || m_OutputProcessInformation || m_OutputOther) {
       if (m_OutputAll) {
 	result.mergeWith(input);
       }
@@ -271,6 +312,8 @@ public class NotesSubset
 	  result.mergeWith(input.getWarnings());
 	if (m_OutputProcessInformation)
 	  result.mergeWith(input.getProcessInformation());
+	if (m_OutputOther)
+	  result.mergeWith(input.getOthers());
       }
     }
     
