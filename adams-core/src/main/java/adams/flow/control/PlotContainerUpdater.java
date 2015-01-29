@@ -15,11 +15,12 @@
 
 /**
  * PlotContainerUpdater.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.flow.container.AbstractContainer;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
@@ -27,7 +28,7 @@ import adams.flow.core.OutputProducer;
 
 /**
  <!-- globalinfo-start -->
- * Applies all sub-actors to process either the name, the X or the Y value of the plot container.
+ * Applies all sub-actors to process either the selected value of the plot container.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -39,14 +40,15 @@ import adams.flow.core.OutputProducer;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
  * <p/>
  * Container information:<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, IsMarker, Error X, Error Y<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, IsMarker, Error X, Error Y
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData<br/>
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
+ * <p/>
+ * Conditional equivalent:<br/>
+ * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalSubProcess
  * <p/>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -57,23 +59,31 @@ import adams.flow.core.OutputProducer;
  * &nbsp;&nbsp;&nbsp;default: PlotContainerUpdater
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-finish-before-stopping (property: finishBeforeStopping)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
@@ -81,9 +91,14 @@ import adams.flow.core.OutputProducer;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-container-value &lt;PLOT_NAME|X_VALUE|Y_VALUE|X_ERROR_VALUE|Y_ERROR_VALUE&gt; (property: containerValue)
+ * <pre>-container-value &lt;PLOT_NAME|X_VALUE|Y_VALUE|X_ERROR_VALUE|Y_ERROR_VALUE|META_DATA&gt; (property: containerValue)
  * &nbsp;&nbsp;&nbsp;The type of value to update.
  * &nbsp;&nbsp;&nbsp;default: Y_VALUE
+ * </pre>
+ * 
+ * <pre>-meta-data-key &lt;java.lang.String&gt; (property: metaDataKey)
+ * &nbsp;&nbsp;&nbsp;The key to use when updating meta-data.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -113,11 +128,16 @@ public class PlotContainerUpdater
     /** the X error value. */
     X_ERROR_VALUE,
     /** the Y error value. */
-    Y_ERROR_VALUE
+    Y_ERROR_VALUE,
+    /** meta-data. */
+    META_DATA
   }
 
   /** the value to modify. */
   protected PlotContainerValue m_ContainerValue;
+
+  /** the key in case of meta-data. */
+  protected String m_MetaDataKey;
 
   /**
    * Returns a string describing the object.
@@ -126,7 +146,7 @@ public class PlotContainerUpdater
    */
   @Override
   public String globalInfo() {
-    return "Applies all sub-actors to process either the name, the X or the Y value of the plot container.";
+    return "Applies all sub-actors to process either the selected value of the plot container.";
   }
 
   /**
@@ -139,6 +159,10 @@ public class PlotContainerUpdater
     m_OptionManager.add(
 	    "container-value", "containerValue",
 	    PlotContainerValue.Y_VALUE);
+
+    m_OptionManager.add(
+	    "meta-data-key", "metaDataKey",
+	    "");
   }
 
   /**
@@ -149,9 +173,13 @@ public class PlotContainerUpdater
   @Override
   public String getQuickInfo() {
     String	result;
+    String      value;
 
     result = QuickInfoHelper.toString(this, "containerValue", m_ContainerValue);
-    
+    value = QuickInfoHelper.toString(this, "metaDataKey", m_MetaDataKey, ", meta-data: ");
+    if (value != null)
+      result += value;
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
 
@@ -180,6 +208,9 @@ public class PlotContainerUpdater
       case Y_ERROR_VALUE:
 	setContainerValueName(SequencePlotterContainer.VALUE_ERROR_Y);
 	break;
+      case META_DATA:
+	setContainerValueName(SequencePlotterContainer.VALUE_METADATA);
+	break;
       default:
 	throw new IllegalArgumentException("Unhandled container value: " + value);
     }
@@ -204,6 +235,35 @@ public class PlotContainerUpdater
    */
   public String containerValueTipText() {
     return "The type of value to update.";
+  }
+
+  /**
+   * Sets the meta-data key to use.
+   *
+   * @param value	the key
+   */
+  public void setMetaDataKey(String value) {
+    m_MetaDataKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the meta-data key to use.
+   *
+   * @return		the key
+   */
+  public String getMetaDataKey() {
+    return m_MetaDataKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataKeyTipText() {
+    return "The key to use when updating meta-data.";
   }
 
   /**
@@ -252,6 +312,9 @@ public class PlotContainerUpdater
 	case Y_VALUE:
 	  cls = new Class[]{Object.class};
 	  break;
+        case META_DATA:
+	  cls = new Class[]{Object.class};
+	  break;
 	default:
 	  cls    = null;
 	  result = "Unhandled container value: " + m_ContainerValue;
@@ -271,5 +334,27 @@ public class PlotContainerUpdater
     }
 
     return result;
+  }
+
+  /**
+   * Tries to obtain the container value.
+   *
+   * @param cont      the container to obtain the value from
+   * @return          the value, if available
+   * @throws java.lang.IllegalStateException  if failed to obtain value
+   */
+  protected Object getContainerValue(AbstractContainer cont) {
+    SequencePlotterContainer  plotcont;
+
+    if (m_ContainerValue == PlotContainerValue.META_DATA) {
+      plotcont = (SequencePlotterContainer) cont;
+      if (plotcont.getMetaData().containsKey(m_MetaDataKey))
+        return plotcont.getMetaData().get(m_MetaDataKey);
+      else
+        throw new IllegalStateException("Meta-data value not present: " + m_MetaDataKey);
+    }
+    else {
+      return super.getContainerValue(cont);
+    }
   }
 }

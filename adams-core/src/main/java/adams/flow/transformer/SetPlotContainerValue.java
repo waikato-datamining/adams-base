@@ -15,7 +15,7 @@
 
 /*
  * SetPlotContainerValue.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,8 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.data.conversion.ConversionFromString;
+import adams.data.conversion.StringToString;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.control.PlotContainerUpdater.PlotContainerValue;
 import adams.flow.core.Token;
@@ -57,7 +59,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SetPlotContainerValue
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -74,7 +76,12 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-container-value &lt;PLOT_NAME|X_VALUE|Y_VALUE|X_ERROR_VALUE|Y_ERROR_VALUE&gt; (property: containerValue)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-container-value &lt;PLOT_NAME|X_VALUE|Y_VALUE|X_ERROR_VALUE|Y_ERROR_VALUE|META_DATA&gt; (property: containerValue)
  * &nbsp;&nbsp;&nbsp;The type of value to update.
  * &nbsp;&nbsp;&nbsp;default: PLOT_NAME
  * </pre>
@@ -84,6 +91,16 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;automatically parsed to doubles; in case of PLOT_NAME you can also use variables 
  * &nbsp;&nbsp;&nbsp;in the string.
  * &nbsp;&nbsp;&nbsp;default: Plot
+ * </pre>
+ * 
+ * <pre>-meta-data-key &lt;java.lang.String&gt; (property: metaDataKey)
+ * &nbsp;&nbsp;&nbsp;The key to use when updating meta-data.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The conversion to apply to the meta-data value string before adding it.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
  * 
  <!-- options-end -->
@@ -102,6 +119,12 @@ public class SetPlotContainerValue
 
   /** the value to set. */
   protected BaseString m_Value;
+
+  /** the meta-data key to use. */
+  protected String m_MetaDataKey;
+
+  /** the conversion for turning the string into another object type. */
+  protected ConversionFromString m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -126,12 +149,20 @@ public class SetPlotContainerValue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "container-value", "containerValue",
-	    PlotContainerValue.PLOT_NAME);
+      "container-value", "containerValue",
+      PlotContainerValue.PLOT_NAME);
 
     m_OptionManager.add(
-	    "value", "value",
-	    new BaseString("Plot"));
+      "value", "value",
+      new BaseString("Plot"));
+
+    m_OptionManager.add(
+      "meta-data-key", "metaDataKey",
+      "");
+
+    m_OptionManager.add(
+      "conversion", "conversion",
+      new StringToString());
   }
 
   /**
@@ -142,9 +173,15 @@ public class SetPlotContainerValue
   @Override
   public String getQuickInfo() {
     String	result;
+    String      value;
 
     result  = QuickInfoHelper.toString(this, "containerValue", m_ContainerValue);
     result += QuickInfoHelper.toString(this, "value", m_Value, ": ");
+    value = QuickInfoHelper.toString(this, "metaDataKey", m_MetaDataKey, ", meta-data: ");
+    if (value != null) {
+      result += value;
+      result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+    }
 
     return result;
   }
@@ -213,6 +250,64 @@ public class SetPlotContainerValue
   }
 
   /**
+   * Sets the meta-data key to use.
+   *
+   * @param value	the key
+   */
+  public void setMetaDataKey(String value) {
+    m_MetaDataKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the meta-data key to use.
+   *
+   * @return		the key
+   */
+  public String getMetaDataKey() {
+    return m_MetaDataKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataKeyTipText() {
+    return "The key to use when updating meta-data.";
+  }
+
+  /**
+   * Sets the conversion to apply to the meta-data value string.
+   *
+   * @param value	the conversion
+   */
+  public void setConversion(ConversionFromString value) {
+    m_Conversion = value;
+    reset();
+  }
+
+  /**
+   * Returns the conversion to apply to the meta-data value string.
+   *
+   * @return		the conversion
+   */
+  public ConversionFromString getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The conversion to apply to the meta-data value string before adding it.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.container.SequencePlotterContainer.class<!-- flow-accepts-end -->
@@ -232,6 +327,7 @@ public class SetPlotContainerValue
     SequencePlotterContainer	cont;
     SequencePlotterContainer	newCont;
     double			dvalue;
+    Object                      parsed;
 
     result = null;
 
@@ -252,6 +348,19 @@ public class SetPlotContainerValue
 	dvalue = Utils.toDouble(m_Value.getValue());
 	newCont.setValue(SequencePlotterContainer.VALUE_Y, dvalue);
 	break;
+
+      case META_DATA:
+        parsed = m_Value.getValue();
+        if (!(m_Conversion instanceof StringToString)) {
+          m_Conversion.setInput(parsed);
+          result = m_Conversion.convert();
+          if (result == null)
+            parsed = m_Conversion.getOutput();
+          m_Conversion.cleanUp();
+        }
+        if (result == null)
+          newCont.addMetaData(m_MetaDataKey, parsed);
+        break;
 
       default:
 	throw new IllegalStateException("Unhandled container value: " + m_ContainerValue);

@@ -15,17 +15,17 @@
 
 /**
  * AbstractContainerUpdater.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Hashtable;
 
 /**
  * Ancestor for control actors that update a specific value of a container
@@ -142,6 +142,20 @@ public abstract class AbstractContainerUpdater
   }
 
   /**
+   * Tries to obtain the container value.
+   *
+   * @param cont      the container to obtain the value from
+   * @return          the value, if available
+   * @throws java.lang.IllegalStateException  if failed to obtain value
+   */
+  protected Object getContainerValue(AbstractContainer cont) {
+    if (cont.hasValue(m_ContainerValueName))
+      return cont.getValue(m_ContainerValueName);
+    else
+      throw new IllegalStateException("Container value not present: " + m_ContainerValueName);
+  }
+
+  /**
    * Executes the actor.
    *
    * @return		null if everything is fine, otherwise error message
@@ -165,11 +179,8 @@ public abstract class AbstractContainerUpdater
     cont      = null;
     processed = false;
     if ((first != null) && (first instanceof InputConsumer)) {
-      cont = (AbstractContainer) m_CurrentToken.getPayload();
-      if (cont.hasValue(m_ContainerValueName))
-	input = cont.getValue(m_ContainerValueName);
-      else
-	throw new IllegalStateException("Container value not present: " + m_ContainerValueName);
+      cont  = (AbstractContainer) m_CurrentToken.getPayload();
+      input = getContainerValue(cont);
 
       ((InputConsumer) first).input(new Token(input));
       if (isLoggingEnabled())
