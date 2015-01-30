@@ -95,12 +95,13 @@ public class NotesTest
     notes.addNote(getClass(), "note");
     notes.addWarning(getClass(), "warning");
     notes.addError(getClass(), "error");
+    notes.addError(getClass(), "error2");
     notes.addProcessInformation("pi");
 
     assertEquals("size differs", 1, notes.getWarnings().getNotes(getClass()).size());
     assertEquals("content differs", "[WARNING: warning]", notes.getWarnings().getNotes(getClass()).toString());
-    assertEquals("size differs", 1, notes.getErrors().getNotes(getClass()).size());
-    assertEquals("content differs", "[ERROR: error]", notes.getErrors().getNotes(getClass()).toString());
+    assertEquals("size differs", 2, notes.getErrors().getNotes(getClass()).size());
+    assertEquals("content differs", "[ERROR: error, ERROR: error2]", notes.getErrors().getNotes(getClass()).toString());
     assertEquals("size differs", 1, notes.getOthers().getNotes(getClass()).size());
     assertEquals("content differs", "[note]", notes.getOthers().getNotes(getClass()).toString());
     assertEquals("size differs", 1, notes.getProcessInformation().getNotes(Notes.PROCESS_INFORMATION).size());
