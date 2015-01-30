@@ -15,20 +15,20 @@
 
 /*
  * Notes.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data;
+
+import adams.core.CloneHandler;
+import adams.core.Mergeable;
+import adams.core.option.OptionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.core.CloneHandler;
-import adams.core.Mergeable;
-import adams.core.option.OptionUtils;
 
 /**
  * A helper class for the Chromatogram class for storing meta-data.
@@ -246,10 +246,8 @@ public class Notes
       key  = iter.next();
       list = getNotes(key);
       for (i = 0; i < list.size(); i++) {
-	if (list.get(i).matches(regex)) {
+	if (list.get(i).matches(regex))
 	  result.addNote(key, list.get(i));
-	  break;
-	}
       }
     }
 
