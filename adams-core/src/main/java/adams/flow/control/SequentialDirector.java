@@ -15,7 +15,7 @@
 
 /*
  * SequentialDirector.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -173,6 +173,8 @@ public class SequentialDirector
 
     if ((msg = checkActorHasStopped(actor)) != null)
       return msg;
+    if (isFlushing())
+      return "Flushing execution!";
 
     try {
       if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
@@ -213,6 +215,8 @@ public class SequentialDirector
 
     if (checkActorHasStopped(actor) != null)
       return false;
+    if (isFlushing())
+      return false;
 
     msgFull = null;
 
@@ -245,6 +249,8 @@ public class SequentialDirector
     String	msgFull;
 
     if (checkActorHasStopped(actor) != null)
+      return null;
+    if (isFlushing())
       return null;
 
     msgFull = null;
@@ -402,7 +408,7 @@ public class SequentialDirector
 	      getLogger().severe(
 		  curr.getFullName() + " generated following error output:\n"
 		  + actorResult);
-	      if (curr.getStopFlowOnError())
+	      if (curr.getStopFlowOnError() || isFlushing())
 		break;
 	    }
 	    if (!curr.isFinished() && (notFinishedActor == null))
@@ -435,7 +441,7 @@ public class SequentialDirector
 	    getLogger().severe(
 		curr.getFullName() + " generated following error output:\n"
 		+ actorResult);
-	    if (curr.getStopFlowOnError())
+	    if (curr.getStopFlowOnError() || isFlushing())
 	      break;
 	  }
 	  if (!curr.isFinished() && (notFinishedActor == null))
@@ -468,7 +474,7 @@ public class SequentialDirector
 
 	// token from last actor generated? -> store
 	if ((i == m_ControlActor.lastActive().index()) && (token != null)) {
-	  if (isFinalOutputRecorded())
+	  if (isFinalOutputRecorded() && !isFlushing())
 	    getFinalOutput().add(token);
 	}
 
@@ -509,7 +515,7 @@ public class SequentialDirector
     m_Executed = true;
     m_Flushing = false;
 
-    if (m_ControlActor.getActorHandlerInfo().canContainStandalones()) {
+    if (m_ControlActor.getActorHandlerInfo().canContainStandalones() && !isFlushing()) {
       try {
 	start = doExecuteStandalones();
 	if (isLoggingEnabled())

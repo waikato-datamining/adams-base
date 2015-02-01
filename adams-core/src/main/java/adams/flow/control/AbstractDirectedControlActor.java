@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -177,6 +177,8 @@ public abstract class AbstractDirectedControlActor
   public void flushExecution() {
     if (m_Director != null)
       m_Director.flushExecution();
+
+    super.flushExecution();
   }
 
   /**

@@ -15,12 +15,10 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.HashSet;
 
 import adams.core.Pausable;
 import adams.core.Variables;
@@ -36,6 +34,8 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.SubFlowWrapUp;
+
+import java.util.HashSet;
 
 /**
  * Ancestor for all actors that control sub-actors in some way.
@@ -387,6 +387,18 @@ public abstract class AbstractControlActor
       result = super.preExecute();
     
     return result;
+  }
+
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    int     i;
+
+    for (i = 0; i < size(); i++) {
+      if (get(i) instanceof ActorHandler)
+        ((ActorHandler) get(i)).flushExecution();
+    }
   }
 
   /**
