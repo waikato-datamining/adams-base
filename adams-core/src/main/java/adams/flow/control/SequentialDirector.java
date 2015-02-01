@@ -577,8 +577,9 @@ public class SequentialDirector
   @Override
   public void flushExecution() {
     super.flushExecution();
-    
-    m_FinalOutput.clear();
+
+    if (m_FinalOutput != null)
+      m_FinalOutput.clear();
   }
   
   /**
