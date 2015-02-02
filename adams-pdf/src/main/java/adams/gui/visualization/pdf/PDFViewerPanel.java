@@ -489,7 +489,7 @@ public class PDFViewerPanel
    * @return		the class
    */
   public Class[] getSendToClasses() {
-    return new Class[]{PlaceholderFile.class};
+    return new Class[]{PlaceholderFile.class, PDDocument.class};
   }
 
   /**
@@ -499,7 +499,7 @@ public class PDFViewerPanel
    * @return		true if an object is available for sending
    */
   public boolean hasSendToItem(Class[] cls) {
-    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls))
+    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(PDDocument.class, cls))
            && (getCurrentPanel() != null)
            && (getCurrentPanel().getDocument() != null);
   }
@@ -511,18 +511,21 @@ public class PDFViewerPanel
    * @return		the item to send
    */
   public Object getSendToItem(Class[] cls) {
-    PlaceholderFile	result;
+    Object	result;
 
     result = null;
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (getCurrentPanel().getDocument() != null) {
 	result = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-	if (!JPod.save(getCurrentPanel().getDocument(), result)) {
+	if (!JPod.save(getCurrentPanel().getDocument(), (File) result)) {
 	  System.err.println("Failed to save PDF to '" + result + "'!");
 	  result = null;
 	}
       }
+    }
+    else if (SendToActionUtils.isAvailable(PDDocument.class, cls)) {
+      result = getCurrentPanel().getDocument();
     }
 
     return result;

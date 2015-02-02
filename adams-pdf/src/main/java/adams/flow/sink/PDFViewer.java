@@ -15,15 +15,10 @@
 
 /*
  * PDFViewer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.io.File;
-
-import javax.swing.JComponent;
 
 import adams.core.io.JPod;
 import adams.core.io.PlaceholderFile;
@@ -32,6 +27,11 @@ import adams.gui.core.BasePanel;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.pdf.PDFPanel;
+import de.intarsys.pdf.pd.PDDocument;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -319,7 +319,7 @@ public class PDFViewer
    */
   @Override
   public Class[] getSendToClasses() {
-    return new Class[]{PlaceholderFile.class};
+    return new Class[]{PlaceholderFile.class, PDDocument.class};
   }
 
   /**
@@ -330,7 +330,7 @@ public class PDFViewer
    */
   @Override
   public boolean hasSendToItem(Class[] cls) {
-    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls))
+    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(PDDocument.class, cls))
            && (m_PDFPanel.getDocument() != null);
   }
 
@@ -342,18 +342,21 @@ public class PDFViewer
    */
   @Override
   public Object getSendToItem(Class[] cls) {
-    PlaceholderFile	result;
+    Object	result;
 
     result = null;
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (m_PDFPanel.getDocument() != null) {
 	result = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-	if (!JPod.save(m_PDFPanel.getDocument(), result)) {
+	if (!JPod.save(m_PDFPanel.getDocument(), (File) result)) {
 	  getLogger().severe("Failed to save PDF to '" + result + "'!");
 	  result = null;
 	}
       }
+    }
+    else if (SendToActionUtils.isAvailable(PDDocument.class, cls)) {
+      result = m_PDFPanel.getDocument();
     }
 
     return result;
