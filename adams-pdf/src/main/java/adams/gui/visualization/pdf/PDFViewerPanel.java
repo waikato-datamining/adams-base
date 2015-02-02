@@ -15,24 +15,13 @@
 
 /**
  * PDFViewerPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.Properties;
 import adams.core.io.JPod;
+import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
@@ -46,6 +35,17 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import de.intarsys.pdf.pd.PDDocument;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * A basic PDF viewer.
@@ -114,6 +114,9 @@ public class PDFViewerPanel
 
   /** the "close" menu item. */
   protected JMenuItem m_MenuItemFileClose;
+
+  /** the "print" menu item. */
+  protected JMenuItem m_MenuItemFilePrint;
 
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileExit;
@@ -233,11 +236,25 @@ public class PDFViewerPanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  closeFile();
-	}
+        public void actionPerformed(ActionEvent e) {
+          closeFile();
+        }
       });
       m_MenuItemFileClose = menuitem;
+
+      // File/Print...
+      menu.addSeparator();
+      menuitem = new JMenuItem("Print...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
+      menuitem.setIcon(GUIHelper.getIcon("print.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  printFile();
+	}
+      });
+      m_MenuItemFilePrint = menuitem;
 
       // File/Send to
       menu.addSeparator();
@@ -365,6 +382,7 @@ public class PDFViewerPanel
 
     // File
     m_MenuItemFileClose.setEnabled(pdfAvailable);
+    m_MenuItemFilePrint.setEnabled(pdfAvailable);
 
     // View
     m_MenuViewZoom.setEnabled(pdfAvailable);
@@ -426,6 +444,27 @@ public class PDFViewerPanel
 
     m_TabbedPane.getPanelAt(index).closeDocument();
     m_TabbedPane.remove(index);
+  }
+
+  /**
+   * Prints the current active tab.
+   */
+  protected void printFile() {
+    int		index;
+    File        file;
+
+    index = m_TabbedPane.getSelectedIndex();
+    if (index == -1)
+      return;
+
+    file = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
+    if (JPod.save(m_TabbedPane.getPanelAt(index).getDocument(), file)) {
+      if (!PDFBox.print(file))
+        GUIHelper.showErrorMessage(this, "Failed to print PDF document: " + file);
+    }
+    else {
+      GUIHelper.showErrorMessage(this, "Failed to save PDF document to: " + file);
+    }
   }
 
   /**
