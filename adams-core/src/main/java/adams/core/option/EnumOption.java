@@ -19,15 +19,13 @@
  */
 package adams.core.option;
 
-import java.beans.PropertyEditorManager;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-
 import adams.core.ClassLocator;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Utils;
-import adams.gui.goe.Editors;
 import adams.gui.goe.EnumEditor;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  * Option class for enums. Enums get automatically registered with the
@@ -76,8 +74,8 @@ public class EnumOption
     super(owner, commandline, property, defValue, outputDefValue);
 
     // register enums automatically with the GOE
-    if (PropertyEditorManager.findEditor(getBaseClass()) == null)
-      Editors.registerCustomEditor(getBaseClass(), EnumEditor.class);
+    EnumEditor.registerEditor(this);
+
     m_CustomDisplayInstance = null;
   }
 

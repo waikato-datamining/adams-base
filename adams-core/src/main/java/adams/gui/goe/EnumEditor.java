@@ -21,19 +21,20 @@
 
 package adams.gui.goe;
 
+import adams.core.EnumHelper;
+import adams.core.option.EnumOption;
+import adams.gui.core.BaseList;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Array;
-
-import javax.swing.ListSelectionModel;
-
-import adams.core.EnumHelper;
-import adams.gui.core.BaseList;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.dialog.ApprovalDialog;
+import java.util.HashSet;
 
 /**
  * A PropertyEditor that displays Enums. Based on Weka's SelectedTagEditor.
@@ -46,6 +47,12 @@ import adams.gui.dialog.ApprovalDialog;
 public class EnumEditor
   extends PropertyEditorSupport
   implements MultiSelectionEditor {
+
+  /** whether the editor has been registered for the enum class. */
+  protected static HashSet<Class> m_Registered;
+  static {
+    m_Registered = new HashSet<Class>();
+  }
 
   /**
    * Returns a description of the property value as java source.
@@ -131,5 +138,20 @@ public class EnumEditor
       result = (Object[]) Array.newInstance(cls, 0);
 
     return result;
+  }
+
+  /**
+   * Registers the EnumEditor for the enum option if necessary.
+   *
+   * @param option	the option to check
+   */
+  public static void registerEditor(EnumOption option) {
+    Class	cls;
+
+    cls = option.getBaseClass();
+    if (!m_Registered.contains(cls)) {
+      Editors.registerCustomEditor(cls, EnumEditor.class);
+      m_Registered.add(cls);
+    }
   }
 }
