@@ -15,23 +15,11 @@
 
 /*
  * WekaFileReader.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils.DataSource;
-import weka.core.converters.AArffLoader;
-import weka.core.converters.URLSourcedLoader;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -43,6 +31,18 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.AArffLoader;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.URLSourcedLoader;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -517,7 +517,12 @@ public class WekaFileReader
    */
   @Override
   public boolean hasPendingOutput() {
-    return ((m_Structure != null) && (m_Source.hasMoreElements(m_Structure)));
+    switch (m_OutputType) {
+      case INCREMENTAL:
+	return ((m_Structure != null) && (m_Source.hasMoreElements(m_Structure)));
+      default:
+	return (m_Structure != null);
+    }
   }
 
   /**
