@@ -15,16 +15,16 @@
 
 /**
  * SerializedFileHandler.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
-
-import java.io.File;
-import java.util.logging.Level;
 
 import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.gui.core.BaseTabbedPane;
+
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -99,7 +99,7 @@ public class SerializedFileHandler
     for (Object obj: objects) {
       panel = new SerializedObjectPanel();
       panel.setCurrent(obj);
-      tabbedPane.addTab("" + obj.getClass().getSimpleName(), panel);
+      tabbedPane.addTab(Utils.classToString(obj.getClass()).replaceAll(".*\\.", ""), panel);
     }
     
     return new PreviewPanel(tabbedPane);

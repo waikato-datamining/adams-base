@@ -15,16 +15,17 @@
 
 /**
  * DefaultSerializedObjectViewer.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
-
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
+
+import java.awt.BorderLayout;
 
 /**
  * Default viewer that just uses the Object's toString() method to
@@ -76,11 +77,21 @@ public class DefaultSerializedObjectViewer
     textOptions.setLineWrap(true);
     textOptions.setWrapStyleWord(true);
     textOptions.setFont(GUIHelper.getMonospacedFont());
-    textOptions.setText(OptionUtils.getCommandLine(obj));
+    if (obj == null)
+      textOptions.setText("");
+    else if (obj.getClass().isArray())
+      textOptions.setText(Utils.classToString(obj.getClass()));
+    else
+      textOptions.setText(OptionUtils.getCommandLine(obj));
     textObject = new BaseTextArea();
     textObject.setEditable(false);
     textObject.setFont(GUIHelper.getMonospacedFont());
-    textObject.setText(obj.toString());
+    if (obj == null)
+      textObject.setText("");
+    else if (obj.getClass().isArray())
+      textObject.setText(Utils.arrayToString(obj));
+    else
+      textObject.setText(obj.toString());
     result = new PreviewPanel(new BaseScrollPane(textObject), textObject);
     result.add(new BaseScrollPane(textOptions), BorderLayout.NORTH);
 
