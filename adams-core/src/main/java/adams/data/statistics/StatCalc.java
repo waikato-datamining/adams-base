@@ -15,7 +15,7 @@
 
 /*
  * StatCalc.java
- * Copyright (C) 2008-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -33,9 +33,9 @@ public class StatCalc
 
   private double squareSum;  // The sum of the squares of all the items.
 
-  private double min= Double.POSITIVE_INFINITY;
+  private double min = Double.POSITIVE_INFINITY;
 
-  private double max= Double.NEGATIVE_INFINITY;
+  private double max = Double.NEGATIVE_INFINITY;
 
   public void enter(double num) {
     // Add the number to the dataset.
@@ -67,7 +67,7 @@ public class StatCalc
   }
 
   public double getSumSquares(){
-    return(squareSum);
+    return squareSum;
   }
 
   public double getStandardDeviation() {
@@ -78,10 +78,18 @@ public class StatCalc
   }
 
   public double getMin() {
-    return(min);
+    return min;
   }
 
   public double  getMax() {
-    return(max);
+    return max;
+  }
+
+  @Override
+  public String toString() {
+    return
+      "[count=" + getCount() + ", min=" + getMin() + ", max=" + getMax()
+	+ ", sum=" + getSum() + ", sumSq=" + getSumSquares() + ", mean="
+	+ getMean() + ", stdev=" + getStandardDeviation() + "]";
   }
 }
