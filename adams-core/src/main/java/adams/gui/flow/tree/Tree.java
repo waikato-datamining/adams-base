@@ -2407,7 +2407,7 @@ public class Tree
 	if (comp instanceof MenuBarProvider)
 	  dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
 	dialog.pack();
-        dialog.setSize(Math.max(400, dialog.getWidth()), Math.max(200, dialog.getHeight()));
+        dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
 	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
 	dialog.setVisible(true);
 	errorPanel = null;
@@ -2425,7 +2425,7 @@ public class Tree
       dialog.getContentPane().add(errorPanel, BorderLayout.CENTER);
       dialog.setJMenuBar(errorPanel.getMenuBar());
       dialog.pack();
-      dialog.setSize(Math.max(400, dialog.getWidth()), Math.max(200, dialog.getHeight()));
+      dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
       dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
       dialog.setVisible(true);
     }
