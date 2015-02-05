@@ -15,21 +15,23 @@
 
 /*
  * AbstractActorProcessor.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
+import adams.core.Utils;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Abstract base class for schemes that process a flow/actor in some fashion.
@@ -81,9 +83,15 @@ public abstract class AbstractActorProcessor
    */
   public void process(AbstractActor actor) {
     m_Errors.clear();
-    
-    checkData(actor);
-    processActor(actor);
+
+    try {
+      checkData(actor);
+      processActor(actor);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to processed actor: " + actor, e);
+      m_Errors.add("Failed to processed actor: " + Utils.throwableToString(e));
+    }
   }
 
   /**
