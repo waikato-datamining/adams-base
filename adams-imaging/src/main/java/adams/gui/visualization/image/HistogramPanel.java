@@ -22,7 +22,9 @@ package adams.gui.visualization.image;
 import adams.data.image.BufferedImageHelper;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
+import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.visualization.core.AbstractHistogramPanel;
+import adams.gui.visualization.sequence.StickPaintlet;
 
 import java.awt.image.BufferedImage;
 
@@ -37,6 +39,23 @@ public class HistogramPanel
 
   /** for serialization. */
   private static final long serialVersionUID = -8621818594275641231L;
+
+  /**
+   * Creates a new plot panel.
+   *
+   * @param name	the name for the panel
+   * @return		the panel
+   */
+  protected SequencePlotterPanel newPanel(String name) {
+    SequencePlotterPanel 	result;
+    StickPaintlet		paintlet;
+
+    result = super.newPanel(name);
+    paintlet = new StickPaintlet();
+    result.setPaintlet(paintlet);
+
+    return result;
+  }
 
   /**
    * Generates the sequence(s) from the data.

@@ -26,7 +26,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
-import adams.gui.visualization.sequence.StickPaintlet;
+import adams.gui.visualization.sequence.BarPaintlet;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -79,10 +79,13 @@ public abstract class AbstractHistogramPanel<T>
   protected SequencePlotterPanel newPanel(String name) {
     SequencePlotterPanel	result;
     FancyTickGenerator		tick;
+    BarPaintlet			paintlet;
 
     result = new SequencePlotterPanel(name);
     result.setSidePanelVisible(false);
-    result.setPaintlet(new StickPaintlet());
+    paintlet = new BarPaintlet();
+    paintlet.setWidth(3);
+    result.setPaintlet(paintlet);
     tick = new FancyTickGenerator();
     tick.setNumTicks(10);
     result.getPlot().getAxis(Axis.LEFT).setTickGenerator(tick);
