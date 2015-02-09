@@ -15,7 +15,7 @@
 
 /*
  * AbstractExtensionFileFilterFileChooser.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -483,5 +483,19 @@ public abstract class AbstractExtensionFileFilterFileChooser<F extends Extension
     }
     
     return result;
+  }
+
+  /**
+   * Checks whether the filter uses "*.*".
+   *
+   * @param filter	the filter to check
+   * @return		true if filter has extension .*
+   */
+  public static boolean isAllFilter(ExtensionFileFilter filter) {
+    for (String ext: filter.getExtensions()) {
+      if (ext.endsWith("*") || ext.endsWith(".*"))
+	return true;
+    }
+    return false;
   }
 }
