@@ -15,19 +15,11 @@
 
 /*
  * Report.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.data.report;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.CloneHandler;
 import adams.core.Constants;
@@ -38,6 +30,14 @@ import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.core.option.AbstractOption;
 import adams.data.id.MutableDatabaseIDHandler;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Data structure for a report.
@@ -906,7 +906,7 @@ public class Report
       if (name.endsWith(DATATYPE_SUFFIX))
 	continue;
       if (name.equals(PROPERTY_PARENTID))
-	result.setDatabaseID(props.getInteger(PROPERTY_PARENTID, -1));
+	result.setDatabaseID(props.getDouble(PROPERTY_PARENTID, -1.0).intValue());
       type = (DataType) DataType.valueOf((AbstractOption) null, props.getProperty(name + DATATYPE_SUFFIX, "U"));
       if (type == null)
 	type = DataType.UNKNOWN;
