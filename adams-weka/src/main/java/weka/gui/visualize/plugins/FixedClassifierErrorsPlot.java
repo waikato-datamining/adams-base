@@ -96,11 +96,11 @@ public class FixedClassifierErrorsPlot
 	plot.getPlot().getAxis(Axis.LEFT).setTickGenerator(tick.shallowCopy());
 	plot.getPlot().getAxis(Axis.LEFT).setNumberFormat("0.0");
 	plot.getPlot().getAxis(Axis.LEFT).setNthValueToShow(2);
-	plot.getPlot().getAxis(Axis.LEFT).setAxisName("Predicted");;
+	plot.getPlot().getAxis(Axis.LEFT).setAxisName("Predicted");
 	plot.getPlot().getAxis(Axis.BOTTOM).setTickGenerator(tick.shallowCopy());
 	plot.getPlot().getAxis(Axis.BOTTOM).setNumberFormat("0.0");
 	plot.getPlot().getAxis(Axis.BOTTOM).setNthValueToShow(2);
-	plot.getPlot().getAxis(Axis.BOTTOM).setAxisName("Actual");;
+	plot.getPlot().getAxis(Axis.BOTTOM).setAxisName("Actual");
 	// create plot data
 	SequencePlotSequence seq = new SequencePlotSequence();
 	seq.setComparison(Comparison.X_AND_Y);
