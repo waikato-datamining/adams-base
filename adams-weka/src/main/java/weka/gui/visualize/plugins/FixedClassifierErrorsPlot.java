@@ -15,25 +15,11 @@
 
 /*
  * FixedClassifierErrorsPlot.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.visualize.plugins;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Date;
-import java.util.HashMap;
-
-import javax.swing.JMenuItem;
-
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
@@ -48,6 +34,19 @@ import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CrossHitDetector;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import javax.swing.JMenuItem;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Displays the classifier errors using an ADAMS plot with fixed size crosses.
@@ -139,6 +138,7 @@ public class FixedClassifierErrorsPlot
 	plot.getContainerManager().add(cont);
 	// display
 	ApprovalDialog dialog = new ApprovalDialog((Dialog) null, ModalityType.MODELESS);
+	dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle("Absolute classifier errors");
 	dialog.getContentPane().add(plot, BorderLayout.CENTER);
 	dialog.setSize(800, 600);
