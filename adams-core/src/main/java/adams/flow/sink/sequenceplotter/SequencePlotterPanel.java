@@ -15,14 +15,9 @@
 
 /**
  * SequencePlotterPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.event.DataChangeEvent;
@@ -32,13 +27,16 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintletWithCustomerContainerManager;
 import adams.gui.visualization.sequence.XYSequencePanel;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The panel that plots all the sequences.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <M> the container manager for markers
  */
 public class SequencePlotterPanel
   extends XYSequencePanel {
@@ -351,7 +349,7 @@ public class SequencePlotterPanel
     XYSequenceContainerManager	overlayManager;
 
     result         = new TIntArrayList();
-    overlayManager = getMarkerContainerManager();
+    overlayManager = getOverlayContainerManager();
     seqManager     = getContainerManager();
     for (i = 0; i < seqIndices.length; i++) {
       id    = seqManager.get(seqIndices[i]).getID();
