@@ -15,15 +15,10 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.util.HashMap;
-
-import javax.swing.JComponent;
 
 import adams.core.NamedCounter;
 import adams.core.Utils;
@@ -60,6 +55,10 @@ import adams.gui.visualization.sequence.CirclePaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -883,14 +882,14 @@ public class SequencePlotter
 
     result = new SequencePlotterPanel(getTitle());
     result.setPaintlet(getPaintlet());
-    result.setOverlayPaintlet(m_OverlayPaintlet);
-    result.setMarkerPaintlet(getMarkerPaintlet());
-    result.setErrorPaintlet(getErrorPaintlet());
+    result.setOverlayPaintlet((XYSequencePaintlet) getOverlayPaintlet().shallowCopy());
+    result.setMarkerPaintlet((MarkerPaintlet) getMarkerPaintlet().shallowCopy());
+    result.setErrorPaintlet((AbstractErrorPaintlet) getErrorPaintlet().shallowCopy());
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
-    result.setColorProvider(m_ColorProvider);
-    result.setOverlayColorProvider(m_OverlayColorProvider);
+    result.setColorProvider(getColorProvider().shallowCopy());
+    result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
 
     return result;
   }
