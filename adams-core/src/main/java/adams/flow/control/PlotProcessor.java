@@ -15,20 +15,21 @@
 
 /**
  * PlotProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.container.SequencePlotterContainer;
+import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.control.plotprocessor.AbstractPlotProcessor;
 import adams.flow.control.plotprocessor.PassThrough;
 import adams.flow.core.Token;
 import adams.flow.transformer.AbstractTransformer;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -103,7 +104,10 @@ public class PlotProcessor
 
   /** the processor to apply. */
   protected AbstractPlotProcessor m_Processor;
-  
+
+  /** the type to use. */
+  protected ContentType m_Type;
+
   /** whether to drop the input. */
   protected boolean m_DropInput;
 
@@ -131,12 +135,16 @@ public class PlotProcessor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "processor", "processor",
-	    new PassThrough());
+      "processor", "processor",
+      new PassThrough());
 
     m_OptionManager.add(
-	    "drop-input", "dropInput",
-	    false);
+      "type", "type",
+      ContentType.PLOT);
+
+    m_OptionManager.add(
+      "drop-input", "dropInput",
+      false);
   }
 
   /**
@@ -164,6 +172,7 @@ public class PlotProcessor
       result = QuickInfoHelper.toString(this, "processor", m_Processor);
     else
       result = m_Processor.getClass().getSimpleName() + ": " + result;
+    result += QuickInfoHelper.toString(this, "type", m_Type, ", type: ");
     value = QuickInfoHelper.toString(this, "dropInput", m_DropInput, ", drop");
     if (value != null)
       result += value;
@@ -198,6 +207,35 @@ public class PlotProcessor
    */
   public String processorTipText() {
     return "The plot processor to apply to the stream of plot containers passing through.";
+  }
+
+  /**
+   * Sets the type of container to create.
+   *
+   * @param value	the type
+   */
+  public void setType(ContentType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of container to create.
+   *
+   * @return		the type
+   */
+  public ContentType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "The type of plot container to create.";
   }
 
   /**
@@ -310,6 +348,7 @@ public class PlotProcessor
     result = m_Processor.getLastError();
     if ((result == null) && (cont != null)) {
       for (SequencePlotterContainer c: cont) {
+	c.setValue(SequencePlotterContainer.VALUE_CONTENTTYPE, m_Type);
 	m_AdditionalOutputTokens.add(new Token(c));
 	if (isLoggingEnabled())
 	  getLogger().fine("additional: " + c);

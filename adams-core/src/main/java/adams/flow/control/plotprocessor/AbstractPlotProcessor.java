@@ -15,11 +15,9 @@
 
 /**
  * AbstractPlotProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
-
-import java.util.List;
 
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
@@ -28,6 +26,9 @@ import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.control.PlotProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for processors of plot containers. A processor produces "additional"
@@ -186,7 +187,48 @@ public abstract class AbstractPlotProcessor
    * @return		null if no new containers were produced
    */
   protected abstract List<SequencePlotterContainer> doProcess(SequencePlotterContainer cont);
-  
+
+  /**
+   * Checks wheteher value is valid.
+   * </p>
+   * Default implementation makes sure that doubles aren't NaN.
+   *
+   * @param value		the value to check
+   * @return			true if valid
+   */
+  protected boolean isValid(Comparable value) {
+    if (value instanceof Number) {
+      if (Double.isNaN(((Number) value).doubleValue()))
+	return false;
+    }
+    return true;
+  }
+
+  /**
+   * Post-processes the provided containers.
+   * </p>
+   * Default implementation drops containers that have invalid values for X or Y.
+   *
+   * @param conts	the containers to post-process
+   * @return		null if no new containers were produced
+   * @see		#isValid(Comparable)
+   */
+  protected List<SequencePlotterContainer> postProcess(List<SequencePlotterContainer> conts) {
+    List<SequencePlotterContainer>	result;
+
+    result = new ArrayList<>();
+
+    for (SequencePlotterContainer cont: conts) {
+      if (cont.hasValue(SequencePlotterContainer.VALUE_X) && !isValid((Comparable) cont.getValue(SequencePlotterContainer.VALUE_X)))
+	continue;
+      if (cont.hasValue(SequencePlotterContainer.VALUE_Y) && !isValid((Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y)))
+	continue;
+      result.add(cont);
+    }
+
+    return result;
+  }
+
   /**
    * Process the given container.
    * 
@@ -194,15 +236,21 @@ public abstract class AbstractPlotProcessor
    * @return		null if no new containers were produced
    */
   public List<SequencePlotterContainer> process(SequencePlotterContainer cont) {
+    List<SequencePlotterContainer>	result;
+
     m_LastError = check(cont);
     
     if (m_LastError == null) {
-      return doProcess(cont);
+      result = doProcess(cont);
+      if (result != null)
+	result = postProcess(result);
     }
     else {
       getLogger().severe(m_LastError);
-      return null;
+      result = null;
     }
+
+    return result;
   }
   
   /**
