@@ -15,24 +15,10 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import adams.core.QuickInfoHelper;
 import adams.core.management.ProcessUtils;
@@ -47,6 +33,20 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -282,8 +282,13 @@ public class Branch
    * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
   public void setNumThreads(int value) {
-    m_NumThreads = value;
-    reset();
+    if (value >= -1) {
+      m_NumThreads = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Number of threads must be >= -1, provided: " + value);
+    }
   }
 
   /**
