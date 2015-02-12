@@ -45,8 +45,8 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
  * <p/>
  * Container information:<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y<br/>
- * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData<br/>
+ * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
  * <p/>
  <!-- flow-summary-end -->
  *
@@ -61,7 +61,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: PlotProcessor
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -78,9 +78,19 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-processor &lt;adams.flow.control.plotprocessor.AbstractPlotProcessor&gt; (property: processor)
  * &nbsp;&nbsp;&nbsp;The plot processor to apply to the stream of plot containers passing through.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.plotprocessor.PassThrough
+ * </pre>
+ * 
+ * <pre>-type &lt;PLOT|MARKER|OVERLAY|UPDATE&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The type of plot container to create.
+ * &nbsp;&nbsp;&nbsp;default: OVERLAY
  * </pre>
  * 
  * <pre>-drop-input &lt;boolean&gt; (property: dropInput)
@@ -140,7 +150,7 @@ public class PlotProcessor
 
     m_OptionManager.add(
       "type", "type",
-      ContentType.PLOT);
+      ContentType.OVERLAY);
 
     m_OptionManager.add(
       "drop-input", "dropInput",
