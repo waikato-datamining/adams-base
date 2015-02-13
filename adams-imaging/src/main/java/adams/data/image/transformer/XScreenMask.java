@@ -342,7 +342,7 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
             value = (r - b) * (g - b);
             break;
           default:
-            throw new RuntimeException("Color not implemented.");
+            throw new IllegalStateException("Color not implemented: " + m_Color);
         }
         map[y][x] = value;
         if (value > max) max = value;
