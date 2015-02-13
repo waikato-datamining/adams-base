@@ -389,7 +389,7 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
       }
     }
 
-    BufferedImageContainer outputContainer = new BufferedImageContainer();
+    BufferedImageContainer outputContainer = (BufferedImageContainer) container.getHeader();
     outputContainer.setImage(output);
     return new BufferedImageContainer[]{outputContainer};
   }
