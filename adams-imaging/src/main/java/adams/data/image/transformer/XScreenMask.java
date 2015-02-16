@@ -21,52 +21,50 @@
 package adams.data.image.transformer;
 
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.XScreenMaskHelper;
+import adams.data.image.XScreenMaskHelper.Color;
 
 import java.awt.image.BufferedImage;
 
 /**
- * <!-- globalinfo-start -->
- * * Masks out a color by making it transparent.
- * * <p/>
- * <!-- globalinfo-end -->
+ <!-- globalinfo-start -->
+ * Masks out a color by making it transparent.
  * <p/>
- * <!-- options-start -->
- * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * * &nbsp;&nbsp;&nbsp;default: WARNING
- * * </pre>
- * * 
- * * <pre>-color &lt;RED|GREEN|BLUE|YELLOW&gt; (property: color)
- * * &nbsp;&nbsp;&nbsp;Color to be masked.
- * * &nbsp;&nbsp;&nbsp;default: RED
- * * </pre>
- * * 
- * * <pre>-bias &lt;int&gt; (property: bias)
- * * &nbsp;&nbsp;&nbsp;Bias to be applied after finding the histogram peak.
- * * &nbsp;&nbsp;&nbsp;default: 0
- * * &nbsp;&nbsp;&nbsp;minimum: -255
- * * &nbsp;&nbsp;&nbsp;maximum: 255
- * * </pre>
- * * 
- * * <pre>-down &lt;boolean&gt; (property: down)
- * * &nbsp;&nbsp;&nbsp;If true, then pixels &lt;= threshold are not masked and the others' alpha channel 
- * * &nbsp;&nbsp;&nbsp;are set to 0 (made transparent).
- * * &nbsp;&nbsp;&nbsp;default: true
- * * </pre>
- * * 
- * * <pre>-auto-threshold &lt;boolean&gt; (property: autoThreshold)
- * * &nbsp;&nbsp;&nbsp;If true, it will automatically select the threshold value.
- * * &nbsp;&nbsp;&nbsp;default: true
- * * </pre>
- * * 
- * * <pre>-threshold &lt;int&gt; (property: threshold)
- * * &nbsp;&nbsp;&nbsp;If auto-threshold is disabled, this will be used as the threshold value.
- * * &nbsp;&nbsp;&nbsp;default: 127
- * * &nbsp;&nbsp;&nbsp;minimum: 0
- * * &nbsp;&nbsp;&nbsp;maximum: 255
- * * </pre>
- * * 
- * <!-- options-end -->
+ <!-- globalinfo-end -->
+ <p/>
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-color &lt;RED|GREEN|BLUE|YELLOW&gt; (property: color)
+ * &nbsp;&nbsp;&nbsp;Color to be masked.
+ * &nbsp;&nbsp;&nbsp;default: RED
+ * </pre>
+ * 
+ * <pre>-bias &lt;int&gt; (property: bias)
+ * &nbsp;&nbsp;&nbsp;Bias to be applied after finding the histogram peak.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: -255
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ * 
+ * <pre>-down &lt;boolean&gt; (property: down)
+ * &nbsp;&nbsp;&nbsp;If true, then pixels &lt;= threshold are not masked and the others' alpha channel 
+ * &nbsp;&nbsp;&nbsp;are set to 0 (made transparent).
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-threshold &lt;int&gt; (property: threshold)
+ * &nbsp;&nbsp;&nbsp;Threshold value used for binarization, specify -1 to automatically determine 
+ * &nbsp;&nbsp;&nbsp;a threshold.
+ * &nbsp;&nbsp;&nbsp;default: 127
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
  * @version $Revision$
@@ -77,17 +75,6 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
    * For serialization.
    */
   private static final long serialVersionUID = -922292531841315436L;
-
-  /**
-   * Colors that can be masked.
-   * An additional switch case needs to be implemented in the doTransform() method.
-   *
-   * @author lx51 (lx51 at students dot waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum Color {
-    RED, GREEN, BLUE, YELLOW
-  }
 
   /**
    * Color to be masked out.
@@ -105,12 +92,7 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
   protected boolean m_Down;
 
   /**
-   * If true, it will automatically select the threshold value.
-   */
-  protected boolean m_AutoThreshold;
-
-  /**
-   * If auto-threshold is disabled, this will be used as the threshold value..
+   * Threshold value used for binarization, specify -1 to automatically determine a threshold.
    */
   protected int m_Threshold;
 
@@ -134,8 +116,7 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
     m_OptionManager.add("color", "color", Color.RED);
     m_OptionManager.add("bias", "bias", 0, -255, 255);
     m_OptionManager.add("down", "down", true);
-    m_OptionManager.add("auto-threshold", "autoThreshold", true);
-    m_OptionManager.add("threshold", "threshold", 127, 0, 255);
+    m_OptionManager.add("threshold", "threshold", 127, -1, 255);
   }
 
   /**
@@ -229,34 +210,6 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
   }
 
   /**
-   * Get whether it shall automatically select the threshold value.
-   *
-   * @return automatically detect threshold?
-   */
-  public boolean getAutoThreshold() {
-    return m_AutoThreshold;
-  }
-
-  /**
-   * Enable or disable automatically selecting the threshold value.
-   *
-   * @param value automatically detect threshold?
-   */
-  public void setAutoThreshold(boolean value) {
-    m_AutoThreshold = value;
-    reset();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
-   */
-  public String autoThresholdTipText() {
-    return "If true, it will automatically select the threshold value.";
-  }
-
-  /**
    * Get the manual threshold value.
    *
    * @return manual threshold value
@@ -271,11 +224,11 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
    * @param value manual threshold value
    */
   public void setThreshold(int value) {
-    if (value >= 0 && value <= 255) {
+    if (value >= -1 && value <= 255) {
       m_Threshold = value;
       reset();
     } else
-      getLogger().severe("Threshold must be 0 >= value <= 255, provided: " + value);
+      getLogger().severe("Threshold must be 0 >= value <= 255, or -1 for auto-thresholding, provided: " + value);
   }
 
   /**
@@ -284,24 +237,7 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
    * @return tip text for this property suitable for displaying in the GUI or for listing the options.
    */
   public String thresholdTipText() {
-    return "If auto-threshold is disabled, this will be used as the threshold value.";
-  }
-
-  /**
-   * Normalize a histogram to 0-255.
-   *
-   * @param histogram histogram as integer array
-   */
-  protected void normalizeHistogram(int[] histogram) {
-    int min = Integer.MAX_VALUE;
-    int max = Integer.MIN_VALUE;
-    for (int c : histogram) {
-      if (c > max) max = c;
-      if (c < min) min = c;
-    }
-    int range = max - min;
-    for (int i = 0; i < histogram.length; i++)
-      histogram[i] = (int) ((histogram[i] - min) / (float) range * 255);
+    return "Threshold value used for binarization, specify -1 to automatically determine a threshold.";
   }
 
   /**
@@ -313,84 +249,11 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
   @Override
   protected BufferedImageContainer[] doTransform(BufferedImageContainer container) {
     BufferedImage image = container.getImage();
-    BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-    float[][] map = new float[image.getHeight()][image.getWidth()];
-    float min = Float.POSITIVE_INFINITY;
-    float max = Float.NEGATIVE_INFINITY;
-    float range;
 
-    // Apply screening and generate histogram
-    for (int y = 0; y < image.getHeight(); y++) {
-      for (int x = 0; x < image.getWidth(); x++) {
-        int color = image.getRGB(x, y);
-        int r = color >> 16 & 0xff;
-        int g = color >> 8 & 0xff;
-        int b = color & 0xff;
+    int[][] mask = XScreenMaskHelper.generateMask(image, m_Color);
+    image = XScreenMaskHelper.applyMask(image, mask, m_Threshold, m_Down, getLogger());
 
-        int value;
-        switch (m_Color) {
-          case RED:
-            value = r * (r - b) * (r - g);
-            break;
-          case GREEN:
-            value = g * (g - r) * (g - b);
-            break;
-          case BLUE:
-            value = b * (b - r) * (b - g);
-            break;
-          case YELLOW:
-            value = (r - b) * (g - b);
-            break;
-          default:
-            throw new IllegalStateException("Color not implemented: " + m_Color);
-        }
-        map[y][x] = value;
-        if (value > max) max = value;
-        if (value < min) min = value;
-      }
-    }
-    range = max - min;
-
-    // Normalize map and calculate histogram
-    int[] histogram = new int[256];
-    BufferedImage tmp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-    for (int y = 0; y < map.length; y++) {
-      for (int x = 0; x < map[0].length; x++) {
-        map[y][x] = (map[y][x] - min) / range * 255;
-        histogram[(int) map[y][x]]++;
-        int c = (int) map[y][x];
-        tmp.setRGB(x, y, (0xff << 24) + (c << 16) + (c << 8) + c);
-      }
-    }
-
-    // Normalize histogram
-    normalizeHistogram(histogram);
-
-    // Auto-threshold
-    int threshold = m_Threshold;
-    if (m_AutoThreshold) {
-      threshold = histogram.length / 2;
-      if (histogram[threshold] <= 1)
-        for (; threshold < 256 && histogram[threshold] <= 1; threshold++) ;
-      else
-        for (; threshold > 0 && histogram[threshold] > 1; threshold--) ;
-      if (isLoggingEnabled())
-	getLogger().info("Threshold: " + threshold);
-    }
-
-    // Create masked image
-    for (int y = 0; y < map.length; y++) {
-      for (int x = 0; x < map[0].length; x++) {
-        int color = image.getRGB(x, y);
-        if (m_Down)
-          output.setRGB(x, y, map[y][x] <= threshold ? color : color & 0x00ffffff);
-        else
-          output.setRGB(x, y, map[y][x] >= threshold ? color : color & 0x00ffffff);
-      }
-    }
-
-    BufferedImageContainer outputContainer = (BufferedImageContainer) container.getHeader();
-    outputContainer.setImage(output);
-    return new BufferedImageContainer[]{outputContainer};
+    container.setImage(image);
+    return new BufferedImageContainer[]{container};
   }
 }

@@ -19,6 +19,7 @@
  */
 package adams.data.image.transformer;
 
+import adams.data.image.XScreenMaskHelper;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -69,9 +70,9 @@ public class XScreenMaskTest
     result[0] = new XScreenMask();
     result[1] = new XScreenMask();
     result[1].setBias(0);
-    result[1].setColor(XScreenMask.Color.RED);
+    result[1].setColor(XScreenMaskHelper.Color.RED);
     result[1].setDown(true);
-    result[1].setAutoThreshold(true);
+    result[1].setThreshold(-1);
 
     return result;
   }
