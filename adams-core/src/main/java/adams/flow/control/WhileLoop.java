@@ -15,7 +15,7 @@
 
 /*
  * WhileLoop.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -432,6 +432,9 @@ public class WhileLoop
       catch (Exception e) {
 	result = handleException(m_Actors.getFullName() + " generated following exception: ", e);
       }
+      // do we need to apply variables?
+      if ((result == null) && !isStopped())
+	result = preExecute();
     }
 
     if (result != null)
