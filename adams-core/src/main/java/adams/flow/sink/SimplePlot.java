@@ -14,8 +14,8 @@
  */
 
 /*
- * SequencePlotter.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * SimplePlot.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -26,21 +26,16 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
+import adams.data.DecimalFormatString;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.Token;
-import adams.flow.sink.sequenceplotter.AbstractErrorPaintlet;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
-import adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor;
-import adams.flow.sink.sequenceplotter.MarkerPaintlet;
 import adams.flow.sink.sequenceplotter.MouseClickAction;
-import adams.flow.sink.sequenceplotter.NoErrorPaintlet;
-import adams.flow.sink.sequenceplotter.NoMarkers;
 import adams.flow.sink.sequenceplotter.NullClickAction;
-import adams.flow.sink.sequenceplotter.PassThrough;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
@@ -49,7 +44,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
-import adams.gui.visualization.core.axis.SimpleTickGenerator;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CirclePaintlet;
@@ -63,7 +58,10 @@ import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
- * Actor that plots sequences over time.
+ * Actor for generating simple plots.<br/>
+ * <br/>
+ * See also:<br/>
+ * adams.flow.sink.SequencePlotter
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -85,7 +83,7 @@ import java.util.HashMap;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: SequencePlotter
+ * &nbsp;&nbsp;&nbsp;default: SimplePlot
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -102,6 +100,11 @@ import java.util.HashMap;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -148,29 +151,9 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-comparison &lt;X|Y|X_AND_Y&gt; (property: comparisonType)
- * &nbsp;&nbsp;&nbsp;The type of comparison to use for the data points of the sequence.
- * &nbsp;&nbsp;&nbsp;default: X
- * </pre>
- * 
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
- * </pre>
- * 
- * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
- * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
- * </pre>
- * 
- * <pre>-marker-paintlet &lt;adams.flow.sink.sequenceplotter.MarkerPaintlet&gt; (property: markerPaintlet)
- * &nbsp;&nbsp;&nbsp;The marker paintlet to use for painting marker overlays.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NoMarkers
- * </pre>
- * 
- * <pre>-error-paintlet &lt;adams.flow.sink.sequenceplotter.AbstractErrorPaintlet&gt; (property: errorPaintlet)
- * &nbsp;&nbsp;&nbsp;The paintlet to use for painting error overlays.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NoErrorPaintlet
  * </pre>
  * 
  * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
@@ -183,34 +166,19 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
  * 
- * <pre>-overlay-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: overlayColorProvider)
- * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the overlay plots.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
- * </pre>
- * 
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The title for the border around the plot.
- * &nbsp;&nbsp;&nbsp;default: X-Y Sequences
+ * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
  * 
  * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 20\" -width 40
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0
  * </pre>
  * 
  * <pre>-axis-y &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisY)
  * &nbsp;&nbsp;&nbsp;The setup for the Y axis.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60
- * </pre>
- * 
- * <pre>-plot-updater &lt;adams.flow.sink.sequenceplotter.AbstractPlotUpdater&gt; (property: plotUpdater)
- * &nbsp;&nbsp;&nbsp;The updating strategy for the plot.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.SimplePlotUpdater
- * </pre>
- * 
- * <pre>-post-processor &lt;adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor&gt; (property: postProcessor)
- * &nbsp;&nbsp;&nbsp;The post-processor to use on the sequences after a token has been added.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.PassThrough
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
  * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
@@ -225,33 +193,18 @@ import java.util.HashMap;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SequencePlotter
+public class SimplePlot
   extends AbstractGraphicalDisplay 
   implements DisplayPanelProvider, FileWriter, ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
 
-  /** the comparison to use for the X/Y points. */
-  protected Comparison m_ComparisonType;
-
   /** the paintlet to use for painting the XY data. */
   protected XYSequencePaintlet m_Paintlet;
 
-  /** the overlay paintlet to use for painting the overlays. */
-  protected XYSequencePaintlet m_OverlayPaintlet;
-
-  /** the paintlet to use for painting markers. */
-  protected MarkerPaintlet m_MarkerPaintlet;
-
-  /** the paintlet to use for painting errors. */
-  protected AbstractErrorPaintlet m_ErrorPaintlet;
-
   /** the color provider to use. */
   protected AbstractColorProvider m_ColorProvider;
-
-  /** the color provider to use for the overlays. */
-  protected AbstractColorProvider m_OverlayColorProvider;
 
   /** the mouse click action. */
   protected MouseClickAction m_MouseClickAction;
@@ -265,12 +218,6 @@ public class SequencePlotter
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
 
-  /** the plot updater to use. */
-  protected AbstractPlotUpdater m_PlotUpdater;
-
-  /** the post-processor for the sequences. */
-  protected AbstractSequencePostProcessor m_PostProcessor;
-
   /** for keeping track of the tokens. */
   protected NamedCounter m_Counter;
   
@@ -280,6 +227,9 @@ public class SequencePlotter
   /** whether to use an output file. */
   protected Boolean m_UseOutputFile;
 
+  /** the plot updater to use. */
+  protected AbstractPlotUpdater m_PlotUpdater;
+
   /**
    * Returns a string describing the object.
    *
@@ -287,7 +237,7 @@ public class SequencePlotter
    */
   @Override
   public String globalInfo() {
-    return "Actor that plots sequences over time.";
+    return "Actor for generating simple plots.";
   }
 
   /**
@@ -298,24 +248,8 @@ public class SequencePlotter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "comparison", "comparisonType",
-	     Comparison.X);
-
-    m_OptionManager.add(
-	    "paintlet", "paintlet",
-	    new CirclePaintlet());
-
-    m_OptionManager.add(
-	    "overlay-paintlet", "overlayPaintlet",
-	    new CirclePaintlet());
-
-    m_OptionManager.add(
-	    "marker-paintlet", "markerPaintlet",
-	    new NoMarkers());
-
-    m_OptionManager.add(
-	    "error-paintlet", "errorPaintlet",
-	    new NoErrorPaintlet());
+      "paintlet", "paintlet",
+      new CirclePaintlet());
 
     m_OptionManager.add(
 	    "mouse-click-action", "mouseClickAction",
@@ -326,12 +260,8 @@ public class SequencePlotter
 	    new DefaultColorProvider());
 
     m_OptionManager.add(
-	    "overlay-color-provider", "overlayColorProvider",
-	    new DefaultColorProvider());
-
-    m_OptionManager.add(
 	    "title", "title",
-	    "X-Y Sequences");
+	    "Plot");
 
     m_OptionManager.add(
 	    "axis-x", "axisX",
@@ -340,14 +270,6 @@ public class SequencePlotter
     m_OptionManager.add(
 	    "axis-y", "axisY",
 	    getDefaultAxisY());
-
-    m_OptionManager.add(
-	    "plot-updater", "plotUpdater",
-	    new SimplePlotUpdater());
-
-    m_OptionManager.add(
-	    "post-processor", "postProcessor",
-	    new PassThrough());
 
     m_OptionManager.add(
 	    "output", "outputFile",
@@ -360,7 +282,7 @@ public class SequencePlotter
    * @return		the classes
    */
   public Class[] getClassCrossReferences() {
-    return new Class[]{SimplePlot.class};
+    return new Class[]{SequencePlotter.class};
   }
 
   /**
@@ -371,6 +293,8 @@ public class SequencePlotter
     super.initialize();
 
     m_Counter = new NamedCounter();
+    m_PlotUpdater = new SimplePlotUpdater();
+    ((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
   }
 
   /**
@@ -405,35 +329,6 @@ public class SequencePlotter
   }
 
   /**
-   * Sets the type of comparison to use for the X/Y points.
-   *
-   * @param value	the type of comparison to use
-   */
-  public void setComparisonType(Comparison value) {
-    m_ComparisonType = value;
-    reset();
-  }
-
-  /**
-   * Returns the type of comparison currently in use for the X/Y points.
-   *
-   * @return		the type of comparison
-   */
-  public Comparison getComparisonType() {
-    return m_ComparisonType;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String comparisonTypeTipText() {
-    return "The type of comparison to use for the data points of the sequence.";
-  }
-
-  /**
    * Sets the paintlet to use.
    *
    * @param value 	the paintlet
@@ -460,93 +355,6 @@ public class SequencePlotter
    */
   public String paintletTipText() {
     return "The paintlet to use for painting the data.";
-  }
-
-  /**
-   * Sets the overlay paintlet to use.
-   *
-   * @param value 	the paintlet
-   */
-  public void setOverlayPaintlet(XYSequencePaintlet value) {
-    m_OverlayPaintlet = value;
-    reset();
-  }
-
-  /**
-   * Returns the overlay paintlet to use.
-   *
-   * @return 		the paintlet
-   */
-  public XYSequencePaintlet getOverlayPaintlet() {
-    return m_OverlayPaintlet;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String overlayPaintletTipText() {
-    return "The paintlet to use for painting the overlay data (if any).";
-  }
-
-  /**
-   * Sets the marker paintlet to use.
-   *
-   * @param value 	the marker paintlet
-   */
-  public void setMarkerPaintlet(MarkerPaintlet value) {
-    m_MarkerPaintlet = value;
-    reset();
-  }
-
-  /**
-   * Returns the marker paintlet to use.
-   *
-   * @return 		the marker paintlet
-   */
-  public MarkerPaintlet getMarkerPaintlet() {
-    return m_MarkerPaintlet;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String markerPaintletTipText() {
-    return "The marker paintlet to use for painting marker overlays.";
-  }
-
-  /**
-   * Sets the error paintlet to use.
-   *
-   * @param value 	the error paintlet
-   */
-  public void setErrorPaintlet(AbstractErrorPaintlet value) {
-    m_ErrorPaintlet = value;
-    reset();
-  }
-
-  /**
-   * Returns the error paintlet to use.
-   *
-   * @return 		the error paintlet
-   */
-  public AbstractErrorPaintlet getErrorPaintlet() {
-    return m_ErrorPaintlet;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String errorPaintletTipText() {
-    return "The paintlet to use for painting error overlays.";
   }
 
   /**
@@ -608,52 +416,25 @@ public class SequencePlotter
   }
 
   /**
-   * Sets the color provider to use for the overlays.
-   *
-   * @param value 	the color provider
-   */
-  public void setOverlayColorProvider(AbstractColorProvider value) {
-    m_OverlayColorProvider = value;
-    reset();
-  }
-
-  /**
-   * Returns the color provider in use for the overlays.
-   *
-   * @return 		the color provider
-   */
-  public AbstractColorProvider getOverlayColorProvider() {
-    return m_OverlayColorProvider;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String overlayColorProviderTipText() {
-    return "The color provider in use for generating the colors for the overlay plots.";
-  }
-
-  /**
    * Returns the setup for the X axis.
    *
    * @return 		the setup
    */
   protected AxisPanelOptions getDefaultAxisX() {
     AxisPanelOptions	result;
-    SimpleTickGenerator	tick;
+    FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
     result.setType(Type.ABSOLUTE);
     result.setLabel("x");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
+    result.setNthValueToShow(2);
     result.setWidth(40);
     result.setTopMargin(0.0);
     result.setBottomMargin(0.0);
-    tick = new SimpleTickGenerator();
+    result.setCustomFormat(new DecimalFormatString("0.0"));
+    tick = new FancyTickGenerator();
     tick.setNumTicks(20);
     result.setTickGenerator(tick);
 
@@ -667,17 +448,19 @@ public class SequencePlotter
    */
   protected AxisPanelOptions getDefaultAxisY() {
     AxisPanelOptions	result;
-    SimpleTickGenerator	tick;
+    FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
     result.setType(Type.ABSOLUTE);
     result.setLabel("y");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
+    result.setNthValueToShow(2);
     result.setWidth(60);
     result.setTopMargin(0.0);
     result.setBottomMargin(0.0);
-    tick = new SimpleTickGenerator();
+    result.setCustomFormat(new DecimalFormatString("0.0"));
+    tick = new FancyTickGenerator();
     tick.setNumTicks(10);
     result.setTickGenerator(tick);
 
@@ -772,64 +555,6 @@ public class SequencePlotter
   }
 
   /**
-   * Sets the plot updater to use.
-   *
-   * @param value 	the updater
-   */
-  public void setPlotUpdater(AbstractPlotUpdater value) {
-    m_PlotUpdater = value;
-    reset();
-  }
-
-  /**
-   * Returns the plot updater in use.
-   *
-   * @return 		the updater
-   */
-  public AbstractPlotUpdater getPlotUpdater() {
-    return m_PlotUpdater;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String plotUpdaterTipText() {
-    return "The updating strategy for the plot.";
-  }
-
-  /**
-   * Sets the post-processor for the sequences.
-   *
-   * @param value 	the post-processor
-   */
-  public void setPostProcessor(AbstractSequencePostProcessor value) {
-    m_PostProcessor = value;
-    reset();
-  }
-
-  /**
-   * Returns the limit on the number of data points per sequence.
-   *
-   * @return 		the limit
-   */
-  public AbstractSequencePostProcessor getPostProcessor() {
-    return m_PostProcessor;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String postProcessorTipText() {
-    return "The post-processor to use on the sequences after a token has been added.";
-  }
-
-  /**
    * Returns the default output file.
    *
    * @return		the file
@@ -892,14 +617,10 @@ public class SequencePlotter
 
     result = new SequencePlotterPanel(getTitle());
     result.setPaintlet(getPaintlet());
-    result.setOverlayPaintlet((XYSequencePaintlet) getOverlayPaintlet().shallowCopy());
-    result.setMarkerPaintlet((MarkerPaintlet) getMarkerPaintlet().shallowCopy());
-    result.setErrorPaintlet((AbstractErrorPaintlet) getErrorPaintlet().shallowCopy());
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
-    result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
 
     return result;
   }
@@ -1055,11 +776,8 @@ public class SequencePlotter
 	manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
 	break;
       case MARKER:
-	manager = ((SequencePlotterPanel) m_Panel).getMarkerContainerManager();
-	break;
       case OVERLAY:
-	manager = ((SequencePlotterPanel) m_Panel).getOverlayContainerManager();
-	break;
+	return;
       case UPDATE:
 	m_PlotUpdater.update((SequencePlotterPanel) getPanel());
 	return;
@@ -1071,7 +789,7 @@ public class SequencePlotter
     // find or create new plot
     if (manager.indexOf(plotName) == -1) {
       seq  = new SequencePlotSequence();
-      seq.setComparison(m_ComparisonType);
+      seq.setComparison(Comparison.X_AND_Y);
       seq.setID(plotName);
       cont = manager.newContainer(seq);
       manager.add(cont);
@@ -1103,10 +821,6 @@ public class SequencePlotter
     if (m_UseOutputFile)
       writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
 
-    // limit size of sequence?
-    if (type != ContentType.MARKER)
-      m_PostProcessor.postProcess(manager, plotName);
-
     m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
   }
 
@@ -1123,20 +837,19 @@ public class SequencePlotter
     result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
       private static final long serialVersionUID = 4356468458332186521L;
       protected SequencePlotterPanel m_Panel;
+      protected AbstractPlotUpdater m_PlotUpdater;
       @Override
       protected void initGUI() {
         super.initGUI();
+	m_PlotUpdater = new SimplePlotUpdater();
+	((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
         m_Panel = new SequencePlotterPanel(getTitle());
         m_Panel.setPaintlet(getPaintlet());
-        m_Panel.setOverlayPaintlet(m_OverlayPaintlet);
-        m_Panel.setMarkerPaintlet(getMarkerPaintlet());
-        m_Panel.setErrorPaintlet(m_ErrorPaintlet);
         m_Panel.setMouseClickAction(m_MouseClickAction);
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
         m_Panel.setColorProvider(m_ColorProvider);
-        m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
-        add(m_Panel, BorderLayout.CENTER);
+	add(m_Panel, BorderLayout.CENTER);
       }
       @Override
       public void display(Token token) {
@@ -1158,14 +871,14 @@ public class SequencePlotter
 
 	switch (type) {
 	  case PLOT:
-	    manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
-	    break;
-	  case MARKER:
-	    manager = ((SequencePlotterPanel) m_Panel).getMarkerContainerManager();
+	    manager = m_Panel.getContainerManager();
 	    break;
 	  case OVERLAY:
-	    manager = ((SequencePlotterPanel) m_Panel).getOverlayContainerManager();
-	    break;
+	  case MARKER:
+	    return;
+	  case UPDATE:
+	    m_PlotUpdater.update(m_Panel);
+	    return;
 	  default:
 	    throw new IllegalStateException("Unhandled plot container content type: " + type);
 	}
@@ -1174,7 +887,7 @@ public class SequencePlotter
 	// find or create new plot
 	if (manager.indexOf(plotName) == -1) {
 	  seq  = new XYSequence();
-	  seq.setComparison(m_ComparisonType);
+	  seq.setComparison(Comparison.X_AND_Y);
 	  seq.setID(plotName);
 	  cont = manager.newContainer(seq);
 	  manager.add(cont);
@@ -1189,10 +902,6 @@ public class SequencePlotter
 	  x = new Double(m_Counter.next(plotName));
 	point = new XYSequencePoint("" + seq.size(), x, y);
 	seq.add(point);
-
-	// limit size of sequence?
-	if (type != ContentType.MARKER)
-	  m_PostProcessor.postProcess(manager, plotName);
 
 	m_PlotUpdater.update(m_Panel, plotCont);
       }

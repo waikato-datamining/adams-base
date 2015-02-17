@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:21:04
+# Date: 2015-02-18 12:15:30
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -8,49 +8,41 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor
-				adams.flow.sink.SequencePlotter
+				adams.flow.sink.SimplePlot
 					-writer
 						adams.gui.print.NullWriter
 					-paintlet
 						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Bell curve
 					-axis-x
 						adams.gui.visualization.core.AxisPanelOptions
 							-label
 							x
 							-tick-generator
-								adams.gui.visualization.core.axis.SimpleTickGenerator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+									-num-ticks
+									20
+							-nth-value
+							2
 							-width
 							40
 							-custom-format
-							0.000
+							0.0
 					-axis-y
 						adams.gui.visualization.core.AxisPanelOptions
 							-label
 							y
 							-tick-generator
-								adams.gui.visualization.core.axis.SimpleTickGenerator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
 							-width
-							40
+							60
 							-custom-format
 							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							40
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
 	-actor
 		adams.flow.standalone.SetVariable
 			-var-name
@@ -96,7 +88,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.sink.CallableSink
 							-callable
-							SequencePlotter
+							SimplePlot
 			-branch
 				adams.flow.control.Sequence
 					-name
@@ -116,7 +108,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.sink.CallableSink
 							-callable
-							SequencePlotter
+							SimplePlot
 			-branch
 				adams.flow.control.Sequence
 					-name
@@ -136,7 +128,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.sink.CallableSink
 							-callable
-							SequencePlotter
+							SimplePlot
 			-branch
 				adams.flow.control.Sequence
 					-name
@@ -156,7 +148,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.sink.CallableSink
 							-callable
-							SequencePlotter
+							SimplePlot
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
