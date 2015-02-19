@@ -34,11 +34,84 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 /**
- * <!-- globalinfo-start -->
- * <!-- globalinfo-end -->
+ <!-- globalinfo-start -->
+ * Using the XScreenMask, this locator masks out the background plate (similar to a green screening process)then proceeds to find blobs in the resultant image.
  * <p/>
- * <!-- options-start -->
- * <!-- options-end -->
+ <!-- globalinfo-end -->
+ * <p/>
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-center-on-canvas &lt;boolean&gt; (property: centerOnCanvas)
+ * &nbsp;&nbsp;&nbsp;If enabled, the located objects get centered on a canvas of fixed size.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-canvas-width &lt;int&gt; (property: canvasWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-height &lt;int&gt; (property: canvasHeight)
+ * &nbsp;&nbsp;&nbsp;The height of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-color &lt;java.awt.Color&gt; (property: canvasColor)
+ * &nbsp;&nbsp;&nbsp;The color to use for filling the canvas.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
+ * <pre>-min-size &lt;int&gt; (property: minSize)
+ * &nbsp;&nbsp;&nbsp;Minimum object size.
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
+ * <pre>-max-size &lt;int&gt; (property: maxSize)
+ * &nbsp;&nbsp;&nbsp;Maximum object size.
+ * &nbsp;&nbsp;&nbsp;default: 200
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
+ * <pre>-crop &lt;adams.data.image.transformer.crop.AbstractCropAlgorithm&gt; (property: crop)
+ * &nbsp;&nbsp;&nbsp;Cropping algorithm.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.image.transformer.crop.NoCrop
+ * </pre>
+ * 
+ * <pre>-scale &lt;double&gt; (property: scale)
+ * &nbsp;&nbsp;&nbsp;Scale factor of working image (decrease scale for speed, increase for accuracy
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: 0.2
+ * &nbsp;&nbsp;&nbsp;minimum: 0.1
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ * 
+ * <pre>-color &lt;RED|GREEN|BLUE|YELLOW&gt; (property: color)
+ * &nbsp;&nbsp;&nbsp;Color to be masked out.
+ * &nbsp;&nbsp;&nbsp;default: RED
+ * </pre>
+ * 
+ * <pre>-down &lt;boolean&gt; (property: down)
+ * &nbsp;&nbsp;&nbsp;If true, then pixels &lt;= threshold are not masked and the others' alpha channel 
+ * &nbsp;&nbsp;&nbsp;are set to 0 (made transparent).
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-threshold &lt;int&gt; (property: threshold)
+ * &nbsp;&nbsp;&nbsp;Threshold value used for binarization, specify -1 to automatically determine 
+ * &nbsp;&nbsp;&nbsp;a threshold.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
  * @version $Revision$
