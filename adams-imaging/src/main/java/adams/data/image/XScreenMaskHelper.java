@@ -91,9 +91,8 @@ public class XScreenMaskHelper {
     int[][] normalized = new int[image.getHeight()][image.getWidth()];
     float ratio = 255 / (max - min);
     for (int y = 0; y < mask.length; y++) {
-      for (int x = 0; x < mask[0].length; x++) {
+      for (int x = 0; x < mask[0].length; x++)
         normalized[y][x] = Math.round((mask[y][x] - min) * ratio);
-      }
     }
 
     return normalized;
@@ -106,6 +105,7 @@ public class XScreenMaskHelper {
    * @param mask      generated mask
    * @param threshold threshold to binarize image, specify a negative value to automatically determine a threshold
    * @param down      if true, then pixels <= threshold are not masked and the others' alpha channel are set to 0 (made transparent)
+   * @param log       logger to be used to log the automatically determined threshold, can be null
    * @return masked image, type ARGB
    */
   public static BufferedImage applyMask(BufferedImage image, int[][] mask, int threshold, boolean down, Logger log) {
@@ -115,36 +115,8 @@ public class XScreenMaskHelper {
       throw new IllegalStateException("Image and mask dimensions mismatch!");
 
     // Auto-thresholding
-    if (threshold < 0) {
-      int min = Integer.MAX_VALUE;
-      int max = Integer.MIN_VALUE;
-      int[] histogram = new int[256];
-
-      // Calculate histogram
-      for (int y = 0; y < mask.length; y++) {
-        for (int x = 0; x < mask[0].length; x++) {
-          histogram[mask[y][x]]++;
-          if (histogram[mask[y][x]] > max) max = histogram[mask[y][x]];
-          if (histogram[mask[y][x]] < min) min = histogram[mask[y][x]];
-        }
-      }
-
-      // Normalize histogram
-      float ratio = 255 / (max - min);
-      for (int i = 0; i < histogram.length; i++)
-        histogram[i] = Math.round((histogram[i] - min) * ratio);
-
-      // Determine threshold
-      threshold = histogram.length / 2;
-      if (histogram[threshold] <= 1)
-        for (; threshold < 256 && histogram[threshold] <= 1; threshold++) ;
-      else
-        for (; threshold > 0 && histogram[threshold] > 1; threshold--) ;
-
-      // Log threshold
-      if (log != null)
-        log.info("Threshold: " + threshold);
-    }
+    if (threshold < 0)
+      threshold = determineThreshold(mask, log);
 
     // Apply mask
     for (int y = 0; y < mask.length; y++) {
@@ -158,5 +130,72 @@ public class XScreenMaskHelper {
     }
 
     return output;
+  }
+
+  /**
+   * Given a previously generated mask, this binarizes the mask given a threshold.
+   *
+   * @param mask      generated mask
+   * @param threshold threshold to binarize image, specify a negative value to automatically determine a threshold
+   * @param down      if true, then pixels <= threshold are not masked and the others' alpha channel are set to 0 (made transparent)
+   * @param log       logger to be used to log the automatically determined threshold, can be null
+   */
+  public static void binarizeMask(int[][] mask, int threshold, boolean down, Logger log) {
+    // Auto-thresholding
+    if (threshold < 0)
+      threshold = determineThreshold(mask, log);
+
+    // Apply mask
+    for (int y = 0; y < mask.length; y++) {
+      for (int x = 0; x < mask[0].length; x++) {
+        if (down)
+          mask[y][x] = mask[y][x] <= threshold ? 1 : 0;
+        else
+          mask[y][x] = mask[y][x] >= threshold ? 1 : 0;
+      }
+    }
+  }
+
+  /**
+   * Determine an optimal threshold value.
+   * A normalized histogram is calculated, assuming two peaks, the threshold begins in the middle, walking right until
+   * it hits the right peak, or left until it is walks off the peak.
+   *
+   * @param mask generated mask
+   * @param log  logger to be used to log the automatically determined threshold, can be null
+   * @return threshold value
+   */
+  public static int determineThreshold(int[][] mask, Logger log) {
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
+    int[] histogram = new int[256];
+
+    // Calculate histogram
+    for (int y = 0; y < mask.length; y++) {
+      for (int x = 0; x < mask[0].length; x++) {
+        int value = histogram[mask[y][x]]++;
+        if (value > max) max = value;
+        if (value < min) min = value;
+      }
+    }
+
+    // Normalize histogram
+    float ratio = 255f / (max - min);
+    for (int i = 0; i < histogram.length; i++)
+      histogram[i] = Math.round((histogram[i] - min) * ratio);
+
+    // Determine threshold
+    int threshold = histogram.length / 2;
+    if (histogram[threshold] <= 1)
+      for (; threshold < 256 && histogram[threshold] <= 1; threshold++) ;
+    else
+      for (; threshold > 0 && histogram[threshold] > 1; threshold--) ;
+
+
+    // Log threshold
+    if (log != null)
+      log.info("Threshold: " + threshold);
+
+    return threshold;
   }
 }
