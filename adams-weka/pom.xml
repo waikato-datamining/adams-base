@@ -137,7 +137,7 @@
     <dependency>
       <groupId>nz.ac.waikato.cms.weka</groupId>
       <artifactId>WekaExcel</artifactId>
-      <version>1.0.4</version>
+      <version>1.0.5</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
