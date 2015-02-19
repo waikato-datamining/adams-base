@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.util.HashMap;
-
 import adams.core.QuickInfoHelper;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
@@ -29,6 +27,8 @@ import adams.flow.core.Token;
 import adams.parser.GrammarSupplier;
 import adams.parser.MathematicalExpression;
 import adams.parser.MathematicalExpressionText;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -88,11 +88,20 @@ import adams.parser.MathematicalExpressionText;
  * # numeric functions<br/>
  *               | abs ( expr )<br/>
  *               | sqrt ( expr )<br/>
+ *               | cbrt ( expr )<br/>
  *               | log ( expr )<br/>
+ *               | log10 ( expr )<br/>
  *               | exp ( expr )<br/>
  *               | sin ( expr )<br/>
+ *               | sinh ( expr )<br/>
  *               | cos ( expr )<br/>
+ *               | cosh ( expr )<br/>
  *               | tan ( expr )<br/>
+ *               | tanh ( expr )<br/>
+ *               | atan ( expr )<br/>
+ *               | atan2 ( exprY , exprX )<br/>
+ *               | hypot ( exprX , exprY )<br/>
+ *               | signum ( expr )<br/>
  *               | rint ( expr )<br/>
  *               | floor ( expr )<br/>
  *               | pow[er] ( expr , expr )<br/>

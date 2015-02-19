@@ -15,7 +15,7 @@
 
 /*
  * ReportMathExpression.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -76,6 +76,7 @@ import adams.parser.MathematicalExpressionText;
  *               | expr | expr (or: expr or expr)<br/>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br/>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br/>
+ *               | isNaN ( expr )<br/>
  * <br/>
  * # arithmetics<br/>
  *               | expr + expr<br/>
@@ -89,15 +90,26 @@ import adams.parser.MathematicalExpressionText;
  * # numeric functions<br/>
  *               | abs ( expr )<br/>
  *               | sqrt ( expr )<br/>
+ *               | cbrt ( expr )<br/>
  *               | log ( expr )<br/>
+ *               | log10 ( expr )<br/>
  *               | exp ( expr )<br/>
  *               | sin ( expr )<br/>
+ *               | sinh ( expr )<br/>
  *               | cos ( expr )<br/>
+ *               | cosh ( expr )<br/>
  *               | tan ( expr )<br/>
+ *               | tanh ( expr )<br/>
+ *               | atan ( expr )<br/>
+ *               | atan2 ( exprY , exprX )<br/>
+ *               | hypot ( exprX , exprY )<br/>
+ *               | signum ( expr )<br/>
  *               | rint ( expr )<br/>
  *               | floor ( expr )<br/>
  *               | pow[er] ( expr , expr )<br/>
  *               | ceil ( expr )<br/>
+ *               | min ( expr1 , expr2 )<br/>
+ *               | max ( expr1 , expr2 )<br/>
  *               | year ( expr )<br/>
  *               | month ( expr )<br/>
  *               | day ( expr )<br/>
@@ -139,6 +151,16 @@ import adams.parser.MathematicalExpressionText;
  * <br/>
  * A lot of the functions have been modeled after LibreOffice:<br/>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br/>
+ * <br/>
+ * Additional functions:<br/>
+ * - env(String): String<br/>
+ * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br/>
+ * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br/>
+ * <br/>
+ * Additional procedures:<br/>
+ * - println(...)<br/>
+ * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br/>
+ * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -154,8 +176,6 @@ import adams.parser.MathematicalExpressionText;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -166,19 +186,26 @@ import adams.parser.MathematicalExpressionText;
  * &nbsp;&nbsp;&nbsp;default: ReportMathExpression
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-expression &lt;adams.parser.MathematicalExpressionText&gt; (property: expression)
@@ -191,8 +218,9 @@ import adams.parser.MathematicalExpressionText;
  * &nbsp;&nbsp;&nbsp;default: Blah[N]
  * </pre>
  * 
- * <pre>-output-result (property: outputResult)
+ * <pre>-output-result &lt;boolean&gt; (property: outputResult)
  * &nbsp;&nbsp;&nbsp;If enabled, then the result is output instead of the report field updated.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->

@@ -143,6 +143,16 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 89
 	  {/** no symbols necessary */},		// 90
 	  {/** no symbols necessary */},		// 91
+	  {/** no symbols necessary */},		// 92
+	  {/** no symbols necessary */},		// 93
+	  {/** no symbols necessary */},		// 94
+	  {/** no symbols necessary */},		// 95
+	  {/** no symbols necessary */},		// 96
+	  {/** no symbols necessary */},		// 97
+	  {/** no symbols necessary */},		// 98
+	  {/** no symbols necessary */},		// 99
+	  {/** no symbols necessary */},		// 100
+	  {/** no symbols necessary */},		// 101
 	}
     };
   }
@@ -247,6 +257,16 @@ public class BooleanExpressionTest
 	  "isnan(0.0 / 0.0)", 	// 89
 	  "min(2.0, 1.0) = 1.0", 	// 90
 	  "max(2.0, 1.0) = 2.0", 	// 91
+	  "cbrt(27) = 3", 	// 92
+	  "log10(1000) = 3", 	// 93
+	  "sinh(3) > 0", 	// 94
+	  "cosh(3) > 0", 	// 95
+	  "tanh(3) > 0", 	// 96
+	  "atan(3) > 0", 	// 97
+	  "atan2(4, 3) > 0", 	// 98
+	  "hypot(4, 3) = 5", 	// 99
+	  "signum(-3.7) = -1", 	// 100
+	  "signum(2.1) = 1", 	// 101
 	}
     };
   }

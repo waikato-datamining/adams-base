@@ -88,11 +88,20 @@ import adams.parser.booleanexpression.Scanner;
  * # numeric functions<br/>
  *               | abs ( expr )<br/>
  *               | sqrt ( expr )<br/>
+ *               | cbrt ( expr )<br/>
  *               | log ( expr )<br/>
+ *               | log10 ( expr )<br/>
  *               | exp ( expr )<br/>
  *               | sin ( expr )<br/>
+ *               | sinh ( expr )<br/>
  *               | cos ( expr )<br/>
+ *               | cosh ( expr )<br/>
  *               | tan ( expr )<br/>
+ *               | tanh ( expr )<br/>
+ *               | atan ( expr )<br/>
+ *               | atan2 ( exprY , exprX )<br/>
+ *               | hypot ( exprX , exprY )<br/>
+ *               | signum ( expr )<br/>
  *               | rint ( expr )<br/>
  *               | floor ( expr )<br/>
  *               | pow[er] ( expr , expr )<br/>
@@ -260,11 +269,20 @@ public class BooleanExpression
       + "# numeric functions\n"
       + "              | abs ( expr )\n"
       + "              | sqrt ( expr )\n"
+      + "              | cbrt ( expr )\n"
       + "              | log ( expr )\n"
+      + "              | log10 ( expr )\n"
       + "              | exp ( expr )\n"
       + "              | sin ( expr )\n"
+      + "              | sinh ( expr )\n"
       + "              | cos ( expr )\n"
+      + "              | cosh ( expr )\n"
       + "              | tan ( expr )\n"
+      + "              | tanh ( expr )\n"
+      + "              | atan ( expr )\n"
+      + "              | atan2 ( exprY , exprX )\n"
+      + "              | hypot ( exprX , exprY )\n"
+      + "              | signum ( expr )\n"
       + "              | rint ( expr )\n"
       + "              | floor ( expr )\n"
       + "              | pow[er] ( expr , expr )\n"

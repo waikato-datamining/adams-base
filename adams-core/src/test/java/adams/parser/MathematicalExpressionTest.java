@@ -126,6 +126,16 @@ public class MathematicalExpressionTest
 	  {/** no symbols necessary */},		// 72
 	  {/** no symbols necessary */},		// 73
 	  {/** no symbols necessary */},		// 74
+	  {/** no symbols necessary */},		// 75
+	  {/** no symbols necessary */},		// 76
+	  {/** no symbols necessary */},		// 77
+	  {/** no symbols necessary */},		// 78
+	  {/** no symbols necessary */},		// 79
+	  {/** no symbols necessary */},		// 80
+	  {/** no symbols necessary */},		// 81
+	  {/** no symbols necessary */},		// 82
+	  {/** no symbols necessary */},		// 83
+	  {/** no symbols necessary */},		// 84
 	}
     };
   }
@@ -213,6 +223,16 @@ public class MathematicalExpressionTest
 	  "if(isnan(0.0 / 0.0), 1.0, 0.0)", 	// 72
 	  "min(1.1, 0.1)", 	// 73
 	  "max(1.1, 0.1)", 	// 74
+	  "cbrt(27)", 	// 75
+	  "log10(1000)", 	// 76
+	  "sinh(3)", 	// 77
+	  "cosh(3)", 	// 78
+	  "tanh(3)", 	// 79
+	  "atan(3)", 	// 80
+	  "atan2(4, 3)", 	// 81
+	  "hypot(4, 3)", 	// 82
+	  "signum(-3.7)", 	// 83
+	  "signum(2.1)", 	// 84
 	}
     };
   }

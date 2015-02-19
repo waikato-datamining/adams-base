@@ -90,4 +90,14 @@
 'isnan(0.0 / 0.0): true
 'min(2.0, 1.0) = 1.0: true
 'max(2.0, 1.0) = 2.0: true
+'cbrt(27) = 3: true
+'log10(1000) = 3: true
+'sinh(3) > 0: true
+'cosh(3) > 0: true
+'tanh(3) > 0: true
+'atan(3) > 0: true
+'atan2(4, 3) > 0: true
+'hypot(4, 3) = 5: true
+'signum(-3.7) = -1: true
+'signum(2.1) = 1: true
 
