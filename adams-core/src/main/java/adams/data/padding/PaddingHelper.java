@@ -15,7 +15,7 @@
 
 /**
  * PaddingHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.padding;
 
@@ -45,9 +45,10 @@ public class PaddingHelper {
   }
 
   /**
-   * Pads the data to the next power of 2.
+   * Pads the data to the next power of 2 (pads on the right).
    *
    * @param data	the data to pad
+   * @param type	what values to pad
    * @return		the padded data
    */
   public static float[] padPow2(float[] data, PaddingType type) {
@@ -55,35 +56,81 @@ public class PaddingHelper {
   }
 
   /**
+   * Pads the data to the next power of 2.
+   *
+   * @param data	the data to pad
+   * @param type	what values to pad
+   * @param padLeft	whether to pad on the left rather than right
+   * @return		the padded data
+   */
+  public static float[] padPow2(float[] data, PaddingType type, boolean padLeft) {
+    return pad(data, nextPowerOf2(data.length), type, padLeft);
+  }
+
+  /**
+   * Pads the data to the specified number of data points (pads on the right).
+   *
+   * @param data	the data to pad
+   * @param numPoints	the number of data points for the result
+   * @param type	what values to pad
+   * @return		the padded data
+   */
+  public static float[] pad(float[] data, int numPoints, PaddingType type) {
+    return pad(data, numPoints, type, false);
+  }
+
+  /**
    * Pads the data to the specified number of data points.
    *
    * @param data	the data to pad
    * @param numPoints	the number of data points for the result
+   * @param type	what values to pad
+   * @param padLeft	whether to pad on the left rather than right
    * @return		the padded data
    */
-  public static float[] pad(float[] data, int numPoints, PaddingType type) {
+  public static float[] pad(float[] data, int numPoints, PaddingType type, boolean padLeft) {
     float[] 	result;
     int 	i;
     
     if (numPoints < data.length)
       throw new IllegalArgumentException(
 	  "Number of output data points is smaller than input data points: " + numPoints + " < " + data.length);
-    
-    result = new float[numPoints];
-    System.arraycopy(data, 0, result, 0, data.length);
 
-    switch (type) {
-      case ZERO:
-	for (i = data.length; i < numPoints; i++)
-	  result[i] = 0;
-	break;
-      case LAST:
-	for (i = data.length; i < numPoints; i++)
-	  result[i] = result[data.length - 1];
-	break;
-      default:
-	throw new IllegalStateException(
-	    "Padding " + type  + " not implemented!");
+    result = new float[numPoints];
+
+    if (padLeft) {
+      System.arraycopy(data, 0, result, result.length - data.length, data.length);
+
+      switch (type) {
+	case ZERO:
+	  for (i = 0; i < result.length - data.length; i++)
+	    result[i] = 0;
+	  break;
+	case LAST:
+	  for (i = 0; i < result.length - data.length; i++)
+	    result[i] = result[result.length - data.length];
+	  break;
+	default:
+	  throw new IllegalStateException(
+	    "Padding " + type + " not implemented!");
+      }
+    }
+    else {
+      System.arraycopy(data, 0, result, 0, data.length);
+
+      switch (type) {
+	case ZERO:
+	  for (i = data.length; i < numPoints; i++)
+	    result[i] = 0;
+	  break;
+	case LAST:
+	  for (i = data.length; i < numPoints; i++)
+	    result[i] = result[data.length - 1];
+	  break;
+	default:
+	  throw new IllegalStateException(
+	    "Padding " + type + " not implemented!");
+      }
     }
 
     return result;
@@ -93,6 +140,7 @@ public class PaddingHelper {
    * Pads the data to the next power of 2.
    *
    * @param data	the data to pad
+   * @param type	what values to pad
    * @return		the padded data
    */
   public static double[] padPow2(double[] data, PaddingType type) {
@@ -100,13 +148,39 @@ public class PaddingHelper {
   }
 
   /**
+   * Pads the data to the next power of 2.
+   *
+   * @param data	the data to pad
+   * @param type	what values to pad
+   * @param padLeft	whether to pad on the left rather than right
+   * @return		the padded data
+   */
+  public static double[] padPow2(double[] data, PaddingType type, boolean padLeft) {
+    return pad(data, nextPowerOf2(data.length), type, padLeft);
+  }
+
+  /**
+   * Pads the data to the specified number of data points (pads on the right).
+   *
+   * @param data	the data to pad
+   * @param numPoints	the number of data points for the result
+   * @param type	what values to pad
+   * @return		the padded data
+   */
+  public static double[] pad(double[] data, int numPoints, PaddingType type) {
+    return pad(data, numPoints, type, false);
+  }
+
+  /**
    * Pads the data to the specified number of data points.
    *
    * @param data	the data to pad
    * @param numPoints	the number of data points for the result
+   * @param type	what values to pad
+   * @param padLeft	whether to pad on the left rather than right
    * @return		the padded data
    */
-  public static double[] pad(double[] data, int numPoints, PaddingType type) {
+  public static double[] pad(double[] data, int numPoints, PaddingType type, boolean padLeft) {
     double[] 	result;
     int 	i;
     
@@ -115,20 +189,40 @@ public class PaddingHelper {
 	  "Number of output data points is smaller than input data points: " + numPoints + " < " + data.length);
 
     result = new double[numPoints];
-    System.arraycopy(data, 0, result, 0, data.length);
 
-    switch (type) {
-      case ZERO:
-	for (i = data.length; i < numPoints; i++)
-	  result[i] = 0;
-	break;
-      case LAST:
-	for (i = data.length; i < numPoints; i++)
-	  result[i] = result[data.length - 1];
-	break;
-      default:
-	throw new IllegalStateException(
-	    "Padding " + type  + " not implemented!");
+    if (padLeft) {
+      System.arraycopy(data, 0, result, result.length - data.length, data.length);
+
+      switch (type) {
+	case ZERO:
+	  for (i = 0; i < result.length - data.length; i++)
+	    result[i] = 0;
+	  break;
+	case LAST:
+	  for (i = 0; i < result.length - data.length; i++)
+	    result[i] = result[result.length - data.length];
+	  break;
+	default:
+	  throw new IllegalStateException(
+	    "Padding " + type + " not implemented!");
+      }
+    }
+    else {
+      System.arraycopy(data, 0, result, 0, data.length);
+
+      switch (type) {
+	case ZERO:
+	  for (i = data.length; i < numPoints; i++)
+	    result[i] = 0;
+	  break;
+	case LAST:
+	  for (i = data.length; i < numPoints; i++)
+	    result[i] = result[data.length - 1];
+	  break;
+	default:
+	  throw new IllegalStateException(
+	    "Padding " + type + " not implemented!");
+      }
     }
 
     return result;
