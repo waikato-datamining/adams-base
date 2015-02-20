@@ -15,27 +15,9 @@
 
 /**
  * SpreadSheetTable.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
-
-import gnu.trove.list.array.TDoubleArrayList;
-
-import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
@@ -43,11 +25,37 @@ import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.statistics.ArrayHistogram;
+import adams.flow.control.Flow;
+import adams.flow.control.StorageName;
+import adams.flow.core.AbstractActor;
+import adams.flow.sink.SimplePlot;
+import adams.flow.source.StorageValue;
+import adams.flow.transformer.ArrayToSequence;
+import adams.flow.transformer.MakePlotContainer;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.statistics.HistogramFactory;
+import gnu.trove.list.array.TDoubleArrayList;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingWorker;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A specialized table for displaying a SpreadSheet table model.
@@ -73,6 +81,9 @@ public class SpreadSheetTable
   
   /** the last {@link ArrayHistogram} setup. */
   protected ArrayHistogram m_Histogram;
+
+  /** the last {@link SimplePlot} setup. */
+  protected SimplePlot m_Plot;
   
   /**
    * Initializes the table.
@@ -102,6 +113,7 @@ public class SpreadSheetTable
     m_HeaderPopupMenuCustomizer = null;
     m_CellPopupMenuCustomizer   = null;
     m_Histogram                 = new ArrayHistogram();
+    m_Plot = new SimplePlot();
 
     addHeaderPopupMenuListener(new PopupMenuListener() {
       @Override
@@ -247,7 +259,7 @@ public class SpreadSheetTable
   /**
    * Returns the underlying sheet.
    *
-   * @param onlyVisible	whether to return only the visible data
+   * @param range	the type of rows to return
    * @return		the spread sheet
    */
   public SpreadSheet toSpreadSheet(TableRowRange range) {
@@ -372,31 +384,43 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SpreadSheet sheet = toSpreadSheet();
-        if (getShowRowColumn())
-          sheet.sort(col - 1, asc);
-        else
-          sheet.sort(col, asc);
-        setModel(new SpreadSheetTableModel(sheet));
+	SpreadSheet sheet = toSpreadSheet();
+	if (getShowRowColumn())
+	  sheet.sort(col - 1, asc);
+	else
+	  sheet.sort(col, asc);
+	setModel(new SpreadSheetTableModel(sheet));
       }
     });
     menu.add(menuitem);
-    
+
+    menu.addSeparator();
+
     menuitem = new JMenuItem("Remove column", GUIHelper.getIcon("delete.gif"));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SpreadSheet sheet = toSpreadSheet();
-        if (getShowRowColumn())
-          sheet.removeColumn(col - 1);
-        else
-          sheet.removeColumn(col);
-        setModel(new SpreadSheetTableModel(sheet));
+	SpreadSheet sheet = toSpreadSheet();
+	if (getShowRowColumn())
+	  sheet.removeColumn(col - 1);
+	else
+	  sheet.removeColumn(col);
+	setModel(new SpreadSheetTableModel(sheet));
       }
     });
-    menu.addSeparator();
     menu.add(menuitem);
-    
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Plot", GUIHelper.getIcon("plot.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	plot(toSpreadSheet(), true, getShowRowColumn() ? col - 1 : col);
+      }
+    });
+    menu.add(menuitem);
+
     menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -404,7 +428,6 @@ public class SpreadSheetTable
 	histogram(toSpreadSheet(), true, getShowRowColumn() ? col - 1 : col);
       }
     });
-    menu.addSeparator();
     menu.add(menuitem);
 
     if (m_HeaderPopupMenuCustomizer != null)
@@ -487,6 +510,20 @@ public class SpreadSheetTable
     });
     submenu.add(menuitem);
 
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Plot", GUIHelper.getIcon("plot.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+	int row = rowAtPoint(e.getPoint());
+	if (row == -1)
+	  return;
+	plot(toSpreadSheet(), false, row);
+      }
+    });
+    menu.add(menuitem);
+
     menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -497,8 +534,9 @@ public class SpreadSheetTable
 	histogram(toSpreadSheet(), false, row);
       }
     });
-    menu.addSeparator();
     menu.add(menuitem);
+
+    menu.addSeparator();
 
     menuitem = new JCheckBoxMenuItem("Show formulas");
     menuitem.setIcon(GUIHelper.getIcon("formula.png"));
@@ -510,7 +548,6 @@ public class SpreadSheetTable
 	setShowFormulas(!getShowFormulas());
       }
     });
-    menu.addSeparator();
     menu.add(menuitem);
 
     if (m_CellPopupMenuCustomizer != null)
@@ -709,6 +746,86 @@ public class SpreadSheetTable
     else
       dialog.add(m_Histogram, list.toArray(), "Row " + (index + 1));
     dialog.setVisible(true);
+  }
+
+  /**
+   * Allows the user to generate a plot from either a row or a column.
+   *
+   * @param sheet	the spreadsheet to use
+   * @param isColumn	whether the to use column or row
+   * @param index	the index of the row/column
+   */
+  protected void plot(SpreadSheet sheet, boolean isColumn, int index) {
+    final List<Double> 		list;
+    GenericObjectEditorDialog	setup;
+    int				i;
+    final String		title;
+    SwingWorker 		worker;
+
+    // let user customize plot
+    if (GUIHelper.getParentDialog(this) != null)
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
+    else
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
+    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.getGOEEditor().setClassType(AbstractActor.class);
+    setup.getGOEEditor().setCanChangeClassInDialog(false);
+    setup.setCurrent(m_Plot);
+    setup.setVisible(true);
+    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    m_Plot = (SimplePlot) setup.getCurrent();
+
+    // get data from spreadsheet
+    list = new ArrayList<Double>();
+    if (isColumn) {
+      for (i = 0; i < sheet.getRowCount(); i++) {
+	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
+	  list.add(sheet.getCell(i, index).toDouble());
+      }
+    }
+    else {
+      for (i = 0; i < sheet.getColumnCount(); i++) {
+	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
+	  list.add(sheet.getCell(index, i).toDouble());
+      }
+    }
+
+    // generate plot
+    if (isColumn)
+      title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
+    else
+      title = "Row " + (index + 1);
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	Flow flow = new Flow();
+
+	StorageValue sv = new StorageValue();
+	sv.setStorageName(new StorageName("values"));
+	flow.add(sv);
+
+	ArrayToSequence a2s = new ArrayToSequence();
+	flow.add(a2s);
+
+	MakePlotContainer mpc = new MakePlotContainer();
+	mpc.setPlotName(title);
+	flow.add(mpc);
+
+	SimplePlot plot = (SimplePlot) m_Plot.shallowCopy();
+	plot.setShortTitle(true);
+	plot.setName(title);
+	flow.add(plot);
+
+	flow.setUp();
+	flow.getStorage().put(new StorageName("values"), list.toArray(new Double[list.size()]));
+	flow.execute();
+	flow.wrapUp();
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
