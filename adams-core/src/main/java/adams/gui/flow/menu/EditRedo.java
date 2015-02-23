@@ -15,7 +15,7 @@
 
 /**
  * EditRedo.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -57,8 +57,10 @@ public class EditRedo
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+      m_State.hasCurrentPanel()
+	&& isInputEnabled()
+	&& m_State.getCurrentPanel().isUndoSupported()
+	&& m_State.getCurrentPanel().getUndo().isEnabled());
     
     if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().getUndo().canRedo()) {
       setName("Redo - " + m_State.getCurrentPanel().getUndo().peekRedoComment(true));

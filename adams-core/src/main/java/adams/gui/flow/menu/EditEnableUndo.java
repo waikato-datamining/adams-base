@@ -15,7 +15,7 @@
 
 /**
  * EditEnableUndo.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -28,7 +28,7 @@ import java.awt.event.ActionEvent;
  * @version $Revision$
  */
 public class EditEnableUndo
-  extends AbstractFlowEditorMenuItemAction {
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -44,12 +44,22 @@ public class EditEnableUndo
   }
 
   /**
+   * Returns the initial selected state of the menu item.
+   *
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return true;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().getUndo().setEnabled(
-	!m_State.getCurrentPanel().getUndo().isEnabled());
+      !m_State.getCurrentPanel().getUndo().isEnabled());
   }
 
   /**
