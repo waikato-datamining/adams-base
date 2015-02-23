@@ -15,15 +15,15 @@
 
 /**
  * AbstractSearchableContainerManager.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.container;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for container managers that can be searched.
@@ -225,7 +225,7 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    * Triggers the search.
    * 
    * @param search	the search string
-   * @param boolean	whether to perform regexp matching
+   * @param regExp	whether to perform regexp matching
    */
   public void search(String search, boolean regExp) {
     m_SearchString = search;
