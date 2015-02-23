@@ -15,7 +15,7 @@
 
 /*
  * SearchableContainerManager.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -33,7 +33,7 @@ public interface SearchableContainerManager<T extends AbstractContainer> {
    * Triggers the search.
    * 
    * @param search	the search string
-   * @param boolean	whether to perform regexp matching
+   * @param regExp	whether to perform regexp matching
    */
   public void search(String search, boolean regExp);
   
