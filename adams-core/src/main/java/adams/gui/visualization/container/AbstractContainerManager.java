@@ -15,10 +15,15 @@
 
 /*
  * ContainerManager.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
+
+import adams.gui.event.DataChangeEvent;
+import adams.gui.event.DataChangeEvent.Type;
+import adams.gui.event.DataChangeListener;
+import gnu.trove.list.array.TIntArrayList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,10 +31,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.gui.event.DataChangeEvent;
-import adams.gui.event.DataChangeEvent.Type;
-import adams.gui.event.DataChangeListener;
 
 /**
  * A handler for containers.
@@ -184,11 +185,15 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @param c		the container to add
    */
   public void add(T c) {
+    int		index;
+
     c.setManager(this);
     c = preAdd(c);
     m_List.add(c);
+    index = indexOf(c);
 
-    notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, m_List.size() - 1));
+    if (index > -1)
+      notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, index));
 
     postAdd(c);
   }
@@ -210,24 +215,27 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @param c		the collection to add
    */
   public void addAll(Collection<T> c) {
-    Iterator<T>	iter;
-    int[]	indices;
-    int		i;
+    Iterator<T>		iter;
+    TIntArrayList 	indices;
+    T			cont;
+    int			index;
 
     startUpdate();
 
-    indices = new int[c.size()];
+    indices = new TIntArrayList();
     iter    = c.iterator();
-    i       = 0;
     while (iter.hasNext()) {
-      add(iter.next());
-      indices[i] = m_List.size() - 1;
-      i++;
+      cont = iter.next();
+      add(cont);
+      index = indexOf(cont);
+      if (index > -1)
+	indices.add(index);
     }
 
     finishUpdate(false);
 
-    notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, indices));
+    if (indices.size() > 0)
+      notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, indices.toArray()));
   }
 
   /**
