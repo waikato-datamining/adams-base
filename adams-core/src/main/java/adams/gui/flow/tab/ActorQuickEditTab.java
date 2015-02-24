@@ -142,7 +142,7 @@ public class ActorQuickEditTab
 
       m_ButtonApply = new JButton("Apply");
       m_ButtonApply.setEnabled(true);
-      m_ButtonRevert.setToolTipText("Apply changes");
+      m_ButtonApply.setToolTipText("Apply changes");
       m_ButtonApply.setMnemonic('A');
       m_ButtonApply.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
