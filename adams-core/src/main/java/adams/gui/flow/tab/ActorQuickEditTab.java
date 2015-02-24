@@ -62,8 +62,8 @@ public class ActorQuickEditTab
   /** for serialization. */
   private static final long serialVersionUID = 3860012648562358118L;
 
-  /** the error text. */
-  public final static String ERROR_TEXT = "<html><center><b>Cannot display options</b></center></html>";
+  /** the text when no actor selected. */
+  public final static String NO_SELECTION_TEXT = "<html><center><b>Please select an actor</b></center></html>";
 
   /**
    * Handles the GUI side of editing values.
@@ -295,7 +295,7 @@ public class ActorQuickEditTab
     m_Editor.setCanChangeClassInDialog(false);
     m_PanelEditor = new OptionsPanel(this, m_Editor);
     m_PanelError = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    m_PanelError.add(new JLabel(ERROR_TEXT));
+    m_PanelError.add(new JLabel(NO_SELECTION_TEXT));
 
     add(m_PanelError, BorderLayout.CENTER);
   }
