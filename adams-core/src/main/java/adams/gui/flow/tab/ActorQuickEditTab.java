@@ -142,12 +142,15 @@ public class ActorQuickEditTab
 
       m_ButtonApply = new JButton("Apply");
       m_ButtonApply.setEnabled(true);
+      m_ButtonRevert.setToolTipText("Apply changes");
       m_ButtonApply.setMnemonic('A');
       m_ButtonApply.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  m_Object = m_PanelProperties.getTarget();
-	  if (m_TreePath == null)
+	  if (m_TreePath == null) {
+	    System.err.println("No path linking back to actor tree, cannot apply settings!");
 	    return;
+	  }
 	  Tree tree = m_Owner.getCurrentPanel().getTree();
 	  Node node = (Node) m_TreePath.getLastPathComponent();
 	  Node parent = (Node) node.getParent();
