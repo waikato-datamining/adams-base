@@ -15,7 +15,7 @@
 
 /*
  * FlowEditor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -86,7 +86,7 @@ public class FlowEditor
     m_FlowEditorPanel = new FlowEditorPanel();
     for (String param: m_Parameters)
       m_FlowEditorPanel.loadUnsafe(new PlaceholderFile(param));
-    createChildFrame(m_FlowEditorPanel, 900, 675);
+    createChildFrame(m_FlowEditorPanel, 1000, 700);
   }
 
   /**
