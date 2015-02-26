@@ -23,6 +23,7 @@ package adams.gui.plugin;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
@@ -30,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -49,10 +51,7 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
   protected List<P> m_Plugins;
 
   /** the plugin menu items. */
-  protected List<JMenuItem> m_MenuItemPlugins;
-
-  /** the menu the plugins were added to. */
-  protected BaseMenu m_MenuPlugins;
+  protected List<JMenuItem> m_MenuItems;
 
   /** the change listener to use for triggering menu updates. */
   protected ChangeListener m_MenuUpdateListener;
@@ -63,9 +62,9 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
    * @param owner	the owning tool
    */
   protected AbstractToolPluginManager(T owner) {
-    m_Owner           = owner;
-    m_Plugins         = new ArrayList<>();
-    m_MenuItemPlugins = new ArrayList<>();
+    m_Owner              = owner;
+    m_Plugins            = new ArrayList<>();
+    m_MenuItems          = new ArrayList<>();
     m_MenuUpdateListener = null;
   }
 
@@ -100,35 +99,71 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
    * @param menubar	the menu bar
    */
   public void addToMenuBar(JMenuBar menubar) {
-    BaseMenu	menu;
-    JMenuItem	menuitem;
-    int		i;
-    String[]	plugins;
+    JMenu			menu;
+    JMenuItem			menuitem;
+    int				i;
+    int				n;
+    String[]			plugins;
+    List<String> 		menuNames;
+    HashMap<String,JMenu> 	menus;
+    List<JMenu> 		newMenus;
 
-    // add menu
-    plugins = getPlugins();
-    menu = new BaseMenu("Plugins");
-    menubar.add(menu);
-    menu.setMnemonic('P');
-    menu.setVisible(plugins.length > 0);
-    menu.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	if (m_MenuUpdateListener != null)
-	  m_MenuUpdateListener.stateChanged(e);
-	updateMenu();
-      }
-    });
-    m_MenuPlugins = menu;
-
-    // add items
-    m_MenuItemPlugins.clear();
+    m_MenuItems.clear();
     m_Plugins.clear();
+    plugins = getPlugins();
+
+    // gather menus
+    menuNames = new ArrayList<>();
     for (i = 0; i < plugins.length; i++) {
       try {
-	final P plugin = (P) Class.forName(plugins[i]).newInstance();
+	P plugin = (P) Class.forName(plugins[i]).newInstance();
+	m_Plugins.add(plugin);
+	if (!menuNames.contains(plugin.getMenu()))
+	  menuNames.add(plugin.getMenu());
+      }
+      catch (Exception e) {
+	System.err.println("Failed to install plugin '" + plugins[i] + "':");
+	e.printStackTrace();
+      }
+    }
+
+    // add menu
+    newMenus = new ArrayList<>();
+    menus    = new HashMap<>();
+    for (String menuName: menuNames) {
+      // does menu already exist?
+      menu = null;
+      for (n = 0; n < menubar.getMenuCount(); n++) {
+	if (menubar.getMenu(n).getText().equals(menuName)) {
+	  menu = menubar.getMenu(n);
+	  menu.addSeparator();
+	  break;
+	}
+      }
+      // add new menu
+      if (menu == null) {
+	menu = new BaseMenu(menuName);
+	menubar.add(menu);
+	menu.setVisible(plugins.length > 0);
+	menu.addChangeListener(new ChangeListener() {
+	  public void stateChanged(ChangeEvent e) {
+	    if (m_MenuUpdateListener != null)
+	      m_MenuUpdateListener.stateChanged(e);
+	    updateMenu();
+	  }
+	});
+	newMenus.add(menu);
+      }
+      menus.put(menuName, menu);
+    }
+
+    // add items
+    for (i = 0; i < m_Plugins.size(); i++) {
+      try {
+	final P plugin = m_Plugins.get(i);
 	menuitem = new JMenuItem(plugin.getCaption());
 	menuitem.setIcon(plugin.getIcon());
-	menu.add(menuitem);
+	menus.get(plugin.getMenu()).add(menuitem);
 	menuitem.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    String error = plugin.execute(m_Owner.getCurrentPanel());
@@ -139,15 +174,19 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
 	    updateMenu();
 	  }
 	});
-	m_Plugins.add(plugin);
-	m_MenuItemPlugins.add(menuitem);
+	m_MenuItems.add(menuitem);
       }
       catch (Exception e) {
 	System.err.println("Failed to install plugin '" + plugins[i] + "':");
 	e.printStackTrace();
       }
     }
-    m_MenuPlugins.sort();
+
+    // sort
+    for (JMenu m: newMenus) {
+      if (m instanceof BaseMenu)
+	((BaseMenu) m).sort();
+    }
   }
 
   /**
@@ -160,7 +199,7 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
     for (i = 0; i < m_Plugins.size(); i++) {
       try {
 	enabled = m_Plugins.get(i).canExecute(m_Owner.getCurrentPanel());
-	m_MenuItemPlugins.get(i).setEnabled(enabled);
+	m_MenuItems.get(i).setEnabled(enabled);
       }
       catch (Exception e) {
 	System.err.println("Failed to update plugin: " + m_Plugins.get(i).getClass().getName());

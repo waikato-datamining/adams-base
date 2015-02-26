@@ -51,6 +51,15 @@ public abstract class AbstractToolPlugin<T extends JPanel>
   protected boolean m_CanceledByUser;
 
   /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  public String getMenu() {
+    return "Plugins";
+  }
+
+  /**
    * Returns the text for the menu item to create.
    *
    * @return		the text
