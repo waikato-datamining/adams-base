@@ -15,28 +15,30 @@
 
 /**
  * AbstractSelectedImagesViewerPlugin.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImageViewerPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ancestor for plugins that work on selected images.
@@ -182,10 +184,14 @@ public abstract class AbstractSelectedImagesViewerPlugin
     result.setDiscardVisible(false);
     result.setSize(getDialogSize());
     
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(new JLabel("Please select:"));
+    result.getContentPane().add(panel, BorderLayout.NORTH);
     panel = new JPanel(new BorderLayout());
     result.getContentPane().add(panel, BorderLayout.CENTER);
     
     panelList   = createListPanel(result);
+    panelList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panelConfig = createConfigurationPanel(result);
     if (panelConfig == null) {
       panel.add(panelList, BorderLayout.CENTER);
