@@ -15,19 +15,18 @@
 
 /**
  * AbstractSelectedImagesFilterWithGOE.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
 
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for image filters that process the selected images using
@@ -119,6 +118,26 @@ public abstract class AbstractSelectedImagesFilterWithGOE
       }
     });
     
+    return result;
+  }
+
+  /**
+   * Initializes the processing.
+   * <p/>
+   * Sets the last setup.
+   *
+   * @return		null if successful, otherwise error message
+   * @see		#setLastSetup(Object)
+   */
+  @Override
+  protected String processInit() {
+    String	result;
+
+    result = super.processInit();
+
+    if (result == null)
+      setLastSetup(m_Editor.getValue());
+
     return result;
   }
 }
