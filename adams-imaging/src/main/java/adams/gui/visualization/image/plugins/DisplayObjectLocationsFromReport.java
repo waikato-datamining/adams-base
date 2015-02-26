@@ -53,7 +53,7 @@ public class DisplayObjectLocationsFromReport
    */
   @Override
   public String getMenu() {
-    return "Process";
+    return "View";
   }
 
   /**
