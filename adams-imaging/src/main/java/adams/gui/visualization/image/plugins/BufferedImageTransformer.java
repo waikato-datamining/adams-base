@@ -115,7 +115,7 @@ public class BufferedImageTransformer
     result = null;
 
     setLastSetup(m_Editor.getValue());
-    transformer = (AbstractBufferedImageTransformer) m_Editor.getValue();
+    transformer = (AbstractBufferedImageTransformer) getLastSetup();
     input       = new BufferedImageContainer();
     input.setImage(image);
     transformed = transformer.transform(input);

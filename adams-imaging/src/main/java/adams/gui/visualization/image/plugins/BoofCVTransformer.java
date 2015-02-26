@@ -116,7 +116,7 @@ public class BoofCVTransformer
     result = null;
 
     setLastSetup(m_Editor.getValue());
-    transformer = (AbstractBoofCVTransformer) m_Editor.getValue();
+    transformer = (AbstractBoofCVTransformer) getLastSetup();
     input       = new BoofCVImageContainer();
     input.setImage(BoofCVHelper.toBoofCVImage(image));
     transformed = transformer.transform(input);

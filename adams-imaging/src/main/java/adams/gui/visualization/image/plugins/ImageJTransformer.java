@@ -122,7 +122,7 @@ public class ImageJTransformer
       title = m_CurrentPanel.getCurrentFile().toString();
     else
       title = "" + new Date();
-    transformer = (AbstractImageJTransformer) m_Editor.getValue();
+    transformer = (AbstractImageJTransformer) getLastSetup();
     input       = new ImagePlusContainer();
     input.setImage(new ImagePlus(title, image));
     transformed = transformer.transform(input);
