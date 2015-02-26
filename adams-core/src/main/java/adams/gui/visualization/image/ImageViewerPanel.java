@@ -19,26 +19,6 @@
  */
 package adams.gui.visualization.image;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.Vector;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -68,6 +48,25 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.image.plugins.AbstractImageViewerPlugin;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Vector;
 
 /**
  * A simple image viewer.
@@ -334,8 +333,14 @@ public class ImageViewerPanel
 
     // Plugins
     for (i = 0; i < m_Plugins.size(); i++) {
-      enabled = m_Plugins.get(i).canExecute(getCurrentPanel());
-      m_MenuItemPlugins.get(i).setEnabled(enabled);
+      try {
+	enabled = m_Plugins.get(i).canExecute(getCurrentPanel());
+	m_MenuItemPlugins.get(i).setEnabled(enabled);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to update plugin: " + m_Plugins.get(i).getClass().getName());
+	e.printStackTrace();
+      }
     }
   }
 

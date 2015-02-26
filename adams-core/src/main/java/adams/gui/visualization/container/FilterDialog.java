@@ -19,20 +19,6 @@
  */
 package adams.gui.visualization.container;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.data.container.DataContainer;
 import adams.data.filter.AbstractFilter;
 import adams.data.filter.PassThrough;
@@ -40,6 +26,19 @@ import adams.gui.core.BaseDialog;
 import adams.gui.event.FilterEvent;
 import adams.gui.event.FilterListener;
 import adams.gui.goe.GenericObjectEditorPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A dialog that lets the user select a filter and also choose whether to
@@ -100,7 +99,7 @@ public class FilterDialog<T extends DataContainer>
   protected void initialize() {
     super.initialize();
 
-    m_CurrentFilter  = new PassThrough<T>();
+    m_CurrentFilter  = getDefaultFilter();
     m_FilterListener = null;
   }
 
@@ -115,7 +114,7 @@ public class FilterDialog<T extends DataContainer>
 
     getContentPane().setLayout(new BorderLayout());
 
-    m_PanelFilter = new GenericObjectEditorPanel(AbstractFilter.class, m_CurrentFilter, true);
+    m_PanelFilter = createGOEPanel();
     m_PanelFilter.setPrefix("Filter");
     m_PanelFilter.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -171,6 +170,25 @@ public class FilterDialog<T extends DataContainer>
 
     pack();
   }
+
+  /**
+   * Returns the default filter.
+   *
+   * @return		the filter
+   */
+  protected AbstractFilter<T> getDefaultFilter() {
+    return new PassThrough<T>();
+  }
+
+  /**
+   * Creates the GenericObjectEditor panel to use.
+   *
+   * @return		the panel
+   */
+  protected GenericObjectEditorPanel createGOEPanel() {
+    return new GenericObjectEditorPanel(AbstractFilter.class, m_CurrentFilter, true);
+  }
+
 
   /**
    * Sets the filter to use.
