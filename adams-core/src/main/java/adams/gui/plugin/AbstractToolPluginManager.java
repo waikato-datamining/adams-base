@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -126,6 +127,7 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
 	e.printStackTrace();
       }
     }
+    Collections.sort(menuNames);
 
     // add menu
     newMenus = new ArrayList<>();
