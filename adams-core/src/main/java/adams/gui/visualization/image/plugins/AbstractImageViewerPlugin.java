@@ -19,7 +19,6 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import adams.core.ClassLister;
 import adams.gui.plugin.AbstractToolPlugin;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -48,14 +47,5 @@ public abstract class AbstractImageViewerPlugin
    */
   protected void doLog(String msg) {
     m_CurrentPanel.log(msg);
-  }
-
-  /**
-   * Returns a list with classnames of plugins.
-   *
-   * @return		the plugin classnames
-   */
-  public static String[] getPlugins() {
-    return ClassLister.getSingleton().getClassnames(AbstractImageViewerPlugin.class);
   }
 }

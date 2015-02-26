@@ -15,7 +15,7 @@
 
 /**
  * ImageViewerPanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -31,7 +31,6 @@ import adams.env.Environment;
 import adams.env.ImageViewerPanelDefinition;
 import adams.env.Modules;
 import adams.gui.chooser.ImageFileChooser;
-import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
@@ -44,10 +43,11 @@ import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.plugin.ToolPluginSupporter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
-import adams.gui.visualization.image.plugins.AbstractImageViewerPlugin;
+import adams.gui.visualization.image.plugins.ImageViewerPluginManager;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
@@ -76,7 +76,7 @@ import java.util.Vector;
  */
 public class ImageViewerPanel
   extends BasePanel
-  implements MenuBarProvider, SendToActionSupporter {
+  implements MenuBarProvider, SendToActionSupporter, ToolPluginSupporter<ImagePanel> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7291572371004753723L;
@@ -159,14 +159,8 @@ public class ImageViewerPanel
   /** the menu item "show log". */
   protected JMenuItem m_MenuItemViewShowLog;
 
-  /** the menu "plugins". */
-  protected BaseMenu m_MenuPlugins;
-
-  /** the plugins. */
-  protected Vector<AbstractImageViewerPlugin> m_Plugins;
-
-  /** the plugin menu items. */
-  protected Vector<JMenuItem> m_MenuItemPlugins;
+  /** for managing the plugins. */
+  protected ImageViewerPluginManager m_PluginManager;
 
   /** the tabbed pane with the images. */
   protected ImageTabbedPane m_TabbedPane;
@@ -198,8 +192,13 @@ public class ImageViewerPanel
     m_PopupMenuCustomizer  = null;
     m_RecentFilesHandler   = null;
     m_TitleGenerator       = new TitleGenerator("Image viewer", true);
-    m_MenuItemPlugins      = new Vector<JMenuItem>();
-    m_Plugins              = new Vector<AbstractImageViewerPlugin>();
+    m_PluginManager        = new ImageViewerPluginManager(this);
+    m_PluginManager.setMenuUpdateListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+	update();
+      }
+    });
     m_ImagingModulePresent = Modules.getSingleton().isAvailable("adams-imaging");
   }
 
@@ -330,18 +329,6 @@ public class ImageViewerPanel
     m_MenuItemViewShowProperties.setEnabled(imageAvailable);
     m_MenuItemViewShowLog.setSelected(imageAvailable && getCurrentPanel().getShowLog());
     m_MenuItemViewShowLog.setEnabled(imageAvailable);
-
-    // Plugins
-    for (i = 0; i < m_Plugins.size(); i++) {
-      try {
-	enabled = m_Plugins.get(i).canExecute(getCurrentPanel());
-	m_MenuItemPlugins.get(i).setEnabled(enabled);
-      }
-      catch (Exception e) {
-	System.err.println("Failed to update plugin: " + m_Plugins.get(i).getClass().getName());
-	e.printStackTrace();
-      }
-    }
   }
 
   /**
@@ -774,47 +761,7 @@ public class ImageViewerPanel
       });
       m_MenuItemViewShowLog = menuitem;
 
-      // Plugins
-      plugins = AbstractImageViewerPlugin.getPlugins();
-      menu = new BaseMenu("Plugins");
-      result.add(menu);
-      menu.setMnemonic('P');
-      menu.setVisible(plugins.length > 0);
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
-      m_MenuPlugins = (BaseMenu) menu;
-
-      // add plugins
-      m_MenuItemPlugins.clear();
-      m_Plugins.clear();
-      for (i = 0; i < plugins.length; i++) {
-	try {
-	  final AbstractImageViewerPlugin plugin = (AbstractImageViewerPlugin) Class.forName(plugins[i]).newInstance();
-	  menuitem = new JMenuItem(plugin.getCaption());
-	  menuitem.setIcon(plugin.getIcon());
-	  menu.add(menuitem);
-	  menuitem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-	      String error = plugin.execute(getCurrentPanel());
-	      if ((error != null) && !error.isEmpty())
-		GUIHelper.showErrorMessage(
-		    getCurrentPanel(),
-		    "Error occurred executing plugin '" + plugin.getCaption() + "':\n" + error);
-	      update();
-	    }
-	  });
-	  m_Plugins.add(plugin);
-	  m_MenuItemPlugins.add(menuitem);
-	}
-	catch (Exception e) {
-	  System.err.println("Failed to install plugin '" + plugins[i] + "':");
-	  e.printStackTrace();
-	}
-      }
-      m_MenuPlugins.sort();
+      m_PluginManager.addToMenuBar(result);
 
       // update menu
       m_MenuBar = result;
