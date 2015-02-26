@@ -15,14 +15,9 @@
 
 /**
  * DisplayObjectLocationsFromReport.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.Dialog.ModalityType;
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 import adams.core.io.FileUtils;
 import adams.data.io.input.AbstractReportReader;
@@ -33,6 +28,11 @@ import adams.gui.visualization.image.AbstractImageOverlay;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+
+import java.awt.Dialog.ModalityType;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Prompts user to select report with object locations to be overlayed.
@@ -45,7 +45,17 @@ public class DisplayObjectLocationsFromReport
   
   /** for serialization. */
   private static final long serialVersionUID = -7792128547228275760L;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

@@ -15,12 +15,9 @@
 
 /**
  * BoofCVDetectLines.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import adams.core.option.OptionUtils;
 import adams.data.boofcv.BoofCVImageContainer;
@@ -32,6 +29,9 @@ import adams.gui.visualization.image.BoofCVDetectLinesImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageUInt8;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Allows the user to change the brightness of an image.
@@ -47,7 +47,17 @@ public class BoofCVDetectLines
   
   /** the overlay in use. */
   protected BoofCVDetectLinesImageOverlay m_Overlay;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

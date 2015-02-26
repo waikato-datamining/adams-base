@@ -15,24 +15,23 @@
 
 /**
  * Brightness.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
+import adams.data.image.BufferedImageContainer;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.DialogWithButtons;
+import adams.gui.visualization.image.ImagePanel;
+
+import javax.swing.JButton;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
-import adams.data.image.BufferedImageContainer;
-import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.DialogWithButtons;
-import adams.gui.visualization.image.ImagePanel;
 
 /**
  * Allows the user to change the brightness of an image.
@@ -234,7 +233,17 @@ public class Brightness
   
   /** the current setup for changing the brightness. */
   protected adams.data.jai.transformer.Brightness m_Brightness;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "View";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

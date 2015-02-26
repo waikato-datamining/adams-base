@@ -15,11 +15,9 @@
 
 /**
  * ImageJFeatureGenerator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.image.BufferedImage;
 
 import adams.core.option.OptionUtils;
 import adams.data.conversion.BufferedImageToImageJ;
@@ -29,6 +27,8 @@ import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
 import adams.data.imagej.features.Histogram;
 import adams.data.spreadsheet.Row;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Allows the user to apply a ImageJ feature generator to an image in the ImageViewer.
@@ -41,6 +41,16 @@ public class ImageJFeatureGenerator
 
   /** for serialization. */
   private static final long serialVersionUID = 6721788085343201024L;
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Features";
+  }
 
   /**
    * Returns the text for the menu item to create.

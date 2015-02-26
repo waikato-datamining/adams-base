@@ -15,15 +15,9 @@
 
 /**
  * ImageMagick.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import adams.core.base.BaseText;
 import adams.data.image.BufferedImageContainer;
@@ -33,6 +27,11 @@ import adams.flow.transformer.ImageMagickTransformer;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.image.ImagePanel;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 
 /**
  * Allows the user to apply ImageMagick commands.
@@ -48,6 +47,16 @@ public class ImageMagick
 
   /** the editor with the commands. */
   protected TextEditorPanel m_Editor;
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Filter";
+  }
 
   /**
    * Returns the text for the menu item to create.

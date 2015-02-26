@@ -40,7 +40,17 @@ public class Barcode
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

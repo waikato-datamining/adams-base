@@ -15,14 +15,9 @@
 
 /**
  * TesseractOCR.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.io.File;
-import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -33,6 +28,10 @@ import adams.core.option.OptionUtils;
 import adams.data.tesseract.TesseractHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.util.List;
 
 
 /**
@@ -49,7 +48,17 @@ public class TesseractOCR
 
   /** the last command that was executed. */
   protected String m_LastCommand;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

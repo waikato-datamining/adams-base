@@ -15,7 +15,7 @@
 
 /**
  * ImageFileMetaData.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -37,7 +37,17 @@ public class ImageFileMetaData
 
   /** for serialization. */
   private static final long serialVersionUID = -3146372359577147914L;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

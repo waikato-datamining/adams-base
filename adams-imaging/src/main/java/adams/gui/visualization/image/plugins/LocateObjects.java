@@ -15,7 +15,7 @@
 
 /**
  * LocateObjects.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -37,6 +37,16 @@ public class LocateObjects
 
   /** for serialization. */
   private static final long serialVersionUID = -7713559121399012254L;
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Process";
+  }
 
   /**
    * Returns the class to use as type (= superclass) in the GOE.

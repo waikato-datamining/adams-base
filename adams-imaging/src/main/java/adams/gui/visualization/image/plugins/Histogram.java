@@ -15,16 +15,16 @@
 
 /**
  * Histogram.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
 
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.image.HistogramPanel;
 import adams.gui.visualization.image.ImagePanel;
+
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 
 /**
  * Displays the histogram(s) for an image.
@@ -37,7 +37,17 @@ public class Histogram
   
   /** for serialization. */
   private static final long serialVersionUID = 3286345601880725626L;
-  
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "View";
+  }
+
   /**
    * Returns the text for the menu item to create.
    *

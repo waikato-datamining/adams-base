@@ -15,19 +15,18 @@
 
 /**
  * ImageJTransformer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
-
-import ij.ImagePlus;
-
-import java.awt.image.BufferedImage;
-import java.util.Date;
 
 import adams.core.option.OptionUtils;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.transformer.AbstractImageJTransformer;
 import adams.data.imagej.transformer.PassThrough;
+import ij.ImagePlus;
+
+import java.awt.image.BufferedImage;
+import java.util.Date;
 
 /**
  * Allows the user to apply an ImageJ transformer to an image in the ImageViewer.
@@ -40,6 +39,16 @@ public class ImageJTransformer
 
   /** for serialization. */
   private static final long serialVersionUID = 9108452366270377935L;
+
+  /**
+   * Returns the text for the menu to place the plugin beneath.
+   *
+   * @return		the menu
+   */
+  @Override
+  public String getMenu() {
+    return "Filter";
+  }
 
   /**
    * Returns the text for the menu item to create.
