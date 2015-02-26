@@ -15,42 +15,9 @@
 
 /**
  * ImagePanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
@@ -68,6 +35,7 @@ import adams.data.report.Report;
 import adams.flow.control.Flow;
 import adams.gui.chooser.DefaultReportFileChooser;
 import adams.gui.chooser.ImageFileChooser;
+import adams.gui.core.BaseLogPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -90,6 +58,38 @@ import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.report.ReportFactory;
+
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * For displaying a single image.
@@ -818,17 +818,8 @@ public class ImagePanel
   protected Report m_AdditionalProperties;
 
   /** the panel for the log. */
-  protected BasePanel m_PanelLog;
-  
-  /** the text area for the log. */
-  protected BaseTextArea m_TextLog;
-  
-  /** the button for clearing the log. */
-  protected JButton m_ButtonClearLog;
-  
-  /** the button for copy the log. */
-  protected JButton m_ButtonCopyLog;
-  
+  protected BaseLogPanel m_PanelLog;
+
   /** list of dependent dialogs to clean up. */
   protected List<Dialog> m_DependentDialogs;
   
@@ -912,57 +903,11 @@ public class ImagePanel
     });
     m_PanelProperties.add(m_PanelSearchProperties, BorderLayout.SOUTH);
 
-    m_PanelLog = new BasePanel(new BorderLayout());
+    m_PanelLog = new BaseLogPanel();
+    m_PanelLog.setRows(10);
+    m_PanelLog.setColumns(20);
     m_SideSplitPane.addTab(TAB_LOG, m_PanelLog);
-    m_TextLog  = new BaseTextArea(10, 20);
-    m_TextLog.setLineWrap(false);
-    m_TextLog.setEditable(false);
-    m_TextLog.setFont(GUIHelper.getMonospacedFont());
-    m_TextLog.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-	updateButtons();
-      }
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-	updateButtons();
-      }
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-	updateButtons();
-      }
-      public void updateButtons() {
-	m_ButtonClearLog.setEnabled(m_TextLog.getDocument().getLength() > 0);
-	m_ButtonCopyLog.setEnabled(m_TextLog.getDocument().getLength() > 0);
-      }
-    });
-    m_PanelLog.add(new BaseScrollPane(m_TextLog), BorderLayout.CENTER);
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    m_PanelLog.add(panel, BorderLayout.SOUTH);
-    m_ButtonClearLog = new JButton(GUIHelper.getIcon("new.gif"));
-    m_ButtonClearLog.setEnabled(false);
-    m_ButtonClearLog.setToolTipText("Clear log");
-    m_ButtonClearLog.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_TextLog.setText("");
-      }
-    });
-    panel.add(m_ButtonClearLog);
-    m_ButtonCopyLog = new JButton(GUIHelper.getIcon("copy.gif"));
-    m_ButtonCopyLog.setEnabled(false);
-    m_ButtonCopyLog.setToolTipText("Copy log");
-    m_ButtonCopyLog.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (m_TextLog.getSelectedText() == null)
-	  GUIHelper.copyToClipboard(m_TextLog.getText());
-	else
-	  GUIHelper.copyToClipboard(m_TextLog.getSelectedText());
-      }
-    });
-    panel.add(m_ButtonCopyLog);
-    
+
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
 
@@ -1198,9 +1143,7 @@ public class ImagePanel
    * @param msg		the message to append
    */
   public void log(String msg) {
-    if (!msg.endsWith("\n"))
-      msg += "\n";
-    m_TextLog.append(msg);
+    m_PanelLog.append(msg);
   }
   
   /**
