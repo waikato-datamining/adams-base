@@ -144,10 +144,15 @@ public class Barcode
 	dialog = new TextDialog(m_CurrentPanel.getParentFrame());
       dialog.setDialogTitle("Barcode - " + m_CurrentPanel.getCurrentFile().getName() + " [" + m_CurrentPanel.getCurrentFile().getParent() + "]");
       dialog.setEditable(false);
-      dialog.setContent(text.getContent() + "\n\nTime (ms): " + watch.getTime() + "\n\nMeta-data\n\n" + text.getReport());
-      dialog.setSize(400, 400);
-      dialog.setLocationRelativeTo(null);
-      dialog.setVisible(true);
+      if (text != null) {
+	dialog.setContent(text.getContent() + "\n\nTime (ms): " + watch.getTime() + "\n\nMeta-data\n\n" + text.getReport());
+	dialog.setSize(400, 400);
+	dialog.setLocationRelativeTo(null);
+	dialog.setVisible(true);
+      }
+      else {
+	result = "Failed to extract barcode! None present?";
+      }
     }
     catch (Exception e) {
       result = "Failed to extract barcode: " + Utils.throwableToString(e);
