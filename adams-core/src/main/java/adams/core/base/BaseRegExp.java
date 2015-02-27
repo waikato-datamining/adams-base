@@ -15,14 +15,14 @@
 
 /*
  * BaseRegExp.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
-import java.util.regex.Pattern;
-
 import adams.core.Utils;
+
+import java.util.regex.Pattern;
 
 /**
  * Wrapper for a regular expression string to be editable in the GOE. Basically
@@ -103,6 +103,15 @@ public class BaseRegExp
   @Override
   public String stringValue() {
     return Utils.backQuoteChars(getValue());
+  }
+
+  /**
+   * Returns the expression as compiled pattern.
+   *
+   * @return		the pattern
+   */
+  public Pattern patternValue() {
+    return Pattern.compile(getValue());
   }
 
   /**
