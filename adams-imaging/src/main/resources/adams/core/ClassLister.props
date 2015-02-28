@@ -27,7 +27,7 @@ adams.data.imagej.features.AbstractImageJFeatureGenerator=\
 
 # the BoofCV feature generators
 adams.data.boofcv.features.AbstractBoofCVFeatureGenerator=\
-  adams.data.boofcv.flattener
+  adams.data.boofcv.features
 
 # the ImageJ transformers
 adams.data.imagej.transformer.AbstractImageJTransformer=\
