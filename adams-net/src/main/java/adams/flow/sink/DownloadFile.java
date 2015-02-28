@@ -15,21 +15,27 @@
 
 /*
  * DownloadFile.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
+
+import adams.core.License;
+import adams.core.QuickInfoHelper;
+import adams.core.annotation.MixedCopyright;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
-
-import adams.core.QuickInfoHelper;
+import java.net.URLConnection;
 
 /**
  <!-- globalinfo-start -->
- * Downloads a file from a URL and saves it locally.
+ * Downloads a file from a URL and saves it locally.<br/>
+ * Also handles basic authentication when using URLs like this:<br/>
+ * http:&#47;&#47;user:pass&#64;domain.com&#47;url
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -42,46 +48,49 @@ import adams.core.QuickInfoHelper;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DownloadFile
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to save the downloaded content to.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
  * &nbsp;&nbsp;&nbsp;The size of byte-buffer used for reading&#47;writing the content.
  * &nbsp;&nbsp;&nbsp;default: 1024
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -103,7 +112,10 @@ public class DownloadFile
    */
   @Override
   public String globalInfo() {
-    return "Downloads a file from a URL and saves it locally.";
+    return
+      "Downloads a file from a URL and saves it locally.\n"
+      + "Also handles basic authentication when using URLs like this:\n"
+      + "http://user:pass@domain.com/url";
   }
 
   /**
@@ -188,6 +200,12 @@ public class DownloadFile
    * @return		null if everything is fine, otherwise error message
    */
   @Override
+  @MixedCopyright(
+    author = "http://stackoverflow.com/users/2920131/lboix",
+    license = License.CC_BY_SA_3,
+    url = "http://stackoverflow.com/a/13122190",
+    note = "handling basic authentication"
+  )
   protected String doExecute() {
     String			result;
     URL				url;
@@ -196,6 +214,8 @@ public class DownloadFile
     byte[]			buffer;
     int				len;
     int				count;
+    URLConnection 		conn;
+    String 			basicAuth;
 
     input  = null;
     output = null;
@@ -205,7 +225,12 @@ public class DownloadFile
       else
 	url = (URL) m_InputToken.getPayload();
 
-      input  = new BufferedInputStream(url.openStream());
+      conn = url.openConnection();
+      if (url.getUserInfo() != null) {
+	basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+	conn.setRequestProperty("Authorization", basicAuth);
+      }
+      input  = new BufferedInputStream(conn.getInputStream());
       output = new BufferedOutputStream(new FileOutputStream(m_OutputFile.getAbsoluteFile()));
       buffer = new byte[m_BufferSize];
       count  = 0;

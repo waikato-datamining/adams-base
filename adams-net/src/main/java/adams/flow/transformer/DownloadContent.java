@@ -15,20 +15,25 @@
 
 /*
  * DownloadContent.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import java.io.BufferedInputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
+import adams.core.License;
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.MixedCopyright;
 import adams.flow.core.Token;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  <!-- globalinfo-start -->
- * Downloads the raw, textual content from a URL and forwards it.
+ * Downloads the raw, textual content from a URL and forwards it.Also handles basic authentication when using URLs like this:<br/>
+ * http:&#47;&#47;user:pass&#64;domain.com&#47;url
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -43,8 +48,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -55,19 +58,26 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: DownloadContent
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
@@ -97,7 +107,10 @@ public class DownloadContent
    */
   @Override
   public String globalInfo() {
-    return "Downloads the raw, textual content from a URL and forwards it.";
+    return
+      "Downloads the raw, textual content from a URL and forwards it."
+      + "Also handles basic authentication when using URLs like this:\n"
+      + "http://user:pass@domain.com/url";
   }
 
   /**
@@ -181,6 +194,12 @@ public class DownloadContent
    * @return		null if everything is fine, otherwise error message
    */
   @Override
+  @MixedCopyright(
+    author = "http://stackoverflow.com/users/2920131/lboix",
+    license = License.CC_BY_SA_3,
+    url = "http://stackoverflow.com/a/13122190",
+    note = "handling basic authentication"
+  )
   protected String doExecute() {
     String			result;
     URL				url;
@@ -189,6 +208,8 @@ public class DownloadContent
     byte[]			bufferSmall;
     int				len;
     StringBuilder		content;
+    URLConnection 		conn;
+    String 			basicAuth;
 
     input   = null;
     content = new StringBuilder();
@@ -198,7 +219,12 @@ public class DownloadContent
       else
 	url = (URL) m_InputToken.getPayload();
 
-      input  = new BufferedInputStream(url.openStream());
+      conn = url.openConnection();
+      if (url.getUserInfo() != null) {
+	basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+	conn.setRequestProperty("Authorization", basicAuth);
+      }
+      input  = new BufferedInputStream(conn.getInputStream());
       buffer = new byte[m_BufferSize];
       while ((len = input.read(buffer)) > 0) {
 	if (len < m_BufferSize) {
