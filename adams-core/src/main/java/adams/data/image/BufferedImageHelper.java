@@ -39,6 +39,7 @@ import javax.imageio.stream.ImageInputStream;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.data.Notes;
 import adams.data.conversion.DOMToProperties;
 import adams.data.report.Report;
 
@@ -603,5 +604,30 @@ public class BufferedImageHelper {
       default:
 	return -1;
     }
+  }
+
+  /**
+   * Creates a {@link BufferedImageContainer} container if necessary, otherwise it just casts the object.
+   *
+   * @param cont	the cont to cast/convert
+   * @return		the casted/converted container
+   */
+  public static BufferedImageContainer toBufferedImageContainer(AbstractImageContainer cont) {
+    BufferedImageContainer	result;
+    Report			report;
+    Notes 			notes;
+
+    if (cont instanceof BufferedImageContainer) {
+      result = (BufferedImageContainer) cont;
+    }
+    else {
+      report = cont.getReport().getClone();
+      notes  = cont.getNotes().getClone();
+      result = new BufferedImageContainer();
+      result.setImage(cont.toBufferedImage());
+      result.setReport(report);
+      result.setNotes(notes);
+    }
+    return result;
   }
 }
