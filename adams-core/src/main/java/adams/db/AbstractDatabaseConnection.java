@@ -21,15 +21,6 @@
 
 package adams.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.logging.Level;
-
 import adams.core.CloneHandler;
 import adams.core.Properties;
 import adams.core.Utils;
@@ -40,12 +31,20 @@ import adams.core.logging.LoggingObject;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionManager;
 import adams.core.option.OptionUtils;
-import adams.env.Environment;
+import adams.env.AbstractEnvironment;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
-
 import com.mysql.jdbc.CommunicationsException;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * DatabaseConnection manages the interface to the database back-end.
@@ -129,6 +128,9 @@ public abstract class AbstractDatabaseConnection
   /** the database manager this connection belongs to. */
   protected DatabaseManager m_Owner;
 
+  /** the environment to use. */
+  protected transient AbstractEnvironment m_Environment;
+
   /**
    * Constructor, uses the default settings.
    */
@@ -144,7 +146,6 @@ public abstract class AbstractDatabaseConnection
    * connection to the database specified in the URL, with the given username
    * and password.
    *
-   * @param driver      the JDBC driver
    * @param url         the JDBC URL
    * @param user        the user to connect with
    * @param password    the password for the user
@@ -315,13 +316,31 @@ public abstract class AbstractDatabaseConnection
   protected abstract String getDefinitionKey();
 
   /**
+   * Creates a new instance of the environment object that we require.
+   *
+   * @return		the instance
+   */
+  protected abstract AbstractEnvironment createEnvironment();
+
+  /**
+   * Returns the environment instance to use, creates it if necessary.
+   *
+   * @return		the instance
+   */
+  protected synchronized AbstractEnvironment getEnvironment() {
+    if (m_Environment == null)
+      m_Environment = createEnvironment();
+    return m_Environment;
+  }
+
+  /**
    * Reads the properties.
    *
    * @return		the properties
    * @see		#getDefinitionKey()
    */
   protected synchronized Properties readProperties() {
-    return Environment.getInstance().read(getDefinitionKey());
+    return getEnvironment().read(getDefinitionKey());
   }
 
   /**
@@ -1198,7 +1217,7 @@ public abstract class AbstractDatabaseConnection
    * @return		true if sucessfully updated
    */
   public boolean updateConnections() {
-    return Environment.getInstance().write(getDefinitionKey(), getProperties());
+    return getEnvironment().write(getDefinitionKey(), getProperties());
   }
 
   /**

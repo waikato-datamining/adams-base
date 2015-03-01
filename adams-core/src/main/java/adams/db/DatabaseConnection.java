@@ -15,14 +15,16 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2008-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
 import adams.core.base.BasePassword;
+import adams.env.AbstractEnvironment;
 import adams.env.DatabaseConnectionDefinition;
+import adams.env.Environment;
 
 /**
  * DatabaseConnection manages the interface to the database back-end.
@@ -67,6 +69,15 @@ public class DatabaseConnection
    */
   public DatabaseConnection(String url, String user, BasePassword password) {
     super(url, user, password);
+  }
+
+  /**
+   * Creates a new instance of the environment object that we require.
+   *
+   * @return		the instance
+   */
+  protected AbstractEnvironment createEnvironment() {
+    return new Environment();
   }
 
   /**

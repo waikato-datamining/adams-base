@@ -37,13 +37,6 @@ public class Environment
   private static final long serialVersionUID = -2199293612498875147L;
 
   /**
-   * Initializes the object.
-   */
-  protected Environment() {
-    super();
-  }
-
-  /**
    * Returns the resource locations of the properties files with the definitions.
    *
    * @return		the resource locations
