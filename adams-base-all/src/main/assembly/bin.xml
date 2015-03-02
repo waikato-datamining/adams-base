@@ -82,7 +82,42 @@
       <useProjectArtifact>true</useProjectArtifact>
       <excludes>
         <exclude>de.jflex:jflex:*</exclude>
+        <exclude>*:linux32</exclude>
+        <exclude>*:linux64</exclude>
+        <exclude>*:windows32</exclude>
+        <exclude>*:windows64</exclude>
+        <exclude>*:macosx64</exclude>
       </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/linux32</outputDirectory>
+      <includes>
+        <include>*:linux32</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/linux64</outputDirectory>
+      <includes>
+        <include>*:linux64</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/windows32</outputDirectory>
+      <includes>
+        <include>*:windows32</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/windows64</outputDirectory>
+      <includes>
+        <include>*:windows64</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/macosx64</outputDirectory>
+      <includes>
+        <include>*:macosx64</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 </assembly>

@@ -1029,6 +1029,130 @@ Driver=oracle.jdbc.OracleDriver
 	your JDBC driver(s).
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Platform-specific libraries %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Platform-specific libraries}
+Despite Java being platform-independent, there are moments when you need to
+include platform-specific libraries, e.g., native libraries for accessing
+OS-specific funtionality.
+
+The \textit{Launcher} class (package: \textit{adams.core.management})
+automatically determines what operating system family and \textit{bitness}
+the operating system has and constructs an additional library path below
+the \texttt{lib} directory in a binary archive. For instance, for a 64-bit
+Linux system, this would be \texttt{linux64}, or the full library path
+therefore \texttt{lib/linux64}.
+
+In order for this to work automatically, the platform-specific libraries
+need to be available using the following Maven \textit{classifiers}:
+
+\begin{verbatim}
+  linux32|linux64|windows32|windows64|macosx64
+\end{verbatim}
+
+In your \texttt{pom.xml} you can then use
+\textit{profiles}\footnote{\url{}{http://maven.apache.org/guides/introduction/introduction-to-profiles.html}}
+to include the libraries accordingly. Below is an example \textit{profiles} tag, where
+you need to replace the \texttt{<!-- stuff -->} comment with dependencies etc.
+When using \texttt{-Dadams.arch=all} in the Maven command-line, all the platform-specific
+jars will be added to the binary zip files, as opposed to only the ones for the
+current platform.
+
+{\scriptsize
+\begin{verbatim}
+  <profiles>
+    <!-- linux -->
+    <profile>
+      <id>linux32</id>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>x86</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+    <profile>
+      <id>linux64</id>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>x64</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+    <profile>
+      <id>linux64-amd</id>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>amd64</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+    <!-- windows -->
+    <profile>
+      <id>windows32</id>
+      <activation>
+        <os>
+          <family>windows</family>
+          <arch>x86</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+    <profile>
+      <id>windows64</id>
+      <activation>
+        <os>
+          <family>windows</family>
+          <arch>x64</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+    <!-- max osx -->
+    <profile>
+      <id>macosx64</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>x64</arch>
+        </os>
+        <property>
+          <name>adams.arch</name>
+          <value>all</value>
+        </property>
+      </activation>
+      <!-- stuff -->
+    </profile>
+  </profiles>
+\end{verbatim}
+}
+
 %%%%%%%%%%%%%%%
 % JUnit Tests %
 %%%%%%%%%%%%%%%
