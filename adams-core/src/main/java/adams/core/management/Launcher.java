@@ -15,15 +15,9 @@
 
 /**
  * Launcher.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
-
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.core.ClassLocator;
 import adams.core.Utils;
@@ -31,6 +25,13 @@ import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
+
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Launches a new JVM process with the specified memory
@@ -264,7 +265,7 @@ public class Launcher {
   /**
    * Adds the augmentations that the classpath augmenter returns.
    *
-   * @param value	the classname+options of the augmenter
+   * @param cmdline	the classname+options of the augmenter
    * @see		ClassPathAugmenter
    */
   public void addClassPathAugmentations(String cmdline) {
@@ -285,7 +286,7 @@ public class Launcher {
   /**
    * Adds the augmentations that the classpath augmenter returns.
    *
-   * @param value	the classname+options of the augmenter
+   * @param augmenter	the classname+options of the augmenter
    * @see		ClassPathAugmenter
    */
   public void addClassPathAugmentations(ClassPathAugmenter augmenter) {
@@ -375,9 +376,46 @@ public class Launcher {
   protected String getClassPath() {
     StringBuilder	result;
     String		sep;
+    String		os;
+    File		file;
+    String[]		parts;
+    String[]		jars;
 
     result = new StringBuilder(System.getProperty("java.class.path"));
     sep    = System.getProperty("path.separator");
+
+    // add platform-specific path (if available)
+    if (OS.isMac())
+      os = "macosx";
+    else if (OS.isWindows())
+      os = "windows";
+    else
+      os = "linux";
+    os += OS.getBitness();
+    parts = System.getProperty("java.class.path").split(sep);
+    for (String part: parts) {
+      // platform specific sub-directory present?
+      file = new File(part);
+      if (file.isFile())
+	file = file.getParentFile();
+      file = new File(file.getAbsolutePath() + File.separator + os);
+      if (file.exists() && file.isDirectory()) {
+	jars = file.list(new FilenameFilter() {
+	  @Override
+	  public boolean accept(File dir, String name) {
+	    return name.endsWith(".jar");
+	  }
+	});
+	for (String jar: jars) {
+	  if (result.length() > 0)
+	    result.append(sep);
+	  result.append(file.getAbsolutePath() + File.separator + jar);
+	}
+	break;
+      }
+    }
+
+    // add augmentations
     for (String augmentation: m_ClassPathAugmentations) {
       if (result.length() > 0)
 	result.append(sep);
