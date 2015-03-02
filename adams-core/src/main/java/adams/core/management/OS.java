@@ -15,7 +15,7 @@
 
 /**
  * OS.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -65,4 +65,20 @@ public class OS {
     return m_IsMac;
   }
 
+  /**
+   * Returns the "bitness", ie 32 or 64 bit of the underlying OS.
+   *
+   * @return		the number of bits
+   */
+  public synchronized static int getBitness() {
+    String	arch;
+
+    arch = System.getProperty("os.arch");
+    if (arch.endsWith("86"))
+      return 32;
+    else if (arch.endsWith("64"))
+      return 64;
+    else
+      throw new IllegalStateException("Cannot interpret 'os.arch' for bitness: " + arch);
+  }
 }
