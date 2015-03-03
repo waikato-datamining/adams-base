@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-05-14 16:53:21
+# Date: 2015-03-03 21:24:32
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -21,6 +21,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-overlay-color-provider
@@ -67,6 +69,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-overlay-color-provider
@@ -99,54 +103,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.SimplePlotUpdater
 					-post-processor
 						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					Pressure
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Pressure
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							time (utc)
-							-type
-							TIME
-							-tick-generator
-								adams.gui.visualization.core.axis.SimpleTickGenerator
-							-width
-							40
-							-custom-format
-							M/d HH:mm
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							pressure (mb)
-							-tick-generator
-								adams.gui.visualization.core.axis.SimpleTickGenerator
-							-width
-							80
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
 			-num-rows
-			3
+			2
 			-writer
 				adams.gui.print.NullWriter
 	-actor
@@ -249,6 +207,8 @@ adams.flow.control.Flow
 									@{msec}
 									-location
 									BEFORE
+									-conversion
+										adams.data.conversion.StringToString
 							-tee
 								adams.flow.control.Cast
 									-classname
@@ -287,6 +247,8 @@ adams.flow.control.Flow
 									@{msec}
 									-location
 									BEFORE
+									-conversion
+										adams.data.conversion.StringToString
 							-tee
 								adams.flow.control.Cast
 									-classname
@@ -309,44 +271,6 @@ adams.flow.control.Flow
 								adams.flow.sink.CallableSink
 									-callable
 									Wind
-					-tee
-						adams.flow.control.Tee
-							-name
-							pressure
-							-tee
-								adams.flow.transformer.XPath
-									-expression
-									/response/current_observation/pressure_mb
-									-result-type
-									STRING
-							-tee
-								adams.flow.control.Injector
-									-injection
-									@{msec}
-									-location
-									BEFORE
-							-tee
-								adams.flow.control.Cast
-									-classname
-									java.lang.String
-							-tee
-								adams.flow.transformer.Convert
-									-name
-									Convert-1
-									-conversion
-										adams.data.conversion.StringToDouble
-							-tee
-								adams.flow.transformer.SequenceToArray
-									-length
-									2
-							-tee
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									pressure
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Pressure
 			-loop
 				adams.flow.control.Sleep
 					-interval
