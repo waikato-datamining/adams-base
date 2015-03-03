@@ -6,7 +6,7 @@
   <parent>
     <groupId>nz.ac.waikato.cms.adams</groupId>
     <artifactId>adams-pom</artifactId>
-    <version>0.4.8-SNAPSHOT</version>
+    <version>0.4.8</version>
   </parent>
 
   <artifactId>adams-twitter</artifactId>
