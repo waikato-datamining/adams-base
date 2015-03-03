@@ -15,17 +15,17 @@
 
 /*
  * BaseDirectoryChooser.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.core.Placeholders;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
+import adams.env.Environment;
+import adams.gui.core.GUIHelper;
+import com.jidesoft.swing.FolderChooser;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,14 +33,12 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
-
-import adams.core.Placeholders;
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
-import adams.env.Environment;
-import adams.gui.core.GUIHelper;
-
-import com.jidesoft.swing.FolderChooser;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Extended version of the com.jidesoft.swing.FolderChooser to
@@ -128,7 +126,9 @@ public class BaseDirectoryChooser
    */
   protected void initialize() {
     JComponent		accessory;
-    
+    int			width;
+    int			height;
+
     setRecentListVisible(false);
    
     accessory = createAccessoryPanel();
@@ -136,6 +136,11 @@ public class BaseDirectoryChooser
       setAccessory(accessory);
     
     showBookmarks(GUIHelper.getBoolean("BaseDirectoryChooser.ShowBookmarks", false));
+
+    width  = GUIHelper.getInteger("BaseDirectoryChooser.Width", 400);
+    height = GUIHelper.getInteger("BaseDirectoryChooser.Height", 500);
+    if ((width != -1) && (height != -1))
+      setPreferredSize(new Dimension(width, height));
   }
 
   /**

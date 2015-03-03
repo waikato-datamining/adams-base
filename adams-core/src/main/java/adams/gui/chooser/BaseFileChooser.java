@@ -15,26 +15,25 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.io.File;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
-import adams.gui.core.ExtensionFileFilter;
-import adams.gui.core.GUIHelper;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.io.File;
 
 /**
  * A file chooser dialog based on the one developed by the 
@@ -115,6 +114,8 @@ public class BaseFileChooser
    */
   protected void initialize() {
     JComponent		accessory;
+    int			width;
+    int			height;
     
     m_PromptOverwriteFile = true;
     m_AutoAppendExtension = false;
@@ -124,6 +125,11 @@ public class BaseFileChooser
     accessory = createAccessoryPanel();
     if (accessory != null)
       setAccessory(accessory);
+
+    width  = GUIHelper.getInteger("BaseFileChooser.Width", 750);
+    height = GUIHelper.getInteger("BaseFileChooser.Height", 500);
+    if ((width != -1) && (height != -1))
+      setPreferredSize(new Dimension(width, height));
   }
 
   /**
@@ -314,12 +320,7 @@ public class BaseFileChooser
    * not the current directory, changes the current directory
    * to be the file's parent directory.
    *
-   * @beaninfo
-   *   preferred: true
-   *       bound: true
-   *
    * @see #getSelectedFile
-   *
    * @param file the selected file
    */
   @Override
@@ -366,9 +367,6 @@ public class BaseFileChooser
    * set to allow multiple selection.
    *
    * @param selectedFiles	the files to select initially
-   * @beaninfo
-   *       bound: true
-   * description: The list of selected files if the chooser is in multiple selection mode.
    */
   @Override
   public void setSelectedFiles(File[] selectedFiles) {
@@ -495,7 +493,6 @@ public class BaseFileChooser
     // fix extensions?
     if (m_AutoAppendExtension) {
       // determine extension to add
-      extensions = null;
       if ((getFileFilter() != getAcceptAllFileFilter()) && !isGlobFilter(getFileFilter()))
 	extensions = ((ExtensionFileFilter) getFileFilter()).getExtensions();
       else

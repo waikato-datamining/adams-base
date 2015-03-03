@@ -26,9 +26,17 @@ PreferredJComponentWriter=adams.gui.print.PNGWriter
 PreferredImageReader=png
 PreferredImageWriter=png
 
+# The default dimensions of the BaseFileChooser (use -1 to use default)
+BaseFileChooser.Width=750
+BaseFileChooser.Height=500
+
 # The default dimensions of the BaseFileChooser accessory panel (use -1 to use default)
 BaseFileChooser.Accessory.Width=-1
 BaseFileChooser.Accessory.Height=-1
+
+# The default dimensions of the BaseDirectoryChooser (use -1 to use default)
+BaseDirectoryChooser.Width=400
+BaseDirectoryChooser.Height=500
 
 # Whether the BaseDirectoryChooser shows bookmarks
 BaseDirectoryChooser.ShowBookmarks=false
