@@ -15,7 +15,7 @@
 
 /**
  * BlobContainer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.blob;
 
@@ -93,6 +93,20 @@ public class BlobContainer
    */
   @Override
   public String toString() {
-    return "id=" + m_ID + ", " + "content=" + Utils.arrayToString(m_Content) + ", report=" + m_Report + ", notes=" + m_Notes;
+    StringBuilder	result;
+    int			i;
+
+    result = new StringBuilder();
+    result.append("id=" + m_ID);
+    result.append(", content=");
+    for (i = 0; i < m_Content.length; i++) {
+      if (i > 0)
+	result.append(", ");
+      result.append(Utils.toHex(m_Content[i]));
+    }
+    result.append(", report=" + m_Report);
+    result.append(", notes=" + m_Notes);
+
+    return result.toString();
   }
 }
