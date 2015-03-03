@@ -30,10 +30,15 @@ HOWTO make a release
    -Darguments="-DskipTests=true"
 +---
 
+  Before issuing the same command for adams-addons, change the "parent version" tag and
+  "adams.version" property to the just released version of ADAMS (no -SNAPSHOT).
+  After the Maven release command has succeeded, change these two tags over to the
+  next -SNAPSHOT version of ADAMS.
+
 * Uploads/updates
   
   * generate comparison of actors/conversions between current and previous
-    version:
+    version (best to use "adams-addons-all" as this is the most complete):
     
 +--
   bin/run -main adams.core.ClassLister -super adams.flow.core.AbstractActor > actors.txt
