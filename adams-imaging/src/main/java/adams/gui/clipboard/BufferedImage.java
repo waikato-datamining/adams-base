@@ -14,14 +14,10 @@
  */
 
 /**
- * String.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * BufferedImage.java
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.clipboard;
-
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.datatransfer.DataFlavor;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
@@ -29,6 +25,10 @@ import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
 
 /**
  * Copies/pastes buffered images.
@@ -96,7 +96,7 @@ public class BufferedImage
   /**
    * Wraps the data from the clipboard in a flow token.
    * 
-   * @param 
+   * @param data	the image to wrap
    * @return		the pasted data, null if failed to paste
    */
   protected Token wrap(java.awt.image.BufferedImage data) {
