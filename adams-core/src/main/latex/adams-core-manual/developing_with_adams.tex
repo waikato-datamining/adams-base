@@ -160,6 +160,22 @@ Here are a few common maven commands, if you obtained ADAMS from subversion:
 Make sure that libraries that you use are publicly available from Maven 
 Central, \url{http://search.maven.org/}{}, otherwise they won't be considered.
 
+\subsection{Troubleshooting}
+\begin{tight_itemize}
+  \item \texttt{SSL handshake alert: unrecognized\_name} -- this error occurs starting with Java 7 (or 1.7.0). You can avoid this by setting the \texttt{JAVA\_TOOL\_OPTIONS} environment variable with the following value:
+  \begin{verbatim}
+  -Djsse.enableSNIExtension=false
+  \end{verbatim}
+  On Linux or Mac OSX, you would place the following command in your \texttt{\$HOME/.profile} file (effective after logging out and back in again):
+  \begin{verbatim}
+  export JAVA_TOOL_OPTIONS="-Djsse.enableSNIExtension=false"
+  \end{verbatim}
+  You can see whether this is set correctly, when Maven reports the following just after issuing a \texttt{mvn} command on command-line:
+  \begin{verbatim}
+  Picked up JAVA_TOOL_OPTIONS: -Djsse.enableSNIExtension=false
+  \end{verbatim}
+\end{tight_itemize}
+
 \section{Eclipse}
 The choice of integrated development environment (IDE) is Eclipse
 \cite{eclipse}. It is not only a very good IDE for Java development, but also
