@@ -1,0 +1,12 @@
+--> adams.flow.template.StoreReportValueInVariable-out0.txt
+adams.flow.control.Tee
+	-name
+	Setting blah
+	-tee
+		adams.flow.transformer.GetReportValue
+	-tee
+		adams.flow.transformer.SetVariable
+			-var-name
+			blah
+
+

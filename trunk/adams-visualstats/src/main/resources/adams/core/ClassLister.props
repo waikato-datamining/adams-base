@@ -1,0 +1,47 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  msf8 
+# Version: $Revision$
+
+#scatter overlays
+adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay =\
+  adams.gui.visualization.stats.scatterplot
+
+adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet =\
+  adams.gui.visualization.stats.paintlet
+
+adams.gui.visualization.stats.paintlet.AbstractZScorePaintlet =\
+  adams.gui.visualization.stats.paintlet
+
+adams.gui.visualization.stats.zscore.AbstractZScoreOverlay =\
+ adams.gui.visualization.stats.zscore
+
+adams.gui.visualization.stats.paintlet.AbstractProbabilityPaintlet =\
+ adams.gui.visualization.stats.paintlet
+
+adams.gui.visualization.stats.histogram.HistogramOptions =\
+ adams.gui.visualization.stats.histogram
+
+adams.gui.visualization.stats.probabilityplot.NormalPlotOptions =\
+ adams.gui.visualization.stats.probabilityplot
+
+adams.gui.visualization.stats.fourinone.VersusFitOptions =\
+ adams.gui.visualization.stats.fourinone
+
+adams.gui.visualization.stats.fourinone.VersusOrderOptions =\
+ adams.gui.visualization.stats.fourinone
+
+adams.gui.visualization.stats.paintlet.VsFitPaintlet =\
+ adams.gui.visualization.stats.paintlet
+
+ adams.gui.visualization.stats.paintlet.VsOrderPaintlet =\
+ adams.gui.visualization.stats.paintlet
+
+adams.gui.visualization.stats.paintlet.HistogramPaintlet =\
+ adams.gui.visualization.stats.paintlet
+
+

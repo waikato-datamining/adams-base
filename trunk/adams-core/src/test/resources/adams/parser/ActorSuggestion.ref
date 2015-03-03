@@ -1,0 +1,48 @@
+--> out-0
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: adams.flow.standalone.CallableActors
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: null
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: null
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: adams.flow.source.Start
+
+--> out-1
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: adams.flow.standalone.CallableActors
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: null
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: null
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: null
+
+--> out-2
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: adams.flow.control.Sequence
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: null
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: null
+
+--> out-3
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: adams.flow.control.Sequence
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: null
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: null
+
+--> out-4
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: adams.flow.control.Sequence
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: null
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: null
+
+--> out-5
+IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors: null
+IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence: null
+IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter: adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.CirclePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 20\" -width 40" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough
+IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display: null
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.Start: null
+

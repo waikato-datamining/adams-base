@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2014-01-23 15:30:11
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple flow with an inline Groovy script that just adds\na user-supplied integer value to the (integer) tokens\nbeing passed through.
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.Groovy
+			-options
+			add=10
+			-inline-script
+			/*\n * A simple Groovy transformer that just adds a user-supplied integer to the\n * integers that pass through.\n *\n * @author FracPete (fracpete at waikato dot ac dot nz)\n * @version $Revision: 4278 $\n */\n\nimport adams.flow.core.Token\nimport adams.flow.core.Unknown\nimport adams.flow.transformer.AbstractScript\n\nclass SimpleTransformer\n  extends AbstractScript {\n\n  /**\n   * Returns a string describing the object.\n   *\n   * @return \t\t\ta description suitable for displaying in the gui\n   */\n  public String globalInfo() {\n    return \"Just adds a user-supplied integer to the integers passing through.\\n\\nExpects an additional option called \\\"add\\\" with the number to add.\"\n  }\n\n  /**\n   * Returns the class of objects that it accepts.\n   *\n   * @return\t\tInteger.class\n   */\n  public Class[] accepts() {\n    return [Integer.class] as Object[]\n  }\n\n  /**\n   * Returns the class of objects that it generates.\n   *\n   * @return\t\tInteger.class\n   */\n  public Class[] generates() {\n    return [Integer.class] as Object[]\n  }\n\n  /**\n   * Executes the flow item.\n   *\n   * @return\t\tnull if everything is fine, otherwise error message\n   */\n  protected String doExecute() {\n    Integer input = (Integer) m_InputToken.getPayload()\n    m_OutputToken = new Token(new Integer(input + getAdditionalOptions().getInteger(\"add\", 1)))\n    return null\n  }\n}\n
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

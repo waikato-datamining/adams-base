@@ -1,0 +1,14 @@
+--> adams.flow.template.UpdateVariable-out0.txt
+adams.flow.control.Trigger
+	-name
+	Updating blah
+	-tee
+		adams.flow.source.Variable
+			-var-name
+			blah
+	-tee
+		adams.flow.transformer.SetVariable
+			-var-name
+			blah
+
+

@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2014-01-23 15:41:11
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow for merging multiple columns into a single one.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.SpreadSheetJoinColumns
+					-columns
+					2-3
+					-glue
+					 | 
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

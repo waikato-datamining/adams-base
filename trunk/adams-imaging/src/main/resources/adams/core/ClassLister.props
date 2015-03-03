@@ -1,0 +1,131 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# converting from BufferedImage to other format
+adams.data.conversion.BufferedImageToOtherFormatConversion=\
+  adams.data.conversion
+
+# converting from other format to BufferedImage
+adams.data.conversion.OtherFormatToBufferedImageConversion=\
+  adams.data.conversion
+
+# the BufferedImage feature generators
+adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
+  adams.data.image.features,\
+  adams.data.jai.features,\
+  adams.data.lire.features
+
+# the ImageJ feature generators
+adams.data.imagej.features.AbstractImageJFeatureGenerator=\
+  adams.data.imagej.features
+
+# the BoofCV feature generators
+adams.data.boofcv.features.AbstractBoofCVFeatureGenerator=\
+  adams.data.boofcv.features
+
+# the ImageJ transformers
+adams.data.imagej.transformer.AbstractImageJTransformer=\
+  adams.data.imagej.transformer
+
+# the ImageJ crop algorithms
+adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.imagej.transformer.crop
+
+# the buffered image transformers
+adams.data.image.transformer.AbstractBufferedImageTransformer=\
+  adams.data.image.transformer,\
+  adams.data.jai.transformer,\
+  adams.data.lire.transformer
+
+# the buffered image crop algorithms
+adams.data.image.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.image.transformer.crop
+
+# the subimage generators
+adams.data.image.transformer.subimages.AbstractSubImagesGenerator=\
+  adams.data.image.transformer.subimages
+
+# the buffered image white balance algorithms
+adams.data.image.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
+  adams.data.image.transformer.whitebalance
+
+# the BoofCV transformers
+adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
+  adams.data.boofcv.transformer
+
+# the buffered image multi-image operations
+adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
+  adams.data.image.multiimageoperation
+
+# the BoofCV multi-image operations
+adams.data.boofcv.multiimageoperation.AbstractBoofCVMultiImageOperation=\
+  adams.data.boofcv.multiimageoperation
+
+# the ffmpeg plugins
+adams.flow.sink.ffmpeg.AbstractFFmpegPlugin=\
+  adams.flow.sink.ffmpeg
+
+# the draw operations
+adams.flow.transformer.draw.AbstractDrawOperation=\
+  adams.flow.transformer.draw
+  
+# the algorithms for locating objects
+adams.flow.transformer.locateobjects.AbstractObjectLocator=\
+  adams.flow.transformer.locateobjects
+
+# the meta-data extractors
+adams.flow.transformer.metadata.AbstractMetaDataExtractor=\
+  adams.flow.transformer.metadata
+  
+# the actions for the PixelSelector transformer
+adams.flow.transformer.pixelselector.AbstractPixelSelectorAction=\
+  adams.flow.transformer.pixelselector
+  
+# the actions for the PixelSelector overlays
+adams.flow.transformer.pixelselector.AbstractPixelSelectorOverlay=\
+  adams.flow.transformer.pixelselector
+
+# the algorithms for preparing images
+adams.flow.transformer.imagepreparation.AbstractImagePreparation=\
+  adams.flow.transformer.imagepreparation
+
+# image filters
+adams.data.imagefilter.AbstractImageFilterProvider=\
+  adams.data.imagefilter
+
+# imagesharpness algorithms
+adams.data.imagesharpness.AbstractImageSharpness=\
+  adams.data.imagesharpness
+
+# ImageMagick operations
+adams.data.imagemagick.AbstractImageOperation=\
+  adams.data.imagemagick,\
+  adams.data.imagemagick.dcraw,\
+  adams.data.imagemagick.im,\
+  adams.data.imagemagick.ufraw
+
+# ImageMagick (IM) operations
+adams.data.imagemagick.im.AbstractIMOperation=\
+  adams.data.imagemagick.im
+
+# Dcraw operations
+adams.data.imagemagick.dcraw.AbstractDcrawOperation=\
+  adams.data.imagemagick.dcraw
+
+# Ufraw operations
+adams.data.imagemagick.ufraw.AbstractUfrawOperation=\
+  adams.data.imagemagick.ufraw
+
+# barcode decoders
+adams.data.barcode.decode.AbstractBarcodeDecoder=\
+  adams.data.barcode.decode
+
+# barcode encoders
+adams.data.barcode.encode.AbstractBarcodeEncoder=\
+  adams.data.barcode.encode

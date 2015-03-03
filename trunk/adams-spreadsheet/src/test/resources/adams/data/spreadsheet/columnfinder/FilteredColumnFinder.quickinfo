@@ -1,0 +1,1 @@
+filter: ByIndex (cols: first-last), finder: ByName (regexp: .*)

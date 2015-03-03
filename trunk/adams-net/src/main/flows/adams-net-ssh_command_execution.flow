@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2014-01-23 15:35:47
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Executes a simple \"ls\" command on the current directory after\nthe ssh connection has been established. \nThe user gets prompted for their password on flow execution.
+	-actor
+		adams.flow.standalone.SSHConnection
+			-host
+			localhost
+			-prompt-for-password
+			true
+	-actor
+		adams.flow.source.SSHExec
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

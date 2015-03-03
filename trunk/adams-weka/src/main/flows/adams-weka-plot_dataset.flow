@@ -1,0 +1,82 @@
+# Project: adams
+# Date: 2014-11-11 15:53:20
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots the dataset with each attribute representing a plot.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.arff
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.ArffSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetPlotGenerator
+			-generator
+				adams.flow.transformer.plotgenerator.SimplePlotGenerator
+					-columns
+					1-4
+					-meta-data-columns
+					last
+	-actor
+		adams.flow.sink.SequencePlotter
+			-writer
+				adams.gui.print.NullWriter
+			-paintlet
+				adams.gui.visualization.sequence.CirclePaintlet
+			-overlay-paintlet
+				adams.gui.visualization.sequence.CirclePaintlet
+			-marker-paintlet
+				adams.flow.sink.sequenceplotter.NoMarkers
+			-error-paintlet
+				adams.flow.sink.sequenceplotter.NoErrorPaintlet
+			-mouse-click-action
+				adams.flow.sink.sequenceplotter.ViewDataClickAction
+					-hit-detector
+						adams.gui.visualization.sequence.CircleHitDetector
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-overlay-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-title
+			Dataset
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					instance
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					40
+					-custom-format
+					0
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					attribute value
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					60
+					-custom-format
+					0.0
+			-plot-updater
+				adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-update-interval
+					-1
+			-post-processor
+				adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>nz.ac.waikato.cms.adams</groupId>
+  <artifactId>adams-pom</artifactId>
+  <version>0.4.8</version>
+  <packaging>pom</packaging>
+
+  <name>adams-pom</name>
+  <description>The project object model for all ADAMS-derived modules.</description>
+  <url>https://adams.cms.waikato.ac.nz/</url>
+  <organization>
+    <name>University of Waikato, Hamilton, NZ</name>
+    <url>http://www.waikato.ac.nz/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU General Public License 3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+
+  <modules>
+    <!-- archetypes -->
+    <module>adams-archetype-module</module>
+
+    <!-- core module -->
+    <module>adams-core</module>
+
+    <!-- meta-modules -->
+    <module>adams-base-all</module>
+
+    <!-- dependent modules -->
+    <module>adams-access</module>
+    <module>adams-compress</module>
+    <module>adams-event</module>
+    <module>adams-excel</module>
+    <module>adams-groovy</module>
+    <module>adams-gnuplot</module>
+    <module>adams-imaging</module>
+    <module>adams-jython</module>
+    <module>adams-latex</module>
+    <module>adams-maps</module>
+    <module>adams-meta</module>
+    <module>adams-ml</module>
+    <module>adams-moa</module>
+    <module>adams-net</module>
+    <module>adams-odf</module>
+    <module>adams-osm</module>
+    <module>adams-pdf</module>
+    <module>adams-r</module>
+    <module>adams-random</module>
+    <module>adams-spreadsheet</module>
+    <module>adams-timeseries</module>
+    <module>adams-twitter</module>
+    <module>adams-visualstats</module>
+    <module>adams-weka</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <heap.size>-Xmx512m</heap.size>
+    <adams.test.multiprocess.enabled>false</adams.test.multiprocess.enabled>
+    <!-- classes -->
+    <class.adams.env>adams.env.Environment</class.adams.env>
+    <class.adams.main>adams.gui.Main</class.adams.main>
+    <class.adams.flowrunner>adams.flow.FlowRunner</class.adams.flowrunner>
+    <class.adams.flowsetuprunner>adams.flow.FlowSetupRunner</class.adams.flowsetuprunner>
+    <!-- module-dependent -->
+    <cxf.version>2.7.5</cxf.version>
+    <jetty.version>8.1.7.v20120910</jetty.version>
+    <xjc.version>2.6.1</xjc.version>
+    <moa.version>2014.04</moa.version>
+    <weka.version>3.7.12</weka.version>
+    <postgresql.version>9.1-901.jdbc4</postgresql.version>
+    <postgis.version>1.5.3</postgis.version>
+    <jodd.version>3.5.2</jodd.version>
+  </properties>
+
+  <scm>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.8</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.8</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.8</url>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>adams-snapshots</id>
+      <name>ADAMS Snapshot Repository</name>
+      <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>adams-releases</id>
+      <name>ADAMS Release Repository</name>
+      <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-releases</url>
+    </repository>
+  </distributionManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.googlecode.sizeofag</groupId>
+        <artifactId>sizeofag</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.googlecode.java-diff-utils</groupId>
+        <artifactId>diffutils</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>java-cup</artifactId>
+        <version>0.11a</version>
+        <type>jar</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.0</version>
+          <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>osxappbundle-maven-plugin</artifactId>
+          <version>1.0-alpha-2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>latex-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>latex</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+    
+        <plugin>
+          <groupId>org.bsc.maven</groupId>
+          <artifactId>maven-processor-plugin</artifactId>
+          <version>2.0.5</version>
+          <executions>
+            <execution>
+              <id>process</id>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <phase>process-classes</phase>
+              <configuration>
+                <processors>
+                   <processor>adams.core.annotation.MixedCopyrightProcessor</processor>
+                   <processor>adams.core.annotation.ThirdPartyCopyrightProcessor</processor>
+                </processors>
+                <options>
+                  <printheader>true</printheader>
+                  <module>${project.artifactId}</module>
+                  <output>${project.build.directory}/${project.artifactId}-${project.version}</output>
+                </options>
+              </configuration> 
+            </execution>
+          </executions>
+        </plugin>         
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- update license file: mvn license:add-third-party -DuseMissingFile -->    
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <id>add-third-party</id>
+              <goals>
+                <goal>add-third-party</goal>
+              </goals>
+              <configuration>
+                <excludedScopes>system,test</excludedScopes>
+                <excludedGroups>(de.jflex)</excludedGroups>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>         
+      
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.2.1</version>
+        </plugin>
+
+        <!--
+        example usage: mvn test, mvn test -Dtest=testclassname
+        output: target/surefire-reports/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.15</version>
+          <configuration>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <disableXmlReport>true</disableXmlReport>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <systemPropertyVariables>
+              <adams.env.class>${class.adams.env}</adams.env.class>
+              <adams.test.multiprocess.enabled>${adams.test.multiprocess.enabled}</adams.test.multiprocess.enabled>
+              <adams.test.flow.dump.file>${adams.test.flow.dump.file}</adams.test.flow.dump.file>
+              <adams.test.flow.dump.append>${adams.test.flow.dump.append}</adams.test.flow.dump.append>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <tagBase>https://svn.cms.waikato.ac.nz/svn/adams/base/tags</tagBase>
+            <useReleaseProfile>false</useReleaseProfile>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>1.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.7</version>
+        </plugin>
+        
+        <!-- generates dependency graphs, get pdfs/flows/sources -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.2</version>
+          <executions>
+            <!-- graph with just adams -->
+            <execution>
+              <id>tree</id>
+              <phase>package</phase>
+              <goals>
+                <goal>tree</goal>
+              </goals>
+              <configuration>
+                <outputType>graphml</outputType>
+                <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.graphml</outputFile>
+                <includes>${project.groupId}:*</includes>
+              </configuration>
+            </execution>
+            <!-- graph with all deps -->
+            <execution>
+              <id>tree-all</id>
+              <phase>package</phase>
+              <goals>
+                <goal>tree</goal>
+              </goals>
+              <configuration>
+                <outputType>graphml</outputType>
+                <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-all.graphml</outputFile>
+              </configuration>
+            </execution>
+            <!-- get all doc jars -->
+            <execution>
+              <id>doc</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>unpack-dependencies</goal>
+              </goals>
+              <configuration>
+                <classifier>doc</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/doc</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+            <!-- get all flow jars -->
+            <execution>
+              <id>flows</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>unpack-dependencies</goal>
+              </goals>
+              <configuration>
+                <classifier>flows</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/flows</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+            <!-- get all wsdl jars -->
+            <execution>
+              <id>wsdl</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>unpack-dependencies</goal>
+              </goals>
+              <configuration>
+                <classifier>wsdl</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/wsdl</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+            <!-- get all source jars -->
+            <execution>
+              <id>sources</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <classifier>sources</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/sources</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.4.1</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>**/*~</include>
+                <include>**/.attach_pid*</include>
+                <include>**/hs_err_pid*</include>
+                <include>**/.DS_Store</include>
+                <include>**/*-manual.aux</include>
+                <include>**/*-manual.lof</include>
+                <include>**/*-manual.log</include>
+                <include>**/*-manual.out</include>
+                <include>**/*-manual.pdf</include>
+                <include>**/*-manual.toc</include>
+                <include>**/*-manual.pdf</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <!--
+      example usage for displaying licenses: mvn displaylicense:displaylicense
+      -->
+      <plugin>
+        <groupId>net.surguy</groupId>
+        <artifactId>maven-displaylicense-plugin</artifactId>
+        <version>0.5</version>
+      </plugin>
+    </plugins>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/Module.props</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/Module.props</exclude>
+        </excludes>
+      </resource>
+    </resources>
+  </build>
+</project>

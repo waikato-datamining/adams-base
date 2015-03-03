@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-11-11 11:58:55
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Uses a Hough line detector based on polar parametrization\nto detect lines in an image.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/lines.jpg
+	-actor
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.JAIImageReader
+	-actor
+		adams.flow.transformer.BoofCVDetectLines
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

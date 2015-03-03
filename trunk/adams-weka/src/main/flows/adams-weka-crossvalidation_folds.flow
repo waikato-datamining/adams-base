@@ -1,0 +1,78 @@
+# Project: adams
+# Date: 2014-01-23 15:49:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates cross-validation splits and evaluates the classifier separately \non each of them, aggregating the results and displaying them.\n
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			folds
+			-var-value
+			10
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationSplit
+			-folds
+			@{folds}
+	-actor
+		adams.flow.transformer.WekaTrainTestSetEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+			-classifier
+			WekaClassifier
+			-no-predictions
+			true
+	-actor
+		adams.flow.transformer.WekaAggregateEvaluations
+	-actor
+		adams.flow.control.ConditionalTee
+			-tee
+				adams.flow.transformer.WekaEvaluationSummary
+					-relation
+					true
+					-class-details
+					true
+			-tee
+				adams.flow.sink.Display
+			-condition
+				adams.flow.condition.bool.Counting
+					-min
+					@{folds}
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

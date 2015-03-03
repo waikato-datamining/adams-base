@@ -1,0 +1,14 @@
+--> out-0.txt
+Blah[U]
+numeric[N]
+boolean[B]
+string[S]
+unknown[U]
+
+--> out-1.txt
+Blah[N]
+numeric[N]
+boolean[B]
+string[S]
+unknown[N]
+

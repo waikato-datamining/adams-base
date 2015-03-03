@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-01-23 15:40:35
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simply displays a loaded spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

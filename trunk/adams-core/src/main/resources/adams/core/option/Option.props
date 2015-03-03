@@ -1,0 +1,307 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+###########
+# options #
+###########
+
+# whether to suppress the output of default values in toArray/toNested
+option.SuppressDefaultValues=true
+
+# whether to enable debugging output
+option.Debug=false
+
+#########
+# hooks #
+#########
+
+# File objects
+java.io.File=true
+java.io.File#toString=adams.gui.goe.FileEditor#toString
+java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+
+# Color objects
+java.awt.Color=true
+java.awt.Color#toString=adams.gui.goe.ColorEditor#toString
+java.awt.Color#valueOf=adams.gui.goe.ColorEditor#valueOf
+
+# Color objects
+java.awt.Font=true
+java.awt.Font#toString=adams.gui.goe.FontEditor#toString
+java.awt.Font#valueOf=adams.gui.goe.FontEditor#valueOf
+
+# TimeZone objects
+java.util.TimeZone=true
+java.util.TimeZone#toString=adams.gui.goe.TimeZoneEditor#toString
+java.util.TimeZone#valueOf=adams.gui.goe.TimeZoneEditor#valueOf
+
+# Locale objects
+java.util.Locale=true
+java.util.Locale#toString=adams.gui.goe.LocaleEditor#toString
+java.util.Locale#valueOf=adams.gui.goe.LocaleEditor#valueOf
+
+# NamedSetup objects
+adams.core.NamedSetup=true
+adams.core.NamedSetup#toString=adams.gui.goe.NamedSetupEditor#toString
+adams.core.NamedSetup#valueOf=adams.gui.goe.NamedSetupEditor#valueOf
+
+# TriState objects
+adams.core.TriState=true
+adams.core.TriState#toString=adams.gui.goe.TriStateEditor#toString
+adams.core.TriState#valueOf=adams.gui.goe.TriStateEditor#valueOf
+
+# BaseObject (and derived) objects
+#adams.core.base.BaseObject=true
+#adams.core.base.BaseObject#toString=adams.gui.goe.BaseObjectEditor#toString
+#adams.core.base.BaseObject#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseString objects
+adams.core.base.BaseString=true
+adams.core.base.BaseString#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseRegExp objects
+adams.core.base.BaseRegExp=true
+adams.core.base.BaseRegExp#toString=adams.gui.goe.BaseRegExpEditor#toString
+adams.core.base.BaseRegExp#valueOf=adams.gui.goe.BaseRegExpEditor#valueOf
+
+# BasePassword objects
+adams.core.base.BasePassword=true
+adams.core.base.BasePassword#toString=adams.gui.goe.BasePasswordEditor#toString
+adams.core.base.BasePassword#valueOf=adams.gui.goe.BasePasswordEditor#valueOf
+
+# BaseText objects
+adams.core.base.BaseText=true
+adams.core.base.BaseText#toString=adams.gui.goe.BaseTextEditor#toString
+adams.core.base.BaseText#valueOf=adams.gui.goe.BaseTextEditor#valueOf
+
+# BaseAnnotation objects
+adams.core.base.BaseAnnotation=true
+adams.core.base.BaseAnnotation#toString=adams.gui.goe.BaseAnnotationEditor#toString
+adams.core.base.BaseAnnotation#valueOf=adams.gui.goe.BaseAnnotationEditor#valueOf
+
+# BaseCharacter objects
+adams.core.base.BaseCharacter=true
+adams.core.base.BaseCharacter#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseCharacter#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseBoolean objects
+adams.core.base.BaseBoolean=true
+adams.core.base.BaseBoolean#toString=adams.gui.goe.BaseBooleanEditor#toString
+adams.core.base.BaseBoolean#valueOf=adams.gui.goe.BaseBooleanEditor#valueOf
+
+# BaseByte objects
+adams.core.base.BaseByte=true
+adams.core.base.BaseByte#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseByte#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseShort objects
+adams.core.base.BaseShort=true
+adams.core.base.BaseShort#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseShort#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseInteger objects
+adams.core.base.BaseInteger=true
+adams.core.base.BaseInteger#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseInteger#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseLong objects
+adams.core.base.BaseLong=true
+adams.core.base.BaseLong#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseLong#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseFloat objects
+adams.core.base.BaseFloat=true
+adams.core.base.BaseFloat#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseFloat#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseDouble objects
+adams.core.base.BaseDouble=true
+adams.core.base.BaseDouble#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseDouble#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseDate objects
+adams.core.base.BaseDate=true
+adams.core.base.BaseDate#toString=adams.gui.goe.BaseDateEditor#toString
+adams.core.base.BaseDate#valueOf=adams.gui.goe.BaseDateEditor#valueOf
+
+# BaseDateTime objects
+adams.core.base.BaseDateTime=true
+adams.core.base.BaseDateTime#toString=adams.gui.goe.BaseDateTimeEditor#toString
+adams.core.base.BaseDateTime#valueOf=adams.gui.goe.BaseDateTimeEditor#valueOf
+
+# BaseTime objects
+adams.core.base.BaseTime=true
+adams.core.base.BaseTime#toString=adams.gui.goe.BaseTimeEditor#toString
+adams.core.base.BaseTime#valueOf=adams.gui.goe.BaseTimeEditor#valueOf
+
+# BaseList objects
+adams.core.base.BaseList=true
+adams.core.base.BaseList#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseList#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseURI objects
+adams.core.base.BaseURI=true
+adams.core.base.BaseURI#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseURI#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseURL objects
+adams.core.base.BaseURL=true
+adams.core.base.BaseURL#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseURL#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseCharset objects
+adams.core.base.BaseCharset=true
+adams.core.base.BaseCharset#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseCharset#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BaseColor objects
+adams.core.base.BaseColor=true
+adams.core.base.BaseColor#toString=adams.gui.goe.BaseColorEditor#toString
+adams.core.base.BaseColor#valueOf=adams.gui.goe.BaseColorEditor#valueOf
+
+# BaseDimension objects
+adams.core.base.BaseDimension=true
+adams.core.base.BaseDimension#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseDimension#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointInt objects
+adams.core.base.BasePointInt=true
+adams.core.base.BasePointInt#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointInt#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointFloat objects
+adams.core.base.BasePointFloat=true
+adams.core.base.BasePointFloat#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointFloat#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# BasePointDouble objects
+adams.core.base.BasePointDouble=true
+adams.core.base.BasePointDouble#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BasePointDouble#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# ArrayDimensions objects
+adams.core.base.ArrayDimensions=true
+adams.core.base.ArrayDimensions#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.ArrayDimensions#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# XPathExpression objects
+adams.core.base.XPathExpression=true
+adams.core.base.XPathExpression#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.XPathExpression#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# XSLTStyleSheet objects
+adams.core.base.XSLTStyleSheet=true
+adams.core.base.XSLTStyleSheet#toString=adams.gui.goe.XSLTScriptEditor#toString
+adams.core.base.XSLTStyleSheet#valueOf=adams.gui.goe.XSLTScriptEditor#valueOf
+
+# JsonPathExpression objects
+adams.core.base.JsonPathExpression=true
+adams.core.base.JsonPathExpression#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.JsonPathExpression#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# Index objects
+adams.core.Index=true
+adams.core.Index#toString=adams.gui.goe.IndexEditor#toString
+adams.core.Index#valueOf=adams.gui.goe.IndexEditor#valueOf
+
+# Range objects
+adams.core.Range=true
+adams.core.Range#toString=adams.gui.goe.RangeEditor#toString
+adams.core.Range#valueOf=adams.gui.goe.RangeEditor#valueOf
+
+# CallableActorReference objects
+adams.flow.core.CallableActorReference=true
+adams.flow.core.CallableActorReference#toString=adams.gui.goe.CallableActorReferenceEditor#toString
+adams.flow.core.CallableActorReference#valueOf=adams.gui.goe.CallableActorReferenceEditor#valueOf
+
+# VariableName objects
+adams.core.VariableName=true
+adams.core.VariableName#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.VariableName#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# VariableNameNoUpdate objects
+adams.core.VariableNameNoUpdate=true
+adams.core.VariableNameNoUpdate#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.VariableNameNoUpdate#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# DateFormatString objects
+adams.data.DateFormatString=true
+adams.data.DateFormatString#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.data.DateFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# DecimalFormatString objects
+adams.data.DecimalFormatString=true
+adams.data.DecimalFormatString#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.data.DecimalFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# SQLStatement objects
+adams.db.SQLStatement=true
+adams.db.SQLStatement#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.db.SQLStatement#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
+# BooleanExpressionText objects
+adams.parser.BooleanExpressionText=true
+adams.parser.BooleanExpressionText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.BooleanExpressionText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
+# MathematicalExpressionText objects
+adams.parser.MathematicalExpressionText=true
+adams.parser.MathematicalExpressionText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.MathematicalExpressionText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
+# SpreadSheetFormulaText objects
+adams.parser.SpreadSheetFormulaText=true
+adams.parser.SpreadSheetFormulaText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.SpreadSheetFormulaText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
+# StorageName objects
+adams.flow.control.StorageName=true
+adams.flow.control.StorageName#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.flow.control.StorageName#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# PlaceholderDirectory objects
+adams.core.io.PlaceholderDirectory=true
+adams.core.io.PlaceholderDirectory#toString=adams.gui.goe.PlaceholderDirectoryEditor#toString
+adams.core.io.PlaceholderDirectory#valueOf=adams.gui.goe.PlaceholderDirectoryEditor#valueOf
+
+# PlaceholderFile objects
+adams.core.io.PlaceholderFile=true
+adams.core.io.PlaceholderFile#toString=adams.gui.goe.PlaceholderFileEditor#toString
+adams.core.io.PlaceholderFile#valueOf=adams.gui.goe.PlaceholderFileEditor#valueOf
+
+# FlowFile objects
+adams.core.io.FlowFile=true
+adams.core.io.FlowFile#toString=adams.gui.goe.FlowFileEditor#toString
+adams.core.io.FlowFile#valueOf=adams.gui.goe.FlowFileEditor#valueOf
+
+# Field objects
+adams.data.report.Field=true
+adams.data.report.Field#toString=adams.gui.goe.FieldEditor#toString
+adams.data.report.Field#valueOf=adams.gui.goe.FieldEditor#valueOf
+
+# PrefixField objects
+adams.data.report.PrefixField=true
+adams.data.report.PrefixField#toString=adams.gui.goe.PrefixFieldEditor#toString
+adams.data.report.PrefixField#valueOf=adams.gui.goe.PrefixFieldEditor#valueOf
+
+# SuffixField objects
+adams.data.report.SuffixField=true
+adams.data.report.SuffixField#toString=adams.gui.goe.SuffixFieldEditor#toString
+adams.data.report.SuffixField#valueOf=adams.gui.goe.SuffixFieldEditor#valueOf

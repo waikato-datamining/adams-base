@@ -1,0 +1,25 @@
+--> out-0
+min
+1
+
+
+--> out-1
+min-1,min-2
+1,1
+
+
+--> out-2
+min
+-10
+
+
+--> out-3
+min-index
+2
+
+
+--> out-4
+min-index-1,min-index-2
+2,3
+
+

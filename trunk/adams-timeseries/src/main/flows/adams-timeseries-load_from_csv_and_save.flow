@@ -1,0 +1,34 @@
+# Project: adams
+# Date: 2014-01-23 15:43:15
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to load one or more timeseries\nfrom a CSV file and saves them in a different format.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/timeseries.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetToTimeseries
+			-column-id
+			PARENT_ID
+			-column-timestamp
+			TIMESTAMP
+			-column-value
+			TEMPERATURE
+	-actor
+		adams.flow.transformer.TimeseriesFileWriter
+			-writer
+				adams.data.io.output.SimpleTimeseriesWriter
+			-dir
+			${EXAMPLE_FLOWS}/output
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

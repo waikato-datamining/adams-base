@@ -1,0 +1,20 @@
+# Configuration file for listing template files for scripting editors.
+#
+# Format:
+#   type=file1,file2
+# For instance:
+#   Jytyhon=\
+#      adams/gui/goe/template/Standalone.py,\
+#      adams/gui/goe/template/Transformer.py
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Jython=\
+  adams/gui/goe/template/BooleanCondition.py,\
+  adams/gui/goe/template/Conversion.py,\
+  adams/gui/goe/template/Standalone.py,\
+  adams/gui/goe/template/Source.py,\
+  adams/gui/goe/template/Transformer.py,\
+  adams/gui/goe/template/Sink.py

@@ -1,0 +1,121 @@
+# Project: adams
+# Date: 2014-01-06 12:00:43
+# User: fracpete
+# Class-Path: java-cup-0.11a.jar:/home/fracpete/temp/adams2/adams-base-all-0.4.5-SNAPSHOT/resources:itextpdf-5.4.3.jar:regexp-1.3.jar:maven-scm-api-1.4.jar:jetty-util-8.1.7.v20120910.jar:adams-ml-0.4.5-SNAPSHOT.jar:groovy-all-2.1.1.jar:adams-imaging-0.4.5-SNAPSHOT.jar:adams-net-0.4.5-SNAPSHOT.jar:pdm-timeseriesforecasting-ce-2013.10.22.jar:adams-weka-0.4.5-SNAPSHOT.jar:commons-io-2.1.jar:slf4j-api-1.6.0.jar:maven-scm-provider-svnexe-1.4.jar:xstream-1.4.4.jar:commons-net-3.2.jar:isrt-4.10.jar:lpsolve-2003-11-03.jar:commons-compress-1.3.jar:adams-pdf-0.4.5-SNAPSHOT.jar:jdatepicker-1.3.2.jar:adams-timeseries-0.4.5-SNAPSHOT.jar:poi-ooxml-3.8.jar:poi-3.8.jar:adams-compress-0.4.5-SNAPSHOT.jar:jfreechart-1.0.13.jar:json-smart-1.1.1.jar:plexus-utils-1.5.6.jar:sizeofag-1.0.0.jar:commons-lang-2.6.jar:dom4j-1.6.1.jar:adams-base-all-0.4.5-SNAPSHOT.jar:lzma-java-1.2.jar:moa-2013.11.jar:openxml4j-1.0-beta.jar:jetty-server-8.1.7.v20120910.jar:tika-core-1.3.jar:diffutils-1.2.1.jar:jetty-http-8.1.7.v20120910.jar:javax.servlet-3.0.0.v201112011016.jar:georegression-0.4.jar:iscwt-5.5.jar:adams-r-0.4.5-SNAPSHOT.jar:maven-scm-provider-svn-commons-1.4.jar:adams-excel-0.4.5-SNAPSHOT.jar:commons-codec-1.6.jar:twitter4j-core-3.0.3.jar:jython-standalone-2.5.3.jar:isnativec-5.5.jar:ejml-0.23.jar:stax-api-1.0.1.jar:nekohtml-1.9.12.jar:twitter4j-stream-3.0.3.jar:jPodRenderer-5.5.1.jar:adams-groovy-0.4.5-SNAPSHOT.jar:jPodFonts-5.5.jar:Rserve-0.6-8.1.jar:mathml-dom-java-2.0.jar:REngine-0.6-8.1.jar:jai-core-1.1.3.jar:gridSearch-1.0.7.jar:hsqldb-1.8.0.10.jar:jai-codec-1.1.3.jar:adams-latex-0.4.5-SNAPSHOT.jar:xpp3_min-1.1.4c.jar:xercesImpl-2.8.1.jar:quartz-1.8.4.jar:adams-odf-0.4.5-SNAPSHOT.jar:adams-core-0.4.5-SNAPSHOT.jar:commons-math-2.2.jar:trove4j-3.0.3.jar:jsch-0.1.50.jar:jbig2-5.5.1.jar:log4j-1.2.8.jar:jama-1.0.3.jar:jna-3.2.7.jar:xmlbeans-2.3.0.jar:jide-oss-3.5.6.jar:adams-spreadsheet-0.4.5-SNAPSHOT.jar:mysql-connector-java-5.1.18.jar:joda-time-2.1.jar:adams-jython-0.4.5-SNAPSHOT.jar:poi-ooxml-schemas-3.8.jar:java-cup-0.11a.jar:jPod-5.5.1.jar:commons-vfs2-2.0.jar:xmlworker-1.1.0.jar:adams-event-0.4.5-SNAPSHOT.jar:im4java-1.2.0.jar:weka-dev-3.7.10.jar:jta-1.1.jar:ddogleg-0.3.jar:json-path-0.8.1.jar:adams-moa-0.4.5-SNAPSHOT.jar:WekaODF-1.0.4.jar:isfreetype-5.5.jar:xmlpull-1.1.3.1.jar:WekaExcel-1.0.4.jar:partialLeastSquares-1.0.2.jar:pentaho-package-manager-1.0.8.jar:xml-apis-1.3.03.jar:sanselan-0.97-incubator.jar:jcommon-1.0.14.jar:adams-meta-0.4.5-SNAPSHOT.jar:compress-lzf-0.9.5.jar:adams-twitter-0.4.5-SNAPSHOT.jar:scriptingClassifiers-1.0.2.jar:adams-gnuplot-0.4.5-SNAPSHOT.jar:mail-1.4.4.jar:activation-1.1.jar:sqlite-jdbc-3.7.2.jar:commons-logging-1.1.1.jar:postgresql-9.0-801.jdbc4.jar:imagej-1.47.jar:jetty-io-8.1.7.v20120910.jar:jsci-1.2.jar:adams-visualstats-0.4.5-SNAPSHOT.jar:boofcv-0.15.jar:jOpenDocument-1.3.jar:adams-random-0.4.5-SNAPSHOT.jar:sizeofag-1.0.0.jar
+#
+adams.flow.control.Flow
+	-annotation
+	Traverses a directory with .csv.gz files containing tweets,\ncounting the number of rows and outputting a total and \ncount per file.
+	-actor
+		adams.flow.standalone.GlobalActors
+			-actor
+				adams.flow.sink.Display
+					-name
+					Count
+					-short-title
+					true
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			read files
+			-tee
+				adams.flow.standalone.SetVariable
+					-name
+					SetVariable-1
+					-var-name
+					total
+					-var-value
+					0
+			-tee
+				adams.flow.source.DirectoryLister
+					-dir
+					/storm/research/backup/twitter
+					-list-files
+					true
+					-regexp
+					.*.gz
+					-sorting
+					SORT_BY_NAME
+			-tee
+				adams.flow.control.Tee
+					-name
+					extract file name
+					-tee
+						adams.flow.transformer.BaseName
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							file
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					SetVariable-2
+					-var-name
+					current
+					-var-value
+					0
+			-tee
+				adams.flow.control.Tee
+					-name
+					load file
+					-tee
+						adams.flow.transformer.SpreadSheetFileReader
+							-reader
+								adams.data.io.input.CsvSpreadSheetReader
+									-spreadsheet-type
+										adams.data.spreadsheet.SpreadSheet
+									-missing
+									
+									-text-columns
+									first-last
+									-chunk-size
+									10000
+					-tee
+						adams.flow.transformer.SpreadSheetInfo
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							chunk
+					-tee
+						adams.flow.transformer.IncVariable
+							-var-name
+							current
+							-inc-int
+							@{chunk}
+					-tee
+						adams.flow.transformer.IncVariable
+							-name
+							IncVariable-1
+							-var-name
+							total
+							-inc-int
+							@{chunk}
+			-tee
+				adams.flow.control.Trigger
+					-name
+					output current
+					-tee
+						adams.flow.source.CombineVariables
+							-expression
+							@{file}: @{current}
+					-tee
+						adams.flow.sink.GlobalSink
+							-global
+							Count
+	-actor
+		adams.flow.control.Trigger
+			-name
+			output total
+			-tee
+				adams.flow.source.CombineVariables
+					-expression
+					total: @{total}
+			-tee
+				adams.flow.sink.GlobalSink
+					-global
+					Count
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

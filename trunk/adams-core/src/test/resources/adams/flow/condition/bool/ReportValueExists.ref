@@ -1,0 +1,6 @@
+--> adams.flow.condition.bool.ReportValueExists-out0.txt
+false
+
+--> adams.flow.condition.bool.ReportValueExists-out1.txt
+true
+

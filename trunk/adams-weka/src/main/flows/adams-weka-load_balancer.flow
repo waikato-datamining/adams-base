@@ -1,0 +1,88 @@
+# Project: adams
+# Date: 2014-05-15 15:32:01
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The LoadBalancer actor allows the parallel execution of the \nbalancer\'s sub-flow. Using \"-1\" as number of slots (ie threads)\nall available CPUs/cores will be used to process the incoming\ndata.\nThis example cross-validates all available datasets with J48\nand outputs the evaluation summary in the console.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*\\.arff
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
+	-actor
+		adams.flow.control.LoadBalancer
+			-load
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+			-load
+				adams.flow.control.Tee
+					-name
+					relation name
+					-tee
+						adams.flow.transformer.WekaInstancesInfo
+							-type
+							RELATION_NAME
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							relation
+			-load
+				adams.flow.transformer.WekaClassSelector
+			-load
+				adams.flow.control.TryCatch
+					-try
+						adams.flow.control.SubProcess
+							-name
+							try
+							-actor
+								adams.flow.transformer.WekaCrossValidationEvaluator
+									-output
+										weka.classifiers.evaluation.output.prediction.Null
+									-classifier
+									WekaClassifier
+							-actor
+								adams.flow.transformer.WekaEvaluationSummary
+									-relation
+									true
+									-complexity-stats
+									true
+									-class-details
+									true
+					-catch
+						adams.flow.source.CombineVariables
+							-name
+							catch
+							-expression
+							Relation: @{relation} - failed
+					-store-error
+					true
+			-load
+				adams.flow.sink.Console
+			-use-local-vars
+			true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

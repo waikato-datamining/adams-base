@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-09-26 14:34:29
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Adds a column with scores (in this case the \"mean\") for each row in a spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.TransposeSpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetInsertRowScore
+			-header
+			Mean
+			-score
+				adams.data.spreadsheet.rowscore.RowStatistic
+					-statistic
+						adams.data.spreadsheet.rowstatistic.Mean
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

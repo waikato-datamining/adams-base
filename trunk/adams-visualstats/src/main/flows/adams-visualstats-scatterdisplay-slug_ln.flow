@@ -1,0 +1,55 @@
+# Project: adams
+# Date: 2014-01-23 15:45:25
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates LinearRegression on the \"slug\" (log-transformed)\ndataset and displays the class (actual vs predicted) as scatter plot.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.functions.LinearRegression
+							-S
+							1
+							-C
+							-R
+							1.0E-8
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/slug-ln.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+			-classifier
+			WekaClassifier
+	-actor
+		adams.flow.transformer.WekaPredictionsToInstances
+	-actor
+		adams.flow.sink.ScatterDisplay
+			-writer
+				adams.gui.print.NullWriter
+			-y-attribute
+			2
+			-overlay
+				adams.gui.visualization.stats.scatterplot.Diagonal
+					-color
+					#ff0000
+			-overlay
+				adams.gui.visualization.stats.scatterplot.Lowess
+			-paintlet
+				adams.gui.visualization.stats.paintlet.ScatterPaintletCircle
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

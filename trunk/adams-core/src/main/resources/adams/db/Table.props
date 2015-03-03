@@ -1,0 +1,11 @@
+# Configurations for various table classes and other related classes.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Outputs a stacktrace in case the initTable call for table fails (false|true)
+InitTables.Debug=false
+
+# The logging table (requires MySQL)
+adams.db.LogT.Enabled=false
+adams.db.LogT.Debug=false

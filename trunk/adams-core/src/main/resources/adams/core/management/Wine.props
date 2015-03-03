@@ -1,0 +1,16 @@
+# Contains parameters for wine (http://www.winehq.org/).
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The wine executable for GUI applications
+GUIExecutable=/usr/bin/wine
+
+# Additional parameters for the GUIExecutable
+GUIParameters=
+
+# The wine executable for console applications
+ConsoleExecutable=/usr/bin/wineconsole
+
+# Additional parameters for the ConsoleExecutable
+ConsoleParameters=--backend=user

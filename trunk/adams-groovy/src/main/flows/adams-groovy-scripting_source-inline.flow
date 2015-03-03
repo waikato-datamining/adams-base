@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2014-01-23 15:30:05
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow that uses an inline Groovy source\nscript to generate some random integers.
+	-actor
+		adams.flow.source.Groovy
+			-inline-script
+			/*\n * A simple Groovy source that just generates a few random integers as\n * tokens (0-99).\n *\n * @author FracPete (fracpete at waikato dot ac dot nz)\n * @version $Revision: 4278 $\n */\n\nimport adams.flow.core.Token\nimport adams.flow.core.Unknown\nimport adams.flow.source.AbstractScript\n\nimport java.util.Random\nimport java.util.Vector\n\nclass SimpleSource\n  extends AbstractScript {\n\n  /** contains all the tokens to send. */\n  protected Vector m_Tokens\n\n  /**\n   * Returns a string describing the object.\n   *\n   * @return \t\t\ta description suitable for displaying in the gui\n   */\n  public String globalInfo() {\n    return \"Just generates a bunch of random integer tokens (0-99).\"\n  }\n\n  /**\n   * Initializes the item for flow execution.\n   *\n   * @return\t\tnull if everything is fine, otherwise error message\n   */\n  public String setUp() {\n    def result = super.setUp()\n    if (result == null)\n      m_Tokens = new Vector()\n    return result\n  }\n\n  /**\n   * Returns the class of objects that it generates.\n   *\n   * @return\t\tInteger.class\n   */\n  public Class[] generates() {\n    return [Integer.class] as Object[]\n  }\n\n  /**\n   * Executes the flow item.\n   *\n   * @return\t\tnull if everything is fine, otherwise error message\n   */\n  protected String doExecute() {\n  \tdef rand = new Random(1)\n  \tfor (i in 1..10)\n  \t  m_Tokens.add(new Token(new Integer(rand.nextInt(100))))\n    return null\n  }\n\n  /**\n   * Returns the generated token.\n   *\n   * @return\t\tthe generated token\n   */\n  public Token output() {\n    def result = m_Tokens.get(0)\n    m_Tokens.remove(0)\n    return result\n  }\n\n  /**\n   * Checks whether there is pending output to be collected after\n   * executing the flow item.\n   *\n   * @return\t\ttrue if there is pending output\n   */\n  public boolean hasPendingOutput() {\n    return (m_Tokens.size() > 0)\n  }\n\n  /**\n   * Cleans up after the execution has finished.\n   */\n  public void wrapUp() {\n    super.wrapUp()\n    m_Tokens = null\n  }\n}
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

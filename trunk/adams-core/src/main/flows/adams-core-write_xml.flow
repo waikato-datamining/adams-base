@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-01-23 15:25:25
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Here we create a DOM document from an input string\nand store the object as XML file on disk.
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.XMLToDOM
+	-actor
+		adams.flow.sink.XMLFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/note.xml
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

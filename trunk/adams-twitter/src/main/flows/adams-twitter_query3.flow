@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2014-05-15 13:32:34
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow for querying and filtering Twitter tweets.\nGenerates a CSV file from the obtained tweets.\nFor query examples, see the following web page:\nhttp://search.twitter.com/operators
+	-actor
+		adams.flow.standalone.TwitterConnection
+	-actor
+		adams.flow.source.TwitterQuery
+			-query
+			work
+			-max-tweets
+			1000
+	-actor
+		adams.flow.transformer.TwitterFilter
+			-expression
+			text:":)" or text:":("
+	-actor
+		adams.flow.transformer.TwitterConverter
+			-converter
+				adams.data.twitter.SpreadSheetConverter
+					-field
+					ID
+					-field
+					CREATED
+					-field
+					USER_NAME
+					-field
+					TEXT
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/tweets_filtered.csv
+			-writer
+				adams.data.io.output.CsvSpreadSheetWriter
+					-appending
+					true
+					-always-quote-text
+					true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

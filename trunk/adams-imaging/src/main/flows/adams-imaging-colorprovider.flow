@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-07-31 12:19:15
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	A simple for showing how to generate colors with a \ncolor provider and turning them into their hexa-decimal\nnotation.
+	-actor
+		adams.flow.source.ColorProvider
+			-provider
+				adams.gui.visualization.core.DefaultColorProvider
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.ColorToHex
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

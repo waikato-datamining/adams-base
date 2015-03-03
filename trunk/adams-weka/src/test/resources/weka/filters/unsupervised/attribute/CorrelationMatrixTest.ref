@@ -1,0 +1,21 @@
+@relation 'CorrelationMatrix: bolts-weka.filters.unsupervised.attribute.CorrelationMatrix-Rfirst-last'
+
+@attribute x {RUN,SPEED1,TOTAL,SPEED2,NUMBER2,SENS,TIME,T20BOLT}
+@attribute RUN numeric
+@attribute SPEED1 numeric
+@attribute TOTAL numeric
+@attribute SPEED2 numeric
+@attribute NUMBER2 numeric
+@attribute SENS numeric
+@attribute TIME numeric
+@attribute T20BOLT numeric
+
+@data
+RUN,1,0.007264,-0.220345,-0.128333,-0.094433,0,0.012063,0.136692
+SPEED1,0.007264,1,0,0,0,-0.390434,0.577927,0.70527
+TOTAL,-0.220345,0,1,0,0,-0.390434,0.578461,0.19434
+SPEED2,-0.128333,0,0,1,0,0,-0.009927,-0.025394
+NUMBER2,-0.094433,0,0,0,1,0,-0.023023,-0.102122
+SENS,0,-0.390434,-0.390434,0,0,1,-0.687226,-0.559505
+TIME,0.012063,0.577927,0.578461,-0.009927,-0.023023,-0.687226,1,0.861861
+T20BOLT,0.136692,0.70527,0.19434,-0.025394,-0.102122,-0.559505,0.861861,1

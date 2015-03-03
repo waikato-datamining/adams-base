@@ -1,0 +1,3 @@
+dataset=iris
+num_classes=3
+attribute_names=sepallength,sepalwidth,petallength,petalwidth,class

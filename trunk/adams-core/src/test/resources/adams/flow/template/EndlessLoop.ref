@@ -1,0 +1,10 @@
+--> adams.flow.template.EndlessLoop-out0.txt
+adams.flow.control.WhileLoop
+	-condition
+		adams.flow.condition.bool.True
+	-loop
+		adams.flow.source.Start
+	-loop
+		adams.flow.control.Sleep
+
+

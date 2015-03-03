@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2014-01-23 15:38:16
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Displays a simple PDF file in the viewer.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+	-actor
+		adams.flow.sink.PDFViewer
+			-writer
+				adams.gui.print.NullWriter
+			-zoom
+			75.0
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

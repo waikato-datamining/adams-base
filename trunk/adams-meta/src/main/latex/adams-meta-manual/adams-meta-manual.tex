@@ -1,0 +1,120 @@
+% Copyright (c) 2009-2014 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+\usepackage{varwidth}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-meta} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/meta-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2009-2014} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\chapter{Dynamic use of templates}
+\label{dynamic}
+The templating mechanism described in the ``core-module'' manual, shows how to 
+speed up the inception of new flows. But the templates can also be used in a
+dynamic way at runtime using the following actors:
+\begin{tight_itemize}
+	\item \textit{TemplateStandalone} -- for templates that generate standalones
+	\item \textit{TemplateSource} -- for templates that generate sources
+	\item \textit{TemplateTransformer} -- for templates that generate transforming
+	sub-flows
+	\item \textit{TemplateSink} -- for templates that generate sinks
+\end{tight_itemize}
+The sub-flow generation is done in a lazy way, i.e., only when the
+aforementioned template actor is executed, the template is generated. The
+sub-flow is used till either the end of the flow execution or if a variable
+changes that is attached to the template itself. In the latter case, the
+sub-flow gets re-generated the next time the template actor gets executed. This
+dynamic sub-flow generation in conjunction with variable use, allows to adapt
+and change the flow at runtime. The example \textit{adams-core-template.flow}
+demonstrates this.
+
+\newpage
+\chapter{Copying callable actors}
+\label{copycallableactors}
+Callable actors can not only be used as synchronization points in the flow. It
+is also possible to \textit{copy} them, using them as templates. If you don't
+want to use external flows, but still need to use the same sub-flow multiple
+times and avoid the bottle next of synchronous execution, then you can use
+one of the following actors to create a copy of the callable at the very same 
+location:
+\begin{tight_itemize}
+	\item \textit{CopyCallableStandalone} -- copies a callable standalone
+	\item \textit{CopyCallableSource} -- copies a callable source
+	\item \textit{CopyCallableTransformer} -- copies a callable transformer
+	\item \textit{CopyCallableSink} -- copies a callable sink
+\end{tight_itemize}
+
+\newpage
+\chapter{Including external actors}
+\label{includeexteranlactors}
+Similar to the external actors of the \textit{adams-core} module, the following
+actors allow the use of external flow snippets. However, these flows simply
+replace themselves with the content of the external flow and cannot be changed
+dynamically with variables. Flexibility has been traded here for performance.
+\begin{tight_itemize}
+	\item \textit{IncludeExternalStandalone} -- includes an external standalone
+	\item \textit{IncludeExternalSource} -- includes an external source
+	\item \textit{IncludeExternalTransformer} -- includes an external transformer
+	\item \textit{IncludeExternalSink} -- includes an external sink
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

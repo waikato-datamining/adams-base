@@ -1,0 +1,6 @@
+--> adams.flow.condition.bool.FileExists-out0.txt
+false
+
+--> adams.flow.condition.bool.FileExists-out1.txt
+true
+

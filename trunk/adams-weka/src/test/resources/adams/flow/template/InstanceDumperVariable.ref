@@ -1,0 +1,18 @@
+--> adams.flow.template.InstanceDumperVariable-out0.txt
+adams.flow.control.Trigger
+	-name
+	Setting variable 'blah'
+	-tee
+		adams.flow.source.Variable
+			-var-name
+			flow_filename_long
+	-tee
+		adams.flow.transformer.StringReplace
+			-find
+			\\.[^\\.]*
+	-tee
+		adams.flow.transformer.SetVariable
+			-var-name
+			blah
+
+

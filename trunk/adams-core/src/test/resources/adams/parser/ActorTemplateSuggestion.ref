@@ -1,0 +1,4 @@
+--> out-0
+IF PARENT IS adams.flow.control.Flow THEN adams.flow.template.UpdateVariable: adams.flow.template.UpdateVariable
+IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) THEN adams.flow.template.UpdateVariable: adams.flow.template.UpdateVariable
+

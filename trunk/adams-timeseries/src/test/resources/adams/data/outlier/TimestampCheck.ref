@@ -1,0 +1,8 @@
+--> wine-out0.sts
+
+--> wine-out1.sts
+Timestamp at 'index=first, max=187' is not before supplied timestamp: 1980-01-01 00:00:00 > 1980-01-01 00:00:00
+
+--> wine-out2.sts
+Timestamp at 'index=last, max=187' is not after supplied timestamp: 1995-07-01 00:00:00 < 2000-01-01 00:00:00
+

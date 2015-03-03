@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2015-01-27 12:22:23
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads a spreadsheet in chunks and writes the\nchunks to a newly created MS Access database,\none after the other.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-provider
+						adams.flow.sink.SpreadSheetDisplay
+							-writer
+								adams.data.io.output.NullWriter
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			output
+			-var-value
+			${EXAMPLE_FLOWS}/output/out.mdb
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			delete any existing database
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					output
+			-tee
+				adams.flow.transformer.DeleteFile
+	-actor
+		adams.flow.control.Trigger
+			-name
+			generate Access database
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/labor.csv
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+							-chunk-size
+							20
+			-tee
+				adams.flow.control.Tee
+					-name
+					display chunks
+					-tee
+						adams.flow.sink.CallableSink
+							-callable
+							DisplayPanelManager
+			-tee
+				adams.flow.sink.SpreadSheetFileWriter
+					-output
+					@{output}
+					-writer
+						adams.data.io.output.AccessSpreadSheetWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

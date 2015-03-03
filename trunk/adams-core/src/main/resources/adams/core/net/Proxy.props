@@ -1,0 +1,42 @@
+# Properties file listing proxy related parameters.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Proxy type (DIRECT|HTTP|SOCKS)
+# Note: the HTTP proxy is also used for FTP
+ProxyType=DIRECT
+
+# Whether the http proxy requires authentication (true|false)
+HttpAuthentication=false
+
+# The user for the http proxy
+HttpUser=
+
+# The password for the http proxy
+HttpPassword=
+
+# HTTP proxy server
+HttpHost=http.proxy.com
+
+# HTTP proxy port
+HttpPort=80
+
+# the hosts to bypass the proxy for
+# Example: *.foo.com|localhost
+HttpNoProxy=localhost|127.0.0.1
+
+# Whether the socks proxy requires authentication (true|false)
+SocksAuthentication=false
+
+# The user for the socks proxy
+SocksUser=
+
+# The password for the socks proxy
+SocksPassword=
+
+# Socks proxy server
+SocksHost=socks.proxy.com
+
+# Socks proxy port
+SocksPort=1080

@@ -1,0 +1,25 @@
+--> out-0.txt
+The quick brown fox jumps over the lazy dog
+This Pangram contains four as, one b, two cs, one d, thirty es, six fs, 
+five gs, seven hs, eleven is, one j, one k, two ls, two ms, eighteen ns, 
+fifteen os, two ps, one q, five rs, twenty-seven ss, eighteen ts, two us,
+ seven vs, eight ws, two xs, three ys, & one z.
+
+--> out-1.txt
+The quick brown fox 
+jumps over the lazy 
+dog
+This Pangram contains 
+four as, one b, two 
+cs, one d, thirty es,
+ six fs, five gs, seven 
+hs, eleven is, one j,
+ one k, two ls, two 
+ms, eighteen ns, fifteen 
+os, two ps, one q, five 
+rs, twenty-seven ss, 
+eighteen ts, two us, 
+seven vs, eight ws, 
+two xs, three ys, & 
+one z.
+

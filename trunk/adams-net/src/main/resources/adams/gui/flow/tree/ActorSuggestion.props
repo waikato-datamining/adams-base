@@ -1,0 +1,43 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams-net.SendEmail1=\
+  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.SendEmail
+
+adams-net.SendEmail2=\
+  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.SendEmail
+
+adams-net.EmailViewer1=\
+  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.EmailViewer
+
+adams-net.EmailViewer2=\
+  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.EmailViewer
+
+adams-net.EmailFileWriter1=\
+  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.EmailFileWriter
+
+adams-net.EmailFileWriter2=\
+  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.EmailFileWriter
+
+adams-net.EmailFileReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.EmailFileReader
+
+adams-net.EmailFileReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.EmailFileReader
+
+adams-net.CreateEmail1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.CreateEmail
+
+adams-net.CreateEmail2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.CreateEmail
+  

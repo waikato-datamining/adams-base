@@ -1,0 +1,47 @@
+# Project: adams
+# Date: 2014-01-23 15:49:28
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a SimpleKMeans clusterer on a\ndataset and outputs the log-likelihood.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClustererSetup
+					-clusterer
+						weka.clusterers.SimpleKMeans
+							-N
+							2
+							-A
+							weka.core.EuclideanDistance -R first-last
+							-I
+							500
+							-num-slots
+							1
+							-S
+							10
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaFilter
+			-filter
+				weka.filters.unsupervised.attribute.Remove
+					-R
+					last
+					
+	-actor
+		adams.flow.transformer.WekaCrossValidationClustererEvaluator
+	-actor
+		adams.flow.transformer.WekaClusterEvaluationSummary
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

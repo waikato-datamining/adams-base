@@ -1,0 +1,9 @@
+# Properties file for JDBC drivers.
+#
+# author: FracPete (fracpete at waikato dot ac dot nz)
+# version: $Revision$
+
+# the JDBC driver classes (comma-separated lst)
+Drivers=\
+  com.mysql.jdbc.Driver,\
+  org.sqlite.JDBC

@@ -1,0 +1,64 @@
+# Project: adams
+# Date: 2014-01-23 15:26:58
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to use the Cron actor.\nThe example outputs the files in the TMP directory\nevery 5 seconds.\nThe Start and WhileLoop actors are only used in order \nto keep the flow running till the user stops it.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.Cron
+					-cron-actor
+						adams.flow.source.DirectoryLister
+							-output-array
+							true
+							-dir
+							${TMP}
+							-list-files
+							true
+							-sorting
+							SORT_BY_NAME
+					-cron-actor
+						adams.flow.control.Trigger
+							-tee
+								adams.flow.source.StringConstants
+									-string
+									blah
+							-tee
+								adams.flow.transformer.StringReplace
+									-find
+									.*
+									-replace
+									----- new run -----
+							-tee
+								adams.flow.sink.CallableSink
+									-callable
+									Display
+					-cron-actor
+						adams.flow.transformer.ArrayToSequence
+					-cron-actor
+						adams.flow.sink.CallableSink
+							-callable
+							Display
+					-schedule
+					0/5 * * * * ?
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.WhileLoop
+			-condition
+				adams.flow.condition.bool.Expression
+			-loop
+				adams.flow.source.Start
+			-loop
+				adams.flow.control.Sleep
+					-interval
+					10000
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

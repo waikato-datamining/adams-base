@@ -1,0 +1,70 @@
+# Project: adams
+# Date: 2014-11-11 12:03:07
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flows generates a CSV file from the JPG pictures\nin the \"data\" directory, which the user manually labels.\nThe labelling consists of selecting pixels on the image\nand labelling them using the right-click menu for selecting\na classification label for this pixel. A region around these\nselected pixels is then cropped and turned into a \nadams.data.spreadsheet.Row object which gets output in a CSV file.
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*.jpg
+			-sorting
+			SORT_BY_NAME
+	-actor
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.ImageMagickImageReader
+	-actor
+		adams.flow.transformer.ImageMagickTransformer
+			-commands
+			-scale 75%
+	-actor
+		adams.flow.transformer.PixelSelector
+			-action
+				adams.flow.transformer.pixelselector.AddClassification
+					-label
+					Object
+					-label
+					Background
+					-remember-last-selection
+					true
+			-overlay
+				adams.flow.transformer.pixelselector.ClassificationOverlay
+					-color
+					#ffffff
+	-actor
+		adams.flow.control.Cast
+			-classname
+			adams.data.image.BufferedImageContainer
+	-actor
+		adams.flow.transformer.BufferedImageFeatureGenerator
+			-algorithm
+				adams.data.image.features.PixelClassifications
+					-converter
+						adams.data.featureconverter.SpreadSheet
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+					-width
+					5
+					-height
+					5
+					-anchor
+					MIDDLE_CENTER
+					-pixel-type
+					RGB_SEPARATE
+	-actor
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/pixelselector.csv
+			-writer
+				adams.data.io.output.CsvSpreadSheetWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

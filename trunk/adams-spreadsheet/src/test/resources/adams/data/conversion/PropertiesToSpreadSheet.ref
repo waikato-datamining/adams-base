@@ -1,0 +1,7 @@
+--> out-0.txt
+Key,Value
+attribute_names,"sepallength,sepalwidth,petallength,petalwidth,class"
+dataset,iris
+num_classes,3
+
+

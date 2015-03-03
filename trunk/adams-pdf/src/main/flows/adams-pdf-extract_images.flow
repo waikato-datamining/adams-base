@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2014-01-23 15:38:02
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Extracts all the images from a PDF and displays them.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/multiple_images.pdf
+	-actor
+		adams.flow.transformer.PDFExtractImages
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-width
+			800
+			-height
+			600
+			-provider
+				adams.flow.sink.ImageViewer
+					-writer
+						adams.gui.print.NullWriter
+					-selection-processor
+						adams.gui.visualization.image.selection.NullProcessor
+					-image-overlay
+						adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

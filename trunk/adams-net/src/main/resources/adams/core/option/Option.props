@@ -1,0 +1,28 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# HtmlCode objects
+adams.core.base.HtmlCode=true
+adams.core.base.HtmlCode#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.HtmlCode#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# EmailAddress objects
+adams.core.net.EmailAddress=true
+adams.core.net.EmailAddress#toString=adams.gui.goe.EmailAddressEditor#toString
+adams.core.net.EmailAddress#valueOf=adams.gui.goe.EmailAddressEditor#valueOf

@@ -1,0 +1,110 @@
+# Project: adams
+# Date: 2014-01-23 15:41:39
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Sets the cells on the diagonal with values of \"HELLOWORLD\".
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SetStorageValue
+			-storage-name
+			spreadsheet
+	-actor
+		adams.flow.control.Tee
+			-name
+			# columns
+			-tee
+				adams.flow.transformer.SpreadSheetInfo
+					-type
+					NUM_COLUMNS
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					cols
+	-actor
+		adams.flow.control.Tee
+			-name
+			# rows
+			-tee
+				adams.flow.transformer.SpreadSheetInfo
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					rows
+	-actor
+		adams.flow.control.Trigger
+			-name
+			determine minimum (#cols/#rows)
+			-tee
+				adams.flow.source.VariablesArray
+					-var-name
+					cols
+					-var-name
+					rows
+			-tee
+				adams.flow.control.ArrayProcess
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.StringToInt
+			-tee
+				adams.flow.transformer.Min
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					min
+	-actor
+		adams.flow.control.Trigger
+			-name
+			iterate over cells
+			-tee
+				adams.flow.source.ForLoop
+					-upper
+					@{min}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					pos
+			-tee
+				adams.flow.control.Trigger
+					-tee
+						adams.flow.source.StorageValue
+							-storage-name
+							spreadsheet
+					-tee
+						adams.flow.transformer.SpreadSheetSetCell
+							-no-copy
+							true
+							-row
+							@{pos}
+							-col
+							@{pos}
+							-value
+							HELLOWORLD
+					-tee
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							spreadsheet
+	-actor
+		adams.flow.control.Trigger
+			-name
+			display spreadsheet
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					spreadsheet
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

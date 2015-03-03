@@ -1,0 +1,90 @@
+# Project: adams
+# Date: 2014-01-23 15:47:49
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Since only classes implementing the ADAMS OptionHandler can \nhandle variables, the SetProperty transformer can be used to update \nan arbitrary property in a global actor.\nThe SetProperty actor just updates the property whenever a token \npasses through (uses the string representation of this token as value \nfor the property).\nNB: No re-initializations are taking place, just simple setting of a value.\n\nThis example cross-validates J48 on a dataset with three different\nconfidence factors: 0.2, 0.3 and 0.4. Each time outputting the \npredictions of the cross-validation.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			0.2
+			-string
+			0.3
+			-string
+			0.4
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			confidence
+	-actor
+		adams.flow.transformer.SetProperty
+			-actor-name
+			WekaClassifier
+			-property
+			classifier.confidenceFactor
+	-actor
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					${EXAMPLE_FLOWS}/data/labor.arff
+			-tee
+				adams.flow.transformer.WekaFileReader
+					-loader
+						weka.core.converters.ArffLoader
+			-tee
+				adams.flow.transformer.WekaClassSelector
+			-tee
+				adams.flow.transformer.WekaCrossValidationEvaluator
+					-output
+						weka.classifiers.evaluation.output.prediction.Null
+					-classifier
+					WekaClassifier
+					-num-threads
+					-1
+			-tee
+				adams.flow.transformer.WekaPredictionsToInstances
+					-add-index
+					true
+					-error
+					true
+					-probability
+					true
+					-distribution
+					true
+			-tee
+				adams.flow.sink.DisplayPanelManager
+					-provider
+						adams.flow.sink.WekaInstancesDisplay
+							-writer
+								adams.gui.print.NullWriter
+					-entry-name-variable
+					confidence
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

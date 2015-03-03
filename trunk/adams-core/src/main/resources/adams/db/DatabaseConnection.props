@@ -1,0 +1,25 @@
+# Properties file for database access
+#
+# author: FracPete (fracpete at waikato dot ac dot nz)
+# version: $Revision$
+
+# the database URL
+URL=jdbc:mysql://somehost:3306/somedatabase
+
+# the database user
+User=
+
+# the database password
+Password=
+
+# Whether to connect on start-up of the application
+ConnectOnStartUp=false
+
+# the maximum number of connection attempts for a Driver/URL/User/PW combination
+MaxConnectAttempts=1
+
+# the number of seconds to wait before trying to reconnect
+ReconnectWait=10
+
+# Whether to use auto commit (true|false)
+AutoCommit=true

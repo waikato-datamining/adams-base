@@ -1,0 +1,19 @@
+--> labor-out0.csv
+Key,Value
+average,1
+good,1
+yes,1
+
+
+--> labor-out1.csv
+Key,Value
+full,1
+good,1
+
+
+--> labor-out2.csv
+Key,Value
+below_average,1
+good,1
+
+

@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2014-01-23 15:50:22
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow simply loads a dataset and\ndisplays it. Of course, it also sets the\nclass attribute accordingly.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.sink.WekaInstancesDisplay
+			-writer
+				adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,3 @@
+Col1,Col2,Formula
+1,3,=sum(A2:B2)
+2,4,=sum(A3:B3)

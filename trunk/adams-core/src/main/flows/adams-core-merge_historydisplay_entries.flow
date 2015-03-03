@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2014-01-23 15:23:52
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to use the HistoryDisplay\'s \n\"merge\" capability (option: allowMerge). \nAll entries that have the same value for \"entryNameVariable\" \nget merged, i.e., the content gets appended.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.HistoryDisplay
+					-entry-name-variable
+					outer
+					-allow-merge
+					true
+	-actor
+		adams.flow.source.ForLoop
+			-upper
+			3
+	-actor
+		adams.flow.transformer.SetVariable
+			-annotation
+			This variable identifies a history entry.
+			-var-name
+			outer
+	-actor
+		adams.flow.control.Trigger
+			-name
+			inner loop
+			-tee
+				adams.flow.source.ForLoop
+			-tee
+				adams.flow.transformer.MathExpression
+					-expression
+					X + @{outer} * 100
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

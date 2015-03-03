@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2014-01-23 15:23:56
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Outputs a binary file in hex notation, 16 bytes per row.\nOnly the first 256 bytes are output.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+	-actor
+		adams.flow.transformer.BinaryFileReader
+			-end
+			256
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.ByteToHex
+	-actor
+		adams.flow.transformer.SequenceToArray
+			-length
+			16
+	-actor
+		adams.flow.transformer.StringJoin
+			-glue
+			 
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

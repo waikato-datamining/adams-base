@@ -1,0 +1,13 @@
+--> dumpfile.csv
+Key,Value
+Min,7.32
+Max,89.34
+Mean,33.934
+StdDev,27.411095526241
+Median,19.26
+IQR,55.84
+"Distinct numbers",40
+"Unique numbers",40
+Missing,0
+
+

@@ -1,0 +1,16 @@
+--> adams.flow.template.StringReplace-out0.txt
+adams.flow.control.SubProcess
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X+1000
+
+
+--> adams.flow.template.StringReplace-out1.txt
+adams.flow.control.SubProcess
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X*3+1000
+
+

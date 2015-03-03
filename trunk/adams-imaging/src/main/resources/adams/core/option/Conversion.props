@@ -1,0 +1,99 @@
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 9394 $
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-jai_flattener_dft,\
+  Rename-jai_flattener_histogram,\
+  Rename-jai_flattener_max,\
+  Rename-jai_flattener_multi,\
+  Rename-jai_flattener_namedsetup,\
+  Rename-jai_flattener_pixelclassifications,\
+  Rename-jai_flattener_pixels,\
+  Rename-jai_flattener_scripted,\
+  Rename-jai_transformer_binary,\
+  Rename-jai_transformer_binarymask,\
+  Rename-jai_transformer_crop,\
+  Rename-jai_transformer_cropping,\
+  Rename-jai_transformer_gaussianblur,\
+  Rename-jai_transformer_imagefilter,\
+  Rename-jai_transformer_imagetype,\
+  Rename-jai_transformer_laplaceoperator,\
+  Rename-jai_transformer_multitransformer,\
+  Rename-jai_transformer_namedsetup,\
+  Rename-jai_transformer_passthrough,\
+  Rename-jai_transformer_subimages,\
+  Rename-jai_transformer_whitebalance,\
+  Rename-transformer_boofcvflattener,\
+  Rename-transformer_imagejflattener,\
+  Rename-transformer_jaiflattener,\
+  Rename-transformer_jaitransformer,\
+  Rename-source-jaicreateimage
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-jai_flattener_dft=adams.data.jai.flattener.DFT-adams.data.jai.features.DFT
+Rename-jai_flattener_histogram=adams.data.jai.flattener.Histogram-adams.data.jai.features.Histogram
+Rename-jai_flattener_max=adams.data.jai.flattener.Max-adams.data.adams.features.Max
+Rename-jai_flattener_multi=adams.data.jai.flattener.MultiJAIFlattener-adams.data.adams.features.MultiBufferedImageFeatureGenerator
+Rename-jai_flattener_namedsetup=adams.data.jai.flattener.NamedSetup-adams.data.adams.features.NamedSetup
+Rename-jai_flattener_pixelclassifications=adams.data.jai.flattener.PixelClassifications-adams.data.adams.features.PixelClassifications
+Rename-jai_flattener_pixels=adams.data.jai.flattener.Pixels-adams.data.adams.features.Pixels
+Rename-jai_flattener_scripted=adams.data.jai.flattener.Scripted-adams.data.adams.features.Scripted
+Rename-jai_transformer_binary=adams.data.jai.transformer.Binary-adams.data.adams.transformer.Binary
+Rename-jai_transformer_binarymask=adams.data.jai.transformer.BinaryMask-adams.data.adams.transformer.BinaryMask
+Rename-jai_transformer_crop=adams.data.jai.transformer.Crop-adams.data.adams.transformer.Crop
+Rename-jai_transformer_cropping=adams.data.jai.transformer.Cropping-adams.data.adams.transformer.Cropping
+Rename-jai_transformer_gaussianblur=adams.data.jai.transformer.GaussianBlur-adams.data.adams.transformer.GaussianBlur
+Rename-jai_transformer_imagefilter=adams.data.jai.transformer.ImageFilter-adams.data.adams.transformer.ImageFilter
+Rename-jai_transformer_imagetype=adams.data.jai.transformer.ImageType-adams.data.adams.transformer.ImageType
+Rename-jai_transformer_laplaceoperator=adams.data.jai.transformer.LaplaceOperator-adams.data.adams.transformer.LaplaceOperator
+Rename-jai_transformer_multitransformer=adams.data.jai.transformer.MultiTransformer-adams.data.adams.transformer.MultiTransformer
+Rename-jai_transformer_namedsetup=adams.data.jai.transformer.NamedSetup-adams.data.adams.transformer.NamedSetup
+Rename-jai_transformer_passthrough=adams.data.jai.transformer.PassThrough-adams.data.adams.transformer.PassThrough
+Rename-jai_transformer_subimages=adams.data.jai.transformer.SubImages-adams.data.adams.transformer.SubImages
+Rename-jai_transformer_whitebalance=adams.data.jai.transformer.WhiteBalance-adams.data.adams.transformer.WhiteBalance
+Rename-transformer_boofcvflattener=adams.flow.transformer.BoofCVFlattener-adams.flow.transformer.BoofCVFeatureGenerator
+Rename-transformer_imagejflattener=adams.flow.transformer.ImageJFlattener-adams.flow.transformer.ImageJFeatureGenerator
+Rename-transformer_jaiflattener=adams.flow.transformer.JAIFlattener-adams.flow.transformer.BufferedImageFeatureGenerator
+Rename-transformer_jaitransformer=adams.flow.transformer.JAITransformer-adams.flow.transformer.BufferedImageTransformer
+Rename-source-jaicreateimage=adams.flow.source.JAICreateImage-adams.flow.source.NewImage
+
+# Lists the keys that contain partial classname renaming.
+PartialRename=\
+  PartialRename-boofcv,\
+  PartialRename-imagej,\
+  PartialRename-jai_transformer_crop,\
+  PartialRename-jai_transformer_subimages,\
+  PartialRename-jai_transformer_whitebalance,\
+  PartialRename-adams,\
+  PartialRename-base
+
+# general format for partial classname renaming (no regular expression, but case-sensitive):
+# <key>=<find>\t<replace>
+PartialRename-boofcv=.boofcv.flattener.\t.boofcv.features.
+PartialRename-imagej=.imagej.flattener.\t.imagej.features.
+PartialRename-jai_transformer_crop=.jai.transformer.crop.\t.base.transformer.crop.
+PartialRename-jai_transformer_subimages=.jai.transformer.subimages.\t.base.transformer.subimages.
+PartialRename-jai_transformer_whitebalance=.jai.transformer.whitebalance.\t.base.transformer.whitebalance.
+PartialRename-adams=adams.data.adams.\tadams.data.image.
+PartialRename-base=adams.data.base.\tadams.data.image.
+
+# List the keys that contain renaming of options (ie "-blah" into "-bloerk")
+RenameOption=\
+  RenameOption-transformer_boofcv_featuregenerator_flattener,\
+  RenameOption-transformer_imagej_featuregenerator_flattener,\
+  RenameOption-transformer_bufferedimage_featuregenerator_flattener,\
+  RenameOption-features_multibufferedimagefeaturegenerator_subflattener,\
+  RenameOption-features_multiimagejfeaturegenerator_subflattener
+  
+# general format for renaming options
+# <key>=<classname>#<old>#<new>
+RenameOption-transformer_boofcv_featuregenerator_flattener=adams.flow.transformer.BoofCVFeatureGenerator#flattener#algorithm
+RenameOption-transformer_imagej_featuregenerator_flattener=adams.flow.transformer.ImageJFeatureGenerator#flattener#algorithm
+RenameOption-transformer_bufferedimage_featuregenerator_flattener=adams.flow.transformer.BufferedImageFeatureGenerator#flattener#algorithm
+RenameOption-features_multibufferedimagefeaturegenerator_subflattener=adams.data.adams.features.MultiBufferedImageFeatureGenerator#sub-flattener#sub-generator
+RenameOption-features_multiimagejfeaturegenerator_subflattener=adams.data.adams.features.MultiImageJFeatureGenerator#sub-flattener#sub-generator

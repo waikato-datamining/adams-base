@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2014-01-23 15:24:38
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The \"SetStorageValue\" transformer and \"StorageValue\" source\nactors allow to store arbitrary values during flow execution.\nThis is quite handy if one has to have access to an object\nthat wouldn\'t be passed around as token otherwise.\nIn the example here, the random numbers, that the random\nnumber generator source generates, get stored in temporary\nstorage. The \"Trigger\" actor then retrieves the current value \nusing the \"StorageValue\" source actor.
+	-actor
+		adams.flow.source.RandomNumberGenerator
+			-generator
+				adams.data.random.JavaRandomDouble
+			-max-num
+			100
+	-actor
+		adams.flow.transformer.SetStorageValue
+			-storage-name
+			rand
+	-actor
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					rand
+			-tee
+				adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

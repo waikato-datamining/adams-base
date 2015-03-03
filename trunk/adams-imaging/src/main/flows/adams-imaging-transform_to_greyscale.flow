@@ -1,0 +1,86 @@
+# Project: adams
+# Date: 2014-09-15 11:44:47
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Loads images from disk and displays the originals\nand ones turned into greyscale ones.
+	-actor
+		adams.flow.source.DirectoryLister
+			-dir
+			${EXAMPLE_FLOWS}/data
+			-list-files
+			true
+			-regexp
+			.*.jpg
+	-actor
+		adams.flow.control.Tee
+			-name
+			extract name
+			-tee
+				adams.flow.transformer.BaseName
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+	-actor
+		adams.flow.transformer.ImageJReader
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					grey
+					-actor
+						adams.flow.transformer.ImageJTransformer
+							-transformer
+								adams.data.imagej.transformer.Gray8
+					-actor
+						adams.flow.sink.DisplayPanelManager
+							-name
+							Grey
+							-short-title
+							true
+							-width
+							700
+							-height
+							550
+							-provider
+								adams.flow.sink.ImageViewer
+									-writer
+										adams.gui.print.NullWriter
+									-selection-processor
+										adams.gui.visualization.image.selection.NullProcessor
+									-image-overlay
+										adams.gui.visualization.image.NullOverlay
+							-entry-name-variable
+							name
+			-branch
+				adams.flow.control.Sequence
+					-name
+					color
+					-actor
+						adams.flow.sink.DisplayPanelManager
+							-name
+							Color
+							-short-title
+							true
+							-width
+							700
+							-height
+							550
+							-x
+							-3
+							-provider
+								adams.flow.sink.ImageViewer
+									-writer
+										adams.gui.print.NullWriter
+									-selection-processor
+										adams.gui.visualization.image.selection.NullProcessor
+									-image-overlay
+										adams.gui.visualization.image.NullOverlay
+							-entry-name-variable
+							name
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

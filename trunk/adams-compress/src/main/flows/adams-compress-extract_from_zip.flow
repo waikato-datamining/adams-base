@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-01-23 15:26:28
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow takes a ZIP archive as input and extracts all\nfiles from it that have \"iris\" in the name. The names of \nthe extracted files are displayed.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/datasets.zip
+	-actor
+		adams.flow.transformer.UnZIP
+			-out-dir
+			${EXAMPLE_FLOWS}/output
+			-reg-exp
+			.*iris.*
+	-actor
+		adams.flow.transformer.ArrayToSequence
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,132 @@
+# Project: adams
+# Date: 2015-02-18 12:16:20
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots the gaussian bell curve with mean of 0.0 and the \nstandard deviation ranging from 1.0 to 5.0.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.SimplePlot
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							x
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+									-num-ticks
+									20
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0.0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							y
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			mean
+			-var-name
+			mean
+			-var-value
+			0
+	-actor
+		adams.flow.source.ForLoop
+			-name
+			ForLoop (stdev)
+			-upper
+			5
+	-actor
+		adams.flow.transformer.SetVariable
+			-name
+			stdev
+			-var-name
+			stdev
+	-actor
+		adams.flow.control.Tee
+			-name
+			plot name
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.IntToString
+			-tee
+				adams.flow.transformer.StringReplace
+					-find
+					^
+					-replace
+					stdev = 
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					plot name
+					-var-name
+					plotname
+	-actor
+		adams.flow.control.Trigger
+			-name
+			generate plot
+			-tee
+				adams.flow.source.ForLoop
+					-name
+					ForLoop (graph)
+					-lower
+					-200
+					-upper
+					200
+			-tee
+				adams.flow.transformer.MathExpression
+					-expression
+					X/33
+			-tee
+				adams.flow.transformer.MathExpression
+					-name
+					MathExpression-1
+					-expression
+					1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
+					-output-value-pair
+					true
+			-tee
+				adams.flow.transformer.MakePlotContainer
+					-plot-name
+					@{plotname}
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					SimplePlot
+	-actor
+		adams.flow.control.Tee
+			-name
+			refresh plot
+			-tee
+				adams.flow.transformer.MakePlotContainer
+					-type
+					UPDATE
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					SimplePlot
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

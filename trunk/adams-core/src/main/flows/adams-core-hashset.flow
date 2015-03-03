@@ -1,0 +1,56 @@
+# Project: adams
+# Date: 2014-01-23 15:22:05
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to initialize a hashset in internal storage\nand use it for tests in conditional Tee control actors, redirecting\nthe flow of tokens.
+	-actor
+		adams.flow.standalone.HashSetInit
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			fill hashset
+			-tee
+				adams.flow.source.ForLoop
+			-tee
+				adams.flow.transformer.HashSetAdd
+	-actor
+		adams.flow.control.Trigger
+			-name
+			use hashset for tests
+			-tee
+				adams.flow.source.ForLoop
+					-upper
+					15
+			-tee
+				adams.flow.control.ConditionalTee
+					-tee
+						adams.flow.sink.Display
+							-name
+							contained
+							-short-title
+							true
+					-condition
+						adams.flow.condition.bool.HashSet
+			-tee
+				adams.flow.control.ConditionalTee
+					-name
+					ConditionalTee-1
+					-tee
+						adams.flow.sink.Display
+							-name
+							not contained
+							-short-title
+							true
+							-x
+							-3
+					-condition
+						adams.flow.condition.bool.Not
+							-condition
+								adams.flow.condition.bool.HashSet
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

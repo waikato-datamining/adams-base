@@ -1,0 +1,113 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# read file
+adams-imaging.ImageReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageReader
+
+adams-imaging.ImageReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageReader
+
+adams-imaging.ImageReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageReader
+
+adams-imaging.ImageReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageReader
+
+adams-imaging.ImageJReader1=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader2=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageJReader4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
+
+adams-imaging.ImageMagickOperation1=\
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickOperation
+
+adams-imaging.ImageMagickOperation2=\
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickOperation
+
+adams-imaging.ImageMagickOperation3=\
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageMagickOperation
+
+adams-imaging.ImageMagickOperation4=\
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickOperation
+
+# transformers
+adams-imaging.BufferedImageTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageTransformer
+
+adams-imaging.BufferedImageTransformer2=\
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageTransformer
+
+adams-imaging.BoofCVTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging.BoofCVTransformer2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging.ImageMagickTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.ImageMagickTransformer
+
+adams-imaging.ImageMagickTransformer2=\
+  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.transformer.ImageMagickTransformer
+
+adams-imaging.ImageJTransformer1=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
+
+adams-imaging.ImageJTransformer2=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJTransformer
+
+# features
+adams-imaging.BufferedImageFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
+  
+adams-imaging.BufferedImageFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageFeatureGenerator
+
+adams-imaging.BoofCVFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVFeatureGenerator
+
+adams-imaging.BoofCVFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVFeatureGenerator
+  
+adams-imaging.ImageJFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
+  
+adams-imaging.ImageJFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJFeatureGenerator
+
+adams-imaging.Convert=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
+
+# viewer
+adams-imaging.ImageViewer1=\
+  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer3=\
+  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer4=\
+  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.sink.ImageViewer
+  
+adams-imaging.ImageViewer5=\
+  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.sink.ImageViewer
+  

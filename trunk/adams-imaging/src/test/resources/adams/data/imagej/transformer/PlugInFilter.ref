@@ -1,0 +1,11 @@
+--> adams_logo-out0_0.txt
+Image:
+imp[adams_logo.png' (342x290x1x1x1)]imp[adams_logo.png' (342x290x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.PlugInFilter -suppress-plugin-dialog true -plugin-options "filter_large=40 filter_small=3 suppress=None tolerance=5 autoscale saturate"
+
+
+

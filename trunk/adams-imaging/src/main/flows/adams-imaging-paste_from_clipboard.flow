@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-07-31 12:21:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow pastes an image from the system\'s clipboard\nand forwards it in the flow for further processing.\nE.g., use \"Copy image\" in the Firefox popup menu for an\nimage, to put an image on the system clipboard.
+	-actor
+		adams.flow.source.PasteFromClipboard
+			-message
+			Click 'OK' to obtain image from clipboard
+			-clipboard-data
+				adams.gui.clipboard.BufferedImage
+	-actor
+		adams.flow.sink.ImageViewer
+			-writer
+				adams.gui.print.NullWriter
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

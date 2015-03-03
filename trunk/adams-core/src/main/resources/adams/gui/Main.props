@@ -1,0 +1,118 @@
+###############
+# Menu layout #
+###############
+
+# The "MenuBar" key lists all the various menus. The "Windows" menu cannot
+# be renamed, only moved around.
+# Example:
+#   MenuBar=Program,Tools,Windows,Help
+
+MenuBar=Program,Visualization,Tools,Maintenance,Windows,Help
+
+##############
+# Menu items #
+##############
+
+# The "Menu-<Menu>" key lists all the menu items for this particular menu.
+# "<Menu>" must be listed in "MenuBar". "-" can be used as menuitem separator.
+# Example:
+#   Menu-Program=adams.gui.menu.ConnectToDatabase,-,adams.gui.menu.ProgramExit
+
+Menu-Program=\
+  adams.gui.menu.ConnectToDatabases,\
+  adams.gui.menu.JobCompleteViewer,\
+  -,\
+  adams.gui.menu.ScriptingLog,\
+  adams.gui.menu.ConsoleWindow,\
+  adams.gui.menu.Terminal,\
+  -,\
+  adams.gui.menu.ProgramUserMode,\
+  adams.gui.menu.Preferences,\
+  -,\
+  adams.gui.menu.ProgramRestart,\
+  adams.gui.menu.ProgramRestartWithMoreHeap,\
+  adams.gui.menu.ProgramExit
+
+Menu-Visualization=\
+  adams.gui.menu.ImageViewer,\
+  adams.gui.menu.PreviewBrowser
+
+Menu-Tools=\
+  adams.gui.menu.FlowEditor,\
+  adams.gui.menu.FlowRunner,\
+  -,\
+  adams.gui.menu.TextEditor,\
+  adams.gui.menu.Diff
+
+Menu-Maintenance=\
+  adams.gui.menu.PlaceholderManagement,\
+  adams.gui.menu.NamedSetupManagement,\
+  adams.gui.menu.FavoritesManagement,\
+  adams.gui.menu.FileChooserBookmarksManagement,\
+  -,\
+  adams.gui.menu.LogEntryDatabaseViewer,\
+  adams.gui.menu.ConsoleOutputAnalyzer,\
+  adams.gui.menu.PropertiesViewer,\
+  -,\
+  adams.gui.menu.RunTool,\
+  -,\
+  adams.gui.menu.ContainerNesting,\
+  adams.gui.menu.NestedFormatViewer,\
+  adams.gui.menu.OptionTree,\
+  adams.gui.menu.OptionsConversion,\
+  -,\
+  adams.gui.menu.PlotPanelTest
+
+Menu-Help=\
+  adams.gui.menu.ActorUsage,\
+  adams.gui.menu.SystemInfo,\
+  adams.gui.menu.MemoryMonitor,\
+  adams.gui.menu.TakeScreenshot,\
+  -,\
+  adams.gui.menu.JMap,\
+  adams.gui.menu.JConsole,\
+  adams.gui.menu.JVisualVM,\
+  adams.gui.menu.GarbageCollector,\
+  -,\
+  adams.gui.menu.Homepage,\
+  adams.gui.menu.Documentation,\
+  adams.gui.menu.About
+
+# whether automatic discovery of further menu items is enabled (true|false)
+AutomaticMenuItemDiscovery=true
+
+#############
+# Shortcuts #
+#############
+
+# In addition to that, a shortcut can be supplied as well:
+# Format:
+#   Shortcut-<classname>=<shortcut>
+# See "javax.swing.KeyStroke#getKeyStroke(String s)" method for more
+# details on the keystroke format.
+# Example:
+#   Shortcut-adams.gui.menu.ProgramExit=alt pressed F4
+
+# Program
+Shortcut-adams.gui.menu.LogWindow=ctrl pressed L
+Shortcut-adamsgui.menu.ProgramExit=alt pressed F4
+
+# Tools
+Shortcut-adams.gui.menu.FlowEditor=ctrl pressed F
+Shortcut-adams.gui.menu.FlowControlCenter=ctrl shift pressed F
+Shortcut-adams.gui.menu.MultiExplorer=ctrl pressed X
+Shortcut-adams.gui.menu.Experimenter=ctrl pressed P
+
+##########################
+# Blacklisted menu items #
+##########################
+
+# Menu items that can be found by the dynamic class discovery but aren't
+# supposed to show up in the menu, can be "blacklisted".
+# Format:
+#   Blacklisted-<classname>=true|false
+# Example:
+#   Blacklisted-adams.gui.menu.FunkyItem=true
+
+Blacklisted-adams.gui.menu.SequenceViewer=true
+Blacklisted-adams.gui.menu.FlowControlCenter=true

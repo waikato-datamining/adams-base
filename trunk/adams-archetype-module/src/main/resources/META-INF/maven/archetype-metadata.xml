@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor name="adams-archetype-module">
+  <fileSets>
+    <fileSet filtered="true">
+      <directory></directory>
+      <includes>
+        <include>pom.xml</include>
+        <include>.texlipse</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true">
+      <directory>src/main/resources/adams/env</directory>
+      <includes>
+        <include>Module.props</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true">
+      <directory>src/main/latex/manual</directory>
+      <includes>
+        <include>manual.tex</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</archetype-descriptor>

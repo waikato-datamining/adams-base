@@ -1,0 +1,18 @@
+# Project: adams
+# Date: 2014-01-23 15:38:05
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Extracts the meta-data from the \nPDF document and displays it.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/pdf_with_images.pdf
+	-actor
+		adams.flow.transformer.PDFMetaData
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

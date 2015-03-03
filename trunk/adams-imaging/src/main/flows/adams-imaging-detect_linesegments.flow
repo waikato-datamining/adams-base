@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2014-11-11 11:59:15
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Uses line RANSAC to detect line segments in an image.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/lines.jpg
+	-actor
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.JAIImageReader
+	-actor
+		adams.flow.transformer.BoofCVDetectLineSegments
+			-region-size
+			80
+			-threshold-edge
+			60.0
+			-connect-lines
+			true
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

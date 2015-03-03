@@ -1,0 +1,54 @@
+# Project: adams
+# Date: 2014-05-15 13:39:07
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow uses a serialized model to make predictions on a \ntest set (anneal_test.arff) and output the generated class \ndistributions. The interesting feature here is, that it automatically \ncalls the external flow \"build_classifier-save_model.flow\"\nto generate the classifier model in case it is not present yet.
+	-actor
+		adams.flow.standalone.ConditionalStandalone
+			-condition
+				adams.flow.condition.test.FileExists
+					-file
+					${EXAMPLE_FLOWS}/output/j48.model
+			-execute-on-fail
+			true
+			-actor
+				adams.flow.standalone.ExternalFlow
+					-file
+					${EXAMPLE_FLOWS}/adams-weka-build_classifier-save_model.flow
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal_test.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+			-output-type
+			INCREMENTAL
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaClassifying
+			-model
+			${EXAMPLE_FLOWS}/output/j48.model
+			-on-the-fly
+			true
+	-actor
+		adams.flow.control.ContainerValuePicker
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.sink.Display
+					-name
+					Display class distribution
+					-writer
+						adams.data.io.output.NullWriter
+			-value
+			Distribution
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

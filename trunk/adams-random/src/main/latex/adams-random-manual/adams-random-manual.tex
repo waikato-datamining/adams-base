@@ -1,0 +1,100 @@
+% Copyright (c) 2014 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision: 6368 $
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-random} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/random-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2014} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+The \textit{random} module provides extended support for random number 
+generators and other randomization related actors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+The following actors are available:
+\begin{tight_itemize}
+	\item \textit{ArrayFolds} -- generates subsets using a similar folds 
+	approach as cross-validation. Can output actual fold or inverse or both
+	per fold number.
+	\item \textit{ArraySubSample} -- generates a subsample from the array. 
+	Can output actual sample or inverse or both.
+\end{tight_itemize}
+The following random number generators are available:
+\begin{tight_itemize}
+	\item \textit{Beta}
+	\item \textit{Cauchy}
+	\item \textit{ChiSquare}
+	\item \textit{Exponential}
+	\item \textit{ISAACRandom}
+	\item \textit{JMathArrayInt} -- uses JMathArray's randInt.
+	\item \textit{LogNormal}
+	\item \textit{MersenneTwister}
+	\item \textit{Normal}
+	\item \textit{Triangular}
+	\item \textit{Uniform}
+	\item \textit{Weibull}
+	\item \textit{Well1024a}
+	\item \textit{Well19937a}
+	\item \textit{Well19937c}
+	\item \textit{Well44497a}
+	\item \textit{Well44497b}
+	\item \textit{Well512a}
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

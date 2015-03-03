@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2014-03-24 14:20:53
+# User: fracpete
+#
+adams.flow.control.Flow
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.sink.DumpFile
+			-output
+			${TMP}/dumpfile.txt
+			-append
+			true
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

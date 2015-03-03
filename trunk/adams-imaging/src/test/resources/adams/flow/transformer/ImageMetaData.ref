@@ -1,0 +1,72 @@
+--> dumpfile.txt
+Key,Value
+"Image Description",""
+Make,Canon
+Model,"Canon PowerShot SX20 IS"
+Orientation,1
+XResolution,180
+YResolution,180
+"Resolution Unit",2
+"Modify Date","2013-06-06 14:55:13"
+"YCbCr Positioning",2
+"Exif Offset",2342
+XPKeywords,"78, 0, 111, 0, 118, 0, 32, 0, 68, 0, 101, 0, 99, 0, 32, 0, 50, 0, 48, 0, 49, 0, 50, 0, 0, 0"
+"Unknown Tag (0xea1c)","28, -22, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0... (2060)"
+"Exposure Time","1/640 (0.002)"
+FNumber,5
+ISO,400
+"Exif Version","48, 50, 50, 49"
+"Date Time Original","2012-12-13 17:10:24"
+"Create Date","2012-12-13 17:10:24"
+"Components Configuration","1, 2, 3, 0"
+"Compressed Bits Per Pixel",3
+"Shutter Speed Value","298/32 (9.312)"
+"Aperture Value","149/32 (4.656)"
+"Exposure Compensation",0
+"Max Aperture Value","149/32 (4.656)"
+"Metering Mode",5
+Flash,16
+"Focal Length","61380/1000 (61.38)"
+"Maker Note","0, 1, 0, 0, 0, 1, 0, 0, 20, -50, 0, 0, 11, 50, 0, 0, 0, 0, 77, 77, 0, 42, 0, 0, 0, 8, 0, 12, 1, 14, 0, 2, 0, 0, 0, 32, 0, 0, 8, -86, 1, 15, 0, 2, 0, 0, 0, 6, 0, 0, 8... (5344)"
+UserComment,""
+"Flashpix Version","48, 49, 48, 48"
+"Color Space",1
+"Exif Image Width",0
+"Exif Image Length",0
+"Interop Offset",10540
+"Focal Plane XResolution","3264000/244 (13,377.049)"
+"Focal Plane YResolution","2448000/183 (13,377.049)"
+"Focal Plane Resolution Unit",2
+"Sensing Method",2
+"File Source",3
+"Custom Rendered",0
+"Exposure Mode",0
+"White Balance",0
+"Digital Zoom Ratio",1
+"Scene Capture Type",0
+"Interop Version","48, 49, 48, 48"
+"Related Image Width",3264
+"Related Image Length",2448
+Compression,6
+"Jpg From Raw Start",10676
+"Jpg From Raw Length",7173
+"Format Details","Jpeg/JFIF v.1.1"
+"Bits Per Pixel",24
+Comments,0
+Format,JPEG
+"Format Name","JPEG (Joint Photographic Experts Group) Format"
+"Compression Algorithm",JPEG
+Height,600
+MimeType,image/jpeg
+"Number Of Images",1
+"Physical Height Dpi",180
+"Physical Height Inch",3.3333333
+"Physical Width Dpi",180
+"Physical Width Inch",4.4444447
+Width,800
+"Is Progressive",true
+"Is Transparent",false
+"Color Type",RGB
+"Uses Palette",false
+
+

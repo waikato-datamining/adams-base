@@ -1,0 +1,66 @@
+# Project: adams
+# Date: 2014-01-23 15:32:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates some statistics on the first attribute (\"RUN\")\nof the \"bolts\" UCI dataset. A fake ID attribute is introduced\nto perform aggregations on it and generate the statistics.\nThe statistics are then saved as a LaTeX table.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetInsertColumn
+			-position
+			first
+			-header
+			ID
+			-value
+			1
+			-force-string
+			true
+	-actor
+		adams.flow.transformer.SpreadSheetAggregate
+			-key-columns
+			1
+			-aggregate-columns
+			2
+			-aggregate
+			MIN
+			-aggregate
+			MAX
+			-aggregate
+			AVERAGE
+			-aggregate
+			STDEV
+	-actor
+		adams.flow.control.Tee
+			-name
+			display table
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.SpreadSheetToString
+							-writer
+								adams.data.io.output.LatexSpreadSheetWriter
+			-tee
+				adams.flow.sink.Display
+					-name
+					Table
+					-short-title
+					true
+	-actor
+		adams.flow.sink.SpreadSheetFileWriter
+			-output
+			${EXAMPLE_FLOWS}/output/bolts_stats.tex
+			-writer
+				adams.data.io.output.LatexSpreadSheetWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

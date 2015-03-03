@@ -1,0 +1,24 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the flow generators
+adams.flow.generator.Generator=\
+  adams.flow.generator
+
+# the (fixed) standalone groups
+adams.flow.standalone.StandaloneGroup=\
+  adams.flow.standalone
+
+# the (variable) standalone groups
+adams.flow.standalone.StandaloneMutableGroup=\
+  adams.flow.standalone
+
+# the standalone group items
+adams.flow.standalone.StandaloneGroupItem=\
+  adams.flow.standalone

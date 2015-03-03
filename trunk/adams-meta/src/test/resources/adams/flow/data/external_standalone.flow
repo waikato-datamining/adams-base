@@ -1,0 +1,8 @@
+# Project: adams
+# Date: 2014-06-27 11:57:21
+# User: fracpete
+#
+adams.flow.standalone.Standalones
+	-actor
+		adams.flow.standalone.HashSetInit
+

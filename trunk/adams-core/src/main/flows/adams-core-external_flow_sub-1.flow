@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2014-01-23 15:21:36
+# User: fracpete
+#
+adams.flow.source.InstantiatableSource
+	-actor
+		adams.flow.source.SequenceSource
+			-actor
+				adams.flow.source.ForLoop
+			-actor
+				adams.flow.transformer.MathExpression
+					-expression
+					X+1000
+

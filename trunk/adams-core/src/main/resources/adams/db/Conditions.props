@@ -1,0 +1,11 @@
+# Setup file for defining default setups for classes derived from
+# adams.db.AbstractConditions
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Format:
+# Classname=Options
+
+# Example:
+# adams.some.where.BlahCondition=-D

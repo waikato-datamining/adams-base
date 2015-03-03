@@ -1,0 +1,8 @@
+# Contains parameters for time zone configuration.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The timezone to use
+# Note: "Default" uses the system's default timezone
+TimeZone=Default

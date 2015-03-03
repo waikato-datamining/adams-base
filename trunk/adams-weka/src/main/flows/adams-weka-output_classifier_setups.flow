@@ -1,0 +1,82 @@
+# Project: adams
+# Date: 2014-01-23 15:50:33
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	It is also possible to output classifier setups within the flow, \nwithout using the WekaClassifierGenerator. Instead, use the\nWekaClassifierSetup source actor.\nIn this flow, a string token is used to display the command-line\nstring of three classifiers: ZeroR, J48 and Logistic.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.control.Sequence
+					-name
+					Output classifiers
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.AnyToCommandline
+					-actor
+						adams.flow.sink.Display
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			ZeroR
+			-tee
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.rules.ZeroR
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Output classifiers
+	-actor
+		adams.flow.control.Trigger
+			-name
+			J48
+			-tee
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Output classifiers
+	-actor
+		adams.flow.control.Trigger
+			-name
+			Logistic
+			-tee
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.functions.Logistic
+							-R
+							1.0E-8
+							-M
+							-1
+							
+							
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Output classifiers
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,33 @@
+PostGIS
+
+  * change password for 'postgres' user
+  
+    {{https://help.ubuntu.com/community/PostgreSQL#Basic_Server_Setup}}
+
+  * Ubuntu 
+  
+    {{http://marcusjenkins.com/linux/install-postgresql-9-1-and-postgis-1-5-x-on-ubuntu-11-10/}}
+    
+  * creating a new database
+  
+    ----
+    createdb -T template_postgis -O root databasename
+    ----
+    
+  * Add geometry column
+  
+    {{http://www.bostongis.com/PrinterFriendly.aspx?content_name=postgis_tut03}}
+    
+    {{http://postgis.refractions.net/docs/AddGeometryColumn.html}}
+    
+    
+  * Example for creating POINT column 'long_lat' in table 'reference' using
+    columns 'longitude' and 'latitude' using EPSG 4269:
+    
+    ----
+    SELECT AddGeometryColumn('public', 'reference', 'long_lat', 4269, 'POINT', 2);
+    UPDATE reference SET long_lat = ST_SetSRID(ST_Point(longitude, latitude), 4269);
+    ----
+
+
+  $Revision$

@@ -1,0 +1,48 @@
+# Project: adams
+# Date: 2014-01-23 15:23:11
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Demonstrates how to access and display data in JSON files.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/webapp.json
+	-actor
+		adams.flow.transformer.JsonFileReader
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					full display
+					-actor
+						adams.flow.sink.JsonDisplay
+							-writer
+								adams.gui.print.NullWriter
+							-preview
+							true
+							-expand
+							true
+			-branch
+				adams.flow.control.Sequence
+					-name
+					extract servlet names
+					-actor
+						adams.flow.transformer.GetJsonValue
+							-path
+							$..servlet-name
+							-data-type
+							STRING
+					-actor
+						adams.flow.sink.Display
+							-name
+							Servlets
+							-short-title
+							true
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

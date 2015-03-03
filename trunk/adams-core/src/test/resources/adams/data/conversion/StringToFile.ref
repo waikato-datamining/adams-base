@@ -1,0 +1,21 @@
+--> out-0.txt
+/home/sweet/home.txt
+C:/Microsoft is not the answer/it is the question/and the answer is no.odt
+./some/place.txt
+./some/place:safe.txt
+./some/place safe (or elsewhere!).txt
+
+--> out-1.txt
+/home/sweet/home.txt
+C:/Microsoft is not the answer/it is the question/and the answer is no.odt
+./some/place.txt
+./some/place:safe.txt
+./some/place safe (or elsewhere!).txt
+
+--> out-2.txt
+/home/sweet/home.txt
+C:/Microsoft is not the answer/it is the question/and_the_answer_is_no.odt
+./some/place.txt
+./some/place_safe.txt
+./some/place_safe_(or_elsewhere_).txt
+

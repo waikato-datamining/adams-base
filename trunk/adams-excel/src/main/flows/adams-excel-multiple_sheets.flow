@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2014-01-23 15:27:36
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flows loads both sheets from the spreadsheet\nand displays them together in a DisplayPanelManager.\nNB: You will have to adapt the path to the sample file.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/sample.xls
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.ExcelSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+					-sheets
+					first-last
+	-actor
+		adams.flow.control.Tee
+			-name
+			get sheet name
+			-tee
+				adams.flow.transformer.SpreadSheetInfo
+					-stop-flow-on-error
+					true
+					-type
+					NAME
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					sheet
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-provider
+				adams.flow.sink.SpreadSheetDisplay
+			-entry-name-variable
+			sheet
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

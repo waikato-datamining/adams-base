@@ -1,0 +1,83 @@
+# Project: adams
+# Date: 2014-01-23 15:45:29
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier and displays\nthe zscores and errors of the predictions.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-name
+					WekaClassifier
+					-classifier
+						weka.classifiers.functions.LinearRegression
+							-S
+							1
+							-C
+							-R
+							1.0E-8
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bodyfat.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+			-classifier
+			WekaClassifier
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					zscores
+					-actor
+						adams.flow.transformer.WekaPredictionsToInstances
+					-actor
+						adams.flow.sink.ZScoreDisplay
+							-writer
+								adams.gui.print.NullWriter
+							-overlay
+								adams.gui.visualization.stats.zscore.Mean
+							-overlay
+								adams.gui.visualization.stats.zscore.StdDev
+									-color
+									#ffc800
+									-standard-deviations
+									2.0
+							-overlay
+								adams.gui.visualization.stats.zscore.StdDev
+									-color
+									#ff0000
+									-standard-deviations
+									3.0
+							-paintlet
+								adams.gui.visualization.stats.paintlet.ZScoreCircle
+							-attribute
+							last
+			-branch
+				adams.flow.control.Sequence
+					-name
+					classifier errors
+					-actor
+						adams.flow.sink.WekaClassifierErrors
+							-x
+							-3
+							-writer
+								adams.gui.print.NullWriter
+							-scaler
+								adams.data.weka.predictions.AutoScaler
+									-scaler
+										adams.data.weka.predictions.RelativeNumericErrorScaler
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

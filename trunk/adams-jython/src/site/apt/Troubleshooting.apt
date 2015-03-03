@@ -1,0 +1,14 @@
+Troubleshooting
+
+  * Problem:
+  Unit tests fail with "AttributeError: '...py' object has no attribute '...'"
+
+  * Solution:
+  Create a file called '.jython' in your home directory and add the following content to it:
+
++---
+  python.security.respectJavaAccessibility=false
++---
+
+
+  $Revision$

@@ -1,0 +1,117 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-sink_filewriter,\
+  Rename-sink_modelwriter,\
+  Rename-sink_classifiererrors,\
+  Rename-sink_costcurve,\
+  Rename-sink_experimentgenerator,\
+  Rename-sink_instancesdisplay,\
+  Rename-sink_instanceviewer,\
+  Rename-sink_roc,\
+  Rename-sink_roc2,\
+  Rename-source_databasereader,\
+  Rename-source_classifiergenerator,\
+  Rename-source_clusterergenerator,\
+  Rename-source_databasereader,\
+  Rename-source_datagenerator,\
+  Rename-source_filtergenerator,\
+  Rename-transformer_rename,\
+  Rename-transformer_filereader,\
+  Rename-transformer_accumlatederror,\
+  Rename-transformer_classifier,\
+  Rename-transformer_classifieroptimizer,\
+  Rename-transformer_classifierranker,\
+  Rename-transformer_classifying,\
+  Rename-transformer_classselector,\
+  Rename-transformer_clusterer,\
+  Rename-transformer_clustering,\
+  Rename-transformer_crossvalidationevaluator,\
+  Rename-transformer_crossvalidationsplit,\
+  Rename-transformer_evaluationsummary,\
+  Rename-transformer_evaluationvaluepicker,\
+  Rename-transformer_evaluationvalues,\
+  Rename-transformer_experiment,\
+  Rename-transformer_experimentevaluation,\
+  Rename-transformer_extractarray,\
+  Rename-transformer_getinstancevalue,\
+  Rename-transformer_instancebuffer,\
+  Rename-transformer_instancedumper,\
+  Rename-transformer_instanceevaluator,\
+  Rename-transformer_instancefilereader,\
+  Rename-transformer_instancesinfo,\
+  Rename-transformer_instancesmerge,\
+  Rename-transformer_instancesstatistic,\
+  Rename-transformer_instancestreamplotgenerator,\
+  Rename-transformer_multilabelsplitter,\
+  Rename-transformer_predictionstoinstances,\
+  Rename-transformer_randomsplit,\
+  Rename-transformer_regextorange,\
+  Rename-transformer_relationname,\
+  Rename-transformer_renamerelation,\
+  Rename-transformer_setinstancevalue,\
+  Rename-transformer_testsetevaluator,\
+  Rename-transformer_traintestsetevaluator
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-sink_filewriter=adams.flow.sink.FileWriter-adams.flow.sink.WekaFileWriter
+Rename-sink_modelwriter=adams.flow.sink.ModelWriter-adams.flow.sink.WekaModelWriter
+Rename-sink_classifiererrors=adams.flow.sink.ClassifierErrors-adams.flow.sink.WekaClassifierErrors
+Rename-sink_costcurve=adams.flow.sink.CostCurve-adams.flow.sink.WekaCostCurve
+Rename-sink_experimentgenerator=adams.flow.sink.ExperimentGenerator-adams.flow.sink.WekaExperimentGenerator
+Rename-sink_instancesdisplay=adams.flow.sink.InstancesDisplay-adams.flow.sink.WekaInstancesDisplay
+Rename-sink_instanceviewer=adams.flow.sink.InstanceViewer-adams.flow.sink.WekaInstanceViewer
+Rename-sink_roc=adams.flow.sink.ROC-adams.flow.sink.WekaThresholdCurve
+Rename-sink_roc2=adams.flow.sink.WekaROC-adams.flow.sink.WekaThresholdCurve
+
+Rename-source_databasereader=adams.flow.source.DatabaseReader-adams.flow.source.WekaDatabaseReader
+Rename-source_classifiergenerator=adams.flow.source.ClassifierGenerator-adams.flow.source.WekaClassifierGenerator
+Rename-source_clusterergenerator=adams.flow.source.ClustererGenerator-adams.flow.source.WekaClustererGenerator
+Rename-source_databasereader=adams.flow.source.DatabaseReader-adams.flow.source.WekaDatabaseReader
+Rename-source_datagenerator=adams.flow.source.DataGenerator-adams.flow.source.WekaDataGenerator
+Rename-source_filtergenerator=adams.flow.source.FilterGenerator-adams.flow.source.WekaFilterGenerator
+
+Rename-transformer_rename=adams.flow.transformer.Rename-adams.flow.transformer.RenameRelation
+Rename-transformer_filereader=adams.flow.transformer.FileReader-adams.flow.transformer.WekaFileReader
+Rename-transformer_accumlatederror=adams.flow.transformer.AccumulatedError-adams.flow.transformer.WekaAccumulatedError
+Rename-transformer_classifier=adams.flow.transformer.Classifier-adams.flow.transformer.WekaClassifier
+Rename-transformer_classifieroptimizer=adams.flow.transformer.ClassifierOptimizer-adams.flow.transformer.WekaClassifierOptimizer
+Rename-transformer_classifierranker=adams.flow.transformer.ClassifierRanker-adams.flow.transformer.WekaClassifierRanker
+Rename-transformer_classifying=adams.flow.transformer.Classifying-adams.flow.transformer.WekaClassifying
+Rename-transformer_classselector=adams.flow.transformer.ClassSelector-adams.flow.transformer.WekaClassSelector
+Rename-transformer_clusterer=adams.flow.transformer.Clusterer-adams.flow.transformer.WekaClusterer
+Rename-transformer_clustering=adams.flow.transformer.Clustering-adams.flow.transformer.WekaClustering
+Rename-transformer_crossvalidationevaluator=adams.flow.transformer.CrossValidationEvaluator-adams.flow.transformer.WekaCrossValidationEvaluator
+Rename-transformer_crossvalidationsplit=adams.flow.transformer.CrossValidationSplit-adams.flow.transformer.WekaCrossValidationSplit
+Rename-transformer_evaluationsummary=adams.flow.transformer.EvaluationSummary-adams.flow.transformer.WekaEvaluationSummary
+Rename-transformer_evaluationvaluepicker=adams.flow.transformer.EvaluationValuePicker-adams.flow.transformer.WekaEvaluationValuePicker
+Rename-transformer_evaluationvalues=adams.flow.transformer.EvaluationValues-adams.flow.transformer.WekaEvaluationValues
+Rename-transformer_experiment=adams.flow.transformer.Experiment-adams.flow.transformer.WekaExperiment
+Rename-transformer_experimentevaluation=adams.flow.transformer.ExperimentEvaluation-adams.flow.transformer.WekaExperimentEvaluation
+Rename-transformer_extractarray=adams.flow.transformer.ExtractArray-adams.flow.transformer.WekaExtractArray
+Rename-transformer_getinstancevalue=adams.flow.transformer.GetInstanceValue-adams.flow.transformer.WekaGetInstanceValue
+Rename-transformer_instancebuffer=adams.flow.transformer.InstanceBuffer-adams.flow.transformer.WekaInstanceBuffer
+Rename-transformer_instancedumper=adams.flow.transformer.InstanceDumper-adams.flow.transformer.WekaInstanceDumper
+Rename-transformer_instanceevaluator=adams.flow.transformer.InstanceEvaluator-adams.flow.transformer.WekaInstanceEvaluator
+Rename-transformer_instancefilereader=adams.flow.transformer.InstanceFileReader-adams.flow.transformer.WekaInstanceFileReader
+Rename-transformer_instancesinfo=adams.flow.transformer.InstancesInfo-adams.flow.transformer.WekaInstancesInfo
+Rename-transformer_instancesmerge=adams.flow.transformer.InstancesMerge-adams.flow.transformer.WekaInstancesMerge
+Rename-transformer_instancesstatistic=adams.flow.transformer.InstancesStatistic-adams.flow.transformer.WekaInstancesStatistic
+Rename-transformer_instancestreamplotgenerator=adams.flow.transformer.InstanceStreamPlotGenerator-adams.flow.transformer.WekaInstanceStreamPlotGenerator
+Rename-transformer_multilabelsplitter=adams.flow.transformer.MultiLabelSplitter-adams.flow.transformer.WekaMultiLabelSplitter
+Rename-transformer_predictionstoinstances=adams.flow.transformer.PredictionsToInstances-adams.flow.transformer.WekaPredictionsToInstances
+Rename-transformer_randomsplit=adams.flow.transformer.RandomSplit-adams.flow.transformer.WekaRandomSplit
+Rename-transformer_regextorange=adams.flow.transformer.RegexToRange-adams.flow.transformer.WekaRegexToRange
+Rename-transformer_relationname=adams.flow.transformer.RelationName-adams.flow.transformer.WekaRelationName
+Rename-transformer_renamerelation=adams.flow.transformer.RenameRelation-adams.flow.transformer.WekaRenameRelation
+Rename-transformer_setinstancevalue=adams.flow.transformer.SetInstanceValue-adams.flow.transformer.WekaSetInstanceValue
+Rename-transformer_testsetevaluator=adams.flow.transformer.TestSetEvaluator-adams.flow.transformer.WekaTestSetEvaluator
+Rename-transformer_traintestsetevaluator=adams.flow.transformer.TrainTestSetEvaluator-adams.flow.transformer.WekaTrainTestSetEvaluator
+

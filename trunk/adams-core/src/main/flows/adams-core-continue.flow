@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 15:21:22
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to restrict the flow of tokens\nusing the Continue control actor. The boolean expression\nof the Continue actor checks whether the variable \n\"random_number\" is >700 or the incoming number token\nis <400. If the expression evaluates to \"true\" the token\nis discarded and the flow continues with the execution \nprior to the Continue actor.
+	-actor
+		adams.flow.source.RandomNumberGenerator
+			-generator
+				adams.data.random.JavaRandomInt
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			random_number
+	-actor
+		adams.flow.control.Continue
+			-condition
+				adams.flow.condition.bool.Expression
+					-expression
+					(@{random_number} > 700) | (X < 400)
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

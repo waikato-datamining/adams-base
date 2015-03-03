@@ -1,0 +1,18 @@
+--> adams.flow.template.FromFile-out0.txt
+adams.flow.control.SubProcess
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X+1000
+
+
+--> adams.flow.template.FromFile-out1.txt
+adams.flow.control.SubProcess
+	-name
+	blahblah
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X+1000
+
+

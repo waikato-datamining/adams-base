@@ -1,0 +1,10 @@
+--> vote1-out0.arff
+
+--> vote1-out1.arff
+Field 'blah' not in report!
+
+--> vote1-out2.arff
+
+--> vote1-out3.arff
+'republican' doesn't match 'demo.*' for field Class
+

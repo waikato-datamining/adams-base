@@ -1,0 +1,1 @@
+find: ([\s\S]+), replace: $0

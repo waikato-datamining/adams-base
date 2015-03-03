@@ -1,0 +1,17 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the filters for log records
+adams.flow.standalone.logevent.AbstractLogRecordFilter=\
+  adams.flow.standalone.logevent
+
+# the processors for log records
+adams.flow.standalone.logevent.AbstractLogRecordProcessor=\
+  adams.flow.standalone.logevent
+  

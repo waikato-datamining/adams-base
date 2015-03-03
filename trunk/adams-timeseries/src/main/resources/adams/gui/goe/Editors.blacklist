@@ -1,0 +1,15 @@
+# Properties file for the GenericObjectEditor, listing classes that should
+# not be displayed in the editor.
+#
+# Format:
+#   classname=true|false
+#   classname#property=true|false
+#
+# Notes:
+# - true => blacklisted
+# - you can use [] to denote arrays (only for classes, not for class+property)
+#
+# Author: FracPete (fracpete at waikat dot ac dot nz)
+# Version: $Revision: 7283 $
+
+weka.classifiers.timeseries.core.TSLagMaker#artificialTimeStartValue=true

@@ -1,0 +1,18 @@
+--> adams.flow.condition.test.FileExists-out0.txt
+passed
+
+--> adams.flow.condition.test.FileExists-out1.txt
+File '${TMP}/bolts2.csv' does not exist!
+
+--> adams.flow.condition.test.FileExists-out2.txt
+Target '${TMP}' is a directory!
+
+--> adams.flow.condition.test.FileExists-out3.txt
+File '${TMP}/bolts.csv' already exists!
+
+--> adams.flow.condition.test.FileExists-out4.txt
+passed
+
+--> adams.flow.condition.test.FileExists-out5.txt
+passed
+

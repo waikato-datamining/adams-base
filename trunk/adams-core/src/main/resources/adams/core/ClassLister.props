@@ -1,0 +1,537 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# custom GUI editors
+java.beans.PropertyEditorSupport=\
+  adams.gui,\
+  adams.gui.goe
+
+# the comparators
+java.util.Comparator=\
+  adams.core
+
+# the filename generators
+adams.core.io.AbstractFilenameGenerator=\
+  adams.core.io
+
+# the classpath augmenters
+adams.core.management.ClassPathAugmenter=\
+  adams.core.management
+
+# the option producers
+adams.core.option.OptionProducer=\
+  adams.core.option
+
+# the option producers with option handling
+adams.core.option.OptionProducerWithOptionHandling=\
+  adams.core.option
+
+# the option consumers
+adams.core.option.OptionConsumer=\
+  adams.core.option
+
+# the option consumers with option handling
+adams.core.option.OptionConsumerWithOptionHandling=\
+  adams.core.option
+
+# the commandline handlers
+adams.core.option.AbstractCommandLineHandler=\
+  adams.core.option
+
+# the option traversers
+adams.core.option.OptionTraverser=\
+  adams.core.option,\
+  adams.flow.core
+
+# the scripting handlers
+adams.core.scripting.AbstractScriptingHandler=\
+  adams.core.scripting
+
+# baseline correction schemes
+adams.data.baseline.AbstractBaselineCorrection=\
+  adams.data.baseline
+
+# data conversion schemes
+adams.data.conversion.Conversion=\
+  adams.data.conversion
+
+# data conversion schemes (converting strings to objects)
+adams.data.conversion.ConversionFromString=\
+  adams.data.conversion
+
+# data conversion schemes (converting objects to strings)
+adams.data.conversion.ConversionToString=\
+  adams.data.conversion
+
+# distribution schemes
+adams.data.distribution.AbstractRealDistribution=\
+  adams.data.distribution
+
+# feature converters
+adams.data.featureconverter.AbstractFeatureConverter=\
+  adams.data.featureconverter
+
+# filters
+adams.data.filter.AbstractFilter=\
+  adams.data.filter
+
+# the ID generators
+adams.data.id.AbstractIDGenerator=\
+  adams.data.id
+
+# the container readers
+adams.data.io.input.AbstractDataContainerReader=\
+  adams.data.io.input
+
+# the report readers
+adams.data.io.input.AbstractReportReader=\
+  adams.data.io.input
+
+# the spreadsheet readers
+adams.data.io.input.SpreadSheetReader=\
+  adams.data.io.input
+
+# the flow readers
+adams.data.io.input.FlowReader=\
+  adams.data.io.input
+
+# the text readers
+adams.data.io.input.AbstractTextReader=\
+  adams.data.io.input
+
+# the image readers
+adams.data.io.input.AbstractImageReader=\
+  adams.data.io.input
+
+# the container writers
+adams.data.io.output.AbstractDataContainerWriter=\
+  adams.data.io.output
+
+# the report writers
+adams.data.io.output.AbstractReportWriter=\
+  adams.data.io.output
+
+# the spreadsheet writers
+adams.data.io.output.SpreadSheetWriter=\
+  adams.data.io.output
+
+# the flow writers
+adams.data.io.output.FlowWriter=\
+  adams.data.io.output
+
+# the text writers
+adams.data.io.output.AbstractTextWriter=\
+  adams.data.io.output
+
+# the image writers
+adams.data.io.output.AbstractImageWriter=\
+  adams.data.io.output
+
+# the outlier detector schemes
+adams.data.outlier.AbstractOutlierDetector=\
+  adams.data.outlier
+
+# denoise algorithms
+adams.data.noise.AbstractDenoiser=\
+  adams.data.noise
+
+# random number generators
+adams.data.random.RandomNumberGenerator=\
+  adams.data.random
+
+# seeded random number generators
+adams.data.random.SeededRandomNumberGenerator=\
+  adams.data.random
+
+# distribution-based random number generators
+adams.data.random.DistributionBasedRandomNumberGenerator=\
+  adams.data.random
+
+# random integer generators
+adams.data.random.RandomIntegerRangeGenerator=\
+  adams.data.random
+
+# random double generators
+adams.data.random.RandomDoubleRangeGenerator=\
+  adams.data.random
+
+# filters for the reports
+adams.data.report.AbstractReportFilter=\
+  adams.data.report
+
+# smoothers
+adams.data.smoothing.AbstractSmoother=\
+  adams.data.smoothing
+
+# The types of spreadsheets
+adams.data.spreadsheet.SpreadSheet=\
+  adams.data.spreadsheet
+
+# The types of data rows
+adams.data.spreadsheet.DataRow=\
+  adams.data.spreadsheet
+
+# the spreadsheet handlers for the OBJECT type
+adams.data.spreadsheet.AbstractObjectHandler=\
+  adams.data.spreadsheet
+
+# data container statistics
+adams.data.statistics.AbstractDataContainerStatistics=\
+  adams.data.statistics
+
+# array statistics
+adams.data.statistics.AbstractArrayStatistic=\
+  adams.data.statistics
+
+# data statistics
+adams.data.statistics.AbstractDataStatistic=\
+  adams.data.statistics
+
+# the condition objects
+adams.db.AbstractConditions=\
+  adams.db
+
+# all tables
+adams.db.AbstractTable=\
+  adams.db
+
+# the indexed tables
+adams.db.AbstractIndexedTable=\
+  adams.db
+
+# helper classes for upgrading tables
+adams.db.upgrade.AbstractTableUpgrade=\
+  adams.db.upgrade
+
+# the table cleaners
+adams.db.AbstractTableCleanUp=\
+  adams.db
+  
+# the database data type setup classes
+adams.db.datatype.AbstractDataTypeSetup=\
+  adams.db.datatype
+
+# the Javadoc generators
+adams.doc.javadoc.Javadoc=\
+  adams.doc.javadoc
+
+# the flow actors
+adams.flow.core.AbstractActor=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
+# the actor handlers
+adams.flow.core.ActorHandler=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
+# the flow control actors
+adams.flow.core.ControlActor=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
+# the plot processor algorithms
+adams.flow.control.plotprocessor.AbstractPlotProcessor=\
+  adams.flow.control.plotprocessor
+
+# custom property value converters
+adams.flow.core.AbstractPropertyValueConverter=\
+  adams.flow.core
+
+# the flow execution listeners
+adams.flow.execution.FlowExecutionListener=\
+  adams.flow.execution
+
+# the breakpoints for the flow execution listeners
+adams.flow.execution.AbstractBreakpoint=\
+  adams.flow.execution
+
+# the flow actors that can generate panels for external use
+adams.flow.sink.DisplayPanelProvider=\
+  adams.flow.sink
+
+# the dialogs for viewing log entries
+adams.flow.sink.logview.AbstractLogEntryDialog=\
+  adams.flow.sink.logview
+
+# the error paintlets for the SequencePlotter
+adams.flow.sink.sequenceplotter.AbstractErrorPaintlet=\
+  adams.flow.sink.sequenceplotter
+
+# the marker paintlets for the SequencePlotter
+adams.flow.sink.sequenceplotter.MarkerPaintlet=\
+  adams.flow.sink.sequenceplotter
+
+# the post processors for the SequencePlotter
+adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor=\
+  adams.flow.sink.sequenceplotter
+
+# the plot updaters for the SequencePlotter
+adams.flow.sink.sequenceplotter.AbstractPlotUpdater=\
+  adams.flow.sink.sequenceplotter
+
+# the mouse click actions for the SequencePlotter
+adams.flow.sink.sequenceplotter.MouseClickAction=\
+  adams.flow.sink.sequenceplotter
+
+# the paintlets for the Canvas sink
+adams.flow.sink.canvas.DataPoolPaintlet=\
+  adams.flow.sink.canvas
+
+# the data pool post-processors for the Canvas sink
+adams.flow.sink.canvas.AbstractDataPoolPostProcessor=\
+  adams.flow.sink.canvas
+
+# the file system search algorithms
+adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet=\
+  adams.flow.source.filesystemsearch
+
+# the list generator algorithms
+adams.flow.source.newlist.AbstractListGenerator=\
+  adams.flow.source.newlist
+
+# flow conditions
+adams.flow.condition.test.TestCondition=\
+  adams.flow.condition.test
+
+# conditions for the, e.g., IfThenElse control actor
+adams.flow.condition.bool.BooleanCondition=\
+  adams.flow.condition.bool
+
+# flow containers
+adams.flow.container.AbstractContainer=\
+  adams.flow.container
+
+# the actor processors
+adams.flow.processor.AbstractActorProcessor=\
+  adams.flow.processor
+
+# the check processors
+adams.flow.processor.CheckProcessor=\
+  adams.flow.processor
+
+# the cleanup processors
+adams.flow.processor.CleanUpProcessor=\
+  adams.flow.processor
+
+# the actor templates
+adams.flow.template.AbstractActorTemplate=\
+  adams.flow.template
+
+# the flow setups
+adams.flow.setup.FlowSetup=\
+  adams.flow.setup
+
+# the events
+adams.flow.core.Event=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
+# the triggerable events
+adams.flow.core.TriggerableEvent=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
+# the DataContainer post-processors
+adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor=\
+  adams.flow.transformer.datacontainer
+
+# the DataContainer pre-processors
+adams.flow.transformer.datacontainer.AbstractDataContainerPreProcessor=\
+  adams.flow.transformer.datacontainer
+
+# the Report post-processors
+adams.flow.transformer.report.AbstractReportPostProcessor=\
+  adams.flow.transformer.report
+
+# the Report pre-processors
+adams.flow.transformer.report.AbstractReportPreProcessor=\
+  adams.flow.transformer.report
+
+# the file splitters
+adams.flow.transformer.splitfile.AbstractFileSplitter=\
+  adams.flow.transformer.splitfile
+
+# the flow tabs
+adams.gui.flow.tab.AbstractEditorTab=\
+  adams.gui.flow.tab
+
+# the post-processors for edits in the flow tree
+adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor=\
+  adams.gui.flow.tree.postprocessor
+
+# the startup initialization applets
+adams.gui.application.Initialization=\
+  adams.gui.application
+
+# the preferences panels
+adams.gui.application.PreferencesPanel=\
+  adams.gui.application
+
+# the clipboard data managers
+adams.gui.clipboard.AbstractClipboardData=\
+  adams.gui.clipboard
+
+# the menu actions in the flow editor
+adams.gui.flow.menu.FlowEditorAction=\
+  adams.gui.flow.tree.menu
+
+# additional menu items for the flow editor
+adams.gui.flow.menu.AbstractFlowEditorMenuItem=\
+  adams.gui.flow.menu
+
+# the popup menu actions in the flow editor
+adams.gui.flow.tree.menu.TreePopupAction=\
+  adams.gui.flow.tree.menu
+
+# the handlers for GenericObjectEditors
+adams.gui.goe.AbstractGenericObjectEditorHandler=\
+  adams.gui.goe
+
+# the editor registration schemes
+adams.gui.goe.AbstractEditorRegistration=\
+  adams.gui.goe
+
+# the menu items for the application menu
+adams.gui.application.AbstractMenuItemDefinition=\
+  adams.gui.menu
+
+# the database connection panels
+adams.gui.dialog.AbstractDatabaseConnectionPanel=\
+  adams.gui.dialog
+
+# the writers for GUI components
+adams.gui.print.JComponentWriter=\
+  adams.gui.print
+
+# the scriplets for the command processor
+adams.gui.scripting.AbstractScriptlet=\
+  adams.gui.scripting
+
+# the action classes for forwarding/processing data
+adams.gui.sendto.AbstractSendToAction=\
+  adams.gui.sendto
+
+# the archive handlers for the preview browser
+adams.gui.tools.previewbrowser.AbstractArchiveHandler=\
+  adams.gui.tools.previewbrowser
+
+# the content handlers for the preview browser
+adams.gui.tools.previewbrowser.AbstractContentHandler=\
+  adams.gui.tools.previewbrowser
+
+# the viewers for serialized objects
+adams.gui.tools.previewbrowser.SerializedObjectViewer=\
+  adams.gui.tools.previewbrowser
+
+# the color providers to use for plotting
+adams.gui.visualization.core.AbstractColorProvider=\
+  adams.gui.visualization.core
+
+# gradient color generators
+adams.gui.visualization.core.AbstractColorGradientGenerator=\
+  adams.gui.visualization.core
+
+# mouse movement trackers
+adams.gui.visualization.core.MouseMovementTracker=\
+  adams.gui.visualization.core
+
+# the paintlets
+adams.gui.visualization.core.Paintlet=\
+  adams.gui.visualization.core,\
+  adams.gui.visualization.report,\
+  adams.gui.visualization.sequence,\
+  adams.gui.visualization.container
+
+# the tick generators for the axes
+adams.gui.visualization.core.axis.TickGenerator=\
+  adams.gui.visualization.core.axis
+
+# hit detectors for plots
+adams.gui.visualization.core.plot.AbstractHitDetector=\
+  adams.gui.visualization.core.plot,\
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
+
+# special handlers for inspection objects
+adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler=\
+  adams.gui.visualization.debug.inspectionhandler
+
+# plaintext renderers
+adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer=\
+  adams.gui.visualization.debug.objecttree
+
+# property extractors
+adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor=\
+  adams.gui.visualization.debug.propertyextractor
+
+# the image overlays
+adams.gui.visualization.image.ImageOverlay=\
+  adams.gui.visualization.image
+
+# plugins for the image viewer
+adams.gui.visualization.image.plugins.AbstractImageViewerPlugin=\
+  adams.gui.visualization.image.plugins
+
+# the selection processors for the image viewer
+adams.gui.visualization.image.selection.AbstractSelectionProcessor=\
+  adams.gui.visualization.image.selection
+
+# the actions for table popups
+adams.gui.visualization.report.reportfactory.AbstractTableAction=\
+  adams.gui.visualization.report.reportfactory
+
+# paintlets for XY sequences
+adams.gui.visualization.sequence.XYSequencePaintlet=\
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
+
+# paintlets for drawing custom data
+adams.gui.visualization.sequence.PaintletWithCustomDataSupport=\
+  adams.gui.visualization.sequence
+
+# hit detectors for sequence plots
+adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector=\
+  adams.gui.visualization.sequence,\
+  adams.flow.sink.sequenceplotter
+
+# the optimization schemes
+adams.optimise.AbstractOptimiser=\
+  adams.optimise
+
+# the fitness functions
+adams.optimise.FitnessFunction=\
+  adams.optimise
+
+# the parser functions
+adams.parser.plugin.ParserFunction=\
+  adams.parser.plugin
+
+# the parser procedures
+adams.parser.plugin.ParserProcedure=\
+  adams.parser.plugin
+
+# the tools
+adams.tools.AbstractTool=\
+  adams.tools

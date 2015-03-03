@@ -1,0 +1,193 @@
+% Copyright (c) 2012 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\chapter{Flow}
+The \textit{adams-weka} module has a comprehensive set of actors and conversions
+that allow you to build powerful flows using WEKA's functionality. The following
+sections give a quick overview of available functionality. If you are interested
+in flow examples, check out chapters \ref{classification_and_regression} and
+\ref{clustering}.
+
+\section{Conversions}
+This module offers additional schemes for the \textit{Convert} transformer:
+\begin{tight_itemize}
+	\item \textit{AdamsInstanceToWekaInstance} -- converts an ADAMS instance
+	into a WEKA one.
+	\item \textit{MatchWekaInstanceAgainstFileHeader} -- uses a dataset header
+	stored in a file to convert the string attributes of the instance passing 
+	through into nominal ones (and vice versa).
+	\item \textit{MatchWekaInstanceAgainstStorageHeader} -- uses a dataset
+	header obtained from storage to convert the string attributes of the 
+	instance passing through into nominal ones (and vice versa).
+	\item \textit{ReportToWekaInstance} -- turns a \textit{Report} object
+	into a WEKA instance.
+	\item \textit{SpreadSheetToWekaInstances} -- turns a spreadsheet object
+	into a WEKA dataset.
+	\item \textit{WekaInstancesToSpreadSheet} -- turns a WEKA dataset into
+	a spreadsheet object.
+	\item \textit{WekaInstanceToAdamsInstance} -- turns a WEKA instance into
+	an ADAMS one.
+	\item \textit{WekaPredictionContainerToSpreadSheet} -- generates a 
+	spreadsheet object from a predicition container (useful for display).
+\end{tight_itemize}
+
+\section{Conditions}
+The following boolean conditions, e.g., used in the \textit{IfThenElse} or
+\textit{Switch} control actors, are available:
+\begin{tight_itemize}
+	\item \textit{AdamsInstanceCapabilities} -- checks an ADAMS intance against
+	the specified capabilities that it must satisfy.
+	\item \textit{WekaCapabilities} -- checks a WEKA instance against the
+	specified capabilities.
+	\item \textit{WekaClassification} (used in conjunction with 
+	\textit{Switch}) -- uses the returned classification index to determine 
+	which branch of the switch statement should be used; for all other control 
+	actors, the condition evaluates to ``true'' if an index is returnedl; 
+	condition works only with nominal classes.
+\end{tight_itemize}
+
+\section{Actors}
+The following sources are available:
+\begin{tight_itemize}
+	\item \textit{WekaClassifierGenerator} -- generates parameter sweeps for
+	\item \textit{WekaClassifierSetup} -- outputs a single classifier setup.
+	\item \textit{WekaClustererGenerator} -- generates parameter sweeps for
+	\item \textit{WekaClustererSetup} -- outputs a single clusterer setup.
+	\item \textit{WekaDatabaseReader} -- reads data from a database into
+	WEKA's internal format.
+	\item \textit{WekaDataGenerator} -- generates artificial data using WEKA's
+	data generators.
+	\item \textit{WekaFilterGenerator} -- generates parameter sweeps for
+	filters.
+	\item \textit{WekaNewInstances} -- simple source for generating empty 
+	datasets.
+\end{tight_itemize}
+These transformers:
+\begin{tight_itemize}
+	\item \textit{WekaAccumulatedError} -- extracts all the errors
+	collected during an evaluation, sorted according to magnitude and
+	creates plot output, for comparing classifier performances (most useful
+	for numeric classes).
+	\item \textit{WekaAggregatedEvaluations} -- aggregates incoming
+	Evaluation objects and forwards the current, aggregate state. 
+	\item \textit{WekaAttributeIterator} -- iterates through the names of a
+	dataset and outputs them.
+	\item \textit{WekaTrainClassifier} -- used for generating a trained
+	model using a dataset.
+	\item \textit{WekaChooseAttributes} -- allows the user to interactively
+	select attributes to keep in a dataset.
+	\item \textit{WekaClassifierOptimizer} -- applies a classifier optimizer
+	(e.g., GridSearch or MultiSearch) to a dataset and then forwards the best
+	(untrained) setup.
+	\item \textit{WekaClassifierRanker} -- evaluates an array of classifier
+	setups on a dataset and outputs the top X performing setups.
+	\item \textit{WekaClassifying} -- uses a serialized (or callable) model to
+	make predictions on incoming data.
+	\item \textit{WekaClassSelector} -- sets the class attribute in a dataset.
+	\item \textit{WekaTrainClusterer} -- trains a cluster algorithm setup
+	on a dataset.
+	\item \textit{WekaClustering} -- applies a serialized (or callable) model
+	to incoming data.
+	\item \textit{WekaCrossValidationEvaluator} -- performs cross-validation
+	on an incoming dataset using a referenced classifier setup.
+	\item \textit{WekaCrossValidationSplot} -- generates train/test set splits
+	like cross-validation would generate.
+	\item \textit{WekaEvaluationSummary} -- generates a summary for an 
+	Evaluation.
+	\item \textit{WekaEvaluationValuePicker} -- retrieves a single statistic
+	from an Evaluation.
+	\item \textit{WekaEvaluationValues} -- generates a spreadsheet with the
+	selected statistics from an Evaluation.
+	\item \textit{WekaExperiment} -- executes a WEKA experiment, like in the 
+	Experimenter.
+	\item \textit{WekaExperimentEvaluation} -- evaluates a WEKA experiment,
+	generating text output of various sorts.
+	\item \textit{WekaExtractArray} -- extracts a row or column from a WEKA
+	dataset (using the internal format).
+	\item \textit{WekaFileReader} -- reads any dataset that WEKA can handle, 
+	either outputs the header, the complete dataset or row-by-row.
+	\item \textit{WekaFilter} -- applies a WEKA filter to the data.
+	\item \textit{WekaGetInstanceValue} -- retrieves an attribute's value from
+	a dataset row.
+	\item \textit{WekaGetInstancesValue} -- retrieves an attribute's value from
+	a dataset.
+	\item \textit{WekaInstanceBuffer} -- buffers either incoming instance 
+	objects and outputs datasets or outputs instance objects when getting
+	datasets.
+	\item \textit{WekaInstanceDumper} -- for dumping dataset rows into files,
+	one row at a time (ARFF or CSV).
+	\item \textit{WekaInstanceEvaluator} -- adds an attribute with the value
+	returned by an instance evaluator.
+	\item \textit{WekaInstanceFileReader} -- outputs ADAMS instance objects.
+	\item \textit{WekaInstancesAppend} -- creates one large dataset from 
+	multiple ones, by appending them one after the other.
+	\item \textit{WekaInstancesInfo} -- outputs information on a dataset.
+	\item \textit{WekaInstancesMerge} -- allows the merging of several datasets 
+	(side-by-side).
+	\item \textit{WekaInstanceStreamPlotGenerator} -- generates plot containers
+	from a range of attributes of instance objects passing through (i.e., you 
+	can plot several attributes in one go).
+	\item \textit{WekaModelReader} -- reads a serialized model.
+	\item \textit{WekaMultiLabelSplitter} -- splits a datasets with multiple
+	class attributes (``multi-label'') into ones with only a single class 
+	attribute.
+	\item \textit{WekaNewInstance} -- creates an instance object with only 
+	missing values using a dataset as template.
+	\item \textit{WekaPredictionsToInstances} -- turns WEKA predictions into
+	a WEKA dataset (actual, predicted, etc).
+	\item \textit{WekaPredictionsToSpreadSheet} -- turns WEKA predictions into
+	a spreadsheet (actual, predicted, etc).
+	\item \textit{WekaRandomSplit} -- generates a random split of a dataset.
+	\item \textit{WekaRegexToRange} -- generates a range string using a regular
+	expression applied to the names of a dataset.
+	\item \textit{WekaRelationName} -- simply outputs the name of the dataset.
+	\item \textit{WekaRenameRelation} -- renames a dataset.
+	\item \textit{WekaReorderAttributesToReference} -- reorders the attributes
+	in incoming Instance/Instances based on an order defined in a reference
+	dataset (callable actor or file).
+	\item \textit{WekaSetInstanceValue} -- sets a specific attribute value in
+	an instance object.
+	\item \textit{WekaSetInstancesValue} -- sets a specific attribute value in
+	a dataset object.
+	\item \textit{WekaStoreInstance} -- appends the passing through instance 
+	\item \textit{WekaStreamFilter} -- works the same as
+	\textit{WekaFilter} but only allows stream filters to be selected.
+	\item \textit{WekaSubsets} -- splits dataset into subsets using the unique
+	values of an attribute to identify subsets.
+	\item \textit{WekaTestSetEvaluator} -- evaluates a trained classifier on
+	a dataset obtained from a callable actor.
+	\item \textit{WekaTextDiectoryReader} -- reads in a directory with the 
+	documents in the sub-directories representing different classes.
+	\item \textit{WekaTrainTestSetEvaluator} -- evaluates a referenced classifier
+	using the incoming train/test split.
+\end{tight_itemize}
+And these sinks:
+\begin{tight_itemize}
+	\item \textit{WekaClassifierErrors} -- displays the errors of a classifier.
+	\item \textit{WekaCostCurve} -- generates a cost curve.
+	\item \textit{WekaDatabaseWriter} -- writes a dataset to a database.
+	\item \textit{WekaExperimentGenerator} -- generates a WEKA experiment by 
+	adding the incoming classifier setups and writing it to disk.
+	\item \textit{WekaFileWriter} -- writes a dataset to any file format that
+	WEKA can handle.
+	\item \textit{WekaInstancesDisplay} -- displays datasets in table format.
+	\item \textit{WekaInstanceViewer} -- visualizes incoming WEKA or ADAMS
+	instance objects the same way as the \textit{Instance Explorer} tool does.
+	\item \textit{WekaModelWriter} -- writes a model container or 
+	classifier/clusterer to disk.
+	\item \textit{WekaThresholdCurve} -- displays threshold curves like, 
+	receiver-operator curve (ROC) or precision/recall.
+\end{tight_itemize}
+
+\section{Templates}
+Here are some templates that make the flow development for WEKA easier:
+\begin{tight_itemize}
+	\item \textit{InstanceDumperVariable} -- generates a variable for the 
+	\textit{WekaInstanceDumper} actor which contains an ARFF/CSV filename 
+	prefix aligned with the flow's filename, i.e., the ARFF/CSV file will 
+	always get placed in the same location as the flow.
+\end{tight_itemize}

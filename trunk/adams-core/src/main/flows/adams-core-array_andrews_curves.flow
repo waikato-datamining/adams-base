@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2014-02-22 13:01:45
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Generates Andrews Curves from numeric arrays.\nThe data used are three data rows from the UCI\ndataset \"iris\".
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			5.1,3.5,1.4,0.2
+			-string
+			7,3.2,4.7,1.4
+			-string
+			6.3,3.3,6,2.5
+	-actor
+		adams.flow.transformer.StringSplit
+			-expression
+			,
+	-actor
+		adams.flow.control.ArrayProcess
+			-actor
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.StringToDouble
+	-actor
+		adams.flow.transformer.SequenceToArray
+			-length
+			3
+	-actor
+		adams.flow.transformer.ArrayStatistic
+			-type
+			ROW_BY_INDEX
+			-location
+			1
+			-location
+			2
+			-location
+			3
+			-statistic
+				adams.data.statistics.ArrayAndrewsCurves
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

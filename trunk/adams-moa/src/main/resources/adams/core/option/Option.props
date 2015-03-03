@@ -1,0 +1,8 @@
+#########
+# hooks #
+#########
+
+# MOA objects
+moa.options.ClassOption=true
+moa.options.ClassOption#toString=adams.gui.goe.MOAClassOptionEditor#toString
+moa.options.ClassOption#valueOf=adams.gui.goe.MOAClassOptionEditor#valueOf

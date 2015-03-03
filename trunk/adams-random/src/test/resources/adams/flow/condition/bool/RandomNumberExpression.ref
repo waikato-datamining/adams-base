@@ -1,0 +1,12 @@
+--> adams.flow.condition.bool.RandomNumberExpression-out0.txt
+false
+
+--> adams.flow.condition.bool.RandomNumberExpression-out1.txt
+true
+
+--> adams.flow.condition.bool.RandomNumberExpression-out2.txt
+false
+
+--> adams.flow.condition.bool.RandomNumberExpression-out3.txt
+true
+

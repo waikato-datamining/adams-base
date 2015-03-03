@@ -1,0 +1,14 @@
+--> dumpfile.txt
+classified instances = 100
+classifications correct (percent) = 63
+Kappa Statistic (percent) = 1.07
+Kappa Temporal Statistic (percent) = 13.953
+classified instances = 200
+classifications correct (percent) = 66
+Kappa Statistic (percent) = 1.048
+Kappa Temporal Statistic (percent) = 20
+classified instances = 300
+classifications correct (percent) = 68
+Kappa Statistic (percent) = 1.017
+Kappa Temporal Statistic (percent) = 22.581
+

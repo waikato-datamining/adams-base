@@ -1,0 +1,86 @@
+# Project: adams
+# Date: 2014-03-12 12:54:45
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Simple example for using and monitoring variables:\n1. The ForLoop generates the index for the file to load\n2. The Tee assembles the full path of the file to load\nand sets the variable \"filename\"\n3. The Trigger loads the file, the variable \"filename\"\nis attached to the \"file\" option of the SingleFileSupplier\nactor.\nThe \"VariableChangedEvent\" standalone gets triggered\nwhenever the variable \"filename\" changes.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.HistoryDisplay
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.VariableChangedEvent
+					-variable
+					filename
+					-no-discard
+					true
+					-actor
+						adams.flow.source.Variable
+							-var-name
+							filename
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							HistoryDisplay
+	-actor
+		adams.flow.source.ForLoop
+			-upper
+			2
+	-actor
+		adams.flow.control.Tee
+			-name
+			Tee (set filename variable)
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToString
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace (path)
+					-find
+					^
+					-replace
+					${EXAMPLE_FLOWS}/data/variable
+					-placeholder
+					true
+			-tee
+				adams.flow.transformer.StringReplace
+					-name
+					StringReplace (extension)
+					-find
+					$
+					-replace
+					.txt
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					filename
+	-actor
+		adams.flow.control.Sleep
+			-annotation
+			For a nicer order in the HistoryDisplay.
+			-interval
+			100
+	-actor
+		adams.flow.control.Trigger
+			-name
+			Trigger (load and display file)
+			-tee
+				adams.flow.source.FileSupplier
+					-file
+					@{filename}
+			-tee
+				adams.flow.transformer.TextFileReader
+					-reader
+						adams.data.io.input.SingleStringTextReader
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					HistoryDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

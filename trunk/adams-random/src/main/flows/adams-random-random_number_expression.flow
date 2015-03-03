@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2014-01-23 15:23:59
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	The RandomNumberExpression condition in the IfThenElse\nactor randomly forwards the incoming tokens to either the\n\"Then\" or the \"Else\" branch.\nThe random number generator in use generates random numbers\nfrom 1 to 1000. The expression, which determines where the tokens\ngo, is \"X < 500\". I.e., if the random number is less than 500\nthe ForLoop-generated token ends in the \"Then\" branch, otherwise\nin the \"Else\" branch.
+	-actor
+		adams.flow.source.ForLoop
+			-upper
+			100
+	-actor
+		adams.flow.control.IfThenElse
+			-condition
+				adams.flow.condition.bool.RandomNumberExpression
+					-generator
+						adams.data.random.JavaRandomInt
+			-then
+				adams.flow.control.Sequence
+					-name
+					then
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display (< 500)
+			-else
+				adams.flow.control.Sequence
+					-name
+					else
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display (>= 500)
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

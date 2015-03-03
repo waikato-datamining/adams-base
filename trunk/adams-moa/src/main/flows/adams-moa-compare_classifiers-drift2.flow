@@ -1,0 +1,156 @@
+# Project: adams
+# Date: 2014-01-23 15:34:57
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Compares the accucary of a Hoeffding tree classifier, Hoeffding Adaptive tree\nand OzaBagAdwin on a RandomRBFGenerator (with drift) data stream.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOAClassifierSetup
+					-name
+					Hoeffding
+					-classifier
+					moa.classifiers.trees.HoeffdingTree -l MC
+			-actor
+				adams.flow.source.MOAClassifierSetup
+					-name
+					Hoeffding Adaptive
+					-classifier
+					moa.classifiers.trees.HoeffdingAdaptiveTree
+			-actor
+				adams.flow.source.MOAClassifierSetup
+					-name
+					OzaBagAdwin
+					-classifier
+					moa.classifiers.meta.OzaBagAdwin
+			-actor
+				adams.flow.sink.SequencePlotter
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+							-paint-all
+							true
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Classifier comparison
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Evaluation step
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Accuracy in %
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+							-update-interval
+							30
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-actor
+		adams.flow.source.MOAStream
+			-stream
+			moa.streams.generators.RandomRBFGeneratorDrift -s 0.001
+			-num-examples
+			500000
+			-chunk-size
+			1000
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					hoeffding
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-classifier
+							Hoeffding
+							-output-interval
+							1000
+					-actor
+						adams.flow.transformer.MOAMeasurementsFilter
+							-regexp
+							.*classifications.*
+					-actor
+						adams.flow.transformer.MOAMeasurementPlotGenerator
+							-prefix
+							h: 
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SequencePlotter
+			-branch
+				adams.flow.control.Sequence
+					-name
+					hoeffding adaptive
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-classifier
+							Hoeffding Adaptive
+							-output-interval
+							1000
+					-actor
+						adams.flow.transformer.MOAMeasurementsFilter
+							-regexp
+							.*classifications.*
+					-actor
+						adams.flow.transformer.MOAMeasurementPlotGenerator
+							-prefix
+							ha: 
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SequencePlotter
+			-branch
+				adams.flow.control.Sequence
+					-name
+					ozabag adwin
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-classifier
+							OzaBagAdwin
+							-output-interval
+							1000
+					-actor
+						adams.flow.transformer.MOAMeasurementsFilter
+							-regexp
+							.*classifications.*
+					-actor
+						adams.flow.transformer.MOAMeasurementPlotGenerator
+							-prefix
+							oba: 
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SequencePlotter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

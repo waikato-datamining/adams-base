@@ -1,0 +1,6 @@
+--> adams.flow.condition.bool.IsNull-out0.txt
+false
+
+--> adams.flow.condition.bool.IsNull-out1.txt
+true
+

@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2014-01-23 15:42:15
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to transpose a spreadsheet.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					original
+					-short-title
+					true
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.TransposeSpreadSheet
+					-use-header-as-first-column
+					true
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-name
+			transposed
+			-short-title
+			true
+			-x
+			-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

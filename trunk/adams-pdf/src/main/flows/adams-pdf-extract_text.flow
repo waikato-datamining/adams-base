@@ -1,0 +1,18 @@
+# Project: adams
+# Date: 2014-01-23 15:38:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Extracts the text from all the pages in the \nsupplied PDF document and displays it.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+	-actor
+		adams.flow.transformer.PDFExtractText
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2014-12-24 09:56:24
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Downloads an HTML page and renders it as text.
+	-actor
+		adams.flow.source.URLSupplier
+			-url
+			https://github.com/index.html
+	-actor
+		adams.flow.transformer.DownloadContent
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.RenderHTMLAsText
+	-actor
+		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

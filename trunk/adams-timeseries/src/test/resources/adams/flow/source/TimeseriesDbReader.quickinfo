@@ -1,0 +1,1 @@
+select id,timestamp,value from table order by id

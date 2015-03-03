@@ -1,0 +1,86 @@
+# Project: adams
+# Date: 2014-01-23 15:39:12
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to build a linear model\nfrom a spreadsheet. The spreadsheet gets automatically\nconverted into an R dataframe before passing it into R.\nThe residuals of the linear model are plotted.
+	-actor
+		adams.flow.standalone.Rserve
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.RTransformer
+			-script
+			res = lm(X$T20BOLT ~ X$SPEED1)
+			-return-type
+			DataFrame
+			-data-frame-columns
+			residuals
+	-actor
+		adams.flow.transformer.SpreadSheetPlotGenerator
+			-generator
+				adams.flow.transformer.plotgenerator.SimplePlotGenerator
+					-default-cell-value
+					0.0
+					-columns
+					1
+	-actor
+		adams.flow.sink.SequencePlotter
+			-writer
+				adams.gui.print.NullWriter
+			-paintlet
+				adams.gui.visualization.sequence.LinePaintlet
+			-overlay-paintlet
+				adams.gui.visualization.sequence.CirclePaintlet
+			-marker-paintlet
+				adams.flow.sink.sequenceplotter.NoMarkers
+			-error-paintlet
+				adams.flow.sink.sequenceplotter.NoErrorPaintlet
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-overlay-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-title
+			Residuals
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					row index
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					40
+					-custom-format
+					0
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					residuals
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					80
+					-custom-format
+					0.0
+			-plot-updater
+				adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-update-interval
+					-1
+			-post-processor
+				adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

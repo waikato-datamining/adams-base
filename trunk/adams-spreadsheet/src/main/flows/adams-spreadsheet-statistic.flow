@@ -1,0 +1,94 @@
+# Project: adams
+# Date: 2014-01-23 15:42:01
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Computes an array statistic, in this case a histogram, on the\nclass attribute and displays it, in tabular and graphical format.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetStatistic
+			-location
+			last
+			-statistic
+				adams.data.statistics.ArrayHistogram
+					-num-bins
+					10
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.sink.SpreadSheetDisplay
+			-branch
+				adams.flow.control.Sequence
+					-name
+					plot
+					-actor
+						adams.flow.transformer.Convert
+							-conversion
+								adams.data.conversion.TransposeSpreadSheet
+					-actor
+						adams.flow.transformer.SpreadSheetPlotGenerator
+							-generator
+								adams.flow.transformer.plotgenerator.SimplePlotGenerator
+									-default-cell-value
+									0.0
+									-columns
+									first
+					-actor
+						adams.flow.sink.SequencePlotter
+							-x
+							-3
+							-writer
+								adams.gui.print.NullWriter
+							-paintlet
+								adams.gui.visualization.sequence.LinePaintlet
+							-overlay-paintlet
+								adams.gui.visualization.sequence.CirclePaintlet
+							-marker-paintlet
+								adams.flow.sink.sequenceplotter.NoMarkers
+							-error-paintlet
+								adams.flow.sink.sequenceplotter.NoErrorPaintlet
+							-color-provider
+								adams.gui.visualization.core.DefaultColorProvider
+							-overlay-color-provider
+								adams.gui.visualization.core.DefaultColorProvider
+							-axis-x
+								adams.gui.visualization.core.AxisPanelOptions
+									-label
+									bin number
+									-tick-generator
+										adams.gui.visualization.core.axis.FancyTickGenerator
+									-nth-value
+									2
+									-width
+									40
+									-custom-format
+									0
+							-axis-y
+								adams.gui.visualization.core.AxisPanelOptions
+									-label
+									counts
+									-tick-generator
+										adams.gui.visualization.core.axis.FancyTickGenerator
+									-nth-value
+									2
+									-width
+									60
+									-custom-format
+									0.0
+							-plot-updater
+								adams.flow.sink.sequenceplotter.SimplePlotUpdater
+							-post-processor
+								adams.flow.sink.sequenceplotter.PassThrough
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,31 @@
+@relation FilterTest-weka.filters.unsupervised.attribute.MergeTwoAttributes-firstNominalAtt1-secondNominalAtt2-remove-chars-_.-differMISSING-one-missingMISSING
+
+@attribute StringAtt1 string
+@attribute NominalAtt {a,b,c,d,g,r}
+@attribute NumericAtt1 numeric
+@attribute StringAtt2 string
+@attribute NumericAtt2 numeric
+@attribute DateAtt1 date yyyy-MM-dd
+
+@data
+humpty,?,1,the,-2.3,2001-04-03
+dumpty,b,2,quick,-3.3,2001-04-03
+sat,?,3,brown,-2.4,2001-04-03
+on,?,4,fox,-5.3,2001-04-03
+a,?,5,jumped,-2.6,2001-04-03
+wall,?,6,over,-7.3,2001-04-04
+humpty,?,7,the,-2.8,2001-04-04
+dumpty,?,8,lazy,-9.3,2001-04-04
+had,?,9,dog,-2,2001-05-04
+a,?,9.4,?,-9,2001-05-04
+great,?,1.4,the,-8.3,2001-05-05
+fall,b,2.3,quick,-7.3,2001-05-05
+all,?,3.3,brown,?,2001-05-05
+the,?,4.3,fox,-5.3,2001-05-05
+kings,?,5.3,jumped,-5.6,2001-05-06
+horses,b,6.5,over,-4.3,2001-05-06
+and,?,7.5,the,-3.8,2001-06-06
+all,?,8.5,lazy,-2.3,2001-06-06
+the,?,9.4,?,-1,2001-06-07
+wall,?,4.3,the,0,1970-01-01
+humpty,?,0,lazy,3.4,1970-01-01

@@ -1,0 +1,23 @@
+README
+======
+
+Simply add a directory and a LaTex file with the same name in that directory
+for automatic PDF generation from the LaTex source files.
+For generating a manual, use the module's name as directory name, e.g.,
+"adams-funky". This should have a directory/file structure as follows:
+
+ +- main
+    |
+    +- latex
+       |
+       +- adams-funky
+          |
+          +- adams-funky.tex
+
+This will create a PDF document called "adams-funky.pdf" in the target
+directory.
+
+Add this module's PDFs then to the adams-all and, if appropriate, to the
+adams-ml module's assembly/bin.xml configuration file as well.
+
+$Revision$

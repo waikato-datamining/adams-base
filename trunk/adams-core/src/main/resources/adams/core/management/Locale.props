@@ -1,0 +1,8 @@
+# Contains parameters for locale configuration.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The locale to use
+# Note: "Default" uses the system's default locale
+Locale=Default

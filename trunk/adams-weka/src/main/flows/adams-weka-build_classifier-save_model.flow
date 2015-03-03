@@ -1,0 +1,50 @@
+# Project: adams
+# Date: 2014-01-23 15:47:18
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Builds a J48 classifier in batch mode and stores the model on disk.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaTrainClassifier
+			-name
+			WekaClassifier
+	-actor
+		adams.flow.sink.WekaModelWriter
+			-output
+			${EXAMPLE_FLOWS}/output/j48.model
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

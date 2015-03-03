@@ -1,0 +1,36 @@
+--> sample-out0.txt
+Filename: /tmp/dummy1.txt
+---
+The quick brown fox
+jumps over the lazy
+dog.
+
+      -- anonymous
+
+--> sample-out1.txt
+Filename: /tmp/.txt
+---
+The quick brown fox
+jumps over the lazy
+dog.
+
+      -- anonymous
+
+--> sample-out2.txt
+Filename: /tmp/prefix-dummy3.txt
+---
+The quick brown fox
+jumps over the lazy
+dog.
+
+      -- anonymous
+
+--> sample-out3.txt
+Filename: /tmp/dummy4-suffix
+---
+The quick brown fox
+jumps over the lazy
+dog.
+
+      -- anonymous
+

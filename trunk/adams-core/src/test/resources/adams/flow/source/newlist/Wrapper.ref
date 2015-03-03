@@ -1,0 +1,31 @@
+--> out-0.txt
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+--> out-1.txt
+att-1
+att-4
+att-7
+att-10
+
+--> out-2.txt
+10-blah
+8-blah
+6-blah
+4-blah
+2-blah
+
+--> out-3.txt
+att-1-blah
+att-4-blah
+att-7-blah
+att-10-blah
+

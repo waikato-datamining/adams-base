@@ -1,0 +1,230 @@
+--> dumpfile.txt
+@relation wage-increase-first-year
+
+@attribute duration numeric
+@attribute cost-of-living-adjustment {none,tcf,tc}
+@attribute working-hours numeric
+@attribute pension {none,ret_allw,empl_contr}
+@attribute standby-pay numeric
+@attribute shift-differential numeric
+@attribute education-allowance {yes,no}
+@attribute statutory-holidays numeric
+@attribute vacation {below_average,average,generous}
+@attribute longterm-disability-assistance {yes,no}
+@attribute contribution-to-dental-plan {none,half,full}
+@attribute bereavement-assistance {yes,no}
+@attribute contribution-to-health-plan {none,half,full}
+@attribute class {bad,good}
+@attribute wage-increase-first-year numeric
+
+@data
+1,?,40,?,?,2,?,11,average,?,?,yes,?,good,5
+2,?,35,ret_allw,?,?,yes,11,below_average,?,full,?,full,good,4.5
+?,?,38,empl_contr,?,5,?,11,generous,yes,half,yes,half,good,?
+3,tc,?,?,?,?,yes,?,?,?,?,yes,?,good,3.7
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,4.5
+2,?,35,?,?,6,yes,12,average,?,?,?,?,good,2
+3,tc,?,empl_contr,?,?,?,12,generous,yes,none,yes,half,good,4
+3,?,40,?,?,3,?,12,below_average,?,?,?,?,good,6.9
+2,?,38,?,12,25,yes,11,below_average,yes,half,yes,?,good,3
+1,none,40,empl_contr,?,4,?,11,generous,yes,full,?,?,good,5.7
+3,none,36,?,?,3,?,13,generous,?,?,yes,full,good,3.5
+2,?,38,?,?,4,?,15,?,?,full,?,?,good,6.4
+2,none,40,?,?,2,no,10,below_average,no,half,?,half,bad,3.5
+3,tcf,37,?,?,4,?,13,generous,?,full,yes,full,good,3.5
+1,none,36,?,?,10,no,11,generous,?,?,?,?,good,3
+2,none,37,empl_contr,?,?,?,11,average,?,full,yes,?,good,4.5
+1,?,35,?,?,2,?,12,below_average,?,?,?,?,good,2.8
+1,tc,40,ret_allw,2,3,no,9,below_average,yes,half,?,none,bad,2.1
+1,none,38,none,?,?,yes,11,average,no,none,no,none,bad,2
+2,tcf,35,?,13,5,?,15,generous,?,?,?,?,good,4
+2,?,38,?,?,4,?,12,generous,?,full,?,full,good,4.3
+2,?,40,none,?,?,?,11,below_average,?,?,?,?,bad,2.5
+3,tcf,27,?,?,?,?,?,?,?,?,?,?,good,3.5
+2,?,40,?,?,4,?,10,generous,?,half,?,full,good,4.5
+1,?,38,?,8,3,?,9,generous,?,?,?,?,good,6
+3,none,40,none,?,?,?,10,below_average,?,half,yes,full,bad,2
+2,tcf,?,?,?,?,yes,10,below_average,yes,none,?,half,good,4.5
+2,none,33,?,?,?,yes,12,generous,?,?,yes,full,good,3
+2,none,37,?,?,5,no,11,below_average,yes,full,yes,full,good,5
+3,?,35,none,?,?,?,10,average,?,?,yes,full,bad,2
+3,none,40,?,?,?,no,11,average,?,half,?,?,good,4.5
+3,tc,40,none,?,5,no,10,below_average,yes,half,yes,full,bad,3
+2,?,38,empl_contr,?,?,?,10,average,?,?,?,?,bad,2.5
+2,none,40,none,?,3,no,10,below_average,no,none,?,none,bad,4
+3,tc,40,none,2,1,no,10,below_average,no,half,yes,full,bad,2
+2,none,40,none,?,?,no,11,average,yes,none,yes,full,bad,2
+1,tc,40,ret_allw,4,0,no,11,generous,no,none,no,none,bad,2
+1,none,38,empl_contr,2,3,no,9,below_average,yes,half,?,none,bad,2.8
+3,?,37,empl_contr,?,?,?,10,average,?,?,yes,none,bad,2
+2,none,40,?,?,4,?,12,average,yes,full,yes,half,good,4.5
+1,none,?,none,?,?,yes,11,average,no,none,no,none,bad,4
+2,none,38,empl_contr,?,?,yes,12,generous,yes,none,yes,full,bad,2
+2,tc,39,empl_contr,?,?,?,12,average,?,?,yes,?,bad,2.5
+2,tcf,40,none,?,?,?,11,below_average,?,?,yes,?,bad,2.5
+2,none,40,none,?,3,?,10,below_average,no,none,?,none,bad,4
+2,?,40,?,?,2,no,10,below_average,no,half,?,half,bad,4.5
+2,none,40,?,?,5,?,11,average,?,full,yes,full,good,4.5
+2,tcf,38,?,?,?,?,?,?,yes,half,?,half,good,4.6
+2,none,38,?,14,5,?,11,below_average,yes,?,?,full,good,5
+2,none,40,ret_allw,?,?,?,11,average,yes,full,yes,full,good,5.7
+2,?,?,?,?,?,?,11,?,yes,full,?,?,good,7
+3,tcf,?,empl_contr,?,?,yes,?,?,yes,half,yes,?,good,2
+3,tcf,35,?,?,?,?,13,generous,?,?,yes,full,good,3.5
+3,none,40,empl_contr,?,6,?,11,average,yes,full,?,full,good,4
+3,none,38,empl_contr,10,6,?,11,generous,yes,?,?,full,good,5
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,5
+3,?,35,?,?,14,?,9,generous,yes,full,yes,full,good,6
+@relation wage-increase-second-year
+
+@attribute duration numeric
+@attribute cost-of-living-adjustment {none,tcf,tc}
+@attribute working-hours numeric
+@attribute pension {none,ret_allw,empl_contr}
+@attribute standby-pay numeric
+@attribute shift-differential numeric
+@attribute education-allowance {yes,no}
+@attribute statutory-holidays numeric
+@attribute vacation {below_average,average,generous}
+@attribute longterm-disability-assistance {yes,no}
+@attribute contribution-to-dental-plan {none,half,full}
+@attribute bereavement-assistance {yes,no}
+@attribute contribution-to-health-plan {none,half,full}
+@attribute class {bad,good}
+@attribute wage-increase-second-year numeric
+
+@data
+1,?,40,?,?,2,?,11,average,?,?,yes,?,good,?
+2,?,35,ret_allw,?,?,yes,11,below_average,?,full,?,full,good,5.8
+?,?,38,empl_contr,?,5,?,11,generous,yes,half,yes,half,good,?
+3,tc,?,?,?,?,yes,?,?,?,?,yes,?,good,4
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,4.5
+2,?,35,?,?,6,yes,12,average,?,?,?,?,good,2.5
+3,tc,?,empl_contr,?,?,?,12,generous,yes,none,yes,half,good,5
+3,?,40,?,?,3,?,12,below_average,?,?,?,?,good,4.8
+2,?,38,?,12,25,yes,11,below_average,yes,half,yes,?,good,7
+1,none,40,empl_contr,?,4,?,11,generous,yes,full,?,?,good,?
+3,none,36,?,?,3,?,13,generous,?,?,yes,full,good,4
+2,?,38,?,?,4,?,15,?,?,full,?,?,good,6.4
+2,none,40,?,?,2,no,10,below_average,no,half,?,half,bad,4
+3,tcf,37,?,?,4,?,13,generous,?,full,yes,full,good,4
+1,none,36,?,?,10,no,11,generous,?,?,?,?,good,?
+2,none,37,empl_contr,?,?,?,11,average,?,full,yes,?,good,4
+1,?,35,?,?,2,?,12,below_average,?,?,?,?,good,?
+1,tc,40,ret_allw,2,3,no,9,below_average,yes,half,?,none,bad,?
+1,none,38,none,?,?,yes,11,average,no,none,no,none,bad,?
+2,tcf,35,?,13,5,?,15,generous,?,?,?,?,good,5
+2,?,38,?,?,4,?,12,generous,?,full,?,full,good,4.4
+2,?,40,none,?,?,?,11,below_average,?,?,?,?,bad,3
+3,tcf,27,?,?,?,?,?,?,?,?,?,?,good,4
+2,?,40,?,?,4,?,10,generous,?,half,?,full,good,4
+1,?,38,?,8,3,?,9,generous,?,?,?,?,good,?
+3,none,40,none,?,?,?,10,below_average,?,half,yes,full,bad,2
+2,tcf,?,?,?,?,yes,10,below_average,yes,none,?,half,good,4.5
+2,none,33,?,?,?,yes,12,generous,?,?,yes,full,good,3
+2,none,37,?,?,5,no,11,below_average,yes,full,yes,full,good,4
+3,?,35,none,?,?,?,10,average,?,?,yes,full,bad,2.5
+3,none,40,?,?,?,no,11,average,?,half,?,?,good,4.5
+3,tc,40,none,?,5,no,10,below_average,yes,half,yes,full,bad,2
+2,?,38,empl_contr,?,?,?,10,average,?,?,?,?,bad,2.5
+2,none,40,none,?,3,no,10,below_average,no,none,?,none,bad,5
+3,tc,40,none,2,1,no,10,below_average,no,half,yes,full,bad,2.5
+2,none,40,none,?,?,no,11,average,yes,none,yes,full,bad,2
+1,tc,40,ret_allw,4,0,no,11,generous,no,none,no,none,bad,?
+1,none,38,empl_contr,2,3,no,9,below_average,yes,half,?,none,bad,?
+3,?,37,empl_contr,?,?,?,10,average,?,?,yes,none,bad,2.5
+2,none,40,?,?,4,?,12,average,yes,full,yes,half,good,4
+1,none,?,none,?,?,yes,11,average,no,none,no,none,bad,?
+2,none,38,empl_contr,?,?,yes,12,generous,yes,none,yes,full,bad,3
+2,tc,39,empl_contr,?,?,?,12,average,?,?,yes,?,bad,2.5
+2,tcf,40,none,?,?,?,11,below_average,?,?,yes,?,bad,3
+2,none,40,none,?,3,?,10,below_average,no,none,?,none,bad,4
+2,?,40,?,?,2,no,10,below_average,no,half,?,half,bad,4
+2,none,40,?,?,5,?,11,average,?,full,yes,full,good,4
+2,tcf,38,?,?,?,?,?,?,yes,half,?,half,good,4.6
+2,none,38,?,14,5,?,11,below_average,yes,?,?,full,good,4.5
+2,none,40,ret_allw,?,?,?,11,average,yes,full,yes,full,good,4.5
+2,?,?,?,?,?,?,11,?,yes,full,?,?,good,5.3
+3,tcf,?,empl_contr,?,?,yes,?,?,yes,half,yes,?,good,3
+3,tcf,35,?,?,?,?,13,generous,?,?,yes,full,good,4
+3,none,40,empl_contr,?,6,?,11,average,yes,full,?,full,good,3.5
+3,none,38,empl_contr,10,6,?,11,generous,yes,?,?,full,good,4.4
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,5
+3,?,35,?,?,14,?,9,generous,yes,full,yes,full,good,6
+@relation wage-increase-third-year
+
+@attribute duration numeric
+@attribute cost-of-living-adjustment {none,tcf,tc}
+@attribute working-hours numeric
+@attribute pension {none,ret_allw,empl_contr}
+@attribute standby-pay numeric
+@attribute shift-differential numeric
+@attribute education-allowance {yes,no}
+@attribute statutory-holidays numeric
+@attribute vacation {below_average,average,generous}
+@attribute longterm-disability-assistance {yes,no}
+@attribute contribution-to-dental-plan {none,half,full}
+@attribute bereavement-assistance {yes,no}
+@attribute contribution-to-health-plan {none,half,full}
+@attribute class {bad,good}
+@attribute wage-increase-third-year numeric
+
+@data
+1,?,40,?,?,2,?,11,average,?,?,yes,?,good,?
+2,?,35,ret_allw,?,?,yes,11,below_average,?,full,?,full,good,?
+?,?,38,empl_contr,?,5,?,11,generous,yes,half,yes,half,good,?
+3,tc,?,?,?,?,yes,?,?,?,?,yes,?,good,5
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,5
+2,?,35,?,?,6,yes,12,average,?,?,?,?,good,?
+3,tc,?,empl_contr,?,?,?,12,generous,yes,none,yes,half,good,5
+3,?,40,?,?,3,?,12,below_average,?,?,?,?,good,2.3
+2,?,38,?,12,25,yes,11,below_average,yes,half,yes,?,good,?
+1,none,40,empl_contr,?,4,?,11,generous,yes,full,?,?,good,?
+3,none,36,?,?,3,?,13,generous,?,?,yes,full,good,4.6
+2,?,38,?,?,4,?,15,?,?,full,?,?,good,?
+2,none,40,?,?,2,no,10,below_average,no,half,?,half,bad,?
+3,tcf,37,?,?,4,?,13,generous,?,full,yes,full,good,5.1
+1,none,36,?,?,10,no,11,generous,?,?,?,?,good,?
+2,none,37,empl_contr,?,?,?,11,average,?,full,yes,?,good,?
+1,?,35,?,?,2,?,12,below_average,?,?,?,?,good,?
+1,tc,40,ret_allw,2,3,no,9,below_average,yes,half,?,none,bad,?
+1,none,38,none,?,?,yes,11,average,no,none,no,none,bad,?
+2,tcf,35,?,13,5,?,15,generous,?,?,?,?,good,?
+2,?,38,?,?,4,?,12,generous,?,full,?,full,good,?
+2,?,40,none,?,?,?,11,below_average,?,?,?,?,bad,?
+3,tcf,27,?,?,?,?,?,?,?,?,?,?,good,4.6
+2,?,40,?,?,4,?,10,generous,?,half,?,full,good,?
+1,?,38,?,8,3,?,9,generous,?,?,?,?,good,?
+3,none,40,none,?,?,?,10,below_average,?,half,yes,full,bad,2
+2,tcf,?,?,?,?,yes,10,below_average,yes,none,?,half,good,?
+2,none,33,?,?,?,yes,12,generous,?,?,yes,full,good,?
+2,none,37,?,?,5,no,11,below_average,yes,full,yes,full,good,?
+3,?,35,none,?,?,?,10,average,?,?,yes,full,bad,?
+3,none,40,?,?,?,no,11,average,?,half,?,?,good,5
+3,tc,40,none,?,5,no,10,below_average,yes,half,yes,full,bad,2.5
+2,?,38,empl_contr,?,?,?,10,average,?,?,?,?,bad,?
+2,none,40,none,?,3,no,10,below_average,no,none,?,none,bad,?
+3,tc,40,none,2,1,no,10,below_average,no,half,yes,full,bad,2.1
+2,none,40,none,?,?,no,11,average,yes,none,yes,full,bad,?
+1,tc,40,ret_allw,4,0,no,11,generous,no,none,no,none,bad,?
+1,none,38,empl_contr,2,3,no,9,below_average,yes,half,?,none,bad,?
+3,?,37,empl_contr,?,?,?,10,average,?,?,yes,none,bad,2
+2,none,40,?,?,4,?,12,average,yes,full,yes,half,good,?
+1,none,?,none,?,?,yes,11,average,no,none,no,none,bad,?
+2,none,38,empl_contr,?,?,yes,12,generous,yes,none,yes,full,bad,?
+2,tc,39,empl_contr,?,?,?,12,average,?,?,yes,?,bad,?
+2,tcf,40,none,?,?,?,11,below_average,?,?,yes,?,bad,?
+2,none,40,none,?,3,?,10,below_average,no,none,?,none,bad,?
+2,?,40,?,?,2,no,10,below_average,no,half,?,half,bad,?
+2,none,40,?,?,5,?,11,average,?,full,yes,full,good,?
+2,tcf,38,?,?,?,?,?,?,yes,half,?,half,good,?
+2,none,38,?,14,5,?,11,below_average,yes,?,?,full,good,?
+2,none,40,ret_allw,?,?,?,11,average,yes,full,yes,full,good,?
+2,?,?,?,?,?,?,11,?,yes,full,?,?,good,?
+3,tcf,?,empl_contr,?,?,yes,?,?,yes,half,yes,?,good,?
+3,tcf,35,?,?,?,?,13,generous,?,?,yes,full,good,4.5
+3,none,40,empl_contr,?,6,?,11,average,yes,full,?,full,good,?
+3,none,38,empl_contr,10,6,?,11,generous,yes,?,?,full,good,?
+3,?,40,?,?,?,?,12,average,?,half,yes,half,good,5
+3,?,35,?,?,14,?,9,generous,yes,full,yes,full,good,4
+

@@ -1,0 +1,154 @@
+# Project: adams
+# Date: 2015-02-18 12:15:30
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Plots the gaussian bell curve with mean of 0.0 and standard deviation of 1.0.\nIn addition, the first derivative and the partial first derivatives for stdev and\nmean are plotted as well.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.SimplePlot
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							x
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+									-num-ticks
+									20
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0.0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							y
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			mean
+			-var-value
+			0
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			SetVariable-1
+			-var-name
+			stdev
+			-var-value
+			1.0
+	-actor
+		adams.flow.source.ForLoop
+			-lower
+			-200
+			-upper
+			200
+	-actor
+		adams.flow.transformer.MathExpression
+			-expression
+			X/33
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					normal dist
+					-actor
+						adams.flow.transformer.MathExpression
+							-name
+							MathExpression-1
+							-expression
+							1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
+							-output-value-pair
+							true
+					-actor
+						adams.flow.transformer.MakePlotContainer
+							-plot-name
+							normal
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SimplePlot
+			-branch
+				adams.flow.control.Sequence
+					-name
+					first derivative
+					-actor
+						adams.flow.transformer.MathExpression
+							-name
+							MathExpression-1
+							-expression
+							-(X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev}))
+							-output-value-pair
+							true
+					-actor
+						adams.flow.transformer.MakePlotContainer
+							-plot-name
+							1st deriv normal
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SimplePlot
+			-branch
+				adams.flow.control.Sequence
+					-name
+					partial derivative (stdev)
+					-actor
+						adams.flow.transformer.MathExpression
+							-name
+							MathExpression-1
+							-expression
+							(sqrt(2)*X^2-2^(3/2)*@{mean}*X-sqrt(2)*@{stdev}^2+sqrt(2)*@{mean}^2)*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(2*sqrt(PI)*@{stdev}^3*abs(@{stdev}))
+							-output-value-pair
+							true
+					-actor
+						adams.flow.transformer.MakePlotContainer
+							-plot-name
+							partial deriv (stdev)
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SimplePlot
+			-branch
+				adams.flow.control.Sequence
+					-name
+					partial derivative (mean)
+					-actor
+						adams.flow.transformer.MathExpression
+							-name
+							MathExpression-1
+							-expression
+							(X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev}))
+							-output-value-pair
+							true
+					-actor
+						adams.flow.transformer.MakePlotContainer
+							-plot-name
+							partial deriv (mean)
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SimplePlot
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

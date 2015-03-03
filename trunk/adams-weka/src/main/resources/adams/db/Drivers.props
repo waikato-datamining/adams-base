@@ -1,0 +1,14 @@
+# Properties file for JDBC drivers.
+#
+# author: FracPete (fracpete at waikato dot ac dot nz)
+# version: $Revision$
+#
+# Format:
+#  <classname>=<enabled>
+#  with <enabled> being true|false
+#
+# the JDBC driver classes
+Drivers=\
+  org.sqlite.JDBC,\
+  org.hsqldb.jdbcDriver,\
+  org.postgresql.Driver

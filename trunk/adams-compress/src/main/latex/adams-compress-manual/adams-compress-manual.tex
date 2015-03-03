@@ -1,0 +1,151 @@
+% Copyright (c) 2012 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision: 4890 $
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-compress} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/compress-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2012-2013} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+Compressing and decompressing files, archiving multiple files, extracting files
+from archives. These are all actions that are very common and most of the time
+manually performed. Using ADAMS, these steps can be automated thanks to the 
+various transformers available that handle archives.
+
+In general, there are two different kinds of actors:
+\begin{tight_itemize}
+  \item multi-file archives (compress/decompress)
+  \item single-file algorithms (compression/decompression)
+\end{tight_itemize}
+The latter only work on a single file, like for instance gzip. ZIP, on the
+other hand, works with multiple files.
+
+The following chapters cover the actors for compression and decompression in 
+more detail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Compression}
+In order to compress one or more files, you can use the following transformers:
+\begin{tight_itemize}
+	\item \textbf{single files}
+	\begin{tight_itemize}
+		\item Bzip2 (see \cite{bzip2})
+		\item GZIP (see \cite{gzip})
+		\item Lzf (see \cite{lzf})
+		\item Lzma (see \cite{lzma})
+	\end{tight_itemize}
+	\item \textbf{multiple files}
+	\begin{tight_itemize}
+		\item Tar (see \cite{tar})
+		\item ZIP (see \cite{zip})
+	\end{tight_itemize}
+\end{tight_itemize}
+
+\heading{Single file}
+These transformers take a single file as input, which gets 
+compressed.\footnote{adams-compress-gzip\_single\_file.flow}
+You have the choice of selecting a target file. If not, then the generated
+archive gets placed in the same directory as the input file. Optionally,
+you can also remove the original file. This is useful if you simply want
+to save disk-space and compress all files in a directory, but don't need
+the original files anymore.
+
+\heading{Multiple files}
+Transformers that manage archives instead of only compressing single files,
+you need to supply them with an array of file names that should get added
+to the archive (no incremental adding possible at the moment). Using the
+\textit{stripPath} regular expression, you can exert control over what of
+the (most likely absolute) path of the file names should end up in the
+archive. In order to strip the complete path from the names, simply use
+``.*'' as expression.\footnote{adams-compress-generate\_zip.flow}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Decompression}
+In order to decompress a compressed file or extract one more files from a
+multi-file archive, you have the following transformers available:
+\begin{tight_itemize}
+	\item \textbf{single file archives}
+	\begin{tight_itemize}
+		\item UnBzip2 (see \cite{bzip2})
+		\item UnGZIP (see \cite{gzip})
+		\item UnLzf (see \cite{lzf})
+		\item UnLzma (see \cite{lzma})
+	\end{tight_itemize}
+	\item \textbf{multi-file archives}
+	\begin{tight_itemize}
+		\item UnTar (see \cite{tar})
+		\item UnZIP (see \cite{zip})
+	\end{tight_itemize}
+\end{tight_itemize}
+
+\heading{Single file archives}
+When using transformers for decompressing the content of a single file archive,
+you can choose whether you would like to extract the content to a different 
+directory and even whether to use a different file name (by default, the file name
+is the one with the compression's suffix).\footnote{adams-compress-decompress\_gzipped\_file.flow}
+
+\heading{Multi-file archives}
+By default, all files from a multi-file archive get extracted. If you only 
+require a subset of the files, you can use the \textit{regExp} option to
+limit the files extracted to the ones that match the regular expression (you
+can also invert the matching sense).\footnote{adams-compress-extract\_from\_zip.flow}
+Optionally, you can choose whether to re-create the directory structure 
+stored in the archive.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

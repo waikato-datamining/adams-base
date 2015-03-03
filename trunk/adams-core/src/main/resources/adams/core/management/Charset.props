@@ -1,0 +1,8 @@
+# Contains parameters for character set configuration.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The character set to use
+# Note: "Default" uses the system's default charset
+Charset=Default

@@ -1,0 +1,15 @@
+--> dumpfile.txt
+=== Summary ===
+
+Correctly Classified Instances         302               99.0164 %
+Incorrectly Classified Instances         3                0.9836 %
+Kappa statistic                          0.9747
+Mean absolute error                      0.0047
+Root mean squared error                  0.0562
+Relative absolute error                  3.5448 %
+Root relative squared error             22.2596 %
+Coverage of cases (0.95 level)          99.0164 %
+Mean rel. region size (0.95 level)      16.6667 %
+Total Number of Instances              305     
+
+

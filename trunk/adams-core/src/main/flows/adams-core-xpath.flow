@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-01-23 15:25:39
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow loads an XML file as DOM document \nand extracts data using XPath.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/books.xml
+	-actor
+		adams.flow.transformer.XMLFileReader
+	-actor
+		adams.flow.transformer.XPath
+			-annotation
+			Here we obtain all title nodes.
+			-expression
+			//title[@lang='en']
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.DOMNodeListToArray
+	-actor
+		adams.flow.transformer.ArrayToSequence
+	-actor
+		adams.flow.transformer.XPath
+			-name
+			XPath-1
+			-annotation
+			This expression extracts the text of the title nodes, i.e., the titles.
+			-expression
+			./text()
+			-result-type
+			STRING
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

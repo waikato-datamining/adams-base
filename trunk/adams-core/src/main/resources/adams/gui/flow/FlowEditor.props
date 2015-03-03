@@ -1,0 +1,159 @@
+# Configuration file for the Flow Editor.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial directory for loading setups.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=${EXAMPLE_FLOWS}
+
+# The number of recent setups to display in the menu.
+MaxRecentFlows=5
+
+# The panel class to use
+FlowPanelClass=adams.gui.flow.FlowPanel
+
+# Whether to check the flow before saving (true|false)
+CheckOnSave=true
+
+# Whether to show the quick info (true|false)
+ShowQuickInfo=true
+
+# Whether to show the annotations (true|false)
+ShowAnnotations=true
+
+# Whether to show the input/output information (true|false)
+ShowInputOutput=false
+
+# Divider location (= size of left component)
+DividerLocation=500
+
+# Whether to perform garbage collection after a flow has finished/was stopped (true|false)
+GarbageCollectAfterFinish=true
+
+# The actors to list in the "New" submenu
+NewList=\
+  adams.flow.control.Flow,\
+  adams.flow.control.Sequence,\
+  adams.flow.control.SubProcess,\
+  adams.flow.control.Tee,\
+  adams.flow.control.Trigger,\
+  adams.flow.standalone.Standalones,\
+  adams.flow.source.SequenceSource
+
+# The font color of the actor name in the tree
+Tree.ActorName.Color=black
+
+# The font size of the actor name in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.ActorName.Size=3
+
+# The font color of the quick info in the tree
+Tree.QuickInfo.Color=#008800
+
+# The font size of the quick info in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.QuickInfo.Size=-2
+
+# The font color of the annotations in the tree
+Tree.Annotations.Color=blue
+
+# The font size of the annotations in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.Annotations.Size=-2
+
+# The font color of the input/output information in the tree
+Tree.InputOutput.Color=#A9A9A9
+
+# The font size of the input/output information in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.InputOutput.Size=-2
+
+# The comma-separated list of prefixes to remove from the input/output information
+Tree.InputOutput.Prefixes=\
+  java.lang.,\
+  java.io.,\
+  java.net.,\
+  adams.data.spreadsheet.,\
+  adams.core.io.,\
+  adams.flow.core.,\
+  adams.flow.container.,\
+  org.json.simple.
+
+# The font color of the placeholders in the tree
+Tree.Placeholders.Color=navy
+
+# The font size of the placeholders in the tree (absolute: 1-7, or relative: e.g., +1)
+Tree.Placeholders.Size=-2
+
+# The background color for highlighting variables in the tree
+Tree.VariableHighlight.Background=#FFDD88
+
+# The background color for highlighting bookmarks in the tree
+Tree.BookmarkHighlight.Background=#FFDD00
+
+# Whether to use the nested format in the "state" information or 
+# serialized objects (true|false)
+Tree.StateUsesNested=false
+
+# Whether to ignore name changes of actors and don't prompt user whether to 
+# propagate the changes throughout the tree (true|false)
+Tree.IgnoreNameChanges=false
+
+# The scale factor for the icons (1.0 is actual size)
+Tree.IconScaleFactor=1.0
+
+# Whether to show the global info in the class tree as child node of the
+# actor class (true|false)
+ClassTree.ShowGlobalInfo=true
+
+# The toolbar location (HIDDEN|NORTH|SOUTH|WEST|EAST)
+ToolBar.Location=NORTH
+
+# Whether to scroll through the tabs (true|false)
+Tabs.ScrollLayout=false
+
+# The dimensions for the dialog of the status bar
+StatusBar.Width=600
+StatusBar.Height=400
+
+# The flow editor tree popup menu
+Tree.PopupMenu=\
+  adams.gui.flow.tree.menu.MenuHeader,\
+  -,\
+  adams.gui.flow.tree.menu.EditActor,\
+  adams.gui.flow.tree.menu.ExternalFlow,\
+  -,\
+  adams.gui.flow.tree.menu.AddActorBeneath,\
+  adams.gui.flow.tree.menu.AddActorHere,\
+  adams.gui.flow.tree.menu.AddActorAfter,\
+  -,\
+  adams.gui.flow.tree.menu.CutActor,\
+  adams.gui.flow.tree.menu.CopyActor,\
+  adams.gui.flow.tree.menu.PasteActor,\
+  -,\
+  adams.gui.flow.tree.menu.ToggleState,\
+  adams.gui.flow.tree.menu.Bookmark,\
+  adams.gui.flow.tree.menu.RenameActor,\
+  -,\
+  adams.gui.flow.tree.menu.RemoveActor,\
+  -,\
+  adams.gui.flow.tree.menu.AddBreakpoint,\
+  adams.gui.flow.tree.menu.Listeners,\
+  adams.gui.flow.tree.menu.AddFromTemplate,\
+  adams.gui.flow.tree.menu.EncloseActor,\
+  adams.gui.flow.tree.menu.CreateCallableActor,\
+  adams.gui.flow.tree.menu.MakeConditional,\
+  adams.gui.flow.tree.menu.MakeTimed,\
+  adams.gui.flow.tree.menu.ExternalizeActor,\
+  adams.gui.flow.tree.menu.MaterializeExternalActor,\
+  -,\
+  adams.gui.flow.tree.menu.ExpandAll,\
+  adams.gui.flow.tree.menu.CollapseAll,\
+  -,\
+  adams.gui.flow.tree.menu.Help
+
+# Whether to record the actors that the user adds, to improve suggestions
+# (true|false)
+Tree.RecordAdd=false

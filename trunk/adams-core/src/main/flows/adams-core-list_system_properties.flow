@@ -1,0 +1,36 @@
+# Project: adams
+# Date: 2014-01-23 15:23:25
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to access the system\'s properties\nas defined by Java. Using the SetSystemProperty transformer,\nyou can also update or add properties.
+	-actor
+		adams.flow.source.ListSystemProperties
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			prop
+	-actor
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.GetSystemProperty
+					-property
+					@{prop}
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.BackQuote
+			-tee
+				adams.flow.transformer.StringInsert
+					-position
+					first
+					-value
+					@{prop}=
+					-variable
+					true
+			-tee
+				adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,60 @@
+# Project: adams
+# Date: 2014-01-23 15:47:07
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Performs a simple attribute selection and outputs the summary.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaAttributeSelection
+			-evaluator
+				weka.attributeSelection.CfsSubsetEval
+					-P
+					1
+					-E
+					1
+					
+					
+					
+					
+			-search
+				weka.attributeSelection.BestFirst
+					-D
+					1
+					-N
+					5
+					
+					
+			-folds
+			0
+	-actor
+		adams.flow.control.ContainerValuePicker
+			-tee
+				adams.flow.sink.WekaInstancesDisplay
+					-name
+					Reduced
+					-short-title
+					true
+					-x
+					-3
+					-writer
+						adams.gui.print.NullWriter
+			-value
+			Reduced
+	-actor
+		adams.flow.transformer.WekaAttributeSelectionSummary
+	-actor
+		adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

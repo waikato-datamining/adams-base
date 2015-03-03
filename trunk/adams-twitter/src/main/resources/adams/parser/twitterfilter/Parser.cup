@@ -1,0 +1,478 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ */
+
+package adams.parser.twitterfilter;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+import adams.core.net.TwitterHelper;
+import adams.parser.ParserHelper;
+import adams.data.twitter.TwitterField;
+
+/**
+ * A parser for twitter filter expressions.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+
+parser code {:
+  /** variable - value relation. */
+  protected HashMap m_Symbols = new HashMap();
+
+  /** for storing the result of the expression. */
+  protected Boolean m_Result = null;
+
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
+  /**
+   * Sets the variable - value relation to use.
+   *
+   * @param value the variable-value relation
+   */
+  public void setSymbols(HashMap value) {
+    m_Symbols = value;
+  }
+
+  /**
+   * Returns the current variable - value relation in use.
+   *
+   * @return the variable-value relation
+   */
+  public HashMap getSymbols() {
+    return m_Symbols;
+  }
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
+
+  /**
+   * Returns the string value associated with the symbol.
+   *
+   * @param symbol the symbol to look up
+   * @return the string value, "" if not available
+   */
+  protected String get(TwitterField symbol) {
+  	String		result;
+
+    if (m_Symbols.containsKey(symbol))
+      result = (String) m_Symbols.get(symbol);
+    else
+      result = "";
+
+    return result;
+  }
+
+  /**
+   * Returns the object value associated with the symbol.
+   *
+   * @param symbol the symbol to look up
+   * @return the string value, null if not available
+   */
+  protected Object get(String symbol) {
+  	Object		result;
+
+    if (m_Symbols.containsKey(symbol))
+      result = m_Symbols.get(symbol);
+    else
+      result = null;
+
+    return result;
+  }
+
+  /**
+   * Returns the double value associated with the symbol.
+   *
+   * @return the double value, Double.NaN if not available
+   */
+  protected Double getDouble(TwitterField symbol) {
+  	Double		result;
+
+    if (m_Symbols.containsKey(symbol))
+      result = (Double) m_Symbols.get(symbol);
+    else
+      result = Double.NaN;
+
+    return result;
+  }
+
+  /**
+   * Returns the boolean value associated with the symbol.
+   *
+   * @return the boolean value, false if not available
+   */
+  protected Boolean getBoolean(TwitterField symbol) {
+  	Boolean		result;
+
+    if (m_Symbols.containsKey(symbol))
+      result = (Boolean) m_Symbols.get(symbol);
+    else
+      result = false;
+
+    return result;
+  }
+
+  /**
+   * Returns whether the symbol is present at all.
+   *
+   * @return true if present
+   */
+  protected boolean has(TwitterField symbol) {
+    return m_Symbols.containsKey(symbol);
+  }
+
+  /**
+   * Sets the result of the evaluation.
+   *
+   * @param value the result
+   */
+  public void setResult(Boolean value) {
+    m_Result = value;
+  }
+
+  /**
+   * Returns the result of the evaluation.
+   *
+   * @return the result
+   */
+  public Boolean getResult() {
+    return m_Result;
+  }
+
+  /**
+   * Returns whether an exact match was found in array.
+   *
+   * @param search the search term
+   * @param values the array of values to search
+   * @return true if match
+   */
+  public boolean isExactMatch(String search, String[] values) {
+    boolean result;
+    
+    result = false;
+    
+    for (String value: values) {
+      if (value.equals(search)) {
+        result = true;
+        break;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Returns whether a substring was found in the array.
+   *
+   * @param search the substring to find
+   * @param values the array of values to search
+   * @return true if match
+   */
+  public boolean isSubstringMatch(String search, String[] values) {
+    boolean result;
+    
+    result = false;
+    
+    for (String value: values) {
+      if (value.indexOf(search) > -1) {
+        result = true;
+        break;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Returns whether a regexp matched a value of the array.
+   *
+   * @param search the regexp to match against the values
+   * @param values the array of values to search
+   * @return true if match
+   */
+  public boolean isRegExpMatch(String search, String[] values) {
+    boolean result;
+    
+    result = false;
+    
+    for (String value: values) {
+      if (value.matches(search)) {
+        result = true;
+        break;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Runs the parser from commandline. Either reads lines from System.in
+   * or from a provided file (line by line). With
+   * <code>-symbols <semi-colon separated list of variable/value pairs></code>
+   * as first parameter one can provide predefined variable values. E.g.:
+   * <code>-symbols "Y=10;X=3" "X+Y"</code>
+   *
+   * @param args the commandline arguments
+   * @throws Exception if something goes wrong
+   */
+  public static void main(String args[]) throws Exception {
+    // read symbols, if present
+    HashMap symbols = new HashMap();
+    if (args.length > 0) {
+      if (args[0].equals("-symbols")) {
+        // parse symbols
+        String[] pairs = args[1].replaceAll(" ", "").split(";");
+        for (int i = 0; i < pairs.length; i++) {
+          String[] parts = pairs[i].split("=");
+          symbols.put(parts[0], new Double(parts[1]));
+        }
+        // print symbols
+        System.out.println("\nSymbols provided:");
+        Iterator iter = symbols.keySet().iterator();
+        while (iter.hasNext()) {
+          String key = (String) iter.next();
+          System.out.println(key + "=" + symbols.get(key));
+        }
+        // remove symbols from commandline
+        String[] argsNew = new String[args.length - 2];
+        System.arraycopy(args, 2, argsNew, 0, argsNew.length);
+        args = argsNew;
+      }
+    }
+
+    // setup input stream
+    int index = -1;
+    if (args.length == 1)
+      index = 0;
+    BufferedReader input = null;
+    if (index == -1) {
+      System.out.println("\nPlease type in expressions (and press <Enter>), exit with <Ctrl+D>:");
+      input = new BufferedReader(new InputStreamReader(System.in));
+    }
+    else {
+      System.out.println("\nReading expressions from file '" + args[index] + "':");
+      input = new BufferedReader(new FileReader(args[index]));
+    }
+
+    // process stream
+    SymbolFactory sf = new DefaultSymbolFactory();
+    String line;
+    while ((line = input.readLine()) != null) {
+      ByteArrayInputStream parserInput = new ByteArrayInputStream(line.getBytes());
+      Parser parser = new Parser(new Scanner(parserInput,sf), sf);
+      parser.setSymbols(symbols);
+      parser.parse();
+      System.out.println(line + " = " + parser.getResult());
+    }
+  }
+:}
+
+terminal COMMA, LPAREN, RPAREN;
+terminal SUBSTRING_MATCH, EXACT_MATCH, REGEXP_MATCH;
+terminal LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION, STATUSLANG, RETWEET, ISRETWEETED, FAVCOUNT;
+terminal IFELSE, HAS;
+terminal NOT, AND, OR, XOR, LT, LE, NOT_EQ, GT, GE;
+terminal Boolean BOOLEAN;
+terminal String STRING;
+terminal Double NUMBER;
+
+non terminal expr_list, expr_part;
+non terminal Boolean expr;
+non terminal Boolean boolexpr;
+non terminal Double numexpr;
+non terminal TwitterField parameter;
+
+precedence left AND, OR, XOR, LT, LE, EXACT_MATCH, NOT_EQ, GT, GE;
+precedence left NOT;
+precedence left LPAREN, RPAREN;
+precedence left LANGUAGE_CODE, COUNTRY, COUNTRY_CODE, PLACE, SOURCE, TEXT, USER, LONGITUDE, LATITUDE, HASHTAG, USERMENTION, STATUSLANG, RETWEET, ISRETWEETED, FAVCOUNT;
+
+expr_list ::= expr_list expr_part | expr_part;
+expr_part ::= expr:e {: parser.setResult(e); :} ;
+expr      ::=   LPAREN expr:e RPAREN
+                {: RESULT = e; :}
+              | boolexpr:m
+                {: RESULT = m; :}
+              ;
+
+boolexpr ::=    BOOLEAN:b
+                {: RESULT = b; :}
+              | LPAREN boolexpr:b RPAREN
+                {: RESULT = b; :}
+              | NOT boolexpr:b
+                {: RESULT = !b; :}
+              | boolexpr:l AND boolexpr:r
+                {: RESULT = l && r; :}
+              | boolexpr:l OR boolexpr:r
+                {: RESULT = l || r; :}
+              | boolexpr:l XOR boolexpr:r
+                {: RESULT = l != r; :}
+                
+              | RETWEET
+                {: RESULT = parser.getBoolean(TwitterField.RETWEET); :}
+              | ISRETWEETED
+                {: RESULT = parser.getBoolean(TwitterField.IS_RETWEETED); :}
+
+              |  LANGUAGE_CODE SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.LANGUAGE_CODE).indexOf(s) > -1); :}
+              |  LANGUAGE_CODE EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.LANGUAGE_CODE).equals(s); :}
+              | LANGUAGE_CODE REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.LANGUAGE_CODE).matches(s); :}
+
+              | COUNTRY SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.COUNTRY).indexOf(s) > -1); :}
+              |  COUNTRY EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.COUNTRY).equals(s); :}
+              | COUNTRY REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.COUNTRY).matches(s); :}
+
+              | COUNTRY_CODE SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.COUNTRY_CODE).indexOf(s) > -1); :}
+              | COUNTRY_CODE EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.COUNTRY_CODE).equals(s); :}
+              | COUNTRY_CODE REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.COUNTRY_CODE).matches(s); :}
+
+              | PLACE SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.PLACE).indexOf(s) > -1); :}
+              | PLACE EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.PLACE).equals(s); :}
+              | PLACE REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.PLACE).matches(s); :}
+
+              | SOURCE SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.SOURCE).indexOf(s) > -1); :}
+              | SOURCE EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.SOURCE).equals(s); :}
+              | SOURCE REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.SOURCE).matches(s); :}
+
+              | TEXT SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.TEXT).indexOf(s) > -1); :}
+              | TEXT EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.TEXT).equals(s); :}
+              | TEXT REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.TEXT).matches(s); :}
+
+              | USER SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.USER_NAME).indexOf(s) > -1); :}
+              | USER EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.USER_NAME).equals(s); :}
+              | USER REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.USER_NAME).matches(s); :}
+
+              | HASHTAG SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.isSubstringMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_HASHTAGS))); :}
+              | HASHTAG EXACT_MATCH STRING:s
+                {: RESULT = (parser.isExactMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_HASHTAGS))); :}
+              | HASHTAG REGEXP_MATCH STRING:s
+                {: RESULT = (parser.isRegExpMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_HASHTAGS))); :}
+
+              | USERMENTION SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.isSubstringMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_USERMENTIONS))); :}
+              | USERMENTION EXACT_MATCH STRING:s
+                {: RESULT = (parser.isExactMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_USERMENTIONS))); :}
+              | USERMENTION REGEXP_MATCH STRING:s
+                {: RESULT = (parser.isRegExpMatch(s, (String[]) parser.get(TwitterHelper.SYMBOL_USERMENTIONS))); :}
+
+              | STATUSLANG SUBSTRING_MATCH STRING:s
+                {: RESULT = (parser.get(TwitterField.STATUS_LANG).indexOf(s) > -1); :}
+              | STATUSLANG EXACT_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.STATUS_LANG).equals(s); :}
+              | STATUSLANG REGEXP_MATCH STRING:s
+                {: RESULT = parser.get(TwitterField.STATUS_LANG).matches(s); :}
+
+              |  IFELSE LPAREN boolexpr:b COMMA boolexpr:e_true COMMA boolexpr:e_false RPAREN
+                {: if (b)
+                     RESULT = e_true;
+                   else
+                     RESULT = e_false;
+                :}
+                
+              |  HAS LPAREN parameter:p RPAREN
+                {: RESULT = parser.has(p); :}
+                
+              | numexpr:l LT numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) < 0); :}
+              | numexpr:l LE numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) <= 0); :}
+              | numexpr:l GT numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) > 0); :}
+              | numexpr:l GE numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) >= 0); :}
+              | numexpr:l EXACT_MATCH numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) == 0); :}
+              | numexpr:l NOT_EQ numexpr:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) != 0); :}
+              
+              ;
+
+numexpr  ::=    NUMBER:n
+                {: RESULT = n; :}
+              | LONGITUDE
+                {: RESULT = parser.getDouble(TwitterField.GEO_LONGITUDE); :}
+              | LATITUDE
+                {: RESULT = parser.getDouble(TwitterField.GEO_LATITUDE); :}
+              | FAVCOUNT
+                {: RESULT = parser.getDouble(TwitterField.FAVORITE_COUNT); :}
+              ;
+
+parameter ::=   LANGUAGE_CODE
+                {: RESULT = TwitterField.LANGUAGE_CODE; :}
+              | COUNTRY
+                {: RESULT = TwitterField.COUNTRY; :}
+              | COUNTRY_CODE
+                {: RESULT = TwitterField.COUNTRY_CODE; :}
+              | PLACE
+                {: RESULT = TwitterField.PLACE; :}
+              | TEXT
+                {: RESULT = TwitterField.TEXT; :}
+              | SOURCE
+                {: RESULT = TwitterField.SOURCE; :}
+              | USER
+                {: RESULT = TwitterField.USER_NAME; :}
+              | LATITUDE
+                {: RESULT = TwitterField.GEO_LATITUDE; :}
+              | LONGITUDE
+                {: RESULT = TwitterField.GEO_LONGITUDE; :}
+              ;
+              

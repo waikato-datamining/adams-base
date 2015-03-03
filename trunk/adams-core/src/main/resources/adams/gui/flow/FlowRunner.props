@@ -1,0 +1,23 @@
+# Configuration file for the Flow Runner.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial directory for loading setups.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=${EXAMPLE_FLOWS}
+
+# The number of recent setups to display in the menu.
+MaxRecentFlows=5
+
+# The toolbar location (HIDDEN|NORTH|SOUTH|WEST|EAST)
+ToolBar.Location=NORTH
+
+# The dimensions for the dialog of the status bar
+StatusBar.Width=600
+StatusBar.Height=400

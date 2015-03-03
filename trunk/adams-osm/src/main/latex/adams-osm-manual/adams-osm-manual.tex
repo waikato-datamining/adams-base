@@ -1,0 +1,109 @@
+% Copyright (c) 2014 by the University of Waikato, Hamilton, NZ. 
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision$
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-osm} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/osm-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2014} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+\textit{OpenStreetMap}\cite{osm} is built by a community of mappers that contribute and
+maintain data about roads, trails, cafés, railway stations, and much more, all
+over the world.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=6.0cm]{images/osm_logo.png}
+  \label{osm_logo}
+\end{figure}
+
+The \textit{JMapViewer} component \cite{jmapviewer} displays the image tiles 
+returned by a Mapnik server (either the official OpenStreetMap one or a 
+user-defined one, e.g., an in-house one) in Java.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{OpenStreetMapViewer} -- displays a map with the option
+	of displaying custom markers, circles, rectangles and polygons using layers.
+\end{tight_itemize}
+The following conversions are available:
+\begin{tight_itemize}
+	\item \textit{SpreadSheetToMapObjects} -- can use various generators for 
+	creating map objects (markers, circles, rectangles, polygons) with 
+	optional meta-data to be displayed in layers in a 
+	\textit{OpenStreetMapViewer} sink.
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Tools}
+The \textit{OpenStreetMap viewer} is a simple tool for viewing maps using
+the official OpenStreetMap site (internet access required). 
+Figure \ref{openstreetmapviewer} shows a map centered around Hamilton, NZ.
+The viewer allows you to center the map around a provided GPS location,
+using the decimal notation for coordinates (``lat [,] lon'').
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/openstreetmapviewer.png}
+  \caption{OpenStreetMap viewer showing Hamilton, NZ.}
+  \label{openstreetmapviewer}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

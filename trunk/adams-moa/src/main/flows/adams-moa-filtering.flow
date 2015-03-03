@@ -1,0 +1,264 @@
+# Project: adams
+# Date: 2014-01-23 15:35:11
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Compares the performance of a classifier on different data streams.\nThe DownSample stream filter is used to reduce the number of\nattributes for two of the three streams.
+	-actor
+		adams.flow.standalone.GridView
+			-actor
+				adams.flow.sink.SequencePlotter
+					-name
+					Kappa
+					-x
+					-3
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Kappa
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Evaluation step
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Statistic
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+			-actor
+				adams.flow.sink.SequencePlotter
+					-name
+					Percent correct
+					-x
+					-3
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Percent correct
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Evaluation step
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Statistic
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+			-num-rows
+			2
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOAClassifierSetup
+					-name
+					MOAClassifier
+	-actor
+		adams.flow.source.MOAStream
+			-stream
+			moa.streams.generators.RandomRBFGenerator -c 4 -a 40
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					full
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-output-interval
+							100
+					-actor
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									kappa
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											Kappa St.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											full: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Kappa
+							-branch
+								adams.flow.control.Sequence
+									-name
+									percent correct
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											.*correct.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											full: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Percent correct
+			-branch
+				adams.flow.control.Sequence
+					-name
+					downsample 2
+					-actor
+						adams.flow.transformer.WekaStreamFilter
+							-filter
+								weka.filters.unsupervised.attribute.DownSample
+									-nth
+									2
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-output-interval
+							100
+					-actor
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									kappa
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											Kappa St.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											ds 2: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Kappa
+							-branch
+								adams.flow.control.Sequence
+									-name
+									percent correct
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											.*correct.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											ds 2: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Percent correct
+			-branch
+				adams.flow.control.Sequence
+					-name
+					downsample 4
+					-actor
+						adams.flow.transformer.WekaStreamFilter
+							-filter
+								weka.filters.unsupervised.attribute.DownSample
+									-nth
+									4
+					-actor
+						adams.flow.transformer.MOAClassifierEvaluation
+							-output-interval
+							100
+					-actor
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									kappa
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											Kappa St.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											ds 4: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Kappa
+							-branch
+								adams.flow.control.Sequence
+									-name
+									percent correct
+									-actor
+										adams.flow.transformer.MOAMeasurementsFilter
+											-regexp
+											.*correct.*
+									-actor
+										adams.flow.transformer.MOAMeasurementPlotGenerator
+											-prefix
+											ds 4: 
+									-actor
+										adams.flow.sink.CallableSink
+											-callable
+											Percent correct
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

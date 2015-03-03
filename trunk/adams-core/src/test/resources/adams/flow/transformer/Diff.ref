@@ -1,0 +1,75 @@
+--> dumpfile.txt
+
+--> brief
+
+true
+
+--> unified
+
+0a1,6
+> This is an important
+> notice! It should
+> therefore be located at
+> the beginning of this
+> document!
+> 
+8,9c14
+< compress the size of the
+< changes.
+---
+> compress anything.
+11,15d15
+< This paragraph contains
+< text that is outdated.
+< It will be deleted in the
+< near future.
+< 
+17c17
+< check this dokument. On
+---
+> check this document. On
+24a25,28
+> 
+> This paragraph contains
+> important new additions
+> to this document.
+
+
+--> side-by-side
+
+a |  | This is an important
+a |  | notice! It should
+a |  | therefore be located at
+a |  | the beginning of this
+a |  | document!
+a |  | 
+  | This part of the | This part of the
+  | document has stayed the | document has stayed the
+  | same from version to | same from version to
+  | version.  It shouldn't | version.  It shouldn't
+  | be shown if it doesn't | be shown if it doesn't
+  | change.  Otherwise, that | change.  Otherwise, that
+  | would not be helping to | would not be helping to
+c | compress the size of the | compress anything.
+c | changes. | 
+  |  | 
+d | This paragraph contains | 
+d | text that is outdated. | 
+d | It will be deleted in the | 
+d | near future. | 
+d |  | 
+  | It is important to spell | It is important to spell
+c | check this dokument. On | check this document. On
+  | the other hand, a | the other hand, a
+  | misspelled word isn't | misspelled word isn't
+  | the end of the world. | the end of the world.
+  | Nothing in the rest of | Nothing in the rest of
+  | this paragraph needs to | this paragraph needs to
+  | be changed. Things can | be changed. Things can
+  | be added after it. | be added after it.
+a |  | 
+a |  | This paragraph contains
+a |  | important new additions
+a |  | to this document.
+
+

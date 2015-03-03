@@ -1,0 +1,24 @@
+--> adams.flow.template.OptionTraverser-out0.txt
+adams.flow.control.Trigger
+	-tee
+		adams.flow.source.OptionTraverser
+			-traverser
+				adams.core.option.VariableLister
+	-tee
+		adams.flow.sink.HistoryDisplay
+
+
+--> adams.flow.template.OptionTraverser-out1.txt
+adams.flow.control.Once
+	-tee
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.OptionTraverser
+					-traverser
+						adams.core.option.VariableLister
+			-tee
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
+
+

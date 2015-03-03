@@ -1,0 +1,15 @@
+--> out-0
+"correlation coefficient 1-2"
+1
+
+
+--> out-1
+"correlation coefficient 1-2"
+-1
+
+
+--> out-2
+"correlation coefficient 1-2","correlation coefficient 1-3"
+0.348155311911,-0.348155311911
+
+

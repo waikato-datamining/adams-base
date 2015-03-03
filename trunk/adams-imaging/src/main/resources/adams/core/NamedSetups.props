@@ -1,0 +1,20 @@
+# Default named setups can be stored in here.
+#
+# Format:
+#   <key>=<classname + options>
+#
+# Note:
+# These setups are also used in the JUnit tests. Whenever modifying the setups
+# here, make sure that all the tests still succeed.
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# data
+boofcv_features_pixels=adams.data.boofcv.features.Pixels
+boofcv_transformer_passthrough=adams.data.boofcv.transformer.PassThrough
+imagej_features_pixels=adams.data.imagej.features.Pixels
+imagej_transformer_passthrough=adams.data.imagej.transformer.PassThrough
+adams_features_pixels=adams.data.image.features.Pixels
+adams_transformer_passthrough=adams.data.image.transformer.PassThrough

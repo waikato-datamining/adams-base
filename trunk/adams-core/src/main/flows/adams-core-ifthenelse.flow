@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2014-01-23 15:23:04
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates the use of the IfThenElse \ncontrol actor. This control actor uses a boolean \nexpression  to determine which sub-branch to forward\nthe token to, in case the sub-branch accepts tokens.\nOtherwise, it just executes the correct sub-branch.
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			i
+	-actor
+		adams.flow.control.IfThenElse
+			-condition
+				adams.flow.condition.bool.Expression
+					-expression
+					@{i}<=5
+			-then
+				adams.flow.control.Sequence
+					-name
+					then
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display <= 5
+			-else
+				adams.flow.control.Sequence
+					-name
+					else
+					-actor
+						adams.flow.sink.Display
+							-name
+							Display > 5
+							-x
+							-3
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

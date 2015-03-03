@@ -1,0 +1,65 @@
+--> dumpfile.txt
+=== Summary ===
+
+Correctly Classified Instances          42               73.6842 %
+Incorrectly Classified Instances        15               26.3158 %
+Kappa statistic                          0.4415
+Mean absolute error                      0.3329
+Root mean squared error                  0.4663
+Relative absolute error                 72.7742 %
+Root relative squared error             97.6512 %
+Coverage of cases (0.95 level)          92.9825 %
+Mean rel. region size (0.95 level)      92.1053 %
+Total Number of Instances               57     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.700    0.243    0.609      0.700    0.651      0.444    0.682     0.553     bad
+                 0.757    0.300    0.824      0.757    0.789      0.444    0.682     0.729     good
+Weighted Avg.    0.737    0.280    0.748      0.737    0.740      0.444    0.682     0.667     
+
+=== Summary ===
+
+Correctly Classified Instances          43               75.4386 %
+Incorrectly Classified Instances        14               24.5614 %
+Kappa statistic                          0.4845
+Mean absolute error                      0.3038
+Root mean squared error                  0.4567
+Relative absolute error                 66.4145 %
+Root relative squared error             95.6585 %
+Coverage of cases (0.95 level)          89.4737 %
+Mean rel. region size (0.95 level)      82.4561 %
+Total Number of Instances               57     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.750    0.243    0.625      0.750    0.682      0.490    0.711     0.577     bad
+                 0.757    0.250    0.848      0.757    0.800      0.490    0.711     0.746     good
+Weighted Avg.    0.754    0.248    0.770      0.754    0.759      0.490    0.711     0.686     
+
+=== Summary ===
+
+Correctly Classified Instances          45               78.9474 %
+Incorrectly Classified Instances        12               21.0526 %
+Kappa statistic                          0.5581
+Mean absolute error                      0.2696
+Root mean squared error                  0.4216
+Relative absolute error                 58.9383 %
+Root relative squared error             88.3002 %
+Coverage of cases (0.95 level)          89.4737 %
+Mean rel. region size (0.95 level)      82.4561 %
+Total Number of Instances               57     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.800    0.216    0.667      0.800    0.727      0.564    0.745     0.597     bad
+                 0.784    0.200    0.879      0.784    0.829      0.564    0.749     0.797     good
+Weighted Avg.    0.789    0.206    0.804      0.789    0.793      0.564    0.748     0.727     
+
+

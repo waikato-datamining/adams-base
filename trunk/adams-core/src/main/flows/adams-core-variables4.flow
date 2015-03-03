@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2014-01-23 15:25:17
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	In this flow, the ability to attach storage values to options is demonstrated.\nThe For-Loop runs from 1 to 10 and the current loop value is stored in\nthe storage value \"i\" (after getting multiplied by 2). The variable \"val\", \ninitialized with \"0\", is then incremented by the value that the storage value \n\"i\" currently has.
+	-actor
+		adams.flow.standalone.SetVariable
+			-var-name
+			val
+			-var-value
+			0
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.control.Tee
+			-tee
+				adams.flow.transformer.MathExpression
+					-expression
+					X*2
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.DoubleToInt
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					i
+	-actor
+		adams.flow.transformer.IncVariable
+			-var-name
+			val
+			-inc-int
+			@{storage:i}
+	-actor
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					val
+			-tee
+				adams.flow.sink.Display
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2014-06-27 11:56:27
+# User: fracpete
+#
+adams.flow.source.SequenceSource
+	-actor
+		adams.flow.source.StringConstants
+			-string
+			1
+			-string
+			2
+			-string
+			3
+

@@ -1,0 +1,23 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Jython script objects
+adams.core.scripting.JythonScript=true
+adams.core.scripting.JythonScript#toString=adams.gui.goe.AbstractAdvancedScriptEditor#toString
+adams.core.scripting.JythonScript#valueOf=adams.gui.goe.AbstractAdvancedScriptEditor#valueOf

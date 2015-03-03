@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2014-01-23 15:42:24
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow loads an XML file as DOM document \nand applies an XSLT stylesheet to it.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/cdcollection.xml
+	-actor
+		adams.flow.transformer.XMLFileReader
+	-actor
+		adams.flow.transformer.XSLT
+			-stylesheet
+			${EXAMPLE_FLOWS}/data/cdcollection.xsl
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.StringToSpreadSheet
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-num-decimals
+			2
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

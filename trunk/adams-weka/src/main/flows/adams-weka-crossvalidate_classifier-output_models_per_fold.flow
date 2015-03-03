@@ -1,0 +1,112 @@
+# Project: adams
+# Date: 2014-01-23 15:49:09
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier and outputs\nthe evaluation summary.\nFor each of the folds, a model is displayed as well.
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			number of cross-validation folds
+			-var-name
+			folds
+			-var-value
+			10
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			current fold
+			-var-name
+			fold
+			-var-value
+			0
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+					-name
+					Summary
+					-short-title
+					true
+			-actor
+				adams.flow.sink.HistoryDisplay
+					-name
+					Models
+					-short-title
+					true
+					-x
+					-3
+					-entry-name-variable
+					fold
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.trees.J48
+							-C
+							0.25
+							-M
+							2
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationSplit
+			-folds
+			@{folds}
+	-actor
+		adams.flow.transformer.IncVariable
+			-var-name
+			fold
+	-actor
+		adams.flow.transformer.WekaTrainTestSetEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+	-actor
+		adams.flow.control.ContainerValuePicker
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Models
+			-value
+			Model
+	-actor
+		adams.flow.transformer.WekaAggregateEvaluations
+	-actor
+		adams.flow.control.ConditionalTee
+			-tee
+				adams.flow.transformer.WekaEvaluationSummary
+					-relation
+					true
+					-class-details
+					true
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Summary
+			-condition
+				adams.flow.condition.bool.Counting
+					-min
+					@{folds}
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

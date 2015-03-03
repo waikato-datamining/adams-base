@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2014-01-23 15:50:25
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flows merges two Instances objects using the ID attribute\nthat uniquely identifies each row.
+	-actor
+		adams.flow.source.FileSupplier
+			-output-array
+			true
+			-file
+			${EXAMPLE_FLOWS}/data/iris_sepal.arff
+			-file
+			${EXAMPLE_FLOWS}/data/iris_petal.arff
+	-actor
+		adams.flow.transformer.WekaInstancesMerge
+			-use-prefix
+			true
+			-prefix
+			@
+			-unique-id
+			ID
+	-actor
+		adams.flow.transformer.WekaFilter
+			-name
+			merge class
+			-filter
+				weka.filters.unsupervised.attribute.MergeTwoAttributes
+					-first
+					iris-sepal-class
+					-second
+					iris-petal-class
+					-merged-index
+					last
+					-remove-chars
+					 -_.
+					-differ
+					MISSING
+					-one-missing
+					MISSING
+	-actor
+		adams.flow.transformer.WekaFilter
+			-name
+			remove ID attribute
+			-filter
+				weka.filters.unsupervised.attribute.RemoveByName
+					-E
+					^.*ID$
+	-actor
+		adams.flow.transformer.WekaFilter
+			-name
+			rename class attribute
+			-filter
+				weka.filters.unsupervised.attribute.RenameAttribute
+					-find
+					iris
+					-replace
+					class
+					-R
+					last
+	-actor
+		adams.flow.sink.WekaInstancesDisplay
+			-writer
+				adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

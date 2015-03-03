@@ -1,0 +1,14 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-transformer_pdf
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+Rename-transformer_pdf=adams.flow.transformer.PDF-adams.flow.transformer.PDFCreate

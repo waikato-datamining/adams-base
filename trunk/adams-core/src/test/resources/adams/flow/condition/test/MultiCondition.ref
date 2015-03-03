@@ -1,0 +1,6 @@
+--> adams.flow.condition.test.MultiCondition-out0.txt
+passed
+
+--> adams.flow.condition.test.MultiCondition-out1.txt
+Failed condition #1: File '${TMP}/bolts2.csv' does not exist!
+

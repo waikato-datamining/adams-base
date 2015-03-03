@@ -1,0 +1,4 @@
+--> dumpfile.txt
+weka.classifiers.meta.FilteredClassifier -F "weka.filters.AllFilter " -W weka.classifiers.trees.J48 -- -C 0.5 -M 2
+weka.classifiers.meta.FilteredClassifier -F "weka.filters.AllFilter " -W weka.classifiers.trees.J48 -- -C 0.5 -M 5
+

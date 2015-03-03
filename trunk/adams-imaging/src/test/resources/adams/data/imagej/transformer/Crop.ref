@@ -1,0 +1,15 @@
+--> adams_icon-out0_0.txt
+Image:
+imp[adams_icon.png' (16x16x1x1x1)]imp[adams_icon.png' (16x16x1x1x1)]
+Report:
+Crop.Bottom[N]: 16.0
+Crop.Left[N]: 0.0
+Crop.Right[N]: 16.0
+Crop.Top[N]: 0.0
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.Crop -algorithm adams.data.imagej.transformer.crop.NoCrop
+
+
+

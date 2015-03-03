@@ -1,0 +1,3 @@
+--> dumpfile.xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><outer outer1="1" outer2="2"><inner inner1="i1"/></outer>
+

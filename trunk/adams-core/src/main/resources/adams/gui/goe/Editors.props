@@ -1,0 +1,72 @@
+# Configuration file for registering custom editors used in conjunction with the
+# GenericObjectEditor.
+#
+# Format:
+#   class=editor-class
+# For instance:
+#   java.io.File=adams.gui.goe.FileEditor
+#
+# Arrays can be defined as follows:
+#   class[]=editor-class
+# For instance:
+#   java.lang.String[]=adams.gui.goe.GenericArrayEditor
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+java.io.File=adams.gui.goe.FileEditor
+java.awt.Color=adams.gui.goe.ColorEditor
+java.awt.Font=adams.gui.goe.FontEditor
+java.util.TimeZone=adams.gui.goe.TimeZoneEditor
+java.util.Locale=adams.gui.goe.LocaleEditor
+adams.core.NamedSetup=adams.gui.goe.NamedSetupEditor
+adams.core.TriState=adams.gui.goe.TriStateEditor
+adams.core.base.BaseBoolean=adams.gui.goe.BaseBooleanEditor
+adams.core.base.BaseCharacter=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseString=adams.gui.goe.BaseObjectEditor
+adams.core.base.BasePassword=adams.gui.goe.BasePasswordEditor
+adams.core.base.BaseRegExp=adams.gui.goe.BaseRegExpEditor
+adams.core.base.BaseText=adams.gui.goe.BaseTextEditor
+adams.core.base.BaseAnnotation=adams.gui.goe.BaseAnnotationEditor
+adams.core.base.BaseByte=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseShort=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseInteger=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseLong=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseFloat=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseDouble=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseDate=adams.gui.goe.BaseDateEditor
+adams.core.base.BaseDateTime=adams.gui.goe.BaseDateTimeEditor
+adams.core.base.BaseTime=adams.gui.goe.BaseTimeEditor
+adams.core.base.BaseList=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseURI=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseURL=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseCharset=adams.gui.goe.BaseCharsetEditor
+adams.core.base.BaseColor=adams.gui.goe.BaseColorEditor
+adams.core.base.ArrayDimensions=adams.gui.goe.BaseObjectEditor
+adams.core.base.XPathExpression=adams.gui.goe.BaseObjectEditor
+adams.core.base.XSLTStyleSheet=adams.gui.goe.XSLTScriptEditor
+adams.core.base.JsonPathExpression=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseDimension=adams.gui.goe.BaseObjectEditor
+adams.core.base.BasePointInt=adams.gui.goe.BaseObjectEditor
+adams.core.base.BasePointFloat=adams.gui.goe.BaseObjectEditor
+adams.core.base.BasePointDouble=adams.gui.goe.BaseObjectEditor
+adams.core.io.PlaceholderDirectory=adams.gui.goe.PlaceholderDirectoryEditor
+adams.core.io.PlaceholderFile=adams.gui.goe.PlaceholderFileEditor
+adams.core.io.FlowFile=adams.gui.goe.FlowFileEditor
+adams.core.Index=adams.gui.goe.IndexEditor
+adams.core.Range=adams.gui.goe.RangeEditor
+adams.data.DateFormatString=adams.gui.goe.BaseObjectEditor
+adams.data.DecimalFormatString=adams.gui.goe.BaseObjectEditor
+adams.data.report.Field=adams.gui.goe.FieldEditor
+adams.data.report.PrefixField=adams.gui.goe.PrefixFieldEditor
+adams.data.report.SuffixField=adams.gui.goe.SuffixFieldEditor
+adams.flow.core.CallableActorReference=adams.gui.goe.CallableActorReferenceEditor
+adams.flow.source.ValueDefinition=adams.gui.goe.GenericObjectEditor
+adams.core.VariableName=adams.gui.goe.BaseObjectEditor
+adams.core.VariableNameNoUpdate=adams.gui.goe.BaseObjectEditor
+adams.db.SQLStatement=adams.gui.goe.AbstractSimpleScriptEditor
+adams.parser.BooleanExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
+adams.parser.MathematicalExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
+adams.parser.SpreadSheetFormulaText=adams.gui.goe.AbstractSimpleScriptEditor
+adams.flow.control.StorageName=adams.gui.goe.BaseObjectEditor

@@ -1,0 +1,80 @@
+# Project: adams
+# Date: 2014-01-23 15:44:27
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Example flow for querying the Twitter API.\nTweets that have GEO location data available get\nappended to a spreadsheet that gets displayed at\nthe end.\nFor query examples, see the following web page:\nhttp://search.twitter.com/operators
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.SpreadSheetDisplay
+					-name
+					Tweets
+					-short-title
+					true
+					-x
+					-3
+			-actor
+				adams.flow.sink.Display
+					-name
+					Progress
+					-short-title
+					true
+	-actor
+		adams.flow.standalone.TwitterConnection
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			query twitter
+			-tee
+				adams.flow.source.TwitterQuery
+					-query
+					movie -scary :)
+					-max-tweets
+					600
+			-tee
+				adams.flow.transformer.TwitterFilter
+					-expression
+					has(latitude) and has(longitude)
+			-tee
+				adams.flow.transformer.TwitterConverter
+					-converter
+						adams.data.twitter.SpreadSheetConverter
+							-field
+							GEO_LONGITUDE
+							-field
+							GEO_LATITUDE
+							-field
+							TEXT
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+			-tee
+				adams.flow.transformer.SpreadSheetAppend
+					-storage-name
+					sheet
+			-tee
+				adams.flow.control.Count
+					-tee
+						adams.flow.sink.CallableSink
+							-callable
+							Progress
+					-condition
+						adams.flow.condition.bool.Counting
+	-actor
+		adams.flow.control.Trigger
+			-name
+			display data
+			-tee
+				adams.flow.source.StorageValue
+					-storage-name
+					sheet
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Tweets
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

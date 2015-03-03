@@ -1,0 +1,44 @@
+# Project: adams
+# Date: 2014-01-23 15:27:06
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow shows how to listen to global log events and process the log records.\nIn this case, the log records are turned into a simple string and displayed.\nNOTE: For speed reasons, log events get discarded when the LogEvent\'s subflow\nis currently busy processing an event.
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.LogEvent
+					-filter
+						adams.flow.standalone.logevent.AcceptAllFilter
+					-processor
+						adams.flow.standalone.logevent.SimpleProcessor
+					-actor
+						adams.flow.sink.Display
+	-actor
+		adams.flow.source.ForLoop
+	-actor
+		adams.flow.transformer.SetVariable
+			-logging-level
+			FINE
+	-actor
+		adams.flow.control.Sleep
+			-interval
+			10
+	-actor
+		adams.flow.transformer.SetVariable
+			-logging-level
+			FINE
+			-name
+			SetVariable-1
+			-var-name
+			variable2
+	-actor
+		adams.flow.control.Sleep
+			-name
+			Sleep-1
+			-interval
+			10
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

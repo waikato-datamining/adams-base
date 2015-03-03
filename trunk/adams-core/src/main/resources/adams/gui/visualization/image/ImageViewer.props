@@ -1,0 +1,31 @@
+# Configuration file for the Image viewer.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial directory for loading setups.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=%h
+
+# The number of recent setups to display in the menu.
+MaxRecentImages=5
+
+# The default zoom (in percent); use -100 for best fit
+ZoomLevel=-100
+
+# Whether to show the images properties
+ShowProperties=True
+
+# The preferred width of the properties
+PropertiesWidth=400
+
+# The width of the image (the rest is for the properties)
+DividerLocation=800
+
+# Whether to show the log
+ShowLog=True

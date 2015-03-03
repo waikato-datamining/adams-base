@@ -1,0 +1,129 @@
+# Parameters for the GUI.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The Look'n'Feel
+LookAndFeel=javax.swing.plaf.metal.MetalLookAndFeel
+#LookAndFeel=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
+#LookAndFeel=com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+#LookAndFeel=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
+#LookAndFeel=com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel
+
+# The image directory prefix:
+ImagesDirectory=adams/gui/images/
+
+# The application Logo
+LogoImage=adams_logo.png
+
+# The application icon
+LogoIcon=adams_icon.png
+
+# The preferred JComponentWriter
+PreferredJComponentWriter=adams.gui.print.PNGWriter
+
+# The preferred Image format (ie extension)
+PreferredImageReader=png
+PreferredImageWriter=png
+
+# The default dimensions of the BaseFileChooser (use -1 to use default)
+BaseFileChooser.Width=750
+BaseFileChooser.Height=500
+
+# The default dimensions of the BaseFileChooser accessory panel (use -1 to use default)
+BaseFileChooser.Accessory.Width=-1
+BaseFileChooser.Accessory.Height=-1
+
+# The default dimensions of the BaseDirectoryChooser (use -1 to use default)
+BaseDirectoryChooser.Width=400
+BaseDirectoryChooser.Height=500
+
+# Whether the BaseDirectoryChooser shows bookmarks
+BaseDirectoryChooser.ShowBookmarks=false
+
+# The maximum percentage for the height/width of frames and dialogs (0-1)
+MaxWindowHeight=0.95
+MaxWindowWidth=1.00
+
+# The number of pixels to keep clear off the borders of the screen.
+# E.g. on Windows, this would be the height of the taskbar ("Bottom").
+ScreenBorder.Top=0
+ScreenBorder.Left=0
+ScreenBorder.Bottom=0
+ScreenBorder.Right=0
+
+# Dimensions and location
+# - pack the window
+# <classname of component>.pack=true|false
+# - frame width
+# <classname of component>.width=<width of window>
+# - frame height
+# <classname of component>.height=<height of window>
+# - x position of the window
+# <classname of component>.left=<left position of window>
+# - y position of the window
+# <classname of component>.top=<top position of window>
+#
+# Notes:
+# - use left=-1 and top=-1 for centering the window
+# - use left=-2 for moving the window to absolute right of the screen
+# - use top=-2 for moving the window to absolute bottom of the screen
+# - use height=-1 for screen height (".height" is set after ".pack")
+# - use width=-1 for screen width (".width" is set after ".pack")
+
+# The memory monitor
+adams.gui.core.MemoryMonitorPanel.pack=true
+adams.gui.core.MemoryMonitorPanel.width=500
+adams.gui.core.MemoryMonitorPanel.height=200
+adams.gui.core.MemoryMonitorPanel.top=-2
+adams.gui.core.MemoryMonitorPanel.left=0
+
+# The job complete viewer
+adams.gui.JobCompleteManagerPanel.pack=true
+adams.gui.JobCompleteManagerPanel.width=800
+adams.gui.JobCompleteManagerPanel.height=600
+adams.gui.JobCompleteManagerPanel.top=-1
+adams.gui.JobCompleteManagerPanel.left=-1
+
+# The database connection dialog
+adams.gui.DatabaseConnectionDialog.pack=true
+adams.gui.DatabaseConnectionDialog.top=-1
+adams.gui.DatabaseConnectionDialog.left=-1
+
+# The dialog for logging the script commands
+adams.gui.scripting.ScriptingLogPanel.width=600
+adams.gui.scripting.ScriptingLogPanel.height=400
+adams.gui.scripting.ScriptingLogPanel.top=-1
+adams.gui.scripting.ScriptingLogPanel.left=-1
+
+# The dialog for managing scripts
+adams.gui.scripting.ScriptingDialog.width=600
+adams.gui.scripting.ScriptingDialog.height=400
+adams.gui.scripting.ScriptingDialog.top=-1
+adams.gui.scripting.ScriptingDialog.left=-1
+
+# The defaults for sequences
+adams.gui.visualization.sequence.LinePaintlet.markersExtent=7
+adams.gui.visualization.sequence.LinePaintlet.markersEnabled=true
+adams.gui.visualization.sequence.LinePaintlet.overlayDashLength=3.0
+
+# The defaults for Instances
+adams.gui.InstanceCompare.width=1000
+adams.gui.InstanceCompare.height=800
+adams.gui.InstanceCompare.top=-1
+adams.gui.InstanceCompare.left=-1
+adams.gui.visualization.instance.InstanceLinePaintlet.overlayDashLength=3.0
+adams.gui.visualization.instance.InstanceLinePaintlet.markersExtent=7
+adams.gui.visualization.instance.InstanceLinePaintlet.markersEnabled=true
+adams.gui.visualization.instance.InstanceLinePaintlet.overlayDashLength=3.0
+
+# The default monospaced font
+Font.Monospaced=monospaced-PLAIN-12
+
+# DiffTextPane
+# The color for deleted content
+adams.gui.visualization.debug.DiffTextPane.Deleted.Color=#9999FF
+# The color for added content
+adams.gui.visualization.debug.DiffTextPane.Added.Color=#CCFFFF
+# The color for modified content
+adams.gui.visualization.debug.DiffTextPane.Modified.Color=#FFCCCC

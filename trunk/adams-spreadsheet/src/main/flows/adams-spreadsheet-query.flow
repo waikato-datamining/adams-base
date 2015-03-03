@@ -1,0 +1,56 @@
+# Project: adams
+# Date: 2014-01-23 15:41:31
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow demonstrates how to use the flexible spreadshet query \nlanguage to quickly select a subset of rows/columns.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.DisplayPanelManager
+					-provider
+						adams.flow.sink.SpreadSheetDisplay
+					-entry-name-variable
+					name
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/bolts.csv
+	-actor
+		adams.flow.transformer.SpreadSheetFileReader
+			-reader
+				adams.data.io.input.CsvSpreadSheetReader
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.control.Tee
+			-name
+			original
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					name
+					-var-value
+					original
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					DisplayPanelManager
+	-actor
+		adams.flow.transformer.SpreadSheetQuery
+			-query
+			SELECT RUN,SPEED1 AS SPEED,SENS AS SENSOR,TIME,T20BOLT AS CLASS\nWHERE (SPEED1 < 6)\nAND (RUN >= 10)\nORDER BY T20BOLT
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			name
+			-var-value
+			modified
+	-actor
+		adams.flow.sink.CallableSink
+			-callable
+			DisplayPanelManager
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

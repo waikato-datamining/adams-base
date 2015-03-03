@@ -1,0 +1,68 @@
+# Project: adams
+# Date: 2014-01-23 15:41:44
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Shows how to merge two spreadsheets from storage\nsimply by putting them side-by-side.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.csv
+	-actor
+		adams.flow.control.Tee
+			-name
+			create first spreadsheet
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+			-tee
+				adams.flow.transformer.SpreadSheetRemoveColumn
+					-annotation
+					only leave first 3 columns
+					-position
+					inv(1-3)
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					first
+	-actor
+		adams.flow.control.Tee
+			-name
+			create second spreadsheet
+			-tee
+				adams.flow.transformer.SpreadSheetFileReader
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+			-tee
+				adams.flow.transformer.SpreadSheetRemoveColumn
+					-annotation
+					remove first 3 columns
+					-position
+					1-3
+			-tee
+				adams.flow.transformer.SetStorageValue
+					-storage-name
+					second
+	-actor
+		adams.flow.control.Trigger
+			-name
+			merge spreadsheets
+			-tee
+				adams.flow.source.StorageValuesArray
+					-storage-name
+					first
+					-storage-name
+					second
+			-tee
+				adams.flow.transformer.SpreadSheetMerge
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

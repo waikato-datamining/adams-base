@@ -1,0 +1,8 @@
+--> out-0.txt
+A2
+=SUM({C1}:{C2})
+
+--> out-1.txt
+{C}
+=SUM(CV11:{C2})
+

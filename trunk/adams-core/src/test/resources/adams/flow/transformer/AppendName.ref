@@ -1,0 +1,5 @@
+--> dumpfile.txt
+/hello/world/README.txt
+/and/some/where/else/README.txt
+${CWD}/README.txt
+

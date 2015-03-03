@@ -1,0 +1,32 @@
+--> adams.flow.template.OptionTraverserWithSpreadSheetDisplay-out0.txt
+adams.flow.control.Trigger
+	-tee
+		adams.flow.source.OptionTraverser
+			-traverser
+				adams.core.option.VariableLister
+	-tee
+		adams.flow.transformer.StringToSpreadSheet
+	-tee
+		adams.flow.sink.DisplayPanelManager
+			-provider
+				adams.flow.sink.SpreadSheetDisplay
+					-writer
+						adams.data.io.output.NullWriter
+
+
+--> adams.flow.template.OptionTraverserWithSpreadSheetDisplay-out1.txt
+adams.flow.control.Once
+	-tee
+		adams.flow.control.Trigger
+			-tee
+				adams.flow.source.OptionTraverser
+					-traverser
+						adams.core.option.VariableLister
+			-tee
+				adams.flow.transformer.StringToSpreadSheet
+			-tee
+				adams.flow.sink.SpreadSheetDisplay
+					-writer
+						adams.data.io.output.NullWriter
+
+

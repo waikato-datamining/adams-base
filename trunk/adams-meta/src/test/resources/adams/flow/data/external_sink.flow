@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2014-06-27 12:02:17
+# User: fracpete
+#
+adams.flow.control.Sequence
+	-actor
+		adams.flow.sink.DumpFile
+			-output
+			${TMP}/dumpfile.txt
+			-append
+			true
+

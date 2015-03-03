@@ -1,0 +1,5 @@
+--> dumpfile.txt
+weka.classifiers.trees.J48 -C 3.1622777 -M 2
+weka.classifiers.trees.J48 -C 2.5118864 -M 2
+weka.classifiers.trees.J48 -C 1.9952623 -M 2
+

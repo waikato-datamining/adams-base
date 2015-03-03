@@ -1,0 +1,165 @@
+# Configuration file for the Flow Editor menu.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 9847 $
+
+# Format:
+# <action-classname>-Shortcut=<empty or shortcut definition>
+# <action-classname>-Mnemonic=<empty or image filename without path>
+# <action-classname>-Icon=<empty or image filename without path>
+
+# File
+adams.gui.flow.menu.FileNewFlow-Icon=new.gif
+adams.gui.flow.menu.FileNewFlow-Mnemonic=N
+adams.gui.flow.menu.FileNewFlow-Shortcut=control N
+adams.gui.flow.menu.FileOpen-Icon=open.gif
+adams.gui.flow.menu.FileOpen-Mnemonic=O
+adams.gui.flow.menu.FileOpen-Shortcut=control O
+adams.gui.flow.menu.FileSave-Icon=save.gif
+adams.gui.flow.menu.FileSave-Mnemonic=S
+adams.gui.flow.menu.FileSave-Shortcut=control S
+adams.gui.flow.menu.FileSaveAs-Icon=
+adams.gui.flow.menu.FileSaveAs-Mnemonic=A
+adams.gui.flow.menu.FileSaveAs-Shortcut=control shift S
+adams.gui.flow.menu.FileCheckOnSave-Icon=
+adams.gui.flow.menu.FileCheckOnSave-Mnemonic=C
+adams.gui.flow.menu.FileCheckOnSave-Shortcut=
+adams.gui.flow.menu.FileRevert-Icon=refresh.gif
+adams.gui.flow.menu.FileRevert-Mnemonic=R
+adams.gui.flow.menu.FileRevert-Shortcut=control F5
+adams.gui.flow.menu.FileCloseTab-Icon=
+adams.gui.flow.menu.FileCloseTab-Mnemonic=T
+adams.gui.flow.menu.FileCloseTab-Shortcut=control W
+adams.gui.flow.menu.FileImport-Icon=
+adams.gui.flow.menu.FileImport-Mnemonic=I
+adams.gui.flow.menu.FileImport-Shortcut=
+adams.gui.flow.menu.FileExport-Icon=
+adams.gui.flow.menu.FileExport-Mnemonic=E
+adams.gui.flow.menu.FileExport-Shortcut=
+adams.gui.flow.menu.FileClose-Icon=exit.png
+adams.gui.flow.menu.FileClose-Mnemonic=C
+adams.gui.flow.menu.FileClose-Shortcut=control Q
+
+# Edit
+adams.gui.flow.menu.EditUndo-Icon=undo.gif
+adams.gui.flow.menu.EditUndo-Mnemonic=U
+adams.gui.flow.menu.EditUndo-Shortcut=control Z
+adams.gui.flow.menu.EditRedo-Icon=redo.gif
+adams.gui.flow.menu.EditRedo-Mnemonic=R
+adams.gui.flow.menu.EditRedo-Shortcut=control Y
+adams.gui.flow.menu.EditEnableUndo-Icon=
+adams.gui.flow.menu.EditEnableUndo-Mnemonic=N
+adams.gui.flow.menu.EditEnableUndo-Shortcut=
+adams.gui.flow.menu.EditDiff-Icon=diff.png
+adams.gui.flow.menu.EditDiff-Mnemonic=D
+adams.gui.flow.menu.EditDiff-Shortcut=
+adams.gui.flow.menu.EditFind-Icon=find.gif
+adams.gui.flow.menu.EditFind-Mnemonic=F
+adams.gui.flow.menu.EditFind-Shortcut=control F
+adams.gui.flow.menu.EditFindNext-Icon=find.gif
+adams.gui.flow.menu.EditFindNext-Mnemonic=N
+adams.gui.flow.menu.EditFindNext-Shortcut=control shift F
+adams.gui.flow.menu.EditLocateActor-Icon=
+adams.gui.flow.menu.EditLocateActor-Mnemonic=L
+adams.gui.flow.menu.EditLocateActor-Shortcut=control L
+adams.gui.flow.menu.EditCleanUpFlow-Icon=delete.gif
+adams.gui.flow.menu.EditCleanUpFlow-Mnemonic=C
+adams.gui.flow.menu.EditCleanUpFlow-Shortcut=
+adams.gui.flow.menu.EditCheckVariables-Icon=check_variables.png
+adams.gui.flow.menu.EditCheckVariables-Mnemonic=V
+adams.gui.flow.menu.EditCheckVariables-Shortcut=
+adams.gui.flow.menu.EditInteractiveActors-Icon=
+adams.gui.flow.menu.EditInteractiveActors-Mnemonic=I
+adams.gui.flow.menu.EditInteractiveActors-Shortcut=
+adams.gui.flow.menu.EditIgnoreNameChanges-Icon=
+adams.gui.flow.menu.EditIgnoreNameChanges-Mnemonic=N
+adams.gui.flow.menu.EditIgnoreNameChanges-Shortcut=
+adams.gui.flow.menu.EditProcessActors-Icon=
+adams.gui.flow.menu.EditProcessActors-Mnemonic=P
+adams.gui.flow.menu.EditProcessActors-Shortcut=
+
+# Debug
+adams.gui.flow.menu.DebugEnableAllBreakpoints-Icon=debug.png
+adams.gui.flow.menu.DebugEnableAllBreakpoints-Mnemonic=E
+adams.gui.flow.menu.DebugEnableAllBreakpoints-Shortcut=
+adams.gui.flow.menu.DebugDisableAllBreakpoints-Icon=debug_off.png
+adams.gui.flow.menu.DebugDisableAllBreakpoints-Mnemonic=D
+adams.gui.flow.menu.DebugDisableAllBreakpoints-Shortcut=
+adams.gui.flow.menu.DebugRemoveAllBreakpoints-Icon=debug_delete.png
+adams.gui.flow.menu.DebugRemoveAllBreakpoints-Mnemonic=E
+adams.gui.flow.menu.DebugRemoveAllBreakpoints-Shortcut=
+adams.gui.flow.menu.DebugVariables-Icon=variable.gif
+adams.gui.flow.menu.DebugVariables-Mnemonic=V
+adams.gui.flow.menu.DebugVariables-Shortcut=
+adams.gui.flow.menu.DebugStorage-Icon=storage.gif
+adams.gui.flow.menu.DebugStorage-Mnemonic=S
+adams.gui.flow.menu.DebugStorage-Shortcut=
+
+# Execution
+adams.gui.flow.menu.ExecutionValidateSetup-Icon=validate.png
+adams.gui.flow.menu.ExecutionValidateSetup-Mnemonic=V
+adams.gui.flow.menu.ExecutionValidateSetup-Shortcut=F7
+adams.gui.flow.menu.ExecutionRun-Icon=run.gif
+adams.gui.flow.menu.ExecutionRun-Mnemonic=R
+adams.gui.flow.menu.ExecutionRun-Shortcut=control R
+adams.gui.flow.menu.ExecutionPauseResume-Icon=pause.gif
+adams.gui.flow.menu.ExecutionPauseResume-Mnemonic=U
+adams.gui.flow.menu.ExecutionPauseResume-Shortcut=control P
+adams.gui.flow.menu.ExecutionStop-Icon=stop_blue.gif
+adams.gui.flow.menu.ExecutionStop-Mnemonic=S
+adams.gui.flow.menu.ExecutionStop-Shortcut=control K
+adams.gui.flow.menu.ExecutionKill-Icon=kill.png
+adams.gui.flow.menu.ExecutionKill-Mnemonic=
+adams.gui.flow.menu.ExecutionKill-Shortcut=
+adams.gui.flow.menu.ExecutionDisplayErrors-Icon=log.gif
+adams.gui.flow.menu.ExecutionDisplayErrors-Mnemonic=D
+adams.gui.flow.menu.ExecutionDisplayErrors-Shortcut=
+adams.gui.flow.menu.ExecutionClearGraphicalOutput-Icon=close_window.png
+adams.gui.flow.menu.ExecutionClearGraphicalOutput-Mnemonic=C
+adams.gui.flow.menu.ExecutionClearGraphicalOutput-Shortcut=
+adams.gui.flow.menu.ExecutionHeadless-Icon=
+adams.gui.flow.menu.ExecutionHeadless-Mnemonic=H
+adams.gui.flow.menu.ExecutionHeadless-Shortcut=control H
+adams.gui.flow.menu.ExecutionGC-Icon=duke.png
+adams.gui.flow.menu.ExecutionGC-Mnemonic=G
+adams.gui.flow.menu.ExecutionGC-Shortcut=
+
+# View
+adams.gui.flow.menu.ViewShowToolbar-Icon=
+adams.gui.flow.menu.ViewShowToolbar-Mnemonic=T
+adams.gui.flow.menu.ViewShowToolbar-Shortcut=
+adams.gui.flow.menu.ViewShowQuickInfo-Icon=
+adams.gui.flow.menu.ViewShowQuickInfo-Mnemonic=Q
+adams.gui.flow.menu.ViewShowQuickInfo-Shortcut=
+adams.gui.flow.menu.ViewShowAnnotations-Icon=
+adams.gui.flow.menu.ViewShowAnnotations-Mnemonic=A
+adams.gui.flow.menu.ViewShowAnnotations-Shortcut=
+adams.gui.flow.menu.ViewShowInputOutput-Icon=
+adams.gui.flow.menu.ViewShowInputOutput-Mnemonic=P
+adams.gui.flow.menu.ViewShowInputOutput-Shortcut=
+adams.gui.flow.menu.ViewHighlightVariables-Icon=
+adams.gui.flow.menu.ViewHighlightVariables-Mnemonic=V
+adams.gui.flow.menu.ViewHighlightVariables-Shortcut=
+adams.gui.flow.menu.ViewRemoveVariableHighlights-Icon=
+adams.gui.flow.menu.ViewRemoveVariableHighlights-Mnemonic=R
+adams.gui.flow.menu.ViewRemoveVariableHighlights-Shortcut=
+adams.gui.flow.menu.ViewShowSource-Icon=source.png
+adams.gui.flow.menu.ViewShowSource-Mnemonic=S
+adams.gui.flow.menu.ViewShowSource-Shortcut=
+adams.gui.flow.menu.ViewStatistics-Icon=statistics.png
+adams.gui.flow.menu.ViewStatistics-Mnemonic=T
+adams.gui.flow.menu.ViewStatistics-Shortcut=
+adams.gui.flow.menu.ViewRedraw-Icon=
+adams.gui.flow.menu.ViewRedraw-Mnemonic=R
+adams.gui.flow.menu.ViewRedraw-Shortcut=F5
+
+# Window
+adams.gui.flow.menu.WindowNew-Icon=
+adams.gui.flow.menu.WindowNew-Mnemonic=W
+adams.gui.flow.menu.WindowNew-Shortcut=
+adams.gui.flow.menu.WindowDuplicateInWindow-Icon=
+adams.gui.flow.menu.WindowDuplicateInWindow-Mnemonic=W
+adams.gui.flow.menu.WindowDuplicateInWindow-Shortcut=
+adams.gui.flow.menu.WindowDuplicateInTab-Icon=copy.gif
+adams.gui.flow.menu.WindowDuplicateInTab-Mnemonic=T
+adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=

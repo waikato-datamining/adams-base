@@ -1,0 +1,37 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+#########
+# hooks #
+#########
+
+# BaseString objects
+adams.core.base.CronSchedule=true
+adams.core.base.CronSchedule#toString=adams.gui.goe.CronScheduleEditor#toString
+adams.core.base.CronSchedule#valueOf=adams.gui.goe.CronScheduleEditor#valueOf
+
+# EventReference objects
+adams.flow.core.EventReference=true
+adams.flow.core.EventReference#toString=adams.gui.goe.EventReferenceEditor#toString
+adams.flow.core.EventReference#valueOf=adams.gui.goe.EventReferenceEditor#valueOf
+
+# TriggerableEventReference objects
+adams.flow.core.TriggerableEventReference=true
+adams.flow.core.TriggerableEventReference#toString=adams.gui.goe.TriggerableEventReferenceEditor#toString
+adams.flow.core.TriggerableEventReference#valueOf=adams.gui.goe.TriggerableEventReferenceEditor#valueOf

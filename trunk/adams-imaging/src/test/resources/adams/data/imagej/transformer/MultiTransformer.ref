@@ -1,0 +1,24 @@
+--> adams_logo-out0_0.txt
+Image:
+imp[adams_logo.png' (342x290x1x1x1)]imp[adams_logo.png' (342x290x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.MultiTransformer
+
+
+
+--> adams_logo-out1_0.txt
+Image:
+imp[adams_logo.png'''-resized[w=-1,h=-1] (342x290x1x1x1)]imp[adams_logo.png'''-resized[w=-1,h=-1] (342x290x1x1x1)]
+Report:
+
+Notes:
+PROCESS INFORMATION:
+  1. adams.data.imagej.transformer.Gray8
+  2. adams.data.imagej.transformer.Resize
+  3. adams.data.imagej.transformer.MultiTransformer -transformer adams.data.imagej.transformer.Gray8 -transformer adams.data.imagej.transformer.Resize
+
+
+

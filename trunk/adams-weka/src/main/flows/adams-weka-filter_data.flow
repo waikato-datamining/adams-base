@@ -1,0 +1,132 @@
+# Project: adams
+# Date: 2014-01-23 15:50:04
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Here we compare the impact of preprocessing on a dataset.\nThe \"slug\" dataset contains length and weight of slugs, with\nthe weight being the class attribute.\nLinearRegression is used as regression scheme, once on the\noriginal data and once on log-transformed data.\nBoth results (evaluation summary and classifier errors) are\ndisplayed for comparison.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.functions.LinearRegression
+							-S
+							1
+							-C
+							-R
+							1.0E-8
+			-actor
+				adams.flow.control.Sequence
+					-name
+					evaluate
+					-actor
+						adams.flow.transformer.WekaClassSelector
+					-actor
+						adams.flow.transformer.WekaCrossValidationEvaluator
+							-output
+								weka.classifiers.evaluation.output.prediction.Null
+					-actor
+						adams.flow.control.Branch
+							-branch
+								adams.flow.control.Sequence
+									-name
+									summary
+									-actor
+										adams.flow.transformer.WekaEvaluationSummary
+									-actor
+										adams.flow.sink.HistoryDisplay
+											-short-title
+											true
+											-entry-name-variable
+											filter
+							-branch
+								adams.flow.sink.DisplayPanelManager
+									-short-title
+									true
+									-x
+									-3
+									-provider
+										adams.flow.sink.WekaClassifierErrors
+											-writer
+												adams.gui.print.NullWriter
+											-scaler
+												adams.data.weka.predictions.AutoScaler
+													-scaler
+														adams.data.weka.predictions.RelativeNumericErrorScaler
+									-entry-name-variable
+									filter
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/slug-original.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					no preprocessing
+					-actor
+						adams.flow.transformer.SetVariable
+							-var-name
+							filter
+							-var-value
+							original data
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							evaluate
+			-branch
+				adams.flow.control.Sequence
+					-name
+					log transform
+					-actor
+						adams.flow.transformer.WekaFilter
+							-name
+							WekaFilter (log length)
+							-filter
+								weka.filters.unsupervised.attribute.AddExpression
+									-E
+									log(a1)
+									-N
+									ln_length
+									
+					-actor
+						adams.flow.transformer.WekaFilter
+							-name
+							WekaFilter (log weight)
+							-filter
+								weka.filters.unsupervised.attribute.AddExpression
+									-E
+									log(a2)
+									-N
+									ln_weight
+									
+					-actor
+						adams.flow.transformer.WekaFilter
+							-name
+							WekaFilter (remove old atts)
+							-filter
+								weka.filters.unsupervised.attribute.Remove
+									-R
+									1-2
+									
+					-actor
+						adams.flow.transformer.SetVariable
+							-var-name
+							filter
+							-var-value
+							log-transformed
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							evaluate
+			-num-threads
+			0
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

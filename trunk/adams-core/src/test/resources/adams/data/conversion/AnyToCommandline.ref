@@ -1,0 +1,5 @@
+--> out-0.txt
+java.lang.Double
+adams.data.filter.PassThrough -logging-level FINEST
+adams.data.filter.BaselineCorrection -baseline adams.data.baseline.PassThrough
+

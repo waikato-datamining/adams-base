@@ -1,0 +1,29 @@
+--> dumpfile.txt
+Relation: anneal
+
+=== Summary ===
+
+Correctly Classified Instances         884               98.441  %
+Incorrectly Classified Instances        14                1.559  %
+Kappa statistic                          0.9605
+Mean absolute error                      0.0056
+Root mean squared error                  0.0669
+Relative absolute error                  4.1865 %
+Root relative squared error             25.9118 %
+Coverage of cases (0.95 level)          98.7751 %
+Mean rel. region size (0.95 level)      16.7223 %
+Total Number of Instances              898     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.625    0.000    1.000      0.625    0.769      0.789    ?         ?         1
+                 1.000    0.003    0.980      1.000    0.990      0.989    ?         ?         2
+                 0.994    0.047    0.986      0.994    0.990      0.957    ?         ?         3
+                 0.000    0.000    0.000      0.000    0.000      0.000    ?         ?         4
+                 1.000    0.000    1.000      1.000    1.000      1.000    ?         ?         5
+                 0.825    0.002    0.943      0.825    0.880      0.877    ?         ?         U
+Weighted Avg.    0.984    0.036    0.984      0.984    0.984      0.959    0.000     0.000     
+
+

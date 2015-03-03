@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2014-01-23 15:25:28
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Flattens an XML document, generates a Properties \nobject (key-value pairs) from it and displays it.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/books.xml
+	-actor
+		adams.flow.transformer.XMLFileReader
+	-actor
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.DOMToProperties
+					-add-index
+					true
+					-store-attributes
+					true
+	-actor
+		adams.flow.sink.PropertiesDisplay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
