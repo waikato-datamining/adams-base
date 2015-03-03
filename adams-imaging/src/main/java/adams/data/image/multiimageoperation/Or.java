@@ -14,21 +14,22 @@
  */
 
 /*
- * And.java
+ * Or.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.boofcv.multiimageoperation;
+package adams.data.image.multiimageoperation;
 
-import adams.data.boofcv.BoofCVHelper;
-import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.ImageUInt8;
+import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageHelper;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the  binary pixels of the images.<br/>
- * Converts images automatically to type UNSIGNED_INT_8.
+ * Performs a logical OR on the binary pixels of the images.<br/>
+ * Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -43,8 +44,8 @@ import boofcv.struct.image.ImageUInt8;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class And
-  extends AbstractBoofCVMultiImageOperation {
+public class Or
+  extends AbstractBufferedImageMultiImageOperation {
 
   /**
    * Returns a string describing the object.
@@ -54,8 +55,8 @@ public class And
   @Override
   public String globalInfo() {
     return
-      "Performs a logical AND on the  binary pixels of the images.\n"
-	+ "Converts images automatically to type " + BoofCVImageType.UNSIGNED_INT_8 + ".";
+      "Performs a logical OR on the binary pixels of the images.\n"
+	+ "Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.";
   }
 
   /**
@@ -76,7 +77,7 @@ public class And
    * @param images	the images to check
    */
   @Override
-  protected void check(BoofCVImageContainer[] images) {
+  protected void check(BufferedImageContainer[] images) {
     super.check(images);
 
     if (!checkSameDimensions(images[0], images[1]))
@@ -94,26 +95,30 @@ public class And
    * @return		the generated image(s)
    */
   @Override
-  protected BoofCVImageContainer[] doProcess(BoofCVImageContainer[] images) {
-    BoofCVImageContainer[]	result;
+  protected BufferedImageContainer[] doProcess(BufferedImageContainer[] images) {
+    BufferedImageContainer[]	result;
+    BufferedImage 		img0;
+    BufferedImage		img1;
+    BufferedImage		output;
     int				x;
     int				y;
-    int				and;
-    ImageUInt8			img0;
-    ImageUInt8			img1;
-    ImageUInt8			output;
+    int 			or;
+    int				match;
+    int				mismatch;
 
-    result    = new BoofCVImageContainer[1];
-    img0      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.UNSIGNED_INT_8);
-    img1      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.UNSIGNED_INT_8);
-    output    = (ImageUInt8) BoofCVHelper.clone(img0);
+    result   = new BufferedImageContainer[1];
+    img0     = BufferedImageHelper.convert(images[0].getImage(), BufferedImage.TYPE_BYTE_BINARY);
+    img1     = BufferedImageHelper.convert(images[1].getImage(), BufferedImage.TYPE_BYTE_BINARY);
+    output   = BufferedImageHelper.deepCopy(img0);
+    match    = Color.BLACK.getRGB();
+    mismatch = Color.WHITE.getRGB();
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
-	and = (img0.get(x, y) == img1.get(x, y)) ? 0 : 1;
-	output.set(x, y, and);
+	or = (img0.getRGB(x, y) == match) || (img1.getRGB(x, y) == match) ? match : mismatch;
+	output.setRGB(x, y, or);
       }
     }
-    result[0] = new BoofCVImageContainer();
+    result[0] = new BufferedImageContainer();
     result[0].setImage(output);
 
     return result;

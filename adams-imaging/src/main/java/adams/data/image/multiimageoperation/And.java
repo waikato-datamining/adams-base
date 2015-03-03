@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the pixels of the images, i.e., if both are the same, the resulting pixel is black, otherwise white.<br/>
+ * Performs a logical AND on the binary pixels of the images.<br/>
  * Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.
  * <p/>
  <!-- globalinfo-end -->
@@ -55,8 +55,7 @@ public class And
   @Override
   public String globalInfo() {
     return
-      "Performs a logical AND on the pixels of the images, i.e., if both are the same, the resulting pixel is black, "
-	+ "otherwise white.\n"
+      "Performs a logical AND on the binary pixels of the images.\n"
 	+ "Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.";
   }
 

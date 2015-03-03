@@ -14,7 +14,7 @@
  */
 
 /*
- * And.java
+ * Or.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -27,7 +27,7 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the  binary pixels of the images.<br/>
+ * Performs a logical OR on the binary pixels of the images.<br/>
  * Converts images automatically to type UNSIGNED_INT_8.
  * <p/>
  <!-- globalinfo-end -->
@@ -43,7 +43,7 @@ import boofcv.struct.image.ImageUInt8;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class And
+public class Or
   extends AbstractBoofCVMultiImageOperation {
 
   /**
@@ -54,7 +54,7 @@ public class And
   @Override
   public String globalInfo() {
     return
-      "Performs a logical AND on the  binary pixels of the images.\n"
+      "Performs a logical OR on the binary pixels of the images.\n"
 	+ "Converts images automatically to type " + BoofCVImageType.UNSIGNED_INT_8 + ".";
   }
 
@@ -98,7 +98,7 @@ public class And
     BoofCVImageContainer[]	result;
     int				x;
     int				y;
-    int				and;
+    int 			or;
     ImageUInt8			img0;
     ImageUInt8			img1;
     ImageUInt8			output;
@@ -109,8 +109,8 @@ public class And
     output    = (ImageUInt8) BoofCVHelper.clone(img0);
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
-	and = (img0.get(x, y) == img1.get(x, y)) ? 0 : 1;
-	output.set(x, y, and);
+	or = (img0.get(x, y) == 0) || (img1.get(x, y) == 0) ? 0 : 1;
+	output.set(x, y, or);
       }
     }
     result[0] = new BoofCVImageContainer();
