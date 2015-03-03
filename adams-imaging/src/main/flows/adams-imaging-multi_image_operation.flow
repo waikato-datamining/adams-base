@@ -59,8 +59,6 @@ adams.flow.control.Flow
 		adams.flow.transformer.BufferedImageMultiImageOperation
 			-operation
 				adams.data.image.multiimageoperation.And
-					-mismatch
-					#9999ff
 	-actor
 		adams.flow.transformer.SetVariable
 			-var-name

@@ -1,13 +1,15 @@
 package adams.data.image.multiimageoperation;
 
 import adams.data.image.BufferedImageContainer;
-import adams.data.report.Report;
+import adams.data.image.BufferedImageHelper;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the pixels of the images, i.e., if pixels match, the 'match' color is used, otherwise the 'mismatch' color.
+ * Performs a logical AND on the pixels of the images, i.e., if both are the same, the resulting pixel is black, otherwise white.<br/>
+ * Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -15,18 +17,6 @@ import java.awt.*;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- * 
- * <pre>-match &lt;java.awt.Color&gt; (property: match)
- * &nbsp;&nbsp;&nbsp;The color to use for pixels where the corresponding pixels in the images 
- * &nbsp;&nbsp;&nbsp;match.
- * &nbsp;&nbsp;&nbsp;default: #000000
- * </pre>
- * 
- * <pre>-mismatch &lt;java.awt.Color&gt; (property: mismatch)
- * &nbsp;&nbsp;&nbsp;The color to use for pixels where the corresponding pixels in the images 
- * &nbsp;&nbsp;&nbsp;don't match.
- * &nbsp;&nbsp;&nbsp;default: #ffffff
  * </pre>
  * 
  <!-- options-end -->
@@ -37,12 +27,6 @@ import java.awt.*;
 public class And
   extends AbstractBufferedImageMultiImageOperation {
 
-  /** color to use when the pixels match. */
-  protected Color m_Match;
-
-  /** color to use when the pixels don't match. */
-  protected Color m_Mismatch;
-
   /**
    * Returns a string describing the object.
    *
@@ -51,82 +35,9 @@ public class And
   @Override
   public String globalInfo() {
     return
-      "Performs a logical AND on the pixels of the images, i.e., if pixels match, "
-	+ "the 'match' color is used, otherwise the 'mismatch' color.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "match", "match",
-      Color.BLACK);
-
-    m_OptionManager.add(
-      "mismatch", "mismatch",
-      Color.WHITE);
-  }
-
-  /**
-   * Sets the color to use for matches.
-   *
-   * @param value	the color
-   */
-  public void setMatch(Color value) {
-    m_Match = value;
-    reset();
-  }
-
-  /**
-   * Returns the color in use for matches.
-   *
-   * @return		the color
-   */
-  public Color getMatch() {
-    return m_Match;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String matchTipText() {
-    return "The color to use for pixels where the corresponding pixels in the images match.";
-  }
-
-  /**
-   * Sets the color to use for mismatches.
-   *
-   * @param value	the color
-   */
-  public void setMismatch(Color value) {
-    m_Mismatch = value;
-    reset();
-  }
-
-  /**
-   * Returns the color in use for mismatches.
-   *
-   * @return		the color
-   */
-  public Color getMismatch() {
-    return m_Mismatch;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String mismatchTipText() {
-    return "The color to use for pixels where the corresponding pixels in the images don't match.";
+      "Performs a logical AND on the pixels of the images, i.e., if both are the same, the resulting pixel is black, "
+	+ "otherwise white.\n"
+	+ "Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.";
   }
 
   /**
@@ -167,24 +78,29 @@ public class And
   @Override
   protected BufferedImageContainer[] doProcess(BufferedImageContainer[] images) {
     BufferedImageContainer[]	result;
+    BufferedImage 		img0;
+    BufferedImage		img1;
+    BufferedImage		output;
     int				x;
     int				y;
     int				and;
     int				match;
     int				mismatch;
 
-    result    = new BufferedImageContainer[1];
-    match     = m_Match.getRGB();
-    mismatch  = m_Mismatch.getRGB();
-    result[0] = (BufferedImageContainer) images[0].getClone();
-    result[0].getNotes().clear();
-    result[0].setReport(new Report());
+    result   = new BufferedImageContainer[1];
+    img0     = BufferedImageHelper.convert(images[0].getImage(), BufferedImage.TYPE_BYTE_BINARY);
+    img1     = BufferedImageHelper.convert(images[1].getImage(), BufferedImage.TYPE_BYTE_BINARY);
+    output   = BufferedImageHelper.deepCopy(img0);
+    match    = Color.BLACK.getRGB();
+    mismatch = Color.WHITE.getRGB();
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
-	and = (images[0].getImage().getRGB(x, y) == images[1].getImage().getRGB(x, y)) ? match : mismatch;
-	result[0].getImage().setRGB(x, y, and);
+	and = (img0.getRGB(x, y) == img1.getRGB(x, y)) ? match : mismatch;
+	output.setRGB(x, y, and);
       }
     }
+    result[0] = new BufferedImageContainer();
+    result[0].setImage(output);
 
     return result;
   }

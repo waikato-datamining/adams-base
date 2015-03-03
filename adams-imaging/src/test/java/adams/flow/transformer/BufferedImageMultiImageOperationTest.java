@@ -151,8 +151,6 @@ public class BufferedImageMultiImageOperationTest
       adams.flow.transformer.BufferedImageMultiImageOperation bufferedimagemultiimageoperation14 = new adams.flow.transformer.BufferedImageMultiImageOperation();
       argOption = (AbstractArgumentOption) bufferedimagemultiimageoperation14.getOptionManager().findByProperty("operation");
       adams.data.image.multiimageoperation.And and16 = new adams.data.image.multiimageoperation.And();
-      argOption = (AbstractArgumentOption) and16.getOptionManager().findByProperty("mismatch");
-      and16.setMismatch((java.awt.Color) argOption.valueOf("#9999ff"));
       bufferedimagemultiimageoperation14.setOperation(and16);
 
       actors1[2] = bufferedimagemultiimageoperation14;
