@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-01-19 14:18:57
+# Date: 2015-03-03 21:49:22
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -149,6 +149,8 @@ adams.flow.control.Flow
 							DisplayPanelManager
 			-tee
 				adams.flow.transformer.DecodeBarcode
+					-decoder
+						adams.data.barcode.decode.ZXing
 			-tee
 				adams.flow.control.Tee
 					-name

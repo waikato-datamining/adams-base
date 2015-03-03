@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:43:17
+# Date: 2015-03-03 22:05:49
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -19,6 +19,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-overlay-color-provider
@@ -59,6 +61,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.Convert
 			-conversion
 				adams.data.conversion.WekaInstancesToSpreadSheet
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
 					-spreadsheet-type
 						adams.data.spreadsheet.SpreadSheet
 	-actor
@@ -95,6 +99,8 @@ adams.flow.control.Flow
 									10
 									-right
 									10
+							-type
+							PLOT
 							-drop-input
 							true
 					-actor
@@ -111,6 +117,8 @@ adams.flow.control.Flow
 								adams.flow.control.plotprocessor.LOWESS
 									-plot-name-suffix
 									-low
+							-type
+							PLOT
 							-drop-input
 							true
 					-actor
