@@ -15,9 +15,14 @@
 
 /**
  * SystemInfo.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.management.Java;
+import adams.core.management.OS;
+import adams.core.management.ProcessUtils;
+import adams.env.Environment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,10 +30,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-
-import adams.core.management.Java;
-import adams.core.management.ProcessUtils;
-import adams.env.Environment;
 
 /**
  * Gathers information about system properties.
@@ -43,6 +44,9 @@ public class SystemInfo {
 
   /** the key for the JVM PID. */
   public final static String JVM_PID = "java.vm.pid";
+
+  /** the key for the OS bitness. */
+  public final static String OS_BITNESS = "os.bitness";
 
   /** the project prefix. */
   public final static String PROJECT_PREFIX = "project.";
@@ -108,6 +112,7 @@ public class SystemInfo {
 
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());
+    m_Info.put(OS_BITNESS, "" + OS.getBitness());
   }
 
   /**
