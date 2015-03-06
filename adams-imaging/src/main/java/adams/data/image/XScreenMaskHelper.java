@@ -39,7 +39,7 @@ public class XScreenMaskHelper {
    * @see XScreenMaskHelper#generateMask(java.awt.image.BufferedImage, adams.data.image.XScreenMaskHelper.Color)
    */
   public enum Color {
-    RED, GREEN, BLUE, YELLOW
+    RED, GREEN, BLUE, YELLOW, LUMINANCE, NO_MASK
   }
 
   /**
@@ -78,6 +78,12 @@ public class XScreenMaskHelper {
           case YELLOW:
             value = (r - b) * (g - b);
             break;
+          case LUMINANCE:
+              value = (int) Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+              break;
+          case NO_MASK:
+              value = rgb;
+              break;
           default:
             throw new IllegalStateException("Color not implemented: " + color.name());
         }
