@@ -10,3 +10,7 @@
 # the PDF processors writers
 adams.core.io.AbstractPdfProclet=\
   adams.core.io
+
+# the stamp algorithms
+adams.flow.transformer.pdfstamp.AbstractStamper=\
+  adams.flow.transformer.pdfstamp
