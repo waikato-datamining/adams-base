@@ -15,9 +15,13 @@
 
 /**
  * CannyEdgesTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
+
+import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the CannyEdges object locator.
@@ -56,5 +60,25 @@ public class CannyEdgesTest
   @Override
   protected AbstractObjectLocator[] getRegressionSetups() {
     return new AbstractObjectLocator[]{new CannyEdges()};
+  }
+
+  /**
+   *
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(CannyEdgesTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(adams.env.Environment.class);
+    runTest(suite());
   }
 }
