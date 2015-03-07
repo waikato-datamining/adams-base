@@ -15,16 +15,15 @@
 
 /**
  * ImagePdfProclet.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
-import java.io.File;
-
 import adams.core.base.BaseString;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -139,7 +138,7 @@ public class ImagePdfProclet
       reset();
     }
     else {
-      System.err.println("Degrees must be from 0 to 360!");
+      getLogger().warning("Degrees must be from 0 to 360!");
     }
   }
 
@@ -173,7 +172,7 @@ public class ImagePdfProclet
       reset();
     }
     else {
-      System.err.println("Scale must satisfy 0 <= x <= 1!");
+      getLogger().warning("Scale must satisfy 0 <= x <= 1!");
     }
   }
 
