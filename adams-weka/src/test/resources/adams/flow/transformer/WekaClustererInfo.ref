@@ -1,0 +1,31 @@
+--> dumpfile.txt
+
+EM
+==
+
+Number of clusters selected by cross validation: 5
+Number of iterations performed: 16
+
+
+              Cluster
+Attribute           0       1       2       3       4
+               (0.18)  (0.23)  (0.28)  (0.15)  (0.15)
+======================================================
+sepallength
+  mean          4.7748  6.8585  6.1613  5.2823  5.5432
+  std. dev.     0.2405  0.5228  0.4138  0.2407  0.3159
+
+sepalwidth
+  mean          3.1789  3.0862  2.8547  3.7037  2.5786
+  std. dev.     0.2599  0.2891  0.2687  0.2857  0.2512
+
+petallength
+  mean          1.4194  5.7859  4.7484  1.5173   3.863
+  std. dev.     0.1692  0.4745  0.3193  0.1592  0.3516
+
+petalwidth
+  mean          0.1948  2.1327  1.5757  0.3028  1.1696
+  std. dev.     0.0557  0.2359  0.2196  0.1212  0.1351
+
+
+
