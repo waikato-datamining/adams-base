@@ -15,7 +15,7 @@
 
 /**
  * ErrorHandlerInstance.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -25,6 +25,8 @@ import adams.core.option.AbstractOptionTraverserWithResult;
 import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -104,6 +106,28 @@ public class ErrorHandlerInstanceLister
   }
 
   /**
+   * Adds the object to the list if an Actor.
+   *
+   * @param option	the current option
+   * @param obj		the current object (eg element of array)
+   * @param path	the traversal path
+   */
+  protected void addToList(AbstractArgumentOption option, Object obj, OptionTraversalPath path) {
+    if (obj instanceof Actor) {
+      m_Result.append(path.getPath());
+      m_Result.append("\t");
+      m_Result.append(obj.getClass().getName());
+      m_Result.append("\t");
+      m_Result.append(option.getProperty());
+      m_Result.append("\t");
+      m_Result.append(obj.getClass().getName());
+      m_Result.append("\t");
+      m_Result.append(((Actor) obj).getErrorHandler().hashCode());
+      m_Result.append("\n");
+    }
+  }
+
+  /**
    * Handles the encountered argument option.
    *
    * @param option	the option to handle
@@ -111,17 +135,14 @@ public class ErrorHandlerInstanceLister
    */
   @Override
   public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-    if (option.getOptionHandler() instanceof Actor) {
-      m_Result.append(path.getPath());
-      m_Result.append("\t");
-      m_Result.append(option.getOptionHandler().getClass().getName());
-      m_Result.append("\t");
-      m_Result.append(option.getProperty());
-      m_Result.append("\t");
-      m_Result.append(((ErrorHandler) option.getOptionHandler()).getClass().getName());
-      m_Result.append("\t");
-      m_Result.append(((ErrorHandler) option.getOptionHandler()).hashCode());
-      m_Result.append("\n");
+    Object current = option.getCurrentValue();
+    if (option.isMultiple()) {
+      for (int i = 0; i < Array.getLength(current); i++) {
+	addToList(option, Array.get(current, i), path);
+      }
+    }
+    else {
+      addToList(option, current, path);
     }
   }
 
