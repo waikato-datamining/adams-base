@@ -113,7 +113,10 @@ public class ErrorHandlerInstanceLister
    * @param path	the traversal path
    */
   protected void addToList(AbstractArgumentOption option, Object obj, OptionTraversalPath path) {
+    ErrorHandler	handler;
+
     if (obj instanceof Actor) {
+      handler = ((Actor) obj).getErrorHandler();
       m_Result.append(path.getPath());
       m_Result.append("\t");
       m_Result.append(obj.getClass().getName());
@@ -122,7 +125,7 @@ public class ErrorHandlerInstanceLister
       m_Result.append("\t");
       m_Result.append(obj.getClass().getName());
       m_Result.append("\t");
-      m_Result.append(((Actor) obj).getErrorHandler().hashCode());
+      m_Result.append((handler == null) ? "null" : "" + handler.hashCode());
       m_Result.append("\n");
     }
   }
