@@ -15,14 +15,14 @@
 
 /**
  * PropertyHelper.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
+import adams.gui.goe.PropertyPath.PropertyContainer;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.gui.goe.PropertyPath.PropertyContainer;
 
 /**
  * Helper class for updating properties of objects.
@@ -81,6 +81,8 @@ public class PropertyHelper {
 
     result = null;
     cls    = cont.getReadMethod().getReturnType();
+    if (value == null)
+      return result;
 
     initialize();
 
