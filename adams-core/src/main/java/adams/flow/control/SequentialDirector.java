@@ -20,11 +20,6 @@
 
 package adams.flow.control;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.logging.Level;
-
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -33,6 +28,11 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.logging.Level;
 
 /**
  * Manages the execution of actors in sequential order.
@@ -399,7 +399,8 @@ public class SequentialDirector
 	// no token? get pending one or produce new one
 	if (token == null) {
 	  if ((curr instanceof OutputProducer) && doHasOutput(curr)) {
-	    pendingActors.pop();
+            if (pendingActors.size() > 0)
+              pendingActors.pop();
 	    getLogger().fine("Actor holds another output token: " + curr.getFullName());
 	  }
 	  else {
