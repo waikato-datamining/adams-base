@@ -70,7 +70,7 @@ public class ImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"bmp", "gif", "jpg", "jpeg", "png"};
+    return new JAIImageReader().getFormatExtensions();
   }
 
   /**
