@@ -15,14 +15,15 @@
 
 /**
  * ImageHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
 import adams.core.Utils;
+import adams.data.io.input.JAIImageReader;
 import adams.gui.visualization.image.ImagePanel;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -83,7 +84,7 @@ public class ImageHandler
     ImagePanel		panel;
 
     panel = new ImagePanel();
-    panel.load(file);
+    panel.load(file, new JAIImageReader());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }
