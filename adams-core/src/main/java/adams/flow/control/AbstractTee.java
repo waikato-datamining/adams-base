@@ -15,14 +15,10 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
-
-import javax.swing.SwingWorker;
 
 import adams.core.QuickInfoHelper;
 import adams.core.logging.LoggingLevel;
@@ -34,6 +30,9 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.sink.Null;
+
+import javax.swing.SwingWorker;
+import java.util.Hashtable;
 
 /**
  * Abstract ancestor for actors that tee-off tokens.
@@ -595,7 +594,8 @@ public abstract class AbstractTee
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    m_InputToken = token;
+    m_InputToken  = token;
+    m_OutputToken = null;
   }
 
   /**

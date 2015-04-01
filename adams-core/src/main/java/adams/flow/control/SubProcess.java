@@ -21,9 +21,6 @@
 package adams.flow.control;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.ActorWithTimedEquivalent;
@@ -33,6 +30,9 @@ import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -304,6 +304,8 @@ public class SubProcess
   @Override
   public void input(Token token) {
     super.input(token);
+    if (m_OutputTokens != null)
+      m_OutputTokens.clear();
   }
   
   /**

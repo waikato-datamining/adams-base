@@ -15,22 +15,9 @@
 
 /**
  * DesktopScreenshot.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
-
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
@@ -42,6 +29,18 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -237,7 +236,8 @@ public class DesktopScreenshot
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    m_InputToken = token;
+    m_InputToken  = token;
+    m_OutputToken = null;
   }
 
   /**

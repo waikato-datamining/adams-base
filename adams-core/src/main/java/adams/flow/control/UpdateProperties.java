@@ -15,12 +15,10 @@
 
 /*
  * UpdateProperties.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -38,6 +36,8 @@ import adams.flow.core.Token;
 import adams.flow.transformer.PassThrough;
 import adams.gui.goe.PropertyPath;
 import adams.gui.goe.PropertyPath.PropertyContainer;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -426,7 +426,8 @@ public class UpdateProperties
    * @see		#m_InputToken
    */
   public void input(Token token) {
-    m_InputToken = token;
+    m_InputToken  = token;
+    m_OutputToken = null;
     if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
       getFlowExecutionListeningSupporter().getFlowExecutionListener().preInput(m_SubActor, m_InputToken);
     ((InputConsumer) m_SubActor).input(m_InputToken);

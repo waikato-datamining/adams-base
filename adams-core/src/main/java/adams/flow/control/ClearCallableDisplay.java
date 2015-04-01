@@ -15,7 +15,7 @@
 
 /**
  * ClearCallableDisplay.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -145,7 +145,8 @@ public class ClearCallableDisplay
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    m_InputToken = token;
+    m_InputToken  = token;
+    m_OutputToken = null;
   }
 
   /**

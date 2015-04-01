@@ -15,23 +15,17 @@
 
 /**
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
-
-import java.util.HashSet;
-import java.util.Hashtable;
-
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.AbstractFilenameGenerator;
 import adams.core.io.DefaultFilenameGenerator;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -40,6 +34,11 @@ import adams.flow.core.Unknown;
 import adams.flow.sink.ComponentSupplier;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.NullWriter;
+
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -404,7 +403,8 @@ public class CallableActorScreenshot
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    m_InputToken = token;
+    m_InputToken  = token;
+    m_OutputToken = null;
   }
 
   /**
