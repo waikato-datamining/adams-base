@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -41,6 +41,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -75,6 +76,12 @@ public abstract class AbstractDatabaseConnection
 
   /** the suffix in the props file for the number of connections. */
   public final static String SUFFIX_COUNT = "count";
+
+  /** keeping track of environment instances. */
+  protected static HashMap<Class, AbstractEnvironment> m_Environments;
+  static {
+    m_Environments = new HashMap<Class, AbstractEnvironment>();
+  }
 
   /** keeping track of connections. */
   protected static HashSet<AbstractDatabaseConnection> m_ConnectionObjects;
@@ -328,8 +335,19 @@ public abstract class AbstractDatabaseConnection
    * @return		the instance
    */
   protected synchronized AbstractEnvironment getEnvironment() {
+    AbstractEnvironment   env;
+
+    // already cached?
     if (m_Environment == null)
-      m_Environment = createEnvironment();
+      m_Environment = m_Environments.get(getClass());
+
+    // create new one?
+    if (m_Environment == null) {
+      env = createEnvironment();
+      m_Environments.put(getClass(), env);
+      m_Environment = env;
+    }
+
     return m_Environment;
   }
 
