@@ -124,7 +124,27 @@ public class SequentialDirector
   protected String handleException(AbstractActor actor, String msg, Throwable t) {
     return Utils.handleException(actor, msg, t, m_ControlActor.getSilent());
   }
-  
+
+  /**
+   * Handles the given error message, calling the actor's error handler, if
+   * defined.
+   *
+   * @param actor       the actor to let the error handle
+   * @param action      the action when the error occurred
+   * @param msg         the error message, skips handling if null
+   * @return            the (potentially) updated error message
+   */
+  protected String handleError(AbstractActor actor, String action, String msg) {
+    if (msg == null)
+      return null;
+    if (actor.hasErrorHandler()) {
+      if (isLoggingEnabled())
+        getLogger().info("Error handler: " + actor.getErrorHandler().hashCode());
+      return actor.getErrorHandler().handleError(actor, action, msg);
+    }
+    return msg;
+  }
+
   /**
    * Presents the specified token to the actor.
    *
@@ -153,10 +173,7 @@ public class SequentialDirector
       result = handleException(actor, "Calling the 'input(Token)' method with token '" + input + "' generated error: ", t);
     }
 
-    if (result != null) {
-      if (actor.hasErrorHandler())
-	result = actor.getErrorHandler().handleError(actor, "input", result);
-    }
+    result = handleError(actor, "input", result);
 
     return result;
   }
@@ -193,10 +210,7 @@ public class SequentialDirector
       result = handleException(actor, "Calling the 'execute()' method generated error: ", t);
     }
 
-    if (result != null) {
-      if (actor.hasErrorHandler())
-	result = actor.getErrorHandler().handleError(actor, "execute", result);
-    }
+    result = handleError(actor, "execute", result);
 
     return result;
   }
@@ -228,10 +242,7 @@ public class SequentialDirector
       result = false;
     }
 
-    if (msgFull != null) {
-      if (actor.hasErrorHandler())
-	msgFull = actor.getErrorHandler().handleError(actor, "hasPendingOutput", msgFull);
-    }
+    handleError(actor, "hasPendingOutput", msgFull);
 
     return result;
   }
@@ -273,10 +284,7 @@ public class SequentialDirector
       result = null;
     }
 
-    if (msgFull != null) {
-      if (actor.hasErrorHandler())
-	msgFull = actor.getErrorHandler().handleError(actor, "output", msgFull);
-    }
+    handleError(actor, "output", msgFull);
 
     return result;
   }
