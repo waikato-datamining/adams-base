@@ -15,7 +15,7 @@
 
 /*
  * AbstractPropertyUpdater.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -176,12 +176,12 @@ public abstract class AbstractPropertyUpdater
       helper        = new CallableActorHelper();
       m_CallableActor = helper.findCallableActorRecursive(this, m_ActorName);
       if (m_CallableActor == null) {
-	result = "Cannot find global actor '" + m_ActorName + "'!";
+	result = "Cannot find callable actor '" + m_ActorName + "'!";
       }
       else {
 	m_Container = PropertyPath.find(m_CallableActor, m_Property);
 	if (m_Container == null) {
-	  result = "Cannot find property '" + m_Property + "' in global actor '" + m_ActorName + "'!";
+	  result = "Cannot find property '" + m_Property + "' in callable actor '" + m_ActorName + "'!";
 	}
 	else {
 	  cls = m_Container.getReadMethod().getReturnType();
