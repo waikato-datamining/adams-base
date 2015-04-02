@@ -27,6 +27,7 @@ import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 import weka.classifiers.Classifier;
 import weka.clusterers.Clusterer;
+import weka.core.Drawable;
 
 /**
  <!-- globalinfo-start -->
@@ -80,7 +81,7 @@ import weka.clusterers.Clusterer;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-type &lt;MODEL|NUM_CLUSTERS&gt; (property: type)
+ * <pre>-type &lt;MODEL|NUM_CLUSTERS|GRAPH&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: MODEL
  * </pre>
@@ -108,6 +109,8 @@ public class WekaClustererInfo
     MODEL,
     /** number of clusters. */
     NUM_CLUSTERS,
+    /** graph (if available). */
+    GRAPH,
   }
 
   /** the type of information to generate. */
@@ -192,6 +195,7 @@ public class WekaClustererInfo
   public Class[] generates() {
     switch (m_Type) {
       case MODEL:
+      case GRAPH:
 	return new Class[]{String.class};
 
       case NUM_CLUSTERS:
@@ -234,6 +238,16 @@ public class WekaClustererInfo
 	  }
 	  catch (Exception e) {
 	    result = handleException("Failed to obtain number of clusters!", e);
+	  }
+	  break;
+
+	case GRAPH:
+	  try {
+	    if (cls instanceof Drawable)
+	      m_OutputToken = new Token(((Drawable) cls).graph());
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to obtain graph from clusterer!", e);
 	  }
 	  break;
 
