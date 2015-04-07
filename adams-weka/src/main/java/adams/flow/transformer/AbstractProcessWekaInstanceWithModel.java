@@ -317,7 +317,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 
     result = null;
 
-    if (m_OnTheFly) {
+    if (m_OnTheFly && (m_Model==null)) {
       result = setUpModel();
       if (result != null)
 	return result;
