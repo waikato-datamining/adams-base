@@ -1434,6 +1434,8 @@ The following actors are available to handle variables:
 \begin{tight_itemize}
 	\item \textit{ListVariables} -- source actor for outputting the names of 
 	currently available variables.
+	\item \textit{DumpVariables} -- source actor for outputting a spreadsheet with
+	variable names and their associated values.
 	\item \textit{CombineVariables} -- source actor for combining one or more
 	variables into a single string using a supplied expression.
 	\item \textit{Variable} -- source actor for outputting the value associated
@@ -1619,6 +1621,9 @@ The following actors are available to handle variables:
 	associated with the specified name.
 	\item \textit{ListStorageNames} -- source actor for outputting the names of 
 	the currently stored items.
+	\item \textit{DumpStorage} -- source actor for outputting the names of
+	the currently stored items and their associated values (in string
+	representation) in a spreadsheet.
 	\item \textit{StorageValue} -- source actor for outputting the storage value
 	associated with the specified name.
 	\item \textit{StorageValuesArray} -- source actor for outputting the 
