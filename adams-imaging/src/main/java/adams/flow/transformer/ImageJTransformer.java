@@ -15,15 +15,10 @@
 
 /*
  * ImageJTransformer.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
@@ -37,6 +32,8 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 
+import java.util.Arrays;
+
 /**
  <!-- globalinfo-start -->
  * Applies an ImageJ transformation to the incoming image and outputs the generated image(s).
@@ -46,7 +43,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
  * - generates:<br/>
  * &nbsp;&nbsp;&nbsp;adams.data.imagej.ImagePlusContainer<br/>
  * <p/>
@@ -63,7 +60,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;default: ImageJTransformer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,6 +77,16 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Whether to output the images as an array or one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-transformer &lt;adams.data.imagej.transformer.AbstractImageJTransformer&gt; (property: transformAlgorithm)
  * &nbsp;&nbsp;&nbsp;The transformer to use for transformering the image.
  * &nbsp;&nbsp;&nbsp;default: adams.data.imagej.transformer.PassThrough
@@ -91,20 +98,14 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class ImageJTransformer
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements ProvenanceSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
 
-  /** the key for storing the current images in the backup. */
-  public final static String BACKUP_CURRENTIMAGES = "current images";
-
   /** the transformer to apply to the image. */
   protected AbstractImageJTransformer m_TransformAlgorithm;
-
-  /** the generated images. */
-  protected List<ImagePlusContainer> m_CurrentImages;
 
   /**
    * Returns a string describing the object.
@@ -126,18 +127,19 @@ public class ImageJTransformer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "transformer", "transformAlgorithm",
-	    new adams.data.imagej.transformer.PassThrough());
+      "transformer", "transformAlgorithm",
+      new adams.data.imagej.transformer.PassThrough());
   }
 
   /**
-   * Initializes the members.
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
    */
   @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_CurrentImages = new ArrayList<ImagePlusContainer>();
+  public String outputArrayTipText() {
+    return "Whether to output the images as an array or one-by-one.";
   }
 
   /**
@@ -176,7 +178,15 @@ public class ImageJTransformer
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "transformAlgorithm", m_TransformAlgorithm);
+    String      result;
+    String      value;
+
+    result = QuickInfoHelper.toString(this, "transformAlgorithm", m_TransformAlgorithm);
+    value  = QuickInfoHelper.toString(this, "outputArray", m_OutputArray, (m_OutputArray ? "as array" : ""), ", ");
+    if (value != null)
+      result += value;
+
+    return result;
   }
 
   /**
@@ -189,53 +199,13 @@ public class ImageJTransformer
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->adams.data.imagej.ImagePlusContainer.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{ImagePlusContainer.class};
-  }
-
-  /**
-   * Removes entries from the backup.
+   * @return		the class
    */
   @Override
-  protected void pruneBackup() {
-    super.pruneBackup();
-
-    pruneBackup(BACKUP_CURRENTIMAGES);
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
-   */
-  @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_CURRENTIMAGES, m_CurrentImages);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_CURRENTIMAGES)) {
-      m_CurrentImages = (List<ImagePlusContainer>) state.get(BACKUP_CURRENTIMAGES);
-      state.remove(BACKUP_CURRENTIMAGES);
-    }
-
-    super.restoreState(state);
+  protected Class getItemClass() {
+    return ImagePlusContainer.class;
   }
 
   /**
@@ -269,27 +239,14 @@ public class ImageJTransformer
 
     try {
       img = ImageJHelper.toImagePlusContainer((AbstractImageContainer) m_InputToken.getPayload());
-
-      m_CurrentImages = new ArrayList<ImagePlusContainer>(
-	  Arrays.asList(
-	      m_TransformAlgorithm.transform(img)));
+      m_Queue.clear();
+      m_Queue.addAll(Arrays.asList(m_TransformAlgorithm.transform(img)));
     }
     catch (Exception e) {
       result = handleException("Failed to transform image: ", e);
     }
 
     return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_CurrentImages.size() > 0);
   }
 
   /**
@@ -301,22 +258,10 @@ public class ImageJTransformer
   public Token output() {
     Token	result;
 
-    result = new Token(m_CurrentImages.get(0));
-    m_CurrentImages.remove(0);
-
+    result = super.output();
     updateProvenance(result);
 
     return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void wrapUp() {
-    m_CurrentImages.clear();
-
-    super.wrapUp();
   }
 
   /**

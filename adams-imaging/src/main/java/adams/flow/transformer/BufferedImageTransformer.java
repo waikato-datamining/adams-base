@@ -15,15 +15,10 @@
 
 /*
  * BufferedImageTransformer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
@@ -37,16 +32,18 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 
+import java.util.Arrays;
+
 /**
  <!-- globalinfo-start -->
- * Applies an JAI transformation to the incoming image and outputs the generated image(s).
+ * Applies a BufferedImage transformation to the incoming image and outputs the generated image(s).
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br/>
  * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
  * - generates:<br/>
  * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
  * <p/>
@@ -60,10 +57,10 @@ import adams.flow.provenance.ProvenanceSupporter;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: JAITransformer
+ * &nbsp;&nbsp;&nbsp;default: BufferedImageTransformer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,9 +77,19 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-transformer &lt;adams.data.jai.transformer.AbstractJAITransformer&gt; (property: transformAlgorithm)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Whether to output the images as an array or one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-transformer &lt;adams.data.image.transformer.AbstractBufferedImageTransformer&gt; (property: transformAlgorithm)
  * &nbsp;&nbsp;&nbsp;The transformer to use for transformering the image.
- * &nbsp;&nbsp;&nbsp;default: adams.data.jai.transformer.PassThrough
+ * &nbsp;&nbsp;&nbsp;default: adams.data.image.transformer.PassThrough
  * </pre>
  * 
  <!-- options-end -->
@@ -91,20 +98,14 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class BufferedImageTransformer
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements ProvenanceSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
 
-  /** the key for storing the current counter in the backup. */
-  public final static String BACKUP_CURRENTIMAGES = "current images";
-
   /** the algorithm to apply to the image. */
   protected AbstractBufferedImageTransformer m_TransformAlgorithm;
-
-  /** the generated images. */
-  protected List<BufferedImageContainer> m_CurrentImages;
 
   /**
    * Returns a string describing the object.
@@ -126,18 +127,19 @@ public class BufferedImageTransformer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "transformer", "transformAlgorithm",
-	    new adams.data.image.transformer.PassThrough());
+      "transformer", "transformAlgorithm",
+      new adams.data.image.transformer.PassThrough());
   }
 
   /**
-   * Initializes the members.
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
    */
   @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_CurrentImages = new ArrayList<BufferedImageContainer>();
+  public String outputArrayTipText() {
+    return "Whether to output the images as an array or one-by-one.";
   }
 
   /**
@@ -176,7 +178,15 @@ public class BufferedImageTransformer
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "transformAlgorithm", m_TransformAlgorithm);
+    String      result;
+    String      value;
+
+    result = QuickInfoHelper.toString(this, "transformAlgorithm", m_TransformAlgorithm);
+    value  = QuickInfoHelper.toString(this, "outputArray", m_OutputArray, (m_OutputArray ? "as array" : ""), ", ");
+    if (value != null)
+      result += value;
+
+    return result;
   }
 
   /**
@@ -189,53 +199,13 @@ public class BufferedImageTransformer
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->adams.data.image.BufferedImageContainer.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{BufferedImageContainer.class};
-  }
-
-  /**
-   * Removes entries from the backup.
+   * @return		the class
    */
   @Override
-  protected void pruneBackup() {
-    super.pruneBackup();
-
-    pruneBackup(BACKUP_CURRENTIMAGES);
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
-   */
-  @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_CURRENTIMAGES, m_CurrentImages);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_CURRENTIMAGES)) {
-      m_CurrentImages = (List<BufferedImageContainer>) state.get(BACKUP_CURRENTIMAGES);
-      state.remove(BACKUP_CURRENTIMAGES);
-    }
-
-    super.restoreState(state);
+  protected Class getItemClass() {
+    return BufferedImageContainer.class;
   }
 
   /**
@@ -252,27 +222,14 @@ public class BufferedImageTransformer
 
     try {
       img = JAIHelper.toBufferedImageContainer((AbstractImageContainer) m_InputToken.getPayload());
-
-      m_CurrentImages = new ArrayList<BufferedImageContainer>(
-	  Arrays.asList(
-	      m_TransformAlgorithm.transform(img)));
+      m_Queue.clear();
+      m_Queue.addAll(Arrays.asList(m_TransformAlgorithm.transform(img)));
     }
     catch (Exception e) {
       result = handleException("Failed to transform image: ", e);
     }
 
     return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_CurrentImages.size() > 0);
   }
 
   /**
@@ -284,22 +241,10 @@ public class BufferedImageTransformer
   public Token output() {
     Token	result;
 
-    result = new Token(m_CurrentImages.get(0));
-    m_CurrentImages.remove(0);
-
+    result = super.output();
     updateProvenance(result);
 
     return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void wrapUp() {
-    m_CurrentImages.clear();
-
-    super.wrapUp();
   }
 
   /**
