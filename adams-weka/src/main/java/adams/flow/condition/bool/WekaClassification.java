@@ -15,25 +15,25 @@
 
 /**
  * WekaClassification.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
-import java.util.logging.Level;
-
-import weka.classifiers.Classifier;
-import weka.core.Capabilities;
-import weka.core.Capabilities.Capability;
-import weka.core.Instance;
-import weka.core.Utils;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
+import weka.classifiers.Classifier;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
+import weka.core.Instance;
+import weka.core.Utils;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -334,7 +334,7 @@ public class WekaClassification
 
     result = -1;
 
-    if (m_OnTheFly) {
+    if (m_OnTheFly && (m_Model == null)) {
       msg = setUpModel(owner);
       if (msg != null) {
 	getLogger().severe(msg);
