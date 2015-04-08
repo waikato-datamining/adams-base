@@ -15,23 +15,23 @@
 
 /*
  * WekaForecasting.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.List;
-
-import weka.classifiers.evaluation.NumericPrediction;
-import weka.classifiers.timeseries.AbstractForecaster;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaForecastContainer;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
+import weka.classifiers.evaluation.NumericPrediction;
+import weka.classifiers.timeseries.AbstractForecaster;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -389,7 +389,7 @@ public class WekaForecasting
 
     result = null;
 
-    if (m_OnTheFly) {
+    if (m_OnTheFly && (m_Model == null)) {
       result = setUpModel();
       if (result != null)
 	return result;
