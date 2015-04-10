@@ -492,9 +492,9 @@ public class UpdateProperties
 
     for (i = 0; i < m_Properties.length; i++) {
       try {
-	value = PropertyHelper.convertVariableValue(
-	    m_Containers[i],
-	    getVariables().get(m_VariableNames[i].getValue()));
+	value = PropertyHelper.convertValue(
+          m_Containers[i],
+          getVariables().get(m_VariableNames[i].getValue()));
 	if (isLoggingEnabled())
 	  getLogger().info("Updating #" + (i+1) + ": var=" + m_VariableNames[i] + ", value=" + getVariables().get(m_VariableNames[i].getValue()) + ", class=" + (value == null ? "null" : value.getClass().getName()));
 	if (!PropertyPath.setValue(
