@@ -1509,10 +1509,10 @@ names of the various properties concatenated and separated by dots (``.''). In
 case of arrays, you simply have to append ``[x]'' to the property with ``x''
 being the 0-based index of the array element that you want to access.
 
-The following actors allow the updating of properties:
+The following actors  properties:
 \begin{tight_itemize}
 	\item \textit{SetProperty} -- transformer that modifies a single property of a
-	callable actor based on the current value of the specified variable.
+	callable actor using the string representation of the token passing through.
 	\item \textit{UpdateProperties} -- allows you to update multiple properties
 	(each property is associated with a particular variable) of the actor that
 	this actor manages.
