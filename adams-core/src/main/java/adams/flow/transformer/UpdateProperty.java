@@ -20,24 +20,26 @@
 
 package adams.flow.transformer;
 
-import adams.flow.core.AbstractCallableActorPropertyUpdater;
+import adams.core.QuickInfoHelper;
+import adams.flow.core.AbstractPropertyUpdater;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
+import adams.flow.core.PropertyHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import adams.gui.goe.PropertyPath;
+import adams.gui.goe.PropertyPath.PropertyContainer;
 
 import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Sets the property of a callable actor whenever a token passes through.<br/>
- * Note: this actor just sets the value, but performs no re-initialization or similar of the modified object.<br/>
- * The transformer just forwards tokens that it receives after the property has been set.
+ * Updates the property of the object passing through with the specified value.
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
+ * Input&#47;output:<br/>
  * - accepts:<br/>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
  * - generates:<br/>
@@ -46,47 +48,55 @@ import java.util.Hashtable;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: SetProperty
+ * &nbsp;&nbsp;&nbsp;default: UpdateProperty
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-actor-name &lt;java.lang.String&gt; (property: actorName)
- * &nbsp;&nbsp;&nbsp;The name of the global actor to update the property for.
- * &nbsp;&nbsp;&nbsp;default: unknown
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-property &lt;java.lang.String&gt; (property: property)
- * &nbsp;&nbsp;&nbsp;The property to update whenever the variable changes.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;The property to update.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
+ * <pre>-value &lt;java.lang.String&gt; (property: value)
+ * &nbsp;&nbsp;&nbsp;The new value for the property.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SetProperty
-  extends AbstractCallableActorPropertyUpdater
+public class UpdateProperty
+  extends AbstractPropertyUpdater
   implements InputConsumer, OutputProducer {
 
   /** for serialization. */
@@ -98,11 +108,17 @@ public class SetProperty
   /** the key for storing the output token in the backup. */
   public final static String BACKUP_OUTPUT = "output";
 
+  /** the new value for the property. */
+  protected String m_Value;
+
   /** the current input token. */
   protected transient Token m_InputToken;
 
   /** the current output token. */
   protected transient Token m_OutputToken;
+
+  /** the property container of the property to update. */
+  protected transient PropertyContainer m_Container;
 
   /**
    * Returns a string describing the object.
@@ -112,11 +128,7 @@ public class SetProperty
   @Override
   public String globalInfo() {
     return
-        "Sets the property of a callable actor whenever a token passes through.\n"
-      + "Note: this actor just sets the value, but performs no re-initialization "
-      + "or similar of the modified object.\n"
-      + "The transformer just forwards tokens that it receives after the "
-      + "property has been set.";
+        "Updates the property of the object passing through with the specified value.";
   }
 
   /**
@@ -128,6 +140,62 @@ public class SetProperty
 
     m_InputToken  = null;
     m_OutputToken = null;
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "value", "value",
+      "");
+  }
+
+  /**
+   * Sets the new value for the property.
+   *
+   * @param value	the value
+   */
+  public void setValue(String value) {
+    m_Value = value;
+    reset();
+  }
+
+  /**
+   * Returns the new value for the property.
+   *
+   * @return		the value
+   */
+  public String getValue() {
+    return m_Value;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String valueTipText() {
+    return "The new value for the property.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String    result;
+
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-none-" : m_Value), ", value: ");
+
+    return result;
   }
 
   /**
@@ -199,6 +267,25 @@ public class SetProperty
   }
 
   /**
+   * Updates the property.
+   *
+   * @param s		the string to set
+   */
+  @Override
+  protected void updateProperty(String s) {
+    Object	value;
+
+    value = PropertyHelper.convertValue(m_Container, s);
+
+    // could we convert the value?
+    if (value != null) {
+      PropertyPath.setValue(m_InputToken.getPayload(), m_Property, value);
+      if (isLoggingEnabled())
+	getLogger().info("Property '" + m_Property + "' changed to: " + value);
+    }
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -206,18 +293,27 @@ public class SetProperty
   @Override
   protected String doExecute() {
     String	result;
-    String	value;
+    Object      obj;
+    Class       cls;
 
     result = null;
 
     try {
-      if (m_InputToken.getPayload() != null) {
-	value = m_InputToken.getPayload().toString();
-	updateProperty(value);
+      obj = m_InputToken.getPayload();
+      m_Container = PropertyPath.find(obj, m_Property);
+      if (m_Container == null) {
+        result = "Cannot find property '" + m_Property + "' in class '" + obj.getClass().getName() + "'!";
       }
+      else {
+        cls = m_Container.getReadMethod().getReturnType();
+        if (cls.isArray())
+          result = "Property '" + m_Property + "' is an array!";
+      }
+      if (result == null)
+        updateProperty(m_Value);
     }
     catch (Exception e) {
-      result = handleException("Failed to set property: " + m_Property, e);
+      result = handleException("Failed to update property: " + m_Property, e);
     }
 
     m_OutputToken = m_InputToken;

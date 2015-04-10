@@ -25,7 +25,7 @@ import adams.core.VariableName;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.event.VariableChangeListener;
-import adams.flow.core.AbstractPropertyUpdater;
+import adams.flow.core.AbstractCallableActorPropertyUpdater;
 
 /**
  <!-- globalinfo-start -->
@@ -87,7 +87,7 @@ import adams.flow.core.AbstractPropertyUpdater;
  */
 @Deprecated
 public class SetProperty
-  extends AbstractPropertyUpdater
+  extends AbstractCallableActorPropertyUpdater
   implements VariableChangeListener {
 
   /** for serialization. */
