@@ -120,7 +120,7 @@ public abstract class AbstractPropertyUpdater
    * 			displaying in the GUI or for listing the options.
    */
   public String propertyTipText() {
-    return "The property to update whenever the variable changes.";
+    return "The property to update.";
   }
 
   /**
@@ -149,7 +149,7 @@ public abstract class AbstractPropertyUpdater
   protected void updateProperty(String s) {
     Object	value;
 
-    value = PropertyHelper.convertVariableValue(m_Container, s);
+    value = PropertyHelper.convertValue(m_Container, s);
 
     // could we convert the value?
     if (value != null) {
