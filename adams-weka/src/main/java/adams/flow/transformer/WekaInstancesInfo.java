@@ -15,10 +15,25 @@
 
 /*
  * WekaInstancesInfo.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.DateFormat;
+import adams.core.DateUtils;
+import adams.core.Index;
+import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.StatUtils;
+import adams.data.weka.WekaAttributeIndex;
+import adams.flow.core.DataInfoActor;
+import adams.flow.core.Token;
+import weka.core.Attribute;
+import weka.core.AttributeStats;
+import weka.core.Instances;
+import weka.core.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,23 +42,10 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 
-import weka.core.Attribute;
-import weka.core.AttributeStats;
-import weka.core.Instances;
-import adams.core.DateFormat;
-import adams.core.DateUtils;
-import adams.core.Index;
-import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.data.weka.WekaAttributeIndex;
-import adams.flow.core.DataInfoActor;
-import adams.flow.core.Token;
-
 /**
  <!-- globalinfo-start -->
  * Outputs statistics of a weka.core.Instances object.<br/>
- * FULL_ATTRIBUTE and FULL_CLASS output a spreadsheet with detailed attribute statistics. All others output either strings, integers or doubles.
+ * FULL_ATTRIBUTE and FULL_CLASS output a spreadsheet with detailed attribute statistics. All others output either strings, integers or doubles (or arrays of them, in case of counts&#47;distribution).
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -84,7 +86,12 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-type &lt;FULL|FULL_ATTRIBUTE|FULL_CLASS|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-type &lt;FULL|FULL_ATTRIBUTE|FULL_CLASS|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|LABEL_COUNTS|CLASS_LABEL_COUNTS|LABEL_DISTRIBUTION|CLASS_LABEL_DISTRIBUTION|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate; NB some of the types are only available 
  * &nbsp;&nbsp;&nbsp;for numeric or nominal attributes.
  * &nbsp;&nbsp;&nbsp;default: FULL
@@ -99,10 +106,10 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
- * <pre>-class-label-index &lt;adams.core.Index&gt; (property: classLabelIndex)
- * &nbsp;&nbsp;&nbsp;The index of the class label to use; An index is a number starting with 
- * &nbsp;&nbsp;&nbsp;1; the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * <pre>-label-index &lt;adams.core.Index&gt; (property: labelIndex)
+ * &nbsp;&nbsp;&nbsp;The index of the label to use; An index is a number starting with 1; the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
+ * &nbsp;&nbsp;&nbsp; last_1, last
  * &nbsp;&nbsp;&nbsp;default: first
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
@@ -121,7 +128,7 @@ public class WekaInstancesInfo
 
   /** the tokens to output. */
   protected List m_Queue;
-  
+
   /**
    * The type of information to generate.
    *
@@ -163,6 +170,14 @@ public class WekaInstancesInfo
     LABEL_COUNT,
     /** the number of instances with the specified class label (only nominal). */
     CLASS_LABEL_COUNT,
+    /** the counts per label (selected attribute, only nominal). */
+    LABEL_COUNTS,
+    /** the counts per class label (only nominal). */
+    CLASS_LABEL_COUNTS,
+    /** the distribution (percentages, 0-1) per label (selected attribute, only nominal). */
+    LABEL_DISTRIBUTION,
+    /** the distribution (percentages, 0-1) per class label (only nominal). */
+    CLASS_LABEL_DISTRIBUTION,
     /** the minimum value (selected attribute, only numeric). */
     MIN,
     /** the maximum value (selected attribute, only numeric). */
@@ -174,7 +189,7 @@ public class WekaInstancesInfo
     /** the attribute type (selected attribute). */
     ATTRIBUTE_TYPE,
     /** the class attribute type. */
-    CLASS_TYPE
+    CLASS_TYPE,
   }
 
   /** the type of information to generate. */
@@ -183,9 +198,9 @@ public class WekaInstancesInfo
   /** the index of the attribute to get the information for. */
   protected WekaAttributeIndex m_AttributeIndex;
 
-  /** the index of the class label. */
-  protected Index m_ClassLabelIndex;
-  
+  /** the index of the label. */
+  protected Index m_LabelIndex;
+
   /** for formatting dates. */
   protected DateFormat m_DateFormat;
 
@@ -196,11 +211,12 @@ public class WekaInstancesInfo
    */
   @Override
   public String globalInfo() {
-    return 
-	"Outputs statistics of a weka.core.Instances object.\n"
-	+ InfoType.FULL_ATTRIBUTE + " and " + InfoType.FULL_CLASS + " output "
-	+ "a spreadsheet with detailed attribute statistics. All others output "
-	+ "either strings, integers or doubles.";
+    return
+      "Outputs statistics of a weka.core.Instances object.\n"
+        + InfoType.FULL_ATTRIBUTE + " and " + InfoType.FULL_CLASS + " output "
+        + "a spreadsheet with detailed attribute statistics. All others output "
+        + "either strings, integers or doubles (or arrays of them, in case of "
+        + "counts/distribution).";
   }
 
   /**
@@ -219,7 +235,7 @@ public class WekaInstancesInfo
 	    new WekaAttributeIndex(WekaAttributeIndex.LAST));
 
     m_OptionManager.add(
-	    "class-label-index", "classLabelIndex",
+	    "label-index", "labelIndex",
 	    new Index(Index.FIRST));
   }
 
@@ -257,19 +273,21 @@ public class WekaInstancesInfo
 		InfoType.NUM_CLASS_LABELS,
 		InfoType.CLASS_TYPE,
 		InfoType.CLASS_LABELS,
-		InfoType.CLASS_LABEL_COUNT
+		InfoType.CLASS_LABEL_COUNT,
+		InfoType.CLASS_LABEL_COUNTS,
+		InfoType.CLASS_LABEL_DISTRIBUTION,
 	    }));
     if (QuickInfoHelper.hasVariable(this, "type") || !types.contains(m_Type))
       result += QuickInfoHelper.toString(this, "attributeIndex", m_AttributeIndex, ", index: ");
-    
+
     types = new HashSet<InfoType>(
 	Arrays.asList(
 	    new InfoType[]{
 		InfoType.LABEL_COUNT,
-		InfoType.CLASS_LABEL_COUNT
+		InfoType.CLASS_LABEL_COUNT,
 	    }));
     if (QuickInfoHelper.hasVariable(this, "type") || types.contains(m_Type))
-      result += QuickInfoHelper.toString(this, "classLabelIndex", m_ClassLabelIndex, ", label: ");
+      result += QuickInfoHelper.toString(this, "labelIndex", m_LabelIndex, ", label: ");
 
     return result;
   }
@@ -333,22 +351,22 @@ public class WekaInstancesInfo
   }
 
   /**
-   * Sets the index of the class label to use.
+   * Sets the index of the label to use.
    *
    * @param value	the 1-based index
    */
-  public void setClassLabelIndex(Index value) {
-    m_ClassLabelIndex = value;
+  public void setLabelIndex(Index value) {
+    m_LabelIndex = value;
     reset();
   }
 
   /**
-   * Returns the index of the class label to use.
+   * Returns the index of the label to use.
    *
    * @return		the 1-based index
    */
-  public Index getClassLabelIndex() {
-    return m_ClassLabelIndex;
+  public Index getLabelIndex() {
+    return m_LabelIndex;
   }
 
   /**
@@ -357,8 +375,8 @@ public class WekaInstancesInfo
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String classLabelIndexTipText() {
-    return "The index of the class label to use; " + m_ClassLabelIndex.getExample();
+  public String labelIndexTipText() {
+    return "The index of the label to use; " + m_LabelIndex.getExample();
   }
 
   /**
@@ -398,11 +416,19 @@ public class WekaInstancesInfo
       case CLASS_LABEL_COUNT:
 	return new Class[]{Integer.class};
 
+      case LABEL_COUNTS:
+      case CLASS_LABEL_COUNTS:
+	return new Class[]{Integer[].class};
+
       case MIN:
       case MAX:
       case MEAN:
       case STDEV:
 	return new Class[]{Double.class};
+
+      case LABEL_DISTRIBUTION:
+      case CLASS_LABEL_DISTRIBUTION:
+	return new Class[]{Double[].class};
 
       case FULL_ATTRIBUTE:
       case FULL_CLASS:
@@ -516,7 +542,9 @@ public class WekaInstancesInfo
     Instances		inst;
     int			index;
     int			labelIndex;
+    double[]            dist;
     Enumeration		enm;
+    int                 i;
 
     result = null;
 
@@ -571,18 +599,48 @@ public class WekaInstancesInfo
 
       case LABEL_COUNT:
 	if (index > -1) {
-	  m_ClassLabelIndex.setMax(inst.attribute(index).numValues());
-	  labelIndex = m_ClassLabelIndex.getIntIndex();
+	  m_LabelIndex.setMax(inst.attribute(index).numValues());
+	  labelIndex = m_LabelIndex.getIntIndex();
 	  m_Queue.add(inst.attributeStats(index).nominalCounts[labelIndex]);
 	}
 	break;
 
+      case LABEL_COUNTS:
+	if (index > -1)
+          m_Queue.add(StatUtils.toNumberArray(inst.attributeStats(index).nominalCounts));
+	break;
+
+      case LABEL_DISTRIBUTION:
+	if (index > -1) {
+          dist = new double[inst.attributeStats(index).nominalCounts.length];
+          for (i = 0; i < dist.length; i++)
+            dist[i] = inst.attributeStats(index).nominalCounts[i];
+          Utils.normalize(dist);
+          m_Queue.add(StatUtils.toNumberArray(dist));
+        }
+	break;
+
       case CLASS_LABEL_COUNT:
 	if (inst.classIndex() > -1) {
-	  m_ClassLabelIndex.setMax(inst.classAttribute().numValues());
-	  labelIndex = m_ClassLabelIndex.getIntIndex();
+	  m_LabelIndex.setMax(inst.classAttribute().numValues());
+	  labelIndex = m_LabelIndex.getIntIndex();
 	  m_Queue.add(inst.attributeStats(inst.classIndex()).nominalCounts[labelIndex]);
 	}
+	break;
+
+      case CLASS_LABEL_COUNTS:
+	if (inst.classIndex() > -1)
+          m_Queue.add(StatUtils.toNumberArray(inst.attributeStats(inst.classIndex()).nominalCounts));
+	break;
+
+      case CLASS_LABEL_DISTRIBUTION:
+	if (inst.classIndex() > -1) {
+          dist = new double[inst.attributeStats(inst.classIndex()).nominalCounts.length];
+          for (i = 0; i < dist.length; i++)
+            dist[i] = inst.attributeStats(inst.classIndex()).nominalCounts[i];
+          Utils.normalize(dist);
+          m_Queue.add(StatUtils.toNumberArray(dist));
+        }
 	break;
 
       case NUM_ATTRIBUTES:
