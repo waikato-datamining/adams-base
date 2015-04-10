@@ -69,13 +69,13 @@ public class PropertyHelper {
   }
   
   /**
-   * Converts the variable value into the appropriate object, if possible.
+   * Converts the value into the appropriate object, if possible.
    *
    * @param cont	the property container to use
    * @param value	the string to convert
    * @return		the converted value or null if it cannot be converted
    */
-  public static Object convertVariableValue(PropertyContainer cont, String value) {
+  public static Object convertValue(PropertyContainer cont, String value) {
     Object	result;
     Class	cls;
 
