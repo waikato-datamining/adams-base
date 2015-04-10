@@ -76,7 +76,7 @@ import adams.flow.core.AbstractPropertyUpdater;
  * </pre>
  * 
  * <pre>-var-name &lt;adams.core.VariableName&gt; (property: variableName)
- * &nbsp;&nbsp;&nbsp;The name of the variable to update.
+ * &nbsp;&nbsp;&nbsp;The name of the variable to obtain the current value from.
  * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
  * 
@@ -122,7 +122,7 @@ public class SetProperty
   }
 
   /**
-   * Sets the name of the variable to update.
+   * Sets the name of the variable to obtain the current value from.
    *
    * @param value	the name
    */
@@ -132,7 +132,7 @@ public class SetProperty
   }
 
   /**
-   * Returns the name of the variable to update.
+   * Returns the name of the variable to obtain the current value from.
    *
    * @return		the name
    */
@@ -147,7 +147,7 @@ public class SetProperty
    * 			displaying in the GUI or for listing the options.
    */
   public String variableNameTipText() {
-    return "The name of the variable to update.";
+    return "The name of the variable to obtain the current value from.";
   }
 
   /**
