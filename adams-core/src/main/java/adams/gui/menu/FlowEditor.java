@@ -26,8 +26,14 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.flow.FlowEditorPanel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Opens the Flow Editor.
+ * You can load/run flows. If no prefix or prefixed with "load:" a file only
+ * gets loaded. If prefixed with "run:" the file gets loaded and executed.
+ * Multiple files can be specified.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -83,9 +89,28 @@ public class FlowEditor
    */
   @Override
   public void launch() {
+    List<String>    load;
+    List<String>    run;
+
+    // parse file list
+    load = new ArrayList<>();
+    run  = new ArrayList<>();
+    for (String param: m_Parameters) {
+      if (param.startsWith("run:"))
+        run.add(param.substring(4));
+      else if (param.startsWith("load:"))
+        load.add(param.substring(5));
+      else
+        load.add(param);
+    }
+
+    // load/run flows
     m_FlowEditorPanel = new FlowEditorPanel();
-    for (String param: m_Parameters)
+    for (String param: load)
       m_FlowEditorPanel.loadUnsafe(new PlaceholderFile(param));
+    for (String param: run)
+      m_FlowEditorPanel.runUnsafe(new PlaceholderFile(param));
+
     createChildFrame(m_FlowEditorPanel, 1000, 700);
   }
 

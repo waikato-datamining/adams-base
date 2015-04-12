@@ -47,6 +47,8 @@ import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -792,6 +794,16 @@ public class FlowPanel
    * @param file	the flow to load
    */
   public void load(final FlowReader reader, final File file) {
+    load(reader, file, false);
+  }
+
+  /**
+   * Loads a flow and optionally executes it.
+   *
+   * @param reader	the reader to use
+   * @param file	the flow to load
+   */
+  public void load(final FlowReader reader, final File file, final boolean execute) {
     SwingWorker		worker;
 
     m_RunningSwingWorker = true;
@@ -824,7 +836,11 @@ public class FlowPanel
 
       @Override
       protected void done() {
+        boolean   canExecute;
+        String    msg;
+
 	m_RunningSwingWorker = false;
+        canExecute           = execute && m_Errors.isEmpty();
 
 	if (m_Errors.isEmpty())
 	  setCurrentFile(file);
@@ -836,13 +852,21 @@ public class FlowPanel
 	      "Failed to load flow '" + file + "':\n" + Utils.flatten(m_Errors, "\n") 
 	      + (m_Warnings.isEmpty() ? "" : "\nWarning(s):\n" + Utils.flatten(m_Warnings, "\n")));
 	}
-	if (!m_Warnings.isEmpty())
-	  GUIHelper.showErrorMessage(
-	      m_Owner, "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n"));
+	if (!m_Warnings.isEmpty()) {
+          msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
+          if (canExecute)
+            ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+          else
+            GUIHelper.showErrorMessage(m_Owner, msg);
+        }
 
 	update();
 
         super.done();
+
+        // execute flow?
+        if (canExecute)
+          FlowPanel.this.run();
       }
     };
     worker.execute();

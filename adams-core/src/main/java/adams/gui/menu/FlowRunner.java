@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -28,6 +28,8 @@ import adams.gui.flow.FlowRunnerPanel;
 
 /**
  * Opens the Flow Runner.
+ * You can load/run flows. If no prefix or prefixed with "load:" a file only
+ * gets loaded. If prefixed with "run:" the file gets loaded and executed.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -69,8 +71,14 @@ public class FlowRunner
   public void launch() {
     FlowRunnerPanel panel = new FlowRunnerPanel();
     createChildFrame(panel, 640, 480);
-    if (m_Parameters.length > 0)
-      panel.loadUnsafe(new PlaceholderFile(m_Parameters[0]));
+    if (m_Parameters.length > 0) {
+      if (m_Parameters[0].startsWith("run:"))
+        panel.runUnsafe(new PlaceholderFile(m_Parameters[0].substring(4)));
+      else if (m_Parameters[0].startsWith("load:"))
+        panel.loadUnsafe(new PlaceholderFile(m_Parameters[0].substring(5)));
+      else
+        panel.loadUnsafe(new PlaceholderFile(m_Parameters[0]));
+    }
   }
 
   /**

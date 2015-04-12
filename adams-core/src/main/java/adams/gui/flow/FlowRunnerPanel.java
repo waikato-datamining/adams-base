@@ -15,40 +15,9 @@
 
 /**
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.Pausable;
 import adams.core.Properties;
@@ -77,6 +46,8 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.StatusProcessor;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
@@ -85,6 +56,36 @@ import adams.gui.core.ToolBarPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.tools.LogEntryViewerPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Panel that allows the execution of flows.
@@ -715,8 +716,35 @@ public class FlowRunnerPanel
       updateActions();
     }
     else {
-      load(m_FileChooser.getReaderForFile(file), file);
+      load(m_FileChooser.getReaderForFile(file), file, false);
     }
+  }
+
+  /**
+   * Attempts to load/run the file. If non-existent, then a new flow will be
+   * created and the current filename set to the provided one.
+   *
+   * @param file	the file to load/run
+   */
+  public void runUnsafe(File file) {
+    if (!file.exists()) {
+      reset();
+      setCurrentFile(new File(file.getAbsolutePath()));
+      updateActions();
+    }
+    else {
+      load(m_FileChooser.getReaderForFile(file), file, true);
+    }
+  }
+
+  /**
+   * Loads a flow.
+   *
+   * @param reader	the reader to use
+   * @param file	the flow to load
+   */
+  protected void load(final FlowReader reader, final File file) {
+    load(reader, file, false);
   }
 
   /**
@@ -725,7 +753,7 @@ public class FlowRunnerPanel
    * @param reader	the reader to use
    * @param file	the flow to load
    */
-  protected void load(final FlowReader reader, final File file) {
+  protected void load(final FlowReader reader, final File file, final boolean execute) {
     SwingWorker		worker;
 
     m_RunningSwingWorker = true;
@@ -757,7 +785,11 @@ public class FlowRunnerPanel
 
       @Override
       protected void done() {
+        boolean      canExecute;
+        String       msg;
+
 	m_RunningSwingWorker = false;
+        canExecute           = execute && m_Errors.isEmpty();
 
 	if (m_Flow == null) {
 	  if (m_Errors.isEmpty())
@@ -772,14 +804,22 @@ public class FlowRunnerPanel
 	  setCurrentDirectory(file.getParentFile());
 	  if (m_RecentFilesHandler != null)
 	    m_RecentFilesHandler.addRecentItem(file);
-	  if (!m_Warnings.isEmpty())
-	    GUIHelper.showErrorMessage(
-		m_Self, "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n"));
+	  if (!m_Warnings.isEmpty()) {
+            msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
+            if (canExecute)
+              ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+            else
+              GUIHelper.showErrorMessage(m_Self, msg);
+          }
 	}
 
 	update();
 
         super.done();
+
+        // execute flow?
+        if (canExecute)
+          FlowRunnerPanel.this.run();
       }
     };
     worker.execute();
