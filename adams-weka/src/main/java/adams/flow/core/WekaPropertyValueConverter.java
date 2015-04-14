@@ -19,6 +19,7 @@
  */
 package adams.flow.core;
 
+import adams.core.option.OptionUtils;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.classifiers.Classifier;
@@ -28,9 +29,13 @@ import weka.filters.Filter;
 import adams.core.ClassLocator;
 import adams.core.option.WekaCommandLineHandler;
 
+import java.lang.reflect.Array;
+
 /**
  * Handler for WEKA classes.
- * 
+ * Values for arrays are assumed to be blank-separated strings (one element
+ * per array value).
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -60,6 +65,10 @@ public class WekaPropertyValueConverter
    */
   @Override
   public boolean handles(Class cls) {
+    // array?
+    if (cls.isArray())
+      return handles(cls.getComponentType());
+
     if (ClassLocator.hasInterface(OptionHandler.class, cls))
       return true;
     if (cls == Classifier.class)
@@ -86,6 +95,19 @@ public class WekaPropertyValueConverter
    */
   @Override
   public Object convert(Class cls, String value) throws Exception {
+    Object      result;
+    String[]    values;
+    int         i;
+
+    // array?
+    if (cls.isArray()) {
+      values = OptionUtils.splitOptions(value);
+      result = Array.newInstance(cls.getComponentType(), values.length);
+      for (i = 0; i < values.length; i++)
+        Array.set(result, i, convert(cls.getComponentType(), values[i]));
+      return result;
+    }
+
     return m_CommandLineHandler.fromCommandLine(value);
   }
 }

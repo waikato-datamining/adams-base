@@ -15,17 +15,22 @@
 
 /**
  * MOAPropertyValueConverter.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
+import adams.core.option.OptionUtils;
 import moa.AbstractMOAObject;
 import adams.core.ClassLocator;
 import adams.core.option.MOACommandLineHandler;
 
+import java.lang.reflect.Array;
+
 /**
  * Handler for MOA classes.
- * 
+ * Values for arrays are assumed to be blank-separated strings (one element
+ * per array value).
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -55,6 +60,10 @@ public class MOAPropertyValueConverter
    */
   @Override
   public boolean handles(Class cls) {
+    // array?
+    if (cls.isArray())
+      return handles(cls.getComponentType());
+
     if (ClassLocator.isSubclass(AbstractMOAObject.class, cls))
       return true;
 
@@ -71,6 +80,19 @@ public class MOAPropertyValueConverter
    */
   @Override
   public Object convert(Class cls, String value) throws Exception {
+    Object      result;
+    String[]    values;
+    int         i;
+
+    // array?
+    if (cls.isArray()) {
+      values = OptionUtils.splitOptions(value);
+      result = Array.newInstance(cls.getComponentType(), values.length);
+      for (i = 0; i < values.length; i++)
+        Array.set(result, i, convert(cls.getComponentType(), values[i]));
+      return result;
+    }
+
     return m_CommandLineHandler.fromCommandLine(value);
   }
 }

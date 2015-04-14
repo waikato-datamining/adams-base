@@ -141,14 +141,8 @@ public abstract class AbstractCallableActorPropertyUpdater
       }
       else {
 	m_Container = PropertyPath.find(m_CallableActor, m_Property);
-	if (m_Container == null) {
+	if (m_Container == null)
 	  result = "Cannot find property '" + m_Property + "' in callable actor '" + m_ActorName + "'!";
-	}
-	else {
-	  cls = m_Container.getReadMethod().getReturnType();
-	  if (cls.isArray())
-	    result = "Property '" + m_Property + "' is an array!";
-	}
       }
     }
 

@@ -128,7 +128,8 @@ public class UpdateProperty
   @Override
   public String globalInfo() {
     return
-        "Updates the property of the object passing through with the specified value.";
+        "Updates the property of the object passing through with the specified value.\n"
+      + "Use blank-separated string for updating arrays.";
   }
 
   /**
@@ -294,21 +295,14 @@ public class UpdateProperty
   protected String doExecute() {
     String	result;
     Object      obj;
-    Class       cls;
 
     result = null;
 
     try {
       obj = m_InputToken.getPayload();
       m_Container = PropertyPath.find(obj, m_Property);
-      if (m_Container == null) {
+      if (m_Container == null)
         result = "Cannot find property '" + m_Property + "' in class '" + obj.getClass().getName() + "'!";
-      }
-      else {
-        cls = m_Container.getReadMethod().getReturnType();
-        if (cls.isArray())
-          result = "Property '" + m_Property + "' is an array!";
-      }
       if (result == null)
         updateProperty(m_Value);
     }

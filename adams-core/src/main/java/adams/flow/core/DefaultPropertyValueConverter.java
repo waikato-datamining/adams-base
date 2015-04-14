@@ -15,18 +15,22 @@
 
 /**
  * DefaultPropertyValueConverter.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
-
-import java.io.File;
 
 import adams.core.ClassLocator;
 import adams.core.base.BaseObject;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
+
+import java.io.File;
+import java.lang.reflect.Array;
 
 /**
  * Default handler for primitives.
+ * Values for arrays are assumed to be blank-separated strings (one element
+ * per array value).
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -45,6 +49,10 @@ public class DefaultPropertyValueConverter
    */
   @Override
   public boolean handles(Class cls) {
+    // array?
+    if (cls.isArray())
+      return handles(cls.getComponentType());
+
     // boolean
     if ((cls == Boolean.class) || (cls == Boolean.TYPE))
       return true;
@@ -90,9 +98,20 @@ public class DefaultPropertyValueConverter
   @Override
   public Object convert(Class cls, String value) throws Exception {
     Object	result;
+    String[]    values;
+    int         i;
     
     result = null;
-    
+
+    // array?
+    if (cls.isArray()) {
+      values = OptionUtils.splitOptions(value);
+      result = Array.newInstance(cls.getComponentType(), values.length);
+      for (i = 0; i < values.length; i++)
+        Array.set(result, i, convert(cls.getComponentType(), values[i]));
+      return result;
+    }
+
     // boolean
     if ((cls == Boolean.class) || (cls == Boolean.TYPE))
       result = new Boolean(value);
@@ -122,7 +141,7 @@ public class DefaultPropertyValueConverter
       result = new PlaceholderFile(value).getAbsoluteFile();
     // BaseObject (or derived class)
     else if (ClassLocator.isSubclass(BaseObject.class, cls)) {
-      result = (BaseObject) cls.newInstance();
+      result = cls.newInstance();
       ((BaseObject) result).setValue(value);
     }
 
