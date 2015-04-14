@@ -242,8 +242,8 @@ public class DumpVariables
     row.addCell("V").setContent("Value");
     for (String name: names) {
       row = sheet.addRow();
-      row.addCell("K").setContent(name);
-      row.addCell("V").setContent(var.get(name));
+      row.addCell("K").setContentAsString(name);
+      row.addCell("V").setContentAsString(var.get(name));
     }
     m_OutputToken = new Token(sheet);
 

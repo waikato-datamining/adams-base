@@ -297,11 +297,11 @@ public class DumpStorage
     row.addCell("V").setContent("Value");
     for (StorageName name: names) {
       row = sheet.addRow();
-      row.addCell("K").setContent(name.getValue());
+      row.addCell("K").setContentAsString(name.getValue());
       if (m_Cache.isEmpty())
-        row.addCell("V").setContent("" + var.get(name));
+        row.addCell("V").setContentAsString("" + var.get(name));
       else
-        row.addCell("V").setContent("" + var.get(m_Cache, name));
+        row.addCell("V").setContentAsString("" + var.get(m_Cache, name));
     }
     m_OutputToken = new Token(sheet);
 
