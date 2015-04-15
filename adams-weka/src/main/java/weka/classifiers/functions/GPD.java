@@ -160,8 +160,7 @@ implements WeightedInstancesHandler, OptionHandler, TechnicalInformationHandler
   /** The vector of target values. */
   protected double[] m_t;
 
-  protected double[][] m_chol;
-  protected double[][] m_L;
+
 
   /**
    * Returns a string describing classifier
@@ -343,9 +342,8 @@ implements WeightedInstancesHandler, OptionHandler, TechnicalInformationHandler
     }
 
     //solve(a,m_t);
-
+    double[][] m_chol;
     m_chol = choleskyDecomposition(a);
-    m_L = null;
     m_t = solveChol(m_chol,m_t);
 
 
