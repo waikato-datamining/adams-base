@@ -15,14 +15,9 @@
 
 /**
  * SpreadSheetTransformCells.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 
 import adams.core.DateTime;
 import adams.core.QuickInfoHelper;
@@ -46,6 +41,11 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -819,6 +819,8 @@ public class SpreadSheetTransformCells
     if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !m_Stopped) {
       synchronized(m_CallableActor) {
 	while (cells.hasNext()) {
+          if (m_Stopped)
+            return null;
 	  result = transformCell(cells.next(), sheetNew);
 	  if (result != null)
 	    break;
