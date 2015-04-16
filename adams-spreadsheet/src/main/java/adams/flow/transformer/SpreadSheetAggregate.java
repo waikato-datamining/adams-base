@@ -15,16 +15,9 @@
 
 /**
  * SpreadSheetAggregate.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.set.hash.TIntHashSet;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
@@ -35,6 +28,12 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.statistics.StatUtils;
 import adams.flow.core.Token;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.set.hash.TIntHashSet;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -434,6 +433,8 @@ public class SpreadSheetAggregate
       // data
       if (rows != null) {
 	for (String key: rows.getKeys()) {
+          if (m_Stopped)
+            return null;
 	  rowNew = aggregated.addRow();
 	  subset = rows.getRows(key);
 	  // keys
@@ -464,7 +465,9 @@ public class SpreadSheetAggregate
 	}
 	// aggregates
 	for (int index: agg) {
-	  aggs = computeAggregates(input, null, index); 
+          if (m_Stopped)
+            return null;
+	  aggs = computeAggregates(input, null, index);
 	  for (Aggregate a: m_Aggregates) {
 	    if (aggs.get(agg) instanceof Integer)
 	      rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
