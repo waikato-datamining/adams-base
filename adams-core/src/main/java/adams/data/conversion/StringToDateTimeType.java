@@ -15,22 +15,23 @@
 
 /**
  * StringToDateTimeType.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Date;
-
-import jodd.datetime.JDateTime;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
 import adams.core.DateTimeType;
+import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
 import adams.data.DateFormatString;
+import jodd.datetime.JDateTime;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -244,6 +245,8 @@ public class StringToDateTimeType
 	return BaseTime.class;
       case JULIANDATE:
 	return Double.class;
+      case SERIAL_DATETIME:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -306,6 +309,8 @@ public class StringToDateTimeType
 	  return new BaseTime(date);
 	case JULIANDATE:
 	  return new JDateTime(date).getJulianDateDouble();
+        case SERIAL_DATETIME:
+          return new Double(DateUtils.msecToSerialDate(date.getTime()));
 	default:
 	  throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
       }

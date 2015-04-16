@@ -19,9 +19,6 @@
  */
 package adams.flow.transformer;
 
-import java.lang.reflect.Array;
-import java.util.Date;
-
 import adams.core.DateTime;
 import adams.core.DateTimeType;
 import adams.core.QuickInfoHelper;
@@ -31,6 +28,9 @@ import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
 import adams.data.conversion.ConvertDateTimeType;
 import adams.flow.core.Token;
+
+import java.lang.reflect.Array;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -248,6 +248,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseTime[].class};
       case JULIANDATE:
 	return new Class[]{Double[].class};
+      case SERIAL_DATETIME:
+	return new Class[]{Double[].class};
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -278,6 +280,8 @@ public class DateTimeTypeDifference
       case BASETIME:
 	return new Class[]{BaseTime.class};
       case JULIANDATE:
+	return new Class[]{Double.class};
+      case SERIAL_DATETIME:
 	return new Class[]{Double.class};
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);

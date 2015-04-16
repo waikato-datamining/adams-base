@@ -19,20 +19,21 @@
  */
 package adams.data.conversion;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import jodd.datetime.JDateTime;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
 import adams.core.DateTimeType;
+import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
 import adams.data.DateFormatString;
+import jodd.datetime.JDateTime;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  <!-- globalinfo-start -->
@@ -317,6 +318,8 @@ public class ExtractDateTimeField
 	return BaseTime.class;
       case JULIANDATE:
 	return Double.class;
+      case SERIAL_DATETIME:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -390,6 +393,8 @@ public class ExtractDateTimeField
 	break;
       case JULIANDATE:
 	m_Calendar.setTime(new JDateTime((Double) m_Input).convertToDate());
+      case SERIAL_DATETIME:
+	m_Calendar.setTime(new Date(DateUtils.serialDateToMsec((Double) m_Input)));
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }

@@ -15,9 +15,13 @@
 
 /**
  * DateUtils.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.annotation.MixedCopyright;
+import adams.core.management.LocaleHelper;
+import adams.data.DateFormatString;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,15 +30,17 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import adams.core.management.LocaleHelper;
-import adams.data.DateFormatString;
-
 /**
  * A helper class for common Date-related operations.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@MixedCopyright(
+  copyright = "Apache Foundation, POI 3.11",
+  license = License.APACHE2,
+  note = "Excel date handling taken from: org.apache.poi.ss.usermodel.DateUtil"
+)
 public class DateUtils {
 
   /** the timezone to use. */
@@ -42,6 +48,13 @@ public class DateUtils {
   
   /** the locale to use. */
   protected static Locale m_Locale = LocaleHelper.getSingleton().getDefault();
+
+  public static final int BAD_DATE = -1;   // used to specify that date is invalid
+  public static final int SECONDS_PER_MINUTE = 60;
+  public static final int MINUTES_PER_HOUR = 60;
+  public static final int HOURS_PER_DAY = 24;
+  public static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
+  public static final long DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
 
   /**
    * Sets the time zone to use globally.
@@ -229,7 +242,7 @@ public class DateUtils {
    * Returns whether the "check" date is before the "base" date.
    * 
    * @param base	the basis of the comparison
-   * @param toCheck	the date to compare with
+   * @param check	the date to compare with
    * @return		true if "check" is before "base"
    */
   public static boolean isBefore(Date base, Date check) {
@@ -240,7 +253,7 @@ public class DateUtils {
    * Returns whether the "check" date is after the "base" date.
    * 
    * @param base	the basis of the comparison
-   * @param toCheck	the date to compare with
+   * @param check	the date to compare with
    * @return		true if "check" is after "base"
    */
   public static boolean isAfter(Date base, Date check) {
@@ -447,5 +460,182 @@ public class DateUtils {
     cal.set(Calendar.MILLISECOND, 0);
 
     return cal.getTime();
+  }
+
+  // set HH:MM:SS fields of cal to 00:00:00:000
+  protected static Calendar dayStart(final Calendar cal) {
+    cal.get(Calendar
+      .HOUR_OF_DAY);   // force recalculation of internal fields
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    cal.get(Calendar
+      .HOUR_OF_DAY);   // force recalculation of internal fields
+    return cal;
+  }
+
+  /**
+   * Given a Calendar, return the number of days since 1900/12/31.
+   *
+   * @return days number of days since 1900/12/31
+   * @param  cal the Calendar
+   * @exception IllegalArgumentException if date is invalid
+   */
+  protected static int absoluteDay(Calendar cal, boolean use1904windowing) {
+    return cal.get(Calendar.DAY_OF_YEAR)
+      + daysInPriorYears(cal.get(Calendar.YEAR), use1904windowing);
+  }
+
+  /**
+   * Return the number of days in prior years since 1900
+   *
+   * @return    days  number of days in years prior to yr.
+   * @param     yr    a year (1900 < yr < 4000)
+   * @param use1904windowing
+   * @exception IllegalArgumentException if year is outside of range.
+   */
+  protected static int daysInPriorYears(int yr, boolean use1904windowing) {
+    if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1900)) {
+      throw new IllegalArgumentException("'year' must be 1900 or greater");
+    }
+
+    int yr1  = yr - 1;
+    int leapDays =   yr1 / 4   // plus julian leap days in prior years
+      - yr1 / 100 // minus prior century years
+      + yr1 / 400 // plus years divisible by 400
+      - 460;      // leap days in previous 1900 years
+
+    return 365 * (yr - (use1904windowing ? 1904 : 1900)) + leapDays;
+  }
+
+  protected static double internalGetExcelDate(Calendar date, boolean use1904windowing) {
+    if ((!use1904windowing && date.get(Calendar.YEAR) < 1900) ||
+      (use1904windowing && date.get(Calendar.YEAR) < 1904)) {
+      return BAD_DATE;
+    }
+    // Because of daylight time saving we cannot use
+    //     date.getTime() - calStart.getTimeInMillis()
+    // as the difference in milliseconds between 00:00 and 04:00
+    // can be 3, 4 or 5 hours but Excel expects it to always
+    // be 4 hours.
+    // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
+    // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
+    double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60
+      + date.get(Calendar.MINUTE)
+    ) * 60 + date.get(Calendar.SECOND)
+    ) * 1000 + date.get(Calendar.MILLISECOND)
+    ) / ( double ) DAY_MILLISECONDS;
+    Calendar calStart = dayStart(date);
+
+    double value = fraction + absoluteDay(calStart, use1904windowing);
+
+    if (!use1904windowing && value >= 60) {
+      value++;
+    } else if (use1904windowing) {
+      value--;
+    }
+
+    return value;
+  }
+
+  /**
+   * Converts the milli-seconds (Java Epoch) to a Excel serial date (days
+   * since 0-jan-1900).
+   *
+   * @param msec      the java epoch in msec
+   * @return          the serial date
+   */
+  public static double msecToSerialDate(long msec) {
+    return msecToSerialDate(new Date(msec));
+  }
+
+  /**
+   * Converts the date to a Excel serial date (days since 0-jan-1900).
+   *
+   * @param date      the date
+   * @return          the serial date
+   */
+  public static double msecToSerialDate(Date date) {
+    Calendar calStart = new GregorianCalendar();
+    calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
+    return internalGetExcelDate(calStart, false);
+  }
+
+    /**
+     * Given a double, checks if it is a valid Excel date.
+     *
+     * @return true if valid
+     * @param  value the double value
+     */
+    protected static boolean isValidExcelDate(double value) {
+        return (value > -Double.MIN_VALUE);
+    }
+
+    protected static void setCalendar(Calendar calendar, int wholeDays,
+            int millisecondsInDay, boolean use1904windowing, boolean roundSeconds) {
+        int startYear = 1900;
+        int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
+        if (use1904windowing) {
+            startYear = 1904;
+            dayAdjust = 1; // 1904 date windowing uses 1/2/1904 as the first day
+        }
+        else if (wholeDays < 61) {
+            // Date is prior to 3/1/1900, so adjust because Excel thinks 2/29/1900 exists
+            // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
+            dayAdjust = 0;
+        }
+        calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, millisecondsInDay);
+        if (roundSeconds) {
+            calendar.add(Calendar.MILLISECOND, 500);
+            calendar.clear(Calendar.MILLISECOND);
+        }
+    }
+
+    /**
+     * Get EXCEL date as Java Calendar with given time zone.
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @param timeZone The TimeZone to evaluate the date in
+     * @param roundSeconds round to closest second
+     * @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    protected static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone, boolean roundSeconds) {
+        if (!isValidExcelDate(date)) {
+            return null;
+        }
+        int wholeDays = (int)Math.floor(date);
+        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+      Calendar calendar;
+      if (timeZone != null) {
+            calendar = new GregorianCalendar(timeZone);
+        } else {
+            calendar = new GregorianCalendar();     // using default time-zone
+        }
+        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
+        return calendar;
+    }
+
+  /**
+   * Converts the Excel serial date (days since 0-jan-1900) to a Java date.
+   *
+   * @param serial    the serial date
+   * @return          the date
+   */
+  public static Date serialDateToDate(double serial) {
+    return new Date(serialDateToMsec(serial));
+  }
+
+  /**
+   * Converts the Excel serial date (days since 0-jan-1900) to milli-seconds
+   * (Java Epoch).
+   *
+   * @param serial    the serial date
+   * @return          the java epoch in msec
+   */
+  public static long serialDateToMsec(double serial) {
+    return getJavaCalendar(serial, false, null, false).getTimeInMillis();
   }
 }

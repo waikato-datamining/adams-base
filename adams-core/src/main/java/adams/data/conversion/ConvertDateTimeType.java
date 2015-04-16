@@ -15,20 +15,21 @@
 
 /**
  * ConvertDateTimeType.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Date;
-
-import jodd.datetime.JDateTime;
 import adams.core.DateTime;
 import adams.core.DateTimeType;
+import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
+import jodd.datetime.JDateTime;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -195,6 +196,8 @@ public class ConvertDateTimeType
 	return BaseTime.class;
       case JULIANDATE:
 	return Double.class;
+      case SERIAL_DATETIME:
+	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -225,6 +228,8 @@ public class ConvertDateTimeType
       case BASETIME:
 	return BaseTime.class;
       case JULIANDATE:
+	return Double.class;
+      case SERIAL_DATETIME:
 	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
@@ -273,6 +278,9 @@ public class ConvertDateTimeType
       case JULIANDATE:
 	msecs = new JDateTime((Double) m_Input).convertToDate().getTime();
 	break;
+      case SERIAL_DATETIME:
+        msecs = DateUtils.serialDateToMsec((Double) m_Input);
+	break;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -296,6 +304,8 @@ public class ConvertDateTimeType
 	return new BaseTime(new Time(msecs));
       case JULIANDATE:
 	return new JDateTime(new Date(msecs)).getJulianDateDouble();
+      case SERIAL_DATETIME:
+        return DateUtils.msecToSerialDate(msecs);
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }

@@ -15,17 +15,17 @@
 
 /**
  * ConvertDateTimeTypeTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import java.util.Date;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.DateTimeType;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Date;
 
 /**
  * Tests the ConvertDateTimeType conversion.
@@ -70,7 +70,7 @@ public class ConvertDateTimeTypeTest
   protected Conversion[] getRegressionSetups() {
     ConvertDateTimeType[]	result;
     
-    result = new ConvertDateTimeType[5];
+    result = new ConvertDateTimeType[6];
     result[0] = new ConvertDateTimeType();
     result[1] = new ConvertDateTimeType();
     result[1].setOutputDateTimeType(DateTimeType.SECONDS);
@@ -80,7 +80,9 @@ public class ConvertDateTimeTypeTest
     result[3].setOutputDateTimeType(DateTimeType.TIME);
     result[4] = new ConvertDateTimeType();
     result[4].setOutputDateTimeType(DateTimeType.DATE);
-    
+    result[5] = new ConvertDateTimeType();
+    result[5].setOutputDateTimeType(DateTimeType.SERIAL_DATETIME);
+
     return result;
   }
 
