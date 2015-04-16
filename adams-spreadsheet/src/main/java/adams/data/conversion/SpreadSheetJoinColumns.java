@@ -15,17 +15,17 @@
 
 /**
  * SpreadSheetJoinColumns.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
-
-import java.util.HashSet;
 
 import adams.core.Range;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -249,6 +249,8 @@ public class SpreadSheetJoinColumns
     n            = 0;
     first        = true;
     for (i = 0; i < input.getColumnCount(); i++) {
+      if (m_Stopped)
+        return null;
       if (hashMerge.contains(i)) {
 	if (headerMerged != null) {
 	  indexMerged  = n;
@@ -268,10 +270,14 @@ public class SpreadSheetJoinColumns
     
     // data
     for (DataRow rowInput: input.rows()) {
+      if (m_Stopped)
+        return null;
       rowOutput = result.addRow();
       first     = true;
       n         = 0;
       for (i = 0; i < input.getColumnCount(); i++) {
+        if (m_Stopped)
+          return null;
 	if (hashMerge.contains(i)) {
 	  content = SpreadSheet.MISSING_VALUE;
 	  if (rowInput.hasCell(i) && !rowInput.getCell(i).isMissing())
