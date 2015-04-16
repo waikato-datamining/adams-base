@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetQueryTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -128,7 +128,7 @@ public class SpreadSheetQueryTest
       // Flow.SpreadSheetQuery
       adams.flow.transformer.SpreadSheetQuery spreadsheetquery7 = new adams.flow.transformer.SpreadSheetQuery();
       argOption = (AbstractArgumentOption) spreadsheetquery7.getOptionManager().findByProperty("query");
-      spreadsheetquery7.setQuery((adams.parser.SpreadSheetQueryText) argOption.valueOf("SELECT RUN,SPEED1 AS SPEED,SENS AS SENSOR,TIME,T20BOLT AS CLASS\nWHERE (SPEED1 < 6)\nAND (RUN >= 10)\nORDER BY T20BOLT"));
+      spreadsheetquery7.setQuery((adams.parser.SpreadSheetQueryText) argOption.valueOf("SELECT RUN,SPEED1 AS SPEED,SENS AS SENSOR,TIME,T20BOLT AS CLASS\nWHERE (SPEED1 < 6)\nAND (RUN >= 10)\nORDER BY CLASS"));
       actors1[2] = spreadsheetquery7;
 
       // Flow.DumpFile

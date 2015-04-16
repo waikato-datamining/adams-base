@@ -15,23 +15,23 @@
 
 /*
  * SpreadSheetQuery.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.logging.Level;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.parser.spreadsheetquery.Parser;
 import adams.parser.spreadsheetquery.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -133,6 +133,7 @@ import adams.parser.spreadsheetquery.Scanner;
  * - timestamp format: 'yyyy-MM-dd HH:mm'<br/>
  * - STRING is referring to characters enclosed by double quotes<br/>
  * - COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')<br/>
+ * - columns used in the ORDER BY clause must be present in the SELECT part; also, any alias given to them in SELECT must be used instead of original column name<br/>
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -318,6 +319,7 @@ public class SpreadSheetQuery
 	  + "- timestamp format: 'yyyy-MM-dd HH:mm'\n"
 	  + "- STRING is referring to characters enclosed by double quotes\n"
 	  + "- COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')\n"
+	  + "- columns used in the ORDER BY clause must be present in the SELECT part; also, any alias given to them in SELECT must be used instead of original column name\n"
 	  ;
   }
 

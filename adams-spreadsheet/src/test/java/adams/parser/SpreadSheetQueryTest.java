@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetQueryTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -110,7 +110,7 @@ public class SpreadSheetQueryTest
 	  "SELECT duration as dur",				//  2
 	  "SELECT duration,class ORDER by class",			//  3
 	  "SELECT duration,wage-increase-first-year,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE (duration >= 2)",			//  4
-	  "SELECT duration as dur,working-hours,bereavement-assistance,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\") ORDER by class",			//  5
+	  "SELECT duration as dur,working-hours,bereavement-assistance,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\") ORDER by dur",			//  5
 	  "UPDATE SET duration = 3.5",				//  6
 	  "UPDATE SET duration = 3.5 WHERE (duration >= 2)",	//  7
 	  "UPDATE SET duration = 3.5 WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp \"^yes$\")",			//  8

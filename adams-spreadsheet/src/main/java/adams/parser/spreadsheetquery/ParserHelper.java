@@ -15,7 +15,7 @@
 
 /**
  * ParserHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetquery;
 
@@ -512,20 +512,6 @@ public class ParserHelper
     
     SubProcess sub = new SubProcess();
     if (m_Select) {
-      // sorting?
-      if (m_SortColumns.size() > 0) {
-        SpreadSheetSort sort = new SpreadSheetSort();
-        SpreadSheetColumnIndex[] cols = new SpreadSheetColumnIndex[m_SortColumns.size()];
-        BaseBoolean[] order = new BaseBoolean[m_SortColumns.size()];
-        for (int i = 0; i < m_SortColumns.size(); i++) {
-          cols[i]  = new SpreadSheetColumnIndex(m_SortColumns.get(i));
-          order[i] = new BaseBoolean("" + m_SortAsc.get(i));
-        }
-        sort.setNoCopy(true);
-        sort.setSortColumn(cols);
-        sort.setSortOrder(order);
-        sub.add(sort);
-      }
       // subset of columns?
       if (!m_AllColumns) {
         SpreadSheetReorderColumns reorder = new SpreadSheetReorderColumns();
@@ -554,6 +540,20 @@ public class ParserHelper
 	SpreadSheetRowFilter subsample = new SpreadSheetRowFilter();
 	subsample.setFinder(m_Subsample);
 	sub.add(subsample);
+      }
+      // sorting?
+      if (m_SortColumns.size() > 0) {
+        SpreadSheetSort sort = new SpreadSheetSort();
+        SpreadSheetColumnIndex[] cols = new SpreadSheetColumnIndex[m_SortColumns.size()];
+        BaseBoolean[] order = new BaseBoolean[m_SortColumns.size()];
+        for (int i = 0; i < m_SortColumns.size(); i++) {
+          cols[i]  = new SpreadSheetColumnIndex(m_SortColumns.get(i));
+          order[i] = new BaseBoolean("" + m_SortAsc.get(i));
+        }
+        sort.setNoCopy(true);
+        sort.setSortColumn(cols);
+        sort.setSortOrder(order);
+        sub.add(sort);
       }
       // limit?
       if (m_LimitMax > 0) {

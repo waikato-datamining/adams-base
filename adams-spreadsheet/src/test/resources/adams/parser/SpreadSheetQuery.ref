@@ -224,31 +224,31 @@
 3,5,5,5,""
 3,6,6,4,""
 
-'SELECT duration as dur,working-hours,bereavement-assistance,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp "^yes$") ORDER by class: dur,working-hours,bereavement-assistance,wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment
-1,40,"",2.1,"","",tc
-3,35,yes,2,2.5,"",""
-2,38,"",2.5,2.5,"",""
-1,40,no,2,"","",tc
+'SELECT duration as dur,working-hours,bereavement-assistance,wage-increase-first-year as wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment WHERE ((duration >= 2) or (working-hours < 40) or (working-hours < 38)) and not (bereavement-assistance regexp "^yes$") ORDER by dur: dur,working-hours,bereavement-assistance,wfy,wage-increase-second-year,wage-increase-third-year,cost-of-living-adjustment
+1,36,"",3,"","",none
+1,35,"",2.8,"","",""
+1,38,no,2,"","",none
+1,38,"",6,"","",""
 1,38,"",2.8,"","",none
-1,"",no,4,"","",none
-2,39,yes,2.5,2.5,"",tc
+2,35,"",4.5,5.8,"",""
+2,35,"",2,2.5,"",""
+2,38,"",6.4,6.4,"",""
+2,40,"",3.5,4,"",none
+2,35,"",4,5,"",tcf
+2,38,"",4.3,4.4,"",""
+2,40,"",2.5,3,"",""
+2,40,"",4.5,4,"",""
+2,"","",4.5,4.5,"",tcf
+2,38,"",2.5,2.5,"",""
+2,40,"",4,5,"",none
 2,40,"",4,4,"",none
 2,40,"",4.5,4,"",""
-1,40,yes,5,"","",""
-2,35,"",4.5,5.8,"",""
-"",38,yes,"","","",""
-3,"",yes,3.7,4,5,tc
-3,40,yes,4.5,4.5,5,""
-3,"",yes,4,5,5,tc
-3,36,yes,3.5,4,4.6,none
-3,37,yes,3.5,4,5.1,tcf
-1,36,"",3,"","",none
-2,38,"",4.3,4.4,"",""
-3,40,"",4.5,4.5,5,none
-2,40,yes,4.5,4,"",none
 2,38,"",4.6,4.6,"",tcf
 2,38,"",5,4.5,"",none
 2,"","",7,5.3,"",""
+3,40,"",6.9,4.8,2.3,""
+3,27,"",3.5,4,4.6,tcf
+3,40,"",4.5,4.5,5,none
 3,40,"",4,3.5,"",none
 3,38,"",5,4.4,"",none
 
