@@ -15,12 +15,9 @@
 
 /**
  * SpreadSheetConvertCells.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.Date;
-import java.util.Iterator;
 
 import adams.core.DateTime;
 import adams.core.QuickInfoHelper;
@@ -36,6 +33,9 @@ import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
 import adams.flow.core.Token;
+
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -517,6 +517,8 @@ public class SpreadSheetConvertCells
     
     cells = m_Finder.findCells(sheetNew);
     while (cells.hasNext() && !m_Stopped) {
+      if (m_Stopped)
+        return null;
       result = convertCell(cells.next(), sheetNew);
       if (result != null)
 	break;
