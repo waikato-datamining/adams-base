@@ -15,18 +15,19 @@
 
 /**
  * AbstractConversion.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
-
-import java.util.logging.Level;
 
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.flow.core.Actor;
 import adams.flow.core.Unknown;
+
+import java.util.logging.Level;
 
 /**
  * Ancestor for all conversions.
@@ -183,6 +184,7 @@ public abstract class AbstractConversion
   public String convert() {
     String	result;
     String	msg;
+    boolean     output;
 
     m_Stopped = false;
     
@@ -213,9 +215,13 @@ public abstract class AbstractConversion
 	  getLogger().info("Output: " + m_Output);
       }
       catch (Exception e) {
+        output = true;
+        if ((m_Owner instanceof Actor) && ((Actor) m_Owner).getSilent())
+          output = false;
 	msg    = "Failed to convert data (" + Utils.classToString(accepts()) + " -> " + Utils.classToString(generates()) + "):";
 	result = msg + " " + e;
-	getLogger().log(Level.SEVERE, msg, e);
+        if (output)
+          getLogger().log(Level.SEVERE, msg, e);
       }
     }
 
