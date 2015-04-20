@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSetCell.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -117,7 +117,7 @@ public class SpreadSheetSetCell
   /** the column of the cell to obtain. */
   protected SpreadSheetColumnRange m_Column;
 
-  /** the value to return if cell is empty. */
+  /** the value to set. */
   protected String m_Value;
   
   /** whether to set value as string. */
