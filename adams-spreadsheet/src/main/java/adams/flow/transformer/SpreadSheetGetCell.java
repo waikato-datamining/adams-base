@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetGetCell.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,7 +28,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 
 /**
  <!-- globalinfo-start -->
- * Extracts a single value from a spreadsheet.
+ * Extracts one or more values from a spreadsheet.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -132,7 +132,7 @@ public class SpreadSheetGetCell
    */
   @Override
   public String globalInfo() {
-    return "Extracts a single value from a spreadsheet.";
+    return "Extracts one or more values from a spreadsheet.";
   }
 
   /**
