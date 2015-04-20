@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	Builds a classifier on a training set, evaluates it on\na separate test set, accessible through the global\nactor \"test\", and then outputs the evaluation \nsummary and also saves the built classifier to a file.
+	Builds a classifier on a training set, evaluates it on\na separate test set, accessible through the callable\nactor \"test\", and then outputs the evaluation \nsummary and also saves the built classifier to a file.
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor

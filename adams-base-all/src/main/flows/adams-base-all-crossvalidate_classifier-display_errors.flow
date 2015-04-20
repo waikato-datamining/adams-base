@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-04-01 09:33:29
+# Date: 2015-04-21 10:40:41
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -99,6 +99,8 @@ adams.flow.control.Flow
 								adams.flow.sink.sequenceplotter.NoMarkers
 							-error-paintlet
 								adams.flow.sink.sequenceplotter.NoErrorPaintlet
+							-mouse-click-action
+								adams.flow.sink.sequenceplotter.NullClickAction
 							-color-provider
 								adams.gui.visualization.core.DefaultColorProvider
 							-overlay-color-provider

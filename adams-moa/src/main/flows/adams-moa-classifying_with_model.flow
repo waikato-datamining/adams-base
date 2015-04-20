@@ -60,9 +60,9 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.control.Trigger
 			-name
-			global actor
+			callable actor
 			-annotation
-			This flow uses a model obtained from a global actor to make \npredictions on a data set (iris.arff) and output the \ngenerated class distributions (the global actor merely loads a\nserialized model in this example).
+			This flow uses a model obtained from a callable actor to make \npredictions on a data set (iris.arff) and output the \ngenerated class distributions (the callable actor merely loads a\nserialized model in this example).
 			-tee
 				adams.flow.source.FileSupplier
 					-file

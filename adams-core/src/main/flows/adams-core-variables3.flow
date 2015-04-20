@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:25:12
+# Date: 2015-04-21 10:43:34
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -48,7 +48,7 @@ adams.flow.control.Flow
 			-var-name
 			val
 			-inc-int
-			@{global:increment}
+			@{callable:increment}
 	-actor
 		adams.flow.control.Trigger
 			-tee
@@ -57,6 +57,8 @@ adams.flow.control.Flow
 					val
 			-tee
 				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

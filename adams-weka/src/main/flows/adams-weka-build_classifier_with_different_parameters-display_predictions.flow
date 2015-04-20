@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	Since only classes implementing the ADAMS OptionHandler can \nhandle variables, the SetProperty transformer can be used to update \nan arbitrary property in a global actor.\nThe SetProperty actor just updates the property whenever a token \npasses through (uses the string representation of this token as value \nfor the property).\nNB: No re-initializations are taking place, just simple setting of a value.\n\nThis example cross-validates J48 on a dataset with three different\nconfidence factors: 0.2, 0.3 and 0.4. Each time outputting the \npredictions of the cross-validation.
+	Since only classes implementing the ADAMS OptionHandler can \nhandle variables, the SetProperty transformer can be used to update \nan arbitrary property in a callable actor.\nThe SetProperty actor just updates the property whenever a token \npasses through (uses the string representation of this token as value \nfor the property).\nNB: No re-initializations are taking place, just simple setting of a value.\n\nThis example cross-validates J48 on a dataset with three different\nconfidence factors: 0.2, 0.3 and 0.4. Each time outputting the \npredictions of the cross-validation.
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor

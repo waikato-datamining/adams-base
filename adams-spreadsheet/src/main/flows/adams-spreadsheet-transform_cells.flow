@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	This flows applies a global MathExpression transformer to all the\ncells in columns 4 and 7. The original and the transformer\nspreadsheet are displayed side-by-side.
+	This flows applies a callable MathExpression transformer to all the\ncells in columns 4 and 7. The original and the transformer\nspreadsheet are displayed side-by-side.
 	-actor
 		adams.flow.standalone.CallableActors
 			-actor

@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	This flow shows how to listen to global log events and process the log records.\nIn this case, the log records are turned into a simple string and displayed.\nNOTE: For speed reasons, log events get discarded when the LogEvent\'s subflow\nis currently busy processing an event.
+	This flow shows how to listen to callable log events and process the log records.\nIn this case, the log records are turned into a simple string and displayed.\nNOTE: For speed reasons, log events get discarded when the LogEvent\'s subflow\nis currently busy processing an event.
 	-actor
 		adams.flow.standalone.Events
 			-actor

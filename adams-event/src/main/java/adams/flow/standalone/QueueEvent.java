@@ -20,8 +20,6 @@
 
 package adams.flow.standalone;
 
-import java.util.logging.Level;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
@@ -35,6 +33,8 @@ import adams.flow.core.EventRunnable;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
