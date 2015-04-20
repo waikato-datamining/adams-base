@@ -15,13 +15,10 @@
 
 /*
  * AbstractDataContainerFileWriter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderDirectory;
@@ -33,6 +30,9 @@ import adams.data.id.DatabaseIDHandler;
 import adams.data.io.output.AbstractDataContainerWriter;
 import adams.data.io.output.MetaFileWriter;
 import adams.flow.core.Token;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * Abstract ancestor for transformer actors that write data containers
@@ -175,6 +175,15 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /**
+   * Returns the default extension to use if none can be found (excl dot).
+   * <br>
+   * Default implementation returns empty string.
+   */
+  protected String getDefaultExtension() {
+    return "";
+  }
+
+  /**
    * Performs the actual writing.
    * 
    * @param conts	the container array (if an array was received)
@@ -186,6 +195,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     PlaceholderFile	file;
     boolean		success;
     String[]		ext;
+    String              actualExt;
 
     result = null;
 
@@ -194,14 +204,25 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
       ext = ((MetaFileWriter) m_Writer).getActualFormatExtensions();
     else
       ext = m_Writer.getFormatExtensions();
+
+    // determine extension to use
+    actualExt = getDefaultExtension();
+    for (String e: ext) {
+      if (e.equals("*"))
+        continue;
+      actualExt = e;
+      break;
+    }
+    if (!actualExt.isEmpty() && !actualExt.startsWith("."))
+      actualExt = "." + actualExt;
     
     // setup writer
     if (m_Writer.isOutputFile()) {
       // gzip compression?
       if ((m_Writer instanceof CompressionSupporter) && ((CompressionSupporter) m_Writer).getUseCompression())
-	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, "." + ext[0] + ".gz"));
+	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, actualExt + ".gz"));
       else
-	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, "." + ext[0]));
+	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, actualExt));
     }
     else {
       file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, null));
