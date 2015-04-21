@@ -15,16 +15,10 @@
 
 /*
  * Switch.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.condition.bool.BooleanCondition;
@@ -41,6 +35,12 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.sink.Null;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -743,5 +743,14 @@ public class Switch
     m_InputToken = null;
 
     super.cleanUp();
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    for (BooleanCondition cond: m_Conditions)
+      cond.stopExecution();
+    super.stopExecution();
   }
 }

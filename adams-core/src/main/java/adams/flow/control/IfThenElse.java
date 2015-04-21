@@ -15,12 +15,10 @@
 
 /*
  * IfThenElse.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -31,6 +29,8 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -606,5 +606,13 @@ public class IfThenElse
     m_InputToken = null;
 
     super.cleanUp();
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
+    super.stopExecution();
   }
 }

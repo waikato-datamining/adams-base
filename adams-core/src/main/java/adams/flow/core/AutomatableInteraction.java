@@ -14,20 +14,19 @@
  */
 
 /**
- * AutomatableInteractiveActor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * AutomatableInteraction.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
+
 package adams.flow.core;
 
 /**
- * Interface for actors that interact with the user, but can also be automated,
- * e.g., for testing purposes.
+ * For classes that can be switched from interactive to automated.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface AutomatableInteractiveActor 
-  extends InteractiveActor, AutomatableInteraction {
+public interface AutomatableInteraction {
 
   /**
    * Sets whether to enable/disable interactiveness.

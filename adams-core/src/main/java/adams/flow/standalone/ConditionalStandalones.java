@@ -15,7 +15,7 @@
 
 /**
  * ConditionalStandalones.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -196,5 +196,13 @@ public class ConditionalStandalones
       return super.doExecute();
     else
       return null;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
+    super.stopExecution();
   }
 }

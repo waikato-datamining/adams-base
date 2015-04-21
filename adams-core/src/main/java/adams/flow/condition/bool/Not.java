@@ -15,7 +15,7 @@
 
 /**
  * Not.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -165,5 +165,12 @@ public class Not
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
     return !m_Condition.evaluate(owner, token);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
   }
 }

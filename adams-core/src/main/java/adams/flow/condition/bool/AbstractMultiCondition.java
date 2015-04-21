@@ -15,7 +15,7 @@
 
 /**
  * AbstractMultiCondition.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -104,5 +104,13 @@ public abstract class AbstractMultiCondition
     }
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    for (BooleanCondition cond: m_Conditions)
+      cond.stopExecution();
   }
 }

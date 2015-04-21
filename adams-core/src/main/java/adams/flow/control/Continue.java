@@ -15,12 +15,10 @@
 
 /*
  * Continue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -31,6 +29,8 @@ import adams.flow.core.Unknown;
 import adams.flow.transformer.AbstractTransformer;
 import adams.parser.BooleanExpressionText;
 import adams.parser.GrammarSupplier;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -382,5 +382,13 @@ public class Continue
       m_OutputToken = null;
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
+    super.stopExecution();
   }
 }

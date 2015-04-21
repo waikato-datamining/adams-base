@@ -15,17 +15,17 @@
 
 /*
  * Count.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.Counting;
 import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -333,5 +333,13 @@ public class Count
       result = m_Condition.setUp(this);
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
+    super.stopExecution();
   }
 }

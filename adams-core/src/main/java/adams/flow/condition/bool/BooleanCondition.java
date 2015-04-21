@@ -15,12 +15,13 @@
 
 /**
  * BooleanCondition.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.ShallowCopySupporter;
+import adams.core.Stoppable;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 
@@ -32,7 +33,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public interface BooleanCondition
-  extends ShallowCopySupporter<BooleanCondition>, QuickInfoSupporter {
+  extends ShallowCopySupporter<BooleanCondition>, QuickInfoSupporter, Stoppable {
 
   /**
    * Returns the quick info string to be displayed in the flow editor.
@@ -79,4 +80,9 @@ public interface BooleanCondition
    * @return		the shallow copy
    */
   public BooleanCondition shallowCopy(boolean expand);
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution();
 }

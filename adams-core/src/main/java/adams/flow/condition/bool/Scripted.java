@@ -15,7 +15,7 @@
 
 /*
  *    Scripted.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -178,5 +178,12 @@ public class Scripted
   @Override
   protected boolean doScriptEvaluate(Actor owner, Token token) {
     return m_ConditionObject.evaluate(owner, token);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_ConditionObject.stopExecution();
   }
 }

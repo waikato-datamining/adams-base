@@ -456,7 +456,7 @@ public class WhileLoop
   @Override
   public void stopExecution() {
     m_Actors.stopExecution();
-
+    m_Condition.stopExecution();
     super.stopExecution();
   }
 }

@@ -15,10 +15,11 @@
 
 /**
  * AbstractBooleanCondition.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
+import adams.core.Stoppable;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
@@ -33,7 +34,7 @@ import adams.flow.core.Token;
  */
 public abstract class AbstractBooleanCondition
   extends AbstractOptionHandler
-  implements BooleanCondition {
+  implements BooleanCondition, Stoppable {
 
   /** for serialization. */
   private static final long serialVersionUID = 1816980432972492738L;
@@ -108,6 +109,15 @@ public abstract class AbstractBooleanCondition
       throw new IllegalStateException(msg);
     
     return doEvaluate(owner, token);
+  }
+
+  /**
+   * Stops the execution.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void stopExecution() {
+    // nothing
   }
 
   /**

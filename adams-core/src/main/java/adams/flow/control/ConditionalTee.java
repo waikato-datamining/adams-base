@@ -15,7 +15,7 @@
 
 /*
  * ConditionalTee.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -199,5 +199,13 @@ public class ConditionalTee
       result = m_Condition.setUp(this);
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Condition.stopExecution();
+    super.stopExecution();
   }
 }

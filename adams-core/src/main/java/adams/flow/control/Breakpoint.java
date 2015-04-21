@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -1574,6 +1574,7 @@ public class Breakpoint
    */
   @Override
   public void stopExecution() {
+    m_Condition.stopExecution();
     if ((m_Frame != null) && (m_Frame.isVisible()))
       m_Frame.setVisible(false);
 
