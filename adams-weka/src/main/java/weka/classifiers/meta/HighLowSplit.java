@@ -429,14 +429,14 @@ public class HighLowSplit
     if (!curropt.isEmpty())
       setHiClassifier((Classifier) handler.fromCommandLine(curropt));
     else {
-      setHiClassifier((Classifier) handler.fromCommandLine(defaultClassifierString() + " " + defaultClassifierOptions()));
+      setHiClassifier((Classifier) handler.fromCommandLine(defaultClassifierString() + " " + Utils.joinOptions(defaultClassifierOptions())));
     }
 
     curropt = Utils.getOption('G', options);
     if (!curropt.isEmpty())
       setLoClassifier((Classifier) handler.fromCommandLine(curropt));
     else {
-      setLoClassifier((Classifier) handler.fromCommandLine(defaultClassifierString() + " " + defaultClassifierOptions()));
+      setLoClassifier((Classifier) handler.fromCommandLine(defaultClassifierString() + " " + Utils.joinOptions(defaultClassifierOptions())));
     }
 
     super.setOptions(options);
