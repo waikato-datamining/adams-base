@@ -27,7 +27,6 @@ import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
@@ -137,12 +136,10 @@ public class SpreadSheetTablePopupMenuItemHelper {
    * @param row		the current row
    * @param column	the current column
    * @param menu	the menu to add the items to
-   * @param caption	the caption for the submenu
    * @param items	the available schemes
    */
-  protected static void addToPopupMenu(SpreadSheetTable table, boolean isRow, int row, int column, JPopupMenu menu, String caption, List<SpreadSheetTablePopupMenuItem> items) {
+  protected static void addToPopupMenu(SpreadSheetTable table, boolean isRow, int row, int column, JPopupMenu menu, List<SpreadSheetTablePopupMenuItem> items) {
     JMenuItem		menuitem;
-    JMenu 		submenu;
     SpreadSheet		sheet;
 
     if (items.size() == 0)
@@ -150,23 +147,14 @@ public class SpreadSheetTablePopupMenuItemHelper {
 
     sheet = table.toSpreadSheet();
 
-    if (items.size() == 1) {
-      menuitem = new JMenuItem(items.get(0).getMenuItem());
-      if (items.get(0).getIconName() != null)
-	menuitem.setIcon(GUIHelper.getIcon(items.get(0).getIconName()));
-      addAction(table, sheet, isRow, row, column, menuitem, items.get(0));
+    if (menu.getComponent(menu.getComponentCount() - 1) instanceof JMenuItem)
+      menu.addSeparator();
+    for (SpreadSheetTablePopupMenuItem item: items) {
+      menuitem = new JMenuItem(item.getMenuItem());
+      if (item.getIconName() != null)
+        menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+      addAction(table, sheet, isRow, row, column, menuitem, item);
       menu.add(menuitem);
-    }
-    else {
-      submenu = new JMenu(caption);
-      menu.add(submenu);
-      for (SpreadSheetTablePopupMenuItem item: items) {
-	menuitem = new JMenuItem(item.getMenuItem());
-	if (item.getIconName() != null)
-	  menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
-	addAction(table, sheet, isRow, row, column, menuitem, item);
-	submenu.add(menuitem);
-      }
     }
   }
 
@@ -182,13 +170,13 @@ public class SpreadSheetTablePopupMenuItemHelper {
   public static void addToPopupMenu(SpreadSheetTable table, JPopupMenu menu, boolean isRow, int row, int column) {
     menu.addSeparator();
     if (isRow) {
-      addToPopupMenu(table, true, row, column, menu, "Plot row", getItems(PlotRow.class));
-      addToPopupMenu(table, true, row, column, menu, "Process row", getItems(ProcessRow.class));
-      addToPopupMenu(table, true, row, column, menu, "Process cell", getItems(ProcessCell.class));
+      addToPopupMenu(table, true, row, column, menu, getItems(PlotRow.class));
+      addToPopupMenu(table, true, row, column, menu, getItems(ProcessRow.class));
+      addToPopupMenu(table, true, row, column, menu, getItems(ProcessCell.class));
     }
     else {
-      addToPopupMenu(table, false, row, column, menu, "Plot column", getItems(PlotColumn.class));
-      addToPopupMenu(table, false, row, column, menu, "Process column", getItems(ProcessColumn.class));
+      addToPopupMenu(table, false, row, column, menu, getItems(PlotColumn.class));
+      addToPopupMenu(table, false, row, column, menu, getItems(ProcessColumn.class));
     }
   }
 }
