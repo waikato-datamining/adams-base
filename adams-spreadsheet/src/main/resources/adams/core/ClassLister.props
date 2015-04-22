@@ -7,6 +7,10 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
+# the spreadsheet column converters
+adams.data.conversion.AbstractSpreadSheetColumnConverter=\
+  adams.data.conversion
+
 # The cell locators
 adams.data.spreadsheet.cellfinder.AbstractCellFinder=\
   adams.data.spreadsheet.cellfinder
