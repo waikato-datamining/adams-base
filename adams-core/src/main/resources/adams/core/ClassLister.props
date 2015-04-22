@@ -393,6 +393,26 @@ adams.gui.application.PreferencesPanel=\
 adams.gui.clipboard.AbstractClipboardData=\
   adams.gui.clipboard
 
+# the column plotters for the SpreadSheetTable
+adams.gui.core.spreadsheettable.PlotColumn=\
+  adams.gui.core.spreadsheettable
+
+# the row plotters for the SpreadSheetTable
+adams.gui.core.spreadsheettable.PlotRow=\
+  adams.gui.core.spreadsheettable
+
+# the column processsors for the SpreadSheetTable
+adams.gui.core.spreadsheettable.ProcessColumn=\
+  adams.gui.core.spreadsheettable
+
+# the row processors for the SpreadSheetTable
+adams.gui.core.spreadsheettable.ProcessRow=\
+  adams.gui.core.spreadsheettable
+
+# the cell processsors for the SpreadSheetTable
+adams.gui.core.spreadsheettable.ProcessCell=\
+  adams.gui.core.spreadsheettable
+
 # the menu actions in the flow editor
 adams.gui.flow.menu.FlowEditorAction=\
   adams.gui.flow.tree.menu

@@ -24,38 +24,25 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
-import adams.data.statistics.ArrayHistogram;
-import adams.flow.control.Flow;
-import adams.flow.control.StorageName;
-import adams.flow.core.AbstractActor;
-import adams.flow.sink.SimplePlot;
-import adams.flow.source.StorageValue;
-import adams.flow.transformer.ArrayToSequence;
-import adams.flow.transformer.MakePlotContainer;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
-import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.PopupMenuCustomizer;
-import adams.gui.visualization.statistics.HistogramFactory;
-import gnu.trove.list.array.TDoubleArrayList;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * A specialized table for displaying a SpreadSheet table model.
@@ -78,12 +65,9 @@ public class SpreadSheetTable
 
   /** the file chooser for saving the spreadsheet. */
   protected SpreadSheetFileChooser m_FileChooser;
-  
-  /** the last {@link ArrayHistogram} setup. */
-  protected ArrayHistogram m_Histogram;
 
-  /** the last {@link SimplePlot} setup. */
-  protected SimplePlot m_Plot;
+  /** for keeping track of the setups being used (classname-{plot|process}-{column|row} - setup). */
+  protected HashMap<String,Object> m_LastSetup;
   
   /**
    * Initializes the table.
@@ -112,8 +96,7 @@ public class SpreadSheetTable
 
     m_HeaderPopupMenuCustomizer = null;
     m_CellPopupMenuCustomizer   = null;
-    m_Histogram                 = new ArrayHistogram();
-    m_Plot = new SimplePlot();
+    m_LastSetup                 = new HashMap<>();
 
     addHeaderPopupMenuListener(new PopupMenuListener() {
       @Override
@@ -124,7 +107,7 @@ public class SpreadSheetTable
     addCellPopupMenuListener(new PopupMenuListener() {
       @Override
       public void showPopupMenu(MouseEvent e) {
-	showCellPopupMenu(e);
+        showCellPopupMenu(e);
       }
     });
   }
@@ -313,20 +296,24 @@ public class SpreadSheetTable
   protected void showHeaderPopupMenu(MouseEvent e) {
     JPopupMenu		menu;
     JMenuItem		menuitem;
-    final int		col;
     final boolean	asc;
+    final int           row;
+    final int           col;
+    final int           actCol;
 
     menu = new JPopupMenu();
+    row  = rowAtPoint(e.getPoint());
     col  = columnAtPoint(e.getPoint());
+    if (getShowRowColumn())
+      actCol = col - 1;
+    else
+      actCol = col;
     
     menuitem = new JMenuItem("Copy column name", GUIHelper.getEmptyIcon());
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	int actCol = col;
-	if (getShowRowColumn())
-	  actCol--;
 	GUIHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol));
       }
     });
@@ -360,9 +347,6 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	int actCol = col;
-	if (getShowRowColumn())
-	  actCol--;
 	SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
 	String newName = sheet.getColumnName(actCol);
 	newName = GUIHelper.showInputDialog(getParent(), "Please enter new column name", newName);
@@ -385,10 +369,7 @@ public class SpreadSheetTable
       @Override
       public void actionPerformed(ActionEvent e) {
 	SpreadSheet sheet = toSpreadSheet();
-	if (getShowRowColumn())
-	  sheet.sort(col - 1, asc);
-	else
-	  sheet.sort(col, asc);
+        sheet.sort(actCol, asc);
 	setModel(new SpreadSheetTableModel(sheet));
       }
     });
@@ -401,34 +382,13 @@ public class SpreadSheetTable
       @Override
       public void actionPerformed(ActionEvent e) {
 	SpreadSheet sheet = toSpreadSheet();
-	if (getShowRowColumn())
-	  sheet.removeColumn(col - 1);
-	else
-	  sheet.removeColumn(col);
+        sheet.removeColumn(actCol);
 	setModel(new SpreadSheetTableModel(sheet));
       }
     });
     menu.add(menuitem);
 
-    menu.addSeparator();
-
-    menuitem = new JMenuItem("Plot", GUIHelper.getIcon("plot.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	plot(toSpreadSheet(), true, getShowRowColumn() ? col - 1 : col);
-      }
-    });
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	histogram(toSpreadSheet(), true, getShowRowColumn() ? col - 1 : col);
-      }
-    });
-    menu.add(menuitem);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, row, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -445,8 +405,12 @@ public class SpreadSheetTable
     JPopupMenu	menu;
     JMenuItem	menuitem;
     JMenu	submenu;
+    final int   row;
+    final int   col;
 
     menu = new JPopupMenu();
+    row  = rowAtPoint(e.getPoint());
+    col  = columnAtPoint(e.getPoint());
 
     if (getSelectedRowCount() > 1)
       menuitem = new JMenuItem("Copy rows");
@@ -457,7 +421,7 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	copyToClipboard();
+        copyToClipboard();
       }
     });
     menu.add(menuitem);
@@ -468,13 +432,11 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	int row = rowAtPoint(e.getPoint());
-	if (row == -1)
-	  return;
-	int col = columnAtPoint(e.getPoint());
-	if (col == -1)
-	  return;
-	GUIHelper.copyToClipboard("" + getValueAt(row, col));
+        if (row == -1)
+          return;
+        if (col == -1)
+          return;
+        GUIHelper.copyToClipboard("" + getValueAt(row, col));
       }
     });
     menu.add(menuitem);
@@ -487,7 +449,7 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	saveAs(TableRowRange.ALL);
+        saveAs(TableRowRange.ALL);
       }
     });
     submenu.add(menuitem);
@@ -505,36 +467,12 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	saveAs(TableRowRange.VISIBLE);
+        saveAs(TableRowRange.VISIBLE);
       }
     });
     submenu.add(menuitem);
 
-    menu.addSeparator();
-
-    menuitem = new JMenuItem("Plot", GUIHelper.getIcon("plot.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent ae) {
-	int row = rowAtPoint(e.getPoint());
-	if (row == -1)
-	  return;
-	plot(toSpreadSheet(), false, row);
-      }
-    });
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent ae) {
-	int row = rowAtPoint(e.getPoint());
-	if (row == -1)
-	  return;
-	histogram(toSpreadSheet(), false, row);
-      }
-    });
-    menu.add(menuitem);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, row, col);
 
     menu.addSeparator();
 
@@ -693,142 +631,6 @@ public class SpreadSheetTable
   }
 
   /**
-   * Allows the user to generate a histogram from either a row or a column.
-   * 
-   * @param sheet	the spreadsheet to use
-   * @param isColumn	whether the to use column or row
-   * @param index	the index of the row/column
-   */
-  protected void histogram(SpreadSheet sheet, boolean isColumn, int index) {
-    TDoubleArrayList			list;
-    HistogramFactory.SetupDialog	setup;
-    HistogramFactory.Dialog		dialog;
-    int					i;
-    
-    // let user customize histogram
-    if (GUIHelper.getParentDialog(this) != null)
-      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
-    else
-      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentFrame(this), true);
-    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
-    setup.setCurrent(m_Histogram);
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-    m_Histogram = (ArrayHistogram) setup.getCurrent();
-
-    // get data from spreadsheet
-    list = new TDoubleArrayList();
-    if (isColumn) {
-      for (i = 0; i < sheet.getRowCount(); i++) {
-	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
-	  list.add(sheet.getCell(i, index).toDouble());
-      }
-    }
-    else {
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
-	  list.add(sheet.getCell(index, i).toDouble());
-      }
-    }
-    
-    // calculate histogram
-    m_Histogram.clear();
-    
-    // display histogram
-    if (GUIHelper.getParentDialog(this) != null)
-      dialog = HistogramFactory.getDialog(GUIHelper.getParentDialog(this), ModalityType.MODELESS);
-    else
-      dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(this), false);
-    dialog.setDefaultCloseOperation(HistogramFactory.Dialog.DISPOSE_ON_CLOSE);
-    if (isColumn)
-      dialog.add(m_Histogram, list.toArray(), "Column " + (index + 1) + "/" + sheet.getColumnName(index));
-    else
-      dialog.add(m_Histogram, list.toArray(), "Row " + (index + 1));
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Allows the user to generate a plot from either a row or a column.
-   *
-   * @param sheet	the spreadsheet to use
-   * @param isColumn	whether the to use column or row
-   * @param index	the index of the row/column
-   */
-  protected void plot(SpreadSheet sheet, boolean isColumn, int index) {
-    final List<Double> 		list;
-    GenericObjectEditorDialog	setup;
-    int				i;
-    final String		title;
-    SwingWorker 		worker;
-
-    // let user customize plot
-    if (GUIHelper.getParentDialog(this) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
-    else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
-    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
-    setup.getGOEEditor().setClassType(AbstractActor.class);
-    setup.getGOEEditor().setCanChangeClassInDialog(false);
-    setup.setCurrent(m_Plot);
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-    m_Plot = (SimplePlot) setup.getCurrent();
-
-    // get data from spreadsheet
-    list = new ArrayList<Double>();
-    if (isColumn) {
-      for (i = 0; i < sheet.getRowCount(); i++) {
-	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
-	  list.add(sheet.getCell(i, index).toDouble());
-      }
-    }
-    else {
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
-	  list.add(sheet.getCell(index, i).toDouble());
-      }
-    }
-
-    // generate plot
-    if (isColumn)
-      title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
-    else
-      title = "Row " + (index + 1);
-
-    worker = new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
-	Flow flow = new Flow();
-
-	StorageValue sv = new StorageValue();
-	sv.setStorageName(new StorageName("values"));
-	flow.add(sv);
-
-	ArrayToSequence a2s = new ArrayToSequence();
-	flow.add(a2s);
-
-	MakePlotContainer mpc = new MakePlotContainer();
-	mpc.setPlotName(title);
-	flow.add(mpc);
-
-	SimplePlot plot = (SimplePlot) m_Plot.shallowCopy();
-	plot.setShortTitle(true);
-	plot.setName(title);
-	flow.add(plot);
-
-	flow.setUp();
-	flow.getStorage().put(new StorageName("values"), list.toArray(new Double[list.size()]));
-	flow.execute();
-	flow.wrapUp();
-	return null;
-      }
-    };
-    worker.execute();
-  }
-
-  /**
    * Pops up a save dialog for saving the data to a file.
    * 
    * @param range	the type of data to save
@@ -848,5 +650,41 @@ public class SpreadSheetTable
 	  SpreadSheetTable.this,
 	  "Failed to save spreadsheet to the following file:\n" + file);
     }
- }
+  }
+
+  /**
+   * Generates a key for the HashMap used for the last setups.
+   *
+   * @param cls       the scheme
+   * @param plot      plot or process
+   * @param row       row or column
+   * @return          the generated key
+   */
+  protected String createLastSetupKey(Class cls, boolean plot, boolean row) {
+    return cls.getName() + "-" + (plot ? "plot" : "process") + "-" + (row ? "row" : "column");
+  }
+
+  /**
+   * Stores this last setup.
+   *
+   * @param cls       the scheme
+   * @param plot      plot or process
+   * @param row       row or column
+   * @param setup     the setup to add
+   */
+  public void addLastSetup(Class cls, boolean plot, boolean row, Object setup) {
+    m_LastSetup.put(createLastSetupKey(cls, plot, row), setup);
+  }
+
+  /**
+   * Returns any last setup if available.
+   *
+   * @param cls       the scheme
+   * @param plot      plot or process
+   * @param row       row or column
+   * @return          the last setup or null if none stored
+   */
+  public Object getLastSetup(Class cls, boolean plot, boolean row) {
+    return m_LastSetup.get(createLastSetupKey(cls, plot, row));
+  }
 }
