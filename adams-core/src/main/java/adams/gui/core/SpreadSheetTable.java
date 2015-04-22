@@ -314,7 +314,7 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol));
+        GUIHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol));
       }
     });
     menu.add(menuitem);
@@ -324,20 +324,20 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	int actCol = col;
-	if (getShowRowColumn())
-	  actCol--;
-	SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
-	StringBuilder content = new StringBuilder();
-	String sep = System.getProperty("line.separator");
-	content.append(sheet.getColumnName(actCol) + sep);
-	for (int i = 0; i < sheet.getRowCount(); i++) {
-	  if (!sheet.hasCell(i, actCol) || sheet.getCell(i, actCol).isMissing())
-	    content.append(sep);
-	  else
-	    content.append(sheet.getCell(i, actCol).getContent() + sep);
-	}
-	GUIHelper.copyToClipboard(content.toString());
+        int actCol = col;
+        if (getShowRowColumn())
+          actCol--;
+        SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+        StringBuilder content = new StringBuilder();
+        String sep = System.getProperty("line.separator");
+        content.append(sheet.getColumnName(actCol) + sep);
+        for (int i = 0; i < sheet.getRowCount(); i++) {
+          if (!sheet.hasCell(i, actCol) || sheet.getCell(i, actCol).isMissing())
+            content.append(sep);
+          else
+            content.append(sheet.getCell(i, actCol).getContent() + sep);
+        }
+        GUIHelper.copyToClipboard(content.toString());
       }
     });
     menu.add(menuitem);
@@ -368,9 +368,9 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	SpreadSheet sheet = toSpreadSheet();
+        SpreadSheet sheet = toSpreadSheet();
         sheet.sort(actCol, asc);
-	setModel(new SpreadSheetTableModel(sheet));
+        setModel(new SpreadSheetTableModel(sheet));
       }
     });
     menu.add(menuitem);
@@ -381,9 +381,9 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	SpreadSheet sheet = toSpreadSheet();
+        SpreadSheet sheet = toSpreadSheet();
         sheet.removeColumn(actCol);
-	setModel(new SpreadSheetTableModel(sheet));
+        setModel(new SpreadSheetTableModel(sheet));
       }
     });
     menu.add(menuitem);
@@ -440,6 +440,21 @@ public class SpreadSheetTable
       }
     });
     menu.add(menuitem);
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Remove row", GUIHelper.getIcon("delete.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	SpreadSheet sheet = toSpreadSheet();
+        sheet.removeRow(row);
+	setModel(new SpreadSheetTableModel(sheet));
+      }
+    });
+    menu.add(menuitem);
+
+    menu.addSeparator();
 
     submenu = new JMenu("Save");
     submenu.setIcon(GUIHelper.getIcon("save.gif"));
