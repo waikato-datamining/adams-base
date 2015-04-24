@@ -123,4 +123,6 @@ adams-core.SetVariable2=\
 
 adams-core.SetVariable3=\
   IF AFTER adams.flow.source.SelectDirectory THEN adams.flow.transformer.SetVariable
-  
+
+adams-core.SetVariable4=\
+  IF AFTER adams.flow.transformer.ArrayLength THEN adams.flow.transformer.SetVariable
