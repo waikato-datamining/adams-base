@@ -26,3 +26,5 @@ adams-spreadsheet.SpreadSheetFileReader4=\
 adams-spreadsheet.SequencePlotter1=\
   IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator THEN adams.flow.sink.SequencePlotter
 
+adams-spreadsheet.SetVariable1=\
+  IF AFTER adams.flow.transformer.SpreadSheetGetCell THEN adams.flow.transformer.SetVariable
