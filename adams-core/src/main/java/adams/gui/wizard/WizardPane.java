@@ -15,7 +15,7 @@
 
 /**
  * WizardPane.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -45,6 +45,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 /**
@@ -478,6 +479,12 @@ public class WizardPane
     lpage.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     lpage.setSelectedValues(new String[]{"3", "5"});
     wizard.addPage(lpage);
+    SelectFilePage selpage = new SelectFilePage();
+    selpage.setPageName("Select file");
+    selpage.setDescription("Please select any existing file by clicking on the '...' button.");
+    selpage.addChoosableFileFilter(new ExtensionFileFilter("Log files", "log"));
+    selpage.addChoosableFileFilter(new ExtensionFileFilter("Text files", "txt"));
+    wizard.addPage(selpage);
     wizard.addPage(new FinalPage());
     final BaseFrame frame = new BaseFrame("Example Wizard");
     wizard.addActionListener(new ActionListener() {
