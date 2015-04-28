@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Wizard page that allows the user to select multiple sfile. File filters can
+ * Wizard page that allows the user to select multiple files. File filters can
  * be defined as well. Stores the selected files as blank-separated list.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
