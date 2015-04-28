@@ -27,6 +27,7 @@ import adams.gui.core.BaseListWithButtons;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -67,6 +68,12 @@ public class SelectMultipleFilesPage
 
   /** the button for removing all files. */
   protected JButton m_ButtonRemoveAll;
+
+  /** the button for moving the selected files up. */
+  protected JButton m_ButtonMoveUp;
+
+  /** the button for moving the selected files down. */
+  protected JButton m_ButtonMoveDown;
 
   /**
    * Default constructor.
@@ -129,6 +136,28 @@ public class SelectMultipleFilesPage
     });
     m_ListFiles.addToButtonsPanel(m_ButtonAdd);
 
+    m_ListFiles.addToButtonsPanel(new JLabel(""));
+
+    m_ButtonMoveUp = new JButton("Up");
+    m_ButtonMoveUp.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        m_ListFiles.moveUp();
+      }
+    });
+    m_ListFiles.addToButtonsPanel(m_ButtonMoveUp);
+
+    m_ButtonMoveDown = new JButton("Down");
+    m_ButtonMoveDown.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        m_ListFiles.moveDown();
+      }
+    });
+    m_ListFiles.addToButtonsPanel(m_ButtonMoveDown);
+
+    m_ListFiles.addToButtonsPanel(new JLabel(""));
+
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.addActionListener(new ActionListener() {
       @Override
@@ -168,6 +197,8 @@ public class SelectMultipleFilesPage
    */
   protected void updateListButtons() {
     m_ButtonAdd.setEnabled(true);
+    m_ButtonMoveUp.setEnabled(m_ListFiles.canMoveUp());
+    m_ButtonMoveDown.setEnabled(m_ListFiles.canMoveDown());
     m_ButtonRemove.setEnabled(m_ListFiles.getSelectedIndices().length > 0);
     m_ButtonRemoveAll.setEnabled(m_ListFiles.getModel().getSize() > 0);
     updateButtons();
