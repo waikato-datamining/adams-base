@@ -15,17 +15,17 @@
 
 /**
  * NamedPlotGenerator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.container.SequencePlotterContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -34,13 +34,9 @@ import adams.flow.container.SequencePlotterContainer;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-default-cell-value &lt;double&gt; (property: defaultCellValue)
@@ -48,24 +44,41 @@ import adams.flow.container.SequencePlotterContainer;
  * &nbsp;&nbsp;&nbsp;default: -1.0
  * </pre>
  * 
+ * <pre>-plot-name-range &lt;java.lang.String&gt; (property: plotNameRange)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use for generating the plot name (overrides any 
+ * &nbsp;&nbsp;&nbsp;plot generator specific names); A range is a comma-separated list of single 
+ * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
+ * &nbsp;&nbsp;&nbsp;the range '...'; column names (case-sensitive) as well as the following 
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-plot-name-separator &lt;java.lang.String&gt; (property: plotNameSeparator)
+ * &nbsp;&nbsp;&nbsp;The separator to use when constructing the plot name from cell values.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-x-column &lt;java.lang.String&gt; (property: XColumn)
  * &nbsp;&nbsp;&nbsp;The index of the column which values to use as X values in the plot; An 
- * &nbsp;&nbsp;&nbsp;index is a number starting with 1; the following placeholders can be used 
- * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;index is a number starting with 1; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-y-column &lt;java.lang.String&gt; (property: YColumn)
  * &nbsp;&nbsp;&nbsp;The index of the column which values to use as Y values in the plot; An 
- * &nbsp;&nbsp;&nbsp;index is a number starting with 1; the following placeholders can be used 
- * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;index is a number starting with 1; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-name-column &lt;java.lang.String&gt; (property: nameColumn)
  * &nbsp;&nbsp;&nbsp;The index of the column which values to use as for naming the plots; An 
- * &nbsp;&nbsp;&nbsp;index is a number starting with 1; the following placeholders can be used 
- * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;index is a number starting with 1; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -142,7 +155,9 @@ public class NamedPlotGenerator
     String	result;
     String	variable;
 
-    result = "x: ";
+    result = super.getQuickInfo();
+
+    result = ", x: ";
     variable = getOptionManager().getVariableForProperty("XColumn");
     if (variable != null)
       result += variable;
@@ -304,7 +319,7 @@ public class NamedPlotGenerator
     for (i = 0; i < sheet.getRowCount(); i++) {
       row  = sheet.getRow(i);
       cont = new SequencePlotterContainer(
-	  getCellString(row, nameCol), 
+	  getActualPlotName(row, getCellString(row, nameCol)),
 	  getCellValue(row, xCol), 
 	  getCellValue(row, yCol));
       result.add(cont);

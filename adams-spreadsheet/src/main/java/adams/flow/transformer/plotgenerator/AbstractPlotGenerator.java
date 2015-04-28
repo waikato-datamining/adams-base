@@ -15,20 +15,22 @@
 
 /**
  * AbstractPlotGenerator.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
 
-import java.util.List;
-
+import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.sink.SequencePlotter;
+
+import java.util.List;
 
 /**
  * Ancestor for generators that use data from a spreadsheet to create
@@ -50,6 +52,12 @@ public abstract class AbstractPlotGenerator
   /** the default value for missing or non-numeric cells. */
   protected double m_DefaultCellValue;
 
+  /** the columns that make up the plot name. */
+  protected SpreadSheetColumnRange m_PlotNameRange;
+
+  /** the separator for the plot names. */
+  protected String m_PlotNameSeparator;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -58,8 +66,26 @@ public abstract class AbstractPlotGenerator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "default-cell-value", "defaultCellValue",
-	    -1.0);
+      "default-cell-value", "defaultCellValue",
+      -1.0);
+
+    m_OptionManager.add(
+      "plot-name-range", "plotNameRange",
+      "");
+
+    m_OptionManager.add(
+      "plot-name-separator", "plotNameSeparator",
+      "");
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_PlotNameRange = new SpreadSheetColumnRange();
   }
 
   /**
@@ -92,14 +118,71 @@ public abstract class AbstractPlotGenerator
   }
 
   /**
-   * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
-   * Default implementation returns null.
+   * Sets the column range to use generating the plot name.
+   *
+   * @param value	the column range
+   */
+  public void setPlotNameRange(String value) {
+    m_PlotNameRange.setRange(value);
+    reset();
+  }
+
+  /**
+   * Returns the current column range to use generating the plot name.
+   *
+   * @return		the column range
+   */
+  public String getPlotNameRange() {
+    return m_PlotNameRange.getRange();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotNameRangeTipText() {
+    return "The range of columns to use for generating the plot name (overrides any plot generator specific names); " + m_PlotNameRange.getExample();
+  }
+
+  /**
+   * Sets the separator to use when constructing the plot name from cell values.
+   *
+   * @param value	the separator
+   */
+  public void setPlotNameSeparator(String value) {
+    m_PlotNameSeparator = value;
+    reset();
+  }
+
+  /**
+   * Returns the separator to use when constructing the plot name from cell values.
+   *
+   * @return		the separator
+   */
+  public String getPlotNameSeparator() {
+    return m_PlotNameSeparator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotNameSeparatorTipText() {
+    return "The separator to use when constructing the plot name from cell values.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
+  @Override
   public String getQuickInfo() {
-    return null;
+    return QuickInfoHelper.toString(this, "plotNameRange", (getPlotNameRange().isEmpty() ? "-default-" : getPlotNameRange()), "plot: ");
   }
 
   /**
@@ -112,6 +195,7 @@ public abstract class AbstractPlotGenerator
   protected void check(SpreadSheet sheet) {
     if (sheet == null)
       throw new IllegalStateException("No spreadsheet provided!");
+    m_PlotNameRange.setData(sheet);
   }
 
   /**
@@ -200,7 +284,34 @@ public abstract class AbstractPlotGenerator
   protected Comparable getCellValue(Row row, int index) {
     return getCellValue(row, index, m_DefaultCellValue);
   }
-  
+
+  /**
+   * Returns the plot name to use.
+   *
+   * @param row		the row to construct the name from, if necessary
+   * @param defValue    the default plot name
+   * @return		the plot name
+   */
+  protected String getActualPlotName(Row row, String defValue) {
+    String      result;
+    int[]       indices;
+    int         i;
+
+    result = defValue;
+
+    if (!getPlotNameRange().isEmpty()) {
+      indices = m_PlotNameRange.getIntIndices();
+      result  = "";
+      for (i = 0; i < indices.length; i++) {
+        if (i > 0)
+          result += m_PlotNameSeparator;
+        result += getCellString(row, indices[i]);
+      }
+    }
+
+    return result;
+  }
+
   /**
    * Performs the actual generation of containers.
    * 

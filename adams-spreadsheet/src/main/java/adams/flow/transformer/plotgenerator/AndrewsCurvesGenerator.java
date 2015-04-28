@@ -15,12 +15,9 @@
 
 /**
  * AndrewsCurvesGenerator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
@@ -31,6 +28,9 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.container.SequencePlotterContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -50,6 +50,20 @@ import adams.flow.container.SequencePlotterContainer;
  * &nbsp;&nbsp;&nbsp;default: -1.0
  * </pre>
  * 
+ * <pre>-plot-name-range &lt;java.lang.String&gt; (property: plotNameRange)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use for generating the plot name (overrides any 
+ * &nbsp;&nbsp;&nbsp;plot generator specific names); A range is a comma-separated list of single 
+ * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
+ * &nbsp;&nbsp;&nbsp;the range '...'; column names (case-sensitive) as well as the following 
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-plot-name-separator &lt;java.lang.String&gt; (property: plotNameSeparator)
+ * &nbsp;&nbsp;&nbsp;The separator to use when constructing the plot name from cell values.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-num-points &lt;int&gt; (property: numPoints)
  * &nbsp;&nbsp;&nbsp;The number of points to generate for the curves.
  * &nbsp;&nbsp;&nbsp;default: 100
@@ -64,18 +78,18 @@ import adams.flow.container.SequencePlotterContainer;
  * <pre>-columns &lt;java.lang.String&gt; (property: plotColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to include in the curves; A range is a comma-separated 
  * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-meta-data-columns &lt;java.lang.String&gt; (property: metaDataColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to add as meta-data in the plot; A range is a comma-separated 
  * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -177,8 +191,9 @@ public class AndrewsCurvesGenerator
   @Override
   public String getQuickInfo() {
     String	result;
-    
-    result  = QuickInfoHelper.toString(this, "plotColumns", (getPlotColumns().isEmpty() ? "-none-" : getPlotColumns()), "cols: ");
+
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "plotColumns", (getPlotColumns().isEmpty() ? "-none-" : getPlotColumns()), ", cols: ");
     result += QuickInfoHelper.toString(this, "prefix", (getPrefix().isEmpty() ? "-none-" : getPrefix()), ", prefix: ");
     result += QuickInfoHelper.toString(this, "metaDataColumns", (getMetaDataColumns().isEmpty() ? "-none-" : getMetaDataColumns()), ", meta-data: ");
     
@@ -352,7 +367,7 @@ public class AndrewsCurvesGenerator
 	  else
 	    y += row.getCell(cols[n]).toDouble() * Math.cos(t * Math.ceil(n / 2));
 	}
-	cont = new SequencePlotterContainer(m_Prefix + r, t, y);
+	cont = new SequencePlotterContainer(getActualPlotName(row, m_Prefix + r), t, y);
 	// meta-data
 	for (m = 0; m < metaCols.length; m++)
 	  cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));

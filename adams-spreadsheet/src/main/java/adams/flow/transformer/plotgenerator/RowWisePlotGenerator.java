@@ -15,12 +15,9 @@
 
 /**
  * RowWisePlotGenerator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
@@ -28,6 +25,9 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.container.SequencePlotterContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -44,6 +44,20 @@ import adams.flow.container.SequencePlotterContainer;
  * <pre>-default-cell-value &lt;double&gt; (property: defaultCellValue)
  * &nbsp;&nbsp;&nbsp;The default value for missing or non-numeric cells.
  * &nbsp;&nbsp;&nbsp;default: -1.0
+ * </pre>
+ * 
+ * <pre>-plot-name-range &lt;java.lang.String&gt; (property: plotNameRange)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use for generating the plot name (overrides any 
+ * &nbsp;&nbsp;&nbsp;plot generator specific names); A range is a comma-separated list of single 
+ * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
+ * &nbsp;&nbsp;&nbsp;the range '...'; column names (case-sensitive) as well as the following 
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-plot-name-separator &lt;java.lang.String&gt; (property: plotNameSeparator)
+ * &nbsp;&nbsp;&nbsp;The separator to use when constructing the plot name from cell values.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-id-column &lt;java.lang.String&gt; (property: IDColumn)
@@ -158,8 +172,9 @@ public class RowWisePlotGenerator
   public String getQuickInfo() {
     String	result;
     String	value;
-    
-    result  = QuickInfoHelper.toString(this, "IDColumn", (getIDColumn().isEmpty() ? "-none-" : getIDColumn()), "ID: ");
+
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "IDColumn", (getIDColumn().isEmpty() ? "-none-" : getIDColumn()), ", ID: ");
     result += QuickInfoHelper.toString(this, "dataColumns", (getDataColumns().isEmpty() ? "-none-" : getDataColumns()), ", data: ");
     result += QuickInfoHelper.toString(this, "metaDataColumns", (getMetaDataColumns().isEmpty() ? "-none-" : getMetaDataColumns()), ", meta-data: ");
     value   = QuickInfoHelper.toString(this, "addColumnName", m_AddColumnName, "col name", ", ");
@@ -337,7 +352,7 @@ public class RowWisePlotGenerator
 	comp = getCellValue(row, dataCols[n], null);
 	if (comp == null)
 	  continue;
-	cont = new SequencePlotterContainer(name, new Double(n), comp);
+	cont = new SequencePlotterContainer(getActualPlotName(row, name), new Double(n), comp);
 	// meta-data
 	for (m = 0; m < metaCols.length; m++)
 	  cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));

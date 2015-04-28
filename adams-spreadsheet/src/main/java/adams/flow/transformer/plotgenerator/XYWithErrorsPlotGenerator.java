@@ -15,12 +15,9 @@
 
 /**
  * XYWithErrorsPlotGenerator.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
@@ -29,6 +26,9 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -47,49 +47,63 @@ import adams.flow.container.SequencePlotterContainer.ContentType;
  * &nbsp;&nbsp;&nbsp;default: -1.0
  * </pre>
  * 
- * <pre>-y-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: YColumn)
- * &nbsp;&nbsp;&nbsp;The column to use for Y; An index is a number starting with 1; apart from 
- * &nbsp;&nbsp;&nbsp;column names (case-sensitive), the following placeholders can be used as 
- * &nbsp;&nbsp;&nbsp;well: first, second, third, last_2, last_1, last
+ * <pre>-plot-name-range &lt;java.lang.String&gt; (property: plotNameRange)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use for generating the plot name (overrides any 
+ * &nbsp;&nbsp;&nbsp;plot generator specific names); A range is a comma-separated list of single 
+ * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
+ * &nbsp;&nbsp;&nbsp;the range '...'; column names (case-sensitive) as well as the following 
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-plot-name-separator &lt;java.lang.String&gt; (property: plotNameSeparator)
+ * &nbsp;&nbsp;&nbsp;The separator to use when constructing the plot name from cell values.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-y-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: YColumn)
+ * &nbsp;&nbsp;&nbsp;The column to use for Y; An index is a number starting with 1; column names 
+ * &nbsp;&nbsp;&nbsp;(case-sensitive) as well as the following placeholders can be used: first,
+ * &nbsp;&nbsp;&nbsp; second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-x-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: XColumn)
  * &nbsp;&nbsp;&nbsp;The (optional) index of the column which values to use as X values in the 
- * &nbsp;&nbsp;&nbsp;plot; An index is a number starting with 1; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;plot; An index is a number starting with 1; column names (case-sensitive
+ * &nbsp;&nbsp;&nbsp;) as well as the following placeholders can be used: first, second, third,
+ * &nbsp;&nbsp;&nbsp; last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-y-error-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: YErrorColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to use for Y error information (1=delta, 2=low&#47;high
  * &nbsp;&nbsp;&nbsp;); A range is a comma-separated list of single 1-based indices or sub-ranges 
- * &nbsp;&nbsp;&nbsp;of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from 
- * &nbsp;&nbsp;&nbsp;column names (case-sensitive), the following placeholders can be used as 
- * &nbsp;&nbsp;&nbsp;well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;of indices ('start-end'); 'inv(...)' inverts the range '...'; column names 
+ * &nbsp;&nbsp;&nbsp;(case-sensitive) as well as the following placeholders can be used: first,
+ * &nbsp;&nbsp;&nbsp; second, third, last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-x-error-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: XErrorColumns)
  * &nbsp;&nbsp;&nbsp;The (optional) range of columns to use for X error information (1=delta, 
  * &nbsp;&nbsp;&nbsp;2=low&#47;high); A range is a comma-separated list of single 1-based indices 
  * &nbsp;&nbsp;&nbsp;or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...
- * &nbsp;&nbsp;&nbsp;'; apart from column names (case-sensitive), the following placeholders 
- * &nbsp;&nbsp;&nbsp;can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;'; column names (case-sensitive) as well as the following placeholders can 
+ * &nbsp;&nbsp;&nbsp;be used: first, second, third, last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-meta-data-columns &lt;java.lang.String&gt; (property: metaDataColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to add as meta-data in the plot; A range is a comma-separated 
  * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -183,8 +197,9 @@ public class XYWithErrorsPlotGenerator
   @Override
   public String getQuickInfo() {
     String	result;
-    
-    result  = QuickInfoHelper.toString(this, "YColumn", getYColumn(), "y: ");
+
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "YColumn", getYColumn(), ", y: ");
     result += QuickInfoHelper.toString(this, "XColumn", getXColumn(), ", x: ");
     result += QuickInfoHelper.toString(this, "YErrorColumns", (getYErrorColumns().isEmpty() ? "-none-" : getYErrorColumns()), ", y error: ");
     result += QuickInfoHelper.toString(this, "XErrorColumns", (getXErrorColumns().isEmpty() ? "-none-" : getXErrorColumns()), ", x error: ");
@@ -428,7 +443,7 @@ public class XYWithErrorsPlotGenerator
       }
       
       // container
-      cont = new SequencePlotterContainer(plotName, x, y, errX, errY, ContentType.PLOT);
+      cont = new SequencePlotterContainer(getActualPlotName(row, plotName), x, y, errX, errY, ContentType.PLOT);
       // meta-data
       for (m = 0; m < metaCols.length; m++)
 	cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));
