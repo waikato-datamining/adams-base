@@ -15,18 +15,17 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.io.File;
+import adams.core.Placeholders;
+import adams.core.io.PlaceholderFile;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-
-import adams.core.Placeholders;
-import adams.core.io.PlaceholderFile;
+import java.io.File;
 
 /**
  * A panel that contains a text field with the current file/directory and a
@@ -342,7 +341,7 @@ public class FileChooserPanel
    *
    * @return	true if the save dialog is used
    */
-  public boolean getUseSaveDialog(boolean value) {
+  public boolean getUseSaveDialog() {
     return m_UseSaveDialog;
   }
 }
