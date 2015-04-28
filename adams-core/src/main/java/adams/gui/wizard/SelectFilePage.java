@@ -168,6 +168,24 @@ public class SelectFilePage
   }
 
   /**
+   * Sets the active file filter.
+   *
+   * @param value	the file filter to select
+   */
+  public void setFileFilter(FileFilter value) {
+    m_PanelFile.setFileFilter(value);
+  }
+
+  /**
+   * Returns the active file filter.
+   *
+   * @return		the current file filter
+   */
+  public FileFilter getFileFilter() {
+    return m_PanelFile.getFileFilter();
+  }
+
+  /**
    * Returns the content of the page (ie parameters) as properties.
    * 
    * @return		the parameters as properties
