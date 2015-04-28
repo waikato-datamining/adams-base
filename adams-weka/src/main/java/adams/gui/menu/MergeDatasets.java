@@ -21,21 +21,32 @@
 
 package adams.gui.menu;
 
+import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.wizard.AbstractWizardPage;
+import adams.gui.wizard.FinalPage;
+import adams.gui.wizard.PageCheck;
+import adams.gui.wizard.PropertySheetPanelPage;
+import adams.gui.wizard.WekaPropertySheetPanelPage;
+import adams.gui.wizard.WekaSelectDatasetPage;
+import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
+import adams.gui.wizard.WizardPane;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.gui.ConverterFileChooser;
 
-import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -81,55 +92,105 @@ public class MergeDatasets
    */
   @Override
   public void launch() {
-    ConverterFileChooser        filechooser;
-    int                         retVal;
-    File[]                      input;
-    File                        output;
+    final WizardPane                wizard;
+    WekaSelectMultipleDatasetsPage  infiles;
+    PropertySheetPanelPage          goe;
+    WekaSelectDatasetPage           outfile;
+    FinalPage                       finalpage;
+    WekaInstancesMerge              merge;
+    final ChildFrame                frame;
+
+    // configuration
+    merge = new WekaInstancesMerge();
+
+    // wizard
+    wizard = new WizardPane();
+    wizard.setCustomFinishText("Merge");
+    infiles = new WekaSelectMultipleDatasetsPage("Input");
+    infiles.setDescription("Select the Weka datasets to merge (side-by-side).\nYou have to choose at least two.");
+    infiles.setPageCheck(new PageCheck() {
+      @Override
+      public boolean checkPage(AbstractWizardPage page) {
+        Properties props = page.getProperties();
+        try {
+          String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
+          return (files.length >= 2);
+        }
+        catch (Exception e) {
+          System.err.println("Failed to obtain files:");
+          e.printStackTrace();
+        }
+        return false;
+      }
+    });
+    wizard.addPage(infiles);
+    goe = new PropertySheetPanelPage("Setup");
+    goe.setDescription("Specify how the files should get merged.");
+    goe.setTarget(merge);
+    wizard.addPage(goe);
+    outfile = new WekaSelectDatasetPage("Output");
+    outfile.setDescription("Select the file to save the merged data to.");
+    outfile.setUseSaveDialog(true);
+    wizard.addPage(outfile);
+    finalpage = new FinalPage();
+    finalpage.setLogo(null);
+    finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Merge</b> to start the process.</html>");
+    wizard.addPage(finalpage);
+    frame = createChildFrame(wizard, 800, 600);
+    wizard.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
+          frame.dispose();
+          return;
+        }
+        Properties props = wizard.getProperties(false);
+        File[] input = null;
+        File output = null;
+        WekaInstancesMerge merge = null;
+        try {
+          String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
+          input = new File[files.length];
+          for (int i = 0; i < files.length; i++)
+            input[i] = new File(files[i]);
+          merge = (WekaInstancesMerge) OptionUtils.forCommandLine(WekaInstancesMerge.class, props.getProperty(WekaPropertySheetPanelPage.PROPERTY_CMDLINE));
+          output = new File(props.getProperty(WekaSelectDatasetPage.KEY_FILE));
+        }
+        catch (Exception ex) {
+          GUIHelper.showErrorMessage(
+            getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+          return;
+        }
+        doMerge(frame, input, merge, output);
+      }
+    });
+  }
+
+  /**
+   * Performs the merge.
+   *
+   * @param frame       the frame to close
+   * @param input       the files to merge
+   * @param merge       the merge setup
+   * @param output      the output file
+   */
+  protected void doMerge(ChildFrame frame, File[] input, WekaInstancesMerge merge, File output) {
     Instances[]                 data;
     Instances                   full;
     int                         i;
     AbstractFileLoader          loader;
     AbstractFileSaver           saver;
-    WekaInstancesMerge          merge;
-    GenericObjectEditorDialog   dialog;
     Token                       token;
     String                      msg;
 
-    // choose files
-    filechooser = new ConverterFileChooser();
-    filechooser.setMultiSelectionEnabled(true);
-    retVal = filechooser.showOpenDialog(null);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
-      return;
-    input  = filechooser.getSelectedFiles();
-    loader = filechooser.getLoader();
     if (input.length < 2) {
       GUIHelper.showErrorMessage(getOwner(), "At least two files are required!");
       return;
     }
 
-    // configuration
-    merge = new WekaInstancesMerge();
-    dialog = new GenericObjectEditorDialog(null, ModalityType.APPLICATION_MODAL);
-    dialog.setTitle("Merge setup");
-    dialog.getGOEEditor().setCanChangeClassInDialog(false);
-    dialog.getGOEEditor().setClassType(WekaInstancesMerge.class);
-    dialog.setCurrent(merge);
-    dialog.setLocationRelativeTo(null);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-    merge = (WekaInstancesMerge) dialog.getCurrent();
-
-    // save
-    retVal = filechooser.showSaveDialog(null);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
-      return;
-    output = filechooser.getSelectedFile();
-    saver  = filechooser.getSaver();
-
     // load and check compatibility
-    data = new Instances[input.length];
+    loader = ConverterUtils.getLoaderForFile(input[0]);
+    data   = new Instances[input.length];
     for (i = 0; i < input.length; i++) {
       try {
         loader.setFile(input[i]);
@@ -161,6 +222,7 @@ public class MergeDatasets
     full  = (Instances) token.getPayload();
 
     // save
+    saver = ConverterUtils.getSaverForFile(output);
     try {
       saver.setFile(output);
       saver.setInstances(full);
@@ -173,6 +235,7 @@ public class MergeDatasets
     }
 
     GUIHelper.showInformationMessage(null, "Successfully merged!\n" + output);
+    frame.dispose();
   }
 
   /**
