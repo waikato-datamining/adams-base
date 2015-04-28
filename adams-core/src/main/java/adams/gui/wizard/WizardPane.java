@@ -479,12 +479,21 @@ public class WizardPane
     lpage.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     lpage.setSelectedValues(new String[]{"3", "5"});
     wizard.addPage(lpage);
+    ExtensionFileFilter filter;
     SelectFilePage selpage = new SelectFilePage();
     selpage.setPageName("Select file");
     selpage.setDescription("Please select any existing file by clicking on the '...' button.");
     selpage.addChoosableFileFilter(new ExtensionFileFilter("Log files", "log"));
-    selpage.addChoosableFileFilter(new ExtensionFileFilter("Text files", "txt"));
+    selpage.addChoosableFileFilter(filter = new ExtensionFileFilter("Text files", "txt"));
+    selpage.setFileFilter(filter);
     wizard.addPage(selpage);
+    SelectMultipleFilesPage selmpage = new SelectMultipleFilesPage();
+    selmpage.setPageName("Select multiple files");
+    selmpage.setDescription("Please select as many files as you like.");
+    selmpage.addChoosableFileFilter(new ExtensionFileFilter("Log files", "log"));
+    selmpage.addChoosableFileFilter(filter = new ExtensionFileFilter("Text files", "txt"));
+    selmpage.setFileFilter(filter);
+    wizard.addPage(selmpage);
     wizard.addPage(new FinalPage());
     final BaseFrame frame = new BaseFrame("Example Wizard");
     wizard.addActionListener(new ActionListener() {
