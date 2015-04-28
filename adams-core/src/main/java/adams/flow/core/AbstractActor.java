@@ -15,19 +15,10 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
-
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
 
 import adams.core.ClassLister;
 import adams.core.ClassLocator;
@@ -53,6 +44,15 @@ import adams.flow.control.ScopeHandler;
 import adams.flow.control.StorageHandler;
 import adams.flow.execution.DefaultFlowExecutionListeningSupporter;
 import adams.flow.execution.FlowExecutionListeningSupporter;
+
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Abstract base class for actors.
@@ -1102,7 +1102,7 @@ public abstract class AbstractActor
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
       getLogger().finest("Size after execute: " + sizeOf());
 
-    m_Executed = !m_Stopped;
+    m_Executed = !isStopped();
 
     return null;
   }
