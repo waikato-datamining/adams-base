@@ -15,7 +15,7 @@
 
 /*
  * DeQueue.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -262,7 +262,7 @@ public class DeQueue
     result = null;
     queue  = QueueHelper.getQueue(this, m_StorageName);
     
-    while ((result == null) && !m_Stopped) {
+    while ((result == null) && !isStopped()) {
       try {
 	if (queue.size() > 0) {
 	  result = new Token(queue.remove());

@@ -15,7 +15,7 @@
 
 /*
  * FTPLister.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -438,7 +438,7 @@ public class FTPLister
 	  client.changeWorkingDirectory(m_RemoteDir);
 	files = client.listDirectories();
 	for (FTPFile file: files) {
-	  if (m_Stopped)
+	  if (isStopped())
 	    break;
 	  if (file == null)
 	    continue;
@@ -458,7 +458,7 @@ public class FTPLister
 	    client.changeWorkingDirectory(m_RemoteDir);
 	  files = client.listFiles();
 	  for (FTPFile file: files) {
-	    if (m_Stopped)
+	    if (isStopped())
 	      break;
 	    if (file == null)
 	      continue;
@@ -474,7 +474,7 @@ public class FTPLister
       }
     }
 
-    if (m_Stopped)
+    if (isStopped())
       m_Queue.clear();
 
     return result;

@@ -860,7 +860,7 @@ public class Branch
 
       if (result != null)
 	break;
-      if (m_Stopped)
+      if (isStopped())
 	break;
     }
 

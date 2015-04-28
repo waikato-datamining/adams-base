@@ -15,17 +15,10 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
@@ -49,6 +42,13 @@ import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
 import adams.gui.core.BaseFrame;
+
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -896,7 +896,7 @@ public class Flow
 
     // do we execute an actor?
     m_AfterExecuteActor = null;
-    if (m_Stopped) {
+    if (isStopped()) {
       if (m_ExecuteOnErrorActor != null)
 	m_AfterExecuteActor = m_ExecuteOnErrorActor;
     }

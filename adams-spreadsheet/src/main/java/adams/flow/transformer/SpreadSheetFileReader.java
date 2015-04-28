@@ -261,7 +261,7 @@ public class SpreadSheetFileReader
       }
     }
 
-    if (m_Stopped) {
+    if (isStopped()) {
       m_Queue.clear();
       m_OutputToken = null;
     }

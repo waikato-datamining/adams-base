@@ -15,12 +15,10 @@
 
 /*
  * LogEvent.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.util.logging.LogRecord;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -41,8 +39,9 @@ import adams.flow.standalone.logevent.AbstractLogRecordFilter;
 import adams.flow.standalone.logevent.AbstractLogRecordProcessor;
 import adams.flow.standalone.logevent.AcceptAllFilter;
 import adams.flow.standalone.logevent.SimpleProcessor;
-
 import com.jidesoft.utils.SwingWorker;
+
+import java.util.logging.LogRecord;
 
 /**
  <!-- globalinfo-start -->
@@ -406,7 +405,7 @@ public class LogEvent
 	return BUSY;
       }
       else {
-	while (m_ExecutingActors && !m_Stopped) {
+	while (m_ExecutingActors && !isStopped()) {
 	  try {
 	    synchronized(this) {
 	      wait(10);
@@ -419,7 +418,7 @@ public class LogEvent
       }
     }
 
-    if (m_Stopped)
+    if (isStopped())
       return null;
     
     m_ExecutingActors = true;
@@ -643,7 +642,7 @@ public class LogEvent
    * @param record	the record associated with the log event
    */
   public void logEventOccurred(AbstractLogHandler source, LogRecord record) {
-    if (!m_Stopped)
+    if (!isStopped())
       processRecord(record);
   }
 

@@ -15,13 +15,9 @@
 
 /**
  * SpreadSheetTransformHeaderCells.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
 
 import adams.core.DateTime;
 import adams.core.QuickInfoHelper;
@@ -40,6 +36,10 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -700,19 +700,19 @@ public class SpreadSheetTransformHeaderCells
     else
       sheetNew = sheetOld.getClone();
 
-    if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !m_Stopped) {
+    if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !isStopped()) {
       synchronized(m_CallableActor) {
 	for (Cell cell: sheetNew.getHeaderRow().cells()) {
 	  result = transformCell(cell, sheetNew);
 	  if (result != null)
 	    break;
-	  if (m_Stopped)
+	  if (isStopped())
 	    break;
 	}
       }
     }
 
-    if ((result == null) && !m_Stopped)
+    if ((result == null) && !isStopped())
       m_OutputToken = new Token(sheetNew);
 
     return result;

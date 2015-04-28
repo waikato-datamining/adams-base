@@ -15,15 +15,10 @@
 
 /*
  * Rserve.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.util.logging.Level;
-
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 
 import adams.core.QuickInfoHelper;
 import adams.core.RProjectHelper;
@@ -31,6 +26,10 @@ import adams.core.Utils;
 import adams.core.management.LoggingObjectOutputPrinter;
 import adams.core.management.OS;
 import adams.core.management.OutputProcessStream;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -303,7 +302,7 @@ public class Rserve
 	    connected = false;
 	    for (i = 0; i < 5; i++) {
 	      getLogger().info("Waiting for Rserve to become available #" + (i+1));
-	      if (m_Stopped)
+	      if (isStopped())
 		break;
 	      try {
 		synchronized(this) {

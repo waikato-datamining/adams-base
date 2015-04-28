@@ -15,16 +15,10 @@
 
 /*
  * Email.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.SwingWorker;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -39,6 +33,11 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.NullToken;
 import adams.flow.standalone.SMTPConnection;
 import adams.flow.transformer.CreateEmail;
+
+import javax.swing.SwingWorker;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -697,7 +696,7 @@ public class Email
    */
   @Override
   public void wrapUp() {
-    while ((m_Sending.size() > 0) && !m_Stopped) {
+    while ((m_Sending.size() > 0) && !isStopped()) {
       try {
 	synchronized(this) {
 	  wait(100);

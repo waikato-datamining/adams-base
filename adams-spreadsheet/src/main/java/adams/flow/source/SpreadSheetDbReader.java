@@ -15,11 +15,9 @@
 
 /**
  * SpreadSheetDbReader.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.sql.ResultSet;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -31,6 +29,8 @@ import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
+
+import java.sql.ResultSet;
 
 /**
  <!-- globalinfo-start -->
@@ -260,7 +260,7 @@ public class SpreadSheetDbReader
   /**
    * Returns the current chunk size.
    * 
-   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   * @return	the size of the chunks, &lt; 1 denotes infinity
    */
   public int getChunkSize() {
     return m_ChunkSize;
@@ -350,7 +350,7 @@ public class SpreadSheetDbReader
       result = handleException("Failed to retrieve data from database!\n" + query, e);
     }
     
-    if (m_Stopped)
+    if (isStopped())
       result = null;
     
     if (result == null)

@@ -15,7 +15,7 @@
 
 /*
  * DelayedEvent.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -436,7 +436,7 @@ public class DelayedEvent
 
     // wait
     stopTime = System.currentTimeMillis() + m_Delay;
-    while ((stopTime > System.currentTimeMillis()) && !m_Stopped) {
+    while ((stopTime > System.currentTimeMillis()) && !isStopped()) {
       try {
 	synchronized(this) {
 	  wait(50);
@@ -447,7 +447,7 @@ public class DelayedEvent
       }
     }
 
-    if (!m_Stopped)
+    if (!isStopped())
       result = m_Actors.execute();
 
     return result;

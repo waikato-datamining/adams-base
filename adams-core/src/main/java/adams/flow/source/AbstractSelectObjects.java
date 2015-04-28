@@ -15,16 +15,16 @@
 
 /**
  * AbstractSelectObjects.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
 import adams.flow.core.AutomatableInteractiveActor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for sources that promp the user to select a nuber of objects to
@@ -267,7 +267,7 @@ public abstract class AbstractSelectObjects
     selected = showDialog();
     if (selected == null)
       return false;
-    if (m_Stopped)
+    if (isStopped())
       return true;
     for (Object sel: selected)
       m_Queue.add(sel);

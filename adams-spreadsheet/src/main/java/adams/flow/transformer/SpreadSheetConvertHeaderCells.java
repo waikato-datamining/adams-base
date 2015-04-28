@@ -15,11 +15,9 @@
 
 /**
  * SpreadSheetConvertHeaderCells.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.Date;
 
 import adams.core.DateTime;
 import adams.core.QuickInfoHelper;
@@ -30,6 +28,8 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -394,11 +394,11 @@ public class SpreadSheetConvertHeaderCells
       result = convertCell(cell, sheetNew);
       if (result != null)
 	break;
-      if (m_Stopped)
+      if (isStopped())
 	break;
     }
     
-    if ((result == null) && !m_Stopped)
+    if ((result == null) && !isStopped())
       m_OutputToken = new Token(sheetNew);
     
     return result;

@@ -15,7 +15,7 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -883,7 +883,7 @@ public class LoadBalancer
    */
   public void input(Token token) {
     m_CurrentToken = token;
-    while ((m_Executor.getActiveCount() >= m_Executor.getMaximumPoolSize()) && !m_Stopped) {
+    while ((m_Executor.getActiveCount() >= m_Executor.getMaximumPoolSize()) && !isStopped()) {
       if (isLoggingEnabled())
 	getLogger().info("Waiting for free thread...");
       try {

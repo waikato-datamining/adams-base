@@ -15,12 +15,10 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.HashSet;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -36,6 +34,8 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -911,7 +911,7 @@ public class LocalScopeTransformer
     
     result = super.postExecute();
 
-    if (!m_Stopped) {
+    if (!isStopped()) {
       if ((m_ScopeHandlingVariables != ScopeHandling.SHARE) && m_PropagateVariables && (m_LocalVariables != null)) {
 	for (String name: m_LocalVariables.nameSet()) {
 	  if (m_VariablesRegExp.isMatch(name)) {

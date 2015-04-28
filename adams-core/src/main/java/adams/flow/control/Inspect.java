@@ -19,15 +19,6 @@
  */
 package adams.flow.control;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.flow.sink.Display;
@@ -38,6 +29,14 @@ import adams.flow.transformer.AbstractInteractiveTransformerDialog;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  <!-- globalinfo-start -->
@@ -504,7 +503,7 @@ public class Inspect
     
     if (m_Interactive) {
       m_Waiting = true;
-      while (m_Waiting && !m_Stopped) {
+      while (m_Waiting && !isStopped()) {
 	try {
 	  synchronized(this) {
 	    wait(100);

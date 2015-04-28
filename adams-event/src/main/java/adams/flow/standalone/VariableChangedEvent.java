@@ -15,7 +15,7 @@
 
 /*
  * VariableChangedEvent.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -335,7 +335,7 @@ public class VariableChangedEvent
 	return BUSY;
       }
       else {
-	while (m_ExecutingActors && !m_Stopped) {
+	while (m_ExecutingActors && !isStopped()) {
 	  try {
 	    synchronized(this) {
 	      wait(10);
@@ -348,7 +348,7 @@ public class VariableChangedEvent
       }
     }
 
-    if (m_Stopped)
+    if (isStopped())
       return null;
     
     m_ExecutingActors = true;

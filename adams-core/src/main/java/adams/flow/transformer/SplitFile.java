@@ -189,10 +189,10 @@ public class SplitFile
       file = new PlaceholderFile((File) m_InputToken.getPayload());
     
     files = m_Splitter.split(file);
-    if (!m_Stopped)
+    if (!isStopped())
       m_OutputToken = new Token(files);
 
-    if (!m_Stopped && isLoggingEnabled())
+    if (!isStopped() && isLoggingEnabled())
       getLogger().info(m_InputToken.getPayload() + " -> " + m_OutputToken.getPayload());
     
     return result;

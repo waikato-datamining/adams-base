@@ -15,21 +15,20 @@
 
 /*
  * BinaryFileReader.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import gnu.trove.list.array.TByteArrayList;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
+import gnu.trove.list.array.TByteArrayList;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -428,7 +427,7 @@ public class BinaryFileReader
 	    m_Position = m_ActualEnd;
 	    closeStream();
 	  }
-	  if (m_Stopped) {
+	  if (isStopped()) {
 	    m_Data = null;
 	    break;
 	  }
@@ -441,7 +440,7 @@ public class BinaryFileReader
       m_CurrentFile = null;
     }
 
-    if (m_Stopped)
+    if (isStopped())
       closeStream();
 
     return result;

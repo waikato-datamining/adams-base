@@ -399,7 +399,7 @@ public class SpreadSheetConvertCells
 	targetRow.addCell(col).assign(sourceRow.getCell(i));
       }
       
-      if (m_Stopped)
+      if (isStopped())
 	break;
     }
   }
@@ -516,8 +516,8 @@ public class SpreadSheetConvertCells
       sheetNew = sheetOld.getClone();
     
     cells = m_Finder.findCells(sheetNew);
-    while (cells.hasNext() && !m_Stopped) {
-      if (m_Stopped)
+    while (cells.hasNext() && !isStopped()) {
+      if (isStopped())
         return null;
       result = convertCell(cells.next(), sheetNew);
       if (result != null)

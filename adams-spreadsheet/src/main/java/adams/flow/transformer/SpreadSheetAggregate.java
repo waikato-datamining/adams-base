@@ -433,7 +433,7 @@ public class SpreadSheetAggregate
       // data
       if (rows != null) {
 	for (String key: rows.getKeys()) {
-          if (m_Stopped)
+          if (isStopped())
             return null;
 	  rowNew = aggregated.addRow();
 	  subset = rows.getRows(key);
@@ -465,7 +465,7 @@ public class SpreadSheetAggregate
 	}
 	// aggregates
 	for (int index: agg) {
-          if (m_Stopped)
+          if (isStopped())
             return null;
 	  aggs = computeAggregates(input, null, index);
 	  for (Aggregate a: m_Aggregates) {

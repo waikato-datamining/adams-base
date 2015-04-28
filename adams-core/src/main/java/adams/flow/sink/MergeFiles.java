@@ -15,17 +15,17 @@
 
 /*
  * MergeFiles.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
@@ -143,12 +143,12 @@ public class MergeFiles
 	reader = new FileReader(files[i].getAbsoluteFile());
 	while ((read = reader.read(buffer)) > -1) {
 	  writer.write(buffer, 0, read);
-	  if (m_Stopped)
+	  if (isStopped())
 	    break;
 	}
 	reader.close();
 	writer.flush();
-	if (m_Stopped)
+	if (isStopped())
 	  break;
       }
       writer.close();

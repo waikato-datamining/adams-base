@@ -15,12 +15,10 @@
 
 /*
  * SpreadSheetSubsetByValue.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
@@ -28,6 +26,8 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -349,7 +349,7 @@ public class SpreadSheetSubsetByValue
 	finished = true;
       }
     }
-    while (!finished && !m_Stopped && (m_RowIndex < m_Sorted.getRowCount()));
+    while (!finished && !isStopped() && (m_RowIndex < m_Sorted.getRowCount()));
     
     if (sheet != null)
       result = new Token(sheet);

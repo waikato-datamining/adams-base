@@ -650,7 +650,7 @@ public class SpreadSheetTransformCells
 	targetRow.addCell(col).assign(sourceRow.getCell(i));
       }
 
-      if (m_Stopped)
+      if (isStopped())
 	break;
     }
   }
@@ -816,10 +816,10 @@ public class SpreadSheetTransformCells
       sheetNew = sheetOld.getClone();
 
     cells = m_Finder.findCells(sheetNew);
-    if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !m_Stopped) {
+    if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped() && !isStopped()) {
       synchronized(m_CallableActor) {
 	while (cells.hasNext()) {
-          if (m_Stopped)
+          if (isStopped())
             return null;
 	  result = transformCell(cells.next(), sheetNew);
 	  if (result != null)
