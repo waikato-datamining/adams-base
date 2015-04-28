@@ -1582,7 +1582,7 @@ public class GUIHelper {
     JPanel			panelAll;
     JPanel			panel;
     JLabel			label;
-    BaseTextArea		textValue;
+    final BaseTextArea		textValue;
     final ApprovalDialog	dialog;
     Component			pparent;
     Boolean                     sync;
@@ -1610,6 +1610,7 @@ public class GUIHelper {
     dialog.setTitle(title);
     
     textValue = new BaseTextArea(1, 20);
+    textValue.setToolTipText("Use <Ctrl-Enter> for adding a new line");
     textValue.setText(initial);
     if (!initial.isEmpty()) {
       textValue.setSelectionStart(0);
@@ -1620,16 +1621,21 @@ public class GUIHelper {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	  e.consume();
-	  dialog.getApproveButton().doClick();
+          if (e.getModifiers() == 0) {
+            e.consume();
+            dialog.getApproveButton().doClick();
+          }
+          else if ((e.getModifiers() & KeyEvent.CTRL_MASK) == KeyEvent.CTRL_MASK) {
+            e.consume();
+            textValue.append("\n");
+          }
 	}
 	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 	  e.consume();
 	  dialog.getCancelButton().doClick();
 	}
-	else {
-	  super.keyPressed(e);
-	}
+        if (!e.isConsumed())
+          super.keyPressed(e);
       }
     });
 
