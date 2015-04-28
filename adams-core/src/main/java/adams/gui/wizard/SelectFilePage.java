@@ -47,6 +47,8 @@ public class SelectFilePage
   /** the panel for selecting the file. */
   protected FileChooserPanel m_PanelFile;
 
+  /** whether to show the
+
   /**
    * Default constructor.
    */
@@ -183,6 +185,24 @@ public class SelectFilePage
    */
   public FileFilter getFileFilter() {
     return m_PanelFile.getFileFilter();
+  }
+
+  /**
+   * Sets whether to use the save or open dialog.
+   *
+   * @param value	if true the save dialog is used
+   */
+  public void setUseSaveDialog(boolean value) {
+    m_PanelFile.setUseSaveDialog(value);
+  }
+
+  /**
+   * Returns whether the save or open dialog is used.
+   *
+   * @return	true if the save dialog is used
+   */
+  public boolean getUseSaveDialog() {
+    return m_PanelFile.getUseSaveDialog();
   }
 
   /**
