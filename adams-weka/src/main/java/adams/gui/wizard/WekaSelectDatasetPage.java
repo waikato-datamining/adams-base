@@ -24,6 +24,8 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.DatasetFileChooserPanel;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.io.File;
 
@@ -76,6 +78,12 @@ public class WekaSelectDatasetPage
     panel = new JPanel(new BorderLayout());
     add(panel, BorderLayout.CENTER);
     m_PanelFile = new DatasetFileChooserPanel();
+    m_PanelFile.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        updateButtons();
+      }
+    });
     panel.add(m_PanelFile, BorderLayout.NORTH);
   }
 
