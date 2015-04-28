@@ -15,7 +15,7 @@
 
 /**
  * AbstractExcelSpreadSheetReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -28,7 +28,8 @@ import adams.core.Range;
  * @version $Revision$
  */
 public abstract class AbstractExcelSpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport {
+  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
+  implements NoHeaderSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
@@ -39,6 +40,12 @@ public abstract class AbstractExcelSpreadSheetReader
   /** the range of columns to force to be text. */
   protected Range m_TextColumns;
 
+  /** whether the file has a header or not. */
+  protected boolean m_NoHeader;
+
+  /** the comma-separated list of column header names. */
+  protected String m_CustomColumnHeaders;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -47,12 +54,20 @@ public abstract class AbstractExcelSpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "no-auto-extend-header", "autoExtendHeader",
-	    true);
+      "no-auto-extend-header", "autoExtendHeader",
+      true);
 
     m_OptionManager.add(
-	    "text-columns", "textColumns",
-	    new Range());
+      "text-columns", "textColumns",
+      new Range());
+
+    m_OptionManager.add(
+      "no-header", "noHeader",
+      false);
+
+    m_OptionManager.add(
+      "custom-column-headers", "customColumnHeaders",
+      "");
   }
 
   /**
@@ -131,5 +146,63 @@ public abstract class AbstractExcelSpreadSheetReader
    */
   public String textColumnsTipText() {
     return "The range of columns to treat as text.";
+  }
+
+  /**
+   * Sets whether the file contains a header row or not.
+   *
+   * @param value	true if no header row available
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		true if no header row available
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, all rows get added as data rows and a dummy header will get inserted.";
+  }
+
+  /**
+   * Sets the custom headers to use.
+   *
+   * @param value	the comma-separated list
+   */
+  public void setCustomColumnHeaders(String value) {
+    m_CustomColumnHeaders = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		the comma-separated list
+   */
+  public String getCustomColumnHeaders() {
+    return m_CustomColumnHeaders;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String customColumnHeadersTipText() {
+    return "The custom headers to use for the columns instead (comma-separated list); ignored if empty.";
   }
 }

@@ -19,21 +19,6 @@
  */
 package adams.data.io.input;
 
-import gnu.trove.set.hash.TIntHashSet;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.logging.Level;
-
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
@@ -49,6 +34,20 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import gnu.trove.set.hash.TIntHashSet;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -211,7 +210,8 @@ import adams.data.spreadsheet.SpreadSheet;
  */
 public class CsvSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
-  implements ChunkedSpreadSheetReader, OptionHandlingLocaleSupporter, WindowedSpreadSheetReader {
+  implements ChunkedSpreadSheetReader, OptionHandlingLocaleSupporter,
+             WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4461796269354230002L;
@@ -522,21 +522,10 @@ public class CsvSpreadSheetReader
 	    continue;
 	  if (m_HeaderCells == null) {
 	    isHeader = true;
-	    // insert dummy header?
+	    // create header?
 	    if (m_Owner.getNoHeader()) {
-	      // custom header?
-	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
-		m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
-		if (cells.size() != m_HeaderCells.size())
-		  throw new IllegalStateException(
-		      "Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
-	      }
-	      else {
-		m_HeaderCells = new ArrayList<String>();
-		for (i = 0; i < cells.size(); i++)
-		  m_HeaderCells.add("Col" + (i+1));
-	      }
-	      row = result.getHeaderRow();
+              m_HeaderCells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
+	      row           = result.getHeaderRow();
 	      for (i = 0; i < m_HeaderCells.size(); i++)
 		row.addCell("" + i).setContentAsString(m_HeaderCells.get(i));
 	      row      = null;
@@ -544,15 +533,10 @@ public class CsvSpreadSheetReader
 	    }
 	    else {
 	      // custom header?
-	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0) {
-		m_HeaderCells = new ArrayList<String>(Arrays.asList(m_Owner.getCustomColumnHeaders().trim().split(",")));
-		if (cells.size() != m_HeaderCells.size())
-		  throw new IllegalStateException(
-		      "Number of cells of custom header differs from data: " + m_HeaderCells.size() + " != " + cells.size());
-	      }
-	      else {
+	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0)
+                m_HeaderCells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
+	      else
 		m_HeaderCells = cells;
-	      }
 	      row = result.getHeaderRow();
 	    }
 
@@ -1248,7 +1232,7 @@ public class CsvSpreadSheetReader
    * Sets whether parsing of times is to be lenient or not.
    *
    * @param value	if true lenient parsing is used, otherwise not
-   * @see		SimpleTimeFormat#setLenient(boolean)
+   * @see		SimpleDateFormat#setLenient(boolean)
    */
   public void setTimeLenient(boolean value) {
     m_TimeLenient = value;
@@ -1259,7 +1243,7 @@ public class CsvSpreadSheetReader
    * Returns whether the parsing of times is lenient or not.
    *
    * @return		true if parsing is lenient
-   * @see		SimpleTimeFormat#isLenient()
+   * @see		SimpleDateFormat#isLenient()
    */
   public boolean isTimeLenient() {
     return m_TimeLenient;

@@ -15,18 +15,9 @@
 
 /**
  * ODFSpreadSheetReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.ODValueType;
-import org.jopendocument.dom.spreadsheet.Sheet;
 
 import adams.core.Range;
 import adams.core.Utils;
@@ -35,6 +26,15 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import org.jopendocument.dom.ODPackage;
+import org.jopendocument.dom.ODValueType;
+import org.jopendocument.dom.spreadsheet.Sheet;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -85,13 +85,20 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public class ODFSpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport {
+  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
+  implements NoHeaderSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
 
   /** the range of columns to force to be text. */
   protected Range m_TextColumns;
+
+  /** whether the file has a header or not. */
+  protected boolean m_NoHeader;
+
+  /** the comma-separated list of column header names. */
+  protected String m_CustomColumnHeaders;
 
   /**
    * Returns a string describing the object.
@@ -114,8 +121,16 @@ public class ODFSpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "text-columns", "textColumns",
-	    "");
+      "text-columns", "textColumns",
+      "");
+
+    m_OptionManager.add(
+      "no-header", "noHeader",
+      false);
+
+    m_OptionManager.add(
+      "custom-column-headers", "customColumnHeaders",
+      "");
   }
 
   /**
@@ -198,6 +213,64 @@ public class ODFSpreadSheetReader
   }
 
   /**
+   * Sets whether the file contains a header row or not.
+   *
+   * @param value	true if no header row available
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		true if no header row available
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, all rows get added as data rows and a dummy header will get inserted.";
+  }
+
+  /**
+   * Sets the custom headers to use.
+   *
+   * @param value	the comma-separated list
+   */
+  public void setCustomColumnHeaders(String value) {
+    m_CustomColumnHeaders = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		the comma-separated list
+   */
+  public String getCustomColumnHeaders() {
+    return m_CustomColumnHeaders;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String customColumnHeadersTipText() {
+    return "The custom headers to use for the columns instead (comma-separated list); ignored if empty.";
+  }
+
+  /**
    * Returns how to read the data, from a file, stream or reader.
    *
    * @return		how to read the data
@@ -247,6 +320,8 @@ public class ODFSpreadSheetReader
     ODValueType		type;
     ContentType[]	cellTypes;
     int[]		indices;
+    int                 dataRowStart;
+    List<String>        header;
 
     result = new ArrayList<SpreadSheet>();
 
@@ -254,6 +329,7 @@ public class ODFSpreadSheetReader
       spreadsheet = org.jopendocument.dom.spreadsheet.SpreadSheet.get(new ODPackage(in));
       m_SheetRange.setMax(spreadsheet.getSheetCount());
       indices = m_SheetRange.getIntIndices();
+      dataRowStart = getNoHeader() ? 0 : 1;
       for (int index: indices) {
 	spsheet = m_SpreadSheetType.newInstance();
 	spsheet.setDataRowClass(m_DataRowType.getClass());
@@ -267,18 +343,32 @@ public class ODFSpreadSheetReader
 	if (isLoggingEnabled())
 	  getLogger().info("header row");
 	row = spsheet.getHeaderRow();
-	for (i = 0; i < sheet.getColumnCount(); i++) {
-	  if (m_Stopped)
-	    break;
-	  cellStr = sheet.getCellAt(i, 0).getTextValue();
-	  if (cellStr.length() == 0)
-	    break;
-	  row.addCell("" + (i+1)).setContent(cellStr);
-	}
+        if (getNoHeader()) {
+          header = SpreadSheetUtils.createHeader(sheet.getColumnCount(), m_CustomColumnHeaders);
+          for (i = 0; i < header.size(); i++)
+            row.addCell("" + (i + 1)).setContent(header.get(i));
+        }
+        else {
+          if (!m_CustomColumnHeaders.trim().isEmpty()) {
+            header = SpreadSheetUtils.createHeader(sheet.getColumnCount(), m_CustomColumnHeaders);
+            for (i = 0; i < header.size(); i++)
+              row.addCell("" + (i + 1)).setContent(header.get(i));
+          }
+          else {
+            for (i = 0; i < sheet.getColumnCount(); i++) {
+              if (m_Stopped)
+                break;
+              cellStr = sheet.getCellAt(i, 0).getTextValue();
+              if (cellStr.length() == 0)
+                break;
+              row.addCell("" + (i + 1)).setContent(cellStr);
+            }
+          }
+        }
 
 	// data
 	m_TextColumns.setMax(spsheet.getColumnCount());
-	for (n = 1; n < sheet.getRowCount(); n++) {
+	for (n = dataRowStart; n < sheet.getRowCount(); n++) {
 	  if (m_Stopped)
 	    break;
 	  if (isLoggingEnabled())

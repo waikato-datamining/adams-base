@@ -20,31 +20,6 @@
  */
 package adams.data.io.input;
 
-import gnu.trove.set.hash.TIntHashSet;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 import adams.core.DateTime;
 import adams.core.ExcelHelper;
 import adams.core.License;
@@ -60,6 +35,30 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import gnu.trove.set.hash.TIntHashSet;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -230,7 +229,7 @@ public class ExcelStreamingSpreadSheetReader
     
     /** the text columns. */
     protected TIntHashSet m_TextColumns;
-    
+
     /**
      * Initializes the SAX handler.
      * 
@@ -250,7 +249,7 @@ public class ExcelStreamingSpreadSheetReader
       m_Stopped            = false;
       m_LoggingAtLeastFine = LoggingHelper.isAtLeast(m_Owner.getLogger(), Level.FINE);
       m_TextColumns        = null;
-      
+
       m_CellTypes                  = new HashMap<String,ContentType>();
       m_CellStrings                = new HashMap<String,ContentType>();
       m_UnknownCellTypes           = new HashSet<String>();
@@ -273,7 +272,7 @@ public class ExcelStreamingSpreadSheetReader
      * @param localName The local name (without prefix), or the
      *        empty string if Namespace processing is not being
      *        performed.
-     * @param qName The qualified name (with prefix), or the
+     * @param name The qualified name (with prefix), or the
      *        empty string if qualified names are not available.
      * @param attributes The attributes attached to the element.  If
      *        there are no attributes, it shall be an empty
@@ -341,7 +340,7 @@ public class ExcelStreamingSpreadSheetReader
      * @param localName The local name (without prefix), or the
      *        empty string if Namespace processing is not being
      *        performed.
-     * @param qName The qualified name (with prefix), or the
+     * @param name The qualified name (with prefix), or the
      *        empty string if qualified names are not available.
      * @throws org.xml.sax.SAXException Any SAX exception, possibly wrapping another exception.
      */
@@ -786,6 +785,10 @@ public class ExcelStreamingSpreadSheetReader
     SpreadSheet			spsheet;
     InputSource 		sheetSource;
     HashSet<Integer>		indices;
+    List<String>                header;
+    Row                         rowOld;
+    Row                         row;
+    int                         i;
 
     result = new ArrayList<SpreadSheet>();
 
@@ -810,6 +813,25 @@ public class ExcelStreamingSpreadSheetReader
 	  parser.setContentHandler(m_Handler);
 	  sheetSource = new InputSource(sheet);
 	  parser.parse(sheetSource);
+          // fix header?
+          if (getNoHeader()) {
+            header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
+            rowOld = spsheet.getHeaderRow();
+            row    = spsheet.insertRow(0);
+            for (i = 0; i < spsheet.getColumnCount(); i++)
+              row.getCell(i).assign(rowOld.getCell(i));
+            row    = spsheet.getHeaderRow();
+            for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
+              row.getCell(i).setContent(header.get(i));
+          }
+          else {
+            if (!getCustomColumnHeaders().trim().isEmpty()) {
+              header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
+              row    = spsheet.getHeaderRow();
+              for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
+                row.getCell(i).setContent(header.get(i));
+            }
+          }
 	  result.add(spsheet);
 	  // missing types?
 	  if (m_Handler.getUnknownCellTypes().size() > 0) {

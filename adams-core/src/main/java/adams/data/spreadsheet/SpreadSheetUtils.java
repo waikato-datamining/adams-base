@@ -15,14 +15,15 @@
 
 /**
  * SpreadSheetUtils.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for spreadsheet related functionality.
@@ -98,4 +99,29 @@ public class SpreadSheetUtils {
     return result.toArray(new String[result.size()]);
   }
 
+  /**
+   * Creates list of column header names. Either using the comma-separated
+   * list or, if that is empty, a made up list using "Col-" plus the index.
+   *
+   * @param numCols         the number of column headers to generate
+   * @param customCols      the comma-separated list of custom headers, can be empty
+   * @return                the generated list of headers
+   */
+  public static List<String> createHeader(int numCols, String customCols) {
+    List<String>      result;
+
+    result     = new ArrayList<>();
+    customCols = customCols.trim();
+
+    if (!customCols.isEmpty())
+      result.addAll(Arrays.asList(customCols.split(",")));
+
+    while (result.size() < numCols)
+      result.add("Col-" + (result.size() + 1));
+
+    while (result.size() > numCols)
+      result.remove(result.size() - 1);
+
+    return result;
+  }
 }

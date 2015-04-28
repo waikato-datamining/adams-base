@@ -15,21 +15,9 @@
 
 /**
  * ExcelSpreadSheetReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import adams.core.DateFormat;
 import adams.core.DateTime;
@@ -38,6 +26,18 @@ import adams.core.Utils;
 import adams.data.io.output.ExcelSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -187,6 +187,8 @@ public class ExcelSpreadSheetReader
     int				cellType;
     DateFormat			dformat;
     boolean			numeric;
+    int                 	dataRowStart;
+    List<String>        	header;
 
     result = new ArrayList<SpreadSheet>();
 
@@ -195,7 +197,8 @@ public class ExcelSpreadSheetReader
     try {
       workbook = WorkbookFactory.create(in);
       m_SheetRange.setMax(workbook.getNumberOfSheets());
-      indices = m_SheetRange.getIntIndices();
+      indices      = m_SheetRange.getIntIndices();
+      dataRowStart = getNoHeader() ? 0 : 1;
       for (int index: indices) {
 	if (m_Stopped)
 	  break;
@@ -224,37 +227,51 @@ public class ExcelSpreadSheetReader
 	else if (exRow != null) {
 	  spRow = spsheet.getHeaderRow();
 	  m_TextColumns.setMax(exRow.getLastCellNum());
-	  for (i = 0; i < exRow.getLastCellNum(); i++) {
-	    if (m_Stopped)
-	      break;
-	    exCell = exRow.getCell(i);
-	    if (exCell == null) {
-	      spRow.addCell("" + (i + 1)).setMissing();
-	      continue;
+	  if (getNoHeader()) {
+	    header = SpreadSheetUtils.createHeader(exRow.getLastCellNum(), m_CustomColumnHeaders);
+	    for (i = 0; i < header.size(); i++)
+	      spRow.addCell("" + (i + 1)).setContent(header.get(i));
+	  }
+	  else {
+	    if (!m_CustomColumnHeaders.trim().isEmpty()) {
+	      header = SpreadSheetUtils.createHeader(exRow.getLastCellNum(), m_CustomColumnHeaders);
+	      for (i = 0; i < header.size(); i++)
+		spRow.addCell("" + (i + 1)).setContent(header.get(i));
 	    }
-	    numeric = !m_TextColumns.isInRange(i);
-	    switch (exCell.getCellType()) {
-	      case Cell.CELL_TYPE_BLANK:
-	      case Cell.CELL_TYPE_ERROR:
-		spRow.addCell("" + (i + 1)).setContent("column-" + (i+1));
-		break;
-	      case Cell.CELL_TYPE_NUMERIC:
-		if (HSSFDateUtil.isCellDateFormatted(exCell))
-		  spRow.addCell("" + (i + 1)).setContent(new DateTime(HSSFDateUtil.getJavaDate(exCell.getNumericCellValue())));
-		else if (numeric)
-		  spRow.addCell("" + (i + 1)).setContent(exCell.getNumericCellValue());
-		else
-		  spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
-		break;
-	      default:
-		spRow.addCell("" + (i + 1)).setContentAsString(exCell.getStringCellValue());
+	    else {
+	      for (i = 0; i < exRow.getLastCellNum(); i++) {
+		if (m_Stopped)
+		  break;
+		exCell = exRow.getCell(i);
+		if (exCell == null) {
+		  spRow.addCell("" + (i + 1)).setMissing();
+		  continue;
+		}
+		numeric = !m_TextColumns.isInRange(i);
+		switch (exCell.getCellType()) {
+		  case Cell.CELL_TYPE_BLANK:
+		  case Cell.CELL_TYPE_ERROR:
+		    spRow.addCell("" + (i + 1)).setContent("column-" + (i + 1));
+		    break;
+		  case Cell.CELL_TYPE_NUMERIC:
+		    if (HSSFDateUtil.isCellDateFormatted(exCell))
+		      spRow.addCell("" + (i + 1)).setContent(new DateTime(HSSFDateUtil.getJavaDate(exCell.getNumericCellValue())));
+		    else if (numeric)
+		      spRow.addCell("" + (i + 1)).setContent(exCell.getNumericCellValue());
+		    else
+		      spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
+		    break;
+		  default:
+		    spRow.addCell("" + (i + 1)).setContentAsString(exCell.getStringCellValue());
+		}
+	      }
 	    }
 	  }
 	}
 
 	// data
 	if (spsheet.getColumnCount() > 0) {
-	  for (i = 1; i <= sheet.getLastRowNum(); i++) {
+	  for (i = dataRowStart; i <= sheet.getLastRowNum(); i++) {
 	    if (m_Stopped)
 	      break;
 	    if (isLoggingEnabled())
