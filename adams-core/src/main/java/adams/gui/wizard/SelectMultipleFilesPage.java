@@ -170,6 +170,7 @@ public class SelectMultipleFilesPage
     m_ButtonAdd.setEnabled(true);
     m_ButtonRemove.setEnabled(m_ListFiles.getSelectedIndices().length > 0);
     m_ButtonRemoveAll.setEnabled(m_ListFiles.getModel().getSize() > 0);
+    updateButtons();
   }
 
   /**

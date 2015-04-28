@@ -24,6 +24,8 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.FileChooserPanel;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.io.File;
@@ -78,6 +80,12 @@ public class SelectFilePage
     panel = new JPanel(new BorderLayout());
     add(panel, BorderLayout.CENTER);
     m_PanelFile = new FileChooserPanel();
+    m_PanelFile.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        updateButtons();
+      }
+    });
     panel.add(m_PanelFile, BorderLayout.NORTH);
   }
 
