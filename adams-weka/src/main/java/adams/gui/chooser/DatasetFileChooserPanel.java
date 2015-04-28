@@ -15,21 +15,20 @@
 
 /*
  * DatasetFileChooserPanel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.io.File;
-
-import javax.swing.JFileChooser;
-
+import adams.core.io.PlaceholderFile;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils;
 import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
-import adams.core.io.PlaceholderFile;
+
+import javax.swing.JFileChooser;
+import java.io.File;
 
 /**
  * A panel that contains a text field with the current file and a
@@ -125,13 +124,25 @@ public class DatasetFileChooserPanel
   @Override
   protected File doChoose() {
     m_FileChooser.setSelectedFile(getCurrent().getAbsoluteFile());
-    if (m_FileChooser.showOpenDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
-      m_Loader = m_FileChooser.getLoader();
-      m_Saver  = m_FileChooser.getSaver();
-      return new PlaceholderFile(m_FileChooser.getSelectedFile());
+    if (!m_UseSaveDialog) {
+      if (m_FileChooser.showOpenDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
+        m_Loader = m_FileChooser.getLoader();
+        m_Saver  = null;
+        return new PlaceholderFile(m_FileChooser.getSelectedFile());
+      }
+      else {
+        return null;
+      }
     }
     else {
-      return null;
+      if (m_FileChooser.showSaveDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
+        m_Loader = null;
+        m_Saver  = m_FileChooser.getSaver();
+        return new PlaceholderFile(m_FileChooser.getSelectedFile());
+      }
+      else {
+        return null;
+      }
     }
   }
 
