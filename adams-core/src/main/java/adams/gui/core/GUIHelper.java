@@ -1538,7 +1538,7 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg) {
-    return showInputDialog(parent, null, msg);
+    return showInputDialog(parent, msg, null);
   }
 
   /**
