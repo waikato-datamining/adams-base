@@ -15,17 +15,17 @@
 
 /**
  * ViewStatistics.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
-
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
 
 import adams.data.statistics.InformativeStatistic;
 import adams.flow.core.ActorStatistic;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 /**
  * Displays statistics about the flow.
@@ -72,7 +72,7 @@ public class ViewStatistics
       dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
     dialog.setStatistics(statsList);
     dialog.setTitle("Actor statistics");
-    dialog.pack();
+    dialog.setSize(650, 500);
     dialog.setLocationRelativeTo(m_State);
     dialog.setVisible(true);
   }
