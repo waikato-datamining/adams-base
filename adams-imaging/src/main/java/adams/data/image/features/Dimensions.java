@@ -112,7 +112,7 @@ public class Dimensions
     result[0].add(img.getHeight());
     result[0].add(img.getWidth() * img.getHeight());
     if (img.getHeight() > 0)
-      result[0].add(img.getWidth() / img.getHeight());
+      result[0].add((double) img.getWidth() / (double) img.getHeight());
     else
       result[0].add(null);
 
