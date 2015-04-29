@@ -19,15 +19,15 @@
  */
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.core.Instance;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
+import weka.core.Instance;
+
+import java.util.Hashtable;
 
 /**
  * Ancestor for transformers that user models for processing Instance objects,
@@ -76,6 +76,16 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     m_OptionManager.add(
 	    "on-the-fly", "onTheFly",
 	    false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Model = null;
   }
 
   /**
