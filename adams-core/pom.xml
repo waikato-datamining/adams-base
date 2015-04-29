@@ -94,6 +94,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.arnabk</groupId>
+      <artifactId>pgslookandfeel</artifactId>
+      <version>1.1.4</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.fifesoft</groupId>
       <artifactId>rsyntaxtextarea</artifactId>
       <version>2.5.6</version>
