@@ -54,6 +54,7 @@ public class HistogramTest
   protected String[] getRegressionInputFiles() {
     return new String[]{
 	"adams_logo.png",
+	"adams_logo.png",
 	"adams_logo.png"
     };
   }
@@ -67,13 +68,17 @@ public class HistogramTest
   protected AbstractBufferedImageFeatureGenerator[] getRegressionSetups() {
     Histogram[]	result;
 
-    result = new Histogram[2];
+    result = new Histogram[3];
 
     result[0] = new Histogram();
     result[0].setHistogramType(HistogramType.RGB);
 
     result[1] = new Histogram();
     result[1].setHistogramType(HistogramType.EIGHT_BIT);
+
+    result[2] = new Histogram();
+    result[2].setHistogramType(HistogramType.RGB);
+    result[2].setNumBins(16);
 
     return result;
   }

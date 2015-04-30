@@ -15,19 +15,10 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.features;
-
-import java.awt.image.BufferedImage;
-import java.awt.image.renderable.ParameterBlock;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
 
 import adams.core.EnumWithCustomDisplay;
 import adams.core.option.AbstractOption;
@@ -38,21 +29,31 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.report.DataType;
 import adams.data.statistics.StatUtils;
 
+import javax.media.jai.JAI;
+import javax.media.jai.PlanarImage;
+import java.awt.image.BufferedImage;
+import java.awt.image.renderable.ParameterBlock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Turns an image into a histogram.<br/>
- * In case of an 8-bit histogram, the image must already be converted to a gray image.
+ * In case of an 8-bit histogram, the image must already be converted to a gray image.<br/>
+ * The number of bins per channel can be chosen as well (1-256).
  * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
  * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -66,9 +67,16 @@ import adams.data.statistics.StatUtils;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-histo-type &lt;8-bit|RGB&gt; (property: histogramType)
+ * <pre>-histo-type &lt;EIGHT_BIT|RGB&gt; (property: histogramType)
  * &nbsp;&nbsp;&nbsp;The type of histogram to generate.
  * &nbsp;&nbsp;&nbsp;default: RGB
+ * </pre>
+ * 
+ * <pre>-num-bins &lt;int&gt; (property: numBins)
+ * &nbsp;&nbsp;&nbsp;The number of bins per channel (1-256).
+ * &nbsp;&nbsp;&nbsp;default: 256
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;maximum: 256
  * </pre>
  * 
  <!-- options-end -->
@@ -199,6 +207,9 @@ public class Histogram
   /** the type of histogram to generate. */
   protected HistogramType m_HistogramType;
 
+  /** the number of bins per channel. */
+  protected int m_NumBins;
+
   /**
    * Returns a string describing the object.
    *
@@ -209,7 +220,8 @@ public class Histogram
     return
         "Turns an image into a histogram.\n"
       + "In case of an 8-bit histogram, the image must already be converted "
-      + "to a gray image.";
+      + "to a gray image.\n"
+      + "The number of bins per channel can be chosen as well (1-256).";
   }
 
   /**
@@ -222,6 +234,10 @@ public class Histogram
     m_OptionManager.add(
 	    "histo-type", "histogramType",
 	    HistogramType.RGB);
+
+    m_OptionManager.add(
+      "num-bins", "numBins",
+      256, 1, 256);
   }
 
   /**
@@ -254,6 +270,40 @@ public class Histogram
   }
 
   /**
+   * Sets the number of bins to use per channel.
+   *
+   * @param value 	the number of bins
+   */
+  public void setNumBins(int value) {
+    if ((value >= 1) && (value <= 256)) {
+      m_NumBins = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Number of bins must meet 1 <= x <= 256, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the number of bins to use per channel.
+   *
+   * @return 		the number of bins
+   */
+  public int getNumBins() {
+    return m_NumBins;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numBinsTipText() {
+    return "The number of bins per channel (1-256).";
+  }
+
+  /**
    * Creates the header from a template image.
    *
    * @param img		the image to act as a template
@@ -266,7 +316,7 @@ public class Histogram
     int				numAtts;
 
     result  = new HeaderDefinition();
-    numAtts = 256;
+    numAtts = m_NumBins;
     for (i = 0; i < numAtts; i++) {
       switch (m_HistogramType) {
 	case EIGHT_BIT:
@@ -309,17 +359,17 @@ public class Histogram
 
     switch (m_HistogramType) {
       case EIGHT_BIT:
-	values = new double[256];
-	bins   = new int[]{256};             // The number of bins.
+	values = new double[m_NumBins];
+	bins   = new int[]{m_NumBins};             // The number of bins.
 	low    = new double[]{0.0D};        // The low value.
-	high   = new double[]{256.0D}; // The high value.
+	high   = new double[]{(double) m_NumBins}; // The high value.
 	break;
 
       case RGB:
-	values = new double[256 * 3];
-	bins   = new int[]{256, 256, 256};             // The number of bins.
+	values = new double[m_NumBins * 3];
+	bins   = new int[]{m_NumBins, m_NumBins, m_NumBins};             // The number of bins.
 	low    = new double[]{0.0D, 0.0D, 0.0D};        // The low value.
-	high   = new double[]{256.0D, 256.0D, 256.0D}; // The high value.
+	high   = new double[]{(double) m_NumBins, (double) m_NumBins, (double) m_NumBins}; // The high value.
 	break;
 
       default:
@@ -344,12 +394,12 @@ public class Histogram
 
     switch (m_HistogramType) {
       case EIGHT_BIT:
-	for (i = 0; i < 256; i++)
+	for (i = 0; i < m_NumBins; i++)
 	  values[i] = hist.getBinSize(0, i);
 	break;
 
       case RGB:
-	for (i = 0; i < 256; i++) {
+	for (i = 0; i < m_NumBins; i++) {
 	  values[i*3 + 0] = hist.getBinSize(0, i);
 	  if (hist.getNumBands() > 1) {
 	    values[i*3 + 1] = hist.getBinSize(1, i);
