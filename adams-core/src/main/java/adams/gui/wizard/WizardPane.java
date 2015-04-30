@@ -494,6 +494,10 @@ public class WizardPane
     selmpage.addChoosableFileFilter(filter = new ExtensionFileFilter("Text files", "txt"));
     selmpage.setFileFilter(filter);
     wizard.addPage(selmpage);
+    TextAreaPage textpage = new TextAreaPage("Free text");
+    textpage.setDescription("Please enter some text");
+    textpage.setText("blah\nblah\nblah");
+    wizard.addPage(textpage);
     wizard.addPage(new FinalPage());
     final BaseFrame frame = new BaseFrame("Example Wizard");
     wizard.addActionListener(new ActionListener() {
