@@ -213,6 +213,7 @@ public class MarkLocation
     dialog.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(wizard, BorderLayout.CENTER);
+    dialog.setTitle("Mark locations");
     dialog.setSize(600, 500);
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
