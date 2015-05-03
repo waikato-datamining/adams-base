@@ -41,8 +41,8 @@ import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
 import adams.gui.wizard.WizardPane;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils;
+import weka.core.converters.ConverterUtils.DataSink;
 import weka.core.converters.ConverterUtils.DataSource;
 
 import java.awt.event.ActionEvent;
@@ -179,7 +179,7 @@ public class MergeDatasets
     Instances                   full;
     int                         i;
     AbstractFileLoader          loader;
-    AbstractFileSaver           saver;
+    DataSink                    sink;
     Token                       token;
     String                      msg;
 
@@ -222,11 +222,9 @@ public class MergeDatasets
     full  = (Instances) token.getPayload();
 
     // save
-    saver = ConverterUtils.getSaverForFile(output);
     try {
-      saver.setInstances(full);
-      saver.setFile(output);
-      saver.writeBatch();
+      sink = new DataSink(output.getAbsolutePath());
+      sink.write(full);
     }
     catch (Exception e) {
         GUIHelper.showErrorMessage(
