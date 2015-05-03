@@ -207,8 +207,8 @@ public class AppendDatasets
     // save
     saver = ConverterUtils.getSaverForFile(output);
     try {
-      saver.setFile(output);
       saver.setInstances(full);
+      saver.setFile(output);
       saver.writeBatch();
     }
     catch (Exception e) {
