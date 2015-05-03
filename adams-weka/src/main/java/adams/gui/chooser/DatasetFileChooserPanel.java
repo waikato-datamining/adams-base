@@ -24,7 +24,6 @@ import adams.core.io.PlaceholderFile;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils;
-import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
 
 import javax.swing.JFileChooser;
@@ -45,7 +44,7 @@ public class DatasetFileChooserPanel
   private static final long serialVersionUID = -8755020252465094120L;
 
   /** the filechooser for selecting the dataset. */
-  protected ConverterFileChooser m_FileChooser;
+  protected WekaFileChooser m_FileChooser;
 
   /** the current loader. */
   protected AbstractFileLoader m_Loader;
@@ -110,8 +109,7 @@ public class DatasetFileChooserPanel
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(m_FileChooser);
+    m_FileChooser = new WekaFileChooser();
     m_Loader      = null;
     m_Saver       = null;
   }
@@ -126,7 +124,7 @@ public class DatasetFileChooserPanel
     m_FileChooser.setSelectedFile(getCurrent().getAbsoluteFile());
     if (!m_UseSaveDialog) {
       if (m_FileChooser.showOpenDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
-        m_Loader = m_FileChooser.getLoader();
+        m_Loader = m_FileChooser.getReader();
         m_Saver  = null;
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
       }
@@ -137,7 +135,7 @@ public class DatasetFileChooserPanel
     else {
       if (m_FileChooser.showSaveDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
         m_Loader = null;
-        m_Saver  = m_FileChooser.getSaver();
+        m_Saver  = m_FileChooser.getWriter();
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
       }
       else {

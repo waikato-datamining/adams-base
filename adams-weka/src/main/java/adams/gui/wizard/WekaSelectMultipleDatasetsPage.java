@@ -23,8 +23,8 @@ import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseListWithButtons;
-import weka.gui.ConverterFileChooser;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -58,7 +58,7 @@ public class WekaSelectMultipleDatasetsPage
   protected BaseListWithButtons m_ListFiles;
 
   /** the filechooser for selecting the files. */
-  protected ConverterFileChooser m_FileChooser;
+  protected WekaFileChooser m_FileChooser;
 
   /** the button for bringing up the filechooser. */
   protected JButton m_ButtonAdd;
@@ -99,7 +99,7 @@ public class WekaSelectMultipleDatasetsPage
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser = new ConverterFileChooser();
+    m_FileChooser = new WekaFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
   }
 
