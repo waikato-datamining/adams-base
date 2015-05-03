@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-04-23 09:36:45
+# Date: 2015-05-03 13:29:47
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -312,15 +312,17 @@ adams.flow.control.Flow
 							-tee
 								adams.flow.transformer.BufferedImageTransformer
 									-transformer
-										adams.data.image.transformer.Crop
-											-x
-											@{x}
-											-y
-											@{y}
-											-width
-											@{crop}
-											-height
-											@{crop}
+										adams.data.image.transformer.Cropping
+											-algorithm
+												adams.data.image.transformer.crop.RelativeCrop
+													-x
+													@{x}
+													-y
+													@{y}
+													-width
+													@{crop}
+													-height
+													@{crop}
 							-tee
 								adams.flow.transformer.BufferedImageFeatureGenerator
 									-algorithm
