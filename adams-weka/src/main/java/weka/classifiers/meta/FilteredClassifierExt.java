@@ -23,6 +23,7 @@ package weka.classifiers.meta;
 
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.IntervalEstimator;
+import weka.core.BatchPredictor;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -429,7 +430,15 @@ public class FilteredClassifierExt
    * @throws Exception if a problem occurs
    */
   public double[][] distributionsForInstances(Instances insts) throws Exception {
-    return super.distributionsForInstances(filter(insts));
+    if (getClassifier() instanceof BatchPredictor) {
+      return super.distributionsForInstances(filter(insts));
+    } else {
+      double[][] result = new double[insts.numInstances()][insts.numClasses()];
+      for (int i = 0; i < insts.numInstances(); i++) {
+        result[i] = distributionForInstance(insts.instance(i));
+      }
+      return result;
+    }
   }
 
   /**
