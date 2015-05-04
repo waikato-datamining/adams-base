@@ -21,10 +21,6 @@
 
 package weka.classifiers.meta;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.IntervalEstimator;
 import weka.core.Capabilities;
@@ -36,6 +32,10 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -417,6 +417,19 @@ public class FilteredClassifierExt
   @Override
   public double[] distributionForInstance(Instance instance) throws Exception {
     return super.distributionForInstance(filter(instance));
+  }
+
+  /**
+   * Batch scoring method. Calls the appropriate method for the base learner
+   * if it implements BatchPredictor. Otherwise it simply calls the
+   * distributionForInstance() method repeatedly.
+   *
+   * @param insts the instances to get predictions for
+   * @return an array of probability distributions, one for each instance
+   * @throws Exception if a problem occurs
+   */
+  public double[][] distributionsForInstances(Instances insts) throws Exception {
+    return super.distributionsForInstances(filter(insts));
   }
 
   /**
