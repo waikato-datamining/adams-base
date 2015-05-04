@@ -15,18 +15,18 @@
 
 /*
  * DumpFile.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
 import adams.flow.core.Unknown;
+
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -181,6 +181,7 @@ public class DumpFile
     String		result;
     BufferedWriter	writer;
 
+    writer = null;
     try {
       if (m_Encoding != null)
 	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(m_OutputFile.getAbsolutePath(), m_Append), m_Encoding.charsetValue()));
@@ -189,11 +190,20 @@ public class DumpFile
       writer.write("" + m_InputToken.getPayload());
       writer.newLine();
       writer.flush();
-      writer.close();
       result = null;
     }
     catch (Exception e) {
       result = handleException("Failed to write output to " + m_OutputFile + ":", e);
+    }
+    finally {
+      if (writer != null) {
+        try {
+          writer.close();
+        }
+        catch (Exception ex) {
+          // ignored
+        }
+      }
     }
 
     return result;
