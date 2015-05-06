@@ -15,7 +15,7 @@
 
 /**
  * SqlUtils.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -634,7 +634,7 @@ public class SqlUtils {
 	      row.addCell(i - 1).setContent(rs.getDouble(i));
 	      break;
 	    case STRING:
-	      row.addCell(i - 1).setContent(rs.getString(i));
+	      row.addCell(i - 1).setContentAsString(rs.getString(i));
 	      break;
 	    default:
 	      throw new IllegalStateException("Unhandled content type: " + type);
