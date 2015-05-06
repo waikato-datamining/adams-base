@@ -15,19 +15,19 @@
 
 /*
  * ChangeCanvasSize.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2105 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer;
+
+import adams.data.image.BufferedImageContainer;
+import adams.data.image.ImageAnchor;
+import adams.data.image.ImageAnchorHelper;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-
-import adams.data.image.BufferedImageContainer;
-import adams.data.image.ImageAnchor;
-import adams.data.image.ImageAnchorHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -271,10 +271,11 @@ public class ChangeCanvasSize
     result[0] = new BufferedImageContainer();
 
     corners = ImageAnchorHelper.calculateCorners(
-	m_CanvasWidth, (int) m_CanvasHeight, 
-	m_Anchor, 
-	0.0, 0.0, 
-	img.getImage().getWidth(), img.getImage().getHeight());
+      m_CanvasWidth, (int) m_CanvasHeight,
+      m_Anchor,
+      0.0, 0.0,
+      img.getImage().getWidth(), img.getImage().getHeight(),
+      false);
     leftNew = (int) corners[0].getX();
     topNew  = (int) corners[0].getY();
 

@@ -15,7 +15,7 @@
 
 /**
  * ImageAnchorHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -75,10 +75,11 @@ public class ImageAnchorHelper {
    * @param height	the height (0-1: percent of original image width, >1 absolute pixels)
    * @param anchor	the anchor to use
    * @param img		the image to use as basis
+   * @param useAnchorAtPos  whether to use the anchor at the position rather than the image
    * @return		the top-left and bottom-right coordinates
    */
-  public static Point[] calculateCorners(BufferedImage img, ImageAnchor anchor, double x, double y, double width, double height) {
-    return calculateCorners(img.getWidth(), img.getHeight(), anchor, x, y, width, height);
+  public static Point[] calculateCorners(BufferedImage img, ImageAnchor anchor, double x, double y, double width, double height, boolean useAnchorAtPos) {
+    return calculateCorners(img.getWidth(), img.getHeight(), anchor, x, y, width, height, useAnchorAtPos);
   }
 
   /**
@@ -91,9 +92,10 @@ public class ImageAnchorHelper {
    * @param anchor	the anchor to use
    * @param imgWidth	the image width to use as basis
    * @param imgHeight	the image height to use as basis
+   * @param useAnchorAtPos  whether to use the anchor at the position rather than the image
    * @return		the top-left and bottom-right coordinates
    */
-  public static Point[] calculateCorners(int imgWidth, int imgHeight, ImageAnchor anchor, double x, double y, double width, double height) {
+  public static Point[] calculateCorners(int imgWidth, int imgHeight, ImageAnchor anchor, double x, double y, double width, double height, boolean useAnchorAtPos) {
     Point[]		result;
     int			xAct;
     int			yAct;
@@ -112,15 +114,27 @@ public class ImageAnchorHelper {
     yAct      = calculateY(imgHeight, y);
     widthAct  = calculateX(imgWidth, width);
     heightAct = calculateY(imgHeight, height);
-    
-    // Y
-    top    = yAct;
-    middle = imgHeight / 2 - (heightAct / 2) - yAct / 2;
-    bottom = imgHeight - heightAct - yAct;
-    // X
-    left   = xAct;
-    center = imgWidth / 2 - (widthAct / 2) - xAct / 2;
-    right  = imgWidth - widthAct - xAct;
+
+    if (useAnchorAtPos) {
+      // Y
+      top    = yAct;
+      middle = yAct - heightAct / 2;
+      bottom = yAct + heightAct - 1;
+      // X
+      left   = xAct;
+      center = xAct - widthAct / 2;
+      right  = xAct + widthAct - 1;
+    }
+    else {
+      // Y
+      top    = yAct;
+      middle = imgHeight / 2 - (heightAct / 2) - yAct / 2;
+      bottom = imgHeight - heightAct - yAct;
+      // X
+      left   = xAct;
+      center = imgWidth / 2 - (widthAct / 2) - xAct / 2;
+      right  = imgWidth - widthAct - xAct;
+    }
     
     switch (anchor) {
       case TOP_LEFT:

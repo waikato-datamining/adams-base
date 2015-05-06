@@ -15,13 +15,10 @@
 
 /*
  * Crop.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer;
-
-import java.awt.Point;
-import java.awt.image.BufferedImage;
 
 import adams.core.annotation.DeprecatedClass;
 import adams.data.image.BufferedImageContainer;
@@ -32,6 +29,9 @@ import adams.data.image.transformer.crop.RelativeCrop;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -338,7 +338,7 @@ public class Crop
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
 
-    corners       = ImageAnchorHelper.calculateCorners(img.getImage(), m_Anchor, m_X, m_Y, m_Width, m_Height);
+    corners       = ImageAnchorHelper.calculateCorners(img.getImage(), m_Anchor, m_X, m_Y, m_Width, m_Height, false);
     leftOrig      = (int) corners[0].getX();
     topOrig       = (int) corners[0].getY();
     width         = (int) (corners[1].getX() - corners[0].getX() + 1);

@@ -20,11 +20,11 @@
 
 package adams.data.image.transformer.crop;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-
 import adams.data.image.ImageAnchor;
 import adams.data.image.ImageAnchorHelper;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -93,6 +93,9 @@ public class RelativeCrop
   /** where to anchor the position on the rectangle. */
   protected ImageAnchor m_Anchor;
 
+  /** whether to use the anchor at the specified to position rather than using image. */
+  protected boolean m_UseAnchorAtPos;
+
   /**
    * Returns a string describing the object.
    *
@@ -113,8 +116,8 @@ public class RelativeCrop
     super.defineOptions();
 
     m_OptionManager.add(
-	"x", "X",
-	0.0, 0.0, null);
+      "x", "X",
+      0.0, 0.0, null);
 
     m_OptionManager.add(
 	"y", "Y",
@@ -131,6 +134,10 @@ public class RelativeCrop
     m_OptionManager.add(
 	"anchor", "anchor",
 	ImageAnchor.TOP_LEFT);
+
+    m_OptionManager.add(
+	"use-anchor-at-pos", "UseAnchorAtPos",
+	false);
   }
 
   /**
@@ -299,6 +306,35 @@ public class RelativeCrop
   }
 
   /**
+   * Sets whether to place the anchor at the position or use it relative to image.
+   *
+   * @param value	true if anchor at pos
+   */
+  public void setUseAnchorAtPos(boolean value) {
+    m_UseAnchorAtPos = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to place the anchor at the position or use it relative to image.
+   *
+   * @return		true if anchor at pos
+   */
+  public boolean getUseAnchorAtPos() {
+    return m_UseAnchorAtPos;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String useAnchorAtPosTipText() {
+    return "If enabled, the anchor gets placed at the x/y positiion and the corners of the crop are calculated accordingly.";
+  }
+
+  /**
    * Performs the actual cropping.
    *
    * @param img		the image to crop
@@ -319,7 +355,7 @@ public class RelativeCrop
     int			xOrig;
     int			yOrig;
 
-    corners       = ImageAnchorHelper.calculateCorners(img, m_Anchor, m_X, m_Y, m_Width, m_Height);
+    corners       = ImageAnchorHelper.calculateCorners(img, m_Anchor, m_X, m_Y, m_Width, m_Height, m_UseAnchorAtPos);
     m_TopLeft     = corners[0];
     m_BottomRight = corners[1];
     leftOrig      = (int) m_TopLeft.getX();

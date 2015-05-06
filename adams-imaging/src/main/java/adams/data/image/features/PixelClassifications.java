@@ -15,27 +15,28 @@
 
 /*
  * PixelClassifications.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.features;
-
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.ImageAnchor;
 import adams.data.image.features.Pixels.PixelType;
-import adams.data.image.transformer.Crop;
+import adams.data.image.transformer.Cropping;
+import adams.data.image.transformer.crop.RelativeCrop;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.flow.transformer.PixelSelector;
 import adams.flow.transformer.pixelselector.AddClassification;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -286,17 +287,20 @@ public class PixelClassifications
   @Override
   public HeaderDefinition createHeader(BufferedImageContainer img) {
     HeaderDefinition	result;
-    Crop		crop;
+    Cropping            cropping;
+    RelativeCrop        crop;
     Pixels		pixels;
 
     // 1st: crop
-    crop = new Crop();
+    crop = new RelativeCrop();
     crop.setWidth(m_Width);
     crop.setHeight(m_Height);
     crop.setAnchor(ImageAnchor.TOP_LEFT);
     crop.setX(1);
     crop.setY(1);
-    img = crop.transform(img)[0];
+    cropping = new Cropping();
+    cropping.setAlgorithm(crop);
+    img = cropping.transform(img)[0];
     crop.destroy();
 
     // 2nd: turn into pixels
@@ -366,7 +370,8 @@ public class PixelClassifications
   public List<Object>[] generateRows(BufferedImageContainer img) {
     List<List<Object>>		result;
     Integer[]			indices;
-    Crop			crop;
+    Cropping                    cropping;
+    RelativeCrop                crop;
     Pixels			pixels;
     Point			loc;
     List<Object>[]		data;
@@ -378,13 +383,17 @@ public class PixelClassifications
       loc = getPixelLocation(img, index);
 
       // 1st: crop
-      crop = new Crop();
+      crop = new RelativeCrop();
       crop.setWidth(m_Width);
       crop.setHeight(m_Height);
       crop.setAnchor(m_Anchor);
+      crop.setUseAnchorAtPos(true);
       crop.setX((int) (loc.getX() + 1));
       crop.setY((int) (loc.getY() + 1));
-      cropped = crop.transform(img)[0];
+      crop.setLoggingLevel(getLoggingLevel());
+      cropping = new Cropping();
+      cropping.setAlgorithm(crop);
+      cropped = cropping.transform(img)[0];
       crop.destroy();
 
       // 2nd: turn into pixels

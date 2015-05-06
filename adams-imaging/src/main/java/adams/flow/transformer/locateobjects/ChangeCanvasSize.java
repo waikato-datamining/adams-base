@@ -296,7 +296,7 @@ public class ChangeCanvasSize
     base   = m_Locator.locate(image);
 
     for (LocatedObject obj: base) {
-      corners = ImageAnchorHelper.calculateCorners(m_CanvasWidth, (int) m_CanvasHeight, m_Anchor, 0.0, 0.0, obj.getImage().getWidth(), obj.getImage().getHeight());
+      corners = ImageAnchorHelper.calculateCorners(m_CanvasWidth, (int) m_CanvasHeight, m_Anchor, 0.0, 0.0, obj.getImage().getWidth(), obj.getImage().getHeight(), false);
       leftNew = (int) corners[0].getX();
       topNew  = (int) corners[0].getY();
 

@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-05-03 13:29:47
+# Date: 2015-05-07 11:30:26
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -323,6 +323,10 @@ adams.flow.control.Flow
 													@{crop}
 													-height
 													@{crop}
+													-anchor
+													MIDDLE_CENTER
+													-use-anchor-at-pos
+													true
 							-tee
 								adams.flow.transformer.BufferedImageFeatureGenerator
 									-algorithm
