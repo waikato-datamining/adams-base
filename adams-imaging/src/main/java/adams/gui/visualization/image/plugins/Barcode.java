@@ -127,9 +127,6 @@ public class Barcode
     
     result = null;
     
-    if ((m_CurrentPanel.getCurrentFile() == null) || (m_CurrentPanel.isModified()))
-      return result;
-    
     try {
       cont    = new BufferedImageContainer();
       cont.setImage(m_CurrentPanel.getCurrentImage());
@@ -142,7 +139,10 @@ public class Barcode
 	dialog = new TextDialog(m_CurrentPanel.getParentDialog());
       else
 	dialog = new TextDialog(m_CurrentPanel.getParentFrame());
-      dialog.setDialogTitle("Barcode - " + m_CurrentPanel.getCurrentFile().getName() + " [" + m_CurrentPanel.getCurrentFile().getParent() + "]");
+      if (m_CurrentPanel.getCurrentFile() != null)
+        dialog.setDialogTitle("Barcode - " + m_CurrentPanel.getCurrentFile().getName() + " [" + m_CurrentPanel.getCurrentFile().getParent() + "]");
+      else
+        dialog.setDialogTitle("Barcode");
       dialog.setEditable(false);
       if (text != null) {
 	dialog.setContent(text.getContent() + "\n\nTime (ms): " + watch.getTime() + "\n\nMeta-data\n\n" + text.getReport());
