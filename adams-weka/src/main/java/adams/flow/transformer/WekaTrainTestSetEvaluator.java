@@ -15,7 +15,7 @@
 
 /*
  * WekaTrainTestSetEvaluator.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -168,6 +168,7 @@ public class WekaTrainTestSetEvaluator
       train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
       test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
       cls.buildClassifier(train);
+      initOutputBuffer();
       m_Output.setHeader(train);
       eval  = new Evaluation(train);
       eval.setDiscardPredictions(m_DiscardPredictions);

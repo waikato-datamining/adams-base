@@ -15,7 +15,7 @@
 
 /**
  * AbstractWekaClassifierEvaluator.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -103,6 +103,13 @@ public abstract class AbstractWekaClassifierEvaluator
   protected void reset() {
     super.reset();
 
+    initOutputBuffer();
+  }
+
+  /**
+   * Initializes the output buffer.
+   */
+  protected void initOutputBuffer() {
     m_OutputBuffer = new StringBuffer();
     if (m_Output != null)
       m_Output.setBuffer(m_OutputBuffer);

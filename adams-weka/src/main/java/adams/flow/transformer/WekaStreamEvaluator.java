@@ -15,20 +15,20 @@
 
 /**
  * WekaStreamEvaluator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
+import adams.core.QuickInfoHelper;
+import adams.flow.container.WekaEvaluationContainer;
+import adams.flow.core.Token;
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.evaluation.output.prediction.Null;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.QuickInfoHelper;
-import adams.flow.container.WekaEvaluationContainer;
-import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -348,12 +348,14 @@ public class WekaStreamEvaluator
 
     inst = (Instance) m_InputToken.getPayload();
     data = inst.dataset();
-    
+
     if (m_Evaluation == null) {
       try {
 	m_Evaluation = new Evaluation(data);
 	m_Current    = 0;
 	m_Header     = data;
+        initOutputBuffer();
+        m_Output.setHeader(m_Header);
       }
       catch (Exception e) {
 	result = handleException("Failed to set up evaluation!", e);

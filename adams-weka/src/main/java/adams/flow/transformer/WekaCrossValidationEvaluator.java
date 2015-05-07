@@ -557,6 +557,7 @@ public class WekaCrossValidationEvaluator
 	m_ActualNumThreads = 0;
 
       if (m_ActualNumThreads == 0) {
+        initOutputBuffer();
 	m_Output.setHeader(data);
 	eval  = new Evaluation(data);
 	eval.setDiscardPredictions(m_DiscardPredictions);
