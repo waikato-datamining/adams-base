@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer;
 
+import adams.core.option.OptionUtils;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.classifiers.evaluation.output.prediction.Null;
 import adams.flow.container.WekaEvaluationContainer;
@@ -111,8 +112,16 @@ public abstract class AbstractWekaClassifierEvaluator
    */
   protected void initOutputBuffer() {
     m_OutputBuffer = new StringBuffer();
-    if (m_Output != null)
-      m_Output.setBuffer(m_OutputBuffer);
+    if (m_Output != null) {
+      try {
+        m_Output = (AbstractOutput) OptionUtils.forAnyCommandLine(
+          AbstractOutput.class, OptionUtils.getCommandLine(m_Output));
+        m_Output.setBuffer(m_OutputBuffer);
+      }
+      catch (Exception e) {
+        throw new IllegalStateException("Failed to create copy of output!", e);
+      }
+    }
   }
 
   /**
