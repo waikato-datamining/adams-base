@@ -537,6 +537,7 @@ public class Flow
 	  m_FlowExecutionListenerFrame.dispose();
       }
       m_FlowExecutionListener = l;
+      m_FlowExecutionListener.setOwner(this);
       return result;
     }
     
@@ -547,6 +548,7 @@ public class Flow
     if (m_FlowExecutionListener instanceof NullListener) {
       m_FlowExecutionListener.finishListening();
       m_FlowExecutionListener = l;
+      m_FlowExecutionListener.setOwner(this);
       m_FlowExecutionListener.startListening();
     }
     else {
@@ -557,11 +559,13 @@ public class Flow
       else {
 	multi     = new MultiListener();
 	listeners = new ArrayList<FlowExecutionListener>();
+        multi.setOwner(this);
 	multi.startListening();
       }
       listeners.add(l);
       multi.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
       m_FlowExecutionListener = multi;
+      m_FlowExecutionListener.setOwner(this);
       l.startListening();
     }
 
@@ -873,6 +877,7 @@ public class Flow
 
     m_FlowExecutionListenerFrame = null;
     if (m_FlowExecutionListeningEnabled) {
+      m_FlowExecutionListener.setOwner(this);
       m_FlowExecutionListener.startListening();
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
     }

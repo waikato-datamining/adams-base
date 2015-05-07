@@ -15,11 +15,12 @@
 
 /**
  * FlowExecutionListener.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
 import adams.core.CleanUpHandler;
+import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 
@@ -31,7 +32,21 @@ import adams.flow.core.Token;
  */
 public interface FlowExecutionListener 
   extends CleanUpHandler {
-  
+
+  /**
+   * Sets the owning flow.
+   *
+   * @param value       the owner
+   */
+  public void setOwner(Flow value);
+
+  /**
+   * Returns the owning flow.
+   *
+   * @return            the owner
+   */
+  public Flow getOwner();
+
   /**
    * Gets called when the flow execution starts.
    */

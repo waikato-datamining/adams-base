@@ -15,7 +15,7 @@
 
 /**
  * AbstractFlowExecutionListener.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -23,6 +23,7 @@ import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 
@@ -38,7 +39,28 @@ public abstract class AbstractFlowExecutionListener
 
   /** for serialization. */
   private static final long serialVersionUID = 476112131534239867L;
-  
+
+  /** the owner. */
+  protected Flow m_Owner;
+
+  /**
+   * Sets the owning flow.
+   *
+   * @param value       the owner
+   */
+  public void setOwner(Flow value) {
+    m_Owner = value;
+  }
+
+  /**
+   * Returns the owning flow.
+   *
+   * @return            the owner
+   */
+  public Flow getOwner() {
+    return m_Owner;
+  }
+
   /**
    * Gets called when the flow execution starts.
    * <p/>
@@ -183,8 +205,9 @@ public abstract class AbstractFlowExecutionListener
   /**
    * Gets called when the flow execution ends.
    * <p/>
-   * Default implementation does nothing.
+   * Default implementation only unsets the owner.
    */
   public void finishListening() {
+    m_Owner = null;
   }
 }

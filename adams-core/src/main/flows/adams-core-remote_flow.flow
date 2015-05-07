@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2015-05-08 11:20:35
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Start this flow and then use the following menu item to retrieve the setup \nof the running flow (the default server and port settings will work):\n  File -> Open remote flow...\n\nHow it works:\nThe RemoteFlowListener that is attached to this flow, sends back the \nsetup of the flow that it is part of.
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.WhileLoop
+			-condition
+				adams.flow.condition.bool.True
+			-loop
+				adams.flow.source.Start
+			-loop
+				adams.flow.control.Sleep
+	-flow-execution-listening-enabled
+	true
+	-flow-execution-listener
+		adams.flow.execution.RemoteFlowListener
+
