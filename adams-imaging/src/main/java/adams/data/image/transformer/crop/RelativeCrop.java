@@ -15,7 +15,7 @@
 
 /*
  * RelativeCrop.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer.crop;
@@ -37,36 +37,43 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-x &lt;double&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The horizontal pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- *
+ * 
  * <pre>-y &lt;double&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The vertical pixel position (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- *
+ * 
  * <pre>-width &lt;double&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- *
+ * 
  * <pre>-height &lt;double&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the crop rectangle (0-1: percent; &gt;1: pixels).
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-5
  * </pre>
- *
- * <pre>-anchor &lt;TOP_LEFT|TOP_RIGHT|CENTER|BOTTOM_LEFT|BOTTOM_RIGHT&gt; (property: anchor)
+ * 
+ * <pre>-anchor &lt;TOP_LEFT|TOP_CENTER|TOP_RIGHT|MIDDLE_LEFT|MIDDLE_CENTER|MIDDLE_RIGHT|BOTTOM_LEFT|BOTTOM_CENTER|BOTTOM_RIGHT&gt; (property: anchor)
  * &nbsp;&nbsp;&nbsp;Defines where to anchor the position on the crop rectangle.
  * &nbsp;&nbsp;&nbsp;default: TOP_LEFT
  * </pre>
- *
+ * 
+ * <pre>-use-anchor-at-pos &lt;boolean&gt; (property: useAnchorAtPos)
+ * &nbsp;&nbsp;&nbsp;If enabled, the anchor gets placed at the x&#47;y positiion and the corners 
+ * &nbsp;&nbsp;&nbsp;of the crop are calculated accordingly; eg 'MIDDLE_CENTER' then refers to 
+ * &nbsp;&nbsp;&nbsp;the center of the crop rectangle, with the center located at x&#47;y.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -136,7 +143,7 @@ public class RelativeCrop
 	ImageAnchor.TOP_LEFT);
 
     m_OptionManager.add(
-	"use-anchor-at-pos", "UseAnchorAtPos",
+	"use-anchor-at-pos", "useAnchorAtPos",
 	false);
   }
 
@@ -331,7 +338,11 @@ public class RelativeCrop
    * 			displaying in the gui
    */
   public String useAnchorAtPosTipText() {
-    return "If enabled, the anchor gets placed at the x/y positiion and the corners of the crop are calculated accordingly.";
+    return
+      "If enabled, the anchor gets placed at the x/y positiion and the "
+        + "corners of the crop are calculated accordingly; "
+        + "eg '" + ImageAnchor.MIDDLE_CENTER + "' then refers to the center "
+        + "of the crop rectangle, with the center located at x/y.";
   }
 
   /**
