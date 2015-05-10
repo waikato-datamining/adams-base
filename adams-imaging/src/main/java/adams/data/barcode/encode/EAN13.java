@@ -31,53 +31,53 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <!-- globalinfo-start -->
- * * Draws an EAN13 barcode at a specified location and size.Digits must be 13 characters long. A valid checksum is enforced.
- * * <p/>
- * <!-- globalinfo-end -->
+ <!-- globalinfo-start -->
+ * Draws an EAN13 barcode at a specified location and size.Digits must be 13 characters long. A valid checksum is enforced.
  * <p/>
- * <!-- options-start -->
- * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * * &nbsp;&nbsp;&nbsp;default: WARNING
- * * </pre>
- * * 
- * * <pre>-x &lt;int&gt; (property: x)
- * * &nbsp;&nbsp;&nbsp;X position of the top-left corner.
- * * &nbsp;&nbsp;&nbsp;default: 1
- * * &nbsp;&nbsp;&nbsp;minimum: 1
- * * </pre>
- * * 
- * * <pre>-y &lt;int&gt; (property: y)
- * * &nbsp;&nbsp;&nbsp;Y position of the top-left corner.
- * * &nbsp;&nbsp;&nbsp;default: 1
- * * &nbsp;&nbsp;&nbsp;minimum: 1
- * * </pre>
- * * 
- * * <pre>-width &lt;int&gt; (property: width)
- * * &nbsp;&nbsp;&nbsp;Width of the barcode in pixels.
- * * &nbsp;&nbsp;&nbsp;default: 100
- * * &nbsp;&nbsp;&nbsp;minimum: 1
- * * </pre>
- * * 
- * * <pre>-height &lt;int&gt; (property: height)
- * * &nbsp;&nbsp;&nbsp;Height of the barcode in pixels.
- * * &nbsp;&nbsp;&nbsp;default: 100
- * * &nbsp;&nbsp;&nbsp;minimum: 1
- * * </pre>
- * * 
- * * <pre>-margin &lt;int&gt; (property: margin)
- * * &nbsp;&nbsp;&nbsp;White margin surrounding the barcode.
- * * &nbsp;&nbsp;&nbsp;default: 5
- * * &nbsp;&nbsp;&nbsp;minimum: 0
- * * </pre>
- * * 
- * * <pre>-digits &lt;java.lang.String&gt; (property: digits)
- * * &nbsp;&nbsp;&nbsp;Digits to be encoded.
- * * &nbsp;&nbsp;&nbsp;default: 0123456789012
- * * </pre>
- * * 
- * <!-- options-end -->
+ <!-- globalinfo-end -->
+ * <p/>
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-x &lt;int&gt; (property: x)
+ * &nbsp;&nbsp;&nbsp;X position of the top-left corner.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-y &lt;int&gt; (property: y)
+ * &nbsp;&nbsp;&nbsp;Y position of the top-left corner.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;Width of the barcode in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;Height of the barcode in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-margin &lt;int&gt; (property: margin)
+ * &nbsp;&nbsp;&nbsp;White margin surrounding the barcode.
+ * &nbsp;&nbsp;&nbsp;default: 5
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
+ * <pre>-digits &lt;java.lang.String&gt; (property: digits)
+ * &nbsp;&nbsp;&nbsp;Digits to be encoded.
+ * &nbsp;&nbsp;&nbsp;default: 0123456789012
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
  * @version $Revision$
