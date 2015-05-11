@@ -15,7 +15,7 @@
 
 /*
  * AbstractScriptedFlattener.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,7 +27,7 @@ import adams.core.scripting.FileBasedScriptingWithOptions;
 import adams.data.imagej.ImagePlusContainer;
 
 /**
- * Abstract ancestor for flatteners that execute external scripts.
+ * Abstract ancestor for ImageJ feature generator that execute external scripts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

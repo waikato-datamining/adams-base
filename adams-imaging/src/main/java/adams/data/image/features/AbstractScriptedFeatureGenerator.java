@@ -27,7 +27,7 @@ import adams.core.scripting.FileBasedScriptingWithOptions;
 import adams.data.image.BufferedImageContainer;
 
 /**
- * Abstract ancestor for flatteners that execute external scripts.
+ * Abstract ancestor for BufferedImage feature generator that execute external scripts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

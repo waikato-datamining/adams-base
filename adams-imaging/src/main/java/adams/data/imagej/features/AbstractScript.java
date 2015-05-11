@@ -15,7 +15,7 @@
 
 /**
  * AbstractScript.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.imagej.features;
 
@@ -23,7 +23,7 @@ import adams.flow.core.AdditionalOptions;
 import adams.flow.core.AdditionalOptionsHandler;
 
 /**
- * Ancestor for ImageJ flattener scripts.
+ * Ancestor for ImageJ feature generator scripts.
  * <p/>
  * Scripts of scripting languages like Jython or Groovy need to be derived from this
  * class.
