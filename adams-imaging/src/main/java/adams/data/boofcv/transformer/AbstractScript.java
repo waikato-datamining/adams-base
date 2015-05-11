@@ -19,6 +19,7 @@
  */
 package adams.data.boofcv.transformer;
 
+import adams.data.boofcv.BoofCVImageContainer;
 import adams.flow.core.AdditionalOptions;
 import adams.flow.core.AdditionalOptionsHandler;
 
@@ -67,5 +68,24 @@ public abstract class AbstractScript
    */
   public AdditionalOptions getAdditionalOptions() {
     return m_AdditionalOptions;
+  }
+
+  /**
+   * Performs the actual transforming of the image.
+   *
+   * @param img		the image to transform (can be modified, since it is a copy)
+   * @return		the generated image(s)
+   */
+  public abstract BoofCVImageContainer[] performTransform(BoofCVImageContainer img);
+
+  /**
+   * Performs the actual transforming of the image.
+   *
+   * @param img		the image to transform (can be modified, since it is a copy)
+   * @return		the generated image(s)
+   */
+  @Override
+  public BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
+    return performTransform(img);
   }
 }

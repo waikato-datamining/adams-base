@@ -19,8 +19,11 @@
  */
 package adams.data.imagej.features;
 
+import adams.data.imagej.ImagePlusContainer;
 import adams.flow.core.AdditionalOptions;
 import adams.flow.core.AdditionalOptionsHandler;
+
+import java.util.List;
 
 /**
  * Ancestor for ImageJ feature generator scripts.
@@ -67,5 +70,23 @@ public abstract class AbstractScript
    */
   public AdditionalOptions getAdditionalOptions() {
     return m_AdditionalOptions;
+  }
+
+  /**
+   * Performs the actual feature genration.
+   *
+   * @param img		the image to process
+   * @return		the generated features
+   */
+  protected abstract List[] doGenerateRows(ImagePlusContainer img);
+
+  /**
+   * Performs the actual feature genration.
+   *
+   * @param img		the image to process
+   * @return		the generated features
+   */
+  public List<Object>[] generateRows(ImagePlusContainer img) {
+    return doGenerateRows(img);
   }
 }

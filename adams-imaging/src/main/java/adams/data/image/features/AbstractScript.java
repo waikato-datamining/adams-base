@@ -19,8 +19,11 @@
  */
 package adams.data.image.features;
 
+import adams.data.image.BufferedImageContainer;
 import adams.flow.core.AdditionalOptions;
 import adams.flow.core.AdditionalOptionsHandler;
+
+import java.util.List;
 
 /**
  * Ancestor for BufferedImage feature generator scripts.
@@ -37,7 +40,7 @@ public abstract class AbstractScript
 
   /** for serialization. */
   private static final long serialVersionUID = -8283487312539061029L;
-  
+
   /** for storing the additional options. */
   protected AdditionalOptions m_AdditionalOptions;
 
@@ -67,5 +70,23 @@ public abstract class AbstractScript
    */
   public AdditionalOptions getAdditionalOptions() {
     return m_AdditionalOptions;
+  }
+
+  /**
+   * Performs the actual feature genration.
+   *
+   * @param img		the image to process
+   * @return		the generated features
+   */
+  protected abstract List[] doGenerateRows(BufferedImageContainer img);
+
+  /**
+   * Performs the actual feature genration.
+   *
+   * @param img		the image to process
+   * @return		the generated features
+   */
+  public List<Object>[] generateRows(BufferedImageContainer img) {
+    return doGenerateRows(img);
   }
 }
