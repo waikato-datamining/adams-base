@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2015-05-11 15:27:48
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Uses a Groovy script to generate a histogram with 128 bins from an image.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/4825046958_787c97bc96.jpg
+	-actor
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.JAIImageReader
+	-actor
+		adams.flow.transformer.BufferedImageFeatureGenerator
+			-algorithm
+				adams.data.image.features.Scripted
+					-converter
+						adams.data.featureconverter.SpreadSheet
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
+					-script
+					${EXAMPLE_FLOWS}/scripts/ImageFeatures.groovy
+					-options
+					numbins=128
+					-handler
+						adams.core.scripting.GroovyHandler
+	-actor
+		adams.flow.transformer.SpreadSheetRowBuffer
+	-actor
+		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
