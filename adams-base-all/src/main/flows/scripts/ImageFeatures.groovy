@@ -88,7 +88,7 @@ class ImageFeatures
             }
         }
 
-        result    = new List[1]
+        List[] result = new List[1]
         result[0] = new ArrayList()
         result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)))
 
