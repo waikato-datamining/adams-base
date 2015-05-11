@@ -22,11 +22,15 @@ package adams.flow.sink;
 
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.management.CharsetHelper;
 import adams.flow.core.Unknown;
 
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  <!-- globalinfo-start -->
@@ -178,15 +182,26 @@ public class DumpFile
    */
   @Override
   protected String doExecute() {
-    String		result;
-    BufferedWriter	writer;
+    String		  result;
+    BufferedWriter	  writer;
+    Charset               charset;
+    StandardOpenOption[]  options;
+    Path                  path;
 
+    m_Encoding.charsetValue();
     writer = null;
     try {
       if (m_Encoding != null)
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(m_OutputFile.getAbsolutePath(), m_Append), m_Encoding.charsetValue()));
+        charset = CharsetHelper.getSingleton().getCharset();
       else
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(m_OutputFile.getAbsolutePath(), m_Append)));
+        charset = m_Encoding.charsetValue();
+
+      if (m_Append)
+        options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND};
+      else
+        options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
+      path = FileSystems.getDefault().getPath(m_OutputFile.getAbsolutePath());
+      writer = Files.newBufferedWriter(path, charset, options);
       writer.write("" + m_InputToken.getPayload());
       writer.newLine();
       writer.flush();
@@ -201,7 +216,8 @@ public class DumpFile
           writer.close();
         }
         catch (Exception ex) {
-          // ignored
+          // ignored, only reported
+          handleException("Failed to close file: " + m_OutputFile, ex);
         }
       }
     }
