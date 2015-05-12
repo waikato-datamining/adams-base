@@ -14,8 +14,8 @@
  */
 
 /**
- * RowNormTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesRowNormTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the RowNorm filter. Run from the command line with: <p/>
- * java adams.data.filter.RowNormTest
+ * Test class for the TimeseriesRowNorm filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesRowNormTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7892 $

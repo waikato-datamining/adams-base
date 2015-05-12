@@ -14,8 +14,8 @@
  */
 
 /**
- * LOWESSTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesLOWESSTest.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the LOWESS filter. Run from the command line with: <p/>
- * java adams.data.filter.LOWESSTest
+ * Test class for the TimeseriesLOWESS filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesLOWESSTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

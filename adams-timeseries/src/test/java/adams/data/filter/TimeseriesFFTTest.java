@@ -14,8 +14,8 @@
  */
 
 /**
- * FFTTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesFFTTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the FFT filter. Run from the command line with: <p/>
- * java adams.data.filter.FFTTest
+ * Test class for the TimeseriesFFT filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesFFTTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7892 $

@@ -14,8 +14,8 @@
  */
 
 /**
- * SavitzkyGolayTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesSavitzkyGolayTest.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the SavitzkyGolay filter. Run from the command line with: <p/>
- * java adams.data.filter.SavitzkyGolayTest
+ * Test class for the TimeseriesSavitzkyGolay filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesSavitzkyGolayTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

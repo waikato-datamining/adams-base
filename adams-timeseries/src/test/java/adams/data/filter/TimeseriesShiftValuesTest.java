@@ -14,8 +14,8 @@
  */
 
 /**
- * ShiftValuesTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesShiftValuesTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the ShiftValues filter. Run from the command line with: <p/>
- * java adams.data.filter.ShiftValuesTest
+ * Test class for the TimeseriesShiftValues filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesShiftValuesTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7881 $

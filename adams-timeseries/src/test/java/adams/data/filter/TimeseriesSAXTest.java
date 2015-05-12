@@ -14,8 +14,8 @@
  */
 
 /**
- * SAXTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesSAXTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -28,8 +28,8 @@ import adams.env.Environment;
 import adams.test.TimeseriesTestHelper;
 
 /**
- * Test class for the SAX filter. Run from the command line with: <p/>
- * java adams.data.filter.SAXTest
+ * Test class for the TimeseriesSAX filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesSAXTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7892 $

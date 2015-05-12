@@ -14,8 +14,8 @@
  */
 
 /**
- * ResetTimestampsTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesResetTimestampsTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -26,8 +26,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the ResetTimestamps filter. Run from the command line with: <p/>
- * java adams.data.filter.ResetTimestampsTest
+ * Test class for the TimeseriesResetTimestamps filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesResetTimestampsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7892 $

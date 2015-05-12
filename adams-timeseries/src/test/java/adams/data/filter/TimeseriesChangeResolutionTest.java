@@ -14,8 +14,8 @@
  */
 
 /**
- * ChangeResolutionTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesChangeResolutionTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the ChangeResolution filter. Run from the command line with: <p/>
- * java adams.data.filter.ChangeResolutionTest
+ * Test class for the TimeseriesChangeResolution filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesChangeResolutionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7892 $

@@ -14,8 +14,8 @@
  */
 
 /**
- * RoundTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesRoundTest.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -26,8 +26,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the Round filter. Run from the command line with: <p/>
- * java adams.data.filter.RoundTest
+ * Test class for the TimeseriesRound filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesRoundTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

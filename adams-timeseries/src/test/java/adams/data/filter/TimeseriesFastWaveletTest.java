@@ -14,8 +14,8 @@
  */
 
 /**
- * FastWaveletTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesFastWaveletTest.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -26,8 +26,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the FastWavelet filter. Run from the command line with: <p/>
- * java adams.data.filter.FastWaveletTest
+ * Test class for the TimeseriesFastWavelet filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesFastWaveletTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

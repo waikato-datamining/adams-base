@@ -14,8 +14,8 @@
  */
 
 /**
- * ValueSubsetTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesValueSubsetTest.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -25,8 +25,8 @@ import adams.data.timeseries.Timeseries;
 import adams.env.Environment;
 
 /**
- * Test class for the ValueSubset filter. Run from the command line with: <p/>
- * java adams.data.filter.ValueSubsetTest
+ * Test class for the TimeseriesValueSubset filter. Run from the command line with: <p/>
+ * java adams.data.filter.TimeseriesValueSubsetTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 7882 $
