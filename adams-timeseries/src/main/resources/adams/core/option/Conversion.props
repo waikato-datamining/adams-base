@@ -31,7 +31,7 @@ Rename=\
   Rename-outlier_timeseries-timestampcheck,\
   Rename-smoothing_timeseries-lowessbased,\
   Rename-smoothing_timeseries-savitzkygolaybased,\
-  Rename-smoothing_timeseries-slidingwindow,\
+  Rename-smoothing_timeseries-slidingwindow
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
