@@ -14,17 +14,17 @@
  */
 
 /**
- * LOWESS.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesLOWESS.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
-
-import java.awt.geom.Point2D;
-import java.util.Date;
 
 import adams.data.container.DataPoint;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.awt.geom.Point2D;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->

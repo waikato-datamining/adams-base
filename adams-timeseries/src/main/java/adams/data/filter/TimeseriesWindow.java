@@ -14,17 +14,17 @@
  */
 
 /**
- * Window.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesWindow.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
-
-import java.util.Date;
 
 import adams.core.DateUtils;
 import adams.core.base.BaseDateTime;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->

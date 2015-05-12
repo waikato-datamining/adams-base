@@ -14,16 +14,16 @@
  */
 
 /**
- * MinPoints.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesMinPoints.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.outlier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->

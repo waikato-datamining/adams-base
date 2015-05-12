@@ -14,8 +14,8 @@
  */
 
 /*
- * SavitzkyGolay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesSavitzkyGolay.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;

@@ -14,18 +14,18 @@
  */
 
 /*
- * FastWavelet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * TimeseriesFastWavelet.java
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.Date;
-import java.util.List;
-
 import adams.data.container.DataPoint;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->

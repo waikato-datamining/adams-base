@@ -14,8 +14,8 @@
  */
 
 /*
- * ResetTimestamps.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * TimeseriesResetTimestamps.java
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;

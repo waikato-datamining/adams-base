@@ -14,17 +14,17 @@
  */
 
 /*
- * Histogram.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * TimeseriesHistogram.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.Date;
-
 import adams.data.container.DataPoint;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
