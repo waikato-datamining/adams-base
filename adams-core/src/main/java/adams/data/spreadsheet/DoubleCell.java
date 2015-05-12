@@ -15,18 +15,19 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
 
-import java.util.Date;
-import java.util.HashMap;
-
 import adams.core.DateTime;
+import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.Utils;
 import adams.parser.SpreadSheetFormula;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Represents a single cell.
@@ -359,10 +360,7 @@ public class DoubleCell
    * @see		SpreadSheet#getTimeFormat()
    */
   protected boolean checkTime(String s) {
-    if (s.indexOf(':') > -1)
-      return getSpreadSheet().getTimeFormat().check(s);
-    else
-      return false;
+    return DateUtils.checkTime(s, getSpreadSheet().getTimeFormat());
   }
 
   /**
@@ -373,10 +371,7 @@ public class DoubleCell
    * @see		SpreadSheet#getDateFormat()
    */
   protected boolean checkDate(String s) {
-    if (s.indexOf('-') > -1)
-      return getSpreadSheet().getDateFormat().check(s);
-    else
-      return false;
+    return DateUtils.checkDate(s, getSpreadSheet().getDateFormat());
   }
 
   /**
@@ -387,10 +382,7 @@ public class DoubleCell
    * @see		SpreadSheet#getDateTimeFormat()
    */
   protected boolean checkDateTime(String s) {
-    if ((s.indexOf('-') > -1) && (s.indexOf(':') > -1))
-      return getSpreadSheet().getDateTimeFormat().check(s);
-    else
-      return false;
+    return DateUtils.checkDateTime(s, getSpreadSheet().getDateTimeFormat());
   }
 
   /**

@@ -638,4 +638,82 @@ public class DateUtils {
   public static long serialDateToMsec(double serial) {
     return getJavaCalendar(serial, false, null, false).getTimeInMillis();
   }
+
+  /**
+   * Checks whether the string represents a time.
+   *
+   * @param s		the string to check
+   * @return		true if time
+   */
+  public static boolean checkTime(String s) {
+    return checkTime(s, null);
+  }
+
+  /**
+   * Checks whether the string represents a time.
+   *
+   * @param s		the string to check
+   * @param df          the format, can be null
+   * @return		true if time
+   */
+  public static boolean checkTime(String s, DateFormat df) {
+    if (df == null)
+      df = getTimeFormatter();
+    if (s.indexOf(':') > -1)
+      return df.check(s);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the string represents a date.
+   *
+   * @param s		the string to check
+   * @return		true if date
+   */
+  public static boolean checkDate(String s) {
+    return checkDate(s, null);
+  }
+
+  /**
+   * Checks whether the string represents a date.
+   *
+   * @param s		the string to check
+   * @param df          the format, can be null
+   * @return		true if date
+   */
+  public static boolean checkDate(String s, DateFormat df) {
+    if (df == null)
+      df = getDateFormatter();
+    if (s.indexOf('-') > -1)
+      return df.check(s);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the string represents a date/time.
+   *
+   * @param s		the string to check
+   * @return		true if date/time
+   */
+  public static boolean checkDateTime(String s) {
+    return checkDate(s, null);
+  }
+
+  /**
+   * Checks whether the string represents a date/time.
+   *
+   * @param s		the string to check
+   * @param df          the format, can be null
+   * @return		true if date/time
+   */
+  public static boolean checkDateTime(String s, DateFormat df) {
+    if (df == null)
+      df = getTimestampFormatter();
+    if ((s.indexOf('-') > -1) && (s.indexOf(':') > -1))
+      return df.check(s);
+    else
+      return false;
+  }
 }
