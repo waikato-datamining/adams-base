@@ -19,8 +19,6 @@
  */
 package adams.flow.transformer.timeseriessplit;
 
-import java.util.Date;
-
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.QuickInfoHelper;
@@ -30,6 +28,8 @@ import adams.data.DateFormatString;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.timeseries.Timeseries;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -240,7 +240,7 @@ public class ReportDate
 		+ "'" + Constants.DATE_FORMAT + "'!");
     }
     else {
-      
+      // nothing to check
     }
   }
   
