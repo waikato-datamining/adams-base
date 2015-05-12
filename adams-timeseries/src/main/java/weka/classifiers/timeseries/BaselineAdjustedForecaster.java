@@ -36,7 +36,7 @@ import adams.core.Constants;
 import adams.core.option.OptionUtils;
 import adams.data.DateFormatString;
 import adams.data.baseline.AbstractBaselineCorrection;
-import adams.data.baseline.LOWESSBased;
+import adams.data.baseline.TimeseriesLOWESSBased;
 import adams.data.conversion.TimeseriesToWekaInstances;
 import adams.data.conversion.WekaInstancesToTimeseries;
 import adams.data.timeseries.Timeseries;
@@ -126,7 +126,7 @@ public class BaselineAdjustedForecaster
    * Initializes the members.
    */
   protected void initialize() {
-    m_Correction    = new LOWESSBased();
+    m_Correction    = new TimeseriesLOWESSBased();
     m_Baseline    = new WekaForecaster();
     m_Periodicity = new WekaForecaster();
   }
@@ -156,7 +156,7 @@ public class BaselineAdjustedForecaster
     
     result.addElement(new Option(
 	"\tThe baseline correction scheme.\n"
-	+ "\t(default: " + LOWESSBased.class.getName() + ")",
+	+ "\t(default: " + TimeseriesLOWESSBased.class.getName() + ")",
 	"correction", 1, "-correction <classname+options>"));
     
     result.addElement(new Option(
@@ -188,7 +188,7 @@ public class BaselineAdjustedForecaster
     
     tmpStr = Utils.getOption("correction", options);
     if (tmpStr.isEmpty())
-      setCorrection(new LOWESSBased());
+      setCorrection(new TimeseriesLOWESSBased());
     else
       setCorrection(AbstractBaselineCorrection.forCommandLine(tmpStr));
 

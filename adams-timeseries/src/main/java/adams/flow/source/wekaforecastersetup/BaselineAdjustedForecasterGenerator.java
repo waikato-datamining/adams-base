@@ -23,7 +23,7 @@ import weka.classifiers.timeseries.AbstractForecaster;
 import weka.classifiers.timeseries.BaselineAdjustedForecaster;
 import adams.core.QuickInfoHelper;
 import adams.data.baseline.AbstractBaselineCorrection;
-import adams.data.baseline.LOWESSBased;
+import adams.data.baseline.TimeseriesLOWESSBased;
 
 /**
  <!-- globalinfo-start -->
@@ -91,7 +91,7 @@ public class BaselineAdjustedForecasterGenerator
 
     m_OptionManager.add(
 	"correction", "correction", 
-	new LOWESSBased());
+	new TimeseriesLOWESSBased());
 
     m_OptionManager.add(
 	"baseline", "baseline", 

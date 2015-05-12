@@ -268,7 +268,7 @@ adams.flow.control.Flow
 					-tee
 						adams.flow.transformer.TimeseriesFilter
 							-filter
-								adams.data.filter.Window
+								adams.data.filter.TimeseriesWindow
 									-start
 									1980-01-01 00:00:00
 									-end
@@ -382,7 +382,7 @@ adams.flow.control.Flow
 							-tee
 								adams.flow.transformer.TimeseriesFilter
 									-filter
-										adams.data.filter.Window
+										adams.data.filter.TimeseriesWindow
 											-start
 											@{start}
 											-end
@@ -448,7 +448,7 @@ adams.flow.control.Flow
 							-tee
 								adams.flow.transformer.TimeseriesFilter
 									-filter
-										adams.data.filter.Window
+										adams.data.filter.TimeseriesWindow
 											-start
 											@{start}
 											-end

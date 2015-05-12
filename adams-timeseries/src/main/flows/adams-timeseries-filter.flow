@@ -160,7 +160,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.transformer.TimeseriesFilter
 							-filter
-								adams.data.filter.FFT
+								adams.data.filter.TimeseriesFFT
 					-actor
 						adams.flow.transformer.SetID
 							-id
@@ -180,7 +180,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.transformer.TimeseriesFilter
 							-filter
-								adams.data.filter.FFT
+								adams.data.filter.TimeseriesFFT
 									-real
 									false
 					-actor
@@ -202,7 +202,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.transformer.TimeseriesFilter
 							-filter
-								adams.data.filter.FFT
+								adams.data.filter.TimeseriesFFT
 									-inverse
 									true
 					-actor
@@ -224,7 +224,7 @@ adams.flow.control.Flow
 					-actor
 						adams.flow.transformer.TimeseriesFilter
 							-filter
-								adams.data.filter.FFT
+								adams.data.filter.TimeseriesFFT
 									-inverse
 									true
 									-real

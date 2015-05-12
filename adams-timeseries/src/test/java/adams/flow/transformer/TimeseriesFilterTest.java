@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.data.filter.TimeseriesWindow;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -132,7 +133,7 @@ public class TimeseriesFilterTest
       // Flow.TimeseriesFilter
       adams.flow.transformer.TimeseriesFilter timeseriesfilter9 = new adams.flow.transformer.TimeseriesFilter();
       argOption = (AbstractArgumentOption) timeseriesfilter9.getOptionManager().findByProperty("filter");
-      adams.data.filter.Window window11 = new adams.data.filter.Window();
+      TimeseriesWindow window11 = new TimeseriesWindow();
       argOption = (AbstractArgumentOption) window11.getOptionManager().findByProperty("start");
       window11.setStart((adams.core.base.BaseDateTime) argOption.valueOf("1990-01-01 00:00:00"));
       argOption = (AbstractArgumentOption) window11.getOptionManager().findByProperty("end");

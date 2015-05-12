@@ -1,4 +1,4 @@
-% Copyright (c) 2013-2014 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2013-2015 by the University of Waikato, Hamilton, NZ.
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -98,35 +98,46 @@ data, as well as make future predictions. \\
 
 \noindent The following filters are available:
 \begin{tight_itemize}
-	\item \textit{Derivative} -- calculates a derivative from the timeseries 
+	\item \textit{TimeseriesChangeResolution} -- uses fixed-length interval between data points.
+	\item \textit{TimeseriesDerivative} -- calculates a derivative from the timeseries
 	data.
-	\item \textit{EquiDistance} -- ensures that the data points are evenly 
+	\item \textit{TimeseriesEquiDistance} -- ensures that the data points are evenly
 	spaced, can also interpolate to create timeseries with the same number of
 	points.
-	\item \textit{FastWavelet} -- applies a wavelet transform to a timeseries.
-	\item \textit{LOWESS} -- applies LOWESS smoothing \cite{lowess}.
-	\item \textit{Round} -- allows the rounding of the values associated with
+	\item \textit{TimeseriesFastWavelet} -- applies a wavelet transform to a timeseries.
+	\item \textit{TimeseriesFFT} -- applies fast fourier transformation to timeseries.
+	\item \textit{TimeseriesHistogram} -- generates a histogram from timeseries.
+	\item \textit{TimeseriesLOWESS} -- applies LOWESS smoothing \cite{lowess}.
+	\item \textit{TimeseriesResetTimestamps} -- lets the timeseries start at a new timestamp.
+	\item \textit{TimeseriesRound} -- allows the rounding of the values associated with
 	timestamps in the timeseries.
-	\item \textit{SavitzkyGolay} -- transforms the timeseries using the
+	\item \textit{TimeseriesRowNorm} -- applies row normalization to the timeseries.
+	\item \textit{TimeseriesSavitzkyGolay} -- transforms the timeseries using the
 	Savitzky-Golay filter (smoothing and differentiation) \cite{savitzky}
-	\item \textit{SetStart} -- shifts all data points relatively to a new 
+	\item \textit{TimeseriesSAX} -- performs \textit{S}ymbolic \textit{A}ggregate appro\textit{X}imation.
+	\item \textit{TimeseriesSetStart} -- shifts all data points relatively to a new
 	starting point for the timeseries.
-	\item \textit{Window} -- extracts a specified window (or the inverse) from
+	\item \textit{TimeseriesShiftValues} -- shifts the timeseries y values up or down.
+	\item \textit{TimeseriesValueSubset} -- first block of values that fits inside defined y range.
+	\item \textit{TimeseriesWindow} -- extracts a specified window (or the inverse) from
 	a timeseries.
 \end{tight_itemize}
 
 \noindent The following outlier detectors are available:
 \begin{tight_itemize}
-	\item \textit{MinPoints} -- requires the timeseries to have a certain 
+	\item \textit{TimeseriesMinPoints} -- requires the timeseries to have a certain
 	number (absolute or percentage) of values above a specified value.
+	\item \textit{TimeseriesRange} -- ensures that y values lie within defined range
+	\item \textit{TimeseriesTimestampCheck} -- checks whether timeseries point is
+	before/after specified timestamp
 \end{tight_itemize}
 
 \noindent The following smoothers are available:
 \begin{tight_itemize}
-	\item \textit{LOWESSBased} -- uses a LOWESS filter for smoothing \cite{lowess}.
-	\item \textit{SavitzkyGolayBased} -- uses the \textit{SavitzkyGolay} filter
+	\item \textit{TimeseriesLOWESSBased} -- uses a LOWESS filter for smoothing \cite{lowess}.
+	\item \textit{TimeseriesSavitzkyGolayBased} -- uses the \textit{SavitzkyGolay} filter
 	to smooth the timeseries.\cite{savitzky}
-	\item \textit{SlidingWindow} -- wrapper smoother that applies the base 
+	\item \textit{TimeseriesSlidingWindow} -- wrapper smoother that applies the base
 	smoother to a sliding window.
 \end{tight_itemize}
 

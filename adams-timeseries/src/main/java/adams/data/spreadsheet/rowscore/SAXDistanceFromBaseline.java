@@ -20,7 +20,7 @@
 package adams.data.spreadsheet.rowscore;
 
 import gnu.trove.list.array.TDoubleArrayList;
-import adams.data.filter.RowNorm;
+import adams.data.filter.TimeseriesRowNorm;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -76,7 +76,7 @@ public class SAXDistanceFromBaseline
   @Override
   public String globalInfo() {
     return 
-	"Applies " + RowNorm.class.getName() + " to the timeseries before "
+	"Applies " + TimeseriesRowNorm.class.getName() + " to the timeseries before "
 	+ "calculating the SAX distance of the timeseries to the baseline.";
   }
 
