@@ -84,6 +84,7 @@ public class TimeseriesShiftTimestampsTest
 
     result[0] = new TimeseriesShiftTimestamps();
     result[0].setNewTimestamp(new BaseDateTime("2000-01-01 00:00:00"));
+    result[0].setSuppliedTimestamp(new BaseDateTime("2000-01-01 00:00:00"));
 
     result[1] = new TimeseriesShiftTimestamps();
     result[1].setSource(TimestampSource.SUPPLIED_TIMESTAMP);
