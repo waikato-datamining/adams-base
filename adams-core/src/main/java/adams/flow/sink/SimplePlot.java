@@ -32,6 +32,7 @@ import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
 import adams.flow.sink.sequenceplotter.MouseClickAction;
@@ -617,6 +618,7 @@ public class SimplePlot
 
     result = new SequencePlotterPanel(getTitle());
     result.setPaintlet(getPaintlet());
+    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
@@ -845,6 +847,7 @@ public class SimplePlot
 	((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
         m_Panel = new SequencePlotterPanel(getTitle());
         m_Panel.setPaintlet(getPaintlet());
+        ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SimplePlot.this);
         m_Panel.setMouseClickAction(m_MouseClickAction);
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);

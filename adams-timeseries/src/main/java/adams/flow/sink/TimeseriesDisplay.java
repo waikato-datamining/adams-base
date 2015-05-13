@@ -15,20 +15,16 @@
 
 /*
  * TimeseriesDisplay.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.List;
-
-import javax.swing.JComponent;
-
 import adams.data.DecimalFormatString;
 import adams.data.timeseries.PeriodicityType;
 import adams.data.timeseries.Timeseries;
+import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
@@ -45,6 +41,11 @@ import adams.gui.visualization.timeseries.TimeseriesContainerManager;
 import adams.gui.visualization.timeseries.TimeseriesExplorer;
 import adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions;
 import adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -237,6 +238,10 @@ public class TimeseriesDisplay
 	m_Panel.getContainerManager().add(cont);
       }
       m_Panel.getContainerManager().finishUpdate();
+    }
+
+    public void updateFlowAwarePaintlets(Actor actor) {
+      ActorUtils.updateFlowAwarePaintlets(m_Panel.getTimeseriesPanel(), actor);
     }
   }
 
@@ -579,6 +584,7 @@ public class TimeseriesDisplay
       overlay.setPanel(result.getTimeseriesPanel());
       result.getTimeseriesPanel().addPaintlet(overlay);
     }
+    ActorUtils.updateFlowAwarePaintlets(result.getTimeseriesPanel(), this);
 
     return result;
   }
@@ -618,6 +624,7 @@ public class TimeseriesDisplay
     DisplayPanel	result;
 
     result = new DisplayPanel(getClass().getSimpleName());
+    result.updateFlowAwarePaintlets(this);
     if (token != null)
       result.display(token);
 

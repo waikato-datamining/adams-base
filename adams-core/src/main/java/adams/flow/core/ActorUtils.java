@@ -15,25 +15,10 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
-
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.beans.PropertyDescriptor;
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import adams.core.ClassLister;
 import adams.core.ClassLocator;
@@ -64,6 +49,25 @@ import adams.flow.standalone.Standalones;
 import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.visualization.core.FlowAwarePaintlet;
+import adams.gui.visualization.core.PaintablePanel;
+import adams.gui.visualization.core.Paintlet;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Helper class for actors.
@@ -1278,6 +1282,7 @@ public class ActorUtils {
           updateErrorHandler(external, handler, trace);
         }
       }
+
       @Override
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
         Object current = option.getCurrentValue();
@@ -1290,22 +1295,27 @@ public class ActorUtils {
           update(current, handler);
         }
       }
+
       @Override
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
         // ignored
       }
+
       @Override
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
         // ignored
       }
+
       @Override
       public boolean canHandle(AbstractOption option) {
         return true;
       }
+
       @Override
       public boolean canRecurse(Class cls) {
         return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
+
       @Override
       public boolean canRecurse(Object obj) {
         return canRecurse(obj.getClass());
@@ -1343,5 +1353,35 @@ public class ActorUtils {
       return PROCEDURAL_SINK;
     else
       throw new IllegalStateException("Neither standalone/source/transformer/sink??");
+  }
+
+  /**
+   * Updates all the "flow-aware" paintlets of the panel with the specified
+   * actor.
+   *
+   * @param panel       this panel's paintlets get updated
+   * @param actor       the actor to set
+   */
+  public static void updateFlowAwarePaintlets(PaintablePanel panel, Actor actor) {
+    Iterator<Paintlet>  iter;
+    Paintlet            paintlet;
+
+    iter = panel.paintlets();
+    while (iter.hasNext()) {
+      paintlet = iter.next();
+      if (paintlet instanceof FlowAwarePaintlet)
+        ((FlowAwarePaintlet) paintlet).setActor(actor);
+    }
+  }
+
+  /**
+   * Updates a "flow-aware" paintlet with the specified actor.
+   *
+   * @param paintlet    the paintlet to update, if necessary
+   * @param actor       the actor to set
+   */
+  public static void updateFlowAwarePaintlet(Paintlet paintlet, Actor actor) {
+    if (paintlet instanceof FlowAwarePaintlet)
+      ((FlowAwarePaintlet) paintlet).setActor(actor);
   }
 }

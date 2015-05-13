@@ -15,13 +15,14 @@
 
 /**
  * MultiPaintlet.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
-import java.awt.Graphics;
-
+import adams.flow.core.Actor;
 import adams.gui.event.PaintEvent.PaintMoment;
+
+import java.awt.Graphics;
 
 /**
  * Paintlet that combines multiple paintlets.
@@ -30,14 +31,18 @@ import adams.gui.event.PaintEvent.PaintMoment;
  * @version $Revision$
  */
 public class MultiPaintlet
-  extends AbstractPaintlet {
+  extends AbstractPaintlet
+  implements FlowAwarePaintlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 159999248427405834L;
   
   /** the paintlets to use. */
   protected Paintlet[] m_SubPaintlets;
-  
+
+  /** the actor that this paintlet belongs to. */
+  protected Actor m_Actor;
+
   /**
    * Returns a string describing the object.
    *
@@ -61,6 +66,35 @@ public class MultiPaintlet
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Actor = null;
+  }
+
+  /**
+   * Sets the owning actor.
+   *
+   * @param actor	the actor this paintlet belongs to
+   */
+  public void setActor(Actor actor) {
+    m_Actor = actor;
+    memberChanged();
+  }
+
+  /**
+   * Returns the owning actor.
+   *
+   * @return		the actor this paintlet belongs to, null if none set
+   */
+  public Actor getActor() {
+    return m_Actor;
+  }
+
+  /**
    * Returns the default paintlets.
    * 
    * @return		the paintlets
@@ -77,6 +111,10 @@ public class MultiPaintlet
   public void setSubPaintlets(Paintlet[] value) {
     m_SubPaintlets = value;
     setPanel(getPanel());  // update sub paintlets
+    for (Paintlet paintlet: m_SubPaintlets) {
+      if (paintlet instanceof FlowAwarePaintlet)
+        ((FlowAwarePaintlet) paintlet).setActor(m_Actor);
+    }
     memberChanged();
   }
 

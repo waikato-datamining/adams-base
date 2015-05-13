@@ -15,10 +15,11 @@
 
 /**
  * Canvas.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.canvas.AbstractDataPoolPostProcessor;
 import adams.flow.sink.canvas.DataPoolPaintlet;
@@ -28,6 +29,7 @@ import adams.flow.sink.canvas.XYPaintlet;
 import adams.gui.core.BasePanel;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.BackgroundImagePaintlet;
+import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.Paintlet;
 
 /**
@@ -290,9 +292,12 @@ public class Canvas
     paintlet.setPanel(result);
     result.addPaintlet(paintlet);
     paintlet = m_BackgroundPaintlet.shallowCopy(true);
+    if (paintlet instanceof FlowAwarePaintlet)
+      ((FlowAwarePaintlet) paintlet).setActor(this);
     paintlet.setPanel(result);
     result.addPaintlet(paintlet);
     result.setPostProcessor(m_PostProcessor.shallowCopy(true));
+    ActorUtils.updateFlowAwarePaintlets(result, this);
     
     return result;
   }

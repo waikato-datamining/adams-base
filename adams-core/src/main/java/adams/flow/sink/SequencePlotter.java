@@ -31,6 +31,7 @@ import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.AbstractErrorPaintlet;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
@@ -901,6 +902,11 @@ public class SequencePlotter
     result.setColorProvider(getColorProvider().shallowCopy());
     result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
 
+    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(result.getMarkerPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(result.getErrorPaintlet(), this);
+
     return result;
   }
 
@@ -1137,6 +1143,10 @@ public class SequencePlotter
         m_Panel.setColorProvider(m_ColorProvider);
         m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
         add(m_Panel, BorderLayout.CENTER);
+        ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SequencePlotter.this);
+        ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SequencePlotter.this);
+        ActorUtils.updateFlowAwarePaintlet(m_Panel.getMarkerPaintlet(), SequencePlotter.this);
+        ActorUtils.updateFlowAwarePaintlet(m_Panel.getErrorPaintlet(), SequencePlotter.this);
       }
       @Override
       public void display(Token token) {
