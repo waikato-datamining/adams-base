@@ -15,56 +15,13 @@
 
 /*
  *    ExperimentPanel.java
- *    Copyright (C) 2007-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2007-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.gui.explorer;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.IntrospectionException;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import adams.core.io.FileUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
@@ -99,6 +56,49 @@ import weka.gui.explorer.Explorer.CapabilitiesFilterChangeEvent;
 import weka.gui.explorer.Explorer.CapabilitiesFilterChangeListener;
 import weka.gui.explorer.Explorer.ExplorerPanel;
 import weka.gui.explorer.Explorer.LogHandler;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyDescriptor;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Vector;
 
 /** 
  * This panel allows the user to select and configure a classifier, set the
@@ -572,7 +572,7 @@ public class ExperimentPanel
 	  inst.setClassIndex(classIndex);
 	  File tmpDataset = null;
 	  try {
-	    tmpDataset = File.createTempFile("weka_", XRFFLoader.FILE_EXTENSION_COMPRESSED);
+	    tmpDataset = FileUtils.createTempFile("weka_", XRFFLoader.FILE_EXTENSION_COMPRESSED);
 	    tmpDataset.deleteOnExit();
 	    XRFFSaver saver = new XRFFSaver();
 	    saver.setFile(tmpDataset);
@@ -680,7 +680,7 @@ public class ExperimentPanel
 	  InstancesResultListener irl = new InstancesResultListener();
 	  File tmpResult = null;
 	  try {
-	    tmpResult = File.createTempFile("weka_result_", ArffLoader.FILE_EXTENSION);
+	    tmpResult = FileUtils.createTempFile("weka_result_", ArffLoader.FILE_EXTENSION);
 	    tmpResult.deleteOnExit();
 	  }
 	  catch (Exception ex) {

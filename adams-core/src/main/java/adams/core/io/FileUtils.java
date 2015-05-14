@@ -24,6 +24,7 @@ import adams.core.Placeholders;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.management.OS;
+import adams.core.management.ProcessUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -50,7 +51,13 @@ public class FileUtils {
 
   /** the properties file. */
   public final static String FILENAME = "adams/core/io/FileUtils.props";
-  
+
+  /** the counter for temp file names. */
+  protected static long m_TempFileCounter;
+  static {
+    m_TempFileCounter = 0;
+  }
+
   /** the properties. */
   protected static Properties m_Properties;
 
@@ -142,17 +149,20 @@ public class FileUtils {
     List<String>	result;
     BufferedReader	reader;
     String		line;
+    FileInputStream	fis;
 
     result = new ArrayList<String>();
 
     try {
+      fis = new FileInputStream(file.getAbsolutePath());
       if ((encoding != null) && (encoding.length() > 0))
-	reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), encoding));
+	reader = new BufferedReader(new InputStreamReader(fis, encoding));
       else
-	reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath())));
+	reader = new BufferedReader(new InputStreamReader(fis));
       while ((line = reader.readLine()) != null)
         result.add(line);
       reader.close();
+      fis.close();
     }
     catch (Exception e) {
       result = null;
@@ -173,15 +183,18 @@ public class FileUtils {
     List<Byte>		content;
     int			read;
     byte[]		buffer;
+    FileInputStream	fis;
     BufferedInputStream	stream;
     int			i;
 
     content = new ArrayList<Byte>();
 
     stream = null;
+    fis    = null;
     try {
       buffer = new byte[1024];
-      stream = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      stream = new BufferedInputStream(fis);
       while ((read = stream.read(buffer)) != -1) {
 	for (i = 0; i < read; i++)
 	  content.add(buffer[i]);
@@ -192,12 +205,22 @@ public class FileUtils {
       e.printStackTrace();
       content = null;
     }
-    if (stream != null) {
-      try {
-	stream.close();
+    finally {
+      if (stream != null) {
+	try {
+	  stream.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
-      catch (Exception e) {
-	// ignored
+      if (fis != null) {
+	try {
+	  fis.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
     }
 
@@ -249,23 +272,45 @@ public class FileUtils {
    */
   public static byte[] loadByteArrayFromFile(File file) {
     byte[] 			result;
+    FileInputStream		fis;
     BufferedInputStream		bis;
     ByteArrayOutputStream	bytesIn;
     int 			ch;
 
     bis     = null;
+    fis     = null;
     bytesIn = null;
     try {
-      bis     = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis     = new FileInputStream(file.getAbsoluteFile());
+      bis     = new BufferedInputStream(fis);
       bytesIn = new ByteArrayOutputStream();
       while ((ch = bis.read()) != -1)
 	bytesIn.write(ch);
       bis.close();
+      fis.close();
       result = bytesIn.toByteArray();
     }
     catch(Exception e) {
       result = null;
       e.printStackTrace();
+    }
+    finally {
+      if (bis != null) {
+	try {
+	  bis.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+      if (fis != null) {
+	try {
+	  fis.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
     }
 
     return result;
@@ -312,20 +357,23 @@ public class FileUtils {
     boolean		result;
     BufferedWriter	writer;
     int			i;
+    FileOutputStream	fos;
 
     result = true;
     
     try {
+      fos = new FileOutputStream(file.getAbsolutePath());
       if ((encoding != null) && (encoding.length() > 0))
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), encoding));
+	writer = new BufferedWriter(new OutputStreamWriter(fos, encoding));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath())));
+	writer = new BufferedWriter(new OutputStreamWriter(fos));
       for (i = 0; i < content.size(); i++) {
         writer.write(content.get(i));
         writer.newLine();
       }
       writer.flush();
       writer.close();
+      fos.close();
     }
     catch (Exception e) {
       result = false;
@@ -386,12 +434,14 @@ public class FileUtils {
   public static boolean writeToFile(String filename, Object obj, boolean append, String encoding) {
     boolean		result;
     BufferedWriter	writer;
+    FileOutputStream	fos;
 
     try {
+      fos = new FileOutputStream(filename, append);
       if ((encoding != null) && (encoding.length() > 0))
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, append), encoding));
+	writer = new BufferedWriter(new OutputStreamWriter(fos, encoding));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, append)));
+	writer = new BufferedWriter(new OutputStreamWriter(fos));
       writer.write("" + obj);
       writer.newLine();
       writer.flush();
@@ -460,7 +510,9 @@ public class FileUtils {
         out.write(buf, 0, len);
 
       in.close();
+      in = null;
       out.close();
+      out = null;
 
       if (move)
         return sourceLocation.delete();
@@ -910,6 +962,7 @@ public class FileUtils {
    */
   public static boolean isBinary(File file) {
     boolean		result;
+    FileInputStream	fis;
     BufferedInputStream	stream;
     int			i;
     int			read;
@@ -917,10 +970,12 @@ public class FileUtils {
     
     result = false;
 
+    fis    = null;
     stream = null;
     buffer = new byte[BINARY_CHECK_BUFFER_SIZE];
     try {
-      stream = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      stream = new BufferedInputStream(fis);
       read   = stream.read(buffer);
     }
     catch (Exception e) {
@@ -928,12 +983,22 @@ public class FileUtils {
       e.printStackTrace();
       read = -1;
     }
-    if (stream != null) {
-      try {
-	stream.close();
+    finally {
+      if (stream != null) {
+	try {
+	  stream.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
-      catch (Exception e) {
-	// ignored
+      if (fis != null) {
+	try {
+	  fis.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
     }
     
@@ -1097,5 +1162,47 @@ public class FileUtils {
       result = path.replace("\\", "/");
 
     return result;
+  }
+
+  /**
+   * Creates a temp file name in the user's temp directory.
+   *
+   * @param prefix	the prefix for the name, can be null
+   * @param suffix	the suffix, eg the extension, can be null
+   * @return		the generated file name
+   */
+  public static synchronized File createTempFile(String prefix, String suffix) {
+    return createTempFile(null, prefix, suffix);
+  }
+
+  /**
+   * Creates a temp file name in the specified directory.
+   *
+   * @param dir		the directory for the temp file, use null for user's temp dir
+   * @param prefix	the prefix for the name, can be null
+   * @param suffix	the suffix, eg the extension, can be null
+   * @return		the generated file name
+   */
+  public static synchronized File createTempFile(PlaceholderDirectory dir, String prefix, String suffix) {
+    String	filename;
+
+    m_TempFileCounter++;
+
+    if (dir == null)
+      filename = getTempDirectory() + File.separator;
+    else
+      filename = dir.getAbsolutePath() + File.separator;
+
+    if (prefix != null)
+      filename += prefix;
+
+    filename += Long.toHexString(System.nanoTime())
+	+ "-" + Long.toHexString(ProcessUtils.getVirtualMachinePID())
+	+ "-" + Long.toHexString(m_TempFileCounter);
+
+    if (suffix != null)
+      filename += suffix;
+
+    return new File(filename);
   }
 }

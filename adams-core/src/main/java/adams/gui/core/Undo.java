@@ -15,10 +15,18 @@
 
 /*
  * Undo.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
+
+import adams.core.ClassLocator;
+import adams.core.CloneHandler;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoEvent.UndoType;
+import adams.gui.event.UndoListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,13 +38,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.core.ClassLocator;
-import adams.core.CloneHandler;
-import adams.core.Utils;
-import adams.gui.event.UndoEvent;
-import adams.gui.event.UndoEvent.UndoType;
-import adams.gui.event.UndoListener;
 
 /**
  * A general Undo/Redo-mechanism: stores objects either in memory or on disk.
@@ -300,7 +301,7 @@ public class Undo {
     if (m_OnDisk) {
       try {
 	// create tmp file
-	file = File.createTempFile("undo", null);
+	file = FileUtils.createTempFile("undo", null);
 	file.deleteOnExit();
 
 	// write to disk
@@ -366,7 +367,7 @@ public class Undo {
     if (m_OnDisk) {
       try {
 	// create tmp file
-	file = File.createTempFile("redo", null);
+	file = FileUtils.createTempFile("redo", null);
 	file.deleteOnExit();
 
 	// write to disk

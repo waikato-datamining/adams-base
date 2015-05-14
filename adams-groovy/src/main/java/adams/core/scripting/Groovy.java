@@ -15,15 +15,10 @@
 
 /*
  * Groovy.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-20135University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
-
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
 
 import adams.core.Utils;
 import adams.core.Variables;
@@ -33,6 +28,11 @@ import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.flow.core.AdditionalOptionsHandler;
 import adams.flow.core.AdditionalOptionsHandlerUtils;
+
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * A helper class for <a href="http://groovy.codehaus.org/" target="_blank">Groovy</a>.
@@ -221,7 +221,7 @@ public class Groovy
       }
       else {
 	try {
-	  file = new PlaceholderFile(File.createTempFile(Environment.getInstance().getProject() + "-", ".groovy"));
+	  file = new PlaceholderFile(FileUtils.createTempFile(Environment.getInstance().getProject() + "-", ".groovy"));
 	  FileUtils.saveToFile(inlineScript.getValue().split("\n"), file);
 	}
 	catch (Exception e) {

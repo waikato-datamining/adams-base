@@ -120,7 +120,7 @@ public class TesseractOCR
     m_LastCommand = "";
     tmp = null;
     try {
-      tmp = File.createTempFile("ocr", ".png");
+      tmp = FileUtils.createTempFile("ocr", ".png");
       if (!ImageIO.write(m_CurrentPanel.getCurrentImage(), "PNG", tmp))
 	result = "Failed to save current image as temp file: " + tmp;
     }

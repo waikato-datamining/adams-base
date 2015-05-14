@@ -22,15 +22,11 @@ package adams.flow.sink;
 
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
-import adams.core.management.CharsetHelper;
 import adams.flow.core.Unknown;
 
 import java.io.BufferedWriter;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -182,26 +178,18 @@ public class DumpFile
    */
   @Override
   protected String doExecute() {
-    String		  result;
-    BufferedWriter	  writer;
-    Charset               charset;
-    StandardOpenOption[]  options;
-    Path                  path;
+    String		result;
+    FileOutputStream    fos;
+    BufferedWriter	writer;
 
-    m_Encoding.charsetValue();
     writer = null;
+    fos    = null;
     try {
+      fos = new FileOutputStream(m_OutputFile.getAbsolutePath(), m_Append);
       if (m_Encoding != null)
-        charset = CharsetHelper.getSingleton().getCharset();
+	writer = new BufferedWriter(new OutputStreamWriter(fos, m_Encoding.charsetValue()));
       else
-        charset = m_Encoding.charsetValue();
-
-      if (m_Append)
-        options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND};
-      else
-        options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
-      path = FileSystems.getDefault().getPath(m_OutputFile.getAbsolutePath());
-      writer = Files.newBufferedWriter(path, charset, options);
+	writer = new BufferedWriter(new OutputStreamWriter(fos));
       writer.write("" + m_InputToken.getPayload());
       writer.newLine();
       writer.flush();
@@ -216,8 +204,15 @@ public class DumpFile
           writer.close();
         }
         catch (Exception ex) {
-          // ignored, only reported
-          handleException("Failed to close file: " + m_OutputFile, ex);
+          // ignored
+        }
+      }
+      if (fos != null) {
+        try {
+          fos.close();
+        }
+        catch (Exception ex) {
+          // ignored
         }
       }
     }

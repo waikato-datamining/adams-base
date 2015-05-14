@@ -20,11 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.media.jai.JAI;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
@@ -41,6 +36,10 @@ import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
 import adams.flow.core.Token;
 import adams.flow.standalone.TesseractConfiguration;
+
+import javax.media.jai.JAI;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -497,8 +496,7 @@ public class TesseractOCR
     }
     else {
       try {
-	file = File.createTempFile(getClass().getSimpleName(), ".png");
-	file.delete();
+	file = FileUtils.createTempFile(getClass().getSimpleName(), ".png");
 	fileStr = file.getAbsolutePath();
 	img = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();
 	JAI.create("filestore", img, fileStr, "PNG");
