@@ -19,9 +19,6 @@
  */
 package adams.core.option;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-
 import adams.core.AdditionalInformationHandler;
 import adams.core.ClassCrossReference;
 import adams.core.ExampleProvider;
@@ -30,6 +27,9 @@ import adams.core.Utils;
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  * Generates the help for the GUI, i.e., HTML output.
@@ -346,7 +346,7 @@ public class HtmlHelpProducer
 
   /**
    * Hook method that gets called just before an option gets produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager
@@ -434,7 +434,7 @@ public class HtmlHelpProducer
 
   /**
    * Hook-method after visiting options.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   @Override
