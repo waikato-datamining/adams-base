@@ -15,10 +15,22 @@
 
 /**
  * BufferedImageHelper.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.data.Notes;
+import adams.data.conversion.DOMToProperties;
+import adams.data.report.Report;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -29,19 +41,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
-
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.io.FileUtils;
-import adams.data.Notes;
-import adams.data.conversion.DOMToProperties;
-import adams.data.report.Report;
 
 /**
  * Helper class for BufferedImage objects.
@@ -229,7 +228,6 @@ public class BufferedImageHelper {
    * @param startY	the starting point, y coordinate
    * @param targetColor	the target color (what we want to fill)
    * @param replacementColor	the replacement color (the color fill with)
-   * @param extent	for recording the bounding box for the flood fill, all -1 if failed to fill
    * @return		true if successfully filled
    */
   public static boolean floodFill(BufferedImage img, int startX, int startY, Color targetColor, Color replacementColor) {
@@ -245,7 +243,6 @@ public class BufferedImageHelper {
    * @param startY	the starting point, y coordinate
    * @param targetColor	the target color (what we want to fill)
    * @param replacementColor	the replacement color (the color fill with)
-   * @param extent	for recording the bounding box for the flood fill, all -1 if failed to fill
    * @return		true if successfully filled
    */
   public static boolean floodFill(BufferedImage img, int startX, int startY, int targetColor, int replacementColor) {
@@ -441,7 +438,8 @@ public class BufferedImageHelper {
     String[]			formats;
     DOMToProperties		convert;
     Properties			props;
-    
+
+    iis = null;
     try {
       result = new BufferedImageContainer();
       iis    = ImageIO.createImageInputStream(new FileInputStream(file.getAbsoluteFile()));
@@ -471,6 +469,7 @@ public class BufferedImageHelper {
       // image
       image = reader.read(0);
       result.setImage(image);
+      reader = null;
 
       return result;
     }
@@ -478,6 +477,17 @@ public class BufferedImageHelper {
       System.err.println("Failed to read image: " + file);
       e.printStackTrace();
       return null;
+    }
+    finally {
+      if (iis != null) {
+        try {
+          iis.close();
+          iis = null;
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
     }
   }
   
