@@ -361,6 +361,7 @@ public class TimedTrigger
     String	result;
     
     result  = QuickInfoHelper.toString(this, "callableName", m_CallableName);
+    result += QuickInfoHelper.toString(this, "prefix", (m_Prefix.isEmpty() ? "-none-" : m_Prefix), ". prefix: ");
     result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
     result += QuickInfoHelper.toString(this, "timingEnabled", m_TimingEnabled, "enabled", ", ");
 
