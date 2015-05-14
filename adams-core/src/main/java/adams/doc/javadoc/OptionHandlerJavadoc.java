@@ -32,10 +32,10 @@ import adams.core.option.OptionHandler;
  * Generates Javadoc comments from the OptionHandler's options. Can
  * automatically update the option comments if they're surrounded by
  * the OPTIONS_STARTTAG and OPTIONS_ENDTAG (the indention is determined via
- * the OPTIONS_STARTTAG). <p/>
+ * the OPTIONS_STARTTAG). <br><br>
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  *         The class to use for determining the environment.
@@ -199,7 +199,7 @@ public class OptionHandlerJavadoc
 
       // prolog?
       if (getProlog())
-	result = "Valid options are: <p/>\n\n";
+	result = "Valid options are: <br>\n\n";
 
       // options
       buffer = new StringBuilder();

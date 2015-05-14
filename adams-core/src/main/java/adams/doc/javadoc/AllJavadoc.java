@@ -28,7 +28,7 @@ import java.util.logging.Level;
  * Applies all known Javadoc-derived classes to a source file.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  *         The class to use for determining the environment.

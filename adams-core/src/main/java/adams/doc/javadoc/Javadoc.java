@@ -164,7 +164,7 @@ public abstract class Javadoc
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()
@@ -392,7 +392,7 @@ public abstract class Javadoc
     String	result;
 
     result = HtmlUtils.toHTML(s);
-    result = result.replaceAll("\n", "<br/>\n");
+    result = result.replaceAll("\n", "<br>\n");
     result = result.replaceAll("\t", "&nbsp;&nbsp;&nbsp;");
     result = result.replace("\\u", "\\\\u");
 

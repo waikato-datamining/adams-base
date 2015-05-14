@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * the GRAMMAR_STARTTAG).
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
@@ -124,7 +124,7 @@ public class GrammarJavadoc
 	result = (String) grammar.invoke(getInstance(), (Object[]) null);
       if (result.length() > 0) {
 	result = toHTML("Input/output:\n" + result).trim().replaceAll("(\t)(.+)(<br\\/>)", "<pre>   $2</pre>");
-	result += "\n<p/>\n";
+	result += "\n<br><br>\n";
       }
 
       // stars?

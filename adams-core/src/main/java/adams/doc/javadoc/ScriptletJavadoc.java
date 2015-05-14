@@ -29,14 +29,14 @@ import adams.gui.scripting.AbstractScriptlet;
  * automatically update the comments if they're surrounded by
  * the FLOW_STARTTAG and FLOW_ENDTAG (the indention is determined via
  * the FLOW_STARTTAG).
- * <p/>
+ * <br><br>
  * In addition to the flow tags, one can also place the tags
  * ACCEPTS_STARTTAG/ACCEPTS_ENDTAG and GENERATES_STARTTAG/GENERATES_ENDTAG
  * in the Javadoc. These tags don't add blocks of comments, but just a single
  * classname.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  *         The class to use for determining the environment.
@@ -147,8 +147,8 @@ public class ScriptletJavadoc
 
     // parameters
     if (m_StartTag[index].equals(PARAMETERS_STARTTAG)) {
-      result = "Action parameters:<br/>\n" + "<pre>   " + toHTML(scriptlet.getParameterDescription()) + "</pre>";
-      result = result.trim() + "\n<p/>\n";
+      result = "Action parameters:<br>\n" + "<pre>   " + toHTML(scriptlet.getParameterDescription()) + "</pre>";
+      result = result.trim() + "\n<br><br>\n";
 
       // stars?
       if (getUseStars())
@@ -167,7 +167,7 @@ public class ScriptletJavadoc
 	if (i == lines.length - 1)
 	  result += "</pre>";
       }
-      result += "\n<p/>\n";
+      result += "\n<br><br>\n";
 
       // stars?
       if (getUseStars())

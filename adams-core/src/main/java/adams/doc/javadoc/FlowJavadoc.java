@@ -20,29 +20,29 @@
 
 package adams.doc.javadoc;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.ActorWithConditionalEquivalent;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Generates Javadoc comments for the AbstractActor. Can
  * automatically update the comments if they're surrounded by
  * the FLOW_STARTTAG and FLOW_ENDTAG (the indention is determined via
  * the FLOW_STARTTAG).
- * <p/>
+ * <br><br>
  * In addition to the flow tags, one can also place the tags
  * ACCEPTS_STARTTAG/ACCEPTS_ENDTAG and GENERATES_STARTTAG/GENERATES_ENDTAG
  * in the Javadoc. These tags don't add blocks of comments, but just a single
  * classname.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  *         The class to use for determining the environment.
@@ -198,7 +198,7 @@ public class FlowJavadoc
       }
       if (result.length() > 0) {
 	result = toHTML("Input/output:\n" + result).trim().replaceAll("(\t)(.+)(<br\\/>)", "<pre>   $2</pre>");
-	result += "\n<p/>\n";
+	result += "\n<br><br>\n";
       }
 
       // container information
@@ -223,7 +223,7 @@ public class FlowJavadoc
 	  }
 	}
 	result += toHTML(info.toString());
-	result += "\n<p/>\n";
+	result += "\n<br><br>\n";
       }
       
       if (getInstance() instanceof ActorWithConditionalEquivalent) {
@@ -233,7 +233,7 @@ public class FlowJavadoc
 	  info.append("Conditional equivalent:\n");
 	  info.append("\t" + condEquiv.getName());
 	  result += toHTML(info.toString());
-	  result += "\n<p/>\n";
+	  result += "\n<br><br>\n";
 	}
       }
 

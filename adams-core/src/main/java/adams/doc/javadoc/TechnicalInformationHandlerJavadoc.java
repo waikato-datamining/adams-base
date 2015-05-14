@@ -26,10 +26,10 @@ import adams.core.TechnicalInformationHandler;
 /**
  * Generates Javadoc comments from the TechnicalInformationHandler's data.
  * Update the BibTex references and the plaintext techincal information.
- * <p/>
+ * <br><br>
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  *         The class to use for determining the environment.
@@ -179,8 +179,8 @@ public class TechnicalInformationHandlerJavadoc
 	if (getProlog())
 	  result = "BibTeX:\n";
 	result += "<pre>\n";
-	result += toHTML(handler.getTechnicalInformation().toBibTex()).replaceAll("<br/>", "") + "\n";
-	result += "</pre>\n<p/>\n";
+	result += toHTML(handler.getTechnicalInformation().toBibTex()).replaceAll("<br>", "") + "\n";
+	result += "</pre>\n<br><br>\n";
 	break;
     }
 
