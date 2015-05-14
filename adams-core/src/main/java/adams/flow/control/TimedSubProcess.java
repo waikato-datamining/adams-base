@@ -19,13 +19,9 @@
  */
 package adams.flow.control;
 
-import java.util.HashSet;
-import java.util.Hashtable;
-
-import org.apache.commons.lang.time.StopWatch;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.flow.container.TimingContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
@@ -34,21 +30,25 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.TimedActor;
 import adams.flow.core.Token;
+import org.apache.commons.lang.time.StopWatch;
+
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Encapsulates a sequence of flow items. The first actor must accept input and the last one must produce output.<br/>
- * Times how long the sub-flow execution takes and sends the time in milli-seconds (as double) to the specified callable actor.
- * <p/>
+ * Encapsulates a sequence of flow items. The first actor must accept input and the last one must produce output.<br>
+ * Times how long the sub-flow execution takes and sends the time in milli-seconds (as double) in a adams.flow.container.TimingContainer container to the specified callable actor.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -99,6 +99,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix to store in the timing container.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor to use.
  * &nbsp;&nbsp;&nbsp;default: unknown
@@ -130,7 +135,10 @@ public class TimedSubProcess
 
   /** whether timing is enabled. */
   protected boolean m_TimingEnabled;
-  
+
+  /** the prefix to use. */
+  protected String m_Prefix;
+
   /** the callable name. */
   protected CallableActorReference m_CallableName;
 
@@ -158,8 +166,9 @@ public class TimedSubProcess
   public String globalInfo() {
     return 
 	super.globalInfo() + "\n"
-	+ "Times how long the sub-flow execution takes and sends the time "
-	+ "in milli-seconds (as double) to the specified callable actor.";
+	  + "Times how long the sub-flow execution takes and sends the time "
+	  + "in milli-seconds (as double) in a " + TimingContainer.class.getName()
+	  + " container to the specified callable actor.";
   }
 
   /**
@@ -180,16 +189,20 @@ public class TimedSubProcess
     super.defineOptions();
 
     m_OptionManager.add(
-	    "timing-enabled", "timingEnabled",
-	    true);
+      "timing-enabled", "timingEnabled",
+      true);
 
     m_OptionManager.add(
-	    "callable", "callableName",
-	    new CallableActorReference("unknown"));
+      "prefix", "prefix",
+      "");
 
     m_OptionManager.add(
-	    "optional", "optional",
-	    false);
+      "callable", "callableName",
+      new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+      "optional", "optional",
+      false);
   }
 
   /**
@@ -241,6 +254,35 @@ public class TimedSubProcess
    */
   public String timingEnabledTipText() {
     return "If enabled, then the actors performs timing on its execution.";
+  }
+
+  /**
+   * Sets the prefix to store in the timing container.
+   *
+   * @param value 	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix to store in the timing container.
+   *
+   * @return 		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The prefix to store in the timing container.";
   }
 
   /**
@@ -469,13 +511,15 @@ public class TimedSubProcess
    * Executes the callable actor. Derived classes might need to override this
    * method to ensure atomicity.
    *
-   * @param int		the time in milli-seconds
+   * @param msec	the time in milli-seconds
    * @return		null if no error, otherwise error message
    */
   protected String executeCallableActor(double msec) {
-    String	result;
+    String	    result;
+    TimingContainer cont;
 
-    ((InputConsumer) m_CallableActor).input(new Token(msec));
+    cont = new TimingContainer(msec, m_Prefix, getFullName());
+    ((InputConsumer) m_CallableActor).input(new Token(cont));
     result = m_CallableActor.execute();
 
     return result;
