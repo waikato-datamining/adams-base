@@ -15,7 +15,7 @@
 
 /*
  * TesseractOCR.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,13 +31,13 @@ import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
 import adams.flow.core.Token;
 import adams.flow.standalone.TesseractConfiguration;
 
-import javax.media.jai.JAI;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -499,7 +499,7 @@ public class TesseractOCR
 	file = FileUtils.createTempFile(getClass().getSimpleName(), ".png");
 	fileStr = file.getAbsolutePath();
 	img = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();
-	JAI.create("filestore", img, fileStr, "PNG");
+    	result = BufferedImageHelper.write(img, file);
       }
       catch (Exception e) {
 	result = handleException("Failed to save image to temporary file!", e);
