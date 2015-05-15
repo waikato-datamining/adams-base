@@ -430,6 +430,7 @@ public class BufferedImageHelper {
    */
   public static BufferedImageContainer read(File file) {
     BufferedImageContainer	result;
+    FileInputStream		fis;
     ImageInputStream 		iis;
     Iterator 			it;
     ImageReader 		reader;
@@ -440,9 +441,11 @@ public class BufferedImageHelper {
     Properties			props;
 
     iis = null;
+    fis = null;
     try {
       result = new BufferedImageContainer();
-      iis    = ImageIO.createImageInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      iis    = ImageIO.createImageInputStream(fis);
       it     = ImageIO.getImageReaders(iis);
       if (!it.hasNext()) {
 	System.err.println("No reader for this format: " + file);
@@ -483,6 +486,15 @@ public class BufferedImageHelper {
         try {
           iis.close();
           iis = null;
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+      if (fis != null) {
+        try {
+          fis.close();
+          fis = null;
         }
         catch (Exception e) {
           // ignored
