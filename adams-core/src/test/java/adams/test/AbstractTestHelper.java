@@ -15,20 +15,20 @@
 
 /**
  * TestHelper.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
+
+import adams.core.base.BasePassword;
+import adams.core.io.FileUtils;
+import adams.data.container.DataContainer;
+import adams.db.AbstractDatabaseConnection;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import adams.core.base.BasePassword;
-import adams.core.io.FileUtils;
-import adams.data.container.DataContainer;
-import adams.db.AbstractDatabaseConnection;
 
 /**
  * Ancestor for helper classes for tests.
@@ -109,6 +109,7 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
     boolean			result;
     BufferedInputStream		input;
     BufferedOutputStream	output;
+    FileOutputStream		fos;
     byte[]			buffer;
     int				read;
     String			ext;
@@ -117,9 +118,11 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
     output   = null;
     resource = getDataDirectory() + "/" + resource;
 
+    fos = null;
     try {
       input  = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(resource));
-      output = new BufferedOutputStream(new FileOutputStream(getTmpLocationFromResource(resource)));
+      fos    = new FileOutputStream(getTmpLocationFromResource(resource));
+      output = new BufferedOutputStream(fos);
       buffer = new byte[1024];
       while ((read = input.read(buffer)) != -1) {
 	output.write(buffer, 0, read);
@@ -143,22 +146,9 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
       result = false;
     }
 
-    if (input != null) {
-      try {
-	input.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
-    }
-    if (output != null) {
-      try {
-	output.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
-    }
+    FileUtils.closeQuietly(input);
+    FileUtils.closeQuietly(output);
+    FileUtils.closeQuietly(fos);
 
     return result;
   }

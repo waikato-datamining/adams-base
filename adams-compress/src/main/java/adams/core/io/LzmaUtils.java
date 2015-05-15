@@ -15,10 +15,17 @@
 
 /**
  * LzmaUtils.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Julien Ponge
  */
 package adams.core.io;
+
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import lzma.sdk.lzma.Decoder;
+import lzma.streams.LzmaInputStream;
+import lzma.streams.LzmaOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -26,15 +33,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
-import lzma.streams.LzmaOutputStream;
-
-import org.apache.commons.compress.utils.IOUtils;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
 
 /**
  * Helper class for lzma related operations.
@@ -76,10 +74,14 @@ public class LzmaUtils {
     String		result;
     LzmaInputStream	in;
     OutputStream 	out;
+    FileInputStream     fis;
+    FileOutputStream	fos;
     String		msg;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
 
@@ -87,16 +89,12 @@ public class LzmaUtils {
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
-      in = new LzmaInputStream(
-	  new BufferedInputStream(new FileInputStream(archiveFile.getAbsolutePath())),
-	  new Decoder());
-      out = new BufferedOutputStream(new FileOutputStream(outputFile.getAbsolutePath()));
+      fis = new FileInputStream(archiveFile.getAbsolutePath());
+      in  = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+      fos = new FileOutputStream(outputFile.getAbsolutePath());
+      out = new BufferedOutputStream(fos);
 
       IOUtils.copy(in, out, buffer);
-      out.close();      
-      out = null;
-      in.close();
-      in = null;
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
@@ -105,22 +103,10 @@ public class LzmaUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;
@@ -168,24 +154,35 @@ public class LzmaUtils {
     String			result;
     LzmaOutputStream 		out;
     BufferedInputStream 	in;
+    FileInputStream		fis;
+    FileOutputStream		fos;
     String			msg;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
-      in  = new BufferedInputStream(new FileInputStream(inputFile.getAbsolutePath()));
-      out = new LzmaOutputStream.Builder(new BufferedOutputStream(new FileOutputStream(outputFile.getAbsolutePath()))).build();
+      fis = new FileInputStream(inputFile.getAbsolutePath());
+      in  = new BufferedInputStream(fis);
+      fos = new FileOutputStream(outputFile.getAbsolutePath());
+      out = new LzmaOutputStream.Builder(new BufferedOutputStream(fos)).build();
       
       IOUtils.copy(in, out, buffer);
-      in.close();
-      in = null;
-      out.close();
+
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
+      in  = null;
+      fis = null;
       out = null;
+      fos = null;
 
       // remove input file?
       if (removeInput) {
@@ -200,22 +197,10 @@ public class LzmaUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

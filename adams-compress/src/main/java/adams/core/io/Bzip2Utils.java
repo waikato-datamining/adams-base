@@ -15,18 +15,18 @@
 
 /**
  * Bzip2Utils.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 /**
  * Helper class for bzip2 related operations.
@@ -65,33 +65,29 @@ public class Bzip2Utils {
     String			result;
     byte[] 			buf;
     int 			len;
+    FileInputStream             fis;
     BZip2CompressorInputStream 	in;
     BufferedOutputStream 	out;
     String			msg;
 
     in     = null;
     out    = null;
+    fis    = null;
     result = null;
     try {
-
       // does file already exist?
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
       // create GZIP file
       buf = new byte[buffer];
-      in  = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(archiveFile.getAbsolutePath())));
+      fis = new FileInputStream(archiveFile.getAbsolutePath());
+      in  = new BZip2CompressorInputStream(new BufferedInputStream(fis));
       out = new BufferedOutputStream(new FileOutputStream(outputFile), buffer);
 
       // Transfer bytes from the file to the GZIP file
       while ((len = in.read(buf)) > 0)
 	out.write(buf, 0, len);
-
-      // finish up
-      in.close();
-      in = null;
-      out.close();
-      out = null;
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
@@ -100,22 +96,9 @@ public class Bzip2Utils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(out);
     }
 
     return result;
@@ -163,9 +146,13 @@ public class Bzip2Utils {
     BZip2CompressorOutputStream	out;
     BufferedInputStream 	in;
     String			msg;
+    FileInputStream             fis;
+    FileOutputStream		fos;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
@@ -174,18 +161,23 @@ public class Bzip2Utils {
 
       // create GZIP file
       buf = new byte[buffer];
-      out = new BZip2CompressorOutputStream(new FileOutputStream(outputFile));
-      in  = new BufferedInputStream(new FileInputStream(inputFile.getAbsolutePath()));
+      fos = new FileOutputStream(outputFile);
+      out = new BZip2CompressorOutputStream(fos);
+      fis = new FileInputStream(inputFile.getAbsolutePath());
+      in  = new BufferedInputStream(fis);
 
       // Transfer bytes from the file to the GZIP file
       while ((len = in.read(buf)) > 0)
 	out.write(buf, 0, len);
 
-      // finish up
-      in.close();
-      in = null;
-      out.close();
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
+      in  = null;
+      fis = null;
       out = null;
+      fos = null;
 
       // remove input file?
       if (removeInput) {
@@ -200,22 +192,10 @@ public class Bzip2Utils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

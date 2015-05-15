@@ -15,9 +15,15 @@
 
 /**
  * ODFSpreadSheetHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
+
+import adams.core.Range;
+import adams.core.io.FileUtils;
+import adams.data.io.input.ODFSpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
+import org.jopendocument.dom.ODPackage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -25,12 +31,6 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import org.jopendocument.dom.ODPackage;
-
-import adams.core.Range;
-import adams.data.io.input.ODFSpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
@@ -80,10 +80,13 @@ public class ODFSpreadSheetHandler
     int							result;
     org.jopendocument.dom.spreadsheet.SpreadSheet	spreadsheet;
     BufferedInputStream					input;
+    FileInputStream					fis;
 
     input = null;
+    fis   = null;
     try {
-      input       = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis         = new FileInputStream(file.getAbsoluteFile());
+      input       = new BufferedInputStream(fis);
       spreadsheet = org.jopendocument.dom.spreadsheet.SpreadSheet.get(new ODPackage(input));
       result      = spreadsheet.getSheetCount();
     }
@@ -92,14 +95,8 @@ public class ODFSpreadSheetHandler
       getLogger().log(Level.SEVERE, "Failed to determine sheet count for '" + file + "':", e);
     }
     finally {
-      if (input != null) {
-	try {
-	  input.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(input);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;

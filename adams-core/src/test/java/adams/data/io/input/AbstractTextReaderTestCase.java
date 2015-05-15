@@ -15,14 +15,9 @@
 
 /**
  * AbstractTextReaderTestCase.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.lang.reflect.Array;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
@@ -31,6 +26,11 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.lang.reflect.Array;
 
 /**
  * Ancestor for Text reader test cases.
@@ -68,18 +68,26 @@ public abstract class AbstractTextReaderTestCase
    * @return		the generated content
    */
   protected String load(String filename, AbstractTextReader scheme) {
-    String	result;
-    Object	read;
-    int		i;
+    String		result;
+    Object		read;
+    int			i;
+    FileReader		reader;
+    FileInputStream	fis;
 
     result = null;
-    
+
+    reader = null;
+    fis    = null;
     m_TestHelper.copyResourceToTmp(filename);
     try {
-      if (scheme.useReader())
-	scheme.initialize(new BufferedReader(new FileReader(new TmpFile(filename).getAbsolutePath())));
-      else
-	scheme.initialize(new FileInputStream(new TmpFile(filename).getAbsolutePath()));
+      if (scheme.useReader()) {
+	reader = new FileReader(new TmpFile(filename).getAbsolutePath());
+	scheme.initialize(new BufferedReader(reader));
+      }
+      else {
+	fis = new FileInputStream(new TmpFile(filename).getAbsolutePath());
+	scheme.initialize(fis);
+      }
       while (scheme.hasNext()) {
 	read = scheme.next();
 	if (read != null) {
@@ -104,6 +112,10 @@ public abstract class AbstractTextReaderTestCase
       result = null;
       System.err.println("Failed to read text from: " + filename);
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(fis);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

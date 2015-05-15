@@ -290,6 +290,7 @@ public class Undo {
     boolean		result;
     File		file;
     ObjectOutputStream 	oos;
+    FileOutputStream	fos;
     UndoPoint		point;
 
     if (!isEnabled())
@@ -299,6 +300,8 @@ public class Undo {
     m_Working = true;
 
     if (m_OnDisk) {
+      fos = null;
+      oos = null;
       try {
 	// create tmp file
 	file = FileUtils.createTempFile("undo", null);
@@ -308,7 +311,6 @@ public class Undo {
 	oos  = new ObjectOutputStream(new FileOutputStream(file));
 	oos.writeObject(o);
 	oos.flush();
-	oos.close();
 
 	// create undo point
 	point = new UndoPoint(file, comment);
@@ -317,6 +319,10 @@ public class Undo {
 	e.printStackTrace();
 	point  = null;
 	result = false;
+      }
+      finally {
+	FileUtils.closeQuietly(oos);
+	FileUtils.closeQuietly(fos);
       }
     }
     else {
@@ -356,6 +362,7 @@ public class Undo {
     boolean		result;
     File		file;
     ObjectOutputStream 	oos;
+    FileOutputStream	fos;
     UndoPoint		point;
 
     if (!isEnabled())
@@ -365,6 +372,8 @@ public class Undo {
     m_Working = true;
 
     if (m_OnDisk) {
+      fos = null;
+      oos = null;
       try {
 	// create tmp file
 	file = FileUtils.createTempFile("redo", null);
@@ -374,7 +383,6 @@ public class Undo {
 	oos  = new ObjectOutputStream(new FileOutputStream(file));
 	oos.writeObject(o);
 	oos.flush();
-	oos.close();
 
 	// create undo point
 	point = new UndoPoint(file, comment);
@@ -383,6 +391,10 @@ public class Undo {
 	e.printStackTrace();
 	point  = null;
 	result = false;
+      }
+      finally {
+	FileUtils.closeQuietly(oos);
+	FileUtils.closeQuietly(fos);
       }
     }
     else {
@@ -462,6 +474,7 @@ public class Undo {
     UndoPoint		result;
     File		file;
     boolean		success;
+    FileInputStream     fis;
     ObjectInputStream 	ois;
     UndoPoint		point;
 
@@ -469,21 +482,27 @@ public class Undo {
     m_Working = true;
 
     if (m_OnDisk) {
+      fis = null;
+      ois = null;
       try {
 	// remove file from history
 	point = m_UndoList.remove(m_UndoList.size() - 1);
 	file  = (File) point.getData();
 
 	// load object
-	ois    = new ObjectInputStream(new FileInputStream(file));
+	fis    = new FileInputStream(file);
+	ois    = new ObjectInputStream(fis);
 	result = new UndoPoint(ois.readObject(), new String(point.getComment()));
-	ois.close();
       }
       catch (Exception e) {
 	e.printStackTrace();
 	result  = null;
 	point   = null;
 	success = false;
+      }
+      finally {
+	FileUtils.closeQuietly(ois);
+	FileUtils.closeQuietly(fis);
       }
     }
     else {
@@ -562,19 +581,23 @@ public class Undo {
     File		file;
     boolean		success;
     ObjectInputStream 	ois;
+    FileInputStream	fis;
     UndoPoint		point;
 
     success   = true;
     m_Working = true;
 
     if (m_OnDisk) {
+      fis = null;
+      ois = null;
       try {
 	// remove file from history
 	point = m_RedoList.remove(m_RedoList.size() - 1);
 	file  = (File) point.getData();
 
 	// load object
-	ois    = new ObjectInputStream(new FileInputStream(file));
+	fis    = new FileInputStream(file);
+	ois    = new ObjectInputStream(fis);
 	result = new UndoPoint(ois.readObject(), new String(point.getComment()));
 	ois.close();
       }
@@ -583,6 +606,10 @@ public class Undo {
 	result  = null;
 	point   = null;
 	success = false;
+      }
+      finally {
+	FileUtils.closeQuietly(ois);
+	FileUtils.closeQuietly(fis);
       }
     }
     else {

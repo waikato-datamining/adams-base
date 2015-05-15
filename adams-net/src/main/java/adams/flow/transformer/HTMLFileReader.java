@@ -15,20 +15,20 @@
 
 /*
  * HTMLFileReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.io.FileInputStream;
-
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -165,6 +165,7 @@ public class HTMLFileReader
     Object			fileObj;
     File			file;
     DOMParser			parser;
+    FileInputStream		fis;
     Document 			doc;
 
     result = null;
@@ -175,15 +176,20 @@ public class HTMLFileReader
     else
       file = new PlaceholderFile((String) fileObj);
 
+    fis = null;
     try {
+      fis    = new FileInputStream(file.getAbsoluteFile());
       parser = new DOMParser();
-      parser.parse(new InputSource(new FileInputStream(file.getAbsoluteFile())));
+      parser.parse(new InputSource(fis));
       doc    = parser.getDocument();
       
       m_OutputToken = new Token(doc);
     }
     catch (Exception e) {
       result = handleException("Failed to read HTML file: " + file, e);
+    }
+    finally {
+      FileUtils.closeQuietly(fis);
     }
 
     return result;

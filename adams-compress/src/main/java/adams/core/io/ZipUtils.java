@@ -15,7 +15,7 @@
 
 /**
  * ZipUtils.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -91,12 +91,16 @@ public class ZipUtils {
     int 			len;
     ZipArchiveOutputStream	out;
     BufferedInputStream 	in;
+    FileInputStream		fis;
+    FileOutputStream		fos;
     String			filename;
     String			msg;
     ZipArchiveEntry		entry;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
@@ -105,9 +109,11 @@ public class ZipUtils {
 
       // create ZIP file
       buf = new byte[bufferSize];
-      out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(output.getAbsolutePath())));
+      fos = new FileOutputStream(output.getAbsolutePath());
+      out = new ZipArchiveOutputStream(new BufferedOutputStream(fos));
       for (i = 0; i < files.length; i++) {
-	in = new BufferedInputStream(new FileInputStream(files[i].getAbsolutePath()));
+	fis = new FileInputStream(files[i].getAbsolutePath());
+	in  = new BufferedInputStream(fis);
 
 	// Add ZIP entry to output stream.
 	filename = files[i].getParentFile().getAbsolutePath();
@@ -126,13 +132,17 @@ public class ZipUtils {
 
 	// Complete the entry
 	out.closeArchiveEntry();
-	in.close();
-	in = null;
+	FileUtils.closeQuietly(in);
+	FileUtils.closeQuietly(fis);
+	in  = null;
+	fis = null;
       }
 
       // Complete the ZIP file
-      out.close();
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
       out = null;
+      fos = null;
     }
     catch (Exception e) {
       msg = "Failed to generate archive '" + output + "': ";
@@ -141,22 +151,10 @@ public class ZipUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;
@@ -252,6 +250,7 @@ public class ZipUtils {
     byte[]				buffer;
     BufferedInputStream			in;
     BufferedOutputStream		out;
+    FileOutputStream			fos;
     int					len;
     String				error;
     long				read;
@@ -289,6 +288,7 @@ public class ZipUtils {
 	else {
 	  in      = null;
 	  out     = null;
+	  fos     = null;
 	  outName = null;
 	  try {
 	    // assemble output name
@@ -313,7 +313,8 @@ public class ZipUtils {
 
 	    // extract data
 	    in   = new BufferedInputStream(archive.getInputStream(entry));
-	    out  = new BufferedOutputStream(new FileOutputStream(outName), bufferSize);
+	    fos  = new FileOutputStream(outName);
+	    out  = new BufferedOutputStream(fos, bufferSize);
 	    read = 0;
 	    while (read < entry.getSize()) {
 	      len   = in.read(buffer);
@@ -328,23 +329,9 @@ public class ZipUtils {
 	    errors.append(error + "\n");
 	  }
 	  finally {
-	    if (in != null) {
-	      try {
-		in.close();
-	      }
-	      catch (Exception e) {
-		// ignored
-	      }
-	    }
-	    if (out != null) {
-	      try {
-		out.flush();
-		out.close();
-	      }
-	      catch (Exception e) {
-		// ignored
-	      }
-	    }
+	    FileUtils.closeQuietly(in);
+	    FileUtils.closeQuietly(out);
+	    FileUtils.closeQuietly(fos);
 	  }
 	}
       }
@@ -416,6 +403,7 @@ public class ZipUtils {
     byte[]				buffer;
     BufferedInputStream			in;
     BufferedOutputStream		out;
+    FileOutputStream			fos;
     int					len;
     String				error;
     long				read;
@@ -437,6 +425,7 @@ public class ZipUtils {
 
 	in      = null;
 	out     = null;
+	fos     = null;
 	outName = null;
 	try {
 	  // output name
@@ -467,7 +456,8 @@ public class ZipUtils {
 
 	  // extract data
 	  in   = new BufferedInputStream(zipfile.getInputStream(entry));
-	  out  = new BufferedOutputStream(new FileOutputStream(outName), bufferSize);
+	  fos  = new FileOutputStream(outName);
+	  out  = new BufferedOutputStream(fos, bufferSize);
 	  read = 0;
 	  while (read < entry.getSize()) {
 	    len = in.read(buffer);
@@ -485,23 +475,9 @@ public class ZipUtils {
 	  errors.append(error + "\n");
 	}
 	finally {
-	  if (in != null) {
-	    try {
-	      in.close();
-	    }
-	    catch (Exception e) {
-	      // ignored
-	    }
-	  }
-	  if (out != null) {
-	    try {
-	      out.flush();
-	      out.close();
-	    }
-	    catch (Exception e) {
-	      // ignored
-	    }
-	  }
+	  FileUtils.closeQuietly(in);
+	  FileUtils.closeQuietly(out);
+	  FileUtils.closeQuietly(fos);
 	}
       }
     }

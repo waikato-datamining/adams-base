@@ -15,16 +15,17 @@
 
 /*
  * BinaryFileWriter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.base.BaseCharset;
+import adams.core.io.FileUtils;
+import adams.data.blob.BlobContainer;
+
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-
-import adams.core.base.BaseCharset;
-import adams.data.blob.BlobContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -145,14 +146,7 @@ public class BinaryFileWriter
       result = handleException("Failed to write byte array to " + m_OutputFile, e);
     }
     finally {
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(out);
     }
 
     return result;

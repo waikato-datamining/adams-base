@@ -21,6 +21,8 @@
 
 package adams.core;
 
+import adams.core.io.FileUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -184,16 +186,23 @@ public class SerializedObject
   public static boolean write(File file, Serializable o) {
     boolean		result;
     ObjectOutputStream 	oo;
-    
+    FileOutputStream    fos;
+
+    fos = null;
+    oo  = null;
     try {
-      oo = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+      fos = new FileOutputStream(file);
+      oo  = new ObjectOutputStream(new BufferedOutputStream(fos));
       oo.writeObject(o);
-      oo.close();
       result = true;
     }
     catch (Exception e) {
       e.printStackTrace();
       result = false;
+    }
+    finally {
+      FileUtils.closeQuietly(oo);
+      FileUtils.closeQuietly(fos);
     }
     
     return result;

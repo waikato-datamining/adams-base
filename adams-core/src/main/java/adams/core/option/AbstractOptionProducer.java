@@ -439,20 +439,27 @@ public abstract class AbstractOptionProducer<O,I>
   public boolean write(String filename) {
     boolean		result;
     BufferedWriter	writer;
+    FileOutputStream    fos;
 
+    writer = null;
+    fos    = null;
     try {
+      fos = new FileOutputStream(filename);
       if (filename.toLowerCase().endsWith(".gz"))
-	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(filename))));
+	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(fos)));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
+	writer = new BufferedWriter(new OutputStreamWriter(fos));
       writer.write(toString());
       writer.newLine();
       writer.flush();
-      writer.close();
       result = true;
     }
     catch (Exception e) {
       result = false;
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

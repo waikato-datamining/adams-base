@@ -15,26 +15,26 @@
 
 /**
  * WekaGraphVisualizer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
+import adams.core.io.FileUtils;
+import adams.flow.container.WekaModelContainer;
+import adams.flow.core.Token;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import weka.core.Drawable;
+import weka.gui.graphvisualizer.GraphVisualizer;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.Reader;
-
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-
-import weka.core.Drawable;
-import weka.gui.graphvisualizer.GraphVisualizer;
-import adams.flow.container.WekaModelContainer;
-import adams.flow.core.Token;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -239,22 +239,8 @@ public class WekaGraphVisualizer
       return result;
     }
     finally {
-      if (reader != null) {
-	try {
-	  reader.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(stream);
     }
 
     return result;

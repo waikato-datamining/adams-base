@@ -19,6 +19,13 @@
  */
 package adams.data.io.input;
 
+import adams.core.ClassLister;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
+import org.apache.commons.io.input.ReaderInputStream;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,13 +35,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.input.ReaderInputStream;
-
-import adams.core.ClassLister;
-import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionHandler;
-import adams.flow.core.Actor;
 
 /**
  * Ancestor for classes that can read flows.
@@ -170,22 +170,8 @@ public abstract class AbstractFlowReader
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
-	if (reader != null) {
-	  try {
-	    reader.close();
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
-	}
-	if (input != null) {
-	  try {
-	    input.close();
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
-	}
+        FileUtils.closeQuietly(reader);
+        FileUtils.closeQuietly(input);
       }
     }
     

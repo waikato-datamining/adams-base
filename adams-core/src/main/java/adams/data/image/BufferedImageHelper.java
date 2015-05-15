@@ -491,15 +491,7 @@ public class BufferedImageHelper {
           // ignored
         }
       }
-      if (fis != null) {
-        try {
-          fis.close();
-          fis = null;
-        }
-        catch (Exception e) {
-          // ignored
-        }
-      }
+      FileUtils.closeQuietly(fis);
     }
   }
   

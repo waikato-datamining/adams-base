@@ -15,23 +15,22 @@
 
 /*
  * PDFMerge.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.core.Token;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -195,17 +194,20 @@ public class PDFMerge
     Document 		document;
     PdfCopy 		copy;
     PdfReader 		reader;
+    FileOutputStream	fos;
 
     result = null;
 
     // get files
     files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
+    fos = null;
     try {
       if (isLoggingEnabled())
 	getLogger().info("Merging PDFs into: " + m_Output);
       document = new Document();
-      copy     = new PdfCopy(document, new FileOutputStream(m_Output.getAbsolutePath()));
+      fos      = new FileOutputStream(m_Output.getAbsolutePath());
+      copy     = new PdfCopy(document, fos);
       document.open();
       document.addCreationDate();
       document.addCreator(Environment.getInstance().getProject());
@@ -229,6 +231,9 @@ public class PDFMerge
     }
     catch (Exception e) {
       result = handleException("Failed to merge PDF files: ", e);
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
     }
 
     if (result == null)

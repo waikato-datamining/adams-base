@@ -15,22 +15,22 @@
 
 /*
  * FTPSend.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.apache.commons.net.ftp.FTPClient;
-
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.FTPConnection;
+import org.apache.commons.net.ftp.FTPClient;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -213,6 +213,7 @@ public class FTPSend
     String		filename;
     File		file;
     String		remotefile;
+    FileInputStream     fis;
     BufferedInputStream	stream;
 
     result = null;
@@ -222,12 +223,13 @@ public class FTPSend
     remotefile = m_RemoteDir + "/" + file.getName();
     client     = m_Connection.getFTPClient();
     stream     = null;
+    fis        = null;
     try {
       if (isLoggingEnabled())
 	getLogger().info("Uploading " + file + " to " + remotefile);
-      stream = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      stream = new BufferedInputStream(fis);
       client.storeFile(remotefile, stream);
-      stream.close();
       m_OutputToken = new Token(filename);
     }
     catch (Exception e) {
@@ -235,14 +237,8 @@ public class FTPSend
       m_OutputToken = null;
     }
     finally {
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(stream);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;

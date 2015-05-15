@@ -15,23 +15,23 @@
 
 /*
  * PDFExtract.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.core.Token;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -244,14 +244,15 @@ public class PDFExtract
    */
   @Override
   protected String doExecute() {
-    String	result;
-    File	file;
-    int		i;
-    Document 	document;
-    PdfCopy 	copy;
-    PdfReader 	reader;
-    int[]	pages;
-    int		page;
+    String		result;
+    File		file;
+    int			i;
+    Document 		document;
+    PdfCopy 		copy;
+    PdfReader 		reader;
+    int[]		pages;
+    int			page;
+    FileOutputStream	fos;
 
     result = null;
 
@@ -261,11 +262,13 @@ public class PDFExtract
     else
       file = new PlaceholderFile((String) m_InputToken.getPayload());
 
+    fos = null;
     try {
       if (isLoggingEnabled())
 	getLogger().info("Extracting pages from '" + file + "' into '" + m_Output + "'");
       document = new Document();
-      copy     = new PdfCopy(document, new FileOutputStream(m_Output.getAbsolutePath()));
+      fos      = new FileOutputStream(m_Output.getAbsolutePath());
+      copy     = new PdfCopy(document, fos);
       document.open();
       document.addCreationDate();
       document.addCreator(Environment.getInstance().getProject());
@@ -286,6 +289,9 @@ public class PDFExtract
     }
     catch (Exception e) {
       result = handleException("Failed to extract pages: ", e);
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
     }
 
     if (result == null)

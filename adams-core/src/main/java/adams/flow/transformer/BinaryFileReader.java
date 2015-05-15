@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
@@ -452,13 +453,7 @@ public class BinaryFileReader
   protected void closeStream() {
     if (m_Stream == null)
       return;
-    
-    try {
-      m_Stream.close();
-    }
-    catch (Exception e) {
-      // ignored
-    }
+    FileUtils.closeQuietly(m_Stream);
     m_CurrentFile = null;
   }
   

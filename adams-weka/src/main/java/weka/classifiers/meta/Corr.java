@@ -14,19 +14,12 @@
  */
 
 /*
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
+import adams.core.io.FileUtils;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Instance;
@@ -36,6 +29,14 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -506,9 +507,15 @@ public class Corr
   }
 
   public void saveObject(Object o) throws Exception {
-    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("xxx.ser"));
+    FileOutputStream	fos;
+    ObjectOutputStream 	oos;
+
+    fos = new FileOutputStream("xxx.ser");
+    oos = new ObjectOutputStream(fos);
     oos.writeObject(o);
-    oos.close();
+
+    FileUtils.closeQuietly(oos);
+    FileUtils.closeQuietly(fos);
   }
 
   /**

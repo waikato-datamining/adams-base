@@ -15,11 +15,13 @@
 
  /*
   *    PostscriptWriter.java
-  *    Copyright (C) 2005,2009 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2005,2009,2015 University of Waikato, Hamilton, New Zealand
   *
   */
 
 package adams.gui.print;
+
+import adams.core.io.FileUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -125,13 +127,15 @@ public class PostscriptWriter
    * @throws Exception	if something goes wrong
    */
   public void generateOutput() throws Exception {
-    BufferedOutputStream      ostrm;
-    PostscriptGraphics        psg;
+    BufferedOutputStream	ostrm;
+    FileOutputStream		fos;
+    PostscriptGraphics		psg;
 
     ostrm = null;
-
+    fos = null;
     try {
-      ostrm = new BufferedOutputStream(new FileOutputStream(getFile().getAbsoluteFile()));
+      fos = new FileOutputStream(getFile().getAbsoluteFile());
+      ostrm = new BufferedOutputStream(fos);
       psg = new PostscriptGraphics(getComponent().getHeight(), getComponent().getWidth(), ostrm);
       psg.setFont(getComponent().getFont());
       psg.scale(getXScale(), getYScale());
@@ -142,13 +146,8 @@ public class PostscriptWriter
       System.err.println(e);
     }
     finally {
-      if (ostrm != null) {
-        try {
-          ostrm.close();
-        } catch (Exception e) {
-          // Nothing to really do for error on close
-        }
-      }
+      FileUtils.closeQuietly(ostrm);
+      FileUtils.closeQuietly(fos);
     }
   }
 }

@@ -15,18 +15,19 @@
 
 /**
  * MimeTypeHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-
+import adams.core.io.FileUtils;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * Helper class for mime types.
@@ -58,13 +59,17 @@ public class MimeTypeHelper {
    */
   public static MediaType getMimeType(String filename) {
     MediaType 			result;
+    FileInputStream             fis;
     BufferedInputStream 	bis;
     AutoDetectParser 		parser;
     Detector 			detector;
     Metadata 			md;
-    
+
+    fis = null;
+    bis = null;
     try {
-      bis      = new BufferedInputStream(new FileInputStream(filename));
+      fis      = new FileInputStream(filename);
+      bis      = new BufferedInputStream(fis);
       parser   = new AutoDetectParser();
       detector = parser.getDetector();
       md       = new Metadata();
@@ -75,6 +80,10 @@ public class MimeTypeHelper {
     }
     catch (Exception e) {
       return MediaType.OCTET_STREAM;
+    }
+    finally {
+      FileUtils.closeQuietly(bis);
+      FileUtils.closeQuietly(fis);
     }
   }
 }

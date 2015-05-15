@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileUtils;
 import adams.flow.core.Unknown;
 
 import java.io.BufferedWriter;
@@ -199,22 +200,8 @@ public class DumpFile
       result = handleException("Failed to write output to " + m_OutputFile + ":", e);
     }
     finally {
-      if (writer != null) {
-        try {
-          writer.close();
-        }
-        catch (Exception ex) {
-          // ignored
-        }
-      }
-      if (fos != null) {
-        try {
-          fos.close();
-        }
-        catch (Exception ex) {
-          // ignored
-        }
-      }
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

@@ -15,24 +15,23 @@
 
 /**
  * GzipUtils.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
+
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.commons.compress.compressors.CompressorInputStream;
-import org.apache.commons.compress.compressors.CompressorOutputStream;
-import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.utils.IOUtils;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
 
 /**
  * Helper class for gzip related operations.
@@ -78,6 +77,7 @@ public class GzipUtils {
     String			msg;
 
     in     = null;
+    fis    = null;
     out    = null;
     result = null;
     try {
@@ -90,10 +90,6 @@ public class GzipUtils {
       out = new FileOutputStream(outputFile.getAbsolutePath()); 
       in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis);
       IOUtils.copy(in, out, buffer);
-      out.close();      
-      out = null;
-      in.close();
-      in = null;
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
@@ -102,22 +98,9 @@ public class GzipUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
     }
 
     return result;
@@ -170,6 +153,7 @@ public class GzipUtils {
 
     in     = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
@@ -180,10 +164,13 @@ public class GzipUtils {
       fos = new FileOutputStream(outputFile.getAbsolutePath());
       out = new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.GZIP, fos);
       IOUtils.copy(in, out, buffer);
-      in.close();
-      in = null;
-      out.close();
+
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
+      in  = null;
       out = null;
+      fos = null;
 
       // remove input file?
       if (removeInput) {
@@ -198,22 +185,9 @@ public class GzipUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

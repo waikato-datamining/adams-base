@@ -15,10 +15,18 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
+
+import adams.core.base.BasePassword;
+import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
+import adams.env.Environment;
+import adams.gui.core.ColorHelper;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -42,13 +50,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import adams.core.base.BasePassword;
-import adams.core.base.BaseRegExp;
-import adams.core.logging.LoggingHelper;
-import adams.env.Environment;
-import adams.gui.core.ColorHelper;
-import adams.gui.core.GUIHelper;
 
 /**
  * Enhanced java.util.Properties class.
@@ -473,18 +474,24 @@ public class Properties
   public boolean save(String filename, String comment) {
     boolean			result;
     BufferedOutputStream	stream;
+    FileOutputStream		fos;
 
     result = true;
 
+    fos    = null;
+    stream = null;
     try {
       stream = new BufferedOutputStream(new FileOutputStream(filename));
       collapse().store(stream, comment);
       stream.flush();
-      stream.close();
     }
     catch (Exception e) {
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(stream);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

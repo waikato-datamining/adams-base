@@ -15,9 +15,19 @@
 
 /**
  * SimpleTimeseriesWriter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
+
+import adams.core.Constants;
+import adams.core.DateFormat;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.data.DateFormatString;
+import adams.data.io.input.SimpleTimeseriesReader;
+import adams.data.report.Report;
+import adams.data.timeseries.Timeseries;
+import adams.data.timeseries.TimeseriesPoint;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -28,15 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
-
-import adams.core.Constants;
-import adams.core.DateFormat;
-import adams.core.Utils;
-import adams.data.DateFormatString;
-import adams.data.io.input.SimpleTimeseriesReader;
-import adams.data.report.Report;
-import adams.data.timeseries.Timeseries;
-import adams.data.timeseries.TimeseriesPoint;
 
 /**
  * Writer for the simply timeseries format, CSV-like with preceding comments.
@@ -141,19 +142,27 @@ public class SimpleTimeseriesWriter
     TimeseriesPoint		point;
     String[]			lines;
     BufferedWriter		writer;
+    FileOutputStream            fos;
+    FileWriter			fw;
     DateFormat			dformat;
     Report			report;
 
     writer  = null;
+    fw      = null;
+    fos     = null;
     dformat = m_TimestampFormat.toDateFormat();
     
     try {
       series = data.get(0);
 
-      if (m_Output.getName().endsWith(".gz"))
-	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(m_Output.getAbsolutePath()))));
-      else
-	writer = new BufferedWriter(new FileWriter(m_Output.getAbsolutePath()));
+      if (m_Output.getName().endsWith(".gz")) {
+	fos    = new FileOutputStream(m_Output.getAbsolutePath());
+	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(fos)));
+      }
+      else {
+	fw     = new FileWriter(m_Output.getAbsolutePath());
+	writer = new BufferedWriter(fw);
+      }
       
       // report?
       if (series.hasReport()) {
@@ -187,12 +196,9 @@ public class SimpleTimeseriesWriter
       getLogger().log(Level.SEVERE, "Failed to write timeseries to: " + m_Output, e);
     }
     finally {
-      try {
-	writer.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(fw);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

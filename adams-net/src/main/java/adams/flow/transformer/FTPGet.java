@@ -15,22 +15,22 @@
 
 /*
  * FTPGet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-
-import org.apache.commons.net.ftp.FTPClient;
-
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.FTPConnection;
+import org.apache.commons.net.ftp.FTPClient;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -257,6 +257,7 @@ public class FTPGet
     String			remotefile;
     String			outFile;
     BufferedOutputStream	stream;
+    FileOutputStream		fos;
 
     result = null;
 
@@ -264,10 +265,13 @@ public class FTPGet
     remotefile = m_RemoteDir + "/" + file;
     outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
     client     = m_Connection.getFTPClient();
+    fos        = null;
+    stream     = null;
     try {
       if (isLoggingEnabled())
 	getLogger().info("Downloading " + remotefile);
-      stream = new BufferedOutputStream(new FileOutputStream(outFile));
+      fos    = new FileOutputStream(outFile);
+      stream = new BufferedOutputStream(fos);
       client.retrieveFile(remotefile, stream);
       stream.flush();
       stream.close();
@@ -276,6 +280,10 @@ public class FTPGet
     catch (Exception e) {
       result = handleException("Failed to download file '" + remotefile + "' to '" + outFile + "': ", e);
       m_OutputToken = null;
+    }
+    finally {
+      FileUtils.closeQuietly(stream);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

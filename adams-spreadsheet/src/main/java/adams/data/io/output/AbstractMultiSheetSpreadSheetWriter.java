@@ -19,6 +19,7 @@
  */
 package adams.data.io.output;
 
+import adams.core.io.FileUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import org.apache.commons.io.output.WriterOutputStream;
 
@@ -198,9 +199,14 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
     boolean			result;
     BufferedWriter		writer;
     OutputStream		output;
+    FileOutputStream            fos;
+    FileWriter			fw;
 
     result = true;
 
+    writer = null;
+    fw     = null;
+    fos    = null;
     try {
       switch (getOutputType()) {
         case FILE:
@@ -209,12 +215,10 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
         case STREAM:
           output = new FileOutputStream(filename, false);
           result = doWrite(content, output);
-          output.close();
           break;
         case WRITER:
           writer = new BufferedWriter(new FileWriter(filename, false));
           result = doWrite(content, writer);
-          writer.close();
           break;
         default:
           throw new IllegalStateException("Unhandled output type: " + getOutputType());
@@ -223,6 +227,11 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
     catch (Exception e) {
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(fw);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

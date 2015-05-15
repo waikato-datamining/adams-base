@@ -23,6 +23,7 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
+import adams.core.io.FileUtils;
 import adams.data.DateFormatString;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -1107,6 +1108,8 @@ public class CsvSpreadSheetWriter
     result      = true;
     m_Appending = true;
 
+    writer = null;
+    output = null;
     try {
       output = new FileOutputStream(filename, (m_Header != null));
       if (m_Encoding != null)
@@ -1115,11 +1118,14 @@ public class CsvSpreadSheetWriter
 	writer = new BufferedWriter(new OutputStreamWriter(output));
       result = write(content, writer);
       writer.flush();
-      writer.close();
     }
     catch (Exception e) {
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(output);
     }
 
     return result;

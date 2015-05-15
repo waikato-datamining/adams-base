@@ -15,20 +15,21 @@
 
 /*
  * MessageDigest.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.EnumWithCustomDisplay;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.option.AbstractOption;
+import adams.flow.core.Token;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.DigestInputStream;
-
-import adams.core.EnumWithCustomDisplay;
-import adams.core.Utils;
-import adams.core.option.AbstractOption;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -304,11 +305,14 @@ public class MessageDigest
     byte[]			digest;
     StringBuilder		hex;
     DigestInputStream		stream;
+    FileInputStream             fis;
     File			file;
     byte[]			buffer;
 
     result = null;
 
+    fis    = null;
+    stream = null;
     try {
       md = java.security.MessageDigest.getInstance(m_Type.toDisplay());
       if (m_InputToken.getPayload() instanceof String) {
@@ -317,7 +321,8 @@ public class MessageDigest
       }
       else {
 	file   = (File) m_InputToken.getPayload();
-	stream = new DigestInputStream(new BufferedInputStream(new FileInputStream(file.getAbsolutePath())), md);
+	fis    = new FileInputStream(file.getAbsolutePath());
+	stream = new DigestInputStream(new BufferedInputStream(fis), md);
 	buffer = new byte[1024];
 	while (stream.read(buffer) != -1);
       }
@@ -330,6 +335,10 @@ public class MessageDigest
     catch (Exception e) {
       m_OutputToken = null;
       result = handleException("Failed to generate digest:", e);
+    }
+    finally {
+      FileUtils.closeQuietly(stream);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;

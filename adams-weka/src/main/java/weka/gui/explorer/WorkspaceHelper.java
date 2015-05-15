@@ -15,9 +15,15 @@
 
 /**
  * WorkspaceHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
+
+import adams.core.ClassLocator;
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.ExtensionFileFilter;
+import weka.gui.explorer.Explorer.ExplorerPanel;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -29,11 +35,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-
-import weka.gui.explorer.Explorer.ExplorerPanel;
-import adams.core.ClassLocator;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.ExtensionFileFilter;
 
 /**
  * Helper class for loading/saving workspaces.
@@ -139,6 +140,7 @@ public class WorkspaceHelper {
    */
   public static void write(MultiExplorer explorer, File file) throws Exception {
     ObjectOutputStream			oos;
+    FileOutputStream			fos;
     int					i;
     ExplorerExt				expext;
     String				name;
@@ -146,7 +148,8 @@ public class WorkspaceHelper {
     ArrayList<ExplorerPanel>		panels;
 
     handlers = getHandlers();
-    oos      = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+    fos      = new FileOutputStream(file);
+    oos      = new ObjectOutputStream(new BufferedOutputStream(fos));
 
     oos.writeObject(explorer.getEntryPanel().count());
     for (i = 0; i < explorer.getEntryPanel().count(); i++) {
@@ -180,7 +183,8 @@ public class WorkspaceHelper {
     }
     
     oos.flush();
-    oos.close();
+    FileUtils.closeQuietly(oos);
+    FileUtils.closeQuietly(fos);
   }
   
   /**
@@ -202,6 +206,7 @@ public class WorkspaceHelper {
    */
   public static void read(File file, MultiExplorer explorer) throws Exception {
     ObjectInputStream			ois;
+    FileInputStream			fis;
     int					i;
     int					n;
     ExplorerExt				expext;
@@ -213,7 +218,8 @@ public class WorkspaceHelper {
     ArrayList<ExplorerPanel>		panels;
     Hashtable<String,Object>		options;
 
-    ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+    fis = new FileInputStream(file);
+    ois = new ObjectInputStream(new BufferedInputStream(fis));
     
     explorer.getEntryPanel().clear();
     expCount = (Integer) ois.readObject();
@@ -239,7 +245,8 @@ public class WorkspaceHelper {
 	}
       }
     }
-    
-    ois.close();
+
+    FileUtils.closeQuietly(ois);
+    FileUtils.closeQuietly(fis);
   }
 }

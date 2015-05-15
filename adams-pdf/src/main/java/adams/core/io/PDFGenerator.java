@@ -15,19 +15,18 @@
 
 /**
  * PDF.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import adams.core.io.AbstractPdfProclet.DocumentState;
 import adams.env.Environment;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * A helper class for PDF generation.
@@ -122,6 +121,9 @@ public class PDFGenerator {
 
   /** the documentation that is being worked on. */
   protected Document m_Document;
+
+  /** the output stream. */
+  protected transient FileOutputStream m_Stream;
 
   /** the document state. */
   protected DocumentState m_State;
@@ -413,7 +415,8 @@ public class PDFGenerator {
       m_Document = new Document(determinePageSize());
     else
       m_Document = new Document(determinePageSize().rotate());
-    PdfWriter.getInstance(m_Document, new FileOutputStream(m_Output.getAbsoluteFile()));
+    m_Stream = new FileOutputStream(m_Output.getAbsoluteFile());
+    PdfWriter.getInstance(m_Document, m_Stream);
     m_Document.open();
     m_Document.addCreationDate();
     m_Document.addCreator(Environment.getInstance().getProject());
@@ -470,6 +473,7 @@ public class PDFGenerator {
    */
   public void close() {
     m_Document.close();
+    FileUtils.closeQuietly(m_Stream);
     resetState();
   }
 }

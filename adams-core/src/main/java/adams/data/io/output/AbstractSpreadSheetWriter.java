@@ -22,10 +22,10 @@ package adams.data.io.output;
 import adams.core.ClassLister;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -214,10 +214,12 @@ public abstract class AbstractSpreadSheetWriter
     append = false;
     if (this instanceof AppendableSpreadSheetWriter) {
       appendable = (AppendableSpreadSheetWriter) this;
-      appendable.setFileExists(FileUtils.fileExists(filename));
+      appendable.setFileExists(new File(filename).exists());
       append     = appendable.canAppend(content);
     }
 
+    writer = null;
+    output = null;
     try {
       switch (getOutputType()) {
         case FILE:
@@ -229,7 +231,6 @@ public abstract class AbstractSpreadSheetWriter
             output = new GZIPOutputStream(output);
           result = doWrite(content, output);
           output.flush();
-          output.close();
           break;
         case WRITER:
           output = new FileOutputStream(filename, append);
@@ -241,7 +242,6 @@ public abstract class AbstractSpreadSheetWriter
             writer = new BufferedWriter(new OutputStreamWriter(output));
           result = doWrite(content, writer);
           writer.flush();
-          writer.close();
           break;
         default:
           throw new IllegalStateException("Unhandled output type: " + getOutputType());
@@ -250,6 +250,10 @@ public abstract class AbstractSpreadSheetWriter
     catch (Exception e) {
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(output);
     }
 
     return result;

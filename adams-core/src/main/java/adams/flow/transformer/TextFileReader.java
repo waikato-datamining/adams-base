@@ -15,24 +15,25 @@
 
 /*
  * TextFileReader.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractTextReader;
 import adams.data.io.input.LineArrayTextReader;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 /**
  <!-- globalinfo-start -->
@@ -104,6 +105,9 @@ public class TextFileReader
 
   /** the reader to use. */
   protected AbstractTextReader m_Reader;
+
+  /** the file input stream in use. */
+  protected transient FileInputStream m_Stream;
   
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
@@ -256,12 +260,15 @@ public class TextFileReader
       file = (File) fileObj;
     else
       file = new PlaceholderFile((String) fileObj);
+    FileUtils.closeQuietly(m_Stream);
 
+    m_Stream = null;
     try {
+      m_Stream = new FileInputStream(file.getAbsolutePath());
       if (m_Reader.useReader())
-	m_Reader.initialize(new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), m_Encoding.charsetValue())));
+	m_Reader.initialize(new BufferedReader(new InputStreamReader(m_Stream, m_Encoding.charsetValue())));
       else
-	m_Reader.initialize(new FileInputStream(file.getAbsolutePath()));
+	m_Reader.initialize(m_Stream);
     }
     catch (Exception e) {
       result = handleException("Failed to read text from: " + file, e);
@@ -293,13 +300,26 @@ public class TextFileReader
     Object	obj;
     
     obj = m_Reader.next();
-    if (obj != null)
+    if (obj != null) {
       result = new Token(obj);
-    else
+    }
+    else {
       result = null;
+      FileUtils.closeQuietly(m_Stream);
+    }
 
     m_InputToken  = null;
 
     return result;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    FileUtils.closeQuietly(m_Stream);
+
+    super.wrapUp();
   }
 }

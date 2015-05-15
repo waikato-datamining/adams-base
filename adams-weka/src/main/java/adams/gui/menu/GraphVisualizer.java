@@ -21,20 +21,20 @@
 
 package adams.gui.menu;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.Reader;
-
-import javax.swing.JOptionPane;
-
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * Displays data in the graph visualizer.
@@ -124,22 +124,8 @@ public class GraphVisualizer
       return;
     }
     finally {
-      if (reader != null) {
-	try {
-	  reader.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(stream);
     }
 
     // create frame

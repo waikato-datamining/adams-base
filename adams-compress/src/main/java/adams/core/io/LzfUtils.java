@@ -15,9 +15,13 @@
 
 /**
  * LzfUtils.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
+
+import com.ning.compress.lzf.LZFInputStream;
+import com.ning.compress.lzf.LZFOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,11 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-
-import org.apache.commons.compress.utils.IOUtils;
-
-import com.ning.compress.lzf.LZFInputStream;
-import com.ning.compress.lzf.LZFOutputStream;
 
 /**
  * Helper class for LZF related operations.
@@ -66,10 +65,14 @@ public class LzfUtils {
     String		result;
     LZFInputStream	in;
     OutputStream 	out;
+    FileInputStream     fis;
+    FileOutputStream	fos;
     String		msg;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
 
@@ -77,14 +80,12 @@ public class LzfUtils {
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
-      in  = new LZFInputStream(new FileInputStream(archiveFile.getAbsolutePath()));
-      out = new BufferedOutputStream(new FileOutputStream(outputFile.getAbsolutePath()));
+      fis = new FileInputStream(archiveFile.getAbsolutePath());
+      in  = new LZFInputStream(fis);
+      fos = new FileOutputStream(outputFile.getAbsolutePath());
+      out = new BufferedOutputStream(fos);
 
       IOUtils.copy(in, out, buffer);
-      out.close();      
-      out = null;
-      in.close();
-      in = null;
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
@@ -93,22 +94,10 @@ public class LzfUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;
@@ -151,24 +140,35 @@ public class LzfUtils {
     String			result;
     LZFOutputStream 		out;
     BufferedInputStream 	in;
+    FileInputStream		fis;
+    FileOutputStream		fos;
     String			msg;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
-      in  = new BufferedInputStream(new FileInputStream(inputFile.getAbsolutePath()));
-      out = new LZFOutputStream(new FileOutputStream(outputFile.getAbsolutePath()));
+      fis = new FileInputStream(inputFile.getAbsolutePath());
+      in  = new BufferedInputStream(fis);
+      fos = new FileOutputStream(outputFile.getAbsolutePath());
+      out = new LZFOutputStream(fos);
       
       IOUtils.copy(in, out, buffer);
-      in.close();
-      in = null;
-      out.close();
+
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
+      in  = null;
+      fis = null;
       out = null;
+      fos = null;
 
       // remove input file?
       if (removeInput) {
@@ -183,22 +183,10 @@ public class LzfUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

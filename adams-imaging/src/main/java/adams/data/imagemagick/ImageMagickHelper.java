@@ -15,23 +15,22 @@
 
 /**
  * ImageMagickHelper.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.imagemagick;
+
+import adams.core.io.FileUtils;
+import adams.env.Environment;
+import org.im4java.core.ConvertCmd;
+import org.im4java.core.IMOperation;
+import org.im4java.core.Stream2BufferedImage;
+import org.im4java.process.Pipe;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IMOperation;
-import org.im4java.core.Stream2BufferedImage;
-import org.im4java.process.Pipe;
-
-import adams.core.io.FileUtils;
-import adams.env.Environment;
 
 /**
  * Helper class for ImageMagick (http://www.imagemagick.org/).
@@ -117,14 +116,7 @@ public class ImageMagickHelper {
       e.printStackTrace();
     }
     finally {
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(stream);
     }
 
     return result;

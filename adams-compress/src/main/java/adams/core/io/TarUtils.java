@@ -15,7 +15,7 @@
 
 /**
  * TarUtils.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
@@ -97,20 +97,21 @@ public class TarUtils {
    * Returns an input stream for the specified tar archive. Automatically
    * determines the compression used for the archive.
    *
-   * @param input	the tar archive to create the input stream for
+   * @param file	the tar archive to create the input stream for
+   * @param stream	the stream to wrap
    * @return		the input stream
    * @throws Exception	if file not found or similar problems
    */
-  protected static TarArchiveInputStream openArchiveForReading(File input) throws Exception {
+  protected static TarArchiveInputStream openArchiveForReading(File file, FileInputStream stream) throws Exception {
     Compression		comp;
 
-    comp = determineCompression(input);
+    comp = determineCompression(file);
     if (comp == Compression.GZIP)
-      return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(input.getAbsoluteFile()))));
+      return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.BZIP2)
-      return new TarArchiveInputStream(new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(input.getAbsoluteFile()))));
+      return new TarArchiveInputStream(new BZip2CompressorInputStream(new BufferedInputStream(stream)));
     else
-      return new TarArchiveInputStream(new BufferedInputStream(new FileInputStream(input.getAbsoluteFile())));
+      return new TarArchiveInputStream(new BufferedInputStream(stream));
   }
 
   /**
@@ -119,21 +120,22 @@ public class TarUtils {
    * support.
    *
    * @param input	the tar archive to create the output stream for
+   * @param stream	the output stream to wrap
    * @return		the output stream
    * @throws Exception	if file not found or similar problems
    * @see		TarArchiveOutputStream#LONGFILE_GNU
    */
-  protected static TarArchiveOutputStream openArchiveForWriting(File input) throws Exception {
+  protected static TarArchiveOutputStream openArchiveForWriting(File input, FileOutputStream stream) throws Exception {
     TarArchiveOutputStream	result;
     Compression			comp;
 
     comp = determineCompression(input);
     if (comp == Compression.GZIP)
-      result = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(new FileOutputStream(input.getAbsoluteFile()))));
+      result = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(stream)));
     else if (comp == Compression.BZIP2)
-      result = new TarArchiveOutputStream(new BZip2CompressorOutputStream(new BufferedOutputStream(new FileOutputStream(input.getAbsoluteFile()))));
+      result = new TarArchiveOutputStream(new BZip2CompressorOutputStream(new BufferedOutputStream(stream)));
     else
-      result = new TarArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(input.getAbsoluteFile())));
+      result = new TarArchiveOutputStream(new BufferedOutputStream(stream));
 
     result.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
 
@@ -189,12 +191,16 @@ public class TarUtils {
     int 			len;
     TarArchiveOutputStream 	out;
     BufferedInputStream 	in;
+    FileInputStream             fis;
+    FileOutputStream		fos;
     String			filename;
     String			msg;
     TarArchiveEntry		entry;
 
     in     = null;
+    fis    = null;
     out    = null;
+    fos    = null;
     result = null;
     try {
       // does file already exist?
@@ -203,9 +209,11 @@ public class TarUtils {
 
       // create tar file
       buf = new byte[bufferSize];
-      out = openArchiveForWriting(output);
+      fos = new FileOutputStream(output.getAbsolutePath());
+      out = openArchiveForWriting(output, fos);
       for (i = 0; i < files.length; i++) {
-	in = new BufferedInputStream(new FileInputStream(files[i].getAbsolutePath()));
+	fis = new FileInputStream(files[i].getAbsolutePath());
+	in  = new BufferedInputStream(fis);
 
 	// Add tar entry to output stream.
 	filename = files[i].getParentFile().getAbsolutePath();
@@ -225,13 +233,17 @@ public class TarUtils {
 
 	// Complete the entry
 	out.closeArchiveEntry();
-	in.close();
-	in = null;
+	FileUtils.closeQuietly(in);
+	FileUtils.closeQuietly(fis);
+	in  = null;
+	fis = null;
       }
 
       // Complete the tar file
-      out.close();
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
       out = null;
+      fos = null;
     }
     catch (Exception e) {
       msg = "Failed to generate archive '" + output + "': ";
@@ -240,22 +252,10 @@ public class TarUtils {
       result = msg + e;
     }
     finally {
-      if (in != null) {
-	try {
-	  in.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (out != null) {
-	try {
-	  out.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(in);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(out);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;
@@ -337,13 +337,15 @@ public class TarUtils {
    * @return		the successfully extracted files
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize, StringBuilder errors) {
-    List<File>		result;
+    List<File>			result;
+    FileInputStream		fis;
     TarArchiveInputStream	archive;
     TarArchiveEntry		entry;
     File			outFile;
     String			outName;
     byte[]			buffer;
     BufferedOutputStream	out;
+    FileOutputStream		fos;
     int				len;
     String			error;
     long			size;
@@ -351,10 +353,13 @@ public class TarUtils {
 
     result  = new ArrayList<File>();
     archive = null;
+    fis     = null;
+    fos     = null;
     try {
       // decompress archive
       buffer  = new byte[bufferSize];
-      archive = openArchiveForReading(input.getAbsoluteFile());
+      fis     = new FileInputStream(input.getAbsoluteFile());
+      archive = openArchiveForReading(input, fis);
       while ((entry = archive.getNextTarEntry()) != null) {
 	if (entry.isDirectory() && !createDirs)
 	  continue;
@@ -401,7 +406,8 @@ public class TarUtils {
 	    }
 
 	    // extract data
-	    out  = new BufferedOutputStream(new FileOutputStream(outName), bufferSize);
+	    fos  = new FileOutputStream(outName);
+	    out  = new BufferedOutputStream(fos, bufferSize);
 	    size = entry.getSize();
 	    read = 0;
 	    while (read < size) {
@@ -417,15 +423,8 @@ public class TarUtils {
 	    errors.append(error + "\n");
 	  }
 	  finally {
-	    if (out != null) {
-	      try {
-		out.flush();
-		out.close();
-	      }
-	      catch (Exception e) {
-		// ignored
-	      }
-	    }
+	    FileUtils.closeQuietly(out);
+	    FileUtils.closeQuietly(fos);
 	  }
 	}
       }
@@ -435,6 +434,7 @@ public class TarUtils {
       errors.append("Error occurred: " + e + "\n");
     }
     finally {
+      FileUtils.closeQuietly(fis);
       if (archive != null) {
 	try {
 	  archive.close();
@@ -489,11 +489,13 @@ public class TarUtils {
    */
   public static boolean decompress(File input, String archiveFile, File output, boolean createDirs, int bufferSize, StringBuilder errors) {
     boolean			result;
+    FileInputStream		fis;
     TarArchiveInputStream	archive;
     TarArchiveEntry		entry;
     File			outFile;
     String			outName;
     byte[]			buffer;
+    FileOutputStream		fos;
     BufferedOutputStream	out;
     int				len;
     String			error;
@@ -502,10 +504,13 @@ public class TarUtils {
 
     result  = false;
     archive = null;
+    fis     = null;
+    fos     = null;
     try {
       // decompress archive
       buffer  = new byte[bufferSize];
-      archive = openArchiveForReading(input.getAbsoluteFile());
+      fis     = new FileInputStream(input.getAbsoluteFile());
+      archive = openArchiveForReading(input, fis);
       while ((entry = archive.getNextTarEntry()) != null) {
 	if (entry.isDirectory())
 	  continue;
@@ -542,7 +547,8 @@ public class TarUtils {
 	  }
 
 	  // extract data
-	  out = new BufferedOutputStream(new FileOutputStream(outName), bufferSize);
+	  fos = new FileOutputStream(outName);
+	  out = new BufferedOutputStream(fos, bufferSize);
 	  size = entry.getSize();
 	  read = 0;
 	  while (read < size) {
@@ -561,15 +567,8 @@ public class TarUtils {
 	  errors.append(error + "\n");
 	}
 	finally {
-	  if (out != null) {
-	    try {
-	      out.flush();
-	      out.close();
-	    }
-	    catch (Exception e) {
-	      // ignored
-	    }
-	  }
+	  FileUtils.closeQuietly(out);
+	  FileUtils.closeQuietly(fos);
 	}
       }
     }
@@ -579,6 +578,7 @@ public class TarUtils {
       errors.append("Error occurred: " + e + "\n");
     }
     finally {
+      FileUtils.closeQuietly(fis);
       if (archive != null) {
 	try {
 	  archive.close();
@@ -610,14 +610,17 @@ public class TarUtils {
    * @return		the stored files
    */
   public static List<File> listFiles(File input, boolean listDirs) {
-    List<File>		result;
+    List<File>			result;
+    FileInputStream		fis;
     TarArchiveInputStream	archive;
     TarArchiveEntry		entry;
 
     result  = new ArrayList<File>();
     archive = null;
+    fis     = null;
     try {
-      archive = openArchiveForReading(input);
+      fis     = new FileInputStream(input.getAbsolutePath());
+      archive = openArchiveForReading(input, fis);
       while ((entry = archive.getNextTarEntry()) != null) {
 	if (entry.isDirectory() && listDirs) {
 	  result.add(new File(entry.getName()));
@@ -631,6 +634,7 @@ public class TarUtils {
       e.printStackTrace();
     }
     finally {
+      FileUtils.closeQuietly(fis);
       if (archive != null) {
 	try {
 	  archive.close();

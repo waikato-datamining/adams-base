@@ -15,19 +15,20 @@
 
 /*
   *    PDFWriter.java
-  *    Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
   *
   */
 
 package adams.gui.print;
 
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-
+import adams.core.io.FileUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -240,6 +241,7 @@ public class PDFWriter
     Document		doc;
     Image 		image;
     float		scale;
+    FileOutputStream    fos;
 
     // render image
     bi = createBufferedImage();
@@ -247,7 +249,8 @@ public class PDFWriter
     // generate PDF
     scale = (float) m_ImageScale;
     doc   = new Document();
-    PdfWriter.getInstance(doc, new FileOutputStream(getFile().getAbsoluteFile()));
+    fos   = new FileOutputStream(getFile().getAbsoluteFile());
+    PdfWriter.getInstance(doc, fos);
     doc.open();
     image = Image.getInstance(Toolkit.getDefaultToolkit().createImage(bi.getSource()), null);
     if (m_ImageRotation != 0) {
@@ -259,5 +262,6 @@ public class PDFWriter
 	doc.getPageSize().getHeight()*scale);
     doc.add(image);
     doc.close();
+    FileUtils.closeQuietly(fos);
   }
 }

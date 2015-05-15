@@ -23,6 +23,7 @@ package adams.flow.sink;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
+import adams.core.io.FileUtils;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedInputStream;
@@ -211,6 +212,7 @@ public class DownloadFile
     URL				url;
     BufferedInputStream		input;
     BufferedOutputStream	output;
+    FileOutputStream		fos;
     byte[]			buffer;
     int				len;
     int				count;
@@ -219,6 +221,7 @@ public class DownloadFile
 
     input  = null;
     output = null;
+    fos    = null;
     try {
       if (m_InputToken.getPayload() instanceof String)
 	url = new URL((String) m_InputToken.getPayload());
@@ -231,7 +234,8 @@ public class DownloadFile
 	conn.setRequestProperty("Authorization", basicAuth);
       }
       input  = new BufferedInputStream(conn.getInputStream());
-      output = new BufferedOutputStream(new FileOutputStream(m_OutputFile.getAbsoluteFile()));
+      fos    = new FileOutputStream(m_OutputFile.getAbsoluteFile());
+      output = new BufferedOutputStream(fos);
       buffer = new byte[m_BufferSize];
       count  = 0;
       while ((len = input.read(buffer)) > 0) {
@@ -248,20 +252,9 @@ public class DownloadFile
       result = handleException("Problem downloading '" + m_InputToken.getPayload() + "': ", e);
     }
     finally {
-      try {
-	if (input != null)
-	  input.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
-      try {
-	if (output != null)
-	  output.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
+      FileUtils.closeQuietly(input);
+      FileUtils.closeQuietly(output);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

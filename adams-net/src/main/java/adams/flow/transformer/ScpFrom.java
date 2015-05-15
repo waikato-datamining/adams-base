@@ -15,27 +15,27 @@
 
 /*
  * ScpFrom.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
-
 import com.jcraft.jsch.ChannelExec;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -303,6 +303,7 @@ public class ScpFrom
     remotefile = m_RemoteDir + "/" + file;
     outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
     channel    = null;
+    fos        = null;
     try {
       channel = (ChannelExec) m_Connection.getSession().openChannel("exec");
       channel.setCommand("scp -f " + remotefile);
@@ -364,7 +365,7 @@ public class ScpFrom
           if (filesize == 0L)
             break;
         }
-        fos.close();
+        FileUtils.closeQuietly(fos);
         fos = null;
 
 	if (SSHConnection.checkAck(in) != 0)
@@ -383,6 +384,7 @@ public class ScpFrom
       m_OutputToken = null;
     }
     finally {
+      FileUtils.closeQuietly(fos);
       if (channel != null) {
 	channel.disconnect();
       }

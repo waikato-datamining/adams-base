@@ -15,10 +15,14 @@
 
 /*
  * DirectoryLister.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
+
+import adams.core.base.BaseDateTime;
+import adams.core.base.BaseRegExp;
+import adams.core.logging.LoggingObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,10 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.base.BaseDateTime;
-import adams.core.base.BaseRegExp;
-import adams.core.logging.LoggingObject;
 
 /**
  * Lists files/dirs in a directory.
@@ -526,14 +526,7 @@ public class DirectoryLister
       // ignored
     }
     finally {
-      if (fos != null) {
-	try {
-	  fos.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

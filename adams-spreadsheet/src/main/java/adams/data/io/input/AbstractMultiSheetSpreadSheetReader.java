@@ -15,9 +15,16 @@
 
 /**
  * AbstractMultiSheetSpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.Range;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.data.spreadsheet.SpreadSheet;
+import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,13 +34,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-
-import org.apache.commons.io.input.ReaderInputStream;
-
-import adams.core.Range;
-import adams.core.Utils;
-import adams.core.io.PlaceholderFile;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Ancestor for spreadsheet readers that can read multiple sheets from a
@@ -148,22 +148,8 @@ public abstract class AbstractMultiSheetSpreadSheetReader
       e.printStackTrace();
     }
     finally {
-      if (reader != null) {
-	try {
-	  reader.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (input != null) {
-	try {
-	  input.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(input);
     }
     
     if (m_Stopped)

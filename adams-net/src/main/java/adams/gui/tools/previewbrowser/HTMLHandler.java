@@ -15,20 +15,20 @@
 
 /**
  * HTMLHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-import java.io.FileInputStream;
-
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.gui.core.TextEditorPanel;
+import adams.gui.core.dom.DOMTreeWithPreview;
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import adams.core.Utils;
-import adams.gui.core.TextEditorPanel;
-import adams.gui.core.dom.DOMTreeWithPreview;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -87,12 +87,15 @@ public class HTMLHandler
     PreviewPanel		result;
     TextEditorPanel		textPanel;
     DOMParser			parser;
+    FileInputStream		fis;
     Document 			doc;
     DOMTreeWithPreview		domPanel;
 
+    fis = null;
     try {
       parser = new DOMParser();
-      parser.parse(new InputSource(new FileInputStream(file.getAbsoluteFile())));
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      parser.parse(new InputSource(fis));
       doc      = parser.getDocument();
       domPanel = new DOMTreeWithPreview();
       domPanel.setDOM(doc);
@@ -105,6 +108,9 @@ public class HTMLHandler
       textPanel.open(file);
       textPanel.setEditable(false);
       result = new PreviewPanel(textPanel, textPanel.getTextArea());
+    }
+    finally {
+      FileUtils.closeQuietly(fis);
     }
     
     return result;

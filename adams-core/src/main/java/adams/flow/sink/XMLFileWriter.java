@@ -15,24 +15,23 @@
 
 /*
  * XMLFileWriter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import adams.core.QuickInfoHelper;
+import adams.core.base.BaseCharset;
+import adams.core.io.FileUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import adams.core.QuickInfoHelper;
-import adams.core.base.BaseCharset;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  <!-- globalinfo-start -->
@@ -200,6 +199,7 @@ public class XMLFileWriter
     String		result;
     Document		doc;
     DOMSource 		dsource;
+    FileOutputStream    fos;
     PrintStream 	pstream;
     StreamResult 	sresult;
     TransformerFactory 	factory;
@@ -207,13 +207,15 @@ public class XMLFileWriter
 
     result = null;
 
+    fos = null;
     try {
       if (m_InputToken.getPayload() instanceof Document)
 	doc = (Document) m_InputToken.getPayload();
       else
 	doc = ((Node) m_InputToken.getPayload()).getOwnerDocument();
       dsource     = new DOMSource(doc);
-      pstream     = new PrintStream(new FileOutputStream(m_OutputFile.getAbsolutePath()), true, m_Encoding.getValue());
+      fos         = new FileOutputStream(m_OutputFile.getAbsolutePath());
+      pstream     = new PrintStream(fos, true, m_Encoding.getValue());
       sresult     = new StreamResult(pstream);
       factory     = TransformerFactory.newInstance();
       transformer = factory.newTransformer();
@@ -221,6 +223,9 @@ public class XMLFileWriter
     }
     catch (Exception e) {
       result = handleException("Failed to write DOM document to " + m_OutputFile, e);
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

@@ -15,9 +15,22 @@
 
 /**
  * AbstractSpreadSheetReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.ClassLister;
+import adams.core.Utils;
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileFormatHandler;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.AbstractOptionHandler;
+import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DenseDataRow;
+import adams.data.spreadsheet.SpreadSheet;
+import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,19 +39,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.commons.io.input.ReaderInputStream;
-
-import adams.core.ClassLister;
-import adams.core.Utils;
-import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
-import adams.core.io.FileFormatHandler;
-import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionHandler;
-import adams.data.spreadsheet.DataRow;
-import adams.data.spreadsheet.DenseDataRow;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Ancestor for classes that can read spreadsheets.
@@ -331,22 +331,8 @@ public abstract class AbstractSpreadSheetReader
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
-	if (reader != null) {
-	  try {
-	    reader.close();
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
-	}
-	if (input != null) {
-	  try {
-	    input.close();
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
-	}
+        FileUtils.closeQuietly(reader);
+        FileUtils.closeQuietly(input);
       }
     }
     

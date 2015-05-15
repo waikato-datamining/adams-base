@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.flow.transformer.pdfstamp.AbstractStamper;
@@ -235,6 +236,7 @@ public class PDFStamp
     PlaceholderFile	file;
     PdfReader 		reader;
     PdfStamper		stamper;
+    FileOutputStream    fos;
 
     result = null;
 
@@ -246,9 +248,11 @@ public class PDFStamp
 
     reader  = null;
     stamper = null;
+    fos     = null;
     try {
       reader  = new PdfReader(file.getAbsolutePath());
-      stamper = new PdfStamper(reader, new FileOutputStream(m_Output.getAbsolutePath()));
+      fos     = new FileOutputStream(m_Output.getAbsolutePath());
+      stamper = new PdfStamper(reader, fos);
       m_Stamper.stamp(stamper);
     }
     catch (Exception e) {
@@ -269,6 +273,7 @@ public class PDFStamp
       catch (Exception e) {
 	// ignored
       }
+      FileUtils.closeQuietly(fos);
     }
 
     if (result == null)

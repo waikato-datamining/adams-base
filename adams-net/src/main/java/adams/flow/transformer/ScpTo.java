@@ -15,16 +15,11 @@
 
 /*
  * ScpTo.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import adams.core.License;
 import adams.core.QuickInfoHelper;
@@ -33,12 +28,17 @@ import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
-
 import com.jcraft.jsch.ChannelExec;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -272,7 +272,6 @@ public class ScpTo
 	getLogger().info("Uploading " + file + " to " + remotefile);
       in     = channel.getInputStream();
       out    = channel.getOutputStream();
-      buffer = new byte[1024];
 
       channel.connect();
 
@@ -298,7 +297,7 @@ public class ScpTo
 	  break;
 	out.write(buffer, 0, len);
       }
-      fis.close();
+      FileUtils.closeQuietly(fis);
       fis = null;
 
       // send '\0'
@@ -308,7 +307,7 @@ public class ScpTo
 
       if (SSHConnection.checkAck(in) != 0)
 	result = "Left-over data in input stream!";
-      out.close();
+      FileUtils.closeQuietly(out);
 
       if (result == null)
 	m_OutputToken = new Token(filename);

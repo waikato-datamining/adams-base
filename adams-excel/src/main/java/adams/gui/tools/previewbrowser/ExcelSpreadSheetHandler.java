@@ -15,9 +15,16 @@
 
 /**
  * ExcelSpreadSheetHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
+
+import adams.core.Range;
+import adams.core.io.FileUtils;
+import adams.data.io.input.ExcelSpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -25,13 +32,6 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-
-import adams.core.Range;
-import adams.data.io.input.ExcelSpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
@@ -80,11 +80,14 @@ public class ExcelSpreadSheetHandler
   protected int getSheetCount(File file) {
     int			result;
     Workbook		workbook;
+    FileInputStream     fis;
     BufferedInputStream	input;
 
     input = null;
+    fis   = null;
     try {
-      input    = new BufferedInputStream(new FileInputStream(file.getAbsoluteFile()));
+      fis      = new FileInputStream(file.getAbsoluteFile());
+      input    = new BufferedInputStream(fis);
       workbook = WorkbookFactory.create(input);
       result   = workbook.getNumberOfSheets();
     }
@@ -93,14 +96,8 @@ public class ExcelSpreadSheetHandler
       getLogger().log(Level.SEVERE, "Failed to determine sheet count for '" + file + "':", e);
     }
     finally {
-      if (input != null) {
-	try {
-	  input.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(input);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;

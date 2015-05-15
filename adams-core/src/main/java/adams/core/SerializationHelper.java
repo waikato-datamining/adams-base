@@ -20,6 +20,8 @@
 
 package adams.core;
 
+import adams.core.io.FileUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -211,10 +213,15 @@ public class SerializationHelper {
    * @throws Exception	if serialization fails
    */
   public static void write(String filename, Object o) throws Exception {
+    FileOutputStream  fos;
+
+    fos = new FileOutputStream(filename);
     if (filename.endsWith(".gz"))
-      write(new GZIPOutputStream(new FileOutputStream(filename)), o);
+      write(new GZIPOutputStream(fos), o);
     else
-      write(new FileOutputStream(filename), o);
+      write(fos, o);
+
+    FileUtils.closeQuietly(fos);
   }
 
   /**
@@ -244,10 +251,16 @@ public class SerializationHelper {
    * @throws Exception	if serialization fails
    */
   public static void writeAll(String filename, Object[] o) throws Exception {
+    FileOutputStream	fos;
+
+    fos = new FileOutputStream(filename);
+
     if (filename.endsWith(".gz"))
-      writeAll(new GZIPOutputStream(new FileOutputStream(filename)), o);
+      writeAll(new GZIPOutputStream(fos), o);
     else
-      writeAll(new FileOutputStream(filename), o);
+      writeAll(fos, o);
+
+    FileUtils.closeQuietly(fos);
   }
 
   /**
@@ -279,10 +292,19 @@ public class SerializationHelper {
    * @throws Exception	if deserialization fails
    */
   public static Object read(String filename) throws Exception {
+    Object		result;
+    FileInputStream	fis;
+
+    fis = new FileInputStream(filename);
+
     if (filename.endsWith(".gz"))
-      return read(new GZIPInputStream(new FileInputStream(filename)));
+      result = read(new GZIPInputStream(fis));
     else
-      return read(new FileInputStream(filename));
+      result = read(fis);
+
+    FileUtils.closeQuietly(fis);
+
+    return result;
   }
 
   /**

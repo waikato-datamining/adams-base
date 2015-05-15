@@ -19,6 +19,12 @@
  */
 package adams.data.io.output;
 
+import adams.core.ClassLister;
+import adams.core.io.FileUtils;
+import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
+import org.apache.commons.io.output.WriterOutputStream;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,12 +32,6 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
-import org.apache.commons.io.output.WriterOutputStream;
-
-import adams.core.ClassLister;
-import adams.core.option.AbstractOptionHandler;
-import adams.flow.core.Actor;
 
 /**
  * Ancestor for classes that can write flow objects.
@@ -116,7 +116,9 @@ public abstract class AbstractFlowWriter
     OutputStream		output;
 
     result = true;
-    
+
+    writer = null;
+    output = null;
     try {
       switch (getOutputType()) {
 	case FILE:
@@ -125,12 +127,10 @@ public abstract class AbstractFlowWriter
 	case WRITER:
 	  writer = new BufferedWriter(new FileWriter(filename));
 	  result = doWrite(content, writer);
-	  writer.close();
 	  break;
 	case STREAM:
 	  output = new FileOutputStream(filename);
 	  result = doWrite(content, output);
-	  output.close();
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled output type: " + getOutputType());
@@ -139,6 +139,10 @@ public abstract class AbstractFlowWriter
     catch (Exception e) {
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(output);
     }
 
     return result;

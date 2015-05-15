@@ -34,8 +34,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -155,6 +159,7 @@ public class FileUtils {
 
     result = new ArrayList<String>();
 
+    fis = null;
     try {
       fis = new FileInputStream(file.getAbsolutePath());
       if ((encoding != null) && (encoding.length() > 0))
@@ -164,12 +169,12 @@ public class FileUtils {
       while ((line = reader.readLine()) != null)
         result.add(line);
       reader.close();
-      fis.close();
     }
     catch (Exception e) {
       result = null;
       e.printStackTrace();
     }
+    closeQuietly(fis);
 
     return result;
   }
@@ -208,22 +213,8 @@ public class FileUtils {
       content = null;
     }
     finally {
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (fis != null) {
-	try {
-	  fis.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      closeQuietly(stream);
+      closeQuietly(fis);
     }
 
     if (content != null) {
@@ -288,8 +279,6 @@ public class FileUtils {
       bytesIn = new ByteArrayOutputStream();
       while ((ch = bis.read()) != -1)
 	bytesIn.write(ch);
-      bis.close();
-      fis.close();
       result = bytesIn.toByteArray();
     }
     catch(Exception e) {
@@ -297,22 +286,8 @@ public class FileUtils {
       e.printStackTrace();
     }
     finally {
-      if (bis != null) {
-	try {
-	  bis.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (fis != null) {
-	try {
-	  fis.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      closeQuietly(bis);
+      closeQuietly(fis);
     }
 
     return result;
@@ -362,7 +337,9 @@ public class FileUtils {
     FileOutputStream	fos;
 
     result = true;
-    
+
+    fos    = null;
+    writer = null;
     try {
       fos = new FileOutputStream(file.getAbsolutePath());
       if ((encoding != null) && (encoding.length() > 0))
@@ -374,13 +351,13 @@ public class FileUtils {
         writer.newLine();
       }
       writer.flush();
-      writer.close();
-      fos.close();
     }
     catch (Exception e) {
       result = false;
       e.printStackTrace();
     }
+    closeQuietly(writer);
+    closeQuietly(fos);
 
     return result;
   }
@@ -438,6 +415,8 @@ public class FileUtils {
     BufferedWriter	writer;
     FileOutputStream	fos;
 
+    fos    = null;
+    writer = null;
     try {
       fos = new FileOutputStream(filename, append);
       if ((encoding != null) && (encoding.length() > 0))
@@ -447,12 +426,13 @@ public class FileUtils {
       writer.write("" + obj);
       writer.newLine();
       writer.flush();
-      writer.close();
       result = true;
     }
     catch (Exception e) {
       result = false;
     }
+    closeQuietly(writer);
+    closeQuietly(fos);
 
     return result;
   }
@@ -606,7 +586,7 @@ public class FileUtils {
    * Returns the number of directories that this file object contains.
    * E.g.: /home/blah/some/where.txt will return 3. /blah.txt returns 0.
    * 
-   * @param 
+   * @param file		the file
    */
   public static int getDirectoryDepth(File file) {
     int		result;
@@ -973,22 +953,8 @@ public class FileUtils {
       read = -1;
     }
     finally {
-      if (stream != null) {
-	try {
-	  stream.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-      if (fis != null) {
-	try {
-	  fis.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      closeQuietly(stream);
+      closeQuietly(fis);
     }
     
     if (read > -1) {
@@ -1193,5 +1159,69 @@ public class FileUtils {
       filename += suffix;
 
     return new File(filename);
+  }
+
+  /**
+   * Closes the stream, if possible, suppressing any exception.
+   *
+   * @param is		the stream to close
+   */
+  public static void closeQuietly(InputStream is) {
+    if (is != null) {
+      try {
+	is.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+  }
+
+  /**
+   * Closes the stream, if possible, suppressing any exception.
+   *
+   * @param os		the stream to close
+   */
+  public static void closeQuietly(OutputStream os) {
+    if (os != null) {
+      try {
+	os.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+  }
+
+  /**
+   * Closes the reader, if possible, suppressing any exception.
+   *
+   * @param reader	the reader to close
+   */
+  public static void closeQuietly(Reader reader) {
+    if (reader != null) {
+      try {
+	reader.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+  }
+
+  /**
+   * Closes the writer, if possible, suppressing any exception.
+   *
+   * @param writer	the writer to close
+   */
+  public static void closeQuietly(Writer writer) {
+    if (writer != null) {
+      try {
+	writer.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
   }
 }

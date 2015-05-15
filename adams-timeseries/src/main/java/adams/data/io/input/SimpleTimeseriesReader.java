@@ -15,9 +15,19 @@
 
 /**
  * SimpleTimeseriesReader.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.Constants;
+import adams.core.DateFormat;
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.data.DateFormatString;
+import adams.data.report.Report;
+import adams.data.timeseries.Timeseries;
+import adams.data.timeseries.TimeseriesPoint;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,15 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
-
-import adams.core.Constants;
-import adams.core.DateFormat;
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.data.DateFormatString;
-import adams.data.report.Report;
-import adams.data.timeseries.Timeseries;
-import adams.data.timeseries.TimeseriesPoint;
 
 /**
  * Reader for the simple timeseries data format, CSV-like with preceding comments.
@@ -142,18 +143,26 @@ public class SimpleTimeseriesReader
     List<String>	report;
     Report		sd;
     BufferedReader	reader;
+    FileInputStream	fis;
+    FileReader		fr;
     String[]		parts;
     DateFormat		dformat;
 
     reader  = null;
+    fr      = null;
+    fis     = null;
     dformat = m_TimestampFormat.toDateFormat();
     series  = new Timeseries();
     
     try {
-      if (m_Input.getName().endsWith(".gz"))
-	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(m_Input.getAbsolutePath()))));
-      else
-	reader = new BufferedReader(new FileReader(m_Input.getAbsolutePath()));
+      if (m_Input.getName().endsWith(".gz")) {
+	fis    = new FileInputStream(m_Input.getAbsolutePath());
+	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+      }
+      else {
+	fr     = new FileReader(m_Input.getAbsolutePath());
+	reader = new BufferedReader(fr);
+      }
       
       // read whole file
       content  = new ArrayList<String>();
@@ -194,12 +203,9 @@ public class SimpleTimeseriesReader
       getLogger().log(Level.SEVERE, "Failed to read timeseries: " + m_Input, e);
     }
     finally {
-      try {
-	reader.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(fr);
+      FileUtils.closeQuietly(fis);
     }
   }
 }

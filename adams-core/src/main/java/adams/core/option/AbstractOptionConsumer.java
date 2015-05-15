@@ -15,7 +15,7 @@
 
 /**
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -509,6 +509,7 @@ public abstract class AbstractOptionConsumer<C,V>
   public OptionHandler read(String filename) {
     OptionHandler	result;
     BufferedReader	reader;
+    FileInputStream     fis;
     StringBuilder	content;
     String		line;
     String		msg;
@@ -516,12 +517,14 @@ public abstract class AbstractOptionConsumer<C,V>
     result = null;
 
     reader = null;
+    fis    = null;
     try {
       content = new StringBuilder();
+      fis = new FileInputStream(filename);
       if (filename.toLowerCase().endsWith(".gz"))
-	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(filename))));
+	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
       else
-	reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+	reader = new BufferedReader(new InputStreamReader(fis));
       while ((line = reader.readLine()) != null) {
 	if (content.length() > 0)
 	  content.append("\n");
@@ -536,14 +539,8 @@ public abstract class AbstractOptionConsumer<C,V>
       result = null;
     }
     finally {
-      if (reader != null) {
-	try {
-	  reader.close();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
+      FileUtils.closeQuietly(reader);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;
