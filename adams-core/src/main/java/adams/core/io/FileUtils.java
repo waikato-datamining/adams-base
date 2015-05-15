@@ -34,10 +34,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -471,10 +473,8 @@ public class FileUtils {
   public static boolean copyOrMove(File sourceLocation, File targetLocation, boolean move) throws IOException {
     String[] 		children;
     int 		i;
-    InputStream 	in;
-    OutputStream 	out;
-    byte[] 		buf;
-    int 		len;
+    Path		source;
+    Path 		target;
 
     if (sourceLocation.isDirectory()) {
       if (!targetLocation.exists()) {
@@ -497,27 +497,16 @@ public class FileUtils {
 	return true;
     }
     else {
-      in = new FileInputStream(sourceLocation.getAbsoluteFile());
-      // do we need to append the filename?
+      source = FileSystems.getDefault().getPath(sourceLocation.getAbsolutePath());
       if (targetLocation.isDirectory())
-        out = new FileOutputStream(targetLocation.getAbsolutePath() + File.separator + sourceLocation.getName());
+        target = FileSystems.getDefault().getPath(targetLocation.getAbsolutePath() + File.separator + sourceLocation.getName());
       else
-        out = new FileOutputStream(targetLocation.getAbsoluteFile());
-
-      // Copy the content from instream to outstream
-      buf = new byte[1024];
-      while ((len = in.read(buf)) > 0)
-        out.write(buf, 0, len);
-
-      in.close();
-      in = null;
-      out.close();
-      out = null;
-
+        target = FileSystems.getDefault().getPath(targetLocation.getAbsolutePath());
       if (move)
-        return sourceLocation.delete();
+	Files.move(source, target);
       else
-	return true;
+	Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+      return true;
     }
   }
 
