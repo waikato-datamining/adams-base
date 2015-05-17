@@ -1188,14 +1188,12 @@ public class FileUtils {
 	os.flush();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	// ignored
       }
       try {
 	os.close();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	// ignored
       }
     }
@@ -1228,14 +1226,12 @@ public class FileUtils {
 	writer.flush();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	// ignored
       }
       try {
 	writer.close();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	// ignored
       }
     }
