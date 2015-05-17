@@ -37,19 +37,19 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br/>
- * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.<br/>
+ * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br>
+ * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.<br>
  * If no key column(s) provided, the complete spreadsheet is used for aggregation.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -80,6 +80,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-key-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: keyColumns)
  * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; if 
  * &nbsp;&nbsp;&nbsp;left empty, all rows are used.
@@ -93,7 +98,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
- * <pre>-aggregate &lt;COUNT|SUM|MIN|MAX|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE&gt; [-aggregate ...] (property: aggregates)
+ * <pre>-aggregate &lt;COUNT|SUM|MIN|MAX|RANGE|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE&gt; [-aggregate ...] (property: aggregates)
  * &nbsp;&nbsp;&nbsp;The aggregates to calculate and introduce as columns.
  * &nbsp;&nbsp;&nbsp;default: SUM
  * </pre>
@@ -124,6 +129,8 @@ public class SpreadSheetAggregate
     MIN,
     /** the maximum. */
     MAX,
+    /** the range (max-min). */
+    RANGE,
     /** the average. */
     AVERAGE,
     /** the median. */
@@ -335,6 +342,9 @@ public class SpreadSheetAggregate
 	    break;
 	  case MAX:
 	    result.put(agg, StatUtils.max(values));
+	    break;
+	  case RANGE:
+	    result.put(agg, StatUtils.max(values) - StatUtils.min(values));
 	    break;
 	  case AVERAGE:
 	    result.put(agg, StatUtils.mean(values));

@@ -140,11 +140,12 @@ public class SpreadSheetAggregateTest
       argOption = (AbstractArgumentOption) spreadsheetaggregate12.getOptionManager().findByProperty("keyColumns");
       spreadsheetaggregate12.setKeyColumns((adams.data.spreadsheet.SpreadSheetColumnRange) argOption.valueOf("last"));
       argOption = (AbstractArgumentOption) spreadsheetaggregate12.getOptionManager().findByProperty("aggregates");
-      adams.flow.transformer.SpreadSheetAggregate.Aggregate[] aggregates14 = new adams.flow.transformer.SpreadSheetAggregate.Aggregate[4];
+      adams.flow.transformer.SpreadSheetAggregate.Aggregate[] aggregates14 = new adams.flow.transformer.SpreadSheetAggregate.Aggregate[5];
       aggregates14[0] = (adams.flow.transformer.SpreadSheetAggregate.Aggregate) argOption.valueOf("MIN");
       aggregates14[1] = (adams.flow.transformer.SpreadSheetAggregate.Aggregate) argOption.valueOf("MAX");
       aggregates14[2] = (adams.flow.transformer.SpreadSheetAggregate.Aggregate) argOption.valueOf("AVERAGE");
       aggregates14[3] = (adams.flow.transformer.SpreadSheetAggregate.Aggregate) argOption.valueOf("STDEV");
+      aggregates14[4] = (adams.flow.transformer.SpreadSheetAggregate.Aggregate) argOption.valueOf("RANGE");
       spreadsheetaggregate12.setAggregates(aggregates14);
       actors1[2] = spreadsheetaggregate12;
 
