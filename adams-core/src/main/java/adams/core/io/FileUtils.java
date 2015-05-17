@@ -1185,9 +1185,17 @@ public class FileUtils {
   public static void closeQuietly(OutputStream os) {
     if (os != null) {
       try {
+	os.flush();
+      }
+      catch (Exception e) {
+	e.printStackTrace();
+	// ignored
+      }
+      try {
 	os.close();
       }
       catch (Exception e) {
+	e.printStackTrace();
 	// ignored
       }
     }
@@ -1217,9 +1225,17 @@ public class FileUtils {
   public static void closeQuietly(Writer writer) {
     if (writer != null) {
       try {
+	writer.flush();
+      }
+      catch (Exception e) {
+	e.printStackTrace();
+	// ignored
+      }
+      try {
 	writer.close();
       }
       catch (Exception e) {
+	e.printStackTrace();
 	// ignored
       }
     }
