@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.spreadsheetquery;
@@ -78,6 +78,7 @@ import java.io.*;
   "count"     { return sf.newSymbol("Count",     sym.COUNT); }
   "min"       { return sf.newSymbol("Min",       sym.MIN); }
   "max"       { return sf.newSymbol("Max",       sym.MAX); }
+  "range"     { return sf.newSymbol("Range",     sym.RANGE); }
   "mean"      { return sf.newSymbol("Mean",      sym.AVERAGE); }
   "average"   { return sf.newSymbol("Average",   sym.AVERAGE); }
   "median"    { return sf.newSymbol("Median",    sym.MEDIAN); }

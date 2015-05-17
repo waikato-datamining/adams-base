@@ -35,106 +35,107 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates spreadsheet subset queries.<br/>
- * <br/>
- * The following grammar is used:<br/>
- * <br/>
- * expr_list ::= expr_list expr_part | expr_part;<br/>
- * <br/>
- * expr_part ::= select | update | delete;<br/>
- * <br/>
- * select    ::=   SELECT col_list [limit]<br/>
- *               | SELECT col_list WHERE cond_list [limit]<br/>
- *               | SELECT col_list ORDER BY order_list [limit]<br/>
- *               | SELECT col_list WHERE cond_list ORDER BY order_list [limit]<br/>
- *               | SELECT agg_list<br/>
- *               | SELECT agg_list GROUP BY col_list<br/>
- *               | SELECT agg_list HAVING cond_list<br/>
- *               | SELECT agg_list GROUP BY col_list HAVING cond_list<br/>
- *               ;<br/>
- * <br/>
- * update    ::=   UPDATE SET upd_list<br/>
- *               | UPDATE SET upd_list WHERE cond_list<br/>
- *               ;<br/>
- * <br/>
- * delete    ::=   DELETE WHERE cond_list<br/>
- *               ;<br/>
- * <br/>
- * col_list  ::=   col_list COMMA col<br/>
- *               | col<br/>
- *               | SELECT NUMBER [subsample: &lt;1 = percent; &gt;= 1 number of rows]<br/>
- *               ;<br/>
- * <br/>
- * col       ::=   * <br/>
- *               | COLUMN<br/>
- *               | COLUMN AS COLUMN<br/>
- *               ;<br/>
- * <br/>
- * upd_list  ::= upd_list COMMA upd | upd;<br/>
- * <br/>
- * upd       ::=   COLUMN = value<br/>
- *               ;<br/>
- * <br/>
- * order_list::= order_list COMMA order | order;<br/>
- * <br/>
- * order     ::=   COLUMN<br/>
- *               | COLUMN ASC<br/>
- *               | COLUMN DESC<br/>
- *               ;<br/>
- *               <br/>
- * cond_list ::=   cond_list cond <br/>
- *               | cond<br/>
- *               ;<br/>
- * <br/>
- * cond      ::=   COLUMN &lt; value<br/>
- *               | COLUMN &lt;= value<br/>
- *               | COLUMN = value<br/>
- *               | COLUMN &lt;&gt; value<br/>
- *               | COLUMN &gt;= value<br/>
- *               | COLUMN &gt; value<br/>
- *               | COLUMN REGEXP STRING<br/>
- *               | COLUMN IS NULL<br/>
- *               | CELLTYPE ( COLUMN ) = "numeric|long|double|boolean|string|time|date|datetime|timestamp|object|missing"<br/>
- *               | ( cond )<br/>
- *               | cond:c1 AND cond:c2<br/>
- *               | cond:c1 OR cond:c2<br/>
- *               | NOT cond<br/>
- *               ;<br/>
- * <br/>
- * value     ::=   NUMBER<br/>
- *               | STRING<br/>
- *               | PARSE ( "number" , STRING )<br/>
- *               | PARSE ( "date" , STRING )<br/>
- *               | PARSE ( "time" , STRING )<br/>
- *               | PARSE ( "timestamp" , STRING )<br/>
- *               ;<br/>
- * <br/>
- * limit     ::=   LIMIT NUMBER:max<br/>
- *               | LIMIT NUMBER:offset , NUMBER:max<br/>
- *               ;<br/>
- * agg_list  ::=   agg_list COMMA agg <br/>
- *               | agg<br/>
- *               ;<br/>
- * <br/>
- * agg       ::=   COUNT [(*)] [AS COLUMN]<br/>
- *               | MIN ( COLUMN ) [AS COLUMN]<br/>
- *               | MAX ( COLUMN ) [AS COLUMN]<br/>
- *               | MEAN ( COLUMN ) [AS COLUMN]<br/>
- *               | AVERAGE ( COLUMN ) [AS COLUMN]<br/>
- *               | STDEV ( COLUMN ) [AS COLUMN]<br/>
- *               | STDEVP ( COLUMN ) [AS COLUMN]<br/>
- *               | SUM ( COLUMN ) [AS COLUMN]<br/>
- *               | IQR ( COLUMN ) [AS COLUMN]<br/>
- *               | INTERQUARTILE ( COLUMN ) [AS COLUMN]<br/>
- * <br/>
- * Notes:<br/>
- * - time format: 'HH:mm'<br/>
- * - date format: 'yyyy-MM-dd'<br/>
- * - timestamp format: 'yyyy-MM-dd HH:mm'<br/>
- * - STRING is referring to characters enclosed by double quotes<br/>
- * - COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')<br/>
- * - columns used in the ORDER BY clause must be present in the SELECT part; also, any alias given to them in SELECT must be used instead of original column name<br/>
- * <p/>
+ * Evaluates spreadsheet subset queries.<br>
+ * <br>
+ * The following grammar is used:<br>
+ * <br>
+ * expr_list ::= expr_list expr_part | expr_part;<br>
+ * <br>
+ * expr_part ::= select | update | delete;<br>
+ * <br>
+ * select    ::=   SELECT col_list [limit]<br>
+ *               | SELECT col_list WHERE cond_list [limit]<br>
+ *               | SELECT col_list ORDER BY order_list [limit]<br>
+ *               | SELECT col_list WHERE cond_list ORDER BY order_list [limit]<br>
+ *               | SELECT agg_list<br>
+ *               | SELECT agg_list GROUP BY col_list<br>
+ *               | SELECT agg_list HAVING cond_list<br>
+ *               | SELECT agg_list GROUP BY col_list HAVING cond_list<br>
+ *               ;<br>
+ * <br>
+ * update    ::=   UPDATE SET upd_list<br>
+ *               | UPDATE SET upd_list WHERE cond_list<br>
+ *               ;<br>
+ * <br>
+ * delete    ::=   DELETE WHERE cond_list<br>
+ *               ;<br>
+ * <br>
+ * col_list  ::=   col_list COMMA col<br>
+ *               | col<br>
+ *               | SELECT NUMBER [subsample: &lt;1 = percent; &gt;= 1 number of rows]<br>
+ *               ;<br>
+ * <br>
+ * col       ::=   * <br>
+ *               | COLUMN<br>
+ *               | COLUMN AS COLUMN<br>
+ *               ;<br>
+ * <br>
+ * upd_list  ::= upd_list COMMA upd | upd;<br>
+ * <br>
+ * upd       ::=   COLUMN = value<br>
+ *               ;<br>
+ * <br>
+ * order_list::= order_list COMMA order | order;<br>
+ * <br>
+ * order     ::=   COLUMN<br>
+ *               | COLUMN ASC<br>
+ *               | COLUMN DESC<br>
+ *               ;<br>
+ *               <br>
+ * cond_list ::=   cond_list cond <br>
+ *               | cond<br>
+ *               ;<br>
+ * <br>
+ * cond      ::=   COLUMN &lt; value<br>
+ *               | COLUMN &lt;= value<br>
+ *               | COLUMN = value<br>
+ *               | COLUMN &lt;&gt; value<br>
+ *               | COLUMN &gt;= value<br>
+ *               | COLUMN &gt; value<br>
+ *               | COLUMN REGEXP STRING<br>
+ *               | COLUMN IS NULL<br>
+ *               | CELLTYPE ( COLUMN ) = "numeric|long|double|boolean|string|time|date|datetime|timestamp|object|missing"<br>
+ *               | ( cond )<br>
+ *               | cond:c1 AND cond:c2<br>
+ *               | cond:c1 OR cond:c2<br>
+ *               | NOT cond<br>
+ *               ;<br>
+ * <br>
+ * value     ::=   NUMBER<br>
+ *               | STRING<br>
+ *               | PARSE ( "number" , STRING )<br>
+ *               | PARSE ( "date" , STRING )<br>
+ *               | PARSE ( "time" , STRING )<br>
+ *               | PARSE ( "timestamp" , STRING )<br>
+ *               ;<br>
+ * <br>
+ * limit     ::=   LIMIT NUMBER:max<br>
+ *               | LIMIT NUMBER:offset , NUMBER:max<br>
+ *               ;<br>
+ * agg_list  ::=   agg_list COMMA agg <br>
+ *               | agg<br>
+ *               ;<br>
+ * <br>
+ * agg       ::=   COUNT [(*)] [AS COLUMN]<br>
+ *               | MIN ( COLUMN ) [AS COLUMN]<br>
+ *               | MAX ( COLUMN ) [AS COLUMN]<br>
+ *               | RANGE ( COLUMN ) [AS COLUMN] (= MIN - MAX)<br>
+ *               | MEAN ( COLUMN ) [AS COLUMN]<br>
+ *               | AVERAGE ( COLUMN ) [AS COLUMN]<br>
+ *               | STDEV ( COLUMN ) [AS COLUMN]<br>
+ *               | STDEVP ( COLUMN ) [AS COLUMN]<br>
+ *               | SUM ( COLUMN ) [AS COLUMN]<br>
+ *               | IQR ( COLUMN ) [AS COLUMN]<br>
+ *               | INTERQUARTILE ( COLUMN ) [AS COLUMN]<br>
+ * <br>
+ * Notes:<br>
+ * - time format: 'HH:mm'<br>
+ * - date format: 'yyyy-MM-dd'<br>
+ * - timestamp format: 'yyyy-MM-dd HH:mm'<br>
+ * - STRING is referring to characters enclosed by double quotes<br>
+ * - COLUMN is either a string with no blanks (consisting of letters, numbers, hyphen or underscore; eg 'MyCol-1') or a bracket enclosed string when containing blanks (eg '[Some other col]')<br>
+ * - columns used in the ORDER BY clause must be present in the SELECT part; also, any alias given to them in SELECT must be used instead of original column name<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -305,6 +306,7 @@ public class SpreadSheetQuery
 	  + "agg       ::=   COUNT [(*)] [AS COLUMN]\n"
 	  + "              | MIN ( COLUMN ) [AS COLUMN]\n"
 	  + "              | MAX ( COLUMN ) [AS COLUMN]\n"
+	  + "              | RANGE ( COLUMN ) [AS COLUMN] (= MIN - MAX)\n"
 	  + "              | MEAN ( COLUMN ) [AS COLUMN]\n"
 	  + "              | AVERAGE ( COLUMN ) [AS COLUMN]\n"
 	  + "              | STDEV ( COLUMN ) [AS COLUMN]\n"

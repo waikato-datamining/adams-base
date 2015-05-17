@@ -144,7 +144,7 @@ parser code {:
 :}
 
 terminal SELECT, UPDATE, DELETE, WHERE, SET, ORDER, BY, IS, NULL, REGEXP, AS, LIMIT;
-terminal GROUP, HAVING, COUNT, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, SUM, IQR;
+terminal GROUP, HAVING, COUNT, MIN, MAX, RANGE, AVERAGE, MEDIAN, STDEV, STDEVP, SUM, IQR;
 terminal PARSE, CELLTYPE;
 terminal COMMA, LPAREN, RPAREN;
 terminal STAR, PERCENT;
@@ -736,6 +736,15 @@ agg       ::=   COUNT
                 {: 
                   parser.getHelper().addAggregate(Aggregate.MAX, c); 
                   parser.getHelper().renameAggregate(Aggregate.MAX, c, newc); 
+                :}
+              | RANGE LPAREN COLUMN:c RPAREN
+                {:
+                  parser.getHelper().addAggregate(Aggregate.RANGE, c);
+                :}
+              | RANGE LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {:
+                  parser.getHelper().addAggregate(Aggregate.RANGE, c);
+                  parser.getHelper().renameAggregate(Aggregate.RANGE, c, newc);
                 :}
               | AVERAGE LPAREN COLUMN:c RPAREN
                 {: 

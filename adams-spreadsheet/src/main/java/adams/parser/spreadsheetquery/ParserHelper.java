@@ -19,16 +19,6 @@
  */
 package adams.parser.spreadsheetquery;
 
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.set.hash.TIntHashSet;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.Range;
@@ -54,6 +44,15 @@ import adams.flow.transformer.SpreadSheetRowFilter;
 import adams.flow.transformer.SpreadSheetSetCell;
 import adams.flow.transformer.SpreadSheetSort;
 import adams.flow.transformer.SpreadSheetSubset;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.hash.TIntHashSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Helper class for spreadsheet formulas.
@@ -260,7 +259,7 @@ public class ParserHelper
   /**
    * Adds the aggregate to generate from a column.
    *
-   * @param aggregate the aggregate
+   * @param agg the aggregate
    * @param col the column name, null if COUNT
    */
   public void addAggregate(Aggregate agg, String col) {
@@ -282,7 +281,7 @@ public class ParserHelper
   /**
    * Sets the new column name for the aggregate generated from a column.
    *
-   * @param aggregate the aggregate
+   * @param agg the aggregate
    * @param col the column name, null if COUNT
    * @param newCol the new column name
    */
@@ -299,7 +298,6 @@ public class ParserHelper
    * Adds the name of a group by column.
    *
    * @param col the column name
-   * @param value the new value
    */
   public void addGroupByColumn(String col) {
     m_GroupByColumns.add(SpreadSheetColumnRange.escapeColumnName(col));
@@ -330,7 +328,6 @@ public class ParserHelper
    *
    * @param finder the row finder to apply
    * @param log a logging message
-   * @return the selected rows
    */
   public void setSubsampleRowFinder(RowFinder finder, String log) {
     m_Subsample = finder;
