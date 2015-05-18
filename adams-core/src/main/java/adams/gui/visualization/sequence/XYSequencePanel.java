@@ -15,31 +15,10 @@
 
 /*
  * XYSequencePanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JColorChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
 import adams.core.Properties;
 import adams.core.io.FileUtils;
@@ -79,6 +58,26 @@ import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
+
+import javax.swing.JColorChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A panel for displaying XY sequences.
@@ -394,12 +393,12 @@ public class XYSequencePanel
     }
 
     if (!determineYRange && !isFixedY) {
-      minY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMinY();
-      maxY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMaxY();
+      minY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMinimumY();
+      maxY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMaximumY();
     }
     if (!determineXRange && !isFixedX) {
-      minX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMinX();
-      maxX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMaxX();
+      minX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMinimumX();
+      maxX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMaximumX();
     }
 
     if (determineXRange || determineYRange) {

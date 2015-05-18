@@ -15,15 +15,15 @@
 
 /**
  * PaintletWithFixedXRange.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
-
-import java.awt.Graphics;
 
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
+
+import java.awt.Graphics;
 
 /**
  * A wrapper for XY-sequence paintlets, in order to use fixed a X range.
@@ -129,6 +129,15 @@ public class PaintletWithFixedXRange
   }
 
   /**
+   * Returns the minimum of the X range.
+   *
+   * @return		the minimum
+   */
+  public double getMinimumX() {
+    return m_MinX;
+  }
+
+  /**
    * Returns the tip text for this property.
    *
    * @return 		tip text for this property suitable for
@@ -154,6 +163,15 @@ public class PaintletWithFixedXRange
    * @return		the maximum
    */
   public double getMaxX() {
+    return m_MaxX;
+  }
+
+  /**
+   * Returns the maximum of the X range.
+   *
+   * @return		the maximum
+   */
+  public double getMaximumX() {
     return m_MaxX;
   }
 
