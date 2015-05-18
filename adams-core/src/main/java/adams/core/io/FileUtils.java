@@ -486,7 +486,7 @@ public class FileUtils {
       else
         target = FileSystems.getDefault().getPath(targetLocation.getAbsolutePath());
       if (move)
-	Files.move(source, target);
+	Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
       else
 	Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
       return true;
