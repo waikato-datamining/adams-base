@@ -25,9 +25,8 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.flow.core.Unknown;
 
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -179,28 +178,30 @@ public class DumpFile
    */
   @Override
   protected String doExecute() {
-    String		result;
-    FileOutputStream    fos;
-    BufferedWriter	writer;
+    String			result;
+    FileOutputStream    	fos;
+    BufferedOutputStream 	bos;
+    StringBuilder		buffer;
 
-    writer = null;
+    bos    = null;
     fos    = null;
+    buffer = new StringBuilder("" + m_InputToken.getPayload());
+    buffer.append(System.getProperty("line.separator"));
     try {
       fos = new FileOutputStream(m_OutputFile.getAbsolutePath(), m_Append);
+      bos = new BufferedOutputStream(fos);
       if (m_Encoding != null)
-	writer = new BufferedWriter(new OutputStreamWriter(fos, m_Encoding.charsetValue()));
+	bos.write(buffer.toString().getBytes(m_Encoding.charsetValue()));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(fos));
-      writer.write("" + m_InputToken.getPayload());
-      writer.newLine();
-      writer.flush();
+	bos.write(buffer.toString().getBytes());
+      bos.flush();
       result = null;
     }
     catch (Exception e) {
       result = handleException("Failed to write output to " + m_OutputFile + ":", e);
     }
     finally {
-      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(bos);
       FileUtils.closeQuietly(fos);
     }
 

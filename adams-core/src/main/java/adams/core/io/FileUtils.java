@@ -27,6 +27,7 @@ import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -412,19 +413,21 @@ public class FileUtils {
    */
   public static boolean writeToFile(String filename, Object obj, boolean append, String encoding) {
     boolean		result;
-    BufferedWriter	writer;
+    BufferedOutputStream writer;
     FileOutputStream	fos;
+    StringBuilder		buffer;
 
     fos    = null;
     writer = null;
+    buffer = new StringBuilder("" + obj);
+    buffer.append(System.getProperty("line.separator"));
     try {
       fos = new FileOutputStream(filename, append);
+      writer = new BufferedOutputStream(fos);
       if ((encoding != null) && (encoding.length() > 0))
-	writer = new BufferedWriter(new OutputStreamWriter(fos, encoding));
+	writer.write(buffer.toString().getBytes(encoding));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(fos));
-      writer.write("" + obj);
-      writer.newLine();
+	writer.write(buffer.toString().getBytes());
       writer.flush();
       result = true;
     }
