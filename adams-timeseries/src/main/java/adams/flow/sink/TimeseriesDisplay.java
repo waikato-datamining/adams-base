@@ -205,7 +205,7 @@ public class TimeseriesDisplay
       super.initGUI();
       setLayout(new BorderLayout());
       m_Panel = new TimeseriesExplorer();
-      m_Panel.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy());
+      m_Panel.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy(true));
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setAllowRemoval(false);
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setReloadable(false);
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setColorProvider(m_ColorProvider.shallowCopy());
@@ -636,7 +636,7 @@ public class TimeseriesDisplay
     Paintlet			overlay;
 
     result = new TimeseriesExplorer();
-    result.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy());
+    result.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy(true));
     ((TimeseriesContainerManager) result.getContainerManager()).setAllowRemoval(false);
     ((TimeseriesContainerManager) result.getContainerManager()).setReloadable(false);
     ((TimeseriesContainerManager) result.getContainerManager()).setColorProvider(m_ColorProvider.shallowCopy());
