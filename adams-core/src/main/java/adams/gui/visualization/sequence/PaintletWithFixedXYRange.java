@@ -19,6 +19,7 @@
  */
 package adams.gui.visualization.sequence;
 
+import adams.flow.core.Actor;
 import adams.gui.visualization.core.PaintletWithFixedXRange;
 
 /**
@@ -39,6 +40,9 @@ public class PaintletWithFixedXYRange
 
   /** the maximum of Y. */
   protected double m_MaxX;
+
+  /** the actor the paintlet belongs to. */
+  protected Actor m_Actor;
 
   /**
    * Returns a string describing the object.
