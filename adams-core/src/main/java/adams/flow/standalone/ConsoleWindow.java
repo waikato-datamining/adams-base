@@ -15,23 +15,9 @@
 
 /**
  * ConsoleWindow.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -52,6 +38,19 @@ import adams.gui.event.ConsolePanelEvent;
 import adams.gui.event.ConsolePanelListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -527,16 +526,20 @@ public class ConsoleWindow
    */
   protected void saveAs() {
     int		retVal;
+    String 	msg;
 
     retVal = getFileChooser().showSaveDialog(m_Panel);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    FileUtils.writeToFile(
+    msg = FileUtils.writeToFileMsg(
 	getFileChooser().getSelectedFile().getAbsolutePath(),
 	supplyText(),
 	false,
 	getFileChooser().getEncoding());
+
+    if (msg != null)
+      getLogger().severe("Error saving text to '" + getFileChooser().getSelectedFile() + "':\n" + msg);
   }
 
   /**

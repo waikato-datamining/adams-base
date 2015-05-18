@@ -15,28 +15,10 @@
 
 /*
  * DisplayPanelManager.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Hashtable;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -63,6 +45,23 @@ import adams.gui.print.JComponentWriterFileChooser;
 import adams.gui.print.PNGWriter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -1099,11 +1098,14 @@ public class DisplayPanelManager
       if (retVal != BaseFileChooser.APPROVE_OPTION)
 	return;
 
-      FileUtils.writeToFile(
-	  getTextFileChooser().getSelectedFile().getAbsolutePath(),
-	  supplyText(),
-	  false,
-	  getTextFileChooser().getEncoding());
+      String msg = FileUtils.writeToFileMsg(
+        getTextFileChooser().getSelectedFile().getAbsolutePath(),
+        supplyText(),
+        false,
+        getTextFileChooser().getEncoding());
+
+      if (msg != null)
+        getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
     }
     else if (m_PanelProvider instanceof ComponentSupplier) {
       getComponentFileChooser().setSelectedFile(new File(filename));

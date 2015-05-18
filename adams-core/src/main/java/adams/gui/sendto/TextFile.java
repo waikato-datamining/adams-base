@@ -15,7 +15,7 @@
 
 /**
  * TextFile.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
@@ -80,6 +80,7 @@ public class TextFile
     TextFileChooser	fileChooser;
     ExtensionFileFilter	filter;
     int			retVal;
+    String 		msg;
 
     result = null;
 
@@ -97,8 +98,9 @@ public class TextFile
       retVal = fileChooser.showSaveDialog(null);
       if (retVal != BaseFileChooser.APPROVE_OPTION)
         return "Save dialog canceled!";
-      if (!FileUtils.writeToFile(fileChooser.getSelectedFile().getAbsolutePath(), o, false, fileChooser.getEncoding()))
-	result = "Failed to write text to:\n" + fileChooser.getSelectedFile();
+      msg = FileUtils.writeToFileMsg(fileChooser.getSelectedFile().getAbsolutePath(), o, false, fileChooser.getEncoding());
+      if (msg != null)
+	result = "Failed to write text to '" + fileChooser.getSelectedFile() + "':\n" + msg;
     }
     else {
       result = "Cannot save as text: " + o.getClass();

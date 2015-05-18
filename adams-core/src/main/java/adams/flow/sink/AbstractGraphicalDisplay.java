@@ -15,21 +15,10 @@
 
 /*
  * AbstractGraphicalDisplay.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -43,6 +32,16 @@ import adams.gui.print.NullWriter;
 import adams.gui.print.PNGWriter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for actors that display stuff.
@@ -333,20 +332,20 @@ public abstract class AbstractGraphicalDisplay
    */
   protected void saveTextAs() {
     int		retVal;
-    boolean	ok;
+    String      msg;
 
     retVal = getTextFileChooser().showSaveDialog(m_Panel);
     if (retVal != JComponentWriterFileChooser.APPROVE_OPTION)
       return;
 
-    ok = FileUtils.writeToFile(
+    msg = FileUtils.writeToFileMsg(
 	getTextFileChooser().getSelectedFile().getAbsolutePath(),
 	((TextSupplier) this).supplyText(),
 	false,
 	getTextFileChooser().getEncoding());
 
-    if (!ok)
-      getLogger().severe("Error saving ext to '" + getTextFileChooser().getSelectedFile() + "'!");
+    if (msg != null)
+      getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
   }
 
   /**

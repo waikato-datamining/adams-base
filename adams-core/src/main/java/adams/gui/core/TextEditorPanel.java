@@ -15,20 +15,18 @@
 
 /**
  * TextEditorPanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
+import adams.core.License;
+import adams.core.Utils;
+import adams.core.annotation.MixedCopyright;
+import adams.core.io.FileUtils;
+import adams.flow.sink.TextSupplier;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.TextFileChooser;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
@@ -41,14 +39,15 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
-
-import adams.core.License;
-import adams.core.Utils;
-import adams.core.annotation.MixedCopyright;
-import adams.core.io.FileUtils;
-import adams.flow.sink.TextSupplier;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.TextFileChooser;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A panel that allows the editing of text, including undo/redo support.
@@ -562,7 +561,6 @@ public class TextEditorPanel
    * Opens the specified file and loads/displays the content.
    *
    * @param file	the file to load
-   * @param encoding	the encoding to use, use null for default UTF-8
    * @return		true if successfully opened
    */
   public boolean  open(File file) {
@@ -628,9 +626,12 @@ public class TextEditorPanel
    * @param encoding	the file encoding to use
    */
   protected void save(File file, String encoding) {
-    if (!FileUtils.writeToFile(file.getAbsolutePath(), m_TextArea.getText(), false, encoding)) {
+    String	msg;
+
+    msg = FileUtils.writeToFileMsg(file.getAbsolutePath(), m_TextArea.getText(), false, encoding);
+    if (msg != null) {
       GUIHelper.showErrorMessage(
-	  this, "Error saving content to file '" + file + "'!");
+	  this, "Error saving content to file '" + file + "':\n" + msg);
     }
     else {
       m_CurrentFile     = file;

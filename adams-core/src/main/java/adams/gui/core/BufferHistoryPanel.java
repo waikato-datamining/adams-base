@@ -15,25 +15,25 @@
 
 /**
  * BufferHistoryPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.TextFileChooser;
+import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
+import adams.gui.core.ConsolePanel.OutputType;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Hashtable;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
-
-import adams.core.io.FileUtils;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.TextFileChooser;
-import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
 
 /**
  * A history panel that keeps track of named StringBuilder objects, e.g.,
@@ -291,6 +291,7 @@ public class BufferHistoryPanel
   protected void saveEntry(String name) {
     int			retVal;
     String		filename;
+    String 		msg;
 
     filename = name + "." + getFileChooser().getDefaultExtension();
     filename = FileUtils.createFilename(filename, "");
@@ -299,11 +300,14 @@ public class BufferHistoryPanel
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    FileUtils.writeToFile(
+    msg = FileUtils.writeToFileMsg(
 	getFileChooser().getSelectedFile().getAbsolutePath(),
 	getEntry(name).toString(),
 	false,
 	getFileChooser().getEncoding());
+
+    if (msg != null)
+      ConsolePanel.getSingleton().append(OutputType.ERROR, "Error saving text to '" + getFileChooser().getSelectedFile() + "':\n" + msg);
   }
 
   /**
