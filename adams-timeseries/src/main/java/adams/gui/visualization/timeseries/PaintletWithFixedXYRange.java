@@ -20,6 +20,7 @@
 package adams.gui.visualization.timeseries;
 
 import adams.core.base.BaseDateTime;
+import adams.flow.core.Actor;
 
 /**
  * A wrapper for XY-sequence paintlets, in order to use fixed X and Y ranges.
@@ -39,6 +40,9 @@ public class PaintletWithFixedXYRange
 
   /** the maximum of Y. */
   protected BaseDateTime m_MaxX;
+
+  /** the actor the paintlet belongs to. */
+  protected Actor m_Actor;
 
   /**
    * Returns a string describing the object.

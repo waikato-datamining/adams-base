@@ -19,7 +19,9 @@
  */
 package adams.gui.visualization.timeseries;
 
+import adams.flow.core.Actor;
 import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 
 import java.awt.Graphics;
@@ -32,7 +34,8 @@ import java.awt.Graphics;
  */
 public class PaintletWithFixedYRange
   extends AbstractTimeseriesPaintlet
-  implements adams.gui.visualization.core.PaintletWithFixedYRange {
+  implements adams.gui.visualization.core.PaintletWithFixedYRange,
+             FlowAwarePaintlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 354723429582771889L;
@@ -45,6 +48,9 @@ public class PaintletWithFixedYRange
 
   /** the actual paintlet to use. */
   protected AbstractTimeseriesPaintlet m_Paintlet;
+
+  /** the actor the paintlet belongs to. */
+  protected Actor m_Actor;
 
   /**
    * Returns a string describing the object.
@@ -240,5 +246,25 @@ public class PaintletWithFixedYRange
       return m_Paintlet.getPaintMoment();
     else
       return PaintMoment.PAINT;
+  }
+
+  /**
+   * Sets the owning actor.
+   *
+   * @param actor	the actor this paintlet belongs to
+   */
+  @Override
+  public void setActor(Actor actor) {
+    m_Actor = actor;
+  }
+
+  /**
+   * Returns the owning actor.
+   *
+   * @return		the actor this paintlet belongs to, null if none set
+   */
+  @Override
+  public Actor getActor() {
+    return m_Actor;
   }
 }
