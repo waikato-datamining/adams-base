@@ -276,9 +276,16 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
     result = QuickInfoHelper.toString(this, "modelFile", (m_ModelFile.isDirectory() ? m_ModelActor : m_ModelFile));
-    result += QuickInfoHelper.toString(this, "modelResetVariable", (m_UseModelResetVariable ? ", reset: " + m_ModelResetVariable : ""));
+    value  = QuickInfoHelper.toString(this, "modelResetVariable", (m_UseModelResetVariable ? "reset: " + m_ModelResetVariable : ""));
+    if (value != null) {
+      if (result == null)
+	result = value;
+      else
+	result += ", " + value;
+    }
 
     return result;
   }
