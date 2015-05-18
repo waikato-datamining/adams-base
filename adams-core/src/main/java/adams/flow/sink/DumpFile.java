@@ -175,6 +175,10 @@ public class DumpFile
    */
   @Override
   protected String doExecute() {
-    return FileUtils.writeToFileMsg(m_OutputFile.getAbsolutePath(), m_InputToken.getPayload(), m_Append, m_Encoding.getValue());
+    return FileUtils.writeToFileMsg(
+      m_OutputFile.getAbsolutePath(),
+      m_InputToken.getPayload(),
+      m_Append,
+      m_Encoding.charsetValue().name());
   }
 }
