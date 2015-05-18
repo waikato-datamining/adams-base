@@ -15,13 +15,15 @@
 
 /**
  * AbstractProcessWekaInstanceWithModel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
+import adams.core.VariableName;
 import adams.core.io.PlaceholderFile;
+import adams.event.VariableChangeEvent;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
@@ -58,6 +60,15 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   /** whether the model gets built on the fly and might not be present at the start. */
   protected boolean m_OnTheFly;
 
+  /** whether to use a variable to monitor for changes, triggering resets of the model. */
+  protected boolean m_UseModelResetVariable;
+
+  /** the variable to monitor for changes, triggering resets of the model. */
+  protected VariableName m_ModelResetVariable;
+
+  /** whether we need to reset the model. */
+  protected boolean m_ResetModel;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -76,6 +87,14 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     m_OptionManager.add(
 	    "on-the-fly", "onTheFly",
 	    false);
+
+    m_OptionManager.add(
+	    "use-model-reset-variable", "useModelResetVariable",
+	    false);
+
+    m_OptionManager.add(
+	    "model-reset-variable", "modelResetVariable",
+	    new VariableName());
   }
 
   /**
@@ -186,13 +205,82 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
+   * Sets the whether to use a variable to monitor for changes in order
+   * to reset the model.
+   *
+   * @param value	true if to use monitor variable
+   */
+  public void setUseModelResetVariable(boolean value) {
+    m_UseModelResetVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the whether to use a variable to monitor for changes in order
+   * to reset the model.
+   *
+   * @return		true if to use monitor variable
+   */
+  public boolean getUseModelResetVariable() {
+    return m_UseModelResetVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useModelResetVariableTipText() {
+    return
+        "If enabled, chnages to the specified variable are monitored in order "
+	  + "to reset the model, eg when a storage model changed.";
+  }
+
+  /**
+   * Sets the variable to monitor for changes in order to reset the model.
+   *
+   * @param value	the variable
+   */
+  public void setModelResetVariable(VariableName value) {
+    m_ModelResetVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the variable to monitor for changes in order to reset the model.
+   *
+   * @return		the variable
+   */
+  public VariableName getModelResetVariable() {
+    return m_ModelResetVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String modelResetVariableTipText() {
+    return
+        "The variable to monitor for changes in order to reset the model, eg "
+	  + "when a storage model changed.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "modelFile", (m_ModelFile.isDirectory() ? m_ModelActor : m_ModelFile));
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "modelFile", (m_ModelFile.isDirectory() ? m_ModelActor : m_ModelFile));
+    result += QuickInfoHelper.toString(this, "modelResetVariable", (m_UseModelResetVariable ? ", reset: " + m_ModelResetVariable : ""));
+
+    return result;
   }
 
   /**
@@ -254,6 +342,18 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
+   * Gets triggered when a variable changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  @Override
+  public void variableChanged(VariableChangeEvent e) {
+    super.variableChanged(e);
+    if (e.getName().equals(m_ModelResetVariable.getValue()))
+      m_ResetModel = true;
+  }
+
+  /**
    * Loads the model from the model file.
    *
    * @return		null if everything worked, otherwise an error message
@@ -283,6 +383,8 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 	result  = handleException("Failed to load model from '" + m_ModelFile + "': ", e);
       }
     }
+
+    m_ResetModel = false;
 
     return result;
   }
@@ -327,7 +429,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 
     result = null;
 
-    if (m_OnTheFly && (m_Model==null)) {
+    if ((m_OnTheFly && (m_Model == null)) || m_ResetModel) {
       result = setUpModel();
       if (result != null)
 	return result;
