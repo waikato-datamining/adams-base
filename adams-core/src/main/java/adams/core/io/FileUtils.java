@@ -332,12 +332,24 @@ public class FileUtils {
    * @return		true if successfully saved
    */
   public static boolean saveToFile(List<String> content, File file, String encoding) {
-    boolean		result;
+    return (saveToFileMsg(content, file, encoding) == null);
+  }
+
+  /**
+   * Saves the content to the given file.
+   *
+   * @param content	the content to save
+   * @param file	the file to save the content to
+   * @param encoding	the encoding to use, null for default
+   * @return		true if successfully saved
+   */
+  public static String saveToFileMsg(List<String> content, File file, String encoding) {
+    String		result;
     BufferedWriter	writer;
     int			i;
     FileOutputStream	fos;
 
-    result = true;
+    result = null;
 
     fos    = null;
     writer = null;
@@ -354,8 +366,7 @@ public class FileUtils {
       writer.flush();
     }
     catch (Exception e) {
-      result = false;
-      e.printStackTrace();
+      result = "Failed to save to '" + file + "':\n" + Utils.throwableToString(e);
     }
     closeQuietly(writer);
     closeQuietly(fos);
@@ -412,11 +423,26 @@ public class FileUtils {
    * @return		true if writing was successful
    */
   public static boolean writeToFile(String filename, Object obj, boolean append, String encoding) {
-    boolean		result;
-    BufferedOutputStream writer;
-    FileOutputStream	fos;
+    return (writeToFileMsg(filename, obj, append, encoding) == null);
+  }
+
+  /**
+   * Writes the given object to the specified file. The message is either
+   * appended or replaces the current content of the file.
+   *
+   * @param filename	the file to write to
+   * @param obj		the object to write
+   * @param append	whether to append the message or not
+   * @param encoding	the encoding to use, null for default
+   * @return		true if writing was successful
+   */
+  public static String writeToFileMsg(String filename, Object obj, boolean append, String encoding) {
+    String			result;
+    BufferedOutputStream 	writer;
+    FileOutputStream		fos;
     StringBuilder		buffer;
 
+    result = null;
     fos    = null;
     writer = null;
     buffer = new StringBuilder("" + obj);
@@ -429,10 +455,9 @@ public class FileUtils {
       else
 	writer.write(buffer.toString().getBytes());
       writer.flush();
-      result = true;
     }
     catch (Exception e) {
-      result = false;
+      result = "Failed to write to '" + filename + "'\n" + Utils.throwableToString(e);
     }
     closeQuietly(writer);
     closeQuietly(fos);
