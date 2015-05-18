@@ -15,13 +15,13 @@
 
 /**
  * PaintletWithFixedXRange.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.visualization.sequence;
+package adams.gui.visualization.timeseries;
 
+import adams.core.base.BaseDateTime;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.PaintablePanel;
-import adams.gui.visualization.core.plot.HitDetectorSupporter;
 
 import java.awt.Graphics;
 
@@ -32,20 +32,20 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public class PaintletWithFixedXRange
-  extends AbstractXYSequencePaintlet
+  extends AbstractTimeseriesPaintlet
   implements adams.gui.visualization.core.PaintletWithFixedXRange {
 
   /** for serialization. */
   private static final long serialVersionUID = 3270329510617886683L;
 
   /** the minimum of X. */
-  protected double m_MinX;
+  protected BaseDateTime m_MinX;
 
   /** the maximum of X. */
-  protected double m_MaxX;
+  protected BaseDateTime m_MaxX;
 
   /** the actual paintlet to use. */
-  protected XYSequencePaintlet m_Paintlet;
+  protected AbstractTimeseriesPaintlet m_Paintlet;
 
   /**
    * Returns a string describing the object.
@@ -66,11 +66,11 @@ public class PaintletWithFixedXRange
 
     m_OptionManager.add(
 	    "min-x", "minX",
-	    0.0, null, null);
+	    new BaseDateTime(BaseDateTime.INF_PAST));
 
     m_OptionManager.add(
 	    "max-x", "maxX",
-	    1000.0, null, null);
+	    new BaseDateTime(BaseDateTime.INF_FUTURE));
 
     m_OptionManager.add(
 	    "paintlet", "paintlet",
@@ -92,8 +92,8 @@ public class PaintletWithFixedXRange
    *
    * @return		the default paintlet
    */
-  protected XYSequencePaintlet getDefaultPaintlet() {
-    return new LinePaintlet();
+  protected AbstractTimeseriesPaintlet getDefaultPaintlet() {
+    return new TimeseriesPaintlet();
   }
 
   /**
@@ -110,11 +110,24 @@ public class PaintletWithFixedXRange
   }
 
   /**
+   * Returns when this paintlet is to be executed.
+   *
+   * @return		when this paintlet is to be executed
+   */
+  @Override
+  public PaintMoment getPaintMoment() {
+    if (m_Paintlet != null)
+      return m_Paintlet.getPaintMoment();
+    else
+      return PaintMoment.PAINT;
+  }
+
+  /**
    * Sets the minimum of the X range.
    *
    * @param value	the minimum
    */
-  public void setMinX(double value) {
+  public void setMinX(BaseDateTime value) {
     m_MinX = value;
     memberChanged(true);
   }
@@ -124,7 +137,7 @@ public class PaintletWithFixedXRange
    *
    * @return		the minimum
    */
-  public double getMinX() {
+  public BaseDateTime getMinX() {
     return m_MinX;
   }
 
@@ -134,7 +147,7 @@ public class PaintletWithFixedXRange
    * @return		the minimum
    */
   public double getMinimumX() {
-    return m_MinX;
+    return m_MinX.dateValue().getTime();
   }
 
   /**
@@ -152,7 +165,7 @@ public class PaintletWithFixedXRange
    *
    * @param value	the maximum
    */
-  public void setMaxX(double value) {
+  public void setMaxX(BaseDateTime value) {
     m_MaxX = value;
     memberChanged(true);
   }
@@ -162,7 +175,7 @@ public class PaintletWithFixedXRange
    *
    * @return		the maximum
    */
-  public double getMaxX() {
+  public BaseDateTime getMaxX() {
     return m_MaxX;
   }
 
@@ -172,7 +185,7 @@ public class PaintletWithFixedXRange
    * @return		the maximum
    */
   public double getMaximumX() {
-    return m_MaxX;
+    return m_MaxX.dateValue().getTime();
   }
 
   /**
@@ -190,7 +203,7 @@ public class PaintletWithFixedXRange
    *
    * @param value	the paintlet
    */
-  public void setPaintlet(XYSequencePaintlet value) {
+  public void setPaintlet(AbstractTimeseriesPaintlet value) {
     if (m_Paintlet != null)
       m_Paintlet.setPanel(null);
 
@@ -205,7 +218,7 @@ public class PaintletWithFixedXRange
    *
    * @return		the paintlet
    */
-  public XYSequencePaintlet getPaintlet() {
+  public AbstractTimeseriesPaintlet getPaintlet() {
     return m_Paintlet;
   }
 
@@ -228,28 +241,5 @@ public class PaintletWithFixedXRange
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
     m_Paintlet.performPaint(g, moment);
-  }
-
-  /**
-   * Returns a new instance of the hit detector to use.
-   *
-   * @return		the hit detector
-   */
-  @Override
-  public AbstractXYSequencePointHitDetector newHitDetector() {
-    return m_Paintlet.newHitDetector();
-  }
-
-  /**
-   * Returns the hit detector to use for this paintlet.
-   *
-   * @return		the detector
-   */
-  @Override
-  public AbstractXYSequencePointHitDetector getHitDetector() {
-    if (m_Paintlet instanceof HitDetectorSupporter<?>)
-      return ((HitDetectorSupporter<AbstractXYSequencePointHitDetector>) m_Paintlet).getHitDetector();
-    else
-      return m_HitDetector;
   }
 }

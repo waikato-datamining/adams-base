@@ -33,7 +33,7 @@ import java.awt.Graphics;
  */
 public class PaintletWithFixedYRange
   extends AbstractXYSequencePaintlet
-  implements XYSequencePaintletWithFixedYRange {
+  implements adams.gui.visualization.core.PaintletWithFixedYRange {
 
   /** for serialization. */
   private static final long serialVersionUID = 354723429582771889L;

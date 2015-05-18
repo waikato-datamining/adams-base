@@ -15,19 +15,14 @@
 
 /**
  * DefaultTimeseriesYAxisPanelOptions.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.timeseries;
 
-import adams.gui.core.GUIHelper;
-import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.plot.Axis;
-
 /**
  <!-- globalinfo-start -->
- * Encapsulates options for the Y axis in a timeseries plot.<br/>
- * It is possible to fix the range of the Y axis.
- * <p/>
+ * Encapsulates options for the Y axis in a timeseries plot.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -92,21 +87,6 @@ import adams.gui.visualization.core.plot.Axis;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-fixed &lt;boolean&gt; (property: fixed)
- * &nbsp;&nbsp;&nbsp;If enabled, fixed minimum&#47;maximum are used for the axis.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-minimum &lt;double&gt; (property: minimum)
- * &nbsp;&nbsp;&nbsp;The minimum for the axis, if fixed.
- * &nbsp;&nbsp;&nbsp;default: 0.0
- * </pre>
- * 
- * <pre>-maximum &lt;double&gt; (property: maximum)
- * &nbsp;&nbsp;&nbsp;The maximum for the axis, if fixed.
- * &nbsp;&nbsp;&nbsp;default: 1.0
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -118,15 +98,6 @@ public class DefaultTimeseriesYAxisPanelOptions
   /** for serialization. */
   private static final long serialVersionUID = -1774995113138870653L;
 
-  /** whether to fix axis. */
-  protected boolean m_Fixed;
-
-  /** the minimum for the axis. */
-  protected double m_Minimum;
-
-  /** the maximum for the axis. */
-  protected double m_Maximum;
-
   /**
    * Returns a string describing the object.
    *
@@ -135,141 +106,6 @@ public class DefaultTimeseriesYAxisPanelOptions
   @Override
   public String globalInfo() {
     return 
-	"Encapsulates options for the Y axis in a timeseries plot.\n"
-	+ "It is possible to fix the range of the Y axis.";
-  }
-  
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "fixed", "fixed",
-	    false);
-
-    m_OptionManager.add(
-	    "minimum", "minimum",
-	    0.0);
-
-    m_OptionManager.add(
-	    "maximum", "maximum",
-	    1.0);
-  }
-
-  /**
-   * Sets whether to fix the axis.
-   *
-   * @param value 	if true then the axis gets fixed
-   */
-  public void setFixed(boolean value) {
-    m_Fixed = value;
-    reset();
-  }
-
-  /**
-   * Returns whether the axis is fixed.
-   *
-   * @return 		true if the axis is fixed
-   */
-  public boolean getFixed() {
-    return m_Fixed;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String fixedTipText() {
-    return "If enabled, fixed minimum/maximum are used for the axis.";
-  }
-
-  /**
-   * Sets the minimum for the axis (if fixed).
-   *
-   * @param value 	the minimum
-   */
-  public void setMinimum(double value) {
-    m_Minimum = value;
-    reset();
-  }
-
-  /**
-   * Returns the minimum for the axis (if fixed).
-   *
-   * @return 		the minimum
-   */
-  public double getMinimum() {
-    return m_Minimum;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String minimumTipText() {
-    return "The minimum for the axis, if fixed.";
-  }
-
-  /**
-   * Sets the maximum for the axis (if fixed).
-   *
-   * @param value 	the maximum
-   */
-  public void setMaximum(double value) {
-    m_Maximum = value;
-    reset();
-  }
-
-  /**
-   * Returns the maximum for the axis (if fixed).
-   *
-   * @return 		the maximum
-   */
-  public double getMaximum() {
-    return m_Maximum;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String maximumTipText() {
-    return "The maximum for the axis, if fixed.";
-  }
-
-  /**
-   * Applies the options to the specified axis.
-   *
-   * @param plot	the plot panel to update an axis for
-   * @param axis	the axis to configure
-   */
-  @Override
-  public void configure(PlotPanel plot, Axis axis) {
-    Object		parent;
-    TimeseriesPanel	panel;
-    
-    super.configure(plot, axis);
-    
-    parent = GUIHelper.getParent(plot, TimeseriesPanel.class);
-    if (parent != null) {
-      panel = (TimeseriesPanel) parent;
-      if (m_Fixed) {
-	panel.setMinY(m_Minimum);
-	panel.setMaxY(m_Maximum);
-      }
-      else {
-	panel.setMinY(null);
-	panel.setMaxY(null);
-      }
-    }
+	"Encapsulates options for the Y axis in a timeseries plot.";
   }
 }

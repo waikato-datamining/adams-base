@@ -14,33 +14,31 @@
  */
 
 /**
- * XYSequencePaintletWithFixedYRange.java
+ * XYSequencePaintletWithFixedXRange.java
  * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.visualization.sequence;
-
-import adams.gui.visualization.core.Paintlet;
+package adams.gui.visualization.core;
 
 /**
- * Interface for paintlets that use a fixed Y range.
+ * Interface for paintlets that use a fixed X range.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface XYSequencePaintletWithFixedYRange
+public interface PaintletWithFixedXRange
   extends Paintlet {
 
   /**
-   * Returns the minimum to use for the Y range.
+   * Returns the minimum to use for the X range.
    *
    * @return		the minimum
    */
-  public double getMinimumY();
+  public double getMinimumX();
 
   /**
-   * Returns the maximum to use for the Y range.
+   * Returns the maximum to use for the X range.
    *
    * @return		the maximum
    */
-  public double getMaximumY();
+  public double getMaximumX();
 }

@@ -20,33 +20,8 @@
 
 package adams.gui.visualization.timeseries;
 
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JColorChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
 import adams.core.Properties;
 import adams.core.Range;
-import adams.core.base.BaseDateTime;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -77,6 +52,7 @@ import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.CoordinatesPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
@@ -84,6 +60,28 @@ import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import gnu.trove.list.array.TIntArrayList;
+
+import javax.swing.JColorChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Special panel for displaying the spectral data.
@@ -94,7 +92,7 @@ import adams.gui.visualization.statistics.InformativeStatisticFactory;
 public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainerManager<C>, C extends TimeseriesContainer>
   extends DataContainerPanelWithSidePanel<T, M>
   implements PaintListener, ContainerListPopupMenuSupplier<M,C>,
-             PopupMenuCustomizer, TipTextCustomizer {
+  PopupMenuCustomizer, TipTextCustomizer {
 
   /** for serialization. */
   private static final long serialVersionUID = -9059718549932104312L;
@@ -106,7 +104,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   protected CoordinatesPaintlet m_CoordinatesPaintlet;
 
   /** paintlet for drawing the timeseries. */
-  protected TimeseriesPaintlet m_TimeseriesPaintlet;
+  protected AbstractTimeseriesPaintlet m_TimeseriesPaintlet;
 
   /** paintlet for drawing the periodicity background. */
   protected PeriodicityPaintlet m_PeriodicityPaintlet;
@@ -128,18 +126,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /** the export dialog. */
   protected TimeseriesExportDialog m_ExportDialog;
-
-  /** the minimum Y to use. */
-  protected Double m_MinY;
-
-  /** the maximum Y to use. */
-  protected Double m_MaxY;
-
-  /** the minimum X to use. */
-  protected BaseDateTime m_MinX;
-
-  /** the maximum X to use. */
-  protected BaseDateTime m_MaxX;
 
   /**
    * Initializes the panel without title.
@@ -165,10 +151,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     super.initialize();
 
     m_AdjustToVisibleData = true;
-    m_MinY                = null;
-    m_MaxY                = null;
-    m_MinX                = null;
-    m_MaxX                = null;
   }
 
   /**
@@ -197,7 +179,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		the paintlet
    */
   @Override
-  public TimeseriesPaintlet getContainerPaintlet() {
+  public AbstractTimeseriesPaintlet getContainerPaintlet() {
     return m_TimeseriesPaintlet;
   }
 
@@ -269,7 +251,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_TimeseriesPaintlet = new TimeseriesPaintlet();
     m_TimeseriesPaintlet.setStrokeThickness(props.getDouble("Plot.StrokeThickness", 1.0).floatValue());
     m_TimeseriesPaintlet.setPanel(this);
-    m_TimeseriesPaintlet.setAntiAliasingEnabled(props.getBoolean("Plot.AntiAliasing", true));
+    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter)
+      ((AntiAliasingSupporter) m_TimeseriesPaintlet).setAntiAliasingEnabled(props.getBoolean("Plot.AntiAliasing", true));
     m_PeriodicityPaintlet = new PeriodicityPaintlet();
     m_PeriodicityPaintlet.setPanel(this);
     m_PeriodicityPaintlet.setPeriodicity(PeriodicityType.valueOf(props.getProperty("Plot.Periodicity", PeriodicityType.NONE.toString())));
@@ -289,9 +272,9 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     try {
       getContainerManager().setColorProvider(
-	  (AbstractColorProvider) OptionUtils.forAnyCommandLine(
-	      AbstractColorProvider.class,
-	      props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
+	(AbstractColorProvider) OptionUtils.forAnyCommandLine(
+	  AbstractColorProvider.class,
+	  props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
     }
     catch (Exception e) {
       System.err.println(getClass().getName() + " - Failed to set the color provider:");
@@ -307,11 +290,23 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
+   * Sets the paintlet for painting the timeseries.
+   *
+   * @param paintlet		the paintlet
+   */
+  public void setTimeseriesPaintlet(AbstractTimeseriesPaintlet paintlet) {
+    removePaintlet(m_TimeseriesPaintlet);
+    m_TimeseriesPaintlet = paintlet;
+    m_TimeseriesPaintlet.setPanel(this);
+    addPaintlet(m_TimeseriesPaintlet);
+  }
+
+  /**
    * Returns the paintlet for painting the timeseries.
    *
    * @return		the paintlet
    */
-  public TimeseriesPaintlet getTimeseriesPaintlet() {
+  public AbstractTimeseriesPaintlet getTimeseriesPaintlet() {
     return m_TimeseriesPaintlet;
   }
 
@@ -364,82 +359,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
-   * Sets the fixed minimum for the Y axis.
-   *
-   * @param value	the minimum, null to automatically calculate
-   */
-  public void setMinY(Double value) {
-    m_MinY = value;
-    update();
-  }
-
-  /**
-   * Returns the fixed minimum for the Y axis.
-   *
-   * @return		the minimum, null if automatically calculated
-   */
-  public Double getMinY() {
-    return m_MinY;
-  }
-
-  /**
-   * Sets the fixed maximum for the Y axis.
-   *
-   * @param value	the maximum, null to automatically calculate
-   */
-  public void setMaxY(Double value) {
-    m_MaxY = value;
-    update();
-  }
-
-  /**
-   * Returns the fixed maximum for the Y axis.
-   *
-   * @return		the maximum, null if automatically calculated
-   */
-  public Double getMaxY() {
-    return m_MaxY;
-  }
-
-  /**
-   * Sets the fixed minimum for the X axis.
-   *
-   * @param value	the minimum, null to automatically calculate
-   */
-  public void setMinX(BaseDateTime value) {
-    m_MinX = value;
-    update();
-  }
-
-  /**
-   * Returns the fixed minimum for the X axis.
-   *
-   * @return		the minimum, null if automatically calculated
-   */
-  public BaseDateTime getMinX() {
-    return m_MinX;
-  }
-
-  /**
-   * Sets the fixed maximum for the X axis.
-   *
-   * @param value	the maximum, null to automatically calculate
-   */
-  public void setMaxX(BaseDateTime value) {
-    m_MaxX = value;
-    update();
-  }
-
-  /**
-   * Returns the fixed maximum for the X axis.
-   *
-   * @return		the maximum, null if automatically calculated
-   */
-  public BaseDateTime getMaxX() {
-    return m_MaxX;
-  }
-
-  /**
    * Returns true if the paintlets can be executed.
    *
    * @param g		the graphics context
@@ -456,30 +375,29 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   @Override
   public void prepareUpdate() {
     List<TimeseriesPoint>	points;
-    double 				minX;
-    double 				maxX;
-    double 				minY;
-    double 				maxY;
-    int					i;
+    double 			minX;
+    double 			maxX;
+    double 			minY;
+    double 			maxY;
+    int				i;
+    boolean			determineYRange;
+    boolean			determineXRange;
 
-    // X
-    if (m_MinX != null)
-      minX = m_MinX.dateValue().getTime();
-    else
-      minX = Double.MAX_VALUE;
-    if (m_MaxX != null)
-      maxX = m_MaxX.dateValue().getTime();
-    else
-      maxX = -Double.MAX_VALUE;
-    // Y
-    if (m_MinY != null)
-      minY = m_MinY;
-    else
-      minY = Double.MAX_VALUE;
-    if (m_MaxY != null)
-      maxY = m_MaxY;
-    else
-      maxY = -Double.MAX_VALUE;
+    determineYRange = !(m_TimeseriesPaintlet instanceof adams.gui.visualization.core.PaintletWithFixedYRange);
+    determineXRange = !(m_TimeseriesPaintlet instanceof PaintletWithFixedXRange);
+    minY            = Double.MAX_VALUE;
+    maxY            = -Double.MAX_VALUE;
+    minX            = Double.MAX_VALUE;
+    maxX            = -Double.MAX_VALUE;
+
+    if (!determineYRange) {
+      minY = ((adams.gui.visualization.core.PaintletWithFixedYRange) m_TimeseriesPaintlet).getMinimumY();
+      maxY = ((adams.gui.visualization.core.PaintletWithFixedYRange) m_TimeseriesPaintlet).getMaximumY();
+    }
+    if (!determineXRange) {
+      minX = ((PaintletWithFixedXRange) m_TimeseriesPaintlet).getMinimumX();
+      maxX = ((PaintletWithFixedXRange) m_TimeseriesPaintlet).getMaximumX();
+    }
 
     for (i = 0; i < getContainerManager().count(); i++) {
       if (m_AdjustToVisibleData) {
@@ -492,15 +410,13 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	continue;
 
       // determine min/max
-      if (m_MinX == null)
+      if (determineXRange) {
 	minX = Math.min(minX, points.get(0).getTimestamp().getTime());
-      if (m_MaxX == null)
 	maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
-      for (TimeseriesPoint point: points) {
-	if (m_MaxY == null)
-	  maxY = Math.max(maxY, point.getValue());
-	if (m_MinY == null)
-	  minY = Math.min(minY, point.getValue());
+      }
+      if (determineYRange) {
+	maxY = Math.max(maxY, getContainerManager().get(i).getData().getMaxValue().getValue());
+	minY = Math.min(minY, getContainerManager().get(i).getData().getMinValue().getValue());
       }
     }
 
@@ -554,14 +470,14 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	if (invisible.size() > 0) {
 	  range.setIndices(invisible.toArray());
 	  getScriptingEngine().add(
-	      TimeseriesPanel.this,
-	      Invisible.ACTION + " " + range.getRange());
+	    TimeseriesPanel.this,
+	    Invisible.ACTION + " " + range.getRange());
 	}
 	if (visible.size() > 0) {
 	  range.setIndices(visible.toArray());
 	  getScriptingEngine().add(
-	      TimeseriesPanel.this,
-	      Visible.ACTION + " " + range.getRange());
+	    TimeseriesPanel.this,
+	    Visible.ACTION + " " + range.getRange());
 	}
       }
     });
@@ -581,8 +497,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	  range.setMax(getContainerManager().count());
 	  range.setIndices(list.toArray());
 	  getScriptingEngine().add(
-	      TimeseriesPanel.this,
-	      Visible.ACTION + " " + range.getRange());
+	    TimeseriesPanel.this,
+	    Visible.ACTION + " " + range.getRange());
 	}
       }
     });
@@ -602,8 +518,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	  range.setMax(getContainerManager().count());
 	  range.setIndices(list.toArray());
 	  getScriptingEngine().add(
-	      TimeseriesPanel.this,
-	      Invisible.ACTION + " " + range.getRange());
+	    TimeseriesPanel.this,
+	    Invisible.ACTION + " " + range.getRange());
 	}
       }
     });
@@ -616,15 +532,15 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 	Color c = null;
 	if (indices.length == 1) {
 	  c = JColorChooser.showDialog(
-	      table,
-	      "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
-	      getContainerManager().get(indices[0]).getColor());
+	    table,
+	    "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
+	    getContainerManager().get(indices[0]).getColor());
 	}
 	else {
 	  c = JColorChooser.showDialog(
-	      table,
-	      "Choose color",
-	      getContainerManager().get(row).getColor());
+	    table,
+	    "Choose color",
+	    getContainerManager().get(row).getColor());
 	}
 	if (c != null) {
 	  for (int index: indices)
@@ -719,19 +635,22 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     menu.addSeparator();
 
-    item = new JMenuItem();
-    if (!getTimeseriesPaintlet().isMarkersDisabled())
-      item.setText("Disable markers");
-    else
-      item.setText("Enable markers");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	getTimeseriesPaintlet().setMarkersDisabled(!getTimeseriesPaintlet().isMarkersDisabled());
-	repaint();
-      }
-    });
-    menu.add(item);
+    if (m_TimeseriesPaintlet instanceof TimeseriesPaintlet) {
+      item = new JMenuItem();
+      if (!((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled())
+	item.setText("Disable markers");
+      else
+	item.setText("Enable markers");
+      item.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  ((TimeseriesPaintlet) getTimeseriesPaintlet()).setMarkersDisabled(
+	    !((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled());
+	  repaint();
+	}
+      });
+      menu.add(item);
+    }
 
     item = new JMenuItem();
     if (isSidePanelVisible())
@@ -928,9 +847,11 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param value	if true then anti-aliasing is used
    */
   public void setAntiAliasingEnabled(boolean value) {
-    m_TimeseriesPaintlet.setAntiAliasingEnabled(value);
-    if (m_PanelZoomOverview.getContainerPaintlet() instanceof AntiAliasingSupporter)
-      ((AntiAliasingSupporter) m_PanelZoomOverview.getContainerPaintlet()).setAntiAliasingEnabled(value);
+    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter) {
+      ((AntiAliasingSupporter) m_TimeseriesPaintlet).setAntiAliasingEnabled(value);
+      if (m_PanelZoomOverview.getContainerPaintlet() instanceof AntiAliasingSupporter)
+	((AntiAliasingSupporter) m_PanelZoomOverview.getContainerPaintlet()).setAntiAliasingEnabled(value);
+    }
   }
 
   /**
@@ -939,7 +860,10 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		true if anti-aliasing is used
    */
   public boolean isAntiAliasingEnabled() {
-    return m_TimeseriesPaintlet.isAntiAliasingEnabled();
+    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter)
+      return ((AntiAliasingSupporter) m_TimeseriesPaintlet).isAntiAliasingEnabled();
+    else
+      return false;
   }
 
   /**
@@ -970,14 +894,14 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     result = tiptext;
     event  = new MouseEvent(
-			getPlot().getContent(),
-			MouseEvent.MOUSE_MOVED,
-			new Date().getTime(),
-			0,
-			(int) mouse.getX(),
-			(int) mouse.getY(),
-			0,
-			false);
+      getPlot().getContent(),
+      MouseEvent.MOUSE_MOVED,
+      new Date().getTime(),
+      0,
+      (int) mouse.getX(),
+      (int) mouse.getY(),
+      0,
+      false);
 
     hit = (String) m_TimeseriesPointHitDetector.detect(event);
     if (hit != null)

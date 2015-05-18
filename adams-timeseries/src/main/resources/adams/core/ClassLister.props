@@ -31,6 +31,10 @@ adams.flow.transformer.timeseriessplit.AbstractTimeseriesSplitter=\
 adams.gui.visualization.core.Paintlet=\
   adams.gui.visualization.timeseries
 
+# the paintlets
+adams.gui.visualization.timeseries.AbstractTimeseriesPaintlet=\
+  adams.gui.visualization.timeseries
+
 # the axis panel options for timeseries (x axis)
 adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions=\
   adams.gui.visualization.timeseries

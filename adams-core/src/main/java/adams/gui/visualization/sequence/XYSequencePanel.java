@@ -53,6 +53,8 @@ import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
+import adams.gui.visualization.core.PaintletWithFixedXRange;
+import adams.gui.visualization.core.PaintletWithFixedYRange;
 import adams.gui.visualization.core.axis.FixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
@@ -347,8 +349,8 @@ public class XYSequencePanel
     double[]			keys;
     List<String>		labels;
 
-    determineYRange = !(m_XYSequencePaintlet instanceof XYSequencePaintletWithFixedYRange);
-    determineXRange = !(m_XYSequencePaintlet instanceof XYSequencePaintletWithFixedXRange);
+    determineYRange = !(m_XYSequencePaintlet instanceof PaintletWithFixedYRange);
+    determineXRange = !(m_XYSequencePaintlet instanceof PaintletWithFixedXRange);
     isFixedX        = false;
     isFixedY        = false;
     minY            = Double.MAX_VALUE;
@@ -393,12 +395,12 @@ public class XYSequencePanel
     }
 
     if (!determineYRange && !isFixedY) {
-      minY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMinimumY();
-      maxY = ((XYSequencePaintletWithFixedYRange) m_XYSequencePaintlet).getMaximumY();
+      minY = ((PaintletWithFixedYRange) m_XYSequencePaintlet).getMinimumY();
+      maxY = ((PaintletWithFixedYRange) m_XYSequencePaintlet).getMaximumY();
     }
     if (!determineXRange && !isFixedX) {
-      minX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMinimumX();
-      maxX = ((XYSequencePaintletWithFixedXRange) m_XYSequencePaintlet).getMaximumX();
+      minX = ((PaintletWithFixedXRange) m_XYSequencePaintlet).getMinimumX();
+      maxX = ((PaintletWithFixedXRange) m_XYSequencePaintlet).getMaximumX();
     }
 
     if (determineXRange || determineYRange) {
@@ -520,7 +522,7 @@ public class XYSequencePanel
 	update();
       }
     });
-    if (!(m_XYSequencePaintlet instanceof XYSequencePaintletWithFixedYRange))
+    if (!(m_XYSequencePaintlet instanceof PaintletWithFixedYRange))
       menu.add(item);
 
     menu.addSeparator();

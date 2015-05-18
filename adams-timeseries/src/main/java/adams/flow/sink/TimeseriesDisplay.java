@@ -34,11 +34,13 @@ import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.timeseries.AbstractTimeseriesPaintlet;
 import adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions;
 import adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions;
 import adams.gui.visualization.timeseries.TimeseriesContainer;
 import adams.gui.visualization.timeseries.TimeseriesContainerManager;
 import adams.gui.visualization.timeseries.TimeseriesExplorer;
+import adams.gui.visualization.timeseries.TimeseriesPaintlet;
 import adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions;
 import adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions;
 
@@ -50,14 +52,14 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Actor that displays timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -88,9 +90,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -123,6 +136,11 @@ import java.util.List;
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
+ * </pre>
+ * 
+ * <pre>-paintlet &lt;adams.gui.visualization.timeseries.AbstractTimeseriesPaintlet&gt; (property: paintlet)
+ * &nbsp;&nbsp;&nbsp;The paintlet to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.TimeseriesPaintlet
  * </pre>
  * 
  * <pre>-axis-x &lt;adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions&gt; (property: axisX)
@@ -187,6 +205,7 @@ public class TimeseriesDisplay
       super.initGUI();
       setLayout(new BorderLayout());
       m_Panel = new TimeseriesExplorer();
+      m_Panel.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy());
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setAllowRemoval(false);
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setReloadable(false);
       ((TimeseriesContainerManager) m_Panel.getContainerManager()).setColorProvider(m_ColorProvider.shallowCopy());
@@ -248,6 +267,9 @@ public class TimeseriesDisplay
   /** for serialization. */
   private static final long serialVersionUID = 2505818295695863125L;
 
+  /** the paintlet to use. */
+  protected AbstractTimeseriesPaintlet m_Paintlet;
+
   /** the options for the X axis. */
   protected TimeseriesXAxisPanelOptions m_AxisX;
 
@@ -282,6 +304,10 @@ public class TimeseriesDisplay
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+	    "paintlet", "paintlet",
+	    getDefaultPaintlet());
 
     m_OptionManager.add(
 	    "axis-x", "axisX",
@@ -326,6 +352,15 @@ public class TimeseriesDisplay
   @Override
   protected int getDefaultHeight() {
     return 600;
+  }
+
+  /**
+   * Returns the default paintlet.
+   *
+   * @return		the default paintlet
+   */
+  protected AbstractTimeseriesPaintlet getDefaultPaintlet() {
+    return new TimeseriesPaintlet();
   }
 
   /**
@@ -376,6 +411,35 @@ public class TimeseriesDisplay
     result.setTickGenerator(tick);
 
     return result;
+  }
+
+  /**
+   * Sets the paintlet to use.
+   *
+   * @param value 	the paintlet
+   */
+  public void setPaintlet(AbstractTimeseriesPaintlet value) {
+    m_Paintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the paintlet in use.
+   *
+   * @return 		the paintlet
+   */
+  public AbstractTimeseriesPaintlet getPaintlet() {
+    return m_Paintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String paintletTipText() {
+    return "The paintlet to use.";
   }
 
   /**
@@ -572,6 +636,7 @@ public class TimeseriesDisplay
     Paintlet			overlay;
 
     result = new TimeseriesExplorer();
+    result.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy());
     ((TimeseriesContainerManager) result.getContainerManager()).setAllowRemoval(false);
     ((TimeseriesContainerManager) result.getContainerManager()).setReloadable(false);
     ((TimeseriesContainerManager) result.getContainerManager()).setColorProvider(m_ColorProvider.shallowCopy());

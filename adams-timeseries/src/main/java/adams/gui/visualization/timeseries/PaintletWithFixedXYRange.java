@@ -15,11 +15,11 @@
 
 /**
  * PaintletWithFixedXYRange.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.visualization.sequence;
+package adams.gui.visualization.timeseries;
 
-import adams.gui.visualization.core.PaintletWithFixedXRange;
+import adams.core.base.BaseDateTime;
 
 /**
  * A wrapper for XY-sequence paintlets, in order to use fixed X and Y ranges.
@@ -29,16 +29,16 @@ import adams.gui.visualization.core.PaintletWithFixedXRange;
  */
 public class PaintletWithFixedXYRange
   extends PaintletWithFixedYRange
-  implements PaintletWithFixedXRange {
+  implements adams.gui.visualization.core.PaintletWithFixedXRange {
 
   /** for serialization. */
   private static final long serialVersionUID = -7452372971179139015L;
 
   /** the minimum of Y. */
-  protected double m_MinX;
+  protected BaseDateTime m_MinX;
 
   /** the maximum of Y. */
-  protected double m_MaxX;
+  protected BaseDateTime m_MaxX;
 
   /**
    * Returns a string describing the object.
@@ -59,31 +59,11 @@ public class PaintletWithFixedXYRange
 
     m_OptionManager.add(
 	    "min-x", "minX",
-	    0.0, null, null);
+	    new BaseDateTime(BaseDateTime.INF_PAST));
 
     m_OptionManager.add(
 	    "max-x", "maxX",
-	    1000.0, null, null);
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    setPaintlet(getDefaultPaintlet());
-
-    super.initialize();
-  }
-
-  /**
-   * Returns the default paintlet to use.
-   *
-   * @return		the default paintlet
-   */
-  @Override
-  protected AbstractXYSequencePaintlet getDefaultPaintlet() {
-    return new DotPaintlet();
+	    new BaseDateTime(BaseDateTime.INF_FUTURE));
   }
 
   /**
@@ -91,7 +71,7 @@ public class PaintletWithFixedXYRange
    *
    * @param value	the minimum
    */
-  public void setMinX(double value) {
+  public void setMinX(BaseDateTime value) {
     m_MinX = value;
     memberChanged(true);
   }
@@ -101,7 +81,7 @@ public class PaintletWithFixedXYRange
    *
    * @return		the minimum
    */
-  public double getMinX() {
+  public BaseDateTime getMinX() {
     return m_MinX;
   }
 
@@ -111,7 +91,7 @@ public class PaintletWithFixedXYRange
    * @return		the minimum
    */
   public double getMinimumX() {
-    return m_MinX;
+    return m_MinX.dateValue().getTime();
   }
 
   /**
@@ -129,7 +109,7 @@ public class PaintletWithFixedXYRange
    *
    * @param value	the maximum
    */
-  public void setMaxX(double value) {
+  public void setMaxX(BaseDateTime value) {
     m_MaxX = value;
     memberChanged(true);
   }
@@ -139,7 +119,7 @@ public class PaintletWithFixedXYRange
    *
    * @return		the maximum
    */
-  public double getMaxX() {
+  public BaseDateTime getMaxX() {
     return m_MaxX;
   }
 
@@ -149,7 +129,7 @@ public class PaintletWithFixedXYRange
    * @return		the maximum
    */
   public double getMaximumX() {
-    return m_MaxX;
+    return m_MaxX.dateValue().getTime();
   }
 
   /**
