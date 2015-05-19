@@ -26,16 +26,28 @@ import java.io.File;
 
 /**
  * Functionality related to temporary directory and temporary files.
+ * <br>
+ * The temp directory can be overridden using the {@link #PROPERTY_TMPDIR}
+ * property.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class TempUtils {
 
+  /** property indicating the temp directory to use. */
+  public final static String PROPERTY_TMPDIR = "adams.io.tmpdir";
+
   /** the counter for temp file names. */
   protected static long m_TempFileCounter;
   static {
     m_TempFileCounter = 0;
+  }
+
+  /** the temporary directory. */
+  protected static String m_TempDir;
+  static {
+    m_TempDir = null;
   }
 
   /**
@@ -95,8 +107,29 @@ public class TempUtils {
    *
    * @return	the temp directory
    */
-  public static String getTempDirectoryStr() {
-    return System.getProperty("java.io.tmpdir");
+  public static synchronized String getTempDirectoryStr() {
+    String dir;
+    File	file;
+
+    if (m_TempDir == null) {
+      dir = System.getProperty(PROPERTY_TMPDIR);
+      if (dir == null) {
+	dir = System.getProperty("java.io.tmpdir");
+      }
+      else {
+	file = new File(dir);
+	if (!file.exists()) {
+	  if (!file.mkdirs()) {
+	    dir = System.getProperty("java.io.tmpdir");
+	    System.err.println(
+	      "Failed to create temp directory '" + file + "', reverting back to system's default: " + dir);
+	  }
+	}
+      }
+      m_TempDir = dir;
+    }
+
+    return m_TempDir;
   }
 
   /**
