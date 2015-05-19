@@ -157,7 +157,7 @@ public class SplitFileTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger16 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger16.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.AbstractActor[] actors17 = new adams.flow.core.AbstractActor[3];
 
       // Flow.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables18 = new adams.flow.source.CombineVariables();
@@ -165,13 +165,16 @@ public class SplitFileTest
       combinevariables18.setExpression((adams.core.base.BaseText) argOption.valueOf("@{file}: @{size}"));
       actors17[0] = combinevariables18;
 
+      BaseName bn = new BaseName();
+      actors17[1] = bn;
+
       // Flow.Trigger.DumpFile
       adams.flow.sink.DumpFile dumpfile20 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) dumpfile20.getOptionManager().findByProperty("outputFile");
       dumpfile20.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
       dumpfile20.setAppend(true);
 
-      actors17[1] = dumpfile20;
+      actors17[2] = dumpfile20;
       trigger16.setActors(actors17);
 
       actors1[6] = trigger16;
