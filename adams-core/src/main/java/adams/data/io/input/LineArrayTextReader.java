@@ -96,7 +96,7 @@ public class LineArrayTextReader
   /**
    * Returns the current chunk size.
    *
-   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   * @return	the size of the chunks, &lt; 1 denotes infinity
    */
   public int getChunkSize() {
     return m_ChunkSize;
