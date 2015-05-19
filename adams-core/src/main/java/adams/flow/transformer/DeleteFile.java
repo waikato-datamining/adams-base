@@ -20,13 +20,13 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -188,6 +188,8 @@ public class DeleteFile
     File	file;
     String	type;
 
+    result = null;
+
     if (m_InputToken.getPayload() instanceof File)
       file = new PlaceholderFile((File) m_InputToken.getPayload());
     else
@@ -203,13 +205,13 @@ public class DeleteFile
 	    result = "Failed to delete " + type + ": " + file;
 	}
       }
-      result = null;
     }
     catch (Exception e) {
       result = handleException("Problem deleting " + type + " '" + file + "': ", e);
     }
 
-    m_OutputToken = new Token(m_InputToken.getPayload());
+    if (result == null)
+      m_OutputToken = new Token(m_InputToken.getPayload());
 
     return result;
   }
