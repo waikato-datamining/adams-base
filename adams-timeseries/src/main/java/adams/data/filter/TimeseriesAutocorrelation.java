@@ -60,6 +60,16 @@ public class TimeseriesAutocorrelation
   private static final long serialVersionUID = -6722542153654514316L;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Performs autocorrelation on the timeseries.";
+  }
+
+  /**
    * Returns the X value of the DataPoint.
    *
    * @param point the point to get the X value from

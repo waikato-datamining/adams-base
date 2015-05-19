@@ -43,16 +43,6 @@ public abstract class AbstractAutocorrelation<T extends DataContainer>
   protected AbstractAutoCorrelation m_Algorithm;
 
   /**
-   * Returns a string describing the object.
-   *
-   * @return a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return "Performs autocorrelation on the timeseries.";
-  }
-
-  /**
    * Adds options to the internal list of options.
    */
   @Override
