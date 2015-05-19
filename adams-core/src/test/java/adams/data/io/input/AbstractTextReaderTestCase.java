@@ -27,7 +27,6 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.lang.reflect.Array;
@@ -80,14 +79,8 @@ public abstract class AbstractTextReaderTestCase
     fis    = null;
     m_TestHelper.copyResourceToTmp(filename);
     try {
-      if (scheme.useReader()) {
-	reader = new FileReader(new TmpFile(filename).getAbsolutePath());
-	scheme.initialize(new BufferedReader(reader));
-      }
-      else {
-	fis = new FileInputStream(new TmpFile(filename).getAbsolutePath());
-	scheme.initialize(fis);
-      }
+      fis = new FileInputStream(new TmpFile(filename).getAbsolutePath());
+      scheme.initialize(fis);
       while (scheme.hasNext()) {
 	read = scheme.next();
 	if (read != null) {

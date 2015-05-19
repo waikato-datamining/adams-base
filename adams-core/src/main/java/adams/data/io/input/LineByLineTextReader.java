@@ -15,16 +15,19 @@
 
 /**
  * LineByLineTextReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
  * Reads the text data, line by line. Allows the reading of very large files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -33,16 +36,25 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading the file, use empty string for 
+ * &nbsp;&nbsp;&nbsp;default.
+ * &nbsp;&nbsp;&nbsp;default: Default
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class LineByLineTextReader
-  extends AbstractTextReader<String> {
+  extends AbstractTextReaderWithEncoding<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -2921085514028198744L;
+
+  /** the scanner in use. */
+  protected transient Scanner m_Scanner;
 
   /**
    * Returns a string describing the object.
@@ -65,6 +77,16 @@ public class LineByLineTextReader
   }
 
   /**
+   * Initializes the input stream to read the content from.
+   *
+   * @param stream	the input stream to use
+   */
+  public void initialize(InputStream stream) {
+    super.initialize(stream);
+    m_Scanner = new Scanner(m_Stream, m_Encoding.charsetValue().name());
+  }
+
+  /**
    * Returns the next lot of data.
    * 
    * @return		the next amount of data, null if failed to read
@@ -76,16 +98,23 @@ public class LineByLineTextReader
     result = null;
     
     try {
-      result = m_Reader.readLine();
-      if (result == null)
-	m_Reader = null;
+      result = m_Scanner.nextLine();
+    }
+    catch (NoSuchElementException e) {
+      // nothing left in stream
+      m_Scanner.close();
+      m_Scanner = null;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to read from reader!", e);
-      m_Reader = null;
-      result   = null;
+      getLogger().log(Level.SEVERE, "Failed to read from scanner!", e);
+      m_Scanner.close();
+      m_Scanner = null;
+      result    = null;
     }
-    
+
+    if (m_Scanner == null)
+      m_Stream = null;
+
     return result;
   }
 }

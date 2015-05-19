@@ -15,7 +15,7 @@
 
 /**
  * AbstractCompressedTextReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -28,7 +28,7 @@ import adams.core.QuickInfoHelper;
  * @version $Revision$
  */
 public abstract class AbstractCompressedTextReader
-  extends AbstractTextReaderWithEncoding {
+  extends AbstractTextReader {
   
   /** for serialization. */
   private static final long serialVersionUID = -7256819627812267170L;

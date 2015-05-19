@@ -15,25 +15,34 @@
 
 /**
  * LineArrayTextReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Reads the text in as array of strings (each line is an array element).<br/>
+ * Reads the text in as array of strings (each line is an array element).<br>
  * For large files, the data can be 'chunked' (ie outputting it in blocks).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading the file, use empty string for 
+ * &nbsp;&nbsp;&nbsp;default.
+ * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
  * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
@@ -49,13 +58,16 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class LineArrayTextReader
-  extends AbstractTextReader<String[]> {
+  extends AbstractTextReaderWithEncoding<String[]> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4772416995579481937L;
 
   /** the chunk size to use. */
   protected int m_ChunkSize;
+
+  /** the scanner in use. */
+  protected transient Scanner m_Scanner;
 
   /**
    * Returns a string describing the object.
@@ -123,6 +135,16 @@ public class LineArrayTextReader
   }
 
   /**
+   * Initializes the input stream to read the content from.
+   *
+   * @param stream	the input stream to use
+   */
+  public void initialize(InputStream stream) {
+    super.initialize(stream);
+    m_Scanner = new Scanner(m_Stream, m_Encoding.charsetValue().name());
+  }
+
+  /**
    * Returns the next lot of data.
    * 
    * @return		the next amount of data, null if failed to read
@@ -135,22 +157,33 @@ public class LineArrayTextReader
     result = new ArrayList<String>();
     
     try {
-      while ((line = m_Reader.readLine()) != null) {
+      while ((line = m_Scanner.nextLine()) != null) {
 	result.add(line);
 	if (m_ChunkSize > -1) {
 	  if (result.size() >= m_ChunkSize)
 	    break;
 	}
       }
-      if (line == null)
-	m_Reader = null;
-      if (m_ChunkSize == -1)
-	m_Reader = null;
+      if (m_ChunkSize == -1) {
+	m_Scanner.close();
+	m_Scanner = null;
+      }
+    }
+    catch (NoSuchElementException e) {
+      m_Scanner.close();
+      m_Scanner = null;
+      // nothing left in stream
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to read from reader!", e);
+      getLogger().log(Level.SEVERE, "Failed to read from scanner!", e);
+      m_Scanner.close();
+      m_Scanner = null;
+      m_Stream  = null;
       return null;
     }
+
+    if (m_Scanner == null)
+      m_Stream = null;
     
     return result.toArray(new String[result.size()]);
   }

@@ -15,21 +15,18 @@
 
 /**
  * LzfTextFileReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
 import com.ning.compress.lzf.LZFInputStream;
+
+import java.io.InputStream;
 
 /**
  <!-- globalinfo-start -->
  * Reads content from LZF compressed text files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -41,12 +38,6 @@ import com.ning.compress.lzf.LZFInputStream;
  * <pre>-text-reader &lt;adams.data.io.input.AbstractTextReader&gt; (property: textReader)
  * &nbsp;&nbsp;&nbsp;The reader to use for reading the decompressed content.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.LineArrayTextReader
- * </pre>
- * 
- * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
- * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading the file, use empty string for 
- * &nbsp;&nbsp;&nbsp;default.
- * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
  <!-- options-end -->
@@ -74,16 +65,6 @@ public class LzfTextFileReader
   }
 
   /**
-   * Whether to use a {@link Reader} or an {@link InputStream}.
-   * 
-   * @return		true if using reader
-   */
-  @Override
-  public boolean useReader() {
-    return false;
-  }
-  
-  /**
    * Initializes the input stream to read the content from.
    * 
    * @param stream	the input stream to use
@@ -95,7 +76,7 @@ public class LzfTextFileReader
     try {
       lis = new LZFInputStream(stream);
       super.initialize(lis);
-      m_TextReader.initialize(new BufferedReader(new InputStreamReader(lis, m_Encoding.charsetValue())));
+      m_TextReader.initialize(lis);
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to initialize lzf stream!", e);

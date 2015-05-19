@@ -21,8 +21,6 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractTextReader;
@@ -30,26 +28,24 @@ import adams.data.io.input.LineArrayTextReader;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 
 /**
  <!-- globalinfo-start -->
- * Reads a text file and forwards the content.<br/>
+ * Reads a text file and forwards the content.<br>
  * This actor takes the file to read as input.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -63,7 +59,7 @@ import java.io.InputStreamReader;
  * &nbsp;&nbsp;&nbsp;default: TextFileReader
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,15 +76,14 @@ import java.io.InputStreamReader;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-reader &lt;adams.data.io.input.AbstractTextReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The reader to use for reading the content of the text file.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.LineArrayTextReader
- * </pre>
- * 
- * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
- * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading the file, use empty string for 
- * &nbsp;&nbsp;&nbsp;default.
- * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
  <!-- options-end -->
@@ -97,8 +92,7 @@ import java.io.InputStreamReader;
  * @version $Revision$
  */
 public class TextFileReader
-  extends AbstractTransformer 
-  implements FileEncodingSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -184602726110144511L;
@@ -108,9 +102,6 @@ public class TextFileReader
 
   /** the file input stream in use. */
   protected transient FileInputStream m_Stream;
-  
-  /** the encoding to use. */
-  protected BaseCharset m_Encoding;
 
   /**
    * Returns a string describing the object.
@@ -134,10 +125,6 @@ public class TextFileReader
     m_OptionManager.add(
 	    "reader", "reader",
 	    new LineArrayTextReader());
-
-    m_OptionManager.add(
-	    "encoding", "encoding",
-	    new BaseCharset());
   }
 
   /**
@@ -159,35 +146,6 @@ public class TextFileReader
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "reader", m_Reader);
-  }
-  
-  /**
-   * Sets the encoding to use.
-   * 
-   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
-   */
-  public void setEncoding(BaseCharset value) {
-    m_Encoding = value;
-    reset();
-  }
-  
-  /**
-   * Returns the encoding to use.
-   * 
-   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
-   */
-  public BaseCharset getEncoding() {
-    return m_Encoding;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String encodingTipText() {
-    return "The type of encoding to use when reading the file, use empty string for default.";
   }
 
   /**
@@ -265,10 +223,7 @@ public class TextFileReader
     m_Stream = null;
     try {
       m_Stream = new FileInputStream(file.getAbsolutePath());
-      if (m_Reader.useReader())
-	m_Reader.initialize(new BufferedReader(new InputStreamReader(m_Stream, m_Encoding.charsetValue())));
-      else
-	m_Reader.initialize(m_Stream);
+      m_Reader.initialize(m_Stream);
     }
     catch (Exception e) {
       result = handleException("Failed to read text from: " + file, e);
