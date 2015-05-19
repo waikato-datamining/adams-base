@@ -1,5 +1,5 @@
 --> dumpfile.txt
-/tmp/vote.csv
-/tmp/labor.csv
-/tmp/blah.csv
+vote.csv
+labor.csv
+blah.csv
 

@@ -15,24 +15,25 @@
 
 /*
  * FileSupplierTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.sink.DumpFile;
+import adams.flow.transformer.BaseName;
 import adams.test.Platform;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Tests the FileSupplier actor.
@@ -101,12 +102,14 @@ public class FileSupplierTest
 	    new TmpFile("blah.csv")
 	});
 
+    BaseName bn = new BaseName();
+
     DumpFile df = new DumpFile();
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, df});
+    flow.setActors(new AbstractActor[]{sfs, bn, df});
 
     return flow;
   }
