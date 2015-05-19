@@ -22,6 +22,9 @@
 package adams.data.utils;
 
 import adams.core.License;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
 import adams.core.annotation.MixedCopyright;
 import org.jtransforms.fft.DoubleFFT_1D;
 
@@ -29,6 +32,7 @@ import org.jtransforms.fft.DoubleFFT_1D;
  * Contains methods related to autocorrelation.
  * See <a href="https://en.wikipedia.org/wiki/Autocorrelation" target="_blank">WikiPedia</a>.
  *
+ * @author Gene (Stackoverflow)
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -114,6 +118,22 @@ public class AutoCorrelation {
           result[i] /= result[0];
       result[0] = 1;
     }
+
+    return result;
+  }
+
+  /**
+   * Returns technical information on autocorrelation.
+   *
+   * @return		the technical information
+   */
+  public static TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "WikiPedia");
+    result.setValue(Field.TITLE, "Autocorrelation");
+    result.setValue(Field.HTTP, "https://en.wikipedia.org/wiki/Autocorrelation");
 
     return result;
   }

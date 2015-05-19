@@ -53,6 +53,10 @@ adams.core.option.OptionTraverser=\
 adams.core.scripting.AbstractScriptingHandler=\
   adams.core.scripting
 
+# the autocorrelation algorithms
+adams.data.autocorrelation.AbstractAutoCorrelation=\
+  adams.data.autocorrelation
+
 # baseline correction schemes
 adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline
