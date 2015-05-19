@@ -83,7 +83,7 @@
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.51</version>
+      <version>0.1.52</version>
     </dependency>
 
     <dependency>
@@ -138,12 +138,6 @@
       <groupId>org.jodd</groupId>
       <artifactId>jodd-mail</artifactId>
       <version>${jodd.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.turn</groupId>
-      <artifactId>ttorrent</artifactId>
-      <version>1.4</version>
     </dependency>
   </dependencies>
   
