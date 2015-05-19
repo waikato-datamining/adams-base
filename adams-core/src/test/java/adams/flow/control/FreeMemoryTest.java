@@ -20,13 +20,14 @@
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.core.AbstractActor;
+import adams.flow.transformer.BaseName;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for FreeMemory actor.
@@ -129,12 +130,13 @@ public class FreeMemoryTest
       tmp1[2] = tmp7;
       adams.flow.control.Trigger tmp9 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[4];
       adams.flow.source.FileSupplier tmp11 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("files");
       tmp11.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/simple.report")});
 
       tmp10[0] = tmp11;
+      tmp10[1] = new BaseName();
       adams.flow.control.Tee tmp13 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[1];
@@ -145,9 +147,9 @@ public class FreeMemoryTest
       tmp14[0] = tmp15;
       tmp13.setActors(tmp14);
 
-      tmp10[1] = tmp13;
+      tmp10[2] = tmp13;
       adams.flow.control.FreeMemory tmp17 = new adams.flow.control.FreeMemory();
-      tmp10[2] = tmp17;
+      tmp10[3] = tmp17;
       tmp9.setActors(tmp10);
 
       tmp1[3] = tmp9;
