@@ -106,7 +106,11 @@ public abstract class AbstractCompressedTextReader
     String	result;
     
     result  = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "reader", m_TextReader, ", reader: ");
+    if (result == null)
+      result = "";
+    else
+      result += ", ";
+    result += QuickInfoHelper.toString(this, "reader", m_TextReader, "reader: ");
     
     return result;
   }
