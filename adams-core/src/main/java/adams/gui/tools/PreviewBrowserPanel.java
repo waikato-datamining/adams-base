@@ -55,6 +55,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.env.Environment;
 import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.application.ChildFrame;
@@ -673,7 +674,7 @@ public class PreviewBrowserPanel
     tmpFiles = new File[selFiles.length];
     for (i = 0; i < selFiles.length; i++) {
       try {
-	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles[i].toString()), FileUtils.getTempDirectory());
+	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles[i].toString()), TempUtils.getTempDirectory());
 	if (!m_ArchiveHandler.extract(selFiles[i].toString(), tmpFiles[i])) {
 	  System.err.println("Failed to extract file '" + selFiles[i] + "'!");
 	  return;

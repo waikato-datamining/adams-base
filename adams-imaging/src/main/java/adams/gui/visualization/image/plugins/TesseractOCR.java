@@ -22,6 +22,7 @@ package adams.gui.visualization.image.plugins;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
@@ -120,7 +121,7 @@ public class TesseractOCR
     m_LastCommand = "";
     tmp = null;
     try {
-      tmp = FileUtils.createTempFile("ocr", ".png");
+      tmp = TempUtils.createTempFile("ocr", ".png");
       if (!ImageIO.write(m_CurrentPanel.getCurrentImage(), "PNG", tmp))
 	result = "Failed to save current image as temp file: " + tmp;
     }

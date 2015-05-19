@@ -21,7 +21,7 @@
 
 package weka.gui.explorer;
 
-import adams.core.io.FileUtils;
+import adams.core.io.TempUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
@@ -572,7 +572,7 @@ public class ExperimentPanel
 	  inst.setClassIndex(classIndex);
 	  File tmpDataset = null;
 	  try {
-	    tmpDataset = FileUtils.createTempFile("weka_", XRFFLoader.FILE_EXTENSION_COMPRESSED);
+	    tmpDataset = TempUtils.createTempFile("weka_", XRFFLoader.FILE_EXTENSION_COMPRESSED);
 	    tmpDataset.deleteOnExit();
 	    XRFFSaver saver = new XRFFSaver();
 	    saver.setFile(tmpDataset);
@@ -680,7 +680,7 @@ public class ExperimentPanel
 	  InstancesResultListener irl = new InstancesResultListener();
 	  File tmpResult = null;
 	  try {
-	    tmpResult = FileUtils.createTempFile("weka_result_", ArffLoader.FILE_EXTENSION);
+	    tmpResult = TempUtils.createTempFile("weka_result_", ArffLoader.FILE_EXTENSION);
 	    tmpResult.deleteOnExit();
 	  }
 	  catch (Exception ex) {

@@ -15,7 +15,7 @@
 
 /*
  * AbstractQuantitationWriter.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
@@ -25,6 +25,7 @@ import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -92,7 +93,8 @@ public abstract class AbstractReportWriter<T extends Report>
 
     m_OptionManager.add(
 	    "output", "output",
-	    new PlaceholderFile(System.getProperty("java.io.tmpdir") + PlaceholderFile.separator + "out." + getFormatExtensions()[0]));
+	    new PlaceholderFile(
+              TempUtils.createTempFile("out." + getFormatExtensions()[0])));
   }
 
   /**

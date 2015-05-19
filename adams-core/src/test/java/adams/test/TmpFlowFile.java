@@ -20,6 +20,7 @@
 package adams.test;
 
 import adams.core.io.FlowFile;
+import adams.core.io.TempUtils;
 
 /**
  * A simple file handler class (for flow files) that automatically places the
@@ -43,6 +44,6 @@ public class TmpFlowFile
    * @param   pathname  A pathname string
    */
   public TmpFlowFile(String pathname) {
-    super(System.getProperty("java.io.tmpdir") + separator + pathname);
+    super(TempUtils.createTempFile(pathname));
   }
 }

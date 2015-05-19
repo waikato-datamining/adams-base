@@ -34,8 +34,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import adams.core.ClassLister;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.gui.core.GUIHelper;
 
 /**
@@ -256,7 +256,7 @@ public class SendToActionUtils {
     String		tmp;
     File		file;
 
-    tmp = FileUtils.getTempDirectory().getAbsolutePath();
+    tmp = TempUtils.getTempDirectory().getAbsolutePath();
     do {
       m_Counter++;
       file = new File(tmp + File.separator + prefix + m_Counter + "." + extension);

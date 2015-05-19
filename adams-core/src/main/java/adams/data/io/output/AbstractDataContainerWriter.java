@@ -15,24 +15,25 @@
 
 /*
  * AbstractDataContainerWriter.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract ancestor for writers that write data containers to files in various
@@ -98,7 +99,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
     m_OptionManager.add(
 	    "output", "output",
 	    new PlaceholderFile(
-		System.getProperty("java.io.tmpdir") + PlaceholderFile.separator + "out.tmp"));
+              TempUtils.createTempFile("out.tmp")));
   }
 
   /**

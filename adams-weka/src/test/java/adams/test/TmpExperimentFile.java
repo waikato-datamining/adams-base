@@ -19,6 +19,7 @@
  */
 package adams.test;
 
+import adams.core.io.TempUtils;
 import adams.data.WekaExperimentFile;
 
 /**
@@ -43,6 +44,6 @@ public class TmpExperimentFile
    * @param   pathname  A pathname string
    */
   public TmpExperimentFile(String pathname) {
-    super(System.getProperty("java.io.tmpdir") + separator + pathname);
+    super(TempUtils.createTempFile(pathname));
   }
 }

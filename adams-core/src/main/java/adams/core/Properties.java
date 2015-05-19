@@ -23,6 +23,7 @@ package adams.core;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.core.io.TempUtils;
 import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.gui.core.ColorHelper;
@@ -279,7 +280,7 @@ public class Properties
     result = s;
 
     if ((s.indexOf('%') > -1) || (s.indexOf('$') > -1)) {
-      result = result.replace("%t", System.getProperty("java.io.tmpdir"));
+      result = result.replace("%t", TempUtils.getTempDirectoryStr());
       result = result.replace("%p", Environment.getInstance().getHome());
       result = result.replace("%h", System.getProperty("user.home"));
       result = result.replace("$HOME", System.getProperty("user.home"));
@@ -329,7 +330,7 @@ public class Properties
 	System.getProperty("user.dir"),
 	Environment.getInstance().getHome(),
 	System.getProperty("user.home"),
-	System.getProperty("java.io.tmpdir")
+	TempUtils.getTempDirectoryStr()
     };
     replace = new String[]{
 	"%c",

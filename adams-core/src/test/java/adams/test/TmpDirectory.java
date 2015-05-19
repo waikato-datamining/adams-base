@@ -15,11 +15,12 @@
 
 /**
  * TmpDirectory.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.TempUtils;
 
 /**
  * A simple file handler class that automatically places the directory in the
@@ -42,7 +43,7 @@ public class TmpDirectory
    * Creates a file object pointing to the tmp directory.
    */
   public TmpDirectory() {
-    super(System.getProperty("java.io.tmpdir"));
+    super(TempUtils.getTempDirectoryStr());
   }
 
   /**
@@ -53,6 +54,6 @@ public class TmpDirectory
    * @param   pathname  A pathname string
    */
   public TmpDirectory(String pathname) {
-    super(System.getProperty("java.io.tmpdir") + separator + pathname);
+    super(TempUtils.createTempFile(pathname));
   }
 }

@@ -15,24 +15,25 @@
 
 /*
  * AdamsTestSuite.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.test;
 
+import adams.core.ClassLister;
+import adams.core.ClassLocator;
+import adams.core.io.TempUtils;
+import adams.core.management.ProcessUtils;
+import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-import adams.core.ClassLister;
-import adams.core.ClassLocator;
-import adams.core.management.ProcessUtils;
-import adams.env.Environment;
 
 /**
  * Extends the standard TestSuite class wtih some additional methods for
@@ -303,7 +304,7 @@ public class AdamsTestSuite
    * @return		the tmp directory
    */
   public static String getTmpDirectory() {
-    return System.getProperty("java.io.tmpdir");
+    return TempUtils.getTempDirectoryStr();
   }
 
   /**

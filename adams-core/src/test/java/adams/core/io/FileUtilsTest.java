@@ -148,26 +148,26 @@ public class FileUtilsTest
     
     input = "${TMP}/hello.txt";
     assertEqualsArrays(
-	new String[]{FileUtils.getTempDirectory() + File.separator + "hello.txt"},
+	new String[]{TempUtils.getTempDirectory() + File.separator + "hello.txt"},
 	FileUtils.toStringArray(input));
     
     input = new String[]{"${TMP}/hello.txt", "/some/where/helloworld.txt"};
     assertEqualsArrays(
 	new String[]{
-	    FileUtils.getTempDirectory() + File.separator + "hello.txt",
+	    TempUtils.getTempDirectory() + File.separator + "hello.txt",
 	    "/some/where/helloworld.txt"
 	},
 	FileUtils.toStringArray(input));
     
     input = new PlaceholderFile("${TMP}/hello.txt");
     assertEqualsArrays(
-	new String[]{FileUtils.getTempDirectory() + File.separator + "hello.txt"},
+	new String[]{TempUtils.getTempDirectory() + File.separator + "hello.txt"},
 	FileUtils.toStringArray(input));
     
     input = new File[]{new PlaceholderFile("${TMP}/hello.txt"), new File("/some/where/helloworld.txt")};
     assertEqualsArrays(
 	new String[]{
-	    FileUtils.getTempDirectory() + File.separator + "hello.txt",
+	    TempUtils.getTempDirectory() + File.separator + "hello.txt",
 	    "/some/where/helloworld.txt"
 	},
 	FileUtils.toStringArray(input));

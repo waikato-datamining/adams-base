@@ -24,6 +24,7 @@ import adams.core.ClassLocator;
 import adams.core.CloneHandler;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.TempUtils;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoEvent.UndoType;
 import adams.gui.event.UndoListener;
@@ -304,7 +305,7 @@ public class Undo {
       oos = null;
       try {
 	// create tmp file
-	file = FileUtils.createTempFile("undo", null);
+	file = TempUtils.createTempFile("undo", null);
 	file.deleteOnExit();
 
 	// write to disk
@@ -376,7 +377,7 @@ public class Undo {
       oos = null;
       try {
 	// create tmp file
-	file = FileUtils.createTempFile("redo", null);
+	file = TempUtils.createTempFile("redo", null);
 	file.deleteOnExit();
 
 	// write to disk

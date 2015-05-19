@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.flow.core.AdditionalOptionsHandler;
@@ -221,7 +222,7 @@ public class Groovy
       }
       else {
 	try {
-	  file = new PlaceholderFile(FileUtils.createTempFile(Environment.getInstance().getProject() + "-", ".groovy"));
+	  file = new PlaceholderFile(TempUtils.createTempFile(Environment.getInstance().getProject() + "-", ".groovy"));
 	  FileUtils.saveToFile(inlineScript.getValue().split("\n"), file);
 	}
 	catch (Exception e) {

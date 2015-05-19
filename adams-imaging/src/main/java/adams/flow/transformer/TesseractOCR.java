@@ -27,6 +27,7 @@ import adams.core.io.DirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
@@ -496,7 +497,7 @@ public class TesseractOCR
     }
     else {
       try {
-	file = FileUtils.createTempFile(getClass().getSimpleName(), ".png");
+	file = TempUtils.createTempFile(getClass().getSimpleName(), ".png");
 	fileStr = file.getAbsolutePath();
 	img = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();
     	result = BufferedImageHelper.write(img, file);

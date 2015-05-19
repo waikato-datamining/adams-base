@@ -24,7 +24,6 @@ import adams.core.Placeholders;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.management.OS;
-import adams.core.management.ProcessUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -53,12 +52,6 @@ public class FileUtils {
 
   /** the properties file. */
   public final static String FILENAME = "adams/core/io/FileUtils.props";
-
-  /** the counter for temp file names. */
-  protected static long m_TempFileCounter;
-  static {
-    m_TempFileCounter = 0;
-  }
 
   /** the properties. */
   protected static Properties m_Properties;
@@ -829,16 +822,7 @@ public class FileUtils {
     
     return result;
   }
-  
-  /**
-   * Returns the temporary directory.
-   *
-   * @return	the temp directory
-   */
-  public static File getTempDirectory() {
-    return new File(System.getProperty("java.io.tmpdir"));
-  }
-  
+
   /**
    * Returns whether the file is (most likely) a binary one.
    * 
@@ -1044,48 +1028,6 @@ public class FileUtils {
       result = path.replace("\\", "/");
 
     return result;
-  }
-
-  /**
-   * Creates a temp file name in the user's temp directory.
-   *
-   * @param prefix	the prefix for the name, can be null
-   * @param suffix	the suffix, eg the extension, can be null
-   * @return		the generated file name
-   */
-  public static synchronized File createTempFile(String prefix, String suffix) {
-    return createTempFile(null, prefix, suffix);
-  }
-
-  /**
-   * Creates a temp file name in the specified directory.
-   *
-   * @param dir		the directory for the temp file, use null for user's temp dir
-   * @param prefix	the prefix for the name, can be null
-   * @param suffix	the suffix, eg the extension, can be null
-   * @return		the generated file name
-   */
-  public static synchronized File createTempFile(PlaceholderDirectory dir, String prefix, String suffix) {
-    String	filename;
-
-    m_TempFileCounter++;
-
-    if (dir == null)
-      filename = getTempDirectory() + File.separator;
-    else
-      filename = dir.getAbsolutePath() + File.separator;
-
-    if (prefix != null)
-      filename += prefix;
-
-    filename += Long.toHexString(System.nanoTime())
-	+ "-" + Long.toHexString(ProcessUtils.getVirtualMachinePID())
-	+ "-" + Long.toHexString(m_TempFileCounter);
-
-    if (suffix != null)
-      filename += suffix;
-
-    return new File(filename);
   }
 
   /**
