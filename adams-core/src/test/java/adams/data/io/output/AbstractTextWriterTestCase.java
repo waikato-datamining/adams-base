@@ -15,11 +15,9 @@
 
 /**
  * AbstractTextWriterTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import java.util.List;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
@@ -30,6 +28,8 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.util.List;
 
 /**
  * Ancestor for text writer test cases.
@@ -71,11 +71,13 @@ public abstract class AbstractTextWriterTestCase
     String		result;
     List<String>	lines;
     String		filename;
+    PlaceholderFile	file;
 
     filename = scheme.write(content, name);
     if (filename != null) {
-      lines  = FileUtils.loadFromFile(new PlaceholderFile(filename));
-      lines.add(0, "Filename: " + filename);
+      file   = new PlaceholderFile(filename);
+      lines  = FileUtils.loadFromFile(file);
+      lines.add(0, "Filename: " + file.getName());
       lines.add(1, "---");
       result = Utils.flatten(lines, "\n");
       FileUtils.delete(filename);
