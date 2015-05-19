@@ -568,10 +568,14 @@ public class FileUtils {
 
     if (file.isDirectory()) {
       files = file.listFiles();
-      for (File f: files) {
-	if (f.getName().equals(".") || f.getName().equals(".."))
-	  continue;
-	delete(f);
+      if (files != null) {
+	for (File f : files) {
+	  if (f.getName().equals(".") || f.getName().equals(".."))
+	    continue;
+	  result = delete(f);
+	  if (!result)
+	    return false;
+	}
       }
     }
 
