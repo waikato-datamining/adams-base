@@ -27,20 +27,14 @@ import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -150,34 +144,20 @@ public class FileUtils {
    *
    * @param file	the file to load
    * @param encoding	the encoding to use, null to use default
-   * @return		the content/lines of the file
+   * @return		the content/lines of the file, null in case of an error
    */
   public static List<String> loadFromFile(File file, String encoding) {
-    List<String>	result;
-    BufferedReader	reader;
-    String		line;
-    FileInputStream	fis;
-
-    result = new ArrayList<String>();
-
-    fis = null;
     try {
-      fis = new FileInputStream(file.getAbsolutePath());
-      if ((encoding != null) && (encoding.length() > 0))
-	reader = new BufferedReader(new InputStreamReader(fis, encoding));
+      if (encoding == null)
+	return Files.readAllLines(file.toPath());
       else
-	reader = new BufferedReader(new InputStreamReader(fis));
-      while ((line = reader.readLine()) != null)
-        result.add(line);
-      reader.close();
+	return Files.readAllLines(file.toPath(), Charset.forName(encoding));
     }
     catch (Exception e) {
-      result = null;
+      System.err.println("Failed to read lines from '" + file + "':");
       e.printStackTrace();
+      return null;
     }
-    closeQuietly(fis);
-
-    return result;
   }
 
   /**
@@ -187,47 +167,14 @@ public class FileUtils {
    * @return		the binary content, null in case of an error
    */
   public static byte[] loadFromBinaryFile(File file) {
-    byte[]		result;
-    List<Byte>		content;
-    int			read;
-    byte[]		buffer;
-    FileInputStream	fis;
-    BufferedInputStream	stream;
-    int			i;
-
-    content = new ArrayList<Byte>();
-
-    stream = null;
-    fis    = null;
     try {
-      buffer = new byte[1024];
-      fis    = new FileInputStream(file.getAbsoluteFile());
-      stream = new BufferedInputStream(fis);
-      while ((read = stream.read(buffer)) != -1) {
-	for (i = 0; i < read; i++)
-	  content.add(buffer[i]);
-      }
+      return Files.readAllBytes(file.toPath());
     }
     catch (Exception e) {
-      System.err.println("Problem loading binary file '" + file + "':");
+      System.err.println("Failed to read bytes from '" + file + "':");
       e.printStackTrace();
-      content = null;
+      return null;
     }
-    finally {
-      closeQuietly(stream);
-      closeQuietly(fis);
-    }
-
-    if (content != null) {
-      result = new byte[content.size()];
-      for (i = 0; i < result.length; i++)
-	result[i] = content.get(i);
-    }
-    else {
-      result = null;
-    }
-
-    return result;
   }
 
   /**
@@ -256,42 +203,6 @@ public class FileUtils {
       return null;
     else
       return Utils.toHex(content, columns);
-  }
-
-  /**
-   * Load file and return contents as byte array.
-   *
-   * @param file	file to load
-   * @return		byte array
-   */
-  public static byte[] loadByteArrayFromFile(File file) {
-    byte[] 			result;
-    FileInputStream		fis;
-    BufferedInputStream		bis;
-    ByteArrayOutputStream	bytesIn;
-    int 			ch;
-
-    bis     = null;
-    fis     = null;
-    bytesIn = null;
-    try {
-      fis     = new FileInputStream(file.getAbsoluteFile());
-      bis     = new BufferedInputStream(fis);
-      bytesIn = new ByteArrayOutputStream();
-      while ((ch = bis.read()) != -1)
-	bytesIn.write(ch);
-      result = bytesIn.toByteArray();
-    }
-    catch(Exception e) {
-      result = null;
-      e.printStackTrace();
-    }
-    finally {
-      closeQuietly(bis);
-      closeQuietly(fis);
-    }
-
-    return result;
   }
 
   /**
@@ -345,31 +256,18 @@ public class FileUtils {
    */
   public static String saveToFileMsg(List<String> content, File file, String encoding) {
     String		result;
-    BufferedWriter	writer;
-    int			i;
-    FileOutputStream	fos;
 
     result = null;
 
-    fos    = null;
-    writer = null;
     try {
-      fos = new FileOutputStream(file.getAbsolutePath());
-      if ((encoding != null) && (encoding.length() > 0))
-	writer = new BufferedWriter(new OutputStreamWriter(fos, encoding));
+      if (encoding == null)
+	Files.write(file.toPath(), content);
       else
-	writer = new BufferedWriter(new OutputStreamWriter(fos));
-      for (i = 0; i < content.size(); i++) {
-        writer.write(content.get(i));
-        writer.newLine();
-      }
-      writer.flush();
+	Files.write(file.toPath(), content, Charset.forName(encoding));
     }
     catch (Exception e) {
       result = "Failed to save to '" + file + "':\n" + Utils.throwableToString(e);
     }
-    closeQuietly(writer);
-    closeQuietly(fos);
 
     return result;
   }
@@ -438,29 +336,23 @@ public class FileUtils {
    */
   public static String writeToFileMsg(String filename, Object obj, boolean append, String encoding) {
     String			result;
-    BufferedOutputStream 	writer;
-    FileOutputStream		fos;
     StringBuilder		buffer;
+    List<String>		lines;
 
     result = null;
-    fos    = null;
-    writer = null;
     buffer = new StringBuilder("" + obj);
     buffer.append(System.getProperty("line.separator"));
+    lines = new ArrayList<String>();
+    lines.add(buffer.toString());
     try {
-      fos = new FileOutputStream(filename, append);
-      writer = new BufferedOutputStream(fos);
-      if ((encoding != null) && (encoding.length() > 0))
-	writer.write(buffer.toString().getBytes(encoding));
+      if (encoding == null)
+	Files.write(new File(filename).toPath(), lines);
       else
-	writer.write(buffer.toString().getBytes());
-      writer.flush();
+	Files.write(new File(filename).toPath(), lines, Charset.forName(encoding));
     }
     catch (Exception e) {
       result = "Failed to write to '" + filename + "'\n" + Utils.throwableToString(e);
     }
-    closeQuietly(writer);
-    closeQuietly(fos);
 
     return result;
   }
