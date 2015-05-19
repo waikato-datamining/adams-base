@@ -39,6 +39,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -336,19 +337,21 @@ public class FileUtils {
    */
   public static String writeToFileMsg(String filename, Object obj, boolean append, String encoding) {
     String			result;
-    StringBuilder		buffer;
     List<String>		lines;
+    StandardOpenOption[]	options;
 
     result = null;
-    buffer = new StringBuilder("" + obj);
-    buffer.append(System.getProperty("line.separator"));
-    lines = new ArrayList<String>();
-    lines.add(buffer.toString());
+    lines = new ArrayList<>();
+    lines.add("" + obj);
+    if (append)
+      options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.WRITE};
+    else
+      options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE};
     try {
       if (encoding == null)
-	Files.write(new File(filename).toPath(), lines);
+	Files.write(new File(filename).toPath(), lines, options);
       else
-	Files.write(new File(filename).toPath(), lines, Charset.forName(encoding));
+	Files.write(new File(filename).toPath(), lines, Charset.forName(encoding), options);
     }
     catch (Exception e) {
       result = "Failed to write to '" + filename + "'\n" + Utils.throwableToString(e);
