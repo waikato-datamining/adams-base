@@ -15,17 +15,17 @@
 
 /*
  * BaseDate.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
-
-import java.util.Date;
 
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.parser.BaseDateExpression;
 import adams.parser.GrammarSupplier;
+
+import java.util.Date;
 /**
  * Wrapper for a Date string to be editable in the GOE. Dates have to be of
  * format "yyyy-MM-dd".
@@ -249,6 +249,15 @@ public class BaseDate
    */
   public String stringValue() {
     return m_Format.format(dateValue());
+  }
+
+  /**
+   * Returns the Date value formatted as a string.
+   *
+   * @return		the formatted string
+   */
+  public String formatDateValue(String format) {
+    return new DateFormat(format).format(dateValue());
   }
 
   /**

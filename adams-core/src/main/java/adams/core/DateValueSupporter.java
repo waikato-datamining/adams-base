@@ -15,7 +15,7 @@
 
 /**
  * DateValueSupporter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -35,4 +35,11 @@ public interface DateValueSupporter {
    * @return		the Date value
    */
   public Date dateValue();
+
+  /**
+   * Returns the Date value formatted as a string.
+   *
+   * @return		the formatted string
+   */
+  public String formatDateValue(String format);
 }
