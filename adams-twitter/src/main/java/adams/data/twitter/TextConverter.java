@@ -31,7 +31,7 @@ import adams.data.DateFormatString;
 /**
  <!-- globalinfo-start -->
  * A simple text converter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

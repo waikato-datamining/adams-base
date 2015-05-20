@@ -50,7 +50,7 @@ public abstract class AbstractClusterMembershipPostProcessor
   
   /**
    * Checks the model container.
-   * <p/>
+   * <br><br>
    * Checks for Clusterer and Instances.
    * 
    * @param cont	the container to check

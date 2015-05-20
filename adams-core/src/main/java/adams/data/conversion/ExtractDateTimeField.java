@@ -37,9 +37,9 @@ import java.util.GregorianCalendar;
 
 /**
  <!-- globalinfo-start -->
- * Extracts the specified field from a date&#47;time type.<br/>
+ * Extracts the specified field from a date&#47;time type.<br>
  * A custom format string can be used with field CUSTOM.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

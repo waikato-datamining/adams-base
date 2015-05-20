@@ -27,11 +27,11 @@ import adams.flow.sink.Console;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow that outputs the token count every X number of tokens, with X being the interval supplied to this template.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

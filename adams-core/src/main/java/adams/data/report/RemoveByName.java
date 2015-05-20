@@ -25,11 +25,11 @@ import adams.data.container.DataContainer;
 /**
  <!-- globalinfo-start -->
  * Removes all fields from the report which names match the specified regular expression. Matching can be inverted as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

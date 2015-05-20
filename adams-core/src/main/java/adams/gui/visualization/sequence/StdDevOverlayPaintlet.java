@@ -34,7 +34,7 @@ import adams.gui.visualization.core.plot.Axis;
 /**
  <!-- globalinfo-start -->
  * Draws the standard deviation as straight line.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

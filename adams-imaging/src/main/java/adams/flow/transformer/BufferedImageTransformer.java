@@ -37,16 +37,16 @@ import java.util.Arrays;
 /**
  <!-- globalinfo-start -->
  * Applies a BufferedImage transformation to the incoming image and outputs the generated image(s).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -63,16 +63,16 @@ import adams.multiprocess.JobRunner;
 /**
  <!-- globalinfo-start -->
  * Performs a quick evaluation using cross-validation on a single dataset (or evaluation on a separate test set if the number of folds is less than 2) to rank the classifiers received on the input and forwarding the x best ones. Further evaluation can be performed using the Experimenter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

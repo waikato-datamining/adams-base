@@ -25,11 +25,11 @@ import adams.data.container.DataContainer;
 /**
  <!-- globalinfo-start -->
  * A dummy smoother that just passes the data through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

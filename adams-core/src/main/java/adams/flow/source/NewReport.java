@@ -27,14 +27,14 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Generates a new instance of the specified report class.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -40,7 +40,7 @@ public class JAIHelper {
   /**
    * Disables the "java.lang.NoClassDefFoundError: com/sun/medialib/mlib/Image"
    * exception.
-   * <p/>
+   * <br><br>
    * Taken from <a href="http://www.java.net/node/666373" target="_blank">here</a>
    */
   public static void disableMediaLib() {

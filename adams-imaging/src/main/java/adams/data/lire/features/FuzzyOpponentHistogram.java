@@ -38,12 +38,12 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram.<br/>
- * For more information, see:<br/>
- * van de Sande, K.E.A., Gevers, T., Snoek, C.G.M. (2010). Evaluating Color Descriptors for Object and Scene Recognition. Pattern Analysis and Machine Intelligence, IEEE Transactions on. 32(9):1582-1596.<br/>
- * For more information on the LIRE project, see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.FuzzyOpponentHistogram.<br>
+ * For more information, see:<br>
+ * van de Sande, K.E.A., Gevers, T., Snoek, C.G.M. (2010). Evaluating Color Descriptors for Object and Scene Recognition. Pattern Analysis and Machine Intelligence, IEEE Transactions on. 32(9):1582-1596.<br>
+ * For more information on the LIRE project, see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -61,7 +61,7 @@ import adams.data.statistics.StatUtils;
  *    HTTP = {http:&#47;&#47;doi.ieeecomputersociety.org&#47;10.1109&#47;TPAMI.2009.154}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  * 
  <!-- options-start -->

@@ -39,13 +39,13 @@ import adams.ml.data.Dataset;
 
 /**
  <!-- globalinfo-start -->
- * Generates a weka.core.Instances object from a SpreadSheet object.<br/>
+ * Generates a weka.core.Instances object from a SpreadSheet object.<br>
  * If there are too many unique lables for a NOMINAL attribute, it gets turned into a STRING attribute (see 'maxLabels' property).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

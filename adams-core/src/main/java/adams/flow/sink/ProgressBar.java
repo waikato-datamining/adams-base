@@ -36,14 +36,14 @@ import adams.gui.core.BasePanel;
 /**
  <!-- globalinfo-start -->
  * Displays a progress bar. The incoming token is used as 'current' value to be displayed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Number<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Number<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

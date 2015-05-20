@@ -61,7 +61,7 @@ public abstract class AbstractDrawOperation
   
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -72,7 +72,7 @@ public abstract class AbstractDrawOperation
 
   /**
    * Checks the image.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether an owner and image is present.
    * 
    * @param image	the image to check

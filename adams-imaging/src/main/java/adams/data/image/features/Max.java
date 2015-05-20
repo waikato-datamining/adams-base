@@ -33,7 +33,7 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Simply outputs the RGB value of the brightest pixel.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

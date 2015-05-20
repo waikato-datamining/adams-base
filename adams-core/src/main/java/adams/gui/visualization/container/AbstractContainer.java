@@ -66,7 +66,7 @@ public abstract class AbstractContainer
 
   /**
    * For invalidating cached data.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void invalidate() {
@@ -105,7 +105,7 @@ public abstract class AbstractContainer
 
   /**
    * For post-processing the payload, just after it got set.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void postProcessPayload() {

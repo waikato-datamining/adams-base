@@ -26,7 +26,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 /**
  <!-- globalinfo-start -->
  * Applies the specified base row score algorithm to the specified subset of columns and returns the calculated score.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

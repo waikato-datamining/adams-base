@@ -29,7 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Turns a spreadsheet into a string using the specified spreadsheet writer.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -90,7 +90,7 @@ public class ReportContainer
 
   /**
    * For invalidating cached data.
-   * <p/>
+   * <br><br>
    * Resets the cached Table.
    *
    * @see		#m_Table

@@ -28,7 +28,7 @@ import adams.core.io.PlaceholderFile;
 /**
  <!-- globalinfo-start -->
  * Splits the file into chunks with the specified maximum size.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

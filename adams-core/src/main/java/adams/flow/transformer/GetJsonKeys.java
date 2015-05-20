@@ -30,21 +30,21 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Outputs all the keys of the JSON Object passing through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.json.simple.JSONAware<br/>
- * &nbsp;&nbsp;&nbsp;org.json.simple.JSONObject<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.json.simple.JSONAware<br>
+ * &nbsp;&nbsp;&nbsp;org.json.simple.JSONObject<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

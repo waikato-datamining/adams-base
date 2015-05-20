@@ -30,7 +30,7 @@ import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * A container for storing results from attribute selection.
- * <p/>
+ * <br><br>
  * In case of performing cross-validation: seed and fold count get stored as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -68,7 +68,7 @@ public class WekaAttributeSelectionContainer
 
   /**
    * Initializes the container.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public WekaAttributeSelectionContainer() {

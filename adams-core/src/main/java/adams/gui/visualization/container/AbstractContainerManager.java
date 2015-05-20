@@ -201,7 +201,7 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   /**
    * A post-hook for the add-method, after the container got added to the internal
    * list and the notifications got sent.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param c		the container that got added
@@ -312,7 +312,7 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   /**
    * A post-hook for the set method, after the container replaced the item
    * previously occupying the position.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param index	the position to place the container

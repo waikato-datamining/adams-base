@@ -26,11 +26,11 @@ import adams.flow.container.SequencePlotterContainer.ContentType;
 /**
  <!-- globalinfo-start -->
  * Updates the flow after the specified number of tokens per named plot have been processed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

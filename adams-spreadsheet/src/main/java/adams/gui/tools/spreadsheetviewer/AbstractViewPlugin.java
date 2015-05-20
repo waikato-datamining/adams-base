@@ -139,7 +139,7 @@ public abstract class AbstractViewPlugin
 
   /**
    * Checks the spreadsheet.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether data was provided.
    * 
    * @param sheet	the spreadsheet to check
@@ -154,7 +154,7 @@ public abstract class AbstractViewPlugin
   
   /**
    * Returns whether the dialog requires the OK/Cancel buttons.
-   * <p/>
+   * <br><br>
    * Default implementation returns true.
    * 
    * @return		true if the dialog requires the buttons

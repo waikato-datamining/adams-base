@@ -32,7 +32,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Places the located objects obtained from the base locator on a canvas of specified size at the specified position.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

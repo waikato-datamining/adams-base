@@ -25,7 +25,7 @@ import adams.data.timeseries.TimeseriesPoint;
 /**
  <!-- globalinfo-start -->
  * Shifts the values of the timeseries by the specified amount (up or down, depending on the sign).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

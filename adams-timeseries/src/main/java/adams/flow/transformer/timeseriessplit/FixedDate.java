@@ -26,7 +26,7 @@ import adams.data.timeseries.Timeseries;
 /**
  <!-- globalinfo-start -->
  * Splits the timeseries using the specified date.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

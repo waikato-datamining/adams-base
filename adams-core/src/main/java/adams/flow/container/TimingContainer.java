@@ -47,7 +47,7 @@ public class TimingContainer
   /**
    * Initializes the container with no prefix and origin and a msec
    * value of 0.0.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public TimingContainer() {

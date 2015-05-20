@@ -31,22 +31,22 @@ import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Generates subsets from a spreadsheet, grouped by the same string value in the specified column.<br/>
+ * Generates subsets from a spreadsheet, grouped by the same string value in the specified column.<br>
  * For instance, if a spreadsheet has 3 unique values (A, B, C) in column 2, then 3 subsheets will generated, each containing the rows that have the value A, B or C.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

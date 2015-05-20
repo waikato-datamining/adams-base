@@ -35,11 +35,11 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Emulates an If-Then-Else construct. The 'Then' branch gets executed if the 'If' condition evaluates to 'true', otherwise the 'else' branch gets executed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

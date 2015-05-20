@@ -71,7 +71,7 @@ import java.util.Map;
  * <p>
  * If necessary additional font replacements can be inserted, since some fonts
  * might be displayed incorrectly.
- * <p/>
+ * <br><br>
  * Based on weka.gui.visualize.PostscriptGraphics
  *
  * @see #addPSFontReplacement(String, String)

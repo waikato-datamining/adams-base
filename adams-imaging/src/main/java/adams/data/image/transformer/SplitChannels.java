@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Splits the image into the specified separate channels. With the output channels all converted to grayscale.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

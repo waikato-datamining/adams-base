@@ -27,23 +27,23 @@ import adams.core.io.ZipUtils;
 /**
  <!-- globalinfo-start -->
  * Creates a ZIP file containing one or more files. Outputs the filename of the ZIP file generated.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

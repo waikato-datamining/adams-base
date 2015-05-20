@@ -45,16 +45,16 @@ import java.util.Iterator;
 /**
  <!-- globalinfo-start -->
  * Takes a screenshot of the desktop whenever a token passes through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -326,7 +326,7 @@ public class DesktopScreenshot
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
-   * <p/>
+   * <br><br>
    * The method is not allowed allowed to return "true" before the
    * actor has been executed. For actors that return an infinite
    * number of tokens, the m_Executed flag can be returned.

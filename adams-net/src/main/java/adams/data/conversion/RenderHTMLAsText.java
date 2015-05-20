@@ -24,7 +24,7 @@ import net.htmlparser.jericho.Source;
 /**
  <!-- globalinfo-start -->
  * Renders an HTML string as text.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

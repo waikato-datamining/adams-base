@@ -40,11 +40,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * A simple filter that retains only every nth attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  Turns on output of debugging information.</pre>

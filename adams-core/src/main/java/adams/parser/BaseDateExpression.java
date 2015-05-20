@@ -32,48 +32,48 @@ import adams.parser.basedate.Scanner;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates date expressions.<br/>
- * <br/>
- * Format:<br/>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (DAY|WEEK|MONTH|YEAR)]*<br/>
- * expr ::=   ( expr )<br/>
- *          | - expr<br/>
- *          | + expr<br/>
- *          | expr + expr<br/>
- *          | expr - expr<br/>
- *          | expr * expr<br/>
- *          | expr &#47; expr<br/>
- *          | expr % expr<br/>
- *          | expr ^ expr<br/>
- *          | abs ( expr )<br/>
- *          | sqrt ( expr )<br/>
- *          | log ( expr )<br/>
- *          | exp ( expr )<br/>
- *          | rint ( expr )<br/>
- *          | floor ( expr )<br/>
- *          | pow[er] ( expr , expr )<br/>
- *          | ceil ( expr )<br/>
- *          | NUMBER<br/>
- * <br/>
- * <br/>
- * Examples:<br/>
- * 1999-12-31<br/>
- * 1999-12-31 +1 DAY<br/>
- * NOW<br/>
- * +INF<br/>
- * NOW +1 YEAR<br/>
- * NOW +14 DAY<br/>
- * NOW +(2*3) DAY<br/>
- * <br/>
- * Amounts can be chained as well:<br/>
- * NOW -1 MONTH +1 DAY<br/>
- * <br/>
+ * Evaluates date expressions.<br>
+ * <br>
+ * Format:<br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (DAY|WEEK|MONTH|YEAR)]*<br>
+ * expr ::=   ( expr )<br>
+ *          | - expr<br>
+ *          | + expr<br>
+ *          | expr + expr<br>
+ *          | expr - expr<br>
+ *          | expr * expr<br>
+ *          | expr &#47; expr<br>
+ *          | expr % expr<br>
+ *          | expr ^ expr<br>
+ *          | abs ( expr )<br>
+ *          | sqrt ( expr )<br>
+ *          | log ( expr )<br>
+ *          | exp ( expr )<br>
+ *          | rint ( expr )<br>
+ *          | floor ( expr )<br>
+ *          | pow[er] ( expr , expr )<br>
+ *          | ceil ( expr )<br>
+ *          | NUMBER<br>
+ * <br>
+ * <br>
+ * Examples:<br>
+ * 1999-12-31<br>
+ * 1999-12-31 +1 DAY<br>
+ * NOW<br>
+ * +INF<br>
+ * NOW +1 YEAR<br>
+ * NOW +14 DAY<br>
+ * NOW +(2*3) DAY<br>
+ * <br>
+ * Amounts can be chained as well:<br>
+ * NOW -1 MONTH +1 DAY<br>
+ * <br>
  * START and END can only be set programmatically; by default they are equal to -INF and +INF.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

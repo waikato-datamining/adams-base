@@ -27,7 +27,7 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
 /**
  <!-- globalinfo-start -->
  * Adds an ID column to the spreadsheet, using the row index as value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

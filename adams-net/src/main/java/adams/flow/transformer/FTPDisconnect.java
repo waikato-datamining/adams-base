@@ -26,18 +26,18 @@ import adams.flow.standalone.FTPConnection;
 
 /**
  <!-- globalinfo-start -->
- * Closes the currently open FTP session.<br/>
+ * Closes the currently open FTP session.<br>
  * Simply passes through any tokens.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

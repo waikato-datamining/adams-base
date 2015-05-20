@@ -28,26 +28,26 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Turns an object array into an primitive one. Depending on the input type, either an int or double array.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Byte[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Short[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Long[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Float[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;int[]<br/>
- * &nbsp;&nbsp;&nbsp;double[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Byte[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Short[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Long[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Float[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;int[]<br>
+ * &nbsp;&nbsp;&nbsp;double[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

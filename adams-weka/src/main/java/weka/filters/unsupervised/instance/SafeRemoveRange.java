@@ -40,13 +40,13 @@ import adams.core.Range;
 
 /**
  <!-- globalinfo-start -->
- * A filter that removes a given range of instances of a dataset.<br/>
+ * A filter that removes a given range of instances of a dataset.<br>
  * Works just like weka.filters.unsupervised.instance.RemoveRange, but has a more robust handling of instance ranges. E.g., removal of 30-100 will not result in an error when presenting only 20 or 40 instances, but return no instance or instances 30-40 instead.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -R &lt;inst1,inst2-inst4,...&gt;
  *  Specifies list of instances to select. First and last
@@ -113,10 +113,10 @@ public class SafeRemoveRange
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -R &lt;inst1,inst2-inst4,...&gt;
    *  Specifies list of instances to select. First and last

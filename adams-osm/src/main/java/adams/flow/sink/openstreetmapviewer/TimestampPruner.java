@@ -30,7 +30,7 @@ import adams.data.mapobject.TimestampSupporter;
 /**
  <!-- globalinfo-start -->
  * Removes map objects that are older than the specified cut-off date.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

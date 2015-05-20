@@ -29,7 +29,7 @@ import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
 
 /**
- * Tests PLSFilterWithLoadings. Run from the command line with: <p/>
+ * Tests PLSFilterWithLoadings. Run from the command line with: <br><br>
  * java weka.filters.supervised.attribute.PLSFilterWithLoadingsTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

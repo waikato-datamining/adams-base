@@ -218,7 +218,7 @@ public abstract class AbstractSpreadSheetWriterTestCase
 
   /**
    * Returns whether a regression can be run.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    *
    * @return		true if the regression can be run (e.g., for non-binary output)
@@ -238,7 +238,7 @@ public abstract class AbstractSpreadSheetWriterTestCase
 
   /**
    * Regression test.
-   * <p/>
+   * <br><br>
    * Only gets executed if "hasRegressionTest" returns true.
    *
    * @see
@@ -293,7 +293,7 @@ public abstract class AbstractSpreadSheetWriterTestCase
 
   /**
    * Returns whether a regression can be run.
-   * <p/>
+   * <br><br>
    * Default implementation returns true if there are incremental input files.
    *
    * @return		true if the regression can be run (e.g., for non-binary output)
@@ -379,7 +379,7 @@ public abstract class AbstractSpreadSheetWriterTestCase
 
   /**
    * Incremental regression test.
-   * <p/>
+   * <br><br>
    * Only gets executed if "hasRegressionTest" returns true.
    *
    * @see

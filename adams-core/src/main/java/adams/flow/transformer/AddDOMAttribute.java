@@ -28,16 +28,16 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Adds a new attribute to the incoming org.w3c.dom.Node and forwards the new updated node.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

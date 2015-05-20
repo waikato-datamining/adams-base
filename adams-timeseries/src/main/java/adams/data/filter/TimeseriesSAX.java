@@ -30,15 +30,15 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Performs Symbolic Aggregate approXimation (SAX).<br/>
- * The data must be normalized using adams.data.filter.RowNorm beforehand.<br/>
- * For more information see:<br/>
- * <br/>
- * Chiu, B., Keogh, E., Lonardi, S. (2003). Probabilistic Discovery of Time Series Motifs.<br/>
- * <br/>
- * See also:<br/>
+ * Performs Symbolic Aggregate approXimation (SAX).<br>
+ * The data must be normalized using adams.data.filter.RowNorm beforehand.<br>
+ * For more information see:<br>
+ * <br>
+ * Chiu, B., Keogh, E., Lonardi, S. (2003). Probabilistic Discovery of Time Series Motifs.<br>
+ * <br>
+ * See also:<br>
  * adams.data.filter.RowNorm
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -53,7 +53,7 @@ import java.util.Date;
  *    PDF = {http:&#47;&#47;www.cs.ucr.edu&#47;\~eamonn&#47;SIGKDD_Motif.pdf}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->

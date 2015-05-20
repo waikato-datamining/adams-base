@@ -32,7 +32,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Counts how often a label (ie string) occurs.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

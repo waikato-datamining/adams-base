@@ -29,11 +29,11 @@ import weka.core.RevisionUtils;
 /**
  <!-- globalinfo-start -->
  * Takes logs of all numeric attributes in the data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and

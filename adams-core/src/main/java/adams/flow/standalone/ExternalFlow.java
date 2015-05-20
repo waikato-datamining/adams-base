@@ -35,7 +35,7 @@ import adams.flow.core.RunnableWithLogging;
 /**
  <!-- globalinfo-start -->
  * Allows to execute a complete external Flow rather than just an external actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

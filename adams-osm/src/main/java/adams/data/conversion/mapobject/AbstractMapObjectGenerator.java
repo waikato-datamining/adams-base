@@ -198,7 +198,7 @@ public abstract class AbstractMapObjectGenerator<T extends MapObject>
 
   /**
    * Checks the spreadsheet and throws an exception if it fails.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that data is present.
    * 
    * @param sheet	the spreadsheet to check

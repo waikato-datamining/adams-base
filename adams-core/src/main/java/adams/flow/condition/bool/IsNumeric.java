@@ -26,7 +26,7 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Evaluates to 'true' if the payload of the token is a number or a numeric string.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

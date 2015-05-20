@@ -33,7 +33,7 @@ import weka.filters.unsupervised.instance.SafeRemoveRange;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests SafeRemoveRange. Run from the command line with: <p/>
+ * Tests SafeRemoveRange. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.SafeRemoveRangeTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

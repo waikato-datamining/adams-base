@@ -34,9 +34,9 @@ import adams.core.base.BaseCharset;
 
 /**
  <!-- globalinfo-start -->
- * Turns a org.w3c.dom.Node or org.w3c.dom.Document DOM object into a String.<br/>
+ * Turns a org.w3c.dom.Node or org.w3c.dom.Document DOM object into a String.<br>
  * In case of org.w3c.dom.Node objects, the owner document is converted to String.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

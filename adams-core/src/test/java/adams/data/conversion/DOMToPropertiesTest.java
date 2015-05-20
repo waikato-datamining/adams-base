@@ -26,7 +26,7 @@ import adams.env.Environment;
 
 /**
  * Tests the DOMToProperties conversion.
- * <p/>
+ * <br><br>
  * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -36,24 +36,24 @@ import adams.test.TmpFile;
 
 /**
  * Abstract Test class for actor processors.
- * <p/>
+ * <br><br>
  * It is possible to dump the input and output flow used in "testProcessing()"
  * using the following properties.
  * <ul>
  *   <li>"adams.test.flowprocessor.dump.inputfile" allows you to specify the file in which
- *   to save the input flow. Example: <br/>
+ *   to save the input flow. Example: <br>
  *   <code>-Dadams.test.flowprocessor.dump.inputfile=/some/where/flow-in.txt</code>
  *   </li>
  *   <li>"adams.test.flowprocessor.dump.outputfile" allows you to specify the file in which
- *   to save the output flow. Example: <br/>
+ *   to save the output flow. Example: <br>
  *   <code>-Dadams.test.flowprocessor.dump.outputfile=/some/where/flow-out.txt</code>
  *   </li>
  *   <li>"adams.test.flowprocessor.dump.append" allows to append all the flows that are
- *   run in the test sequence in the same file. Example: <br/>
+ *   run in the test sequence in the same file. Example: <br>
  *   <code>-Dadams.test.flowprocessor.dump.append=true</code>
  *   </li>
  *   <li>"adams.test.flowprocessor.dump.format" allows to specify the format (classname
- *   of option producer) of the dump. Example: <br/>
+ *   of option producer) of the dump. Example: <br>
  *   <code>-Dadams.test.flowprocessor.dump.format=adams.core.option.NestedProducer</code>
  *   </li>
  * </ul>

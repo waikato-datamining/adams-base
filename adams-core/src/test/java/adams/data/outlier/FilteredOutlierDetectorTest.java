@@ -25,7 +25,7 @@ import adams.env.Environment;
 
 /**
  * Test class for the FilteredOutlierDetector outlier detector.
- * <p/>
+ * <br><br>
  * Dummy test. See adams-weka.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

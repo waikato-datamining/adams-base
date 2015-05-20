@@ -30,16 +30,16 @@ import adams.flow.standalone.webserver.ResourceHandler;
 
 /**
  <!-- globalinfo-start -->
- * Provides a simple web server using an embedded jetty server.<br/>
+ * Provides a simple web server using an embedded jetty server.<br>
  * Depending on the used handlers, it can do more than just serve static files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

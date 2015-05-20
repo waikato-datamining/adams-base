@@ -38,7 +38,7 @@ public abstract class AbstractEmailReader
   /**
    * Hook method for performing checks before reading the emails. Throws
    * {@link IllegalStateException} in case something is wrong.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void check() {

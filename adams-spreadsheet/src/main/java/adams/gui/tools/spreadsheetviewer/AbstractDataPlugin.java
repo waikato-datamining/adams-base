@@ -143,7 +143,7 @@ public abstract class AbstractDataPlugin
   
   /**
    * Checks the spreadsheet.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether data was provided.
    * 
    * @param sheet	the spreadsheet to check

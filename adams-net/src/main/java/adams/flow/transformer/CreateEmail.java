@@ -34,13 +34,13 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Actor for creating emails to be sent. The (optional) attachments are taken from the input.<br/>
- * Variables in 'subject', 'body' and 'signature' are automatically replaced whenever the actor is executed.<br/>
- * <p/>
+ * Actor for creating emails to be sent. The (optional) attachments are taken from the input.<br>
+ * Variables in 'subject', 'body' and 'signature' are automatically replaced whenever the actor is executed.<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

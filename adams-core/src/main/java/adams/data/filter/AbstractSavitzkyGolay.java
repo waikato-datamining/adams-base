@@ -310,7 +310,7 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
 
   /**
    * Optional post-processing.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param oldPoint	the original DataPoint

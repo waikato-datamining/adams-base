@@ -27,18 +27,18 @@ import adams.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Cuts out a part of a string. The cut can be either specified as a fixed character position or as a field from delimited columns.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -27,9 +27,9 @@ import adams.data.twitter.TwitterField;
 
 /**
  <!-- globalinfo-start -->
- * Replays tweets stored in a CSV file generate by a Twitter export.<br/>
+ * Replays tweets stored in a CSV file generate by a Twitter export.<br>
  * Extracts hashtags ('#...') and usermentions ('&#64;...') automatically.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

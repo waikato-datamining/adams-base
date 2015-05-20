@@ -25,7 +25,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Turns a spreadsheet into a string matrix.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

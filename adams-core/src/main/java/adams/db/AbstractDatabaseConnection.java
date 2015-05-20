@@ -305,7 +305,7 @@ public abstract class AbstractDatabaseConnection
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()

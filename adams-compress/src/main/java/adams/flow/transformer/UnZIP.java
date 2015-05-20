@@ -28,21 +28,21 @@ import adams.core.io.ZipUtils;
 /**
  <!-- globalinfo-start -->
  * Unzips a ZIP archive and broadcasts the full file names of the extracted files. A regular expression can be used to control the files that are being extracted. Whether the directory structure in the ZIP archive gets restored is optional.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

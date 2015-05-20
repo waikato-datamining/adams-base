@@ -42,7 +42,7 @@ import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 
 /**
  * A PropertyEditor for File objects that lets the user select a file.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.FileEditor</code>.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)

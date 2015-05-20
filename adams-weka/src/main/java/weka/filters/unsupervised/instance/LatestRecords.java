@@ -41,11 +41,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Retains the latest database records.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -att-name
  *  The name of the attribute that holds the numeric DB ID.
@@ -115,10 +115,10 @@ public class LatestRecords
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -att-name
    *  The name of the attribute that holds the numeric DB ID.

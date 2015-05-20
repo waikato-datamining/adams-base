@@ -140,7 +140,7 @@ public abstract class AbstractImageOverlay
 
   /**
    * Cleans up data structures, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void cleanUp() {

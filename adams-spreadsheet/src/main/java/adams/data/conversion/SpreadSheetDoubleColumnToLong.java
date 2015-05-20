@@ -23,13 +23,13 @@ import adams.data.spreadsheet.Cell;
 
 /**
  <!-- globalinfo-start -->
- * Converts the specified spreadsheet column from double to long.<br/>
+ * Converts the specified spreadsheet column from double to long.<br>
  * Simply uses the Double's 'longValue()' method.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

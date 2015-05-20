@@ -27,7 +27,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.functions.LinearRegression;
 
 /**
- * Tests Corr. Run from the command line with:<p/>
+ * Tests Corr. Run from the command line with:<br><br>
  * java weka.classifiers.meta.CorrTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

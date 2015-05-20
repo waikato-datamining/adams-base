@@ -38,7 +38,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Uses the BoofCV contour-finding algorithm to locate objects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -41,16 +41,16 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Actor for sending emails. The (optional) attachments are taken from the input.<br/>
- * Variables in 'subject', 'body' and 'signature' are automatically replaced whenever the actor is executed.<br/>
- * <br/>
- * <br/>
+ * Actor for sending emails. The (optional) attachments are taken from the input.<br>
+ * Variables in 'subject', 'body' and 'signature' are automatically replaced whenever the actor is executed.<br>
+ * <br>
+ * <br>
  * Deprecated: Use adams.flow.transformer.CreateEmail and adams.flow.sink.SendEmail instead
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

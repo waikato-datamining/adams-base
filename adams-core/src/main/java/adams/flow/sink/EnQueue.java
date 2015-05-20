@@ -30,14 +30,14 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Enqueues the incoming data in the specified queue in internal storage.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

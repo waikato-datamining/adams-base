@@ -31,7 +31,7 @@ import adams.test.AdamsTestCase;
 
 
 /**
- * Test class for the OptionUtils class. Run from the command line with: <p/>
+ * Test class for the OptionUtils class. Run from the command line with: <br><br>
  * java adams.core.option.OptionUtilsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

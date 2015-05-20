@@ -33,7 +33,7 @@ import adams.data.report.DataType;
 /**
  <!-- globalinfo-start -->
  * Gets all the pixels of the image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

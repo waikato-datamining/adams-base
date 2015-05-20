@@ -38,7 +38,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Uses the BoofCV canny binary algorithm to locate objects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

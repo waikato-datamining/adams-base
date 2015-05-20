@@ -30,7 +30,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Inverts the image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

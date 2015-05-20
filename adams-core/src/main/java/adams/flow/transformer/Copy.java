@@ -28,20 +28,20 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Creates copies of the tokens being passed through. If the payload of the token implements java.io.Serializable, then a deep copy is created. If the payload implements the adams.core.CloneHandler interface, then this approach is used to create a copy of the payload. In all other cases, the payload is just forwarded.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

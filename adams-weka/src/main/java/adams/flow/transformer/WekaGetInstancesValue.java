@@ -29,21 +29,21 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Retrieves a value from a WEKA Instances object.<br/>
- * Notes:<br/>
- * - date and relational values are forwarded as strings<br/>
- * - missing values are output as '?' (without the single quotes)<br/>
- * <p/>
+ * Retrieves a value from a WEKA Instances object.<br>
+ * Notes:<br>
+ * - date and relational values are forwarded as strings<br>
+ * - missing values are output as '?' (without the single quotes)<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

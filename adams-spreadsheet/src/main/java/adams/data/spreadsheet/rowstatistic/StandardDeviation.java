@@ -27,7 +27,7 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Calculates the standard deviation (population or sample).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

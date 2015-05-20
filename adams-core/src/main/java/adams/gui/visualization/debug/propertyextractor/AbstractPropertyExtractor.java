@@ -165,7 +165,7 @@ public abstract class AbstractPropertyExtractor
 
   /**
    * Initializes the extractor.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {

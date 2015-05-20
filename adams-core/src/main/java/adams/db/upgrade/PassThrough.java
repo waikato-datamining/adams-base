@@ -23,11 +23,11 @@ package adams.db.upgrade;
 /**
  <!-- globalinfo-start -->
  * A dummy upgrader, does nothing.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

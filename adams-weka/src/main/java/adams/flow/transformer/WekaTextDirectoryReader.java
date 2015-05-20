@@ -35,23 +35,23 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Loads all text files in a directory and uses the subdirectory names as class labels. The content of the text files will be stored in a String attribute, the filename can be stored as well.<br/>
+ * Loads all text files in a directory and uses the subdirectory names as class labels. The content of the text files will be stored in a String attribute, the filename can be stored as well.<br>
  * Uses the WEKA weka.core.converters.TextDirectoryLoader converter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -38,13 +38,13 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Reads ODF (Open Document Format) spreadsheet files.<br/>
+ * Reads ODF (Open Document Format) spreadsheet files.<br>
  * If a row contains only empty cells, this is interpreted as the end of the sheet.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

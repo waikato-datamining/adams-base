@@ -49,7 +49,7 @@ public abstract class AbstractIDGenerator<T>
   /**
    * For performing checks on the provided data. If data doesn't pass the
    * check then just throw an IllegalStateException.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param o		the object to check
@@ -67,7 +67,7 @@ public abstract class AbstractIDGenerator<T>
 
   /**
    * For post-processing the ID.
-   * <p/>
+   * <br><br>
    * The default implementation does nothing.
    *
    * @param id		the ID to post-process
@@ -98,7 +98,7 @@ public abstract class AbstractIDGenerator<T>
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -117,7 +117,7 @@ public abstract class AbstractIDGenerator<T>
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

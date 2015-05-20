@@ -892,7 +892,7 @@ public class SpreadSheet
   /**
    * Returns the position of the cell. A position is a combination of a number
    * of letters (for the column) and number (for the row).
-   * <p/>
+   * <br><br>
    * Note: add "1" to the row indices, since the header row does not count
    * towards the row count.
    *
@@ -1007,7 +1007,7 @@ public class SpreadSheet
 
   /**
    * Sorts the rows based on the values in the specified column.
-   * <p/>
+   * <br><br>
    * NB: the row keys will change!
    *
    * @param index	the index (0-based) of the column to sort on
@@ -1020,7 +1020,7 @@ public class SpreadSheet
 
   /**
    * Sorts the rows using the given comparator.
-   * <p/>
+   * <br><br>
    * NB: the row keys will change!
    *
    * @param comp	the row comparator to use
@@ -1031,7 +1031,7 @@ public class SpreadSheet
 
   /**
    * Sorts the rows using the given comparator.
-   * <p/>
+   * <br><br>
    * NB: the row keys will change!
    *
    * @param comp	the row comparator to use

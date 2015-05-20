@@ -71,7 +71,7 @@ public class Regression {
 
   /**
    * Sets the reference file to use.
-   * <p/>
+   * <br><br>
    * Normally, the reference file is determined based on the classname.
    * This method should only be called if a file different from the class
    * name must be used, for instance for an additional regression test.

@@ -29,7 +29,7 @@ import adams.flow.sink.OpenStreetMapViewer;
 /**
  <!-- globalinfo-start -->
  * Overlays the map with an icon obtained from a file.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -200,7 +200,7 @@ public class ImageMapOverlay
 
   /**
    * Gets executed before the actual painting.
-   * <p/>
+   * <br><br>
    * Loads the image.
    * 
    * @param viewer	the associated viewer

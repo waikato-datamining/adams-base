@@ -26,7 +26,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Combines the statistics calculated from the specified statistic generators.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

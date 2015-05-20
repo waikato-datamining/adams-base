@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Tests the TwitterQuery actor.
- * <br/>
+ * <br>
  * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -27,15 +27,15 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  <!-- globalinfo-start -->
- * Simply highlights the selected pixel<br/>
- * <br/>
- * Some actions that generate data for this overlay:<br/>
+ * Simply highlights the selected pixel<br>
+ * <br>
+ * Some actions that generate data for this overlay:<br>
  * adams.flow.transformer.pixelselector.SimpleSelect
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -26,11 +26,11 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Merely loads an actor from a file.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -114,7 +114,7 @@ public class FromFile
 
   /**
    * Hook before generating the actor.
-   * <p/>
+   * <br><br>
    * Checks whether the template file exists.
    */
   protected void preGenerate() {

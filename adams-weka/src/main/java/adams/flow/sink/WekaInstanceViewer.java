@@ -34,15 +34,15 @@ import adams.gui.visualization.instance.InstancePanel;
 /**
  <!-- globalinfo-start -->
  * Actor for displaying adams.data.instance.Instance objects in a graphical way (using the internal format), like the 'Instance Explorer' tool.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

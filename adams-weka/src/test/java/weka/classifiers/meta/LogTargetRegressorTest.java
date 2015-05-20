@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests LogTargetRegressor. Run from the command line with:<p/>
+ * Tests LogTargetRegressor. Run from the command line with:<br><br>
  * java weka.classifiers.meta.LogTargetRegressorTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

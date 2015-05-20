@@ -34,20 +34,20 @@ import java.sql.ResultSet;
 
 /**
  <!-- globalinfo-start -->
- * Returns a spreadsheet object generated from an SQL query.<br/>
+ * Returns a spreadsheet object generated from an SQL query.<br>
  * To optimize memory consumption, you can return the result of the query in chunks of a specified size.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

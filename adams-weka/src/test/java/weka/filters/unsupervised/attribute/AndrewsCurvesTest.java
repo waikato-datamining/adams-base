@@ -30,7 +30,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests AndrewsCurves. Run from the command line with: <p/>
+ * Tests AndrewsCurves. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.AndrewsCurvesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

@@ -29,16 +29,16 @@ import weka.filters.unsupervised.attribute.Normalize;
 
 /**
  <!-- globalinfo-start -->
- * Implementing Euclidean distance (or similarity) function.<br/>
- * <br/>
- * One object defines not one distance but the data model in which the distances between objects of that data model can be computed.<br/>
- * <br/>
- * Attention: For efficiency reasons the use of consistency checks (like are the data models of the two instances exactly the same), is low.<br/>
- * <br/>
- * For more information, see:<br/>
- * <br/>
+ * Implementing Euclidean distance (or similarity) function.<br>
+ * <br>
+ * One object defines not one distance but the data model in which the distances between objects of that data model can be computed.<br>
+ * <br>
+ * Attention: For efficiency reasons the use of consistency checks (like are the data models of the two instances exactly the same), is low.<br>
+ * <br>
+ * For more information, see:<br>
+ * <br>
  * Wikipedia. Euclidean distance. URL http://en.wikipedia.org/wiki/Euclidean_distance.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -50,11 +50,11 @@ import weka.filters.unsupervised.attribute.Normalize;
  *    URL = {http://en.wikipedia.org/wiki/Euclidean_distance}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns off the normalization of attribute 
@@ -183,7 +183,7 @@ public class WeightedEuclideanDistance
   /**
    * Calculates the distance (or similarity) between two instances. Need to
    * pass this returned distance later on to postprocess method to set it on
-   * correct scale. <br/>
+   * correct scale. <br>
    * P.S.: Please don't mix the use of this function with
    * distance(Instance first, Instance second), as that already does post
    * processing. Please consider passing Double.POSITIVE_INFINITY as the cutOffValue to

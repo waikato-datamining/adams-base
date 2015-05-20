@@ -39,7 +39,7 @@ import adams.env.Environment;
 /**
  * Determines the classnames of superclasses that are to be displayed in
  * the GUI for instance.
- * <p/>
+ * <br><br>
  * <b>IMPORTANT NOTE:</b> Due to <a href="http://geekexplains.blogspot.com/2008/07/what-is-reentrant-synchronization-in.html" target="_blank">reentrant threads</a>,
  * the <code>getSingleton()</code> method is not allowed to be called from
  * <code>static {...}</code> blocks in classes that are managed by the
@@ -48,7 +48,7 @@ import adams.env.Environment;
  * block of these classes gets executed and the ClassLister gets initialized
  * once again. In this case, the previous singleton will most likely get
  * overwritten.
- * <p/>
+ * <br><br>
  * Calling the main method of this class allows listing of classes for
  * all or a specific superclass. Examples:
  * <pre>

@@ -24,7 +24,7 @@ import adams.data.container.ObjectContainer;
 /**
  <!-- globalinfo-start -->
  * Obtains the object content of a adams.data.container.ObjectContainer and forwards that.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

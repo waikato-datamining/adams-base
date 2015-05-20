@@ -29,11 +29,11 @@ import adams.db.DatabaseConnectionHandler;
 /**
  <!-- globalinfo-start -->
  * This filter first pushes the data through the provided data filter before applying the actual report filter. The updated filter obtained from the report filter is then replaces the report of the original data container.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

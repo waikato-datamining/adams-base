@@ -136,7 +136,7 @@ public abstract class AbstractScriptletWithDataFile
 
   /**
    * Hook method for performing checks.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether the data file is available.
    *
    * @return		null if all checks passed, otherwise error message

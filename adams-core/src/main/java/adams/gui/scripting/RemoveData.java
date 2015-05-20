@@ -24,9 +24,9 @@ import adams.gui.visualization.container.AbstractContainerManager;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   remove-data &lt;comma-separated list of 1-based indices&gt;</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
@@ -34,7 +34,7 @@ import adams.gui.visualization.container.AbstractContainerManager;
  * <pre>   Removes the data containers with the specified indices.
  *    NB: index is based on the order the data containers have beeen loaded into
  *    the system, includes all data containers, not just visible ones.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

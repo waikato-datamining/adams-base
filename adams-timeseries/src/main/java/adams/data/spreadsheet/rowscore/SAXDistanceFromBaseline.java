@@ -30,7 +30,7 @@ import adams.data.utils.SAXUtils;
 /**
  <!-- globalinfo-start -->
  * Applies adams.data.filter.RowNorm to the timeseries before calculating the SAX distance of the timeseries to the baseline.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -25,7 +25,7 @@ import adams.data.image.transformer.ImageType.Type;
 import adams.env.Environment;
 
 /**
- * Test class for the ImageType transformer. Run from the command line with: <p/>
+ * Test class for the ImageType transformer. Run from the command line with: <br><br>
  * java adams.data.adams.transformer.ImageTypeTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

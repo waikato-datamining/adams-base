@@ -45,7 +45,7 @@ public abstract class AbstractCellFinder
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -56,7 +56,7 @@ public abstract class AbstractCellFinder
 
   /**
    * Checks whether the spreadsheet can be processed.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether a spreadsheet was provided.
    * 
    * @param sheet	the spreadsheet to check

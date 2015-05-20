@@ -24,7 +24,7 @@ import adams.gui.visualization.image.ImagePanel;
 
 /**
  * Ancestor for plugins for the ImageViewer.
- * <p/>
+ * <br><br>
  * If the plugin modifies any panel, then an undo point should be added 
  * before updating the panel. Here is an example:
  * <pre>

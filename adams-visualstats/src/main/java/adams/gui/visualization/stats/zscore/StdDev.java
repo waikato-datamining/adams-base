@@ -25,11 +25,11 @@ import adams.gui.visualization.stats.paintlet.StdDevPaintlet;
 /**
  <!-- globalinfo-start -->
  * Display a standard deviation line on the z score above and below the mean
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

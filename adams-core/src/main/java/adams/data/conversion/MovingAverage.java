@@ -27,11 +27,11 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Computes the average on a window of numbers that have passed through and outputs the average.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

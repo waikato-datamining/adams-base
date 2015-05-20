@@ -32,7 +32,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests RowNorm. Run from the command line with: <p/>
+ * Tests RowNorm. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.RowNormTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

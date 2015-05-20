@@ -26,12 +26,12 @@ import adams.core.QuickInfoHelper;
 
 /**
  <!-- globalinfo-start -->
- * Emulates the following for-loop for integer IDs:<br/>
- * - positive step size:<br/>
- *   for (int i = lower; i &lt;= upper; i += step)<br/>
- * - negative step size:<br/>
+ * Emulates the following for-loop for integer IDs:<br>
+ * - positive step size:<br>
+ *   for (int i = lower; i &lt;= upper; i += step)<br>
+ * - negative step size:<br>
  *   for (int i = upper; i &gt;= lower; i += step)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -199,7 +199,7 @@ public class ForLoop
 
   /**
    * Hook method for checks.
-   * <p/>
+   * <br><br>
    * Ensures that loop setup makes sense.
    * 
    * @return		the list of elements

@@ -30,9 +30,9 @@ import adams.core.base.BaseText;
 
 /**
  <!-- globalinfo-start -->
- * Sets the value of a variable.<br/>
+ * Sets the value of a variable.<br>
  * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

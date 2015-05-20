@@ -28,14 +28,14 @@ import adams.data.io.output.JAIImageWriter;
 /**
  <!-- globalinfo-start -->
  * Writes the image to disk using the specified writer.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

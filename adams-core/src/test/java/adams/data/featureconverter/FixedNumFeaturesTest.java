@@ -29,7 +29,7 @@ import adams.data.report.DataType;
 import adams.env.Environment;
 
 /**
- * Test class for the FixedNumFeatures feature converter. Run from the command line with: <p/>
+ * Test class for the FixedNumFeatures feature converter. Run from the command line with: <br><br>
  * java adams.data.featureconverter.FixedNumFeaturesTest
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

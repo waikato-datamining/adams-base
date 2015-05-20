@@ -39,17 +39,17 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Assembles a container with data obtained from callable actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

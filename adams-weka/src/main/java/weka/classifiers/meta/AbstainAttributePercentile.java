@@ -120,7 +120,7 @@ implements WeightedInstancesHandler, AbstainingClassifier {
    * of options is not possible).
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  If set, classifier is run in debug mode and

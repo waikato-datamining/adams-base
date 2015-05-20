@@ -34,7 +34,7 @@ import adams.data.imagefilter.GrayFilterProvider;
 /**
  <!-- globalinfo-start -->
  * Applies an ImageFilter to the buffered image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

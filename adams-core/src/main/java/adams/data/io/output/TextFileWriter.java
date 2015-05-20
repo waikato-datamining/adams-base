@@ -25,7 +25,7 @@ import adams.core.io.FileUtils;
 /**
  <!-- globalinfo-start -->
  * Writes the content to a text file.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

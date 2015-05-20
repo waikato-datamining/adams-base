@@ -130,7 +130,7 @@ public class BaseTabbedPane
 
   /**
    * Gets called when the user clicks on a tab.
-   * <p/>
+   * <br><br>
    * Default implementation closes tabs if automatic closing of tabs is
    * enabled.
    *
@@ -156,7 +156,7 @@ public class BaseTabbedPane
   /**
    * Hook method that checks whether the specified tab can really be closed
    * with a click of the middle mouse button.
-   * <p/>
+   * <br><br>
    * Default implementation always returns true.
    *
    * @param index	the tab index
@@ -170,7 +170,7 @@ public class BaseTabbedPane
   /**
    * Hook method that gets executed after a tab was successfully removed with
    * a middle mouse button click.
-   * <p/>
+   * <br><br>
    * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
    * instances.
    * 

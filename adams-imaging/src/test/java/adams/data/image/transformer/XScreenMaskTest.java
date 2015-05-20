@@ -25,7 +25,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test class for the XScreenMask transformer. Run from the command line with: <p/>
+ * Test class for the XScreenMask transformer. Run from the command line with: <br><br>
  * java adams.data.adams.transformer.XScreenMaskTest
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)

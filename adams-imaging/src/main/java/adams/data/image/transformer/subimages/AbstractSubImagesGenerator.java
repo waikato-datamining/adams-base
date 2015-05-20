@@ -38,7 +38,7 @@ public abstract class AbstractSubImagesGenerator
 
   /**
    * Checks whether the image can be processed.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that an image is present.
    * 
    * @param image	the image to check

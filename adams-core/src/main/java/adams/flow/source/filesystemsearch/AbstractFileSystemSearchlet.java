@@ -41,7 +41,7 @@ public abstract class AbstractFileSystemSearchlet
   
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation just returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -52,7 +52,7 @@ public abstract class AbstractFileSystemSearchlet
 
   /**
    * Performs a setup check before search.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @throws Exception	if checks failed

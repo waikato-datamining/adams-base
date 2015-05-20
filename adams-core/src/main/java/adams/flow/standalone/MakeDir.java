@@ -26,14 +26,14 @@ import adams.core.io.PlaceholderDirectory;
 /**
  <!-- globalinfo-start -->
  * Creates the user-supplied directory if not already existing. The actor automatically creates all missing directories in the directory hierarchy.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

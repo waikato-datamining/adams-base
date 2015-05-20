@@ -188,7 +188,7 @@ public abstract class AbstractScriptedTemplate
   
   /**
    * Cleans up, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   @Override

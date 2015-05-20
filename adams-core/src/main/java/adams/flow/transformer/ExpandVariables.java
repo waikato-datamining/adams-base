@@ -24,20 +24,20 @@ import adams.core.Variables;
 
 /**
  <!-- globalinfo-start -->
- * Expands all the variables in the string(s) passing through.A string can consist of arbitrary strings and the following special placeholder for variables:<br/>
+ * Expands all the variables in the string(s) passing through.A string can consist of arbitrary strings and the following special placeholder for variables:<br>
  * &#64;{...}
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

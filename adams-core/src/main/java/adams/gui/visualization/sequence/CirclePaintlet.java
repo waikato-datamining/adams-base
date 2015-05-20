@@ -35,11 +35,11 @@ import adams.gui.visualization.core.plot.Axis;
 /**
  <!-- globalinfo-start -->
  * Paintlet for simply painting circles at the specified X-Y position.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

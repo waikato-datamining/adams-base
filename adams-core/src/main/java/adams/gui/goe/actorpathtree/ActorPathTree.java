@@ -224,7 +224,7 @@ public abstract class ActorPathTree<T extends ActorPathNode>
   /**
    * Processes the classname for the icon, returns null if not suitable to be 
    * added to the node.
-   * <p/>
+   * <br><br>
    * Default implementation just returns the provided classname.
    * 
    * @param node	the node currently processed
@@ -238,7 +238,7 @@ public abstract class ActorPathTree<T extends ActorPathNode>
   /**
    * Processes the classname, returns null if not suitable to be added to the
    * node.
-   * <p/>
+   * <br><br>
    * Default implementation just returns the provided classname.
    * 
    * @param node	the node to process

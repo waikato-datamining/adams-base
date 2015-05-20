@@ -29,7 +29,7 @@ import adams.data.featureconverter.HeaderDefinition;
 /**
  <!-- globalinfo-start -->
  * Applies multiple generators to the same image and merges the generate a feature vectors side-by-side. If one of the generators should create fewer a feature vectors, missing values are used in that case.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

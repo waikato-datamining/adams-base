@@ -156,7 +156,7 @@ public class MultiScriptlet
 
   /**
    * Hook method for performing checks.
-   * <p/>
+   * <br><br>
    * Calls the check() methods of all scriptlets.
    *
    * @return		null if all checks passed, otherwise error message

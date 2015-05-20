@@ -24,11 +24,11 @@ import java.awt.event.MouseEvent;
 /**
  <!-- globalinfo-start -->
  * Simply outputs the mouse position in the console.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

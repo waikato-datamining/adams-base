@@ -35,7 +35,7 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 /**
  <!-- globalinfo-start -->
  * Displays the locations of objects in the image, using data from the attached report.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

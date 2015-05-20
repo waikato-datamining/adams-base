@@ -27,7 +27,7 @@ import adams.core.base.BaseString;
 /**
  <!-- globalinfo-start -->
  * Simply outputs the supplied list elements.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -108,7 +108,7 @@ public class FixedList
 
   /**
    * Hook method for checks.
-   * <p/>
+   * <br><br>
    * Ensures that list elements have been supplied.
    * 
    * @return		the list of elements

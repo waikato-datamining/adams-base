@@ -29,11 +29,11 @@ import adams.gui.goe.CustomStringRepresentationHandler;
 /**
  <!-- globalinfo-start -->
  * Turns a String into an object of a class with an associated object editor that has implements adams.gui.goe.CustomStringRepresentationHandler. For instance, all adams.core.base.BaseObject dervied classes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

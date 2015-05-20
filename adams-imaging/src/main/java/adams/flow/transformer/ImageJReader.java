@@ -36,19 +36,19 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Reads any file format that ImageJ can read.<br/>
+ * Reads any file format that ImageJ can read.<br>
  * WARNING: may not close files properly.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.imagej.ImagePlusContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.imagej.ImagePlusContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

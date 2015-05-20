@@ -81,7 +81,7 @@ public class SequencePlotterContainer
   /**
    * Initializes the container with the default plot name and no X value and Y
    * value of 0.0.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public SequencePlotterContainer() {

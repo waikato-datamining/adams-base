@@ -37,23 +37,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Safe-guards the execution of the 'try' sequence of actors. In case of an error, the 'catch' sequence is executed to generate output instead.<br/>
- * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.<br/>
- * If the 'try' block fails and the 'catch' block accepts input (doesn't have to be a transformer, it can be just a source, eg SequenceSource), then the same input token is presented to the 'catch' block. This allows you to react to errors better. E.g., if the input token is a filename, then you can create an error message made up of the recorded error and the filename and pass this on.<br/>
- * Note for developers: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.<br/>
- * <br/>
- * See also:<br/>
+ * Safe-guards the execution of the 'try' sequence of actors. In case of an error, the 'catch' sequence is executed to generate output instead.<br>
+ * This works similar to the Java try-catch-block. Allowing the flow to recover from unexpected errors and, for instance, return default values.<br>
+ * If the 'try' block fails and the 'catch' block accepts input (doesn't have to be a transformer, it can be just a source, eg SequenceSource), then the same input token is presented to the 'catch' block. This allows you to react to errors better. E.g., if the input token is a filename, then you can create an error message made up of the recorded error and the filename and pass this on.<br>
+ * Note for developers: If actors use other actors internally, these need to be accessible. This can be achieved by simply  implementing the adams.flow.core.InternalActorHandler interface.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.control.RaiseError
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -657,7 +657,7 @@ public class TryCatch
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
-   * <p/>
+   * <br><br>
    * The method is not allowed allowed to return "true" before the
    * actor has been executed. For actors that return an infinite
    * number of tokens, the m_Executed flag can be returned.

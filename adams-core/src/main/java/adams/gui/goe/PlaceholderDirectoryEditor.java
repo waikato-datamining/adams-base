@@ -43,7 +43,7 @@ import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 /**
  * A PropertyEditor for PlaceholderDirectory objects that lets the user select
  * a directory.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.FileEditor</code>.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)

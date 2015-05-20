@@ -32,20 +32,20 @@ import weka.core.Drawable;
 /**
  <!-- globalinfo-start -->
  * Outputs information of a trained weka.classifiers.Classifier object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

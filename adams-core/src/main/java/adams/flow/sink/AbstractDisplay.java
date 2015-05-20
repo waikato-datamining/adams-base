@@ -38,7 +38,7 @@ public abstract class AbstractDisplay
 
   /**
    * Before the token is displayed.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param token	the token to display
@@ -56,7 +56,7 @@ public abstract class AbstractDisplay
 
   /**
    * After the token has been displayed.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param token	the token to display

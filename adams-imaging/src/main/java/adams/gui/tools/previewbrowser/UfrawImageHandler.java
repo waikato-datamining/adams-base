@@ -28,7 +28,7 @@ import java.io.File;
 /**
  <!-- globalinfo-start -->
  * Displays the following image types: 3fr,arw,bay,bmq,cine,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,ia,jpg,k25,kc2,kdc,mdc,mef,mos,mrw,nef,nrw,orf,pef,pxn,qtk,raf,raw,rdc,rw2,sr2,srf,sti,tif,x3f
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

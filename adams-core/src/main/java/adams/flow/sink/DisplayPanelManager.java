@@ -66,17 +66,17 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Actor that displays a 'history' of panels created by the selected panel provider. The provider can be an actor that generates classifier errors, for instance.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -770,7 +770,7 @@ public class DisplayPanelManager
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

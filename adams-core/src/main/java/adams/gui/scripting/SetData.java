@@ -27,16 +27,16 @@ import adams.gui.visualization.container.NamedContainer;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   set-data &lt;index&gt; &lt;DB-ID&gt;</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
  * Description:
  * <pre>   Replaces the currently loaded data container at the specified 1-based index
  *    with the one associated with the database ID.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  *

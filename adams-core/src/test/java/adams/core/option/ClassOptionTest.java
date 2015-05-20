@@ -28,7 +28,7 @@ import adams.env.Environment;
 
 
 /**
- * Test class for all class options. Run from the command line with: <p/>
+ * Test class for all class options. Run from the command line with: <br><br>
  * java adams.core.option.ClassOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

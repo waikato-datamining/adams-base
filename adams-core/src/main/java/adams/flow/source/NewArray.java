@@ -28,20 +28,20 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Generates a new array of the specified class with the given dimensions.<br/>
+ * Generates a new array of the specified class with the given dimensions.<br>
  * Dimensions are given as follows: [x], with x being the number of elements. You can have multi-dimensional arrays: [x][y][z]. Variables can be used as well to specify the dimensions: [&#64;{x}].
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

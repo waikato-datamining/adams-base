@@ -33,9 +33,9 @@ import adams.flow.control.LocalScopeTrigger;
 
 /**
  <!-- globalinfo-start -->
- * Updates all occurrences of the old variable name with the new one.<br/>
+ * Updates all occurrences of the old variable name with the new one.<br>
  * Processes either attached variables or variables that are a part of an object that is derived from adams.core.base.BaseObject.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -115,7 +115,7 @@ public class UpdateVariableName
   /**
    * Returns whether the traverser can recurse the specified class
    * (base class from a ClassOption).
-   * <p/>
+   * <br><br>
    * Does not recurse into {@link LocalScopeTrigger} and {@link Flow} actors.
    *
    * @param cls		the class to determine for whether recursing is

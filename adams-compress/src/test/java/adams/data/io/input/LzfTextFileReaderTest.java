@@ -25,9 +25,9 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Tests the adams.data.io.input.LzfTextFileReader class. Run from commandline with: <p/>
+ * Tests the adams.data.io.input.LzfTextFileReader class. Run from commandline with: <br><br>
  * java adams.data.io.input.LzfTextFileReader
- * <p/>
+ * <br><br>
  * NB: dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

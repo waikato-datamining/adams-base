@@ -520,7 +520,7 @@ public abstract class AbstractDisplay
   
   /**
    * Hook method before the frame gets created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param panel	the panel to display in the frame
@@ -560,7 +560,7 @@ public abstract class AbstractDisplay
 
   /**
    * Hook method after the frame got created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param frame	the frame that got just created
@@ -613,7 +613,7 @@ public abstract class AbstractDisplay
   /**
    * Returns whether to de-register in {@link #wrapUp()} or wait till 
    * {@link #cleanUpGUI()}.
-   * <p/>
+   * <br><br>
    * Default returns false.
    * 
    * @return		true if to deregister already in {@link #wrapUp()}

@@ -37,11 +37,11 @@ import java.util.zip.GZIPOutputStream;
 /**
  <!-- globalinfo-start -->
  * Writes Gnumeric workbook files (GZIP compressed or uncompressed XML), version 1.10.13.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

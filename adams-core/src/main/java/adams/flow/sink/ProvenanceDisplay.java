@@ -35,18 +35,18 @@ import adams.gui.flow.provenance.ProvenanceTree;
 /**
  <!-- globalinfo-start -->
  * Actor for displaying the provenance of a token.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -264,7 +264,7 @@ public class ProvenanceDisplay
 
   /**
    * Executes the flow item. 
-   * <p/>
+   * <br><br>
    * Outputs the token on the command-line in headless mode.
    *
    * @return		null if everything is fine, otherwise error message

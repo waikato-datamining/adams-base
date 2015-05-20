@@ -46,19 +46,19 @@ import com.jcraft.jsch.Session;
 
 /**
  <!-- globalinfo-start -->
- * Provides access to a remote host via SSH.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * Provides access to a remote host via SSH.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  *  (2011). JSch - JSch is a pure Java implementation of SSH2..
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

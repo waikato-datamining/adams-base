@@ -28,7 +28,7 @@ import adams.data.spreadsheet.columnfinder.NullFinder;
 /**
  <!-- globalinfo-start -->
  * Turns the columns that the specified column finder locates into a 1-based range string. Instead of a compressed range string (eg 1-4) it is also possible to output the individual indices (eg 1,2,3,4).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

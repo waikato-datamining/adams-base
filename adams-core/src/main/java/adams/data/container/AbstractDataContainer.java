@@ -226,7 +226,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
   /**
    * Method that gets notified about changes in the collection of data points.
    * Just passes the modified state through.
-   * <p/>
+   * <br><br>
    * The default implementation only passes the value through.
    *
    * @param modified	whether the action modified the collection

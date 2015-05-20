@@ -29,9 +29,9 @@ import adams.flow.core.AbstractCallableActorPropertyUpdater;
 
 /**
  <!-- globalinfo-start -->
- * Sets the property of a callable actor whenever the specified variable gets changed.<br/>
+ * Sets the property of a callable actor whenever the specified variable gets changed.<br>
  * Note: this actor just sets the value, but performs no re-initialization or similar of the modified object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

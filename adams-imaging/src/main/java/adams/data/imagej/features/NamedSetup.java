@@ -28,7 +28,7 @@ import adams.data.imagej.ImagePlusContainer;
 /**
  <!-- globalinfo-start -->
  * Applies an ImageJ feature generator that is referenced via its global setup name (see 'NamedSetups').
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

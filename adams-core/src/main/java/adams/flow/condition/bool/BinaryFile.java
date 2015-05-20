@@ -28,9 +28,9 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the file exists and is a binary file.<br/>
+ * Evaluates to 'true' if the file exists and is a binary file.<br>
  * A heuristic is used to determine whether a file is binary, based on the first 1024 bytes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

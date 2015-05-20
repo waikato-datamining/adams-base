@@ -29,7 +29,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 /**
  <!-- globalinfo-start -->
  * Applies the specified BoofCV transformers one after the other.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

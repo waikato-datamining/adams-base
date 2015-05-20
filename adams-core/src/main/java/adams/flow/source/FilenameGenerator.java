@@ -29,19 +29,19 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Uses the specified filename generator to output a filename.<br/>
- * NB: Generators that require an object to pass through won't work with this source.<br/>
- * <br/>
- * See also:<br/>
+ * Uses the specified filename generator to output a filename.<br>
+ * NB: Generators that require an object to pass through won't work with this source.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.transformer.FilenameGenerator
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

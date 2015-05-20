@@ -40,11 +40,11 @@ import adams.data.statistics.StatCalc;
 /**
  <!-- globalinfo-start -->
  * A simple filter that retains only every nth attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -nth &lt;int&gt;
  *  Only every n-th point will be output (&gt;0).

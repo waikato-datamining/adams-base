@@ -31,7 +31,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Turns a JSON object into a spreadsheet, essentially flattening it.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

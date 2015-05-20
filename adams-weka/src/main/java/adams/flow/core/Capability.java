@@ -22,7 +22,7 @@ package adams.flow.core;
 
 /**
  * Enumeration of all capabilities.
- * <p/>
+ * <br><br>
  * Replication of the Weka capabilities, as these cannot be edited in the
  * GOE. Needs to be updated whenever the Weka ones changes.
  *

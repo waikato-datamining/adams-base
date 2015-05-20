@@ -235,7 +235,7 @@ public class ApprovalDialog
   /**
    * Hook method for the "approve" button. Button triggers only if this method
    * returns null.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    * 
    * @return		null if the input is valid, otherwise error message

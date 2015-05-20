@@ -31,7 +31,7 @@ import adams.gui.dialog.TextDialog;
 /**
  <!-- globalinfo-start -->
  * Simply shows the position on the map that the user clicked on.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

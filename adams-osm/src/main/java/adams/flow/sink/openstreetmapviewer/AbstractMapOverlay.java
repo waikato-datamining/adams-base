@@ -84,7 +84,7 @@ public abstract class AbstractMapOverlay
 
   /**
    * Gets executed before the actual painting.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param viewer	the associated viewer
@@ -103,7 +103,7 @@ public abstract class AbstractMapOverlay
 
   /**
    * Gets executed after the actual painting.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param viewer	the associated viewer

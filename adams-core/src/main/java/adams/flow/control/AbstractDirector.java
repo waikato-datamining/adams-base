@@ -74,7 +74,7 @@ public abstract class AbstractDirector
 
   /**
    * Initializes the members.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    */
   protected void initialize() {

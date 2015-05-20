@@ -21,15 +21,15 @@ package adams.gui.scripting;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   disable-undo</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
  * Description:
  * <pre>   Disables the undo support, if available.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

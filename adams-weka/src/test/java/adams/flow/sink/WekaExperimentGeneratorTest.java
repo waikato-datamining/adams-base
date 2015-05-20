@@ -39,7 +39,7 @@ import java.util.HashSet;
 
 /**
  * Tests the WekaExperimentGenerator actor.
- * <p/>
+ * <br><br>
  * Note: regression file needs to be updated whenever the Weka version
  *       changes (the XML stores the Weka version!).
  *

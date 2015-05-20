@@ -32,7 +32,7 @@ import adams.flow.core.LagMakerOptions;
 /**
  <!-- globalinfo-start -->
  * Outputs a configured instance of a Weka Forecaster.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->

@@ -32,17 +32,17 @@ import adams.data.report.ReportHandler;
 /**
  <!-- globalinfo-start -->
  * Outputs all fields that match the regular expression.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.AbstractField<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.AbstractField<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

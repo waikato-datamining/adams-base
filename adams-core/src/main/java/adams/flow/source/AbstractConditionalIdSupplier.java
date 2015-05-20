@@ -88,7 +88,7 @@ public abstract class AbstractConditionalIdSupplier
 
   /**
    * Returns the accepted classes for condition objects.
-   * <p/>
+   * <br><br>
    * The default implementation just returns the class of the default condition
    * object.
    *

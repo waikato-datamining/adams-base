@@ -29,16 +29,16 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Determines whether images are in focus ('sharp') using the specified algorithm.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Boolean<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Boolean<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

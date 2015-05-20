@@ -26,20 +26,20 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Dummy transformer that passes tokens through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
+ * Input/output:<br>
+ * - accepts:<br>
  * <pre>   adams.flow.core.Unknown</pre>
- * - generates:<br/>
+ * - generates:<br>
  * <pre>   adams.flow.core.Unknown</pre>
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

@@ -28,7 +28,7 @@ import adams.core.base.BaseDate;
 import adams.env.Environment;
 
 /**
- * Tests the adams.parser.BaseDateExpression class. Run from commandline with: <p/>
+ * Tests the adams.parser.BaseDateExpression class. Run from commandline with: <br><br>
  * java adams.parser.BaseDateExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

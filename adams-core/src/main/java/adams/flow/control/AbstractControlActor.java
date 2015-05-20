@@ -109,7 +109,7 @@ public abstract class AbstractControlActor
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -361,7 +361,7 @@ public abstract class AbstractControlActor
 
   /**
    * Pre-execute hook.
-   * <p/>
+   * <br><br>
    * Attempts to setUp actor again, if it was wrapped up before.
    *
    * @return		null if everything is fine, otherwise error message
@@ -430,7 +430,7 @@ public abstract class AbstractControlActor
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options and calls the destroy() method of all sub-actors.
    */
   @Override
@@ -490,7 +490,7 @@ public abstract class AbstractControlActor
 
   /**
    * Gets called when the pause state of the flow changes.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param e		the event

@@ -28,7 +28,7 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 
 /**
- * Tests the adams.core.ODFHelper class. Run from commandline with: <p/>
+ * Tests the adams.core.ODFHelper class. Run from commandline with: <br><br>
  * java adams.core.ODFHelperTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -33,16 +33,16 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Obtains a report from a callable source and replaces the current one in the token passing through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -249,7 +249,7 @@ public abstract class AbstractSpreadSheetReader
   /**
    * Returns whether to automatically handle gzip compressed files
    * ({@link InputType#READER}, {@link InputType#STREAM}).
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    * 
    * @return		true if to automatically decompress
@@ -272,7 +272,7 @@ public abstract class AbstractSpreadSheetReader
   
   /**
    * Hook method to perform some checks before performing the actual read.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void check() {
@@ -427,7 +427,7 @@ public abstract class AbstractSpreadSheetReader
   /**
    * Performs the actual reading. Must handle compression itself, if 
    * {@link #supportsCompressedInput()} returns true.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param file	the file to read from
@@ -441,7 +441,7 @@ public abstract class AbstractSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param r		the reader to read from
@@ -454,7 +454,7 @@ public abstract class AbstractSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param in		the input stream to read from

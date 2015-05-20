@@ -25,7 +25,7 @@ import junit.textui.TestRunner;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests HashableInstanceUsingSum. Run from the command line with:<p/>
+ * Tests HashableInstanceUsingSum. Run from the command line with:<br><br>
  * java weka.core.HashableInstanceUsingSumTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

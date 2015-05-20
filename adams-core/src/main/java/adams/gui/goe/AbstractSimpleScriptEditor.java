@@ -361,7 +361,7 @@ public class AbstractSimpleScriptEditor
   
   /**
    * Hook-method to add further menu items to the menu of the "..." button.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param menu	the popup menu for the button

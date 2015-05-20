@@ -31,14 +31,14 @@ import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Performs a gaussian blur.<br/>
- * Original code taken from here:<br/>
+ * Performs a gaussian blur.<br>
+ * Original code taken from here:<br>
  * http:&#47;&#47;www.jhlabs.com&#47;ip&#47;blurring.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

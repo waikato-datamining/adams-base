@@ -24,7 +24,7 @@ import java.sql.Connection;
 /**
  <!-- globalinfo-start -->
  * Combines (and executes) multiple setups.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

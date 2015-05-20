@@ -37,7 +37,7 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 /**
  * Ancestor of all containers. A container allows the access to the stored
  * values via their names.
- * <p/>
+ * <br><br>
  * NB: containers need to declare a default constructor. The default constructor
  * is used to generate help information.
  *

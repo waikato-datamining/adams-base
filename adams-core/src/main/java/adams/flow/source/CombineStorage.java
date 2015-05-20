@@ -28,18 +28,18 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Outputs the expanded string generated from the specified combination expression (variables and storage placeholders). In case of storage placeholders the string representation of the storage item is used.<br/>
- * The expression string consists of arbitrary strings and the following special placeholders:<br/>
- * - variables: &#64;{...}<br/>
- * - storage placeholders: %{...}<br/>
- * <p/>
+ * Outputs the expanded string generated from the specified combination expression (variables and storage placeholders). In case of storage placeholders the string representation of the storage item is used.<br>
+ * The expression string consists of arbitrary strings and the following special placeholders:<br>
+ * - variables: &#64;{...}<br>
+ * - storage placeholders: %{...}<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

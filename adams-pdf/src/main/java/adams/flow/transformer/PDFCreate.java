@@ -36,25 +36,25 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Actor for generating PDF files. Images (GIF&#47;PNG&#47;JPEG), plain text files and CSV files are supported. CSV files are automatically added as tables (if they contain comments, then these will get added as well).<br/>
+ * Actor for generating PDF files. Images (GIF&#47;PNG&#47;JPEG), plain text files and CSV files are supported. CSV files are automatically added as tables (if they contain comments, then these will get added as well).<br>
  * The filename of the generated PDF is forwarded.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

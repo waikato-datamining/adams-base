@@ -25,7 +25,7 @@ import adams.core.Utils;
 
 /**
  * A container for search parameters.
- * <p/>
+ * <br><br>
  * In case of simple substring matching, the search string and the string
  * being searched are both used in lower case.
  *

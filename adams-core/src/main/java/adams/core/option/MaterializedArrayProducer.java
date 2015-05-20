@@ -30,7 +30,7 @@ import adams.flow.provenance.ProvenanceInformation;
 /**
  * Specialized ArrayProducer that resolves "callable actor references" into
  * concrete options. Used in provenance.
- * <p/>
+ * <br><br>
  * Assumes that the callable actor forwards a setup if merely executed, without
  * any input.
  *
@@ -60,7 +60,7 @@ public class MaterializedArrayProducer
   /**
    * Hook method for performing checks on the input. May throw exceptions
    * if object doesn't pass test(s).
-   * <p/>
+   * <br><br>
    * Makes sure that the input is derived from AbstractActor.
    *
    * @param object	the objec to check

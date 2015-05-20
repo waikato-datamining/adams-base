@@ -39,11 +39,11 @@ import java.util.Vector;
 /**
  <!-- globalinfo-start -->
  * A filter that removes instances which are incorrectly classified. Useful for removing outliers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -W &lt;classifier specification&gt;
  *  Full class name of classifier to use, followed
@@ -395,10 +395,10 @@ public class RemoveMisclassifiedRel
 
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -W &lt;classifier specification&gt;
    *  Full class name of classifier to use, followed

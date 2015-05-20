@@ -77,19 +77,19 @@ import adams.gui.visualization.osm.OpenStreetMapViewerTree;
 /**
  <!-- globalinfo-start -->
  * Displays data layers (markers, rectangles and polygons) on top of a map provided by OpenStreetMap.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapMarker<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapMarker[]<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon[]<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle<br/>
- * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapMarker<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapMarker[]<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon[]<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle<br>
+ * &nbsp;&nbsp;&nbsp;org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

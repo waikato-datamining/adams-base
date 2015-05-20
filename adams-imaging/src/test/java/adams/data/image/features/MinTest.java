@@ -24,7 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test class for the Min feature generator. Run from the command line with: <p/>
+ * Test class for the Min feature generator. Run from the command line with: <br><br>
  * java adams.data.image.features.MinTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

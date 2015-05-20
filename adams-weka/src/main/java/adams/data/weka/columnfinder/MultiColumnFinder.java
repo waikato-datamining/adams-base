@@ -26,13 +26,13 @@ import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
- * Applies multiple column finding algorithms to the data.<br/>
+ * Applies multiple column finding algorithms to the data.<br>
  * The indices can be either joined or intersected.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

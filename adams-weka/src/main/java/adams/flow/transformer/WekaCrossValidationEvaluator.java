@@ -48,19 +48,19 @@ import adams.multiprocess.JobRunner;
 /**
  <!-- globalinfo-start -->
  * Cross-validates a classifier on an incoming dataset. The classifier setup being used in the evaluation is a callable 'Classifier' actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

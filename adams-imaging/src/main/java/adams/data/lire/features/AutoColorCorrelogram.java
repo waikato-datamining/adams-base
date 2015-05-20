@@ -38,12 +38,12 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.<br/>
- * For more information on the LIRE project, see:<br/>
- * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;<br/>
- * For more information see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.<br>
+ * For more information on the LIRE project, see:<br>
+ * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;<br>
+ * For more information see:<br>
  * Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. &amp; Zabih, R. (2007). Image Indexing Using Color Correlograms. IEEE Computer Society..
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -56,7 +56,7 @@ import adams.data.statistics.StatUtils;
  *    HTTP = {http:&#47;&#47;doi.ieeecomputersociety.org&#47;10.1109&#47;CVPR.1997.609412}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  * 
  <!-- options-start -->

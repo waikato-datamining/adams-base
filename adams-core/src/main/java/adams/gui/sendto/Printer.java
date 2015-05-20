@@ -91,7 +91,7 @@ public class Printer
 
   /**
    * Performs the actual sending/forwarding/processing of the data.
-   * <p/>
+   * <br><br>
    * Code for printing java.awt.Component taken from
    * <a href="http://download.oracle.com/javase/tutorial/2d/printing/examples/PrintUIWindow.java" target="_blank">here</a>.
    *

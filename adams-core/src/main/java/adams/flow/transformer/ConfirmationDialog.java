@@ -31,24 +31,24 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Pops up a confirmation dialog, prompting the user to select 'yes', 'no' or 'cancel'.<br/>
- * If no custom tokens are used, the current token is only forwarded when the user selects 'yes'. Otherwise the token simply gets dropped.<br/>
- * In case of custom tokens, depending on the user's selection, either the user-defined 'yes' string or the 'no' string get forwarded as string tokens.<br/>
+ * Pops up a confirmation dialog, prompting the user to select 'yes', 'no' or 'cancel'.<br>
+ * If no custom tokens are used, the current token is only forwarded when the user selects 'yes'. Otherwise the token simply gets dropped.<br>
+ * In case of custom tokens, depending on the user's selection, either the user-defined 'yes' string or the 'no' string get forwarded as string tokens.<br>
  * Closing the dialog gets interpreted as selecting the 'cancel' button.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -29,22 +29,22 @@ import adams.gui.core.BrowserHelper;
 
 /**
  <!-- globalinfo-start -->
- * Displays a URL in a webbrowser.<br/>
+ * Displays a URL in a webbrowser.<br>
  * By default, the system's default browser is used. But the user can also specify a custom browser executable.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URI<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URL<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URI<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

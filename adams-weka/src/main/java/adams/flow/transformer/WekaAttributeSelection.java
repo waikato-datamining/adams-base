@@ -38,27 +38,27 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Performs attribute selection on the incoming data.<br/>
+ * Performs attribute selection on the incoming data.<br>
  * In case of input in form of a class adams.flow.container.WekaTrainTestSetContainer object, the training set stored in the container is being used.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaTrainTestSetContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaAttributeSelectionContainer<br/>
- * <p/>
- * Container information:<br/>
- * - adams.flow.container.WekaTrainTestSetContainer: Train, Test, Seed, FoldNumber, FoldCount<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaTrainTestSetContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaAttributeSelectionContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaTrainTestSetContainer: Train, Test, Seed, FoldNumber, FoldCount<br>
  * - adams.flow.container.WekaAttributeSelectionContainer: Train, Reduced, Transformed, Evaluation, Statistics, Selected attributes, Seed, FoldCount
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

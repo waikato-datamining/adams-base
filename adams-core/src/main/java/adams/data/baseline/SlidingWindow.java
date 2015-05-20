@@ -31,11 +31,11 @@ import adams.db.DatabaseConnectionHandler;
 /**
  <!-- globalinfo-start -->
  * Applies a baseline correction scheme on partitions of the data with a sliding window approach.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

@@ -29,7 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Creates features from the incoming spreadsheet and turns them into OpenStreetMap MapObjects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

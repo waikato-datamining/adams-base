@@ -34,7 +34,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Checks whether the timestamp with the specified index meets the condition (eg before or after the supplied timestamp).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

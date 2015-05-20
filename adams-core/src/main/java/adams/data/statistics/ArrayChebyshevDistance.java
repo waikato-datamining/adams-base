@@ -22,7 +22,7 @@ package adams.data.statistics;
 /**
  <!-- globalinfo-start -->
  * Calculates the Chebyshev distance between the first array and the remaining arrays. The arrays must be numeric, of course.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

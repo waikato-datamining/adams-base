@@ -28,10 +28,10 @@ import java.util.List;
 
 /**
  * Used for paper references in the Javadoc and for BibTex generation.
- * Based on documentation found here: <p/>
+ * Based on documentation found here: <br><br>
  * <a href="http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html" target="_blank">http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html</a>
- * <p/>
- * BibTex examples can be found here: <p/>
+ * <br><br>
+ * BibTex examples can be found here: <br><br>
  * <a href="http://bib2web.djvuzone.org/bibtex.html" target="_blank">http://bib2web.djvuzone.org/bibtex.html</a>
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -33,12 +33,12 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Splits the timeseries using a field from its report.<br/>
- * Accepted date formats:<br/>
- * yyyy-MM-dd HH:mm:ss<br/>
- * yyyy-MM-dd HH:mm:ss.S<br/>
+ * Splits the timeseries using a field from its report.<br>
+ * Accepted date formats:<br>
+ * yyyy-MM-dd HH:mm:ss<br>
+ * yyyy-MM-dd HH:mm:ss.S<br>
  * yyyy-MM-dd
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -208,7 +208,7 @@ public class ReportDate
 
   /**
    * Performs checks on the timeseries that is to be split.
-   * <p/>
+   * <br><br>
    * Ensures that report and field are present.
    * 
    * @param series	the timeseries to split

@@ -29,11 +29,11 @@ import adams.db.DatabaseConnectionHandler;
 /**
  <!-- globalinfo-start -->
  * A meta-filter that runs multiple filters over the data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

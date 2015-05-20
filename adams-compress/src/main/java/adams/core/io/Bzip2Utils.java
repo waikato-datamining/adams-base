@@ -53,7 +53,7 @@ public class Bzip2Utils {
 
   /**
    * Decompresses the specified archive.
-   * <p/>
+   * <br><br>
    * See <a href="https://commons.apache.org/compress/examples.html" target="_blank">Apache commons/compress</a>.
    *
    * @param archiveFile	the archive file to decompress
@@ -130,7 +130,7 @@ public class Bzip2Utils {
 
   /**
    * Compresses the specified file.
-   * <p/>
+   * <br><br>
    * See <a href="https://commons.apache.org/compress/examples.html" target="_blank">Apache commons/compress</a>.
    *
    * @param inputFile	the file to compress

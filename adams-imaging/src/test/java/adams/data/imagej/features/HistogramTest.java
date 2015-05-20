@@ -25,7 +25,7 @@ import adams.data.imagej.features.Histogram.HistogramType;
 import adams.env.Environment;
 
 /**
- * Test class for the Histogram features. Run from the command line with: <p/>
+ * Test class for the Histogram features. Run from the command line with: <br><br>
  * java adams.data.imagej.features.HistogramTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

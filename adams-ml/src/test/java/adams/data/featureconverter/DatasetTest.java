@@ -28,7 +28,7 @@ import adams.data.report.DataType;
 import adams.env.Environment;
 
 /**
- * Test class for the Dataset feature converter. Run from the command line with: <p/>
+ * Test class for the Dataset feature converter. Run from the command line with: <br><br>
  * java adams.data.featureconverter.DatasetTest
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests M5P2. Run from the command line with:<p/>
+ * Tests M5P2. Run from the command line with:<br><br>
  * java weka.classifiers.trees.M5P2Test
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

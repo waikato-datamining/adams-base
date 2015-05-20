@@ -29,18 +29,18 @@ import adams.core.base.BaseURL;
 /**
  <!-- globalinfo-start -->
  * Supplies multiple URLs (uniform resource locators).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
- * <p/>
+ * Input/output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URL<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

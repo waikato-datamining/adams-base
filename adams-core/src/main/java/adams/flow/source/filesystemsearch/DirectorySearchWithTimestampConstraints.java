@@ -23,9 +23,9 @@ import adams.core.base.BaseDateTime;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories.<br/>
+ * Searches only for directories.<br>
  * Allows to further restrict the search using a timestamp window ('last modified') that the directories must satisfy.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

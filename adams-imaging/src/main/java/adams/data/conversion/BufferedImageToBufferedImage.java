@@ -24,7 +24,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy conversion, performs no conversion at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

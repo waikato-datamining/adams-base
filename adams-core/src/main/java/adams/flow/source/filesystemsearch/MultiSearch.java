@@ -25,7 +25,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Combines the search results of multiple search algorithms.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

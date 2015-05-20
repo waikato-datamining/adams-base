@@ -26,7 +26,7 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Adaptive resize (option -adaptive-resize)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -24,17 +24,17 @@ import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
- * Backquotes, i.e., escapes with a backslash, characters like quotes (single and double), new lines, tabs.<br/>
- * <br/>
- * See also:<br/>
- * adams.data.conversion.Quote<br/>
- * adams.data.conversion.UnQuote<br/>
+ * Backquotes, i.e., escapes with a backslash, characters like quotes (single and double), new lines, tabs.<br>
+ * <br>
+ * See also:<br>
+ * adams.data.conversion.Quote<br>
+ * adams.data.conversion.UnQuote<br>
  * adams.data.conversion.UnBackQuote
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -25,28 +25,28 @@ import adams.db.AbstractDatabaseConnection;
 
 /**
  <!-- globalinfo-start -->
- * General actions:<br/>
- * <br/>
- * connect &lt;driver&gt; &lt;URL&gt; &lt;user&gt; [password]<br/>
- * &nbsp;&nbsp;&nbsp;Connects to the database.<br/>
- * <br/>
- * disconnect<br/>
- * &nbsp;&nbsp;&nbsp;Disconnects from the database.<br/>
- * <br/>
- * run-tool &lt;tool + options&gt;<br/>
- * &nbsp;&nbsp;&nbsp;Runs the specified tool.<br/>
- * <br/>
- * <br/>
- * Actions for adams.gui.core.UndoHandler:<br/>
- * <br/>
- * disable-undo<br/>
- * &nbsp;&nbsp;&nbsp;Disables the undo support, if available.<br/>
- * <br/>
- * enable-undo<br/>
- * &nbsp;&nbsp;&nbsp;Enables the undo support, if available.<br/>
- * <br/>
- * <br/>
- * <p/>
+ * General actions:<br>
+ * <br>
+ * connect &lt;driver&gt; &lt;URL&gt; &lt;user&gt; [password]<br>
+ * &nbsp;&nbsp;&nbsp;Connects to the database.<br>
+ * <br>
+ * disconnect<br>
+ * &nbsp;&nbsp;&nbsp;Disconnects from the database.<br>
+ * <br>
+ * run-tool &lt;tool + options&gt;<br>
+ * &nbsp;&nbsp;&nbsp;Runs the specified tool.<br>
+ * <br>
+ * <br>
+ * Actions for adams.gui.core.UndoHandler:<br>
+ * <br>
+ * disable-undo<br>
+ * &nbsp;&nbsp;&nbsp;Disables the undo support, if available.<br>
+ * <br>
+ * enable-undo<br>
+ * &nbsp;&nbsp;&nbsp;Enables the undo support, if available.<br>
+ * <br>
+ * <br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

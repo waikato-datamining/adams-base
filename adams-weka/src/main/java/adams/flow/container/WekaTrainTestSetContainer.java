@@ -28,7 +28,7 @@ import weka.core.Instances;
 
 /**
  * A container for storing train and test set.
- * <p/>
+ * <br><br>
  * Optionally, random seed, fold number and fold count can be stored as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -57,7 +57,7 @@ public class WekaTrainTestSetContainer
 
   /**
    * Initializes the container.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public WekaTrainTestSetContainer() {

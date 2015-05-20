@@ -54,7 +54,7 @@ public abstract class AbstractMultiImageOperation<T extends AbstractImageContain
 
   /**
    * Checks the images.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that images are present.
    *
    * @param images	the images to check

@@ -24,7 +24,7 @@ import weka.core.Drawable;
 /**
  <!-- globalinfo-start -->
  * Extracts the string representation of a weka.core.Drawable object, e.g., the tree representation of a decision tree or the graph of a BayesNet.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

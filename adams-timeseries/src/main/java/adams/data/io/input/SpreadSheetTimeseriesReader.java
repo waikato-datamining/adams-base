@@ -31,14 +31,14 @@ import adams.data.timeseries.TimeseriesPoint;
 
 /**
  <!-- globalinfo-start -->
- * Reads timeseries containers from columns of a spreadsheet.<br/>
- * A new container is started, whenever the value of the ID column changes (hence you need to ensure that the data is ordered on this column).<br/>
+ * Reads timeseries containers from columns of a spreadsheet.<br>
+ * A new container is started, whenever the value of the ID column changes (hence you need to ensure that the data is ordered on this column).<br>
  * However, it is not required to have an ID column present. In this case, all of the data gets added to the same timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

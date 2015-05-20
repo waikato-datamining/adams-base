@@ -28,14 +28,14 @@ import weka.filters.supervised.attribute.PLSFilterWithLoadings;
 
 /**
 <!-- globalinfo-start -->
-* A wrapper classifier for the PLSFilter, utilizing the PLSFilter's ability to perform predictions.<br/>
-* <br/>
+* A wrapper classifier for the PLSFilter, utilizing the PLSFilter's ability to perform predictions.<br>
+* <br>
 * Allows access to the PLS matrices in case the filter is a PLSFilterWithLoadings instance.
-* <p/>
+* <br><br>
 <!-- globalinfo-end -->
 *
 <!-- options-start -->
-* Valid options are: <p/>
+* Valid options are: <br><br>
 * 
 * <pre> -filter &lt;filter specification&gt;
 *  The PLS filter to use. Full classname of filter to include,  followed by scheme options.

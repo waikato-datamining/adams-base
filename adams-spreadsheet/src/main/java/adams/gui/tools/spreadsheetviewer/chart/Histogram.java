@@ -51,7 +51,7 @@ import adams.gui.visualization.sequence.BarPaintlet;
 /**
  <!-- globalinfo-start -->
  * Generates histograms by plotting the X column against the Y column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

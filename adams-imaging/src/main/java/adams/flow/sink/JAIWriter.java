@@ -31,14 +31,14 @@ import adams.data.jai.ImageType;
 /**
  <!-- globalinfo-start -->
  * Writes an image to disk using Java Advanced Imaging (JAI).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

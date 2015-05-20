@@ -35,16 +35,16 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Computes the difference between the two date&#47;time types of the incoming array (of length 2) by subtracting the second element from the first one.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.util.Date[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.util.Date[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

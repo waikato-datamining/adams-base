@@ -55,7 +55,7 @@ import adams.gui.dialog.ApprovalDialog;
 
 /**
  * A PropertyEditor for BaseObject-derived objects.
- * <p/>
+ * <br><br>
  * If the 
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -454,7 +454,7 @@ public class BaseObjectEditor
   
   /**
    * Returns a long help description, e.g., used in tiptexts.
-   * <p/>
+   * <br><br>
    * If current value is an instance of {@link HelpProvider}, then its description
    * is returned, otherwise the value's tip text.
    * 

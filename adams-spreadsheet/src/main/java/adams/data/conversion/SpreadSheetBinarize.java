@@ -32,7 +32,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 /**
  <!-- globalinfo-start -->
  * Binarizes the non-numeric columns in the selected column range by creating a new column for each of the labels.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

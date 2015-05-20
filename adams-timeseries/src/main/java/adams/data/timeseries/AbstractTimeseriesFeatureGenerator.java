@@ -180,7 +180,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -210,7 +210,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
 
   /**
    * Optional checks of the timeseries.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether timeseries is null.
    *
    * @param timeseries		the timeseries to check
@@ -358,7 +358,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -377,7 +377,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared
@@ -416,7 +416,7 @@ public abstract class AbstractTimeseriesFeatureGenerator<T extends Timeseries>
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp() and cleans up the options.
    */
   @Override

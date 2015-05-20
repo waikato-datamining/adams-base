@@ -25,11 +25,11 @@ import adams.core.VariablesHandler;
 /**
  <!-- globalinfo-start -->
  * Lists all variables in the flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

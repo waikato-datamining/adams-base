@@ -29,9 +29,9 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Decodes the data in a barcode using the specified decoder.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

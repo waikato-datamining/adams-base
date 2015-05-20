@@ -27,22 +27,22 @@ import adams.flow.sink.AbstractSink;
 
 /**
  <!-- globalinfo-start -->
- * Attempts to free up memory of the sub-flow that it belongs to.<br/>
- * This actor is useful in case when sub-flows are only executed once, but still keep their data-structures and gobble up unnecessary memory. One scenario is having a adams.flow.control.Branch actor with lots of sequences as branches, which only get executed once.<br/>
- * The parent must implement adams.flow.core.SubFlowWrapUp in order for this to work.<br/>
+ * Attempts to free up memory of the sub-flow that it belongs to.<br>
+ * This actor is useful in case when sub-flows are only executed once, but still keep their data-structures and gobble up unnecessary memory. One scenario is having a adams.flow.control.Branch actor with lots of sequences as branches, which only get executed once.<br>
+ * The parent must implement adams.flow.core.SubFlowWrapUp in order for this to work.<br>
  * CAUTION: Behind the scenes, all actors below this actor's parent will call their wrapUp() methods to conserve space. Therefore, use this actor with caution, as it will basically reset the actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

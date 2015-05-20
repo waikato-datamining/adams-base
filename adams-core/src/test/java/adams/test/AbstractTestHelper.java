@@ -281,7 +281,7 @@ public abstract class AbstractTestHelper<I extends DataContainer, O> {
 
   /**
    * Hook method for actions after connecting to a database.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void postConnect() {

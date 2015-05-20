@@ -34,18 +34,18 @@ import adams.data.timeseries.TimeseriesPoint;
 
 /**
  <!-- globalinfo-start -->
- * Extracts one or more timeseries from a spreadsheet.<br/>
+ * Extracts one or more timeseries from a spreadsheet.<br>
  * It uses one column ('ID') to identify all the rows that belong to a single timeseries. The 'Timestamp' and 'Value' columns make up data points of a timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

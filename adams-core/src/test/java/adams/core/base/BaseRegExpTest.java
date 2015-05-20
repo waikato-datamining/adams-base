@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.base.BaseRegExp class. Run from commandline with: <p/>
+ * Tests the adams.core.base.BaseRegExp class. Run from commandline with: <br><br>
  * java adams.core.base.BaseRegExpTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -34,11 +34,11 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.BinaryPatternsPyramid.<br/>
- * Works the same way as PHOG, but instead of measuring the orientation of gradients, this class uses a histogram of rotation-invariant local binary patterns.<br/>
- * For more information on the LIRE project, see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.BinaryPatternsPyramid.<br>
+ * Works the same way as PHOG, but instead of measuring the orientation of gradients, this class uses a histogram of rotation-invariant local binary patterns.<br>
+ * For more information on the LIRE project, see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -34,19 +34,19 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Iterates through a defined range of rows. In each iteration the cell values of the defined column range are mapped to storage values.<br/>
- * By default the (cleaned up) header names of the columns are used as storage names. To avoid name clashes, a prefix can be chosen for the storage names.<br/>
+ * Iterates through a defined range of rows. In each iteration the cell values of the defined column range are mapped to storage values.<br>
+ * By default the (cleaned up) header names of the columns are used as storage names. To avoid name clashes, a prefix can be chosen for the storage names.<br>
  * The subset of columns of the row in the current iteration can be output as spreadsheet well (computationally expensive). By default, the complete spreadsheet is forwarded as is.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

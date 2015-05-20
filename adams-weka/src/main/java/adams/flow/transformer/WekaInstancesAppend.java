@@ -38,22 +38,22 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Creates one large dataset by appending all one after the other.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

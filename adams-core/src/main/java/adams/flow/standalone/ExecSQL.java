@@ -31,7 +31,7 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Executes a SQL statement, which does not return a result set, like INSERT, UPDATE, DELETE, CREATE.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

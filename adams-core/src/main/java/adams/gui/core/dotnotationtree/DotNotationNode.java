@@ -77,7 +77,7 @@ public class DotNotationNode
    * Returns whether this node represents a leaf node in the sense of the
    * end-point of the dot notation of the full label. Custom trees might
    * have additional information below this actual leaf node.
-   * <p/>
+   * <br><br>
    * Default implementation just returns isLeaf() value.
    *
    * @return		true if leaf

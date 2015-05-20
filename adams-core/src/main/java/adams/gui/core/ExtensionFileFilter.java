@@ -221,7 +221,7 @@ public class ExtensionFileFilter
 
   /**
    * Indicates whether some other object is "equal to" this one.
-   * <p/>
+   * <br><br>
    * For some reason, we cannot override this method, using the result returned
    * by the compareTo(ExtensionFileFilter) method. This results in the user
    * no longer being able to change the file filter in the FileChooser dialog.

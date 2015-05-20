@@ -23,17 +23,17 @@ import java.io.Serializable;
 
 /**
  * Formatting class for turning byte amounts into kb, mb, etc.
- * <p/>
+ * <br><br>
  * Format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E}
- * <p/>
+ * <br><br>
  * <ul>
- *   <li>b|B<br/>
+ *   <li>b|B<br>
  *   "b" outputs the amount without thousand separators, "B" includes them.</li>
- *   <li>.N<br/>
+ *   <li>.N<br>
  *   Prints "N" decimal places</li>
- *   <li>k|K|m|M|g|G|t|T|p|P|e|E<br/>
+ *   <li>k|K|m|M|g|G|t|T|p|P|e|E<br>
  *   Specifies the unit to use: k|K=kilobytes, m|M=megabytes, g|G=gigabytes,
- *   t|T=terabytes, p|P=petabytes, e|E=exabytes<br/>
+ *   t|T=terabytes, p|P=petabytes, e|E=exabytes<br>
  *   Lower case does not add a specifier like "KB", upper case does.</li>
  * </ul>
  *

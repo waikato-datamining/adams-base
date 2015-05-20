@@ -35,11 +35,11 @@ import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the Shannon entropy of an image.<br/>
- * <br/>
- * Original code taken from here:<br/>
+ * Calculates the Shannon entropy of an image.<br>
+ * <br>
+ * Original code taken from here:<br>
  * http:&#47;&#47;stackoverflow.com&#47;a&#47;22280200
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

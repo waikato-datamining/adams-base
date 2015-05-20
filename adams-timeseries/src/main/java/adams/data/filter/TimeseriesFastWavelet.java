@@ -29,12 +29,12 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * A filter that transforms the data with a wavelet.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * A filter that transforms the data with a wavelet.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  *  (2009). JSci - A science API for Java.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -46,11 +46,11 @@ import java.util.List;
  *    HTTP = {http:&#47;&#47;jsci.sourceforge.net&#47;}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

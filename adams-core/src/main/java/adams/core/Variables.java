@@ -36,12 +36,12 @@ import adams.event.VariableChangeListener;
 /**
  * A container for storing variables and their values. Values are
  * stored as string representations. A variable placeholder string is of the
- * following form: <br/>
+ * following form: <br>
  * <pre>
  * @{name}
  * </pre>
  * With "name" consisting of word characters: 0-9a-zA-Z_-
- * <p/>
+ * <br><br>
  * Environment variables can be accessed by prefixing them with "env."
  * ({@link Variables#ENVIRONMENT_VARIABLE_PREFIX}) and system properties
  * by prefixing with "system." ({@link Variables#SYSTEM_PROPERTY_PREFIX}).
@@ -260,7 +260,7 @@ public class Variables
 
   /**
    * Returns whether the stored value is present as non-string object.
-   * <p/>
+   * <br><br>
    * Default implementation always returns false.
    *
    * @return		true if the value is stored as non-string
@@ -283,7 +283,7 @@ public class Variables
 
   /**
    * Returns the store value.
-   * <p/>
+   * <br><br>
    * Default implementation simply returns {@link #get(String,String)}.
    *
    * @param name	the name of the value

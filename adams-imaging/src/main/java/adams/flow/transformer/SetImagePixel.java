@@ -30,24 +30,24 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Draws a pixel at the specified location onto the image passing through.<br/>
- * <br/>
- * DEPRECATED<br/>
+ * Draws a pixel at the specified location onto the image passing through.<br>
+ * <br>
+ * DEPRECATED<br>
  * Use adams.flow.transformer.Draw with adams.flow.transformer.draw.Pixel instead.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.jai.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.jai.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -28,11 +28,11 @@ import adams.core.scripting.JythonScript;
 /**
  <!-- globalinfo-start -->
  * A condition that uses the condition defined in an external Jython script.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

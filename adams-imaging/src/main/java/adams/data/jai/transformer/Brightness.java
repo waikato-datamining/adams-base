@@ -27,9 +27,9 @@ import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
- * Brightens or darkens an image using the specified factor and offset.<br/>
+ * Brightens or darkens an image using the specified factor and offset.<br>
  * factor: &lt;0=darken image, &gt;0=brighten image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

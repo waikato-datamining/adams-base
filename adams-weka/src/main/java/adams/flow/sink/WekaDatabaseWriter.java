@@ -32,21 +32,21 @@ import adams.db.DatabaseConnection;
 
 /**
  <!-- globalinfo-start -->
- * Actor for saving a weka.core.Instances object in a database.<br/>
+ * Actor for saving a weka.core.Instances object in a database.<br>
  * The relation name of the incoming dataset can be used to replace the current filename (path and extension are kept).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

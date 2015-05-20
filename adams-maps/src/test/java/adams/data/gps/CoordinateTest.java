@@ -26,7 +26,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.data.gps.Coordinate class. Run from commandline with: <p/>
+ * Tests the adams.data.gps.Coordinate class. Run from commandline with: <br><br>
  * java adams.data.gps.CoordinateTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -61,7 +61,7 @@ public class TimeChooserPanel
 
   /**
    * Creates the panel to display in the dialog.
-   * <p/>
+   * <br><br>
    * Must implement {@link DateProvider}.
    * 
    * @return		the panel

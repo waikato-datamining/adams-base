@@ -29,7 +29,7 @@ import adams.gui.visualization.core.plot.Axis;
 /**
  <!-- globalinfo-start -->
  * Encapsulates options for an axis in a plot.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

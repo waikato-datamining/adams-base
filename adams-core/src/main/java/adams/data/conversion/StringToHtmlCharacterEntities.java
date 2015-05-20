@@ -24,7 +24,7 @@ import adams.core.net.HtmlUtils;
 /**
  <!-- globalinfo-start -->
  * Turns a string into valid HTML, replacing characters like '&lt;', '&gt;' etc with their character entities.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

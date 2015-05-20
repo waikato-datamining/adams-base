@@ -186,7 +186,7 @@ public abstract class AbstractSpreadSheetReaderTestCase
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

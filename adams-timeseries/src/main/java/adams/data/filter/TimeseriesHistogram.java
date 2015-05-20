@@ -29,7 +29,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Generates a histogram from the timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -29,24 +29,24 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Appends the incoming spreadsheet to one in storage.<br/>
- * If there is none in storage yet, the incoming spreadsheet will simply get stored in storage.<br/>
- * The spreadsheets need not have the same structure, but it is assumed that column names are unique within a spreadsheet.<br/>
+ * Appends the incoming spreadsheet to one in storage.<br>
+ * If there is none in storage yet, the incoming spreadsheet will simply get stored in storage.<br>
+ * The spreadsheets need not have the same structure, but it is assumed that column names are unique within a spreadsheet.<br>
  * The combined spreadsheet is then forwarded.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

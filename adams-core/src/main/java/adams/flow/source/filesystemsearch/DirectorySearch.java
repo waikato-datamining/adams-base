@@ -30,7 +30,7 @@ import adams.core.io.PlaceholderDirectory;
 /**
  <!-- globalinfo-start -->
  * Searches only for directories.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

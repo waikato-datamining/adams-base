@@ -35,7 +35,7 @@ import adams.gui.visualization.core.plot.Axis;
 /**
  <!-- globalinfo-start -->
  * Paintlet for simply painting crosses at the specified X-Y position.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -37,28 +37,28 @@ import adams.flow.standalone.Rserve;
 
 /**
  <!-- globalinfo-start -->
- * Carries out an r command on the token passed in. The input can be accessed via 'X'.<br/>
- * Variables are supported as well, e.g. pow(X,&#64;{exp}) with '&#64;{exp}' being a variable available at execution time.<br/>
+ * Carries out an r command on the token passed in. The input can be accessed via 'X'.<br>
+ * Variables are supported as well, e.g. pow(X,&#64;{exp}) with '&#64;{exp}' being a variable available at execution time.<br>
  * Returns a result from R.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[][]<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[][]<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

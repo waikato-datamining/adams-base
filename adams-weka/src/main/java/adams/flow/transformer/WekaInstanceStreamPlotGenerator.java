@@ -31,22 +31,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Generates plot containers from a range of attributes of the weka.core.Instance objects being passed through.<br/>
+ * Generates plot containers from a range of attributes of the weka.core.Instance objects being passed through.<br>
  * The generator merely uses the internal data representation for generating the Y value of the plot container.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

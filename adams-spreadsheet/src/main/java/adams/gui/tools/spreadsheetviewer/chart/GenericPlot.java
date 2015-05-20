@@ -41,7 +41,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
 /**
  <!-- globalinfo-start -->
  * Flexible chart generator.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

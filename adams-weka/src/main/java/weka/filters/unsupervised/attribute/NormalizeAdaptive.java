@@ -34,7 +34,7 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Normalizes all numeric values in the given dataset (apart from the class attribute, if set). The resulting values are in [0,1] for the data used to compute the normalization intervals.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)

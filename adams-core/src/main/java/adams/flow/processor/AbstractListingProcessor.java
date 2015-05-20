@@ -62,7 +62,7 @@ public abstract class AbstractListingProcessor
 
   /**
    * Returns the string representation of the object that is added to the list.
-   * <p/>
+   * <br><br>
    * Default implementation only calls the <code>toString()</code> method.
    * 
    * @param obj		the object to turn into a string
@@ -106,7 +106,7 @@ public abstract class AbstractListingProcessor
   
   /**
    * Initializes the list.
-   * <p/>
+   * <br><br>
    * Default implementation creates an empty vector.
    */
   protected void initializeList() {
@@ -185,7 +185,7 @@ public abstract class AbstractListingProcessor
   
   /**
    * Returns the default sie of the dialog.
-   * <p/>
+   * <br><br>
    * The default is 400x300.
    * 
    * @return		the size

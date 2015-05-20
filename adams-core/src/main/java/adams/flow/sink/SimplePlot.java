@@ -59,21 +59,21 @@ import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
- * Actor for generating simple plots.<br/>
- * <br/>
- * See also:<br/>
+ * Actor for generating simple plots.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.sink.SequencePlotter
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

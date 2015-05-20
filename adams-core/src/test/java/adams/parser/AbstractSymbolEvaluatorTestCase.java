@@ -190,7 +190,7 @@ public abstract class AbstractSymbolEvaluatorTestCase<D extends Object, E extend
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   @Override

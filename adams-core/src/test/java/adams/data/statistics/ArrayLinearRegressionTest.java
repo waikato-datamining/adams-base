@@ -25,7 +25,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests the adams.data.statistics.ArrayLinearRegression class. Run from commandline with: <p/>
+ * Tests the adams.data.statistics.ArrayLinearRegression class. Run from commandline with: <br><br>
  * java adams.data.statistics.ArrayLinearRegressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

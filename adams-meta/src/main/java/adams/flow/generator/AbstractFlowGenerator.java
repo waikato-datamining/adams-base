@@ -59,7 +59,7 @@ public abstract class AbstractFlowGenerator<T extends AbstractActor>
 
   /**
    * Hook method for checks before generating the flow.
-   * <p/>
+   * <br><br>
    * Checks for owner.
    */
   protected void check() {

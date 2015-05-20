@@ -39,7 +39,7 @@ import adams.gui.print.NullWriter;
 /**
  <!-- globalinfo-start -->
  * Displays multiple graphical actors in a grid. The actors get added row-wise to the grid from top-left to bottom-right. The actors can be referenced in the flow using adams.flow.sink.CallableSink actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

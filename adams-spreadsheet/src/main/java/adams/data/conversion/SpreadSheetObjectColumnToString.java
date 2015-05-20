@@ -26,11 +26,11 @@ import adams.data.spreadsheet.StringObjectHandler;
 /**
  <!-- globalinfo-start -->
  * Converts the specified spreadsheet column from the object type to string. Ignores cells that have no objects set, by setting them to missing.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

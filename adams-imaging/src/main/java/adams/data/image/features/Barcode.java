@@ -33,7 +33,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Decodes any barcode in the image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

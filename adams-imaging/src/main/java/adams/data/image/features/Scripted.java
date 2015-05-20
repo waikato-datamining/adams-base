@@ -30,7 +30,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * A feature generator that uses any scripting handler for processing the data with a script located in the specified file.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

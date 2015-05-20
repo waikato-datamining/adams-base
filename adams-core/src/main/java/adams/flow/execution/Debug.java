@@ -60,11 +60,11 @@ import adams.gui.visualization.debug.InspectionPanel;
 /**
  <!-- globalinfo-start -->
  * Allows the user to define breakpoints that suspend the execution of the flow, allowing the inspection of the current flow state.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

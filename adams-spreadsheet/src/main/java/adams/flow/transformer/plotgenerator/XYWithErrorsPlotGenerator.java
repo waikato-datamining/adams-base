@@ -33,7 +33,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generator for X&#47;Y plots (with X optional) that attaches error information for Y and optionally X as well. If only one error column is defined, this is interpreted as 'error-delta'; providing two columns is interpreted as 'low' and 'high'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

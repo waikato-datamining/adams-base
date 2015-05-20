@@ -40,11 +40,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Removes all instances that contain missing values.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -121,10 +121,10 @@ public class RemoveInstancesWithMissingValue
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Turns on output of debugging information.</pre>

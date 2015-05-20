@@ -30,7 +30,7 @@ import java.util.HashSet;
 /**
  <!-- globalinfo-start -->
  * Merges two or more columns in a spreadsheet into a single column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

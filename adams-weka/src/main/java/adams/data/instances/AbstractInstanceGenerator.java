@@ -132,7 +132,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp() and cleans up the options.
    */
   @Override
@@ -269,7 +269,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
 
   /**
    * Checks whether the setup is consistent.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @return		null if everything OK, otherwise the error message
@@ -319,7 +319,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
 
   /**
    * Checks the input profile.
-   * <p/>
+   * <br><br>
    * The default implementation only checks whether there is any data set.
    *
    * @param data	the data to process
@@ -433,7 +433,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -452,7 +452,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

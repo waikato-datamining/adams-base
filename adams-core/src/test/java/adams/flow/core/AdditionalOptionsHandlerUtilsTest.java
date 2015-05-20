@@ -29,7 +29,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.flow.core.AdditionalOptionsHandlerUtils class. Run from commandline with: <p/>
+ * Tests the adams.flow.core.AdditionalOptionsHandlerUtils class. Run from commandline with: <br><br>
  * java adams.flow.core.AdditionalOptionsHandlerUtilsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

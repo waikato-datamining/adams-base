@@ -25,21 +25,21 @@ import weka.core.matrix.Matrix;
 
 /** 
 <!-- globalinfo-start -->
-* Runs Partial Least Square Regression over the given instances and computes the resulting beta matrix for prediction.<br/>
-* By default it replaces missing values and centers the data.<br/>
-* <br/>
-* Allows access to the internal matrices.<br/>
-* <br/>
-* For more information see:<br/>
-* <br/>
-* Tormod Naes, Tomas Isaksson, Tom Fearn, Tony Davies (2002). A User Friendly Guide to Multivariate Calibration and Classification. NIR Publications.<br/>
-* <br/>
-* StatSoft, Inc.. Partial Least Squares (PLS).<br/>
-* <br/>
-* Bent Jorgensen, Yuri Goegebeur. Module 7: Partial least squares regression I.<br/>
-* <br/>
+* Runs Partial Least Square Regression over the given instances and computes the resulting beta matrix for prediction.<br>
+* By default it replaces missing values and centers the data.<br>
+* <br>
+* Allows access to the internal matrices.<br>
+* <br>
+* For more information see:<br>
+* <br>
+* Tormod Naes, Tomas Isaksson, Tom Fearn, Tony Davies (2002). A User Friendly Guide to Multivariate Calibration and Classification. NIR Publications.<br>
+* <br>
+* StatSoft, Inc.. Partial Least Squares (PLS).<br>
+* <br>
+* Bent Jorgensen, Yuri Goegebeur. Module 7: Partial least squares regression I.<br>
+* <br>
 * S. de Jong (1993). SIMPLS: an alternative approach to partial least squares regression. Chemometrics and Intelligent Laboratory Systems. 18:251-263.
-* <p/>
+* <br><br>
 <!-- globalinfo-end -->
 *
 <!-- technical-bibtex-start -->
@@ -76,11 +76,11 @@ import weka.core.matrix.Matrix;
 *    year = {1993}
 * }
 * </pre>
-* <p/>
+* <br><br>
 <!-- technical-bibtex-end -->
 *
 <!-- options-start -->
-* Valid options are: <p/>
+* Valid options are: <br><br>
 * 
 * <pre> -D
 *  Turns on output of debugging information.</pre>

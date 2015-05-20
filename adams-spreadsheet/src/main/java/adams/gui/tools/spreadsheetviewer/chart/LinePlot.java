@@ -30,7 +30,7 @@ import adams.gui.visualization.sequence.LinePaintlet;
 /**
  <!-- globalinfo-start -->
  * Generates a line plot by plotting the X column against one or more Y columns.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

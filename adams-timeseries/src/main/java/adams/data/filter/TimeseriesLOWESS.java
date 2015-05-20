@@ -28,12 +28,12 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * A filter that applies LOWESS smoothing.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * A filter that applies LOWESS smoothing.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  * WikiPedia. Local Regression. URL http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -44,7 +44,7 @@ import java.util.Date;
  *    URL = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->

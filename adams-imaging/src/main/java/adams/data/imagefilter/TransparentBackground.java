@@ -28,7 +28,7 @@ import adams.core.Index;
 /**
  <!-- globalinfo-start -->
  * Uses the color at the specified location as background and turns it transparent.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

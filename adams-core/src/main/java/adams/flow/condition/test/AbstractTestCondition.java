@@ -72,7 +72,7 @@ public abstract class AbstractTestCondition
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -109,7 +109,7 @@ public abstract class AbstractTestCondition
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -128,7 +128,7 @@ public abstract class AbstractTestCondition
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

@@ -27,7 +27,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Evaluates to 'true' if the operating system is a Mac.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -51,7 +51,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Branches off the flow into several sub-branches, each being supplied with a copy of the same object being passed into this meta-actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

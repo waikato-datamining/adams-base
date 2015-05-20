@@ -30,20 +30,20 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Deletes the file&#47;directory received on its input port if it matches the provided regular expression.<br/>
+ * Deletes the file&#47;directory received on its input port if it matches the provided regular expression.<br>
  * In case of directories, deletion is performed recursively (if a directory matches, then the content gets deleted regardless whether it matches the regular expression or not).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

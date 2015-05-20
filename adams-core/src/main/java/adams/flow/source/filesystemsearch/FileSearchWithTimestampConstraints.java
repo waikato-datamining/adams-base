@@ -23,9 +23,9 @@ import adams.core.base.BaseDateTime;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files.<br/>
+ * Searches only for files.<br>
  * Allows to further restrict the search using a timestamp window ('last modified') that the files must satisfy.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

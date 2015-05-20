@@ -35,20 +35,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Generates plot containers from an evaluation object's predictions. The predictions are first sorted according to their error, smallest to largest, and then plot containers are created with the RMSE being accumulated.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
@@ -135,7 +135,7 @@ public class WekaAccumulatedError
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
-     * <p/>
+     * <br><br>
      * Uses the absolute difference between actual and predicted values.
      *
      * @param o 	the object to be compared.

@@ -30,7 +30,7 @@ import adams.data.timeseries.TimeseriesPoint;
 /**
  <!-- globalinfo-start -->
  * Turns a timeseries into a SpreadSheet object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

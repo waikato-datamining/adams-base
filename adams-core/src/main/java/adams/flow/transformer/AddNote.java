@@ -27,21 +27,21 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Adds a note to the notes handler passing through.<br/>
- * Pre-defined note types:<br/>
- * - ERROR: <br/>
- * - WARNING: <br/>
+ * Adds a note to the notes handler passing through.<br>
+ * Pre-defined note types:<br>
+ * - ERROR: <br>
+ * - WARNING: <br>
  * - PROCESS INFORMATION
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.NotesHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.NotesHandler<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.NotesHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.NotesHandler<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

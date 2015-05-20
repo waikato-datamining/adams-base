@@ -40,18 +40,18 @@ import adams.gui.sendto.SendToActionUtils;
 /**
  <!-- globalinfo-start -->
  * Actor for displaying a weka.core.Instances object in table format.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -207,7 +207,7 @@ public class WekaInstancesDisplay
 
   /**
    * Executes the flow item. 
-   * <p/>
+   * <br><br>
    * Outputs the token on the command-line in headless mode.
    *
    * @return		null if everything is fine, otherwise error message

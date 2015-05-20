@@ -28,15 +28,15 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Simple cropping algorithm that assumes a good contrast between background and foreground.<br/>
- * Algorithm:<br/>
- * - create histogram of grayscale image<br/>
- * - remove counts from histogram that fall below noise-level<br/>
- * - determine left-most (L) and right-most (R) non-zero count<br/>
- * - divide region between L and R into two and determine highest peak in each (LP and RP)<br/>
- * - 8-bit threshold is halfway between LP and RP<br/>
+ * Simple cropping algorithm that assumes a good contrast between background and foreground.<br>
+ * Algorithm:<br>
+ * - create histogram of grayscale image<br>
+ * - remove counts from histogram that fall below noise-level<br>
+ * - determine left-most (L) and right-most (R) non-zero count<br>
+ * - divide region between L and R into two and determine highest peak in each (LP and RP)<br>
+ * - 8-bit threshold is halfway between LP and RP<br>
  * - determine first pixel that is above threshold from top, bottom, left and right, which is used for the crop
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

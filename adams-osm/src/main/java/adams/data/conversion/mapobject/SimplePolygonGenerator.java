@@ -39,7 +39,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 /**
  <!-- globalinfo-start -->
  * Generates polygons.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

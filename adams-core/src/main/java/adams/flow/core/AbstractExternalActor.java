@@ -220,7 +220,7 @@ public abstract class AbstractExternalActor
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -272,7 +272,7 @@ public abstract class AbstractExternalActor
    * Gets called in the doExceute() method, after an optional
    * setUpExternalActor() call (in case a variable is used for the actor file),
    * but before the external actor's execute() method is called.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @return		null if everything ok, otherwise error message

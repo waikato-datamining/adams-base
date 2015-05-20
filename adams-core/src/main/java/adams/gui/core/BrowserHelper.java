@@ -46,7 +46,7 @@ import adams.env.Environment;
 
 /**
  * A little helper class for browser related stuff.
- * <p/>
+ * <br><br>
  * The <code>openURL</code> method was originally based on
  * <a href="http://www.centerkey.com/java/browser/" target="_blank">Bare Bones Browser Launch</a>,
  * which has been placed in the public domain.

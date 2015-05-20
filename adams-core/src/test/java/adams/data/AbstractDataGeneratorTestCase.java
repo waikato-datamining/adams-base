@@ -138,7 +138,7 @@ public abstract class AbstractDataGeneratorTestCase<A, D extends DataContainer>
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

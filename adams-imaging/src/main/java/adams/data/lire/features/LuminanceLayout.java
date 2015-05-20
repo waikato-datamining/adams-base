@@ -34,11 +34,11 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.LuminanceLayout.<br/>
- * Intended for grayscale or B&#47;W images. It scales an image down to a very small size and uses this smaller version as a descriptor. Interesting aspect is that white stripes are added to make the small image quadratic.<br/>
- * For more information on the LIRE project, see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.LuminanceLayout.<br>
+ * Intended for grayscale or B&#47;W images. It scales an image down to a very small size and uses this smaller version as a descriptor. Interesting aspect is that white stripes are added to make the small image quadratic.<br>
+ * For more information on the LIRE project, see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -198,7 +198,7 @@ public abstract class AbstractScriptlet
 
   /**
    * Returns a one-line listing of the options of the action.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		the options or null if none
@@ -217,7 +217,7 @@ public abstract class AbstractScriptlet
   /**
    * Returns the class(es) of an object that must be present for this action
    * to be executed.
-   * <p/>
+   * <br><br>
    * The default implementation returns null.
    *
    * @return		the class(es) of which an instance must be present for
@@ -240,7 +240,7 @@ public abstract class AbstractScriptlet
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the action name of the two objects.
    *
    * @param o 	the object to be compared.
@@ -262,7 +262,7 @@ public abstract class AbstractScriptlet
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the action name of the two objects.
    *
    * @param o	the object to be compared

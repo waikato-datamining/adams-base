@@ -27,7 +27,7 @@ import adams.data.report.DataType;
 /**
  <!-- globalinfo-start -->
  * Meta-generator that can add database ID and container ID.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

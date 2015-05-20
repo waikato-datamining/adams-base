@@ -28,23 +28,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Turns a string representation of a spreadsheet (CSV format) into a SpreadSheet object.<br/>
- * <br/>
+ * Turns a string representation of a spreadsheet (CSV format) into a SpreadSheet object.<br>
+ * <br>
  * This actor has been deprecated, use the adams.data.conversion.StringToSpreadSheet conversion instead.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

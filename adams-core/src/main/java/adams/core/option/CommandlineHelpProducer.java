@@ -278,7 +278,7 @@ public class CommandlineHelpProducer
 
   /**
    * Hook method that gets called just before an option gets produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager

@@ -32,22 +32,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Generates statistics from a weka.core.Instances object.<br/>
+ * Generates statistics from a weka.core.Instances object.<br>
  * The actor just uses the internal format (double array) and does not check whether the attributes are actually numeric.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

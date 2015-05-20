@@ -29,7 +29,7 @@ import adams.data.DateFormatString;
 /**
  <!-- globalinfo-start -->
  * Generator that assembles a filename based on output dir, prefix, current timestamp (according to format string), suffix and extension.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

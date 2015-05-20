@@ -35,34 +35,34 @@ import adams.flow.source.WekaClassifierSetup;
 
 /**
  <!-- globalinfo-start -->
- * Trains a classifier based on the incoming dataset and outputs the built classifier alongside the training header (in a model container).<br/>
- * Incremental training is performed, if the input are weka.core.Instance objects and the classifier implements weka.classifiers.UpdateableClassifier.<br/>
- * If the incoming token does not encapsulate a dataset or instance, then only a new instance of the classifier is sent around.<br/>
- * <br/>
- * DEPRECATED<br/>
- * <br/>
- * - Use adams.flow.source.WekaClassifierSetup for definined a classifier setup.<br/>
+ * Trains a classifier based on the incoming dataset and outputs the built classifier alongside the training header (in a model container).<br>
+ * Incremental training is performed, if the input are weka.core.Instance objects and the classifier implements weka.classifiers.UpdateableClassifier.<br>
+ * If the incoming token does not encapsulate a dataset or instance, then only a new instance of the classifier is sent around.<br>
+ * <br>
+ * DEPRECATED<br>
+ * <br>
+ * - Use adams.flow.source.WekaClassifierSetup for definined a classifier setup.<br>
  * - Use adams.flow.transformer.WekaTrainClassifier for building a classifier.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

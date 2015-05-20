@@ -31,20 +31,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Filters the measures based on the measurement name. The matching can be inverted as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

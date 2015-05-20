@@ -34,145 +34,145 @@ import adams.parser.MathematicalExpressionText;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates a mathematical expression based on report values.<br/>
- * Either outputs the updated report or the report handler if that allows updating the report. The calculated value can be output by itself, if the 'outputResult' property is enabled.<br/>
- * Variables are supported as well, e.g.: pow(X,&#64;{exp}) with '&#64;{exp}' being a variable available at execution time.<br/>
- * <br/>
- * The following grammar is used for the expressions:<br/>
- * <br/>
- * expr_list ::= '=' expr_list expr_part | expr_part ;<br/>
- * expr_part ::=  expr ;<br/>
- * <br/>
- * expr      ::=   ( expr )<br/>
- * <br/>
- * # data types<br/>
- *               | number<br/>
- *               | string<br/>
- *               | boolean<br/>
- *               | date<br/>
- * <br/>
- * # constants<br/>
- *               | true<br/>
- *               | false<br/>
- *               | pi<br/>
- *               | e<br/>
- *               | now()<br/>
- *               | today()<br/>
- * <br/>
- * # negating numeric value<br/>
- *               | -expr<br/>
- * <br/>
- * # comparisons<br/>
- *               | expr &lt; expr<br/>
- *               | expr &lt;= expr<br/>
- *               | expr &gt; expr<br/>
- *               | expr &gt;= expr<br/>
- *               | expr = expr<br/>
- *               | expr != expr (or: expr &lt;&gt; expr)<br/>
- * <br/>
- * # boolean operations<br/>
- *               | ! expr (or: not expr)<br/>
- *               | expr &amp; expr (or: expr and expr)<br/>
- *               | expr | expr (or: expr or expr)<br/>
- *               | if[else] ( expr , expr (if true) , expr (if false) )<br/>
- *               | ifmissing ( variable , expr (default value if variable is missing) )<br/>
- *               | isNaN ( expr )<br/>
- * <br/>
- * # arithmetics<br/>
- *               | expr + expr<br/>
- *               | expr - expr<br/>
- *               | expr * expr<br/>
- *               | expr &#47; expr<br/>
- *               | expr ^ expr (power of)<br/>
- *               | expr % expr (modulo)<br/>
- *               ;<br/>
- * <br/>
- * # numeric functions<br/>
- *               | abs ( expr )<br/>
- *               | sqrt ( expr )<br/>
- *               | cbrt ( expr )<br/>
- *               | log ( expr )<br/>
- *               | log10 ( expr )<br/>
- *               | exp ( expr )<br/>
- *               | sin ( expr )<br/>
- *               | sinh ( expr )<br/>
- *               | cos ( expr )<br/>
- *               | cosh ( expr )<br/>
- *               | tan ( expr )<br/>
- *               | tanh ( expr )<br/>
- *               | atan ( expr )<br/>
- *               | atan2 ( exprY , exprX )<br/>
- *               | hypot ( exprX , exprY )<br/>
- *               | signum ( expr )<br/>
- *               | rint ( expr )<br/>
- *               | floor ( expr )<br/>
- *               | pow[er] ( expr , expr )<br/>
- *               | ceil ( expr )<br/>
- *               | min ( expr1 , expr2 )<br/>
- *               | max ( expr1 , expr2 )<br/>
- *               | year ( expr )<br/>
- *               | month ( expr )<br/>
- *               | day ( expr )<br/>
- *               | hour ( expr )<br/>
- *               | minute ( expr )<br/>
- *               | second ( expr )<br/>
- *               | weekday ( expr )<br/>
- *               | weeknum ( expr )<br/>
- * <br/>
- * # string functions<br/>
- *               | substr ( expr , start [, end] )<br/>
- *               | left ( expr , len )<br/>
- *               | mid ( expr , start , len )<br/>
- *               | right ( expr , len )<br/>
- *               | rept ( expr , count )<br/>
- *               | concatenate ( expr1 , expr2 [, expr3-5] )<br/>
- *               | lower[case] ( expr )<br/>
- *               | upper[case] ( expr )<br/>
- *               | trim ( expr )<br/>
- *               | matches ( expr , regexp )<br/>
- *               | trim ( expr )<br/>
- *               | len[gth] ( str )<br/>
- *               | find ( search , expr [, pos] )<br/>
- *               | replace ( str , pos , len , newstr )<br/>
- *               | substitute ( str , find , replace [, occurrences] )<br/>
- *               ;<br/>
- * <br/>
- * Notes:<br/>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br/>
- * - 'start' and 'end' for function 'substr' are indices that start at 1.<br/>
- * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br/>
- * - Line comments start with '#'.<br/>
- * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br/>
- *   e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'<br/>
- * - dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'<br/>
- * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br/>
- * - the characters in square brackets in function names are optional:<br/>
- *   e.g. 'len("abc")' is the same as 'length("abc")'<br/>
- * <br/>
- * A lot of the functions have been modeled after LibreOffice:<br/>
- *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br/>
- * <br/>
- * Additional functions:<br/>
- * - env(String): String<br/>
- * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br/>
- * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br/>
- * <br/>
- * Additional procedures:<br/>
- * - println(...)<br/>
- * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br/>
- * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br/>
- * <p/>
+ * Evaluates a mathematical expression based on report values.<br>
+ * Either outputs the updated report or the report handler if that allows updating the report. The calculated value can be output by itself, if the 'outputResult' property is enabled.<br>
+ * Variables are supported as well, e.g.: pow(X,&#64;{exp}) with '&#64;{exp}' being a variable available at execution time.<br>
+ * <br>
+ * The following grammar is used for the expressions:<br>
+ * <br>
+ * expr_list ::= '=' expr_list expr_part | expr_part ;<br>
+ * expr_part ::=  expr ;<br>
+ * <br>
+ * expr      ::=   ( expr )<br>
+ * <br>
+ * # data types<br>
+ *               | number<br>
+ *               | string<br>
+ *               | boolean<br>
+ *               | date<br>
+ * <br>
+ * # constants<br>
+ *               | true<br>
+ *               | false<br>
+ *               | pi<br>
+ *               | e<br>
+ *               | now()<br>
+ *               | today()<br>
+ * <br>
+ * # negating numeric value<br>
+ *               | -expr<br>
+ * <br>
+ * # comparisons<br>
+ *               | expr &lt; expr<br>
+ *               | expr &lt;= expr<br>
+ *               | expr &gt; expr<br>
+ *               | expr &gt;= expr<br>
+ *               | expr = expr<br>
+ *               | expr != expr (or: expr &lt;&gt; expr)<br>
+ * <br>
+ * # boolean operations<br>
+ *               | ! expr (or: not expr)<br>
+ *               | expr &amp; expr (or: expr and expr)<br>
+ *               | expr | expr (or: expr or expr)<br>
+ *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
+ *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | isNaN ( expr )<br>
+ * <br>
+ * # arithmetics<br>
+ *               | expr + expr<br>
+ *               | expr - expr<br>
+ *               | expr * expr<br>
+ *               | expr &#47; expr<br>
+ *               | expr ^ expr (power of)<br>
+ *               | expr % expr (modulo)<br>
+ *               ;<br>
+ * <br>
+ * # numeric functions<br>
+ *               | abs ( expr )<br>
+ *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
+ *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
+ *               | exp ( expr )<br>
+ *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
+ *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
+ *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
+ *               | rint ( expr )<br>
+ *               | floor ( expr )<br>
+ *               | pow[er] ( expr , expr )<br>
+ *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
+ *               | year ( expr )<br>
+ *               | month ( expr )<br>
+ *               | day ( expr )<br>
+ *               | hour ( expr )<br>
+ *               | minute ( expr )<br>
+ *               | second ( expr )<br>
+ *               | weekday ( expr )<br>
+ *               | weeknum ( expr )<br>
+ * <br>
+ * # string functions<br>
+ *               | substr ( expr , start [, end] )<br>
+ *               | left ( expr , len )<br>
+ *               | mid ( expr , start , len )<br>
+ *               | right ( expr , len )<br>
+ *               | rept ( expr , count )<br>
+ *               | concatenate ( expr1 , expr2 [, expr3-5] )<br>
+ *               | lower[case] ( expr )<br>
+ *               | upper[case] ( expr )<br>
+ *               | trim ( expr )<br>
+ *               | matches ( expr , regexp )<br>
+ *               | trim ( expr )<br>
+ *               | len[gth] ( str )<br>
+ *               | find ( search , expr [, pos] )<br>
+ *               | replace ( str , pos , len , newstr )<br>
+ *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               ;<br>
+ * <br>
+ * Notes:<br>
+ * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
+ * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
+ * - Line comments start with '#'.<br>
+ * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br>
+ *   e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'<br>
+ * - dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - the characters in square brackets in function names are optional:<br>
+ *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * <br>
+ * A lot of the functions have been modeled after LibreOffice:<br>
+ *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
+ * <br>
+ * Additional functions:<br>
+ * - env(String): String<br>
+ * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br>
+ * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br>
+ * <br>
+ * Additional procedures:<br>
+ * - println(...)<br>
+ * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br>
+ * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

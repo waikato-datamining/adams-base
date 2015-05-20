@@ -34,16 +34,16 @@ import adams.ml.data.Dataset;
 /**
  <!-- globalinfo-start -->
  * Sets (or unsets) the class index&#47;indices. Can either honour already existing ones or override them.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.ml.data.Dataset<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.ml.data.Dataset<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

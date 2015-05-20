@@ -24,11 +24,11 @@ import adams.core.base.BaseDate;
 /**
  <!-- globalinfo-start -->
  * Turns a BaseDate format string into a String, evaluted using user-supplied start and end dates (ignored if future INF dates).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

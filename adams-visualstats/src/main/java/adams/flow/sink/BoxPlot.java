@@ -33,15 +33,15 @@ import adams.gui.visualization.stats.boxplot.BoxPlotManager;
 
 /**
  * <!-- globalinfo-start -->
- * * Actor for displaying box plots.<br/>
- * * <br/>
- * * For more information, see:<br/>
+ * * Actor for displaying box plots.<br>
+ * * <br>
+ * * For more information, see:<br>
  * * http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Box_plot
- * * <p/>
+ * * <br><br>
  * <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -29,11 +29,11 @@ import adams.data.image.BufferedImageHelper;
 
 /**
  <!-- globalinfo-start -->
- * Basic algorithm that incorporates the Gray World assumption, which argues that the average reflectance of scene is achromatic. The mean of the red, green and blue channel should be roughly equal.<br/>
- * <br/>
- * For more information see:<br/>
+ * Basic algorithm that incorporates the Gray World assumption, which argues that the average reflectance of scene is achromatic. The mean of the red, green and blue channel should be roughly equal.<br>
+ * <br>
+ * For more information see:<br>
  * Edmund Y. Lam, George S. K. Fung (2009). Single-Sensor Imaging: Methods and Applications for Digital Cameras.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

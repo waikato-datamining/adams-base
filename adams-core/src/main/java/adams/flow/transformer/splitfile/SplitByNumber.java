@@ -28,7 +28,7 @@ import adams.core.io.PlaceholderFile;
 /**
  <!-- globalinfo-start -->
  * Splits the file into a number of equally sized files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

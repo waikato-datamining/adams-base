@@ -86,7 +86,7 @@ public abstract class AbstractSelectionDialog<T, P extends AbstractSelectionPane
 
   /**
    * Cleans up data structures, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void cleanUp() {

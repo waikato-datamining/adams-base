@@ -33,14 +33,14 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Generates an empty image with the specified dimensions (Type: RGB or ARBG).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

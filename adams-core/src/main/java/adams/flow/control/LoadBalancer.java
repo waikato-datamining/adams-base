@@ -47,16 +47,16 @@ import adams.multiprocess.PausableFixedThreadPoolExecutor;
 
 /**
  <!-- globalinfo-start -->
- * Runs the specified 'load actor' in as many separate threads as specified with the 'num-threads' parameter.<br/>
+ * Runs the specified 'load actor' in as many separate threads as specified with the 'num-threads' parameter.<br>
  * NB: no callable transformer or sink allowed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

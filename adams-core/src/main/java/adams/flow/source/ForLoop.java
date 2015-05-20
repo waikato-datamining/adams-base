@@ -28,21 +28,21 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Emulates the following for-loop for integer IDs:<br/>
- * - positive step size:<br/>
- *   for (int i = lower; i &lt;= upper; i += step)<br/>
- * - negative step size:<br/>
- *   for (int i = upper; i &gt;= lower; i += step)<br/>
- * <br/>
+ * Emulates the following for-loop for integer IDs:<br>
+ * - positive step size:<br>
+ *   for (int i = lower; i &lt;= upper; i += step)<br>
+ * - negative step size:<br>
+ *   for (int i = upper; i &gt;= lower; i += step)<br>
+ * <br>
  * The integers can be output as a single array as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

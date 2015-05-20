@@ -72,10 +72,10 @@ import adams.gui.flow.tree.Node;
 
 /**
  * A BaseTree ehanced with drag'n'drop.
- * <p/>
+ * <br><br>
  * Drag'n'Drop originally taken from the DnDJTree referenced
  * <a href="http://www.stupidjavatricks.com/?p=17" target="_blank">here</a>.
- * <p/>
+ * <br><br>
  * Delayed expansion of collapsed nodes during drag'n'drop originally taken
  * from <a href="http://stackoverflow.com/questions/5507098/controlling-jtree-expansion-delay-on-drag-drop/5507194#5507194" target="_blank">here</a>.
  *
@@ -349,7 +349,7 @@ public class DragAndDropTree
 
   /**
    * Creates a new TreeNode for this tree.
-   * <p/>
+   * <br><br>
    * Default implementation uses the toString() method of the transferable
    * as user object (and splits it on the "\n").
    *
@@ -599,7 +599,7 @@ public class DragAndDropTree
 
   /**
    * Checks whether the source data can be dropped here.
-   * <p/>
+   * <br><br>
    * The default implementation always allows the drop.
    *
    * @param source	the data being transferred
@@ -856,7 +856,7 @@ public class DragAndDropTree
 
   /**
    * Returns whether dragging is enabled.
-   * <p/>
+   * <br><br>
    * The default implementation always returns false
    *
    * @return		true if dragging is enabled
@@ -867,7 +867,7 @@ public class DragAndDropTree
 
   /**
    * Returns whether dropping is enabled.
-   * <p/>
+   * <br><br>
    * The default implementation always returns false
    *
    * @return		true if dropping is enabled
@@ -878,7 +878,7 @@ public class DragAndDropTree
 
   /**
    * Checks whether the source node can be dragged at all.
-   * <p/>
+   * <br><br>
    * The default implementation allows all nodes to be dragged.
    *
    * @param source	the source node that is about to be dragged

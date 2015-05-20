@@ -98,7 +98,7 @@ public class BaseFrame
   
   /**
    * Initializes the logger.
-   * <p/>
+   * <br><br>
    * Default implementation uses the class name.
    */
   protected void initializeLogger() {

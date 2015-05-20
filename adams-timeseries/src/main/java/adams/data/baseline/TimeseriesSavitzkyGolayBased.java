@@ -28,14 +28,14 @@ import adams.data.timeseries.TimeseriesUtils;
 
 /**
  <!-- globalinfo-start -->
- * A baseline correction scheme that uses SavitzkyGolay smoothing to determine the baseline.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
- * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br/>
- * <br/>
+ * A baseline correction scheme that uses SavitzkyGolay smoothing to determine the baseline.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
+ * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br>
+ * <br>
  * William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery (1992). Savitzky-Golay Smoothing Filters.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

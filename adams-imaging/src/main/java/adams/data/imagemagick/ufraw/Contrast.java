@@ -26,7 +26,7 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Changes the contrast using the specified level.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

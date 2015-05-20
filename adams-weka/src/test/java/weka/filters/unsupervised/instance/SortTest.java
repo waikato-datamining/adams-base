@@ -30,7 +30,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests Sort. Run from the command line with: <p/>
+ * Tests Sort. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.SortTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

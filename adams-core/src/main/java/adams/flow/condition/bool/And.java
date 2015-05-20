@@ -26,11 +26,11 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Performs a logical AND over all its sub-conditions, i.e., it only evaluates to 'true' if all of the sub-conditions evaluate to 'true' as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

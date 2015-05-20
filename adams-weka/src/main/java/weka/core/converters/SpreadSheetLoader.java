@@ -43,11 +43,11 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Loads a CSV file using an ADAMS spreadsheet reader and converts it into an Instances object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Enables debug output.
@@ -140,10 +140,10 @@ public class SpreadSheetLoader
   }
   
   /** 
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Enables debug output.

@@ -25,7 +25,7 @@ import adams.flow.standalone.CallableActors;
 /**
  <!-- globalinfo-start -->
  * A dummy standalone template, used as default by the TemplateStandalone actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

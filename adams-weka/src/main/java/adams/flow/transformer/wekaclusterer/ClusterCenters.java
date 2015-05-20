@@ -36,14 +36,14 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Computes the cluster centers for the provided dataset. An additional attribute is added to the dataset structure that contains the cluster index.<br/>
- * Only numeric attributes are considered when computing the centers.<br/>
+ * Computes the cluster centers for the provided dataset. An additional attribute is added to the dataset structure that contains the cluster index.<br>
+ * Only numeric attributes are considered when computing the centers.<br>
  * Stored in container under: Clustered dataset
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

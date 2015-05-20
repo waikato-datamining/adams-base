@@ -31,7 +31,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Sink that executes an external sink actor stored on disk.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -171,7 +171,7 @@ public class ExternalSink
    * Gets called in the doExceute() method, after an optional
    * setUpExternalActor() call (in case a variable is used for the actor file),
    * but before the external actor's execute() method is called.
-   * <p/>
+   * <br><br>
    * Sets the input token.
    *
    * @return		null if everything ok, otherwise error message

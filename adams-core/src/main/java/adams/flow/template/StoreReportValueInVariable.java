@@ -30,11 +30,11 @@ import adams.flow.transformer.SetVariable;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow (enlosed by a Tee) that sets the value of a variable with the associated value from the report.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

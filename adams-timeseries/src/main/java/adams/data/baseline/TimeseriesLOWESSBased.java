@@ -27,12 +27,12 @@ import adams.data.timeseries.TimeseriesPoint;
 
 /**
  <!-- globalinfo-start -->
- * A baseline correction scheme that uses LOWESS smoothing to determine the baseline.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * A baseline correction scheme that uses LOWESS smoothing to determine the baseline.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  * WikiPedia. Local Regression. URL http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

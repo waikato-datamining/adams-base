@@ -36,7 +36,7 @@ public class MenuItemComparator
    * Compares its two arguments for order.  Returns a negative integer,
    * zero, or a positive integer as the first argument is less than, equal
    * to, or greater than the second.
-   * <p/>
+   * <br><br>
    * Uses the text of the menu items for comparison.
    *
    * @param o1 the first object to be compared.

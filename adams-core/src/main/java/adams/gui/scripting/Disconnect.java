@@ -21,15 +21,15 @@ package adams.gui.scripting;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   disconnect</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
  * Description:
  * <pre>   Disconnects from the database.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -24,7 +24,7 @@ import adams.tools.AbstractToolTestCase;
 
 /**
  * Tests the TableUpgrade tool.
- * <p/>
+ * <br><br>
  * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -55,7 +55,7 @@ public class TableUpgradeTest
   /**
    * The files to use as output in the regression tests, in case of tool
    * implementing the OutputFileGenerator interface.
-   * <p/>
+   * <br><br>
    * NB: these names must be all different!
    *
    * @return		the files, zero-length if not an OutputFileGenerator

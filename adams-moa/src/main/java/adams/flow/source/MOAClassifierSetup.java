@@ -29,18 +29,18 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Outputs an instance of the specified MOA classifier.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;moa.classifiers.Classifier<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;moa.classifiers.Classifier<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -246,7 +246,7 @@ public class MOAClassifierSetup
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
-   * <p/>
+   * <br><br>
    * The method is not allowed allowed to return "true" before the
    * actor has been executed. For actors that return an infinite
    * number of tokens, the m_Executed flag can be returned.

@@ -27,7 +27,7 @@ import adams.flow.sink.OpenStreetMapViewer;
 /**
  <!-- globalinfo-start -->
  * Dummy overlay, does nothing.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 /**
  * Represents a single cell.
- * <p/>
+ * <br><br>
  * Any integer type gets turned into a Long and any floating point type
  * into a Double.
  *

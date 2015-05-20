@@ -169,7 +169,7 @@ public class TarUtils {
 
   /**
    * Creates a tar file from the specified files.
-   * <p/>
+   * <br><br>
    * See <a href="http://www.thoughtspark.org/node/53" target="_blank">Creating a tar.gz with commons-compress</a>.
    *
    * @param output	the output file to generate

@@ -171,7 +171,7 @@ public abstract class AbstractTemplate
 
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

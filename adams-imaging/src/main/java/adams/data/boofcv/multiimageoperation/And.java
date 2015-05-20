@@ -27,9 +27,9 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the  binary pixels of the images.<br/>
+ * Performs a logical AND on the  binary pixels of the images.<br>
  * Converts images automatically to type UNSIGNED_INT_8.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -70,7 +70,7 @@ public class And
 
   /**
    * Checks the images.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that images are present.
    *
    * @param images	the images to check

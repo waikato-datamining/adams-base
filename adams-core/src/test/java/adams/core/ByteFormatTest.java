@@ -28,7 +28,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.core.ByteFormat class. Run from commandline with: <p/>
+ * Tests the adams.core.ByteFormat class. Run from commandline with: <br><br>
  * java adams.core.ByteFormatTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -38,7 +38,7 @@ public abstract class AbstractTimeseriesSplitter
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -49,7 +49,7 @@ public abstract class AbstractTimeseriesSplitter
 
   /**
    * Performs checks on the timeseries that is to be split.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether data has been provided.
    * 
    * @param series	the timeseries to split

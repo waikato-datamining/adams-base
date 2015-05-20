@@ -24,7 +24,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewerTree;
 /**
  <!-- globalinfo-start -->
  * Prunes according to a simple upper limit of objects, removing the older ones.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -58,7 +58,7 @@ public abstract class AbstractReportPreProcessor<T extends Report>
 
   /**
    * Checks the data to pre-process.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether data is present.
    * 
    * @param data	the data to check

@@ -28,8 +28,8 @@ import java.util.List;
 
 /**
 * This class pipelines print/println's to several PrintStreams. Useful for
-* redirecting System.out and System.err to files etc.<br/>
-* E.g., for redirecting stderr/stdout to files with timestamps and:<br/>
+* redirecting System.out and System.err to files etc.<br>
+* E.g., for redirecting stderr/stdout to files with timestamps and:<br>
 * <pre>
 *    import java.io.*;
 *    import adams.core.io.Tee;

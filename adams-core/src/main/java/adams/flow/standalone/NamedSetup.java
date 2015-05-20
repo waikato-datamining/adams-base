@@ -26,14 +26,14 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Standalone that executes a standalone actor referenced by the specified named setup.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

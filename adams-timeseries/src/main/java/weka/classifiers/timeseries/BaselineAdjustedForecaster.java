@@ -47,11 +47,11 @@ import adams.data.weka.WekaAttributeIndex;
 /**
  <!-- globalinfo-start -->
  * Uses two base-forecasters for making predictions. The first one is trained on the baseline of the timeseries (= overall trend), the second is trained on the baseline-corrected data (= periodicity). At forecast time, the two predictions are super-imposed to generate the original signal again.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -correction &lt;classname+options&gt;
  *  The baseline correction scheme.

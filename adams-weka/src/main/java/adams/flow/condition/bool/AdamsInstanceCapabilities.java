@@ -26,13 +26,13 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Filters adams.data.instance.Instance based on defined capabilities. Only objects that match the capabilities will be passed on, all others get discarded.<br/>
+ * Filters adams.data.instance.Instance based on defined capabilities. Only objects that match the capabilities will be passed on, all others get discarded.<br>
  * The matching sense can be inverted as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

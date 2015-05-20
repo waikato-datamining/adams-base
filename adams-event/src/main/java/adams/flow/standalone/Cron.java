@@ -44,21 +44,21 @@ import adams.flow.template.EndlessLoop;
 
 /**
  <!-- globalinfo-start -->
- * Executes an actor according to a pre-defined schedule.<br/>
- * Note: since the actor merely starts the cron scheduler in the background, the actor finishes the execution pretty much immediately. Therefore, the flow needs to be kept alive in order to let the background jobs getting executed. This can be done with a simple WhileLoop actor using the 'adams.flow.condition.bool.True' condition and a nested Start&#47;Sleep actor. You can use the adams.flow.template.EndlessLooptemplate to generate this loop automatically.<br/>
- * <br/>
- * NB: Any newly scheduled jobs get dropped if the previous execution is still running.<br/>
- * <br/>
- * For more information on the scheduler format see:<br/>
+ * Executes an actor according to a pre-defined schedule.<br>
+ * Note: since the actor merely starts the cron scheduler in the background, the actor finishes the execution pretty much immediately. Therefore, the flow needs to be kept alive in order to let the background jobs getting executed. This can be done with a simple WhileLoop actor using the 'adams.flow.condition.bool.True' condition and a nested Start&#47;Sleep actor. You can use the adams.flow.template.EndlessLooptemplate to generate this loop automatically.<br>
+ * <br>
+ * NB: Any newly scheduled jobs get dropped if the previous execution is still running.<br>
+ * <br>
+ * For more information on the scheduler format see:<br>
  * http:&#47;&#47;www.quartz-scheduler.org&#47;docs&#47;tutorials&#47;crontrigger.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -243,7 +243,7 @@ public class Cron
   /**
    * Checks the cron actors before they are set via the setCronActors method.
    * Returns an error message if the actors are not acceptable, null otherwise.
-   * <p/>
+   * <br><br>
    * Default implementation always returns null.
    *
    * @param actors	the actors to check
@@ -493,7 +493,7 @@ public class Cron
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

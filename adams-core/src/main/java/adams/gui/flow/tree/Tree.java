@@ -1461,7 +1461,7 @@ public class Tree
 
   /**
    * Returns the underlying flow.
-   * <p/>
+   * <br><br>
    * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
    * slow for large flows. If you only need the root actor, then use getRootActor()
    * instead.
@@ -1476,7 +1476,7 @@ public class Tree
 
   /**
    * Returns the underlying flow.
-   * <p/>
+   * <br><br>
    * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
    * slow for large flows. If you only need the root actor, then use getRootActor()
    * instead.
@@ -2128,7 +2128,7 @@ public class Tree
 
   /**
    * Checks whether the source node can be dragged at all.
-   * <p/>
+   * <br><br>
    * The parent of the source node must a MutableActorHandler
    *
    * @param source	the source node that is about to be dragged

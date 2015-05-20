@@ -35,19 +35,19 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Uses a serialized model to perform predictions on the data being passed through.<br/>
+ * Uses a serialized model to perform predictions on the data being passed through.<br>
  * The model can also be obtained from a callable actor, if the model file is pointing to a directory.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaForecastContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaForecastContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaForecastContainer: Model, Forecasts
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

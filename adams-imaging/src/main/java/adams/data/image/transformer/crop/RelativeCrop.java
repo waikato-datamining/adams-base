@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

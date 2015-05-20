@@ -38,11 +38,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Sorts the instances on a particular attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -C &lt;col&gt;
  *  The index of the attribute to sort on.
@@ -94,10 +94,10 @@ public class SortOnAttribute
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -C &lt;col&gt;
    *  The index of the attribute to sort on.

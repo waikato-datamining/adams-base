@@ -25,7 +25,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 /**
  <!-- globalinfo-start -->
  * Returns a CycleMap tile source.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

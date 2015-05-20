@@ -28,10 +28,10 @@ import adams.parser.MathematicalExpressionText;
 
 /**
  <!-- globalinfo-start -->
- * Uses a mathematical expression to post-process or combine the score(s) returned from the base row score algorithm.<br/>
- * The individual scores of the base algorithm can be accessed using placeholders of the format: [n] with 'n' being the 1-based index in the score array.<br/>
+ * Uses a mathematical expression to post-process or combine the score(s) returned from the base row score algorithm.<br>
+ * The individual scores of the base algorithm can be accessed using placeholders of the format: [n] with 'n' being the 1-based index in the score array.<br>
  * 'null' scores get interpreted as 'NaN'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

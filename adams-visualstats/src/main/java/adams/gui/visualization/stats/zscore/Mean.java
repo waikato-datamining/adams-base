@@ -25,11 +25,11 @@ import adams.gui.visualization.stats.paintlet.MeanPaintlet;
 /**
  <!-- globalinfo-start -->
  * Plot a mean line as an overlay on the z score graph
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

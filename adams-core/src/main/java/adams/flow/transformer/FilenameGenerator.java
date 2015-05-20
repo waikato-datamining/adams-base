@@ -29,20 +29,20 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Passes the incoming token through the generator to generate and forward a filename.<br/>
- * <br/>
- * See also:<br/>
+ * Passes the incoming token through the generator to generate and forward a filename.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.source.FilenameGenerator
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

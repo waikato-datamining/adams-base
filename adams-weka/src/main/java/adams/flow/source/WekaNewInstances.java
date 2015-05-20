@@ -39,21 +39,21 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Generates an empty dataset, based on the attribute types and names specified.<br/>
- * Nominal attributes are generated with an empty set of labels. Use the weka.filters.unsupervised.attribute.AddValues filter to add the required labels.<br/>
+ * Generates an empty dataset, based on the attribute types and names specified.<br>
+ * Nominal attributes are generated with an empty set of labels. Use the weka.filters.unsupervised.attribute.AddValues filter to add the required labels.<br>
  * Date attributes are created with the default format of 'yyyy-MM-dd'T'HH:mm:ss'. Use the weka.filters.unsupervised.attribute.ChangeDateFormat filter to change the format to a more suitable format, if required.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -124,7 +124,7 @@ public abstract class AbstractOptionProducer<O,I>
 
   /**
    * Generates a debug string, e.g., based on the method name.
-   * <p/>
+   * <br><br>
    * Default implementation merely returns the string.
    *
    * @param s		the string to process
@@ -260,7 +260,7 @@ public abstract class AbstractOptionProducer<O,I>
 
   /**
    * Hook method that gets called just before an option gets produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager
@@ -322,7 +322,7 @@ public abstract class AbstractOptionProducer<O,I>
 
   /**
    * Hook method that gets called just after an option was produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager
@@ -334,7 +334,7 @@ public abstract class AbstractOptionProducer<O,I>
   /**
    * Hook method for performing checks on the input. May throw exceptions
    * if object doesn't pass test(s).
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param object	the objec to check
@@ -348,7 +348,7 @@ public abstract class AbstractOptionProducer<O,I>
 
   /**
    * Hook-method before starting visiting options.
-   * <p/>
+   * <br><br>
    * Default implementation merely initializes m_Output.
    *
    * @see		#initOutput()
@@ -391,7 +391,7 @@ public abstract class AbstractOptionProducer<O,I>
 
   /**
    * Hook-method after visiting options.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void postProduce() {

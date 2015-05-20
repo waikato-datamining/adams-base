@@ -27,20 +27,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Turns a command-line into an object. Option-handlers are taken care of as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

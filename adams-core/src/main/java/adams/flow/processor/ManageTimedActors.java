@@ -33,11 +33,11 @@ import adams.flow.core.TimedActor;
 /**
  <!-- globalinfo-start -->
  * Enables&#47;disables the interactive behaviour of adams.flow.core.AutomatableInteractiveActor actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

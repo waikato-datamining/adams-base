@@ -25,7 +25,7 @@ import adams.data.blob.BlobContainer;
 /**
  <!-- globalinfo-start -->
  * Wraps the byte array in a adams.data.blob.BlobContainer, which allows the storage of meta-data using the attached report and&#47;or notes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

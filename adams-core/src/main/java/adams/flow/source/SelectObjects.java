@@ -34,14 +34,14 @@ import adams.gui.goe.GenericArrayEditorDialog;
 /**
  <!-- globalinfo-start -->
  * Allows the user to select an arbitrary number of objects from the specified class hierarchy using the GenericObjectArray.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

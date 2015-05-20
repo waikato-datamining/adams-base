@@ -32,7 +32,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Uses one column for the X value and one or more other columns as Y to plot against.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

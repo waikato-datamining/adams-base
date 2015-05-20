@@ -32,9 +32,9 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Applies all sub-actors to the input token and generates an array from the collected output.<br/>
+ * Applies all sub-actors to the input token and generates an array from the collected output.<br>
  * Each of the branches is expected to produce at most one output token (ideally one per branch, otherwise there will be null elements in the output array).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

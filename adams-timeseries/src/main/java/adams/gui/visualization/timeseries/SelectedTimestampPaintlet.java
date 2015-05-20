@@ -31,11 +31,11 @@ import adams.gui.visualization.core.plot.Axis;
 /**
  <!-- globalinfo-start -->
  * Paintlet for highlighting a selected timeseries data point point on a panel.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

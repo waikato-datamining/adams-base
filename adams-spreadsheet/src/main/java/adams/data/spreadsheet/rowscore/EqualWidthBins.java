@@ -26,7 +26,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Splits the row into bins with (more or less) same size and applies the base score algorithm to each of the bins.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -30,7 +30,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests SetMissingValue. Run from the command line with: <p/>
+ * Tests SetMissingValue. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.SetMissingValueTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

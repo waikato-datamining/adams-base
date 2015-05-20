@@ -26,7 +26,7 @@ import adams.data.report.ReportHandler;
 /**
  <!-- globalinfo-start -->
  * Obtains the filename from a field in the attached report.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

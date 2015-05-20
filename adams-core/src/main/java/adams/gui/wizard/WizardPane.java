@@ -51,7 +51,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 /**
  * Similar to a {@link BaseTabbedPane}, but with the names of the pages
  * listed in a {@link BaseList} on the left-hand side.
- * <p/>
+ * <br><br>
  * Attached {@link ActionListener}s received either {@link #ACTION_CANCEL}
  * or {@link #ACTION_FINISH} as command.
  * 

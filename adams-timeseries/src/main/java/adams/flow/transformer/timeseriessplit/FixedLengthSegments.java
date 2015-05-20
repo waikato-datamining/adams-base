@@ -30,7 +30,7 @@ import adams.data.timeseries.TimeseriesPoint;
 /**
  <!-- globalinfo-start -->
  * Splits the timeseries into segements of a fixed length, i.e., number of data points.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

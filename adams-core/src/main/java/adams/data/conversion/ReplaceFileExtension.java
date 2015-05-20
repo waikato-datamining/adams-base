@@ -24,11 +24,11 @@ import adams.core.io.FileUtils;
 /**
  <!-- globalinfo-start -->
  * Interpretes the string as file name and replaces its extension with the provided one. If no extension is given, it simply removes it.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

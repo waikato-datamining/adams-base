@@ -33,15 +33,15 @@ import weka.core.Utils;
 
 /**
  <!-- globalinfo-start -->
- * Locally weighted learning. Uses an instance-based algorithm to assign instance weights which are then used by a specified WeightedInstancesHandler.<br/>
- * Can do classification (e.g. using naive Bayes) or regression (e.g. using linear regression).<br/>
- * <br/>
- * For more info, see<br/>
- * <br/>
- * Eibe Frank, Mark Hall, Bernhard Pfahringer: Locally Weighted Naive Bayes. In: 19th Conference in Uncertainty in Artificial Intelligence, 249-256, 2003.<br/>
- * <br/>
+ * Locally weighted learning. Uses an instance-based algorithm to assign instance weights which are then used by a specified WeightedInstancesHandler.<br>
+ * Can do classification (e.g. using naive Bayes) or regression (e.g. using linear regression).<br>
+ * <br>
+ * For more info, see<br>
+ * <br>
+ * Eibe Frank, Mark Hall, Bernhard Pfahringer: Locally Weighted Naive Bayes. In: 19th Conference in Uncertainty in Artificial Intelligence, 249-256, 2003.<br>
+ * <br>
  * C. Atkeson, A. Moore, S. Schaal (1996). Locally weighted learning. AI Review..
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -63,11 +63,11 @@ import weka.core.Utils;
  *    year = {1996}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -no-update
  *  Suppresses the update of the nearest neighbor search (nns)
@@ -207,10 +207,10 @@ public class LWLSynchro
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -no-update
    *  Suppresses the update of the nearest neighbor search (nns)
@@ -347,7 +347,7 @@ public class LWLSynchro
 
   /**
    * Builds the classifier.
-   * <p/>
+   * <br><br>
    * Note: needs manual syncing with the distributionForInstance method of the
    * original WEKA classifier.
    *

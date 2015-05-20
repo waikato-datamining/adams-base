@@ -37,7 +37,7 @@ import adams.gui.core.ExtensionFileFilter;
 /**
  <!-- globalinfo-start -->
  * Displays multiple graphical actors in a tabbed pane. The actors can be referenced in the flow using adams.flow.sink.CallableSink actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

@@ -26,20 +26,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Returns the database ID of the database ID handler passing through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.id.DatabaseIDHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.id.DatabaseIDHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

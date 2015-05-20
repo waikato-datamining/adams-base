@@ -21,15 +21,15 @@ package adams.gui.scripting;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   clear-data</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
  * Description:
  * <pre>   Removes all containers.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

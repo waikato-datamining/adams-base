@@ -29,7 +29,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Row wise normalization.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

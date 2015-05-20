@@ -39,7 +39,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 /**
  <!-- globalinfo-start -->
  * Generates circle markers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

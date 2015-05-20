@@ -35,13 +35,13 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * Fake classifier that requires no dataset for training and just outputs random values within the specified bounds.<br/>
+ * Fake classifier that requires no dataset for training and just outputs random values within the specified bounds.<br>
  * Fake build and prediction times can be set as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -seed &lt;int&gt;
  *  The seed value to use.

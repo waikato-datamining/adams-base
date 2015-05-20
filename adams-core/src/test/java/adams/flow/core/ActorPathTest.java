@@ -27,7 +27,7 @@ import adams.flow.core.ActorPath;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.flow.core.ActorPath class. Run from commandline with: <p/>
+ * Tests the adams.flow.core.ActorPath class. Run from commandline with: <br><br>
  * java adams.flow.core.ActorPathTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -90,7 +90,7 @@ public class ActorPathTest
 
   /**
    * Tests parsing path from console output.
-   * <p/>
+   * <br><br>
    * Example: [Flow.ContainerValuePicker/700475288-DEBUG]
    */
   public static void testConsoleString() {

@@ -26,11 +26,11 @@ import adams.flow.FlowRunner;
 /**
  <!-- globalinfo-start -->
  * Checks whether a specified file exists. If not, then the specified flow is run. After the flow finishes, the check is performed once again, whether the file exists or not.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

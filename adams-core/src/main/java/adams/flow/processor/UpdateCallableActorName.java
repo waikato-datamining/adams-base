@@ -24,7 +24,7 @@ import adams.flow.core.CallableActorReference;
 /**
  <!-- globalinfo-start -->
  * Updates all occurrences of the old callable actor name with the new one.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

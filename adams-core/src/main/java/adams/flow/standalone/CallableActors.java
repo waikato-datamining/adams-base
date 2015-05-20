@@ -33,7 +33,7 @@ import adams.flow.core.CallableActorHandler;
 /**
  <!-- globalinfo-start -->
  * Container for actors that need to be accessed via their name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

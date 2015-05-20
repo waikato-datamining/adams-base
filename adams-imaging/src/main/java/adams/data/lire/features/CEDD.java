@@ -38,12 +38,12 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.CEDD.<br/>
- * For more information, see:<br/>
- * Savvas A. Chatzichristofis, Yiannis S. Boutalis: CEDD: Color and Edge Directivity Descriptor. A Compact Descriptor for Image Indexing and Retrieval. In: 6th International Conference on Computer Vision Systems, 312-322, 2008.<br/>
- * For more information on the LIRE project, see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.CEDD.<br>
+ * For more information, see:<br>
+ * Savvas A. Chatzichristofis, Yiannis S. Boutalis: CEDD: Color and Edge Directivity Descriptor. A Compact Descriptor for Image Indexing and Retrieval. In: 6th International Conference on Computer Vision Systems, 312-322, 2008.<br>
+ * For more information on the LIRE project, see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -58,7 +58,7 @@ import adams.data.statistics.StatUtils;
  *    year = {2008}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  * 
  <!-- options-start -->

@@ -33,7 +33,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Tests the WekaAttributeIndex class. Run from commandline with: <p/>
+ * Tests the WekaAttributeIndex class. Run from commandline with: <br><br>
  * java adams.data.weka.WekaAttributeIndexTest
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

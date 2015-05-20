@@ -110,7 +110,7 @@ public class TimeseriesPoint
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only uses the timestamp for comparison.
    *
    * @param   o the object to be compared.

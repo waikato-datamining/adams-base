@@ -27,7 +27,7 @@ import adams.core.io.PlaceholderFile;
 /**
  <!-- globalinfo-start -->
  * Adaptive blur (option -adaptive-blur)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

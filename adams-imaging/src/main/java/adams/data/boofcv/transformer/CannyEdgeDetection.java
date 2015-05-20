@@ -46,10 +46,10 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Performs edge detection using the Canny Edge detection algorithm.<br/>
- * For more information on the algorithm, see:<br/>
+ * Performs edge detection using the Canny Edge detection algorithm.<br>
+ * For more information on the algorithm, see:<br>
  * WikiPedia. Canny edge detector.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -60,7 +60,7 @@ import boofcv.struct.image.ImageUInt8;
  *    HTTP = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Canny_edge_detector}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->

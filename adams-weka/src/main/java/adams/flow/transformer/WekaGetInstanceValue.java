@@ -28,26 +28,26 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Retrieves a value from a WEKA Instance object.<br/>
- * Notes:<br/>
- * - date and relational values are forwarded as strings<br/>
- * - missing values are output as '?' (without the single quotes)<br/>
+ * Retrieves a value from a WEKA Instance object.<br>
+ * Notes:<br>
+ * - date and relational values are forwarded as strings<br>
+ * - missing values are output as '?' (without the single quotes)<br>
  * - the 'attribute name' option overrides the 'index' option
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

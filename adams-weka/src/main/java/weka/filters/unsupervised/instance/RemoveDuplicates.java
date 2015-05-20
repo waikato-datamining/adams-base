@@ -41,11 +41,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Removes all duplicate instances.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -include-class
  *  Whether to include the class attribute in the comparison as well.
@@ -119,10 +119,10 @@ public class RemoveDuplicates
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -include-class
    *  Whether to include the class attribute in the comparison as well.

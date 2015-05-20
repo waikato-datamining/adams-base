@@ -58,7 +58,7 @@ public abstract class AbstractConditions
   /**
    * Checks the correctness of the provided values, may throw unchecked
    * Exceptions.
-   * <p/>
+   * <br><br>
    * Default implementation merely calls "update()" to ensure corrected values.
    * Derived classes can add checks/throw exceptions.
    */
@@ -70,7 +70,7 @@ public abstract class AbstractConditions
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -89,7 +89,7 @@ public abstract class AbstractConditions
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

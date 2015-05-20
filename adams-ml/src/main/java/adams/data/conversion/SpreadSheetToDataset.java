@@ -27,7 +27,7 @@ import adams.ml.data.Dataset;
 /**
  <!-- globalinfo-start -->
  * Turns a spreadsheet object into a dataset object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -34,11 +34,11 @@ import weka.core.WeightedInstancesHandler;
 /**
  <!-- globalinfo-start -->
  * Uses the maximum peak in the instances.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and

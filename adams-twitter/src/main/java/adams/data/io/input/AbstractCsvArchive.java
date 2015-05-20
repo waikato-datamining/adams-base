@@ -44,7 +44,7 @@ import adams.data.twitter.TwitterField;
 /**
  <!-- globalinfo-start -->
  * Dummy replayer that just outputs tweets from manually set status texts.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -195,7 +195,7 @@ public abstract class AbstractCsvArchive
 
   /**
    * Hook method for preprocessing the new chunk of data before converting it.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param chunk	the chunk to convert

@@ -39,7 +39,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Executes its sub-flow after a predefined number of milli-seconds.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
@@ -249,7 +249,7 @@ public class QueueEvent
   /**
    * Checks the cron actors before they are set via the setActors method.
    * Returns an error message if the actors are not acceptable, null otherwise.
-   * <p/>
+   * <br><br>
    * Default implementation always returns null.
    *
    * @param actors	the actors to check
@@ -508,7 +508,7 @@ public class QueueEvent
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

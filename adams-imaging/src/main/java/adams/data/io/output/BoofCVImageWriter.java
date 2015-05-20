@@ -35,10 +35,10 @@ import boofcv.io.image.UtilImageIO;
 
 /**
  <!-- globalinfo-start -->
- * BoofCV image writer for: bmp, gif, jpeg, jpg, pgm, png, ppm, wbmp<br/>
- * For more information see:<br/>
+ * BoofCV image writer for: bmp, gif, jpeg, jpg, pgm, png, ppm, wbmp<br>
+ * For more information see:<br>
  * http:&#47;&#47;boofcv.org&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

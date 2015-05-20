@@ -31,7 +31,7 @@ import adams.flow.source.StringConstants;
 
 /**
  * Tests the MenuItem sink.
- * <p/>
+ * <br><br>
  * Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

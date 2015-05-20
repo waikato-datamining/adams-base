@@ -29,11 +29,11 @@ import adams.data.noise.AbstractDenoiser;
 /**
  <!-- globalinfo-start -->
  * A filter that removes noise from the data with a user-supplied noise level algorithm.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

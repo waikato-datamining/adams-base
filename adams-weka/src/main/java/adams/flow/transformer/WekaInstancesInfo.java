@@ -44,18 +44,18 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Outputs statistics of a weka.core.Instances object.<br/>
+ * Outputs statistics of a weka.core.Instances object.<br>
  * FULL_ATTRIBUTE and FULL_CLASS output a spreadsheet with detailed attribute statistics. All others output either strings, integers or doubles (or arrays of them, in case of counts&#47;distribution).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

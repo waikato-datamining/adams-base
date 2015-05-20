@@ -30,7 +30,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Plots the numeric data of two columns, X and Y with the plot name from a separate column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -187,7 +187,7 @@ public abstract class AbstractPlotGenerator
 
   /**
    * Checks the spreadsheet.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether any data was provided.
    * 
    * @param sheet	the sheet to check

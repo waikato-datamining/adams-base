@@ -46,15 +46,15 @@ import weka.filters.UnsupervisedFilter;
 
 /**
  <!-- globalinfo-start -->
- * Merges two attributes, offers various strategies if values differ or not present.<br/>
- * Uses the common subsequence (either from start or end) of the two attributes as name of the merged attribute, otherwise the concatenation of the both (separated by '-'). If this new name should already be present, then a number is appended to the name to make it unique.<br/>
- * The merged attribute can either be left at the default position (either first or second attribute, whichever comes first) or moved to a specific one.<br/>
+ * Merges two attributes, offers various strategies if values differ or not present.<br>
+ * Uses the common subsequence (either from start or end) of the two attributes as name of the merged attribute, otherwise the concatenation of the both (separated by '-'). If this new name should already be present, then a number is appended to the name to make it unique.<br>
+ * The merged attribute can either be left at the default position (either first or second attribute, whichever comes first) or moved to a specific one.<br>
  * If one of the two attributes to be merged is the current class attribute, the newly created merged attribute will become the new class attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -282,10 +282,10 @@ public class MergeTwoAttributes
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Turns on output of debugging information.</pre>

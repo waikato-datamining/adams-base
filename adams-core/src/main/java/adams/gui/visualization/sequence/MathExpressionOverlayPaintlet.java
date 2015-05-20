@@ -34,9 +34,9 @@ import adams.parser.MathematicalExpressionText;
 
 /**
  <!-- globalinfo-start -->
- * Calculates data points using the provided mathematical expression and paints them using the specified paintlet.<br/>
+ * Calculates data points using the provided mathematical expression and paints them using the specified paintlet.<br>
  * If the expression generates a NaN ('not a number') the x&#47;y pair gets ignored.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

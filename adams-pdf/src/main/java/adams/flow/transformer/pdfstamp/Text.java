@@ -29,12 +29,12 @@ import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  <!-- globalinfo-start -->
- * Simple text stamper.<br/>
- * You can use placeholders for the page index:<br/>
- * - 0-based: #<br/>
- * - 1-based: &#64;<br/>
+ * Simple text stamper.<br>
+ * You can use placeholders for the page index:<br>
+ * - 0-based: #<br>
+ * - 1-based: &#64;<br>
  * Variables in the template get expanded as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

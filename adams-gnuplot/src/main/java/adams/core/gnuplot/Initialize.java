@@ -316,7 +316,7 @@ public class Initialize
 
   /**
    * Hook method for performing checks.
-   * <p/>
+   * <br><br>
    * Makes sure that the output file (if terminal is not x11) is not a directory.
    *
    * @return		null if all checks passed, otherwise error message

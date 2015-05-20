@@ -27,11 +27,11 @@ import weka.core.Capabilities.Capability;
 /**
  <!-- globalinfo-start -->
  * Applies the specified numeric scaler to the data in case of a numeric class attribute, otherwise just passes on the data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-scaler &lt;adams.data.weka.predictions.AbstractErrorScaler [options]&gt; (property: scaler)
  * &nbsp;&nbsp;&nbsp;The scaler to use for numeric data.

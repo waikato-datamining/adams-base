@@ -52,10 +52,10 @@ import weka.filters.unsupervised.attribute.Standardize;
 // this is GaussianProcessesX +  "inline" RBFkernel
 
  <!-- globalinfo-start -->
- * Implements Gaussian Processes for regression without hyperparameter-tuning. For more information see<br/>
- * <br/>
+ * Implements Gaussian Processes for regression without hyperparameter-tuning. For more information see<br>
+ * <br>
  * David J.C. Mackay (1998). Introduction to Gaussian Processes. Dept. of Physics, Cambridge University, UK.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -69,11 +69,11 @@ import weka.filters.unsupervised.attribute.Standardize;
  *    PS = {http://wol.ra.phy.cam.ac.uk/mackay/gpB.ps.gz}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and
@@ -450,10 +450,10 @@ implements WeightedInstancesHandler, OptionHandler, TechnicalInformationHandler
 
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  If set, classifier is run in debug mode and

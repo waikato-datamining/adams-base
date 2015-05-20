@@ -28,7 +28,7 @@ import adams.core.base.BaseURL;
 /**
  <!-- globalinfo-start -->
  * Returns a tile source for a custom Mapnik server.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

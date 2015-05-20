@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Allows filtering the located objects based on the min&#47;max width&#47;height.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

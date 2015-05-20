@@ -31,30 +31,30 @@ import adams.flow.source.Start;
 
 /**
  <!-- globalinfo-start -->
- * Creates a named container for the SequencePlotter actor.<br/>
- * In case of Double arrays arriving at the input, they must have length 2 for X and Y, 4 for X&#47;Y&#47;Y-Error (low&#47;high) or 6 X&#47;Y&#47;X-Error (low-high)&#47;Y-Error (low-high).<br/>
- * Integer arrays can only have the length 2.<br/>
- * It is also possible, depending on the plotter sink setup, to use strings for x and&#47;or y.<br/>
+ * Creates a named container for the SequencePlotter actor.<br>
+ * In case of Double arrays arriving at the input, they must have length 2 for X and Y, 4 for X&#47;Y&#47;Y-Error (low&#47;high) or 6 X&#47;Y&#47;X-Error (low-high)&#47;Y-Error (low-high).<br>
+ * Integer arrays can only have the length 2.<br>
+ * It is also possible, depending on the plotter sink setup, to use strings for x and&#47;or y.<br>
  * In order to force an update of the plot, overriding the current plot-updater setup, you can create a special plot container of type UPDATE and send that to the plot (can be triggered with a null-token, e.g., from a adams.flow.source.Start source). Useful if you want to take a screenshot at a specific time, but avoid costly screen refreshs.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

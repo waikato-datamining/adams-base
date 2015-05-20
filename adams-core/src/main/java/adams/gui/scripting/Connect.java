@@ -26,15 +26,15 @@ import adams.db.GlobalSingletonDatabaseConnection;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   connect &lt;driver&gt; &lt;URL&gt; &lt;user&gt; [password]</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
  * Description:
  * <pre>   Connects to the database.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

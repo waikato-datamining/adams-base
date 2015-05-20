@@ -46,7 +46,7 @@ public class FeatureConverterContainer
 
   /**
    * Initializes the container with empty header and no row.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public FeatureConverterContainer() {

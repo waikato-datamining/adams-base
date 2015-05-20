@@ -33,11 +33,11 @@ import adams.flow.template.DummySink;
 /**
  <!-- globalinfo-start -->
  * Lets a sink generated from a template consume the input tokens.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -27,7 +27,7 @@ import adams.core.ClassLocator;
 
 /**
  * Class that determines compatibility between inputs and outputs.
- * <p/>
+ * <br><br>
  * An input and output are compatible, if...
  * <ul>
  *   <li>either output or input is Unknown.class</li>

@@ -59,7 +59,7 @@ public class AbstractExperimenterPanel
   
   /**
    * Gets called when the owner changes.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    */
   protected void ownerChanged() {

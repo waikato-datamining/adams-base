@@ -39,7 +39,7 @@ import adams.gui.visualization.core.plot.Axis;
 
 /**
  * Panel that shows the zoom in the data container panel as overlay.
- * <p/>
+ * <br><br>
  * Requires the following keys in the data container panel's props file:
  * <ul>
  *   <li>ZoomOverview.HighlightColor</li>

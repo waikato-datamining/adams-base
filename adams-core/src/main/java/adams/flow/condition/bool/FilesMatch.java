@@ -30,7 +30,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Evaluates to 'true' if at least one file matches the regular expression in the specified directory.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

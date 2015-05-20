@@ -35,17 +35,17 @@ import java.io.PrintStream;
 
 /**
  <!-- globalinfo-start -->
- * Writes a org.w3c.dom.Document to an XML file.<br/>
+ * Writes a org.w3c.dom.Document to an XML file.<br>
  * In case of org.w3c.dom.Node objects, the owning document is written to disk.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

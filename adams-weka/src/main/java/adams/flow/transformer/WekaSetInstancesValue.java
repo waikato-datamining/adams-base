@@ -30,20 +30,20 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Sets a value in a WEKA Instances object.<br/>
- * Notes:<br/>
- * - relational values cannot be set<br/>
+ * Sets a value in a WEKA Instances object.<br>
+ * Notes:<br>
+ * - relational values cannot be set<br>
  * - '?' (without single quotes) is interpreted as missing value
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

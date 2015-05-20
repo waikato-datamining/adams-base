@@ -33,7 +33,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Simply outputs the RGB value of the darkest pixel.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

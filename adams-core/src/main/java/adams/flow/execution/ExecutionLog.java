@@ -33,11 +33,11 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Generates a trace file with all activity logged.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

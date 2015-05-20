@@ -33,23 +33,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Iterates through all attributes of a dataset and outputs the names.<br/>
+ * Iterates through all attributes of a dataset and outputs the names.<br>
  * The attributes can be limited with the range parameter and furthermore with the regular expression applied to the names.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

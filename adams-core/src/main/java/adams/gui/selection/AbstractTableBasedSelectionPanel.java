@@ -481,7 +481,7 @@ public abstract class AbstractTableBasedSelectionPanel<T>
   /**
    * Hook method for processing items that were not found when trying to
    * select them initially.
-   * <p/>
+   * <br><br>
    * The default implementation merely outputs the items.
    *
    * @param missing	the missing items
@@ -492,7 +492,7 @@ public abstract class AbstractTableBasedSelectionPanel<T>
 
   /**
    * Checks whether the item is valid.
-   * <p/>
+   * <br><br>
    * Default implementation only checks for null.
    *
    * @param item	the item to check
@@ -504,7 +504,7 @@ public abstract class AbstractTableBasedSelectionPanel<T>
 
   /**
    * Returns whether to add the item really to the missing list.
-   * <p/>
+   * <br><br>
    * Default implementation returns always true.
    * 
    * @param item	the item to check

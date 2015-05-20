@@ -30,11 +30,11 @@ import adams.db.DatabaseConnectionHandler;
 /**
  <!-- globalinfo-start -->
  * A filter that runs a smoothing scheme over the data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

@@ -290,7 +290,7 @@ public class ColorHelper {
 
   /**
    * Returns a contrast color.
-   * <p/>
+   * <br><br>
    * Taken from <a href="http://stackoverflow.com/a/13030061" target="_blank">here</a>.
    * 
    * @param color	the color to return the contrast color for

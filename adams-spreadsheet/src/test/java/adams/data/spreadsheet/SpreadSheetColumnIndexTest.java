@@ -32,7 +32,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.core.SpreadSheetColumnIndex class. Run from commandline with: <p/>
+ * Tests the adams.core.SpreadSheetColumnIndex class. Run from commandline with: <br><br>
  * java adams.core.SpreadSheetColumnIndexTest
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

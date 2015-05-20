@@ -67,7 +67,7 @@ public class ArrayDimensions
 
   /**
    * Converts the string according to the specified conversion.
-   * <p/>
+   * <br><br>
    * Simply unsets the {@link #m_Dimensions} member.
    *
    * @param value	the string to convert

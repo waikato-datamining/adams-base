@@ -29,7 +29,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Source that executes an external source actor stored on disk.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

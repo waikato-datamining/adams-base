@@ -30,25 +30,25 @@ import adams.core.base.BaseRegExp;
 
 /**
  <!-- globalinfo-start -->
- * Performs a string replacement, using either String.replaceFirst(...) or String.replaceAll(...). Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.<br/>
- * If the 'replace' string contains both, variables and placeholders, then first all variables are expanded and then the placeholders. This ensures that variables containing placeholders expand their placeholders as well. Not expanding placeholders will cause 'Illegal group reference' error messages.<br/>
+ * Performs a string replacement, using either String.replaceFirst(...) or String.replaceAll(...). Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.<br>
+ * If the 'replace' string contains both, variables and placeholders, then first all variables are expanded and then the placeholders. This ensures that variables containing placeholders expand their placeholders as well. Not expanding placeholders will cause 'Illegal group reference' error messages.<br>
  * If no regular expression matching is required, you can also use the simple replacing, which uses String.replace(...).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

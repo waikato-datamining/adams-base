@@ -34,7 +34,7 @@ import adams.env.ProxyDefinition;
 
 /**
  * Helper class for proxy setups.
- * <p/>
+ * <br><br>
  * Code was based on Real Gagnon's example code located
  * <a href="http://www.rgagnon.com/javadetails/java-0085.html" target="_blank">here</a>.
  *
@@ -107,7 +107,7 @@ public class ProxyHelper {
 
   /**
    * Initializes the proxy with the current settings.
-   * <p/>
+   * <br><br>
    * See following URL for Java properties:
    * <a href="http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html"
    * target="_blank">http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html</a>

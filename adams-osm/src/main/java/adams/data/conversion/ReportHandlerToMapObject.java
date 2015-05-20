@@ -30,7 +30,7 @@ import adams.data.report.ReportHandler;
 /**
  <!-- globalinfo-start -->
  * Creates features from the incoming reporthandler's reports and turns them into a OpenStreetMap MapObject.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -92,7 +92,7 @@ public abstract class AbstractMetaObjectLocator
 
   /**
    * Checks whether the input can be used.
-   * <p/>
+   * <br><br>
    * Ensures that base locator is set.
    *
    * @param image	the image to check

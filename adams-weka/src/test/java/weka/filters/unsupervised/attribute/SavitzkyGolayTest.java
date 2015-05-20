@@ -30,7 +30,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests SavitzkyGolay. Run from the command line with: <p/>
+ * Tests SavitzkyGolay. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.SavitzkyGolayTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

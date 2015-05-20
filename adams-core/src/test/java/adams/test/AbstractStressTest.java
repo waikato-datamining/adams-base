@@ -476,7 +476,7 @@ public abstract class AbstractStressTest
   /**
    * For cleaning up. Gets always executed, even if actual execution didn't
    * occur.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @see		#m_Excecuted

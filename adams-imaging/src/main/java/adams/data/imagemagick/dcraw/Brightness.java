@@ -26,7 +26,7 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Divides the white level by the provided level.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

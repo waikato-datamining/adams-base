@@ -27,7 +27,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generates a new timeseries with the first block of values that fits between the specified min&#47;max (both included).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

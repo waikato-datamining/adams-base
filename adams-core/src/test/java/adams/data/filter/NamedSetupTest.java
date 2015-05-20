@@ -24,9 +24,9 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the NamedSetup filter. Run from the command line with: <p/>
+ * Test class for the NamedSetup filter. Run from the command line with: <br><br>
  * java adams.data.filter.NamedSetupTest
- * <p/>
+ * <br><br>
  * Note: dummy test
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -40,7 +40,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 /**
  <!-- globalinfo-start -->
  * Generates rectangles.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -32,7 +32,7 @@ import adams.gui.visualization.instance.InstanceComparePanel;
  * Stand-alone version of the Instance Compare utility.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-file1 &lt;java.io.File&gt; (property: firstDataset)
  * &nbsp;&nbsp;&nbsp;The first dataset in the comparison.

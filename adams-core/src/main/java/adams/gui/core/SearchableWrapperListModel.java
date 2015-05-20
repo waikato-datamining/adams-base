@@ -166,7 +166,7 @@ public class SearchableWrapperListModel
 
   /**
    * Tests whether the search matches the specified element index.
-   * <p/>
+   * <br><br>
    * Default implementation just checks against the strings that getElementAt(...)
    * returns (using the toString() method of the returned objects). Derived
    * classes should override this method in order to implement

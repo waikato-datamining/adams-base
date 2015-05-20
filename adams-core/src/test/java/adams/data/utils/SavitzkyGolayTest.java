@@ -25,7 +25,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.data.utils.SavitzkyGolayTest class. Run from commandline with: <p/>
+ * Tests the adams.data.utils.SavitzkyGolayTest class. Run from commandline with: <br><br>
  * java adams.data.utils.SavitzkyGolayTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

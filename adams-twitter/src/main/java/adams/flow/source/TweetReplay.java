@@ -28,14 +28,14 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Replays tweets using the specified replay class.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;twitter4j.Status<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;twitter4j.Status<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

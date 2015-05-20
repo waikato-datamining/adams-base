@@ -26,7 +26,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests HashableInstanceUsingString. Run from the command line with:<p/>
+ * Tests HashableInstanceUsingString. Run from the command line with:<br><br>
  * java weka.core.HashableInstanceUsingStringTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

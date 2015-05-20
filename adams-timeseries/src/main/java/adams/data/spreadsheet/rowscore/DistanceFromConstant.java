@@ -26,7 +26,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Calculates the Euclidean distance to a timeseries that is basically a 'flat-liner' with a constant value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

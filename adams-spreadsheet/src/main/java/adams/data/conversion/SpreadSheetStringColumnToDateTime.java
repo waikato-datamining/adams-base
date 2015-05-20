@@ -27,14 +27,14 @@ import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Converts the specified spreadsheet column from string to date/time, according to the provided format.<br/>
- * For more information on the format, see Javadoc of 'java.text.SimpleDateFormat' class:<br/>
+ * Converts the specified spreadsheet column from string to date/time, according to the provided format.<br>
+ * For more information on the format, see Javadoc of 'java.text.SimpleDateFormat' class:<br>
  * http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

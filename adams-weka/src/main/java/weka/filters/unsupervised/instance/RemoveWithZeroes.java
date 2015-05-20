@@ -37,11 +37,11 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Removes all instances that contain at least the specified number (or percentage) of zeroes in numeric attributes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -num-zeroes &lt;number of zeroes or percentage&gt;
  *  The number of zeroes that an instance must at least contain in

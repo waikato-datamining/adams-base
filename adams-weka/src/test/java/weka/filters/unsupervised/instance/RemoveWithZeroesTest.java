@@ -32,7 +32,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests RemoveWithZeroes. Run from the command line with: <p/>
+ * Tests RemoveWithZeroes. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.RemoveWithZeroesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

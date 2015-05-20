@@ -23,7 +23,7 @@ package adams.core;
 
 /**
  * A little helper class for Memory management. Very crude, since JDK 1.4
- * doesn't offer real Memory Management.<p/>
+ * doesn't offer real Memory Management.<br><br>
  * The memory management can be disabled by using the setEnabled(boolean)
  * method.
  *

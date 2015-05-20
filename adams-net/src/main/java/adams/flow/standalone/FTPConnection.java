@@ -38,16 +38,16 @@ import adams.gui.dialog.PasswordDialog;
 
 /**
  <!-- globalinfo-start -->
- * Provides access to a FTP host.<br/>
+ * Provides access to a FTP host.<br>
  * If debugging is enabled, the FTP commands issued by other actors will get printed as debug output of this actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

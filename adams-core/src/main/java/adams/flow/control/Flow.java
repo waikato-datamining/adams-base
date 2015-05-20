@@ -53,11 +53,11 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Container object for actors, used for executing a flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -684,7 +684,7 @@ public class Flow
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -968,7 +968,7 @@ public class Flow
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the variables.
    *
    * @see 		#m_Variables

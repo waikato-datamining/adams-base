@@ -24,7 +24,7 @@ import java.io.File;
 /**
  <!-- globalinfo-start -->
  * Simple generator that assembles filename based on output dir, prefix, current object (string representation), suffix and extension.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

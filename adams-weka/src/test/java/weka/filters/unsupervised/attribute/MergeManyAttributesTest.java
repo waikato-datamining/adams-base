@@ -35,7 +35,7 @@ import adams.core.Utils;
 import adams.core.base.BaseString;
 
 /**
- * Tests MergeManyAttributes. Run from the command line with: <p/>
+ * Tests MergeManyAttributes. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.MergeManyAttributesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

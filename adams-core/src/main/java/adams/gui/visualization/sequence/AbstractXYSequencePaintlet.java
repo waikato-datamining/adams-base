@@ -62,7 +62,7 @@ public abstract class AbstractXYSequencePaintlet
   
   /**
    * Executes a repaints only if the changes to members are not ignored.
-   * <p/>
+   * <br><br>
    * Also updates the current hit detector, if necessary.
    */
   @Override
@@ -74,7 +74,7 @@ public abstract class AbstractXYSequencePaintlet
   
   /**
    * Updates the settings of the hit detector.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void updateHitDetector() {

@@ -40,7 +40,7 @@ public abstract class AbstractTweetReplay
 
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -52,7 +52,7 @@ public abstract class AbstractTweetReplay
 
   /**
    * Performs checks before starting the replay.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing and always returns null.
    * 
    * @return		null if everything OK, otherwise error message

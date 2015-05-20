@@ -31,19 +31,19 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Sets the value of a variable. Each time a token passes through, the variable value will get updated according to the update type.<br/>
- * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.<br/>
+ * Sets the value of a variable. Each time a token passes through, the variable value will get updated according to the update type.<br>
+ * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.<br>
  * The transformer just forwards tokens that it receives after the variable has been set.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

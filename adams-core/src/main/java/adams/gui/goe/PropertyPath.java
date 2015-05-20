@@ -35,13 +35,13 @@ import adams.core.CloneHandler;
  * MultipleClassifierCombiner, e.g., Vote. For doing so, one needs to
  * supply the object to work on and a property path. The property path is a
  * dot delimited path of property names ("getFoo()" and "setFoo(int)" have
- * "foo" as property name), indices of arrays are 0-based. E.g.: <p/>
+ * "foo" as property name), indices of arrays are 0-based. E.g.: <br><br>
  *
  * <code>getPropertyDescriptor(vote, "classifiers[1].ridge")</code> will return
  * the second classifier (which should be our LinearRegression) of the given
  * Vote meta-classifier and there the property descriptor of the "ridge"
  * property. <code>getValue(...)</code> will return the actual value of the
- * ridge parameter and <code>setValue(...)</code> will set it.<p/>
+ * ridge parameter and <code>setValue(...)</code> will set it.<br><br>
  * 
  * Using <code>.get(X)</code> it is possible to access the items of 
  * {@link List} objects, with "X" being the index for the "get(index)" method.

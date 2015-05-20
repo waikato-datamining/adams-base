@@ -28,7 +28,7 @@ import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
 
 /**
- * Tests SpellChecker. Run from the command line with: <p/>
+ * Tests SpellChecker. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.SpellCheckerTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

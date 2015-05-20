@@ -452,7 +452,7 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /**
    * Hook method before the dialog gets created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param panel	the panel to display in the dialog
@@ -499,7 +499,7 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /**
    * Hook method after the dialog got created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param dialog	the dialog that got just created
@@ -535,7 +535,7 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /**
    * Performs the interaction with the user.
-   * <p/>
+   * <br><br>
    * Default implementation simply displays the dialog and returns always true.
    *
    * @return		true if successfully interacted

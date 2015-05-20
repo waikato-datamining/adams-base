@@ -26,9 +26,9 @@ import adams.core.TechnicalInformationHandler;
 
 /**
  <!-- globalinfo-start -->
- * Generates Andrews Curves from array data.<br/>
+ * Generates Andrews Curves from array data.<br>
  * César Ignacio García Osorio, Colin Fyfe (2003). AN EXTENSION OF ANDREWS CURVES FOR DATA ANALYSIS.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

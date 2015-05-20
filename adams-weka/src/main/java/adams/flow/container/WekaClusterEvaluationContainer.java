@@ -49,7 +49,7 @@ public class WekaClusterEvaluationContainer
 
   /**
    * Initializes the container.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public WekaClusterEvaluationContainer() {

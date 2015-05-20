@@ -707,7 +707,7 @@ public class SortableAndSearchableWrapperTableModel
 
   /**
    * Tests whether the search matches the specified row.
-   * <p/>
+   * <br><br>
    * Default implementation just checks against the strings that getValueAt(...)
    * returns (using the toString() method of the returned objects). Derived
    * classes should override this method in order to implement

@@ -28,21 +28,21 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Outputs the value associated with the specified name from temporary storage.<br/>
- * Does nothing if the storage value isn't present.<br/>
+ * Outputs the value associated with the specified name from temporary storage.<br>
+ * Does nothing if the storage value isn't present.<br>
  * By supplying a cache name, the value can be obtained from a LRU cache instead of the regular storage.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

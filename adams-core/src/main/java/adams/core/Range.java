@@ -534,7 +534,7 @@ public class Range
   
   /**
    * Returns whether invalid characters should get removed.
-   * <p/>
+   * <br><br>
    * Default implementation always returns true.
    * 
    * @return		true if to replace invalid chars

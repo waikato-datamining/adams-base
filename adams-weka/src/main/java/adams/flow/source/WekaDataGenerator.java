@@ -35,18 +35,18 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Generates artificial data using a Weka data generator.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - generates:<br/>
+ * Input/output:<br>
+ * - generates:<br>
  * <pre>   weka.core.Instances</pre>
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

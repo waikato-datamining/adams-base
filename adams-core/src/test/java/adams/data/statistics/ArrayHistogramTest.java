@@ -26,7 +26,7 @@ import adams.data.statistics.ArrayHistogram.BinCalculation;
 import adams.env.Environment;
 
 /**
- * Tests the adams.data.statistics.ArrayHistogram class. Run from commandline with: <p/>
+ * Tests the adams.data.statistics.ArrayHistogram class. Run from commandline with: <br><br>
  * java adams.data.statistics.ArrayHistogramTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

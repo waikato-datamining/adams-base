@@ -41,11 +41,11 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Writes the Instances to a spreadsheet file using the specified ADAMS spreadsheet writer.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -i &lt;the input file&gt;
  *  The input file</pre>
@@ -151,10 +151,10 @@ public class SpreadSheetSaver
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -i &lt;the input file&gt;
    *  The input file</pre>

@@ -28,7 +28,7 @@ import adams.gui.core.BaseTreeNode;
 
 /**
  * Generates a tree structure from a Swing container.
- * <p/>
+ * <br><br>
  * A class name can be provided on the command-line. The provided class 
  * requires a default constructor in order to be analyzed.
  * 

@@ -24,7 +24,7 @@ import adams.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Writes the content to a text file, preceding each line with its line number.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

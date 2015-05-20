@@ -34,7 +34,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Counts the occurrences of a specific color (alpha channel gets ignored).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

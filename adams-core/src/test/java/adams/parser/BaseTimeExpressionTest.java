@@ -28,7 +28,7 @@ import adams.core.base.BaseTime;
 import adams.env.Environment;
 
 /**
- * Tests the adams.parser.BaseTimeExpression class. Run from commandline with: <p/>
+ * Tests the adams.parser.BaseTimeExpression class. Run from commandline with: <br><br>
  * java adams.parser.BaseTimeExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

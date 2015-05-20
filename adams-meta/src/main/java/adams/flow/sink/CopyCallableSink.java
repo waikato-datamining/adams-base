@@ -32,7 +32,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Copies a callable sink to consume the tokens.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

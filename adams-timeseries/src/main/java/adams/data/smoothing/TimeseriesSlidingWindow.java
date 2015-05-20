@@ -27,11 +27,11 @@ import adams.data.timeseries.TimeseriesPoint;
 /**
  <!-- globalinfo-start -->
  * Uses a sliding window for determining the median&#47;average inside the window. This measure is then used as new abundance for the time series point in the center of the window. The left and the right ends of the series are filled with dummy points to return a series with the same number of points.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

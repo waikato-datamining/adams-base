@@ -25,7 +25,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy operation, simply passes on the input images.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

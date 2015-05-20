@@ -35,7 +35,7 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Encapsulates a sequence of flow items, with the last one generating the output for this meta-source.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -254,7 +254,7 @@ public class SequenceSource
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
-   * <p/>
+   * <br><br>
    * The method is not allowed allowed to return "true" before the
    * actor has been executed. For actors that return an infinite
    * number of tokens, the m_Executed flag can be returned.

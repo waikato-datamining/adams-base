@@ -48,11 +48,11 @@ import weka.filters.unsupervised.instance.Resample;
 /**
  <!-- globalinfo-start -->
  * Finds the base classifier with the best least median squared error.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and
@@ -192,7 +192,7 @@ public class AbstainLeastMedianSq
    * of options is not possible).
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  If set, classifier is run in debug mode and

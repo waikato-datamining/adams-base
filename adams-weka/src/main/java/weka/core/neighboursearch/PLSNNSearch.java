@@ -35,11 +35,11 @@ import weka.filters.supervised.attribute.PLSFilter;
 /**
  <!-- globalinfo-start -->
  * Class implementing the brute force search algorithm for nearest neighbour search, filtered using PLS.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -S
  *  Skip identical instances (distances equal to zero).

@@ -33,7 +33,7 @@ import adams.data.mapobject.TimestampSupporter;
 /**
  <!-- globalinfo-start -->
  * Removes map objects that are older than a specific timespan compared to the newest map object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -31,11 +31,11 @@ import adams.flow.source.OptionTraverser.TraversalStart;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow that displays the result of the specified option traversal algorithm, e.g., for displaying currently attached variables.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

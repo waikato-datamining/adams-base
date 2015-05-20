@@ -57,7 +57,7 @@ public abstract class AbstractTableCleanUp
   
   /**
    * Performs checks before cleaning up the table.
-   * <p/>
+   * <br><br>
    * Default implementation only checks if connected to database
    * 
    * @return		null if checks successful, otherwise error message

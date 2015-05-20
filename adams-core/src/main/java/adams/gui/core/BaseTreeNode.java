@@ -125,7 +125,7 @@ public class BaseTreeNode
   
   /**
    * Returns the plain text representation of this node.
-   * <p/>
+   * <br><br>
    * Default implementation simply returns {@link #toString()}.
    * 
    * @return		the string representation

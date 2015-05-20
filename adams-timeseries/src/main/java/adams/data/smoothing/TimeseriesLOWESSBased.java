@@ -26,11 +26,11 @@ import adams.data.timeseries.Timeseries;
 
 /**
  <!-- globalinfo-start -->
- * A LOWESS based smoothing algorithm.<br/>
- * For more information on LOWESS see:<br/>
- * <br/>
+ * A LOWESS based smoothing algorithm.<br>
+ * For more information on LOWESS see:<br>
+ * <br>
  * WikiPedia. Local Regression. URL http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

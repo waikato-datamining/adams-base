@@ -34,24 +34,24 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Filters Instance objects using the specified filter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.instance.Instance<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

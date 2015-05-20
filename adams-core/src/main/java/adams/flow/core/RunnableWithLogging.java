@@ -56,7 +56,7 @@ public abstract class RunnableWithLogging
 
   /**
    * Hook method before the run is started.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void preRun() {
@@ -69,7 +69,7 @@ public abstract class RunnableWithLogging
 
   /**
    * Hook method after the run finished.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void postRun() {

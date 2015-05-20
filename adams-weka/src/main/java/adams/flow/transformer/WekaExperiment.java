@@ -30,26 +30,26 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Represents a Weka experiment, stored in a file. Can be setup from inside the flow.<br/>
+ * Represents a Weka experiment, stored in a file. Can be setup from inside the flow.<br>
  * Via the input port, additional datasets can be inserted into the experiment. This allows one to define a template experiment and then just run it over various datasets without every having to change the experiment setup itself.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.experiment.Experiment<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.experiment.Experiment<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

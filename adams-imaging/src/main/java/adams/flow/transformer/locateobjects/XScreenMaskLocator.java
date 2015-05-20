@@ -36,9 +36,9 @@ import java.util.Deque;
 /**
  <!-- globalinfo-start -->
  * Using the XScreenMask, this locator masks out the background plate (similar to a green screening process)then proceeds to find blobs in the resultant image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

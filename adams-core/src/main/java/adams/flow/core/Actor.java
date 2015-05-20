@@ -42,7 +42,7 @@ import adams.flow.execution.FlowExecutionListeningSupporter;
 
 /**
  * Interface for actors.
- * <p/>
+ * <br><br>
  * NB: Not yet final version. Using ShallowCopySupporter&lt;Actor&gt; has 
  * far-reaching consequences.
  *
@@ -207,7 +207,7 @@ public interface Actor
 
   /**
    * Updates the Variables instance in use, if different from current one.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -253,7 +253,7 @@ public interface Actor
 
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -344,7 +344,7 @@ public interface Actor
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp().
    */
   @Override

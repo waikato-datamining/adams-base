@@ -52,7 +52,7 @@ public abstract class BaseObject
 
   /**
    * Initializes the internal object.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {

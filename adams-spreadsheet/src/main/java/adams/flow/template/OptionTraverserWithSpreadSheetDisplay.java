@@ -26,13 +26,13 @@ import adams.flow.transformer.StringToSpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Generates a sub-flow that displays the result of the specified option traversal algorithm, e.g., for displaying currently attached variables.<br/>
+ * Generates a sub-flow that displays the result of the specified option traversal algorithm, e.g., for displaying currently attached variables.<br>
  * Displays the results in a table.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

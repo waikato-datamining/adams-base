@@ -1018,7 +1018,7 @@ public class GenericObjectEditor
    * Checks and, if possible, sets the class type for the given object.
    * If a class type is determined successfully, {@link #m_canChangeClassInDialog}
    * is enabled as well.
-   * <p/>
+   * <br><br>
    * It is assumed that a missing class type is due to the fact that the
    * GOE is called from another framework which doesn't know that 
    * {@link #setClassType(Class)} needs to called in order to make it work

@@ -199,7 +199,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /**
    * Checks the item after obtaining from the props file.
-   * <p/>
+   * <br><br>
    * File must exist and handler not null.
    * 
    * @param item	the item to check

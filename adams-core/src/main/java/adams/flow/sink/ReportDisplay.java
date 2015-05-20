@@ -42,19 +42,19 @@ import adams.gui.visualization.report.ReportFactory;
 /**
  <!-- globalinfo-start -->
  * Displays quantitation reports.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;gcms.data.chromatogram.Chromatogram<br/>
- * &nbsp;&nbsp;&nbsp;gcms.data.quantitation.QuantitationReport<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;gcms.data.chromatogram.Chromatogram<br>
+ * &nbsp;&nbsp;&nbsp;gcms.data.quantitation.QuantitationReport<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

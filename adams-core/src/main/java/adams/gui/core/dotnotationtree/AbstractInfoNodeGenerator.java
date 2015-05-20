@@ -61,7 +61,7 @@ public abstract class AbstractInfoNodeGenerator
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the classnames of the two objects.
    *
    * @param o	the object to be compared

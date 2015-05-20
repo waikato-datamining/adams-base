@@ -151,7 +151,7 @@ public class ActorExecutionClassProducer
   protected void addPreExecuteMethod() {
     m_OutputBuffer.append("  /**\n");
     m_OutputBuffer.append("   * Hook method before the actor is executed.\n");
-    m_OutputBuffer.append("   * <p/>\n");
+    m_OutputBuffer.append("   * <br><br>\n");
     m_OutputBuffer.append("   * Default implementation does nothing.\n");
     m_OutputBuffer.append("   *\n");
     m_OutputBuffer.append("   * @param actor 		the actor that will get executed.\n");
@@ -194,7 +194,7 @@ public class ActorExecutionClassProducer
   protected void addPostExecuteMethod() {
     m_OutputBuffer.append("  /**\n");
     m_OutputBuffer.append("   * Hook method after the actor was executed.\n");
-    m_OutputBuffer.append("   * <p/>\n");
+    m_OutputBuffer.append("   * <br><br>\n");
     m_OutputBuffer.append("   * Default implementation does nothing.\n");
     m_OutputBuffer.append("   *\n");
     m_OutputBuffer.append("   * @param actor 		the actor that got executed.\n");

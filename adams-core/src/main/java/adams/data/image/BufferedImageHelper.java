@@ -52,7 +52,7 @@ public class BufferedImageHelper {
 
   /**
    * Returns a copy of a BufferedImage object.
-   * <p/>
+   * <br><br>
    * Taken from
    * <a href="http://stackoverflow.com/a/19327237" target="_blank">here</a>
    * (CC BY-SA 3.0).

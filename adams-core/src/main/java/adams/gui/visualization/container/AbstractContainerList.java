@@ -417,7 +417,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
 
   /**
    * Gets called when the underlying data model changes.
-   * <p/>
+   * <br><br>
    * Default implementation notifies all the TableModelListener with the
    * even that this method receives.
    *
@@ -449,7 +449,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
 
   /**
    * Called whenever the value of the selection changes.
-   * <p/>
+   * <br><br>
    * Default implementation forwards the event to all managed list selection
    * listeners.
    *

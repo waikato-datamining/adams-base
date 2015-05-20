@@ -260,7 +260,7 @@ public class HtmlParametersProducer
 
   /**
    * Hook method that gets called just before an option gets produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager
@@ -297,7 +297,7 @@ public class HtmlParametersProducer
 
   /**
    * Hook-method after visiting options.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   @Override

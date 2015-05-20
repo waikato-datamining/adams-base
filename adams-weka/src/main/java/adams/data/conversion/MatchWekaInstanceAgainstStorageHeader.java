@@ -26,11 +26,11 @@ import adams.flow.control.StorageName;
 /**
  <!-- globalinfo-start -->
  * Matches an Instance against a dataset header from storage, i.e., it automatically converts STRING attributes into NOMINAL ones and vice versa.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

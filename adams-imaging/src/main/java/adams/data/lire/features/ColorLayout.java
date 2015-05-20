@@ -34,11 +34,11 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.ColorLayout.<br/>
- * For extracting &amp; comparing MPEG-7 based CBIR descriptor ColorLayout.<br/>
- * For more information on the LIRE project, see:<br/>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.ColorLayout.<br>
+ * For extracting &amp; comparing MPEG-7 based CBIR descriptor ColorLayout.<br>
+ * For more information on the LIRE project, see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

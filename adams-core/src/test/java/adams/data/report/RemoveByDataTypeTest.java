@@ -24,9 +24,9 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the RemoveByDataType report filter. Run from the command line with: <p/>
+ * Test class for the RemoveByDataType report filter. Run from the command line with: <br><br>
  * java adams.data.report.RemoveByDataTypeTest
- * <p/>
+ * <br><br>
  * Note: dummy test, see adams-weka module for actual test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

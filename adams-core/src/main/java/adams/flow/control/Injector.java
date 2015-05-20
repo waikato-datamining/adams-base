@@ -34,18 +34,18 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Injects a string token into the token sequence.<br/>
+ * Injects a string token into the token sequence.<br>
  * The string can be inject before or after the current token. One can also control how often the string gets injected, i.e., every n-th token.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

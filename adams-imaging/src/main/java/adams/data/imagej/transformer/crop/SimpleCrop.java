@@ -28,7 +28,7 @@ import java.awt.Point;
 /**
  <!-- globalinfo-start -->
  * Simple cropping algorithm that uses a fixed window. The user either specifies a window height&#47;width (if both non-zero) or the bottom-right corner coordinates apart from the coordinates of the top-left corner.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

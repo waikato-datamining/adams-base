@@ -32,7 +32,7 @@ public class GenerateParser {
 
   /**
    * Runs the generator from command-line.
-   * <p/>
+   * <br><br>
    * Expects one argument: directory that that contains the Scanner.jflex and 
    *                       Parser.cup files
    *

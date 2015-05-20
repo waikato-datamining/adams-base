@@ -30,7 +30,7 @@ import adams.gui.application.AbstractApplicationFrame;
  * GUI for ADAMS.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-home &lt;java.lang.String&gt; (property: home)
  * &nbsp;&nbsp;&nbsp;The directory to use as the project's home directory, overriding the automatically

@@ -160,7 +160,7 @@ public abstract class AbstractMultiView
     
     /**
      * Updates the Variables instance in use, if different from current one.
-     * <p/>
+     * <br><br>
      * Updates the {@link #m_Wrapped} actor as well.
      *
      * @param value	the instance to use
@@ -679,7 +679,7 @@ public abstract class AbstractMultiView
   
   /**
    * Updates the Variables instance in use, if different from current one.
-   * <p/>
+   * <br><br>
    * Also updates the {@link ViewWrapper} instances.
    *
    * @param value	the instance to use

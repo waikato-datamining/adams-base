@@ -36,14 +36,14 @@ import adams.gui.core.ExtensionFileFilter;
 /**
  <!-- globalinfo-start -->
  * Pops up a file chooser dialog, prompting the user to select one or more files. The files then get forwarded as strings.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

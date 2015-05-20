@@ -28,7 +28,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests DatasetCleaner. Run from the command line with: <p/>
+ * Tests DatasetCleaner. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.DatasetCleanerTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

@@ -34,17 +34,17 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Reads a binary file and forwards the content byte by byte or as byte array.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Byte<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Byte<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

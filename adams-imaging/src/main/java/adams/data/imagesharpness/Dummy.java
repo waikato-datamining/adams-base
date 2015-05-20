@@ -25,7 +25,7 @@ import adams.data.image.AbstractImageContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy algorithm, always returns that image is sharp.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

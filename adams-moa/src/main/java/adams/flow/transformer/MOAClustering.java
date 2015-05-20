@@ -27,22 +27,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Uses a serialized MOA model to cluster data being passed through.<br/>
- * The model can also be obtained from a callable actor, if the model file is pointing to a directory.<br/>
+ * Uses a serialized MOA model to cluster data being passed through.<br>
+ * The model can also be obtained from a callable actor, if the model file is pointing to a directory.<br>
  * Optionally, the model can be updated with data being passed through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusteringContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusteringContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaClusteringContainer: Instance, Cluster, Distribution, LogDensity, LogDensityPerCluster, LogJointDensities
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -32,11 +32,11 @@ import adams.gui.core.HashtableTableModel;
 /**
  <!-- globalinfo-start -->
  * Shows what actors are currently being executed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -163,7 +163,7 @@ public class CurrentlyExecuted
 
   /**
    * Gets called when the flow execution ends.
-   * <p/>
+   * <br><br>
    * Outputs the counts in debug mode.
    */
   @Override

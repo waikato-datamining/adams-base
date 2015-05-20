@@ -24,11 +24,11 @@ import adams.core.base.BaseTime;
 /**
  <!-- globalinfo-start -->
  * Turns a BaseTime format string into a String, evaluted using user-supplied start and end times (ignored if future INF times).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

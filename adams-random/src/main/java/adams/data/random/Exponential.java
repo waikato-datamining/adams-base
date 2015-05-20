@@ -23,11 +23,11 @@ package adams.data.random;
 /**
  <!-- globalinfo-start -->
  * Generates random numbers from an Exponential random variable (Mean = 1/lambda, variance = 1/lambda^2).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -134,7 +134,7 @@ public class Exponential
 
   /**
    * Performs optional checks.
-   * <p/>
+   * <br><br>
    * Initializes the random number generator.
    */
   @Override

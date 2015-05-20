@@ -32,48 +32,48 @@ import adams.parser.basetime.Scanner;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates time expressions.<br/>
- * <br/>
- * Format:<br/>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR)]*<br/>
- * expr ::=   ( expr )<br/>
- *          | - expr<br/>
- *          | + expr<br/>
- *          | expr + expr<br/>
- *          | expr - expr<br/>
- *          | expr * expr<br/>
- *          | expr &#47; expr<br/>
- *          | expr % expr<br/>
- *          | expr ^ expr<br/>
- *          | abs ( expr )<br/>
- *          | sqrt ( expr )<br/>
- *          | log ( expr )<br/>
- *          | exp ( expr )<br/>
- *          | rint ( expr )<br/>
- *          | floor ( expr )<br/>
- *          | pow[er] ( expr , expr )<br/>
- *          | ceil ( expr )<br/>
- *          | NUMBER<br/>
- * <br/>
- * <br/>
- * Examples:<br/>
- * 01:02:03<br/>
- * 01:02:03 +1 MINUTE<br/>
- * NOW<br/>
- * +INF<br/>
- * NOW +1 HOUR<br/>
- * NOW +14 MINUTE<br/>
- * NOW +(2*3) MINUTE<br/>
- * <br/>
- * Amounts can be chained as well:<br/>
- * NOW -1 MINUTE +1 HOUR<br/>
- * <br/>
+ * Evaluates time expressions.<br>
+ * <br>
+ * Format:<br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR)]*<br>
+ * expr ::=   ( expr )<br>
+ *          | - expr<br>
+ *          | + expr<br>
+ *          | expr + expr<br>
+ *          | expr - expr<br>
+ *          | expr * expr<br>
+ *          | expr &#47; expr<br>
+ *          | expr % expr<br>
+ *          | expr ^ expr<br>
+ *          | abs ( expr )<br>
+ *          | sqrt ( expr )<br>
+ *          | log ( expr )<br>
+ *          | exp ( expr )<br>
+ *          | rint ( expr )<br>
+ *          | floor ( expr )<br>
+ *          | pow[er] ( expr , expr )<br>
+ *          | ceil ( expr )<br>
+ *          | NUMBER<br>
+ * <br>
+ * <br>
+ * Examples:<br>
+ * 01:02:03<br>
+ * 01:02:03 +1 MINUTE<br>
+ * NOW<br>
+ * +INF<br>
+ * NOW +1 HOUR<br>
+ * NOW +14 MINUTE<br>
+ * NOW +(2*3) MINUTE<br>
+ * <br>
+ * Amounts can be chained as well:<br>
+ * NOW -1 MINUTE +1 HOUR<br>
+ * <br>
  * START and END can only be set programmatically; by default they are equal to -INF and +INF.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

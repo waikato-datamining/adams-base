@@ -23,9 +23,9 @@ import adams.data.spreadsheet.Cell;
 
 /**
  <!-- globalinfo-start -->
- * Converts the specified spreadsheet column from long to double.<br/>
+ * Converts the specified spreadsheet column from long to double.<br>
  * Simply uses the cell's 'toDouble()' method.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

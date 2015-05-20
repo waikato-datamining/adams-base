@@ -238,7 +238,7 @@ public abstract class AbstractFFmpegPlugin
   
   /**
    * Checks the configuration.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether owner is set.
    * 
    * @see #getOwner()

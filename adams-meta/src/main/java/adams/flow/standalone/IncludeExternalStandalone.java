@@ -26,7 +26,7 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Includes an external standalone.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

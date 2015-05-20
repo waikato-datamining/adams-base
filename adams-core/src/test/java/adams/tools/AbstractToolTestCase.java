@@ -61,7 +61,7 @@ public abstract class AbstractToolTestCase<A extends AbstractTool>
 
   /**
    * Returns the database connection props files.
-   * <p/>
+   * <br><br>
    * The default returns null.
    *
    * @return		the props files, null if to use the the default one
@@ -82,7 +82,7 @@ public abstract class AbstractToolTestCase<A extends AbstractTool>
   /**
    * The files to use as output in the regression tests, in case of tool
    * implementing the OutputFileGenerator interface.
-   * <p/>
+   * <br><br>
    * NB: these names must be all different!
    *
    * @return		the files, zero-length if not an OutputFileGenerator
@@ -187,7 +187,7 @@ public abstract class AbstractToolTestCase<A extends AbstractTool>
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

@@ -97,7 +97,7 @@ public abstract class AbstractFrameWithOptionHandling
 
   /**
    * For resetting the frame.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void reset() {
@@ -127,7 +127,7 @@ public abstract class AbstractFrameWithOptionHandling
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()

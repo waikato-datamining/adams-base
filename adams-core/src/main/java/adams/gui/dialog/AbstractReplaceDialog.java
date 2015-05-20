@@ -194,7 +194,7 @@ public abstract class AbstractReplaceDialog<T>
 
   /**
    * Cleans up data structures, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void cleanUp() {

@@ -27,20 +27,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Updates the database ID of the database ID handler passing through with the provided 'ID' value. Attach a variable to the 'ID' option to allow for more flexibility.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

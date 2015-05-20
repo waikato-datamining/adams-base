@@ -39,16 +39,16 @@ import adams.flow.provenance.ProvenanceSupporter;
 /**
  <!-- globalinfo-start -->
  * Applies a BoofCV feature generator to the incoming image and outputs the generated features.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.boofcv.BoofCVImageContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.boofcv.BoofCVImageContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

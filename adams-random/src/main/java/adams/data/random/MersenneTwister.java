@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 /**
  <!-- globalinfo-start -->
  * This class implements a powerful pseudo-random number generator developed by Makoto Matsumoto and Takuji Nishimura during 1996-1997.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

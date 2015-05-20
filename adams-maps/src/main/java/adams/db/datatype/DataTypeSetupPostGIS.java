@@ -26,7 +26,7 @@ import adams.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Configures some PostGIS specific data types.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

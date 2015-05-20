@@ -31,11 +31,11 @@ import adams.flow.transformer.WekaInstanceDumper;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow that sets a variable for the adams.flow.transformer.WekaInstanceDumper transformer's outputPrefix property using a prefix based on the full flow name. In other words, the ARFF&#47;CSV file will get generated in the same location as the flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -27,16 +27,16 @@ import adams.flow.control.StorageName;
 /**
  <!-- globalinfo-start -->
  * Removes a value from the specified hashset. The object passing through is interpreted as the object to remove.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

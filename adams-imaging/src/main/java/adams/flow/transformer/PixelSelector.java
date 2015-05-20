@@ -36,22 +36,22 @@ import adams.gui.visualization.image.ImageOverlay;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to select pixels. How the pixels are interpreted depends on the actions selected.<br/>
+ * Allows the user to select pixels. How the pixels are interpreted depends on the actions selected.<br>
  * In addition, overlays that visualize the information stored in the image's report can be selected as well. The overlays offer information on what actions generate the data that is required for proper visualization.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

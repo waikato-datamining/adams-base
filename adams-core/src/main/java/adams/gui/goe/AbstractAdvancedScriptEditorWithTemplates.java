@@ -111,7 +111,7 @@ public abstract class AbstractAdvancedScriptEditorWithTemplates
   
   /**
    * Hook-method to add further menu items to the menu of the "..." button.
-   * <p/>
+   * <br><br>
    * Adds the templates, if any to the menu.
    * 
    * @param menu	the popup menu for the button

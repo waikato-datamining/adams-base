@@ -262,7 +262,7 @@ public class SparseDataRow
 
   /**
    * Merges its own data with the one provided by the specified row.
-   * <p/>
+   * <br><br>
    * Assumes that this sheet's header has already been updated.
    * 
    * @param other		the row to merge with

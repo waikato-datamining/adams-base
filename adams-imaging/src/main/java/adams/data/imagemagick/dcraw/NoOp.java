@@ -24,7 +24,7 @@ import adams.core.io.PlaceholderFile;
 /**
  <!-- globalinfo-start -->
  * Dummy operation, does nothing
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

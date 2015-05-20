@@ -28,21 +28,21 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Simply determines the size of the file coming through, -1 in case of an error or file does not exist.<br/>
- * <br/>
- * Deprecated<br/>
+ * Simply determines the size of the file coming through, -1 in case of an error or file does not exist.<br>
+ * <br>
+ * Deprecated<br>
  * Use adams.flow.transformer.FileInfo instead.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Long<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Long<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

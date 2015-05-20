@@ -230,7 +230,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
   
   /**
    * Checks the item after obtaining from the props file.
-   * <p/>
+   * <br><br>
    * Default implementation performs no checks and always returns true.
    * 
    * @param item	the item to check
@@ -289,7 +289,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
 
   /**
    * Hook method which gets executed just before the menu gets updated.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing. 
    */
   protected void preUpdateMenu() {
@@ -368,7 +368,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
 
   /**
    * Hook method which gets executed just after the menu was updated.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing. 
    */
   protected void postUpdateMenu() {

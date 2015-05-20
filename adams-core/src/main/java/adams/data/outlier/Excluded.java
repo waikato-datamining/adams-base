@@ -32,11 +32,11 @@ import adams.data.report.ReportHandler;
 /**
  <!-- globalinfo-start -->
  * Checks whether the 'Excluded' flag has been set in the report.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

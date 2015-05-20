@@ -22,11 +22,11 @@ package adams.data.random;
 /**
  <!-- globalinfo-start -->
  * Random generator that generates random integers using Java's java.util.Random class.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -168,7 +168,7 @@ public class JavaRandomInt
 
   /**
    * Performs optional checks.
-   * <p/>
+   * <br><br>
    * Initializes the random number generator.
    */
   @Override

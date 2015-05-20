@@ -30,11 +30,11 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * A boolean condition that uses the condition defined in a Jython script.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

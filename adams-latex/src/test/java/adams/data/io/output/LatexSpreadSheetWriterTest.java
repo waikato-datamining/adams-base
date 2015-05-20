@@ -28,7 +28,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.io.LatexSpreadSheetWriter class. Run from commandline with: <p/>
+ * Tests the adams.core.io.LatexSpreadSheetWriter class. Run from commandline with: <br><br>
  * java adams.core.io.LatexSpreadSheetWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

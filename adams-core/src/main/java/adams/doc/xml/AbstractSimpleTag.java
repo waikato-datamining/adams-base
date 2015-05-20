@@ -106,7 +106,7 @@ public abstract class AbstractSimpleTag
   
   /**
    * Sets whether to convert HTML entities or not. 
-   * <p/>
+   * <br><br>
    * CAUTION: caller must ensure that content is XHTML compliant if this is 
    * turned off!
    * 

@@ -26,7 +26,7 @@ import adams.data.jai.features.Histogram.HistogramType;
 import adams.env.Environment;
 
 /**
- * Test class for the Histogram flattener. Run from the command line with: <p/>
+ * Test class for the Histogram flattener. Run from the command line with: <br><br>
  * java adams.data.jai.flattener.HistogramTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

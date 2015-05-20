@@ -42,11 +42,11 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Computes a matrix with the correlation coefficients between attributes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -140,10 +140,10 @@ public class CorrelationMatrix
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  Turns on output of debugging information.</pre>

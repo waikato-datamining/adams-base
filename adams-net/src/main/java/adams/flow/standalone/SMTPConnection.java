@@ -35,7 +35,7 @@ import adams.gui.dialog.PasswordDialog;
 /**
  <!-- globalinfo-start -->
  * SMTP server setup for overriding default parameters.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

@@ -30,7 +30,7 @@ public interface HomeRelocator {
 
   /**
    * Sets the new home directory to use.
-   * <p/>
+   * <br><br>
    * Notes: cannot contain placeholders, should be absolute.
    *
    * @param value	the directory to use

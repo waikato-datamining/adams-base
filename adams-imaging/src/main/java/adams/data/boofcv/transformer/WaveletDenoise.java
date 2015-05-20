@@ -32,7 +32,7 @@ import boofcv.struct.image.ImageFloat32;
 /**
  <!-- globalinfo-start -->
  * Removes noise using wavelet transformation.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

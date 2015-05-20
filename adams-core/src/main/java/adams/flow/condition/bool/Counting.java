@@ -27,11 +27,11 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Counts the tokens passing through and returns 'true' if min&#47;max&#47;interval are met.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -29,7 +29,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Generates a binary image from the input and uses this mask to determine which pixels get replaced by the specified replacement color.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

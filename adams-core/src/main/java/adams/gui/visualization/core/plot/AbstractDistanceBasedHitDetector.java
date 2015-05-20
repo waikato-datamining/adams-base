@@ -29,7 +29,7 @@ import adams.core.annotation.MixedCopyright;
 /**
  * Detects hits based on the difference between two points in the plot,
  * based on their 2-dim coordinates.
- * <p/>
+ * <br><br>
  * Distance calcuation between point and line see <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/">here</a>
  * and <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/DistancePoint.java">DistancePoint.java</a>
  *

@@ -40,26 +40,26 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Can act in two different ways:<br/>
- * 1. Instance -&gt; Instances (row -&gt; dataset)<br/>
- * Buffers weka.core.Instance objects and outputs a weka.core.Instances object, whenever the interval condition has been met.<br/>
- * 2. Instances -&gt; Instance (dataset -&gt; row)<br/>
+ * Can act in two different ways:<br>
+ * 1. Instance -&gt; Instances (row -&gt; dataset)<br>
+ * Buffers weka.core.Instance objects and outputs a weka.core.Instances object, whenever the interval condition has been met.<br>
+ * 2. Instances -&gt; Instance (dataset -&gt; row)<br>
  * Outputs all the weka.core.Instance objects that the incoming weka.core.Instances object contains.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

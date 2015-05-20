@@ -28,7 +28,7 @@ import adams.data.container.DataPoint;
 /**
  <!-- globalinfo-start -->
  * A filter that picks a specified number of evenly spaced data points from the data. Does not introduce extra data points if there are too few points.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

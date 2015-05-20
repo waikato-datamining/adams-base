@@ -33,19 +33,19 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Evaluates an incremental classifier on a data stream using prequential evaluation (first evaluate, then train).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

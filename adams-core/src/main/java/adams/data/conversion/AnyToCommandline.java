@@ -24,11 +24,11 @@ import adams.core.option.OptionUtils;
 /**
  <!-- globalinfo-start -->
  * Generates a commandline string from any object. If the object does not handle options, merely the class name will be returned.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

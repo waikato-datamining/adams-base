@@ -21,13 +21,13 @@ package adams.data.conversion;
 
 /**
  <!-- globalinfo-start -->
- * Converts backslashes in file names to forward slashes.<br/>
+ * Converts backslashes in file names to forward slashes.<br>
  * Does not touch the '\\' prefix of UNC paths.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

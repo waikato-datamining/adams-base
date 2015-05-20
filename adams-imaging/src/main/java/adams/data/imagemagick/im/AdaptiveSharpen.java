@@ -27,7 +27,7 @@ import adams.core.io.PlaceholderFile;
 /**
  <!-- globalinfo-start -->
  * Adaptive sharpen (option -adaptive-sharpen)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

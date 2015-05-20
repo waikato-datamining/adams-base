@@ -30,15 +30,15 @@ import java.io.FileOutputStream;
 /**
  <!-- globalinfo-start -->
  * Writes a byte array or adams.data.blob.BlobContainer to a binary file.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;byte[]<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.blob.BlobContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;byte[]<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.blob.BlobContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

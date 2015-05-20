@@ -26,9 +26,9 @@ import adams.core.base.BasePassword;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.base.BasePassword class. Run from commandline with: <p/>
+ * Tests the adams.core.base.BasePassword class. Run from commandline with: <br><br>
  * java adams.core.base.BasePasswordTest
- * <p/>
+ * <br><br>
  * Example strings taken from <a href="http://en.wikipedia.org/wiki/Base64">here</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -22,7 +22,7 @@ package adams.core.io;
 /**
  <!-- globalinfo-start -->
  * Simply returns the supplied file name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

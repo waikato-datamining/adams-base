@@ -903,7 +903,7 @@ public class ActorUtils {
 
   /**
    * Removes all disabled actors (recursively) from the actor.
-   * <p/>
+   * <br><br>
    * NB: creates a copy of the actor first before removing the disabled actors.
    *
    * @param actor	the actor to process

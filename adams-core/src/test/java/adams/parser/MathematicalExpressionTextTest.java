@@ -26,7 +26,7 @@ import adams.env.Environment;
 import adams.core.base.AbstractBaseObjectTestCase;
 
 /**
- * Tests the adams.parser.MathematicalExpressionText class. Run from commandline with: <p/>
+ * Tests the adams.parser.MathematicalExpressionText class. Run from commandline with: <br><br>
  * java adams.parser.MathematicalExpressionTextTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

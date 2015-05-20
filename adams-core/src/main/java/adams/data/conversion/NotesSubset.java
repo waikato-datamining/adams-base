@@ -24,7 +24,7 @@ import adams.data.Notes;
 /**
  <!-- globalinfo-start -->
  * Generates a subset of a adams.data.Notes object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

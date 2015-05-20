@@ -31,22 +31,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Copies the file received on its input port to the target directory if it matches the provided regular expression.<br/>
- * In case of a directory, the directory gets copied recursively.<br/>
- * If required, you can also provide a new filename (just the name, no path).<br/>
+ * Copies the file received on its input port to the target directory if it matches the provided regular expression.<br>
+ * In case of a directory, the directory gets copied recursively.<br>
+ * If required, you can also provide a new filename (just the name, no path).<br>
  * The generated target file&#47;directory gets forwarded in the flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -155,7 +155,7 @@ public abstract class Sequences
   }
 
   /**
-   * Filters the columns that can be displayed. <br/>
+   * Filters the columns that can be displayed. <br>
    * Relation: Index &lt;-&gt; type (of SQL Types).
    *
    * @param rs		the Resultset to analyze

@@ -30,22 +30,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Creates a new weka.core.Instance-derived object, with all values marked as missing.<br/>
+ * Creates a new weka.core.Instance-derived object, with all values marked as missing.<br>
  * The class implementing the weka.core.Instance interface needs to have a constructor that takes the number of attributes as sole parameter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

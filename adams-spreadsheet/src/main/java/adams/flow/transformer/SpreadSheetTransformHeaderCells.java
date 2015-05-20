@@ -43,18 +43,18 @@ import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Transforms header cells with a callable transformer.<br/>
+ * Transforms header cells with a callable transformer.<br>
  * In case of transformers having Object or Unknown in their types of classes that they accept, no proper type can be inferred automatically. Therefore it is recommended to manually enforce the 'input type'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

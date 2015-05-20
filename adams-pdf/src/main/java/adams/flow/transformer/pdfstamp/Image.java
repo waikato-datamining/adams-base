@@ -29,7 +29,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Places the image at the specified location.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

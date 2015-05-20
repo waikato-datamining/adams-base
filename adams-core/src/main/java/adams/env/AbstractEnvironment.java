@@ -100,7 +100,7 @@ public abstract class AbstractEnvironment
 
   /**
    * Finishes up the initialization.
-   * <p/>
+   * <br><br>
    * Tries to create the project's home directory
    */
   protected void finishInit() {
@@ -167,7 +167,7 @@ public abstract class AbstractEnvironment
 
   /**
    * Sets the home directory to use.
-   * <p/>
+   * <br><br>
    * Note: no placeholders allowed, should be absolute path.
    *
    * @param value	the new home directory, use empty string or null to

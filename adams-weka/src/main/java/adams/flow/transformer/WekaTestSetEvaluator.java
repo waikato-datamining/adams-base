@@ -38,21 +38,21 @@ import adams.flow.source.CallableSource;
 /**
  <!-- globalinfo-start -->
  * Evaluates a trained classifier (obtained from input) on the dataset obtained from the callable actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
- * - adams.flow.container.WekaModelContainer: Model, Header, Dataset<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaModelContainer: Model, Header, Dataset<br>
  * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

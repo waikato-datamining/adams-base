@@ -25,11 +25,11 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
 /**
  <!-- globalinfo-start -->
  * Simply prunes the sequences at the head if they exceed a pre-defined size limit.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

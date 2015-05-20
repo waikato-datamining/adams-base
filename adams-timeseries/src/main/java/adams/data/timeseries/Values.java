@@ -31,7 +31,7 @@ import adams.data.report.DataType;
 /**
  <!-- globalinfo-start -->
  * Simple feature generator that just outputs all the values of a timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -24,11 +24,11 @@ import adams.core.Constants;
 /**
  <!-- globalinfo-start -->
  * A simple ID generator that can make use of data provided by classes implementing IDHandler and DatabaseIDHandler.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

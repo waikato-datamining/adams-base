@@ -26,14 +26,14 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * First, the actor checks whether the connection to the database is established. Then, the JDBC URL is matched against the provided regular expression.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

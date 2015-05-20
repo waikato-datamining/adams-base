@@ -27,7 +27,7 @@ import adams.data.report.DataType;
 /**
  <!-- globalinfo-start -->
  * Simple feature converter that generates textual output with fixed column width.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

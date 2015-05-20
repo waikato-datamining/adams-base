@@ -31,7 +31,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Ensures that timeseries values lie within the defined range.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

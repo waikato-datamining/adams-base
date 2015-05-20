@@ -25,9 +25,9 @@ import java.awt.image.BufferedImage;
 /**
  * <!-- globalinfo-start -->
  * * Dummy barcode type, draws nothing.
- * * <p/>
+ * * <br><br>
  * <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  * <!-- options-start -->
  * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

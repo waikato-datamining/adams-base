@@ -27,7 +27,7 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Wraps the list items produced by the specified generator with user-supplied prefix and suffix.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

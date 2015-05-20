@@ -28,7 +28,7 @@ import adams.data.statistics.InformativeStatisticSupporter;
 /**
  <!-- globalinfo-start -->
  * Turns the statistics obtained from a adams.data.statistics.InformativeStatisticSupporter into a spreadsheet.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

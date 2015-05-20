@@ -33,16 +33,16 @@ import adams.flow.source.StringConstants;
 
 /**
  <!-- globalinfo-start -->
- * An If-Then-Else source actor for storage values. If a storage value is available, the 'Then' branch gets executed, otherwise the 'Else' branch.<br/>
+ * An If-Then-Else source actor for storage values. If a storage value is available, the 'Then' branch gets executed, otherwise the 'Else' branch.<br>
  * Whereas the 'Then' branch receives the storage value (in case this branch accepts input), the 'Else' branch needs to produce its own data, i.e., having a source actor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -26,11 +26,11 @@ import weka.filters.Filter;
 /**
  <!-- globalinfo-start -->
  * Removes all columns from the data data that have been indentified.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>

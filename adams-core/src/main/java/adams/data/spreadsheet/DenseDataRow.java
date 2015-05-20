@@ -64,7 +64,7 @@ public class DenseDataRow
   
   /**
    * Sets the spreadsheet this row belongs to.
-   * <p/>
+   * <br><br>
    * Clears the cells if the number of columns differ.
    * 
    * @param owner	the owner
@@ -434,7 +434,7 @@ public class DenseDataRow
 
   /**
    * Merges its own data with the one provided by the specified row.
-   * <p/>
+   * <br><br>
    * Assumes that this sheet's header has already been updated.
    * 
    * @param other		the row to merge with

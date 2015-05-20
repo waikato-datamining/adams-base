@@ -29,7 +29,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Turns an image into the specified type of image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

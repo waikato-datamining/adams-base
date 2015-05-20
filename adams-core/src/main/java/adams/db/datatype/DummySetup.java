@@ -24,7 +24,7 @@ import java.sql.Connection;
 /**
  <!-- globalinfo-start -->
  * Dummy setup, does nothing.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -356,7 +356,7 @@ public class FileUtils {
   /**
    * Copies or moves files and directories (recursively).
    * If targetLocation does not exist, it will be created.
-   * <p/>
+   * <br><br>
    * Original code from <a href="http://www.java-tips.org/java-se-tips/java.io/how-to-copy-a-directory-from-one-location-to-another-loc.html" target="_blank">Java-Tips.org</a>.
    *
    * @param sourceLocation	the source file/dir

@@ -27,7 +27,7 @@ import adams.data.io.output.NullWriter;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.io.NullWriter class. Run from commandline with: <p/>
+ * Tests the adams.core.io.NullWriter class. Run from commandline with: <br><br>
  * java adams.core.io.NullWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

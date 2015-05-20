@@ -32,11 +32,11 @@ import weka.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Generates table output in MediaWiki format.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -mean-prec &lt;int&gt;
  *  The number of decimals after the decimal point for the mean.

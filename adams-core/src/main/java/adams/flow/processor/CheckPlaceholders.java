@@ -41,11 +41,11 @@ import adams.gui.dialog.TextPanel;
 /**
  <!-- globalinfo-start -->
  * Checks whether all placeholder files&#47;dirs can be expanded, i.e., whether all placeholders are actually defined.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

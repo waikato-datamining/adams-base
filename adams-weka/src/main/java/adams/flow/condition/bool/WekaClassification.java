@@ -38,7 +38,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Uses the index of the classification, i.e., the predicted label, as index of the switch
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

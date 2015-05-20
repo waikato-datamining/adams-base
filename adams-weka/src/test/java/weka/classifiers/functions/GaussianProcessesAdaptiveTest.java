@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests GaussianProcessesAdaptive. Run from the command line with:<p/>
+ * Tests GaussianProcessesAdaptive. Run from the command line with:<br><br>
  * java weka.classifiers.functions.GaussianProcessesAdaptiveTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

@@ -151,7 +151,7 @@ public abstract class AbstractSpreadSheetWriter
 
   /**
    * Returns whether to automatically compress.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    *
    * @return		true if to automatically decompress
@@ -306,7 +306,7 @@ public abstract class AbstractSpreadSheetWriter
   /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the spreadsheet to write
@@ -320,7 +320,7 @@ public abstract class AbstractSpreadSheetWriter
   /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the spreadsheet to write
@@ -334,7 +334,7 @@ public abstract class AbstractSpreadSheetWriter
   /**
    * Performs the actual writing. The caller must ensure that the output stream
    * gets closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the spreadsheet to write

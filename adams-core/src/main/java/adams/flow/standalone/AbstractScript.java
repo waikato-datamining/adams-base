@@ -24,7 +24,7 @@ import adams.flow.core.AdditionalOptionsHandler;
 
 /**
  * Ancestor for singleton script actors.
- * <p/>
+ * <br><br>
  * Scripting languages like Jython or Groovy need to be derived from this
  * class.
  *

@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 /**
  <!-- globalinfo-start -->
  * This class implements the WELL1024a pseudo-random number generator from Francois Panneton, Pierre L'Ecuyer and Makoto Matsumoto
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

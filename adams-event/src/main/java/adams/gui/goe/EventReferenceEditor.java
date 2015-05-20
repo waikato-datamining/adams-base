@@ -341,7 +341,7 @@ public class EventReferenceEditor
 
   /**
    * Checks whether the node is valid and can be added to the tree.
-   * <p/>
+   * <br><br>
    * Default implementation returns always true.
    *
    * @param node	the node to check

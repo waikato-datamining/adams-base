@@ -30,7 +30,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Tests the Standalones actor.
- * <p/>
+ * <br><br>
  * Just uses the WhileLoopTest since it uses a Standalones actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

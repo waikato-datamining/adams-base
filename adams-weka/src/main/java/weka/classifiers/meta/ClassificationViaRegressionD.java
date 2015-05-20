@@ -40,10 +40,10 @@ import weka.filters.unsupervised.attribute.MakeIndicator;
 
 /**
  <!-- globalinfo-start -->
- * Class for doing classification using regression methods. Class is binarized and one regression model is built for each class value. For more information, see, for example<br/>
- * <br/>
+ * Class for doing classification using regression methods. Class is binarized and one regression model is built for each class value. For more information, see, for example<br>
+ * <br>
  * E. Frank, Y. Wang, S. Inglis, G. Holmes, I.H. Witten (1998). Using model trees for classification. Machine Learning. 32(1):63-76.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -59,11 +59,11 @@ import weka.filters.unsupervised.attribute.MakeIndicator;
  *    year = {1998}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and

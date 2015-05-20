@@ -385,11 +385,11 @@ public class ClassLocator
    * Possible calls:
    * <ul>
    *    <li>
-   *      adams.core.ClassLocator &lt;packages&gt;<br/>
+   *      adams.core.ClassLocator &lt;packages&gt;<br>
    *      Prints all the packages in the current classpath
    *    </li>
    *    <li>
-   *      adams.core.ClassLocator &lt;classname&gt; &lt;packagename(s)&gt;<br/>
+   *      adams.core.ClassLocator &lt;classname&gt; &lt;packagename(s)&gt;<br>
    *      Prints the classes it found.
    *    </li>
    * </ul>

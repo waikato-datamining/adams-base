@@ -32,11 +32,11 @@ import adams.flow.core.AbstractActor;
 /**
  <!-- globalinfo-start -->
  * Replaces strings that match the specified regular expressions in the file before instantiating an actor from it.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -170,7 +170,7 @@ public class StringReplace
 
   /**
    * Hook before generating the actor.
-   * <p/>
+   * <br><br>
    * Checks whether find and replace arrays have the same length.
    */
   @Override

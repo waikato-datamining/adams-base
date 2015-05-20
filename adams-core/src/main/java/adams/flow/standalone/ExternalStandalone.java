@@ -28,12 +28,12 @@ import adams.flow.core.TriggerableEvent;
 
 /**
  <!-- globalinfo-start -->
- * Standalone that executes an external standalone actor stored on disk.<br/>
- * For executing whole flows, use the adams.flow.standalone.ExternalFlow standalone actor instead.<br/>
- * <br/>
- * See also:<br/>
+ * Standalone that executes an external standalone actor stored on disk.<br>
+ * For executing whole flows, use the adams.flow.standalone.ExternalFlow standalone actor instead.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.standalone.ExternalFlow
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

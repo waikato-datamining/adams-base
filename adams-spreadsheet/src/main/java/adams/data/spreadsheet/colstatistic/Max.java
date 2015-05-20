@@ -27,7 +27,7 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Calculates the max for a numeric column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

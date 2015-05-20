@@ -316,7 +316,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

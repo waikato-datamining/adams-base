@@ -62,7 +62,7 @@ public class LineHitDetector
 
   /**
    * Checks for a hit.
-   * <p/>
+   * <br><br>
    * For calculating distance between point and line, see <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/">here</a>
    *
    * @param e		the MouseEvent (for coordinates)

@@ -29,7 +29,7 @@ import adams.core.base.BaseColor;
 /**
  <!-- globalinfo-start -->
  * Keeps only the specified colors and turns all other pixels to transparent.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

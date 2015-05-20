@@ -24,11 +24,11 @@ import weka.core.Instance;
 /**
  <!-- globalinfo-start -->
  * A dummy evaluator that OKs all data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

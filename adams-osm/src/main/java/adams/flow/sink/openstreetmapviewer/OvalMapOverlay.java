@@ -28,7 +28,7 @@ import adams.flow.sink.OpenStreetMapViewer;
 /**
  <!-- globalinfo-start -->
  * Paints an oval at the specified location.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

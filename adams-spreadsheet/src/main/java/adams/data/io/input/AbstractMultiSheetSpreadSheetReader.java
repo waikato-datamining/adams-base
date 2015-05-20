@@ -244,7 +244,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param file	the file to read from
@@ -257,7 +257,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param r		the reader to read from
@@ -270,7 +270,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param in		the input stream to read from
@@ -283,7 +283,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Reads all defined sheets and returns only the first that it found.
    *
    * @param file	the file to read from
@@ -303,7 +303,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Reads all defined sheets and returns only the first that it found.
    *
    * @param r		the reader to read from
@@ -323,7 +323,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Reads all defined sheets and returns only the first that it found.
    *
    * @param in		the input stream to read from

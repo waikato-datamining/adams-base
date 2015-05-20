@@ -24,7 +24,7 @@ import net.htmlparser.jericho.Source;
 /**
  <!-- globalinfo-start -->
  * Extracts the text from an HTML string.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

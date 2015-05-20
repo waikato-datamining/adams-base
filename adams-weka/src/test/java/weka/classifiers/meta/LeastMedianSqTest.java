@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests LeastMedianSq. Run from the command line with:<p/>
+ * Tests LeastMedianSq. Run from the command line with:<br><br>
  * java weka.classifiers.meta.LeastMedianSqTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

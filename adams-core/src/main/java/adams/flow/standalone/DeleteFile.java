@@ -32,16 +32,16 @@ import adams.core.io.PlaceholderDirectory;
 
 /**
  <!-- globalinfo-start -->
- * Deletes the files&#47;dirs that match the regular expression below the specified directory.<br/>
+ * Deletes the files&#47;dirs that match the regular expression below the specified directory.<br>
  * In case of directories, deletion is performed recursively (if a directory matches, then the content gets deleted regardless whether it matches the regular expression or not).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

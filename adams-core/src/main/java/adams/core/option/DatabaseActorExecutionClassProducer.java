@@ -177,7 +177,7 @@ public class DatabaseActorExecutionClassProducer
   protected void addPreExecuteMethod() {
     m_OutputBuffer.append("  /**\n");
     m_OutputBuffer.append("   * Hook method before the actor is executed.\n");
-    m_OutputBuffer.append("   * <p/>\n");
+    m_OutputBuffer.append("   * <br><br>\n");
     m_OutputBuffer.append("   * Establishes the database connection.\n");
     m_OutputBuffer.append("   *\n");
     m_OutputBuffer.append("   * @param actor 		the actor that will get executed.\n");

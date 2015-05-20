@@ -44,17 +44,17 @@ import adams.flow.provenance.ProvenanceInformation;
 /**
  <!-- globalinfo-start -->
  * Evaluates a MOA clusterer using prequential evaluation. With each incoming instance, the clusterer is first evaluated, then trained.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;moa.core.Measurement[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

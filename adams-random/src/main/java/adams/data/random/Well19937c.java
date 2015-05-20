@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 /**
  <!-- globalinfo-start -->
  * This class implements the Well19937c pseudo-random number generator from Francois Panneton, Pierre L'Ecuyer and Makoto Matsumoto
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -28,7 +28,7 @@ import adams.flow.sink.OpenStreetMapViewer;
 /**
  <!-- globalinfo-start -->
  * A meta-overlay that paints multiple overlays.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

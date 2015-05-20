@@ -34,7 +34,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests SetupGenerator. Run from the command line with:<p/>
+ * Tests SetupGenerator. Run from the command line with:<br><br>
  * java weka.core.SetupGeneratorTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

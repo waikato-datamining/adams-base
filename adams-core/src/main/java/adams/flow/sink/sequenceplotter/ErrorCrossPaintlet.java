@@ -36,7 +36,7 @@ import adams.gui.visualization.sequence.CrossPaintlet;
 /**
  <!-- globalinfo-start -->
  * Paintlet for painting crosses with diameters based on the error at the specified X-Y position. Prefers X errors over Y errors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

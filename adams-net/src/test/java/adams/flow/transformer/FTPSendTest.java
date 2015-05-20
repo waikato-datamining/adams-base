@@ -30,7 +30,7 @@ import adams.test.TmpDirectory;
 
 /**
  * Test case for the FTPSend actor.
- * <p/>
+ * <br><br>
  * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

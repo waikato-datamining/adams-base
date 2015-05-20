@@ -30,11 +30,11 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Resets the timestamps, makes them start at the specified date&#47;time. The relative time differences between the data points are kept.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

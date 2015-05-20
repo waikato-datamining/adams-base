@@ -44,26 +44,26 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Merges multiple datasets, either from file or using Instances&#47;Instance objects.<br/>
- * If no 'ID' attribute is named, then all datasets must contain the same number of rows.<br/>
+ * Merges multiple datasets, either from file or using Instances&#47;Instance objects.<br>
+ * If no 'ID' attribute is named, then all datasets must contain the same number of rows.<br>
  * Attributes can be excluded from ending up in the final dataset via a regular expression. They can also be prefixed with name and&#47;or index.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance[]<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance[]<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

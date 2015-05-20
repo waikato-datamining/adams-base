@@ -28,18 +28,18 @@ import weka.core.setupgenerator.MathParameter;
 /**
  <!-- globalinfo-start -->
  * Generates multiple clusterer setups.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br/>
- * <p/>
+ * Input/output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

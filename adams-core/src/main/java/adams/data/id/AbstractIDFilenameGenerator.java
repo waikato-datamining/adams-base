@@ -123,7 +123,7 @@ public abstract class AbstractIDFilenameGenerator<T>
 
   /**
    * For post-processing the ID.
-   * <p/>
+   * <br><br>
    * The default implementation can make the ID filename-compliant.
    *
    * @param id		the ID to post-process

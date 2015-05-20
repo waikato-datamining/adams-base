@@ -40,13 +40,13 @@ import weka.filters.UnsupervisedFilter;
 
 /**
  <!-- globalinfo-start -->
- * Attribute values in the given range are set to missing values.<br/>
+ * Attribute values in the given range are set to missing values.<br>
  * NB: The class attribute is not excluded from this process.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  Turns on output of debugging information.</pre>

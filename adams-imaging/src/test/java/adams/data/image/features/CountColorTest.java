@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 import java.awt.*;
 
 /**
- * Test class for the CountColor flattener. Run from the command line with: <p/>
+ * Test class for the CountColor flattener. Run from the command line with: <br><br>
  * java adams.data.jai.flattener.CountColorTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

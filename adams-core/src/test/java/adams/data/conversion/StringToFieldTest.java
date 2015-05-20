@@ -46,7 +46,7 @@ public class StringToFieldTest
 
   /**
    * Turns the data object into a useful string representation.
-   * <p/>
+   * <br><br>
    * Outputs the parseable format.
    *
    * @param data	the object to convert

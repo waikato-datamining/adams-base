@@ -50,14 +50,14 @@ import adams.gui.application.AbstractInitialization;
 
 /**
  <!-- globalinfo-start -->
- * Executes flows from command-line.<br/>
- * It is also possible to traverse a directory and execute all flows within that match a regular expression.<br/>
+ * Executes flows from command-line.<br>
+ * It is also possible to traverse a directory and execute all flows within that match a regular expression.<br>
  * Using the 'no-execute' option, you can suppress the flow execution, but still test whether the flow loads and can be fully set up and wrapped up.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

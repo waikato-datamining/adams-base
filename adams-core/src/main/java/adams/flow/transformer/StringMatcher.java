@@ -25,24 +25,24 @@ import adams.core.base.BaseRegExp;
 
 /**
  <!-- globalinfo-start -->
- * Lets string tokens only pass if they match the regular expression. Matching sense can be inverted as well.<br/>
+ * Lets string tokens only pass if they match the regular expression. Matching sense can be inverted as well.<br>
  * Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
+ * Input/output:<br>
+ * - accepts:<br>
  * <pre>   java.lang.String</pre>
  * <pre>   java.lang.String[]</pre>
- * - generates:<br/>
+ * - generates:<br>
  * <pre>   java.lang.String</pre>
  * <pre>   java.lang.String[]</pre>
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

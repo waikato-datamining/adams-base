@@ -24,24 +24,24 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Applies all sub-actors to process the specified value of the container passing through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.AbstractContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.AbstractContainer<br/>
- * <p/>
- * Container information:<br/>
- * - adams.flow.container.AbstractContainer: <br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.AbstractContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.AbstractContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.AbstractContainer: <br>
  * - adams.flow.container.AbstractContainer:
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

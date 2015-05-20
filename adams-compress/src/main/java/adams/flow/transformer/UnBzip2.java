@@ -26,23 +26,23 @@ import adams.core.io.Bzip2Utils;
 
 /**
  <!-- globalinfo-start -->
- * Decompresses an archive that was compressed with bzip2. It is assumed, that the file ends with .bz2. If that is not the case, an alternative filename has to be provided.<br/>
+ * Decompresses an archive that was compressed with bzip2. It is assumed, that the file ends with .bz2. If that is not the case, an alternative filename has to be provided.<br>
  * The filename of the generated output filename is then broadcasted.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

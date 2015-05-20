@@ -37,7 +37,7 @@ public abstract class AbstractEmailWriter
 
   /**
    * Hook method for performing checks before writing the emails.
-   * <p/>
+   * <br><br>
    * Default implementation checks only whether an email has been provided.
    * 
    * @return		the error message, null if everything OK

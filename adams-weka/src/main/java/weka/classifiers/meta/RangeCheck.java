@@ -34,11 +34,11 @@ import weka.core.Instances;
 /**
  <!-- globalinfo-start -->
  * Keeps track of the ranges in case of numeric attributes. It then allows checks whether an instance is for one or more attributes outside the training range.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  If set, classifier is run in debug mode and

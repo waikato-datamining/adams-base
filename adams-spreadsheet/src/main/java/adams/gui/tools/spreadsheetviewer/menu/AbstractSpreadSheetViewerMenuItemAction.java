@@ -101,7 +101,7 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
   
   /**
    * Invoked when an action occurs (hook method after executing the actual action code).
-   * <p/>
+   * <br><br>
    * Updates the menu.
    * 
    * @param e		the event

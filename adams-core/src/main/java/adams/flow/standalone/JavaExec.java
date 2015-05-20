@@ -40,14 +40,14 @@ import adams.flow.sink.Null;
 /**
  <!-- globalinfo-start -->
  * Forks off a new JVM with the same classpath by default. The classpath can be extended using classpath augmenters. Additional JVM options can be supplied as well, apart from the heap size.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

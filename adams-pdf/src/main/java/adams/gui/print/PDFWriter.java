@@ -33,11 +33,11 @@ import java.io.FileOutputStream;
 /**
  <!-- globalinfo-start -->
  * Outputs PDF documents.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
@@ -97,7 +97,7 @@ import java.io.FileOutputStream;
  * </pre>
  *
  <!-- options-end -->
- * <p/>
+ * <br><br>
  * Based on weka.gui.visualize.PDFWriter
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

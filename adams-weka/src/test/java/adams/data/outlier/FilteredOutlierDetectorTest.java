@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the FilteredOutlierDetector outlier detector. Run from the command line with: <p/>
+ * Test class for the FilteredOutlierDetector outlier detector. Run from the command line with: <br><br>
  * java adams.data.outlier.FilteredOutlierDetectorTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

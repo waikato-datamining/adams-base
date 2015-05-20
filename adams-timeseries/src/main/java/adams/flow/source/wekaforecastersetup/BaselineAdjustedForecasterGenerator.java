@@ -28,7 +28,7 @@ import adams.data.baseline.TimeseriesLOWESSBased;
 /**
  <!-- globalinfo-start -->
  * Outputs a configured instance of a baseline-adjusted Forecaster.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->

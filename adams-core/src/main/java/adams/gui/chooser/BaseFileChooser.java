@@ -392,7 +392,7 @@ public class BaseFileChooser
   /**
    * Returns a list of selected files if the file
    * chooser is set to allow multiple selection.
-   * <p/>
+   * <br><br>
    * Fixes the problem with JFileChooser of not returning anything sometimes 
    * when only a single file is selected.
    *

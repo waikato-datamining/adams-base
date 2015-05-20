@@ -24,13 +24,13 @@ import adams.core.net.Email;
 
 /**
  <!-- globalinfo-start -->
- * Writes emails to text files.<br/>
+ * Writes emails to text files.<br>
  * Handles only ASCII content.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

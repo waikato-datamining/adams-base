@@ -34,9 +34,9 @@ import adams.data.statistics.ArrayMean;
 
 /**
  <!-- globalinfo-start -->
- * Applies the specified array statistic algorithm and returns the specified cell's value as score.<br/>
+ * Applies the specified array statistic algorithm and returns the specified cell's value as score.<br>
  * NB: Only collects numeric values from the rows.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -24,7 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test class for the FFT autocorrelation scheme. Run from the command line with: <p/>
+ * Test class for the FFT autocorrelation scheme. Run from the command line with: <br><br>
  * java adams.data.autocorrelation.FFTTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

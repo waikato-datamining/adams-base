@@ -28,7 +28,7 @@ import adams.env.Environment;
 import adams.test.Platform;
 
 /**
- * Test class for the NamedSetupIDGenerator filter. Run from the command line with: <p/>
+ * Test class for the NamedSetupIDGenerator filter. Run from the command line with: <br><br>
  * java adams.data.filter.NamedSetupIDGeneratorTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

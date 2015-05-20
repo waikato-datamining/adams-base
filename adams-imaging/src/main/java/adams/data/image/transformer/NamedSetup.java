@@ -25,11 +25,11 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Applies an JAI transfomer that is referenced via its global setup name (see 'NamedSetups').
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -29,9 +29,9 @@ import adams.gui.visualization.stats.paintlet.LowessPaintlet;
 
 /**
  <!-- globalinfo-start -->
- * Display a lowess curve as an overlay. <br/>
+ * Display a lowess curve as an overlay. <br>
  * WikiPedia. Local Regression. URL http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -43,11 +43,11 @@ import adams.gui.visualization.stats.paintlet.LowessPaintlet;
  *    URL = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Lowess}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -28,7 +28,7 @@ import adams.data.container.DataPoint;
 /**
  <!-- globalinfo-start -->
  * A filter that returns only every n-th data point.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

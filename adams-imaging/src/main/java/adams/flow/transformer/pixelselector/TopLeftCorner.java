@@ -27,9 +27,9 @@ import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to select a pixel location of the top-left corner.<br/>
+ * Allows the user to select a pixel location of the top-left corner.<br>
  * Stores the location in 'Pixel.Left' and 'Pixel.Top'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

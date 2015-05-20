@@ -36,24 +36,24 @@ import adams.test.TestHelper;
 
 /**
  * Abstract Test class for flow actors.
- * <p/>
+ * <br><br>
  * It is possible to dump the flow used in "testActor()" using the following
  * properties.
  * <ul>
  *   <li>"adams.test.flow.dump.file" allows you to specify the file in which
- *   to save the flow as command-line string. Example: <br/>
+ *   to save the flow as command-line string. Example: <br>
  *   <code>-Dadams.test.flow.dump.file=/some/where/flow.txt</code>
  *   </li>
  *   <li>"adams.test.flow.dump.append" allows to append all the flows that are
- *   run in the test sequence in the same file. Example: <br/>
+ *   run in the test sequence in the same file. Example: <br>
  *   <code>-Dadams.test.flow.dump.append=true</code>
  *   </li>
  *   <li>"adams.test.flow.dump.format" allows to specify the format (classname
- *   of option producer) of the dump. Example: <br/>
+ *   of option producer) of the dump. Example: <br>
  *   <code>-Dadams.test.flow.dump.format=adams.core.option.NestedProducer</code>
  *   </li>
  * </ul>
- * The regression test can be skipped as follows: <br/>
+ * The regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.flow.noregression=true</code>
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

@@ -31,11 +31,11 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Sink that executes an sink actor referenced by the specified named setup.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -164,7 +164,7 @@ public class NamedSetup
    * Gets called in the doExceute() method, after an optional
    * setUpNamedSetupActor() call (in case a variable is used for the actor file),
    * but before the named setup actor's execute() method is called.
-   * <p/>
+   * <br><br>
    * Sets the input token.
    *
    * @return		null if everything ok, otherwise error message

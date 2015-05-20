@@ -93,7 +93,7 @@ import java.util.Vector;
 
 /**
  * For displaying a single image.
- * <p/>
+ * <br><br>
  * The scroll wheel allows zooming in/out. Mouse-wheel clicking sets scale
  * back to 100%.
  *

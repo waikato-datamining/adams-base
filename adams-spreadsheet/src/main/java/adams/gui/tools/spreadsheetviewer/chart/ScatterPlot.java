@@ -30,7 +30,7 @@ import adams.gui.visualization.sequence.CirclePaintlet;
 /**
  <!-- globalinfo-start -->
  * Generates a scatter plot by plotting the X column against one or more Y columns.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

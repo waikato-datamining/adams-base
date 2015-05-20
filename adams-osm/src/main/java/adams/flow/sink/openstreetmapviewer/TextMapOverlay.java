@@ -30,9 +30,9 @@ import adams.flow.sink.OpenStreetMapViewer;
 
 /**
  <!-- globalinfo-start -->
- * Displays text, either fixed, from a variable or from storage.<br/>
+ * Displays text, either fixed, from a variable or from storage.<br>
  * Precedence: fixed &gt; variable &gt; storage
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -24,7 +24,7 @@ import adams.core.net.Email;
 /**
  <!-- globalinfo-start -->
  * Turns an Email object into a plain text string.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

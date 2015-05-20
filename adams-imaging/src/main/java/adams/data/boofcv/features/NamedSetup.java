@@ -28,7 +28,7 @@ import adams.data.featureconverter.HeaderDefinition;
 /**
  <!-- globalinfo-start -->
  * Applies a BoofCV feature generator that is referenced via its global setup name (see 'NamedSetups').
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

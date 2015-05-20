@@ -27,11 +27,11 @@ import weka.core.Capabilities.Capability;
 /**
  <!-- globalinfo-start -->
  * Scales the errors for numeric class attributes, using an user-specified error as reference point for a specified size.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

@@ -81,7 +81,7 @@ public class BaseRegExp
 
   /**
    * Converts the string according to the specified conversion.
-   * <p/>
+   * <br><br>
    * Implementation performs no conversion, merely initializes
    * the pattern matcher.
    *

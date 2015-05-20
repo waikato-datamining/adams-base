@@ -27,10 +27,10 @@ import adams.core.TechnicalInformationHandler;
 
 /**
  <!-- globalinfo-start -->
- * Turns a number representing milli-seconds since 1970 (Java date) into a String.<br/>
- * For more information on formatting the date, see:<br/>
+ * Turns a number representing milli-seconds since 1970 (Java date) into a String.<br>
+ * For more information on formatting the date, see:<br>
  * Javadoc. java.text.SimpleDateFormat.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -42,11 +42,11 @@ import adams.core.TechnicalInformationHandler;
  *    HTTP = {http:&#47;&#47;download.oracle.com&#47;javase&#47;1,5.0&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Draws the image obtained from a callable actor at the specified location.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

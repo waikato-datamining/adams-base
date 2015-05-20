@@ -35,10 +35,10 @@ import adams.env.Environment;
 
 /**
  <!-- globalinfo-start -->
- * Turns a spreadsheet into a KML (Keyhole Markup Language) XML data structure.<br/>
- * For more information see:<br/>
+ * Turns a spreadsheet into a KML (Keyhole Markup Language) XML data structure.<br>
+ * For more information see:<br>
  * http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Keyhole_Markup_Language
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

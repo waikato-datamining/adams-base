@@ -236,7 +236,7 @@ public class ArrayConsumer
 
   /**
    * Collects all the arguments for given argument options.
-   * <p/>
+   * <br><br>
    * NB: collection is destructive, i.e., the flags and values are removed
    * from the array.
    *

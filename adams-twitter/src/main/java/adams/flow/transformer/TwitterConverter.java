@@ -32,11 +32,11 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Turns a Twitter tweet or status into different representation.<br/>
- * GEO location data might not be available.<br/>
- * For more information on the date format, see:<br/>
+ * Turns a Twitter tweet or status into different representation.<br>
+ * GEO location data might not be available.<br>
+ * For more information on the date format, see:<br>
  * Javadoc. java.text.SimpleDateFormat.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -47,16 +47,16 @@ import adams.flow.core.Unknown;
  *    HTTP = {http:&#47;&#47;download.oracle.com&#47;javase&#47;1,5.0&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;twitter4j.Status<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;twitter4j.Status<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -33,7 +33,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests RemoveMisclassifiedRel. Run from the command line with: <p/>
+ * Tests RemoveMisclassifiedRel. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.RemoveMisclassifiedRelTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

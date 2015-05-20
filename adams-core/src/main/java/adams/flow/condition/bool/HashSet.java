@@ -28,7 +28,7 @@ import adams.flow.transformer.HashSetInit;
 /**
  <!-- globalinfo-start -->
  * Evaluates to true if the payload of the current token is present in the specified hashset.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

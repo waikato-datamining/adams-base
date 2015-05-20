@@ -23,11 +23,11 @@ package adams.flow.condition.test;
 /**
  <!-- globalinfo-start -->
  * Dummy condition that always succeeds.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

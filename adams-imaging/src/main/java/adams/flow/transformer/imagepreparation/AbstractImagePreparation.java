@@ -126,7 +126,7 @@ public abstract class AbstractImagePreparation
   
   /**
    * Checks whether the input can be used.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether image is not null.
    * 
    * @param image	the image to check

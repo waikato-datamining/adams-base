@@ -31,7 +31,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Plots the numeric data from one or more columns. The plot name is the column name and the X value is the row index.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

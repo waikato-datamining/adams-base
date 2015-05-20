@@ -58,7 +58,7 @@ public abstract class AbstractImageFilterProvider
   
   /**
    * Hook method for performing checks.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void check() {

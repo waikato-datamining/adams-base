@@ -36,7 +36,7 @@ public abstract class AbstractStamper
 
   /**
    * Hook method for checks before stamping.
-   * <p/>
+   * <br><br>
    * Default method only ensures that stamper present.
    *
    * @param stamper	the stamper to check

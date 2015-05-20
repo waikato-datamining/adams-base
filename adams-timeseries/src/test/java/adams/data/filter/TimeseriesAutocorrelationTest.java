@@ -26,7 +26,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test class for the TimeseriesAutocorrelation filter. Run from the command line with: <p/>
+ * Test class for the TimeseriesAutocorrelation filter. Run from the command line with: <br><br>
  * java adams.data.filter.TimeseriesAutocorrelationTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

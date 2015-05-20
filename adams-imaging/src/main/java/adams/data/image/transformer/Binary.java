@@ -29,7 +29,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Turns an image into a binary image, using a grayscale threshold to determine which pixels are black (below) and which are white (equal to or above).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -32,7 +32,7 @@ import adams.data.spreadsheet.cellfinder.SingleCell;
 /**
  <!-- globalinfo-start -->
  * Turns the cells that the specified cell finder locates into an array of cell positions (like 'A2').
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

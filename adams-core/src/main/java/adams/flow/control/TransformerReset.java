@@ -27,7 +27,7 @@ import adams.event.VariableChangeEvent.Type;
 /**
  <!-- globalinfo-start -->
  * Resets all sub-actors in case the monitored variable changed since the last execution.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

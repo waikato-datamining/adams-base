@@ -26,7 +26,7 @@ import adams.env.Environment;
 import adams.test.AdamsTestCase;
 
 /**
- * Tests the adams.core.VariableNameNoUpdate class. Run from commandline with: <p/>
+ * Tests the adams.core.VariableNameNoUpdate class. Run from commandline with: <br><br>
  * java adams.core.VariableNameNoUpdateTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

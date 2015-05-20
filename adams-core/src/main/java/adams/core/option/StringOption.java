@@ -87,7 +87,7 @@ public class StringOption
   /**
    * Allows additional checks whether to include that particular string
    * represents a valid option, i.e., is parseable.
-   * <p/>
+   * <br><br>
    * Any string is valid, even empty ones.
    *
    * @param s		the option string to test.

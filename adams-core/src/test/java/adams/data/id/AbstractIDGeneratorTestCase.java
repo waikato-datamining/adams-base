@@ -212,7 +212,7 @@ public abstract class AbstractIDGeneratorTestCase<D extends DataContainer & IDHa
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

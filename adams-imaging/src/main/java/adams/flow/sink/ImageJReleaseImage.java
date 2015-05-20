@@ -26,16 +26,16 @@ import adams.data.imagej.ImagePlusContainer;
 
 /**
  <!-- globalinfo-start -->
- * Removes the incoming image from ImageJ's internal list of batch mode images, freeing up memory.<br/>
+ * Removes the incoming image from ImageJ's internal list of batch mode images, freeing up memory.<br>
  * This works, of course, only with adams.data.imagej.ImagePlusContainer containers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

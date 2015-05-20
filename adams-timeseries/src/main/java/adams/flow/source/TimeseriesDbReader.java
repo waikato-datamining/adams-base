@@ -35,16 +35,16 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Outputs timeseries containers generated from an SQL SELECT statement.<br/>
+ * Outputs timeseries containers generated from an SQL SELECT statement.<br>
  * A new container is started, whenever the value of the ID column changes (hence you need to ensure that the data is ordered on this column).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

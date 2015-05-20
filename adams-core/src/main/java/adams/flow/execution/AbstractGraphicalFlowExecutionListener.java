@@ -59,7 +59,7 @@ public abstract class AbstractGraphicalFlowExecutionListener
 
   /**
    * Gets called when the flow execution ends.
-   * <p/>
+   * <br><br>
    * Also updates the GUI for a final time.
    */
   @Override

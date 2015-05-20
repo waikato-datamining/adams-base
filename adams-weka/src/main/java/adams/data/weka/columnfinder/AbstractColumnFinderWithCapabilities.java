@@ -25,7 +25,7 @@ import weka.core.Instances;
 
 /**
  * Ancestor for classes that find columns of interest in datasets.
- * <p/>
+ * <br><br>
  * Requires the data to meet the required capabilities.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -48,7 +48,7 @@ public abstract class AbstractColumnFinderWithCapabilities
 
   /**
    * Checks the data.
-   * <p/>
+   * <br><br>
    * Checks the data against the capabilities.
    * 
    * @param data	the data to check

@@ -27,11 +27,11 @@ import weka.core.Capabilities.Capability;
 /**
  <!-- globalinfo-start -->
  * Scales the errors for numeric class attributes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-max &lt;int&gt; (property: maxSize)
  * &nbsp;&nbsp;&nbsp;The maximum size of the errors after scaling.

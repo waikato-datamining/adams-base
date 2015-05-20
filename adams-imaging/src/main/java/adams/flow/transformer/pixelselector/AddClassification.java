@@ -29,13 +29,13 @@ import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to select a pixel location and add a corresponding classification for it.<br/>
+ * Allows the user to select a pixel location and add a corresponding classification for it.<br>
  * Stores the location with prefix 'Pixel.X.' and 'Pixel.Y.' and the classification using 'Classification.' as prefix.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-label &lt;adams.core.base.BaseString&gt; [-label ...] (property: labels)
  * &nbsp;&nbsp;&nbsp;The labels to offer the user for classifying the pixel.

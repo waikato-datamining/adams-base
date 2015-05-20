@@ -28,7 +28,7 @@ import adams.data.image.transformer.whitebalance.NoBalance;
 /**
  <!-- globalinfo-start -->
  * Processes the images passing through using the specified white balance algorithm.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

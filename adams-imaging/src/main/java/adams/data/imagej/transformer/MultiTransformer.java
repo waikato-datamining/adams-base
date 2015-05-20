@@ -29,7 +29,7 @@ import adams.data.imagej.ImagePlusContainer;
 /**
  <!-- globalinfo-start -->
  * Applies the specified ImageJ transformers one after the other.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

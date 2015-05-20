@@ -39,9 +39,9 @@ import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
 
 /**
  <!-- globalinfo-start -->
- * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br/>
+ * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br>
  * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

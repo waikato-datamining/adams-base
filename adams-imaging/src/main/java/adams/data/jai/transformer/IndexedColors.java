@@ -32,7 +32,7 @@ import adams.data.image.BufferedImageHelper;
 /**
  <!-- globalinfo-start -->
  * Turns an RGB image into one with an indexed color palette.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

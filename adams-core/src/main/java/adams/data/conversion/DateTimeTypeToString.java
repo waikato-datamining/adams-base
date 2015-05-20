@@ -36,7 +36,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Turns instances of the the specified date&#47;time type into a string using the specified format.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

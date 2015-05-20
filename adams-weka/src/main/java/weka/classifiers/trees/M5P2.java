@@ -33,15 +33,15 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * M5Base. Implements base routines for generating M5 Model trees and rules<br/>
- * The original algorithm M5 was invented by R. Quinlan and Yong Wang made improvements.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
- * Ross J. Quinlan: Learning with Continuous Classes. In: 5th Australian Joint Conference on Artificial Intelligence, Singapore, 343-348, 1992.<br/>
- * <br/>
+ * M5Base. Implements base routines for generating M5 Model trees and rules<br>
+ * The original algorithm M5 was invented by R. Quinlan and Yong Wang made improvements.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
+ * Ross J. Quinlan: Learning with Continuous Classes. In: 5th Australian Joint Conference on Artificial Intelligence, Singapore, 343-348, 1992.<br>
+ * <br>
  * Y. Wang, I. H. Witten: Induction of model trees for predicting continuous classes. In: Poster papers of the 9th European Conference on Machine Learning, 1997.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -65,11 +65,11 @@ import java.util.Vector;
  *    year = {1997}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -N
  *  Use unpruned tree/rules</pre>
@@ -184,10 +184,10 @@ public class M5P2
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -N
    *  Use unpruned tree/rules</pre>

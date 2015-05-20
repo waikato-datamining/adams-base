@@ -22,11 +22,11 @@ package adams.data.statistics;
 /**
  <!-- globalinfo-start -->
  * Calculates the correlation coefficient between the first array and the remaining arrays. The arrays must be numeric, of course.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

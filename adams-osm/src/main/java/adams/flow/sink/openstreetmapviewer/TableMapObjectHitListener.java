@@ -35,7 +35,7 @@ import adams.gui.dialog.SpreadSheetDialog;
 /**
  <!-- globalinfo-start -->
  * Displays all the hits in a table format.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

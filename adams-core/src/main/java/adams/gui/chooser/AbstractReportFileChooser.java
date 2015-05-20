@@ -36,7 +36,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
  * for reports.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

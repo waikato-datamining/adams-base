@@ -21,9 +21,9 @@ package adams.gui.scripting;
 
 /**
  <!-- scriptlet-parameters-start -->
- * Action parameters:<br/>
+ * Action parameters:<br>
  * <pre>   invisible &lt;comma-separated list of 1-based indices&gt;</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-parameters-end -->
  *
  <!-- scriptlet-description-start -->
@@ -31,7 +31,7 @@ package adams.gui.scripting;
  * <pre>   Sets the visibility of the specified spectrums to false.
  *    NB: index is based on the order the spectrums haven beeen loaded into the
  *    system, includes all spectrums, not just visible ones.</pre>
- * <p/>
+ * <br><br>
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

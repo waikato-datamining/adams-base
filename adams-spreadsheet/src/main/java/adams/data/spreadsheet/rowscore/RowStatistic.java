@@ -29,7 +29,7 @@ import adams.data.spreadsheet.rowstatistic.Mean;
 /**
  <!-- globalinfo-start -->
  * Applies the specified row statistic algorithm and returns the specified cell's value as score.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

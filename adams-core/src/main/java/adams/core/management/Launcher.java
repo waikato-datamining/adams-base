@@ -38,16 +38,16 @@ import java.util.List;
  * (<code>-memory &lt;amount&gt;</code>), a Java agent
  * (<code>-javaagent &lt;jar-file&gt;</code>) and main class
  * (<code>-main &lt;classname&gt;</code>).
- * <p/>
+ * <br><br>
  * All other command-line arguments are passed on to the new process.
- * <p/>
+ * <br><br>
  * In addition to parameters from the commandline, additional parameters can
  * be defined in the <code>ADAMS_OPTS</code> environment variable.
  * Note: No checks are performed if the same parameter is defined in this
  * env variable and on the commandline.
- * <p/>
+ * <br><br>
  * Use <code>-help</code> to output all available parameters.
- * <p/>
+ * <br><br>
  * When run from commandline, the method <code>addShutdownHook()</code> gets
  * called automatically before <code>execute()</code>, which adds a hook
  * thread to the runtime, killing the launched process, e.g., when

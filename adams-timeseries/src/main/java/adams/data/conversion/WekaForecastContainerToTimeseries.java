@@ -33,7 +33,7 @@ import adams.flow.container.WekaForecastContainer;
 /**
  <!-- globalinfo-start -->
  * Turns a series of predictions of a adams.flow.container.WekaForecastContainer container into a adams.data.timeseries.Timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -29,18 +29,18 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Determines the position of a substring in the string passing through.<br/>
+ * Determines the position of a substring in the string passing through.<br>
  * The generated index is 1-based, with 0 indicating that the substring could not be located.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

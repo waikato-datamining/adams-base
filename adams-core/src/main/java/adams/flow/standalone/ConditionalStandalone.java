@@ -29,7 +29,7 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Standalone that needs to fullfil a condition before being executed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -36,7 +36,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Parses a string and turns it into an instance of the the specified date&#47;time type. The string may contain variables, which get expanded at conversion time.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Combines the channels into a single image. The channel images are expected to be gray scale images.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

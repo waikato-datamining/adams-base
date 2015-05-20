@@ -229,7 +229,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp() and cleans up the options.
    */
   @Override
@@ -241,7 +241,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
   /**
    * Compares this object with the specified object for order. Returns a
    * negative integer, zero, or a positive integer as this object is less than,
-   * equal to, or greater than the specified object. <p/> Only compares the
+   * equal to, or greater than the specified object. <br><br> Only compares the
    * commandlines of the two objects.
    *
    * @param o
@@ -261,7 +261,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
   }
 
   /**
-   * Returns whether the two objects are the same. <p/> Only compares the
+   * Returns whether the two objects are the same. <br><br> Only compares the
    * commandlines of the two objects.
    *
    * @param o

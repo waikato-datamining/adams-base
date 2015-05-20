@@ -29,24 +29,24 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Sets a value in a WEKA Instance.<br/>
- * Notes:<br/>
- * - relational values cannot be set<br/>
+ * Sets a value in a WEKA Instance.<br>
+ * Notes:<br>
+ * - relational values cannot be set<br>
  * - '?' (without single quotes) is interpreted as missing value
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

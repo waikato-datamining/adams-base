@@ -30,10 +30,10 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the signal to noise ratio for a numeric column.<br/>
- * For more information, see:<br/>
+ * Calculates the signal to noise ratio for a numeric column.<br>
+ * For more information, see:<br>
  * WikiPedia. Signal-to-noise ratio.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

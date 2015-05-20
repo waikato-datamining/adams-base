@@ -46,7 +46,7 @@ public interface OutputProducer
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
-   * <p/>
+   * <br><br>
    * The method is not allowed allowed to return "true" before the
    * actor has been executed. For actors that return an infinite
    * number of tokens, the m_Executed flag can be returned.

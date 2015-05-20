@@ -26,7 +26,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 /**
  <!-- globalinfo-start -->
  * Does not process any clicks, simply ignores them.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

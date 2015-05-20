@@ -28,9 +28,9 @@ import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Performs a logical AND on the binary pixels of the images.<br/>
+ * Performs a logical AND on the binary pixels of the images.<br>
  * Converts images automatically to type BufferedImage.TYPE_BYTE_BINARY.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -71,7 +71,7 @@ public class And
 
   /**
    * Checks the images.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that images are present.
    *
    * @param images	the images to check

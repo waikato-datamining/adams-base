@@ -72,7 +72,7 @@ public abstract class AbstractSetupOptionPanel
   
   /**
    * Gets called when the owner changes.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    */
   protected void ownerChanged() {
@@ -99,7 +99,7 @@ public abstract class AbstractSetupOptionPanel
   
   /**
    * Performs GUI updates.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void update() {

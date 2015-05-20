@@ -662,7 +662,7 @@ public abstract class AbstractActor
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -680,7 +680,7 @@ public abstract class AbstractActor
 
   /**
    * Updates the Variables instance in use, if different from current one.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use
@@ -777,7 +777,7 @@ public abstract class AbstractActor
 
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -815,7 +815,7 @@ public abstract class AbstractActor
   
   /**
    * Checks whether the class' options can be inspected.
-   * <p/>
+   * <br><br>
    * Default implementation returns true.
    *
    * @param cls		the class to check
@@ -943,7 +943,7 @@ public abstract class AbstractActor
 
   /**
    * Removes entries from the backup.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @see		#reset()
@@ -953,7 +953,7 @@ public abstract class AbstractActor
 
   /**
    * Backs up the current state of the actor before update the variables.
-   * <p/>
+   * <br><br>
    * Default implementation only returns an empty hashtable.
    *
    * @return		the backup
@@ -966,7 +966,7 @@ public abstract class AbstractActor
 
   /**
    * Restores the state of the actor before the variables got updated.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param state	the backup of the state to restore from
@@ -1044,7 +1044,7 @@ public abstract class AbstractActor
 
   /**
    * Hook for performing setup checks -- used in setUp() and preExecute().
-   * <p/>
+   * <br><br>
    * Default implementation performs no checks.
    *
    * @param fromSetUp	whether the method has been called from within setUp()
@@ -1058,7 +1058,7 @@ public abstract class AbstractActor
 
   /**
    * Pre-execute hook.
-   * <p/>
+   * <br><br>
    * Default implementation checks only whether the actor needs to be setup
    * again due to changes in variables.
    *
@@ -1091,7 +1091,7 @@ public abstract class AbstractActor
 
   /**
    * Post-execute hook.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing apart from setting m_Executed to true
    * and only returns null.
    *
@@ -1192,7 +1192,7 @@ public abstract class AbstractActor
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp().
    */
   @Override
@@ -1312,7 +1312,7 @@ public abstract class AbstractActor
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -1331,7 +1331,7 @@ public abstract class AbstractActor
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

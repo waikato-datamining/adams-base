@@ -25,7 +25,7 @@ import adams.data.image.ImageAnchor;
 import adams.env.Environment;
 
 /**
- * Test class for the Crop transformer. Run from the command line with: <p/>
+ * Test class for the Crop transformer. Run from the command line with: <br><br>
  * java adams.data.adams.transformer.CropTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -32,19 +32,19 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  <!-- globalinfo-start -->
- * Downloads the raw, textual content from a URL and forwards it.Also handles basic authentication when using URLs like this:<br/>
+ * Downloads the raw, textual content from a URL and forwards it.Also handles basic authentication when using URLs like this:<br>
  * http:&#47;&#47;user:pass&#64;domain.com&#47;url
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URL<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

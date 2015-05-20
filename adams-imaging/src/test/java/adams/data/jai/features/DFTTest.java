@@ -26,7 +26,7 @@ import adams.data.jai.features.DFT.OutputType;
 import adams.env.Environment;
 
 /**
- * Test class for the DFT flattener. Run from the command line with: <p/>
+ * Test class for the DFT flattener. Run from the command line with: <br><br>
  * java adams.data.jai.flattener.DFTTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

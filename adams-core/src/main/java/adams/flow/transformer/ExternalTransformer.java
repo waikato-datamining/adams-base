@@ -32,7 +32,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Transformer that executes an external transformer actor stored on disk.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -184,7 +184,7 @@ public class ExternalTransformer
    * Gets called in the doExceute() method, after an optional
    * setUpExternalActor() call (in case a variable is used for the actor file),
    * but before the external actor's execute() method is called.
-   * <p/>
+   * <br><br>
    * Sets the input token.
    *
    * @return		null if everything ok, otherwise error message

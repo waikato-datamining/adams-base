@@ -25,7 +25,7 @@ import adams.data.boofcv.transformer.Binary.ThresholdType;
 import adams.env.Environment;
 
 /**
- * Test class for the Binary transformer. Run from the command line with: <p/>
+ * Test class for the Binary transformer. Run from the command line with: <br><br>
  * java adams.data.boofcv.transformer.BinaryTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

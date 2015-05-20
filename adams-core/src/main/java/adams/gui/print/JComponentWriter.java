@@ -45,7 +45,7 @@ import adams.env.Environment;
  *   <li><code>generateOutput()</code></li>
  *   <li><code></code></li>
  * </ul>
- * <p/>
+ * <br><br>
  * Based on weka.gui.visualize.JComponentWriter
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

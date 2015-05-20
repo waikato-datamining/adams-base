@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Uses the defined crop algorithm to first crop the image before locating objects. The locations get adjusted to fit the original image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

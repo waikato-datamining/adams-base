@@ -95,7 +95,7 @@ public abstract class AbstractMenuItemDefinition
 
   /**
    * Initializes members.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {
@@ -150,7 +150,7 @@ public abstract class AbstractMenuItemDefinition
 
   /**
    * Hook method that gets executed just before calling "launch()".
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void preLaunch() {
@@ -163,7 +163,7 @@ public abstract class AbstractMenuItemDefinition
 
   /**
    * Hook method that gets executed just after calling "launch()".
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void postLaunch() {

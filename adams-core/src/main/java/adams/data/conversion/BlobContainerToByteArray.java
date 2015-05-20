@@ -24,7 +24,7 @@ import adams.data.blob.BlobContainer;
 /**
  <!-- globalinfo-start -->
  * Obtains the byte array content of a adams.data.blob.BlobContainer and forwards that.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

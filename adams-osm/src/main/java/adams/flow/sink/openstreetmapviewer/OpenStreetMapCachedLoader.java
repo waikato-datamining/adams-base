@@ -29,7 +29,7 @@ import adams.core.io.PlaceholderDirectory;
 /**
  <!-- globalinfo-start -->
  * Returns the default OpenStreetMap file cache tile loader.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

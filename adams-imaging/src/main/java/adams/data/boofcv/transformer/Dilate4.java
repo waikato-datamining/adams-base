@@ -28,7 +28,7 @@ import boofcv.struct.image.ImageUInt8;
 /**
  <!-- globalinfo-start -->
  * Applies the BoofCV dilate4 algorithm to a binary image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -50,7 +50,7 @@ public abstract class AbstractRecursiveOptionProducer<O,I>
 
   /**
    * Generates a debug string, e.g., based on the method name.
-   * <p/>
+   * <br><br>
    * Default implementation merely returns the string.
    *
    * @param s		the string to process

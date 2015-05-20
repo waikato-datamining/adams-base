@@ -27,23 +27,23 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Increments the value of a storage value by either an integer or double increment.<br/>
- * If the storage value has not been set yet, it will get set to 0.<br/>
+ * Increments the value of a storage value by either an integer or double increment.<br>
+ * If the storage value has not been set yet, it will get set to 0.<br>
  * If the storage value contains a non-numerical value, no increment will be performed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

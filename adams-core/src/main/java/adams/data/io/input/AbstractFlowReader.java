@@ -114,7 +114,7 @@ public abstract class AbstractFlowReader
 
   /**
    * Hook method to perform some checks before performing the actual read.
-   * <p/>
+   * <br><br>
    * Default implementation only clears warnings/errors.
    */
   protected void check() {
@@ -248,7 +248,7 @@ public abstract class AbstractFlowReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param file	the file to read from
@@ -261,7 +261,7 @@ public abstract class AbstractFlowReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param r		the reader to read from
@@ -274,7 +274,7 @@ public abstract class AbstractFlowReader
 
   /**
    * Performs the actual reading.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param in		the input stream to read from

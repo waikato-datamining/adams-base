@@ -25,7 +25,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Converts a primitive array to its object counterpart.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

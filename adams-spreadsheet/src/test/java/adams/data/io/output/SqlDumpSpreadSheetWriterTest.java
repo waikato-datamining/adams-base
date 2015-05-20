@@ -26,7 +26,7 @@ import adams.data.spreadsheet.ColumnNameConversion;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.io.SqlDumpSpreadSheetWriter class. Run from commandline with: <p/>
+ * Tests the adams.core.io.SqlDumpSpreadSheetWriter class. Run from commandline with: <br><br>
  * java adams.core.io.SqlDumpSpreadSheetWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

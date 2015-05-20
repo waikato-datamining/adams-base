@@ -23,11 +23,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  <!-- globalinfo-start -->
- * ISAAC: a fast cryptographic pseudo-random number generator.<br/>
- * <br/>
- * For more information see:<br/>
+ * ISAAC: a fast cryptographic pseudo-random number generator.<br>
+ * <br>
+ * For more information see:<br>
  * http:&#47;&#47;burtleburtle.net&#47;bob&#47;rand&#47;isaacafa.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

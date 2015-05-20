@@ -26,19 +26,19 @@ import adams.data.timeseries.Timeseries;
 
 /**
  <!-- globalinfo-start -->
- * A Savitzky-Golay based smoothing algorithm.<br/>
- * It uses a Savitzky-Golay filter with derivative order 0 and adding of mass-spec data turned on.<br/>
- * <br/>
- * For more information on Savitzky-Golay see:<br/>
- * <br/>
- * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br/>
- * <br/>
+ * A Savitzky-Golay based smoothing algorithm.<br>
+ * It uses a Savitzky-Golay filter with derivative order 0 and adding of mass-spec data turned on.<br>
+ * <br>
+ * For more information on Savitzky-Golay see:<br>
+ * <br>
+ * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br>
+ * <br>
  * William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery (1992). Savitzky-Golay Smoothing Filters.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

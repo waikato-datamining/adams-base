@@ -30,7 +30,7 @@ import adams.tools.InitializeTables;
 
 /**
  * Tests the Tool actor.
- * <p/>
+ * <br><br>
  * Just uses the WhileLoopTest since it uses a Tool actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

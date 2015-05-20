@@ -25,22 +25,22 @@ import adams.flow.control.Storage;
 
 /**
  <!-- globalinfo-start -->
- * Expands all the storage items (using their string representation) and variables in the string(s) passing through.<br/>
- * A string can consist of arbitrary strings and the following special placeholders:<br/>
- * - variables: &#64;{...}<br/>
- * - storage placeholders: %{...}<br/>
- * <p/>
+ * Expands all the storage items (using their string representation) and variables in the string(s) passing through.<br>
+ * A string can consist of arbitrary strings and the following special placeholders:<br>
+ * - variables: &#64;{...}<br>
+ * - storage placeholders: %{...}<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

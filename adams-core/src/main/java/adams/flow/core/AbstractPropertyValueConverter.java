@@ -46,7 +46,7 @@ public abstract class AbstractPropertyValueConverter
 
   /**
    * Initializes member variables.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {

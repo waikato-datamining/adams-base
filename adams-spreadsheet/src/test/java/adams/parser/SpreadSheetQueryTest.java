@@ -28,7 +28,7 @@ import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.parser.SpreadSheetQuery class. Run from commandline with: <p/>
+ * Tests the adams.parser.SpreadSheetQuery class. Run from commandline with: <br><br>
  * java adams.parser.SpreadSheetQueryTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

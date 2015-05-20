@@ -36,23 +36,23 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Generates train/test pairs like during a cross-validation run. It is possible to generate pairs for leave-one-out cross-validation (LOOCV) as well.<br/>
- * It is essential that a class attribute is set. In case of a nominal class attribute, the data gets stratified automatically.<br/>
+ * Generates train/test pairs like during a cross-validation run. It is possible to generate pairs for leave-one-out cross-validation (LOOCV) as well.<br>
+ * It is essential that a class attribute is set. In case of a nominal class attribute, the data gets stratified automatically.<br>
  * Each of the pairs gets forwarded as a container. The training set can be accessed in the container with 'Train' and the test set with 'Test'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.TrainTestSetContainer<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.TrainTestSetContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

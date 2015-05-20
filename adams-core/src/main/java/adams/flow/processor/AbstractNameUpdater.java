@@ -207,7 +207,7 @@ public abstract class AbstractNameUpdater<T>
   /**
    * Returns whether the traverser can recurse the specified class
    * (base class from a ClassOption).
-   * <p/>
+   * <br><br>
    * Default implementation does not recurse into {@link Flow} actors.
    *
    * @param cls		the class to determine for whether recursing is
@@ -220,7 +220,7 @@ public abstract class AbstractNameUpdater<T>
 
   /**
    * Returns whether the traverser can recurse the specified object.
-   * <p/>
+   * <br><br>
    * Default implementation always returns return value of 
    * {@link #canRecurse(Class)}.
    *
@@ -235,7 +235,7 @@ public abstract class AbstractNameUpdater<T>
   /**
    * Returns whether class options are treated as argument options and 
    * processed as well.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    * 
    * @return		true if can be processed

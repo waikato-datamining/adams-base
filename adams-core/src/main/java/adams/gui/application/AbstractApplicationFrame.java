@@ -192,7 +192,7 @@ public abstract class AbstractApplicationFrame
   
   /**
    * Initializes the logger.
-   * <p/>
+   * <br><br>
    * Default implementation uses the class name.
    */
   @Override

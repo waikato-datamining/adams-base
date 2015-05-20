@@ -29,11 +29,11 @@ import java.io.FileOutputStream;
 /**
  <!-- globalinfo-start -->
  * Outputs EPS files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.
@@ -73,14 +73,14 @@ import java.io.FileOutputStream;
  * </pre>
  *
  <!-- options-end -->
- * <p/>
- * <b>Note:</b><br/>
+ * <br><br>
+ * <b>Note:</b><br>
  * This writer does not work with Components that rely on clipping, like e.g.
  * scroll lists. Here the complete list is printed, instead of only in the
  * borders of the scroll list (may overlap other components!). This is due to
  * the way, clipping is handled in Postscript. There was no easy way around
  * this issue. :-(
- * <p/>
+ * <br><br>
  * Based on weka.gui.visualize.PostscriptWriter
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

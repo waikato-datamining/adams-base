@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 /**
  <!-- globalinfo-start -->
  * A meta-pruner that applies multiple pruners.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

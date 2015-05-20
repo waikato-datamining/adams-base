@@ -38,19 +38,19 @@ import adams.flow.source.WekaForecasterSetup;
 /**
  <!-- globalinfo-start -->
  * Trains a forecaster based on the incoming dataset and outputs the built model alongside the training header (in a model container).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaForecastModelContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaForecastModelContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaForecastModelContainer: Model, Header, Dataset, Transformed
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

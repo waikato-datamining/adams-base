@@ -25,11 +25,11 @@ import adams.core.QuickInfoHelper;
 /**
  <!-- globalinfo-start -->
  * Non-graphical actor that outputs any object that arrives at its input port via the 'toString()' method on stdout.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

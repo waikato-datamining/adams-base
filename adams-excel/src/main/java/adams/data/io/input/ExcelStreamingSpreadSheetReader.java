@@ -62,13 +62,13 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Reads large MS Excel XML files (using streaming via SAX).<br/>
+ * Reads large MS Excel XML files (using streaming via SAX).<br>
  * Increasing the debug level to more than 1 results in outputting detailed information on cells.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

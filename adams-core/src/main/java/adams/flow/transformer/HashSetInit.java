@@ -32,18 +32,18 @@ import adams.flow.control.StorageUpdater;
 /**
  <!-- globalinfo-start -->
  * Creates a hashset from a column in a spreadsheet. The hashset itself gets stored in the internal storage under the specified name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

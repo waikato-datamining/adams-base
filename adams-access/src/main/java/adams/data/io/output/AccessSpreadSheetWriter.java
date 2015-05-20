@@ -46,7 +46,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Writes spreadsheet data to a MS Access database.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
@@ -554,7 +554,7 @@ public class AccessSpreadSheetWriter
   /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the spreadsheet to write

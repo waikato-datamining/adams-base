@@ -26,7 +26,7 @@ import adams.env.Environment;
 
 /**
  * Tests the StringToCustomStringRepresentation conversion.
- * <p/>
+ * <br><br>
  * Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -34,7 +34,7 @@ import adams.gui.flow.tree.Tree;
 /**
  <!-- globalinfo-start -->
  * Updates all references of the storage value that was renamed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -48,20 +48,20 @@ import JSci.maths.wavelet.IllegalScalingException;
 
 /**
  <!-- globalinfo-start -->
- * Generates an ensemble using the following approach:<br/>
- * - for each attribute apart from class attribute do:<br/>
- *   * create new dataset with only this feature and the class attribute<br/>
- *   * remove all instances that contain a missing value<br/>
- *   * if no instances left in subset, don't build a classifier for this feature<br/>
- *   * if at least 1 instance is left in subset, build base classifier with it<br/>
- * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br/>
- * In addition to the default feature for a subset, a number of random features can be added to the subset before the classifier is trained.<br/>
+ * Generates an ensemble using the following approach:<br>
+ * - for each attribute apart from class attribute do:<br>
+ *   * create new dataset with only this feature and the class attribute<br>
+ *   * remove all instances that contain a missing value<br>
+ *   * if no instances left in subset, don't build a classifier for this feature<br>
+ *   * if at least 1 instance is left in subset, build base classifier with it<br>
+ * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br>
+ * In addition to the default feature for a subset, a number of random features can be added to the subset before the classifier is trained.<br>
  * At prediction time, the Vote meta-classifier (using the pre-built classifiers) is used to determing the class probabilities or regression value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -num-slots &lt;num&gt;
  *  Number of execution slots.
@@ -196,10 +196,10 @@ public class SubsetEnsemble
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -num-slots &lt;num&gt;
    *  Number of execution slots.

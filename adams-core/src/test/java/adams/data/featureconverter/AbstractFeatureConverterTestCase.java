@@ -85,7 +85,7 @@ public abstract class AbstractFeatureConverterTestCase
 
   /**
    * Turns the data object into a useful string representation.
-   * <p/>
+   * <br><br>
    * The default implementation merely performs a "toString()" on the object, 
    * or, in case of arrays, a {@link Utils#arrayToString(Object)}.
    *
@@ -253,7 +253,7 @@ public abstract class AbstractFeatureConverterTestCase
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

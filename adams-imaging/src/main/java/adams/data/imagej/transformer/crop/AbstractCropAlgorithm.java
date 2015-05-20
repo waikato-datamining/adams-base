@@ -47,7 +47,7 @@ public abstract class AbstractCropAlgorithm
   
   /**
    * Checks whether the image can be cropped.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether an image was supplied.
    * 
    * @param img				the image to check
@@ -60,7 +60,7 @@ public abstract class AbstractCropAlgorithm
 
   /**
    * Hook method before the crop happens.
-   * <p/>
+   * <br><br>
    * Default method initializes the top-left and bottom-right corners to 
    * image dimensions.
    * 
@@ -81,7 +81,7 @@ public abstract class AbstractCropAlgorithm
 
   /**
    * Hook method after the crop happened.
-   * <p/>
+   * <br><br>
    * Default method does nothing.
    * 
    * @param img		the cropped

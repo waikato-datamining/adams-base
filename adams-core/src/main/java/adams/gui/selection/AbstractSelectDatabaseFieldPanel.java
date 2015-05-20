@@ -240,7 +240,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
   /**
    * Hook method for processing items that were not found when trying to
    * select them initially.
-   * <p/>
+   * <br><br>
    * The missing items are displayed in the "manual" field.
    *
    * @param missing	the missing items
@@ -262,7 +262,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
 
   /**
    * Checks whether the item is valid.
-   * <p/>
+   * <br><br>
    * Checks for null and whether field has a name.
    *
    * @param item	the item to check

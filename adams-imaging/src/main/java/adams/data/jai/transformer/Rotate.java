@@ -32,11 +32,11 @@ import java.awt.Color;
 /**
  <!-- globalinfo-start -->
  * Rotates an image by a defined number of degrees.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -317,7 +317,7 @@ public class Rotate
 
   /**
    * Performs no transformation at all, just returns the input.
-   * <p/>
+   * <br><br>
    * Original code for rotation taken from <a href="http://asserttrue.blogspot.com/2010/01/image-rotation-in-8-lines-using-java.html" target="_blank">here</a>,
    * which was placed in public domain by Kas Thomas.
    *

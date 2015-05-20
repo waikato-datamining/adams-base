@@ -241,7 +241,7 @@ public class BaseAnnotation
   
   /**
    * Converts the string according to the specified conversion.
-   * <p/>
+   * <br><br>
    * Just resets the located tags.
    *
    * @param value	the string to convert

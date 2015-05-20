@@ -176,7 +176,7 @@ public abstract class AbstractNamedSetup
    * Gets called in the doExceute() method, after an optional
    * setUpNamedSetupActor() call (in case a variable is used for the actor file),
    * but before the named setup actor's execute() method is called.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @return		null if everything ok, otherwise error message

@@ -32,7 +32,7 @@ import adams.ml.data.Dataset;
 /**
  <!-- globalinfo-start -->
  * Generates a spreadsheet from a weka.core.Instances object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

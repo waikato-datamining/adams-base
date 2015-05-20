@@ -36,10 +36,10 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Computes cluster statistics (min&#47;max&#47;mean&#47;stdev) for the provided dataset. An additional attribute is added to the dataset structure that indicates the cluster index and the statistic.<br/>
- * Only numeric attributes are considered when computing the statistics.<br/>
+ * Computes cluster statistics (min&#47;max&#47;mean&#47;stdev) for the provided dataset. An additional attribute is added to the dataset structure that indicates the cluster index and the statistic.<br>
+ * Only numeric attributes are considered when computing the statistics.<br>
  * Stored in container under: Clustered dataset
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

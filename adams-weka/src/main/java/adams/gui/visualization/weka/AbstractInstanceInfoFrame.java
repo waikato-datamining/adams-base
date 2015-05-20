@@ -55,7 +55,7 @@ import adams.gui.core.SortableAndSearchableTable;
 /**
  * Ancestor for frames for displaying information on the displayed data, with
  * some more domain-specific functionality.
- * <p/>
+ * <br><br>
  * Methods to implement:
  * <ul>
  *   <li><code>getActions()</code> - returns an array of String objects to

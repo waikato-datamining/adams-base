@@ -33,24 +33,24 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Emulates the following for-loop:<br/>
- * - positive step size:<br/>
- *   for (int i = lower; i &lt;= upper; i += step)<br/>
- * - negative step size:<br/>
- *   for (int i = upper; i &gt;= lower; i += step)<br/>
+ * Emulates the following for-loop:<br>
+ * - positive step size:<br>
+ *   for (int i = lower; i &lt;= upper; i += step)<br>
+ * - negative step size:<br>
+ *   for (int i = upper; i &gt;= lower; i += step)<br>
  * In each iteration, the specified variable gets updated with the current value of the for-loop variable. The output of the for-loop is the specified storage value (in each iteration).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

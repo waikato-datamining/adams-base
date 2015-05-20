@@ -28,23 +28,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Extracts a column or row of data from a weka.core.Instances or SpreadSheet object.<br/>
+ * Extracts a column or row of data from a weka.core.Instances or SpreadSheet object.<br>
  * Only numeric columns can be returned. In case of row-retrieval, the value of the internal format of the weka.core.Instance object is returned; for SpreadSheet object it is attempted to convert the cell content to double (null values might get returned!).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

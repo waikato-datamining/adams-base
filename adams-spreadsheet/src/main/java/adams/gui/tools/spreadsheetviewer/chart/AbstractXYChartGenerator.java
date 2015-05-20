@@ -194,7 +194,7 @@ public abstract class AbstractXYChartGenerator
 
   /**
    * Checks whether the spreadsheet can be processed.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that data is present.
    * 
    * @param name	the name of the tab/sheet

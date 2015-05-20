@@ -39,7 +39,7 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Performs discrete fourier transform (DFT).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

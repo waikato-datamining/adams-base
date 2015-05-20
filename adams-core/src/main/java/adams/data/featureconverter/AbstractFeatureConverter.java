@@ -102,7 +102,7 @@ public abstract class AbstractFeatureConverter<D,R>
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string

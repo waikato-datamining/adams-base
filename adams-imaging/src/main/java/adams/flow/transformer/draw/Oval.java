@@ -29,11 +29,11 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Draws an oval with the specified color and dimensions at the given location. The oval can be filled as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

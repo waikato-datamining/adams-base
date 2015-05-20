@@ -36,10 +36,10 @@ import com.jidesoft.utils.SwingWorker;
 
 /**
  <!-- globalinfo-start -->
- * Listens to a any changes to the specified variable.<br/>
- * This allows, for instance, the monitoring of a variable.<br/>
+ * Listens to a any changes to the specified variable.<br>
+ * This allows, for instance, the monitoring of a variable.<br>
  * Enable the 'noDiscard' property to process all change events - NB: this can slow down the system significantly.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
@@ -521,7 +521,7 @@ public class VariableChangedEvent
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

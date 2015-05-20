@@ -28,7 +28,7 @@ import adams.data.jai.transformer.IndexedColors;
 /**
  <!-- globalinfo-start -->
  * Turns the image into one with only two indexed colors and then determines from all four sides the locations where the color changes from the one on the edge. The image is then cropped to this rectangle.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -29,7 +29,7 @@ import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
 
 /**
- * Tests JoinAttributes. Run from the command line with: <p/>
+ * Tests JoinAttributes. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.JoinAttributesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

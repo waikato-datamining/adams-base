@@ -32,8 +32,8 @@ import adams.test.TmpFile;
 
 /**
  * Ancestor for test cases tailored for filters, etc.
- * <p/>
- * The regression test can be skipped as follows: <br/>
+ * <br><br>
+ * The regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.data.noregression=true</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -115,7 +115,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
 
   /**
    * Returns the database connection props files.
-   * <p/>
+   * <br><br>
    * The default returns null.
    *
    * @return		the props files, null if to use the the default one
@@ -324,7 +324,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
   
   /**
    * For further setting up before the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void setUpBeforeRegression() {
@@ -332,7 +332,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

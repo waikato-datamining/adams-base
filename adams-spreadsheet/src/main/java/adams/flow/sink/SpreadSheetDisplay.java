@@ -53,16 +53,16 @@ import adams.gui.sendto.SendToActionUtils;
 
 /**
  <!-- globalinfo-start -->
- * Actor for displaying a spreadsheet.<br/>
+ * Actor for displaying a spreadsheet.<br>
  * Custom background for negative&#47;positive values can be specified as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -717,7 +717,7 @@ public class SpreadSheetDisplay
 
   /**
    * Executes the flow item. 
-   * <p/>
+   * <br><br>
    * Outputs the token on the command-line in headless mode.
    *
    * @return		null if everything is fine, otherwise error message

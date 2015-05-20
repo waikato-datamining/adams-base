@@ -76,7 +76,7 @@ public abstract class AbstractRecursiveOptionProducerWithOptionHandling<O,I>
 
   /**
    * Finishes the initialization in the constructor.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void finishInit() {
@@ -106,7 +106,7 @@ public abstract class AbstractRecursiveOptionProducerWithOptionHandling<O,I>
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()

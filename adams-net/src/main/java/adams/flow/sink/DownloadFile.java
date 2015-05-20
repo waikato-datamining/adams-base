@@ -34,18 +34,18 @@ import java.net.URLConnection;
 
 /**
  <!-- globalinfo-start -->
- * Downloads a file from a URL and saves it locally.<br/>
- * Also handles basic authentication when using URLs like this:<br/>
+ * Downloads a file from a URL and saves it locally.<br>
+ * Also handles basic authentication when using URLs like this:<br>
  * http:&#47;&#47;user:pass&#64;domain.com&#47;url
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URL<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

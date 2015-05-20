@@ -37,7 +37,7 @@ public abstract class AbstractWhiteBalanceAlgorithm
 
   /**
    * Checks whether the image can be processed.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether an image was supplied.
    * 
    * @param img				the image to check

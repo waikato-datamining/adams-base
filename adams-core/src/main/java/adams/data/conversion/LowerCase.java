@@ -27,7 +27,7 @@ import java.util.Locale;
 /**
  <!-- globalinfo-start -->
  * Turns a String into a lowercase String.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

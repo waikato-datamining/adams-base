@@ -33,69 +33,69 @@ import adams.parser.TwitterFilter;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the twitter expression evaluates to 'true'.<br/>
- * The following grammar is used for evaluating the expressions:<br/>
- * <br/>
- * expr_list ::= expr_list expr | expr;<br/>
- * expr      ::=   ( expr )<br/>
- *               | boolexpr<br/>
- *               ;<br/>
- * <br/>
- * boolexpr ::=    BOOLEAN<br/>
- *               | ( boolexpr )<br/>
- *               | not boolexpr<br/>
- *               | boolexpr and boolexpr<br/>
- *               | boolexpr or boolexpr<br/>
- *               | boolexpr xor boolexpr<br/>
- *               | numexpr &lt; numexpr<br/>
- *               | numexpr &lt;= numexpr<br/>
- *               | numexpr = numexpr<br/>
- *               | numexpr &gt; numexpr<br/>
- *               | numexpr &gt;= numexpr<br/>
- *               | numexpr &lt;&gt; numexpr<br/>
- * <br/>
- *               | retweet<br/>
- *               | isretweeted<br/>
- * <br/>
- *               | langcode &lt;match&gt; pattern<br/>
- *               | country &lt;match&gt; pattern<br/>
- *               | countrycode &lt;match&gt; pattern<br/>
- *               | place &lt;match&gt; pattern<br/>
- *               | source &lt;match&gt; pattern<br/>
- *               | text &lt;match&gt; pattern<br/>
- *               | user &lt;match&gt; pattern<br/>
- *               | hashtag &lt;match&gt; pattern<br/>
- *               | usermention &lt;match&gt; pattern<br/>
- *               | statuslang &lt;match&gt; pattern<br/>
- * <br/>
- *               | if[else] ( boolexpr:test , boolexpr:test_true , boolexpr:test_false )<br/>
- *               | has ( parameter )<br/>
- *               ;<br/>
- * <br/>
- * numexpr  ::=    num<br/>
- *               | longitude<br/>
- *               | latitude<br/>
- *               | favcount<br/>
- *               ;<br/>
- * <br/>
- * parameter ::=   langcode<br/>
- *               | country<br/>
- *               | countrycode<br/>
- *               | place<br/>
- *               | source<br/>
- *               | text<br/>
- *               | user<br/>
- *               | longitude<br/>
- *               | latitude<br/>
- *               ;<br/>
- * <br/>
- * The '&lt;match&gt;' operator can be one of the following:<br/>
- * 1. '=' - exact match (the twitter field must be the exact 'pattern' string)<br/>
- * 2. ':' - substring match (the 'pattern' can occur anywhere in the twitter field)<br/>
- * 3. '~' - regular expression match (the 'pattern' is a regular expression that the twitter field must match)<br/>
- * <br/>
+ * Evaluates to 'true' if the twitter expression evaluates to 'true'.<br>
+ * The following grammar is used for evaluating the expressions:<br>
+ * <br>
+ * expr_list ::= expr_list expr | expr;<br>
+ * expr      ::=   ( expr )<br>
+ *               | boolexpr<br>
+ *               ;<br>
+ * <br>
+ * boolexpr ::=    BOOLEAN<br>
+ *               | ( boolexpr )<br>
+ *               | not boolexpr<br>
+ *               | boolexpr and boolexpr<br>
+ *               | boolexpr or boolexpr<br>
+ *               | boolexpr xor boolexpr<br>
+ *               | numexpr &lt; numexpr<br>
+ *               | numexpr &lt;= numexpr<br>
+ *               | numexpr = numexpr<br>
+ *               | numexpr &gt; numexpr<br>
+ *               | numexpr &gt;= numexpr<br>
+ *               | numexpr &lt;&gt; numexpr<br>
+ * <br>
+ *               | retweet<br>
+ *               | isretweeted<br>
+ * <br>
+ *               | langcode &lt;match&gt; pattern<br>
+ *               | country &lt;match&gt; pattern<br>
+ *               | countrycode &lt;match&gt; pattern<br>
+ *               | place &lt;match&gt; pattern<br>
+ *               | source &lt;match&gt; pattern<br>
+ *               | text &lt;match&gt; pattern<br>
+ *               | user &lt;match&gt; pattern<br>
+ *               | hashtag &lt;match&gt; pattern<br>
+ *               | usermention &lt;match&gt; pattern<br>
+ *               | statuslang &lt;match&gt; pattern<br>
+ * <br>
+ *               | if[else] ( boolexpr:test , boolexpr:test_true , boolexpr:test_false )<br>
+ *               | has ( parameter )<br>
+ *               ;<br>
+ * <br>
+ * numexpr  ::=    num<br>
+ *               | longitude<br>
+ *               | latitude<br>
+ *               | favcount<br>
+ *               ;<br>
+ * <br>
+ * parameter ::=   langcode<br>
+ *               | country<br>
+ *               | countrycode<br>
+ *               | place<br>
+ *               | source<br>
+ *               | text<br>
+ *               | user<br>
+ *               | longitude<br>
+ *               | latitude<br>
+ *               ;<br>
+ * <br>
+ * The '&lt;match&gt;' operator can be one of the following:<br>
+ * 1. '=' - exact match (the twitter field must be the exact 'pattern' string)<br>
+ * 2. ':' - substring match (the 'pattern' can occur anywhere in the twitter field)<br>
+ * 3. '~' - regular expression match (the 'pattern' is a regular expression that the twitter field must match)<br>
+ * <br>
  * Please note, all strings are converted to lower case before the filter is applied.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

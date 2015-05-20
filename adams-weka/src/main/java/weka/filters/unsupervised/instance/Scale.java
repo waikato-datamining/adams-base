@@ -38,11 +38,11 @@ import java.util.Vector;
 /**
  <!-- globalinfo-start -->
  * Scales all numeric attributes between the specified min/max.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -min &lt;double&gt;
  *  Specifies the minimum that the values should have. (default: 0.0)
@@ -102,10 +102,10 @@ public class Scale
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -min &lt;double&gt;
    *  Specifies the minimum that the values should have. (default: 0.0)

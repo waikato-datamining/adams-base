@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Picks the background at the specified anchor position and crops to the smallest possible rectangle.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -32,7 +32,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -437,7 +437,7 @@ public class GUIHelper {
 
   /**
    * Sets size and location stored in the props file.
-   * <p/>
+   * <br><br>
    * Takes the following parameters from the props file into account as well:
    * MaxPercentHeight, ScreenBorder.Bottom
    *
@@ -452,7 +452,7 @@ public class GUIHelper {
 
   /**
    * Sets size and location stored in the props file.
-   * <p/>
+   * <br><br>
    * Takes the following parameters from the props file into account as well:
    * MaxPercentHeight, ScreenBorder.Bottom
    *

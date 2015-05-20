@@ -41,22 +41,22 @@ import adams.flow.transformer.wekaclusterer.PassThrough;
 
 /**
  <!-- globalinfo-start -->
- * Trains a clusterer based on the incoming dataset and output the built clusterer alongside the training header (in a model container).<br/>
+ * Trains a clusterer based on the incoming dataset and output the built clusterer alongside the training header (in a model container).<br>
  * Incremental training is performed, if the input are weka.core.Instance objects and the clusterer implements weka.clusterers.UpdateableClusterer.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

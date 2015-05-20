@@ -28,14 +28,14 @@ import adams.flow.source.wekaforecastersetup.WekaForecasterGenerator;
 /**
  <!-- globalinfo-start -->
  * Outputs a configured instance of a Weka Forecaster.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.timeseries.AbstractForecaster<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.timeseries.AbstractForecaster<br>
+ * <br><br>
  <!-- flow-summary-end -->
  * 
  <!-- options-start -->

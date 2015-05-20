@@ -574,7 +574,7 @@ public abstract class AbstractJavaCodeProducer
 
   /**
    * Hook method that gets called just before an option gets produced.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    *
    * @param manager	the option manager
@@ -676,7 +676,7 @@ public abstract class AbstractJavaCodeProducer
 
   /**
    * Adds the start of the enclosing "class" statement.
-   * <p/>
+   * <br><br>
    * Default implementation does not derive the class from another superclass.
    */
   protected void addClassStart() {
@@ -686,7 +686,7 @@ public abstract class AbstractJavaCodeProducer
 
   /**
    * Adds the constructor.
-   * <p/>
+   * <br><br>
    * Default implementation merely adds a default constructor.
    */
   protected void addConstructor() {
@@ -702,7 +702,7 @@ public abstract class AbstractJavaCodeProducer
   /**
    * Hook-method for adding additional methods necessary to make the class
    * compile.
-   * <p/>
+   * <br><br>
    * Default implementation adds nothgin.
    */
   protected void addAdditionalMethods() {
@@ -741,7 +741,7 @@ public abstract class AbstractJavaCodeProducer
 
   /**
    * Hook method for adding a main method.
-   * <p/>
+   * <br><br>
    * Default implementation merely instantiates a new instance of the class.
    */
   protected void addMainMethod() {

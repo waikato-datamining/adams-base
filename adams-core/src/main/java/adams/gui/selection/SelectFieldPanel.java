@@ -126,7 +126,7 @@ public class SelectFieldPanel
   /**
    * Hook method for processing items that were not found when trying to
    * select them initially.
-   * <p/>
+   * <br><br>
    * The missing items are displayed in the "manual" field.
    *
    * @param missing	the missing items

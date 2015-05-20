@@ -45,17 +45,17 @@ import java.util.logging.LogRecord;
 
 /**
  <!-- globalinfo-start -->
- * Listens to the global log record handler and processes records that passed the specified filter(s).<br/>
- * This allows, for instance, the output of log messages into a log file.<br/>
+ * Listens to the global log record handler and processes records that passed the specified filter(s).<br>
+ * This allows, for instance, the output of log messages into a log file.<br>
  * By default, log records are only processed if the sub-actors are not currently being executed. In other words, log records will get dropped if the record processing takes longer than the record generation. Enable the 'noDiscard' property to process all log events - NB: this can slow down the system significantly.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
@@ -592,7 +592,7 @@ public class LogEvent
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

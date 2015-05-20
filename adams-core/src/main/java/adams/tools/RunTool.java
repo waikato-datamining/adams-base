@@ -29,7 +29,7 @@ import adams.run.RunDatabaseScheme;
  * Runs a tool from commandline.
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-driver &lt;java.lang.String&gt; (property: driver)
  *         The JDBC driver.

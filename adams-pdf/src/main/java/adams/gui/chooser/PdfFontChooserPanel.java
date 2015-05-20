@@ -68,7 +68,7 @@ import com.itextpdf.text.Font;
 
 /**
  * A font selection panel.
- * <p/>
+ * <br><br>
  * Original code taken from
  * <a href="http://www.java2s.com/Code/Java/Tiny-Application/Afontselectiondialog.htm" target="_blank">here</a>.
  *

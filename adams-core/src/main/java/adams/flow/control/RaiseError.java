@@ -30,20 +30,20 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Raises a java.lang.Error if the condition evaluates to 'true', using the provided error message.<br/>
- * <br/>
- * See also:<br/>
+ * Raises a java.lang.Error if the condition evaluates to 'true', using the provided error message.<br>
+ * <br>
+ * See also:<br>
  * adams.flow.control.TryCatch
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

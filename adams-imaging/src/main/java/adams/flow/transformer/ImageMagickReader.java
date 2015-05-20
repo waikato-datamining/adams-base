@@ -39,20 +39,20 @@ import java.net.URL;
 
 /**
  <!-- globalinfo-start -->
- * Reads any file format that ImageMagick can read.<br/>
+ * Reads any file format that ImageMagick can read.<br>
  * NB: Uses the im4java wrapper around the ImageMagick executables, which must be available on the PATH or the IM_TOOLPATH environment variable set.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.net.URL<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.net.URL<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -35,11 +35,11 @@ import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.<br/>
- * <br/>
- * DEPRECATED<br/>
+ * Crops the image to specified width and height. Where the crop rectangle starts is defined by the X and Y position and the anchor.<br>
+ * <br>
+ * DEPRECATED<br>
  * Use adams.data.adams.transformer.Cropping in conjunction with adams.data.adams.transformer.crop.RelativeCrop instead.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

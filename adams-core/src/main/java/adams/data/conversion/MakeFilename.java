@@ -24,11 +24,11 @@ import adams.core.io.FileUtils;
 
 /**
  <!-- globalinfo-start -->
- * DEPRECATED -- use adams.data.conversion.StringToValidFileName instead.<br/>
- * <br/>
- * Creates a filesystem compliant filename out of any string.<br/>
+ * DEPRECATED -- use adams.data.conversion.StringToValidFileName instead.<br>
+ * <br>
+ * Creates a filesystem compliant filename out of any string.<br>
  * Note: do not include the path, as the slashes (forward or backward) will get removed&#47;replaced.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

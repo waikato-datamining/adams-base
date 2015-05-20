@@ -87,7 +87,7 @@ public abstract class LazyExpansionTreeNode
   
   /**
    * Returns whether the node can be expanded at all.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    * 
    * @return		true if it can be expanded

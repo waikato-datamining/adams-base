@@ -27,7 +27,7 @@ import adams.data.report.Field;
 import adams.env.Environment;
 
 /**
- * Test class for the MinMax outlier detector. Run from the command line with: <p/>
+ * Test class for the MinMax outlier detector. Run from the command line with: <br><br>
  * java adams.data.outlier.MinMaxTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

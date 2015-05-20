@@ -49,19 +49,19 @@ import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
- * Finds cells in a spreadsheet and transforms them with a callable transformer.<br/>
- * In case of transformers having Object or Unknown in their types of classes that they accept, no proper type can be inferred automatically. Therefore it is recommended to manually enforce the 'input type'.<br/>
+ * Finds cells in a spreadsheet and transforms them with a callable transformer.<br>
+ * In case of transformers having Object or Unknown in their types of classes that they accept, no proper type can be inferred automatically. Therefore it is recommended to manually enforce the 'input type'.<br>
  * If the transformer generates a adams.data.spreadsheet.SpreadSheet object itself, this will get merged with the enclosing one: any additional columns get added and the content of the first row gets added to the row the trasnformed cell belongs to.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

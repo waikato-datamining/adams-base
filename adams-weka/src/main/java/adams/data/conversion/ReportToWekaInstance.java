@@ -32,11 +32,11 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Converts a report into a weka.core.Instance objects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

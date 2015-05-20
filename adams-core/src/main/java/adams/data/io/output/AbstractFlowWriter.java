@@ -193,7 +193,7 @@ public abstract class AbstractFlowWriter
   /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the content to write
@@ -207,7 +207,7 @@ public abstract class AbstractFlowWriter
   /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the content to write
@@ -221,7 +221,7 @@ public abstract class AbstractFlowWriter
   /**
    * Performs the actual writing. The caller must ensure that the output stream
    * gets closed.
-   * <p/>
+   * <br><br>
    * Default implementation returns always false.
    *
    * @param content	the content to write

@@ -27,22 +27,22 @@ import adams.gui.goe.PropertyPath;
 
 /**
  <!-- globalinfo-start -->
- * Retrieves a value from an object's property using a bean property path.<br/>
- * A bean property conists usually of a get and set method, e.g.:<br/>
- * - setDebug(boolean)<br/>
- * - boolean getDebug()<br/>
- * The property name for this pair is:<br/>
+ * Retrieves a value from an object's property using a bean property path.<br>
+ * A bean property conists usually of a get and set method, e.g.:<br>
+ * - setDebug(boolean)<br>
+ * - boolean getDebug()<br>
+ * The property name for this pair is:<br>
  *   debug
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -43,7 +43,7 @@ import java.util.zip.GZIPOutputStream;
  * A helper class for determining serialVersionUIDs and checking whether
  * classes contain one and/or need one. One can also serialize and deserialize
  * objects to and fro files or streams.
- * <p/>
+ * <br><br>
  * Based on WEKA's weka.core.SerializationHelper
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

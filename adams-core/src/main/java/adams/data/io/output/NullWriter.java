@@ -22,7 +22,7 @@ package adams.data.io.output;
 /**
  <!-- globalinfo-start -->
  * Performs no writing at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

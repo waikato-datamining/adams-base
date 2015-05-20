@@ -28,11 +28,11 @@ import adams.db.DatabaseConnection;
 /**
  <!-- globalinfo-start -->
  * Makes sure that all tables exist and are initialized. Can be called at runtime to re-create tables that got dropped.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

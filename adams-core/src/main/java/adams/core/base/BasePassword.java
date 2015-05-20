@@ -25,7 +25,7 @@ import adams.core.net.InternetHelper;
 /**
  * Wrapper for a String object to be editable in the GOE. Used for entering
  * passwords which get Base64 encoded.
- * <p/>
+ * <br><br>
  * This not an attempt to keep passwords safe in any way, merely of obscuring
  * them slightly.
  *

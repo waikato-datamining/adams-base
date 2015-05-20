@@ -402,7 +402,7 @@ public abstract class AbstractNamedHistoryPanel<T>
 
   /**
    * Generates the right-click menu for the JList.
-   * <p/>
+   * <br><br>
    * Derived classes should override this method instead of making use
    * of the PopupCustomizer.
    *

@@ -83,7 +83,7 @@ public abstract class AbstractBasicTypePropertyEditor
   
   /**
    * Turns the object into a string representation.
-   * <p/>
+   * <br><br>
    * Default implementation just uses the Object's toString() method.
    *
    * @param obj		the object to convert

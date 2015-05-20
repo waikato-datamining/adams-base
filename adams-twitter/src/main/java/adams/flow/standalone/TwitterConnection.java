@@ -29,18 +29,18 @@ import adams.core.net.TwitterHelper;
 
 /**
  <!-- globalinfo-start -->
- * Provides access to various twitter services.<br/>
- * For your own twitter account, you can obtain consumer key and access token for ADAMS (= application trying to access twitter) here:<br/>
- *   https:&#47;&#47;dev.twitter.com&#47;apps&#47;<br/>
+ * Provides access to various twitter services.<br>
+ * For your own twitter account, you can obtain consumer key and access token for ADAMS (= application trying to access twitter) here:<br>
+ *   https:&#47;&#47;dev.twitter.com&#47;apps&#47;<br>
  * And make sure that ADAMS has READ and WRITER access.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

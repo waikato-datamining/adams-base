@@ -32,11 +32,11 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Crops the images passing through using the specified crop algorithm.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

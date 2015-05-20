@@ -119,7 +119,7 @@ public abstract class AbstractPlotProcessor
   
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -138,7 +138,7 @@ public abstract class AbstractPlotProcessor
 
   /**
    * Checks the current container.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether a container was provided at all.
    * 
    * @param cont	the container to check

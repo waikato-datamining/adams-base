@@ -30,16 +30,16 @@ import adams.flow.transformer.timeseriessplit.PassThrough;
 /**
  <!-- globalinfo-start -->
  * Splits the incoming timeseries into sub-series using the specified splitter algorithm.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

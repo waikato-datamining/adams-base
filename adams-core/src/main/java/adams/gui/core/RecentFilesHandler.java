@@ -84,7 +84,7 @@ public class RecentFilesHandler<M>
 
   /**
    * Checks the item after obtaining from the props file.
-   * <p/>
+   * <br><br>
    * File must exist.
    * 
    * @param item	the item to check

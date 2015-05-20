@@ -27,17 +27,17 @@ import adams.core.management.ProcessUtils.ProcessResult;
 
 /**
  <!-- globalinfo-start -->
- * Executes Gnuplot with the specified script file.<br/>
- * <br/>
+ * Executes Gnuplot with the specified script file.<br>
+ * <br>
  * NB: Add the absolute path to the binary, if gnuplot is not on the system's path.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -311,7 +311,7 @@ public class PropertyPanel
   /**
    * Registers the text to display in a tool tip.
    * The text displays when the cursor lingers over the component.
-   * <p/>
+   * <br><br>
    * Forwards the tool tip to its sub-panels.
    *
    * @param text	the string to display; if the text is <code>null</code>,

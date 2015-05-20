@@ -29,9 +29,9 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the file exists.<br/>
+ * Evaluates to 'true' if the file exists.<br>
  * If a filename generator other than adams.core.io.NullFilenameGenerator is specified, then this takes precedence over the supplied filename (uses the token passing through).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

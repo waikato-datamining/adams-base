@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Paintlet for highlighting a specific timestamp with a vertical indicator line.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

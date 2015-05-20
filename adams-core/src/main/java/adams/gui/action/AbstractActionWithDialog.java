@@ -49,7 +49,7 @@ public abstract class AbstractActionWithDialog<D extends Dialog>
   
   /**
    * Creates a new dialog.
-   * <p/>
+   * <br><br>
    * Default implementation does NOT create a dialog, throws an 
    * {@link IllegalStateException} instead.
    * 

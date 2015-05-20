@@ -44,11 +44,11 @@ import java.util.Vector;
 /**
  <!-- globalinfo-start -->
  * Uses base classifier to get guess, then get prediction from either lo/hi classifier
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -W
  *  Full name of base classifier.
@@ -242,7 +242,7 @@ implements WeightedInstancesHandler{
 	 * of options is not possible).
 	 *
    <!-- options-start -->
-	 * Valid options are: <p/>
+	 * Valid options are: <br><br>
 	 * 
 	 * <pre> -W
 	 *  Full name of base classifier.

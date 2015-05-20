@@ -510,7 +510,7 @@ public class XhtmlProducer
     tree = new Tree(null, (AbstractActor) getInput());
     listing = new Code();
     lines = Utils.split(toPlainText(tree), "\n");
-    listing.setContent(Utils.flatten(lines, "<br/>\n"));
+    listing.setContent(Utils.flatten(lines, "<br>\n"));
     listing.setConvertEntities(false);
     body.add(listing);
     

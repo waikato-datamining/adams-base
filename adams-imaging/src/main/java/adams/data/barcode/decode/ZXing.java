@@ -47,12 +47,12 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Decodes the data in a barcode using the ZXing library.<br/>
- * For more information see:<br/>
+ * Decodes the data in a barcode using the ZXing library.<br>
+ * For more information see:<br>
  * https:&#47;&#47;github.com&#47;zxing&#47;zxing
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

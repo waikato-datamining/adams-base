@@ -26,7 +26,7 @@ import adams.core.option.ArrayProducer;
 import adams.env.Environment;
 
 /**
- * Test class for all boolean options. Run from the command line with: <p/>
+ * Test class for all boolean options. Run from the command line with: <br><br>
  * java adams.core.option.BooleanOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

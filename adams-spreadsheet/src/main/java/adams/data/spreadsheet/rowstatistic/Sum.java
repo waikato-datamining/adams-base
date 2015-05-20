@@ -27,7 +27,7 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * Calculates the sum for a numeric row.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

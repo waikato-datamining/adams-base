@@ -37,7 +37,7 @@ import adams.gui.core.GUIHelper;
 
 /**
  * Displays a GenericObjectEditor.
- * <p/>
+ * <br><br>
  * Calling code needs to dispose the dialog manually or enable automatic
  * disposal:
  * <pre>

@@ -28,20 +28,20 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Creates a log entry from the incoming token. The incoming string gets added as the 'error' message in the log entry.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.db.LogEntry<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.db.LogEntry<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

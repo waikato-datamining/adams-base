@@ -27,11 +27,11 @@ import adams.core.logging.LoggingLevel;
 /**
  <!-- globalinfo-start -->
  * Filters records based on their logging level, i.e., if the fall in the specified min&#47;max (inclusive).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

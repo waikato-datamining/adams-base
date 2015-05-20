@@ -90,7 +90,7 @@ public abstract class AbstractScriptlet
   
   /**
    * Hook method for performing checks.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing, only warns if not owner set.
    *
    * @return		null if all checks passed, otherwise error message

@@ -105,7 +105,7 @@ import java.util.Vector;
  * attribute of the current dataset to be used as the class, and perform an
  * Experiment (like in the Experimenter) with this Classifier/Dataset
  * combination. The results of the experiment runs are stored in a result
- * history so that previous results are accessible. <p/>
+ * history so that previous results are accessible. <br><br>
  * 
  * Based on the ClassifierPanel code (by Len Trigg, Mark Hall and 
  * Richard Kirkby).

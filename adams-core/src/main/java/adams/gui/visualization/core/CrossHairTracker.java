@@ -31,11 +31,11 @@ import adams.gui.visualization.core.plot.ContentPanel;
 /**
  <!-- globalinfo-start -->
  * A cross-hair mouse movement tracker.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -27,9 +27,9 @@ import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to select a pixel location.<br/>
+ * Allows the user to select a pixel location.<br>
  * Stores the location in 'Pixel.X' and 'Pixel.Y'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

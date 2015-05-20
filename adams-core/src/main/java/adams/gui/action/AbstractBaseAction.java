@@ -244,7 +244,7 @@ public abstract class AbstractBaseAction
 
   /**
    * Invoked when an action occurs (hook method before executing the actual action code).
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param e		the event
@@ -261,7 +261,7 @@ public abstract class AbstractBaseAction
 
   /**
    * Invoked when an action occurs (hook method after executing the actual action code).
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param e		the event
@@ -283,7 +283,7 @@ public abstract class AbstractBaseAction
   
   /**
    * Cleans up data structures, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void cleanUp() {

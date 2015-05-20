@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Paintlet for highlighting a specific timestamp range with a background color.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

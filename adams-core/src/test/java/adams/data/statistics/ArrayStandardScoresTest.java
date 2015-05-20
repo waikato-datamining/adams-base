@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Tests the adams.data.statistics.ArrayStandardScores class. Run from commandline with: <p/>
+ * Tests the adams.data.statistics.ArrayStandardScores class. Run from commandline with: <br><br>
  * java adams.data.statistics.ArrayStandardScoresTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

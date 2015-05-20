@@ -28,7 +28,7 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Applies a feature generator that is referenced via its global setup name (see 'NamedSetups').
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

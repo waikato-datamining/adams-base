@@ -121,7 +121,7 @@ public abstract class AbstractDataContainerStatistics<T extends DataContainer>
   
   /**
    * Performs some checks before executing the calculations.
-   * <p/>
+   * <br><br>
    * Default implementation ensures that prefix is not empty and at least
    * one array statistic has been supplied.
    * 

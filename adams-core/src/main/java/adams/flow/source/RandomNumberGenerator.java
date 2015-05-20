@@ -27,14 +27,14 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Random number generator. The type of random numbers depends on the chosen generator.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

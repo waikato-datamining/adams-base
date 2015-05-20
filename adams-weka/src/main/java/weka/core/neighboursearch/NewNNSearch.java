@@ -35,11 +35,11 @@ import adams.data.SortedList;
 /**
  <!-- globalinfo-start -->
  * Class implementing the brute force search algorithm for nearest neighbour search.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -S
  *  Skip identical instances (distances equal to zero).
@@ -130,10 +130,10 @@ public class NewNNSearch
   }
   
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -S
    *  Skip identical instances (distances equal to zero).

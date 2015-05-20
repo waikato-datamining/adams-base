@@ -39,10 +39,10 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Turns an image into a histogram.<br/>
- * In case of an 8-bit histogram, the image must already be converted to a gray image.<br/>
+ * Turns an image into a histogram.<br>
+ * In case of an 8-bit histogram, the image must already be converted to a gray image.<br>
  * The number of bins per channel can be chosen as well (1-256).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

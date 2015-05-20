@@ -35,7 +35,7 @@ import adams.gui.visualization.container.AbstractContainerManager;
 
 /**
  * Loads timeseries from disk and displays them.
- * <p/>
+ * <br><br>
  * If parameters are provided, the first parameter must be the reader class (and
  * optional parameters) and the second one the actual file/directory to load.
  *

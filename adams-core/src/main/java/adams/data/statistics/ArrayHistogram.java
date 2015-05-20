@@ -27,10 +27,10 @@ import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
- * Generates a histogram from the given array.<br/>
- * The formulas for the various width&#47;#bin calculations can be found here:<br/>
+ * Generates a histogram from the given array.<br>
+ * The formulas for the various width&#47;#bin calculations can be found here:<br>
  * WikiPedia (2010). Histogram.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -42,7 +42,7 @@ import adams.core.Utils;
  *    HTTP = {http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Histogram}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
@@ -563,7 +563,7 @@ public class ArrayHistogram<T extends Number>
 
   /**
    * Calculates the bin width to use.
-   * <p/>
+   * <br><br>
    * Formulas taken from here:
    * <ul>
    *   <li><a href="http://en.wikipedia.org/wiki/Histogram" target="_blank">http://en.wikipedia.org/wiki/Histogram</a></li>
@@ -613,7 +613,7 @@ public class ArrayHistogram<T extends Number>
 
   /**
    * Calculates the number of bins to use.
-   * <p/>
+   * <br><br>
    * Formulas taken from here:
    * <ul>
    *   <li><a href="http://en.wikipedia.org/wiki/Histogram" target="_blank">http://en.wikipedia.org/wiki/Histogram</a></li>

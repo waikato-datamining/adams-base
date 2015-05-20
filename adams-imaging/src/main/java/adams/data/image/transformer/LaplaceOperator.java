@@ -28,15 +28,15 @@ import adams.data.image.IntArrayMatrixView;
 
 /**
  <!-- globalinfo-start -->
- * Applies the Laplace operator, using the following matrix:<br/>
- * <br/>
- * 0  1  0<br/>
- * 1 -4  1<br/>
- * 0  1  0<br/>
- * <br/>
- * For more information on the Laplace operator, see:<br/>
+ * Applies the Laplace operator, using the following matrix:<br>
+ * <br>
+ * 0  1  0<br>
+ * 1 -4  1<br>
+ * 0  1  0<br>
+ * <br>
+ * For more information on the Laplace operator, see:<br>
  * http:&#47;&#47;docs.opencv.org&#47;modules&#47;imgproc&#47;doc&#47;filtering.html?highlight=laplacian#laplacian
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

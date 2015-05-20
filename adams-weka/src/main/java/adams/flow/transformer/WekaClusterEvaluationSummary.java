@@ -31,24 +31,24 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Generates a summary string of the weka.clusterers.ClusterEvaluation objects that it receives.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.clusterers.ClusterEvaluation<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.clusterers.ClusterEvaluation<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaClusterEvaluationContainer: Evaluation, Model, Log-likelohood
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

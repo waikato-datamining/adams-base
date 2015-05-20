@@ -51,10 +51,10 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Reads CSV files.<br/>
- * It is possible to force columns to be text. In that case no intelligent parsing is attempted to determine the type of data a cell has.<br/>
+ * Reads CSV files.<br>
+ * It is possible to force columns to be text. In that case no intelligent parsing is attempted to determine the type of data a cell has.<br>
  * For very large files, one can turn on chunking, which returns spreadsheet objects till all the data has been read.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

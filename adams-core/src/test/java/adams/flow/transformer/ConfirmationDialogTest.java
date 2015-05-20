@@ -32,7 +32,7 @@ import adams.test.TmpFile;
 
 /**
  * Tests the ConfirmationDialog actor.
- * <p/>
+ * <br><br>
  * NB: dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

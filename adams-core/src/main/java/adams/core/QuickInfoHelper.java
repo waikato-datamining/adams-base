@@ -135,7 +135,7 @@ public class QuickInfoHelper {
   
   /**
    * Returns either the variable name attached to optionhandler's property or
-   * the current value as string. <p/>
+   * the current value as string. <br><br>
    * Special handling:
    * If the object is an instance of {@link QuickInfoSupporter} the simple 
    * class name and the quick info in parentheses (if applicable) is output.

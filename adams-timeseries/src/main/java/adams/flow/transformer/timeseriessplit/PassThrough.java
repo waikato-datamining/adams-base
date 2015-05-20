@@ -24,7 +24,7 @@ import adams.data.timeseries.Timeseries;
 /**
  <!-- globalinfo-start -->
  * Performs no splitting, just passes through the original timeseries.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

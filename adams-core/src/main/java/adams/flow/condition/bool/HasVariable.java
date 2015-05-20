@@ -27,7 +27,7 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Evaluates to true if the specified variable is set.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

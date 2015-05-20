@@ -31,7 +31,7 @@ import adams.flow.template.AbstractActorTemplate;
 import adams.parser.ActorTemplateSuggestion;
 
 /**
- * Tests the adams.parser.ActorTemplateSuggestion class. Run from commandline with: <p/>
+ * Tests the adams.parser.ActorTemplateSuggestion class. Run from commandline with: <br><br>
  * java adams.parser.ActorTemplateSuggestionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

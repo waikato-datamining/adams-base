@@ -27,23 +27,23 @@ import adams.data.report.ReportHandler;
 
 /**
  <!-- globalinfo-start -->
- * Saves a report to disk with the specified writer and passes the absolute filename on.<br/>
+ * Saves a report to disk with the specified writer and passes the absolute filename on.<br>
  * As filename&#47;directory name (depending on the writer) the database ID of the report is used (below the specified output directory).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

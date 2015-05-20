@@ -23,22 +23,22 @@ package adams.flow.transformer;
 /**
  <!-- globalinfo-start -->
  * Trims strings, i.e., removes leading/trailing whitespaces.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
+ * Input/output:<br>
+ * - accepts:<br>
  * <pre>   java.lang.String</pre>
  * <pre>   java.lang.String[]</pre>
- * - generates:<br/>
+ * - generates:<br>
  * <pre>   java.lang.String</pre>
  * <pre>   java.lang.String[]</pre>
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

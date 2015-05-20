@@ -25,7 +25,7 @@ import adams.data.io.input.AbstractReportReader;
 import adams.env.Environment;
 
 /**
- * Test class for the DefaultSimpleReportReader data container. Run from the command line with: <p/>
+ * Test class for the DefaultSimpleReportReader data container. Run from the command line with: <br><br>
  * java adams.data.io.input.DefaultSimpleReportReaderTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

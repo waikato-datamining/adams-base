@@ -47,15 +47,15 @@ import adams.core.base.BaseString;
 
 /**
  <!-- globalinfo-start -->
- * Merges two or more attributes, offers various strategies if values differ or not present.<br/>
- * Uses the common subsequence (either from start or end) of the attributes as name of the merged attribute, otherwise the concatenation of them (separated by '-'). If this new name should already be present, then a number is appended to the name to make it unique.<br/>
- * The merged attribute can either be left at the default position (whichever one of the attributes that comes first) or moved to a specific one.<br/>
+ * Merges two or more attributes, offers various strategies if values differ or not present.<br>
+ * Uses the common subsequence (either from start or end) of the attributes as name of the merged attribute, otherwise the concatenation of them (separated by '-'). If this new name should already be present, then a number is appended to the name to make it unique.<br>
+ * The merged attribute can either be left at the default position (whichever one of the attributes that comes first) or moved to a specific one.<br>
  * If one of the attributes to be merged is the current class attribute, the newly created merged attribute will become the new class attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -259,10 +259,10 @@ public class MergeManyAttributes
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Turns on output of debugging information.</pre>

@@ -31,7 +31,7 @@ import weka.core.setupgenerator.AbstractParameter;
 import weka.core.setupgenerator.MathParameter;
 
 /**
- * Tests MultiSearch. Run from the command line with:<p/>
+ * Tests MultiSearch. Run from the command line with:<br><br>
  * java weka.classifiers.meta.MultiSearchTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

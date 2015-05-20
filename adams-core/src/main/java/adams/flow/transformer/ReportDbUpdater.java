@@ -23,23 +23,23 @@ import adams.core.Constants;
 
 /**
  <!-- globalinfo-start -->
- * Adds all the data to the report (or reporthandler's report) passing through that the SQL statement returns.<br/>
- * The {ID} placeholder can be used in the SQL statement to represent the current handler's ID.<br/>
- * The following types of SQL statements are supported:<br/>
- * - multiple rows of key-value pairs.<br/>
- * - single row, with the key being the column name.<br/>
- * <p/>
+ * Adds all the data to the report (or reporthandler's report) passing through that the SQL statement returns.<br>
+ * The {ID} placeholder can be used in the SQL statement to represent the current handler's ID.<br>
+ * The following types of SQL statements are supported:<br>
+ * - multiple rows of key-value pairs.<br>
+ * - single row, with the key being the column name.<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -26,14 +26,14 @@ import adams.core.Range;
 /**
  <!-- globalinfo-start -->
  * Outputs the integers defined by the range expression.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

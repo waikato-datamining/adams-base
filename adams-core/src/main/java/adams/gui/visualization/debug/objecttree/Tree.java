@@ -35,7 +35,7 @@ import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor
 
 /**
  * Specialized tree that displays the properties of an object.
- * <p/>
+ * <br><br>
  * In order to avoid loops, a HashSet is used for keeping track of the processed
  * objects. Of course, custom equals(Object)/compareTo(Object) methods will
  * interfere with this mechanism.

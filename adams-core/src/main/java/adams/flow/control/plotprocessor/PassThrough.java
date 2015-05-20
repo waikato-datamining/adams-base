@@ -26,7 +26,7 @@ import adams.flow.container.SequencePlotterContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy processor which never generates any new containers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

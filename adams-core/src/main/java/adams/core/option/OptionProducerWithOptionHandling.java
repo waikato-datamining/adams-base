@@ -32,7 +32,7 @@ public interface OptionProducerWithOptionHandling<O,I>
 
   /**
    * Adds options to the internal list of options.
-   * <p/>
+   * <br><br>
    * Every subclass needs to add the necessary Option objects to its internal
    * List with Option objects.
    */
@@ -40,7 +40,7 @@ public interface OptionProducerWithOptionHandling<O,I>
 
   /**
    * Returns the option manager.
-   * <p/>
+   * <br><br>
    * Only needs to be implemented in the superclass, which declares the
    * OptionManager object managing all the Option objects.
    *

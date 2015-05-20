@@ -32,13 +32,13 @@ import adams.data.imagej.ImagePlusContainer;
 
 /**
  <!-- globalinfo-start -->
- * Executes the macro commands to transform the image.<br/>
+ * Executes the macro commands to transform the image.<br>
  * Due to ImageJ's architecture, only a single ImageJ instance is available in a process at any given time. Interacting with ImageJ while running a macro will lead to unpredictable side-effects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

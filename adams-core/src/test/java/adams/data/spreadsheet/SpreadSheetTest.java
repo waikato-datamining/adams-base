@@ -34,7 +34,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.core.io.SpreadSheet class. Run from commandline with: <p/>
+ * Tests the adams.core.io.SpreadSheet class. Run from commandline with: <br><br>
  * java adams.core.io.SpreadSheet
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -112,7 +112,7 @@ public abstract class AbstractPixelSelectorAction
 
   /**
    * Finishes the initialization in the constructor.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void finishInit() {
@@ -142,7 +142,7 @@ public abstract class AbstractPixelSelectorAction
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()
@@ -278,7 +278,7 @@ public abstract class AbstractPixelSelectorAction
   
   /**
    * Performs a check on the setup.
-   * <p/>
+   * <br><br>
    * Default implementation always returns null.
    * 
    * @return		null if check passed, otherwise the error message

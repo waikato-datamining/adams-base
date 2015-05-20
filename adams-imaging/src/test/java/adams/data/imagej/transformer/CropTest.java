@@ -28,7 +28,7 @@ import adams.env.Environment;
 import adams.test.Platform;
 
 /**
- * Test class for the Crop transformer. Run from the command line with: <p/>
+ * Test class for the Crop transformer. Run from the command line with: <br><br>
  * java adams.data.imagej.transformer.CropTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

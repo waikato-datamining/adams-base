@@ -42,18 +42,18 @@ import adams.gui.core.BasePanel;
 /**
  <!-- globalinfo-start -->
  * Actor for displaying threshold curves, like ROC or precision&#47;recall.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

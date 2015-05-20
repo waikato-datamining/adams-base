@@ -36,7 +36,7 @@ import weka.filters.UnsupervisedFilter;
 /**
  <!-- globalinfo-start -->
  * Replaces all missing values for nominal and numeric attributes in a dataset with the modes and means from the training data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)

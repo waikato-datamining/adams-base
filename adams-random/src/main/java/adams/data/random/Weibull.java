@@ -22,11 +22,11 @@ package adams.data.random;
 /**
  <!-- globalinfo-start -->
  * Generates random numbers from a Weibull random variable with specified mean and standard deviation.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -94,7 +94,7 @@ public class Weibull
 
   /**
    * Performs optional checks.
-   * <p/>
+   * <br><br>
    * Initializes the random number generator.
    */
   protected void check() {

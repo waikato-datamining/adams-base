@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Dummy white balance algorithm, performs no balancing at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

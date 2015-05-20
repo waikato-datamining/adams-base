@@ -43,12 +43,12 @@ import javax.swing.JPanel;
 /**
  * A simple demonstration for extending the Explorer by another tab, in this
  * case the SqlViewer (as an extra tab instead of only the button in the
- * PreprocessPanel). <br/>
+ * PreprocessPanel). <br>
  * The <code>Explorer.props</code> file needs to edited to make it
  * available and since this tab does not rely on the PreprocessPanel, one
  * should add the "standalone" option. In other words, this would be the
  * string to be added to the list of tabs in the <code>Explorer.props</code> 
- * file: <br/>
+ * file: <br>
  *   <code>weka.gui.explorer.SqlPanel:standalone</code>
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

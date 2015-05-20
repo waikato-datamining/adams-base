@@ -32,12 +32,12 @@ import adams.flow.container.SequencePlotterContainer;
 
 /**
  <!-- globalinfo-start -->
- * A processor that applies SimpleSavitzkyGolay smoothing.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * A processor that applies SimpleSavitzkyGolay smoothing.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -52,7 +52,7 @@ import adams.flow.container.SequencePlotterContainer;
  *    HTTP = {http:&#47;&#47;dx.doi.org&#47;10.1021&#47;ac60214a047}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->

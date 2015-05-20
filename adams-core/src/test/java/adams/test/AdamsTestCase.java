@@ -43,20 +43,20 @@ import adams.gui.scripting.ScriptingEngine;
 
 /**
  * Ancestor for all test cases.
- * <p/>
- * The environment class can be set as follows: <br/>
+ * <br><br>
+ * The environment class can be set as follows: <br>
  *   <code>-Dadams.env.class=adams.env.Environment</code>
- * <p/>
- * Any regression test can be skipped as follows: <br/>
+ * <br><br>
+ * Any regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.noregression=true</code>
- * <p/>
- * Any quickinfo regression test can be skipped as follows: <br/>
+ * <br><br>
+ * Any quickinfo regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.quickinfo.noregression=true</code>
- * <p/>
- * Headless environment can be indicated as follows: <br/>
+ * <br><br>
+ * Headless environment can be indicated as follows: <br>
  *   <code>-Dadams.test.headless=true</code>
- * <p/>
- * Individual tests can be skipped as follows (comma-separated lost): <br/>
+ * <br><br>
+ * Individual tests can be skipped as follows (comma-separated lost): <br>
  *   <code>-Dadams.test.skip=adams.some.where.Class1Test,adams.some.where.else.Class2Test</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

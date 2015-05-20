@@ -25,7 +25,7 @@ import adams.flow.container.WekaTrainTestSetContainer;
 
 /**
  * Helper class for generating cross-validation folds.
- * <p/>
+ * <br><br>
  * The template for the relation name accepts the following placeholders:
  * @ = original relation name, $T = type (train/test), $N = current fold number
  * 

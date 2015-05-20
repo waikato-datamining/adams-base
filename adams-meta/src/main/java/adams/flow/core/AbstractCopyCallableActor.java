@@ -138,7 +138,7 @@ public abstract class AbstractCopyCallableActor
 
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

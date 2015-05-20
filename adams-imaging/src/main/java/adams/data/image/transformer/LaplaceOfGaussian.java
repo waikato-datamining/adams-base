@@ -29,13 +29,13 @@ import java.awt.image.ColorModel;
 
 /**
  <!-- globalinfo-start -->
- * Applies the Laplacian of Gaussian (LoG) to the image, using the following formula<br/>
- * <br/>
- * (x^2 + y^2 - 2*sigma^2) &#47; sigma^4 * exp(-(x^2 +y^2) &#47; (2*sigma^2)<br/>
- * <br/>
- * For more information on LoG, see:<br/>
+ * Applies the Laplacian of Gaussian (LoG) to the image, using the following formula<br>
+ * <br>
+ * (x^2 + y^2 - 2*sigma^2) &#47; sigma^4 * exp(-(x^2 +y^2) &#47; (2*sigma^2)<br>
+ * <br>
+ * For more information on LoG, see:<br>
  * http:&#47;&#47;fourier.eng.hmc.edu&#47;e161&#47;lectures&#47;gradient&#47;node8.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -46,7 +46,7 @@ public abstract class AbstractImageJTransformer
   
   /**
    * Optional checks of the image.
-   * <p/>
+   * <br><br>
    * Ensures that ImageJ plugins path is set.
    *
    * @param img		the image to check

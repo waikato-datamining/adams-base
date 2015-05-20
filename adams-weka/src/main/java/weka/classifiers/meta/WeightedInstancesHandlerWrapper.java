@@ -29,11 +29,11 @@ import weka.core.WeightedInstancesHandler;
  <!-- globalinfo-start -->
  * A meta-classifier that implements the weka.core.WeightedInstancesHandler interface in order to enable all classifiers to be used in other meta-classifiers that require the base classifier to implem
 ent the WeightedInstancesHandler interface. This meta-classifier does nothing with the weights, it is just a dumb (but useful) wrapper.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and

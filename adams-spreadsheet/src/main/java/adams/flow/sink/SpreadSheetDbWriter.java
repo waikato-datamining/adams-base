@@ -32,15 +32,15 @@ import adams.flow.core.ActorUtils;
 /**
  <!-- globalinfo-start -->
  * Transfers a SpreadSheet object into a database.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

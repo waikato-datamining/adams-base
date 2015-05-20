@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Tests the DatabaseReader actor.
- * <p/>
+ * <br><br>
  * Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

@@ -1561,10 +1561,10 @@ public class SAXKMeans
 
   /**
    * Parses a given list of options.
-   * <p/>
+   * <br><br>
    * 
  <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -N &lt;num&gt;
    *  Number of clusters.

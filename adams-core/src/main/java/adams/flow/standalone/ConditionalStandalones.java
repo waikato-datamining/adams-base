@@ -26,7 +26,7 @@ import adams.flow.core.NullToken;
 /**
  <!-- globalinfo-start -->
  * Executes the sub-actors only when the boolean condition evaluates to 'true'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

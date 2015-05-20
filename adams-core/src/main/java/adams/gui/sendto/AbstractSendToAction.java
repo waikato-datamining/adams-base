@@ -119,7 +119,7 @@ public abstract class AbstractSendToAction
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Simply performs comparison on the action string.
    *
    * @param   o the object to be compared.
@@ -133,7 +133,7 @@ public abstract class AbstractSendToAction
 
   /**
    * Returns whether the specified object is the same as this one.
-   * <p/>
+   * <br><br>
    * For AbstractSendToAction objects, it merely uses the action string
    * for comparison.
    *

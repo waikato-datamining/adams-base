@@ -89,7 +89,7 @@ public abstract class AbstractDataContainerWriterTestCase<A extends AbstractData
 
   /**
    * Returns the database connection props files.
-   * <p/>
+   * <br><br>
    * The default returns null.
    *
    * @return		the props files, null if to use the the default one
@@ -225,7 +225,7 @@ public abstract class AbstractDataContainerWriterTestCase<A extends AbstractData
 
   /**
    * For further cleaning up after the regression tests.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUpAfterRegression() {

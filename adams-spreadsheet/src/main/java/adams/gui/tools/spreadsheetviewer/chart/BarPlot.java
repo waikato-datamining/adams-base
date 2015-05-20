@@ -31,7 +31,7 @@ import adams.gui.visualization.sequence.BarPaintlet;
 /**
  <!-- globalinfo-start -->
  * Generates a bar plot by plotting the X column against the Y column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

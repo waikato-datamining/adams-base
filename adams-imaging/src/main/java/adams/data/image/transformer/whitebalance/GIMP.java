@@ -30,12 +30,12 @@ import adams.data.image.BufferedImageHelper;
 
 /**
  <!-- globalinfo-start -->
- * Uses the algorithm for white balancing as used by GIMP.<br/>
- * The White Balance command automatically adjusts the colors by stretching the Red, Green and Blue channels separately. To do this, it discards pixel colors at each end of the Red, Green and Blue histograms which are used by only 0.05% (default) of the pixels in the image and stretches the remaining range as much as possible. The result is that pixel colors which occur very infrequently at the outer edges of the histograms (perhaps bits of dust, etc.) do not negatively influence the minimum and maximum values used for stretching the histograms. However, there may be hue shifts in the resulting image.<br/>
- * <br/>
- * For more information see:<br/>
+ * Uses the algorithm for white balancing as used by GIMP.<br>
+ * The White Balance command automatically adjusts the colors by stretching the Red, Green and Blue channels separately. To do this, it discards pixel colors at each end of the Red, Green and Blue histograms which are used by only 0.05% (default) of the pixels in the image and stretches the remaining range as much as possible. The result is that pixel colors which occur very infrequently at the outer edges of the histograms (perhaps bits of dust, etc.) do not negatively influence the minimum and maximum values used for stretching the histograms. However, there may be hue shifts in the resulting image.<br>
+ * <br>
+ * For more information see:<br>
  * GIMP. White Balance.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

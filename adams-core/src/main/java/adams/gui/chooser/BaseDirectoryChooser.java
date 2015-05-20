@@ -121,7 +121,7 @@ public class BaseDirectoryChooser
 
   /**
    * For initializing some stuff.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {

@@ -35,7 +35,7 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Generates rectangles.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

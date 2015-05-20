@@ -53,7 +53,7 @@ public class BaseCharacter
 
   /**
    * Initializes the internal object.
-   * <p/>
+   * <br><br>
    * Uses \u0000.
    */
   @Override

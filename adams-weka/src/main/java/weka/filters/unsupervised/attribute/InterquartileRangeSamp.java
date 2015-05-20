@@ -29,29 +29,29 @@ import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
- * A filter for detecting outliers and extreme values based on interquartile ranges. The filter skips the class attribute.<br/>
- * <br/>
- * Outliers:<br/>
- *   Q3 + OF*IQR &lt; x &lt;= Q3 + EVF*IQR<br/>
- *   or<br/>
- *   Q1 - EVF*IQR &lt;= x &lt; Q1 - OF*IQR<br/>
- * <br/>
- * Extreme values:<br/>
- *   x &gt; Q3 + EVF*IQR<br/>
- *   or<br/>
- *   x &lt; Q1 - EVF*IQR<br/>
- * <br/>
- * Key:<br/>
- *   Q1  = 25% quartile<br/>
- *   Q3  = 75% quartile<br/>
- *   IQR = Interquartile Range, difference between Q1 and Q3<br/>
- *   OF  = Outlier Factor<br/>
+ * A filter for detecting outliers and extreme values based on interquartile ranges. The filter skips the class attribute.<br>
+ * <br>
+ * Outliers:<br>
+ *   Q3 + OF*IQR &lt; x &lt;= Q3 + EVF*IQR<br>
+ *   or<br>
+ *   Q1 - EVF*IQR &lt;= x &lt; Q1 - OF*IQR<br>
+ * <br>
+ * Extreme values:<br>
+ *   x &gt; Q3 + EVF*IQR<br>
+ *   or<br>
+ *   x &lt; Q1 - EVF*IQR<br>
+ * <br>
+ * Key:<br>
+ *   Q1  = 25% quartile<br>
+ *   Q3  = 75% quartile<br>
+ *   IQR = Interquartile Range, difference between Q1 and Q3<br>
+ *   OF  = Outlier Factor<br>
  *   EVF = Extreme Value Factor
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  Turns on output of debugging information.</pre>

@@ -44,28 +44,28 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Applies OCR to the incoming image file using Tesseract.<br/>
- * In case of successful OCR, either the file names of the generated files are broadcast or the combined text of the files.<br/>
- * NB: The actor deletes all files that have the same prefix as the specified output base. Something you need to be aware of when doing OCR in parallel or generate other files with the same prefix.<br/>
- * <br/>
- * For more information on tesseract see:<br/>
- * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;<br/>
- * <br/>
- * <br/>
- * For more information on hOCR see:<br/>
+ * Applies OCR to the incoming image file using Tesseract.<br>
+ * In case of successful OCR, either the file names of the generated files are broadcast or the combined text of the files.<br>
+ * NB: The actor deletes all files that have the same prefix as the specified output base. Something you need to be aware of when doing OCR in parallel or generate other files with the same prefix.<br>
+ * <br>
+ * For more information on tesseract see:<br>
+ * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;<br>
+ * <br>
+ * <br>
+ * For more information on hOCR see:<br>
  * https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;HOCR
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

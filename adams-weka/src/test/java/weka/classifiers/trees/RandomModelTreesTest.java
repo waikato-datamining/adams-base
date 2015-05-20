@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests RandomModelTrees. Run from the command line with:<p/>
+ * Tests RandomModelTrees. Run from the command line with:<br><br>
  * java weka.classifiers.trees.RandomModelTreesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

@@ -46,7 +46,7 @@ public class WekaEvaluationContainer
 
   /**
    * Initializes the container.
-   * <p/>
+   * <br><br>
    * Only used for generating help information.
    */
   public WekaEvaluationContainer() {

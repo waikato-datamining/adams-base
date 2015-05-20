@@ -25,7 +25,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy operation, simply passes on the input images.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

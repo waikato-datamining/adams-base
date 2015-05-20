@@ -26,7 +26,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 /**
  <!-- globalinfo-start -->
  * Returns the default OpenStreetMap tile loader.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

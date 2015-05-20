@@ -36,10 +36,10 @@ import adams.data.io.input.ImageMagickImageReader;
 
 /**
  <!-- globalinfo-start -->
- * ImageMagick image writer for: aai, avs, bmp, cin, cip, cmyk, cmyka, cur, dcx, dpx, eps, eps, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, htm, html, icb, ico, icon, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, matte, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, ps, ps, psb, psd, ptif, rgb, rgba, sgi, shtml, sun, tga, tiff, txt, uil, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv<br/>
- * For more information see:<br/>
- * http:&#47;&#47;www.imagemagick.org&#47;<br/>
- * <p/>
+ * ImageMagick image writer for: aai, avs, bmp, cin, cip, cmyk, cmyka, cur, dcx, dpx, eps, eps, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, htm, html, icb, ico, icon, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, matte, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, ps, ps, psb, psd, ptif, rgb, rgba, sgi, shtml, sun, tga, tiff, txt, uil, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv<br>
+ * For more information see:<br>
+ * http:&#47;&#47;www.imagemagick.org&#47;<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

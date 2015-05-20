@@ -34,7 +34,7 @@ import adams.data.io.input.SanselanImageReader;
 /**
  <!-- globalinfo-start -->
  * Sanselan image writer for: bmp, gif, ico, pbm, pgm, png, pnm, ppm, tif, tiff
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

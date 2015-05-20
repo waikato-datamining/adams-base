@@ -27,7 +27,7 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Checks whether the spreadsheet passing through has a certain column.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

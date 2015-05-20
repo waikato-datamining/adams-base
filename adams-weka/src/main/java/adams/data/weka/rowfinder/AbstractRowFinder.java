@@ -44,7 +44,7 @@ public abstract class AbstractRowFinder
 
   /**
    * Checks the data.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether we have any data at all.
    * 
    * @param data	the data to check
@@ -78,7 +78,7 @@ public abstract class AbstractRowFinder
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -97,7 +97,7 @@ public abstract class AbstractRowFinder
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

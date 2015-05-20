@@ -34,9 +34,9 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Generates plot containers from row-based data for Andrews Curves.<br/>
+ * Generates plot containers from row-based data for Andrews Curves.<br>
  * César Ignacio García Osorio, Colin Fyfe (2003). AN EXTENSION OF ANDREWS CURVES FOR DATA ANALYSIS.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

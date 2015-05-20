@@ -25,17 +25,17 @@ import adams.data.conversion.Quote.QuoteType;
 
 /**
  <!-- globalinfo-start -->
- * Removes the quotes (single or double) surrounding a string. Also unbackquotes new lines and tabs.<br/>
- * <br/>
- * See also:<br/>
- * adams.data.conversion.Quote<br/>
- * adams.data.conversion.BackQuote<br/>
+ * Removes the quotes (single or double) surrounding a string. Also unbackquotes new lines and tabs.<br>
+ * <br>
+ * See also:<br>
+ * adams.data.conversion.Quote<br>
+ * adams.data.conversion.BackQuote<br>
  * adams.data.conversion.UnBackQuote
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

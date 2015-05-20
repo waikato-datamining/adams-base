@@ -25,11 +25,11 @@ import adams.flow.core.AbstractActor;
 /**
  <!-- globalinfo-start -->
  * Lists the hashcodes of the adams.core.Variables objects in use by the adams.core.option.OptionManager objects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

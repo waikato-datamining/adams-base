@@ -41,22 +41,22 @@ import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
- * Displays trees in dot notation. These trees get generated, for instance, by decision trees such as J48.<br/>
+ * Displays trees in dot notation. These trees get generated, for instance, by decision trees such as J48.<br>
  * Either displays the contents of a file or an object that implements weka.core.Drawable and generates trees.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Drawable<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Drawable<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

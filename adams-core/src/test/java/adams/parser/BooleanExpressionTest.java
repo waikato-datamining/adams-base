@@ -25,7 +25,7 @@ import adams.core.base.BaseString;
 import adams.env.Environment;
 
 /**
- * Tests the adams.parser.BooleanExpression class. Run from commandline with: <p/>
+ * Tests the adams.parser.BooleanExpression class. Run from commandline with: <br><br>
  * java adams.parser.BooleanExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

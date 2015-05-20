@@ -27,7 +27,7 @@ import javax.swing.GrayFilter;
 /**
  <!-- globalinfo-start -->
  * Generates a javax.swing.GrayFilter image filter.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

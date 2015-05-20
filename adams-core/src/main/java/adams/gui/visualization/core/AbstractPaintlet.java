@@ -71,7 +71,7 @@ public abstract class AbstractPaintlet
 
   /**
    * Finishes the initialization in the constructor.
-   * <p/>
+   * <br><br>
    * Calls memberChanged.
    *
    * @see		#memberChanged()

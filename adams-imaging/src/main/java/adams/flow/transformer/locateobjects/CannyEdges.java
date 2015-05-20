@@ -36,7 +36,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Uses the BoofCV canny edges algorithm to locate objects.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

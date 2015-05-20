@@ -54,7 +54,7 @@ public abstract class AbstractInstanceEvaluator
 
   /**
    * Performs necessary initializations before being able to evaluate.
-   * <p/>
+   * <br><br>
    * Default implementation only returns null.
    *
    * @return		null if everything fine, error message otherwise
@@ -65,7 +65,7 @@ public abstract class AbstractInstanceEvaluator
 
   /**
    * Peforms checks on the instance that is about to be evaluated.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether class value is non-missing.
    *
    * @param inst	the instance to evaluate
@@ -116,7 +116,7 @@ public abstract class AbstractInstanceEvaluator
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -135,7 +135,7 @@ public abstract class AbstractInstanceEvaluator
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared
@@ -209,7 +209,7 @@ public abstract class AbstractInstanceEvaluator
 
   /**
    * Cleans up data structures, frees up memory.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   public void cleanUp() {
@@ -217,7 +217,7 @@ public abstract class AbstractInstanceEvaluator
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Calls cleanUp() and cleans up the options.
    */
   public void destroy() {

@@ -33,9 +33,9 @@ import java.util.Map;
 /**
  <!-- globalinfo-start -->
  * Draws a UPCA barcode at a specified location and size.Digits must be 11 (checksum gets calculated) or 12 (incl. checksum)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

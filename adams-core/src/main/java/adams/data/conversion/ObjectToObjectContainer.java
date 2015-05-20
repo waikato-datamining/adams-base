@@ -25,7 +25,7 @@ import adams.data.container.ObjectContainer;
 /**
  <!-- globalinfo-start -->
  * Wraps the object in a adams.data.container.ObjectContainer, which allows the storage of meta-data using the attached report and&#47;or notes.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

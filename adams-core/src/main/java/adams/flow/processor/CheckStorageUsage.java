@@ -46,7 +46,7 @@ import adams.gui.dialog.TextPanel;
 /**
  <!-- globalinfo-start -->
  * Performs a 'soft' check whether storage names in use are actually set somewhere in the flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

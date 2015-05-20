@@ -49,17 +49,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  <!-- globalinfo-start -->
- * Generates an ensemble using the following approach:<br/>
- * - do x times:<br/>
- *   * create new dataset, resampled with specified bias<br/>
- *   * build base classifier with it<br/>
- * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br/>
+ * Generates an ensemble using the following approach:<br>
+ * - do x times:<br>
+ *   * create new dataset, resampled with specified bias<br>
+ *   * build base classifier with it<br>
+ * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br>
  * At prediction time, the Vote meta-classifier (using the pre-built classifiers) is used to determining the class probabilities or regression value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -num-slots &lt;num&gt;
  *  Number of execution slots.

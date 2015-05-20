@@ -78,7 +78,7 @@ public abstract class AbstractDatabaseConnectionOutlierDetector<T extends DataCo
 
   /**
    * Updates the database connection in dependent schemes.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void updateDatabaseConnection() {

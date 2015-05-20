@@ -33,11 +33,11 @@ import adams.flow.control.StorageName;
 /**
  <!-- globalinfo-start -->
  * Updates all occurrences of the old storage name with the new one.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -115,7 +115,7 @@ public class UpdateStorageName
   /**
    * Returns whether the traverser can recurse the specified class
    * (base class from a ClassOption).
-   * <p/>
+   * <br><br>
    * Does not recurse into {@link LocalScopeTrigger} and {@link Flow} actors.
    *
    * @param cls		the class to determine for whether recursing is

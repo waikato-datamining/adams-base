@@ -36,23 +36,23 @@ import adams.flow.source.CallableSource;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates a trained clusterer (obtained from input) on the dataset obtained from the callable actor.<br/>
+ * Evaluates a trained clusterer (obtained from input) on the dataset obtained from the callable actor.<br>
  * If a class attribute is set, a classes-to-clusters evaluation is performed automatically
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
- * - adams.flow.container.WekaModelContainer: Model, Header, Dataset<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaModelContainer: Model, Header, Dataset<br>
  * - adams.flow.container.WekaClusterEvaluationContainer: Evaluation, Model, Log-likelohood
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Test for HashSetInit actor.
- * <p/>
+ * <br><br>
  * NB: Dummy test.
  *
  * @author fracpete

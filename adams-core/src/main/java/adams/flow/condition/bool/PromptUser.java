@@ -29,11 +29,11 @@ import adams.gui.core.GUIHelper.DialogCommunication;
 
 /**
  <!-- globalinfo-start -->
- * Prompts the user to click on 'positive' or 'negative' button.<br/>
- * The actor's name can be used in the message using the following placeholders:<br/>
- * {SHORT} - the short name<br/>
+ * Prompts the user to click on 'positive' or 'negative' button.<br>
+ * The actor's name can be used in the message using the following placeholders:<br>
+ * {SHORT} - the short name<br>
  * {FULL} - the full name (incl path)
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

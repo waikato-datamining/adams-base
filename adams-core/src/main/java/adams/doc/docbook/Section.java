@@ -106,7 +106,7 @@ public class Section
 
   /**
    * Hook method for validating/fixing the XML tree.
-   * <p/>
+   * <br><br>
    * Inserts a dummy paragraph if no nested section paragraphs available.
    */
   @Override

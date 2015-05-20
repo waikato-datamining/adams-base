@@ -32,23 +32,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Computes the difference of the numeric cells between two spreadsheets.<br/>
- * The values of the second spreadsheet are subtracted from the first one.<br/>
+ * Computes the difference of the numeric cells between two spreadsheets.<br>
+ * The values of the second spreadsheet are subtracted from the first one.<br>
  * If no 'key' columns are defined, the current order of rows is used for comparison.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -27,7 +27,7 @@ import adams.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Simple feature converter that generates a CSV-like textual output.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

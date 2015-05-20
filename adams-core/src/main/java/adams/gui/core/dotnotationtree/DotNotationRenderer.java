@@ -56,7 +56,7 @@ public class DotNotationRenderer<N extends DotNotationNode>
 
   /**
    * Tries to obtain the icon for the given object.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @param node	the node get the icon for

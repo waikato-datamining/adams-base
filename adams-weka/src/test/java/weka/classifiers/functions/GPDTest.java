@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests GPD. Run from the command line with:<p/>
+ * Tests GPD. Run from the command line with:<br><br>
  * java weka.classifiers.functions.GPDTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

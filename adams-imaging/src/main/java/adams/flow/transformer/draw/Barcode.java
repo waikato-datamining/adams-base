@@ -28,9 +28,9 @@ import java.awt.image.BufferedImage;
 /**
  * <!-- globalinfo-start -->
  * * Draws a barcode with the specified color and dimensions at the given location.
- * * <p/>
+ * * <br><br>
  * <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  * <!-- options-start -->
  * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

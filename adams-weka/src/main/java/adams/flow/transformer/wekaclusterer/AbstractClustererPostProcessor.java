@@ -67,7 +67,7 @@ public abstract class AbstractClustererPostProcessor
 
   /**
    * Checks the model container.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that it is not null.
    * 
    * @param cont	the container to check

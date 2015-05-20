@@ -33,14 +33,14 @@ import adams.data.io.output.ImageMagickImageWriter;
 /**
  <!-- globalinfo-start -->
  * Writes an image to disk using ImageMagick (http:&#47;&#47;www.imagemagick.org&#47;).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

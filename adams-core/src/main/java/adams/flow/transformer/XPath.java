@@ -40,22 +40,22 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Applies XPath to the DOM document object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.NodeList<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.NodeList<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.NodeList<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.NodeList<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

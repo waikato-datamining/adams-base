@@ -36,13 +36,13 @@ import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
- * Turns an image into a histogram.<br/>
+ * Turns an image into a histogram.<br>
  * In case of an 8-bit histogram, the image must already be converted to a gray image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

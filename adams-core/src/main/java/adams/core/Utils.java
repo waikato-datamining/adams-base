@@ -1336,7 +1336,7 @@ public class Utils {
 
   /**
    * Returns a hexadecimal representation of the byte value.
-   * <p/>
+   * <br><br>
    * Taken from <a href="http://www.herongyang.com/Cryptography/SHA1-Message-Digest-in-Java.html" target="_blank">here</a>.
    *
    * @param value	the value to convert

@@ -128,7 +128,7 @@ public class SimpleTimeseriesWriter
 
   /**
    * Performs the actual writing.
-   * <p/>
+   * <br><br>
    * Writes only the first timeseries to the file.
    *
    * @param data	the data to write

@@ -33,21 +33,21 @@ import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
- * Generates a single file from combined lines from the input files. Line-by-line the lines get joined (separated by the specified delimiter) and output in the output file.<br/>
+ * Generates a single file from combined lines from the input files. Line-by-line the lines get joined (separated by the specified delimiter) and output in the output file.<br>
  * This transformer works similar to the Unix 'paste' command. But instead of providing a list of delimiters, a single one is used.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -31,7 +31,7 @@ import adams.test.Platform;
 import adams.test.TmpDirectory;
 
 /**
- * Tests the adams.core.io.TextFileWriter class. Run from commandline with: <p/>
+ * Tests the adams.core.io.TextFileWriter class. Run from commandline with: <br><br>
  * java adams.core.io.TextFileWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

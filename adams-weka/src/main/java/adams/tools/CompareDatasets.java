@@ -35,13 +35,13 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Compares two datasets, either row-by-row or using a row attribute listing a unique ID for matching the rows, outputting the correlation coefficient of the numeric attributes found in the ranges defined by the user.<br/>
+ * Compares two datasets, either row-by-row or using a row attribute listing a unique ID for matching the rows, outputting the correlation coefficient of the numeric attributes found in the ranges defined by the user.<br>
  * In order to trim down the number of generated rows, a threshold can be specified. Only rows are output which correlation coefficient is below that threshold.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

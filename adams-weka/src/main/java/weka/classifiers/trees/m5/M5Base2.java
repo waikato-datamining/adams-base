@@ -47,18 +47,18 @@ import java.util.Vector;
  * M5Base. Implements base routines
  * for generating M5 Model trees and rules. <p>
  * 
- * The original algorithm M5 was invented by Quinlan: <br/>
+ * The original algorithm M5 was invented by Quinlan: <br>
  * 
  * Quinlan J. R. (1992). Learning with continuous classes. Proceedings of
  * the Australian Joint Conference on Artificial Intelligence. 343--348.
- * World Scientific, Singapore. <p/>
+ * World Scientific, Singapore. <br><br>
  * 
- * Yong Wang made improvements and created M5': <br/>
+ * Yong Wang made improvements and created M5': <br>
  * 
  * Wang, Y and Witten, I. H. (1997). Induction of model trees for
  * predicting continuous classes. Proceedings of the poster papers of the
  * European Conference on Machine Learning. University of Economics,
- * Faculty of Informatics and Statistics, Prague. <p/>
+ * Faculty of Informatics and Statistics, Prague. <br><br>
  *
  * Valid options are:<p>
  * 
@@ -214,7 +214,7 @@ public abstract class M5Base2
   } 
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    * 
    * Valid options are:<p>
    * 

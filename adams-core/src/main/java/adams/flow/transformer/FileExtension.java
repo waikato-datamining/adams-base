@@ -30,31 +30,31 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Extracts the file extension from the file (the part after the '.').<br/>
- * If no dot is in the file name, then an empty string gets forwarded.<br/>
- * <br/>
- * See also:<br/>
- * adams.flow.transformer.AppendName<br/>
- * adams.flow.transformer.DirName<br/>
+ * Extracts the file extension from the file (the part after the '.').<br>
+ * If no dot is in the file name, then an empty string gets forwarded.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.AppendName<br>
+ * adams.flow.transformer.DirName<br>
  * adams.flow.transformer.BaseName
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

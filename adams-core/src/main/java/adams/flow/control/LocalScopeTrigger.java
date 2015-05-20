@@ -29,21 +29,21 @@ import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
- * Executes the sub-actors whenever a token gets passed through, just like the adams.flow.control.Trigger actor, but also provides its own scope for variables and internal storage.<br/>
+ * Executes the sub-actors whenever a token gets passed through, just like the adams.flow.control.Trigger actor, but also provides its own scope for variables and internal storage.<br>
  * It is possible to 'propagate' or 'leak' variables and storage items from within the local scope back to the output scope. However, storage items from caches cannot be propagated.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
- * Conditional equivalent:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
+ * Conditional equivalent:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTrigger
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

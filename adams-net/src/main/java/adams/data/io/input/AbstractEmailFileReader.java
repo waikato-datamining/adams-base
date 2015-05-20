@@ -90,7 +90,7 @@ public abstract class AbstractEmailFileReader
   /**
    * Hook method for performing checks before reading the emails. Throws
    * {@link IllegalStateException} in case something is wrong.
-   * <p/>
+   * <br><br>
    * Ensures that input is a file and present.
    */
   @Override

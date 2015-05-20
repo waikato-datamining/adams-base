@@ -40,19 +40,19 @@ import java.awt.event.ActionListener;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to inspect tokens with the specified viewer.<br/>
- * Inspection can be done interactively, allowing the user to drop tokens, or non-interactively, with the viewer updating whenever a token passes through.<br/>
+ * Allows the user to inspect tokens with the specified viewer.<br>
+ * Inspection can be done interactively, allowing the user to drop tokens, or non-interactively, with the viewer updating whenever a token passes through.<br>
  * Of course, this actor should only be used during development for debugging purposes as can slow down the execution significantly depending on how expensive the view generation is.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
@@ -363,7 +363,7 @@ public class Inspect
   
   /**
    * Updates the Variables instance in use.
-   * <p/>
+   * <br><br>
    * Use with caution!
    *
    * @param value	the instance to use

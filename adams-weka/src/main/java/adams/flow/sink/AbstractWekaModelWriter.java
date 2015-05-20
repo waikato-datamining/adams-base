@@ -67,7 +67,7 @@ public abstract class AbstractWekaModelWriter
 
   /**
    * Returns additional classes that are accepted as input.
-   * <p/>
+   * <br><br>
    * Default implementation returns a zero-length array.
    *
    * @return		the additional classes

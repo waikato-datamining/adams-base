@@ -36,7 +36,7 @@ import adams.gui.core.GUIHelper;
 
 /**
  * Displays a GenericArrayEditor.
- * <p/>
+ * <br><br>
  * Calling code needs to dispose the dialog manually or enable automatic
  * disposal:
  * <pre>

@@ -44,9 +44,9 @@ import weka.filters.UnsupervisedFilter;
 
 /**
  <!-- globalinfo-start -->
- * Generates Andrews Curves from array data.<br/>
+ * Generates Andrews Curves from array data.<br>
  * César Ignacio García Osorio, Colin Fyfe (2003). AN EXTENSION OF ANDREWS CURVES FOR DATA ANALYSIS.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -59,11 +59,11 @@ import weka.filters.UnsupervisedFilter;
  *    HTTP = {http://cib.uco.es/documents/Garcia03SIGEF.pdf}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -num-points &lt;int&gt;
  *  The number of points to generate (&gt; 0).

@@ -27,9 +27,9 @@ import adams.data.twitter.SimulatedStatus;
 
 /**
  <!-- globalinfo-start -->
- * Dummy replayer that just outputs tweets from manually set status texts.<br/>
+ * Dummy replayer that just outputs tweets from manually set status texts.<br>
  * Extracts hashtags ('#...') and usermentions ('&#64;...') automatically.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

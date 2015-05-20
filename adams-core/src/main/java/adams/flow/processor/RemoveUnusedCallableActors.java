@@ -32,7 +32,7 @@ import adams.flow.standalone.CallableActors;
 /**
  <!-- globalinfo-start -->
  * Removes all unused callable actors. Disabled actors referencing callable actors are treated as if they were enabled. If a CallableActors actor ends up being empty, it will get removed as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

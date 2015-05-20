@@ -26,10 +26,10 @@ import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Uses the MetaDataExtractor library to extract the meta-data.<br/>
- * For more information see:<br/>
+ * Uses the MetaDataExtractor library to extract the meta-data.<br>
+ * For more information see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;metadata-extractor&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -95,7 +95,7 @@ public abstract class PaintablePanel
   
   /**
    * Returns whether the panel can handle fixed lables for its axes.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    * 
    * @return		true if panel can handle it
@@ -149,7 +149,7 @@ public abstract class PaintablePanel
 
   /**
    * Hook method, called after the update was performed.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void postUpdate() {

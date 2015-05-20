@@ -42,23 +42,23 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Dumps weka.core.Instance objects into an ARFF file. If the headers change and the header-check is enabled, then a new file will be used.<br/>
+ * Dumps weka.core.Instance objects into an ARFF file. If the headers change and the header-check is enabled, then a new file will be used.<br>
  * The actor can also turn double arrays into weka.core.Instance objects (all attributes are assumed to be numeric).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;double[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;double[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -56,7 +56,7 @@ public abstract class AbstractMapClickListener
 
   /**
    * Determines the database connection in the flow.
-   * <p/>
+   * <br><br>
    * Derived classes can override this method if different database
    * connection objects need to be located.
    *

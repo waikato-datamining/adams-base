@@ -27,7 +27,7 @@ import adams.gui.core.TextEditorPanel;
 /**
  <!-- globalinfo-start -->
  * Displays any file in hexadecimal notation
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

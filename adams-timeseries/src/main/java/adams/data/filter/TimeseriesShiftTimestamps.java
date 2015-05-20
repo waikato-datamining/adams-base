@@ -34,13 +34,13 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Shifts the timestamps of the timeseries by a calculated amount.<br/>
- * The amount is either the difference between the 'new' timestamp and a timestamp from the report or a supplied timestamp.<br/>
- * Accepted date formats (unless custom format specified):<br/>
- * yyyy-MM-dd HH:mm:ss<br/>
- * yyyy-MM-dd HH:mm:ss.S<br/>
+ * Shifts the timestamps of the timeseries by a calculated amount.<br>
+ * The amount is either the difference between the 'new' timestamp and a timestamp from the report or a supplied timestamp.<br>
+ * Accepted date formats (unless custom format specified):<br>
+ * yyyy-MM-dd HH:mm:ss<br>
+ * yyyy-MM-dd HH:mm:ss.S<br>
  * yyyy-MM-dd
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

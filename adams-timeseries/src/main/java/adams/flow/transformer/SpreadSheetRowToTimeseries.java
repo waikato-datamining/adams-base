@@ -36,18 +36,18 @@ import adams.data.timeseries.TimeseriesPoint;
 
 /**
  <!-- globalinfo-start -->
- * Turns a spreadsheet row into a timeseries.<br/>
+ * Turns a spreadsheet row into a timeseries.<br>
  * Columns for timestamps and values are extracted using the regular expressions, the timestamp columns are optional.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

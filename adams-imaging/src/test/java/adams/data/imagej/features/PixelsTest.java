@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the Pixels features. Run from the command line with: <p/>
+ * Test class for the Pixels features. Run from the command line with: <br><br>
  * java adams.data.imagej.features.PixelsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

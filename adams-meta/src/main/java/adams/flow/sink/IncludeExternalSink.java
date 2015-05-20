@@ -29,7 +29,7 @@ import adams.flow.core.Unknown;
 /**
  <!-- globalinfo-start -->
  * Includes an external sink.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

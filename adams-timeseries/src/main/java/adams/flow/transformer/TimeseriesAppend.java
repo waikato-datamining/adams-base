@@ -24,19 +24,19 @@ import adams.data.timeseries.TimeseriesPoint;
 
 /**
  <!-- globalinfo-start -->
- * Appends the incoming timeseries to the one available from storage.<br/>
- * If none yet available from storage, then the current one simply put into storage.<br/>
+ * Appends the incoming timeseries to the one available from storage.<br>
+ * If none yet available from storage, then the current one simply put into storage.<br>
  * If the timeseries already contains elements with the same timestamp, then these will get replaced by the current ones.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

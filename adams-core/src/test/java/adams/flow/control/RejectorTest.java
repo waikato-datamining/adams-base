@@ -28,7 +28,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Tests the Rejector actor.
- * <p/>
+ * <br><br>
  * Note: dummy test
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

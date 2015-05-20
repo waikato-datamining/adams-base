@@ -96,7 +96,7 @@ public abstract class AbstractOptionHandler
 
   /**
    * Finishes the initialization in the constructor.
-   * <p/>
+   * <br><br>
    * Initializes the logger again.
    */
   protected void finishInit() {
@@ -127,7 +127,7 @@ public abstract class AbstractOptionHandler
 
   /**
    * Frees up memory in a "destructive" non-reversible way.
-   * <p/>
+   * <br><br>
    * Cleans up the options.
    *
    * @see	#cleanUpOptions()

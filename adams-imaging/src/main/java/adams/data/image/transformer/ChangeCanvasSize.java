@@ -32,7 +32,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Places the image on a canvas of specified size based on the anchor.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

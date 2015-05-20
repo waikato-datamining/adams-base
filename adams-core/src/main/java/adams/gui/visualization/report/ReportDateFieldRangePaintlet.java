@@ -49,14 +49,14 @@ import adams.gui.visualization.core.plot.Axis;
 
 /**
  <!-- globalinfo-start -->
- * Paintlet for painting a background region based on the date stored in a report.<br/>
- * For more details on the date format, see:<br/>
+ * Paintlet for painting a background region based on the date stored in a report.<br>
+ * For more details on the date format, see:<br>
  * Javadoc. java.text.SimpleDateFormat.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

@@ -31,7 +31,7 @@ import java.lang.reflect.Array;
 /**
  <!-- globalinfo-start -->
  * Lists the hashcodes of the adams.flow.core.ErrorHandler objects in use by actors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

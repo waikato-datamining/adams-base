@@ -34,7 +34,7 @@ import adams.flow.core.CallableActorUser;
 /**
  <!-- globalinfo-start -->
  * Creates an empty queue in internal storage under the specified name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

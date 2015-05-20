@@ -27,13 +27,13 @@ import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Rather than return a cell that was located using the given cell finder, you can return a corresponding cell (within the same row).<br/>
+ * Rather than return a cell that was located using the given cell finder, you can return a corresponding cell (within the same row).<br>
  * This allows you to locate cells with certain value but then update a different column in the same row. You can specify whether the position of the corresponding column is relative (+3 or -4) or absolute (5th).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

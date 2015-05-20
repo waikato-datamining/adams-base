@@ -289,7 +289,7 @@ public abstract class AbstractGraphicalDisplay
 
   /**
    * Whether "clear" is supported and shows up in the menu.
-   * <p/>
+   * <br><br>
    * Default implementation returns "false".
    *
    * @return		true if supported
@@ -300,7 +300,7 @@ public abstract class AbstractGraphicalDisplay
 
   /**
    * Clears the display.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void clear() {

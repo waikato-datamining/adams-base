@@ -35,7 +35,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Outputs the spreadsheet in a simple tabular format with fixed column width, as used by dot matrix printers in days gone by.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

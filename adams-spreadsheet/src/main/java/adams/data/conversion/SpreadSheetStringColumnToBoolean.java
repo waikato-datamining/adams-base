@@ -24,11 +24,11 @@ import adams.data.spreadsheet.Cell;
 /**
  <!-- globalinfo-start -->
  * Converts the specified spreadsheet column from string to boolean.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

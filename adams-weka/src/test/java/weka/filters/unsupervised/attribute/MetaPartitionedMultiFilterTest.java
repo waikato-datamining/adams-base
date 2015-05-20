@@ -31,7 +31,7 @@ import weka.test.AdamsTestHelper;
 import adams.core.base.BaseRegExp;
 
 /**
- * Tests MetaPartitionedMultiFilter. Run from the command line with: <p/>
+ * Tests MetaPartitionedMultiFilter. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.MetaPartitionedMultiFilterTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

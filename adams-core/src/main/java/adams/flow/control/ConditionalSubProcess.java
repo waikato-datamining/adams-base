@@ -27,11 +27,11 @@ import adams.flow.condition.bool.Expression;
 /**
  <!-- globalinfo-start -->
  * Encapsulates a sequence of flow items. The first actor must accept input and the last one must produce output. But the sequence gets only executed if the condition holds true.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

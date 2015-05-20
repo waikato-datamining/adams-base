@@ -200,7 +200,7 @@ public class ImageTabbedPane
   /**
    * Hook method that checks whether the specified tab can really be closed
    * with a click of the middle mouse button.
-   * <p/>
+   * <br><br>
    * Checks modified state.
    *
    * @param index	the tab index

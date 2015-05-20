@@ -24,7 +24,7 @@ import adams.core.Destroyable;
 
 /**
  * An interface to indicate that this class can handle commandline options.
- * <p/>
+ * <br><br>
  * Most of the methods only need to be implemented in the superclass, also
  * including the List holding the Option objects. Derived classes only
  * override <code>defineOptions()</code> to add more Option objects to the
@@ -38,7 +38,7 @@ public interface OptionHandler
 
   /**
    * Adds options to the internal list of options.
-   * <p/>
+   * <br><br>
    * Every subclass needs to add the necessary Option objects to its internal
    * List with Option objects.
    */
@@ -46,7 +46,7 @@ public interface OptionHandler
 
   /**
    * Returns the option manager.
-   * <p/>
+   * <br><br>
    * Only needs to be implemented in the superclass, which declares the
    * OptionManager object managing all the Option objects.
    *

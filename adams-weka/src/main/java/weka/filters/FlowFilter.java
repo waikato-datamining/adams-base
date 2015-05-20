@@ -35,11 +35,11 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Processes the data with a flow. The flow's outer control actor must be a adams.flow.control.SubProcess actor, which takes weka.core.Instances as input and generates weka.core.Instances again.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -131,10 +131,10 @@ public class FlowFilter
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Turns on output of debugging information.</pre>
@@ -193,7 +193,7 @@ public class FlowFilter
    * this. In case the output format cannot be returned immediately, i.e.,
    * immediateOutputFormat() returns false, then this method will be called
    * from batchFinished().
-   * <p/>
+   * <br><br>
    * Simply returns the input format. The process() method determines the 
    * actual format as the format is not known apriori.
    *

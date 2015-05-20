@@ -81,7 +81,7 @@ public class PreviewPanel
   /**
    * Returns the actual content. E.g., a BaseTextArea without the
    * surrounding BaseScrollPane.
-   * <p/>
+   * <br><br>
    * The default implementation returns simply this panel.
    * 
    * @return		the actual content.

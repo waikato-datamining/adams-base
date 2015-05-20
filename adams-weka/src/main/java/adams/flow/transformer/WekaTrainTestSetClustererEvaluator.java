@@ -34,23 +34,23 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Trains a clusterer on an incoming training dataset (from a container) and then evaluates it on the test set (also from a container).<br/>
- * The clusterer setup being used in the evaluation is a callable 'Clusterer' actor.<br/>
+ * Trains a clusterer on an incoming training dataset (from a container) and then evaluates it on the test set (also from a container).<br>
+ * The clusterer setup being used in the evaluation is a callable 'Clusterer' actor.<br>
  * If a class attribute is set, a classes-to-clusters evaluation is performed automatically
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaTrainTestSetContainer<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br/>
- * <p/>
- * Container information:<br/>
- * - adams.flow.container.WekaTrainTestSetContainer: Train, Test, Seed, FoldNumber, FoldCount<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaTrainTestSetContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaClusterEvaluationContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaTrainTestSetContainer: Train, Test, Seed, FoldNumber, FoldCount<br>
  * - adams.flow.container.WekaClusterEvaluationContainer: Evaluation, Model, Log-likelohood
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -176,7 +176,7 @@ public abstract class AbstractCommonsRandomNumberGenerator
 
   /**
    * Performs optional checks.
-   * <p/>
+   * <br><br>
    * Initializes the internal generator if necessary.
    */
   @Override

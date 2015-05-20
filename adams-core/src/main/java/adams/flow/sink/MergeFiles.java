@@ -30,15 +30,15 @@ import java.io.FileWriter;
 /**
  <!-- globalinfo-start -->
  * Combines the incoming files in a single one.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br/>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

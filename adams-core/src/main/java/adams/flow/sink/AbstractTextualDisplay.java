@@ -387,7 +387,7 @@ public abstract class AbstractTextualDisplay
 
   /**
    * Whether "clear" is supported and shows up in the menu.
-   * <p/>
+   * <br><br>
    * Default implementation returns "false".
    *
    * @return		true if supported
@@ -398,7 +398,7 @@ public abstract class AbstractTextualDisplay
 
   /**
    * Clears the display.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void clear() {
@@ -434,7 +434,7 @@ public abstract class AbstractTextualDisplay
 
   /**
    * Returns a custom file filter for the file chooser.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    * 
    * @return		the file filter, null if to use default one
@@ -463,7 +463,7 @@ public abstract class AbstractTextualDisplay
 
   /**
    * Executes the flow item. 
-   * <p/>
+   * <br><br>
    * Outputs the token on the command-line in headless mode.
    *
    * @return		null if everything is fine, otherwise error message

@@ -39,7 +39,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Allows the reading of MS Access databases.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

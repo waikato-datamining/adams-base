@@ -30,7 +30,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Outputs the dimensions of the image: width, height, area, ratio.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

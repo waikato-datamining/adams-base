@@ -29,7 +29,7 @@ import weka.core.SelectedTag;
 import weka.filters.supervised.attribute.PLSFilter;
 
 /**
- * Tests PLSClassifierWeighted. Run from the command line with:<p/>
+ * Tests PLSClassifierWeighted. Run from the command line with:<br><br>
  * java weka.classifiers.functions.PLSClassifierWeightedTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

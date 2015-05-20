@@ -24,7 +24,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewerTree;
 /**
  <!-- globalinfo-start -->
  * Performs no pruning at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

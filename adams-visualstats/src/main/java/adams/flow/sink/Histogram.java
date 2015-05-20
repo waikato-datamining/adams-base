@@ -28,11 +28,11 @@ import adams.gui.visualization.stats.histogram.HistogramOptions;
 /**
  <!-- globalinfo-start -->
  * Generates a histogram based on the incoming data.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

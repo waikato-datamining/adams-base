@@ -32,7 +32,7 @@ import adams.core.net.EmailAddress;
 /**
  <!-- globalinfo-start -->
  * Reads emails stored in EML files.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

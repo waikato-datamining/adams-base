@@ -43,20 +43,20 @@ import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
- * Converts an image using ImageMagick.<br/>
- * In order to make entering of commands easier, they can be spread over multiple lines and line comments can be inserted as well (a line comment starts with '#').<br/>
- * <br/>
+ * Converts an image using ImageMagick.<br>
+ * In order to make entering of commands easier, they can be spread over multiple lines and line comments can be inserted as well (a line comment starts with '#').<br>
+ * <br>
  * NB: Uses im4java, i.e., ImageMagick (http:&#47;&#47;www.imagemagick.org&#47;) executables must be available on the PATH.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

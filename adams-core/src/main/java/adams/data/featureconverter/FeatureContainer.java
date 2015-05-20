@@ -26,7 +26,7 @@ import adams.flow.container.FeatureConverterContainer;
 /**
  <!-- globalinfo-start -->
  * Simply returns the header definition&#47;row in a adams.flow.container.FeatureConverterContainer container.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

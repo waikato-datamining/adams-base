@@ -55,7 +55,7 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Displays the messages that are output in the system's 'Console window'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
@@ -551,7 +551,7 @@ public class ConsoleWindow
 
   /**
    * Returns a custom file filter for the file chooser.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    * 
    * @return		the file filter, null if to use default one

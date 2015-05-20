@@ -23,7 +23,7 @@ package adams.flow;
 
 /**
  * Abstract Test class for flow actors that need an internet connection.
- * <p/>
+ * <br><br>
  * It is possible to disable the execution of the test, in case no internet
  * connection is available, using the "adams.test.flow.offline" property.
  * E.g.: <code>-Dadams.test.flow.offline=true</code>.

@@ -30,11 +30,11 @@ import adams.flow.transformer.SetVariable;
 /**
  <!-- globalinfo-start -->
  * Creates a sub-flow that stores the filename passing through in a user-specified variable.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

@@ -83,7 +83,7 @@ public abstract class AbstractTrainableColumnFinder
 
   /**
    * Checks the data.
-   * <p/>
+   * <br><br>
    * Trains the column finder with the given data if not yet trained.
    * 
    * @param data	the data to check

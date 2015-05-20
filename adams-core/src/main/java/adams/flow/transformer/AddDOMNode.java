@@ -28,19 +28,19 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Adds a new node below the incoming org.w3c.dom.Node and forwards the new node.<br/>
+ * Adds a new node below the incoming org.w3c.dom.Node and forwards the new node.<br>
  * In case of an incoming org.w3c.dom.Document, the node gets added below the root node.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Document<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;org.w3c.dom.Node<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

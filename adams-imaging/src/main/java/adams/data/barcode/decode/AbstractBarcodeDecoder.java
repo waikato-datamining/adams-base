@@ -35,7 +35,7 @@ public abstract class AbstractBarcodeDecoder
 
   /**
    * Performs checks on the image.
-   * <p/>
+   * <br><br>
    * Default implementation just ensures that an image is present.
    *
    * @param image the image to check

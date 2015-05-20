@@ -28,7 +28,7 @@ import net.minidev.json.JSONObject;
 /**
  <!-- globalinfo-start -->
  * Turns a spreadsheet into a JSON array. Missing values get omitted.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

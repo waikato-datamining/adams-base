@@ -72,7 +72,7 @@ public abstract class AbstractPropertyEditorSupport
 
   /**
    * For initializing members.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void initialize() {
@@ -149,7 +149,7 @@ public abstract class AbstractPropertyEditorSupport
 
   /**
    * Cleans up when the dialog is closed.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void cleanUp() {
@@ -250,7 +250,7 @@ public abstract class AbstractPropertyEditorSupport
   
   /**
    * Returns a URL with additional information.
-   * <p/>
+   * <br><br>
    * If current value is an instance of {@link HelpProvider}, then its URL 
    * is returned, otherwise null.
    * 
@@ -265,7 +265,7 @@ public abstract class AbstractPropertyEditorSupport
   
   /**
    * Returns a long help description, e.g., used in tiptexts.
-   * <p/>
+   * <br><br>
    * If current value is an instance of {@link HelpProvider}, then its description
    * is returned, otherwise the value's tip text.
    * 
@@ -280,7 +280,7 @@ public abstract class AbstractPropertyEditorSupport
   
   /**
    * Returns a short title for the help, e.g., used for buttons.
-   * <p/>
+   * <br><br>
    * If current value is an instance of {@link HelpProvider}, then its title
    * is returned, otherwise null.
    * 
@@ -295,7 +295,7 @@ public abstract class AbstractPropertyEditorSupport
   
   /**
    * Returns the name of a help icon, e.g., used for buttons.
-   * <p/>
+   * <br><br>
    * If current value is an instance of {@link HelpProvider}, then its icon 
    * is returned, otherwise null.
    * 

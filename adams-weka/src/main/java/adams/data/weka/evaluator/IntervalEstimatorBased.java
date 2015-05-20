@@ -33,11 +33,11 @@ import adams.core.Utils;
 /**
  <!-- globalinfo-start -->
  * Uses a classifier that produces confidence intervals. ???
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -151,7 +151,7 @@ public class IntervalEstimatorBased
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
-     * <p/>
+     * <br><br>
      * Only compares the commandlines of the two objects.
      *
      * @param o 	the object to be compared.

@@ -37,7 +37,7 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Generates polygons.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

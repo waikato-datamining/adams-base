@@ -57,7 +57,7 @@ public abstract class AbstractRandomNumberGenerator<T extends Number>
 
   /**
    * Performs optional checks.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void check() {

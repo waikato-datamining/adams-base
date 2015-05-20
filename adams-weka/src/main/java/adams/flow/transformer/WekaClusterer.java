@@ -37,26 +37,26 @@ import adams.flow.transformer.wekaclusterer.PassThrough;
 
 /**
  <!-- globalinfo-start -->
- * Trains a clusterer based on the incoming dataset and output the built clusterer alongside the training header (in a model container).<br/>
- * Incremental training is performed, if the input are weka.core.Instance objects and the clusterer implements weka.clusterers.UpdateableClusterer.<br/>
+ * Trains a clusterer based on the incoming dataset and output the built clusterer alongside the training header (in a model container).<br>
+ * Incremental training is performed, if the input are weka.core.Instance objects and the clusterer implements weka.clusterers.UpdateableClusterer.<br>
  * If the incoming token does not encapsulate a dataset, then only a new instance of the clusterer is sent around.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.ModelContainer<br/>
- * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.ModelContainer<br>
+ * &nbsp;&nbsp;&nbsp;weka.clusterers.Clusterer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

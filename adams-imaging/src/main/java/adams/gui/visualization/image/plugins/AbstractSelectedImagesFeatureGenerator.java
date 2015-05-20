@@ -65,7 +65,7 @@ public abstract class AbstractSelectedImagesFeatureGenerator
 
   /**
    * Checks whether the plugin can be executed given the specified image panel.
-   * <p/>
+   * <br><br>
    * Panel must be non-null and must contain an image.
    *
    * @param panel	the panel to use as basis for decision

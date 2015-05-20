@@ -32,7 +32,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generates a separate plot per row in the spreadsheet, using the specified columns as data points. Additional meta-data columns can be specified as well. The optional ID column can be used to name the row plots.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

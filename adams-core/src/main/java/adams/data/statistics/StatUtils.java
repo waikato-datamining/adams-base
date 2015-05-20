@@ -1325,7 +1325,7 @@ public class StatUtils {
   
   /**
    * Calculates the signal/noise ratio.
-   * <p/>
+   * <br><br>
    * For more details, see <a href="http://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank">Signal-to-noise ratio</a>.
    * 
    * @param x		the input data to calculate the ratio for
@@ -1337,7 +1337,7 @@ public class StatUtils {
   
   /**
    * Calculates the signal/noise ratio.
-   * <p/>
+   * <br><br>
    * For more details, see <a href="http://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank">Signal-to-noise ratio</a>.
    * 
    * @param x		the input data to calculate the ratio for

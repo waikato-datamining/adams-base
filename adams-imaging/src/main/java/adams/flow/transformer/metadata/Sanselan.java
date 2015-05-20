@@ -26,10 +26,10 @@ import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
- * Uses the Sanselan library to extract the meta-data.<br/>
- * For more information see:<br/>
+ * Uses the Sanselan library to extract the meta-data.<br>
+ * For more information see:<br>
  * https:&#47;&#47;commons.apache.org&#47;proper&#47;commons-imaging&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

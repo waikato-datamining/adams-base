@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests PartitionedStacking. Run from the command line with:<p/>
+ * Tests PartitionedStacking. Run from the command line with:<br><br>
  * java weka.classifiers.meta.PartitionedStackingTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

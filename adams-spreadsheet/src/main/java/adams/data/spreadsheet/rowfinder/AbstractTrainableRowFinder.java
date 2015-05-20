@@ -83,7 +83,7 @@ public abstract class AbstractTrainableRowFinder
 
   /**
    * Checks the data.
-   * <p/>
+   * <br><br>
    * Trains the row finder with the given data if not yet trained.
    * 
    * @param data	the data to check

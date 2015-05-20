@@ -43,13 +43,13 @@ import weka.filters.supervised.attribute.PLSFilter;
 
 /**
  <!-- globalinfo-start -->
- * RandomRegressionForest: subtract mean and pls, then grow completely random trees (leaf: min .. 2min).<br/>
+ * RandomRegressionForest: subtract mean and pls, then grow completely random trees (leaf: min .. 2min).<br>
  * plus local regression models (-S 1 -C), min &gt;&gt; numPLScomps
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -N &lt;num&gt;
  *  Number of trees.
@@ -148,10 +148,10 @@ public class RandomRegressionForest
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -N &lt;num&gt;
    *  Number of trees.

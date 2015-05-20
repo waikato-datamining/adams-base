@@ -28,21 +28,21 @@ import adams.flow.core.Token;
 /**
 <!-- globalinfo-start -->
 * Produces a range string from a regular expression describing attributes.
-* <p/>
+* <br><br>
 <!-- globalinfo-end -->
 *
 <!-- flow-summary-start -->
-* Input/output:<br/>
-* - accepts:<br/>
-* &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
-* &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
-* - generates:<br/>
-* &nbsp;&nbsp;&nbsp;java.lang.String<br/>
-* <p/>
+* Input/output:<br>
+* - accepts:<br>
+* &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+* &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+* - generates:<br>
+* &nbsp;&nbsp;&nbsp;java.lang.String<br>
+* <br><br>
 <!-- flow-summary-end -->
 *
 <!-- options-start -->
-* Valid options are: <p/>
+* Valid options are: <br><br>
 *
 * <pre>-D &lt;int&gt; (property: debugLevel)
 * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

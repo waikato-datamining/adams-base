@@ -34,20 +34,20 @@ import adams.core.option.OptionUtils;
 
 /**
  <!-- globalinfo-start -->
- * Actor for saving a weka.core.Instances object as file.<br/>
+ * Actor for saving a weka.core.Instances object as file.<br>
  * The relation name of the incoming dataset can be used to replace the current filename (path and extension are kept).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

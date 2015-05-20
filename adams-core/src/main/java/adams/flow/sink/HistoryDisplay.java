@@ -50,14 +50,14 @@ import adams.gui.core.TextEditorPanel;
 /**
  <!-- globalinfo-start -->
  * Actor that outputs any object that arrives at its input port via the 'toString()' method in a separate 'history' entry.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

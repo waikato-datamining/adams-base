@@ -25,7 +25,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 /**
  <!-- globalinfo-start -->
  * Dummy, performs no stamping at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

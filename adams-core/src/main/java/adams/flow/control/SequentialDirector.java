@@ -67,7 +67,7 @@ public class SequentialDirector
 
   /**
    * Returns whether the final output of actors is recorded.
-   * <p/>
+   * <br><br>
    * Default implementation returns false.
    *
    * @return		true if final output is to be recorded

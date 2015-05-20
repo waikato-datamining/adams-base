@@ -25,14 +25,14 @@ import adams.core.annotation.DeprecatedClass;
 
 /**
  <!-- globalinfo-start -->
- * Turns a timestamp string into a Double (time in msecs since 1970).<br/>
- * See Javadoc of java.text.SimpleDateFormat class for more information:<br/>
+ * Turns a timestamp string into a Double (time in msecs since 1970).<br>
+ * See Javadoc of java.text.SimpleDateFormat class for more information:<br>
  * http:&#47;&#47;download.oracle.com&#47;javase&#47;1.5.0&#47;docs&#47;api&#47;java&#47;text&#47;DateFormat.html
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

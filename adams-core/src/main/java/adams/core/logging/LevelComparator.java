@@ -24,7 +24,7 @@ import java.util.logging.Level;
 
 /**
  * Comparator for logging levels.
- * <p/>
+ * <br><br>
  * The following order is used:
  * <pre>
  * FINEST > FINER > FINE > CONFIG > INFO > WARNING > SEVERE > OFF

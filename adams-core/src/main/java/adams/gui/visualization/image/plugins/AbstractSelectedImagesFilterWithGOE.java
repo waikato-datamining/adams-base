@@ -123,7 +123,7 @@ public abstract class AbstractSelectedImagesFilterWithGOE
 
   /**
    * Initializes the processing.
-   * <p/>
+   * <br><br>
    * Sets the last setup.
    *
    * @return		null if successful, otherwise error message

@@ -24,7 +24,7 @@ import adams.data.text.TextContainer;
 /**
  <!-- globalinfo-start -->
  * Obtains the string content of a adams.data.text.TextContainer and forwards that.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

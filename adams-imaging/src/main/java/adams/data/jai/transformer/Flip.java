@@ -31,11 +31,11 @@ import adams.data.image.BufferedImageContainer;
 /**
  <!-- globalinfo-start -->
  * Flips an image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
@@ -125,7 +125,7 @@ public class Flip
 
   /**
    * Performs no transformation at all, just returns the input.
-   * <p/>
+   * <br><br>
    * Original code for rotation taken from <a href="http://asserttrue.blogspot.com/2010/01/image-rotation-in-8-lines-using-java.html" target="_blank">here</a>,
    * which was placed in public domain by Kas Thomas.
    *

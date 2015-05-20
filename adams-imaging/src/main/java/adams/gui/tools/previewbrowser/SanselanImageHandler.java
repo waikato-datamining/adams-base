@@ -28,7 +28,7 @@ import java.io.File;
 /**
  <!-- globalinfo-start -->
  * Displays the following image types: bmp,gif,ico,pbm,pgm,png,pnm,ppm,psd,tif,tiff
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

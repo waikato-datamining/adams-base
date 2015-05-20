@@ -27,7 +27,7 @@ import adams.core.Index;
 /**
  <!-- globalinfo-start -->
  * Generates threshold-curve data from a WEKA Evaluation object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -80,7 +80,7 @@ public class ImageMagick
 
   /**
    * Checks whether the plugin can be executed given the specified image panel.
-   * <p/>
+   * <br><br>
    * Panel must be non-null and must contain an image. Also, ImageMagick must
    * be installed.
    *

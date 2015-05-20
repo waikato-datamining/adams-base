@@ -30,7 +30,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generates a new timeseries with a (user-defined) fixed-length interval between data points.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

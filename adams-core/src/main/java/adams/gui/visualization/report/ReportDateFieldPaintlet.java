@@ -47,10 +47,10 @@ import adams.gui.visualization.core.plot.Axis;
 
 /**
  <!-- globalinfo-start -->
- * Paintlet for painting an indicator based on the date(s) stored in the report.<br/>
- * For more details on the date format, see:<br/>
+ * Paintlet for painting an indicator based on the date(s) stored in the report.<br>
+ * For more details on the date format, see:<br>
  * Javadoc. java.text.SimpleDateFormat.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -27,9 +27,9 @@ import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
- * Turns image into binary (ie black and white) image and determines largest (white) rectangle in the middle to crop to.<br/>
+ * Turns image into binary (ie black and white) image and determines largest (white) rectangle in the middle to crop to.<br>
  * When looking for a black rectangle, check the 'invert' option.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

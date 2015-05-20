@@ -28,22 +28,22 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Returns the maximum value from a double/int array or the index of the maximum value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

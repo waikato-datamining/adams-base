@@ -110,7 +110,7 @@ public abstract class AbstractTag
 
   /**
    * Checks whether the child is valid and can be added.
-   * <p/>
+   * <br><br>
    * Default implementation returns always true.
    *
    * @param child	the child to check
@@ -145,7 +145,7 @@ public abstract class AbstractTag
 
   /**
    * Hook-method after inserting a child element.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param newChild	the child to insert
@@ -247,7 +247,7 @@ public abstract class AbstractTag
 
   /**
    * Hook method for validating/fixing the XML tree.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing
    */
   protected void doValidate() {

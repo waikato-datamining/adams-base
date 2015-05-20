@@ -34,7 +34,7 @@ import java.util.Date;
 /**
  <!-- globalinfo-start -->
  * Turns instances of the the specified input date&#47;time type into instances of the specified output date&#47;time type.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

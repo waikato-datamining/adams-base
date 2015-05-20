@@ -27,7 +27,7 @@ import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.data.io.input.CsvSpreadSheetReader class. Run from commandline with: <p/>
+ * Tests the adams.data.io.input.CsvSpreadSheetReader class. Run from commandline with: <br><br>
  * java adams.data.io.input.CsvSpreadSheetReader
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

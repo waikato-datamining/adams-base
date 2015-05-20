@@ -26,22 +26,22 @@ import adams.data.timeseries.Timeseries;
 
 /**
  <!-- globalinfo-start -->
- * Saves a spectrum to disk with the specified writer and passes the absolute filename on.<br/>
+ * Saves a spectrum to disk with the specified writer and passes the absolute filename on.<br>
  * As filename/directory name (depending on the writer) the database ID of the spectrum is used (below the specified output directory).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
+ * Input/output:<br>
+ * - accepts:<br>
  * <pre>   knir.data.spectrum.Timeseries</pre>
- * - generates:<br/>
+ * - generates:<br>
  * <pre>   java.lang.String</pre>
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  *         If set to true, scheme may output additional info to the console.

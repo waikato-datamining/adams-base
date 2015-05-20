@@ -29,11 +29,11 @@ import adams.data.statistics.StatUtils;
 /**
  <!-- globalinfo-start -->
  * paintlet for plotting cross error points on the z score graph whose size depends on the difference between x and y values
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

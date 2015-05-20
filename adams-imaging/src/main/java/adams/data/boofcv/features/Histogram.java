@@ -31,9 +31,9 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Generates a histogram from the image. Supported image types:<br/>
+ * Generates a histogram from the image. Supported image types:<br>
  * boofcv.struct.image.ImageUInt8
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

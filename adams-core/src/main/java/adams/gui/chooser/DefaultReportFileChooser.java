@@ -30,7 +30,7 @@ import adams.data.report.Report;
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
  * for sampledata reports.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

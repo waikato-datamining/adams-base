@@ -28,13 +28,13 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Leaves only the specified window in the timeseries (borders included).<br/>
+ * Leaves only the specified window in the timeseries (borders included).<br>
  * The matching can be inverted, i.e., everything but the window is returned.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

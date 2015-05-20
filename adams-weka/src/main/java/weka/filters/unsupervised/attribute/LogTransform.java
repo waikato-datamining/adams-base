@@ -40,14 +40,14 @@ import weka.filters.UnsupervisedFilter;
 
 /**
  <!-- globalinfo-start -->
- * Transforms all numeric attributes in the specified range using a log-transform.<br/>
- * The class attribute is omitted.<br/>
+ * Transforms all numeric attributes in the specified range using a log-transform.<br>
+ * The class attribute is omitted.<br>
  * If a value less or equal to zero is encountered, a missing value is output.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -output-debug-info
  *  If set, filter is run in debug mode and

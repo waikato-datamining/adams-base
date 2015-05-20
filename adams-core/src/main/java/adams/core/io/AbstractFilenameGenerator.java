@@ -37,7 +37,7 @@ public abstract class AbstractFilenameGenerator
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -55,7 +55,7 @@ public abstract class AbstractFilenameGenerator
 
   /**
    * Performs checks on the object to generate the filename for.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether object is null (if one is required).
    *
    * @param obj		the object to check

@@ -30,7 +30,7 @@ import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
- * Test class for the RemoveByDataType report filter. Run from the command line with: <p/>
+ * Test class for the RemoveByDataType report filter. Run from the command line with: <br><br>
  * java adams.data.report.RemoveByDataTypeTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

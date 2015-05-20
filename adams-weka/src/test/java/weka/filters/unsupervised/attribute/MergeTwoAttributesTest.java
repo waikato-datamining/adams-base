@@ -30,7 +30,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests MergeTwoAttributes. Run from the command line with: <p/>
+ * Tests MergeTwoAttributes. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.attribute.MergeTwoAttributesTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

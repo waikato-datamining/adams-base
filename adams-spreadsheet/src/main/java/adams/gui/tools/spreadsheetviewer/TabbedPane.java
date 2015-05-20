@@ -111,7 +111,7 @@ public class TabbedPane
   /**
    * Hook method that gets executed after a tab was successfully removed with
    * a middle mouse button click.
-   * <p/>
+   * <br><br>
    * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
    * instances.
    * 

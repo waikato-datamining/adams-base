@@ -23,7 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests SpreadSheetLoader/SpreadSheetSaver. Run from the command line with:<p/>
+ * Tests SpreadSheetLoader/SpreadSheetSaver. Run from the command line with:<br><br>
  * java weka.core.converters.SpreadSheetTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

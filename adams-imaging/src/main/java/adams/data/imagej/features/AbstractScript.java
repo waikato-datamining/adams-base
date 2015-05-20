@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * Ancestor for ImageJ feature generator scripts.
- * <p/>
+ * <br><br>
  * Scripts of scripting languages like Jython or Groovy need to be derived from this
  * class.
  *

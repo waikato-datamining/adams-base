@@ -36,11 +36,11 @@ import adams.db.SQL;
 /**
  <!-- globalinfo-start -->
  * Drops all tables that match a regular expression (matching sense can be inverted).
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

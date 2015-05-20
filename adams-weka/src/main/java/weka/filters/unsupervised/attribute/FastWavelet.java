@@ -53,12 +53,12 @@ import adams.core.option.OptionUtils;
 
 /**
  <!-- globalinfo-start -->
- * A filter for wavelet transformation using the JSci library's fast wavelet transform (FWT) algorithms.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * A filter for wavelet transformation using the JSci library's fast wavelet transform (FWT) algorithms.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  *  (2009). JSci - A science API for Java.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -70,11 +70,11 @@ import adams.core.option.OptionUtils;
  *    HTTP = {http://jsci.sourceforge.net/}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -303,10 +303,10 @@ public class FastWavelet
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  Turns on output of debugging information.</pre>

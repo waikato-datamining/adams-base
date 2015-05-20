@@ -28,11 +28,11 @@ import adams.flow.source.Start;
 /**
  <!-- globalinfo-start -->
  * Generates a simple while-loop that goes on forever.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

@@ -33,9 +33,9 @@ import java.util.Map;
 /**
  <!-- globalinfo-start -->
  * Draws an EAN13 barcode at a specified location and size.Digits must be 13 characters long. A valid checksum is enforced.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
- * <p/>
+ * <br><br>
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

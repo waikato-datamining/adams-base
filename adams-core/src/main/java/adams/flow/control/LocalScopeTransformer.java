@@ -39,9 +39,9 @@ import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
- * Provides a local scope for the sub-actors.<br/>
+ * Provides a local scope for the sub-actors.<br>
  * It is possible to 'propagate' or 'leak' variables and storage items from within the local scope back to the output scope. However, storage items from caches cannot be propagated.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

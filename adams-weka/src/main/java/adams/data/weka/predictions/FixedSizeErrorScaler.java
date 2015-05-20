@@ -26,11 +26,11 @@ import weka.core.Capabilities;
 /**
  <!-- globalinfo-start -->
  * Scales the errors to a fixed size.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-size &lt;int&gt; (property: size)
  * &nbsp;&nbsp;&nbsp;The size of the errors after scaling.

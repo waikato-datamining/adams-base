@@ -24,7 +24,7 @@ import adams.core.io.FileUtils;
 /**
  <!-- globalinfo-start -->
  * Turns any string into a valid file name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

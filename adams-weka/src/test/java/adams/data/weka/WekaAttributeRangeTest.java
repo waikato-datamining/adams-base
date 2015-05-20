@@ -35,7 +35,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.core.WekaAttributeRange class. Run from commandline with: <p/>
+ * Tests the adams.core.WekaAttributeRange class. Run from commandline with: <br><br>
  * java adams.core.WekaAttributeRangeTest
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)

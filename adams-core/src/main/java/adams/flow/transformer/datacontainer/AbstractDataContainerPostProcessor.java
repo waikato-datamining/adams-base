@@ -36,7 +36,7 @@ public abstract class AbstractDataContainerPostProcessor<T extends DataContainer
 
   /**
    * Checks the data to post-process.
-   * <p/>
+   * <br><br>
    * Default implementation only checks whether data is present.
    * 
    * @param data	the data to check

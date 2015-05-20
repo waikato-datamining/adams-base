@@ -34,7 +34,7 @@ import adams.data.io.output.AbstractDataContainerWriter;
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
  * for data containers.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

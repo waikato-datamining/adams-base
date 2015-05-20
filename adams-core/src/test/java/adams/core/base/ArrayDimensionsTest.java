@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.base.ArrayDimensions class. Run from commandline with: <p/>
+ * Tests the adams.core.base.ArrayDimensions class. Run from commandline with: <br><br>
  * java adams.core.base.ArrayDimensionsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

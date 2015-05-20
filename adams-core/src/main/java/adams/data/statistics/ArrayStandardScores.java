@@ -23,11 +23,11 @@ package adams.data.statistics;
 /**
  <!-- globalinfo-start -->
  * Calculates the standard scores (or z scores) of the provided arrays.The arrays must be numeric, of course.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-always-first-stats (property: useAlwaysFirstStats)
  * </pre>

@@ -40,14 +40,14 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Generates a feature vector for each pixel classification that is stored in the image's report.<br/>
- * Pixel classifications are generated with the adams.flow.transformer.PixelSelector transformer, using the adams.flow.transformer.pixelselector.AddClassification action.<br/>
+ * Generates a feature vector for each pixel classification that is stored in the image's report.<br>
+ * Pixel classifications are generated with the adams.flow.transformer.PixelSelector transformer, using the adams.flow.transformer.pixelselector.AddClassification action.<br>
  * Automatically adds the classification label associated with a classification position in the report as a separate attribute.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

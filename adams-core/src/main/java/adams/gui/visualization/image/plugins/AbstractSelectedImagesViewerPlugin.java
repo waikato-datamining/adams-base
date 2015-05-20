@@ -57,7 +57,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
 
   /**
    * Checks whether the plugin can be executed given the specified image panel.
-   * <p/>
+   * <br><br>
    * Panel must be non-null and must contain an image.
    *
    * @param panel	the panel to use as basis for decision
@@ -206,7 +206,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
   
   /**
    * Initializes the processing.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    * 
    * @return		null if successful, otherwise error message
@@ -225,7 +225,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
   
   /**
    * Finishes up the processing.
-   * <p/>
+   * <br><br>
    * Default implementation returns null.
    * 
    * @return		null if successful, otherwise error message

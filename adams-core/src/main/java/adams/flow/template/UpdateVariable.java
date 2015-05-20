@@ -28,11 +28,11 @@ import adams.flow.transformer.SetVariable;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow (enlosed by a Trigger) that retrieves and sets a variable, with the user being able to add custom actors in between for updating the variable value.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

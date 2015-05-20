@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An LRU cache, based on <code>LinkedHashMap</code>.<br/>
+ * An LRU cache, based on <code>LinkedHashMap</code>.<br>
  * This cache has a fixed maximum number of elements (<code>cacheSize</code>).
  * If the cache is full and another entry is added, the LRU (least recently used) entry is dropped.
- * <p/>
- * This class is thread-safe. All methods of this class are synchronized.<br/>
- * <br/>
+ * <br><br>
+ * This class is thread-safe. All methods of this class are synchronized.<br>
+ * <br>
  * License: <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>.
  *
  * @author Christian d'Heureuse (<a href="http://www.source-code.biz">www.source-code.biz</a>)
@@ -161,7 +161,7 @@ public class LRUCache<K,V>
   }
 
   /**
-   * Retrieves an entry from the cache.<br/>
+   * Retrieves an entry from the cache.<br>
    *
    * The retrieved entry becomes the MRU (most recently used) entry.
    *

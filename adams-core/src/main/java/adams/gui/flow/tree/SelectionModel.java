@@ -69,7 +69,7 @@ public class SelectionModel
   /**
    * Returns the paths in the selection. This will return null (or an
    * empty array) if nothing is currently selected.
-   * <p/>
+   * <br><br>
    * This implemention removes all selection paths that are not on the same
    * level as the first one.
    *

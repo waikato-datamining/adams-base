@@ -92,7 +92,7 @@ public abstract class AbstractActorTemplate
 
   /**
    * Hook before generating the actor.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void preGenerate() {
@@ -107,7 +107,7 @@ public abstract class AbstractActorTemplate
 
   /**
    * Hook before generating the actor.
-   * <p/>
+   * <br><br>
    * Default implementation just updates the name of the actor, if necessary.
    *
    * @param actor	the actor to post-process
@@ -167,7 +167,7 @@ public abstract class AbstractActorTemplate
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
    * than, equal to, or greater than the specified object.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o 	the object to be compared.
@@ -186,7 +186,7 @@ public abstract class AbstractActorTemplate
 
   /**
    * Returns whether the two objects are the same.
-   * <p/>
+   * <br><br>
    * Only compares the commandlines of the two objects.
    *
    * @param o	the object to be compared

@@ -175,7 +175,7 @@ public abstract class AbstractFileSplitter
 
   /**
    * Performs checks on the file.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that the file is present and not a 
    * directory.
    * 

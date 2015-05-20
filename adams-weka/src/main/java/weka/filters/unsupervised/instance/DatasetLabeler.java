@@ -38,11 +38,11 @@ import adams.data.weka.rowfinder.AbstractRowFinder;
 /**
  <!-- globalinfo-start -->
  * Adds an additional attribute to the dataset containing a label whether it was a match or not, i.e., whether the row finder selected a particular row or not.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  * 
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>

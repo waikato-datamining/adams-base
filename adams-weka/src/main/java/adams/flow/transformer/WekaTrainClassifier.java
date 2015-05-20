@@ -41,22 +41,22 @@ import adams.flow.source.WekaClassifierSetup;
 
 /**
  <!-- globalinfo-start -->
- * Trains a classifier based on the incoming dataset and outputs the built classifier alongside the training header (in a model container).<br/>
+ * Trains a classifier based on the incoming dataset and outputs the built classifier alongside the training header (in a model container).<br>
  * Incremental training is performed, if the input are weka.core.Instance objects and the classifier implements weka.classifiers.UpdateableClassifier.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br/>
- * <p/>
- * Container information:<br/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaModelContainer<br>
+ * <br><br>
+ * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset
- * <p/>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

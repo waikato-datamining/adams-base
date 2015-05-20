@@ -40,19 +40,19 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * Class for running an arbitrary classifier on data that has been passed through an arbitrary filter. Like the classifier, the structure of the filter is based exclusively on the training data and test instances will be processed by the filter without changing their structure.<br/>
- * <br/>
- * In addition to the default FilteredClassifier, one can specify a range of attributes that are to be removed before applying the actual filter. Useful to remove ID attributes, without having to nest another FilteredClassifier.<br/>
- * <br/>
- * The meta-classifier also 'pretends' to be able to:<br/>
- * - handle weighted instances<br/>
- * - produce confidence intervals<br/>
+ * Class for running an arbitrary classifier on data that has been passed through an arbitrary filter. Like the classifier, the structure of the filter is based exclusively on the training data and test instances will be processed by the filter without changing their structure.<br>
+ * <br>
+ * In addition to the default FilteredClassifier, one can specify a range of attributes that are to be removed before applying the actual filter. Useful to remove ID attributes, without having to nest another FilteredClassifier.<br>
+ * <br>
+ * The meta-classifier also 'pretends' to be able to:<br>
+ * - handle weighted instances<br>
+ * - produce confidence intervals<br>
  * This will only lead to reasonable results, of course, if the base classifier supports this functionality.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -R &lt;att list&gt;
  *  The range of attributes to remove. 'first' and 'last' are
@@ -183,10 +183,10 @@ public class FilteredClassifierExt
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -R &lt;att list&gt;
    *  The range of attributes to remove. 'first' and 'last' are

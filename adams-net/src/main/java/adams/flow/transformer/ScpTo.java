@@ -42,26 +42,26 @@ import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
- * Uploads a file to a remote directory using secure copy (SCP).<br/>
- * The file name of a successful upload gets forwarded.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * Uploads a file to a remote directory using secure copy (SCP).<br>
+ * The file name of a successful upload gets forwarded.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  *  (2011). JSch - JSch is a pure Java implementation of SSH2..
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

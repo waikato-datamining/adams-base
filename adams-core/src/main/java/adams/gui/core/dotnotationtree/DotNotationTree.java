@@ -656,7 +656,7 @@ public class DotNotationTree<N extends DotNotationNode>
   
   /**
    * Hook method just after the tree got built and reloaded.
-   * <p/>
+   * <br><br>
    * Default implementation sets the selection mode.
    */
   protected void postBuildTree() {

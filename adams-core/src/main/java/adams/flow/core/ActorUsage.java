@@ -40,14 +40,14 @@ import adams.env.Environment;
 
 /**
  <!-- globalinfo-start -->
- * Traverses directories and loads all flows that it can locate for examination. Generates a spreadsheet containing two columns:<br/>
- * 1. actor class<br/>
+ * Traverses directories and loads all flows that it can locate for examination. Generates a spreadsheet containing two columns:<br>
+ * 1. actor class<br>
  * 2. all flow files that use this actor
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

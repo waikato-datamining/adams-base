@@ -1279,7 +1279,7 @@ public class FlowEditorPanel
 
   /**
    * Returns the current flow.
-   * <p/>
+   * <br><br>
    * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
    * slow for large flows. If you only need the root actor, then use getCurrentRoot()
    * instead.
@@ -1292,7 +1292,7 @@ public class FlowEditorPanel
 
   /**
    * Returns the current flow.
-   * <p/>
+   * <br><br>
    * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
    * slow for large flows. If you only need the root actor, then use getCurrentRoot()
    * instead.

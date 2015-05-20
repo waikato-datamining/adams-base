@@ -154,7 +154,7 @@ public abstract class AbstractChartGenerator
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <p/>
+   * <br><br>
    * The default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
@@ -302,7 +302,7 @@ public abstract class AbstractChartGenerator
 
   /**
    * Checks whether the spreadsheet can be processed.
-   * <p/>
+   * <br><br>
    * Default implementation only ensures that data is present.
    * 
    * @param name	the name of the tab/sheet

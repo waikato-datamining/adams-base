@@ -36,7 +36,7 @@ import adams.gui.visualization.sequence.CirclePaintlet;
 /**
  <!-- globalinfo-start -->
  * Paintlet for painting circles with diameters based on the error at the specified X-Y position. Prefers X errors over Y errors.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Tests the adams.data.statistics.ArrayStandardDeviation class. Run from commandline with: <p/>
+ * Tests the adams.data.statistics.ArrayStandardDeviation class. Run from commandline with: <br><br>
  * java adams.data.statistics.ArrayStandardDeviationTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

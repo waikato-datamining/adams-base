@@ -31,7 +31,7 @@ import adams.gui.dialog.TextDialog;
 /**
  <!-- globalinfo-start -->
  * Simply displays all the hits in a textual format.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

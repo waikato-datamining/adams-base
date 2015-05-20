@@ -41,11 +41,11 @@ import java.util.Vector;
 /**
  <!-- globalinfo-start -->
  * Assume NO MISSING VALUES, all attributes must be  NUMERIC (or 0/1 maybe ...). Simple attribute selection for regression: select k most correlated attrs ...
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -D
  *  If set, classifier is run in debug mode and
@@ -212,7 +212,7 @@ public class Corr
    * Parses a given list of options.
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -D
    *  If set, classifier is run in debug mode and

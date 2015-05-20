@@ -24,7 +24,7 @@ import adams.core.Variables;
 /**
  <!-- globalinfo-start -->
  * Turns any string into a valid variable name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

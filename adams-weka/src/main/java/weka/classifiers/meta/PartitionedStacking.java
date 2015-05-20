@@ -43,13 +43,13 @@ import weka.filters.unsupervised.attribute.Remove;
 
 /**
  <!-- globalinfo-start -->
- * Builds the base-classifiers on subsets of the data defined by ranges that correspond to the base-classifiers. The base-classifiers expect the class attribute to be the last attribute in the range of attributes that is defined for them.<br/>
+ * Builds the base-classifiers on subsets of the data defined by ranges that correspond to the base-classifiers. The base-classifiers expect the class attribute to be the last attribute in the range of attributes that is defined for them.<br>
  * The predictions of the base-classifiers and the original class attribute are used to generated a new meta-dataset that is used as input for the meta-level classifier.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -R &lt;range&gt;
  *  The attributes ranges to use for training the base-classifiers.
@@ -149,10 +149,10 @@ public class PartitionedStacking
   }
 
   /**
-   * Parses a given list of options. <p/>
+   * Parses a given list of options. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -R &lt;range&gt;
    *  The attributes ranges to use for training the base-classifiers.

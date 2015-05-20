@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the CannyEdgeDetection transformer. Run from the command line with: <p/>
+ * Test class for the CannyEdgeDetection transformer. Run from the command line with: <br><br>
  * java adams.data.boofcv.transformer.CannyEdgeDetectionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

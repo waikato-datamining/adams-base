@@ -31,39 +31,39 @@ import adams.parser.actorsuggestion.Scanner;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates rules for suggesting actors.<br/>
- * <br/>
- * It uses the following grammar:<br/>
- * <br/>
- *  expr_list ::= expr_list expr_part | expr_part ;<br/>
- *  expr_part ::= boolexpr : &lt;classname | "classname+options"&gt;;<br/>
- * <br/>
- *  boolexpr ::=    ( boolean )<br/>
- *                | boolean<br/>
- *                | boolexpr AND boolexpr<br/>
- *                | boolexpr OR boolexpr<br/>
- *                | TRUE<br/>
- *                | FALSE<br/>
- *                | NOT boolexpr<br/>
- *                | ISFIRST<br/>
- *                | ISLAST<br/>
- *                | PARENT IS &lt;classname|interface&gt;<br/>
- *                | BEFORE STANDALONE<br/>
- *                | AFTER STANDALONE<br/>
- *                | BEFORE SOURCE<br/>
- *                | AFTER SOURCE<br/>
- *                | BEFORE TRANSFORMER<br/>
- *                | AFTER TRANSFORMER<br/>
- *                | BEFORE SINK<br/>
- *                | AFTER SINK<br/>
- *                | BEFORE &lt;classname|interface&gt;<br/>
- *                | AFTER &lt;classname|interface&gt;<br/>
- *                ;<br/>
- * <p/>
+ * Evaluates rules for suggesting actors.<br>
+ * <br>
+ * It uses the following grammar:<br>
+ * <br>
+ *  expr_list ::= expr_list expr_part | expr_part ;<br>
+ *  expr_part ::= boolexpr : &lt;classname | "classname+options"&gt;;<br>
+ * <br>
+ *  boolexpr ::=    ( boolean )<br>
+ *                | boolean<br>
+ *                | boolexpr AND boolexpr<br>
+ *                | boolexpr OR boolexpr<br>
+ *                | TRUE<br>
+ *                | FALSE<br>
+ *                | NOT boolexpr<br>
+ *                | ISFIRST<br>
+ *                | ISLAST<br>
+ *                | PARENT IS &lt;classname|interface&gt;<br>
+ *                | BEFORE STANDALONE<br>
+ *                | AFTER STANDALONE<br>
+ *                | BEFORE SOURCE<br>
+ *                | AFTER SOURCE<br>
+ *                | BEFORE TRANSFORMER<br>
+ *                | AFTER TRANSFORMER<br>
+ *                | BEFORE SINK<br>
+ *                | AFTER SINK<br>
+ *                | BEFORE &lt;classname|interface&gt;<br>
+ *                | AFTER &lt;classname|interface&gt;<br>
+ *                ;<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

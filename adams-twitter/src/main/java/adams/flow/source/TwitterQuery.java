@@ -32,21 +32,21 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Outputs tweet messages.<br/>
- * For more information on twitter queries, see the following web page:<br/>
+ * Outputs tweet messages.<br>
+ * For more information on twitter queries, see the following web page:<br>
  * http:&#47;&#47;search.twitter.com&#47;operators
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;twitter4j.Status<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;twitter4j.Status<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

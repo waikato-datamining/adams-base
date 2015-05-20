@@ -28,7 +28,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests DatasetLabeler. Run from the command line with: <p/>
+ * Tests DatasetLabeler. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.DatasetLabelerTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

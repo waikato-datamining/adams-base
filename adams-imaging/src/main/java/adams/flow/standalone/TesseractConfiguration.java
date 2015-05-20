@@ -29,17 +29,17 @@ import adams.flow.core.TesseractPageSegmentation;
 
 /**
  <!-- globalinfo-start -->
- * Setup parameters for tesseract.<br/>
- * For more information see:<br/>
+ * Setup parameters for tesseract.<br>
+ * For more information see:<br>
  * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.

@@ -26,7 +26,7 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests RandomRegressionForest. Run from the command line with:<p/>
+ * Tests RandomRegressionForest. Run from the command line with:<br><br>
  * java weka.classifiers.trees.RandomRegressionForestTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

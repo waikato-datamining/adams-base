@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Tests the MOAClustering actor.
- * <p/>
+ * <br><br>
  * Dummy test at the moment.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

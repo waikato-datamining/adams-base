@@ -41,13 +41,13 @@ import adams.core.base.BaseRegExp;
 
 /**
  <!-- globalinfo-start -->
- * With each specified filter, a regular expression is associated that defines the range of attributes to apply the filter to. This is used to configure a weka.filters.unsupervised.attribute.PartitionedMultiFilter internally to filter that actual data.<br/>
+ * With each specified filter, a regular expression is associated that defines the range of attributes to apply the filter to. This is used to configure a weka.filters.unsupervised.attribute.PartitionedMultiFilter internally to filter that actual data.<br>
  * Unused attributes can be discarded as well.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre> -D
  *  Turns on output of debugging information.</pre>
@@ -134,10 +134,10 @@ public class MetaPartitionedMultiFilter
   }
 
   /**
-   * Parses a list of options for this object. <p/>
+   * Parses a list of options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    * 
    * <pre> -D
    *  Turns on output of debugging information.</pre>

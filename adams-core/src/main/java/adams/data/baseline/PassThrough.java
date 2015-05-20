@@ -25,11 +25,11 @@ import adams.data.container.DataContainer;
 /**
  <!-- globalinfo-start -->
  * Dummy scheme, performs no basline correction at all.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D (property: debug)
  * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.

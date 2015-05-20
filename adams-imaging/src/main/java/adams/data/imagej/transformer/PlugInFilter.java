@@ -31,20 +31,20 @@ import adams.data.imagej.ImagePlusContainer;
 
 /**
  <!-- globalinfo-start -->
- * A transformer that allows the use of ImageJ's plug-in filters.<br/>
- * Notes:<br/>
- * - the filter must implement 'ij.plugin.filter.PlugInFilter'<br/>
- * - the filter can pop-up a window to enter additional parameters,<br/>
- *   the first time it is executed, depending on the filter implementation<br/>
- *   (you can suppress this with supplying the options manually)<br/>
- * - the manual options string can be obtained when recording macros<br/>
- *   in ImageJ<br/>
+ * A transformer that allows the use of ImageJ's plug-in filters.<br>
+ * Notes:<br>
+ * - the filter must implement 'ij.plugin.filter.PlugInFilter'<br>
+ * - the filter can pop-up a window to enter additional parameters,<br>
+ *   the first time it is executed, depending on the filter implementation<br>
+ *   (you can suppress this with supplying the options manually)<br>
+ * - the manual options string can be obtained when recording macros<br>
+ *   in ImageJ<br>
  * - the filter must be in the classpath of the application
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
@@ -271,7 +271,7 @@ public class PlugInFilter
 
   /**
    * Performs no transformation at all, just returns the input.
-   * <p/>
+   * <br><br>
    * Automating an ImageJ dialog taken from
    * <a href="http://albert.rierol.net/imagej_programming_tutorials.html#How%20to%20automate%20an%20ImageJ%20dialog" target="_blank">here</a>.
    *

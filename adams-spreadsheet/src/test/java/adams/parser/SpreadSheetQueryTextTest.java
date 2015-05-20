@@ -31,7 +31,7 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.parser.SpreadSheetQueryText class. Run from commandline with: <p/>
+ * Tests the adams.parser.SpreadSheetQueryText class. Run from commandline with: <br><br>
  * java adams.parser.SpreadSheetQueryTextTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

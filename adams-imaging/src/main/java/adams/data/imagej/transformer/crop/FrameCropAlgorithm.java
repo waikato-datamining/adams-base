@@ -29,11 +29,11 @@ import java.awt.Point;
 /**
  <!-- globalinfo-start -->
  * This class crops a framed image. It can't crop a special object!
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -129,7 +129,7 @@ extends AbstractCropAlgorithm {
 
   /**
    * Hook method after the crop happened.
-   * <p/>
+   * <br><br>
    * Sets the top-left and bottom-right corners.
    * 
    * @param img		the cropped

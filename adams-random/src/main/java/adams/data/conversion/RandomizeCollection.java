@@ -28,13 +28,13 @@ import adams.core.Randomizable;
 
 /**
  <!-- globalinfo-start -->
- * Randomizes the order of the elements in the collection.<br/>
+ * Randomizes the order of the elements in the collection.<br>
  * The random number generator gets initialized every time with the given seed.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

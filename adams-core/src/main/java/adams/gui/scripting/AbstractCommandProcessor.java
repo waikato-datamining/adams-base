@@ -363,7 +363,7 @@ public abstract class AbstractCommandProcessor
 
   /**
    * Checks the following requirement.
-   * <p/>
+   * <br><br>
    * Needs to be extended in derived classes.
    *
    * @param requirement	the requirement class that needs to be present
@@ -398,7 +398,7 @@ public abstract class AbstractCommandProcessor
 
   /**
    * Checks whether all the requirements for the scriptlet have been met.
-   * <p/>
+   * <br><br>
    * Needs to be extended in derived classes.
    *
    * @param scriplet	the scriplet to check
@@ -426,7 +426,7 @@ public abstract class AbstractCommandProcessor
 
   /**
    * Performs further setups of the scriptlet.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param scriptlet	the scriptlet to work on

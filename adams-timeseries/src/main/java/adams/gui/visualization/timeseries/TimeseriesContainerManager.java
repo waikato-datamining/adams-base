@@ -170,7 +170,7 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
   /**
    * A post-hook for the add-method, after the container got added to the internal
    * list and the notifications got sent.
-   * <p/>
+   * <br><br>
    * Updates the color, if WHITE.
    *
    * @param c		the container that got added

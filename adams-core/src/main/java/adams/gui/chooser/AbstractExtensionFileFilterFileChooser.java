@@ -36,7 +36,7 @@ import adams.gui.core.ExtensionFileFilter;
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
  * for reports.
- * <p/>
+ * <br><br>
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -393,7 +393,7 @@ public abstract class AbstractExtensionFileFilterFileChooser<F extends Extension
 
   /**
    * Sets the current handler according to the current filefilter.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @see 		#m_CurrentHandler
@@ -403,7 +403,7 @@ public abstract class AbstractExtensionFileFilterFileChooser<F extends Extension
 
   /**
    * Configures the current handler.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    *
    * @param dialogType	the type of dialog to configure for

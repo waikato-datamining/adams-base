@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Performs a flood-fill starting at the given position. The position also determines the color to replace.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

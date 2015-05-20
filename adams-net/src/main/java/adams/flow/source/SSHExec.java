@@ -39,23 +39,23 @@ import com.jcraft.jsch.ChannelExec;
 
 /**
  <!-- globalinfo-start -->
- * Runs a system command via ssh on a remote machine and broadcasts the generated output (stdout or stderr).<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
+ * Runs a system command via ssh on a remote machine and broadcasts the generated output (stdout or stderr).<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
  *  (2011). JSch - JSch is a pure Java implementation of SSH2..
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

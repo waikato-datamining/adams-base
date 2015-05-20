@@ -35,7 +35,7 @@ import boofcv.struct.image.ImageUInt8;
 /**
  <!-- globalinfo-start -->
  * Creates a binary image.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

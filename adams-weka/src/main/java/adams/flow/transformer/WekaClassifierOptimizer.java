@@ -29,22 +29,22 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates a classifier optimizer on an incoming dataset. The best setup (untrained) found is then forwarded.<br/>
+ * Evaluates a classifier optimizer on an incoming dataset. The best setup (untrained) found is then forwarded.<br>
  * At the moment, only GridSearch and MultiSearch are supported as optimizers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;weka.core.Instances<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br/>
- * <p/>
+ * Input/output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Classifier<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

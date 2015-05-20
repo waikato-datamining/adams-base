@@ -200,7 +200,7 @@ public abstract class AbstractLogEntryDialog
   
   /**
    * Hook method before the dialog gets created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param parent	the parent actor
@@ -219,7 +219,7 @@ public abstract class AbstractLogEntryDialog
   
   /**
    * Hook method after the dialog gets created.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    * 
    * @param parent	the parent actor

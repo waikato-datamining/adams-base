@@ -29,7 +29,7 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests LatestRecords. Run from the command line with: <p/>
+ * Tests LatestRecords. Run from the command line with: <br><br>
  * java weka.filters.unsupervised.instance.LatestRecordsTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

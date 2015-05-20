@@ -40,11 +40,11 @@ import adams.core.option.OptionUtils;
 /**
  <!-- globalinfo-start -->
  * A wrapper classifier for the PLSFilter, utilizing the PLSFilter's ability to perform predictions.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -filter &lt;filter specification&gt;
  *  The PLS filter to use. Full classname of filter to include,  followed by scheme options.
@@ -186,10 +186,10 @@ public class PLSClassifierWeighted
   }
 
   /**
-   * Parses the options for this object. <p/>
+   * Parses the options for this object. <br><br>
    *
    <!-- options-start -->
-   * Valid options are: <p/>
+   * Valid options are: <br><br>
    *
    * <pre> -filter &lt;filter specification&gt;
    *  The PLS filter to use. Full classname of filter to include,  followed by scheme options.

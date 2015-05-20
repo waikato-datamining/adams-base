@@ -42,15 +42,15 @@ import weka.filters.UnsupervisedFilter;
 
 /**
  <!-- globalinfo-start -->
- * A filter that applies Savitzky-Golay smoothing.<br/>
- * If a class attribute is present this will not be touched and moved to the end.<br/>
- * <br/>
- * For more information see:<br/>
- * <br/>
- * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br/>
- * <br/>
+ * A filter that applies Savitzky-Golay smoothing.<br>
+ * If a class attribute is present this will not be touched and moved to the end.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
+ * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br>
+ * <br>
  * William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery (1992). Savitzky-Golay Smoothing Filters.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -78,11 +78,11 @@ import weka.filters.UnsupervisedFilter;
  *    PDF = {http://www.nrbook.com/a/bookcpdf/c14-8.pdf}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre> -left &lt;int&gt;
  *  The number of points to the left (&gt;= 0).

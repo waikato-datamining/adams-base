@@ -492,7 +492,7 @@ public class ReportFactory {
 
     /**
      * Returns the provider for accessing the reports in the database.
-     * <p/>
+     * <br><br>
      * The default implementation returns null.
      *
      * @return		the provider

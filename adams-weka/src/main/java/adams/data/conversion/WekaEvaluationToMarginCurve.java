@@ -26,7 +26,7 @@ import weka.core.Instances;
 /**
  <!-- globalinfo-start -->
  * Generates margin-curve data from a WEKA Evaluation object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

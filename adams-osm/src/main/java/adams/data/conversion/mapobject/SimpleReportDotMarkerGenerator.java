@@ -35,7 +35,7 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Generates dot markers.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

@@ -26,11 +26,11 @@ import weka.core.Capabilities;
 /**
  <!-- globalinfo-start -->
  * Performs no scaling at all, just rounds the error to the next integer.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to

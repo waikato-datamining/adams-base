@@ -33,7 +33,7 @@ import adams.gui.flow.provenance.ProvenanceNode;
 
 /**
  * A wrapper object for passing data through the flow.
- * <p/>
+ * <br><br>
  * If enabled, provenance information can be stored as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

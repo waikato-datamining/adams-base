@@ -30,7 +30,7 @@ import adams.data.image.transformer.subimages.PassThrough;
 /**
  <!-- globalinfo-start -->
  * Produces subimages from the input image using the specified generator.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

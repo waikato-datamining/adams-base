@@ -31,7 +31,7 @@ import adams.data.io.input.JAIImageReader;
 /**
  <!-- globalinfo-start -->
  * Java Advanced Imaging (JAI) image writer for: bmp, jpg, jpeg, wbmp, png, gif
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

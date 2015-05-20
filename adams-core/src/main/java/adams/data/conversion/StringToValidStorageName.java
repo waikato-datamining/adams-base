@@ -24,7 +24,7 @@ import adams.flow.control.Storage;
 /**
  <!-- globalinfo-start -->
  * Turns any string into a valid storage name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

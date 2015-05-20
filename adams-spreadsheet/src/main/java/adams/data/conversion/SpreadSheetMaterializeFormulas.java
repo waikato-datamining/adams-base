@@ -31,7 +31,7 @@ import adams.data.spreadsheet.cellfinder.CellRange;
 /**
  <!-- globalinfo-start -->
  * Finds cells with formulas in a spreadsheet and replaces the cell content with the value calculated by the formula.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

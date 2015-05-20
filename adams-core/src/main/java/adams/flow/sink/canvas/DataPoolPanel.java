@@ -106,7 +106,7 @@ public class DataPoolPanel
 
   /**
    * Hook method, called after the update was performed.
-   * <p/>
+   * <br><br>
    * Post-processes the data pool.
    */
   @Override

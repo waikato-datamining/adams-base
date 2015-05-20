@@ -29,11 +29,11 @@ import adams.data.image.BufferedImageHelper;
 
 /**
  <!-- globalinfo-start -->
- * Basic algorithm that is based on the Retinex theory of visual color constancy, which argues that perceived white is associated with the maximum cone signals. This is known as the white world assumption.<br/>
- * <br/>
- * For more information see:<br/>
+ * Basic algorithm that is based on the Retinex theory of visual color constancy, which argues that perceived white is associated with the maximum cone signals. This is known as the white world assumption.<br>
+ * <br>
+ * For more information see:<br>
  * Edmund Y. Lam, George S. K. Fung (2009). Single-Sensor Imaging: Methods and Applications for Digital Cameras.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

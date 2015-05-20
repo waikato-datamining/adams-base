@@ -42,7 +42,7 @@ import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
  * Displays a GenericObjectEditor.
- * <p/>
+ * <br><br>
  * Calling code needs to dispose the dialog manually or enable automatic
  * disposal:
  * <pre>

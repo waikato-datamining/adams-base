@@ -37,7 +37,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Encapsulates a sequence of flow items. The first actor must accept input and the last one must produce output.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

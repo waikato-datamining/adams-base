@@ -29,7 +29,7 @@ import adams.data.report.Report;
 /**
  <!-- globalinfo-start -->
  * Creates features from the incoming reports and turns them into a OpenStreetMap MapObject.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

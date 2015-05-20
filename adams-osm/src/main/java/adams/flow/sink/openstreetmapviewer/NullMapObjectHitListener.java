@@ -27,7 +27,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapObject;
 /**
  <!-- globalinfo-start -->
  * Does not process the hits, simply ignores them.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

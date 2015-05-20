@@ -24,17 +24,17 @@ import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
- * Surrounds a string with quotes (single or double), if necessary due to blanks or other characters (new line, tab) in the string.<br/>
- * <br/>
- * See also:<br/>
- * adams.data.conversion.UnQuote<br/>
- * adams.data.conversion.BackQuote<br/>
+ * Surrounds a string with quotes (single or double), if necessary due to blanks or other characters (new line, tab) in the string.<br>
+ * <br>
+ * See also:<br>
+ * adams.data.conversion.UnQuote<br>
+ * adams.data.conversion.BackQuote<br>
  * adams.data.conversion.UnBackQuote
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

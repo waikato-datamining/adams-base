@@ -25,7 +25,7 @@ import adams.data.jai.transformer.Flip.FlipDirection;
 import adams.env.Environment;
 
 /**
- * Test class for the Flip transformer. Run from the command line with: <p/>
+ * Test class for the Flip transformer. Run from the command line with: <br><br>
  * java adams.data.jai.transformer.FlipTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

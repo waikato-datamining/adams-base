@@ -33,17 +33,17 @@ import java.awt.image.BufferedImage;
 /**
  <!-- globalinfo-start -->
  * Locates objects in an image and forwards an image per located object, cropped around the object.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br/>
- * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

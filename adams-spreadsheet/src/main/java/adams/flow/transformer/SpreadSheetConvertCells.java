@@ -39,18 +39,18 @@ import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
- * Finds cells in a spreadsheet and converts them with a conversion scheme.<br/>
+ * Finds cells in a spreadsheet and converts them with a conversion scheme.<br>
  * If the conversion scheme generates a adams.data.spreadsheet.SpreadSheet object itself, this will get merged with the enclosing one: any additional columns get added and the content of the first row gets added to the row the converted cell belongs to.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

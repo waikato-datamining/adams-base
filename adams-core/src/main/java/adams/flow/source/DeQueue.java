@@ -30,16 +30,16 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Polls the specified queue in internal storage for an item, blocks till an item is available.<br/>
+ * Polls the specified queue in internal storage for an item, blocks till an item is available.<br>
  * NB: The user needs to stop the flow as the DeQueue source will never stop, as it assumes that there will be more data coming through.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

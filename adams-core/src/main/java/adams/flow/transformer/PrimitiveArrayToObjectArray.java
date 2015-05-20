@@ -28,26 +28,26 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Turns a primitive array into an object one. Depending on the input type, either an Integer or Double array.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;byte[]<br/>
- * &nbsp;&nbsp;&nbsp;short[]<br/>
- * &nbsp;&nbsp;&nbsp;int[]<br/>
- * &nbsp;&nbsp;&nbsp;long[]<br/>
- * &nbsp;&nbsp;&nbsp;float[]<br/>
- * &nbsp;&nbsp;&nbsp;double[]<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br/>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;byte[]<br>
+ * &nbsp;&nbsp;&nbsp;short[]<br>
+ * &nbsp;&nbsp;&nbsp;int[]<br>
+ * &nbsp;&nbsp;&nbsp;long[]<br>
+ * &nbsp;&nbsp;&nbsp;float[]<br>
+ * &nbsp;&nbsp;&nbsp;double[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 

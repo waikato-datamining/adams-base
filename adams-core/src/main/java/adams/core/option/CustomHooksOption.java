@@ -91,7 +91,7 @@ public class CustomHooksOption
 
   /**
    * Turns the string into the appropriate object.
-   * <p/>
+   * <br><br>
    * Needs to be overridden if no custom hook available.
    *
    * @param s		the string to parse
@@ -114,7 +114,7 @@ public class CustomHooksOption
 
   /**
    * Returns a string representation of the specified object.
-   * <p/>
+   * <br><br>
    * Needs to be overridden if no custom hook available.
    *
    * @param obj		the object to turn into a string

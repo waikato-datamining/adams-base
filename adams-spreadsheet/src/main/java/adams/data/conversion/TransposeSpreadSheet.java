@@ -25,11 +25,11 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Transposes a spreadsheet, i.e., swaps columns with rows.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <br><br>
  * 
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
@@ -215,7 +215,7 @@ public class TransposeSpreadSheet
   
   /**
    * Performs the actual conversion.
-   * <p/>
+   * <br><br>
    * 
    * Input spreadsheet:
    * <pre>

@@ -78,7 +78,7 @@ public abstract class AbstractDatabaseConnectionBaselineCorrection<T extends Dat
 
   /**
    * Updates the database connection in dependent schemes.
-   * <p/>
+   * <br><br>
    * Default implementation does nothing.
    */
   protected void updateDatabaseConnection() {

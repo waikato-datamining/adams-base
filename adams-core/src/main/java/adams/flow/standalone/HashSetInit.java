@@ -28,7 +28,7 @@ import adams.flow.control.StorageUpdater;
 /**
  <!-- globalinfo-start -->
  * Creates an empty hashset in internal storage under the specified name.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->

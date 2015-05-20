@@ -50,7 +50,7 @@ public abstract class AbstractBaseString
 
   /**
    * Initializes the internal object.
-   * <p/>
+   * <br><br>
    * Uses empty string.
    */
   @Override
@@ -71,7 +71,7 @@ public abstract class AbstractBaseString
 
   /**
    * Converts the string according to the specified conversion.
-   * <p/>
+   * <br><br>
    * Default implementation performs no conversion.
    *
    * @param value	the string to convert
@@ -83,7 +83,7 @@ public abstract class AbstractBaseString
 
   /**
    * Sets the string value.
-   * <p/>
+   * <br><br>
    * Calls <code>convert(String)</code> first before checking validity or
    * setting the value (if valid).
    *

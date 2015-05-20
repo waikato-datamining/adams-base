@@ -27,7 +27,7 @@ import javax.swing.JDialog;
 
 /**
  * A dialog that loads the size and location from the props file automatically.
- * <p/>
+ * <br><br>
  * Calling code needs to dispose the dialog manually or enable automatic
  * disposal:
  * <pre>

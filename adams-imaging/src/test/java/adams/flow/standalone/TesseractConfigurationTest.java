@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
 
 /**
  * Test for TesseractConfiguration actor.
- * <p/>
+ * <br><br>
  * NB: dummy test.
  *
  * @author fracpete

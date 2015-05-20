@@ -24,7 +24,7 @@ import adams.core.net.HtmlUtils;
 /**
  <!-- globalinfo-start -->
  * Turns HTML character entities like '&amp;lt;' into their character representations like '&lt;'.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

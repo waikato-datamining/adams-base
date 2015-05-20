@@ -29,7 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 /**
  <!-- globalinfo-start -->
  * Turns a string representation of a spreadsheet into a SpreadSheet object, using the specified reader setup.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

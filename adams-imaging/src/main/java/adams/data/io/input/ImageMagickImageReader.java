@@ -34,11 +34,11 @@ import adams.data.io.output.ImageMagickImageWriter;
 
 /**
  <!-- globalinfo-start -->
- * ImageMagick image reader for: 3fr, aai, avs, bmp, cin, cmyk, cmyka, cur, cut, dcm, dcx, dds, dpx, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, icb, ico, icon, inline, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, mac, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, psb, psd, ptif, rgb, rgba, sgi, sun, tga, tiff, txt, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv<br/>
- * <br/>
- * For more information see:<br/>
- * http:&#47;&#47;www.imagemagick.org&#47;<br/>
- * <p/>
+ * ImageMagick image reader for: 3fr, aai, avs, bmp, cin, cmyk, cmyka, cur, cut, dcm, dcx, dds, dpx, fax, fits, fts, g3, gif, gif87, gray, group4, hdr, hrz, icb, ico, icon, inline, j2c, j2k, jbg, jbig, jng, jp2, jpc, jpeg, jpg, jpx, mac, miff, mng, mono, mpc, msl, mtv, mvg, otb, palm, pam, pbm, pcd, pcds, pct, pcx, pdb, pfm, pgm, picon, pict, png, png, png, png, pnm, ppm, psb, psd, ptif, rgb, rgba, sgi, sun, tga, tiff, txt, uyvy, vicar, viff, wbmp, x, xbm, xpm, xwd, ycbcr, ycbcra, yuv<br>
+ * <br>
+ * For more information see:<br>
+ * http:&#47;&#47;www.imagemagick.org&#47;<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->

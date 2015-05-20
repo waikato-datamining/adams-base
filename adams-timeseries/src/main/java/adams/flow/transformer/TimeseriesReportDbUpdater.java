@@ -25,21 +25,21 @@ import adams.data.timeseries.Timeseries;
 
 /**
  <!-- globalinfo-start -->
- * Adds all the data to the report of the timeseries passing through that the SQL statement returns.<br/>
- * The {ID} placeholder can be used in the SQL statement to represent the current timeseries' ID.<br/>
- * The following types of SQL statements are supported:<br/>
- * - multiple rows of key-value pairs.<br/>
- * - single row, with the key being the column name.<br/>
- * <p/>
+ * Adds all the data to the report of the timeseries passing through that the SQL statement returns.<br>
+ * The {ID} placeholder can be used in the SQL statement to represent the current timeseries' ID.<br>
+ * The following types of SQL statements are supported:<br>
+ * - multiple rows of key-value pairs.<br>
+ * - single row, with the key being the column name.<br>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.timeseries.Timeseries<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

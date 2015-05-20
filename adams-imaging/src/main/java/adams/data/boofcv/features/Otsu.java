@@ -38,11 +38,11 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
- * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.ImageUInt8).<br/>
- * <br/>
- * For more information see:<br/>
+ * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.ImageUInt8).<br>
+ * <br>
+ * For more information see:<br>
  * WikiPedia. Otsu's method.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
@@ -53,7 +53,7 @@ import boofcv.struct.image.ImageUInt8;
  *    HTTP = {https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Otsu%27s_method}
  * }
  * </pre>
- * <p/>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->

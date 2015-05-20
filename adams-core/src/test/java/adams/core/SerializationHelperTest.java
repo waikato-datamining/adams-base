@@ -34,7 +34,7 @@ import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
 
 /**
- * Tests the adams.core.SerializationHelper class. Run from commandline with: <p/>
+ * Tests the adams.core.SerializationHelper class. Run from commandline with: <br><br>
  * java adams.core.SerializationHelperTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

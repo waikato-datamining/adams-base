@@ -44,19 +44,19 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Emulates a Switch control statement. The first 'condition' that evaluates to 'true' executes the corresponding 'case' actor and stops evaluation of conditions.<br/>
- * A catch-all or default can be set up as well by having one more 'case' than 'conditions' (the last case acts as default).<br/>
+ * Emulates a Switch control statement. The first 'condition' that evaluates to 'true' executes the corresponding 'case' actor and stops evaluation of conditions.<br>
+ * A catch-all or default can be set up as well by having one more 'case' than 'conditions' (the last case acts as default).<br>
  * If any output is generated then this gets recorded and forwarded in the flow.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input&#47;output:<br/>
- * - accepts:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * - generates:<br/>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br/>
- * <p/>
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->

@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 
 /**
- * Test class for the AutoScaler scaler. Run from the command line with: <p/>
+ * Test class for the AutoScaler scaler. Run from the command line with: <br><br>
  * java adams.data.weka.predictions.AutoScalerTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

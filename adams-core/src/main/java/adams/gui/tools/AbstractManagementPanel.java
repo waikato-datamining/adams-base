@@ -461,7 +461,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   
   /**
    * Returns the ID from the object.
-   * <p/>
+   * <br><br>
    * Default implementation only returns and ID if the object implements 
    * {@link IDHandler}.
    * 
