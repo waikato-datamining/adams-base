@@ -15,13 +15,13 @@
 
 /**
  * AbstractImageContainer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
-import java.awt.image.BufferedImage;
-
 import adams.data.container.AbstractSimpleContainer;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Ancestor for various image format containers.
@@ -38,6 +38,12 @@ public abstract class AbstractImageContainer<T>
   
   /** the field for the filename. */
   public final static String FIELD_FILENAME = "Filename";
+
+  /** the field for the path. */
+  public final static String FIELD_PATH = "Path";
+
+  /** the field for the name. */
+  public final static String FIELD_NAME = "Name";
 
   /**
    * Sets the image to use.

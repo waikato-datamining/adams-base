@@ -15,7 +15,7 @@
 
 /**
  * AbstractImageReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -118,6 +118,10 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
       report = cont.getReport();
       report.addField(new Field(AbstractImageContainer.FIELD_FILENAME, DataType.STRING));
       report.setStringValue(AbstractImageContainer.FIELD_FILENAME, file.getAbsolutePath());
+      report.addField(new Field(AbstractImageContainer.FIELD_PATH, DataType.STRING));
+      report.setStringValue(AbstractImageContainer.FIELD_PATH, file.getParentFile().getAbsolutePath());
+      report.addField(new Field(AbstractImageContainer.FIELD_NAME, DataType.STRING));
+      report.setStringValue(AbstractImageContainer.FIELD_NAME, file.getName());
     }
     
     return cont;
