@@ -1064,6 +1064,16 @@ It is possible to suppress regression tests:
 \end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%
+% Temporary files %
+%%%%%%%%%%%%%%%%%%%
+\chapter{Temporary files}
+By default, the \texttt{\${TMP}} placeholder uses the system's temporary
+directory. This is determine by Java's \textit{java.io.tmpdir} system property.
+However, by setting the \textit{adams.io.tmpdir} system property, one can override
+this application-wide. You can use \texttt{-Dadams.io.tmpdir=/some/where/tmp}
+in the command-line as parameter to the JVM.
+
+%%%%%%%%%%%%%%%%%%%
 % Parsers plugins %
 %%%%%%%%%%%%%%%%%%%
 
