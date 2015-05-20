@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetStatistic.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -98,7 +98,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class SpreadSheetStatistic
-  extends AbstractTransformer {
+  extends AbstractSpreadSheetTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -540187402790189753L;
@@ -256,24 +256,6 @@ public class SpreadSheetStatistic
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "statistic", m_Statistic);
-  }
-
-  /**
-   * Returns the class that the consumer accepts.
-   *
-   * @return		<!-- flow-accepts-start -->adams.core.io.SpreadSheet.class<!-- flow-accepts-end -->
-   */
-  public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->adams.core.io.SpreadSheet.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
   }
 
   /**
