@@ -82,7 +82,7 @@ public abstract class AbstractImageSharpnessTestCase
     if (op != null) {
       result = new BufferedImageContainer();
       result.setImage(op.getAsBufferedImage());
-      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, fullName);
+      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

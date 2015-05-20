@@ -90,7 +90,7 @@ public abstract class AbstractBoofCVTransformerTestCase
     if (op != null) {
       result = new BoofCVImageContainer();
       result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, ImageInt16.class));
-      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, fullName);
+      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

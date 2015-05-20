@@ -20,9 +20,6 @@
 
 package adams.data.image;
 
-import java.lang.reflect.Array;
-import java.util.List;
-
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
 import adams.core.base.BaseString;
@@ -34,6 +31,9 @@ import adams.data.featureconverter.SpreadSheet;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * Abstract base class for AbstractImage feature generation.
@@ -249,7 +249,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    * Post-processes the generated row, adding notes and fields.
    * 
    * @param img		the image container
-   * @param inst	the inst to process
+   * @param data	the inst to process
    * @return		the updated instance
    */
   public List<Object> postProcessRow(T img, List<Object> data) {
@@ -291,7 +291,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    * Post-processes the generated rows, adding notes and fields.
    * 
    * @param img		the image container
-   * @param inst	the inst to process
+   * @param data	the inst to process
    * @return		the updated instance
    */
   public List<Object>[] postProcessRows(T img, List<Object>[] data) {
@@ -311,7 +311,6 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    *
    * @param img		the image to process
    * @return		the generated array
-   * @see		#m_Header
    * @see		#createHeader(T)
    */
   public Object[] generate(T img) {

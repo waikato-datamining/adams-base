@@ -15,15 +15,10 @@
 
 /*
  * ImageJReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import ij.IJ;
-import ij.ImagePlus;
-
-import java.io.File;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.imagej.ImageJHelper;
@@ -34,6 +29,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import ij.IJ;
+import ij.ImagePlus;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -163,6 +162,8 @@ public class ImageJReader
       cont = new ImagePlusContainer();
       cont.setImage(img);
       cont.getReport().setStringValue(ImagePlusContainer.FIELD_FILENAME, file.getAbsolutePath());
+      cont.getReport().setStringValue(ImagePlusContainer.FIELD_PATH, file.getParentFile().getAbsolutePath());
+      cont.getReport().setStringValue(ImagePlusContainer.FIELD_NAME, file.getName());
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {

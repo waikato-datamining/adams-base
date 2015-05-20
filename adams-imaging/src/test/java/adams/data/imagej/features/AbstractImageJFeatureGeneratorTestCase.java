@@ -80,7 +80,7 @@ public abstract class AbstractImageJFeatureGeneratorTestCase
     img  = IJ.openImage(fullName);
     result = new ImagePlusContainer();
     result.setImage(img);
-    result.getReport().setStringValue(ImagePlusContainer.FIELD_FILENAME, fullName);
+    result.getReport().setStringValue(ImagePlusContainer.FIELD_FILENAME, filename);
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

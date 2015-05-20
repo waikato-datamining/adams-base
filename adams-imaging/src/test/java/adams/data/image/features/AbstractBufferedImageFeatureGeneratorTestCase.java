@@ -19,10 +19,6 @@
  */
 package adams.data.image.features;
 
-import java.io.File;
-
-import javax.media.jai.RenderedOp;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
@@ -35,6 +31,9 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import javax.media.jai.RenderedOp;
+import java.io.File;
 
 /**
  * Ancestor for test cases tailored for buffered image feature generators.
@@ -83,7 +82,7 @@ public abstract class AbstractBufferedImageFeatureGeneratorTestCase
     if (op != null) {
       result = new BufferedImageContainer();
       result.setImage(op.getAsBufferedImage());
-      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, fullName);
+      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

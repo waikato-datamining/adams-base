@@ -15,16 +15,10 @@
 
 /*
  * JAIReader.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
 
 import adams.core.annotation.DeprecatedClass;
 import adams.core.io.PlaceholderFile;
@@ -37,6 +31,11 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.sink.ImageWriter;
+
+import javax.media.jai.JAI;
+import javax.media.jai.RenderedOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -142,6 +141,7 @@ public class JAIReader
     RenderedOp			op;
     BufferedImage		image;
     BufferedImageContainer	cont;
+    PlaceholderFile		file;
 
     result = null;
 
@@ -158,9 +158,12 @@ public class JAIReader
       cont = new BufferedImageContainer();
       cont.setImage(image);
       if (m_InputToken.getPayload() instanceof File)
-	cont.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, ((File) m_InputToken.getPayload()).getAbsolutePath());
+	file = new PlaceholderFile((File) m_InputToken.getPayload());
       else
-	cont.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, m_InputToken.getPayload().toString());
+	file = new PlaceholderFile((String) m_InputToken.getPayload());
+      cont.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, file.getAbsolutePath());
+      cont.getReport().setStringValue(BufferedImageContainer.FIELD_PATH, file.getParentFile().getAbsolutePath());
+      cont.getReport().setStringValue(BufferedImageContainer.FIELD_NAME, file.getName());
       m_OutputToken = new Token(cont);
     }
     else {

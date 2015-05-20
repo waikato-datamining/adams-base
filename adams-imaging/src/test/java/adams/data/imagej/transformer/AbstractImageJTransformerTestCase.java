@@ -19,13 +19,6 @@
  */
 package adams.data.imagej.transformer;
 
-import ij.IJ;
-import ij.ImagePlus;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
@@ -39,6 +32,12 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import ij.IJ;
+import ij.ImagePlus;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for test cases tailored for ImageJ transformers.
@@ -84,7 +83,7 @@ public abstract class AbstractImageJTransformerTestCase
     img  = IJ.openImage(fullName);
     result = new ImagePlusContainer();
     result.setImage(img);
-    result.getReport().setStringValue(ImagePlusContainer.FIELD_FILENAME, fullName);
+    result.getReport().setStringValue(ImagePlusContainer.FIELD_FILENAME, filename);
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

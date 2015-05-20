@@ -19,10 +19,6 @@
  */
 package adams.data.boofcv.features;
 
-import java.io.File;
-
-import javax.media.jai.RenderedOp;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
@@ -37,6 +33,9 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageInt16;
+
+import javax.media.jai.RenderedOp;
+import java.io.File;
 
 /**
  * Ancestor for test cases tailored for BoofCV flatteners.
@@ -85,7 +84,7 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
     if (op != null) {
       result = new BoofCVImageContainer();
       result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, ImageInt16.class));
-      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, fullName);
+      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

@@ -19,12 +19,6 @@
  */
 package adams.data.image.transformer.subimages;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.media.jai.RenderedOp;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
@@ -40,6 +34,11 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import javax.media.jai.RenderedOp;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for test cases tailored for subimages generators.
@@ -88,7 +87,7 @@ public abstract class AbstractSubImagesGeneratorTestCase
     if (op != null) {
       result = new BufferedImageContainer();
       result.setImage(op.getAsBufferedImage());
-      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, fullName);
+      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 
