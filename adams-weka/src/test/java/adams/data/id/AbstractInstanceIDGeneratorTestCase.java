@@ -68,7 +68,7 @@ public abstract class AbstractInstanceIDGeneratorTestCase<D extends DataContaine
       for (i = 0; i < data.numInstances(); i++) {
 	result[i] = new Instance();
 	result[i].set(data.instance(i));
-	result[i].setID(new TmpFile(filename).getAbsolutePath() + "-" + i);
+	result[i].setID(new TmpFile(filename).getName() + "-" + i);
       }
     }
     catch (Exception e) {
