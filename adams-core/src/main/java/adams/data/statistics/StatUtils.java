@@ -15,17 +15,16 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
 
-import java.util.Arrays;
-
-import org.apache.commons.math3.distribution.NormalDistribution;
-
 import adams.core.Utils;
 import adams.env.Environment;
+import org.apache.commons.math3.distribution.NormalDistribution;
+
+import java.util.Arrays;
 
 /**
  * A statistical helper class.
@@ -745,7 +744,7 @@ public class StatUtils {
    * Returns sum of all the elements in the array.
    *
    * @param array	the array to work on
-   * @return		the biggest value
+   * @return		the sum
    */
   public static double sum(Number[] array) {
     double	result;
@@ -762,7 +761,7 @@ public class StatUtils {
    * Returns sum of all the elements in the array.
    *
    * @param array	the array to work on
-   * @return		the biggest value
+   * @return		the sum
    */
   public static double sum(int[] array) {
     return sum(toNumberArray(array));
@@ -772,10 +771,47 @@ public class StatUtils {
    * Returns sum of all the elements in the array.
    *
    * @param array	the array to work on
-   * @return		the biggest value
+   * @return		the sum
    */
   public static double sum(double[] array) {
     return sum(toNumberArray(array));
+  }
+
+  /**
+   * Returns sum of all the squared elements in the array.
+   *
+   * @param array	the array to work on
+   * @return		the sum
+   */
+  public static double sumOfSquares(Number[] array) {
+    double	result;
+    int		i;
+
+    result = 0.0;
+    for (i = 0; i < array.length; i++)
+      result += array[i].doubleValue() * array[i].doubleValue();
+
+    return result;
+  }
+
+  /**
+   * Returns sum of all the squared elements in the array.
+   *
+   * @param array	the array to work on
+   * @return		the sum
+   */
+  public static double sumOfSquares(int[] array) {
+    return sumOfSquares(toNumberArray(array));
+  }
+
+  /**
+   * Returns sum of all the squared elements in the array.
+   *
+   * @param array	the array to work on
+   * @return		the sum
+   */
+  public static double sumOfSquares(double[] array) {
+    return sumOfSquares(toNumberArray(array));
   }
 
   /**
