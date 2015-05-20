@@ -15,18 +15,19 @@
 
 /*
  * GnuplotScript.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.gnuplot.AbstractScriptlet;
+import adams.core.gnuplot.AbstractScriptletWithDataFile;
+import adams.core.gnuplot.CustomScriptlet;
+import adams.core.io.PlaceholderFile;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-
-import adams.core.gnuplot.AbstractScriptlet;
-import adams.core.gnuplot.CustomScriptlet;
-import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
@@ -153,6 +154,7 @@ public class GnuplotScript
    */
   public void setScriptlet(AbstractScriptlet value) {
     m_Scriptlet = value;
+    m_Scriptlet.setOwner(this);
     reset();
   }
 
@@ -200,7 +202,8 @@ public class GnuplotScript
       file = new PlaceholderFile((String) m_InputToken.getPayload());
     else
       file = new PlaceholderFile((File) m_InputToken.getPayload());
-    m_Scriptlet.setDataFile(file);
+    if (m_Scriptlet instanceof AbstractScriptletWithDataFile)
+      ((AbstractScriptletWithDataFile) m_Scriptlet).setDataFile(file);
     script = m_Scriptlet.generate();
     script = getVariables().expand(script);
     result = m_Scriptlet.getLastError();

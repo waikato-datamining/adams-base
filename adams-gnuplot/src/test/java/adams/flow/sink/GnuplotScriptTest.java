@@ -15,16 +15,11 @@
 
 /*
  * GnuplotScriptTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -32,6 +27,11 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.Platform;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Test for GnuplotScript actor.
@@ -147,6 +147,7 @@ public class GnuplotScriptTest
 
       tmp8[0] = tmp9;
       adams.core.gnuplot.SimplePlot tmp13 = new adams.core.gnuplot.SimplePlot();
+      tmp13.setUseAbsolutePath(false);
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("columns");
       tmp13.setColumns((java.lang.String) argOption.valueOf("8:2"));
 
@@ -160,6 +161,7 @@ public class GnuplotScriptTest
 
       tmp8[1] = tmp13;
       adams.core.gnuplot.SimplePlot tmp17 = new adams.core.gnuplot.SimplePlot();
+      tmp17.setUseAbsolutePath(false);
       argOption = (AbstractArgumentOption) tmp17.getOptionManager().findByProperty("columns");
       tmp17.setColumns((java.lang.String) argOption.valueOf("8:7"));
 

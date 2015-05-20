@@ -15,7 +15,7 @@
 
 /**
  * Pause.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
 
@@ -23,56 +23,28 @@ import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
- * Pauses the plotting.
- * <p/>
+ * Inserts a pause statement to keep the plot open; the use needs to press the enter key in the terminal to close the plot.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-data-file &lt;adams.core.io.PlaceholderFile&gt; (property: dataFile)
- * &nbsp;&nbsp;&nbsp;The data file to use as basis for the plot.
- * &nbsp;&nbsp;&nbsp;default: .
+ * 
+ * <pre>-waiting-period &lt;int&gt; (property: waitingPeriod)
+ * &nbsp;&nbsp;&nbsp;The waiting period in seconds before closing the plot automatically; use 
+ * &nbsp;&nbsp;&nbsp;-1 to keep open indefinitely.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
- * <pre>-terminal &lt;java.lang.String&gt; (property: terminal)
- * &nbsp;&nbsp;&nbsp;The terminal to use: e.g., 'x11', 'gif', 'png', 'svg'; for any terminal
- * &nbsp;&nbsp;&nbsp;type apart from 'x11', an output file needs to be supplied.
- * &nbsp;&nbsp;&nbsp;default: x11
+ * 
+ * <pre>-message &lt;java.lang.String&gt; (property: message)
+ * &nbsp;&nbsp;&nbsp;The message to output in the terminal when pausing, ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
- * &nbsp;&nbsp;&nbsp;The output file to use if terminal other than 'x11' is used.
- * &nbsp;&nbsp;&nbsp;default: .
- * </pre>
- *
- * <pre>-title &lt;java.lang.String&gt; (property: title)
- * &nbsp;&nbsp;&nbsp;The title to use for the plot.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-x-label &lt;java.lang.String&gt; (property: XLabel)
- * &nbsp;&nbsp;&nbsp;The title for the X axis; gets ignored if empty.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-y-label &lt;java.lang.String&gt; (property: YLabel)
- * &nbsp;&nbsp;&nbsp;The title for the Y axis; gets ignored if empty.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-z-label &lt;java.lang.String&gt; (property: ZLabel)
- * &nbsp;&nbsp;&nbsp;The title for the Z axis; gets ignored if empty.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

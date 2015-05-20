@@ -15,12 +15,12 @@
 
 /**
  * AbstractScriptlet.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
 
-import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for scriplets that generate Gnuplot scripts (or parts of it).
@@ -34,25 +34,14 @@ public abstract class AbstractScriptlet
   /** for serialization. */
   private static final long serialVersionUID = 8269710957096517396L;
 
+  /** the owning actor. */
+  protected Actor m_Owner;
+
   /** the character for comments in Gnuplot scripts. */
   public final static String COMMENT = "#";
 
-  /** the data file to use. */
-  protected PlaceholderFile m_DataFile;
-
   /** stores the error message if the check failed. */
   protected String m_LastError;
-  
-  /**
-   * Adds options to the internal list of options.
-   */
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "data-file", "dataFile",
-	    new PlaceholderFile("."));
-  }
 
   /**
    * Resets the scriptlet.
@@ -64,32 +53,21 @@ public abstract class AbstractScriptlet
   }
 
   /**
-   * Sets the data file to use.
+   * Sets the owning actor.
    *
-   * @param value	the data file
+   * @param value	the owner
    */
-  public void setDataFile(PlaceholderFile value) {
-    m_DataFile = value;
-    reset();
+  public void setOwner(Actor value) {
+    m_Owner = value;
   }
 
   /**
-   * Returns the data file in use.
+   * Returns the owning actor.
    *
-   * @return		the data file
+   * @return		the owner
    */
-  public PlaceholderFile getDataFile() {
-    return m_DataFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   *         		displaying in the explorer/experimenter gui
-   */
-  public String dataFileTipText() {
-    return "The data file to use as basis for the plot.";
+  public Actor getOwner() {
+    return m_Owner;
   }
 
   /**
@@ -113,17 +91,13 @@ public abstract class AbstractScriptlet
   /**
    * Hook method for performing checks.
    * <p/>
-   * Default implementation only checks whether the data file is available.
+   * Default implementation does nothing, only warns if not owner set.
    *
    * @return		null if all checks passed, otherwise error message
    */
   public String check() {
-    if (!m_DataFile.exists())
-      return "Data file '" + m_DataFile + "' does not exist!";
-
-    if (!m_DataFile.isFile())
-      return "'" + m_DataFile + "' is not a file?";
-
+    if (getOwner() == null)
+      getLogger().warning("No owning actor set!");
     return null;
   }
 

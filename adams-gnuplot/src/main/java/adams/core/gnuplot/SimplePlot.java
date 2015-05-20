@@ -15,7 +15,7 @@
 
 /**
  * SimpleLinePlot.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
 
@@ -26,40 +26,47 @@ import adams.core.option.AbstractOption;
 /**
  <!-- globalinfo-start -->
  * For simple plots, like line plots.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-data-file &lt;adams.core.io.PlaceholderFile&gt; (property: dataFile)
  * &nbsp;&nbsp;&nbsp;The data file to use as basis for the plot.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
+ * <pre>-use-absolute-path &lt;boolean&gt; (property: useAbsolutePath)
+ * &nbsp;&nbsp;&nbsp;If enabled, the absolute path of the data file is used, otherwise just its 
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  * <pre>-cols &lt;java.lang.String&gt; (property: columns)
  * &nbsp;&nbsp;&nbsp;The columns to use in the plot.
  * &nbsp;&nbsp;&nbsp;default: 1:2
  * </pre>
- *
- * <pre>-plot-type &lt;lines|points|linespoints|impulses|dots|steps|fsteps|histeps|errorbars|xerrorbars|yerrorbars|xyerrorbars|errorlines|xerrorlines|yerrorlines|xyerrorlines|boxes|filledcurves|boxerrorbars|boxxyerrorbars|financebars|candlesticks|vectors&gt; (property: plotType)
+ * 
+ * <pre>-plot-type &lt;LINES|POINTS|LINESPOINTS|IMPULSES|DOTS|STEPS|FSTEPS|HISTEPS|ERRORBARS|XERRORBARS|YERRORBARS|XYERRORBARS|ERRORLINES|XERRORLINES|YERRORLINES|XYERRORLINES|BOXES|FILLEDCURVES|BOXERRORBARS|BOXXYERRORBARS|FINANCEBARDS|CANDELSTICKS|VECTORS&gt; (property: plotType)
  * &nbsp;&nbsp;&nbsp;The plot type to use.
  * &nbsp;&nbsp;&nbsp;default: LINES
  * </pre>
- *
+ * 
  * <pre>-plot-name &lt;java.lang.String&gt; (property: plotName)
  * &nbsp;&nbsp;&nbsp;The name to use for the plot in the key; gnuplot default is used if empty;
  * &nbsp;&nbsp;&nbsp; use 'notitle' to suppress title.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
+ * <pre>-first-plot &lt;boolean&gt; (property: firstPlot)
+ * &nbsp;&nbsp;&nbsp;If enabled, the plot is assumed to be the first plot.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -358,7 +365,7 @@ public class SimplePlot
     else
       result.append("replot");
     result.append(" ");
-    result.append("\"" + getDataFile().getAbsolutePath() + "\"");
+    result.append("\"" + getActualDataFile() + "\"");
     result.append(" ");
     result.append("using " + m_Columns);
     result.append(" ");

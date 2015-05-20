@@ -15,7 +15,7 @@
 
 /**
  * CustomScriptlet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
 
@@ -23,25 +23,21 @@ import adams.core.base.BaseText;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to enter a custom Gnuplot script snippet.
- * <p/>
+ * Allows the user to enter a custom Gnuplot script snippet. Variables get expanded if an owner is set.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-script &lt;adams.core.base.BaseText&gt; (property: script)
  * &nbsp;&nbsp;&nbsp;The custom script code.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -62,7 +58,9 @@ public class CustomScriptlet
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Allows the user to enter a custom Gnuplot script snippet.";
+    return
+      "Allows the user to enter a custom Gnuplot script snippet. "
+	+ "Variables get expanded if an owner is set.";
   }
 
   /**
@@ -111,6 +109,9 @@ public class CustomScriptlet
    * @return		the script code, null in case of an error
    */
   protected String doGenerate() {
-    return m_Script.getValue();
+    if (getOwner() != null)
+      return getOwner().getVariables().expand(m_Script.getValue());
+    else
+      return m_Script.getValue();
   }
 }

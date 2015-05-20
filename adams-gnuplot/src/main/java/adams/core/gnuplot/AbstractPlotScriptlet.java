@@ -15,7 +15,7 @@
 
 /**
  * AbstractPlotScriptlet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
 
@@ -26,7 +26,7 @@ package adams.core.gnuplot;
  * @version $Revision$
  */
 public abstract class AbstractPlotScriptlet
-  extends AbstractScriptlet {
+  extends AbstractScriptletWithDataFile {
 
   /** for serialization. */
   private static final long serialVersionUID = 8856618164829129380L;

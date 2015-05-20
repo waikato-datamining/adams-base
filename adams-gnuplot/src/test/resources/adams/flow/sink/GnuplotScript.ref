@@ -7,10 +7,10 @@ set ylabel "input variables"
 clear
 
 # adams.core.gnuplot.SimplePlot
-plot "/tmp/out.data" using 8:2 title "speed1 vs t20bolt" with points
+plot "out.data" using 8:2 title "speed1 vs t20bolt" with points
 
 # adams.core.gnuplot.SimplePlot
-replot "/tmp/out.data" using 8:7 title "time vs t20bolt" with points
+replot "out.data" using 8:7 title "time vs t20bolt" with points
 
 # adams.core.gnuplot.Pause
 pause 5 "Press <Enter> to close the plot..."
