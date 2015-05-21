@@ -15,10 +15,17 @@
 
 /**
  * ApplicationMenu.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
+import adams.core.Properties;
+import adams.core.logging.LoggingObject;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -28,14 +35,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-
-import adams.core.Properties;
-import adams.core.logging.LoggingObject;
-import adams.gui.core.GUIHelper;
 
 /**
  * Generates the menu for the application frame.
@@ -231,6 +230,7 @@ public class ApplicationMenu
     boolean[]		separators;
     boolean		added;
     JMenu		menu;
+    HashSet<String>	listAdded;
     HashSet<String>	additional;
     List<String>	additionalList;
     Enumeration<String>	keys;
@@ -252,7 +252,8 @@ public class ApplicationMenu
     mnemonics        = GUIHelper.getMnemonics(items);
     menus            = new JMenu[items.length];
     separators       = new boolean[items.length];
-    indexToolsMenu = -1;
+    indexToolsMenu   = -1;
+    listAdded        = new HashSet<>();
     for (i = 0; i < items.length; i++) {
       if (items[i].length() == 0)
 	continue;
@@ -286,6 +287,9 @@ public class ApplicationMenu
 	  try {
 	    classname = items[n];
 	    title     = null;
+	    if (listAdded.contains(classname))
+	      continue;
+	    listAdded.add(classname);
 	    if (classname.indexOf(SEPARATOR) > -1) {
 	      title     = classname.substring(classname.indexOf(SEPARATOR) + 1);
 	      classname = classname.substring(0, classname.indexOf(SEPARATOR));
