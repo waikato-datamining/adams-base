@@ -90,33 +90,6 @@ public class ArrayLinearRegression<T extends Number>
   }
 
   /**
-   * Calculates the slope and intercept between the two arrays.
-   *
-   * @param x		the first array, representing the X values
-   * @param y		the second array, representing the Y values
-   * @return		intercept/slope
-   */
-  protected double[] linearRegression(Number[] x, Number[] y) {
-    double[]	xTimesY;
-    int		i;
-    int		n;
-    double	a;
-    double	b;
-
-    n      = x.length;
-    xTimesY = new double[n];
-    for (i = 0; i < n; i++)
-      xTimesY[i] = x[i].doubleValue() * y[i].doubleValue();
-
-    a = (StatUtils.sum(y) * StatUtils.sumOfSquares(x) - StatUtils.sum(x) * StatUtils.sum(xTimesY))
-        / (n * (StatUtils.sumOfSquares(x)) - Math.pow(StatUtils.sum(x), 2));
-    b = (n * StatUtils.sum(xTimesY) - StatUtils.sum(x) * StatUtils.sum(y))
-        / (n * StatUtils.sumOfSquares(x) - Math.pow(StatUtils.sum(x), 2));
-
-    return new double[]{a, b};
-  }
-
-  /**
    * Generates the actual result.
    *
    * @return		the generated result
@@ -138,7 +111,7 @@ public class ArrayLinearRegression<T extends Number>
 	result.setHeader(1, "slope");
       }
 
-      lr = linearRegression(get(0), get(i));
+      lr = StatUtils.linearRegression(get(0), get(i));
       result.setCell(0, (i - 1)*2 + 0, lr[0]);
       result.setCell(0, (i - 1)*2 + 1, lr[1]);
     }

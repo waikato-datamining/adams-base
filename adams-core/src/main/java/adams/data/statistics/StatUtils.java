@@ -1433,6 +1433,44 @@ public class StatUtils {
   }
 
   /**
+   * Calculates the slope and intercept between the two arrays.
+   *
+   * @param x		the first array, representing the X values
+   * @param y		the second array, representing the Y values
+   * @return		intercept/slope
+   */
+  public static double[] linearRegression(Number[] x, Number[] y) {
+    return linearRegression(toDoubleArray(x), toDoubleArray(y));
+  }
+
+  /**
+   * Calculates the slope and intercept between the two arrays.
+   *
+   * @param x		the first array, representing the X values
+   * @param y		the second array, representing the Y values
+   * @return		intercept/slope
+   */
+  public static double[] linearRegression(double[] x, double[] y) {
+    double[]	xTimesY;
+    int		i;
+    int		n;
+    double	a;
+    double	b;
+
+    n      = x.length;
+    xTimesY = new double[n];
+    for (i = 0; i < n; i++)
+      xTimesY[i] = x[i] * y[i];
+
+    a = (StatUtils.sum(y) * StatUtils.sumOfSquares(x) - StatUtils.sum(x) * StatUtils.sum(xTimesY))
+        / (n * (StatUtils.sumOfSquares(x)) - Math.pow(StatUtils.sum(x), 2));
+    b = (n * StatUtils.sum(xTimesY) - StatUtils.sum(x) * StatUtils.sum(y))
+        / (n * StatUtils.sumOfSquares(x) - Math.pow(StatUtils.sum(x), 2));
+
+    return new double[]{a, b};
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
