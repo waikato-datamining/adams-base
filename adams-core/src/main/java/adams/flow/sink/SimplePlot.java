@@ -49,6 +49,7 @@ import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CirclePaintlet;
+import adams.gui.visualization.sequence.NullPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -157,6 +158,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
  * </pre>
  * 
+ * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
+ * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
+ * </pre>
+ * 
  * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
  * &nbsp;&nbsp;&nbsp;The action to use for mouse clicks on the canvas.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
@@ -203,6 +209,9 @@ public class SimplePlot
 
   /** the paintlet to use for painting the XY data. */
   protected XYSequencePaintlet m_Paintlet;
+
+  /** the overlay paintlet to use for painting the overlays. */
+  protected XYSequencePaintlet m_OverlayPaintlet;
 
   /** the color provider to use. */
   protected AbstractColorProvider m_ColorProvider;
@@ -253,28 +262,32 @@ public class SimplePlot
       new CirclePaintlet());
 
     m_OptionManager.add(
-	    "mouse-click-action", "mouseClickAction",
-	    new NullClickAction());
+      "overlay-paintlet", "overlayPaintlet",
+      new NullPaintlet());
 
     m_OptionManager.add(
-	    "color-provider", "colorProvider",
-	    new DefaultColorProvider());
+      "mouse-click-action", "mouseClickAction",
+      new NullClickAction());
 
     m_OptionManager.add(
-	    "title", "title",
-	    "Plot");
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	    "axis-x", "axisX",
-	    getDefaultAxisX());
+      "title", "title",
+      "Plot");
 
     m_OptionManager.add(
-	    "axis-y", "axisY",
-	    getDefaultAxisY());
+      "axis-x", "axisX",
+      getDefaultAxisX());
 
     m_OptionManager.add(
-	    "output", "outputFile",
-	    getDefaultOutputFile());
+      "axis-y", "axisY",
+      getDefaultAxisY());
+
+    m_OptionManager.add(
+      "output", "outputFile",
+      getDefaultOutputFile());
   }
 
   /**
@@ -356,6 +369,35 @@ public class SimplePlot
    */
   public String paintletTipText() {
     return "The paintlet to use for painting the data.";
+  }
+
+  /**
+   * Sets the overlay paintlet to use.
+   *
+   * @param value 	the paintlet
+   */
+  public void setOverlayPaintlet(XYSequencePaintlet value) {
+    m_OverlayPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the overlay paintlet to use.
+   *
+   * @return 		the paintlet
+   */
+  public XYSequencePaintlet getOverlayPaintlet() {
+    return m_OverlayPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlayPaintletTipText() {
+    return "The paintlet to use for painting the overlay data (if any).";
   }
 
   /**
@@ -619,6 +661,8 @@ public class SimplePlot
     result = new SequencePlotterPanel(getTitle());
     result.setPaintlet(getPaintlet());
     ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    result.setOverlayPaintlet(getOverlayPaintlet());
+    ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
@@ -845,10 +889,12 @@ public class SimplePlot
         super.initGUI();
 	m_PlotUpdater = new SimplePlotUpdater();
 	((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
-        m_Panel = new SequencePlotterPanel(getTitle());
+	m_Panel = new SequencePlotterPanel(getTitle());
         m_Panel.setPaintlet(getPaintlet());
         ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SimplePlot.this);
         m_Panel.setMouseClickAction(m_MouseClickAction);
+	m_Panel.setOverlayPaintlet(getOverlayPaintlet());
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SimplePlot.this);
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
         m_Panel.setColorProvider(m_ColorProvider);
