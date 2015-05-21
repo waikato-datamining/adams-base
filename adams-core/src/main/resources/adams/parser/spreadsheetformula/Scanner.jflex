@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.spreadsheetformula;
@@ -125,6 +125,8 @@ import java.io.*;
   "countif" { return sf.newSymbol("CountIf", sym.COUNTIF); }
   "countblank" { return sf.newSymbol("CountBlank", sym.COUNTBLANK); }
   "sumif" { return sf.newSymbol("SumIf", sym.SUMIF); }
+  "intercept" { return sf.newSymbol("Intercept", sym.INTERCEPT); }
+  "slope" { return sf.newSymbol("Slope", sym.SLOPE); }
   "now" { return sf.newSymbol("Now", sym.NOW); }
   "today" { return sf.newSymbol("Today", sym.TODAY); }
   "year" { return sf.newSymbol("Year", sym.YEAR); }

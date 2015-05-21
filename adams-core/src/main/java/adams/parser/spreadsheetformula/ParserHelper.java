@@ -15,19 +15,21 @@
 
 /**
  * ParserHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetformula;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
+import adams.data.statistics.ArrayLinearRegression;
 import adams.data.statistics.StatUtils;
 import adams.parser.SpreadSheetFormula;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Helper class for spreadsheet formulas.
@@ -481,8 +483,8 @@ public class ParserHelper
    * @param fromCell 	the top-left cell
    * @param toCell 	the bottom-right cell
    * @param value 	the expression to evaluate or value to look for
-   * @param fromSum 	the top-left cell to sum up
-   * @param toSum 	the bottom-right cell to sum up
+   * @param fromCell 	the top-left cell to sum up
+   * @param toCell 	the bottom-right cell to sum up
    * @return 		the sum
    * @throws Exception 	if cell location cannot be parsed
    */
@@ -609,7 +611,6 @@ public class ParserHelper
    *
    * @param fromCell 	the top-left cell
    * @param toCell 	the bottom-right cell
-   * @param value 	the boolean value to look for
    * @return 		the count
    * @throws Exception if cell location cannot be parsed
    */
@@ -628,5 +629,65 @@ public class ParserHelper
     }
     
     return result;
+  }
+
+  /**
+   * Calculates the intercept or slope of linear regression for a range of cells.
+   *
+   * @param fromCellY 	the top-left cell of Y
+   * @param toCellY 	the bottom-right cell of Y
+   * @param fromCellX 	the top-left cell of X
+   * @param toCellX 	the bottom-right cell of X
+   * @return 		the standard deviation
+   * @throws Exception 	if cell location cannot be parsed
+   */
+  public Double linearRegression(boolean intercept, String fromCellY, String toCellY, String fromCellX, String toCellX) throws Exception {
+    Double[]				x;
+    Double[]				y;
+    ArrayLinearRegression<Double>	lr;
+    StatisticContainer 			cont;
+
+    x = rangeToDoubleArray(fromCellX, toCellX);
+    y = rangeToDoubleArray(fromCellY, toCellY);
+    if (x.length != y.length)
+      throw new IllegalArgumentException("Intercept: X and Y must have same length: " + x.length + " != " + y.length);
+
+    lr = new ArrayLinearRegression<>();
+    lr.add(x);
+    lr.add(y);
+    cont = lr.calculate();
+
+    if (intercept)
+      return (Double) cont.getCell(0, 0);
+    else
+      return (Double) cont.getCell(0, 1);
+  }
+
+  /**
+   * Calculates the intercept of linear regression for a range of cells.
+   *
+   * @param fromCellY 	the top-left cell of Y
+   * @param toCellY 	the bottom-right cell of Y
+   * @param fromCellX 	the top-left cell of X
+   * @param toCellX 	the bottom-right cell of X
+   * @return 		the standard deviation
+   * @throws Exception 	if cell location cannot be parsed
+   */
+  public Double intercept(String fromCellY, String toCellY, String fromCellX, String toCellX) throws Exception {
+    return linearRegression(true, fromCellY, toCellY, fromCellX, toCellX);
+  }
+
+  /**
+   * Calculates the slope of linear regression for a range of cells.
+   *
+   * @param fromCellY 	the top-left cell of Y
+   * @param toCellY 	the bottom-right cell of Y
+   * @param fromCellX 	the top-left cell of X
+   * @param toCellX 	the bottom-right cell of X
+   * @return 		the standard deviation
+   * @throws Exception 	if cell location cannot be parsed
+   */
+  public Double slope(String fromCellY, String toCellY, String fromCellX, String toCellX) throws Exception {
+    return linearRegression(false, fromCellY, toCellY, fromCellX, toCellX);
   }
 }

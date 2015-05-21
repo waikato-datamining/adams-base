@@ -15,23 +15,23 @@
 
 /*
  * SpreadSheetFormula.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.logging.Level;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.parser.spreadsheetformula.Parser;
 import adams.parser.spreadsheetformula.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -106,6 +106,8 @@ import adams.parser.spreadsheetformula.Scanner;
  *               | countif ( cell1 : cell2 ; expr )<br>
  *               | sumif ( cell1 : cell2 ; expr )<br>
  *               | sumif ( cell1 : cell2 ; expr : sumCell1 : sumCell2 )<br>
+ *               | intercept ( cellY1 : cellY2 ; cellX1 : cellX2 )<br>
+ *               | slope ( cellY1 : cellY2 ; cellX1 : cellX2 )<br>
  *               | countblank ( cell1 : cell2 )<br>
  *               | year ( expr | cell )<br>
  *               | month ( expr | cell )<br>
@@ -214,7 +216,7 @@ import adams.parser.spreadsheetformula.Scanner;
  * 
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The spreadsheet reader for loading the spreadsheet to work on.
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
  * </pre>
  * 
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
@@ -346,6 +348,8 @@ public class SpreadSheetFormula
       + "              | countif ( cell1 : cell2 ; expr )\n"
       + "              | sumif ( cell1 : cell2 ; expr )\n"
       + "              | sumif ( cell1 : cell2 ; expr : sumCell1 : sumCell2 )\n"
+      + "              | intercept ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
+      + "              | slope ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
       + "              | countblank ( cell1 : cell2 )\n"
       + "              | year ( expr | cell )\n"
       + "              | month ( expr | cell )\n"
