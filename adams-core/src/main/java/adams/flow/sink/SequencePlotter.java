@@ -54,6 +54,7 @@ import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CirclePaintlet;
+import adams.gui.visualization.sequence.NullPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -64,7 +65,10 @@ import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
- * Actor that plots sequences over time.
+ * Actor that plots sequences over time.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.sink.SimplePlot
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -103,6 +107,11 @@ import java.util.HashMap;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -161,7 +170,7 @@ import java.util.HashMap;
  * 
  * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
  * </pre>
  * 
  * <pre>-marker-paintlet &lt;adams.flow.sink.sequenceplotter.MarkerPaintlet&gt; (property: markerPaintlet)
@@ -191,7 +200,7 @@ import java.util.HashMap;
  * 
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The title for the border around the plot.
- * &nbsp;&nbsp;&nbsp;default: X-Y Sequences
+ * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
  * 
  * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
@@ -308,7 +317,7 @@ public class SequencePlotter
 
     m_OptionManager.add(
 	    "overlay-paintlet", "overlayPaintlet",
-	    new CirclePaintlet());
+	    new NullPaintlet());
 
     m_OptionManager.add(
 	    "marker-paintlet", "markerPaintlet",
@@ -332,7 +341,7 @@ public class SequencePlotter
 
     m_OptionManager.add(
 	    "title", "title",
-	    "X-Y Sequences");
+	    "Plot");
 
     m_OptionManager.add(
 	    "axis-x", "axisX",
