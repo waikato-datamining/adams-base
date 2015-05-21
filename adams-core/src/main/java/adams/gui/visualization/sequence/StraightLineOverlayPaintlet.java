@@ -15,12 +15,9 @@
 
 /**
  * StraightLineOverlayPaintlet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
-
-import java.awt.Color;
-import java.awt.Graphics;
 
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
@@ -28,6 +25,9 @@ import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -142,7 +142,7 @@ public class StraightLineOverlayPaintlet
    * 			displaying in the GUI or for listing the options.
    */
   public String XFactorTipText() {
-    return "The factor to multiply the X values with to determine the inclination of the line.";
+    return "The factor to multiply the X values with to determine the inclination of the line ('slope').";
   }
 
   /**
@@ -171,7 +171,7 @@ public class StraightLineOverlayPaintlet
    * 			displaying in the GUI or for listing the options.
    */
   public String YOffsetTipText() {
-    return "The offset to shift the line up or down on the Y axis.";
+    return "The offset to shift the line up or down on the Y axis ('intercept').";
   }
 
   /**
