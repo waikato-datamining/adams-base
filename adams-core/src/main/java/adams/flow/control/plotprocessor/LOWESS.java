@@ -15,20 +15,18 @@
 
 /**
  * LOWESS.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
+
+import adams.core.QuickInfoHelper;
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformationHandler;
+import adams.flow.container.SequencePlotterContainer;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.QuickInfoHelper;
-import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
-import adams.core.TechnicalInformationHandler;
-import adams.flow.container.SequencePlotterContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -119,7 +117,7 @@ public class LOWESS
     
     m_Data.clear();
   }
-  
+
   /**
    * Returns an instance of a TechnicalInformation object, containing
    * detailed information about the technical background of this class,
@@ -128,14 +126,7 @@ public class LOWESS
    * @return 		the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-    
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.AUTHOR, "WikiPedia");
-    result.setValue(Field.TITLE, "Local Regression");
-    result.setValue(Field.URL, "http://en.wikipedia.org/wiki/Lowess");
-    
-    return result;
+    return adams.data.utils.LOWESS.getTechnicalInformation();
   }
 
   /**

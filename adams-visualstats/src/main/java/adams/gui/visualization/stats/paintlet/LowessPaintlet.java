@@ -15,10 +15,16 @@
 
 /*
  * LowessPaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
+
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformationHandler;
+import adams.data.utils.LOWESS;
+import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.GUIHelper;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
@@ -26,10 +32,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.data.utils.LOWESS;
-import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -71,7 +73,7 @@ import adams.gui.core.GUIHelper;
  */
 public class LowessPaintlet
   extends AbstractOverlayPaintlet
-  implements AntiAliasingSupporter {
+  implements AntiAliasingSupporter, TechnicalInformationHandler {
 
   /** for serializing */
   private static final long serialVersionUID = 1643339689654875242L;
@@ -92,7 +94,10 @@ public class LowessPaintlet
    */
   @Override
   public String globalInfo() {
-    return "Paintlet for drawing the lowess overlay.";
+    return
+      "Paintlet for drawing the lowess overlay.\n\n"
+      + "For more information see:\n"
+      + getTechnicalInformation().toString();
   }
 
   /**
@@ -109,6 +114,17 @@ public class LowessPaintlet
     m_OptionManager.add(
 	    "anti-aliasing-enabled", "antiAliasingEnabled",
 	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public TechnicalInformation getTechnicalInformation() {
+    return LOWESS.getTechnicalInformation();
   }
 
   @Override

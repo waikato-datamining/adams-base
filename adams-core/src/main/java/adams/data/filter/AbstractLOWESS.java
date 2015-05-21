@@ -15,22 +15,20 @@
 
 /*
  * AbstractLOWESS.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 import adams.data.utils.LOWESS;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract ancestor for LOWESS filters.
@@ -71,14 +69,7 @@ public abstract class AbstractLOWESS<T extends DataContainer>
    * @return 		the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-    
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.AUTHOR, "WikiPedia");
-    result.setValue(Field.TITLE, "Local Regression");
-    result.setValue(Field.URL, "http://en.wikipedia.org/wiki/Lowess");
-    
-    return result;
+    return LOWESS.getTechnicalInformation();
   }
 
   /**

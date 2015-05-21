@@ -15,18 +15,21 @@
 
 /**
  * LOWESS.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.utils;
+
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.logging.LoggingHelper;
+import adams.gui.core.Point2DComparator;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-
-import adams.core.logging.LoggingHelper;
-import adams.gui.core.Point2DComparator;
 
 /**
  * A helper class for LOWESS.
@@ -153,6 +156,24 @@ public class LOWESS {
       result.add(new Point2D.Double(closest.get(0).getX(), val));
     }
     
+    return result;
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public static TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "WikiPedia");
+    result.setValue(Field.TITLE, "Local Regression");
+    result.setValue(Field.URL, "http://en.wikipedia.org/wiki/Lowess");
+
     return result;
   }
 }
