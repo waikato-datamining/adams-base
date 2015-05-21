@@ -15,20 +15,19 @@
 
 /*
  * AbstractSavitzkyGolay.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
+import adams.data.utils.SavitzkyGolay;
+
+import java.util.List;
 
 /**
  * Abstract ancestor for Savitzky-Golay filters.
@@ -80,30 +79,7 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
    * @return 		the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-    TechnicalInformation 	additional;
-
-    result = new TechnicalInformation(Type.ARTICLE);
-    result.setValue(Field.AUTHOR, "A. Savitzky and Marcel J.E. Golay");
-    result.setValue(Field.TITLE, "Smoothing and Differentiation of Data by Simplified Least Squares Procedures");
-    result.setValue(Field.JOURNAL, "Analytical Chemistry");
-    result.setValue(Field.VOLUME, "36");
-    result.setValue(Field.PAGES, "1627-1639");
-    result.setValue(Field.YEAR, "1964");
-    result.setValue(Field.HTTP, "http://dx.doi.org/10.1021/ac60214a047");
-
-    additional = result.add(Type.INBOOK);
-    additional.setValue(Field.AUTHOR, "William H. Press and Saul A. Teukolsky and William T. Vetterling and Brian P. Flannery");
-    additional.setValue(Field.SERIES, "Numerical Recipes in C");
-    additional.setValue(Field.EDITION, "Second");
-    additional.setValue(Field.TITLE, "Savitzky-Golay Smoothing Filters");
-    additional.setValue(Field.CHAPTER, "14.8");
-    additional.setValue(Field.PAGES, "650-655");
-    additional.setValue(Field.YEAR, "1992");
-    additional.setValue(Field.PUBLISHER, "Cambridge University Press");
-    additional.setValue(Field.PDF, "http://www.nrbook.com/a/bookcpdf/c14-8.pdf");
-
-    return result;
+    return SavitzkyGolay.getTechnicalInformation();
   }
 
   /**
