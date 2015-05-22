@@ -98,6 +98,12 @@
       <artifactId>weka-dev</artifactId>
       <version>${weka.version}</version>
       <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+          <artifactId>java-cup</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
