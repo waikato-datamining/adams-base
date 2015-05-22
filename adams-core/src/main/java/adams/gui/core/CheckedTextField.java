@@ -137,6 +137,9 @@ public class CheckedTextField
   /** the default foreground color. */
   protected Color m_DefaultForeground;
 
+  /** whether to ignore updates to the text. */
+  protected boolean m_IgnoreUpdates;
+
   /**
    * Constructs a new <code>TextField</code>.  A default model is created,
    * the initial string is <code>null</code>,
@@ -363,15 +366,18 @@ public class CheckedTextField
     getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
-	indicateValidity();
+	if (!m_IgnoreUpdates)
+	  indicateValidity();
       }
       @Override
       public void removeUpdate(DocumentEvent e) {
-	indicateValidity();
+	if (!m_IgnoreUpdates)
+	  indicateValidity();
       }
       @Override
       public void changedUpdate(DocumentEvent e) {
-	indicateValidity();
+	if (!m_IgnoreUpdates)
+	  indicateValidity();
       }
     });
   }
@@ -383,7 +389,7 @@ public class CheckedTextField
    */
   public void setCheckModel(AbstractCheckModel value) {
     m_CheckModel = value;
-    if (!m_CheckModel.isValid(getText()))
+    if (!m_CheckModel.isValid(getTextUnchecked()))
       setText(m_CheckModel.getDefaultValue());
   }
 
@@ -404,14 +410,13 @@ public class CheckedTextField
   public void setText(String t) {
     if (m_CheckModel != null) {
       if (m_CheckModel.isValid(t))
-	super.setText(t);
+	setTextUnchecked(t);
       else
-	super.setText(m_CheckModel.getDefaultValue());
+	setTextUnchecked(m_CheckModel.getDefaultValue());
     }
     else {
-      super.setText(t);
+      setTextUnchecked(t);
     }
-    indicateValidity();
   }
 
   /**
@@ -420,8 +425,10 @@ public class CheckedTextField
    * @param value	the text to set
    */
   protected void setTextUnchecked(String value) {
+    m_IgnoreUpdates = true;
     super.setText(value);
     indicateValidity();
+    m_IgnoreUpdates = false;
   }
 
   /**

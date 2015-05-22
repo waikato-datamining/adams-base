@@ -15,13 +15,13 @@
 
 /**
  * NumberTextField.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import javax.swing.text.Document;
-
 import adams.core.Utils;
+
+import javax.swing.text.Document;
 
 /**
  * A specialized text field for numbers.
@@ -142,10 +142,12 @@ public class NumberTextField
 	    Long.parseLong(text);
 	    break;
 	  case FLOAT:
-	    Utils.toFloat(text);
+	    if (Utils.toFloat(text) == null)
+	      throw new IllegalArgumentException();
 	    break;
 	  case DOUBLE:
-	    Utils.toDouble(text);
+	    if (Utils.toDouble(text) == null)
+	      throw new IllegalArgumentException();
 	    break;
 	  default:
 	    throw new IllegalArgumentException("Unhandled number type: " + m_Type);
@@ -243,9 +245,10 @@ public class NumberTextField
 	  value = Utils.toDouble(text);
 	}
 	catch (Exception e) {
-	  result = false;
-	  value  = Double.NaN;
+	  value = null;
 	}
+
+	result = (value != null);
 
 	if (result) {
 	  if ((m_LowerBound != null) && (value.doubleValue() < m_LowerBound.doubleValue()))
