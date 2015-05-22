@@ -22,18 +22,25 @@ package weka.gui.visualize.plugins;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.Properties;
+import adams.core.Range;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CrossHitDetector;
 import adams.gui.visualization.sequence.CrossPaintlet;
+import adams.gui.visualization.sequence.LinearRegressionOverlayPaintlet;
+import adams.gui.visualization.sequence.MultiPaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -41,7 +48,6 @@ import weka.core.Instances;
 import javax.swing.JMenuItem;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,13 +87,41 @@ public class FixedClassifierErrorsPlot
     JMenuItem result = new JMenuItem("Classifier errors plot (fixed)");
     result.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+	// prompt user
+	PropertiesParameterPanel params = new PropertiesParameterPanel();
+	params.addPropertyType("Meta-data", PropertyType.RANGE);
+	params.setHelp("Meta-data", "The range of attribiutes to add as meta-data; " + new Range().getExample());
+	params.addPropertyType("Trend", PropertyType.BOOLEAN);
+	params.setHelp("Trend", "Adds a best fit line using linear regression");
+	Properties props = new Properties();
+	props.setProperty("Meta-data", Range.ALL);
+	props.setBoolean("Trend", true);
+	params.setPropertyOrder(new String[]{"Meta-data", "Trend"});
+	params.setProperties(props);
+	ApprovalDialog dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
+	dialog.setTitle("Plot setup");
+	dialog.getContentPane().add(params, BorderLayout.CENTER);
+	dialog.pack();
+	dialog.setLocationRelativeTo(null);
+	dialog.setVisible(true);
+	if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+	  return;
+	props = params.getProperties();
+	Range range = new Range(props.getProperty("Meta-data"));
+	range.setMax(predInst.numAttributes());
+	boolean trend = props.getBoolean("Trend");
 	// setup plot
 	SequencePlotterPanel plot = new SequencePlotterPanel(predInst.relationName());
 	CrossPaintlet paintlet = new CrossPaintlet();
 	plot.setPaintlet(paintlet);
+	MultiPaintlet overlays = new MultiPaintlet();
 	StraightLineOverlayPaintlet overlay = new StraightLineOverlayPaintlet();
 	overlay.setColor(Color.RED.darker());
-	plot.setOverlayPaintlet(overlay);
+	if (trend)
+	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, new LinearRegressionOverlayPaintlet()});
+	else
+	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay});
+	plot.setOverlayPaintlet(overlays);
 	FancyTickGenerator tick = new FancyTickGenerator();
 	tick.setNumTicks(10);
 	ViewDataClickAction action = new ViewDataClickAction();
@@ -117,6 +151,8 @@ public class FixedClassifierErrorsPlot
 	    for (int n = 0; n < predInst.numAttributes(); n++) {
 	      if ((n == predInst.classIndex()) || (n == predInst.classIndex() - 1))
 		continue;
+	      if (!range.isInRange(n))
+		continue;
 	      String name = "Att-" + predInst.attribute(n).name();
 	      int type = predInst.attribute(n).type();
 	      if (inst.isMissing(n))
@@ -137,7 +173,7 @@ public class FixedClassifierErrorsPlot
 	SequencePlotContainer cont = (SequencePlotContainer) plot.getContainerManager().newContainer(seq);
 	plot.getContainerManager().add(cont);
 	// display
-	ApprovalDialog dialog = new ApprovalDialog((Dialog) null, ModalityType.MODELESS);
+	dialog = new ApprovalDialog(null, ModalityType.MODELESS);
 	dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle("Absolute classifier errors");
 	dialog.getContentPane().add(plot, BorderLayout.CENTER);
