@@ -135,6 +135,10 @@ public class PropertiesParameterPanel
     BLANK_SEPARATED_LIST_FIXED,
     /** Object editor. */
     OBJECT_EDITOR,
+    /** index (1-based). */
+    INDEX,
+    /** range (1-based). */
+    RANGE
   }
   
   /** the panel for the properties. */
@@ -619,6 +623,8 @@ public class PropertiesParameterPanel
     DateChooserPanel		datePanel;
     DateTimeChooserPanel	dateTimePanel;
     AbstractChooserPanel	chooserPanel;
+    IndexTextField		indexText;
+    RangeTextField		rangeText;
     JComboBox			combo;
     String			help;
     BaseString[]		list;
@@ -816,6 +822,20 @@ public class PropertiesParameterPanel
 	  }
 	  addProperty(key, label, chooserPanel);
 	  break;
+	case INDEX:
+	  indexText = new IndexTextField();
+	  indexText.setColumns(20);
+	  indexText.setText(value.getProperty(key));
+	  indexText.setToolTipText(help);
+	  addProperty(key, label, indexText);
+	  break;
+	case RANGE:
+	  rangeText = new RangeTextField();
+	  rangeText.setColumns(20);
+	  rangeText.setText(value.getProperty(key));
+	  rangeText.setToolTipText(help);
+	  addProperty(key, label, rangeText);
+	  break;
 	default:
 	  throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
       }
@@ -849,6 +869,8 @@ public class PropertiesParameterPanel
     DateTimeChooserPanel	dateTimePanel;
     AbstractChooserPanel	chooserPanel;
     BaseTextChooserPanel        textPanel;
+    IndexTextField		indexText;
+    RangeTextField		rangeText;
     JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
@@ -945,6 +967,14 @@ public class PropertiesParameterPanel
 	case OBJECT_EDITOR:
 	  chooserPanel = (AbstractChooserPanel) comp;
 	  result.setProperty(key, OptionUtils.getCommandLine(chooserPanel.getCurrent()));
+	  break;
+	case INDEX:
+	  indexText = (IndexTextField) comp;
+	  result.setProperty(key, indexText.getText());
+	  break;
+	case RANGE:
+	  rangeText = (RangeTextField) comp;
+	  result.setProperty(key, rangeText.getText());
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
