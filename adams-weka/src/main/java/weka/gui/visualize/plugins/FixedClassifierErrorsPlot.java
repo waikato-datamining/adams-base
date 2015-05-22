@@ -117,8 +117,10 @@ public class FixedClassifierErrorsPlot
 	MultiPaintlet overlays = new MultiPaintlet();
 	StraightLineOverlayPaintlet overlay = new StraightLineOverlayPaintlet();
 	overlay.setColor(Color.RED.darker());
+	LinearRegressionOverlayPaintlet lrPaintlet = new LinearRegressionOverlayPaintlet();
+	lrPaintlet.setOutputSlopeIntercept(true);
 	if (trend)
-	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, new LinearRegressionOverlayPaintlet()});
+	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, lrPaintlet});
 	else
 	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay});
 	plot.setOverlayPaintlet(overlays);
