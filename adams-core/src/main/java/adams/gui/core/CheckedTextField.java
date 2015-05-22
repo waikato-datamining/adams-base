@@ -15,14 +15,17 @@
 
 /**
  * CheckedTextField.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.io.Serializable;
-
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import java.awt.Color;
+import java.io.Serializable;
 
 /**
  * A specialized JTextField that takes a check model as input.
@@ -131,6 +134,9 @@ public class CheckedTextField
   /** the checkmodel in use. */
   protected AbstractCheckModel m_CheckModel;
 
+  /** the default foreground color. */
+  protected Color m_DefaultForeground;
+
   /**
    * Constructs a new <code>TextField</code>.  A default model is created,
    * the initial string is <code>null</code>,
@@ -140,6 +146,8 @@ public class CheckedTextField
   public CheckedTextField() {
     super();
     initialize();
+    initializeCheckModel();
+    indicateValidity();
   }
 
   /**
@@ -153,10 +161,11 @@ public class CheckedTextField
   public CheckedTextField(AbstractCheckModel model) {
     this();
     setCheckModel(model);
+    indicateValidity();
   }
 
   /**
-   * Constructs a new <code>TextField</code> initialized with the
+   * Constructs a new <code>TextField</code> initializeCheckModeld with the
    * specified text. A default model is created and the number of
    * columns is 0.
    * A StringCheckModel is used.
@@ -166,10 +175,12 @@ public class CheckedTextField
   public CheckedTextField(String text) {
     super(text);
     initialize();
+    initializeCheckModel();
+    indicateValidity();
   }
 
   /**
-   * Constructs a new <code>TextField</code> initialized with the
+   * Constructs a new <code>TextField</code> initializeCheckModeld with the
    * specified text. A default model is created and the number of
    * columns is 0.
    * The provided model is used.
@@ -180,6 +191,7 @@ public class CheckedTextField
   public CheckedTextField(String text, AbstractCheckModel model) {
     this(text);
     setCheckModel(model);
+    indicateValidity();
   }
 
   /**
@@ -197,6 +209,8 @@ public class CheckedTextField
   public CheckedTextField(int columns) {
     super(columns);
     initialize();
+    initializeCheckModel();
+    indicateValidity();
   }
 
   /**
@@ -215,10 +229,11 @@ public class CheckedTextField
   public CheckedTextField(int columns, AbstractCheckModel model) {
     this(columns);
     setCheckModel(model);
+    indicateValidity();
   }
 
   /**
-   * Constructs a new <code>TextField</code> initialized with the
+   * Constructs a new <code>TextField</code> initializeCheckModeld with the
    * specified text and columns.  A default model is created.
    * A StringCheckModel is used.
    *
@@ -231,10 +246,12 @@ public class CheckedTextField
   public CheckedTextField(String text, int columns) {
     super(text, columns);
     initialize();
+    initializeCheckModel();
+    indicateValidity();
   }
 
   /**
-   * Constructs a new <code>TextField</code> initialized with the
+   * Constructs a new <code>TextField</code> initializeCheckModeld with the
    * specified text and columns.  A default model is created.
    * The provided model is used.
    *
@@ -248,6 +265,7 @@ public class CheckedTextField
   public CheckedTextField(String text, int columns, AbstractCheckModel model) {
     this(text, columns);
     setCheckModel(model);
+    indicateValidity();
   }
 
   /**
@@ -269,6 +287,8 @@ public class CheckedTextField
   public CheckedTextField(Document doc, String text, int columns) {
     super(doc, text, columns);
     initialize();
+    initializeCheckModel();
+    indicateValidity();
   }
 
   /**
@@ -291,6 +311,7 @@ public class CheckedTextField
   public CheckedTextField(Document doc, String text, int columns, AbstractCheckModel model) {
     this(doc, text, columns);
     setCheckModel(model);
+    indicateValidity();
   }
 
   /**
@@ -303,10 +324,56 @@ public class CheckedTextField
   }
 
   /**
-   * Initializes the text field.
+   * Initializes the model.
+   */
+  protected void initializeCheckModel() {
+    m_CheckModel = getDefaultCheckModel();
+  }
+
+  /**
+   * Initializes the members.
    */
   protected void initialize() {
-    m_CheckModel = getDefaultCheckModel();
+    m_DefaultForeground = getForeground();
+    attachListener();
+  }
+
+  /**
+   * Updates the color of the border, indicating with RED if the
+   * input is invalid.
+   */
+  protected void indicateValidity() {
+    Color	newColor;
+
+    if (getCheckModel() == null)
+      return;
+
+    if (getCheckModel().isValid(getTextUnchecked()))
+      newColor = m_DefaultForeground;
+    else
+      newColor = Color.RED;
+
+    setForeground(newColor);
+  }
+
+  /**
+   * Adds a listener to the document that checks the correctness of the input.
+   */
+  protected void attachListener() {
+    getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	indicateValidity();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	indicateValidity();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	indicateValidity();
+      }
+    });
   }
 
   /**
@@ -344,6 +411,7 @@ public class CheckedTextField
     else {
       super.setText(t);
     }
+    indicateValidity();
   }
 
   /**
@@ -353,6 +421,7 @@ public class CheckedTextField
    */
   protected void setTextUnchecked(String value) {
     super.setText(value);
+    indicateValidity();
   }
 
   /**
@@ -376,6 +445,7 @@ public class CheckedTextField
   public String getText() {
     String	result;
     String	current;
+    Runnable	run;
 
     current = getTextUnchecked();
 
@@ -385,8 +455,15 @@ public class CheckedTextField
       }
       else {
 	result = m_CheckModel.getDefaultValue();
+	final String s = result;
 	// fix input as well
-	setTextUnchecked(result);
+	run = new Runnable() {
+	  @Override
+	  public void run() {
+	    setTextUnchecked(s);
+	  }
+	};
+	SwingUtilities.invokeLater(run);
       }
     }
     else {
@@ -408,8 +485,10 @@ public class CheckedTextField
     result  = true;
     current = getTextUnchecked();
 
-    if ((m_CheckModel != null) && (current != null))
+    if ((m_CheckModel != null) && (current != null)) {
       result = m_CheckModel.isValid(current);
+      indicateValidity();
+    }
 
     return result;
   }
