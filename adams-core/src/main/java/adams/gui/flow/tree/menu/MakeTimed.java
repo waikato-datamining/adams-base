@@ -19,10 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.tree.TreePath;
-
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorWithTimedEquivalent;
 import adams.gui.core.BaseTreeNode;
@@ -31,6 +27,9 @@ import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
+
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
 
 /**
  * For turning an actor into its timed equivalent.
@@ -51,7 +50,7 @@ public class MakeTimed
    */
   @Override
   protected String getTitle() {
-    return "Make timed...";
+    return "Make timed";
   }
 
   /**
