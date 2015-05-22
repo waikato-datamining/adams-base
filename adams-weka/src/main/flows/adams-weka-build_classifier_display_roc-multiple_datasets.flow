@@ -1,0 +1,138 @@
+# Project: adams
+# Date: 2015-05-23 08:16:07
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Cross-validates a classifier on selected datasets and displays the ROC curves.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.WekaClassifierSetup
+					-classifier
+						weka.classifiers.bayes.NaiveBayes
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-file-chooser-title
+			Select datasets
+			-extension
+			arff
+			-initial-file
+			${EXAMPLE_FLOWS}/data/anneal.arff
+			-initial-file
+			${EXAMPLE_FLOWS}/data/iris.arff
+			-initial-file
+			${EXAMPLE_FLOWS}/data/labor.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.control.Tee
+			-annotation
+			get relation name for plot
+			-tee
+				adams.flow.transformer.WekaInstancesInfo
+					-type
+					RELATION_NAME
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					relname
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.transformer.WekaCrossValidationEvaluator
+			-output
+				weka.classifiers.evaluation.output.prediction.Null
+	-actor
+		adams.flow.control.ContainerValuePicker
+			-annotation
+			extract Evaluation object from container
+			-value
+			Evaluation
+			-switch-outputs
+			true
+	-actor
+		adams.flow.transformer.Convert
+			-annotation
+			generate threshold curve data for first class label
+			-conversion
+				adams.data.conversion.WekaEvaluationToThresholdCurve
+	-actor
+		adams.flow.transformer.Convert
+			-name
+			Convert-1
+			-annotation
+			turn Weka Instances into a spreadsheet
+			-conversion
+				adams.data.conversion.WekaInstancesToSpreadSheet
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
+					-spreadsheet-type
+						adams.data.spreadsheet.SpreadSheet
+	-actor
+		adams.flow.transformer.SpreadSheetPlotGenerator
+			-generator
+				adams.flow.transformer.plotgenerator.XYPlotGenerator
+					-columns
+					True Positive Rate
+					-x-column
+					False Positive Rate
+	-actor
+		adams.flow.control.PlotContainerUpdater
+			-annotation
+			set the relationname as plot name
+			-actor
+				adams.flow.transformer.StringReplace
+					-find
+					.*
+					-replace
+					@{relname}
+			-container-value
+			PLOT_NAME
+	-actor
+		adams.flow.sink.SimplePlot
+			-writer
+				adams.gui.print.NullWriter
+			-paintlet
+				adams.gui.visualization.sequence.LinePaintlet
+					-paint-all
+					true
+			-overlay-paintlet
+				adams.gui.visualization.sequence.NullPaintlet
+			-mouse-click-action
+				adams.flow.sink.sequenceplotter.NullClickAction
+			-color-provider
+				adams.gui.visualization.core.DefaultColorProvider
+			-axis-x
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					False Positive Rate
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+							-num-ticks
+							20
+					-nth-value
+					2
+					-width
+					40
+					-custom-format
+					0.00
+			-axis-y
+				adams.gui.visualization.core.AxisPanelOptions
+					-label
+					True Positive Rate
+					-tick-generator
+						adams.gui.visualization.core.axis.FancyTickGenerator
+					-nth-value
+					2
+					-width
+					60
+					-custom-format
+					0.0
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
