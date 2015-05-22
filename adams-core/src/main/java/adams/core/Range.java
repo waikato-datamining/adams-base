@@ -564,7 +564,7 @@ public class Range
   }
   
   /**
-   * Cleanses the given string. Only allows "first", "last", ",", "-" and numbers.
+   * Cleanses the given string.
    *
    * @param s		the string to clean
    * @return		the cleansed string, "" if invalid one provided
@@ -1125,9 +1125,11 @@ public class Range
   public static boolean isValid(String s, int max) {
     boolean		result;
     Range		range;
+    String		clean;
 
-    range  = new Range(s);
-    result = s.equals(range.getRange()) && (range.getRange().length() > 0);
+    range  = new Range(s, max);
+    clean  = range.clean(s);
+    result = s.equals(clean) && (clean.length() > 0);
 
     return result;
   }
