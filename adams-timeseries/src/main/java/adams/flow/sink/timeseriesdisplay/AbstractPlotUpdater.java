@@ -24,7 +24,7 @@ import adams.gui.visualization.timeseries.TimeseriesContainer;
 import adams.gui.visualization.timeseries.TimeseriesPanel;
 
 /**
- * Ancestor for classes that determine when to update the sequence plotter, 
+ * Ancestor for classes that determine when to update the timeseries display,
  * i.e., repaint all of it.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
