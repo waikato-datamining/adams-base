@@ -25,7 +25,10 @@ import adams.data.timeseries.PeriodicityType;
 import adams.data.timeseries.Timeseries;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.DataPlotUpdaterHandler;
 import adams.flow.core.Token;
+import adams.flow.sink.timeseriesdisplay.AbstractPlotUpdater;
+import adams.flow.sink.timeseriesdisplay.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -173,6 +176,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-plot-updater &lt;adams.flow.sink.timeseriesdisplay.AbstractPlotUpdater&gt; (property: plotUpdater)
+ * &nbsp;&nbsp;&nbsp;The updating strategy for the plot.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.timeseriesdisplay.SimplePlotUpdater
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -180,7 +188,7 @@ import java.util.List;
  */
 public class TimeseriesDisplay
   extends AbstractGraphicalDisplay 
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, DataPlotUpdaterHandler<AbstractPlotUpdater> {
 
   /**
    * Panel to be used in {@link DisplayPanelManager} sink.
@@ -206,9 +214,9 @@ public class TimeseriesDisplay
       setLayout(new BorderLayout());
       m_Panel = new TimeseriesExplorer();
       m_Panel.getTimeseriesPanel().setTimeseriesPaintlet((AbstractTimeseriesPaintlet) m_Paintlet.shallowCopy(true));
-      ((TimeseriesContainerManager) m_Panel.getContainerManager()).setAllowRemoval(false);
-      ((TimeseriesContainerManager) m_Panel.getContainerManager()).setReloadable(false);
-      ((TimeseriesContainerManager) m_Panel.getContainerManager()).setColorProvider(m_ColorProvider.shallowCopy());
+      m_Panel.getContainerManager().setAllowRemoval(false);
+      m_Panel.getContainerManager().setReloadable(false);
+      m_Panel.getContainerManager().setColorProvider(m_ColorProvider.shallowCopy());
       m_Panel.getTimeseriesPanel().setSidePanelVisible(m_ShowSidePanel);
       m_Panel.setZoomOverviewPanelVisible(m_ZoomOverview);
       m_AxisX.configure(m_Panel.getTimeseriesPanel().getPlot(), Axis.BOTTOM);
@@ -223,12 +231,16 @@ public class TimeseriesDisplay
 
     @Override
     public void display(Token token) {
-      Timeseries		ts;
-      TimeseriesContainer	cont;
+      TimeseriesContainer		cont;
+      TimeseriesContainerManager	manager;
 
-      ts   = (Timeseries) token.getPayload();
-      cont = ((TimeseriesContainerManager) m_Panel.getContainerManager()).newContainer(ts);
-      m_Panel.getContainerManager().add(cont);
+      manager = m_Panel.getContainerManager();
+      cont    = manager.newContainer((Timeseries) token.getPayload());
+
+      manager.startUpdate();
+      manager.add(cont);
+
+      m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel(), cont);
     }
 
     @Override
@@ -287,7 +299,10 @@ public class TimeseriesDisplay
 
   /** the paintlets to use as overlay. */
   protected Paintlet[] m_Overlays;
-  
+
+  /** the plot updater to use. */
+  protected AbstractPlotUpdater m_PlotUpdater;
+
   /**
    * Returns a string describing the object.
    *
@@ -332,6 +347,10 @@ public class TimeseriesDisplay
     m_OptionManager.add(
 	    "overlay", "overlays",
 	    new Paintlet[0]);
+
+    m_OptionManager.add(
+	    "plot-updater", "plotUpdater",
+	    new SimplePlotUpdater());
   }
 
   /**
@@ -617,6 +636,35 @@ public class TimeseriesDisplay
   }
 
   /**
+   * Sets the plot updater to use.
+   *
+   * @param value 	the updater
+   */
+  public void setPlotUpdater(AbstractPlotUpdater value) {
+    m_PlotUpdater = value;
+    reset();
+  }
+
+  /**
+   * Returns the plot updater in use.
+   *
+   * @return 		the updater
+   */
+  public AbstractPlotUpdater getPlotUpdater() {
+    return m_PlotUpdater;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotUpdaterTipText() {
+    return "The updating strategy for the plot.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -672,10 +720,24 @@ public class TimeseriesDisplay
    */
   @Override
   protected void display(Token token) {
-    TimeseriesContainer	cont;
+    TimeseriesContainer		cont;
+    TimeseriesContainerManager	manager;
 
-    cont = ((TimeseriesContainerManager) ((TimeseriesExplorer) m_Panel).getContainerManager()).newContainer((Timeseries) token.getPayload());
-    ((TimeseriesExplorer) m_Panel).getContainerManager().add(cont);
+    manager = ((TimeseriesExplorer) m_Panel).getContainerManager();
+    cont    = manager.newContainer((Timeseries) token.getPayload());
+
+    manager.startUpdate();
+    manager.add(cont);
+
+    m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel(), cont);
+  }
+
+  /**
+   * Updates the panel regardless, notifying the listeners.
+   */
+  @Override
+  public void updatePlot() {
+    m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel());
   }
 
   /**

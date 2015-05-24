@@ -15,12 +15,12 @@
 
 /**
  * SimplePlotUpdater.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.sink.sequenceplotter;
+package adams.flow.sink.timeseriesdisplay;
 
-import adams.flow.container.SequencePlotterContainer;
-import adams.flow.container.SequencePlotterContainer.ContentType;
+import adams.gui.visualization.timeseries.TimeseriesContainer;
+import adams.gui.visualization.timeseries.TimeseriesPanel;
 
 /**
  <!-- globalinfo-start -->
@@ -29,16 +29,14 @@ import adams.flow.container.SequencePlotterContainer.ContentType;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-update-interval &lt;int&gt; (property: updateInterval)
- * &nbsp;&nbsp;&nbsp;Specifies the number of tokens after which the display is being updated 
- * &nbsp;&nbsp;&nbsp;(markers excluded); &lt;= 0 means no update until flow finished.
+ * &nbsp;&nbsp;&nbsp;Specifies the number of tokens after which the display is being updated; 
+ * &nbsp;&nbsp;&nbsp;&lt;= 0 means no update until flow finished.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
@@ -126,7 +124,7 @@ public class SimplePlotUpdater
   public String updateIntervalTipText() {
     return 
 	"Specifies the number of tokens after which the "
-	+ "display is being updated (markers excluded); "
+	+ "display is being updated; "
 	+ "<= 0 means no update until flow finished.";
   }
 
@@ -139,12 +137,8 @@ public class SimplePlotUpdater
    * @return		true if the listeners can be notified
    */
   @Override
-  protected boolean canNotify(SequencePlotterPanel panel, SequencePlotterContainer cont) {
-    ContentType		type;
-
-    type = (ContentType) cont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
-    if (type == ContentType.PLOT)
-      m_NumTokensAccepted++;
+  protected boolean canNotify(TimeseriesPanel panel, TimeseriesContainer cont) {
+    m_NumTokensAccepted++;
     
     if (m_UpdateInterval > 0)
       return (m_NumTokensAccepted % m_UpdateInterval == 0);

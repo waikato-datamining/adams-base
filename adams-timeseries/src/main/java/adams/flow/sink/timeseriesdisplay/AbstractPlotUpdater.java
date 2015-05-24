@@ -15,12 +15,13 @@
 
 /**
  * AbstractPlotUpdater.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.sink.sequenceplotter;
+package adams.flow.sink.timeseriesdisplay;
 
-import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.AbstractDataPlotUpdater;
+import adams.gui.visualization.timeseries.TimeseriesContainer;
+import adams.gui.visualization.timeseries.TimeseriesPanel;
 
 /**
  * Ancestor for classes that determine when to update the sequence plotter, 
@@ -30,19 +31,8 @@ import adams.flow.core.AbstractDataPlotUpdater;
  * @version $Revision$
  */
 public abstract class AbstractPlotUpdater
-  extends AbstractDataPlotUpdater<SequencePlotterPanel, SequencePlotterContainer> {
+  extends AbstractDataPlotUpdater<TimeseriesPanel, TimeseriesContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -8785918718996153397L;
-
-  /**
-   * Updates the plotter regardless.
-   * 
-   * @param panel	the plotter to update
-   * @param notify	whether to notify listeners
-   */
-  protected void doUpdate(final SequencePlotterPanel panel, boolean notify) {
-    panel.getMarkerContainerManager().finishUpdate(notify);
-    super.doUpdate(panel, notify);
-  }
 }

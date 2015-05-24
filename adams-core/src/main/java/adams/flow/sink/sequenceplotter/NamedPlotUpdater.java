@@ -146,12 +146,12 @@ public class NamedPlotUpdater
    * Checks whether all conditions are met to notify the listeners for changes
    * in the plot.
    * 
-   * @param plotter	the plotter to potentially update
+   * @param panel	the plotter to potentially update
    * @param cont	the current plot container
    * @return		true if the listeners can be notified
    */
   @Override
-  protected boolean canNotify(SequencePlotterPanel plotter, SequencePlotterContainer cont) {
+  protected boolean canNotify(SequencePlotterPanel panel, SequencePlotterContainer cont) {
     boolean			result;
     String			plotName;
     ContentType			type;

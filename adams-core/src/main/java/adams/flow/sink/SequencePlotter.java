@@ -32,6 +32,7 @@ import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.DataPlotUpdaterHandler;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.AbstractErrorPaintlet;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
@@ -237,7 +238,7 @@ import java.util.HashMap;
  */
 public class SequencePlotter
   extends AbstractGraphicalDisplay 
-  implements DisplayPanelProvider, FileWriter, ClassCrossReference {
+  implements DisplayPanelProvider, FileWriter, ClassCrossReference, DataPlotUpdaterHandler<AbstractPlotUpdater> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
@@ -1123,6 +1124,14 @@ public class SequencePlotter
       m_PostProcessor.postProcess(manager, plotName);
 
     m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
+  }
+
+  /**
+   * Updates the panel regardless, notifying the listeners.
+   */
+  @Override
+  public void updatePlot() {
+    m_PlotUpdater.update((SequencePlotterPanel) getPanel());
   }
 
   /**
