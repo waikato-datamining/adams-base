@@ -27,6 +27,10 @@ adams.flow.source.wekaforecastersetup.AbstractForecasterGenerator=\
 adams.flow.transformer.timeseriessplit.AbstractTimeseriesSplitter=\
   adams.flow.transformer.timeseriessplit
 
+# the plot updaters for the TimeseriesDisplay
+adams.flow.sink.timeseriesdisplay.AbstractPlotUpdater=\
+  adams.flow.sink.timeseriesdisplay
+
 # the paintlets
 adams.gui.visualization.core.Paintlet=\
   adams.gui.visualization.timeseries
