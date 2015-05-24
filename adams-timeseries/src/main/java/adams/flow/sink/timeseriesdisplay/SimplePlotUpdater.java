@@ -24,7 +24,7 @@ import adams.gui.visualization.timeseries.TimeseriesPanel;
 
 /**
  <!-- globalinfo-start -->
- * Updates the flow after the specified number of tokens have been processed.
+ * Updates the display after the specified number of tokens have been processed.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -65,7 +65,7 @@ public class SimplePlotUpdater
    */
   @Override
   public String globalInfo() {
-    return "Updates the flow after the specified number of tokens have been processed.";
+    return "Updates the display after the specified number of tokens have been processed.";
   }
   
   /**
