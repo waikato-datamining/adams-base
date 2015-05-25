@@ -289,14 +289,6 @@ public class SPCUtils {
     }
   }
 
-  public static double[] stats_x_mr_x(float[] data, int size) {
-    return stats_x_mr_x(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_x_mr_x(double[] data, int size) {
-    return stats_x_mr_x(StatUtils.toNumberArray(data), size);
-  }
-
   // http://itl.nist.gov/div898/handbook/pmc/section3/pmc322.htm
   public static double[] stats_x_mr_x(Number[] data, int size) {
     assert(size == 1);
@@ -309,14 +301,6 @@ public class SPCUtils {
     double lcl = center - 3 * sd / d2;
     double ucl = center + 3 * sd / d2;
     return new double[]{center,lcl, ucl};
-  }
-
-  public static double[] stats_x_mr_mr(float[] data, int size) {
-    return stats_x_mr_mr(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_x_mr_mr(double[] data, int size) {
-    return stats_x_mr_mr(StatUtils.toNumberArray(data), size);
   }
 
   public static double[] stats_x_mr_mr(Number[] data, int size) {
@@ -332,14 +316,6 @@ public class SPCUtils {
     return new double[]{center,lcl, ucl};
   }
 
-  public static double[] stats_x_bar_r_x(float[][] data, int size) {
-    return stats_x_bar_r_x(StatUtils.toNumberMatrix(data), size);
-  }
-
-  public static double[] stats_x_bar_r_x(double[][] data, int size) {
-    return stats_x_bar_r_x(StatUtils.toNumberMatrix(data), size);
-  }
-
   // Xbar and R chart
   // Process mean chart
   // http://www.qimacros.com/control-chart-formulas/x-bar-r-chart-formula/
@@ -351,7 +327,7 @@ public class SPCUtils {
     double Rsum = 0;
     for (Number[] xset: data) {
       assert(xset.length == n);
-      Rsum += StatUtils.max(xset).doubleValue() - StatUtils.max(xset).doubleValue();
+      Rsum += StatUtils.max(xset).doubleValue() - StatUtils.min(xset).doubleValue();
     }
     double Rbar = Rsum / data.length;
 
@@ -361,14 +337,6 @@ public class SPCUtils {
     double lcl = center - A2[n] * Rbar;
     double ucl = center + A2[n] * Rbar;
     return new double[]{center,lcl, ucl};
-  }
-
-  public static double[] stats_x_bar_r_r(float[][] data, int size) {
-    return stats_x_bar_r_r(StatUtils.toNumberMatrix(data), size);
-  }
-
-  public static double[] stats_x_bar_r_r(double[][] data, int size) {
-    return stats_x_bar_r_r(StatUtils.toNumberMatrix(data), size);
   }
 
   // Xbar and R chart
@@ -392,14 +360,6 @@ public class SPCUtils {
     return new double[]{center,lcl, ucl};
   }
 
-  public static double[] stats_x_bar_s_x(float[][] data, int size) {
-    return stats_x_bar_s_x(StatUtils.toNumberMatrix(data), size);
-  }
-
-  public static double[] stats_x_bar_s_x(double[][] data, int size) {
-    return stats_x_bar_s_x(StatUtils.toNumberMatrix(data), size);
-  }
-
   // Xbar S chart (average)
   // http://www.qimacros.com/control-chart-formulas/x-bar-s-chart-formula/
   public static double[] stats_x_bar_s_x(Number[][] data, int size) {
@@ -417,14 +377,6 @@ public class SPCUtils {
     double lcl = center - A3[n] * Sbar;
     double ucl = center + A3[n] * Sbar;
     return new double[]{center,lcl, ucl};
-  }
-
-  public static double[] stats_x_bar_s_s(float[][] data, int size) {
-    return stats_x_bar_s_s(StatUtils.toNumberMatrix(data), size);
-  }
-
-  public static double[] stats_x_bar_s_s(double[][] data, int size) {
-    return stats_x_bar_s_s(StatUtils.toNumberMatrix(data), size);
   }
 
   // Xbar S chart (stdev)
@@ -445,14 +397,6 @@ public class SPCUtils {
     return new double[]{center,lcl, ucl};
   }
 
-  public static double[] stats_p(float[] data, int size) {
-    return stats_p(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_p(double[] data, int size) {
-    return stats_p(StatUtils.toNumberArray(data), size);
-  }
-
   // p chart
   // http://www.qimacros.com/control-chart-formulas/p-chart-formula/
   public static double[] stats_p(Number[] data, int size) {
@@ -460,7 +404,7 @@ public class SPCUtils {
     assert(n > 1);
 
     double pbar = (StatUtils.sum(data)) / (double) (n * data.length);
-    double sd = Math.sqrt(pbar * (1 - pbar) / n);
+    double sd = Math.sqrt(pbar * (1 - pbar) / (double) n);
 
     double center = pbar;
     double lcl = center - 3 * sd;
@@ -472,14 +416,6 @@ public class SPCUtils {
     return new double[]{center,lcl, ucl};
   }
 
-  public static double[] stats_np(float[] data, int size) {
-    return stats_np(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_np(double[] data, int size) {
-    return stats_np(StatUtils.toNumberArray(data), size);
-  }
-
   // np chart
   // http://www.qimacros.com/control-chart-formulas/np-chart-formula/
   public static double[] stats_np(Number[] data, int size) {
@@ -487,7 +423,7 @@ public class SPCUtils {
     assert(n > 1);
 
     double pbar = (StatUtils.sum(data)) / (double) (n * data.length);
-    double sd = Math.sqrt(n * pbar * (1 - pbar));
+    double sd = Math.sqrt((double) n * pbar * (1 - pbar));
 
     double center = n * pbar;
     double lcl = center - 3 * sd;
@@ -497,14 +433,6 @@ public class SPCUtils {
     if (ucl > n)
       ucl = n;
     return new double[]{center,lcl, ucl};
-  }
-
-  public static double[] stats_c(float[] data, int size) {
-    return stats_c(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_c(double[] data, int size) {
-    return stats_c(StatUtils.toNumberArray(data), size);
   }
 
   // c chart
@@ -520,14 +448,6 @@ public class SPCUtils {
     return new double[]{center,lcl, ucl};
   }
 
-  public static double[] stats_u(float[] data, int size) {
-    return stats_u(StatUtils.toNumberArray(data), size);
-  }
-
-  public static double[] stats_u(double[] data, int size) {
-    return stats_u(StatUtils.toNumberArray(data), size);
-  }
-
   // u chart
   // http://www.qimacros.com/control-chart-formulas/u-chart-formula/
   public static double[] stats_u(Number[] data, int size) {
@@ -537,10 +457,10 @@ public class SPCUtils {
     double cbar = (StatUtils.sum(data)) / (double) (data.length * n);
 
     double center = cbar;
-    double lcl = center - 3 * Math.sqrt(cbar / n);
+    double lcl = center - 3 * Math.sqrt(cbar / (double) n);
     if (lcl < 0)
       lcl = 0;
-    double ucl = center + 3 * Math.sqrt(cbar / n);
+    double ucl = center + 3 * Math.sqrt(cbar / (double) n);
     return new double[]{center,lcl, ucl};
   }
 
