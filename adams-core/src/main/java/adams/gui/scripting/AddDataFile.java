@@ -19,14 +19,15 @@
  */
 package adams.gui.scripting;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- scriptlet-parameters-start -->
@@ -116,8 +117,8 @@ public class AddDataFile
     }
     catch (Exception e) {
       data   = new ArrayList<DataContainer>();
-      result = "Error reading data: " + e;
-      e.printStackTrace();
+      result = "Error reading data: " + Utils.throwableToString(e);
+      getLogger().severe(result);
     }
 
     if (result == null) {
