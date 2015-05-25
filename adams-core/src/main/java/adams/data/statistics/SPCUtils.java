@@ -16,6 +16,7 @@
 /**
  * SPCUtils.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009 godfryd (Python code)
  */
 
 package adams.data.statistics;
@@ -35,7 +36,8 @@ import gnu.trove.list.array.TDoubleArrayList;
 @MixedCopyright(
   author = "godfryd - https://launchpad.net/~godfryd",
   license = License.MIT,
-  url = "https://launchpad.net/python-spc"
+  url = "https://launchpad.net/python-spc",
+  note = "Original code is in Python"
 )
 public class SPCUtils {
 
