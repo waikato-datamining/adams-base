@@ -767,4 +767,15 @@ public class TimeseriesDisplay
   public boolean displayPanelRequiresScrollPane() {
     return false;
   }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_Panel != null)
+      m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel());
+
+    super.wrapUp();
+  }
 }
