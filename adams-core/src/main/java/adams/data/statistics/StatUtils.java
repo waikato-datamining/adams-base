@@ -1471,6 +1471,447 @@ public class StatUtils {
   }
 
   /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static byte[] flatten(byte[][] matrix) {
+    byte[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new byte[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static short[] flatten(short[][] matrix) {
+    short[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new short[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static int[] flatten(int[][] matrix) {
+    int[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new int[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static long[] flatten(long[][] matrix) {
+    long[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new long[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static float[] flatten(float[][] matrix) {
+    float[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new float[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static double[] flatten(double[][] matrix) {
+    double[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new double[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Converts the matrix into a flat array, row after row.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the matrix as arrawy (row after row)
+   */
+  public static Number[] flatten(Number[][] matrix) {
+    Number[]	result;
+    int		i;
+    int		n;
+    int		len;
+
+    len = 0;
+    for (i = 0; i < matrix.length; i++)
+      len += matrix[i].length;
+
+    result = new Number[len];
+    len    = 0;
+    for (i = 0; i < matrix.length; i++) {
+      for (n = 0; n < matrix[i].length; n++)
+	result[len + n] = matrix[i][n];
+      len += matrix[i].length;
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive bytes.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static byte[][] toByteMatrix(Number[][] matrix) {
+    byte[][]	result;
+    int		i;
+    int		n;
+
+    result = new byte[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new byte[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].byteValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive shorts.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static short[][] toShortMatrix(Number[][] matrix) {
+    short[][]	result;
+    int		i;
+    int		n;
+
+    result = new short[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new short[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].shortValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive ints.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static int[][] toIntMatrix(Number[][] matrix) {
+    int[][]	result;
+    int		i;
+    int		n;
+
+    result = new int[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new int[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].intValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive longs.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static long[][] toLongMatrix(Number[][] matrix) {
+    long[][]	result;
+    int		i;
+    int		n;
+
+    result = new long[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new long[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].longValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive floats.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static float[][] toFloatMatrix(Number[][] matrix) {
+    float[][]	result;
+    int		i;
+    int		n;
+
+    result = new float[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new float[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].floatValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive doubles.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static double[][] toDoubleMatrix(Number[][] matrix) {
+    double[][]	result;
+    int		i;
+    int		n;
+
+    result = new double[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new double[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = matrix[i][n].doubleValue();
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive bytes.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(byte[][] matrix) {
+    Byte[][]	result;
+    int		i;
+    int		n;
+
+    result = new Byte[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Byte[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Byte(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the Number matrix into one consisting of primitive shorts.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(short[][] matrix) {
+    Short[][]	result;
+    int		i;
+    int		n;
+
+    result = new Short[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Short[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Short(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the primitve int matrix into one consisting of Integers.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(int[][] matrix) {
+    Integer[][]	result;
+    int		i;
+    int		n;
+
+    result = new Integer[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Integer[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Integer(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive long matrix into one consisting of Longs.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(long[][] matrix) {
+    Long[][]	result;
+    int		i;
+    int		n;
+
+    result = new Long[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Long[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Long(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive float matrix into one consisting of Floats.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(float[][] matrix) {
+    Float[][]	result;
+    int		i;
+    int		n;
+
+    result = new Float[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Float[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Float(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive double matrix into one consisting of Doubles.
+   *
+   * @param matrix	the matrix to convert
+   * @return		the converted matrix
+   */
+  public static Number[][] toNumberMatrix(double[][] matrix) {
+    Double[][]	result;
+    int		i;
+    int		n;
+
+    result = new Double[matrix.length][];
+    for (i = 0; i < matrix.length; i++) {
+      result[i] = new Double[matrix[i].length];
+      for (n = 0; n < matrix[i].length; n++)
+	result[i][n] = new Double(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
