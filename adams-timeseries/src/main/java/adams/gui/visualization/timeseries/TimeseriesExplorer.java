@@ -15,33 +15,10 @@
 
 /*
  * TimeseriesExplorer.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
@@ -95,6 +72,7 @@ import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.AddDataFile;
+import adams.gui.scripting.AddDataFiles;
 import adams.gui.scripting.ClearData;
 import adams.gui.scripting.DisableUndo;
 import adams.gui.scripting.EnableUndo;
@@ -117,6 +95,29 @@ import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.wizard.DatabaseConnectionPage;
 import adams.gui.wizard.ListPage;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A panel for exploring Timeseries, manipulating them with filters, etc.
@@ -967,6 +968,7 @@ public class TimeseriesExplorer
     int				retVal;
     int				i;
     PlaceholderFile[]		files;
+    List<String>		opts;
     AbstractDataContainerReader	reader;
 
     retVal = m_TimeseriesFileChooser.showOpenDialog(this);
@@ -975,12 +977,20 @@ public class TimeseriesExplorer
 
     files  = m_TimeseriesFileChooser.getSelectedPlaceholderFiles();
     reader = m_TimeseriesFileChooser.getReader();
-    for (i = 0; i < files.length; i++) {
-      reader.setInput(files[i]);
+    if (files.length == 1) {
+      reader.setInput(files[0]);
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
-	  TimeseriesExplorer.this,
-	  AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
+	this, AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
+    }
+    else {
+      opts = new ArrayList<>();
+      opts.add(OptionUtils.getCommandLine(reader));
+      for (i = 0; i < files.length; i++)
+	opts.add(files[i].toString());
+      getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
+      getScriptingEngine().add(
+	this, AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[opts.size()])));
     }
   }
 
