@@ -15,7 +15,7 @@
 
 /**
  * QuoteTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -70,10 +70,14 @@ public class QuoteTest
   protected Conversion[] getRegressionSetups() {
     Quote[]	result;
 
-    result    = new Quote[2];
+    result    = new Quote[4];
     result[0] = new Quote();
     result[1] = new Quote();
     result[1].setQuoteType(QuoteType.SINGLE);
+    result[2] = new Quote();
+    result[2].setForce(true);
+    result[3] = new Quote();
+    result[3].setDoubleUp(true);
 
     return result;
   }

@@ -15,16 +15,22 @@
 
 /**
  * Quote.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.ClassCrossReference;
+import adams.core.Constants;
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
  * Surrounds a string with quotes (single or double), if necessary due to blanks or other characters (new line, tab) in the string.<br>
+ * However, you can also 'force' the quoting.<br>
  * <br>
  * See also:<br>
  * adams.data.conversion.UnQuote<br>
@@ -34,18 +40,24 @@ import adams.core.Utils;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-quote-type &lt;SINGLE|DOUBLE&gt; (property: quoteType)
+ * <pre>-quote-type &lt;SINGLE|DOUBLE|DOUBLE_UP&gt; (property: quoteType)
  * &nbsp;&nbsp;&nbsp;The type of quote to use.
  * &nbsp;&nbsp;&nbsp;default: DOUBLE
+ * </pre>
+ * 
+ * <pre>-double-up &lt;boolean&gt; (property: doubleUp)
+ * &nbsp;&nbsp;&nbsp;If enabled, internal quotes get doubled up rather than escaped with backslashes.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-force &lt;boolean&gt; (property: force)
+ * &nbsp;&nbsp;&nbsp;If enabled, forces the quoting of the string.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -70,12 +82,20 @@ public class Quote
     /** single quote ('). */
     SINGLE,
     /** double quote ("). */
-    DOUBLE
+    DOUBLE,
+    /** double quote ("), doubling up internal double quotes. */
+    DOUBLE_UP
   }
   
   /** the quote type to use. */
   protected QuoteType m_QuoteType;
-  
+
+  /** whether to double up internal quotes rather than escaping them with backslashes. */
+  protected boolean m_DoubleUp;
+
+  /** whether to enforce quoting. */
+  protected boolean m_Force;
+
   /**
    * Returns a string describing the object.
    *
@@ -83,7 +103,10 @@ public class Quote
    */
   @Override
   public String globalInfo() {
-    return "Surrounds a string with quotes (single or double), if necessary due to blanks or other characters (new line, tab) in the string.";
+    return
+      "Surrounds a string with quotes (single or double), if necessary due "
+	+ "to blanks or other characters (new line, tab) in the string.\n"
+	+ "However, you can also 'force' the quoting.";
   }
 
   /**
@@ -110,6 +133,14 @@ public class Quote
     m_OptionManager.add(
 	    "quote-type", "quoteType",
 	    QuoteType.DOUBLE);
+
+    m_OptionManager.add(
+	    "double-up", "doubleUp",
+	    false);
+
+    m_OptionManager.add(
+	    "force", "force",
+	    false);
   }
 
   /**
@@ -142,6 +173,83 @@ public class Quote
   }
 
   /**
+   * Sets whether to double up internal quotes rather than escaping with backslash.
+   *
+   * @param value	true if to double up
+   */
+  public void setDoubleUp(boolean value) {
+    m_DoubleUp = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to double up internal quotes rather than escaping with backslash.
+   *
+   * @return 		true if to double up
+   */
+  public boolean getDoubleUp() {
+    return m_DoubleUp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String doubleUpTipText() {
+    return "If enabled, internal quotes get doubled up rather than escaped with backslashes.";
+  }
+
+  /**
+   * Sets whether to force quoting.
+   *
+   * @param value	true if to force quoting
+   */
+  public void setForce(boolean value) {
+    m_Force = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to force quoting.
+   *
+   * @return 		true if to force quoting
+   */
+  public boolean getForce() {
+    return m_Force;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String forceTipText() {
+    return "If enabled, forces the quoting of the string.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String		result;
+    List<String> 	options;
+
+    result = QuickInfoHelper.toString(this, "quoteType", m_QuoteType, "type: ");
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "force", m_Force, "force"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "doubleUp", m_DoubleUp, "double-up"));
+    result += QuickInfoHelper.flatten(options);
+
+    return result;
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @return		the converted data
@@ -149,17 +257,32 @@ public class Quote
    */
   @Override
   protected Object doConvert() throws Exception {
+    String	result;
     String	input;
     
     input = (String) m_Input;
     
     switch (m_QuoteType) {
       case DOUBLE:
-	return Utils.doubleQuote(input);
+	if (m_DoubleUp)
+	  result = Utils.doubleUpQuotes(input, '"', Constants.BACKQUOTE_CHARS, Constants.BACKQUOTED_STRINGS);
+	else
+	  result = Utils.doubleQuote(input);
+	if (m_Force && !result.startsWith("\""))
+	  result = "\"" + result + "\"";
+	break;
       case SINGLE:
-	return Utils.quote(input);
+	if (m_DoubleUp)
+	  result = Utils.doubleUpQuotes(input, '\'', Constants.BACKQUOTE_CHARS, Constants.BACKQUOTED_STRINGS);
+	else
+	  result = Utils.quote(input);
+	if (m_Force && !result.startsWith("'"))
+	  result = "'" + result + "'";
+	break;
       default:
 	throw new IllegalStateException("Unhandled quote type: " + m_QuoteType);
     }
+
+    return result;
   }
 }
