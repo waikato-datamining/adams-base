@@ -66,6 +66,7 @@ Menu-Maintenance=\
 Menu-Help=\
   adams.gui.menu.ActorUsage,\
   adams.gui.menu.SystemInfo,\
+  adams.gui.menu.SystemPerformance,\
   adams.gui.menu.MemoryMonitor,\
   adams.gui.menu.TakeScreenshot,\
   -,\

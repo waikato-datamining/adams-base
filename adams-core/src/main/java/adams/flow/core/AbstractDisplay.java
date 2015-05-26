@@ -15,25 +15,25 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.awt.BorderLayout;
-import java.util.Hashtable;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
-
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
+import adams.flow.control.Flow;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.flow.FlowPanel;
+
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.util.Hashtable;
 
 /**
  * Ancestor for actors that display stuff.
@@ -529,6 +529,18 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns the default operation when closing the frame.
+   *
+   * @return		the operation
+   */
+  protected int getFrameDefaultCloseOperation() {
+    if ((getRoot() != null) && (getRoot() instanceof Flow))
+      return ((Flow) getRoot()).getDefaultCloseOperation();
+    else
+      return BaseDialog.HIDE_ON_CLOSE;
+  }
+
+  /**
    * Creates the actual frame.
    *
    * @param panel	the panel to display in the frame
@@ -542,7 +554,7 @@ public abstract class AbstractDisplay
 
     result.getContentPane().setLayout(new BorderLayout());
     result.getContentPane().add(panel, BorderLayout.CENTER);
-    result.setDefaultCloseOperation(BaseDialog.HIDE_ON_CLOSE);
+    result.setDefaultCloseOperation(getFrameDefaultCloseOperation());
     result.setSize(ActorUtils.determineSize(result, m_X, m_Y, m_Width, m_Height));
     icon = GUIHelper.getIcon(getClass());
     if (icon != null)

@@ -204,6 +204,9 @@ public class Flow
   
   /** the parent component to use for interactive actors. */
   protected transient Component m_ParentComponent;
+
+  /** the default close operation. */
+  protected int m_DefaultCloseOperation;
   
   /**
    * Returns a string describing the object.
@@ -254,14 +257,15 @@ public class Flow
   protected void initialize() {
     super.initialize();
 
-    m_LogEntries             = new ArrayList<LogEntry>();
-    m_Variables              = new FlowVariables();
-    m_ExecuteOnErrorActor    = null;
-    m_ExecuteOnFinishActor   = null;
-    m_PauseStateManager      = new PauseStateManager();
+    m_LogEntries               = new ArrayList<LogEntry>();
+    m_Variables                = new FlowVariables();
+    m_ExecuteOnErrorActor      = null;
+    m_ExecuteOnFinishActor     = null;
+    m_PauseStateManager        = new PauseStateManager();
     m_CallableNames            = new HashSet<String>();
     m_EnforceCallableNameCheck = true;
-    m_ParentComponent        = null;
+    m_ParentComponent          = null;
+    m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
   }
 
   /**
@@ -594,7 +598,25 @@ public class Flow
   public Component getParentComponent() {
     return m_ParentComponent;
   }
-  
+
+  /**
+   * Sets the default close operation for frames.
+   *
+   * @param value	the operation
+   */
+  public void setDefaultCloseOperation(int value) {
+    m_DefaultCloseOperation = value;
+  }
+
+  /**
+   * Returns the default close operation for frames.
+   *
+   * @return		the operation
+   */
+  public int getDefaultCloseOperation() {
+    return m_DefaultCloseOperation;
+  }
+
   /**
    * Returns some information about the actor handler, e.g., whether it can
    * contain standalones and the actor execution.
