@@ -15,7 +15,7 @@
 
 /*
  * MenuItemCodelet.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -149,6 +149,15 @@ public abstract class AbstractMenuItemDefinition
   }
 
   /**
+   * Whether to use a simple runnable for launching or a separate thread.
+   *
+   * @return		true if to use separate thread
+   */
+  protected boolean getUseThread() {
+    return false;
+  }
+
+  /**
    * Hook method that gets executed just before calling "launch()".
    * <br><br>
    * Default implementation does nothing.
@@ -189,15 +198,27 @@ public abstract class AbstractMenuItemDefinition
 	    getOwner().showWindow(child);
 	}
 	else {
-	  Runnable run = new Runnable() {
-	    @Override
-	    public void run() {
-	      preLaunch();
-	      launch();
-	      postLaunch();
-	    }
-	  };
-	  SwingUtilities.invokeLater(run);
+	  if (!getUseThread()) {
+	    Runnable run = new Runnable() {
+	      @Override
+	      public void run() {
+		preLaunch();
+		launch();
+		postLaunch();
+	      }
+	    };
+	    SwingUtilities.invokeLater(run);
+	  }
+	  else {
+	    Thread thread = new Thread(new Runnable() {
+	      public void run() {
+		preLaunch();
+		launch();
+		postLaunch();
+	      }
+	    });
+	    thread.start();
+	  }
 	}
       }
     });
