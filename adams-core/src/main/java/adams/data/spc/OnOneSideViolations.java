@@ -25,9 +25,22 @@ import gnu.trove.list.array.TIntArrayList;
 
 /**
  <!-- globalinfo-start -->
+ * Flags a data point as violation if it is the start of consecutive sequence (of specified minimum length) of points that are all on one side.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-min-points &lt;int&gt; (property: minPoints)
+ * &nbsp;&nbsp;&nbsp;The minimum number of points that have to be on one side.
+ * &nbsp;&nbsp;&nbsp;default: 7
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
