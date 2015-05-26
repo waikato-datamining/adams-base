@@ -15,9 +15,11 @@
 
 /**
  * AbstractValidateString.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.core.QuickInfoHelper;
 
 /**
  * Ancestor for string conversions that ensure a string only contains valid
@@ -85,6 +87,16 @@ public abstract class AbstractValidateString
     return
         "The replacement string for invalid characters in strings; use empty "
 	+ "string for removing the invalid characters instead of replacing them.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "replace", "'" + m_Replace + "'", "replace: ");
   }
 
   /**
