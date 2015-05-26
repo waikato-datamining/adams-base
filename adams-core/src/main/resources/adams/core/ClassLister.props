@@ -177,6 +177,10 @@ adams.data.smoothing.AbstractSmoother=\
 adams.data.spc.ControlChart=\
   adams.data.spc
 
+# algorithms that locate violations in control charts
+adams.data.spc.ViolationFinder=\
+  adams.data.spc
+
 # The types of spreadsheets
 adams.data.spreadsheet.SpreadSheet=\
   adams.data.spreadsheet
