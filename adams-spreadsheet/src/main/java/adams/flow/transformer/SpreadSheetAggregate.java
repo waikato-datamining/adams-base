@@ -39,7 +39,9 @@ import java.util.List;
  <!-- globalinfo-start -->
  * Aggregates rows (min, max, avg, etc) in a spreadsheet using key columns.<br>
  * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.<br>
- * If no key column(s) provided, the complete spreadsheet is used for aggregation.
+ * If no key column(s) provided, the complete spreadsheet is used for aggregation.<br>
+ * Missing cells get ignored.<br>
+ * Note: A single non-numeric cell make a column a non-numeric one!
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -159,13 +161,15 @@ public class SpreadSheetAggregate
    */
   @Override
   public String globalInfo() {
-    return 
-	"Aggregates rows (min, max, avg, etc) in a spreadsheet using key "
-	+ "columns.\n"
-	+ "All numeric columns in the specified aggregrate range (excluding the "
-	+ "key columns) get aggregated. For each of the specified aggregates a "
-	+ "new column is generated.\n"
-	+ "If no key column(s) provided, the complete spreadsheet is used for aggregation.";
+    return
+      "Aggregates rows (min, max, avg, etc) in a spreadsheet using key "
+        + "columns.\n"
+        + "All numeric columns in the specified aggregrate range (excluding the "
+        + "key columns) get aggregated. For each of the specified aggregates a "
+        + "new column is generated.\n"
+        + "If no key column(s) provided, the complete spreadsheet is used for aggregation.\n"
+        + "Missing cells get ignored.\n"
+	+ "Note: A single non-numeric cell make a column a non-numeric one!";
   }
 
   /**
