@@ -15,10 +15,11 @@
 
 /**
  * StringToValidVariableName.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 
 /**
@@ -39,6 +40,11 @@ import adams.core.Variables;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-pad &lt;boolean&gt; (property: pad)
+ * &nbsp;&nbsp;&nbsp;If enabled, the variable gets padded with &#64;{ and }.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -50,6 +56,9 @@ public class StringToValidVariableName
   /** for serialization. */
   private static final long serialVersionUID = 5528425779551772381L;
 
+  /** whether to pad the variable name with @{...}. */
+  protected boolean m_Pad;
+
   /**
    * Returns a string describing the object.
    *
@@ -59,7 +68,66 @@ public class StringToValidVariableName
   public String globalInfo() {
     return "Turns any string into a valid variable name.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "pad", "pad",
+	    false);
+  }
+
+  /**
+   * Sets the replacement string for invalid characters.
+   *
+   * @param value 	the replacement string
+   */
+  public void setPad(boolean value) {
+    m_Pad = value;
+    reset();
+  }
+
+  /**
+   * Returns the replacement string for invalid characters.
+   *
+   * @return 		the replacement string
+   */
+  public boolean getPad() {
+    return m_Pad;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String padTipText() {
+    return "If enabled, the variable gets padded with " + Variables.START + " and " + Variables.END + ".";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    String	value;
+
+    result = super.getQuickInfo();
+    value  = QuickInfoHelper.toString(this, "pad", m_Pad, "pad", ", ");
+    if (value != null)
+      result += value;
+
+    return result;
+  }
+
   /**
    * Performs the actual validation.
    * 
@@ -68,6 +136,12 @@ public class StringToValidVariableName
    */
   @Override
   protected String process(String input, String replace) throws Exception {
-    return Variables.toValidName(input, replace);
+    String	result;
+
+    result = Variables.toValidName(input, replace);
+    if (m_Pad)
+      result = Variables.padName(result);
+
+    return result;
   }
 }
