@@ -15,7 +15,7 @@
 
 /*
  * Constants.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -66,4 +66,16 @@ public class Constants
 
   /** the format for dates. */
   public final static String DATE_FORMAT = "yyyy-MM-dd";
+
+  /** the characters to backquote. */
+  public final static char[] BACKQUOTE_CHARS = new char[]{'\t'};
+
+  /** the backquoted string representations of characters to backquote. */
+  public final static String[] BACKQUOTED_STRINGS = new String[]{"\\t"};
+
+  /** the characters to escape. */
+  public final static char[] ESCAPE_CHARS = new char[]{'\\', '\'', '\t', '\n', '\r', '"'};
+
+  /** the escaped string representations of characters to backquote. */
+  public final static String[] ESCAPE_STRINGS = new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""};
 }

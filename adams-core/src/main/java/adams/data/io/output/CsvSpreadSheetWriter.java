@@ -165,18 +165,6 @@ public class CsvSpreadSheetWriter
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
 
-  /** the characters to backquote. */
-  public final static char[] BACKQUOTE_CHARS = new char[]{'\t'};
-
-  /** the backquoted string representations of characters to backquote. */
-  public final static String[] BACKQUOTED_STRINGS = new String[]{"\\t"};
-
-  /** the characters to escape. */
-  public final static char[] ESCAPE_CHARS = new char[]{'\\', '\'', '\t', '\n', '\r', '"'};
-
-  /** the escaped string representations of characters to backquote. */
-  public final static String[] ESCAPE_STRINGS = new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""};
-
   /** the line comment. */
   protected String m_Comment;
 
@@ -660,7 +648,7 @@ public class CsvSpreadSheetWriter
    *         		displaying in the explorer/experimenter gui
    */
   public String escapeSpecialCharsTipText() {
-    return "If enabled, special characters get escaped with a backslash: " + Utils.flatten(ESCAPE_STRINGS, ", ");
+    return "If enabled, special characters get escaped with a backslash: " + Utils.flatten(Constants.ESCAPE_STRINGS, ", ");
   }
 
   /**
@@ -872,9 +860,9 @@ public class CsvSpreadSheetWriter
 	       || (s.length() == 0);
 
     if (m_EscapeSpecialChars)
-      result = m_QuoteCharacter + Utils.backQuoteChars(s, ESCAPE_CHARS, ESCAPE_STRINGS) + m_QuoteCharacter;
+      result = m_QuoteCharacter + Utils.backQuoteChars(s, Constants.ESCAPE_CHARS, Constants.ESCAPE_STRINGS) + m_QuoteCharacter;
     else if (required)
-      result = Utils.doubleUpQuotes(s, m_QuoteCharacter.charAt(0), BACKQUOTE_CHARS, BACKQUOTED_STRINGS);
+      result = Utils.doubleUpQuotes(s, m_QuoteCharacter.charAt(0), Constants.BACKQUOTE_CHARS, Constants.BACKQUOTED_STRINGS);
     else
       result = s;
 
@@ -895,7 +883,7 @@ public class CsvSpreadSheetWriter
 	       || (s.length() == 0);
 
     if (required)
-      result = Utils.doubleUpQuotes(s, m_QuoteCharacter.charAt(0), BACKQUOTE_CHARS, BACKQUOTED_STRINGS);
+      result = Utils.doubleUpQuotes(s, m_QuoteCharacter.charAt(0), Constants.BACKQUOTE_CHARS, Constants.BACKQUOTED_STRINGS);
     else
       result = s;
 
