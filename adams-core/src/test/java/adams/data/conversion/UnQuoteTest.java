@@ -64,7 +64,8 @@ public class UnQuoteTest
 	"\'12\\t34\'",
 	"\'123\\n45\'",
 	"\'12 34 56\'",
-	"\'123 \"45\" 67\'"
+	"\'123 \"45\" 67\'",
+	"\"123 \"\"45\"\" 67\""
     };
   }
 
@@ -77,10 +78,12 @@ public class UnQuoteTest
   protected Conversion[] getRegressionSetups() {
     UnQuote[]	result;
 
-    result    = new UnQuote[2];
+    result    = new UnQuote[3];
     result[0] = new UnQuote();
     result[1] = new UnQuote();
     result[1].setQuoteType(QuoteType.SINGLE);
+    result[2] = new UnQuote();
+    result[2].setDoubleUp(true);
 
     return result;
   }
