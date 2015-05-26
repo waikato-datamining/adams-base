@@ -86,6 +86,14 @@ public abstract class AbstractControlChartWithSampleSize
    * @param value	the sample size
    */
   public void setSampleSize(int value) {
+    if ((getDefaultSampleSizeLowerLimit() != null) && (value < getDefaultSampleSizeLowerLimit().intValue())) {
+      getLogger().warning("Sample size must be at least " + getDefaultSampleSizeLowerLimit() + ", provided: " + value);
+      return;
+    }
+    if ((getDefaultSampleSizeUpperLimit() != null) && (value > getDefaultSampleSizeUpperLimit().intValue())) {
+      getLogger().warning("Sample size must be at most " + getDefaultSampleSizeUpperLimit() + ", provided: " + value);
+      return;
+    }
     m_SampleSize = value;
     reset();
   }
