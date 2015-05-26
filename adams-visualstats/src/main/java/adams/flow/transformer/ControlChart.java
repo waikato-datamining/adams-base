@@ -1,0 +1,313 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * ControlChart.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ */
+
+package adams.flow.transformer;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.data.spc.IndividualsControlChart;
+import adams.data.spc.NullViolations;
+import adams.data.spc.SamplesControlChart;
+import adams.data.spc.UChart;
+import adams.data.spc.ViolationFinder;
+import adams.data.statistics.StatUtils;
+import adams.flow.container.ControlChartContainer;
+import adams.flow.core.Token;
+import adams.flow.core.Unknown;
+
+/**
+ <!-- globalinfo-start -->
+ * Applies a control chart algorithm to the data.
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * &nbsp;&nbsp;&nbsp;double[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Float[]<br>
+ * &nbsp;&nbsp;&nbsp;float[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
+ * &nbsp;&nbsp;&nbsp;int[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.ControlChartContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.ControlChartContainer: Chart, Data, Prepared, Lower, Center, Upper, Violations
+ * <br><br>
+ <!-- flow-summary-end -->
+ *
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ControlChart
+ * </pre>
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-chart &lt;adams.data.spc.ControlChart&gt; (property: chart)
+ * &nbsp;&nbsp;&nbsp;The control chart algorithm to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spc.UChart
+ * </pre>
+ * 
+ * <pre>-violation-finder &lt;adams.data.spc.ViolationFinder&gt; (property: violationFinder)
+ * &nbsp;&nbsp;&nbsp;The algorithm for locating violations.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spc.NullViolations
+ * </pre>
+ * 
+ <!-- options-end -->
+ *
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @version $Revision: 6264 $
+ */
+public class ControlChart
+  extends AbstractTransformer {
+
+  /** for serialization. */
+  private static final long serialVersionUID = 4013915680601748582L;
+
+  /** the control chart to use. */
+  protected adams.data.spc.ControlChart m_Chart;
+
+  /** for locating violations. */
+  protected ViolationFinder m_ViolationFinder;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Applies a control chart algorithm to the data.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "chart", "chart",
+	    new UChart());
+
+    m_OptionManager.add(
+	    "violation-finder", "violationFinder",
+	    new NullViolations());
+  }
+
+  /**
+   * Sets the chart to use.
+   *
+   * @param value	the chart
+   */
+  public void setChart(adams.data.spc.ControlChart value) {
+    m_Chart = value;
+    reset();
+  }
+
+  /**
+   * Returns the chart to use.
+   *
+   * @return		the chart
+   */
+  public adams.data.spc.ControlChart getChart() {
+    return m_Chart;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String chartTipText() {
+    return "The control chart algorithm to use.";
+  }
+
+  /**
+   * Sets the algorithm for locating violations.
+   *
+   * @param value	the algorithm
+   */
+  public void setViolationFinder(ViolationFinder value) {
+    m_ViolationFinder = value;
+    reset();
+  }
+
+  /**
+   * Returns the algorithm for locating violations.
+   *
+   * @return		the algorithm
+   */
+  public ViolationFinder getViolationFinder() {
+    return m_ViolationFinder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String violationFinderTipText() {
+    return "The algorithm for locating violations.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "chart", m_Chart);
+  }
+  
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		<!-- flow-accepts-start -->java.lang.Double[].class, double[].class, java.lang.Float[].class, float[].class, java.lang.Integer[].class, int[].class<!-- flow-accepts-end -->
+   */
+  public Class[] accepts() {
+    if (m_Chart == null)
+      return new Class[]{Unknown.class};
+    else if (m_Chart instanceof IndividualsControlChart)
+      return new Class[]{Double[].class, double[].class, Float[].class, float[].class, Integer[].class, int[].class};
+    else if (m_Chart instanceof SamplesControlChart)
+      return new Class[]{Double[][].class, double[][].class, Float[][].class, float[][].class, Integer[][].class, int[][].class};
+    else
+      throw new IllegalStateException("Unhandled control chart type: " + m_Chart.getClass().getName());
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		<!-- flow-generates-start -->adams.flow.container.ControlChartContainer.class<!-- flow-generates-end -->
+   */
+  public Class[] generates() {
+    return new Class[]{ControlChartContainer.class};
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String			result;
+    double[]			stats;
+    Object			data;
+    double[]			prepared;
+    ControlChartContainer	cont;
+    Number[]			numberArray;
+    Number[][]			numberMatrix;
+
+    result = null;
+
+    try {
+      data = m_InputToken.getPayload();
+      if (m_Chart instanceof IndividualsControlChart) {
+	if (data instanceof Double[])
+	  numberArray = (Double[]) data;
+	else if (data instanceof double[])
+	  numberArray = StatUtils.toNumberArray((double[]) data);
+	else if (data instanceof Float[])
+	  numberArray = (Float[]) data;
+	else if (data instanceof float[])
+	  numberArray = StatUtils.toNumberArray((float[]) data);
+	else if (data instanceof Integer[])
+	  numberArray = (Integer[]) data;
+	else if (data instanceof int[])
+	  numberArray = StatUtils.toNumberArray((int[]) data);
+	else
+	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
+	stats    = ((IndividualsControlChart) m_Chart).calculate(numberArray);
+	prepared = ((IndividualsControlChart) m_Chart).prepare(numberArray);
+	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats[1], stats[0], stats[2]);
+	if (!(m_ViolationFinder instanceof NullViolations))
+	  cont = m_ViolationFinder.find(cont);
+	m_OutputToken = new Token(cont);
+      }
+      else if (m_Chart instanceof SamplesControlChart) {
+	if (data instanceof Double[][])
+	  numberMatrix = (Double[][]) data;
+	else if (data instanceof double[][])
+	  numberMatrix = StatUtils.toNumberMatrix((double[][]) data);
+	else if (data instanceof Float[][])
+	  numberMatrix = (Float[][]) data;
+	else if (data instanceof float[][])
+	  numberMatrix = StatUtils.toNumberMatrix((float[][]) data);
+	else if (data instanceof Integer[][])
+	  numberMatrix = (Integer[][]) data;
+	else if (data instanceof int[][])
+	  numberMatrix = StatUtils.toNumberMatrix((int[][]) data);
+	else
+	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
+	stats    = ((SamplesControlChart) m_Chart).calculate(numberMatrix);
+	prepared = ((SamplesControlChart) m_Chart).prepare(numberMatrix);
+	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats[1], stats[0], stats[2]);
+	if (!(m_ViolationFinder instanceof NullViolations))
+	  cont = m_ViolationFinder.find(cont);
+	m_OutputToken = new Token(cont);
+      }
+      else {
+        throw new IllegalStateException("Unhandled control chart type: " + m_Chart.getClass().getName());
+      }
+    }
+    catch (Exception e) {
+      m_OutputToken = null;
+      result = handleException(
+	  "Failed to generate control chart data: "
+	      + m_InputToken.getPayload(), e);
+    }
+
+    return result;
+  }
+}

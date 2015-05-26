@@ -7,6 +7,18 @@
 # Author:  msf8 
 # Version: $Revision$
 
+# the control charts
+adams.data.spc.ControlChart=\
+  adams.data.spc
+
+# algorithms that locate violations in control charts
+adams.data.spc.ViolationFinder=\
+  adams.data.spc
+
+# the paintlets for the ControlChartPlot
+adams.flow.sink.controlchartplot.AbstractControlChartPaintlet=\
+  adams.flow.sink.controlchartplot
+
 #scatter overlays
 adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay =\
   adams.gui.visualization.stats.scatterplot
