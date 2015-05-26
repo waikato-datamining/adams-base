@@ -28,9 +28,9 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.statistics.StatUtils;
 import adams.flow.core.Token;
-import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.hash.TIntHashSet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -307,15 +307,17 @@ public class SpreadSheetAggregate
    */
   protected HashMap<Aggregate,Number> computeAggregates(SpreadSheet input, List<Integer> subset, int index) {
     HashMap<Aggregate,Number>	result;
-    TDoubleArrayList		list;
-    double[]			values;
+    ArrayList<Double> 		list;
+    Double[]			values;
     int				i;
     Cell			cell;
+    Number			max;
+    Number			min;
     
     result = new HashMap<Aggregate,Number>();
     for (Aggregate agg: m_Aggregates)
       result.put(agg, Double.NaN);
-    list = new TDoubleArrayList();
+    list = new ArrayList<>();
     if (subset != null) {
       for (i = 0; i < subset.size(); i++) {
 	cell = input.getCell(subset.get(i), index);
@@ -330,7 +332,7 @@ public class SpreadSheetAggregate
 	  list.add(cell.toDouble());
       }
     }
-    values = list.toArray();
+    values = list.toArray(new Double[list.size()]);
     
     if (values.length > 0) {
       for (Aggregate agg: m_Aggregates) {
@@ -348,7 +350,12 @@ public class SpreadSheetAggregate
 	    result.put(agg, StatUtils.max(values));
 	    break;
 	  case RANGE:
-	    result.put(agg, StatUtils.max(values) - StatUtils.min(values));
+	    max = StatUtils.max(values);
+	    min = StatUtils.min(values);
+	    if ((max != null) && (min != null))
+	      result.put(agg, max.doubleValue() - min.doubleValue());
+	    else
+	      result.put(agg, null);
 	    break;
 	  case AVERAGE:
 	    result.put(agg, StatUtils.mean(values));
@@ -460,9 +467,11 @@ public class SpreadSheetAggregate
 	  for (int index: agg) {
 	    aggs = computeAggregates(input, subset, index); 
 	    for (Aggregate a: m_Aggregates) {
-	      if (aggs.get(agg) instanceof Integer)
+	      if (aggs.get(a) == null)
+		rowNew.addCell("" + index + "-" + a).setMissing();
+	      else if (aggs.get(a) instanceof Integer)
 		rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
-	      else if (aggs.get(agg) instanceof Long)
+	      else if (aggs.get(a) instanceof Long)
 		rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
 	      else
 		rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
@@ -483,9 +492,11 @@ public class SpreadSheetAggregate
             return null;
 	  aggs = computeAggregates(input, null, index);
 	  for (Aggregate a: m_Aggregates) {
-	    if (aggs.get(agg) instanceof Integer)
+	    if (aggs.get(a) == null)
+	      rowNew.addCell("" + index + "-" + a).setMissing();
+	    else if (aggs.get(a) instanceof Integer)
 	      rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
-	    else if (aggs.get(agg) instanceof Long)
+	    else if (aggs.get(a) instanceof Long)
 	      rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
 	    else
 	      rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
