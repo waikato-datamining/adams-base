@@ -18,7 +18,7 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.sink.controlchartplot.controlchartplot;
+package adams.flow.sink.controlchartplot;
 
 import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 

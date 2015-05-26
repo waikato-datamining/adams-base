@@ -15,10 +15,10 @@
 
 /*
  * LinePaintlet.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.flow.sink.controlchartplot.controlchartplot;
+package adams.flow.sink.controlchartplot;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
