@@ -28,6 +28,19 @@
 
   <developers>
     <developer>
+      <id>fracpete</id>
+      <name>Peter Reutemann</name>
+      <email>fracpete@waikato.ac.nz</email>
+      <url>http://www.cms.waikato.ac.nz/~fracpete/</url>
+      <organization>University of Waikato, CS department</organization>
+      <organizationUrl>http://www.cs.waikato.ac.nz/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+12</timezone>
+    </developer>
+    <developer>
       <id>msf8</id>
       <name>Michael Fowke</name>
       <email>msf8@waikato.ac.nz</email>

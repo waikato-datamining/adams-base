@@ -13,7 +13,7 @@ Version=${project.version}
 Description=Adds statistical visualizations.
 
 # The author of the module
-Author=Michael Fowke
+Author=Michael Fowke and Peter Reutemann
 
 # The author's organization
 Organization=University of Waikato, Hamilton, NZ
