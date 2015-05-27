@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2015-05-27 15:15:20
+# Date: 2015-05-27 22:25:11
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Generates a Xbar R chart from the samples.
+	Generates a Xbar R chart from the samples.\nData taken from here:\nhttp://www.wikihow.com/Sample/Control-Chart-for-Multiple-Groups
 	-actor
 		adams.flow.source.FileSupplier
 			-file
