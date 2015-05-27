@@ -1,4 +1,4 @@
-% Copyright (c) 2012 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2012-2015 by the University of Waikato, Hamilton, NZ.
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -45,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2015} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -69,11 +69,17 @@ next chapter.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Flow}
 \section{Actors}
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{ControlChart} -- computes control chart statistics from the
+	incoming data.
+\end{tight_itemize}
 The following sinks are available:
 \begin{tight_itemize}
 	\item \textit{BoxPlot} -- displays box plots \cite{boxplot} of the attributes
 	of a dataset.
-	\item \textit{FourInOneDisplay} -- Plots the residuals\cite{4in1} in various ways: 
+	\item \textit{ControlChartPlot} -- displays control chart data.
+	\item \textit{FourInOneDisplay} -- Plots the residuals\cite{4in1} in various ways:
 	probability plot, fit, histogram \cite{histogram}, order.
 	\item \textit{Histogram} -- plots a histogram\cite{histogram} of numeric data.
 	\item \textit{MatrixPlot} -- scatter plots of attributes, all vs all.
