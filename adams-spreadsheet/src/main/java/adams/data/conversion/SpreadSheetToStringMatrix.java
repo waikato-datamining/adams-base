@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetToStringMatrix.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -40,7 +40,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision: 6556 $
  */
 public class SpreadSheetToStringMatrix
-  extends AbstractConversion {
+  extends AbstractSpreadSheetToMatrix {
 
   /** for serialization. */
   private static final long serialVersionUID = 4117708470154504868L;
@@ -53,16 +53,6 @@ public class SpreadSheetToStringMatrix
   @Override
   public String globalInfo() {
     return "Turns a spreadsheet into a string matrix.";
-  }
-
-  /**
-   * Returns the class that is accepted as input.
-   *
-   * @return		the class
-   */
-  @Override
-  public Class accepts() {
-    return SpreadSheet.class;
   }
 
   /**

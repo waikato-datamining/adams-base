@@ -15,14 +15,14 @@
 
 /**
  * SpreadSheetToDoubleMatrix.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.ArrayList;
-
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -46,7 +46,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public class SpreadSheetToDoubleMatrix
-  extends AbstractConversion {
+  extends AbstractSpreadSheetToMatrix {
 
   /** for serialization. */
   private static final long serialVersionUID = 4117708470154504868L;
@@ -59,16 +59,6 @@ public class SpreadSheetToDoubleMatrix
   @Override
   public String globalInfo() {
     return "Turns a spreadsheet into a double matrix, using only the numeric columns.";
-  }
-
-  /**
-   * Returns the class that is accepted as input.
-   *
-   * @return		the class
-   */
-  @Override
-  public Class accepts() {
-    return SpreadSheet.class;
   }
 
   /**

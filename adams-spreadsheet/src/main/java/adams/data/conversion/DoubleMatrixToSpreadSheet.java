@@ -15,12 +15,10 @@
 
 /**
  * DoubleMatrixToSpreadSheet.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.data.spreadsheet.DataRow;
-import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -52,16 +50,10 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public class DoubleMatrixToSpreadSheet
-  extends AbstractConversion {
+  extends AbstractMatrixToSpreadSheet {
 
   /** for serialization. */
   private static final long serialVersionUID = -2047404866165517428L;
-
-  /** the data row type to use. */
-  protected DataRow m_DataRowType;
-
-  /** the type of spreadsheet to use. */
-  protected SpreadSheet m_SpreadSheetType;
 
   /**
    * Returns a string describing the object.
@@ -74,80 +66,6 @@ public class DoubleMatrixToSpreadSheet
   }
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "data-row-type", "dataRowType",
-	    new DenseDataRow());
-
-    m_OptionManager.add(
-	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
-  }
-
-  /**
-   * Sets the type of data row to use.
-   *
-   * @param value	the type
-   */
-  public void setDataRowType(DataRow value) {
-    m_DataRowType = value;
-    reset();
-  }
-
-  /**
-   * Returns the type of data row to use.
-   *
-   * @return		the type
-   */
-  public DataRow getDataRowType() {
-    return m_DataRowType;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String dataRowTypeTipText() {
-    return "The type of row to use for the data.";
-  }
-
-  /**
-   * Sets the type of spreadsheet to use.
-   *
-   * @param value	the type
-   */
-  public void setSpreadSheetType(SpreadSheet value) {
-    m_SpreadSheetType = value;
-    reset();
-  }
-
-  /**
-   * Returns the type of spreadsheet to use.
-   *
-   * @return		the type
-   */
-  public SpreadSheet getSpreadSheetType() {
-    return m_SpreadSheetType;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String spreadSheetTypeTipText() {
-    return "The type of spreadsheet to use for the data.";
-  }
-
-  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -155,19 +73,6 @@ public class DoubleMatrixToSpreadSheet
   @Override
   public Class accepts() {
     return Double[][].class;
-  }
-
-  /**
-   * Returns the class that is generated as output.
-   *
-   * @return		the class
-   */
-  @Override
-  public Class generates() {
-    if (m_SpreadSheetType != null)
-      return m_SpreadSheetType.getClass();
-    else
-      return SpreadSheet.class;
   }
 
   /**
@@ -184,8 +89,7 @@ public class DoubleMatrixToSpreadSheet
     int			n;
     Row			row;
 
-    result = m_SpreadSheetType.newInstance();
-    result.setDataRowClass(m_DataRowType.getClass());
+    result = newInstance();
     matrix = (Double[][]) getInput();
 
     // header
