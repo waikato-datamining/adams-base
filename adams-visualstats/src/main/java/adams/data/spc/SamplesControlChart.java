@@ -27,21 +27,6 @@ package adams.data.spc;
  * @version $Revision$
  */
 public interface SamplesControlChart
-  extends ControlChart {
+  extends MatrixControlChart {
 
-  /**
-   * Calculates center/lower/upper limit.
-   *
-   * @param data	the data to use for the calculation
-   * @return		center/lower/upper
-   */
-  public double[] calculate(Number[][] data);
-
-  /**
-   * Prepares the data.
-   *
-   * @param data	the data to prepare
-   * @return		the prepared/processed data
-   */
-  public double[] prepare(Number[][] data);
 }

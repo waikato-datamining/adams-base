@@ -14,7 +14,7 @@
  */
 
 /*
- * LinePaintlet.java
+ * ChartPaintlet.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -23,6 +23,7 @@ package adams.flow.sink.controlchartplot;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequenceUtils;
+import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
@@ -34,6 +35,7 @@ import adams.gui.visualization.sequence.LineHitDetector;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -42,12 +44,16 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9308 $
  */
-public class LinePaintlet
+public class ChartPaintlet
   extends AbstractControlChartPaintlet
   implements AntiAliasingSupporter, HitDetectorSupporter<AbstractXYSequencePointHitDetector> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8242948176244747138L;
+
+  /** the maximum width/height of the shape to plot around the points (= data
+   * point marker), if there's enough space. */
+  protected int m_MarkerExtent;
 
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
@@ -70,8 +76,48 @@ public class LinePaintlet
     super.defineOptions();
 
     m_OptionManager.add(
+	    "markers-extent", "markerExtent",
+	    7, 0, null);
+
+    m_OptionManager.add(
 	    "anti-aliasing-enabled", "antiAliasingEnabled",
 	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+  }
+
+  /**
+   * Sets the extent (width and height of the shape around the plotted point).
+   * 0 turns the plotting off. Should be an odd number for centering the shape.
+   *
+   * @param value	the new extent
+   */
+  public void setMarkerExtent(int value) {
+    if (value >= 0) {
+      m_MarkerExtent = value;
+      memberChanged();
+    }
+    else {
+      System.err.println("Marker extent must be >= 0 (provided: " + value + ")!");
+    }
+  }
+
+  /**
+   * Returns the current marker extent (which is the width and height of the
+   * shape).
+   *
+   * @return		the current extent
+   */
+  public int getMarkerExtent() {
+    return m_MarkerExtent;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String markerExtentTipText() {
+    return "The size of the markers in pixels.";
   }
 
   /**
@@ -128,13 +174,12 @@ public class LinePaintlet
     int				currY;
     int				prevX;
     int				prevY;
-    int				prevMarkerX;
-    int				prevMarkerY;
     AxisPanel			axisX;
     AxisPanel			axisY;
     int				i;
     int				start;
     int				end;
+    HashMap<String,Object>	meta;
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
@@ -150,15 +195,14 @@ public class LinePaintlet
     if (end < data.size() - 1)
       end++;
 
-    currX       = Integer.MIN_VALUE;
-    currY       = Integer.MIN_VALUE;
-    prevX       = axisX.valueToPos(points.get(start).getX());
-    prevY       = axisY.valueToPos(points.get(start).getY());
-    prevMarkerX = 0;
-    prevMarkerY = 0;
+    prevX = axisX.valueToPos(points.get(start).getX());
+    prevY = axisY.valueToPos(points.get(start).getY());
 
     for (i = start; i <= end; i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
+      meta = null;
+      if (curr instanceof SequencePlotPoint)
+	meta = ((SequencePlotPoint) curr).getMetaData();
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
@@ -166,6 +210,19 @@ public class LinePaintlet
 
       // draw line
       g.drawLine(prevX, prevY, currX, currY);
+
+      // violation?
+      if ((meta != null) && ((Boolean) meta.get("violation")))
+	g.setColor(Color.RED);
+      else
+        g.setColor(color);
+
+      // marker
+      g.drawRect(
+	currX - (m_MarkerExtent / 2),
+	currY - (m_MarkerExtent / 2),
+	m_MarkerExtent - 1,
+	m_MarkerExtent - 1);
 
       prevX = currX;
       prevY = currY;

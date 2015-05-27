@@ -65,18 +65,22 @@ public class BeyondLimitsViolations
   protected ControlChartContainer doFind(ControlChartContainer cont) {
     ControlChartContainer	result;
     TIntArrayList		violations;
-    double			lower;
-    double			upper;
+    Limits[]			limits;
     double[]			prepared;
     int				i;
 
-    lower      = (Double) cont.getValue(ControlChartContainer.VALUE_LOWER);
-    upper      = (Double) cont.getValue(ControlChartContainer.VALUE_UPPER);
+    limits     = (Limits[]) cont.getValue(ControlChartContainer.VALUE_LIMITS);
     prepared   = (double[]) cont.getValue(ControlChartContainer.VALUE_PREPARED);
     violations = new TIntArrayList();
     for (i = 0; i < prepared.length; i++) {
-      if ((prepared[i] < lower) || (prepared[i] > upper))
-	violations.add(i);
+      if (limits.length == prepared.length) {
+	if ((prepared[i] < limits[i].getLower()) || (prepared[i] > limits[i].getUpper()))
+	  violations.add(i);
+      }
+      else {
+	if ((prepared[i] < limits[0].getLower()) || (prepared[i] > limits[0].getUpper()))
+	  violations.add(i);
+      }
     }
 
     result = (ControlChartContainer) cont.getClone();

@@ -25,6 +25,9 @@ import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.data.statistics.SPCUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Generates data for a p chart.<br>
@@ -111,11 +114,16 @@ public class PChart
    * Calculates the center/lower/upper limit.
    *
    * @param data	the data to use for the calculation
-   * @return		center/lower/upper
+   * @return		the limits
    */
   @Override
-  public double[] calculate(Number[] data) {
-    return SPCUtils.stats_p(data, m_SampleSize);
+  public List<Limits> calculate(Number[] data) {
+    List<Limits> result;
+
+    result = new ArrayList<>();
+    result.add(new Limits(SPCUtils.stats_p(data, m_SampleSize)));
+
+    return result;
   }
 
   /**

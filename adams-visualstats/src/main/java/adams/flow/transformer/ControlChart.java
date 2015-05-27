@@ -23,14 +23,16 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.spc.IndividualsControlChart;
+import adams.data.spc.Limits;
+import adams.data.spc.MatrixControlChart;
 import adams.data.spc.NullViolations;
-import adams.data.spc.SamplesControlChart;
 import adams.data.spc.UChart;
 import adams.data.spc.ViolationFinder;
 import adams.data.statistics.StatUtils;
 import adams.flow.container.ControlChartContainer;
-import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -104,7 +106,7 @@ import adams.flow.core.Unknown;
  * @version $Revision: 6264 $
  */
 public class ControlChart
-  extends AbstractTransformer {
+  extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 4013915680601748582L;
@@ -139,6 +141,27 @@ public class ControlChart
     m_OptionManager.add(
 	    "violation-finder", "violationFinder",
 	    new NullViolations());
+  }
+
+  /**
+   * Returns the base class of the items.
+   *
+   * @return		the class
+   */
+  @Override
+  protected Class getItemClass() {
+    return ControlChartContainer.class;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "Whether to output the control chart containers as array or one-by-one.";
   }
 
   /**
@@ -219,19 +242,10 @@ public class ControlChart
       return new Class[]{Unknown.class};
     else if (m_Chart instanceof IndividualsControlChart)
       return new Class[]{Double[].class, double[].class, Float[].class, float[].class, Integer[].class, int[].class};
-    else if (m_Chart instanceof SamplesControlChart)
+    else if (m_Chart instanceof MatrixControlChart)
       return new Class[]{Double[][].class, double[][].class, Float[][].class, float[][].class, Integer[][].class, int[][].class};
     else
       throw new IllegalStateException("Unhandled control chart type: " + m_Chart.getClass().getName());
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->adams.flow.container.ControlChartContainer.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{ControlChartContainer.class};
   }
 
   /**
@@ -242,7 +256,7 @@ public class ControlChart
   @Override
   protected String doExecute() {
     String			result;
-    double[]			stats;
+    List<Limits>		stats;
     Object			data;
     double[]			prepared;
     ControlChartContainer	cont;
@@ -251,6 +265,7 @@ public class ControlChart
 
     result = null;
 
+    m_Queue.clear();
     try {
       data = m_InputToken.getPayload();
       if (m_Chart instanceof IndividualsControlChart) {
@@ -270,12 +285,12 @@ public class ControlChart
 	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
 	stats    = ((IndividualsControlChart) m_Chart).calculate(numberArray);
 	prepared = ((IndividualsControlChart) m_Chart).prepare(numberArray);
-	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats[1], stats[0], stats[2]);
+	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats.toArray(new Limits[stats.size()]));
 	if (!(m_ViolationFinder instanceof NullViolations))
 	  cont = m_ViolationFinder.find(cont);
-	m_OutputToken = new Token(cont);
+	m_Queue.add(cont);
       }
-      else if (m_Chart instanceof SamplesControlChart) {
+      else if (m_Chart instanceof MatrixControlChart) {
 	if (data instanceof Double[][])
 	  numberMatrix = (Double[][]) data;
 	else if (data instanceof double[][])
@@ -290,12 +305,12 @@ public class ControlChart
 	  numberMatrix = StatUtils.toNumberMatrix((int[][]) data);
 	else
 	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
-	stats    = ((SamplesControlChart) m_Chart).calculate(numberMatrix);
-	prepared = ((SamplesControlChart) m_Chart).prepare(numberMatrix);
-	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats[1], stats[0], stats[2]);
+	stats    = ((MatrixControlChart) m_Chart).calculate(numberMatrix);
+	prepared = ((MatrixControlChart) m_Chart).prepare(numberMatrix);
+	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats.toArray(new Limits[stats.size()]));
 	if (!(m_ViolationFinder instanceof NullViolations))
 	  cont = m_ViolationFinder.find(cont);
-	m_OutputToken = new Token(cont);
+	m_Queue.add(cont);
       }
       else {
         throw new IllegalStateException("Unhandled control chart type: " + m_Chart.getClass().getName());

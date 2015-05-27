@@ -14,36 +14,40 @@
  */
 
 /**
- * IndividualsControlChart.java
+ * ControlChartWithSampleSize.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spc;
 
-import java.util.List;
-
 /**
- * Interface for control charts that work on individuals rather than samples.
+ * Interface for all control charts with sample sizes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface IndividualsControlChart
+public interface ControlChartWithSampleSize
   extends ControlChart {
 
   /**
-   * Calculates center/lower/upper limit.
+   * Sets the sample size.
    *
-   * @param data	the data to use for the calculation
-   * @return		center/lower/upper
+   * @param value	the sample size
    */
-  public List<Limits> calculate(Number[] data);
+  public void setSampleSize(int value);
 
   /**
-   * Prepares the data.
+   * Returns the sample size.
    *
-   * @param data	the data to prepare
-   * @return		the prepared/processed data
+   * @return		the sample size
    */
-  public double[] prepare(Number[] data);
+  public int getSampleSize();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String sampleSizeTipText();
 }

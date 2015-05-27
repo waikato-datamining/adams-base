@@ -20,6 +20,8 @@
 
 package adams.flow.container;
 
+import adams.data.spc.Limits;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,14 +46,8 @@ public class ControlChartContainer
   /** the identifier for the perpared data (double array). */
   public final static String VALUE_PREPARED = "Prepared";
 
-  /** the identifier for the lower limit (double). */
-  public final static String VALUE_LOWER = "Lower";
-
-  /** the identifier for the center (double). */
-  public final static String VALUE_CENTER = "Center";
-
-  /** the identifier for the upper limit (double). */
-  public final static String VALUE_UPPER = "Upper";
+  /** the identifier for the limits (array of Limits). */
+  public final static String VALUE_LIMITS = "Limits";
 
   /** the identifier for the indices (int array) of violoations. */
   public final static String VALUE_VIOLATIONS = "Violations";
@@ -62,7 +58,7 @@ public class ControlChartContainer
    * Only used for generating help information.
    */
   public ControlChartContainer() {
-    this("Dummy", new double[]{}, new double[]{}, 0.0, 0.5, 1.0);
+    this("Dummy", new double[0], new double[0], new Limits[]{new Limits()});
   }
 
   /**
@@ -71,12 +67,10 @@ public class ControlChartContainer
    * @param chart	the name of the chart
    * @param data        the original data
    * @param prepared	the prepared/processed data
-   * @param lower	the lower limit
-   * @param center	the center
-   * @param upper	the upper limit
+   * @param limits	the limits
    */
-  public ControlChartContainer(String chart, Object data, Object prepared, double lower, double center, double upper) {
-    this(chart, data, prepared, lower, center, upper, null);
+  public ControlChartContainer(String chart, Object data, Object prepared, Limits[] limits) {
+    this(chart, data, prepared, limits, null);
   }
 
   /**
@@ -85,23 +79,22 @@ public class ControlChartContainer
    * @param chart	the name of the chart
    * @param data        the original data
    * @param prepared	the prepared/processed data
-   * @param lower	the lower limit
-   * @param center	the center
-   * @param upper	the upper limit
+   * @param limits	the limits
    * @param violations	the indices of the violations, null if none
    */
-  public ControlChartContainer(String chart, Object data, Object prepared, double lower, double center, double upper, int[] violations) {
+  public ControlChartContainer(String chart, Object data, Object prepared, Limits[] limits, int[] violations) {
     super();
 
     if ((violations != null) && (violations.length == 0))
       violations = null;
 
+    if (limits.length < 1)
+      throw new IllegalArgumentException("At least one Limit container has to be provided!");
+
     store(VALUE_CHART,      chart);
     store(VALUE_DATA,       data);
     store(VALUE_PREPARED,   prepared);
-    store(VALUE_LOWER,      lower);
-    store(VALUE_CENTER,     center);
-    store(VALUE_UPPER,      upper);
+    store(VALUE_LIMITS,     limits);
     store(VALUE_VIOLATIONS, violations);
   }
 
@@ -119,9 +112,7 @@ public class ControlChartContainer
     result.add(VALUE_CHART);
     result.add(VALUE_DATA);
     result.add(VALUE_PREPARED);
-    result.add(VALUE_LOWER);
-    result.add(VALUE_CENTER);
-    result.add(VALUE_UPPER);
+    result.add(VALUE_LIMITS);
     result.add(VALUE_VIOLATIONS);
 
     return result.iterator();
@@ -138,8 +129,6 @@ public class ControlChartContainer
       hasValue(VALUE_CHART)
 	&& hasValue(VALUE_DATA)
 	&& hasValue(VALUE_PREPARED)
-	&& hasValue(VALUE_LOWER)
-	&& hasValue(VALUE_CENTER)
-	&& hasValue(VALUE_UPPER);
+	&& hasValue(VALUE_LIMITS);
   }
 }

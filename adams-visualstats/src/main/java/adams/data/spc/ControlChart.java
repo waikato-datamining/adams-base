@@ -24,7 +24,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.option.OptionHandler;
 
 /**
- * Ancestor for all control charts.
+ * Interface for all control charts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -38,26 +38,4 @@ public interface ControlChart
    * @return		the chart name
    */
   public String getName();
-
-  /**
-   * Sets the sample size.
-   *
-   * @param value	the sample size
-   */
-  public void setSampleSize(int value);
-
-  /**
-   * Returns the sample size.
-   *
-   * @return		the sample size
-   */
-  public int getSampleSize();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String sampleSizeTipText();
 }

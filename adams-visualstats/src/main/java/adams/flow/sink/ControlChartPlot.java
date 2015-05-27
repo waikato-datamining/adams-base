@@ -20,38 +20,39 @@
 
 package adams.flow.sink;
 
-import adams.core.NamedCounter;
 import adams.data.DecimalFormatString;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
+import adams.data.spc.Limits;
+import adams.data.statistics.StatUtils;
 import adams.flow.container.ControlChartContainer;
-import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.controlchartplot.AbstractControlChartPaintlet;
-import adams.flow.sink.controlchartplot.LinePaintlet;
-import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
+import adams.flow.sink.controlchartplot.ChartPaintlet;
+import adams.flow.sink.controlchartplot.LimitPaintlet;
 import adams.flow.sink.sequenceplotter.MouseClickAction;
 import adams.flow.sink.sequenceplotter.NullClickAction;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
-import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
-import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.AbstractLimitedTickGenerator;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.axis.TickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.MultiPaintlet;
-import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+import gnu.trove.set.hash.TIntHashSet;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -72,8 +73,11 @@ public class ControlChartPlot
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
 
-  /** the paintlet to use for painting the XY data. */
+  /** the paintlet to use for painting the chart data. */
   protected AbstractControlChartPaintlet m_Paintlet;
+
+  /** the paintlet to use for painting the limits. */
+  protected AbstractControlChartPaintlet m_LimitPaintlet;
 
   /** the color provider to use. */
   protected AbstractColorProvider m_ColorProvider;
@@ -89,15 +93,6 @@ public class ControlChartPlot
 
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
-
-  /** for keeping track of the tokens. */
-  protected NamedCounter m_Counter;
-
-  /** the plot updater to use. */
-  protected AbstractPlotUpdater m_PlotUpdater;
-
-  /** the center paintlet. */
-  protected StraightLineOverlayPaintlet m_CenterPaintlet;
 
   /**
    * Returns a string describing the object.
@@ -118,7 +113,11 @@ public class ControlChartPlot
 
     m_OptionManager.add(
       "paintlet", "paintlet",
-      new LinePaintlet());
+      new ChartPaintlet());
+
+    m_OptionManager.add(
+      "limit-paintlet", "limitPaintlet",
+      new LimitPaintlet());
 
     m_OptionManager.add(
       "mouse-click-action", "mouseClickAction",
@@ -139,29 +138,6 @@ public class ControlChartPlot
     m_OptionManager.add(
       "axis-y", "axisY",
       getDefaultAxisY());
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Counter     = new NamedCounter();
-    m_PlotUpdater = new SimplePlotUpdater();
-    ((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
-    m_CenterPaintlet = new StraightLineOverlayPaintlet();
-  }
-
-  /**
-   * Resets the actor.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_Counter.clear();
   }
 
   /**
@@ -211,6 +187,35 @@ public class ControlChartPlot
    */
   public String paintletTipText() {
     return "The paintlet to use for painting the data.";
+  }
+
+  /**
+   * Sets the paintlet to use for painting the limits.
+   *
+   * @param value 	the paintlet
+   */
+  public void setLimitPaintlet(AbstractControlChartPaintlet value) {
+    m_LimitPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the paintlet to use for painting the limits.
+   *
+   * @return 		the paintlet
+   */
+  public AbstractControlChartPaintlet getLimitPaintlet() {
+    return m_LimitPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String limitPaintletTipText() {
+    return "The paintlet to use for painting the limits.";
   }
 
   /**
@@ -282,13 +287,13 @@ public class ControlChartPlot
 
     result = new AxisPanelOptions();
     result.setType(Type.ABSOLUTE);
-    result.setLabel("observation");
+    result.setLabel("sample");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
     result.setNthValueToShow(1);
     result.setWidth(40);
-    result.setTopMargin(0.0);
-    result.setBottomMargin(0.0);
+    result.setTopMargin(0.05);
+    result.setBottomMargin(0.05);
     result.setCustomFormat(new DecimalFormatString("0"));
     tick = new FancyTickGenerator();
     tick.setNumTicks(20);
@@ -313,8 +318,8 @@ public class ControlChartPlot
     result.setLengthTicks(4);
     result.setNthValueToShow(2);
     result.setWidth(60);
-    result.setTopMargin(0.0);
-    result.setBottomMargin(0.0);
+    result.setTopMargin(0.05);
+    result.setBottomMargin(0.05);
     result.setCustomFormat(new DecimalFormatString("0.0"));
     tick = new FancyTickGenerator();
     tick.setNumTicks(10);
@@ -415,10 +420,8 @@ public class ControlChartPlot
    */
   @Override
   public void clearPanel() {
-    if (m_Panel != null) {
+    if (m_Panel != null)
       ((SequencePlotterPanel) m_Panel).getContainerManager().clear();
-      ((SequencePlotterPanel) m_Panel).getMarkerContainerManager().clear();
-    }
   }
 
   /**
@@ -429,20 +432,22 @@ public class ControlChartPlot
   @Override
   protected BasePanel newPanel() {
     SequencePlotterPanel	result;
-    MultiPaintlet multi;
+    MultiPaintlet		multi;
+
+    multi = new MultiPaintlet();
+    multi.setSubPaintlets(new XYSequencePaintlet[]{
+      getPaintlet(),
+      getLimitPaintlet()
+    });
 
     result = new SequencePlotterPanel(getTitle());
-    result.setPaintlet(getPaintlet());
+    result.setPaintlet(multi);
     ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
-    // TODO
-    multi = new MultiPaintlet();
-    multi.setSubPaintlets(new XYSequencePaintlet[]{m_CenterPaintlet});
-    result.setOverlayPaintlet(multi);
-    ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
+    result.getContainerList().setAllowSearch(false);
 
     return result;
   }
@@ -472,30 +477,30 @@ public class ControlChartPlot
     ControlChartContainer 	chartCont;
     String 			chartName;
     double[]			prepared;
-    double			lower;
-    double			center;
-    double			upper;
-    double			diff;
-    String			format;
+    Limits[]			limits;
     int				i;
-    SequencePlotterContainer	seqCont;
-    PlotPanel			plot;
-    AxisPanel 			axis;
-    AbstractLimitedTickGenerator	tick;
-
-    chartCont = (ControlChartContainer) token.getPayload();
-    chartName = (String) chartCont.getValue(ControlChartContainer.VALUE_CHART);
-    prepared  = (double[]) chartCont.getValue(ControlChartContainer.VALUE_PREPARED);
-    lower     = (Double) chartCont.getValue(ControlChartContainer.VALUE_LOWER);
-    center    = (Double) chartCont.getValue(ControlChartContainer.VALUE_CENTER);
-    upper     = (Double) chartCont.getValue(ControlChartContainer.VALUE_UPPER);
-
-    m_CenterPaintlet.setXFactor(0.0);
-    m_CenterPaintlet.setYOffset(center);
+    TIntHashSet			violations;
+    HashMap<String,Object>	meta;
+    double			min;
+    double			max;
+    AxisPanel 			axisY;
+    AxisPanel 			axisX;
+    int				numTicks;
+    TickGenerator		tick;
 
     manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
     manager.startUpdate();
-    
+
+    // extract data from container
+    chartCont  = (ControlChartContainer) token.getPayload();
+    chartName  = (String) chartCont.getValue(ControlChartContainer.VALUE_CHART);
+    prepared   = (double[]) chartCont.getValue(ControlChartContainer.VALUE_PREPARED);
+    limits     = (Limits[]) chartCont.getValue(ControlChartContainer.VALUE_LIMITS);
+    if (chartCont.hasValue(ControlChartContainer.VALUE_VIOLATIONS))
+      violations = new TIntHashSet((int[]) chartCont.getValue(ControlChartContainer.VALUE_VIOLATIONS));
+    else
+      violations = new TIntHashSet();
+
     // find or create new plot
     if (manager.indexOf(chartName) == -1) {
       seq  = new SequencePlotSequence();
@@ -509,40 +514,52 @@ public class ControlChartPlot
       seq  = cont.getData();
     }
 
-    // be a bit intelligent about format for axes
-    plot = ((SequencePlotterPanel) m_Panel).getPlot();
-    axis = plot.getAxis(Axis.LEFT);
-    diff = Math.abs(upper - lower);
-    if (diff >= 1)
-      format = "0.0";
-    else
-      format = ("" + diff).replaceAll("[1-9]*", "") + "0";
-    axis.setNumberFormat(format);
-
-    axis = plot.getAxis(Axis.BOTTOM);
-    axis.setNumberFormat("0");
-    if (axis.getTickGenerator() instanceof AbstractLimitedTickGenerator) {
-      tick = (AbstractLimitedTickGenerator) axis.getTickGenerator();
-      tick.setNumTicks(seq.size());
+    // # ticks
+    axisX = ((SequencePlotterPanel) m_Panel).getPlot().getAxis(Axis.BOTTOM);
+    numTicks = 0;
+    for (i = 0; i < manager.countVisible(); i++)
+      numTicks = Math.max(numTicks, manager.getVisible(i).getData().size());
+    tick = axisX.getTickGenerator();
+    if (tick instanceof AbstractLimitedTickGenerator) {
+      if (((AbstractLimitedTickGenerator) tick).getNumTicks() != numTicks) {
+	tick = tick.shallowCopy();
+	((AbstractLimitedTickGenerator) tick).setNumTicks(numTicks);
+	axisX.setTickGenerator(tick);
+      }
     }
 
+    // create sequence
+    min = Double.MAX_VALUE;
+    max = Double.MIN_VALUE;
     for (i = 0; i < prepared.length; i++) {
-      point = new SequencePlotPoint("" + seq.size(), seq.size(), prepared[i]);
+      meta  = new HashMap<>();
+      if (limits.length == prepared.length) {
+	meta.put("lower", limits[i].getLower());
+	meta.put("center", limits[i].getCenter());
+	meta.put("upper", limits[i].getUpper());
+	// min/max
+	min = StatUtils.min(new double[]{min, limits[i].getLower(), limits[i].getCenter(), limits[i].getUpper(), prepared[i]});
+	max = StatUtils.max(new double[]{max, limits[i].getLower(), limits[i].getCenter(), limits[i].getUpper(), prepared[i]});
+      }
+      else {
+	meta.put("lower", limits[0].getLower());
+	meta.put("center", limits[0].getCenter());
+	meta.put("upper", limits[0].getUpper());
+	// min/max
+	min = StatUtils.min(new double[]{min, limits[0].getLower(), limits[0].getCenter(), limits[0].getUpper(), prepared[i]});
+	max = StatUtils.max(new double[]{max, limits[0].getLower(), limits[0].getCenter(), limits[0].getUpper(), prepared[i]});
+      }
+      meta.put("violation", violations.contains(i));
+      point = new SequencePlotPoint("" + (seq.size() + 1), seq.size() + 1, prepared[i]);
+      point.setMetaData(meta);
       seq.add(point);
-      // update
-      seqCont = new SequencePlotterContainer(chartName, prepared[i]);
-      m_PlotUpdater.update((SequencePlotterPanel) getPanel(), seqCont);
     }
-  }
 
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void wrapUp() {
-    if (m_Panel != null)
-      m_PlotUpdater.update((SequencePlotterPanel) m_Panel);
+    // update min/max
+    axisY = ((SequencePlotterPanel) m_Panel).getPlot().getAxis(Axis.LEFT);
+    axisY.setManualMinimum(min);
+    axisY.setManualMaximum(max);
 
-    super.wrapUp();
+    manager.finishUpdate();
   }
 }

@@ -27,7 +27,8 @@ package adams.data.spc;
  * @version $Revision$
  */
 public abstract class AbstractControlChartWithSampleSize
-  extends AbstractControlChart {
+  extends AbstractControlChart
+  implements ControlChartWithSampleSize {
 
   private static final long serialVersionUID = 6551757750425372768L;
 

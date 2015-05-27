@@ -437,7 +437,7 @@ public class SPCUtils {
 
   // c chart
   // http://www.qimacros.com/control-chart-formulas/c-chart-formula/
-  public static double[] stats_c(Number[] data, int size) {
+  public static double[] stats_c(Number[] data, double size) {
     double cbar = StatUtils.mean(data);
 
     double center = cbar;
@@ -450,18 +450,23 @@ public class SPCUtils {
 
   // u chart
   // http://www.qimacros.com/control-chart-formulas/u-chart-formula/
-  public static double[] stats_u(Number[] data, int size) {
-    int n = size;
-    assert(n > 1);
+  public static double[][] stats_u(Number[] data, Number[] nonconform) {
+    assert(data.length == nonconform.length);
+    for (int i = 0; i < nonconform.length; i++)
+      assert(nonconform[i].doubleValue() > 1);
 
-    double cbar = (StatUtils.sum(data)) / (double) (data.length * n);
+    double ubar = StatUtils.sum(nonconform) / StatUtils.sum(data);
 
-    double center = cbar;
-    double lcl = center - 3 * Math.sqrt(cbar / (double) n);
-    if (lcl < 0)
-      lcl = 0;
-    double ucl = center + 3 * Math.sqrt(cbar / (double) n);
-    return new double[]{center,lcl, ucl};
+    double[][] result = new double[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      double center = ubar;
+      double lcl = center - 3 * Math.sqrt(ubar / data[i].doubleValue());
+      if (lcl < 0)
+	lcl = 0;
+      double ucl = center + 3 * Math.sqrt(ubar / data[i].doubleValue());
+      result[i] = new double[]{center,lcl, ucl};
+    }
+    return result;
   }
 
   public static double[] prepare_data_x_bar_rs_x(Number[][] data, int size) {
@@ -501,11 +506,18 @@ public class SPCUtils {
     return result.toArray();
   }
 
-  public static double[] prepare_data_u(Number[] data, int size) {
+  public static double[] prepare_data_u(Number[] data, Number nonconform) {
     TDoubleArrayList result = new TDoubleArrayList();
-    result.add(0);
     for (Number d: data)
-      result.add(d.doubleValue() / (double) size);
+      result.add(nonconform.doubleValue() / d.doubleValue());
+    return result.toArray();
+  }
+
+  public static double[] prepare_data_u(Number[] data, Number[] nonconform) {
+    assert(data.length == nonconform.length);
+    TDoubleArrayList result = new TDoubleArrayList();
+    for (int i = 0; i < data.length; i++)
+      result.add(nonconform[i].doubleValue() / data[i].doubleValue());
     return result.toArray();
   }
 }

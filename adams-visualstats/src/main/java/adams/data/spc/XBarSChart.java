@@ -25,6 +25,9 @@ import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.data.statistics.SPCUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Generates data for an XBar S chart.<br>
@@ -192,14 +195,20 @@ public class XBarSChart
    * Calculates the center/lower/upper limit.
    *
    * @param data	the data to use for the calculation
-   * @return		center/lower/upper
+   * @return		the limits
    */
   @Override
-  public double[] calculate(Number[][] data) {
+  public List<Limits> calculate(Number[][] data) {
+    List<Limits> result;
+
+    result = new ArrayList<>();
+
     if (m_StandardDeviation)
-      return SPCUtils.stats_x_bar_s_s(data, getActualSampleSize(data));
+      result.add(new Limits(SPCUtils.stats_x_bar_s_s(data, getActualSampleSize(data))));
     else
-      return SPCUtils.stats_x_bar_s_x(data, getActualSampleSize(data));
+      result.add(new Limits(SPCUtils.stats_x_bar_s_x(data, getActualSampleSize(data))));
+
+    return result;
   }
 
   /**

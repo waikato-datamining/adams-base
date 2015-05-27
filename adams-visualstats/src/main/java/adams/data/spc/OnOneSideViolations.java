@@ -122,21 +122,29 @@ public class OnOneSideViolations
   protected ControlChartContainer doFind(ControlChartContainer cont) {
     ControlChartContainer	result;
     TIntArrayList		violations;
-    double			center;
+    Limits[]			limits;
     double[]			prepared;
     int				i;
     int				n;
     boolean			mixed;
 
-    center     = (Double) cont.getValue(ControlChartContainer.VALUE_CENTER);
+    limits     = (Limits[]) cont.getValue(ControlChartContainer.VALUE_LIMITS);
     prepared   = (double[]) cont.getValue(ControlChartContainer.VALUE_PREPARED);
     violations = new TIntArrayList();
     for (i = 0; i < prepared.length - m_MinPoints; i++) {
       mixed = false;
       for (n = 0; n < m_MinPoints - 1; n++) {
-	if ((prepared[n] - center) * (prepared[n + 1] - center) < 0) {
-	  mixed = true;
-	  break;
+	if (limits.length == prepared.length) {
+	  if ((prepared[n] - limits[n].getCenter()) * (prepared[n + 1] - limits[n].getCenter()) < 0) {
+	    mixed = true;
+	    break;
+	  }
+	}
+	else {
+	  if ((prepared[n] - limits[0].getCenter()) * (prepared[n + 1] - limits[0].getCenter()) < 0) {
+	    mixed = true;
+	    break;
+	  }
 	}
       }
       if (!mixed)

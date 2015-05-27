@@ -14,7 +14,7 @@
  */
 
 /**
- * IndividualsControlChart.java
+ * MatrixControlChart.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -23,12 +23,12 @@ package adams.data.spc;
 import java.util.List;
 
 /**
- * Interface for control charts that work on individuals rather than samples.
+ * Interface for control charts that work on a matrix.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface IndividualsControlChart
+public interface MatrixControlChart
   extends ControlChart {
 
   /**
@@ -37,7 +37,7 @@ public interface IndividualsControlChart
    * @param data	the data to use for the calculation
    * @return		center/lower/upper
    */
-  public List<Limits> calculate(Number[] data);
+  public List<Limits> calculate(Number[][] data);
 
   /**
    * Prepares the data.
@@ -45,5 +45,5 @@ public interface IndividualsControlChart
    * @param data	the data to prepare
    * @return		the prepared/processed data
    */
-  public double[] prepare(Number[] data);
+  public double[] prepare(Number[][] data);
 }
