@@ -22,8 +22,6 @@ package adams.data.conversion;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
-import java.util.ArrayList;
-
 /**
  <!-- globalinfo-start -->
  * Turns a spreadsheet into a double matrix, using only the numeric columns.
@@ -31,13 +29,21 @@ import java.util.ArrayList;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
  * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
+ * &nbsp;&nbsp;&nbsp;The range of rows to use.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  <!-- options-end -->
@@ -46,7 +52,7 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public class SpreadSheetToDoubleMatrix
-  extends AbstractSpreadSheetToMatrix {
+  extends AbstractSpreadSheetToMatrix<Double> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4117708470154504868L;
@@ -72,40 +78,38 @@ public class SpreadSheetToDoubleMatrix
   }
 
   /**
-   * Performs the actual conversion.
+   * Generates a new matrix.
    *
-   * @return		the converted data
-   * @throws Exception	if something goes wrong with the conversion
+   * @param rows	the number of rows
+   * @param cols	the number of columns
    */
-  @Override
-  protected Object doConvert() throws Exception {
-    Double[][]		result;
-    SpreadSheet		sheet;
-    ArrayList<Integer>	numeric;
-    int			i;
-    int			n;
-    Row			row;
-    
-    sheet   = (SpreadSheet) m_Input;
-    numeric = new ArrayList<Integer>();
-    for (i = 0; i < sheet.getColumnCount(); i++) {
-      if (sheet.isNumeric(i, true))
-	numeric.add(i);
-    }
-    if (numeric.size() == 0)
-      throw new IllegalStateException("No numeric columns in spreadsheet!");
-    
-    result = new Double[sheet.getRowCount()][numeric.size()];
-    for (n = 0; n < sheet.getRowCount(); n++) {
-      row = sheet.getRow(n);
-      for (i = 0; i < numeric.size(); i++) {
-	if (!row.hasCell(numeric.get(i)))
-	  result[n][i] = Double.NaN;
-	else
-	  result[n][i] = row.getCell(numeric.get(i)).toDouble();
-      }
-    }
-    
-    return result;
+  protected Double[][] newMatrix(int rows, int cols) {
+    return new Double[rows][cols];
+  }
+
+  /**
+   * Determines whether to include this particular column.
+   *
+   * @param sheet	the spreadsheet to work on
+   * @param col		the column to check
+   * @return		true if to include in the matrix
+   */
+  protected boolean includeColumn(SpreadSheet sheet, int col) {
+    return (sheet.isNumeric(col, true));
+  }
+
+  /**
+   * Returns the cell value at the specified location.
+   *
+   * @param sheet	the sheet to process
+   * @param row		the row to work on
+   * @param col		the column index in the row
+   * @return		the cell value
+   */
+  protected Double getValue(SpreadSheet sheet, Row row, int col) {
+    if (!row.hasCell(col))
+      return Double.NaN;
+    else
+      return row.getCell(col).toDouble();
   }
 }

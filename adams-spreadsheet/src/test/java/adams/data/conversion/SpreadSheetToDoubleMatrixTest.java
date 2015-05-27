@@ -15,17 +15,19 @@
 
 /**
  * SpreadSheetToDoubleMatrixTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.Range;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.env.Environment;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the SpreadSheetToDoubleMatrix conversion.
@@ -103,8 +105,11 @@ public class SpreadSheetToDoubleMatrixTest
   protected Conversion[] getRegressionSetups() {
     SpreadSheetToDoubleMatrix[]	result;
 
-    result    = new SpreadSheetToDoubleMatrix[1];
+    result    = new SpreadSheetToDoubleMatrix[2];
     result[0] = new SpreadSheetToDoubleMatrix();
+    result[1] = new SpreadSheetToDoubleMatrix();
+    result[1].setRows(new Range("3-last"));
+    result[1].setColumns(new SpreadSheetColumnRange("2-last_2"));
 
     return result;
   }

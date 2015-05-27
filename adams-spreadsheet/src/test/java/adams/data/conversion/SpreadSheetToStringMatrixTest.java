@@ -15,11 +15,13 @@
 
 /**
  * SpreadSheetToStringMatrixTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import adams.core.Range;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -103,8 +105,11 @@ public class SpreadSheetToStringMatrixTest
   protected Conversion[] getRegressionSetups() {
     SpreadSheetToStringMatrix[]	result;
 
-    result    = new SpreadSheetToStringMatrix[1];
+    result    = new SpreadSheetToStringMatrix[2];
     result[0] = new SpreadSheetToStringMatrix();
+    result[1] = new SpreadSheetToStringMatrix();
+    result[1].setRows(new Range("3-last"));
+    result[1].setColumns(new SpreadSheetColumnRange("2-last_2"));
 
     return result;
   }

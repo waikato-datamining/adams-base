@@ -34,13 +34,25 @@ import adams.data.spreadsheet.SpreadSheet;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
+ * &nbsp;&nbsp;&nbsp;The range of rows to use.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 6556 $
  */
 public class SpreadSheetToStringMatrix
-  extends AbstractSpreadSheetToMatrix {
+  extends AbstractSpreadSheetToMatrix<String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4117708470154504868L;
@@ -66,31 +78,38 @@ public class SpreadSheetToStringMatrix
   }
 
   /**
-   * Performs the actual conversion.
+   * Generates a new matrix.
    *
-   * @return		the converted data
-   * @throws Exception	if something goes wrong with the conversion
+   * @param rows	the number of rows
+   * @param cols	the number of columns
    */
-  @Override
-  protected Object doConvert() throws Exception {
-    String[][]		result;
-    SpreadSheet		sheet;
-    int			i;
-    int			n;
-    Row			row;
-    
-    sheet  = (SpreadSheet) m_Input;
-    result = new String[sheet.getRowCount()][sheet.getColumnCount()];
-    for (n = 0; n < sheet.getRowCount(); n++) {
-      row = sheet.getRow(n);
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (!row.hasCell(i))
-	  result[n][i] = "";
-	else
-	  result[n][i] = row.getCell(i).getContent();
-      }
-    }
-    
-    return result;
+  protected String[][] newMatrix(int rows, int cols) {
+    return new String[rows][cols];
+  }
+
+  /**
+   * Determines whether to include this particular column.
+   *
+   * @param sheet	the spreadsheet to work on
+   * @param col		the column to check
+   * @return		true if to include in the matrix
+   */
+  protected boolean includeColumn(SpreadSheet sheet, int col) {
+    return true;
+  }
+
+  /**
+   * Returns the cell value at the specified location.
+   *
+   * @param sheet	the sheet to process
+   * @param row		the row to work on
+   * @param col		the column index in the row
+   * @return		the cell value
+   */
+  protected String getValue(SpreadSheet sheet, Row row, int col) {
+    if (!row.hasCell(col))
+      return "";
+    else
+      return row.getCell(col).getContent();
   }
 }
