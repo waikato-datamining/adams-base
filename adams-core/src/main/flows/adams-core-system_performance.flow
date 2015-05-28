@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-05-26 20:54:16
+# Date: 2015-05-28 15:52:18
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -135,8 +135,14 @@ adams.flow.control.Flow
 							100
 					-post-processor
 						adams.flow.sink.sequenceplotter.PassThrough
+			-actor
+				adams.flow.sink.Display
+					-name
+					Overall
+					-writer
+						adams.data.io.output.NullWriter
 			-num-rows
-			2
+			3
 			-writer
 				adams.gui.print.NullWriter
 	-actor
@@ -177,6 +183,40 @@ adams.flow.control.Flow
 						adams.flow.sink.CallableSink
 							-callable
 							CPU
+			-actor
+				adams.flow.control.Sequence
+					-name
+					timing_overall
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-tee
+								adams.flow.transformer.SetVariable
+									-var-name
+									msec
+							-value
+							msec
+					-actor
+						adams.flow.control.ContainerValuePicker
+							-name
+							ContainerValuePicker-1
+							-tee
+								adams.flow.transformer.SetVariable
+									-var-name
+									prefix
+							-value
+							Prefix
+					-actor
+						adams.flow.control.Trigger
+							-name
+							generate output
+							-tee
+								adams.flow.source.CombineVariables
+									-expression
+									Overall @{prefix}: @{msec} msec
+							-tee
+								adams.flow.sink.CallableSink
+									-callable
+									Overall
 	-actor
 		adams.flow.standalone.Standalones
 			-name
@@ -236,7 +276,7 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.source.Start
 	-actor
-		adams.flow.control.Trigger
+		adams.flow.control.TimedTrigger
 			-name
 			speed
 			-tee
@@ -399,8 +439,12 @@ adams.flow.control.Flow
 											0.0
 							-callable
 							timing_cpuspeed
+			-prefix
+			CPU
+			-callable
+			timing_overall
 	-actor
-		adams.flow.control.Trigger
+		adams.flow.control.TimedTrigger
 			-name
 			write
 			-tee
@@ -461,6 +505,10 @@ adams.flow.control.Flow
 									true
 							-callable
 							timing_write
+			-prefix
+			Write
+			-callable
+			timing_overall
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
