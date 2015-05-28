@@ -20,16 +20,6 @@
 
 package adams.flow.source;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
@@ -38,6 +28,15 @@ import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -63,7 +62,7 @@ import adams.gui.dialog.ApprovalDialog;
  * &nbsp;&nbsp;&nbsp;default: EnterManyValues
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -77,6 +76,11 @@ import adams.gui.dialog.ApprovalDialog;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -102,6 +106,11 @@ import adams.gui.dialog.ApprovalDialog;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-output-type &lt;SPREADSHEET|KEY_VALUE_PAIRS|KEY_VALUE_PAIRS_ARRAY&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;How to output the entered data.
+ * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
+ * </pre>
+ * 
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -119,17 +128,29 @@ public class EnterManyValues
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
 
+  /**
+   * Defines how to output the data that the user entered.
+   */
+  public enum OutputType {
+    SPREADSHEET,
+    KEY_VALUE_PAIRS,
+    KEY_VALUE_PAIRS_ARRAY
+  }
+
   /** the message for the user. */
   protected String m_Message;
 
   /** the value definitions. */
   protected ValueDefinition[] m_Values;
 
+  /** how to output the data. */
+  protected OutputType m_OutputType;
+
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
   
-  /** the output token to broadcast. */
-  protected Token m_OutputToken;
+  /** the list of tokens to output. */
+  protected List m_Queue;
 
   /**
    * Returns a string describing the object.
@@ -157,8 +178,32 @@ public class EnterManyValues
 	    new ValueDefinition[0]);
 
     m_OptionManager.add(
+	    "output-type", "outputType",
+	    OutputType.SPREADSHEET);
+
+    m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Queue = new ArrayList();
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Queue = new ArrayList();
   }
 
   /**
@@ -176,6 +221,7 @@ public class EnterManyValues
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputType", m_OutputType));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -240,6 +286,35 @@ public class EnterManyValues
   }
 
   /**
+   * Sets how to output the entered data.
+   *
+   * @param value	the type
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to output the entered data.
+   *
+   * @return 		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "How to output the entered data.";
+  }
+
+  /**
    * Sets whether to enable/disable interactiveness.
    *
    * @param value	if true actor is not interactive, but automated
@@ -269,22 +344,21 @@ public class EnterManyValues
   }
 
   /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_OutputToken = null;
-  }
-
-  /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-generates-end -->
+   * @return		the classes
    */
   public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+    switch (m_OutputType) {
+      case SPREADSHEET:
+	return new Class[]{SpreadSheet.class};
+      case KEY_VALUE_PAIRS:
+	return new Class[]{String[].class};
+      case KEY_VALUE_PAIRS_ARRAY:
+	return new Class[]{String[][].class};
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+    }
   }
 
   /**
@@ -326,7 +400,7 @@ public class EnterManyValues
    * names for column names).
    * 
    * @param props	the properties to convert
-   * @return		the generated spreadsheet
+   * @return		the generated spreadsheet in a token
    */
   protected SpreadSheet propertiesToSpreadSheet(Properties props) {
     SpreadSheet	result;
@@ -369,7 +443,56 @@ public class EnterManyValues
     
     return result;
   }
-  
+
+  /**
+   * Converts the properties into the requested output type.
+   *
+   * @param props	the properties to convert
+   * @return		the generated output type
+   */
+  protected Token[] propertiesToOutputType(Properties props) {
+    Token[]		result;
+    SpreadSheet		sheet;
+    String[]		pair;
+    String[][]		pairArray;
+    int			i;
+
+    switch (m_OutputType) {
+      case SPREADSHEET:
+	result = new Token[]{new Token(propertiesToSpreadSheet(props))};
+	break;
+
+      case KEY_VALUE_PAIRS:
+	sheet  = propertiesToSpreadSheet(props);
+	result = new Token[sheet.getColumnCount()];
+	for (i = 0; i < sheet.getColumnCount(); i++) {
+	  pair = new String[]{
+	    sheet.getHeaderRow().getCell(i).getContent(),
+	    sheet.getRow(0).getCell(i).getContent()};
+	  result[i] = new Token(pair);
+	}
+	break;
+
+      case KEY_VALUE_PAIRS_ARRAY:
+	sheet     = propertiesToSpreadSheet(props);
+	result    = new Token[1];
+	pairArray = new String[sheet.getColumnCount()][2];
+	for (i = 0; i < sheet.getColumnCount(); i++) {
+	  pair = new String[]{
+	    sheet.getHeaderRow().getCell(i).getContent(),
+	    sheet.getRow(0).getCell(i).getContent()};
+	  pairArray[i] = pair;
+	}
+	result[0] = new Token(pairArray);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+    }
+
+    return result;
+  }
+
   /**
    * Performs the interaction with the user.
    *
@@ -384,8 +507,10 @@ public class EnterManyValues
     List<String>		order;
     Boolean                     sync;
 
+    m_Queue.clear();
+
     if (m_NonInteractive) {
-      m_OutputToken = new Token(propertiesToSpreadSheet(getDefaultProperties()));
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
       return true;
     }
 
@@ -398,12 +523,14 @@ public class EnterManyValues
       panel.addPropertyType(val.getName(), val.getType());
       if (!val.getDisplay().trim().isEmpty())
         panel.setLabel(val.getName(), val.getDisplay());
+      if (!val.getHelp().trim().isEmpty())
+	panel.setHelp(val.getName(), val.getHelp());
     }
     panel.setPropertyOrder(order);
     panel.setProperties(getDefaultProperties());
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelMsg.add(new JLabel(m_Message));
-    dialog = new ApprovalDialog((Dialog) null, ModalityType.MODELESS);
+    dialog = new ApprovalDialog(null, ModalityType.MODELESS);
     dialog.setTitle(getName());
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
@@ -439,8 +566,8 @@ public class EnterManyValues
       dialog.setVisible(false);
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      props         = panel.getProperties();
-      m_OutputToken = new Token(propertiesToSpreadSheet(props));
+      props = panel.getProperties();
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       return true;
     }
     else {
@@ -456,7 +583,7 @@ public class EnterManyValues
   @Override
   protected String doExecute() {
     if (isHeadless()) {
-      m_OutputToken = new Token(propertiesToSpreadSheet(getDefaultProperties()));
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
       return null;
     }
     else {
@@ -472,8 +599,9 @@ public class EnterManyValues
   public Token output() {
     Token	result;
 
-    result        = m_OutputToken;
-    m_OutputToken = null;
+    result = null;
+    if ((m_Queue != null) && !m_Queue.isEmpty())
+      result = (Token) m_Queue.remove(0);
 
     return result;
   }
@@ -485,6 +613,16 @@ public class EnterManyValues
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return (m_OutputToken != null);
+    return (m_Queue.size() > 0);
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    super.wrapUp();
+
+    m_Queue = null;
   }
 }
