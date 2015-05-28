@@ -31,6 +31,7 @@ import adams.data.io.output.AbstractDataContainerWriter;
 import adams.data.io.output.MetaFileWriter;
 import adams.flow.core.Token;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -48,11 +49,28 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   /** for serialization. */
   private static final long serialVersionUID = -2589436559371405252L;
 
+  public enum FileNameGeneration {
+    /** Use either ID or database ID. */
+    AUTOMATIC,
+    /** Use the database ID. */
+    DATABASE_ID,
+    /** use the container's ID. */
+    ID,
+    /** use the specified name (without path). */
+    SUPPLIED
+  }
+
   /** the writer to use. */
   protected AbstractDataContainerWriter<T> m_Writer;
 
   /** the output directory. */
   protected PlaceholderDirectory m_OutputDir;
+
+  /** how to generate the filename. */
+  protected FileNameGeneration m_FileNameGeneration;
+
+  /** the supplied filename. */
+  protected String m_SuppliedFileName;
 
   /**
    * Adds options to the internal list of options.
@@ -62,12 +80,20 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "writer", "writer",
-	    getDefaultWriter());
+      "writer", "writer",
+      getDefaultWriter());
 
     m_OptionManager.add(
-	    "dir", "outputDir",
-	    new PlaceholderDirectory("."));
+      "dir", "outputDir",
+      new PlaceholderDirectory("."));
+
+    m_OptionManager.add(
+      "file-name-generation", "fileNameGeneration",
+      FileNameGeneration.AUTOMATIC);
+
+    m_OptionManager.add(
+      "supplied-file-name", "suppliedFileName",
+      getDefaultSuppliedFileName());
   }
 
   /**
@@ -136,6 +162,73 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /**
+   * Sets how to generate the filename.
+   *
+   * @param value	the generation
+   */
+  public void setFileNameGeneration(FileNameGeneration value) {
+    m_FileNameGeneration = value;
+    reset();
+  }
+
+  /**
+   * Returns how to generate the file name.
+   *
+   * @return		the generation
+   */
+  public FileNameGeneration getFileNameGeneration() {
+    return m_FileNameGeneration;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fileNameGenerationTipText() {
+    return "Defines how to generate the file name.";
+  }
+
+  /**
+   * The default for the supplied file name.
+   *
+   * @return		the default
+   */
+  protected String getDefaultSuppliedFileName() {
+    return "out." + getDefaultExtension();
+  }
+
+  /**
+   * Sets the filename to use when set to {@link FileNameGeneration#SUPPLIED}.
+   *
+   * @param value	the generation
+   */
+  public void setSuppliedFileName(String value) {
+    m_SuppliedFileName = value;
+    reset();
+  }
+
+  /**
+   * Returns the filename to use when set to {@link FileNameGeneration#SUPPLIED}.
+   *
+   * @return		the generation
+   */
+  public String getSuppliedFileName() {
+    return m_SuppliedFileName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppliedFileNameTipText() {
+    return "The file name (without path) to use when using " + FileNameGeneration.SUPPLIED + ".";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -196,6 +289,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     boolean		success;
     String[]		ext;
     String              actualExt;
+    boolean		useCompression;
 
     result = null;
 
@@ -216,17 +310,42 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     if (!actualExt.isEmpty() && !actualExt.startsWith("."))
       actualExt = "." + actualExt;
     
+    // gzip compression?
+    useCompression = ((m_Writer instanceof CompressionSupporter) && ((CompressionSupporter) m_Writer).getUseCompression());
+    if (useCompression)
+      actualExt += ".gz";
+
+    // filename
+    switch (m_FileNameGeneration) {
+      case AUTOMATIC:
+	if (m_Writer.isOutputFile())
+	  file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, actualExt));
+	else
+	  file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, null));
+	break;
+      case DATABASE_ID:
+	if (m_Writer.isOutputFile())
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + ((DatabaseIDHandler) cont).getDatabaseID() + actualExt);
+	else
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + ((DatabaseIDHandler) cont).getDatabaseID());
+	break;
+      case ID:
+	if (m_Writer.isOutputFile())
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + cont.getID() + actualExt);
+	else
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + cont.getID());
+	break;
+      case SUPPLIED:
+	if (m_Writer.isOutputFile())
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName + actualExt);
+	else
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName);
+	break;
+      default:
+	throw new IllegalStateException("Unhandled file name generation: " + m_FileNameGeneration);
+    }
+
     // setup writer
-    if (m_Writer.isOutputFile()) {
-      // gzip compression?
-      if ((m_Writer instanceof CompressionSupporter) && ((CompressionSupporter) m_Writer).getUseCompression())
-	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, actualExt + ".gz"));
-      else
-	file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, actualExt));
-    }
-    else {
-      file = new PlaceholderFile(DataUtils.createFilename(m_OutputDir, (Object) cont, null));
-    }
     m_Writer.setOutput(file);
 
     // write data
