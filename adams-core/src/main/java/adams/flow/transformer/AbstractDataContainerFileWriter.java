@@ -272,10 +272,10 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   /**
    * Returns the default extension to use if none can be found (excl dot).
    * <br>
-   * Default implementation returns empty string.
+   * Default implementation returns the default extension of the default writer.
    */
   protected String getDefaultExtension() {
-    return "";
+    return getDefaultWriter().getDefaultFormatExtension();
   }
 
   /**
