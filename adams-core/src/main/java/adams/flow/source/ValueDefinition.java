@@ -42,6 +42,9 @@ public class ValueDefinition
   /** the display text. */
   protected String m_Display;
 
+  /** the help text. */
+  protected String m_Help;
+
   /** the type of the value. */
   protected PropertyType m_Type;
   
@@ -71,6 +74,10 @@ public class ValueDefinition
 
     m_OptionManager.add(
 	    "display", "display",
+	    "");
+
+    m_OptionManager.add(
+	    "help", "help",
 	    "");
 
     m_OptionManager.add(
@@ -138,6 +145,35 @@ public class ValueDefinition
    */
   public String displayTipText() {
     return "The text to use as label for the value.";
+  }
+
+  /**
+   * Sets the help text for the value.
+   *
+   * @param value	the help text
+   */
+  public void setHelp(String value) {
+    m_Help = value;
+    reset();
+  }
+
+  /**
+   * Returns the help text for the value.
+   *
+   * @return 		the help text
+   */
+  public String getHelp() {
+    return m_Help;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String helpTipText() {
+    return "The help text to use for the value.";
   }
 
   /**
