@@ -201,6 +201,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
 
   /**
    * Sets the filename to use when set to {@link FileNameGeneration#SUPPLIED}.
+   * Extension included.
    *
    * @param value	the generation
    */
@@ -211,6 +212,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
 
   /**
    * Returns the filename to use when set to {@link FileNameGeneration#SUPPLIED}.
+   * Extension included.
    *
    * @return		the generation
    */
@@ -225,7 +227,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    * 			displaying in the GUI or for listing the options.
    */
   public String suppliedFileNameTipText() {
-    return "The file name (without path) to use when using " + FileNameGeneration.SUPPLIED + ".";
+    return "The file name (without path) to use when using " + FileNameGeneration.SUPPLIED + " (including extension).";
   }
 
   /**
@@ -336,10 +338,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
 	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + cont.getID());
 	break;
       case SUPPLIED:
-	if (m_Writer.isOutputFile())
-	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName + actualExt);
-	else
-	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName);
+	file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName);
 	break;
       default:
 	throw new IllegalStateException("Unhandled file name generation: " + m_FileNameGeneration);
