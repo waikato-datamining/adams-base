@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-05-28 15:52:18
+# Date: 2015-05-29 11:57:38
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -72,7 +72,7 @@ adams.flow.control.Flow
 					-plot-updater
 						adams.flow.sink.sequenceplotter.SimplePlotUpdater
 							-update-interval
-							100
+							@{cpu_plot_update}
 					-post-processor
 						adams.flow.sink.sequenceplotter.PassThrough
 			-actor
@@ -132,7 +132,7 @@ adams.flow.control.Flow
 					-plot-updater
 						adams.flow.sink.sequenceplotter.SimplePlotUpdater
 							-update-interval
-							100
+							@{write_plot_update}
 					-post-processor
 						adams.flow.sink.sequenceplotter.PassThrough
 			-actor
@@ -224,11 +224,19 @@ adams.flow.control.Flow
 			-actor
 				adams.flow.standalone.SetVariable
 					-name
+					# curves
+					-var-name
+					num_curves
+					-var-value
+					500
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
 					# means
 					-var-name
 					num_means
 					-var-value
-					25
+					5
 			-actor
 				adams.flow.standalone.SetVariable
 					-name
@@ -236,7 +244,7 @@ adams.flow.control.Flow
 					-var-name
 					num_stdevs
 					-var-value
-					25
+					5
 			-actor
 				adams.flow.standalone.SetVariable
 					-name
@@ -244,7 +252,15 @@ adams.flow.control.Flow
 					-var-name
 					num_points
 					-var-value
-					1000
+					200
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					cpu plot update interval
+					-var-name
+					cpu_plot_update
+					-var-value
+					100
 	-actor
 		adams.flow.standalone.Standalones
 			-name
@@ -256,7 +272,7 @@ adams.flow.control.Flow
 					-var-name
 					num_files
 					-var-value
-					1000
+					500
 			-actor
 				adams.flow.standalone.SetVariable
 					-name
@@ -268,13 +284,197 @@ adams.flow.control.Flow
 			-actor
 				adams.flow.standalone.SetVariable
 					-name
+					combine numbers
+					-var-name
+					combine_numbers
+					-var-value
+					true
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
 					output file
 					-var-name
 					outfile
 					-var-value
 					${TMP}/rand.txt
+			-actor
+				adams.flow.standalone.SetVariable
+					-name
+					write plot update interval
+					-var-name
+					write_plot_update
+					-var-value
+					100
 	-actor
 		adams.flow.source.Start
+	-actor
+		adams.flow.control.Trigger
+			-name
+			prompt user
+			-tee
+				adams.flow.source.EnterManyValues
+					-name
+					Enter parameters
+					-stop-if-canceled
+					true
+					-message
+					Please enter the performance test parameters
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_curves
+							-display
+							CPU: # curves
+							-help
+							The number of bell curves to calculate
+							-type
+							INTEGER
+							-default-value
+							@{num_curves}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_means
+							-display
+							CPU: # means
+							-help
+							The number of different bell curve means to use in each iteration
+							-type
+							INTEGER
+							-default-value
+							@{num_means}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_stdevs
+							-display
+							CPU: # standard deviations
+							-help
+							The number of different bell curve standard deviations to use in each iteration
+							-type
+							INTEGER
+							-default-value
+							@{num_stdevs}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_points
+							-display
+							CPU: # data points
+							-help
+							The number of data points to calculate per bell curve
+							-type
+							INTEGER
+							-default-value
+							@{num_points}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							cpu_plot_update
+							-display
+							CPU: plot update interval
+							-help
+							After how many iterations to refresh the plot
+							-type
+							INTEGER
+							-default-value
+							@{cpu_plot_update}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_files
+							-display
+							Write: # files
+							-help
+							The number of files to generate
+							-type
+							INTEGER
+							-default-value
+							@{num_files}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							num_rand
+							-display
+							Write: # random numbers per file
+							-help
+							How many random numbers to store in a single file
+							-type
+							INTEGER
+							-default-value
+							@{num_rand}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							combine_numbers
+							-display
+							Write: single write operation per file
+							-help
+							Whether to save one number at a time or all at once
+							-type
+							BOOLEAN
+							-default-value
+							@{combine_numbers}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							outfile
+							-display
+							Write: temporary file
+							-help
+							The temporary to use for saving the random numbers
+							-type
+							FILE_ABSOLUTE
+							-default-value
+							@{outfile}
+					-value
+						adams.flow.source.ValueDefinition
+							-name
+							write_plot_update
+							-display
+							Write: plot update interval
+							-help
+							After how many iterations to refresh the plot
+							-type
+							INTEGER
+							-default-value
+							@{write_plot_update}
+					-output-type
+					KEY_VALUE_PAIRS
+			-tee
+				adams.flow.control.Tee
+					-name
+					output param
+					-tee
+						adams.flow.transformer.StringJoin
+							-glue
+							: 
+					-tee
+						adams.flow.sink.CallableSink
+							-callable
+							Overall
+			-tee
+				adams.flow.control.Tee
+					-name
+					var name
+					-tee
+						adams.flow.transformer.GetArrayElement
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							name
+			-tee
+				adams.flow.control.Tee
+					-name
+					var value
+					-tee
+						adams.flow.transformer.GetArrayElement
+							-index
+							2
+					-tee
+						adams.flow.transformer.SetVariable
+							-var-name
+							@{name}
 	-actor
 		adams.flow.control.TimedTrigger
 			-name
@@ -282,163 +482,73 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.source.ForLoop
 					-upper
-					@{num_means}
+					@{num_curves}
 			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					X / @{num_means}
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					mean
-			-tee
-				adams.flow.control.Trigger
+				adams.flow.control.TimedTrigger
 					-name
-					mean
+					calc curves
 					-tee
 						adams.flow.source.ForLoop
 							-upper
-							@{num_stdevs}
+							@{num_means}
 					-tee
 						adams.flow.transformer.MathExpression
 							-expression
-							X / @{num_stdevs}
+							X / @{num_means}
 					-tee
 						adams.flow.transformer.SetVariable
 							-var-name
-							stdev
+							mean
 					-tee
-						adams.flow.control.TimedTrigger
+						adams.flow.control.Trigger
 							-name
-							stdev
-							-tee
-								adams.flow.standalone.SetVariable
-									-name
-									plot name
-									-var-name
-									plot_name
-									-var-value
-									@{mean}/@{stdev}
-									-expand-value
-									true
+							mean
 							-tee
 								adams.flow.source.ForLoop
-									-lower
-									0
 									-upper
-									@{num_points}
+									@{num_stdevs}
 							-tee
 								adams.flow.transformer.MathExpression
 									-expression
-									(X - (@{num_points} / 2)) / 33
+									X / @{num_stdevs}
 							-tee
-								adams.flow.transformer.MathExpression
+								adams.flow.transformer.SetVariable
+									-var-name
+									stdev
+							-tee
+								adams.flow.control.Trigger
 									-name
-									MathExpression-1
-									-expression
-									1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
-									-output-value-pair
-									true
-							-tee
-								adams.flow.transformer.MakePlotContainer
-									-skip
-									true
-									-plot-name
-									@{plot_name}
-							-tee
-								adams.flow.sink.SequencePlotter
-									-name
-									Plot
-									-skip
-									true
-									-writer
-										adams.gui.print.NullWriter
-									-paintlet
-										adams.gui.visualization.sequence.LinePaintlet
-									-overlay-paintlet
-										adams.gui.visualization.sequence.NullPaintlet
-									-marker-paintlet
-										adams.flow.sink.sequenceplotter.NoMarkers
-									-error-paintlet
-										adams.flow.sink.sequenceplotter.NoErrorPaintlet
-									-mouse-click-action
-										adams.flow.sink.sequenceplotter.NullClickAction
-									-color-provider
-										adams.gui.visualization.core.DefaultColorProvider
-									-overlay-color-provider
-										adams.gui.visualization.core.DefaultColorProvider
-									-axis-x
-										adams.gui.visualization.core.AxisPanelOptions
-											-label
-											steps
-											-tick-generator
-												adams.gui.visualization.core.axis.FancyTickGenerator
-											-nth-value
-											2
-											-width
-											40
-											-custom-format
+									stdev
+									-tee
+										adams.flow.standalone.SetVariable
+											-name
+											plot name
+											-var-name
+											plot_name
+											-var-value
+											@{mean}/@{stdev}
+											-expand-value
+											true
+									-tee
+										adams.flow.source.ForLoop
+											-lower
 											0
-									-axis-y
-										adams.gui.visualization.core.AxisPanelOptions
-											-label
-											msec
-											-tick-generator
-												adams.gui.visualization.core.axis.FancyTickGenerator
-											-nth-value
-											2
-											-width
-											60
-											-custom-format
-											0
-									-plot-updater
-										adams.flow.sink.sequenceplotter.SimplePlotUpdater
-											-update-interval
+											-upper
 											@{num_points}
-									-post-processor
-										adams.flow.sink.sequenceplotter.PassThrough
-							-tee
-								adams.flow.sink.SimplePlot
-									-skip
-									true
-									-writer
-										adams.gui.print.NullWriter
-									-paintlet
-										adams.gui.visualization.sequence.LinePaintlet
-									-overlay-paintlet
-										adams.gui.visualization.sequence.NullPaintlet
-									-mouse-click-action
-										adams.flow.sink.sequenceplotter.NullClickAction
-									-color-provider
-										adams.gui.visualization.core.DefaultColorProvider
-									-axis-x
-										adams.gui.visualization.core.AxisPanelOptions
-											-label
-											x
-											-tick-generator
-												adams.gui.visualization.core.axis.FancyTickGenerator
-													-num-ticks
-													20
-											-nth-value
-											2
-											-width
-											40
-											-custom-format
-											0.0
-									-axis-y
-										adams.gui.visualization.core.AxisPanelOptions
-											-label
-											y
-											-tick-generator
-												adams.gui.visualization.core.axis.FancyTickGenerator
-											-nth-value
-											2
-											-width
-											60
-											-custom-format
-											0.0
-							-callable
-							timing_cpuspeed
+									-tee
+										adams.flow.transformer.MathExpression
+											-expression
+											(X - (@{num_points} / 2)) / 33
+									-tee
+										adams.flow.transformer.MathExpression
+											-name
+											MathExpression-1
+											-expression
+											1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
+											-output-value-pair
+											true
+					-callable
+					timing_cpuspeed
 			-prefix
 			CPU
 			-callable
@@ -494,15 +604,49 @@ adams.flow.control.Flow
 							-length
 							@{num_rand}
 					-tee
+						adams.flow.control.ArrayProcess
+							-actor
+								adams.flow.transformer.Convert
+									-conversion
+										adams.data.conversion.DoubleToString
+											-num-decimals
+											6
+											-fixed-decimals
+											true
+					-tee
 						adams.flow.control.TimedTee
 							-tee
-								adams.flow.transformer.ArrayToSequence
-							-tee
-								adams.flow.sink.DumpFile
-									-output
-									${HOME}/temp/rand.txt
-									-append
-									true
+								adams.flow.control.IfThenElse
+									-condition
+										adams.flow.condition.bool.Expression
+											-expression
+											(@{combine_numbers})
+									-then
+										adams.flow.control.Sequence
+											-name
+											then
+											-actor
+												adams.flow.transformer.StringJoin
+													-glue
+													\n
+											-actor
+												adams.flow.sink.DumpFile
+													-output
+													${HOME}/temp/rand.txt
+													-append
+													true
+									-else
+										adams.flow.control.Sequence
+											-name
+											else
+											-actor
+												adams.flow.transformer.ArrayToSequence
+											-actor
+												adams.flow.sink.DumpFile
+													-output
+													${HOME}/temp/rand.txt
+													-append
+													true
 							-callable
 							timing_write
 			-prefix
