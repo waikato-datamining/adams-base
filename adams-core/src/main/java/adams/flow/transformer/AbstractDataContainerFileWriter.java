@@ -303,6 +303,8 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
 
     // determine extension to use
     actualExt = getDefaultExtension();
+    if (actualExt.endsWith("*"))
+      actualExt = "";
     for (String e: ext) {
       if (e.equals("*"))
         continue;
