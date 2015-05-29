@@ -420,9 +420,9 @@ public class SpreadSheetAggregate
     if (result == null) {
       // determine columns to aggregate
       m_AggregateColumns.setSpreadSheet(input);
-      agg     = m_AggregateColumns.getIntIndices();
+      agg = m_AggregateColumns.getIntIndices();
       numeric = new TIntHashSet();
-      for (int index: agg) {
+      for (int index : agg) {
 	if ((keys.length > 0) && m_KeyColumns.isInRange(index))
 	  continue;
 	if (!input.isNumeric(index, true))
@@ -440,33 +440,59 @@ public class SpreadSheetAggregate
 
       // header
       row = aggregated.getHeaderRow();
-      for (int index: keys) {
+      for (int index : keys) {
 	row.addCell("" + index).setContent(
-	    input.getHeaderRow().getCell(index).getContent());
+	  input.getHeaderRow().getCell(index).getContent());
       }
-      for (int index: agg) {
-	for (Aggregate a: m_Aggregates) {
+      for (int index : agg) {
+	for (Aggregate a : m_Aggregates) {
 	  row.addCell("" + index + "-" + a).setContent(
-	      input.getHeaderRow().getCell(index).getContent() + "-" + a);
+	    input.getHeaderRow().getCell(index).getContent() + "-" + a);
 	}
       }
 
       // data
-      if (rows != null) {
-	for (String key: rows.getKeys()) {
-          if (isStopped())
-            return null;
-	  rowNew = aggregated.addRow();
-	  subset = rows.getRows(key);
-	  // keys
-	  for (int index: keys) {
-	    rowNew.addCell("" + index).setContent(
+      if (input.getRowCount() > 0) {
+	if (rows != null) {
+	  for (String key : rows.getKeys()) {
+	    if (isStopped())
+	      return null;
+	    rowNew = aggregated.addRow();
+	    subset = rows.getRows(key);
+	    // keys
+	    for (int index : keys) {
+	      rowNew.addCell("" + index).setContent(
 		input.getRow(subset.get(0)).getCell(index).getContent());
+	    }
+	    // aggregates
+	    for (int index : agg) {
+	      aggs = computeAggregates(input, subset, index);
+	      for (Aggregate a : m_Aggregates) {
+		if (aggs.get(a) == null)
+		  rowNew.addCell("" + index + "-" + a).setMissing();
+		else if (aggs.get(a) instanceof Integer)
+		  rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+		else if (aggs.get(a) instanceof Long)
+		  rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+		else
+		  rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+	      }
+	    }
+	  }
+	}
+	else {
+	  rowNew = aggregated.addRow();
+	  // keys
+	  for (int index : keys) {
+	    rowNew.addCell("" + index).setContent(
+	      input.getRow(0).getCell(index).getContent());
 	  }
 	  // aggregates
-	  for (int index: agg) {
-	    aggs = computeAggregates(input, subset, index); 
-	    for (Aggregate a: m_Aggregates) {
+	  for (int index : agg) {
+	    if (isStopped())
+	      return null;
+	    aggs = computeAggregates(input, null, index);
+	    for (Aggregate a : m_Aggregates) {
 	      if (aggs.get(a) == null)
 		rowNew.addCell("" + index + "-" + a).setMissing();
 	      else if (aggs.get(a) instanceof Integer)
@@ -476,30 +502,6 @@ public class SpreadSheetAggregate
 	      else
 		rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
 	    }
-	  }
-	}
-      }
-      else {
-	rowNew = aggregated.addRow();
-	// keys
-	for (int index: keys) {
-	  rowNew.addCell("" + index).setContent(
-	      input.getRow(0).getCell(index).getContent());
-	}
-	// aggregates
-	for (int index: agg) {
-          if (isStopped())
-            return null;
-	  aggs = computeAggregates(input, null, index);
-	  for (Aggregate a: m_Aggregates) {
-	    if (aggs.get(a) == null)
-	      rowNew.addCell("" + index + "-" + a).setMissing();
-	    else if (aggs.get(a) instanceof Integer)
-	      rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
-	    else if (aggs.get(a) instanceof Long)
-	      rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
-	    else
-	      rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
 	  }
 	}
       }
