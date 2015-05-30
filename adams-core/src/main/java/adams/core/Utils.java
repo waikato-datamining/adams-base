@@ -1916,4 +1916,57 @@ public class Utils {
     
     return result;
   }
+
+  /**
+   * A simple waiting method.
+   *
+   * @param obj		the object to use for logging and synchronizing
+   * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
+   * @param interval	the amount msecs to wait before checking state (interval < msec)
+   */
+  public static void wait(LoggingObject obj, int msec, int interval) {
+    wait(obj, null, msec, interval);
+  }
+
+  /**
+   * A simple waiting method.
+   *
+   * @param obj		the object to use for logging and synchronizing
+   * @param stoppable	the object to use for checking stoppped state
+   * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
+   * @param interval	the amount msecs to wait before checking state (interval < msec)
+   */
+  public static void wait(LoggingObject obj, StoppableWithFeedback stoppable, int msec, int interval) {
+    int count;
+    int current;
+
+    if (msec == 0)
+      return;
+
+    if (obj.isLoggingEnabled())
+      obj.getLogger().fine("wait: " + msec);
+
+    count = 0;
+    while (count < msec) {
+      try {
+	current = msec - interval;
+	if (current <= 0)
+	  current = msec;
+	if (current > interval)
+	  current = interval;
+	synchronized (obj) {
+	  obj.wait(current);
+	}
+	count += current;
+      }
+      catch (Throwable t) {
+	// ignored
+      }
+      // stopped?
+      if (stoppable != null) {
+	if (stoppable.isStopped())
+	  break;
+      }
+    }
+  }
 }
