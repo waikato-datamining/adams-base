@@ -20,6 +20,8 @@
 
 package adams.flow.sink;
 
+import adams.core.MultiAttemptWithWaitSupporter;
+import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
@@ -32,43 +34,73 @@ import adams.flow.core.Unknown;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DumpFile
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The name of the output file.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
- * <pre>-append (property: append)
+ * 
+ * <pre>-append &lt;boolean&gt; (property: append)
  * &nbsp;&nbsp;&nbsp;If set to true, file gets only appended.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * &nbsp;&nbsp;&nbsp;The type of encoding to use when writing to the file, use empty string for 
+ * &nbsp;&nbsp;&nbsp;default.
+ * &nbsp;&nbsp;&nbsp;default: Default
+ * </pre>
+ * 
+ * <pre>-num-attempts &lt;int&gt; (property: numAttempts)
+ * &nbsp;&nbsp;&nbsp;The number of attempts for writing the data.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-attempt-interval &lt;int&gt; (property: attemptInterval)
+ * &nbsp;&nbsp;&nbsp;The time in msec to wait before the next attempt.
+ * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -76,13 +108,21 @@ import adams.flow.core.Unknown;
  */
 public class DumpFile
   extends AbstractAppendableFileWriter 
-  implements FileEncodingSupporter {
+  implements FileEncodingSupporter, MultiAttemptWithWaitSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -366362262032858011L;
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** the number of tries for writing the data. */
+  protected int m_NumAttempts;
+
+  /** the interval between attempts. */
+  protected int m_AttemptInterval;
+
+  /** the time in msec to wait between attempts. */
 
   /**
    * Returns a string describing the object.
@@ -104,8 +144,16 @@ public class DumpFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "encoding", "encoding",
-	    new BaseCharset());
+      "encoding", "encoding",
+      new BaseCharset());
+
+    m_OptionManager.add(
+      "num-attempts", "numAttempts",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "attempt-interval", "attemptInterval",
+      1000, 0, null);
   }
 
   /**
@@ -160,6 +208,80 @@ public class DumpFile
   }
 
   /**
+   * Sets the number of attempts.
+   *
+   * @param value	the number of attempts
+   */
+  @Override
+  public void setNumAttempts(int value) {
+    if (value >= 1) {
+      m_NumAttempts = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Number of attempts must at least 1, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the number of attempts.
+   *
+   * @return		the number of attempts
+   */
+  @Override
+  public int getNumAttempts() {
+    return m_NumAttempts;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String numAttemptsTipText() {
+    return "The number of attempts for writing the data.";
+  }
+
+  /**
+   * Sets the time to wait between attempts in msec.
+   *
+   * @param value	the time in msec
+   */
+  @Override
+  public void setAttemptInterval(int value) {
+    if (value >= 0) {
+      m_AttemptInterval = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Attempt interval must be 0 or greater, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the time to wait between attempts in msec.
+   *
+   * @return		the time in msec
+   */
+  @Override
+  public int getAttemptInterval() {
+    return m_AttemptInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String attemptIntervalTipText() {
+    return "The time in msec to wait before the next attempt.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
@@ -175,10 +297,30 @@ public class DumpFile
    */
   @Override
   protected String doExecute() {
-    return FileUtils.writeToFileMsg(
-      m_OutputFile.getAbsolutePath(),
-      m_InputToken.getPayload(),
-      m_Append,
-      m_Encoding.charsetValue().name());
+    String    result;
+    int       attempt;
+    boolean   finished;
+
+    result   = null;
+    attempt  = 0;
+    finished = false;
+
+    while (!finished) {
+      attempt++;
+      result = FileUtils.writeToFileMsg(
+        m_OutputFile.getAbsolutePath(),
+        m_InputToken.getPayload(),
+        m_Append,
+        m_Encoding.charsetValue().name());
+      finished = (attempt == m_NumAttempts) || (result == null);
+      if (!finished && (result != null)) {
+        if (isLoggingEnabled())
+          getLogger().info("Attempt " + attempt + "/" + m_NumAttempts + " failed, retrying...");
+        if (m_AttemptInterval > 0)
+          Utils.wait(this, this, m_AttemptInterval, 100);
+      }
+    }
+
+    return result;
   }
 }
