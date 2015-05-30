@@ -15,18 +15,15 @@
 
 /*
  * Actor.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.awt.Component;
-import java.util.HashSet;
-
 import adams.core.AdditionalInformationHandler;
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Variables;
 import adams.core.VariablesInspectionHandler;
 import adams.core.base.BaseAnnotation;
@@ -40,6 +37,9 @@ import adams.flow.control.ScopeHandler;
 import adams.flow.control.StorageHandler;
 import adams.flow.execution.FlowExecutionListeningSupporter;
 
+import java.awt.Component;
+import java.util.HashSet;
+
 /**
  * Interface for actors.
  * <br><br>
@@ -51,7 +51,7 @@ import adams.flow.execution.FlowExecutionListeningSupporter;
  */
 public interface Actor
   extends Comparable, AdditionalInformationHandler,
-          CleanUpHandler, Stoppable, VariableChangeListener, OptionHandler, 
+          CleanUpHandler, StoppableWithFeedback, VariableChangeListener, OptionHandler,
           /*ShallowCopySupporter<Actor>,*/ QuickInfoSupporter, ErrorHandler, 
           LoggingSupporter, LoggingLevelHandler, VariablesInspectionHandler {
   // TODO use Actor interface
@@ -211,7 +211,6 @@ public interface Actor
    * Use with caution!
    *
    * @param value	the instance to use
-   * @see		#forceVariables(Variables)
    */
   public void setVariables(Variables value);
 

@@ -88,7 +88,7 @@ public class SqlUtils {
     /**
      * Initializes the object.
      * 
-     * @param m_Sheet	the underlying spreadm_Sheet
+     * @param sheet	the underlying spreadm_Sheet
      * @param table	the table name
      * @param maxCol	the maximum length for column names
      * @param colName	the conversion for column names

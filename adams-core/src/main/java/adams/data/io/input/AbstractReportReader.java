@@ -15,17 +15,15 @@
 
 /*
  * AbstractQuantitationReader.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
-import java.util.List;
-
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionConsumer;
@@ -33,6 +31,8 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.report.Report;
+
+import java.util.List;
 
 /**
  * Abstract ancestor for readers that read files in various formats and
@@ -44,7 +44,8 @@ import adams.data.report.Report;
  */
 public abstract class AbstractReportReader<T extends Report>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractReportReader>, Stoppable, FileFormatHandler {
+  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractReportReader>,
+             StoppableWithFeedback, FileFormatHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -630224132021076920L;
@@ -189,6 +190,15 @@ public abstract class AbstractReportReader<T extends Report>
    */
   public void stopExecution() {
     m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

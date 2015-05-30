@@ -15,7 +15,7 @@
 
 /*
  * Tool.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,7 +23,7 @@ package adams.tools;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -38,7 +38,7 @@ import adams.core.option.OptionUtils;
  */
 public abstract class AbstractTool
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, Stoppable {
+  implements Comparable, CleanUpHandler, StoppableWithFeedback {
 
   /** for serialization. */
   private static final long serialVersionUID = 8248797808829239144L;

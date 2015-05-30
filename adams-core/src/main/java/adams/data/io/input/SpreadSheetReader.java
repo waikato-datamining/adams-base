@@ -19,16 +19,16 @@
  */
 package adams.data.io.input;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
-
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * Interface for spreadsheet readers.
@@ -37,7 +37,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public interface SpreadSheetReader
-  extends Stoppable, OptionHandler, FileFormatHandler {
+  extends StoppableWithFeedback, OptionHandler, FileFormatHandler {
 
   /**
    * Returns a string describing the format (used in the file chooser).

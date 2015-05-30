@@ -15,14 +15,14 @@
 
 /*
  * AbstractDirector.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 
 import adams.core.CleanUpHandler;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.logging.LoggingHelper;
@@ -40,7 +40,7 @@ import adams.event.FlowPauseStateListener;
  */
 public abstract class AbstractDirector
   extends LoggingObject
-  implements CleanUpHandler, Stoppable, FlowPauseStateListener {
+  implements CleanUpHandler, StoppableWithFeedback, FlowPauseStateListener {
 
   /** for serialization. */
   private static final long serialVersionUID = -1634725837304059804L;

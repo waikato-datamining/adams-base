@@ -15,11 +15,11 @@
 
 /**
  * RunnableWithLogging.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingLevelHandler;
@@ -33,7 +33,7 @@ import adams.core.logging.LoggingObject;
  */
 public abstract class RunnableWithLogging
   extends LoggingObject
-  implements Runnable, Stoppable, LoggingLevelHandler {
+  implements Runnable, StoppableWithFeedback, LoggingLevelHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5192907871210498502L;
