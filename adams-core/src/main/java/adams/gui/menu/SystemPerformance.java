@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.Utils;
 import adams.core.option.AbstractArgumentOption;
 import adams.flow.control.Flow;
+import adams.flow.control.Flow.ErrorHandling;
 import adams.flow.core.AbstractActor;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
@@ -154,6 +155,7 @@ public class SystemPerformance
     AbstractArgumentOption    argOption;
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
+    actor.setErrorHandling(ErrorHandling.ACTORS_DECIDE_TO_STOP_ON_ERROR);
 
     argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("annotations");
     actor.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Uses flow components to give an overview of the system\'s performance."));

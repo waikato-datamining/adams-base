@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-05-29 11:57:38
+# Date: 2015-05-31 10:52:40
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -653,6 +653,8 @@ adams.flow.control.Flow
 			Write
 			-callable
 			timing_overall
+	-error-handling
+	ACTORS_DECIDE_TO_STOP_ON_ERROR
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
