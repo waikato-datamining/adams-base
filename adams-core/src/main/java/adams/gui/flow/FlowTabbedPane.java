@@ -15,17 +15,9 @@
 
 /**
  * FlowTabbedPane.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
-
-import java.awt.Component;
-import java.io.File;
-import java.lang.reflect.Constructor;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.TreePath;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
@@ -35,6 +27,13 @@ import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.flow.tab.RegisteredBreakpointsTab;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreePath;
+import java.awt.Component;
+import java.io.File;
+import java.lang.reflect.Constructor;
 
 /**
  * Specialized tabbed pane for Flow panels.
@@ -74,7 +73,7 @@ public class FlowTabbedPane
       }
     });
 
-    getModel().addChangeListener(new ChangeListener() {
+    addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	tabSelected(e);
       }
