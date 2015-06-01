@@ -15,13 +15,9 @@
 
 /**
  * AbstractChartGenerator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.logging.Level;
 
 import adams.core.NamedCounter;
 import adams.core.QuickInfoSupporter;
@@ -33,10 +29,15 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.source.StorageValue;
+import adams.gui.core.BaseFrame;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.SimpleFixedLabelTickGenerator;
 import adams.gui.visualization.core.axis.TickGenerator;
 import adams.gui.visualization.core.axis.Type;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.logging.Level;
 
 /**
  * Ancestor for classes that generate/display charts using a flow as backend.
@@ -336,6 +337,7 @@ public abstract class AbstractChartGenerator
     StorageValue	sv;
     
     result = new Flow();
+    result.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
     if (sheet.getName() != null)
       result.setName(sheet.getName());
     
