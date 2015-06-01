@@ -15,17 +15,19 @@
 
 /**
  * DataChart.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-
+import adams.core.Utils;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
 import adams.gui.tools.spreadsheetviewer.chart.ScatterPlot;
+
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 
 /**
  * Generates a chart from the spreadsheet.
@@ -78,6 +80,7 @@ public class DataChart
   protected void doActionPerformed(ActionEvent e) {
     SpreadSheetPanel		panel;
     AbstractChartGenerator	generator;
+    String			msg;
 
     panel = getTabbedPane().getCurrentPanel();
     if (panel == null)
@@ -88,7 +91,16 @@ public class DataChart
       return;
 
     generator = (AbstractChartGenerator) getDialog().getGOEEditor().getValue();
-    panel.generateChart(generator);
+    try {
+      panel.generateChart(generator);
+    }
+    catch (Exception ex) {
+      msg = "Failed to generate chart:\n" + Utils.throwableToString(ex);
+      if (getParentDialog() != null)
+	GUIHelper.showErrorMessage(getParentDialog(), msg);
+      else
+	GUIHelper.showErrorMessage(getParentFrame(), msg);
+    }
   }
 
   /**
