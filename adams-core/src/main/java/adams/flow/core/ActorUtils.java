@@ -62,6 +62,7 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -925,9 +926,8 @@ public class ActorUtils {
   /**
    * Ensures that the actors are enclosed in an "instantiable" wrapper.
    *
-   * @param actors	the actors to enclose in an {@link InstantiatableActor}
+   * @param actors	the actors to enclose
    * @return		the processed actor
-   * @see		InstantiatableActor
    */
   public static Actor createExternalActor(AbstractActor[] actors) {
     int			first;
@@ -1010,6 +1010,19 @@ public class ActorUtils {
    * @return		the located actor or null if none found
    */
   public static AbstractActor locate(ActorPath path, AbstractActor parent) {
+    return locate(path, parent, false, false);
+  }
+
+  /**
+   * Tries to locate the actor specified by the path parts.
+   *
+   * @param parent	the parent to start with
+   * @param path	the path elements to traverse (below the parent)
+   * @param included	whether the actor should be included in the search, rather than searching only below
+   * @param quiet	whether to suppress any error messages
+   * @return		the located actor or null if none found
+   */
+  public static AbstractActor locate(ActorPath path, AbstractActor parent, boolean included, boolean quiet) {
     AbstractActor	result;
     ActorHandler	parentHandler;
     AbstractActor	child;
@@ -1019,6 +1032,16 @@ public class ActorUtils {
     result = null;
     if (!(parent instanceof ActorHandler))
       return result;
+
+    if (included) {
+      if (path.getFirstPathComponent().equals(parent.getName())) {
+	if (path.getPathCount() == 1)
+	  result = parent;
+	else
+	  result = locate(path.getChildPath(), parent);
+	return result;
+      }
+    }
 
     parentHandler = (ActorHandler) parent;
     index         = -1;
@@ -1037,7 +1060,8 @@ public class ActorUtils {
 	result = locate(path.getChildPath(), child);
     }
     else {
-      LOGGER.warning("Malformed path? " + path);
+      if (!quiet)
+	LOGGER.warning("Malformed path? " + path);
     }
 
     return result;
@@ -1051,7 +1075,20 @@ public class ActorUtils {
    * @return		the located actor or null if none found
    */
   public static AbstractActor locate(String path, AbstractActor root) {
-    return locate(new ActorPath(path), root);
+    return locate(path, root, false, false);
+  }
+
+  /**
+   * Locates the actor in the actor tree based on the specified path.
+   *
+   * @param path	the path of the node to locate
+   * @param root	the root actor start the search
+   * @param included	whether the actor should be included in the search, rather than searching only below
+   * @param quiet	whether to suppress any error messages
+   * @return		the located actor or null if none found
+   */
+  public static AbstractActor locate(String path, AbstractActor root, boolean included, boolean quiet) {
+    return locate(new ActorPath(path), root, included, quiet);
   }
 
   /**
@@ -1193,7 +1230,7 @@ public class ActorUtils {
    * variables handler.
    *
    * @param handler	the handler to add the filenames to
-   * @param file	the flow file name
+   * @param flow	the flow file name
    * @return		true if successfully added
    * @see		#FLOW_FILENAME_LONG
    * @see		#FLOW_FILENAME_SHORT
@@ -1383,5 +1420,36 @@ public class ActorUtils {
   public static void updateFlowAwarePaintlet(Paintlet paintlet, Actor actor) {
     if (paintlet instanceof FlowAwarePaintlet)
       ((FlowAwarePaintlet) paintlet).setActor(actor);
+  }
+
+  /**
+   * Extracts all the valid actor names from the given text fragment that
+   * exist within the specified flow.
+   *
+   * @param current	the flow to verify the actor paths with
+   * @param text	the text to extract the names from
+   * @return		the full names of the located actors
+   */
+  public static List<String> extractActorNames(AbstractActor current, String text) {
+    List<String> result;
+    AbstractActor	actor;
+    String[]		lines;
+
+    result = new ArrayList<>();
+    lines  = text.split(":");
+    if (lines.length > 0) {
+      for (String line : lines) {
+	ActorPath path = new ActorPath(line.trim());
+	actor = ActorUtils.locate(path, current, true, true);
+	if (actor != null) {
+	  if (!result.contains(path))
+	    result.add(path.toString());
+	}
+      }
+    }
+
+    Collections.sort(result);
+
+    return result;
   }
 }
