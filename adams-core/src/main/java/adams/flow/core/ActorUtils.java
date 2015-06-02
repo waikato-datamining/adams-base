@@ -1431,19 +1431,33 @@ public class ActorUtils {
    * @return		the full names of the located actors
    */
   public static List<String> extractActorNames(AbstractActor current, String text) {
-    List<String> result;
+    List<String> 	result;
     AbstractActor	actor;
+    ActorPath 		path;
     String[]		lines;
+    String[]		parts;
 
     result = new ArrayList<>();
     lines  = text.split(":");
     if (lines.length > 0) {
       for (String line : lines) {
-	ActorPath path = new ActorPath(line.trim());
+	path  = new ActorPath(line.trim());
 	actor = ActorUtils.locate(path, current, true, true);
 	if (actor != null) {
 	  if (!result.contains(path))
 	    result.add(path.toString());
+	}
+	// nested?
+	else if (line.indexOf('\'') > -1) {
+	  parts = line.split("'");
+	  for (String part: parts) {
+	    path  = new ActorPath(part.trim());
+	    actor = ActorUtils.locate(path, current, true, true);
+	    if (actor != null) {
+	      if (!result.contains(path))
+		result.add(path.toString());
+	    }
+	  }
 	}
       }
     }
