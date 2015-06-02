@@ -64,7 +64,6 @@ public interface FlowExecutionListener
    * Gets called after the actor received the token.
    * 
    * @param actor	the actor that received the token
-   * @param token	the token that the actor received
    */
   public void postInput(Actor actor);
   
