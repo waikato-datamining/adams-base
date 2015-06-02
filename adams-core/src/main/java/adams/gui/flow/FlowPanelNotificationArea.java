@@ -15,27 +15,33 @@
 
 /**
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
+import adams.flow.core.ActorUtils;
+import adams.gui.core.BaseMenu;
+import adams.gui.core.BasePanel;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ConsolePanel.PanelType;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.PopupMenuCustomizer;
+import adams.gui.core.TextEditorPanel;
+import adams.gui.dialog.TextPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
-import adams.gui.core.BasePanel;
-import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.PanelType;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.TextPanel;
+import java.util.List;
 
 /**
  * Shows textual notifications. 
@@ -44,7 +50,8 @@ import adams.gui.dialog.TextPanel;
  * @version $Revision$
  */
 public class FlowPanelNotificationArea
-  extends BasePanel {
+  extends BasePanel
+  implements PopupMenuCustomizer<TextEditorPanel>  {
 
   /** for serialization. */
   private static final long serialVersionUID = -6807606526180616742L;
@@ -102,6 +109,7 @@ public class FlowPanelNotificationArea
     m_TextNotification.setUpdateParentTitle(false);
     m_TextNotification.setEditable(false);
     m_TextNotification.setLineWrap(true);
+    m_TextNotification.setPopupMenuCustomizer(this);
     add(m_TextNotification, BorderLayout.CENTER);
     
     panelRight = new JPanel(new BorderLayout());
@@ -243,5 +251,34 @@ public class FlowPanelNotificationArea
     m_Notification = null;
     m_IsError      = false;
     update();
+  }
+
+  /**
+   * For customizing the popup menu.
+   *
+   * @param source	the source, e.g., event
+   * @param menu	the menu to customize
+   */
+  @Override
+  public void customizePopupMenu(TextEditorPanel source, JPopupMenu menu) {
+    List<String> 	paths;
+    BaseMenu 		submenu;
+    JMenuItem 		menuitem;
+
+    paths = ActorUtils.extractActorNames(getOwner().getCurrentFlow(), source.getContent());
+    if (paths.size() > 0) {
+      submenu = new BaseMenu("Jump to");
+      menu.add(submenu);
+      for (final String path: paths) {
+	menuitem = new JMenuItem(path);
+	menuitem.addActionListener(new ActionListener() {
+	  @Override
+	  public void actionPerformed(ActionEvent e) {
+	    getOwner().getTree().locateAndDisplay(path);
+	  }
+	});
+	submenu.add(menuitem);
+      }
+    }
   }
 }
