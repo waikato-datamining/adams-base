@@ -1,1 +1,1 @@
-storage: lookup
+storage: lookup, key: 1, value: 2
