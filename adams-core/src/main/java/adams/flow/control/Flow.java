@@ -38,6 +38,7 @@ import adams.flow.core.PauseStateManager;
 import adams.flow.core.TriggerableEvent;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.FlowExecutionListeningSupporter;
+import adams.flow.execution.GraphicalFlowExecutionListener;
 import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
@@ -958,7 +959,24 @@ public class Flow
     
     return result;
   }
-  
+
+  /**
+   * Finishes up the execution.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_FlowExecutionListenerFrame != null) {
+      if (m_FlowExecutionListener instanceof GraphicalFlowExecutionListener) {
+	if (((GraphicalFlowExecutionListener) m_FlowExecutionListener).getDisposeOnFinish()) {
+	  m_FlowExecutionListenerFrame.dispose();
+	  m_FlowExecutionListenerFrame = null;
+	}
+      }
+    }
+
+    super.wrapUp();
+  }
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.

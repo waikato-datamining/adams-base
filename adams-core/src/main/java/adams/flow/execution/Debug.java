@@ -15,25 +15,9 @@
 
 /**
  * Debug.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.CleanUpHandler;
 import adams.core.Variables;
@@ -56,6 +40,21 @@ import adams.gui.tools.ExpressionWatchPanel;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.InspectionPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  <!-- globalinfo-start -->
@@ -1081,6 +1080,15 @@ public class Debug
   @Override
   public Dimension getDefaultFrameSize() {
     return new Dimension(getWidth(), getHeight());
+  }
+
+  /**
+   * Returns whether the frame should get disposed when the flow finishes.
+   *
+   * @return		true if to dispose when flow finishes
+   */
+  public boolean getDisposeOnFinish() {
+    return true;
   }
 
   /**

@@ -15,13 +15,13 @@
 
 /**
  * GraphicalFlowExecutionListener.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
-import java.awt.Dimension;
-
 import adams.gui.core.BasePanel;
+
+import java.awt.Dimension;
 
 /**
  * Interface for listeners that supply graphical output in from of a panel.
@@ -52,4 +52,11 @@ public interface GraphicalFlowExecutionListener
    * @return		the frame size
    */
   public Dimension getDefaultFrameSize();
+
+  /**
+   * Returns whether the frame should get disposed when the flow finishes.
+   *
+   * @return		true if to dispose when flow finishes
+   */
+  public boolean getDisposeOnFinish();
 }

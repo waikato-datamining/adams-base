@@ -298,7 +298,31 @@ public class MultiListener
     
     return result;
   }
-  
+
+  /**
+   * Returns whether the frame should get disposed when the flow finishes.
+   * <br><br>
+   * Returns only true if all sub-listeners return true.
+   *
+   * @return		true if to dispose when flow finishes
+   */
+  public boolean getDisposeOnFinish() {
+    boolean	result;
+
+    result = true;
+
+    for (FlowExecutionListener l: m_Listeners) {
+      if (l instanceof GraphicalFlowExecutionListener) {
+	if (!((GraphicalFlowExecutionListener) l).getDisposeOnFinish()) {
+	  result = false;
+	  break;
+	}
+      }
+    }
+
+    return result;
+  }
+
   /**
    * Gets called when the flow execution ends.
    */
