@@ -15,16 +15,11 @@
 
 /**
  * MetaPartitionedMultiFilter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
+import adams.core.base.BaseRegExp;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -37,7 +32,12 @@ import weka.core.Utils;
 import weka.filters.AllFilter;
 import weka.filters.Filter;
 import weka.filters.SimpleBatchFilter;
-import adams.core.base.BaseRegExp;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -444,7 +444,8 @@ public class MetaPartitionedMultiFilter
   @Override
   protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
     int					i;
-    HashMap<BaseRegExp,List<Integer>>	indices;
+    int					n;
+    HashMap<Integer,List<Integer>>	indices;
     Attribute				att;
     List<Range>				ranges;
     List<Filter>			filters;
@@ -456,14 +457,14 @@ public class MetaPartitionedMultiFilter
 	return null;
 
       // build indices of subsets
-      indices = new HashMap<BaseRegExp,List<Integer>>();
-      for (BaseRegExp r: m_RegExp)
-	indices.put(r, new ArrayList<Integer>());
+      indices = new HashMap<Integer,List<Integer>>();
+      for (n = 0; n < m_RegExp.length; n++)
+	indices.put(n, new ArrayList<Integer>());
       for (i = 0; i < inputFormat.numAttributes(); i++) {
 	att = inputFormat.attribute(i);
-	for (BaseRegExp r: m_RegExp) {
-	  if (r.isMatch(att.name()))
-	    indices.get(r).add(att.index() + 1);
+	for (n = 0; n < m_RegExp.length; n++) {
+	  if (m_RegExp[n].isMatch(att.name()))
+	    indices.get(n).add(att.index() + 1);
 	}
       }
 
@@ -472,11 +473,11 @@ public class MetaPartitionedMultiFilter
       filters = new ArrayList<Filter>();
       for (i = 0; i < m_RegExp.length; i++) {
 	// output warning for empty subsets
-	if (indices.get(m_RegExp[i]).size() == 0) {
+	if (indices.get(i).size() == 0) {
 	  System.err.println("RegExp #" + (i+1) + " (" + m_RegExp[i] + ") matched no attribute names!");
 	}
 	else {
-	  range = indices.get(m_RegExp[i]).toArray(new Integer[indices.get(m_RegExp[i]).size()]);
+	  range = indices.get(i).toArray(new Integer[indices.get(i).size()]);
 	  ranges.add(new Range(adams.core.Utils.flatten(range, ",")));
 	  filters.add(Filter.makeCopy(m_Filters[i]));
 	}
