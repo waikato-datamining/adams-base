@@ -20,12 +20,12 @@
 
 package adams.flow.sink;
 
-import java.net.URI;
-import java.net.URL;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BrowserHelper;
+
+import java.net.URI;
+import java.net.URL;
 
 /**
  <!-- globalinfo-start -->
@@ -178,7 +178,7 @@ public class Browser
 
     result = null;
 
-    if (!m_Headless) {
+    if (!isHeadless()) {
       if (m_InputToken.getPayload() instanceof URL)
 	url = ((URL) m_InputToken.getPayload()).toString();
       else if (m_InputToken.getPayload() instanceof URI)

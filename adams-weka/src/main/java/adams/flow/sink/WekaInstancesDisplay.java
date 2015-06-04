@@ -15,27 +15,26 @@
 
 /*
  * WekaInstancesDisplay.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JTable;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.gui.arffviewer.ArffPanel;
 import adams.core.DateUtils;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.sendto.SendToActionUtils;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.gui.arffviewer.ArffPanel;
+
+import javax.swing.JTable;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -218,7 +217,7 @@ public class WekaInstancesDisplay
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       System.out.println(m_InputToken.getPayload());
     }

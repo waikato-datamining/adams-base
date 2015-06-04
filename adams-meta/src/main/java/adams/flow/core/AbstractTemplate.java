@@ -15,16 +15,16 @@
 
 /*
  * AbstractTemplate.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.flow.template.AbstractActorTemplate;
+
+import java.util.Hashtable;
 
 /**
  * Abstract ancestor for all actors that use a template to generate the
@@ -199,7 +199,6 @@ public abstract class AbstractTemplate
     }
     else {
       m_Actor.setParent(this);
-      m_Actor.setHeadless(isHeadless());
       m_Actor.setVariables(getVariables());
       m_Actor.setStopFlowOnError(getStopFlowOnError());
       result = m_Actor.setUp();

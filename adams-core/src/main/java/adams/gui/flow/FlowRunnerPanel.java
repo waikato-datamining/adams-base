@@ -904,8 +904,10 @@ public class FlowRunnerPanel
 	    m_CurrentSetVariables.get(i).setVariableValue(new BaseText(m_CurrentParameters.get(i).getText()));
 	  if (m_CurrentFlow instanceof Flow)
 	    ((Flow) m_CurrentFlow).setParentComponent(FlowRunnerPanel.this);
-	  if (m_ActionHeadless != null)
-	    m_CurrentFlow.setHeadless(m_ActionHeadless.isSelected());
+	  if (m_ActionHeadless != null) {
+            if (m_CurrentFlow instanceof Flow)
+              ((Flow) m_CurrentFlow).setHeadless(m_ActionHeadless.isSelected());
+          }
 	  if ((m_ActionExecutionLogErrors != null) && (m_CurrentFlow instanceof Flow)) {
 	    // only override if user selects explicitly to log errors
 	    if (m_ActionExecutionLogErrors.isSelected())

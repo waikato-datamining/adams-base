@@ -208,7 +208,10 @@ public class Flow
 
   /** the default close operation. */
   protected int m_DefaultCloseOperation;
-  
+
+  /** whether the execution is to be headless, i.e., no GUI components. */
+  protected boolean m_Headless;
+
   /**
    * Returns a string describing the object.
    *
@@ -267,6 +270,7 @@ public class Flow
     m_EnforceCallableNameCheck = true;
     m_ParentComponent          = null;
     m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
+    m_Headless                 = false;
   }
 
   /**
@@ -576,7 +580,8 @@ public class Flow
 
     if (m_FlowExecutionListenerFrame != null)
       m_FlowExecutionListenerFrame.dispose();
-    m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+    if (!isHeadless())
+      m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
     
     return result;
   }
@@ -616,6 +621,25 @@ public class Flow
    */
   public int getDefaultCloseOperation() {
     return m_DefaultCloseOperation;
+  }
+
+  /**
+   * Sets whether the actor is to be run in headless mode, i.e., suppressing
+   * GUI components.
+   *
+   * @param value	if true then GUI components will be suppressed
+   */
+  public void setHeadless(boolean value) {
+    m_Headless = value;
+  }
+
+  /**
+   * Returns whether the actor is run in headless mode.
+   *
+   * @return		true if GUI components are suppressed
+   */
+  public boolean isHeadless() {
+    return m_Headless;
   }
 
   /**
@@ -902,7 +926,8 @@ public class Flow
     if (m_FlowExecutionListeningEnabled) {
       m_FlowExecutionListener.setOwner(this);
       m_FlowExecutionListener.startListening();
-      m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+      if (!isHeadless())
+        m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
     }
     
     if (m_Headless) {

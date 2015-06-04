@@ -46,6 +46,7 @@ import adams.flow.execution.DefaultFlowExecutionListeningSupporter;
 import adams.flow.execution.FlowExecutionListeningSupporter;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -93,9 +94,6 @@ public abstract class AbstractActor
 
   /** the message that was used when stopping the execution. */
   protected String m_StopMessage;
-
-  /** whether the execution is to be headless, i.e., no GUI components. */
-  protected boolean m_Headless;
 
   /** annotations for the actor. */
   protected BaseAnnotation m_Annotations;
@@ -237,7 +235,6 @@ public abstract class AbstractActor
 
     m_Parent                  = null;
     m_Root                    = null;
-    m_Headless                = false;
     m_FullName                = null;
     m_Name                    = "";
     m_DetectedVariables       = null;
@@ -315,22 +312,15 @@ public abstract class AbstractActor
   }
 
   /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  public void setHeadless(boolean value) {
-    m_Headless = value;
-  }
-
-  /**
    * Returns whether the actor is run in headless mode.
    *
    * @return		true if GUI components are suppressed
    */
   public boolean isHeadless() {
-    return m_Headless;
+    if (getRoot() != null)
+      return getRoot().isHeadless();
+    else
+      return GraphicsEnvironment.isHeadless();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * CopyToClipboard.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -176,7 +176,7 @@ public class CopyToClipboard
    */
   @Override
   protected String doExecute() {
-    if (!m_Headless && (m_InputToken.getPayload() != null))
+    if (!isHeadless() && (m_InputToken.getPayload() != null))
       m_ClipboardData.copyFromToken(m_InputToken);
 
     m_OutputToken = m_InputToken;

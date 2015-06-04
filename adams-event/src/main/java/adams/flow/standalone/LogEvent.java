@@ -526,18 +526,6 @@ public class LogEvent
   }
 
   /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    super.setHeadless(value);
-    m_Actors.setHeadless(value);
-  }
-
-  /**
    * Returns some information about the actor handler, e.g., whether it can
    * contain standalones and the actor execution.
    *

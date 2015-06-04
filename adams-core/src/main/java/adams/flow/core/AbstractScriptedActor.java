@@ -15,18 +15,18 @@
 
 /*
  *    AbstractScriptedActor.java
- *    Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.flow.core;
 
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.core.scripting.FileBasedScriptingWithOptions;
+
+import java.util.Hashtable;
 
 /**
  * Abstract ancestor for actors that execute external scripts.
@@ -211,7 +211,6 @@ public abstract class AbstractScriptedActor
       if ((result == null) && (m_ScriptObject != null)) {
 	if (m_ScriptObject instanceof Actor) {
 	  ((Actor) m_ScriptObject).setParent(this);
-	  ((Actor) m_ScriptObject).setHeadless(isHeadless());
 	  ((Actor) m_ScriptObject).setVariables(getVariables());
 	  ((Actor) m_ScriptObject).setLoggingLevel(getLoggingLevel());
 	}

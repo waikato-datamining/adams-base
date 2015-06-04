@@ -15,21 +15,9 @@
 
 /**
  * AbstractMultiView.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -56,6 +44,17 @@ import adams.gui.print.JComponentWriter;
 import adams.gui.print.PNGWriter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for graphical actors that display multiple views.
@@ -344,22 +343,6 @@ public abstract class AbstractMultiView
     
     m_Actors   = new ArrayList<AbstractActor>();
     m_Wrappers = null;
-  }
-  
-  /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    int		i;
-
-    super.setHeadless(value);
-
-    for (i = 0; i < size(); i++)
-      get(i).setHeadless(value);
   }
 
   /**

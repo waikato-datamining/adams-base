@@ -15,7 +15,7 @@
 
 /*
  * ProvenanceDisplay.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -275,7 +275,7 @@ public class ProvenanceDisplay
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       System.out.println(new ProvenanceTree(m_InputToken.getProvenance()).toPlainText());
     }

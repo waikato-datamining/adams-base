@@ -15,16 +15,16 @@
 
 /**
  * AbstractIncludeExternalActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for actors that get replaced with the externally stored actor.
@@ -131,7 +131,6 @@ public abstract class AbstractIncludeExternalActor
 	if (result == null) {
 	  if (externalActor.getName().equals(externalActor.getDefaultName()))
 	    externalActor.setName(getName());
-	  externalActor.setHeadless(isHeadless());
 	  externalActor.setVariables(getVariables());
 	  ((ActorHandler) getParent()).set(index(), externalActor);
 	  result = externalActor.setUp();

@@ -157,7 +157,7 @@ public class ClearCallableDisplay
    */
   @Override
   protected String executeCallableActor() {
-    if (!m_Headless)
+    if (!isHeadless())
       ((AbstractDisplay) m_CallableActor).clearPanel();
     m_OutputToken = m_InputToken;
     m_InputToken  = null;

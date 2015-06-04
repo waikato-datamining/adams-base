@@ -15,12 +15,9 @@
 
 /**
  * ExternalFlow.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -31,6 +28,9 @@ import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.RunnableWithLogging;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -279,7 +279,6 @@ public class ExternalFlow
 	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "'!";
       }
       else {
-	m_ExternalFlow.setHeadless(isHeadless());
 	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
 	result = m_ExternalFlow.setUp();
       }

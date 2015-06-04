@@ -474,7 +474,7 @@ public abstract class AbstractTextualDisplay
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       System.out.println(m_InputToken.getPayload());
     }

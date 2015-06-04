@@ -15,13 +15,10 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -29,6 +26,9 @@ import adams.core.Variables;
 import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor of actors that load another actor from disk and execute it.
@@ -195,7 +195,6 @@ public abstract class AbstractExternalActor
       }
       else {
 	m_ExternalActor.setParent(this);
-	m_ExternalActor.setHeadless(isHeadless());
 	m_ExternalActor.setVariables(getVariables());
 	result = m_ExternalActor.setUp();
 	if (getErrorHandler() != this)

@@ -63,14 +63,6 @@ public interface Actor
   public final static String FILE_EXTENSION_GZ = "flow.gz";
 
   /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  public void setHeadless(boolean value);
-
-  /**
    * Returns whether the actor is run in headless mode.
    *
    * @return		true if GUI components are suppressed

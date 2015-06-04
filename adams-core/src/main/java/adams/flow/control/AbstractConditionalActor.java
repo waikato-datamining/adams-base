@@ -102,18 +102,6 @@ public abstract class AbstractConditionalActor
   }
 
   /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    super.setHeadless(value);
-    m_BaseActor.setHeadless(value);
-  }
-
-  /**
    * Sets the condition to use.
    *
    * @param value	the condition

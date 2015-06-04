@@ -78,22 +78,6 @@ public abstract class AbstractControlActor
     
     m_SetUpSubActors = false;
   }
-  
-  /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    int		i;
-
-    super.setHeadless(value);
-
-    for (i = 0; i < size(); i++)
-      get(i).setHeadless(value);
-  }
 
   /**
    * Sets the parent of this actor, e.g., the group it belongs to.

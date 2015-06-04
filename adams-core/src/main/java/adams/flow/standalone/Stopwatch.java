@@ -15,20 +15,19 @@
 
 /**
  * Stopwatch.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.io.Serializable;
-
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.AbstractDisplay;
 import adams.gui.core.BasePanel;
+
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.io.Serializable;
 
 /**
  <!-- globalinfo-start -->
@@ -658,7 +657,7 @@ public class Stopwatch
 
     result = super.doExecute();
 
-    if (!m_Headless && (result == null))
+    if (!isHeadless() && (result == null))
       ((StopwatchPanel) m_Panel).startTimer();
 
     return result;

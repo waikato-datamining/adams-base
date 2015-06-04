@@ -15,7 +15,7 @@
 
 /*
  * ContainerDisplay.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -287,7 +287,7 @@ public class ContainerDisplay
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       System.out.println(m_InputToken.getPayload());
     }

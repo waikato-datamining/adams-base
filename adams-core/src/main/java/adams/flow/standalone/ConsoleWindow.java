@@ -626,7 +626,7 @@ public class ConsoleWindow
     result = super.setUp();
     
     if (result == null) {
-      if (!m_Headless) {
+      if (!isHeadless()) {
 	ConsolePanel.getSingleton().addListener(this);
 	m_LookUp = new HashSet<OutputType>(Arrays.asList(m_Types));
       }
@@ -652,7 +652,7 @@ public class ConsoleWindow
    */
   @Override
   public void wrapUp() {
-    if (!m_Headless)
+    if (!isHeadless())
       ConsolePanel.getSingleton().removeListener(this);
     if (m_LookUp != null)
       m_LookUp = null;

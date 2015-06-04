@@ -335,7 +335,7 @@ public class LocateObjects
     }
 
     // doesn't work in headless mode
-    if (m_Headless) {
+    if (isHeadless()) {
       cont = new BufferedImageContainer();
       cont.setImage(image);
       if (notes != null)

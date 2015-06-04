@@ -15,25 +15,10 @@
 
 /**
  * WekaChooseAttributes.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
-
-import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.Utils;
@@ -49,6 +34,20 @@ import adams.flow.provenance.ProvenanceSupporter;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.dialog.ApprovalDialog;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -454,7 +453,7 @@ public class WekaChooseAttributes
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       inst = (Instances) m_InputToken.getPayload();
       if (!generateOutput(inst, getPreSelectedIndices(inst)))
 	result = "Failed to generate subset!";

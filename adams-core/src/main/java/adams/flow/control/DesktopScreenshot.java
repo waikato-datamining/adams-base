@@ -251,7 +251,7 @@ public class DesktopScreenshot
 
     m_ScreenshotResult = null;
 
-    if (!m_Headless) {
+    if (!isHeadless()) {
       try {
 	Dimension size  = Toolkit.getDefaultToolkit().getScreenSize();
 	Rectangle rect  = new Rectangle(size);

@@ -15,15 +15,15 @@
 
 /*
  * AbstractNamedSetup.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.util.HashSet;
-
 import adams.core.NamedSetup;
 import adams.core.QuickInfoHelper;
+
+import java.util.HashSet;
 
 /**
  * Ancestor of actors that obtain an actor through a named setup and execute it.
@@ -120,7 +120,6 @@ public abstract class AbstractNamedSetup
     }
     else {
       m_NamedSetupActor.setParent(this);
-      m_NamedSetupActor.setHeadless(isHeadless());
       result = m_NamedSetupActor.setUp();
     }
 

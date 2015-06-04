@@ -15,16 +15,10 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
-
-import java.awt.GraphicsEnvironment;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
 
 import adams.core.Pausable;
 import adams.core.Stoppable;
@@ -47,6 +41,12 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.application.AbstractInitialization;
+
+import java.awt.GraphicsEnvironment;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -458,7 +458,8 @@ public class FlowRunner
 
     try {
       // initialize actor
-      m_Actor.setHeadless(isHeadless() || GraphicsEnvironment.isHeadless());
+      if (m_Actor instanceof Flow)
+        ((Flow) m_Actor).setHeadless(isHeadless() || GraphicsEnvironment.isHeadless());
       if (isLoggingEnabled() && m_Actor.isHeadless())
 	getLogger().info("Running in headless mode");
 

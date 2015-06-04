@@ -439,7 +439,7 @@ public class CallableActorScreenshot
     m_ScreenshotResult = null;
     filename           = generateFilename();
 
-    if (!m_Headless) {
+    if (!isHeadless()) {
       run = new Runnable() {
 	public void run() {
 	  synchronized(m_CallableActor) {

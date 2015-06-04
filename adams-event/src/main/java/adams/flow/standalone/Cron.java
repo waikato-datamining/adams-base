@@ -15,20 +15,10 @@
 
 /*
  * Cron.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.util.Date;
-
-import org.quartz.CronTrigger;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.impl.StdSchedulerFactory;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -41,6 +31,15 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.template.EndlessLoop;
+import org.quartz.CronTrigger;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -431,18 +430,6 @@ public class Cron
   public void removeAll() {
     m_CronActors.removeAll();
     reset();
-  }
-
-  /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    super.setHeadless(value);
-    m_CronActors.setHeadless(value);
   }
 
   /**

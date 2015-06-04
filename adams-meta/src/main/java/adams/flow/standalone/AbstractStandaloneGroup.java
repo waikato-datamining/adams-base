@@ -15,11 +15,9 @@
 
 /**
  * AbstractStandaloneGroup.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.util.List;
 
 import adams.core.Variables;
 import adams.flow.core.AbstractActor;
@@ -27,6 +25,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+
+import java.util.List;
 
 /**
  * Ancestor for fixed-sized groups.
@@ -83,22 +83,6 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
       get(i).setParent(null);
       get(i).setParent(this);
     }
-  }
-  
-  /**
-   * Sets whether the actor is to be run in headless mode, i.e., suppressing
-   * GUI components.
-   *
-   * @param value	if true then GUI components will be suppressed
-   */
-  @Override
-  public void setHeadless(boolean value) {
-    int		i;
-
-    super.setHeadless(value);
-
-    for (i = 0; i < size(); i++)
-      get(i).setHeadless(value);
   }
 
   /**

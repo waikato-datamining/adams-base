@@ -15,16 +15,16 @@
 
 /*
  * PasteFromClipboard.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import javax.swing.JOptionPane;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.gui.clipboard.AbstractClipboardData;
+
+import javax.swing.JOptionPane;
 
 /**
  <!-- globalinfo-start -->
@@ -237,7 +237,7 @@ public class PasteFromClipboard
   public boolean doInteract() {
     int		retVal;
 
-    if (m_Headless)
+    if (isHeadless())
       return true;
 	  
     retVal = JOptionPane.showConfirmDialog(getParentComponent(), m_Message, getName(), JOptionPane.OK_CANCEL_OPTION);

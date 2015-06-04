@@ -15,12 +15,10 @@
 
 /*
  * AbstractFlowTest.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow;
-
-import java.io.File;
 
 import adams.core.io.FileUtils;
 import adams.core.option.NestedProducer;
@@ -33,6 +31,8 @@ import adams.test.AbstractDatabaseTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.Regression;
 import adams.test.TestHelper;
+
+import java.io.File;
 
 /**
  * Abstract Test class for flow actors.
@@ -266,8 +266,9 @@ public abstract class AbstractFlowTest
    */
   protected String performActorExecution(AbstractActor actor) {
     String	result;
-    
-    actor.setHeadless(m_Headless);
+
+    if (actor instanceof Flow)
+      ((Flow) actor).setHeadless(m_Headless);
     
     result = actor.setUp();
     assertNull("setUp() not null: " + result, result);

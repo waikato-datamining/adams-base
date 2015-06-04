@@ -15,11 +15,9 @@
 
 /**
  * ImagePreparation.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
@@ -27,6 +25,8 @@ import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.flow.transformer.imagepreparation.AbstractImagePreparation;
 import adams.flow.transformer.imagepreparation.PassThrough;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -214,7 +214,7 @@ public class ImagePreparation
     }
     
     // doesn't work in headless mode
-    if (m_Headless) {
+    if (isHeadless()) {
       cont = new BufferedImageContainer();
       cont.setImage(image);
       if (notes != null)

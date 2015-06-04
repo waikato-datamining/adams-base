@@ -15,21 +15,10 @@
 
 /*
  * SpreadSheetDisplay.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JPanel;
-import javax.swing.JTable;
 
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
@@ -50,6 +39,16 @@ import adams.gui.core.TableRowRange;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -728,7 +727,7 @@ public class SpreadSheetDisplay
     
     result = null;
     
-    if (m_Headless) {
+    if (isHeadless()) {
       System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       System.out.println(m_InputToken.getPayload());
     }
