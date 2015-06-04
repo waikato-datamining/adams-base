@@ -15,21 +15,9 @@
 
 /**
  * InspectionPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
 import adams.core.ByteFormat;
 import adams.core.SizeOf;
@@ -45,6 +33,17 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
+
+import javax.swing.JCheckBox;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel for inspecting an object and its values (accessible through bean
@@ -147,7 +146,7 @@ public class InspectionPanel
     m_TextPanel.setTextFont(GUIHelper.getMonospacedFont());
     m_TextPanel.setCanOpenFiles(false);
     m_TextPanel.setUpdateParentTitle(false);
-    m_PanelContent.add(new BaseScrollPane(m_TextPanel), BorderLayout.CENTER);
+    m_PanelContent.add(m_TextPanel, BorderLayout.CENTER);
 
     m_PanelSize = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelSize.setVisible(SizeOf.isSizeOfAgentAvailable());
