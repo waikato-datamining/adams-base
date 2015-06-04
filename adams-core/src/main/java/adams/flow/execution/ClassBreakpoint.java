@@ -15,7 +15,7 @@
 
 /**
  * ClassBreakpoint.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -32,40 +32,64 @@ import adams.flow.core.Token;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-disabled (property: disabled)
+ * <pre>-disabled &lt;boolean&gt; (property: disabled)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint is completely disabled.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-pre-input (property: onPreInput)
- * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-input (of token) time.
+ * <pre>-on-pre-input &lt;boolean&gt; (property: onPreInput)
+ * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-input (of token) time;
+ * &nbsp;&nbsp;&nbsp; token available.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-post-input (property: onPostInput)
+ * <pre>-on-post-input &lt;boolean&gt; (property: onPostInput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-input (of token) time.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-pre-execute (property: onPreExecute)
+ * <pre>-on-pre-execute &lt;boolean&gt; (property: onPreExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-execute time.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-post-execute (property: onPostExecute)
+ * <pre>-on-post-execute &lt;boolean&gt; (property: onPostExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-execute time.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-pre-output (property: onPreOutput)
- * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-output (of token) time.
+ * <pre>-on-pre-output &lt;boolean&gt; (property: onPreOutput)
+ * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-output (of token) time;
+ * &nbsp;&nbsp;&nbsp; token available.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-on-post-output (property: onPostOutput)
+ * <pre>-on-post-output &lt;boolean&gt; (property: onPostOutput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-output (of token) 
  * &nbsp;&nbsp;&nbsp;time.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-watch &lt;adams.core.base.BaseString&gt; [-watch ...] (property: watches)
+ * &nbsp;&nbsp;&nbsp;The expression to display initially in the watch dialog; the type of the 
+ * &nbsp;&nbsp;&nbsp;watch needs to be specified as well.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-watch-type &lt;VARIABLE|BOOLEAN|NUMERIC|STRING&gt; [-watch-type ...] (property: watchTypes)
+ * &nbsp;&nbsp;&nbsp;The types of the watch expressions; determines how the expressions get evaluated 
+ * &nbsp;&nbsp;&nbsp;and displayed.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-view &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|BREAKPOINTS&gt; [-view ...] (property: views)
+ * &nbsp;&nbsp;&nbsp;The views to display automatically when the breakpoint is reached.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-class-name &lt;java.lang.String&gt; (property: className)

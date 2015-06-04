@@ -20,21 +20,27 @@
 package adams.flow.execution;
 
 import adams.core.CleanUpHandler;
+import adams.core.Stoppable;
 import adams.core.Variables;
 import adams.core.base.BaseString;
 import adams.core.option.DebugNestedProducer;
+import adams.core.option.OptionUtils;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.control.Breakpoint;
-import adams.flow.control.Breakpoint.View;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
+import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
+import adams.gui.flow.FlowPanel;
 import adams.gui.flow.StoragePanel;
+import adams.gui.flow.tree.Tree;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.ExpressionWatchPanel;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
@@ -42,37 +48,80 @@ import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.InspectionPanel;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to define breakpoints that suspend the execution of the flow, allowing the inspection of the current flow state.
+ * Allows the user to define breakpoints that suspend the execution of the flow, allowing the inspection of the current flow state.<br>
+ * Tokens can only inspected during 'preInput' and 'postOutput' of Breakpoint control actors. Step-wise debugging stops in 'preExecute', which has no access to the current token.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 800
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;The height of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 600
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
  * <pre>-breakpoint &lt;adams.flow.execution.AbstractBreakpoint&gt; [-breakpoint ...] (property: breakpoints)
  * &nbsp;&nbsp;&nbsp;The breakpoints to use for suspending the flow execution.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-watch &lt;adams.core.base.BaseString&gt; [-watch ...] (property: watches)
+ * &nbsp;&nbsp;&nbsp;The expression to display initially in the watch dialog; the type of the 
+ * &nbsp;&nbsp;&nbsp;watch needs to be specified as well.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-watch-type &lt;VARIABLE|BOOLEAN|NUMERIC|STRING&gt; [-watch-type ...] (property: watchTypes)
+ * &nbsp;&nbsp;&nbsp;The types of the watch expressions; determines how the expressions get evaluated 
+ * &nbsp;&nbsp;&nbsp;and displayed.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-view &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|BREAKPOINTS&gt; [-view ...] (property: views)
+ * &nbsp;&nbsp;&nbsp;The views to display automatically when the breakpoint is reached.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-step-by-step &lt;boolean&gt; (property: stepByStep)
+ * &nbsp;&nbsp;&nbsp;Whether to start in step-by-step mode or wait for first breakpoint.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -81,10 +130,580 @@ import java.awt.event.ActionListener;
  * @version $Revision$
  */
 public class Debug
-  extends AbstractGraphicalFlowExecutionListener {
+  extends AbstractGraphicalFlowExecutionListener
+  implements Stoppable {
 
   /** for serialization. */
   private static final long serialVersionUID = -7287036923779341439L;
+
+  /**
+   * The breakpoint views available.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum View {
+    /** the source code. */
+    SOURCE,
+    /** the expressions. */
+    EXPRESSIONS,
+    /** the variables. */
+    VARIABLES,
+    /** the storage. */
+    STORAGE,
+    /** inspection of the current token. */
+    INSPECT_TOKEN,
+    /** the breakpoints. */
+    BREAKPOINTS
+  }
+
+  /**
+   * Table model for displaying the current breakpoints.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class BreakpointTableModel
+    extends AbstractBaseTableModel {
+
+    private static final long serialVersionUID = 8719550408646036355L;
+
+    /** the owner. */
+    protected ControlPanel m_Owner;
+
+    /**
+     * Initializes the model.
+     *
+     * @param owner	the owning debug object
+     */
+    public BreakpointTableModel(ControlPanel owner) {
+      m_Owner = owner;
+    }
+
+    /**
+     * Returns the number of breakpoints.
+     *
+     * @return		the number of breakpoints
+     */
+    @Override
+    public int getRowCount() {
+      return m_Owner.getOwner().getBreakpoints().length;
+    }
+
+    /**
+     * Returns the number of columns.
+     *
+     * @return		the number of columns
+     */
+    @Override
+    public int getColumnCount() {
+      return 11;
+    }
+
+    /**
+     * Returns the name of the column.
+     *
+     * @param column	the index of the column
+     * @return		the name
+     */
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+	case 0:
+	  return "Current";
+	case 1:
+	  return "Enabled";
+	case 2:
+	  return "PreIn";
+	case 3:
+	  return "PostIn";
+	case 4:
+	  return "PreEx";
+	case 5:
+	  return "PostEx";
+	case 6:
+	  return "PreOut";
+	case 7:
+	  return "PostOut";
+	case 8:
+	  return "Type";
+	case 9:
+	  return "Quickinfo";
+	case 10:
+	  return "Condition";
+	default:
+	  throw new IllegalArgumentException("Illegal column index: " + column);
+      }
+    }
+
+    /**
+     * Returns the class for the specified column.
+     *
+     * @param columnIndex	the index
+     * @return			the class
+     */
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+      switch (columnIndex) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	  return Boolean.class;
+	case 8:
+	case 9:
+	case 10:
+	  return String.class;
+	default:
+	  throw new IllegalArgumentException("Illegal column index: " + columnIndex);
+      }
+    }
+
+    /**
+     * Returns whether a cell is editable.
+     *
+     * @param rowIndex		the row, i.e., breakpoint
+     * @param columnIndex	the column
+     * @return			true if editable
+     */
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+      return (columnIndex >= 1) && (columnIndex <= 7);
+    }
+
+    /**
+     * Sets the cell value at the specified location.
+     *
+     * @param aValue		the value to set
+     * @param rowIndex		the row, i.e., the breakpoint
+     * @param columnIndex	the column
+     */
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+      AbstractBreakpoint	breakpoint;
+
+      breakpoint = m_Owner.getOwner().getBreakpoints()[rowIndex];
+
+      switch (columnIndex) {
+	case 1:
+	  breakpoint.setDisabled(!((Boolean) aValue));
+	  break;
+	case 2:
+	  breakpoint.setOnPreInput((Boolean) aValue);
+	  break;
+	case 3:
+	  breakpoint.setOnPostInput((Boolean) aValue);
+	  break;
+	case 4:
+	  breakpoint.setOnPreExecute((Boolean) aValue);
+	  break;
+	case 5:
+	  breakpoint.setOnPostExecute((Boolean) aValue);
+	  break;
+	case 6:
+	  breakpoint.setOnPreOutput((Boolean) aValue);
+	  break;
+	case 7:
+	  breakpoint.setOnPostOutput((Boolean) aValue);
+	  break;
+      }
+    }
+
+    /**
+     * Returns the cell value at the specified location.
+     *
+     * @param rowIndex		the row, i.e., breakpoint
+     * @param columnIndex	the column
+     * @return			the value
+     */
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+      AbstractBreakpoint	breakpoint;
+
+      breakpoint = m_Owner.getOwner().getBreakpoints()[rowIndex];
+
+      switch (columnIndex) {
+	case 0:
+	  return (m_Owner.getCurrentBreakpoint() != null) && (breakpoint == m_Owner.getCurrentBreakpoint());
+	case 1:
+	  return !breakpoint.getDisabled();
+	case 2:
+	  return breakpoint.getOnPreInput();
+	case 3:
+	  return breakpoint.getOnPostInput();
+	case 4:
+	  return breakpoint.getOnPreExecute();
+	case 5:
+	  return breakpoint.getOnPostExecute();
+	case 6:
+	  return breakpoint.getOnPreOutput();
+	case 7:
+	  return breakpoint.getOnPostOutput();
+	case 8:
+	  return breakpoint.getClass().getSimpleName();
+	case 9:
+	  if (breakpoint instanceof BooleanConditionSupporter)
+	    return ((BooleanConditionSupporter) breakpoint).getCondition().getQuickInfo();
+	  else
+	    return null;
+	case 10:
+	  if (breakpoint instanceof BooleanConditionSupporter)
+	    return OptionUtils.getCommandLine(((BooleanConditionSupporter) breakpoint).getCondition());
+	  else
+	    return null;
+	default:
+	  throw new IllegalArgumentException("Illegal column index: " + columnIndex);
+      }
+    }
+
+    /**
+     * Removes all breakpoints.
+     */
+    public void clearBreakpoints() {
+      m_Owner.getOwner().setBreakpoints(new AbstractBreakpoint[0]);
+      fireTableDataChanged();
+    }
+
+    /**
+     * Returns the breakpoint at the specified location.
+     *
+     * @param rowIndex	the row
+     * @return		the breakpoints
+     */
+    public AbstractBreakpoint getBreakpointAt(int rowIndex) {
+      return m_Owner.getOwner().getBreakpoints()[rowIndex];
+    }
+
+    /**
+     * Sets the breakpoint at the specified location.
+     *
+     * @param rowIndex	the row
+     * @param value	the breakpoint
+     */
+    public void setBreakpointAt(int rowIndex, AbstractBreakpoint value) {
+      m_Owner.getOwner().getBreakpoints()[rowIndex] = value;
+      fireTableRowsUpdated(rowIndex, rowIndex);
+    }
+
+    /**
+     * Returns the breakpoint at the specified location.
+     *
+     * @param value	the breakpoint to add
+     */
+    public void addBreakpoint(AbstractBreakpoint value) {
+      List<AbstractBreakpoint>	list;
+
+      list = new ArrayList<>(Arrays.asList(m_Owner.getOwner().getBreakpoints()));
+      list.add(value);
+      m_Owner.getOwner().setBreakpoints(list.toArray(new AbstractBreakpoint[list.size()]));
+      fireTableRowsUpdated(list.size() - 1, list.size() - 1);
+    }
+
+    /**
+     * Removes the breakpoint at the specified location.
+     *
+     * @param rowIndex	the row
+     * @return		the breakpoint
+     */
+    public AbstractBreakpoint removeBreakpointAt(int rowIndex) {
+      AbstractBreakpoint	result;
+      List<AbstractBreakpoint>	list;
+
+      result = m_Owner.getOwner().getBreakpoints()[rowIndex];
+      list   = new ArrayList<>(Arrays.asList(m_Owner.getOwner().getBreakpoints()));
+      list.remove(rowIndex);
+      m_Owner.getOwner().setBreakpoints(list.toArray(new AbstractBreakpoint[list.size()]));
+
+      fireTableRowsDeleted(rowIndex, rowIndex);
+
+      return result;
+    }
+
+    /**
+     * Triggers an update.
+     */
+    public void refresh() {
+      fireTableDataChanged();
+    }
+  }
+
+  /**
+   * Panel for managing the breakpoints.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class BreakpointPanel
+    extends BasePanel
+    implements CleanUpHandler {
+
+    private static final long serialVersionUID = 8469709963860298334L;
+
+    /** the owner. */
+    protected ControlPanel m_Owner;
+
+    /** the table with all the breakpoints. */
+    protected BaseTableWithButtons m_TableBreakpoints;
+
+    /** the table model. */
+    protected BreakpointTableModel m_TableModelBreakpoints;
+
+    /** the disable/enable button for breakpoints. */
+    protected JButton m_ButtonBreakpointsToggle;
+
+    /** the add button for breakpoints. */
+    protected JButton m_ButtonBreakpointsAdd;
+
+    /** the edit button for breakpoints. */
+    protected JButton m_ButtonBreakpointsEdit;
+
+    /** the remove button for breakpoints. */
+    protected JButton m_ButtonBreakpointsRemove;
+
+    /** the remove all button for breakpoints. */
+    protected JButton m_ButtonBreakpointsRemoveAll;
+
+    /** the GOE for adding/editing breakpoints. */
+    protected GenericObjectEditorDialog	m_DialogGOE;
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_TableModelBreakpoints = null;
+      m_DialogGOE             = null;
+    }
+
+    /**
+     * For initializing the GUI.
+     */
+    @Override
+    protected void initGUI() {
+      super.initGUI();
+
+      m_TableBreakpoints = new BaseTableWithButtons();
+      m_TableBreakpoints.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      add(m_TableBreakpoints, BorderLayout.CENTER);
+
+      m_ButtonBreakpointsToggle = new JButton("Toggle");
+      m_ButtonBreakpointsToggle.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  toggleBreakpoints();
+	}
+      });
+      m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsToggle);
+
+      m_ButtonBreakpointsAdd = new JButton("Add...");
+      m_ButtonBreakpointsAdd.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  addBreakpoint();
+	}
+      });
+      m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsAdd);
+
+      m_ButtonBreakpointsEdit = new JButton("Edit...");
+      m_ButtonBreakpointsEdit.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  editBreakpoint(m_TableBreakpoints.getSelectedRow());
+	}
+      });
+      m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsEdit);
+
+      m_TableBreakpoints.addToButtonsPanel(new JLabel(""));
+
+      m_ButtonBreakpointsRemove = new JButton("Remove");
+      m_ButtonBreakpointsRemove.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  removeBreakpoints(m_TableBreakpoints.getSelectedRows());
+	}
+      });
+      m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsRemove);
+
+      m_ButtonBreakpointsRemoveAll = new JButton("Remove all");
+      m_ButtonBreakpointsRemoveAll.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  removeBreakpoints(null);
+	}
+      });
+      m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsRemoveAll);
+
+      m_TableBreakpoints.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+	  m_ButtonBreakpointsToggle.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
+	  m_ButtonBreakpointsAdd.setEnabled(true);
+	  m_ButtonBreakpointsRemove.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
+	  m_ButtonBreakpointsRemoveAll.setEnabled(m_TableBreakpoints.getModel().getRowCount() > 0);
+	}
+      });
+    }
+
+    /**
+     * Sets the owner.
+     *
+     * @param value	the owner
+     */
+    public void setOwner(ControlPanel value) {
+      if ((m_TableModelBreakpoints == null) || (m_Owner !=  value)) {
+	m_TableModelBreakpoints = new BreakpointTableModel(value);
+	m_TableBreakpoints.setModel(m_TableModelBreakpoints);
+	m_TableBreakpoints.setOptimalColumnWidth();
+      }
+      m_Owner = value;
+      refresh();
+    }
+
+    /**
+     * Returns the current owner.
+     *
+     * @return		the owner, null if none set
+     */
+    public ControlPanel getOwner() {
+      return m_Owner;
+    }
+
+    /**
+     * Toggles the enabled state of the currently selected breakpoints.
+     */
+    protected void toggleBreakpoints() {
+      AbstractBreakpoint	breakpoint;
+
+      for (int index: m_TableBreakpoints.getSelectedRows()) {
+	breakpoint = m_TableModelBreakpoints.getBreakpointAt(index);
+	breakpoint.setDisabled(!breakpoint.getDisabled());
+      }
+
+      m_Owner.queueUpdate();
+    }
+
+    /**
+     * Returns the default breakpoint to use.
+     *
+     * @return		the default
+     */
+    protected AbstractBreakpoint getDefaultBreakpoint() {
+      PathBreakpoint	result;
+
+      result = new PathBreakpoint();
+      result.setOnPreInput(true);
+
+      return result;
+    }
+
+    /**
+     * Returns the GOE dialog to use for adding/editing breakpoints.
+     * Gets instantiated if necessary.
+     *
+     * @return		the dialog
+     */
+    protected GenericObjectEditorDialog getGOEDialog() {
+      if (m_DialogGOE == null) {
+	if (m_Owner.getParentDialog() != null)
+	  m_DialogGOE = new GenericObjectEditorDialog(m_Owner.getParentDialog(), ModalityType.DOCUMENT_MODAL);
+	else
+	  m_DialogGOE = new GenericObjectEditorDialog(m_Owner.getParentFrame(), true);
+	m_DialogGOE.getGOEEditor().setClassType(AbstractBreakpoint.class);
+	m_DialogGOE.getGOEEditor().setCanChangeClassInDialog(true);
+	m_DialogGOE.setCurrent(getDefaultBreakpoint());
+      }
+      return m_DialogGOE;
+    }
+
+    /**
+     * Allows the user to add another breakpoint.
+     */
+    protected void addBreakpoint() {
+      GenericObjectEditorDialog		dialog;
+
+      dialog = getGOEDialog();
+      dialog.setCurrent(getDefaultBreakpoint());
+      dialog.setTitle("Add breakpoint");
+      dialog.pack();
+      dialog.setLocationRelativeTo(m_Owner);
+      dialog.setVisible(true);
+      if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+
+      m_TableModelBreakpoints.addBreakpoint((AbstractBreakpoint) dialog.getCurrent());
+
+      m_Owner.queueUpdate();
+    }
+
+    /**
+     * Allows the user to edit a breakpoint.
+     *
+     * @param row	the breakpoint to edit
+     */
+    protected void editBreakpoint(int row) {
+      GenericObjectEditorDialog		dialog;
+      AbstractBreakpoint		breakpoint;
+
+      breakpoint = m_TableModelBreakpoints.getBreakpointAt(row);
+
+      dialog = getGOEDialog();
+      dialog.setCurrent(breakpoint);
+      dialog.setTitle("Edit breakpoint");
+      dialog.pack();
+      dialog.setLocationRelativeTo(m_Owner);
+      dialog.setVisible(true);
+      if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+
+      m_TableModelBreakpoints.setBreakpointAt(row, (AbstractBreakpoint) dialog.getCurrent());
+
+      m_Owner.queueUpdate();
+    }
+
+    /**
+     * Removes breakpoints.
+     *
+     * @param indices	the indices of the breakpoints to remove, all if null
+     */
+    protected void removeBreakpoints(int[] indices) {
+      int	i;
+
+      if (indices == null) {
+	m_TableModelBreakpoints.clearBreakpoints();
+      }
+      else {
+	for (i = indices.length - 1; i >= 0; i--)
+	  m_TableModelBreakpoints.removeBreakpointAt(indices[i]);
+      }
+
+      m_Owner.queueUpdate();
+    }
+
+    /**
+     * Triggers an update.
+     */
+    public void refresh() {
+      if (m_TableModelBreakpoints != null)
+	m_TableModelBreakpoints.refresh();
+    }
+
+    /**
+     * Cleans up data structures, frees up memory.
+     */
+    @Override
+    public void cleanUp() {
+      if (m_DialogGOE != null) {
+	m_DialogGOE.dispose();
+	m_DialogGOE = null;
+      }
+    }
+  }
 
   /**
    * A little dialog for controlling the breakpoint. Cannot be static class!
@@ -98,18 +717,21 @@ public class Debug
 
     /** for serialization. */
     private static final long serialVersionUID = 1000900663466801934L;
-    
-    /** the tabbed pane for displaying the various panels. */
-    protected BaseTabbedPane m_TabbedPane;
-    
-    /** the button for continuing execution. */
-    protected JToggleButton m_ButtonContinue;
+
+    /** the tabbed pane for displaying the various display panels. */
+    protected BaseTabbedPane m_TabbedPaneDisplays;
 
     /** the button for stopping execution. */
-    protected JToggleButton m_ButtonStop;
+    protected JButton m_ButtonStop;
 
     /** the button for disabling/enabling the breakpoint. */
-    protected JToggleButton m_ButtonDisableEnable;
+    protected JButton m_ButtonToggle;
+
+    /** the button for resuming execution. */
+    protected JButton m_ButtonPauseResume;
+
+    /** the button for performing the next step when in manual mode. */
+    protected JButton m_ButtonStep;
 
     /** the button for displaying dialog with watch expressions. */
     protected JToggleButton m_ButtonExpressions;
@@ -120,20 +742,20 @@ public class Debug
     /** the breakpoint condition. */
     protected GenericObjectEditorPanel m_GOEPanelCondition;
 
-    /** the button to bring up the source code of the current flow. */
+    /** the button to show the source code of the current flow. */
     protected JToggleButton m_ButtonSource;
 
-    /** the button to bring up the variable management dialog. */
+    /** the button to show the variable management dialog. */
     protected JToggleButton m_ButtonVariables;
 
-    /** the button to bring up the storage dialog. */
+    /** the button to show the storage. */
     protected JToggleButton m_ButtonStorage;
 
-    /** the button to bring up the dialog for inspecting the current token. */
+    /** the button to show inspection panel for the current token. */
     protected JToggleButton m_ButtonInspectToken;
 
-    /** the button to bring up the dialog for inspecting the flow. */
-    protected JToggleButton m_ButtonInspectFlow;
+    /** the button to show the breakpoints management panel. */
+    protected JToggleButton m_ButtonBreakpoints;
 
     /** the panel with the watch expressions. */
     protected ExpressionWatchPanel m_PanelExpressions;
@@ -144,14 +766,14 @@ public class Debug
     /** the panel for inspecting the current token. */
     protected InspectionPanel m_PanelInspectionToken;
 
-    /** the panel for inspecting the current flow. */
-    protected InspectionPanel m_PanelInspectionFlow;
-    
     /** the panel for displaying the source. */
     protected TextEditorPanel m_PanelSource;
 
     /** the panel for displaying the temporary storage. */
     protected StoragePanel m_PanelStorage;
+
+    /** the panel for managing the breakpoints. */
+    protected BreakpointPanel m_PanelBreakpoints;
 
     /** the text field for the actor path. */
     protected JTextField m_TextActorPath;
@@ -161,7 +783,7 @@ public class Debug
 
     /** the text field for the hook method. */
     protected JTextField m_TextHookMethod;
-    
+
     /** the owning listener. */
     protected transient Debug m_Owner;
     
@@ -176,7 +798,10 @@ public class Debug
     
     /** the current boolean condition. */
     protected BooleanCondition m_CurrentCondition;
-    
+
+    /** the current breakpoint. */
+    protected AbstractBreakpoint m_CurrentBreakpoint;
+
     /**
      * Initializes the widgets.
      */
@@ -191,8 +816,8 @@ public class Debug
       setLayout(new BorderLayout());
 
       // tabbed pane
-      m_TabbedPane = new BaseTabbedPane();
-      add(m_TabbedPane, BorderLayout.CENTER);
+      m_TabbedPaneDisplays = new BaseTabbedPane();
+      add(m_TabbedPaneDisplays, BorderLayout.CENTER);
       
       // buttons
       // 1. execution
@@ -201,20 +826,38 @@ public class Debug
       panel = new JPanel(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder("Execution"));
       panelAllButtons.add(panel, BorderLayout.NORTH);
-      panelButtons = new JPanel(new GridLayout(1, 3));
+      panelButtons = new JPanel(new GridLayout(1, 4));
       panel.add(panelButtons, BorderLayout.NORTH);
 
-      m_ButtonContinue = new JToggleButton("Continue", GUIHelper.getIcon("run.gif"));
-      m_ButtonContinue.setMnemonic('C');
-      m_ButtonContinue.setToolTipText("Continues with the flow execution");
-      m_ButtonContinue.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          continueFlowExecution();
-        }
+      m_ButtonPauseResume = new JButton("Resume", GUIHelper.getIcon("resume.gif"));
+      m_ButtonPauseResume.setToolTipText("Pause/Resume execution");
+      m_ButtonPauseResume.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  pauseResumeExecution();
+	}
       });
-      panelButtons.add(m_ButtonContinue);
+      panelButtons.add(m_ButtonPauseResume);
 
-      m_ButtonStop = new JToggleButton("Stop", GUIHelper.getIcon("stop.gif"));
+      m_ButtonStep = new JButton("Step", GUIHelper.getIcon("step.gif"));
+      m_ButtonStep.setToolTipText("Step to next actor");
+      m_ButtonStep.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  nextStep();
+	}
+      });
+      panelButtons.add(m_ButtonStep);
+
+      m_ButtonToggle = new JButton("Disable", GUIHelper.getIcon("debug_off.png"));
+      m_ButtonToggle.setMnemonic('D');
+      m_ButtonToggle.setToolTipText("Disable the breakpoint");
+      m_ButtonToggle.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  disableEnableBreakpoint();
+	}
+      });
+      panelButtons.add(m_ButtonToggle);
+
+      m_ButtonStop = new JButton("Stop", GUIHelper.getIcon("stop.gif"));
       m_ButtonStop.setMnemonic('S');
       m_ButtonStop.setToolTipText("Stops the flow execution immediately");
       m_ButtonStop.addActionListener(new ActionListener() {
@@ -223,16 +866,6 @@ public class Debug
 	}
       });
       panelButtons.add(m_ButtonStop);
-
-      m_ButtonDisableEnable = new JToggleButton("Disable", GUIHelper.getIcon("debug_off.png"));
-      m_ButtonDisableEnable.setMnemonic('D');
-      m_ButtonDisableEnable.setToolTipText("Disable the breakpoint");
-      m_ButtonDisableEnable.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  disableEnableBreakpoint();
-	}
-      });
-      panelButtons.add(m_ButtonDisableEnable);
 
       // condition
       m_PanelCondition = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -294,15 +927,15 @@ public class Debug
       });
       panelButtons.add(m_ButtonInspectToken);
 
-      m_ButtonInspectFlow = new JToggleButton("Inspect flow", GUIHelper.getIcon("flow.gif"));
-      m_ButtonInspectFlow.setMnemonic('n');
-      m_ButtonInspectFlow.setToolTipText("Display dialog for inspecting the current flow");
-      m_ButtonInspectFlow.addActionListener(new ActionListener() {
+      m_ButtonBreakpoints = new JToggleButton("Breakpoints", GUIHelper.getIcon("flow.gif"));
+      m_ButtonBreakpoints.setMnemonic('n');
+      m_ButtonBreakpoints.setToolTipText("Display dialog for inspecting the current flow");
+      m_ButtonBreakpoints.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          inspectFlow(m_ButtonInspectFlow.isSelected());
+          showBreakpoints(m_ButtonBreakpoints.isSelected());
         }
       });
-      panelButtons.add(m_ButtonInspectFlow);
+      panelButtons.add(m_ButtonBreakpoints);
 
       m_ButtonSource = new JToggleButton("Source", GUIHelper.getIcon("source.png"));
       m_ButtonSource.setMnemonic('o');
@@ -335,6 +968,9 @@ public class Debug
       
       // watches
       m_PanelExpressions = new ExpressionWatchPanel();
+
+      // breakpoints
+      m_PanelBreakpoints = new BreakpointPanel();
     }
 
     /**
@@ -356,29 +992,48 @@ public class Debug
     }
 
     /**
-     * Updates the enabled status of the buttons, text fields.
+     * Updates the enabled status of the buttons, text fields and other widget
+     * updates.
      */
     public void update() {
       boolean	actorPresent;
       boolean	stopped;
       boolean	blocked;
+      boolean	hasToken;
 
       actorPresent = (getCurrentActor() != null);
       stopped      = actorPresent && getFlow().isStopped();
       blocked      = (getOwner() != null) && getOwner().isBlocked();
+      hasToken     = (getCurrentToken() != null);
 
-      m_ButtonContinue.setEnabled(actorPresent && !stopped && blocked);
       m_ButtonStop.setEnabled(actorPresent && !stopped);
-      m_ButtonDisableEnable.setEnabled(actorPresent && !stopped);
+      m_ButtonToggle.setEnabled(actorPresent && !stopped && (m_CurrentBreakpoint != null));
+      m_ButtonPauseResume.setEnabled(actorPresent && !stopped);
+      m_ButtonStep.setEnabled(actorPresent && !stopped && blocked);
       m_ButtonVariables.setEnabled(actorPresent);
       m_ButtonStorage.setEnabled(actorPresent);
       m_ButtonExpressions.setEnabled(actorPresent && !stopped && blocked);
-      m_ButtonInspectFlow.setEnabled(actorPresent && !stopped && blocked);
-      m_ButtonInspectToken.setEnabled(actorPresent && !stopped && blocked);
+      m_ButtonBreakpoints.setEnabled(actorPresent && !stopped && blocked);
+      m_ButtonInspectToken.setEnabled(actorPresent && !stopped && blocked && hasToken);
       m_ButtonSource.setEnabled(actorPresent && !stopped && blocked);
       
       m_PanelCondition.setEnabled(actorPresent && !stopped && blocked);
       m_ButtonActorPath.setEnabled(m_TextActorPath.getText().length() > 0);
+
+      if (!m_ButtonInspectToken.isEnabled())
+	inspectToken(false);
+
+      if (m_Owner != null) {
+	if (m_Owner.isBlocked() || m_Owner.isStepMode()) {
+	  m_ButtonPauseResume.setText("Resume");
+	  m_ButtonPauseResume.setIcon(GUIHelper.getIcon("resume.gif"));
+	}
+	else {
+	  m_ButtonPauseResume.setText("Pause");
+	  m_ButtonPauseResume.setIcon(GUIHelper.getIcon("pause.gif"));
+	}
+	m_PanelBreakpoints.setOwner(this);
+      }
     }
     
     /**
@@ -485,7 +1140,25 @@ public class Debug
     public BooleanCondition getCurrentCondition() {
       return m_CurrentCondition;
     }
-    
+
+    /**
+     * Sets the current boolean breakpoint.
+     *
+     * @param value	the breakpoint, null if not available
+     */
+    public void setCurrentBreakpoint(AbstractBreakpoint value) {
+      m_CurrentBreakpoint = value;
+    }
+
+    /**
+     * Returns the current boolean breakpoint.
+     *
+     * @return		the breakpoint, null if none available
+     */
+    public AbstractBreakpoint getCurrentBreakpoint() {
+      return m_CurrentBreakpoint;
+    }
+
     /**
      * Continues the flow execution.
      */
@@ -511,25 +1184,48 @@ public class Debug
      * Disable/enable the breakpoint.
      */
     protected void disableEnableBreakpoint() {
-      // cannot use setSkip(boolean) as this will reset the actor
-      // and remove the control panel
-      getOwner().setDisabled(!getOwner().isDisabled());
-      if (getOwner().isDisabled()) {
-	m_ButtonDisableEnable.setText("Enable");
-	m_ButtonDisableEnable.setMnemonic('E');
-	m_ButtonDisableEnable.setToolTipText("Enable the breakpoint");
-	m_ButtonDisableEnable.setIcon(GUIHelper.getIcon("debug.png"));
+      if (getCurrentBreakpoint() == null)
+	return;
+
+      getCurrentBreakpoint().setDisabled(!getCurrentBreakpoint().getDisabled());
+
+      if (getCurrentBreakpoint().getDisabled()) {
+	m_ButtonToggle.setText("Enable");
+	m_ButtonToggle.setMnemonic('E');
+	m_ButtonToggle.setToolTipText("Enable current breakpoint");
+	m_ButtonToggle.setIcon(GUIHelper.getIcon("debug.png"));
       }
       else {
-	m_ButtonDisableEnable.setText("Disable");
-	m_ButtonDisableEnable.setMnemonic('D');
-	m_ButtonDisableEnable.setToolTipText("Disable the breakpoint");
-	m_ButtonDisableEnable.setIcon(GUIHelper.getIcon("debug_off.png"));
+	m_ButtonToggle.setText("Disable");
+	m_ButtonToggle.setMnemonic('D');
+	m_ButtonToggle.setToolTipText("Disable current breakpoint");
+	m_ButtonToggle.setIcon(GUIHelper.getIcon("debug_off.png"));
       }
+
+      queueUpdate();
+    }
+
+    /**
+     * Pauses/resumes execution.
+     */
+    protected void pauseResumeExecution() {
+      m_Owner.setStepMode(false);
 
       if (getOwner().isBlocked())
 	continueFlowExecution();
-      
+
+      queueUpdate();
+    }
+
+    /**
+     * Executes the next step in manual mode.
+     */
+    protected void nextStep() {
+      getOwner().setStepMode(true);
+
+      if (getOwner().isBlocked())
+	continueFlowExecution();
+
       queueUpdate();
     }
 
@@ -545,8 +1241,8 @@ public class Debug
       int	i;
       
       present = -1;
-      for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
-	if (m_TabbedPane.getComponentAt(i) == panel) {
+      for (i = 0; i < m_TabbedPaneDisplays.getTabCount(); i++) {
+	if (m_TabbedPaneDisplays.getComponentAt(i) == panel) {
 	  present = i;
 	  break;
 	}
@@ -557,11 +1253,11 @@ public class Debug
 	return;
       
       if (visible) {
-	m_TabbedPane.addTab(title, panel);
-	m_TabbedPane.setSelectedIndex(m_TabbedPane.getTabCount() - 1);
+	m_TabbedPaneDisplays.addTab(title, panel);
+	m_TabbedPaneDisplays.setSelectedIndex(m_TabbedPaneDisplays.getTabCount() - 1);
       }
       else {
-	m_TabbedPane.remove(present);
+	m_TabbedPaneDisplays.remove(present);
       }
     }
     
@@ -623,6 +1319,8 @@ public class Debug
      * @param visible	if true then displayed, otherwise hidden
      */
     protected void inspectToken(boolean visible) {
+      if (!visible)
+	m_ButtonInspectToken.setSelected(false);
       if (m_PanelInspectionToken == null)
 	m_PanelInspectionToken = new InspectionPanel();
       m_PanelInspectionToken.setCurrent(m_CurrentToken);
@@ -630,15 +1328,15 @@ public class Debug
     }
 
     /**
-     * Inspects the current flow.
-     * 
+     * Shows the current breakpoints.
+     *
      * @param visible	if true then displayed, otherwise hidden
      */
-    protected void inspectFlow(boolean visible) {
-      if (m_PanelInspectionFlow == null)
-	m_PanelInspectionFlow = new InspectionPanel();
-      m_PanelInspectionFlow.setCurrent(getCurrentActor().getRoot());
-      setPanelVisible(m_PanelInspectionFlow, "Flow", visible);
+    protected void showBreakpoints(boolean visible) {
+      if (m_PanelBreakpoints == null)
+	m_PanelBreakpoints = new BreakpointPanel();
+      m_PanelBreakpoints.setOwner(this);
+      setPanelVisible(m_PanelBreakpoints, "Breakpoints", visible);
     }
 
     /**
@@ -665,11 +1363,40 @@ public class Debug
     }
 
     /**
+     * Highlights the actor.
+     */
+    protected void highlightActor() {
+      Component comp;
+      Tree	tree;
+      Runnable	run;
+
+      if (getFlow().getParentComponent() == null)
+	return;
+      comp = getFlow().getParentComponent();
+      if (!(comp instanceof FlowPanel))
+	return;
+
+      tree = ((FlowPanel) comp).getTree();
+      run = new Runnable() {
+        @Override
+        public void run() {
+          String full = m_CurrentActor.getFullName();
+          tree.locateAndDisplay(full);
+        }
+      };
+      SwingUtilities.invokeLater(run);
+    }
+
+    /**
      * Called by actor when breakpoint reached.
      */
     public void breakpointReached() {
+      HashSet<View>	views;
+      int		i;
+
       m_TextActorPath.setText(getCurrentActor().getFullName());
       m_TextHookMethod.setText(getCurrentHook());
+
       if (getCurrentCondition() == null) {
 	m_PanelCondition.setVisible(false);
       }
@@ -677,18 +1404,36 @@ public class Debug
 	m_GOEPanelCondition.setCurrent(getCurrentCondition().shallowCopy());
 	m_PanelCondition.setVisible(true);
       }
+
+      // combine watches
+      if (getCurrentBreakpoint() != null) {
+	for (i = 0; i < getCurrentBreakpoint().getWatches().length; i++) {
+	  m_PanelExpressions.addExpression(
+	    getCurrentBreakpoint().getWatches()[i].getValue(),
+	    getCurrentBreakpoint().getWatchTypes()[i]);
+	}
+      }
       m_PanelExpressions.refreshAllExpressions();
+
       if (m_PanelInspectionToken != null)
-	m_PanelInspectionToken.setCurrent(m_CurrentToken);
-      if (m_PanelInspectionFlow != null)
-	m_PanelInspectionFlow.setCurrent(getCurrentActor().getRoot());
+	m_PanelInspectionToken.setCurrent(getCurrentToken());
+
+      if (m_ButtonInspectToken.isEnabled() && (getCurrentToken() == null))
+	inspectToken(false);
+
       if (m_PanelStorage != null)
 	m_PanelStorage.setHandler(getCurrentActor().getStorageHandler());
 
+      highlightActor();
       update();
 
+      // combine views
+      views = new HashSet<>(Arrays.asList(getOwner().getViews()));
+      if (getCurrentBreakpoint() != null)
+	views.addAll(Arrays.asList(getCurrentBreakpoint().getViews()));
+
       // show dialogs
-      for (View d: getOwner().getViews()) {
+      for (View d: views) {
 	switch (d) {
 	  case SOURCE:
 	    m_ButtonSource.setSelected(true);
@@ -699,12 +1444,8 @@ public class Debug
 	    showWatchExpressions(true);
 	    break;
 	  case INSPECT_TOKEN:
-	    m_ButtonInspectToken.setSelected(true);
-	    inspectToken(true);
-	    break;
-	  case INSPECT_FLOW:
-	    m_ButtonInspectFlow.setSelected(true);
-	    inspectFlow(true);
+	    m_ButtonInspectToken.setSelected(getCurrentToken() != null);
+	    inspectToken(getCurrentToken() != null);
 	    break;
 	  case STORAGE:
 	    m_ButtonStorage.setSelected(true);
@@ -714,6 +1455,10 @@ public class Debug
 	    m_ButtonVariables.setSelected(true);
 	    showVariables(true);
 	    break;
+	  case BREAKPOINTS:
+	    m_ButtonBreakpoints.setSelected(true);
+	    showBreakpoints(true);
+	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled dialog type: " + d);
 	}
@@ -721,14 +1466,27 @@ public class Debug
     }
 
     /**
-     * Adds a new expression.
+     * Adds a new expression (if not already present).
      *
      * @param expr	the expression
      * @param type	the type of the expression
      * @see		ExpressionWatchPanel#addExpression(String, ExpressionType)
+     * @return		true if added
      */
-    public void addWatch(String expr, ExpressionType type) {
-      m_PanelExpressions.addExpression(expr, type);
+    public boolean addWatch(String expr, ExpressionType type) {
+      return m_PanelExpressions.addExpression(expr, type);
+    }
+
+    /**
+     * Checks whether the expression is already present.
+     *
+     * @param expr	the expression
+     * @param type	the type of the expression
+     * @return		true if already present
+     * @see		ExpressionWatchPanel#hasExpression(String, ExpressionType)
+     */
+    public boolean hasWatch(String expr, ExpressionType type) {
+      return m_PanelExpressions.hasExpression(expr, type);
     }
 
     /**
@@ -744,11 +1502,13 @@ public class Debug
 	m_PanelVariables = null;
       if (m_PanelInspectionToken != null)
 	m_PanelInspectionToken = null;
-      if (m_PanelInspectionFlow != null)
-	m_PanelInspectionFlow = null;
       if (m_PanelStorage != null) {
 	m_PanelStorage.cleanUp();
 	m_PanelStorage = null;
+      }
+      if (m_PanelBreakpoints != null) {
+	m_PanelBreakpoints.cleanUp();
+	m_PanelBreakpoints = null;
       }
     }
   }
@@ -771,15 +1531,27 @@ public class Debug
   /** the watch expression types. */
   protected ExpressionType[] m_WatchTypes;
 
-  /** whether debugging has been disabled. */
-  protected boolean m_Disabled;
-  
+  /** whether to start in auto-progress mode. */
+  protected boolean m_StepByStep;
+
   /** debug panel. */
   protected transient ControlPanel m_DebugPanel;
   
   /** whether the GUI currently blocks the flow execution. */
   protected boolean m_Blocked;
-  
+
+  /** the current actor. */
+  protected transient Actor m_Current;
+
+  /** whether we're in step mode. */
+  protected boolean m_StepMode;
+
+  /** whether we can execute the next step. */
+  protected boolean m_ExecuteNext;
+
+  /** whether the flow got stopped. */
+  protected boolean m_Stopped;
+
   /**
    * Returns a string describing the object.
    *
@@ -789,7 +1561,10 @@ public class Debug
   public String globalInfo() {
     return 
 	"Allows the user to define breakpoints that suspend the execution "
-	+ "of the flow, allowing the inspection of the current flow state.";
+	  + "of the flow, allowing the inspection of the current flow state.\n"
+	  + "Tokens can only inspected during 'preInput' and 'postOutput' "
+	  + "of Breakpoint control actors. Step-wise debugging stops in "
+	  + "'preExecute', which has no access to the current token.";
   }
 
   /**
@@ -822,6 +1597,10 @@ public class Debug
     m_OptionManager.add(
 	    "view", "views",
 	    new View[0]);
+
+    m_OptionManager.add(
+	    "step-by-step", "stepByStep",
+	    false);
   }
 
   /**
@@ -1026,23 +1805,52 @@ public class Debug
   public String viewsTipText() {
     return "The views to display automatically when the breakpoint is reached.";
   }
-  
+
   /**
-   * Sets whether listening has been disabled.
-   * 
-   * @param value	if true then disabled
+   * Sets whether to start in step-by-step mode or wait for first breakpoint.
+   *
+   * @param value	true if to start in step-by-step mode
    */
-  public void setDisabled(boolean value) {
-    m_Disabled = value;
+  public void setStepByStep(boolean value) {
+    m_StepByStep = value;
+    reset();
   }
-  
+
   /**
-   * Returns whether listening has been disabled.
-   * 
-   * @return		true if disabled
+   * Returns whether to start in step-by-step mode or wait for first breakpoint.
+   *
+   * @return		true if to start in step-by-step mode
    */
-  public boolean isDisabled() {
-    return m_Disabled || (m_DebugPanel == null);
+  public boolean getStepByStep() {
+    return m_StepByStep;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String stepByStepTipText() {
+    return "Whether to start in step-by-step mode or wait for first breakpoint.";
+  }
+
+  /**
+   * Sets whether step mode is used.
+   *
+   * @param value	true if step mode
+   */
+  public void setStepMode(boolean value) {
+    m_StepMode = value;
+  }
+
+  /**
+   * Returns whether step mode is used.
+   *
+   * @return		true if step mode
+   */
+  public boolean isStepMode() {
+    return m_StepMode;
   }
 
   /**
@@ -1053,6 +1861,16 @@ public class Debug
   @Override
   public String getListenerTitle() {
     return "Debug";
+  }
+
+  /**
+   * Gets called when the flow execution starts.
+   */
+  public void startListening() {
+    super.startListening();
+
+    m_StepMode = m_StepByStep;
+    m_Stopped  = false;
   }
 
   /**
@@ -1113,7 +1931,7 @@ public class Debug
   protected void blockExecution() {
     m_Blocked = true;
     m_DebugPanel.update();
-    while (m_Blocked && !m_DebugPanel.getCurrentActor().isStopped()) {
+    while (m_Blocked && !m_Stopped && !m_DebugPanel.getCurrentActor().isStopped()) {
       try {
 	synchronized(this) {
 	  wait(50);
@@ -1140,23 +1958,22 @@ public class Debug
    * @param hook	the hook method (eg preInput)
    */
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook) {
-    if (isDisabled())
-      return;
-    
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName());
     
     m_DebugPanel.setCurrentHook(hook);
     m_DebugPanel.setCurrentActor(actor);
     m_DebugPanel.setCurrentToken(null);
+    m_DebugPanel.setCurrentBreakpoint(point);
     if (point instanceof BooleanConditionSupporter)
       m_DebugPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
       m_DebugPanel.setCurrentCondition(null);
     m_DebugPanel.showFrame();
     m_DebugPanel.breakpointReached();
-    
-    blockExecution();
+
+    if (((point == null) && isStepMode()) || (point != null))
+      blockExecution();
   }
   
   /**
@@ -1168,15 +1985,13 @@ public class Debug
    * @param token	the current token
    */
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook, Token token) {
-    if (isDisabled())
-      return;
-    
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName() + "\n\t" + token);
 
     m_DebugPanel.setCurrentHook(hook);
     m_DebugPanel.setCurrentActor(actor);
     m_DebugPanel.setCurrentToken(token);
+    m_DebugPanel.setCurrentBreakpoint(point);
     if (point instanceof BooleanConditionSupporter)
       m_DebugPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
@@ -1184,7 +1999,8 @@ public class Debug
     m_DebugPanel.showFrame();
     m_DebugPanel.breakpointReached();
     
-    blockExecution();
+    if (((point == null) && isStepMode()) || (point != null))
+      blockExecution();
   }
   
   /**
@@ -1225,12 +2041,19 @@ public class Debug
    */
   @Override
   public void preExecute(Actor actor) {
-    for (AbstractBreakpoint point: m_Breakpoints) {
+    boolean	triggered;
+
+    triggered = false;
+    for (AbstractBreakpoint point : m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreExecute(actor)) {
+	triggered = true;
 	triggered(point, actor, "preExecute");
 	break;
       }
     }
+
+    if (!triggered && m_StepMode)
+      triggered(null, actor, "preExecute");
   }
 
   /**
@@ -1277,5 +2100,14 @@ public class Debug
 	break;
       }
     }
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    m_Blocked = false;
   }
 }

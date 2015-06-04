@@ -37,7 +37,6 @@ import adams.data.io.output.FlowWriter;
 import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
-import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
@@ -58,7 +57,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeListener;
 import adams.gui.event.UndoEvent;
-import adams.gui.flow.tab.RegisteredBreakpointsTab;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
@@ -222,7 +220,6 @@ public class FlowPanel
 
       showStatus("Finishing up");
       m_Flow.wrapUp();
-      m_Owner.clearRegisteredBreapoints();
       if (m_Owner.getRunGC())
 	System.gc();
 
@@ -425,9 +422,6 @@ public class FlowPanel
   /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
   protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
 
-  /** the registered breakpoints: class of panel - (name of panel - AbstractDisplay instance). */
-  protected HashMap<String,Breakpoint> m_RegisteredBreakpoints;
-  
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
   
@@ -470,7 +464,6 @@ public class FlowPanel
     m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
     m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
-    m_RegisteredBreakpoints = new HashMap<String,Breakpoint>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
   }
 
@@ -1715,88 +1708,7 @@ public class FlowPanel
 
     return (count > 0);
   }
-  
-  /**
-   * Notifies the {@link RegisteredBreakpointsTab} instance of a change. 
-   * 
-   * @param show	whether to show the tab or leave as is
-   */
-  protected void updateRegisteredBreakpoints(boolean show) {
-    RegisteredBreakpointsTab			registered;
 
-    if (!getEditor().getTabs().isVisible(RegisteredBreakpointsTab.class) && show)
-      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, true, false);
-    registered = (RegisteredBreakpointsTab) getEditor().getTabs().getTab(RegisteredBreakpointsTab.class);
-    if (registered != null)
-      registered.update();
-    
-    // close display?
-    if (!hasRegisteredBreakpoints())
-      getEditor().getTabs().setVisible(RegisteredBreakpointsTab.class, false, false);
-  }
-
-  /**
-   * Registers a Breakpoint.
-   * 
-   * @param name	the name of the Breakpoint
-   * @param panel	the Breakpoint instance
-   * @return		the previously registered panel, if any
-   */
-  public Breakpoint registerBreakpoint(String name, Breakpoint panel) {
-    Breakpoint			result;
-    
-    result = m_RegisteredBreakpoints.put(name, panel);
-    
-    // notify panel
-    updateRegisteredBreakpoints(true);
-    
-    return result;
-  }
-
-  /**
-   * Deregisters a breakpoint.
-   * 
-   * @param name	the name of the breakpoint
-   * @return		the deregistered breakpoint, if any
-   */
-  public Breakpoint deregisterBreakpoint(String name) {
-    Breakpoint	result;
-    
-    result = m_RegisteredBreakpoints.remove(name);
-    
-    // notify panel
-    updateRegisteredBreakpoints(false);
-    
-    return result;
-  }
-  
-  /**
-   * Removes all registered panels.
-   */
-  public void clearRegisteredBreapoints() {
-    m_RegisteredBreakpoints.clear();
-    // notify panel
-    updateRegisteredBreakpoints(false);
-  }
-  
-  /**
-   * Returns all currently registered breakpoints.
-   * 
-   * @return		the breakpoints
-   */
-  public HashMap<String,Breakpoint> getRegisteredBreakpoints() {
-    return m_RegisteredBreakpoints;
-  }
-  
-  /**
-   * Returns whether there are still active breakpoints.
-   * 
-   * @return		if active breakpoints
-   */
-  public boolean hasRegisteredBreakpoints() {
-    return (m_RegisteredBreakpoints.size() > 0);
-  }
-  
   /**
    * Displays the notification text.
    * 

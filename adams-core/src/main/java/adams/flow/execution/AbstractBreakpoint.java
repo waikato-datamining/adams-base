@@ -19,9 +19,13 @@
  */
 package adams.flow.execution;
 
+import adams.core.Variables;
+import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
+import adams.flow.execution.Debug.View;
+import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
 /**
  * Ancestor for breakpoints for execution listeners.
@@ -55,6 +59,15 @@ public abstract class AbstractBreakpoint
 
   /** break on postOutput. */
   protected boolean m_OnPostOutput;
+
+  /** the views to display automatically. */
+  protected View[] m_Views;
+
+  /** the watch expressions. */
+  protected BaseString[] m_Watches;
+
+  /** the watch expression types. */
+  protected ExpressionType[] m_WatchTypes;
 
   /**
    * Adds options to the internal list of options.
@@ -90,6 +103,18 @@ public abstract class AbstractBreakpoint
     m_OptionManager.add(
 	    "on-post-output", "onPostOutput",
 	    false);
+
+    m_OptionManager.add(
+	    "watch", "watches",
+	    new BaseString[0]);
+
+    m_OptionManager.add(
+	    "watch-type", "watchTypes",
+	    new ExpressionType[0]);
+
+    m_OptionManager.add(
+	    "view", "views",
+	    new View[0]);
   }
   
   /**
@@ -294,7 +319,105 @@ public abstract class AbstractBreakpoint
   public String onPostOutputTipText() {
     return "If set to true, the breakpoint gets evaluated at post-output (of token) time.";
   }
-  
+
+  /**
+   * Sets the watch expressions for the watch dialog.
+   *
+   * @param value	the expressions
+   */
+  public void setWatches(BaseString[] value) {
+    int		i;
+
+    for (i = 0; i < value.length; i++) {
+      if (Variables.isPlaceholder(value[i].getValue()))
+	value[i] = new BaseString("(" + value[i].getValue() + ")");
+    }
+
+    m_Watches = value;
+    reset();
+  }
+
+  /**
+   * Returns the watch expressions for the watch dialog.
+   *
+   * @return		the expressions
+   */
+  public BaseString[] getWatches() {
+    return m_Watches;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watchesTipText() {
+    return
+        "The expression to display initially in the watch dialog; the type of "
+      + "the watch needs to be specified as well.";
+  }
+
+  /**
+   * Sets the types of the watch expressions.
+   *
+   * @param value	the types
+   */
+  public void setWatchTypes(ExpressionType[] value) {
+    m_WatchTypes = value;
+    reset();
+  }
+
+  /**
+   * Returns the types of the watch expressions.
+   *
+   * @return		the types
+   */
+  public ExpressionType[] getWatchTypes() {
+    return m_WatchTypes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watchTypesTipText() {
+    return
+        "The types of the watch expressions; determines how the expressions "
+      + "get evaluated and displayed.";
+  }
+
+  /**
+   * Sets the views to display automatically.
+   *
+   * @param value	the views
+   */
+  public void setViews(View[] value) {
+    m_Views = value;
+    reset();
+  }
+
+  /**
+   * Returns the views to display automatically.
+   *
+   * @return		the views
+   */
+  public View[] getViews() {
+    return m_Views;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String viewsTipText() {
+    return "The views to display automatically when the breakpoint is reached.";
+  }
+
   /**
    * Evaluates the breakpoint at pre-input.
    * 

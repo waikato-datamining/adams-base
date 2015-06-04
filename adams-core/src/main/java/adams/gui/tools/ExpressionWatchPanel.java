@@ -15,26 +15,9 @@
 
 /**
  * ExpressionWatchPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.core.Variables;
 import adams.gui.core.AbstractBaseTableModel;
@@ -46,6 +29,22 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Panel that allows the definition of variable, boolean and numerical
@@ -314,18 +313,27 @@ public class ExpressionWatchPanel
     }
 
     /**
+     * Fixes an expression. In case of VARIABLE, surrounding () are removed.
+     *
+     * @param expr	the expression to add
+     * @param type	the type of the expression
+     */
+    public String fixExpression(String expr, ExpressionType type) {
+      if (type == ExpressionType.VARIABLE) {
+	if (expr.startsWith("(") && expr.endsWith(")"))
+	  expr = expr.substring(1, expr.length() - 1);
+      }
+      return expr;
+    }
+
+    /**
      * Adds an expression.
      *
      * @param expr	the expression to add
      * @param type	the type of the expression
      */
     public synchronized void addExpression(String expr, ExpressionType type) {
-      // remove parentheses
-      if (type == ExpressionType.VARIABLE) {
-	if (expr.startsWith("(") && expr.endsWith(")"))
-	  expr = expr.substring(1, expr.length() - 1);
-      }
-
+      expr = fixExpression(expr, type);
       synchronized(m_Expressions) {
 	m_Values.add(null);
 	m_Types.add(type);
@@ -662,14 +670,42 @@ public class ExpressionWatchPanel
   }
 
   /**
-   * Adds a new expression.
+   * Adds a new expression (if not already present).
    *
    * @param expr	the expression
    * @param type	the type
+   * @return		true if added
    */
-  public void addExpression(String expr, ExpressionType type) {
-    m_ExpressionsModel.addExpression(expr, type);
-    m_Table.setOptimalColumnWidth();
+  public boolean addExpression(String expr, ExpressionType type) {
+    if (!hasExpression(expr, type)) {
+      m_ExpressionsModel.addExpression(expr, type);
+      m_Table.setOptimalColumnWidth();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Checks whether the expression is already present.
+   *
+   * @param expr	the expression
+   * @param type	the type
+   * @return		true if already present
+   */
+  public boolean hasExpression(String expr, ExpressionType type) {
+    boolean	result;
+    int		i;
+
+    result = false;
+    expr   = m_ExpressionsModel.fixExpression(expr, type);
+    for (i = 0; i < m_ExpressionsModel.getRowCount(); i++) {
+      if ((m_ExpressionsModel.getExpressionAt(i).equals(expr)) && (m_ExpressionsModel.getTypeAt(i) == type)) {
+	result = true;
+	break;
+      }
+    }
+
+    return result;
   }
 
   /**
