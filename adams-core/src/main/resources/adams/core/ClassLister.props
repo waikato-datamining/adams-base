@@ -417,6 +417,10 @@ adams.gui.core.spreadsheettable.ProcessRow=\
 adams.gui.core.spreadsheettable.ProcessCell=\
   adams.gui.core.spreadsheettable
 
+# the object exporters
+adams.gui.visualization.debug.objectexport.AbstractObjectExporter=\
+  adams.gui.visualization.debug.objectexport
+
 # the menu actions in the flow editor
 adams.gui.flow.menu.FlowEditorAction=\
   adams.gui.flow.tree.menu

@@ -15,23 +15,33 @@
 
 /**
  * Tree.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
+import adams.core.option.OptionHandler;
+import adams.gui.chooser.ObjectExporterFileChooser;
+import adams.gui.core.BaseTree;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler;
+import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
+import adams.gui.visualization.debug.objecttree.Node.NodeType;
+import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-
-import adams.core.option.OptionHandler;
-import adams.gui.core.BaseTree;
-import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler;
-import adams.gui.visualization.debug.objecttree.Node.NodeType;
-import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
 
 /**
  * Specialized tree that displays the properties of an object.
@@ -63,7 +73,10 @@ public class Tree
   
   /** whether the search is using a regular expression. */
   protected boolean m_IsRegExp;
-  
+
+  /** filechooser for exporting objects. */
+  protected ObjectExporterFileChooser m_FileChooser;
+
   /**
    * Initializes the tree.
    */
@@ -73,10 +86,25 @@ public class Tree
     m_SearchString  = null;
     m_SearchPattern = null;
     m_IsRegExp      = false;
+    m_FileChooser   = null;
     setShowsRootHandles(true);
     setRootVisible(true);
     setCellRenderer(new Renderer());
     buildTree(null);
+
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	TreePath path = getPathForLocation(e.getX(), e.getY());
+        if ((path != null) && MouseUtils.isRightClick(e)) {
+	  showPopup(e);
+	  e.consume();
+	}
+
+	if (!e.isConsumed())
+	  super.mouseClicked(e);
+      }
+    });
   }
 
   /**
@@ -327,5 +355,70 @@ public class Tree
     }
     
     buildTree(m_Object);
+  }
+
+  /**
+   * Returns the file chooser to use.
+   *
+   * @return		the file chooser
+   */
+  protected ObjectExporterFileChooser getFileChooser() {
+    if (m_FileChooser == null)
+      m_FileChooser = new ObjectExporterFileChooser();
+    return m_FileChooser;
+  }
+
+  /**
+   * Brings up a popup menu.
+   *
+   * @param e		the mouse event that triggered the popup menu
+   */
+  protected void showPopup(MouseEvent e) {
+    JPopupMenu				menu;
+    JMenuItem				menuitem;
+    TreePath 				path;
+    Node 				node;
+    final Object			obj;
+
+    path = getPathForLocation(e.getX(), e.getY());
+    if (path == null)
+      return;
+
+    node = (Node) path.getLastPathComponent();
+    obj  = node.getUserObject();
+
+    menu = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.setEnabled(obj != null);
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	List<AbstractObjectPlainTextRenderer> list = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
+	String rendered = list.get(0).render(obj);
+	GUIHelper.copyToClipboard(rendered);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+    menuitem.setEnabled(obj != null);
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	int retVal = getFileChooser().showSaveDialog(Tree.this);
+	if (retVal != ObjectExporterFileChooser.APPROVE_OPTION)
+	  return;
+	File file = getFileChooser().getSelectedFile();
+	AbstractObjectExporter exporter = getFileChooser().getWriter();
+	String msg = exporter.export(obj, file);
+	if (msg != null)
+	  GUIHelper.showErrorMessage(
+	    Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
+      }
+    });
+    menu.add(menuitem);
+
+    menu.show(this, e.getX(), e.getY());
   }
 }
