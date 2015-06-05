@@ -1659,13 +1659,13 @@ order to use its value within the expression. For more information on what the
 expression can comprise of, check the online help of the \textit{Breakpoint}
 actor.
 
-Whenever the \textit{Breakpoint} actor is reached and the condition evalutes to
-\textit{true}, the control panel of the actor will get displayed (see Figure
+Whenever a \textit{Breakpoint} actor is reached and the condition evaluates to
+\textit{true}, the debugging control panel will get displayed (see Figure
 \ref{floweditor-debugging1_controlpanel}).
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=8.0cm]{images/floweditor-debugging1_controlpanel.png}
-  \caption{The control panel of the \textit{Breakpoint} actor.}
+  \includegraphics[width=12.0cm]{images/floweditor-debugging1_controlpanel.png}
+  \caption{The debugging control panel.}
   \label{floweditor-debugging1_controlpanel}
 \end{figure}
 
@@ -1677,7 +1677,7 @@ also part of the condition of the \textit{Breakpoint} actor. Finally, these
 values get displayed in a \textit{Display} sink.
 \begin{figure}[htb] 
   \centering
-  \includegraphics[width=10.0cm]{images/floweditor-debugging1_flow.png}
+  \includegraphics[width=12.0cm]{images/floweditor-debugging1_flow.png}
   \caption{Example flow with \textit{Breakpoint} actor.}
   \label{floweditor-debugging1_flow}
 \end{figure}
@@ -1686,11 +1686,10 @@ When the breakpoint gets triggered, the flow gets paused and the aforementioned
 control panel is displayed.
 \begin{tight_itemize}
 	\item The buttons in the \textit{Execution} group allow you to
-	continue with the flow execution, you can stop the flow or you can simply
-	disable the breakpoint (which resumes the execution immediately).
+	resume the flow execution, step through it, actor by actor,
+	stop the flow or simply disable the current breakpoint.
 	\item It is possible to update the breakpoint condition whenever the breakpoint
-	is reached, by simply changing the condition string and clicking on the
-	\textit{Update} button.
+	is reached.
 	\item In the \textit{Runtime information} group you can view the source code of
 	the fully expanded flow (i.e., all external actors are inserted completely and
 	variables are expanded to their current value), you can define watch
@@ -1699,24 +1698,23 @@ control panel is displayed.
 	variables and their current values, inspect the current storage
 	items, you can inspect the current token that is being passed through the
 	breakpoint (Figure \ref{floweditor-debugging1_inspectionpanel}) and also
-	inspect the current flow object (Figure
-	\ref{floweditor-debugging1_inspectflow}).
+	all breakpoints currently present in the flow (Figure
+	\ref{floweditor-debugging1_breakpoints}). Breakpoints can be disabled
+	and enabled, modified when to stop.
 \end{tight_itemize}
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/floweditor-debugging1_inspectionpanel.png}
-  \caption{The \textit{Inspection} dialog of the \textit{Breakpoint}
-  actor for the current token.}
+  \includegraphics[width=12.0cm]{images/floweditor-debugging1_inspectionpanel.png}
+  \caption{The \textit{Inspection} tab of the debugging control panel for the current token.}
   \label{floweditor-debugging1_inspectionpanel}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/floweditor-debugging1_inspectflow.png}
-  \caption{The \textit{Inspection} dialog of the \textit{Breakpoint}
-  actor for the current flow.}
-  \label{floweditor-debugging1_inspectflow}
+  \includegraphics[width=12.0cm]{images/floweditor-debugging1_breakpoints.png}
+  \caption{The \textit{Breakpoints} tab of the debugging control panel.}
+  \label{floweditor-debugging1_breakpoints}
 \end{figure}
 
 While a flow is running, you have some basic tools for inspection at hand as 
@@ -1729,6 +1727,18 @@ well (available from the \textit{Debug} menu):
 	current storage items; as soon as you resume the flow, the dialog will 
 	disappear again, as it doesn't get refreshed automatically.
 \end{tight_itemize}
+A breakpoint can be triggered at various stages of executing an actor:
+\begin{tight_itemize}
+  \item pre/post input of a token (transformers, sinks)
+  \item pre/post execute
+  \item pre/post output of a token (sources, transformers)
+\end{tight_itemize}
+Inspecting a token is only available at stages \textit{preInput} and
+\textit{postOutput}.
+
+Stepping through a flow, using the \textit{Step} button from the control
+panel, always uses the \textit{preExecute} stage (\textit{pre/postInput}
+are not available, unfortunately due to API limitations).
 
 \subsection{Monitoring}
 With ADAMS it is possible to \textit{eavesdrop} on the flow execution by 
@@ -1739,9 +1749,8 @@ The following listeners are available:
 \begin{tight_itemize}
 	\item \textit{CurrentlyExecuted} -- displays all the actors (with their 
 	start times) that are currently being executed.
-	\item \textit{Debug} -- similar to the \textit{Breakpoint} control actor,
-	this listener allows you to set breakpoints in a flow. You can do this
-	also at runtime, without changing the flow in the editor.
+	\item \textit{Debug} -- the \textit{Breakpoint} control actors use
+	this listener, setting the appropriately configured breakpoints.
 	\item \textit{ExecutionCounter} -- counts for each actor how often it was
 	executed.
 	\item \textit{ExecutionLog} -- writes all calls to the input, execute 
