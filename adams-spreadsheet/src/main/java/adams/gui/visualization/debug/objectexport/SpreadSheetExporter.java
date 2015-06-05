@@ -14,7 +14,7 @@
  */
 
 /**
- * CSVExporter.java
+ * SpreadSheetExporter.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
