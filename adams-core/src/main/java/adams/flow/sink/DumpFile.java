@@ -251,12 +251,9 @@ public class DumpFile
    */
   @Override
   public void setAttemptInterval(int value) {
-    if (value >= 0) {
+    if (getOptionManager().isValid("numAttempts", value)) {
       m_AttemptInterval = value;
       reset();
-    }
-    else {
-      getLogger().warning("Attempt interval must be 0 or greater, provided: " + value);
     }
   }
 

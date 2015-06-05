@@ -344,12 +344,9 @@ public class CopyFile
    */
   @Override
   public void setNumAttempts(int value) {
-    if (value >= 1) {
+    if (getOptionManager().isValid("numAttempts", value)) {
       m_NumAttempts = value;
       reset();
-    }
-    else {
-      getLogger().warning("Number of attempts must at least 1, provided: " + value);
     }
   }
 
