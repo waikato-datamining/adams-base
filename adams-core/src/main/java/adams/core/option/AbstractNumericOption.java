@@ -15,9 +15,11 @@
 
 /**
  * AbstractNumericOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.logging.LoggingObject;
 
 /**
  * Handles options with numeric arguments.
@@ -186,6 +188,44 @@ public abstract class AbstractNumericOption<T extends Number>
 
     if (invalid)
       result = (T) getDefaultValue();
+
+    return result;
+  }
+
+  /**
+   * Checks whether the number is within the specified bounds (if any).
+   * If not, uses the owner's logger to output a warning message.
+   *
+   * @param number	the number to check
+   * @return		the default value for this option, if the bounds
+   * 			were defined and the value was outside
+   */
+  public boolean isValid(T number) {
+    boolean	result;
+    String	msg;
+    String	expr;
+
+    result = true;
+
+    if (hasLowerBound() && (number.doubleValue() < getLowerBound().doubleValue()))
+      result = false;
+
+    if (hasUpperBound() && (number.doubleValue() > getUpperBound().doubleValue()))
+      result = false;
+
+    if (!result) {
+      if (hasLowerBound() && hasUpperBound())
+	expr = getLowerBound() + " <= x <= " + getUpperBound();
+      else if (hasLowerBound())
+	expr = getLowerBound() + " <= x";
+      else
+	expr = getUpperBound() + " >= x";
+      msg = getProperty() + "/-" + getCommandline() + " must satisfy " + expr + ", provided: " + number;
+      if (getOptionHandler() instanceof LoggingObject)
+        ((LoggingObject) getOptionHandler()).getLogger().warning(msg);
+      else
+	System.err.println(msg);
+    }
 
     return result;
   }

@@ -15,7 +15,7 @@
 
 /**
  * OptionManager.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -988,7 +988,30 @@ public class OptionManager
   public int size() {
     return m_Options.size();
   }
-  
+
+  /**
+   * Checks whether the numeric value is valid (within the bounds, if any).
+   *
+   * @param property	the property to check
+   * @param n		the number to check
+   * @return		true if valid
+   */
+  public boolean isValid(String property, Number n) {
+    boolean			result;
+    AbstractOption 		opt;
+    AbstractNumericOption	numeric;
+
+    result = true;
+
+    opt = findByProperty(property);
+    if ((opt != null) && (opt instanceof  AbstractNumericOption)) {
+      numeric = (AbstractNumericOption) opt;
+      result  = numeric.isValid(n);
+    }
+
+    return result;
+  }
+
   /**
    * Cleans up the options vector.
    */
