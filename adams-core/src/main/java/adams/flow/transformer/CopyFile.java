@@ -15,19 +15,21 @@
 
 /*
  * CopyFile.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -77,6 +79,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-create-sub-dirs &lt;boolean&gt; (property: createSubDirectories)
  * &nbsp;&nbsp;&nbsp;If set to true, sub directories from the last path component of the inputs 
  * &nbsp;&nbsp;&nbsp;are created below the target directory (eg: &#47;some&#47;where&#47;blah -&gt; TARGET&#47;blah
@@ -100,13 +107,26 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-num-attempts &lt;int&gt; (property: numAttempts)
+ * &nbsp;&nbsp;&nbsp;The number of attempts for copying.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-attempt-interval &lt;int&gt; (property: attemptInterval)
+ * &nbsp;&nbsp;&nbsp;The time in msec to wait before the next attempt.
+ * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class CopyFile
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements MultiAttemptWithWaitSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4670761846363281951L;
@@ -124,7 +144,13 @@ public class CopyFile
 
   /** the (optional) new filename. */
   protected String m_Filename;
-  
+
+  /** the number of tries for writing the data. */
+  protected int m_NumAttempts;
+
+  /** the interval between attempts. */
+  protected int m_AttemptInterval;
+
   /**
    * Returns a string describing the object.
    *
@@ -148,20 +174,28 @@ public class CopyFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "create-sub-dirs", "createSubDirectories",
-	    false);
+      "create-sub-dirs", "createSubDirectories",
+      false);
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "target-dir", "targetDirectory",
-	    new PlaceholderDirectory("."));
+      "target-dir", "targetDirectory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "filename", "filename",
-	    "");
+      "filename", "filename",
+      "");
+
+    m_OptionManager.add(
+      "num-attempts", "numAttempts",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "attempt-interval", "attemptInterval",
+      1000, 0, null);
   }
 
   /**
@@ -304,6 +338,80 @@ public class CopyFile
   }
 
   /**
+   * Sets the number of attempts.
+   *
+   * @param value	the number of attempts
+   */
+  @Override
+  public void setNumAttempts(int value) {
+    if (value >= 1) {
+      m_NumAttempts = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Number of attempts must at least 1, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the number of attempts.
+   *
+   * @return		the number of attempts
+   */
+  @Override
+  public int getNumAttempts() {
+    return m_NumAttempts;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String numAttemptsTipText() {
+    return "The number of attempts for copying.";
+  }
+
+  /**
+   * Sets the time to wait between attempts in msec.
+   *
+   * @param value	the time in msec
+   */
+  @Override
+  public void setAttemptInterval(int value) {
+    if (value >= 0) {
+      m_AttemptInterval = value;
+      reset();
+    }
+    else {
+      getLogger().warning("Attempt interval must be 0 or greater, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the time to wait between attempts in msec.
+   *
+   * @return		the time in msec
+   */
+  @Override
+  public int getAttemptInterval() {
+    return m_AttemptInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String attemptIntervalTipText() {
+    return "The time in msec to wait before the next attempt.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
@@ -332,6 +440,10 @@ public class CopyFile
     File	file;
     File	target;
     String	type;
+    int       	attempt;
+    boolean   	finished;
+
+    result = null;
 
     if (m_InputToken.getPayload() instanceof File)
       file = new PlaceholderFile((File) m_InputToken.getPayload());
@@ -349,16 +461,37 @@ public class CopyFile
 	  else
 	    target = new File(m_TargetDirectory.getAbsolutePath() + (m_Filename.isEmpty() ? "" : File.separator + m_Filename));
 	  getLogger().info("Target: " + target);
-	  FileUtils.copy(file, target);
+
+	  attempt  = 0;
+	  finished = false;
+	  while (!finished) {
+	    attempt++;
+	    result = null;
+	    try {
+	      if (!FileUtils.copy(file, target))
+		result = "Failed to copy " + file + " -> " + target;
+	    }
+	    catch (Exception e) {
+	      result = handleException("Failed to copy file: " + file + " -> " + target, e);
+	    }
+	    finished = (attempt == m_NumAttempts) || (result == null);
+	    if (!finished && (result != null)) {
+	      if (isLoggingEnabled())
+		getLogger().info("Attempt " + attempt + "/" + m_NumAttempts + " failed, retrying...");
+	      if (m_AttemptInterval > 0)
+		Utils.wait(this, this, m_AttemptInterval, 100);
+	    }
+	  }
 
 	  // create output
-	  if (target.isDirectory())
-	    m_OutputToken = new Token(target.getAbsolutePath() + File.separator + file.getName());
-	  else
-	    m_OutputToken = new Token(target.getAbsolutePath());
+	  if (result == null) {
+	    if (target.isDirectory())
+	      m_OutputToken = new Token(target.getAbsolutePath() + File.separator + file.getName());
+	    else
+	      m_OutputToken = new Token(target.getAbsolutePath());
+	  }
 	}
       }
-      result = null;
     }
     catch (Exception e) {
       result = handleException("Problem copying " + type + " '" + file + "': ", e);
