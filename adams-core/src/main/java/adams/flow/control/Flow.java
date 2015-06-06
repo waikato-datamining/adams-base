@@ -36,6 +36,8 @@ import adams.flow.core.FlowVariables;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.TriggerableEvent;
+import adams.flow.execution.AbstractBreakpoint;
+import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.FlowExecutionListeningSupporter;
 import adams.flow.execution.GraphicalFlowExecutionListener;
@@ -584,6 +586,63 @@ public class Flow
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
     
     return result;
+  }
+
+  /**
+   * Adds the breakpoint to its flow execution listener setup.
+   *
+   * @param breakpoint		the breakpoint to add
+   */
+  public void addBreakpoint(AbstractBreakpoint breakpoint) {
+    Debug			debug;
+    MultiListener		multi;
+    FlowExecutionListener	listener;
+    List<FlowExecutionListener>	listeners;
+    List<AbstractBreakpoint> 	breakpoints;
+
+    if (!isFlowExecutionListeningEnabled())
+      setFlowExecutionListeningEnabled(true);
+    listener = getFlowExecutionListener();
+
+    if (listener instanceof NullListener) {
+      debug = new Debug();
+      debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
+      setFlowExecutionListener(debug);
+    }
+    else if (listener instanceof Debug) {
+      debug = (Debug) listener;
+      breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
+      breakpoints.add(breakpoint);
+      debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+    }
+    else if (listener instanceof MultiListener) {
+      multi = (MultiListener) listener;
+      debug = null;
+      for (FlowExecutionListener l: multi.getSubListeners()) {
+	if (l instanceof Debug) {
+	  debug = (Debug) l;
+	  break;
+	}
+      }
+      if (debug == null) {
+	debug = new Debug();
+	debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
+	listeners = new ArrayList<>(Arrays.asList(multi.getSubListeners()));
+	listeners.add(debug);
+	multi.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
+      }
+      else {
+	breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
+	breakpoints.add(breakpoint);
+	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+      }
+    }
+    else {
+      multi = new MultiListener();
+      debug = new Debug();
+      multi.setSubListeners(new FlowExecutionListener[]{listener, debug});
+      setFlowExecutionListener(multi);
+    }
   }
 
   /**

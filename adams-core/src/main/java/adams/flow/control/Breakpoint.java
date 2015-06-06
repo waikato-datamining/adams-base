@@ -28,19 +28,10 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Unknown;
-import adams.flow.execution.AbstractBreakpoint;
-import adams.flow.execution.Debug;
 import adams.flow.execution.Debug.View;
-import adams.flow.execution.FlowExecutionListener;
-import adams.flow.execution.MultiListener;
-import adams.flow.execution.NullListener;
 import adams.flow.execution.PathBreakpoint;
 import adams.flow.transformer.AbstractTransformer;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -559,14 +550,9 @@ public class Breakpoint
    */
   @Override
   public String setUp() {
-    String			result;
-    Flow			flow;
-    Debug			debug;
-    MultiListener		multi;
-    FlowExecutionListener	listener;
-    List<FlowExecutionListener>	listeners;
-    PathBreakpoint		breakpoint;
-    List<AbstractBreakpoint> breakpoints;
+    String		result;
+    Flow		flow;
+    PathBreakpoint	breakpoint;
 
     result = super.setUp();
 
@@ -587,49 +573,7 @@ public class Breakpoint
         breakpoint.setWatchTypes(m_WatchTypes.clone());
 	breakpoint.setPath(getFullName());
 
-	if (!flow.isFlowExecutionListeningEnabled())
-	  flow.setFlowExecutionListeningEnabled(true);
-	listener = flow.getFlowExecutionListener();
-
-	if (listener instanceof NullListener) {
-	  debug = new Debug();
-	  debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
-	  flow.setFlowExecutionListener(debug);
-	}
-	else if (listener instanceof Debug) {
-	  debug = (Debug) listener;
-	  breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
-	  breakpoints.add(breakpoint);
-	  debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
-	}
-	else if (listener instanceof MultiListener) {
-	  multi = (MultiListener) listener;
-	  debug = null;
-	  for (FlowExecutionListener l: multi.getSubListeners()) {
-	    if (l instanceof Debug) {
-	      debug = (Debug) l;
-	      break;
-	    }
-	  }
-	  if (debug == null) {
-	    debug = new Debug();
-	    debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
-	    listeners = new ArrayList<>(Arrays.asList(multi.getSubListeners()));
-	    listeners.add(debug);
-	    multi.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
-	  }
-	  else {
-	    breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
-	    breakpoints.add(breakpoint);
-	    debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
-	  }
-	}
-	else {
-	  multi = new MultiListener();
-	  debug = new Debug();
-	  multi.setSubListeners(new FlowExecutionListener[]{listener, debug});
-	  flow.setFlowExecutionListener(multi);
-	}
+	flow.addBreakpoint(breakpoint);
       }
       else {
 	result = "Root actor is not a flow, failed to set breakpoint!";
