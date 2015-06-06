@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionRun.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * ExecutionRunDebug.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the flow.
+ * Executes the flow in debug mode.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionRun
+public class ExecutionRunDebug
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionRun
    */
   @Override
   protected String getTitle() {
-    return "Run";
+    return "Run (debug)";
   }
 
   /**
@@ -48,7 +48,7 @@ public class ExecutionRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.run(true, false);
+    m_State.run(true, true);
   }
 
   /**

@@ -15,12 +15,10 @@
 
 /*
  * StressTestFlow.java
- * Copyright (C) 2009-2010 University of Waikato
+ * Copyright (C) 2009-2015 University of Waikato
  */
 
 package adams.flow;
-
-import java.awt.BorderLayout;
 
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
@@ -29,6 +27,8 @@ import adams.gui.core.BaseFrame;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.scripting.ScriptingEngine;
 import adams.test.AbstractFileStressTest;
+
+import java.awt.BorderLayout;
 
 /**
  <!-- globalinfo-start -->
@@ -208,7 +208,7 @@ public class StressTestFlow
 	  }
 
 	  // run
-	  m_Panel.run(false);
+	  m_Panel.run(false, false);
 	  while (m_Panel.isRunning() || (!m_Panel.isRunning() && m_Panel.isStopping())) {
 	    try {
 	      synchronized(this) {

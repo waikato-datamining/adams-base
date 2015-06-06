@@ -74,6 +74,7 @@ import adams.gui.flow.menu.ExecutionHeadless;
 import adams.gui.flow.menu.ExecutionKill;
 import adams.gui.flow.menu.ExecutionPauseResume;
 import adams.gui.flow.menu.ExecutionRun;
+import adams.gui.flow.menu.ExecutionRunDebug;
 import adams.gui.flow.menu.ExecutionStop;
 import adams.gui.flow.menu.ExecutionValidateSetup;
 import adams.gui.flow.menu.FileCheckOnSave;
@@ -297,6 +298,9 @@ public class FlowEditorPanel
 
   /** the "run" action. */
   protected FlowEditorAction m_ActionExecutionRun;
+
+  /** the "run (debug)" action. */
+  protected FlowEditorAction m_ActionExecutionRunDebug;
 
   /** the "pause" action. */
   protected FlowEditorAction m_ActionExecutionPauseAndResume;
@@ -640,6 +644,11 @@ public class FlowEditorPanel
     m_ActionExecutionRun = action;
     m_MenuItems.add(action);
 
+    // Execution/Run (debug)
+    action = new ExecutionRunDebug();
+    m_ActionExecutionRunDebug = action;
+    m_MenuItems.add(action);
+
     // Execution/Pause+Resume
     action = new ExecutionPauseResume();
     m_ActionExecutionPauseAndResume = action;
@@ -752,6 +761,7 @@ public class FlowEditorPanel
     addSeparator();
     addToToolBar(m_ActionExecutionValidateSetup);
     addToToolBar(m_ActionExecutionRun);
+    addToToolBar(m_ActionExecutionRunDebug);
     addToToolBar(m_ActionExecutionPauseAndResume);
     addToToolBar(m_ActionExecutionStop);
   }
@@ -986,6 +996,7 @@ public class FlowEditorPanel
 
       menu.add(m_ActionExecutionValidateSetup);
       menu.add(m_ActionExecutionRun);
+      menu.add(m_ActionExecutionRunDebug);
       menu.add(m_ActionExecutionPauseAndResume);
       menu.add(m_ActionExecutionStop);
       menu.add(m_ActionExecutionKill);
@@ -1438,7 +1449,7 @@ public class FlowEditorPanel
    * Executes the flow.
    */
   public void run() {
-    run(true);
+    run(true, false);
   }
 
   /**
@@ -1446,10 +1457,11 @@ public class FlowEditorPanel
    *
    * @param showNotification	whether to show notifications about
    * 				errors/stopped/finished
+   * @param debug		whether to run in debug mode
    */
-  public void run(boolean showNotification) {
+  public void run(boolean showNotification, boolean debug) {
     if (hasCurrentPanel())
-      getCurrentPanel().run(showNotification);
+      getCurrentPanel().run(showNotification, debug);
   }
 
   /**

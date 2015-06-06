@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -41,6 +41,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorUtils;
+import adams.flow.execution.PathBreakpoint;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
@@ -129,6 +130,9 @@ public class FlowPanel
     /** whether to show a notification. */
     protected boolean m_ShowNotification;
 
+    /** whether to run in debug mode. */
+    protected boolean m_Debug;
+
     /** whether the flow is still being executed. */
     protected boolean m_Running;
 
@@ -138,11 +142,12 @@ public class FlowPanel
     /**
      * Initializes the worker.
      */
-    public FlowWorker(FlowPanel owner, AbstractActor flow, File file, boolean showNotification) {
+    public FlowWorker(FlowPanel owner, AbstractActor flow, File file, boolean showNotification, boolean debug) {
       m_Owner            = owner;
       m_Flow             = flow;
       m_File             = file;
       m_ShowNotification = showNotification;
+      m_Debug            = debug;
       m_Running          = false;
       m_Stopping         = false;
     }
@@ -154,6 +159,8 @@ public class FlowPanel
      * @throws Exception if unable to compute a result
      */
     protected Object doInBackground() throws Exception {
+      PathBreakpoint	breakpoint;
+
       m_Owner.update();
       m_Owner.cleanUp();
       m_Owner.clearNotification();
@@ -168,6 +175,14 @@ public class FlowPanel
         if (m_Flow instanceof Flow) {
 	  ((Flow) m_Flow).setHeadless(m_Owner.isHeadless());
 	  ((Flow) m_Flow).setParentComponent(m_Owner);
+	  if (m_Debug) {
+	    if (((Flow) m_Flow).firstActive() != null) {
+	      breakpoint = new PathBreakpoint();
+	      breakpoint.setPath(((Flow) m_Flow).firstActive().getFullName());
+	      breakpoint.setOnPreExecute(true);
+	      ((Flow) m_Flow).addBreakpoint(breakpoint);
+	    }
+	  }
 	}
 	m_Output = m_Flow.setUp();
 	if ((m_Output == null) && !m_Flow.isStopped()) {
@@ -1087,7 +1102,7 @@ public class FlowPanel
    * Executes the flow.
    */
   public void run() {
-    run(true);
+    run(true, false);
   }
 
   /**
@@ -1095,9 +1110,10 @@ public class FlowPanel
    *
    * @param showNotification	whether to show notifications about
    * 				errors/stopped/finished
+   * @param debug		whether to run in debug mode
    */
-  public void run(boolean showNotification) {
-    m_CurrentWorker = new FlowWorker(this, getCurrentFlow(), getCurrentFile(), showNotification);
+  public void run(boolean showNotification, boolean debug) {
+    m_CurrentWorker = new FlowWorker(this, getCurrentFlow(), getCurrentFile(), showNotification, debug);
     m_CurrentThread = new Thread(m_CurrentWorker);
     m_CurrentThread.start();
   }
