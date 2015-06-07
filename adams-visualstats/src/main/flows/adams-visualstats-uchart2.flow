@@ -41,12 +41,12 @@ adams.flow.control.Flow
 									2
 									-sizes-index
 									3
-							-violation-finder
-								adams.data.spc.BeyondLimitsViolations
 					-actor
 						adams.flow.sink.ControlChartPlot
 							-writer
 								adams.gui.print.NullWriter
+							-violation-finder
+								adams.data.spc.BeyondLimitsViolations
 							-paintlet
 								adams.flow.sink.controlchartplot.ChartPaintlet
 							-limit-paintlet

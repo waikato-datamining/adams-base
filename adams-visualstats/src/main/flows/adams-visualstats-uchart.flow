@@ -31,8 +31,6 @@ adams.flow.control.Flow
 						adams.flow.transformer.ControlChart
 							-chart
 								adams.data.spc.UChart
-							-violation-finder
-								adams.data.spc.BeyondLimitsViolations
 					-actor
 						adams.flow.sink.ControlChartPlot
 							-writer
@@ -45,6 +43,8 @@ adams.flow.control.Flow
 								adams.flow.sink.sequenceplotter.NullClickAction
 							-color-provider
 								adams.gui.visualization.core.DefaultColorProvider
+							-violation-finder
+								adams.data.spc.BeyondLimitsViolations
 							-axis-x
 								adams.gui.visualization.core.AxisPanelOptions
 									-label

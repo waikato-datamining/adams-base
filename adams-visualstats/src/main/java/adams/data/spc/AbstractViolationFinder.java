@@ -21,7 +21,6 @@
 package adams.data.spc;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.flow.container.ControlChartContainer;
 
 /**
  * Ancestor for algorithms that check for violations.
@@ -38,29 +37,32 @@ public abstract class AbstractViolationFinder
   /**
    * Check method before locating violations.
    *
-   * @param cont	the container to check
+   * @param data	the data to check
+   * @param limits	the limits for the data
    */
-  protected void check(ControlChartContainer cont) {
-    if (!cont.isValid())
-      throw new IllegalStateException("Container is not valid: " + cont);
+  protected void check(double[] data, Limits[] limits) {
+    if (data == null)
+      throw new IllegalStateException("No data provided!");
   }
-
-  /**
-   * Performs the actual finding.
-   *
-   * @param cont	the container to check for violations
-   * @return		the new and updated container
-   */
-  protected abstract ControlChartContainer doFind(ControlChartContainer cont);
 
   /**
    * Performs the finding.
    *
-   * @param cont	the container to check for violations
-   * @return		the new and updated container
+   * @param data	the data to check
+   * @param limits	the limits for the data
+   * @return		the indices of the violations
    */
-  public ControlChartContainer find(ControlChartContainer cont) {
-    check(cont);
-    return doFind(cont);
+  protected abstract int[] doFind(double[] data, Limits[] limits);
+
+  /**
+   * Performs the finding.
+   *
+   * @param data	the data to check
+   * @param limits	the limits for the data
+   * @return		the indices of the violations
+   */
+  public int[] find(double[] data, Limits[] limits) {
+    check(data, limits);
+    return doFind(data, limits);
   }
 }

@@ -20,8 +20,6 @@
 
 package adams.data.spc;
 
-import adams.flow.container.ControlChartContainer;
-
 /**
  <!-- globalinfo-start -->
  * Flags nothing as violation.
@@ -55,13 +53,13 @@ public class NullViolations
   }
 
   /**
-   * Performs the actual finding.
+   * Performs the finding.
    *
-   * @param cont	the container to check for violations
-   * @return		the new and updated container
+   * @param data	the data to check
+   * @param limits	the limits for the data
+   * @return		the indices of the violations
    */
-  @Override
-  protected ControlChartContainer doFind(ControlChartContainer cont) {
-    return (ControlChartContainer) cont.getClone();
+  protected int[] doFind(double[] data, Limits[] limits) {
+    return new int[0];
   }
 }

@@ -20,7 +20,6 @@
 
 package adams.data.spc;
 
-import adams.flow.container.ControlChartContainer;
 import gnu.trove.list.array.TIntArrayList;
 
 /**
@@ -56,36 +55,28 @@ public class BeyondLimitsViolations
   }
 
   /**
-   * Performs the actual finding.
+   * Performs the finding.
    *
-   * @param cont	the container to check for violations
-   * @return		the new and updated container
+   * @param data	the data to check
+   * @param limits	the limits for the data
+   * @return		the indices of the violations
    */
-  @Override
-  protected ControlChartContainer doFind(ControlChartContainer cont) {
-    ControlChartContainer	result;
-    TIntArrayList		violations;
-    Limits[]			limits;
-    double[]			prepared;
-    int				i;
+  protected int[] doFind(double[] data, Limits[] limits) {
+    TIntArrayList   result;
+    int		    i;
 
-    limits     = (Limits[]) cont.getValue(ControlChartContainer.VALUE_LIMITS);
-    prepared   = (double[]) cont.getValue(ControlChartContainer.VALUE_PREPARED);
-    violations = new TIntArrayList();
-    for (i = 0; i < prepared.length; i++) {
-      if (limits.length == prepared.length) {
-	if ((prepared[i] < limits[i].getLower()) || (prepared[i] > limits[i].getUpper()))
-	  violations.add(i);
+    result = new TIntArrayList();
+    for (i = 0; i < data.length; i++) {
+      if (limits.length == data.length) {
+	if ((data[i] < limits[i].getLower()) || (data[i] > limits[i].getUpper()))
+	  result.add(i);
       }
       else {
-	if ((prepared[i] < limits[0].getLower()) || (prepared[i] > limits[0].getUpper()))
-	  violations.add(i);
+	if ((data[i] < limits[0].getLower()) || (data[i] > limits[0].getUpper()))
+	  result.add(i);
       }
     }
 
-    result = (ControlChartContainer) cont.getClone();
-    result.setValue(ControlChartContainer.VALUE_VIOLATIONS, violations.toArray());
-
-    return result;
+    return result.toArray();
   }
 }

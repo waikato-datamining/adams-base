@@ -316,10 +316,10 @@ public class ControlChart
 
     chart = new adams.flow.transformer.ControlChart();
     chart.setChart(m_Chart);
-    chart.setViolationFinder(m_ViolationFinder);
     flow.add(chart);
 
     plot = new ControlChartPlot();
+    plot.setViolationFinder(m_ViolationFinder);
     if (name != null)
       plot.setTitle(name + " - " + m_Chart.getName());
     else

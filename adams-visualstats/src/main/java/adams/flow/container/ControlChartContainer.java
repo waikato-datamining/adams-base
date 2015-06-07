@@ -20,6 +20,7 @@
 
 package adams.flow.container;
 
+import adams.data.spc.ControlChart;
 import adams.data.spc.Limits;
 
 import java.util.ArrayList;
@@ -37,7 +38,10 @@ public class ControlChartContainer
 
   private static final long serialVersionUID = 1960872156580346093L;
 
-  /** the identifier for the name of the chart. */
+  /** the identifier for the algorithm. */
+  public final static String VALUE_ALGORITHM = "Algor";
+
+  /** the identifier for the chart name. */
   public final static String VALUE_CHART = "Chart";
 
   /** the identifier for the data (double array). */
@@ -49,53 +53,38 @@ public class ControlChartContainer
   /** the identifier for the limits (array of Limits). */
   public final static String VALUE_LIMITS = "Limits";
 
-  /** the identifier for the indices (int array) of violoations. */
-  public final static String VALUE_VIOLATIONS = "Violations";
-
   /**
    * Initializes the container with dummy values.
    * <br><br>
    * Only used for generating help information.
    */
   public ControlChartContainer() {
-    this("Dummy", new double[0], new double[0], new Limits[]{new Limits()});
+    this(null, null, new double[0], new double[0], new Limits[]{new Limits()});
   }
 
   /**
    * Initializes the container.
    *
-   * @param chart	the name of the chart
+   * @param algorithm	the algorithm used for generating the data
+   * @param chart	the name of the chart, can be null
    * @param data        the original data
    * @param prepared	the prepared/processed data
    * @param limits	the limits
    */
-  public ControlChartContainer(String chart, Object data, Object prepared, Limits[] limits) {
-    this(chart, data, prepared, limits, null);
-  }
-
-  /**
-   * Initializes the container.
-   *
-   * @param chart	the name of the chart
-   * @param data        the original data
-   * @param prepared	the prepared/processed data
-   * @param limits	the limits
-   * @param violations	the indices of the violations, null if none
-   */
-  public ControlChartContainer(String chart, Object data, Object prepared, Limits[] limits, int[] violations) {
+  public ControlChartContainer(ControlChart algorithm, String chart, Object data, Object prepared, Limits[] limits) {
     super();
-
-    if ((violations != null) && (violations.length == 0))
-      violations = null;
 
     if (limits.length < 1)
       throw new IllegalArgumentException("At least one Limit container has to be provided!");
 
-    store(VALUE_CHART,      chart);
-    store(VALUE_DATA,       data);
-    store(VALUE_PREPARED,   prepared);
-    store(VALUE_LIMITS,     limits);
-    store(VALUE_VIOLATIONS, violations);
+    if ((chart != null) && chart.isEmpty())
+      chart = null;
+
+    store(VALUE_ALGORITHM, algorithm);
+    store(VALUE_CHART,     chart);
+    store(VALUE_DATA,      data);
+    store(VALUE_PREPARED,  prepared);
+    store(VALUE_LIMITS,    limits);
   }
 
   /**
@@ -109,11 +98,11 @@ public class ControlChartContainer
 
     result = new ArrayList<String>();
 
+    result.add(VALUE_ALGORITHM);
     result.add(VALUE_CHART);
     result.add(VALUE_DATA);
     result.add(VALUE_PREPARED);
     result.add(VALUE_LIMITS);
-    result.add(VALUE_VIOLATIONS);
 
     return result.iterator();
   }
@@ -126,7 +115,7 @@ public class ControlChartContainer
   @Override
   public boolean isValid() {
     return
-      hasValue(VALUE_CHART)
+      hasValue(VALUE_ALGORITHM)
 	&& hasValue(VALUE_DATA)
 	&& hasValue(VALUE_PREPARED)
 	&& hasValue(VALUE_LIMITS);

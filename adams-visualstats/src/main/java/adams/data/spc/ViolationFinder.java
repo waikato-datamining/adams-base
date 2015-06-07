@@ -21,7 +21,6 @@
 package adams.data.spc;
 
 import adams.core.option.OptionHandler;
-import adams.flow.container.ControlChartContainer;
 
 /**
  * Interface for algorithms that check for violations.
@@ -35,8 +34,9 @@ public interface ViolationFinder
   /**
    * Performs the finding.
    *
-   * @param cont	the container to check for violations
-   * @return		the new and updated container
+   * @param data	the data to check
+   * @param limits	the limits for the data
+   * @return		the indices of the violations
    */
-  public ControlChartContainer find(ControlChartContainer cont);
+  public int[] find(double[] data, Limits[] limits);
 }

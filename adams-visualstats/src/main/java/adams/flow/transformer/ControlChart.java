@@ -25,9 +25,7 @@ import adams.core.Utils;
 import adams.data.spc.IndividualsControlChart;
 import adams.data.spc.Limits;
 import adams.data.spc.MatrixControlChart;
-import adams.data.spc.NullViolations;
 import adams.data.spc.UChart;
-import adams.data.spc.ViolationFinder;
 import adams.data.statistics.StatUtils;
 import adams.flow.container.ControlChartContainer;
 import adams.flow.core.Unknown;
@@ -43,17 +41,17 @@ import java.util.List;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
- * &nbsp;&nbsp;&nbsp;double[]<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Float[]<br>
- * &nbsp;&nbsp;&nbsp;float[]<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
- * &nbsp;&nbsp;&nbsp;int[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Double[][]<br>
+ * &nbsp;&nbsp;&nbsp;double[][]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Float[][]<br>
+ * &nbsp;&nbsp;&nbsp;float[][]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Integer[][]<br>
+ * &nbsp;&nbsp;&nbsp;int[][]<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.container.ControlChartContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.ControlChartContainer: Chart, Data, Prepared, Lower, Center, Upper, Violations
+ * - adams.flow.container.ControlChartContainer: Algor, Chart, Data, Prepared, Limits
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -90,14 +88,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Whether to output the control chart containers as array or one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-chart &lt;adams.data.spc.ControlChart&gt; (property: chart)
  * &nbsp;&nbsp;&nbsp;The control chart algorithm to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spc.UChart
- * </pre>
- * 
- * <pre>-violation-finder &lt;adams.data.spc.ViolationFinder&gt; (property: violationFinder)
- * &nbsp;&nbsp;&nbsp;The algorithm for locating violations.
- * &nbsp;&nbsp;&nbsp;default: adams.data.spc.NullViolations
  * </pre>
  * 
  <!-- options-end -->
@@ -113,9 +111,6 @@ public class ControlChart
 
   /** the control chart to use. */
   protected adams.data.spc.ControlChart m_Chart;
-
-  /** for locating violations. */
-  protected ViolationFinder m_ViolationFinder;
 
   /**
    * Returns a string describing the object.
@@ -137,10 +132,6 @@ public class ControlChart
     m_OptionManager.add(
 	    "chart", "chart",
 	    new UChart());
-
-    m_OptionManager.add(
-	    "violation-finder", "violationFinder",
-	    new NullViolations());
   }
 
   /**
@@ -194,35 +185,6 @@ public class ControlChart
   }
 
   /**
-   * Sets the algorithm for locating violations.
-   *
-   * @param value	the algorithm
-   */
-  public void setViolationFinder(ViolationFinder value) {
-    m_ViolationFinder = value;
-    reset();
-  }
-
-  /**
-   * Returns the algorithm for locating violations.
-   *
-   * @return		the algorithm
-   */
-  public ViolationFinder getViolationFinder() {
-    return m_ViolationFinder;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String violationFinderTipText() {
-    return "The algorithm for locating violations.";
-  }
-
-  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -235,7 +197,7 @@ public class ControlChart
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.Double[].class, double[].class, java.lang.Float[].class, float[].class, java.lang.Integer[].class, int[].class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.lang.Double[][].class, double[][].class, java.lang.Float[][].class, float[][].class, java.lang.Integer[][].class, int[][].class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     if (m_Chart == null)
@@ -285,9 +247,7 @@ public class ControlChart
 	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
 	stats    = ((IndividualsControlChart) m_Chart).calculate(numberArray);
 	prepared = ((IndividualsControlChart) m_Chart).prepare(numberArray);
-	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats.toArray(new Limits[stats.size()]));
-	if (!(m_ViolationFinder instanceof NullViolations))
-	  cont = m_ViolationFinder.find(cont);
+	cont     = new ControlChartContainer(m_Chart, null, data, prepared, stats.toArray(new Limits[stats.size()]));
 	m_Queue.add(cont);
       }
       else if (m_Chart instanceof MatrixControlChart) {
@@ -307,9 +267,7 @@ public class ControlChart
 	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
 	stats    = ((MatrixControlChart) m_Chart).calculate(numberMatrix);
 	prepared = ((MatrixControlChart) m_Chart).prepare(numberMatrix);
-	cont     = new ControlChartContainer(m_Chart.getName(), data, prepared, stats.toArray(new Limits[stats.size()]));
-	if (!(m_ViolationFinder instanceof NullViolations))
-	  cont = m_ViolationFinder.find(cont);
+	cont     = new ControlChartContainer(m_Chart, null, data, prepared, stats.toArray(new Limits[stats.size()]));
 	m_Queue.add(cont);
       }
       else {
