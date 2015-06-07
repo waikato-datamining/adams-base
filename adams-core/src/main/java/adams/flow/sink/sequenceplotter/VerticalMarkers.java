@@ -15,18 +15,18 @@
 
 /**
  * VerticalMarkers.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.List;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -92,15 +92,15 @@ public class VerticalMarkers
     g.setColor(color);
 
     for (i = 0; i <= data.size() - 1; i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
 
       // draw line
       g.drawLine(
-	  currX, axisY.valueToPos(axisY.getMinimum()),
-	  currX, axisY.valueToPos(axisY.getMaximum()));
+	  currX, axisY.valueToPos(axisY.getActualMinimum()),
+	  currX, axisY.valueToPos(axisY.getActualMaximum()));
     }
   }
 }
