@@ -15,7 +15,7 @@
 
 /**
  * NamedCounter.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -128,7 +128,7 @@ public class NamedCounter
   /**
    * Returns the incremented counter.
    *
-   * @param		the name of the counter
+   * @param name	the name of the counter
    * @return		the incremented counter
    */
   public synchronized int next(String name) {
@@ -177,7 +177,7 @@ public class NamedCounter
     List<String>	result;
     CounterComparator	comp;
     
-    result = new ArrayList(m_Counts.keySet());
+    result = new ArrayList<>(m_Counts.keySet());
     comp   = new CounterComparator(this);
     Collections.sort(result, comp);
     
