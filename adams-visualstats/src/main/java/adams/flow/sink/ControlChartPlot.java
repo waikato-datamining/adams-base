@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.core.NamedCounter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.DecimalFormatString;
@@ -39,9 +40,11 @@ import adams.flow.core.Token;
 import adams.flow.sink.controlchartplot.AbstractControlChartPaintlet;
 import adams.flow.sink.controlchartplot.ChartPaintlet;
 import adams.flow.sink.controlchartplot.LimitPaintlet;
+import adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor;
 import adams.flow.sink.sequenceplotter.MarkerPaintlet;
 import adams.flow.sink.sequenceplotter.MouseClickAction;
 import adams.flow.sink.sequenceplotter.NullClickAction;
+import adams.flow.sink.sequenceplotter.PassThrough;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
@@ -212,6 +215,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.0
  * </pre>
  * 
+ * <pre>-post-processor &lt;adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor&gt; (property: postProcessor)
+ * &nbsp;&nbsp;&nbsp;The post-processor to use on the sequences after a token has been added.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.PassThrough
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -250,6 +258,9 @@ public class ControlChartPlot
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
 
+  /** the post-processor for the sequences. */
+  protected AbstractSequencePostProcessor m_PostProcessor;
+
   /** the chart algorithm to use. */
   protected ControlChart m_Chart;
 
@@ -258,6 +269,9 @@ public class ControlChartPlot
 
   /** the limits to use. */
   protected Limits m_Limits;
+
+  /** for keeping track of the tokens. */
+  protected NamedCounter m_Counter;
 
   /**
    * Returns a string describing the object.
@@ -318,6 +332,30 @@ public class ControlChartPlot
     m_OptionManager.add(
       "axis-y", "axisY",
       getDefaultAxisY());
+
+    m_OptionManager.add(
+      "post-processor", "postProcessor",
+      new PassThrough());
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Counter = new NamedCounter();
+  }
+
+  /**
+   * Resets the actor.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Counter.clear();
   }
 
   /**
@@ -367,21 +405,6 @@ public class ControlChartPlot
    */
   public String violationFinderTipText() {
     return "The algorithm for locating violations.";
-  }
-
-  /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    String	result;
-
-    result = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "violoationFinder", m_ViolationFinder, "violations: ");
-
-    return result;
   }
 
   /**
@@ -475,17 +498,17 @@ public class ControlChartPlot
 
   /**
    * Sets the mouse click action to use.
-   * 
+   *
    * @param value	the action
    */
   public void setMouseClickAction(MouseClickAction value) {
     m_MouseClickAction = value;
     reset();
   }
-  
+
   /**
    * Returns the current mouse click action in use.
-   * 
+   *
    * @return		the action
    */
   public MouseClickAction getMouseClickAction() {
@@ -671,6 +694,50 @@ public class ControlChartPlot
   }
 
   /**
+   * Sets the post-processor for the sequences.
+   *
+   * @param value 	the post-processor
+   */
+  public void setPostProcessor(AbstractSequencePostProcessor value) {
+    m_PostProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the limit on the number of data points per sequence.
+   *
+   * @return 		the limit
+   */
+  public AbstractSequencePostProcessor getPostProcessor() {
+    return m_PostProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String postProcessorTipText() {
+    return "The post-processor to use on the sequences after a token has been added.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "violoationFinder", m_ViolationFinder, "violations: ");
+
+    return result;
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -755,6 +822,7 @@ public class ControlChartPlot
     Compatibility		comp;
     Number[]			numberArray;
     double			value;
+    int				x;
 
     manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
     manager.startUpdate();
@@ -821,13 +889,13 @@ public class ControlChartPlot
 	  max = StatUtils.max(new double[]{max, limits[0].getLower(), limits[0].getCenter(), limits[0].getUpper(), prepared[i]});
 	}
 	meta.put("violation", violations.contains(i));
-	point = new SequencePlotPoint("" + (seq.size() + 1), seq.size() + 1, prepared[i]);
+	x     = m_Counter.next(m_ChartName);
+	point = new SequencePlotPoint("" + x, x, prepared[i]);
 	point.setMetaData(meta);
 	seq.add(point);
       }
 
       // add marker
-      value         = seq.size();
       markerManager = ((SequencePlotterPanel) m_Panel).getMarkerContainerManager();
       markerManager.startUpdate();
       if (markerManager.indexOf(m_ChartName) == -1) {
@@ -841,7 +909,8 @@ public class ControlChartPlot
 	cont = markerManager.get(manager.indexOf(m_ChartName));
 	seq = cont.getData();
       }
-      point = new SequencePlotPoint("" + ((int) value), value, 0);
+      x     = m_Counter.current(m_ChartName);
+      point = new SequencePlotPoint("" + x, x, 0);
       seq.add(point);
       markerManager.finishUpdate();
 
@@ -849,6 +918,9 @@ public class ControlChartPlot
       axisY = ((SequencePlotterPanel) m_Panel).getPlot().getAxis(Axis.LEFT);
       axisY.setManualMinimum(min);
       axisY.setManualMaximum(max);
+
+      // post-process
+      m_PostProcessor.postProcess(manager, m_ChartName);
     }
     else if (m_Chart instanceof IndividualsControlChart) {
       comp = new Compatibility();
@@ -869,9 +941,13 @@ public class ControlChartPlot
 	meta.put("violation", violations.size() > 0);
 	value    = ((Number) token.getPayload()).doubleValue();
 	prepared = ((IndividualsControlChart) m_Chart).prepare(new Double[]{value});
-	point    = new SequencePlotPoint("" + (seq.size() + 1), seq.size() + 1, prepared[0]);
+	x        = m_Counter.next(m_ChartName);
+	point    = new SequencePlotPoint("" + x, x, prepared[0]);
 	point.setMetaData(meta);
 	seq.add(point);
+
+	// post-process
+	m_PostProcessor.postProcess(manager, m_ChartName);
       }
       else {
 	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload().getClass()));
@@ -913,9 +989,13 @@ public class ControlChartPlot
 	meta.put("center", m_Limits.getCenter());
 	meta.put("upper", m_Limits.getUpper());
 	meta.put("violation", violations.contains(i));
-	point = new SequencePlotPoint("" + (seq.size() + 1), seq.size() + 1, prepared[0]);
+	x     = m_Counter.next(m_ChartName);
+	point = new SequencePlotPoint("" + x, x, prepared[0]);
 	point.setMetaData(meta);
 	seq.add(point);
+
+	// post-process
+	m_PostProcessor.postProcess(manager, m_ChartName);
       }
       else {
 	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload().getClass()));

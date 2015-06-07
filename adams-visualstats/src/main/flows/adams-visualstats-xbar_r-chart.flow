@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2015-06-08 11:35:42
+# Date: 2015-06-08 11:56:45
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Generates a Xbar R chart from the samples.\nDraws two charts:\n- the top one (\"full\") uses the full data\n- The bottom one (\"split\") uses only the first 5 data rows\n  for initializing the chart/limits. The remainder\n  is simply added.\nData taken from here:\nhttp://www.wikihow.com/Sample/Control-Chart-for-Multiple-Groups
+	Generates a Xbar R chart from the samples.\nDraws two charts (with different limits):\n- the top one (\"full\") uses the full data\n- The bottom one (\"split\") uses only the first 10 data rows\n  for initializing the chart/limits. The remainder\n  is simply added. \nIn both cases, only a maximum of 15 data points are \ndisplayed (\"post processor\").\n\nData taken from here:\nhttp://www.wikihow.com/Sample/Control-Chart-for-Multiple-Groups
 	-actor
 		adams.flow.standalone.GridView
 			-actor
@@ -63,6 +63,10 @@ adams.flow.control.Flow
 							0.05
 							-custom-format
 							0.0
+					-post-processor
+						adams.flow.sink.sequenceplotter.SimplePruning
+							-limit
+							15
 			-actor
 				adams.flow.sink.ControlChartPlot
 					-name
@@ -119,6 +123,10 @@ adams.flow.control.Flow
 							0.05
 							-custom-format
 							0.0
+					-post-processor
+						adams.flow.sink.sequenceplotter.SimplePruning
+							-limit
+							15
 			-num-rows
 			2
 			-writer
@@ -170,7 +178,7 @@ adams.flow.control.Flow
 											-finder
 												adams.data.spreadsheet.rowfinder.ByIndex
 													-rows
-													1-5
+													1-10
 									-actor
 										adams.flow.transformer.Convert
 											-conversion
@@ -194,7 +202,7 @@ adams.flow.control.Flow
 													-row-finder
 														adams.data.spreadsheet.rowfinder.ByIndex
 															-rows
-															1-5
+															1-10
 									-actor
 										adams.flow.transformer.Convert
 											-conversion
