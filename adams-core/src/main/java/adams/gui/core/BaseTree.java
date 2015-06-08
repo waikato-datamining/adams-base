@@ -15,16 +15,10 @@
 
 /*
  * BaseTree.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
-
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTree;
@@ -33,6 +27,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * A JTree ehanced with a few useful methods.
@@ -92,6 +91,15 @@ public class BaseTree
   }
 
   /**
+   * Expands only the root node.
+   */
+  public void expandRoot() {
+    TreeNode root = (TreeNode) getModel().getRoot();
+    if ((root != null) && (root instanceof DefaultMutableTreeNode))
+      expand((DefaultMutableTreeNode) root);
+  }
+
+  /**
    * Expands all nodes in the tree.
    */
   public void expandAll() {
@@ -125,6 +133,15 @@ public class BaseTree
    */
   public void collapse(DefaultMutableTreeNode node) {
     collapsePath(new TreePath(node.getPath()));
+  }
+
+  /**
+   * Collapses only the root node.
+   */
+  public void collapseRoot() {
+    TreeNode root = (TreeNode) getModel().getRoot();
+    if ((root != null) && (root instanceof DefaultMutableTreeNode))
+      collapse((DefaultMutableTreeNode) root);
   }
 
   /**
