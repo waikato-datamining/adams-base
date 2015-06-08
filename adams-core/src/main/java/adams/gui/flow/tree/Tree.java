@@ -189,6 +189,12 @@ public class Tree
   /** whether to record the adding of actors to improve suggestions. */
   protected boolean m_RecordAdd;
 
+  /** whether to allow the popup menu. */
+  protected boolean m_AllowNodePopup;
+
+  /** whether to allow keyboard shortcuts. */
+  protected boolean m_AllowKeyboardShortcuts;
+
   /**
    * Initializes the tree.
    *
@@ -248,6 +254,8 @@ public class Tree
     m_LastTemplate                = null;
     m_IgnoreNameChanges           = false;
     m_RecordAdd                   = false;
+    m_AllowNodePopup              = true;
+    m_AllowKeyboardShortcuts      = true;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -294,6 +302,8 @@ public class Tree
     addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
+	if (!m_AllowKeyboardShortcuts)
+	  return;
 	TreePath path = getSelectionPath();
 	TreePath[] paths = getSelectionPaths();
 	if (path != null) {
@@ -484,7 +494,7 @@ public class Tree
   /**
    * Returns the owning panel.
    *
-   * @return		the panel
+   * @return		the panel, null if not available
    */
   public FlowPanel getOwner() {
     return m_Owner;
@@ -493,10 +503,49 @@ public class Tree
   /**
    * Returns the owning editor.
    *
-   * @return		the editor
+   * @return		the editor, null if not available
    */
   public FlowEditorPanel getEditor() {
-    return m_Owner.getEditor();
+    if (getOwner() != null)
+      return getOwner().getEditor();
+    else
+      return null;
+  }
+
+  /**
+   * Sets whether to allow the node popup.
+   *
+   * @param value	true if to allow
+   */
+  public void setAllowNodePopup(boolean value) {
+    m_AllowNodePopup = value;
+  }
+
+  /**
+   * Returns whether the node popup is allowed.
+   *
+   * @return		true if allowed
+   */
+  public boolean getAllowNodePopup() {
+    return m_AllowNodePopup;
+  }
+
+  /**
+   * Sets whether to allow keyboard shortcuts.
+   *
+   * @param value	true if to allow
+   */
+  public void setAllowKeyboardShortcuts(boolean value) {
+    m_AllowKeyboardShortcuts = value;
+  }
+
+  /**
+   * Returns whether the keyboard shortcuts are allowed.
+   *
+   * @return		true if allowed
+   */
+  public boolean getAllowKeyboardShortcuts() {
+    return m_AllowKeyboardShortcuts;
   }
 
   /**
@@ -909,8 +958,10 @@ public class Tree
     
     // currently running flow
     result.runningFlow = null;
-    if (getOwner().getRunningFlow() instanceof Flow)
-      result.runningFlow = (Flow) getOwner().getRunningFlow();
+    if (getOwner() != null) {
+      if (getOwner().getRunningFlow() instanceof Flow)
+        result.runningFlow = (Flow) getOwner().getRunningFlow();
+    }
 
     return result;
   }
@@ -923,9 +974,11 @@ public class Tree
   public void showNodePopupMenu(MouseEvent e) {
     JPopupMenu 	menu;
 
-    menu = createNodePopupMenu(e);
-    if (menu != null)
-      menu.show(this, e.getX(), e.getY());
+    if (m_AllowNodePopup) {
+      menu = createNodePopupMenu(e);
+      if (menu != null)
+	menu.show(this, e.getX(), e.getY());
+    }
   }
 
   /**
