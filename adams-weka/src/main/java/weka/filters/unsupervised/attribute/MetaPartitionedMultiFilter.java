@@ -450,6 +450,7 @@ public class MetaPartitionedMultiFilter
     List<Range>				ranges;
     List<Filter>			filters;
     Integer[]				range;
+    adams.core.Range 			aRange;
 
     if (!isFirstBatchDone()) {
       // we need the full dataset here, see process(Instances)
@@ -478,7 +479,9 @@ public class MetaPartitionedMultiFilter
 	}
 	else {
 	  range = indices.get(i).toArray(new Integer[indices.get(i).size()]);
-	  ranges.add(new Range(adams.core.Utils.flatten(range, ",")));
+	  aRange = new adams.core.Range();
+	  aRange.setIndices(range);
+	  ranges.add(new Range(aRange.getRange()));
 	  filters.add(Filter.makeCopy(m_Filters[i]));
 	}
       }
@@ -489,9 +492,11 @@ public class MetaPartitionedMultiFilter
       m_ActualFilter.setFilters(filters.toArray(new Filter[filters.size()]));
       m_ActualFilter.setRanges(ranges.toArray(new Range[ranges.size()]));
       m_ActualFilter.setInputFormat(inputFormat);
-      Filter.useFilter(inputFormat, m_ActualFilter);
 
-      return m_ActualFilter.getOutputFormat();
+      if (getDebug())
+        System.out.println("setup: " + Utils.toCommandLine(m_ActualFilter));
+
+      return Filter.useFilter(inputFormat, m_ActualFilter);
     }
     else {
       return getOutputFormat();
@@ -508,8 +513,13 @@ public class MetaPartitionedMultiFilter
    */
   @Override
   protected Instances process(Instances instances) throws Exception {
-    if (!isFirstBatchDone())
-      setOutputFormat(determineOutputFormat(instances));
+    Instances	result;
+
+    if (!isFirstBatchDone()) {
+      result = determineOutputFormat(instances);
+      setOutputFormat(new Instances(result, 0));
+      return result;
+    }
     
     return Filter.useFilter(instances, m_ActualFilter);
   }
