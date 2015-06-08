@@ -428,6 +428,7 @@ public class ImagePanel
 
         // zoom
 	submenu = new JMenu("Zoom");
+	submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
 	menu.addSeparator();
 	menu.add(submenu);
         zooms = new int[]{
@@ -450,7 +451,10 @@ public class ImagePanel
           submenu.add(menuitem);
           menuitem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-	      setScale((double) fZoom / 100);
+	      if (getOwner() != null)
+		getOwner().setScale((double) fZoom / 100);
+	      else
+		setScale((double) fZoom / 100);
             }
           });
         }
@@ -964,7 +968,7 @@ public class ImagePanel
   /**
    * Sets the state of the image panel.
    *
-   * @param state	the state
+   * @param value	the state
    * @see		#getState()
    */
   protected void setState(Vector value) {
