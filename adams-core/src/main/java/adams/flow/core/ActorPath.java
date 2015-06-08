@@ -42,6 +42,13 @@ public class ActorPath
 
   /**
    * Initializes the path.
+   */
+  public ActorPath() {
+    this("");
+  }
+
+  /**
+   * Initializes the path.
    *
    * @param path	the path to break up
    */
