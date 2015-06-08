@@ -54,6 +54,7 @@ adams.core.base.BasePointDouble=adams.gui.goe.BaseObjectEditor
 adams.core.io.PlaceholderDirectory=adams.gui.goe.PlaceholderDirectoryEditor
 adams.core.io.PlaceholderFile=adams.gui.goe.PlaceholderFileEditor
 adams.core.io.FlowFile=adams.gui.goe.FlowFileEditor
+adams.flow.core.ActorPath=adams.gui.goe.ActorPathEditor
 adams.core.Index=adams.gui.goe.IndexEditor
 adams.core.Range=adams.gui.goe.RangeEditor
 adams.data.DateFormatString=adams.gui.goe.BaseObjectEditor

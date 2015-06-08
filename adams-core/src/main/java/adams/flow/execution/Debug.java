@@ -38,8 +38,10 @@ import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.StoragePanel;
 import adams.gui.flow.tree.Tree;
+import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.ExpressionWatchPanel;
@@ -61,7 +63,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -439,7 +441,7 @@ public class Debug
    */
   public static class BreakpointPanel
     extends BasePanel
-    implements CleanUpHandler {
+    implements CleanUpHandler, FlowTreeHandler {
 
     private static final long serialVersionUID = 8469709963860298334L;
 
@@ -468,7 +470,7 @@ public class Debug
     protected JButton m_ButtonBreakpointsRemoveAll;
 
     /** the GOE for adding/editing breakpoints. */
-    protected GenericObjectEditorDialog	m_DialogGOE;
+    protected GenericObjectEditorDialog m_DialogGOE;
 
     /**
      * Initializes the members.
@@ -610,10 +612,7 @@ public class Debug
      */
     protected GenericObjectEditorDialog getGOEDialog() {
       if (m_DialogGOE == null) {
-	if (m_Owner.getParentDialog() != null)
-	  m_DialogGOE = new GenericObjectEditorDialog(m_Owner.getParentDialog(), ModalityType.DOCUMENT_MODAL);
-	else
-	  m_DialogGOE = new GenericObjectEditorDialog(m_Owner.getParentFrame(), true);
+	m_DialogGOE = GenericObjectEditorDialog.createDialog(this);
 	m_DialogGOE.getGOEEditor().setClassType(AbstractBreakpoint.class);
 	m_DialogGOE.getGOEEditor().setCanChangeClassInDialog(true);
 	m_DialogGOE.setCurrent(getDefaultBreakpoint());
@@ -703,6 +702,16 @@ public class Debug
 	m_DialogGOE = null;
       }
     }
+
+    /**
+     * Returns the tree.
+     *
+     * @return		the tree
+     */
+    @Override
+    public Tree getTree() {
+      return getOwner().getTree();
+    }
   }
 
   /**
@@ -713,7 +722,7 @@ public class Debug
    */
   public static class ControlPanel
     extends BasePanel
-    implements CleanUpHandler {
+    implements CleanUpHandler, FlowTreeHandler {
 
     /** for serialization. */
     private static final long serialVersionUID = 1000900663466801934L;
@@ -1157,6 +1166,34 @@ public class Debug
      */
     public AbstractBreakpoint getCurrentBreakpoint() {
       return m_CurrentBreakpoint;
+    }
+
+    /**
+     * Returns the tree, if available.
+     *
+     * @return		the tree, null if not available
+     */
+    public Tree getTree() {
+      Tree	result;
+      Flow	flow;
+
+      result = null;
+
+      if (getCurrentActor().getRoot() instanceof Flow) {
+	flow = (Flow) getCurrentActor().getRoot();
+	if (flow.isHeadless())
+	  return result;
+	if (flow.getParentComponent() != null) {
+	  if (flow.getParentComponent() instanceof FlowPanel)
+	    result = ((FlowPanel) flow.getParentComponent()).getTree();
+	  else if (flow.getParentComponent() instanceof Container)
+	    result = FlowHelper.getTree((Container) flow.getParentComponent());
+	  else if (flow.getParentComponent() instanceof FlowTreeHandler)
+	    result = ((FlowTreeHandler) flow.getParentComponent()).getTree();
+	}
+      }
+
+      return result;
     }
 
     /**

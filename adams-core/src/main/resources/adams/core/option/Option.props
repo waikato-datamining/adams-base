@@ -291,6 +291,11 @@ adams.core.io.FlowFile=true
 adams.core.io.FlowFile#toString=adams.gui.goe.FlowFileEditor#toString
 adams.core.io.FlowFile#valueOf=adams.gui.goe.FlowFileEditor#valueOf
 
+# ActorPath objects
+adams.flow.core.ActorPath=true
+adams.flow.core.ActorPath#toString=adams.gui.goe.ActorPathEditor#toString
+adams.flow.core.ActorPath#valueOf=adams.gui.goe.ActorPathEditor#valueOf
+
 # Field objects
 adams.data.report.Field=true
 adams.data.report.Field#toString=adams.gui.goe.FieldEditor#toString

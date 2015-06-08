@@ -23,6 +23,7 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.core.Actor;
+import adams.flow.core.ActorPath;
 import adams.flow.core.Token;
 
 /**
@@ -116,7 +117,7 @@ public class PathBreakpoint
   private static final long serialVersionUID = 3782327753485131754L;
   
   /** the path to listen for. */
-  protected String m_Path;
+  protected ActorPath m_Path;
 
   /** the condition to evaluate. */
   protected BooleanCondition m_Condition;
@@ -140,7 +141,7 @@ public class PathBreakpoint
     
     m_OptionManager.add(
 	    "path", "path",
-	    "");
+	    new ActorPath(""));
 
     m_OptionManager.add(
 	    "condition", "condition",
@@ -152,7 +153,7 @@ public class PathBreakpoint
    *
    * @param value	the path
    */
-  public void setPath(String value) {
+  public void setPath(ActorPath value) {
     m_Path = value;
     reset();
   }
@@ -162,7 +163,7 @@ public class PathBreakpoint
    *
    * @return		the path
    */
-  public String getPath() {
+  public ActorPath getPath() {
     return m_Path;
   }
 
@@ -216,7 +217,7 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePreInput(Actor actor, Token token) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, token);
+    return actor.getFullName().equals(m_Path.toString()) && m_Condition.evaluate(actor, token);
   }
   
   /**
@@ -227,7 +228,7 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePostInput(Actor actor) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, null);
+    return actor.getFullName().equals(m_Path.toString()) && m_Condition.evaluate(actor, null);
   }
   
   /**

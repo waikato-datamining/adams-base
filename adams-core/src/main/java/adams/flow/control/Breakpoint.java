@@ -26,6 +26,7 @@ import adams.core.base.BaseString;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
+import adams.flow.core.ActorPath;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Unknown;
 import adams.flow.execution.Debug.View;
@@ -571,7 +572,7 @@ public class Breakpoint
         breakpoint.setViews(m_Views.clone());
         breakpoint.setWatches(m_Watches.clone());
         breakpoint.setWatchTypes(m_WatchTypes.clone());
-	breakpoint.setPath(getFullName());
+	breakpoint.setPath(new ActorPath(getFullName()));
 
 	flow.addBreakpoint(breakpoint);
       }

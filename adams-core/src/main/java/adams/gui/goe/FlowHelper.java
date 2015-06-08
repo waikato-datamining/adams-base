@@ -15,16 +15,9 @@
 
 /**
  * FlowHelper.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
-
-import java.awt.Component;
-import java.awt.Container;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
@@ -36,8 +29,16 @@ import adams.gui.application.Child;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A helper class for flow-related queries.
@@ -73,6 +74,9 @@ public class FlowHelper {
       else if (parent instanceof FlowEditorPanel) {
 	comp = parent;
       }
+      else if (parent instanceof FlowTreeHandler) {
+	comp = parent;
+      }
       
       if (comp != null) {
 	if (comp instanceof FlowEditorPanel) {
@@ -81,12 +85,13 @@ public class FlowHelper {
 	    result = editor.getCurrentPanel().getTree();
 	  break;
 	}
+        else if (comp instanceof FlowTreeHandler) {
+          result = ((FlowTreeHandler) comp).getTree();
+          break;
+        }
       }
 
-      if (parent instanceof Container)
-	parent = (Container) parent.getParent();
-      else
-	break;
+      parent = parent.getParent();
     }
 
     return result;
@@ -100,25 +105,6 @@ public class FlowHelper {
    */
   public static boolean isFlowEdited(Container cont) {
     return (getTree(cont) != null);
-  }
-
-  /**
-   * Returns the node that is currently being edited.
-   *
-   * @param cont	the container to start the search from
-   * @return		the node, null if none being edited
-   */
-  public static Node getEditedNode(Container cont) {
-    Node	result;
-    Tree	tree;
-
-    result = null;
-
-    tree = getTree(cont);
-    if (tree != null)
-      result = tree.getCurrentEditingNode();
-
-    return result;
   }
 
   /**
@@ -142,6 +128,25 @@ public class FlowHelper {
   }
 
   /**
+   * Returns the node that is currently being edited.
+   *
+   * @param cont	the container to start the search from
+   * @return		the node, null if none being edited
+   */
+  public static Node getEditedNode(Container cont) {
+    Node	result;
+    Tree	tree;
+
+    result = null;
+
+    tree = getTree(cont);
+    if (tree != null)
+      result = tree.getCurrentEditingNode();
+
+    return result;
+  }
+
+  /**
    * Returns the database connection that needs to be used in the GOE.
    *
    * @param cont	the container to start the search from
@@ -150,11 +155,8 @@ public class FlowHelper {
    * @return		the database connection to be used
    */
   public static adams.db.AbstractDatabaseConnection getDatabaseConnection(Container cont, Class actorCls, adams.db.AbstractDatabaseConnection defDbCon) {
-    adams.db.AbstractDatabaseConnection	result;
-    Node				current;
-    Node				parent;
-
-    result = null;
+    Node	current;
+    Node	parent;
 
     current = getEditedNode(cont);
     if (current != null)
@@ -163,7 +165,7 @@ public class FlowHelper {
       parent = getEditedParent(cont);
 
     if (parent == null)
-      return result;
+      return null;
     
     return getDatabaseConnection(parent, actorCls, defDbCon);
   }
@@ -171,7 +173,7 @@ public class FlowHelper {
   /**
    * Returns the database connection that needs to be used in the GOE.
    *
-   * @param cont	the container to start the search from
+   * @param parent	the node to start the search from
    * @param actorCls	the database connection actor class to look for
    * @param defDbCon	the default database connection if none found in tree
    * @return		the database connection to be used
@@ -183,7 +185,7 @@ public class FlowHelper {
   /**
    * Returns the database connection that needs to be used in the GOE.
    *
-   * @param cont	the container to start the search from
+   * @param parent	the node to start the search from
    * @param actorCls	the database connection actor class to look for
    * @param defDbCon	the default database connection if none found in tree
    * @param up		whether to go up in the actor tree

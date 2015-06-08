@@ -19,17 +19,18 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-
 import adams.core.Pausable;
+import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.PathBreakpoint;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 
 /**
  * Allows the attaching of flow execution listeners.
@@ -73,7 +74,7 @@ public class AttachListener
     PathBreakpoint			pbreak;
 
     pbreak = new PathBreakpoint();
-    pbreak.setPath(m_State.selNode.getFullName());
+    pbreak.setPath(new ActorPath(m_State.selNode.getFullName()));
     if (ActorUtils.isSource(m_State.selNode.getActor()))
       pbreak.setOnPostOutput(true);
     if (ActorUtils.isTransformer(m_State.selNode.getActor()))

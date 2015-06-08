@@ -15,10 +15,11 @@
 
 /**
  * ActorPath.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -29,10 +30,15 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public class ActorPath
-  implements Comparable<ActorPath> {
+  implements Comparable<ActorPath>, Serializable {
+
+  private static final long serialVersionUID = -5734626103557090578L;
 
   /** the elements of the path. */
   protected String[] m_Parts;
+
+  /** the full path. */
+  protected String m_FullPath;
 
   /**
    * Initializes the path.
@@ -42,6 +48,7 @@ public class ActorPath
   public ActorPath(String path) {
     int		i;
 
+    m_FullPath = null;
     if ((path == null) || (path.length() == 0)) {
       m_Parts = new String[0];
     }
@@ -72,7 +79,8 @@ public class ActorPath
    * @param path	the path elements to use
    */
   public ActorPath(String[] path) {
-    m_Parts = path.clone();
+    m_Parts    = path.clone();
+    m_FullPath = null;
   }
 
   /**
@@ -276,16 +284,19 @@ public class ActorPath
    * @return		the complete path
    */
   public String toString() {
-    StringBuilder	result;
+    StringBuilder path;
 
-    result = new StringBuilder();
+    if (m_FullPath == null) {
+      path = new StringBuilder();
 
-    for (String part: m_Parts) {
-      if (result.length() > 0)
-	result.append(".");
-      result.append(part.replace(".", "\\."));
+      for (String part : m_Parts) {
+	if (path.length() > 0)
+	  path.append(".");
+	path.append(part.replace(".", "\\."));
+      }
+      m_FullPath = path.toString();
     }
 
-    return result.toString();
+    return m_FullPath;
   }
 }

@@ -40,6 +40,7 @@ import adams.env.FlowEditorPanelDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.PathBreakpoint;
 import adams.flow.processor.AbstractActorProcessor;
@@ -89,7 +90,7 @@ import java.util.Vector;
  */
 public class FlowPanel
   extends UndoPanel
-  implements StatusMessageHandler, SendToActionSupporter {
+  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -178,7 +179,7 @@ public class FlowPanel
 	  if (m_Debug) {
 	    if (((Flow) m_Flow).firstActive() != null) {
 	      breakpoint = new PathBreakpoint();
-	      breakpoint.setPath(((Flow) m_Flow).firstActive().getFullName());
+	      breakpoint.setPath(new ActorPath(((Flow) m_Flow).firstActive().getFullName()));
 	      breakpoint.setOnPreExecute(true);
 	      ((Flow) m_Flow).addBreakpoint(breakpoint);
 	    }
