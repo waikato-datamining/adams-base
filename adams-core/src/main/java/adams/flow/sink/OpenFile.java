@@ -28,7 +28,8 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Opens the incoming file with the appropriate platform-specific application.
+ * Opens the incoming file with the appropriate platform-specific application.<br>
+ * Does nothing in a headless (non-graphical) environment.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -90,7 +91,10 @@ public class OpenFile
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Opens the incoming file with the appropriate platform-specific application.";
+    return
+      "Opens the incoming file with the appropriate platform-specific "
+	+ "application.\n"
+	+ "Does nothing in a headless (non-graphical) environment.";
   }
 
   /**
@@ -113,26 +117,28 @@ public class OpenFile
 
     result = null;
 
-    if (Desktop.isDesktopSupported()) {
-      if (Desktop.getDesktop().isSupported(Action.OPEN)) {
-	if (m_InputToken.getPayload() instanceof String)
-	  file = new PlaceholderFile((String) m_InputToken.getPayload());
-	else
-	  file = (File) m_InputToken.getPayload();
-	file = file.getAbsoluteFile();
-	try {
-	  Desktop.getDesktop().open(file);
+    if (!isHeadless()) {
+      if (Desktop.isDesktopSupported()) {
+	if (Desktop.getDesktop().isSupported(Action.OPEN)) {
+	  if (m_InputToken.getPayload() instanceof String)
+	    file = new PlaceholderFile((String) m_InputToken.getPayload());
+	  else
+	    file = (File) m_InputToken.getPayload();
+	  file = file.getAbsoluteFile();
+	  try {
+	    Desktop.getDesktop().open(file);
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to open: " + file, e);
+	  }
 	}
-	catch (Exception e) {
-	  result = handleException("Failed to open: " + file, e);
+	else {
+	  result = "The 'Open' file action is not supported by Java on this platform!";
 	}
       }
       else {
-	result = "The 'Open' file action is not supported by Java on this platform!";
+	result = "Desktop operations not supported by Java on this platform!";
       }
-    }
-    else {
-      result = "Desktop operations not supported by Java on this platform!";
     }
 
     return result;
