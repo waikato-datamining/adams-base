@@ -465,7 +465,7 @@ public class MetaPartitionedMultiFilter
 	att = inputFormat.attribute(i);
 	for (n = 0; n < m_RegExp.length; n++) {
 	  if (m_RegExp[n].isMatch(att.name()))
-	    indices.get(n).add(att.index() + 1);
+	    indices.get(n).add(att.index());
 	}
       }
 
