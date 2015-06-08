@@ -42,7 +42,6 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.core.BaseTable;
-import adams.gui.core.BaseTextArea;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.CustomPopupMenuProvider;
@@ -59,13 +58,11 @@ import adams.gui.event.UndoEvent;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.report.ReportFactory;
 
-import javax.swing.JButton;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
@@ -390,6 +387,9 @@ public class ImagePanel
     protected void showPopup(MouseEvent e) {
       JPopupMenu	menu;
       JMenuItem		menuitem;
+      JMenu		submenu;
+      int[]		zooms;
+      int		i;
 
       menu = null;
       if (m_CustomPopupMenuProvider != null)
@@ -424,7 +424,36 @@ public class ImagePanel
 	    saveReport();
 	  }
 	});
-	menu.add(menuitem);
+        menu.add(menuitem);
+
+        // zoom
+	submenu = new JMenu("Zoom");
+	menu.addSeparator();
+	menu.add(submenu);
+        zooms = new int[]{
+          -100,
+          25,
+          50,
+          66,
+          75,
+          100,
+          150,
+          200,
+          400,
+          800};
+        for (i = 0; i < zooms.length; i++) {
+          final int fZoom = zooms[i];
+          if (zooms[i] == -100)
+            menuitem = new JMenuItem("Best fit");
+          else
+            menuitem = new JMenuItem(zooms[i] + "%");
+          submenu.add(menuitem);
+          menuitem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+	      setScale((double) fZoom / 100);
+            }
+          });
+        }
       }
 
       menu.show(this, e.getX(), e.getY());
