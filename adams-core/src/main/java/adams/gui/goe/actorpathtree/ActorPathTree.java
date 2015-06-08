@@ -15,22 +15,21 @@
 
 /*
  * ActorPathTree.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.actorpathtree;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath;
 
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.dotnotationtree.DotNotationTree;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Displays actor paths in a tree structure.
@@ -39,7 +38,7 @@ import adams.gui.flow.tree.Tree;
  * @version $Revision$
  * @param <T> the type of node to use
  */
-public abstract class ActorPathTree<T extends ActorPathNode>
+public class ActorPathTree<T extends ActorPathNode>
   extends DotNotationTree<T> {
 
   /** for serialization. */
@@ -255,7 +254,6 @@ public abstract class ActorPathTree<T extends ActorPathNode>
    *
    * @param node	the node to process
    * @param item	the full item string
-   * @see		#processClassname(String)
    */
   @Override
   protected void postAddLeaf(T node, String item) {
