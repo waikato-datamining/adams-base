@@ -812,6 +812,24 @@ public class Debug
     /** the current breakpoint. */
     protected AbstractBreakpoint m_CurrentBreakpoint;
 
+    /** whether the user has modified the view and it should be left alone. */
+    protected boolean m_Manual;
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_Manual            = false;
+      m_CurrentActor      = null;
+      m_CurrentBreakpoint = null;
+      m_CurrentCondition  = null;
+      m_CurrentHook       = null;
+      m_CurrentToken      = null;
+    }
+
     /**
      * Initializes the widgets.
      */
@@ -902,6 +920,7 @@ public class Debug
       m_ButtonExpressions.setToolTipText("Display dialog for watch expressions");
       m_ButtonExpressions.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
 	  showWatchExpressions(m_ButtonExpressions.isSelected());
         }
       });
@@ -912,6 +931,7 @@ public class Debug
       m_ButtonVariables.setToolTipText("Display dialog with currently active variables");
       m_ButtonVariables.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
           showVariables(m_ButtonVariables.isSelected());
         }
       });
@@ -922,6 +942,7 @@ public class Debug
       m_ButtonStorage.setToolTipText("Display dialog with items currently stored in temporary storage");
       m_ButtonStorage.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
           showStorage(m_ButtonStorage.isSelected());
         }
       });
@@ -932,6 +953,7 @@ public class Debug
       m_ButtonInspectToken.setToolTipText("Display dialog for inspecting the current token");
       m_ButtonInspectToken.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
           inspectToken(m_ButtonInspectToken.isSelected());
         }
       });
@@ -942,6 +964,7 @@ public class Debug
       m_ButtonBreakpoints.setToolTipText("Display dialog for inspecting the current flow");
       m_ButtonBreakpoints.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
           showBreakpoints(m_ButtonBreakpoints.isSelected());
         }
       });
@@ -952,6 +975,7 @@ public class Debug
       m_ButtonSource.setToolTipText("Display current flow state as source (nested format)");
       m_ButtonSource.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+	  m_Manual = true;
           showSource(m_ButtonSource.isSelected());
         }
       });
@@ -1006,14 +1030,22 @@ public class Debug
      * updates.
      */
     public void update() {
+      update((getOwner() != null) && getOwner().isBlocked());
+    }
+
+    /**
+     * Updates the enabled status of the buttons, text fields and other widget
+     * updates.
+     *
+     * @param blocked	whether flow execution has been blocked
+     */
+    public void update(boolean blocked) {
       boolean	actorPresent;
       boolean	stopped;
-      boolean	blocked;
       boolean	hasToken;
 
       actorPresent = (getCurrentActor() != null);
       stopped      = actorPresent && getFlow().isStopped();
-      blocked      = (getOwner() != null) && getOwner().isBlocked();
       hasToken     = (getCurrentToken() != null);
 
       m_ButtonStop.setEnabled(actorPresent && !stopped);
@@ -1030,8 +1062,10 @@ public class Debug
       m_PanelCondition.setEnabled(actorPresent && !stopped && blocked);
       m_ButtonActorPath.setEnabled(m_TextActorPath.getText().length() > 0);
 
-      if (!m_ButtonInspectToken.isEnabled())
-	inspectToken(false);
+      if (!m_ButtonInspectToken.isEnabled()) {
+	if (m_PanelInspectionToken != null)
+	  m_PanelInspectionToken.setCurrent(null);
+      }
 
       if (m_Owner != null) {
 	if (m_Owner.isBlocked() || m_Owner.isStepMode()) {
@@ -1427,8 +1461,10 @@ public class Debug
 
     /**
      * Called by actor when breakpoint reached.
+     *
+     * @param blocked	whether execution has been blocked
      */
-    public void breakpointReached() {
+    public void breakpointReached(boolean blocked) {
       HashSet<View>	views;
       int		i;
 
@@ -1463,42 +1499,44 @@ public class Debug
 	m_PanelStorage.setHandler(getCurrentActor().getStorageHandler());
 
       highlightActor();
-      update();
+      update(blocked);
 
-      // combine views
-      views = new HashSet<>(Arrays.asList(getOwner().getViews()));
-      if (getCurrentBreakpoint() != null)
-	views.addAll(Arrays.asList(getCurrentBreakpoint().getViews()));
+      if (!m_Manual) {
+	// combine views
+	views = new HashSet<>(Arrays.asList(getOwner().getViews()));
+	if (getCurrentBreakpoint() != null)
+	  views.addAll(Arrays.asList(getCurrentBreakpoint().getViews()));
 
-      // show dialogs
-      for (View d: views) {
-	switch (d) {
-	  case SOURCE:
-	    m_ButtonSource.setSelected(true);
-	    showSource(true);
-	    break;
-	  case EXPRESSIONS:
-	    m_ButtonExpressions.setSelected(true);
-	    showWatchExpressions(true);
-	    break;
-	  case INSPECT_TOKEN:
-	    m_ButtonInspectToken.setSelected(getCurrentToken() != null);
-	    inspectToken(getCurrentToken() != null);
-	    break;
-	  case STORAGE:
-	    m_ButtonStorage.setSelected(true);
-	    showStorage(true);
-	    break;
-	  case VARIABLES:
-	    m_ButtonVariables.setSelected(true);
-	    showVariables(true);
-	    break;
-	  case BREAKPOINTS:
-	    m_ButtonBreakpoints.setSelected(true);
-	    showBreakpoints(true);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled dialog type: " + d);
+	// show dialogs
+	for (View d : views) {
+	  switch (d) {
+	    case SOURCE:
+	      m_ButtonSource.setSelected(true);
+	      showSource(true);
+	      break;
+	    case EXPRESSIONS:
+	      m_ButtonExpressions.setSelected(true);
+	      showWatchExpressions(true);
+	      break;
+	    case INSPECT_TOKEN:
+	      m_ButtonInspectToken.setSelected(getCurrentToken() != null);
+	      inspectToken(getCurrentToken() != null);
+	      break;
+	    case STORAGE:
+	      m_ButtonStorage.setSelected(true);
+	      showStorage(true);
+	      break;
+	    case VARIABLES:
+	      m_ButtonVariables.setSelected(true);
+	      showVariables(true);
+	      break;
+	    case BREAKPOINTS:
+	      m_ButtonBreakpoints.setSelected(true);
+	      showBreakpoints(true);
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled dialog type: " + d);
+	  }
 	}
       }
     }
@@ -1997,9 +2035,13 @@ public class Debug
    * @param hook	the hook method (eg preInput)
    */
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook) {
+    boolean	blocked;
+
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName());
-    
+
+    blocked = ((point == null) && isStepMode()) || (point != null);
+
     m_DebugPanel.setCurrentHook(hook);
     m_DebugPanel.setCurrentActor(actor);
     m_DebugPanel.setCurrentToken(null);
@@ -2009,9 +2051,9 @@ public class Debug
     else
       m_DebugPanel.setCurrentCondition(null);
     m_DebugPanel.showFrame();
-    m_DebugPanel.breakpointReached();
+    m_DebugPanel.breakpointReached(blocked);
 
-    if (((point == null) && isStepMode()) || (point != null))
+    if (blocked)
       blockExecution();
   }
   
@@ -2024,8 +2066,12 @@ public class Debug
    * @param token	the current token
    */
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook, Token token) {
+    boolean	blocked;
+
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName() + "\n\t" + token);
+
+    blocked = ((point == null) && isStepMode()) || (point != null);
 
     m_DebugPanel.setCurrentHook(hook);
     m_DebugPanel.setCurrentActor(actor);
@@ -2036,9 +2082,9 @@ public class Debug
     else
       m_DebugPanel.setCurrentCondition(null);
     m_DebugPanel.showFrame();
-    m_DebugPanel.breakpointReached();
-    
-    if (((point == null) && isStepMode()) || (point != null))
+    m_DebugPanel.breakpointReached(blocked);
+
+    if (blocked)
       blockExecution();
   }
   
