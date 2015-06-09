@@ -21,6 +21,7 @@ package adams.gui.tools.spreadsheetviewer;
 
 import adams.core.CleanUpHandler;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
@@ -73,6 +74,16 @@ public class TabbedPane
     getModel().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	tabSelected(e);
+      }
+    });
+    setMiddleMouseButtonCloseApprover(new MiddleMouseButtonCloseApprover() {
+      public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source) {
+	boolean	result = checkForModified();
+	// to avoid second popup from checkModified() in removeTab method
+	SpreadSheetPanel panel = getCurrentPanel();
+	if (result && panel.isModified())
+	  panel.setModified(false);
+	return result;
       }
     });
   }
@@ -427,6 +438,18 @@ public class TabbedPane
   }
 
   /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the flow or discarded the changes.
+   *
+   * @return		true if safe to proceed
+   */
+  protected boolean checkForModified() {
+    if (m_Owner == null)
+      return true;
+    return m_Owner.checkForModified();
+  }
+
+  /**
    * Returns the currently selected panel.
    *
    * @return		the current panel, null if not available
@@ -553,5 +576,28 @@ public class TabbedPane
       m_Owner.getViewerTabs().notifyTabs(
 	  m_Owner.getCurrentPanel(),
 	  m_Owner.getCurrentPanel().getTable().getSelectedRows());
+  }
+
+  /**
+   * Removes the tab at <code>index</code>.
+   * After the component associated with <code>index</code> is removed,
+   * its visibility is reset to true to ensure it will be visible
+   * if added to other containers.
+   *
+   * @param index the index of the tab to be removed
+   */
+  @Override
+  public void removeTabAt(int index) {
+    SpreadSheetPanel panel;
+
+    if (index < 0)
+      return;
+    if (!checkForModified())
+      return;
+
+    panel = getPanelAt(index);
+    panel.cleanUp();
+
+    super.removeTabAt(index);
   }
 }

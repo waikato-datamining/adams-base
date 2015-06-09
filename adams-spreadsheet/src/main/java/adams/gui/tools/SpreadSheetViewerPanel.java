@@ -75,6 +75,8 @@ import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
 
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -400,6 +402,28 @@ public class SpreadSheetViewerPanel
     String[]	classes;
 
     if (m_MenuBar == null) {
+      // register window listener since we're part of a dialog or frame
+      if (getParentFrame() != null) {
+	final JFrame frame = (JFrame) getParentFrame();
+	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	frame.addWindowListener(new WindowAdapter() {
+	  @Override
+	  public void windowClosing(WindowEvent e) {
+	    close();
+	  }
+	});
+      }
+      else if (getParentDialog() != null) {
+	final JDialog dialog = (JDialog) getParentDialog();
+	dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+	dialog.addWindowListener(new WindowAdapter() {
+	  @Override
+	  public void windowClosing(WindowEvent e) {
+	    close();
+	  }
+	});
+      }
+
       result = new JMenuBar();
 
       // File
@@ -693,6 +717,48 @@ public class SpreadSheetViewerPanel
   }
 
   /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the flow or discarded the changes.
+   *
+   * @return		true if safe to proceed
+   */
+  public boolean checkForModified() {
+    boolean 	result;
+    int		retVal;
+    String	msg;
+
+    if (getCurrentPanel() == null)
+      return true;
+
+    result = !getCurrentPanel().isModified();
+
+    if (!result) {
+      if (getCurrentPanel().getFilename() == null)
+	msg = "Spreadsheet not saved - save?";
+      else
+	msg = "Spreadsheet not saved - save?\n" + getCurrentPanel().getFilename();
+      retVal = GUIHelper.showConfirmMessage(this, msg, "Spreadsheet not saved");
+      switch (retVal) {
+	case GUIHelper.APPROVE_OPTION:
+	  if (getCurrentPanel().getFilename() != null)
+	    save();
+	  else
+	    saveAs();
+	  result = !getCurrentPanel().isModified();
+	  break;
+	case GUIHelper.DISCARD_OPTION:
+	  result = true;
+	  break;
+	case GUIHelper.CANCEL_OPTION:
+	  result = false;
+	  break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Opens one or more CSV files.
    */
   public void open() {
@@ -856,6 +922,8 @@ public class SpreadSheetViewerPanel
     index = m_TabbedPane.getSelectedIndex();
     if (index == -1)
       return;
+    if (!checkForModified())
+      return;
 
     m_TabbedPane.remove(index);
   }
@@ -864,6 +932,10 @@ public class SpreadSheetViewerPanel
    * Closes the dialog or frame.
    */
   public void close() {
+    if (!checkForModified()) {
+      setVisibleAgain();
+      return;
+    }
     closeParent();
   }
 
@@ -1039,6 +1111,19 @@ public class SpreadSheetViewerPanel
       }
     });
     dialog.setVisible(true);
+  }
+
+  /**
+   * Used by the close() method to re-display the flow, in case the flow
+   * cannot or should not be closed after all.
+   *
+   * @see	#close()
+   */
+  protected void setVisibleAgain() {
+    if (getParentDialog() != null)
+      getParentDialog().setVisible(true);
+    else if (getParentFrame() != null)
+      getParentFrame().setVisible(true);
   }
 
   /**
