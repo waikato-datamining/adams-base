@@ -15,23 +15,24 @@
 
 /*
  * BasePanel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.LayoutManager;
+import adams.core.Utils;
+import adams.gui.application.Child;
+import adams.gui.core.ConsolePanel.OutputType;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
-
-import adams.core.Utils;
-import adams.gui.application.Child;
-import adams.gui.core.ConsolePanel.OutputType;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.LayoutManager;
 
 /**
  * A JPanel extended by a few useful methods.
@@ -167,6 +168,34 @@ public class BasePanel
       afterShow();
     else
       afterHide();
+  }
+
+  /**
+   * Sets the enabled state of itself and all of its children.
+   *
+   * @param enabled	whether the panel is enabled or not
+   *
+   */
+  protected void setEnabledCascade(boolean enabled, Component comp) {
+    Container	cont;
+    int		i;
+
+    if (comp instanceof Container) {
+      cont = (Container) comp;
+      for (i = 0; i < cont.getComponentCount(); i++)
+	setEnabledCascade(enabled, cont.getComponent(i));
+    }
+
+    comp.setEnabled(enabled);
+  }
+
+  /**
+   * Sets the enabled state of itself and all of its children.
+   *
+   * @param enabled	whether the panel is enabled or not
+   */
+  public void setEnabledCascade(boolean enabled) {
+    setEnabledCascade(enabled, this);
   }
 
   /**
