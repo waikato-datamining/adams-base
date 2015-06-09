@@ -1735,8 +1735,9 @@ A breakpoint can be triggered at various stages of executing an actor:
   \item pre/post execute
   \item pre/post output of a token (sources, transformers)
 \end{tight_itemize}
-Inspecting a token is only available at stages \textit{preInput} and
-\textit{postOutput}.
+Inspecting a token is only available at stages \textit{preInput},
+\textit{postOutput} and possibly at \textit{preExecute}, if the
+actor is a transformer or sink.
 
 Stepping through a flow, using the \textit{Step} button from the control
 panel, always uses the \textit{preExecute} stage (\textit{pre/postInput}
