@@ -15,25 +15,24 @@
 
 /**
  * TabbedPane.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.CleanUpHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.Color;
+import java.awt.Component;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A specialized tabbed pane with a few methods for easier access.
@@ -364,6 +363,70 @@ public class TabbedPane
   }
 
   /**
+   * Sets the readonly state.
+   *
+   * @param index	the tab index
+   * @param value	whether to show the formulas
+   */
+  public void setReadOnlyAt(int index, boolean value) {
+    getTableAt(index).setReadOnly(value);
+  }
+
+  /**
+   * Returns whether to show the formulas.
+   *
+   * @param index	the tab index
+   * @return		whether to show the formulas
+   */
+  public boolean getReadOnlyAt(int index) {
+    return getTableAt(index).isReadOnly();
+  }
+
+  /**
+   * Sets the readonly state of all tabs.
+   *
+   * @param value	true if readonly
+   */
+  public void setReadOnly(boolean value) {
+    int	i;
+
+    for (i = 0; i < getTabCount(); i++)
+      setReadOnlyAt(i, value);
+  }
+
+  /**
+   * Sets the modified state.
+   *
+   * @param index	the tab index
+   * @param value	true if modified
+   */
+  public void setModifiedAt(int index, boolean value) {
+    getTableAt(index).setModified(value);
+  }
+
+  /**
+   * Returns the modified state.
+   *
+   * @param index	the tab index
+   * @return		true if modified
+   */
+  public boolean isModifiedAt(int index) {
+    return getTableAt(index).isModified();
+  }
+
+  /**
+   * Sets the modified state of all tab.
+   *
+   * @param value	true if modified
+   */
+  public void setModified(boolean value) {
+    int	i;
+
+    for (i = 0; i < getTabCount(); i++)
+      setModifiedAt(i, value);
+  }
+
+  /**
    * Returns the currently selected panel.
    *
    * @return		the current panel, null if not available
@@ -398,7 +461,12 @@ public class TabbedPane
    * @return		the create panel
    */
   public SpreadSheetPanel addTab(File file, SpreadSheet sheet) {
-    return addTab(createTabTitle(file, sheet), sheet);
+    SpreadSheetPanel	result;
+
+    result = addTab(createTabTitle(file, sheet), sheet);
+    result.setFilename(file);
+
+    return result;
   }
   
   /**
@@ -416,6 +484,7 @@ public class TabbedPane
     result.setNegativeBackground(m_BackgroundNegative);
     result.setPositiveBackground(m_BackgroundPositive);
     result.setSheet(sheet);
+    result.setReadOnly(false);
     addTab(title, result);
     setSelectedIndex(getTabCount() - 1);
     

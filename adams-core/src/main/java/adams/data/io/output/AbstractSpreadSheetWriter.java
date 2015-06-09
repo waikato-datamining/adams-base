@@ -214,8 +214,11 @@ public abstract class AbstractSpreadSheetWriter
     append = false;
     if (this instanceof AppendableSpreadSheetWriter) {
       appendable = (AppendableSpreadSheetWriter) this;
-      appendable.setFileExists(new File(filename).exists());
-      append     = appendable.canAppend(content);
+      append     = appendable.isAppending();
+      if (append) {
+        appendable.setFileExists(new File(filename).exists());
+        append = appendable.canAppend(content);
+      }
     }
 
     writer = null;

@@ -15,23 +15,13 @@
 
 /**
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import adams.core.CleanUpHandler;
+import adams.data.io.input.SpreadSheetReader;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.control.Flow;
@@ -51,6 +41,20 @@ import adams.gui.event.SearchListener;
 import adams.gui.tools.SpreadSheetViewerPanel;
 import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Encapsulates a panel for the spreadsheet viewer tool.
  * 
@@ -59,7 +63,7 @@ import adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator;
  */
 public class SpreadSheetPanel
   extends BasePanel
-  implements SpreadSheetSupporter, CleanUpHandler {
+  implements SpreadSheetSupporter, TableModelListener, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4251007424174062651L;
@@ -79,6 +83,15 @@ public class SpreadSheetPanel
   /** the generated flows (eg charts). */
   protected List<Flow> m_GeneratedFlows;
 
+  /** the associated file name. */
+  protected File m_Filename;
+
+  /** the reader used for reading the file. */
+  protected SpreadSheetReader m_Reader;
+  
+  /** the writer used for writing the file. */
+  protected SpreadSheetWriter m_Writer;
+
   /**
    * Initializes the panel.
    * 
@@ -97,6 +110,9 @@ public class SpreadSheetPanel
     super.initialize();
     
     m_GeneratedFlows = new ArrayList<Flow>();
+    m_Filename       = null;
+    m_Reader         = null;
+    m_Writer         = null;
   }
   
   /**
@@ -120,7 +136,8 @@ public class SpreadSheetPanel
       }
     });
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
-    
+    m_Table.getModel().addTableModelListener(this);
+
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_ColumnComboBox = new SpreadSheetColumnComboBox(m_Table);
     label = new JLabel("Jump to");
@@ -279,7 +296,43 @@ public class SpreadSheetPanel
   public boolean getShowFormulas() {
     return m_Table.getShowFormulas();
   }
-  
+
+  /**
+   * Sets whether the table is read-only.
+   *
+   * @param value	true if read-only
+   */
+  public void setReadOnly(boolean value) {
+    m_Table.setReadOnly(value);
+  }
+
+  /**
+   * Returns whether the table is read-only.
+   *
+   * @return		true if read-only
+   */
+  public boolean isReadOnly() {
+    return m_Table.isReadOnly();
+  }
+
+  /**
+   * Sets whether the table has been modified.
+   *
+   * @param value	true if modified
+   */
+  public void setModified(boolean value) {
+    m_Table.setModified(value);
+  }
+
+  /**
+   * Returns whether the table has been modified.
+   *
+   * @return		true if modified
+   */
+  public boolean isModified() {
+    return m_Table.isModified();
+  }
+
   /**
    * Returns the underlying table.
    * 
@@ -295,7 +348,9 @@ public class SpreadSheetPanel
    * @param value	the sheet
    */
   public void setSheet(SpreadSheet value) {
+    m_Table.getModel().removeTableModelListener(this);
     m_Table.setModel(new SpreadSheetTableModel(value));
+    m_Table.getModel().addTableModelListener(this);
   }
   
   /**
@@ -320,7 +375,7 @@ public class SpreadSheetPanel
   /**
    * Returns the underlying sheet.
    *
-   * @param onlyVisible	whether to return only the visible data
+   * @param range	the range to return
    * @return		the spread sheet
    */
   public SpreadSheet toSpreadSheet(TableRowRange range) {
@@ -389,7 +444,72 @@ public class SpreadSheetPanel
   public void addGeneratedFlow(Flow flow) {
     m_GeneratedFlows.add(flow);
   }
-  
+
+  /**
+   * Sets the associated filename.
+   *
+   * @param value	the file
+   */
+  public void setFilename(File value) {
+    m_Filename = value;
+  }
+
+  /**
+   * Returns the associated filename.
+   *
+   * @return		the file
+   */
+  public File getFilename() {
+    return m_Filename;
+  }
+
+  /**
+   * Sets the associated reader.
+   *
+   * @param value	the reader
+   */
+  public void setReader(SpreadSheetReader value) {
+    m_Reader = value;
+  }
+
+  /**
+   * Returns the associated reader.
+   *
+   * @return		the reader
+   */
+  public SpreadSheetReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Sets the associated writer.
+   *
+   * @param value	the writer
+   */
+  public void setWriter(SpreadSheetWriter value) {
+    m_Writer = value;
+  }
+
+  /**
+   * Returns the associated writer.
+   *
+   * @return		the writer
+   */
+  public SpreadSheetWriter getWriter() {
+    return m_Writer;
+  }
+
+  /**
+   * Gets notified in case of changes to the table model.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void tableChanged(TableModelEvent e) {
+    if (getViewer() != null)
+      getViewer().updateMenu();
+  }
+
   /**
    * Cleans up data structures, frees up memory.
    */

@@ -174,6 +174,9 @@ public class CsvSpreadSheetWriter
   /** whether to append spreadsheets. */
   protected boolean m_Appending;
 
+  /** whether the internal appending flag is one. */
+  protected boolean m_IsAppending;
+
   /** the header of the first spreadsheet written to file, if appending is active. */
   protected SpreadSheet m_Header;
 
@@ -950,7 +953,7 @@ public class CsvSpreadSheetWriter
       if (!m_FileExists || !m_KeepExisting) {
 	result = doWriteHeader(header, writer);
 	// keep header as reference
-	if (m_Appending)
+	if (m_Appending || m_IsAppending)
 	  m_Header = header.getOwner().getHeader();
       }
     }
@@ -1049,8 +1052,8 @@ public class CsvSpreadSheetWriter
   protected boolean doWrite(SpreadSheet content, Writer writer) {
     boolean	result;
     
-    m_Appending = true;
-    result      = writeHeader(content.getHeaderRow(), writer);
+    m_IsAppending = true;
+    result        = writeHeader(content.getHeaderRow(), writer);
     for (DataRow row: content.rows()) {
       result = doWrite(row, writer);
       if (!result)
@@ -1077,7 +1080,7 @@ public class CsvSpreadSheetWriter
    * @return		true if successfully written
    */
   public boolean write(Row content, File file) {
-    m_Appending = true;
+    m_IsAppending = true;
     return write(content, file.getAbsolutePath());
   }
 
@@ -1093,8 +1096,8 @@ public class CsvSpreadSheetWriter
     BufferedWriter		writer;
     OutputStream		output;
 
-    result      = true;
-    m_Appending = true;
+    result        = true;
+    m_IsAppending = true;
 
     writer = null;
     output = null;
@@ -1128,7 +1131,7 @@ public class CsvSpreadSheetWriter
    * @return		true if successfully written
    */
   public boolean write(Row content, OutputStream stream) {
-    m_Appending = true;
+    m_IsAppending = true;
     return write(content, new OutputStreamWriter(stream));
   }
 
@@ -1143,8 +1146,8 @@ public class CsvSpreadSheetWriter
   public boolean write(Row content, Writer writer) {
     boolean	result;
     
-    m_Appending = true;
-    result      = writeHeader(content.getOwner().getHeaderRow(), writer);
+    m_IsAppending = true;
+    result        = writeHeader(content.getOwner().getHeaderRow(), writer);
     if (result)
       result = doWrite(content, writer);
     

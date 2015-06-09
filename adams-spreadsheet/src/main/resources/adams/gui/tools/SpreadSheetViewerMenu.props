@@ -12,8 +12,10 @@
 adams.gui.tools.spreadsheetviewer.menu.FileOpen-Icon=open.gif
 adams.gui.tools.spreadsheetviewer.menu.FileOpen-Mnemonic=O
 adams.gui.tools.spreadsheetviewer.menu.FileOpen-Shortcut=control O
-adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Icon=save.gif
-adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Mnemonic=S
+adams.gui.tools.spreadsheetviewer.menu.FileSave-Icon=save.gif
+adams.gui.tools.spreadsheetviewer.menu.FileSave-Mnemonic=S
+adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Icon=
+adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Mnemonic=A
 adams.gui.tools.spreadsheetviewer.menu.FileSaveAs-Shortcut=ctrl shift pressed S
 adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Icon=
 adams.gui.tools.spreadsheetviewer.menu.FileCloseTab-Mnemonic=t

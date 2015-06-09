@@ -15,13 +15,10 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
-
-import java.awt.Color;
-import java.util.Date;
 
 import adams.core.DateTime;
 import adams.core.Time;
@@ -30,6 +27,9 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.awt.Color;
+import java.util.Date;
 
 /**
  * The table model for displaying a SpreadSheet object.
@@ -64,10 +64,16 @@ public class SpreadSheetTableModel
   
   /** whether to use a simple header. */
   protected boolean m_UseSimpleHeader;
-  
+
+  /** whether the model is read-only (default). */
+  protected boolean m_ReadOnly;
+
+  /** whether the model is modified. */
+  protected boolean m_Modified;
+
   /** the type of a column. */
   protected ContentType[] m_ColumnType;
-  
+
   /**
    * Initializes the model with an empty spread sheet.
    */
@@ -101,6 +107,8 @@ public class SpreadSheetTableModel
     m_ShowFormulas       = false;
     m_ShowRowColumn      = true;
     m_UseSimpleHeader    = false;
+    m_ReadOnly           = true;
+    m_Modified           = false;
     m_ColumnType         = new ContentType[sheet.getColumnCount()];
   }
 
@@ -141,7 +149,43 @@ public class SpreadSheetTableModel
   public boolean getUseSimpleHeader() {
     return m_UseSimpleHeader;
   }
-  
+
+  /**
+   * Sets whether the table model is read-only.
+   *
+   * @param value	true if read-only
+   */
+  public void setReadOnly(boolean value) {
+    m_ReadOnly = value;
+  }
+
+  /**
+   * Returns whether the table model is read-only.
+   *
+   * @return		true if read-only
+   */
+  public boolean isReadOnly() {
+    return m_ReadOnly;
+  }
+
+  /**
+   * Sets whether the table model has been modified.
+   *
+   * @param value	true if modified
+   */
+  public void setModified(boolean value) {
+    m_Modified = value;
+  }
+
+  /**
+   * Returns whether the table model has been modified.
+   *
+   * @return		true if modified
+   */
+  public boolean isModified() {
+    return m_Modified;
+  }
+
   /**
    * Returns the number of rows in the sheet.
    *
@@ -242,6 +286,52 @@ public class SpreadSheetTableModel
       else
 	return String.class;
     }
+  }
+
+  /**
+   * Returns true if the cell at <code>rowIndex</code> and
+   * <code>columnIndex</code>
+   * is editable.  Otherwise, <code>setValueAt</code> on the cell will not
+   * change the value of that cell.
+   *
+   * @param   rowIndex        the row whose value to be queried
+   * @param   columnIndex     the column whose value to be queried
+   * @return  true if the cell is editable
+   */
+  @Override
+  public boolean isCellEditable(int rowIndex, int columnIndex) {
+    if (m_ReadOnly)
+      return false;
+    if (m_ShowRowColumn)
+      return (columnIndex > 0);
+    return true;
+  }
+
+  /**
+   * Sets the value in the cell at <code>columnIndex</code> and
+   * <code>rowIndex</code> to <code>aValue</code>.
+   *
+   * @param   aValue           the new value
+   * @param   rowIndex         the row whose value is to be changed
+   * @param   columnIndex      the column whose value is to be changed
+   */
+  @Override
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    Cell	cell;
+
+    if (m_ReadOnly)
+      return;
+    if (m_ShowRowColumn && (columnIndex == 0))
+      return;
+
+    cell = getCellAt(rowIndex, columnIndex);
+    if (aValue instanceof String)
+      cell.setContent((String) aValue);
+    else
+      cell.setNative(aValue);
+    m_Modified = true;
+
+    fireTableCellUpdated(rowIndex, columnIndex);
   }
 
   /**

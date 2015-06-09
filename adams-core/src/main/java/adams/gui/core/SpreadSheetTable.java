@@ -636,6 +636,42 @@ public class SpreadSheetTable
   }
 
   /**
+   * Sets whether the table is read-only.
+   *
+   * @param value	true if read-only
+   */
+  public void setReadOnly(boolean value) {
+    ((SpreadSheetTableModel) getUnsortedModel()).setReadOnly(value);
+  }
+
+  /**
+   * Returns whether the table is read-only.
+   *
+   * @return		true if read-only
+   */
+  public boolean isReadOnly() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).isReadOnly();
+  }
+
+  /**
+   * Sets whether the table has been modified.
+   *
+   * @param value	true if modified
+   */
+  public void setModified(boolean value) {
+    ((SpreadSheetTableModel) getUnsortedModel()).setModified(value);
+  }
+
+  /**
+   * Returns whether the table has been modified.
+   *
+   * @return		true if modified
+   */
+  public boolean isModified() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).isModified();
+  }
+
+  /**
    * Sorts the spreadsheet with the given comparator.
    *
    * @param comparator	the row comparator to use

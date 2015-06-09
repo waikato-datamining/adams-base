@@ -19,25 +19,6 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JColorChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
@@ -81,6 +62,7 @@ import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
 import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
+import adams.gui.tools.spreadsheetviewer.menu.FileSave;
 import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
 import adams.gui.tools.spreadsheetviewer.menu.HelpFormulas;
 import adams.gui.tools.spreadsheetviewer.menu.HelpQuery;
@@ -91,6 +73,24 @@ import adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground;
 import adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
+
+import javax.swing.JColorChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A panel for viewing SpreadSheet files.
@@ -137,6 +137,9 @@ public class SpreadSheetViewerPanel
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuFileOpenRecent;
+
+  /** the "save" menu item. */
+  protected SpreadSheetViewerAction m_ActionFileSave;
 
   /** the "save as" menu item. */
   protected SpreadSheetViewerAction m_ActionFileSaveAs;
@@ -273,6 +276,11 @@ public class SpreadSheetViewerPanel
     m_Actions.add(action);
 
     // File/Save as
+    action = new FileSave();
+    m_ActionFileSave = action;
+    m_Actions.add(action);
+
+    // File/Save as
     action = new FileSaveAs();
     m_ActionFileSaveAs = action;
     m_Actions.add(action);
@@ -366,7 +374,7 @@ public class SpreadSheetViewerPanel
   @Override
   protected void initToolBar() {
     addToToolBar(m_ActionFileOpen);
-    addToToolBar(m_ActionFileSaveAs);
+    addToToolBar(m_ActionFileSave);
     addSeparator();
     addToToolBar(m_ActionDataFilterColumns);
     addToToolBar(m_ActionDataFilterRows);
@@ -425,6 +433,7 @@ public class SpreadSheetViewerPanel
       });
       m_MenuFileOpenRecent = submenu;
 
+      menu.add(m_ActionFileSave);
       menu.add(m_ActionFileSaveAs);
       menu.add(m_ActionFileCloseTab);
 
@@ -718,6 +727,7 @@ public class SpreadSheetViewerPanel
     SpreadSheet		sheet;
     List<SpreadSheet>	sheets;
     String		msg;
+    SpreadSheetPanel	panel;
 
     // default reader
     if (reader == null)
@@ -739,11 +749,14 @@ public class SpreadSheetViewerPanel
     }
     else {
       if (sheet != null) {
-	m_TabbedPane.addTab(file, sheet);
+	panel = m_TabbedPane.addTab(file, sheet);
+	panel.setReader(reader);
       }
       else {
-	for (SpreadSheet sh: sheets)
-	  m_TabbedPane.addTab(file, sh);
+	for (SpreadSheet sh: sheets) {
+	  panel = m_TabbedPane.addTab(file, sh);
+	  panel.setReader(reader);
+	}
       }
       m_FileChooser.setCurrentDirectory(file.getParentFile());
       if (m_RecentFilesHandler != null)
@@ -774,14 +787,51 @@ public class SpreadSheetViewerPanel
       return;
 
     sheet = table.toSpreadSheet();
-    if (!writer.write(sheet, file))
+    writer.reset();
+    if (!writer.write(sheet, file)) {
       GUIHelper.showErrorMessage(this, "Failed to write spreadsheet to '" + file + "'!");
-    else
+    }
+    else {
+      panel.setFilename(file);
+      panel.setWriter(writer);
+      panel.setModified(false);
       m_TabbedPane.setTitleAt(index, m_TabbedPane.createTabTitle(file, sheet));
+      updateMenu();
+    }
   }
 
   /**
    * Saves the current sheet.
+   */
+  public void save() {
+    SpreadSheetPanel	panel;
+
+    panel = getCurrentPanel();
+    if (panel == null)
+      return;
+
+    if (panel.getFilename() == null) {
+      saveAs();
+      return;
+    }
+    if (panel.getReader() == null) {
+      saveAs();
+      return;
+    }
+    if (panel.getWriter() == null) {
+      if (panel.getReader().getCorrespondingWriter() == null) {
+	saveAs();
+	return;
+      }
+      write(panel.getReader().getCorrespondingWriter(), panel.getFilename());
+    }
+    else {
+      write(panel.getWriter(), getCurrentPanel().getFilename());
+    }
+  }
+
+  /**
+   * Saves the current sheet under a new name.
    */
   public void saveAs() {
     int			retVal;

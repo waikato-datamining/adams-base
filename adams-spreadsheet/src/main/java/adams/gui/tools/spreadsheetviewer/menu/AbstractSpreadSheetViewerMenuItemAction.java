@@ -15,21 +15,23 @@
 
 /**
  * AbstractSpreadSheetViewerMenuItemAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-
 import adams.core.Properties;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
+import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 import adams.gui.tools.spreadsheetviewer.TabbedPane;
+
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for simple menu item actions in the spreadsheet viewer.
@@ -98,7 +100,25 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
   protected boolean isSheetSelected() {
     return (getTabbedPane().getTabCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
   }
-  
+
+  /**
+   * Returns the current panel.
+   *
+   * @return		the current panel, null if not available
+   */
+  protected SpreadSheetPanel getSelectedPanel() {
+    return getTabbedPane().getCurrentPanel();
+  }
+
+  /**
+   * Returns the current sheet.
+   *
+   * @return		the current sheet, null if not available
+   */
+  protected SpreadSheet getSelectedSheet() {
+    return getTabbedPane().getCurrentSheet();
+  }
+
   /**
    * Invoked when an action occurs (hook method after executing the actual action code).
    * <br><br>
