@@ -30,6 +30,7 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BasePanel;
@@ -77,7 +78,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Allows the user to define breakpoints that suspend the execution of the flow, allowing the inspection of the current flow state.<br>
- * Tokens can only inspected during 'preInput' and 'postOutput' of Breakpoint control actors. Step-wise debugging stops in 'preExecute', which has no access to the current token.
+ * Tokens can only inspected during 'preInput', 'preExecute' and 'postOutput' of Breakpoint control actors. Step-wise debugging stops in 'preExecute', which should be able to access the current token in case of input consumers (ie transformers and sinks).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -1599,9 +1600,10 @@ public class Debug
     return 
 	"Allows the user to define breakpoints that suspend the execution "
 	  + "of the flow, allowing the inspection of the current flow state.\n"
-	  + "Tokens can only inspected during 'preInput' and 'postOutput' "
+	  + "Tokens can only inspected during 'preInput', 'preExecute' and 'postOutput' "
 	  + "of Breakpoint control actors. Step-wise debugging stops in "
-	  + "'preExecute', which has no access to the current token.";
+	  + "'preExecute', which should be able to access the current token in "
+	  + "case of input consumers (ie transformers and sinks).";
   }
 
   /**
@@ -2079,18 +2081,30 @@ public class Debug
   @Override
   public void preExecute(Actor actor) {
     boolean	triggered;
+    Token	token;
 
     triggered = false;
+    token     = null;
+    if (actor instanceof InputConsumer)
+      token = ((InputConsumer) actor).currentInput();
+
     for (AbstractBreakpoint point : m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreExecute(actor)) {
 	triggered = true;
-	triggered(point, actor, "preExecute");
+	if (token == null)
+	  triggered(point, actor, "preExecute");
+	else
+	  triggered(point, actor, "preExecute", token);
 	break;
       }
     }
 
-    if (!triggered && m_StepMode)
-      triggered(null, actor, "preExecute");
+    if (!triggered && m_StepMode) {
+      if (token == null)
+	triggered(null, actor, "preExecute");
+      else
+	triggered(null, actor, "preExecute", token);
+    }
   }
 
   /**
