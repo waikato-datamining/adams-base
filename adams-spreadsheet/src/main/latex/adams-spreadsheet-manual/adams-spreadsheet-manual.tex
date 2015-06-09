@@ -276,8 +276,9 @@ The following conversion schemes are available:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Tools}
-The \textit{Spreadsheet file viewer} is a simple tool for viewing all spreadsheet
-file formats that ADAMS supports. Figure \ref{spreadsheet-viewer} shows a
+The \textit{Spreadsheet file viewer} is a simple tool for loading all spreadsheet
+file formats that ADAMS supports. Despite its name, the tool also allows you to
+modify cell values and save them back to a file. Figure \ref{spreadsheet-viewer} shows a
 dataset that was loaded from a CSV (comma-separated values) file.
 
 \begin{figure}[htb]
@@ -426,6 +427,7 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 	\item \textit{ceil} -- smallest value that is greater than or equal to the cell/number and is equal to a mathematical integer.
 	\item \textit{cos} -- the trigonometric cosine of a number/cell.
 	\item \textit{countblank} -- counts empty/missing value cells in a range of cells.
+	\item \textit{countif} -- counts value only a condition is true.
 	\item \textit{exp} -- Euler's number e raised to the power of a number/cell.
 	\item \textit{floor} -- largest value that is less than or equal to the cell/number and is equal to a mathematical integer.
 	\item \textit{if[else]} -- if-then-else construct.
@@ -447,11 +449,20 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 
 \noindent String functions:
 \begin{tight_itemize}
-	\item \textit{length} -- the length of a string.
-	\item \textit{lowercase} -- converts string to a lowercase one.
+	\item \textit{concatenate} -- concatenates up to 5 strings.
+	\item \textit{find} -- returns the location of a search string in a string.
+	\item \textit{left} -- returns substring of specified length from the left of the string.
+	\item \textit{len[gth]} -- the length of a string.
+	\item \textit{lower[case]} -- converts string to a lowercase one.
 	\item \textit{matches} -- matches a string against a regular expression.
+	\item \textit{mid} -- returns substring of specified length from the specified positiojn in the string.
+	\item \textit{right} -- returns substring of specified length from the right of the string.
+	\item \textit{replace} -- replaces a substring at a specified position with a new string.
+	\item \textit{rept} -- returns a string made up of X copies of the supplied string.
+	\item \textit{trim} -- removes all leading and trailing whitespaces.
 	\item \textit{substr} -- creates a substring from a string, given start/end position.
-	\item \textit{uppercase} -- converts string to an uppercase one.
+	\item \textit{substiture} -- replaces occurrences of a search string in a string with a new string.
+	\item \textit{upper[case]} -- converts string to an uppercase one.
 \end{tight_itemize}
 
 \noindent Date/time functions:
