@@ -273,19 +273,10 @@ public class SpreadSheetTableModel
    */
   @Override
   public Class getColumnClass(int columnIndex) {
-    if (m_ShowRowColumn && (columnIndex == 0)) {
+    if (m_ShowRowColumn && (columnIndex == 0))
       return Integer.class;
-    }
-    else {
-      if (m_ShowRowColumn)
-	columnIndex--;
-      if (determineContentType(columnIndex) == ContentType.DOUBLE)
-	return Double.class;
-      else if (determineContentType(columnIndex) == ContentType.OBJECT)
-	return Object.class;
-      else
-	return String.class;
-    }
+    else
+      return String.class;
   }
 
   /**
