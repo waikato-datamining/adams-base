@@ -15,12 +15,10 @@
 
 /*
  * Sequence.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.Hashtable;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
@@ -28,6 +26,8 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -225,6 +225,24 @@ public class Sequence
       if (isLoggingEnabled())
 	getLogger().fine("input token: " + m_CurrentToken);
     }
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_CurrentToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_CurrentToken;
   }
 
   /**

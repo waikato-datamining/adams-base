@@ -173,6 +173,24 @@ public class Stop
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		always false
+   */
+  public boolean hasInput() {
+    return false;
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		always null
+   */
+  public Token currentInput() {
+    return null;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message

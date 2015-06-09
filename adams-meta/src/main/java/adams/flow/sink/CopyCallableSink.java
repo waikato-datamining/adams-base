@@ -15,12 +15,10 @@
 
 /*
  * CopyCallableSink.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.util.Hashtable;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCopyCallableActor;
@@ -28,6 +26,8 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -178,6 +178,24 @@ public class CopyCallableSink
    */
   public void input(Token token) {
     m_CurrentInput = token;
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_CurrentInput != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_CurrentInput;
   }
 
   /**

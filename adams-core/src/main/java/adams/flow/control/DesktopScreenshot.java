@@ -241,6 +241,24 @@ public class DesktopScreenshot
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message

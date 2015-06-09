@@ -409,6 +409,24 @@ public class CallableActorScreenshot
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
+  }
+
+  /**
    * Generates the filename for the output.
    *
    * @return		the file

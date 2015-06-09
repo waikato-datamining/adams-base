@@ -875,6 +875,27 @@ public class LocalScopeTransformer
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_Actors != null) && (m_Actors.hasInput());
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    if (m_Actors != null)
+      return m_Actors.currentInput();
+    else
+      return null;
+  }
+
+  /**
    * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message

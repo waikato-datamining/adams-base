@@ -15,7 +15,7 @@
 
 /*
  * InputProcessor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -42,4 +42,18 @@ public interface InputConsumer
    * @param token	the token to accept and process
    */
   public void input(Token token);
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput();
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput();
 }

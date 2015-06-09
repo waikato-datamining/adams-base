@@ -15,12 +15,10 @@
 
 /*
  * TemplateTransformer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Hashtable;
 
 import adams.flow.core.AbstractTemplate;
 import adams.flow.core.ActorUtils;
@@ -30,6 +28,8 @@ import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.template.AbstractActorTemplate;
 import adams.flow.template.DummyTransformer;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -191,6 +191,24 @@ public class TemplateTransformer
   @Override
   public void input(Token token) {
     m_InputToken  = token;
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
   }
 
   /**

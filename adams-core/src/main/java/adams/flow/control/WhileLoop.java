@@ -406,6 +406,24 @@ public class WhileLoop
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		always false
+   */
+  public boolean hasInput() {
+    return false;
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		always null
+   */
+  public Token currentInput() {
+    return null;
+  }
+
+  /**
    * Checks whether the loop should be executed.
    *
    * @return		true if the loop should be executed

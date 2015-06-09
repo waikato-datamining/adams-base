@@ -15,7 +15,7 @@
 
 /*
  * SetProperty.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -187,6 +187,24 @@ public class SetProperty
   public void input(Token token) {
     m_InputToken  = token;
     m_OutputToken = null;
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
   }
 
   /**

@@ -15,12 +15,10 @@
 
 /*
  * ConditionalSink.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.util.Hashtable;
 
 import adams.flow.control.AbstractConditionalActor;
 import adams.flow.core.AbstractActor;
@@ -30,6 +28,8 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -212,6 +212,24 @@ public class ConditionalSink
     m_InputToken = token;
     if (!m_CheckAtExecutionTime)
       ((InputConsumer) m_BaseActor).input(m_InputToken);
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
   }
 
   /**

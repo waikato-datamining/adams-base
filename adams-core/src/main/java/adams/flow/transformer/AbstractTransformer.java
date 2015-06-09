@@ -15,17 +15,17 @@
 
 /*
  * AbstractTransformer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Hashtable;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  * Ancestor for all flow items that process an input token and generate an
@@ -112,6 +112,24 @@ public abstract class AbstractTransformer
   public void input(Token token) {
     m_InputToken  = token;
     m_OutputToken = null;
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
   }
 
   /**

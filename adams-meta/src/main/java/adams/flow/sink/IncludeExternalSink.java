@@ -15,7 +15,7 @@
 
 /**
  * IncludeExternalTransformer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -115,5 +115,23 @@ public class IncludeExternalSink
    * @param token	the token to accept and process
    */
   public void input(Token token) {
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		always false
+   */
+  public boolean hasInput() {
+    return false;
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		always null
+   */
+  public Token currentInput() {
+    return null;
   }
 }

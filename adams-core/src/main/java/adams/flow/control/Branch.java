@@ -595,6 +595,24 @@ public class Branch
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_CurrentToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_CurrentToken;
+  }
+
+  /**
    * Checks the sub-branch.
    *
    * @param branch	the branch to check

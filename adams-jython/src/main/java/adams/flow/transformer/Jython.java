@@ -15,18 +15,18 @@
 
 /*
  * Jython.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Hashtable;
 
 import adams.flow.core.AbstractJythonActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -158,6 +158,24 @@ public class Jython
   public void input(Token token) {
     m_InputToken = token;
     ((InputConsumer) m_ActorObject).input(token);
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
   }
 
   /**

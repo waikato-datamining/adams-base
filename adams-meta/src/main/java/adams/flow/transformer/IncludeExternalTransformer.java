@@ -128,6 +128,24 @@ public class IncludeExternalTransformer
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		always false
+   */
+  public boolean hasInput() {
+    return false;
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		always null
+   */
+  public Token currentInput() {
+    return null;
+  }
+
+  /**
    * Always null.
    */
   @Override

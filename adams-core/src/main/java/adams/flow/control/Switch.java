@@ -694,6 +694,24 @@ public class Switch
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens

@@ -20,12 +20,6 @@
 
 package adams.flow.control;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.base.BaseAnnotation;
@@ -44,6 +38,12 @@ import adams.flow.sink.CallableSink;
 import adams.flow.sink.Null;
 import adams.flow.transformer.CallableTransformer;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  <!-- globalinfo-start -->
@@ -152,6 +152,9 @@ public class LoadBalancer
 
     /** the local variables to use (either clone or reference). */
     protected Variables m_LocalVariables;
+
+    /** the input token. */
+    protected Token m_InputToken;
 
     /**
      * Initializes the shell.
@@ -325,6 +328,7 @@ public class LoadBalancer
      * @param token	the token to accept and process
      */
     public void input(Token token) {
+      m_InputToken = token;
       if (m_Actor instanceof InputConsumer) {
 	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	  getFlowExecutionListeningSupporter().getFlowExecutionListener().preInput(m_Actor, token);
@@ -332,6 +336,24 @@ public class LoadBalancer
 	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	  getFlowExecutionListeningSupporter().getFlowExecutionListener().postInput(m_Actor);
       }
+    }
+
+    /**
+     * Returns whether an input token is currently present.
+     *
+     * @return		true if input token present
+     */
+    public boolean hasInput() {
+      return (m_InputToken != null);
+    }
+
+    /**
+     * Returns the current input token, if any.
+     *
+     * @return		the input token, null if none present
+     */
+    public Token currentInput() {
+      return m_InputToken;
     }
 
     /**
@@ -348,7 +370,9 @@ public class LoadBalancer
       result = m_Actor.execute();
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(m_Actor);
-      
+
+      m_InputToken = null;
+
       return result;
     }
     
@@ -895,6 +919,24 @@ public class LoadBalancer
 	// ignored
       }
     }
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_CurrentToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_CurrentToken;
   }
 
   /**

@@ -599,6 +599,24 @@ public abstract class AbstractTee
   }
 
   /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_InputToken != null);
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    return m_InputToken;
+  }
+
+  /**
    * Returns whether the token can be processed in the tee actor.
    *
    * @param token	the token to process
