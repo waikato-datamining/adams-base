@@ -300,7 +300,10 @@ public class Tree
     int		i;
     
     result = false;
-    
+
+    if (parent == null)
+      return result;
+
     for (i = 0; i < parent.getChildCount(); i++) {
       child = (Node) parent.getChildAt(i);
       if (child.getProperty().equals(path[index])) {
