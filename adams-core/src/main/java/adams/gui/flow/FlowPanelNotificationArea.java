@@ -279,6 +279,19 @@ public class FlowPanelNotificationArea
 	});
 	submenu.add(menuitem);
       }
+
+      submenu = new BaseMenu("Copy location");
+      menu.add(submenu);
+      for (final String path: paths) {
+	menuitem = new JMenuItem(path);
+	menuitem.addActionListener(new ActionListener() {
+	  @Override
+	  public void actionPerformed(ActionEvent e) {
+	    GUIHelper.copyToClipboard(path);
+	  }
+	});
+	submenu.add(menuitem);
+      }
     }
   }
 }
