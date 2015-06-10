@@ -475,6 +475,9 @@ public class Debug
     /** the GOE for adding/editing breakpoints. */
     protected GenericObjectEditorDialog m_DialogGOE;
 
+    /** whether to ignore updates. */
+    protected boolean m_IgnoreUpdates;
+
     /**
      * Initializes the members.
      */
@@ -484,6 +487,7 @@ public class Debug
 
       m_TableModelBreakpoints = null;
       m_DialogGOE             = null;
+      m_IgnoreUpdates         = false;
     }
 
     /**
@@ -561,7 +565,7 @@ public class Debug
      * @param value	the owner
      */
     public void setOwner(ControlPanel value) {
-      if ((m_TableModelBreakpoints == null) || (m_Owner !=  value)) {
+      if ((m_TableModelBreakpoints == null) || (m_Owner != value)) {
 	if (m_TableModelBreakpoints != null)
 	  m_TableModelBreakpoints.removeTableModelListener(this);
 	m_TableModelBreakpoints = new BreakpointTableModel(value);
@@ -780,6 +784,14 @@ public class Debug
       return result;
     }
 
+    public void setIgnoreUpdates(boolean value) {
+      m_IgnoreUpdates = value;
+    }
+
+    public boolean getIgnoreUpdates() {
+      return m_IgnoreUpdates;
+    }
+
     /**
      * Gets triggered if the table changes.
      *
@@ -787,6 +799,8 @@ public class Debug
      */
     @Override
     public void tableChanged(TableModelEvent e) {
+      if (m_IgnoreUpdates)
+	return;
       m_Owner.queueUpdate();
     }
   }
@@ -1143,6 +1157,10 @@ public class Debug
 	if (m_PanelInspectionToken != null)
 	  m_PanelInspectionToken.setCurrent(null);
       }
+      else {
+	if (m_PanelInspectionToken != null)
+	  m_PanelInspectionToken.setCurrent(getCurrentToken());
+      }
 
       if (getCurrentBreakpoint() != null) {
 	if (getCurrentBreakpoint().getDisabled()) {
@@ -1168,7 +1186,9 @@ public class Debug
 	  m_ButtonPauseResume.setText("Pause");
 	  m_ButtonPauseResume.setIcon(GUIHelper.getIcon("pause.gif"));
 	}
+	m_PanelBreakpoints.setIgnoreUpdates(true);
 	m_PanelBreakpoints.setOwner(this);
+	m_PanelBreakpoints.setIgnoreUpdates(false);
       }
     }
     
@@ -1506,9 +1526,11 @@ public class Debug
      * @param visible	if true then displayed, otherwise hidden
      */
     protected void showBreakpoints(boolean visible) {
-      if (m_PanelBreakpoints == null)
+      if (m_PanelBreakpoints == null) {
 	m_PanelBreakpoints = new BreakpointPanel();
-      m_PanelBreakpoints.setOwner(this);
+	m_PanelBreakpoints.setOwner(this);
+      }
+      m_PanelBreakpoints.refresh();
       setPanelVisible(m_PanelBreakpoints, "Breakpoints", visible);
     }
 
@@ -1591,12 +1613,6 @@ public class Debug
 	}
       }
       m_PanelExpressions.refreshAllExpressions();
-
-      if (m_PanelInspectionToken != null)
-	m_PanelInspectionToken.setCurrent(getCurrentToken());
-
-      if (m_ButtonInspectToken.isEnabled() && (getCurrentToken() == null))
-	inspectToken(false);
 
       if (m_PanelStorage != null)
 	m_PanelStorage.setHandler(getCurrentActor().getStorageHandler());
@@ -2141,6 +2157,9 @@ public class Debug
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook) {
     boolean	blocked;
 
+    if (m_Stopped || ((getOwner() != null) && getOwner().isStopped()))
+      return;
+
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName());
 
@@ -2171,6 +2190,9 @@ public class Debug
    */
   protected void triggered(AbstractBreakpoint point, Actor actor, String hook, Token token) {
     boolean	blocked;
+
+    if (m_Stopped || ((getOwner() != null) && getOwner().isStopped()))
+      return;
 
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName() + "\n\t" + token);
