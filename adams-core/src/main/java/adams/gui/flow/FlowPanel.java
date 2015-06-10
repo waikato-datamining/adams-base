@@ -40,9 +40,8 @@ import adams.env.FlowEditorPanelDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
-import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.execution.PathBreakpoint;
+import adams.flow.execution.AnyActorBreakpoint;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
@@ -160,7 +159,7 @@ public class FlowPanel
      * @throws Exception if unable to compute a result
      */
     protected Object doInBackground() throws Exception {
-      PathBreakpoint	breakpoint;
+      AnyActorBreakpoint breakpoint;
 
       m_Owner.update();
       m_Owner.cleanUp();
@@ -178,8 +177,7 @@ public class FlowPanel
 	  ((Flow) m_Flow).setParentComponent(m_Owner);
 	  if (m_Debug) {
 	    if (((Flow) m_Flow).firstActive() != null) {
-	      breakpoint = new PathBreakpoint();
-	      breakpoint.setPath(new ActorPath(((Flow) m_Flow).firstActive().getFullName()));
+	      breakpoint = new AnyActorBreakpoint();
 	      breakpoint.setOnPreExecute(true);
 	      ((Flow) m_Flow).addBreakpoint(breakpoint);
 	    }

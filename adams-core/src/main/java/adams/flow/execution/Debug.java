@@ -62,6 +62,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -442,7 +444,7 @@ public class Debug
    */
   public static class BreakpointPanel
     extends BasePanel
-    implements CleanUpHandler, FlowTreeHandler {
+    implements CleanUpHandler, FlowTreeHandler, TableModelListener {
 
     private static final long serialVersionUID = 8469709963860298334L;
 
@@ -560,9 +562,12 @@ public class Debug
      */
     public void setOwner(ControlPanel value) {
       if ((m_TableModelBreakpoints == null) || (m_Owner !=  value)) {
+	if (m_TableModelBreakpoints != null)
+	  m_TableModelBreakpoints.removeTableModelListener(this);
 	m_TableModelBreakpoints = new BreakpointTableModel(value);
 	m_TableBreakpoints.setModel(m_TableModelBreakpoints);
 	m_TableBreakpoints.setOptimalColumnWidth();
+	m_TableModelBreakpoints.addTableModelListener(this);
       }
       m_Owner = value;
       refresh();
@@ -712,6 +717,77 @@ public class Debug
     @Override
     public Tree getTree() {
       return getOwner().getTree();
+    }
+
+    /**
+     * Enables/disables step mode.
+     *
+     * @param enabled	if true step mode is enabled
+     */
+    public void setStepModeEnabled(boolean enabled) {
+      AnyActorBreakpoint	breakpoint;
+      List<AbstractBreakpoint>	breakpoints;
+
+      if ((getOwner() == null) || (getOwner().getOwner() == null))
+	return;
+
+      breakpoint = null;
+      for (AbstractBreakpoint bp: getOwner().getOwner().getBreakpoints()) {
+	if (bp instanceof AnyActorBreakpoint) {
+	  breakpoint = (AnyActorBreakpoint) bp;
+	  break;
+	}
+      }
+
+      // no need to add breakpoint?
+      if (!enabled && (breakpoint == null))
+	return;
+
+      if (breakpoint == null) {
+	breakpoint = new AnyActorBreakpoint();
+	breakpoint.setOnPreExecute(true);
+	breakpoints = new ArrayList<>(Arrays.asList(getOwner().getOwner().getBreakpoints()));
+	breakpoints.add(breakpoint);
+	getOwner().getOwner().setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+      }
+
+      breakpoint.setDisabled(!enabled);
+    }
+
+    /**
+     * Returns whether step mode is enabled.
+     *
+     * @return		true if step mode is enabled
+     */
+    public boolean isStepModeEnabled() {
+      boolean 			result;
+      AnyActorBreakpoint	breakpoint;
+
+      result = false;
+
+      if ((getOwner() != null) && (getOwner().getOwner() != null)) {
+	breakpoint = null;
+	for (AbstractBreakpoint bp: getOwner().getOwner().getBreakpoints()) {
+	  if (bp instanceof AnyActorBreakpoint) {
+	    breakpoint = (AnyActorBreakpoint) bp;
+	    break;
+	  }
+	}
+	if (breakpoint != null)
+	  result = !breakpoint.getDisabled();
+      }
+
+      return result;
+    }
+
+    /**
+     * Gets triggered if the table changes.
+     *
+     * @param e		the event
+     */
+    @Override
+    public void tableChanged(TableModelEvent e) {
+      m_Owner.queueUpdate();
     }
   }
 
@@ -1068,6 +1144,21 @@ public class Debug
 	  m_PanelInspectionToken.setCurrent(null);
       }
 
+      if (getCurrentBreakpoint() != null) {
+	if (getCurrentBreakpoint().getDisabled()) {
+	  m_ButtonToggle.setText("Enable");
+	  m_ButtonToggle.setMnemonic('E');
+	  m_ButtonToggle.setToolTipText("Enable current breakpoint");
+	  m_ButtonToggle.setIcon(GUIHelper.getIcon("debug.png"));
+	}
+	else {
+	  m_ButtonToggle.setText("Disable");
+	  m_ButtonToggle.setMnemonic('D');
+	  m_ButtonToggle.setToolTipText("Disable current breakpoint");
+	  m_ButtonToggle.setIcon(GUIHelper.getIcon("debug_off.png"));
+	}
+      }
+
       if (m_Owner != null) {
 	if (m_Owner.isBlocked() || m_Owner.isStepMode()) {
 	  m_ButtonPauseResume.setText("Resume");
@@ -1254,6 +1345,28 @@ public class Debug
     }
 
     /**
+     * Enables/disables step mode.
+     *
+     * @param enabled	if true step mode is enabled
+     */
+    public void setStepModeEnabled(boolean enabled) {
+      if (m_PanelBreakpoints != null)
+	m_PanelBreakpoints.setStepModeEnabled(enabled);
+    }
+
+    /**
+     * Returns whether step mode is enabled.
+     *
+     * @return		true if step mode is enabled
+     */
+    public boolean isStepModeEnabled() {
+      if (m_PanelBreakpoints != null)
+	return m_PanelBreakpoints.isStepModeEnabled();
+      else
+	return false;
+    }
+
+    /**
      * Disable/enable the breakpoint.
      */
     protected void disableEnableBreakpoint() {
@@ -1261,19 +1374,6 @@ public class Debug
 	return;
 
       getCurrentBreakpoint().setDisabled(!getCurrentBreakpoint().getDisabled());
-
-      if (getCurrentBreakpoint().getDisabled()) {
-	m_ButtonToggle.setText("Enable");
-	m_ButtonToggle.setMnemonic('E');
-	m_ButtonToggle.setToolTipText("Enable current breakpoint");
-	m_ButtonToggle.setIcon(GUIHelper.getIcon("debug.png"));
-      }
-      else {
-	m_ButtonToggle.setText("Disable");
-	m_ButtonToggle.setMnemonic('D');
-	m_ButtonToggle.setToolTipText("Disable current breakpoint");
-	m_ButtonToggle.setIcon(GUIHelper.getIcon("debug_off.png"));
-      }
 
       queueUpdate();
     }
@@ -1622,9 +1722,6 @@ public class Debug
   /** the current actor. */
   protected transient Actor m_Current;
 
-  /** whether we're in step mode. */
-  protected boolean m_StepMode;
-
   /** whether we can execute the next step. */
   protected boolean m_ExecuteNext;
 
@@ -1921,7 +2018,8 @@ public class Debug
    * @param value	true if step mode
    */
   public void setStepMode(boolean value) {
-    m_StepMode = value;
+    if (m_DebugPanel != null)
+      m_DebugPanel.setStepModeEnabled(value);
   }
 
   /**
@@ -1930,7 +2028,10 @@ public class Debug
    * @return		true if step mode
    */
   public boolean isStepMode() {
-    return m_StepMode;
+    if (m_DebugPanel != null)
+      return m_DebugPanel.isStepModeEnabled();
+    else
+      return false;
   }
 
   /**
@@ -1949,8 +2050,7 @@ public class Debug
   public void startListening() {
     super.startListening();
 
-    m_StepMode = m_StepByStep;
-    m_Stopped  = false;
+    m_Stopped = false;
   }
 
   /**
@@ -1966,7 +2066,8 @@ public class Debug
     m_DebugPanel.setOwner(this);
     for (i = 0; i < m_Watches.length; i++)
       m_DebugPanel.addWatch(m_Watches[i].getValue(), m_WatchTypes[i]);
-    
+    setStepMode(m_StepByStep);
+
     return m_DebugPanel;
   }
   
@@ -2129,30 +2230,20 @@ public class Debug
    */
   @Override
   public void preExecute(Actor actor) {
-    boolean	triggered;
     Token	token;
 
-    triggered = false;
-    token     = null;
+    token = null;
     if (actor instanceof InputConsumer)
       token = ((InputConsumer) actor).currentInput();
 
     for (AbstractBreakpoint point : m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreExecute(actor)) {
-	triggered = true;
 	if (token == null)
 	  triggered(point, actor, "preExecute");
 	else
 	  triggered(point, actor, "preExecute", token);
 	break;
       }
-    }
-
-    if (!triggered && m_StepMode) {
-      if (token == null)
-	triggered(null, actor, "preExecute");
-      else
-	triggered(null, actor, "preExecute", token);
     }
   }
 
