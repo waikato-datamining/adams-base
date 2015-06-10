@@ -175,7 +175,7 @@ public class InspectionPanel
    *
    * @param value	the object to inspect
    */
-  public void setCurrent(Object value) {
+  public synchronized void setCurrent(Object value) {
     m_Object = value;
     m_Tree.setObject(m_Object);
     m_TextPanel.setContent("");
