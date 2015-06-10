@@ -72,7 +72,7 @@ public abstract class AbstractObjectExporter
 	m_ExporterClasses[i] = Class.forName(m_Exporters[i]);
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate inspection exporter '" + m_Exporters[i] + "': ");
+	System.err.println("Failed to instantiate object exporter '" + m_Exporters[i] + "': ");
 	e.printStackTrace();
       }
     }
@@ -107,7 +107,7 @@ public abstract class AbstractObjectExporter
 	result.add((AbstractObjectExporter) exporters.get(i).newInstance());
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate inspection exporter '" + exporters.get(i).getName() + "':");
+	System.err.println("Failed to instantiate object exporter '" + exporters.get(i).getName() + "':");
 	e.printStackTrace();
       }
     }
@@ -145,7 +145,7 @@ public abstract class AbstractObjectExporter
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate inspection exporter '" + m_ExporterClasses[i].getName() + "':");
+	System.err.println("Failed to instantiate object exporter '" + m_ExporterClasses[i].getName() + "':");
 	e.printStackTrace();
       }
     }
