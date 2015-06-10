@@ -15,27 +15,9 @@
 
 /**
  * StoragePanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
@@ -56,6 +38,23 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.visualization.debug.InspectionPanel;
 import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Displays the current items stored in the temp storage of a flow.
@@ -374,6 +373,10 @@ public class StoragePanel
    * Brings up the dialog for inspecting an item.
    */
   protected void inspect() {
+    String	title;
+    String	cache;
+    String	name;
+
     if (m_DialogInspect == null) {
       m_PanelInspect = new InspectionPanel();
       if (getParentDialog() != null)
@@ -384,9 +387,11 @@ public class StoragePanel
       m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
       m_DialogInspect.setLocationRelativeTo(this);
     }
-    m_PanelInspect.setCurrent(m_TableModel.getObject(
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1)));
+    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+    title = "Inspect (cache: " + (((cache == null) || cache.isEmpty()) ? "-none-" : cache) + "/name: " + name + ")";
+    m_DialogInspect.setTitle(title);
+    m_PanelInspect.setCurrent(m_TableModel.getObject(cache, name));
     m_DialogInspect.setSize(800, 600);
     m_DialogInspect.setVisible(true);
   }

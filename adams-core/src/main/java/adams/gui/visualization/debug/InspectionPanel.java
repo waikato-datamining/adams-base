@@ -24,18 +24,15 @@ import adams.core.SizeOf;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.dialog.TextPanel;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
 
 import javax.swing.JCheckBox;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.TreeSelectionEvent;
@@ -53,8 +50,7 @@ import java.awt.event.ActionListener;
  * @version $Revision$
  */
 public class InspectionPanel
-  extends BasePanel
-  implements MenuBarProvider {
+  extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -3626608063857468806L;
@@ -67,9 +63,6 @@ public class InspectionPanel
 
   /** the search panel. */
   protected SearchPanel m_PanelSearch;
-  
-  /** for displaying the string representation of a property. */
-  protected TextPanel m_TextPanel;
 
   /** the split pane to use for displaying the tree and the associated data. */
   protected BaseSplitPane m_SplitPane;
@@ -124,8 +117,9 @@ public class InspectionPanel
 	if (m_Tree.getSelectionPath() == null)
 	  return;
 	Node node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
-	m_TextPanel.setContent(node.toRepresentation());
-	m_TextPanel.setCaretPosition(0);
+	m_PanelContent.removeAll();
+	AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0).render(
+	  node.getUserObject(), m_PanelContent);
 	m_LastPath = node.getPropertyPath();
 	updateSize(node.getUserObject());
       }
@@ -141,12 +135,6 @@ public class InspectionPanel
     panel.add(m_PanelSearch, BorderLayout.SOUTH);
     
     m_PanelContent = new BasePanel(new BorderLayout());
-
-    m_TextPanel = new TextPanel();
-    m_TextPanel.setTextFont(GUIHelper.getMonospacedFont());
-    m_TextPanel.setCanOpenFiles(false);
-    m_TextPanel.setUpdateParentTitle(false);
-    m_PanelContent.add(m_TextPanel, BorderLayout.CENTER);
 
     m_PanelSize = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelSize.setVisible(SizeOf.isSizeOfAgentAvailable());
@@ -178,7 +166,7 @@ public class InspectionPanel
   public synchronized void setCurrent(Object value) {
     m_Object = value;
     m_Tree.setObject(m_Object);
-    m_TextPanel.setContent("");
+    m_PanelContent.removeAll();
     updateSize(null);
     if (m_LastPath.length > 0)
       m_Tree.selectPropertyPath(m_LastPath);
@@ -193,15 +181,6 @@ public class InspectionPanel
    */
   public Object getCurrent() {
     return m_Object;
-  }
-
-  /**
-   * Creates a menu bar (singleton per panel object). Can be used in frames.
-   *
-   * @return		the menu bar
-   */
-  public JMenuBar getMenuBar() {
-    return m_TextPanel.getMenuBar();
   }
 
   /**
