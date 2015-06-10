@@ -1060,6 +1060,7 @@ public class Debug
       m_ButtonSource.setEnabled(actorPresent && !stopped && blocked);
       
       m_PanelCondition.setEnabled(actorPresent && !stopped && blocked);
+      m_GOEPanelCondition.setEnabled(m_PanelCondition.isEnabled());
       m_ButtonActorPath.setEnabled(m_TextActorPath.getText().length() > 0);
 
       if (!m_ButtonInspectToken.isEnabled()) {
@@ -1472,11 +1473,13 @@ public class Debug
       m_TextHookMethod.setText(getCurrentHook());
 
       if (getCurrentCondition() == null) {
-	m_PanelCondition.setVisible(false);
+	m_PanelCondition.setEnabled(false);
+	m_GOEPanelCondition.setEnabled(false);
       }
       else {
+	m_PanelCondition.setEnabled(true);
+	m_GOEPanelCondition.setEnabled(true);
 	m_GOEPanelCondition.setCurrent(getCurrentCondition().shallowCopy());
-	m_PanelCondition.setVisible(true);
       }
 
       // combine watches
