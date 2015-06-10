@@ -301,6 +301,11 @@ public class SubProcess
       return new Class[]{Unknown.class};
   }
 
+  /**
+   * The method that accepts the input token and then processes it.
+   *
+   * @param token	the token to accept and process
+   */
   @Override
   public void input(Token token) {
     super.input(token);
