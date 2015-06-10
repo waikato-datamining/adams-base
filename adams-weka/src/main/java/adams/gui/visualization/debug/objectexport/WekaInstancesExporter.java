@@ -22,6 +22,7 @@ package adams.gui.visualization.debug.objectexport;
 
 import adams.core.ClassLocator;
 import adams.core.Utils;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSink;
@@ -29,7 +30,7 @@ import weka.core.converters.ConverterUtils.DataSink;
 import java.io.File;
 
 /**
- * Exports Weka Instances objects.
+ * Exports Weka Instances/Instance objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -66,7 +67,8 @@ public class WekaInstancesExporter
    */
   @Override
   public boolean handles(Class cls) {
-    return (ClassLocator.isSubclass(Instances.class, cls));
+    return (ClassLocator.isSubclass(Instances.class, cls))
+      || (ClassLocator.hasInterface(Instance.class, cls));
   }
 
   /**
@@ -78,9 +80,26 @@ public class WekaInstancesExporter
    */
   @Override
   protected String doExport(Object obj, File file) {
+    Instances		data;
+    Instance		inst;
+
     try {
-      DataSink.write(file.getAbsolutePath(), (Instances) obj);
-      return null;
+      if (obj instanceof Instances) {
+	DataSink.write(file.getAbsolutePath(), (Instances) obj);
+	return null;
+      }
+      else {
+	inst = (Instance) obj;
+	if (inst.dataset() != null) {
+	  data = new Instances(inst.dataset());
+	  data.add((Instance) inst.copy());
+	  DataSink.write(file.getAbsolutePath(), data);
+	  return null;
+	}
+	else {
+	  return "Instance has no dataset associated, cannot export as ARFF!";
+	}
+      }
     }
     catch (Exception e) {
       return "Failed to write Instances to '" + file + "'!\n" + Utils.throwableToString(e);

@@ -22,6 +22,7 @@ package adams.gui.visualization.debug.objectrenderer;
 
 import adams.core.ClassLocator;
 import adams.gui.core.BaseScrollPane;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.gui.arffviewer.ArffSortedTableModel;
 import weka.gui.arffviewer.ArffTable;
@@ -30,7 +31,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 /**
- * Renders Weka Instances objects.
+ * Renders Weka Instances/Instance objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -48,7 +49,8 @@ public class WekaInstancesRenderer
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(Instances.class, cls);
+    return ClassLocator.isSubclass(Instances.class, cls)
+      || ClassLocator.hasInterface(Instance.class, cls);
   }
 
   /**
@@ -60,14 +62,32 @@ public class WekaInstancesRenderer
    */
   @Override
   protected String doRender(Object obj, JPanel panel) {
-    Instances		inst;
+    Instance 		inst;
+    Instances 		data;
     ArffTable		table;
     BaseScrollPane	scrollPane;
+    PlainTextRenderer	plain;
 
-    inst       = (Instances) obj;
-    table      = new ArffTable(new ArffSortedTableModel(inst));
-    scrollPane = new BaseScrollPane(table);
-    panel.add(scrollPane, BorderLayout.CENTER);
+    if (obj instanceof Instances) {
+      data = (Instances) obj;
+      table = new ArffTable(new ArffSortedTableModel(data));
+      scrollPane = new BaseScrollPane(table);
+      panel.add(scrollPane, BorderLayout.CENTER);
+    }
+    else {
+      inst = (Instance) obj;
+      if (inst.dataset() != null) {
+	data = new Instances(inst.dataset());
+	data.add((Instance) inst.copy());
+	table      = new ArffTable(new ArffSortedTableModel(data));
+	scrollPane = new BaseScrollPane(table);
+	panel.add(scrollPane, BorderLayout.CENTER);
+      }
+      else {
+	plain = new PlainTextRenderer();
+	plain.render(obj, panel);
+      }
+    }
 
     return null;
   }
