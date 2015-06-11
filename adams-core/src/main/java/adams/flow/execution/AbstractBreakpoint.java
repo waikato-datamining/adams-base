@@ -24,7 +24,7 @@ import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.flow.execution.Debug.View;
+import adams.flow.execution.debug.View;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
 /**

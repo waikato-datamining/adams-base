@@ -29,7 +29,7 @@ import adams.flow.condition.bool.Expression;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Unknown;
-import adams.flow.execution.Debug.View;
+import adams.flow.execution.debug.View;
 import adams.flow.execution.PathBreakpoint;
 import adams.flow.transformer.AbstractTransformer;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
