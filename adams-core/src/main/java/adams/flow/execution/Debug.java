@@ -1802,7 +1802,7 @@ public class Debug
    * @return		the default width
    */
   protected int getDefaultWidth() {
-    return 800;
+    return 900;
   }
 
   /**
