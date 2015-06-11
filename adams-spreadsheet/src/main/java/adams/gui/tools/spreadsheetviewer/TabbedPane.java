@@ -50,6 +50,9 @@ public class TabbedPane
   /** prefix for new titles. */
   public final static String PREFIX_TITLE = "new";
 
+  /** prefix for modified titles. */
+  public final static String PREFIX_MODIFIED = "*";
+
   /** the owning viewer. */
   protected SpreadSheetViewerPanel m_Owner;
   
@@ -599,5 +602,37 @@ public class TabbedPane
     panel.cleanUp();
 
     super.removeTabAt(index);
+  }
+
+  /**
+   * Updates the title of the currently selected tab, taking the modified
+   * state into account.
+   */
+  public void updateCurrentTab() {
+    updateTab(getSelectedIndex());
+  }
+
+  /**
+   * Updates the tab title at the specified index, taking the modified
+   * state into account.
+   *
+   * @param index	the index of the tab
+   */
+  public void updateTab(int index) {
+    String	title;
+
+    if (getPanelAt(index) == null)
+      return;
+
+    title = getTitleAt(index);
+    if (isModifiedAt(index)) {
+      if (!title.startsWith(PREFIX_MODIFIED))
+	title = PREFIX_MODIFIED + title;
+    }
+    else {
+      if (title.startsWith(PREFIX_MODIFIED))
+	title = title.substring(PREFIX_MODIFIED.length());
+    }
+    setTitleAt(index, title);
   }
 }

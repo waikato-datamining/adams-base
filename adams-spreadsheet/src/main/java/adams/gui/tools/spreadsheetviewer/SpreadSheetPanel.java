@@ -508,6 +508,8 @@ public class SpreadSheetPanel
   public void tableChanged(TableModelEvent e) {
     if (getViewer() != null)
       getViewer().updateMenu();
+    if (getOwner() != null)
+      getOwner().updateCurrentTab();
   }
 
   /**
