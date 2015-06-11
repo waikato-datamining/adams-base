@@ -557,16 +557,16 @@ public class TimeseriesExplorer
 	    if (isFlow) {
 	      if (m_MenuItemOverlayFlowOutput.isSelected())
 		getScriptingEngine().add(
-		    TimeseriesExplorer.this,
+		    getTimeseriesPanel(),
 		    RunFlowOverlay.ACTION + " " + file.getAbsolutePath());
 	      else
 		getScriptingEngine().add(
-		    TimeseriesExplorer.this,
+		    getTimeseriesPanel(),
 		    RunFlow.ACTION + " " + file.getAbsolutePath());
 	    }
 	    else {
 	      getScriptingEngine().add(
-		  TimeseriesExplorer.this,
+		  getTimeseriesPanel(),
 		  file);
 	    }
 	  }
@@ -721,11 +721,11 @@ public class TimeseriesExplorer
 	public void actionPerformed(ActionEvent e) {
 	  if (m_MenuItemEnableUndo.isSelected())
 	    getScriptingEngine().add(
-		TimeseriesExplorer.this,
+		getTimeseriesPanel(),
 		EnableUndo.ACTION);
 	  else
 	    getScriptingEngine().add(
-		TimeseriesExplorer.this,
+		getTimeseriesPanel(),
 		DisableUndo.ACTION);
 	}
       });
@@ -957,7 +957,7 @@ public class TimeseriesExplorer
   public void clearData() {
     getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
     getScriptingEngine().add(
-	TimeseriesExplorer.this,
+	getTimeseriesPanel(),
 	ClearData.ACTION);
   }
 
@@ -981,7 +981,7 @@ public class TimeseriesExplorer
       reader.setInput(files[0]);
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
-	this, AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
+	getTimeseriesPanel(), AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
     }
     else {
       opts = new ArrayList<>();
@@ -990,7 +990,7 @@ public class TimeseriesExplorer
 	opts.add(files[i].toString());
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
-	this, AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[opts.size()])));
+	getTimeseriesPanel(), AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[opts.size()])));
     }
   }
 
@@ -1196,11 +1196,11 @@ public class TimeseriesExplorer
 
     if (m_FilterOverlayOriginalData)
       getScriptingEngine().add(
-	  TimeseriesExplorer.this,
+	  getTimeseriesPanel(),
 	  FilterOverlay.ACTION + " " + OptionUtils.getCommandLine(m_CurrentFilter));
     else
       getScriptingEngine().add(
-	  TimeseriesExplorer.this,
+	  getTimeseriesPanel(),
 	  Filter.ACTION + " " + OptionUtils.getCommandLine(m_CurrentFilter));
   }
 
