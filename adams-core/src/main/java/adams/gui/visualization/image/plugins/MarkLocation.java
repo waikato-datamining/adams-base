@@ -89,7 +89,7 @@ public class MarkLocation
    */
   @Override
   public boolean canExecute(ImagePanel panel) {
-    return (panel.getCurrentImage() != null);
+    return (panel != null) && (panel.getCurrentImage() != null);
   }
 
   /**
