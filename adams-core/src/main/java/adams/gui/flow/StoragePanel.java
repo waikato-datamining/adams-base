@@ -27,17 +27,15 @@ import adams.flow.control.StorageName;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.visualization.debug.InspectionPanel;
-import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
+import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -269,20 +267,33 @@ public class StoragePanel
 
   /** the panel with the preview. */
   protected JPanel m_PanelPreview;
-  
-  /** the preview text. */
-  protected BaseTextArea m_TextAreaPreview;
+
+  /** the split pane for table and preview. */
+  protected BaseSplitPane m_SplitPane;
 
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    JPanel	panelSouth;
+    JPanel panelTable;
     
     super.initGUI();
 
     setLayout(new BorderLayout());
+
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setDividerLocation(150);
+    add(m_SplitPane, BorderLayout.CENTER);
+
+    // preview
+    m_PanelPreview = new JPanel(new BorderLayout());
+    m_SplitPane.setBottomComponent(m_PanelPreview);
+    m_SplitPane.setBottomComponentHidden(false);
+
+    // table
+    panelTable = new JPanel(new BorderLayout());
+    m_SplitPane.setTopComponent(panelTable);
 
     m_TableModel = new TableModel();
     m_Table      = new SortableAndSearchableTableWithButtons(m_TableModel);
@@ -294,7 +305,7 @@ public class StoragePanel
 	updatePreview();
       }
     });
-    add(m_Table, BorderLayout.CENTER);
+    panelTable.add(m_Table, BorderLayout.CENTER);
 
     m_ButtonInspect = new JButton("Inspect...");
     m_ButtonInspect.setMnemonic('I');
@@ -311,22 +322,13 @@ public class StoragePanel
     m_CheckBoxPreview.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	m_PanelPreview.setVisible(!m_PanelPreview.isVisible());
+	m_SplitPane.setBottomComponentHidden(!m_CheckBoxPreview.isSelected());
 	updatePreview();
       }
     });
     m_Table.addToButtonsPanel(m_CheckBoxPreview);
 
-    panelSouth = new JPanel(new BorderLayout());
-    add(panelSouth, BorderLayout.SOUTH);
-    
-    m_PanelPreview = new JPanel(new BorderLayout());
-    panelSouth.add(m_PanelPreview, BorderLayout.CENTER);
-    
-    m_TextAreaPreview = new BaseTextArea(10, 80);
-    m_TextAreaPreview.setFont(GUIHelper.getMonospacedFont());
-    m_PanelPreview.add(new BaseScrollPane(m_TextAreaPreview), BorderLayout.CENTER);
-    
+    // search
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
     m_PanelSearch.addSearchListener(new SearchListener() {
       public void searchInitiated(SearchEvent e) {
@@ -335,7 +337,7 @@ public class StoragePanel
 	    e.getParameters().isRegExp());
       }
     });
-    panelSouth.add(m_PanelSearch, BorderLayout.SOUTH);
+    panelTable.add(m_PanelSearch, BorderLayout.SOUTH);
 
     updateButtons();
   }
@@ -351,8 +353,8 @@ public class StoragePanel
    * Updates the preview.
    */
   protected void updatePreview() {
-    Object					obj;
-    List<AbstractObjectPlainTextRenderer>	renderer;
+    Object			obj;
+    AbstractObjectRenderer	renderer;
     
     if (!m_PanelPreview.isVisible())
       return;
@@ -361,12 +363,13 @@ public class StoragePanel
     obj = m_TableModel.getObject(
 	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
 	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
-    
-    renderer = AbstractObjectPlainTextRenderer.getRenderer(obj);
-    if (renderer.size() > 0)
-      m_TextAreaPreview.setText(renderer.get(0).render(obj));
-    else
-      m_TextAreaPreview.setText("" + obj);
+
+    m_PanelPreview.removeAll();
+    renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
+    renderer.render(obj, m_PanelPreview);
+    m_PanelPreview.invalidate();
+    m_PanelPreview.validate();
+    m_PanelPreview.repaint();
   }
 
   /**
