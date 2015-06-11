@@ -45,6 +45,7 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.TreePopupAction;
+import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
@@ -1733,6 +1734,9 @@ public class Tree
     Node		child;
     int			index;
     int			i;
+    int			n;
+    List<Node> 		callables;
+    Node		callable;
 
     result = null;
 
@@ -1752,7 +1756,30 @@ public class Tree
 	result = locate(child, path.getChildPath());
     }
     else {
-      ConsolePanel.getSingleton().append(OutputType.ERROR, "Malformed path?");
+      // check for callable actors
+      callables = FlowHelper.findCallableActorsHandler(parent, parent);
+      child     = null;
+      for (i = 0; i < callables.size(); i++) {
+	callable = callables.get(i);
+	for (n = 0; n < callable.getChildCount(); n++) {
+	  child = (Node) callable.getChildAt(n);
+	  if (child.getActor().getName().equals(path.getFirstPathComponent())) {
+	    index = n;
+	    break;
+	  }
+	}
+	if (index > -1)
+	  break;
+      }
+      if (index > -1) {
+	if (path.getPathCount() == 1)
+	  result = child;
+	else
+	  result = locate(child, path.getChildPath());
+      }
+      else {
+	ConsolePanel.getSingleton().append(OutputType.ERROR, "Malformed path?\n");
+      }
     }
 
     return result;
