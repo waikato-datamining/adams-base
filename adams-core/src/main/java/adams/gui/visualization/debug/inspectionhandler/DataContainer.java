@@ -15,13 +15,13 @@
 
 /**
  * DataContainer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLocator;
+
+import java.util.Hashtable;
 
 /**
  * Provides further insight into data containers.
@@ -56,6 +56,7 @@ public class DataContainer
     result = new Hashtable<String,Object>();
 
     result.put("data points", ((adams.data.container.DataContainer) obj).toArray());
+    result.put("# data points", ((adams.data.container.DataContainer) obj).size());
 
     return result;
   }
