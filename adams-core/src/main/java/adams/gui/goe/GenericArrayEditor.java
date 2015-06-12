@@ -15,7 +15,7 @@
 
 /*
  *    GenericArrayEditor.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -217,6 +217,9 @@ public class GenericArrayEditor
 
   /** The property editor for the class we are editing. */
   protected PropertyEditor m_ElementEditor;
+
+  /** whether the objects are wrapped with BaseObject. */
+  protected boolean m_IsPrimitive;
 
   /** Click this to delete the selected array values. */
   protected JButton m_ButtonRemove;
@@ -504,6 +507,7 @@ public class GenericArrayEditor
   protected void updateEditorType(Object o) {
     Class 				elementClass;
     PropertyEditor 			editor;
+    boolean				primitive;
     Component 				view;
     ListCellRenderer 			lcr;
     AbstractGenericObjectEditorHandler 	handler;
@@ -522,12 +526,16 @@ public class GenericArrayEditor
     m_ElementEditor = null;
     m_View          = null;
     m_ListModel     = null;
+    m_IsPrimitive   = false;
     m_ButtonAdd.setIcon(GUIHelper.getIcon("add.gif"));
     removeAll();
 
     if ((o != null) && (o.getClass().isArray())) {
       elementClass = o.getClass().getComponentType();
-      editor       = PropertyEditorManager.findEditor(elementClass);
+      primitive    = EditorHelper.isPrimitive(elementClass);
+      if (primitive)
+	elementClass = EditorHelper.getWrapperClass(elementClass);
+      editor = PropertyEditorManager.findEditor(elementClass);
       view         = null;
       lcr          = new DefaultListCellRenderer();
       if (editor != null) {
@@ -540,7 +548,10 @@ public class GenericArrayEditor
 	//when we do getAsText() in the constructor of
 	//PropertyValueSelector()
 	if (Array.getLength(o) > 0) {
-	  editor.setValue(Array.get(o,0));
+	  if (primitive)
+	    editor.setValue(EditorHelper.wrapPrimitive(Array.get(o,0)));
+	  else
+	    editor.setValue(Array.get(o,0));
 	}
 	else {
 	  if (editor instanceof GenericObjectEditor) {
@@ -562,6 +573,7 @@ public class GenericArrayEditor
 	    }
 	    catch(Exception ex) {
 	      m_ElementEditor = null;
+	      m_IsPrimitive   = false;
 	      m_View          = null;
 	      ex.printStackTrace();
 	      add(m_Label, BorderLayout.CENTER);
@@ -585,8 +597,7 @@ public class GenericArrayEditor
       }
 
       if (view == null) {
-	System.err.println("No property editor for class: "
-	    + elementClass.getName());
+	System.err.println("No property editor for class: " + elementClass.getName());
       }
       else {
 	panel = new JPanel();
@@ -596,14 +607,21 @@ public class GenericArrayEditor
 
 	m_ElementEditor = editor;
 	m_View          = view;
+	m_IsPrimitive   = primitive;
 
 	// Create the ListModel and populate it
 	m_ListModel       = new DefaultListModel();
 	m_ListModelBackup = new DefaultListModel();
 	m_ElementClass = elementClass;
 	for (i = 0; i < Array.getLength(o); i++) {
-	  m_ListModel.addElement(Utils.deepCopy(Array.get(o,i)));
-	  m_ListModelBackup.addElement(Utils.deepCopy(Array.get(o,i)));
+	  if (primitive) {
+	    m_ListModel.addElement(EditorHelper.wrapPrimitive(Utils.deepCopy(Array.get(o, i))));
+	    m_ListModelBackup.addElement(EditorHelper.wrapPrimitive(Utils.deepCopy(Array.get(o, i))));
+	  }
+	  else {
+	    m_ListModel.addElement(Utils.deepCopy(Array.get(o, i)));
+	    m_ListModelBackup.addElement(Utils.deepCopy(Array.get(o, i)));
+	  }
 	}
 	m_ElementList.getComponent().setCellRenderer(lcr);
 	m_ElementList.setModel(m_ListModel);
@@ -693,9 +711,16 @@ public class GenericArrayEditor
 
     // Convert the listmodel to an array and return it.
     length = m_ListModel.getSize();
-    result = Array.newInstance(m_ElementClass, length);
-    for (i = 0; i < length; i++)
-      Array.set(result, i, Utils.deepCopy(m_ListModel.elementAt(i)));
+    if (m_IsPrimitive)
+      result = Array.newInstance(EditorHelper.getPrimitiveClass(m_ElementClass), length);
+    else
+      result = Array.newInstance(m_ElementClass, length);
+    for (i = 0; i < length; i++) {
+      if (m_IsPrimitive)
+	Array.set(result, i, EditorHelper.unwrapPrimitive(Utils.deepCopy(m_ListModel.elementAt(i))));
+      else
+	Array.set(result, i, Utils.deepCopy(m_ListModel.elementAt(i)));
+    }
 
     return result;
   }

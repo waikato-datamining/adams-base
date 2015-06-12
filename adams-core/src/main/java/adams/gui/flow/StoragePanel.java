@@ -34,6 +34,7 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.InspectionPanel;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
@@ -46,6 +47,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -213,6 +215,30 @@ public class StoragePanel
     }
 
     /**
+     * Sets the value at the specified position.
+     *
+     * @param aValue		the value to set
+     * @param rowIndex		the row of the cell
+     * @param columnIndex	the column of the cell
+     */
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+      String	cache;
+      String	name;
+
+      if (columnIndex == 2) {
+	cache = (String) getValueAt(rowIndex, 0);
+	name  = (String) getValueAt(rowIndex, 1);
+	if ((cache == null) || cache.isEmpty())
+	  m_Storage.put(new StorageName(name), aValue);
+	else
+	  m_Storage.put(cache, new StorageName(name), aValue);
+      }
+
+      fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    /**
      * Returns the class of the column.
      *
      * @param columnIndex	the index of the column
@@ -252,6 +278,9 @@ public class StoragePanel
 
   /** the button for inspecting an item. */
   protected JButton m_ButtonInspect;
+
+  /** the button for editing an item. */
+  protected JButton m_ButtonEdit;
 
   /** the checkbox for previewing items. */
   protected JCheckBox m_CheckBoxPreview;
@@ -316,7 +345,16 @@ public class StoragePanel
     });
     m_Table.addToButtonsPanel(m_ButtonInspect);
     m_Table.setDoubleClickButton(m_ButtonInspect);
-    
+
+    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit.setMnemonic('E');
+    m_ButtonEdit.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	edit();
+      }
+    });
+    m_Table.addToButtonsPanel(m_ButtonEdit);
+
     m_CheckBoxPreview = new JCheckBox("Preview");
     m_CheckBoxPreview.setSelected(true);
     m_CheckBoxPreview.addActionListener(new ActionListener() {
@@ -341,12 +379,19 @@ public class StoragePanel
 
     updateButtons();
   }
-  
+
   /**
    * Updates the enabled state of the buttons.
    */
   protected void updateButtons() {
-    m_ButtonInspect.setEnabled(m_Table.getSelectedRowCount() == 1);
+    int			selCount;
+    Object		selObj;
+
+    selCount = m_Table.getSelectedRowCount();
+    selObj   = getSelectedObject();
+
+    m_ButtonInspect.setEnabled(selCount == 1);
+    m_ButtonEdit.setEnabled((selCount == 1) && canEdit(selObj));
   }
 
   /**
@@ -373,13 +418,45 @@ public class StoragePanel
   }
 
   /**
-   * Brings up the dialog for inspecting an item.
+   * Returns the ID of the currently selected object.
+   *
+   * @return		the ID, null if none selected
    */
-  protected void inspect() {
-    String	title;
+  protected String getSelectedObjectID() {
     String	cache;
     String	name;
 
+    if (m_Table.getSelectedRow() == -1)
+      return null;
+
+    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+
+    return "cache: " + (((cache == null) || cache.isEmpty()) ? "-none-" : cache) + "/name: " + name;
+  }
+
+  /**
+   * Returns the currently selected object.
+   *
+   * @return		the object, null if none selected
+   */
+  protected Object getSelectedObject() {
+    String	cache;
+    String	name;
+
+    if (m_Table.getSelectedRow() == -1)
+      return null;
+
+    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+
+    return m_TableModel.getObject(cache, name);
+  }
+
+  /**
+   * Brings up the dialog for inspecting an item.
+   */
+  protected void inspect() {
     if (m_DialogInspect == null) {
       m_PanelInspect = new InspectionPanel();
       if (getParentDialog() != null)
@@ -390,13 +467,37 @@ public class StoragePanel
       m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
       m_DialogInspect.setLocationRelativeTo(this);
     }
-    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
-    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
-    title = "Inspect (cache: " + (((cache == null) || cache.isEmpty()) ? "-none-" : cache) + "/name: " + name + ")";
-    m_DialogInspect.setTitle(title);
-    m_PanelInspect.setCurrent(m_TableModel.getObject(cache, name));
+    m_DialogInspect.setTitle("Inspect (" + getSelectedObjectID() + ")");
+    m_PanelInspect.setCurrent(getSelectedObject());
     m_DialogInspect.setSize(800, 600);
     m_DialogInspect.setVisible(true);
+  }
+
+  /**
+   * Returns whether the object can be edited.
+   *
+   * @param obj		the object to check
+   * @return		true if editable
+   */
+  protected boolean canEdit(Object obj) {
+    if (obj == null)
+      return false;
+    if (obj.getClass().isArray())
+      return true;
+    return (PropertyEditorManager.findEditor(obj.getClass()) != null);
+  }
+
+  /**
+   * Brings up the dialog for editing an item.
+   */
+  protected void edit() {
+    Object	newObj;
+
+    newObj = EditorHelper.simpleEdit(this, getSelectedObject(), getSelectedObjectID());
+    if (newObj != null) {
+      m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 2);
+      updatePreview();
+    }
   }
 
   /**

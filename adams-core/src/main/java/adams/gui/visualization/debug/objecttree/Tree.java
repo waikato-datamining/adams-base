@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyEditorManager;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.Hashtable;
@@ -67,10 +68,10 @@ public class Tree
 
   /** the search string. */
   protected String m_SearchString;
-  
+
   /** the search pattern. */
   protected Pattern m_SearchPattern;
-  
+
   /** whether the search is using a regular expression. */
   protected boolean m_IsRegExp;
 
@@ -154,7 +155,7 @@ public class Tree
 
   /**
    * Checks whether object represents a primitive class.
-   * 
+   *
    * @param obj		the object to check
    */
   protected boolean isPrimitive(Object obj)  {
@@ -179,10 +180,10 @@ public class Tree
     else
       return false;
   }
-  
+
   /**
    * Checks the label against the current search setup.
-   * 
+   *
    * @param label	the label to check
    * @return		true if a match and should be added
    */
@@ -190,7 +191,7 @@ public class Tree
     boolean	result;
 
     result = true;
-    
+
     if (m_SearchString != null) {
       result = false;
       if (m_SearchPattern != null)
@@ -201,7 +202,7 @@ public class Tree
 
     return result;
   }
-  
+
   /**
    * Builds the tree recursively.
    *
@@ -241,8 +242,8 @@ public class Tree
 	current = extractor.getValue(i);
 	if (current != null) {
 	  label = extractor.getLabel(i);
-	  add   =    matches(label) 
-	          || (current instanceof OptionHandler) 
+	  add   =    matches(label)
+	          || (current instanceof OptionHandler)
 	          || (current.getClass().isArray());
 	  if (add)
 	    buildTree(result, label, current, NodeType.NORMAL);
@@ -285,10 +286,10 @@ public class Tree
   public Object getObject() {
     return m_Object;
   }
-  
+
   /**
    * Attempts to select the specified property path.
-   * 
+   *
    * @param parent	the parent node
    * @param path	the path to select (and open in the tree)
    * @param index	the index in the path array
@@ -298,7 +299,7 @@ public class Tree
     boolean	result;
     Node	child;
     int		i;
-    
+
     result = false;
 
     if (parent == null)
@@ -316,23 +317,23 @@ public class Tree
 	}
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Attempts to select the specified property path.
-   * 
+   *
    * @param path	the path to select (and open in the tree)
    * @return		true if successfully selected
    */
   public boolean selectPropertyPath(String[] path) {
     return selectPropertyPath((Node) getModel().getRoot(), path, 0);
   }
-  
+
   /**
    * Initiates the search.
-   * 
+   *
    * @param search	the search string
    * @param isRegExp	whether the search is using a regular expression
    */
@@ -341,10 +342,10 @@ public class Tree
       search   = null;
       isRegExp = false;
     }
-    
+
     m_SearchString = search;
     m_IsRegExp     = isRegExp;
-    
+
     if ((m_SearchString != null) && m_IsRegExp) {
       try {
 	m_SearchPattern = Pattern.compile(m_SearchString);
@@ -356,7 +357,7 @@ public class Tree
     else {
       m_SearchPattern = null;
     }
-    
+
     buildTree(m_Object);
   }
 
@@ -372,6 +373,20 @@ public class Tree
   }
 
   /**
+   * Returns whether the object can be edited.
+   *
+   * @param obj		the object to check
+   * @return		true if editable
+   */
+  protected boolean canEdit(Object obj) {
+    if (obj == null)
+      return false;
+    if (obj.getClass().isArray())
+      return true;
+    return (PropertyEditorManager.findEditor(obj.getClass()) != null);
+  }
+
+  /**
    * Brings up a popup menu.
    *
    * @param e		the mouse event that triggered the popup menu
@@ -380,7 +395,7 @@ public class Tree
     JPopupMenu				menu;
     JMenuItem				menuitem;
     TreePath 				path;
-    Node 				node;
+    final Node 				node;
     final Object			obj;
 
     path = getPathForLocation(e.getX(), e.getY());
@@ -397,6 +412,7 @@ public class Tree
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        copyToClipboard(obj);
 	List<AbstractObjectPlainTextRenderer> list = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
 	String rendered = list.get(0).render(obj);
 	GUIHelper.copyToClipboard(rendered);
@@ -409,19 +425,48 @@ public class Tree
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	int retVal = getFileChooser().showSaveDialog(Tree.this);
-	if (retVal != ObjectExporterFileChooser.APPROVE_OPTION)
-	  return;
-	File file = getFileChooser().getSelectedFile();
-	AbstractObjectExporter exporter = getFileChooser().getWriter();
-	String msg = exporter.export(obj, file);
-	if (msg != null)
-	  GUIHelper.showErrorMessage(
-	    Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
+	export(obj);
       }
     });
     menu.add(menuitem);
 
     menu.show(this, e.getX(), e.getY());
+  }
+
+  /**
+   * Copies the object's string plain text rendering to the clipboard.
+   *
+   * @param obj		the object to copy
+   */
+  protected void copyToClipboard(Object obj) {
+    List<AbstractObjectPlainTextRenderer> 	list;
+    String 					rendered;
+
+    list     = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
+    rendered = list.get(0).render(obj);
+    GUIHelper.copyToClipboard(rendered);
+  }
+
+  /**
+   * Exports the object to a file.
+   *
+   * @param obj		the object to export
+   */
+  protected void export(Object obj) {
+    int 			retVal;
+    File 			file;
+    AbstractObjectExporter 	exporter;
+    String 			msg;
+
+    retVal = getFileChooser().showSaveDialog(this);
+    if (retVal != ObjectExporterFileChooser.APPROVE_OPTION)
+      return;
+
+    file     = getFileChooser().getSelectedFile();
+    exporter = getFileChooser().getWriter();
+    msg      = exporter.export(obj, file);
+    if (msg != null)
+      GUIHelper.showErrorMessage(
+	Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
   }
 }
