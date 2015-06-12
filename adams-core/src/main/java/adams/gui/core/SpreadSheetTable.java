@@ -343,11 +343,12 @@ public class SpreadSheetTable
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Rename column", GUIHelper.getEmptyIcon());
-    menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
+    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
 	SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+	boolean readOnly = isReadOnly();
 	String newName = sheet.getColumnName(actCol);
 	newName = GUIHelper.showInputDialog(getParent(), "Please enter new column name", newName);
 	if (newName == null)
@@ -355,6 +356,9 @@ public class SpreadSheetTable
 	sheet = sheet.getClone();
 	sheet.getHeaderRow().getCell(actCol).setContent(newName);
 	setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
       }
     });
     menu.add(menuitem);
@@ -364,26 +368,56 @@ public class SpreadSheetTable
       menuitem = new JMenuItem("Sort (asc)", GUIHelper.getIcon("sort-ascending.png"));
     else
       menuitem = new JMenuItem("Sort (desc)", GUIHelper.getIcon("sort-descending.png"));
-    menuitem.setEnabled((getShowRowColumn() && (col > 0)) || !getShowRowColumn());
+    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (col > 0)) || !getShowRowColumn());
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         SpreadSheet sheet = toSpreadSheet();
+	boolean readOnly = isReadOnly();
         sheet.sort(actCol, asc);
         setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
       }
     });
     menu.add(menuitem);
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Remove column", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Insert column", GUIHelper.getIcon("insert-column.png"));
+    menuitem.setEnabled(!isReadOnly());
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	String colName = GUIHelper.showInputDialog(
+	  GUIHelper.getParentComponent(SpreadSheetTable.this),
+	  "Please enter the name of the column", "New");
+	if (colName == null)
+	  return;
+        SpreadSheet sheet = toSpreadSheet();
+	boolean readOnly = isReadOnly();
+        sheet.insertColumn(actCol, colName, SpreadSheet.MISSING_VALUE);
+        setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Remove column", GUIHelper.getIcon("delete-column.png"));
+    menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         SpreadSheet sheet = toSpreadSheet();
+	boolean readOnly = isReadOnly();
         sheet.removeColumn(actCol);
         setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
       }
     });
     menu.add(menuitem);
@@ -406,11 +440,16 @@ public class SpreadSheetTable
     JMenuItem	menuitem;
     JMenu	submenu;
     final int   row;
+    final int[]	rows;
     final int   col;
 
     menu = new JPopupMenu();
-    row  = rowAtPoint(e.getPoint());
     col  = columnAtPoint(e.getPoint());
+    row  = rowAtPoint(e.getPoint());
+    if (getSelectedRows().length == 0)
+      rows = new int[]{row};
+    else
+      rows = getSelectedRows();
 
     if (getSelectedRowCount() > 1)
       menuitem = new JMenuItem("Copy rows");
@@ -443,13 +482,35 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Remove row", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Insert row", GUIHelper.getIcon("insert-row.png"));
+    menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
 	SpreadSheet sheet = toSpreadSheet();
-        sheet.removeRow(row);
+	boolean readOnly = isReadOnly();
+        sheet.insertRow(row);
 	setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Remove row", GUIHelper.getIcon("delete-row.png"));
+    menuitem.setEnabled(!isReadOnly());
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	SpreadSheet sheet = toSpreadSheet();
+	boolean readOnly = isReadOnly();
+	for (int i = rows.length - 1; i >= 0; i--)
+	  sheet.removeRow(rows[i]);
+	setModel(new SpreadSheetTableModel(sheet));
+	setReadOnly(readOnly);
+	setModified(true);
+	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
       }
     });
     menu.add(menuitem);
