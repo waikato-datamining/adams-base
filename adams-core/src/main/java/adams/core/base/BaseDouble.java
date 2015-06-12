@@ -15,7 +15,7 @@
 
 /*
  * BaseDouble.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -58,7 +58,7 @@ public class BaseDouble
    *
    * @param value	the value to use
    */
-  public BaseDouble(BaseDouble value) {
+  public BaseDouble(Double value) {
     this(value.toString());
   }
 
