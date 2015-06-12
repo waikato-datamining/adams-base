@@ -28,6 +28,7 @@ import adams.core.base.BaseInteger;
 import adams.core.base.BaseLong;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseShort;
+import adams.core.base.BaseString;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
@@ -82,6 +83,8 @@ public class EditorHelper {
       return true;
     else if (cls == Character.class)
       return true;
+    else if (cls == String.class)
+      return true;
     else if (cls == Byte.class)
       return true;
     else if (cls == Short.class)
@@ -108,6 +111,8 @@ public class EditorHelper {
       return BaseBoolean.class;
     else if (cls == Character.class)
       return BaseCharacter.class;
+    else if (cls == String.class)
+      return BaseString.class;
     else if (cls == Byte.class)
       return BaseByte.class;
     else if (cls == Short.class)
@@ -134,6 +139,8 @@ public class EditorHelper {
       return Boolean.class;
     else if (cls == BaseCharacter.class)
       return Character.class;
+    else if (cls == BaseString.class)
+      return String.class;
     else if (cls == BaseByte.class)
       return Byte.class;
     else if (cls == BaseShort.class)
@@ -159,6 +166,8 @@ public class EditorHelper {
     if (obj instanceof Boolean)
       return true;
     else if (obj instanceof Character)
+      return true;
+    else if (obj instanceof String)
       return true;
     else if (obj instanceof Byte)
       return true;
@@ -186,6 +195,8 @@ public class EditorHelper {
       return new BaseBoolean((Boolean) obj);
     else if (obj instanceof Character)
       return new BaseCharacter((Character) obj);
+    else if (obj instanceof String)
+      return new BaseString((String) obj);
     else if (obj instanceof Byte)
       return new BaseByte((Byte) obj);
     else if (obj instanceof Short)
@@ -212,6 +223,8 @@ public class EditorHelper {
       return ((BaseBoolean) obj).booleanValue();
     else if (obj instanceof BaseCharacter)
       return ((BaseCharacter) obj).charValue();
+    else if (obj instanceof BaseString)
+      return ((BaseString) obj).stringValue();
     else if (obj instanceof BaseByte)
       return ((BaseByte) obj).byteValue();
     else if (obj instanceof BaseShort)
