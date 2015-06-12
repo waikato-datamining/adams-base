@@ -541,20 +541,20 @@ public class Debug
    * 
    * @param point	the breakpoint that triggered the suspend
    * @param actor	the current actor
-   * @param hook	the hook method (eg preInput)
+   * @param stage	the hook method (eg preInput)
    */
-  protected void triggered(AbstractBreakpoint point, Actor actor, String hook) {
+  protected void triggered(AbstractBreakpoint point, Actor actor, ExecutionStage stage) {
     boolean	blocked;
 
     if (m_Stopped || ((getOwner() != null) && getOwner().isStopped()))
       return;
 
     if (isLoggingEnabled())
-      getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName());
+      getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName());
 
     blocked = ((point == null) && isStepMode()) || (point != null);
 
-    m_DebugPanel.setCurrentHook(hook);
+    m_DebugPanel.setCurrentStage(stage);
     m_DebugPanel.setCurrentActor(actor);
     m_DebugPanel.setCurrentToken(null);
     m_DebugPanel.setCurrentBreakpoint(point);
@@ -574,21 +574,21 @@ public class Debug
    * 
    * @param point	the breakpoint that triggered the suspend
    * @param actor	the current actor
-   * @param hook	the hook method (eg preInput)
+   * @param stage	the hook method (eg preInput)
    * @param token	the current token
    */
-  protected void triggered(AbstractBreakpoint point, Actor actor, String hook, Token token) {
+  protected void triggered(AbstractBreakpoint point, Actor actor, ExecutionStage stage, Token token) {
     boolean	blocked;
 
     if (m_Stopped || ((getOwner() != null) && getOwner().isStopped()))
       return;
 
     if (isLoggingEnabled())
-      getLogger().info(point.getClass().getName() + "/" + hook + ": " + actor.getFullName() + "\n\t" + token);
+      getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName() + "\n\t" + token);
 
     blocked = ((point == null) && isStepMode()) || (point != null);
 
-    m_DebugPanel.setCurrentHook(hook);
+    m_DebugPanel.setCurrentStage(stage);
     m_DebugPanel.setCurrentActor(actor);
     m_DebugPanel.setCurrentToken(token);
     m_DebugPanel.setCurrentBreakpoint(point);
@@ -613,7 +613,7 @@ public class Debug
   public void preInput(Actor actor, Token token) {
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreInput(actor, token)) {
-	triggered(point, actor, "preInput", token);
+	triggered(point, actor, ExecutionStage.PRE_INPUT, token);
 	break;
       }
     }
@@ -628,7 +628,7 @@ public class Debug
   public void postInput(Actor actor) {
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostInput(actor)) {
-	triggered(point, actor, "postInput");
+	triggered(point, actor, ExecutionStage.POST_INPUT);
 	break;
       }
     }
@@ -650,9 +650,9 @@ public class Debug
     for (AbstractBreakpoint point : m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreExecute(actor)) {
 	if (token == null)
-	  triggered(point, actor, "preExecute");
+	  triggered(point, actor, ExecutionStage.PRE_EXECUTE);
 	else
-	  triggered(point, actor, "preExecute", token);
+	  triggered(point, actor, ExecutionStage.PRE_EXECUTE, token);
 	break;
       }
     }
@@ -667,7 +667,7 @@ public class Debug
   public void postExecute(Actor actor) {
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostExecute(actor)) {
-	triggered(point, actor, "postExecute");
+	triggered(point, actor, ExecutionStage.POST_EXECUTE);
 	break;
       }
     }
@@ -682,7 +682,7 @@ public class Debug
   public void preOutput(Actor actor) {
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreOutput(actor)) {
-	triggered(point, actor, "preOutput");
+	triggered(point, actor, ExecutionStage.PRE_OUTPUT);
 	break;
       }
     }
@@ -698,7 +698,7 @@ public class Debug
   public void postOutput(Actor actor, Token token) {
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostOutput(actor, token)) {
-	triggered(point, actor, "postOutput");
+	triggered(point, actor, ExecutionStage.POST_OUTPUT);
 	break;
       }
     }

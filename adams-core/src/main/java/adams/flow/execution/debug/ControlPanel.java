@@ -29,6 +29,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.execution.AbstractBreakpoint;
 import adams.flow.execution.Debug;
+import adams.flow.execution.ExecutionStage;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -139,8 +140,8 @@ public class ControlPanel
   /** the button for copying the actor path. */
   protected JToggleButton m_ButtonActorPath;
 
-  /** the text field for the hook method. */
-  protected JTextField m_TextHookMethod;
+  /** the text field for the stage. */
+  protected JTextField m_TextStage;
 
   /** the owning listener. */
   protected transient Debug m_Owner;
@@ -152,7 +153,7 @@ public class ControlPanel
   protected Actor m_CurrentActor;
 
   /** the current hook method. */
-  protected String m_CurrentHook;
+  protected ExecutionStage m_CurrentStage;
 
   /** the current boolean condition. */
   protected BooleanCondition m_CurrentCondition;
@@ -174,7 +175,7 @@ public class ControlPanel
     m_CurrentActor      = null;
     m_CurrentBreakpoint = null;
     m_CurrentCondition  = null;
-    m_CurrentHook       = null;
+    m_CurrentStage = null;
     m_CurrentToken      = null;
   }
 
@@ -340,12 +341,12 @@ public class ControlPanel
 	GUIHelper.copyToClipboard(m_TextActorPath.getText());
       }
     });
-    m_TextHookMethod = new JTextField(15);
-    m_TextHookMethod.setEditable(false);
+    m_TextStage = new JTextField(15);
+    m_TextStage.setEditable(false);
     panel.add(new JLabel("Actor path"));
     panel.add(m_TextActorPath);
     panel.add(m_ButtonActorPath);
-    panel.add(m_TextHookMethod);
+    panel.add(m_TextStage);
     panelAllButtons.add(panel, BorderLayout.SOUTH);
 
     // watches
@@ -520,21 +521,21 @@ public class ControlPanel
   }
 
   /**
-   * Sets the current hook method.
+   * Sets the current stage.
    *
-   * @param value	the method
+   * @param value	the stage
    */
-  public void setCurrentHook(String value) {
-    m_CurrentHook = value;
+  public void setCurrentStage(ExecutionStage value) {
+    m_CurrentStage = value;
   }
 
   /**
-   * Returns the current hook method.
+   * Returns the current stage.
    *
-   * @return		the method
+   * @return		the stage
    */
-  public String getCurrentHook() {
-    return m_CurrentHook;
+  public ExecutionStage getCurrentStage() {
+    return m_CurrentStage;
   }
 
   /**
@@ -850,7 +851,7 @@ public class ControlPanel
     int		i;
 
     m_TextActorPath.setText(getCurrentActor().getFullName());
-    m_TextHookMethod.setText(getCurrentHook());
+    m_TextStage.setText(getCurrentStage().toDisplay());
 
     if (getCurrentCondition() == null) {
       m_PanelCondition.setEnabled(false);
