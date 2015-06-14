@@ -15,21 +15,16 @@
 
 /*
  * MTAbstractGeneticAlgorithm.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.genetic;
 
-import java.util.BitSet;
-import java.util.Random;
-import java.util.Vector;
-import java.util.logging.Level;
-
-import weka.core.Instances;
 import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.Randomizable;
 import adams.core.Range;
+import adams.core.Stoppable;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -37,6 +32,12 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.multiprocess.Job;
+import weka.core.Instances;
+
+import java.util.BitSet;
+import java.util.Random;
+import java.util.Vector;
+import java.util.logging.Level;
 
 /**
  * Base class for genetic algorithms.
@@ -46,7 +47,7 @@ import adams.multiprocess.Job;
  */
 public abstract class MTAbstractGeneticAlgorithm
   extends AbstractOptionHandler
-  implements Randomizable {
+  implements Randomizable, Stoppable {
 
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
@@ -514,7 +515,7 @@ public abstract class MTAbstractGeneticAlgorithm
   /**
    * Stops the execution of the algorithm.
    */
-  public void stop() {
+  public void stopExecution() {
     m_Running = false;
   }
 
@@ -524,7 +525,7 @@ public abstract class MTAbstractGeneticAlgorithm
    * @return		true if the algorithm is still running
    */
   public boolean isRunning() {
-    return  m_Running;
+    return m_Running;
   }
 
   /**
