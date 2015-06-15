@@ -15,21 +15,23 @@
 
 /**
  * WekaPropertySheetPanelPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import weka.filters.supervised.attribute.AddClassification;
-import weka.gui.PropertySheetPanel;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import weka.filters.supervised.attribute.AddClassification;
+import weka.gui.PropertySheetPanel;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Wizard page that use a {@link PropertySheetPanel} for displaying
@@ -114,6 +116,13 @@ public class WekaPropertySheetPanelPage
     super.initGUI();
     
     m_PanelSheet = new CustomPropertySheetPanel();
+    m_PanelSheet.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+
+        updateButtons();
+      }
+    });
     add(m_PanelSheet, BorderLayout.CENTER);
   }
   
