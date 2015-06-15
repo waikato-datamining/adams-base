@@ -449,7 +449,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     }
     catch (Exception e) {
       m_OutputToken = null;
-      handleException("Failed to process instance: " + inst, e);
+      result = handleException("Failed to process instance: " + inst, e);
     }
 
     return result;
