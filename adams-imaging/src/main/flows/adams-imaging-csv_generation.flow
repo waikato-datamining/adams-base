@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2014-07-31 12:19:11
+# Date: 2015-06-14 07:23:23
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Loads images from disk, processes them and \nturns them into an ARFF file.\nThe final images are displayed as well.
+	Loads images from disk, processes them and \nturns them into a CSV file.\nThe final images are displayed as well.
 	-actor
 		adams.flow.source.DirectoryLister
 			-dir
@@ -53,10 +53,18 @@ adams.flow.control.Flow
 		adams.flow.transformer.ImageJFeatureGenerator
 			-algorithm
 				adams.data.imagej.features.Pixels
+					-converter
+						adams.data.featureconverter.SpreadSheet
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
 	-actor
 		adams.flow.sink.SpreadSheetFileWriter
 			-output
 			${EXAMPLE_FLOWS}/output/flattened.csv
+			-writer
+				adams.data.io.output.CsvSpreadSheetWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

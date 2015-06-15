@@ -216,6 +216,7 @@ public class ControlPanel
     panelButtons.add(m_ButtonPauseResume);
 
     m_ButtonStep = new JButton("Step", GUIHelper.getIcon("step.gif"));
+    m_ButtonStep.setMnemonic('e');
     m_ButtonStep.setToolTipText("Step to next actor");
     m_ButtonStep.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -439,10 +440,12 @@ public class ControlPanel
     if (m_Owner != null) {
       if (m_Owner.isBlocked() || m_Owner.isStepMode()) {
 	m_ButtonPauseResume.setText("Resume");
+        m_ButtonPauseResume.setMnemonic('R');
 	m_ButtonPauseResume.setIcon(GUIHelper.getIcon("resume.gif"));
       }
       else {
 	m_ButtonPauseResume.setText("Pause");
+        m_ButtonPauseResume.setMnemonic('P');
 	m_ButtonPauseResume.setIcon(GUIHelper.getIcon("pause.gif"));
       }
       m_PanelBreakpoints.setIgnoreUpdates(true);
