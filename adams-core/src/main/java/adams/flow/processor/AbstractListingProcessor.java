@@ -15,9 +15,20 @@
 
 /**
  * AbstractListingProcessor.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
+
+import adams.core.Utils;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
+import adams.core.option.BooleanOption;
+import adams.core.option.ClassOption;
+import adams.core.option.OptionHandler;
+import adams.core.option.OptionTraversalPath;
+import adams.core.option.OptionTraverser;
+import adams.flow.core.AbstractActor;
+import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,16 +36,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import adams.core.Utils;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
-import adams.core.option.BooleanOption;
-import adams.core.option.ClassOption;
-import adams.core.option.OptionTraversalPath;
-import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
-import adams.gui.dialog.TextPanel;
 
 /**
  * Ancestor for processors that list stuff.
@@ -55,33 +56,36 @@ public abstract class AbstractListingProcessor
   /**
    * Checks whether the object is valid and should be added to the list.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to check
    * @return		true if valid
    */
-  protected abstract boolean isValid(Object obj);
+  protected abstract boolean isValid(OptionHandler handler, Object obj);
 
   /**
    * Returns the string representation of the object that is added to the list.
    * <br><br>
    * Default implementation only calls the <code>toString()</code> method.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
    * @return		the string representation, null if to ignore the item
    */
-  protected String objectToString(Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj) {
     return obj.toString();
   }
   
   /**
    * Processes the object.
-   * 
+   *
+   * @param handler	the option handler this object belongs to
    * @param obj		the object 
    */
-  protected void process(Object obj) {
+  protected void process(OptionHandler handler, Object obj) {
     String	item;
-    
-    if (isValid(obj)) {
-      item = objectToString(obj);
+
+    if (isValid(handler, obj)) {
+      item = objectToString(handler, obj);
       if (item == null)
 	return;
       if (isUniqueList() && m_List.contains(item))
@@ -126,20 +130,20 @@ public abstract class AbstractListingProcessor
     
     actor.getOptionManager().traverse(new OptionTraverser() {
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
-	Object current = option.getCurrentValue();
-	if (option.isMultiple()) {
-	  for (int i = 0; i < Array.getLength(current); i++)
-	    process(Array.get(current, i));
-	}
-	else {
-	  process(current);
-	}
+	handleArgumentOption(option, path);
       }
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
 	// ignored
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-	// ignored
+	Object current = option.getCurrentValue();
+	if (option.isMultiple()) {
+	  for (int i = 0; i < Array.getLength(current); i++)
+	    process(option.getOptionHandler(), Array.get(current, i));
+	}
+	else {
+	  process(option.getOptionHandler(), current);
+	}
       }
       public boolean canHandle(AbstractOption option) {
 	return true;

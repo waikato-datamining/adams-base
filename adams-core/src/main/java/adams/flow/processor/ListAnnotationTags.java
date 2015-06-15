@@ -15,16 +15,17 @@
 
 /**
  * ListAnnotationTags.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.util.List;
 
 import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseAnnotation.Tag;
 import adams.core.base.BaseRegExp;
+import adams.core.option.OptionHandler;
 import adams.flow.core.Actor;
+
+import java.util.List;
 
 /**
  * Processor that lists tags in annotations.
@@ -95,11 +96,12 @@ public class ListAnnotationTags
   /**
    * Checks whether the object is valid and should be added to the list.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to check
    * @return		true if valid
    */
   @Override
-  protected boolean isValid(Object obj) {
+  protected boolean isValid(OptionHandler handler, Object obj) {
     boolean		result;
     BaseAnnotation	ann;
     List<Tag>		tags;
@@ -128,11 +130,12 @@ public class ListAnnotationTags
   /**
    * Returns the string representation of the object that is added to the list.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj) {
     String		result;
     Actor		actor;
     List<Tag>		tags;

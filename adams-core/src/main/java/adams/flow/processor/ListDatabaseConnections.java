@@ -15,10 +15,12 @@
 
 /**
  * ListDatabaseConnections.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
+
+import adams.core.option.OptionHandler;
 
 /**
  * Processor that lists database connections.
@@ -45,11 +47,12 @@ public class ListDatabaseConnections
   /**
    * Checks whether the object is valid and should be added to the list.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to check
    * @return		true if valid
    */
   @Override
-  protected boolean isValid(Object obj) {
+  protected boolean isValid(OptionHandler handler, Object obj) {
     return 
 	   (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) 
 	|| (obj instanceof adams.db.AbstractDatabaseConnection);
@@ -58,11 +61,12 @@ public class ListDatabaseConnections
   /**
    * Returns the string representation of the object that is added to the list.
    * 
+   * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj) {
     if (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) {
       adams.flow.standalone.AbstractDatabaseConnection conn = (adams.flow.standalone.AbstractDatabaseConnection) obj;
       return conn.getURL();
