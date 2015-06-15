@@ -15,15 +15,24 @@
 
 /**
  * PropertySheetPanelPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
-
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.PropertySheetPanel;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Wizard page that use a {@link PropertySheetPanel} for displaying
@@ -43,7 +52,19 @@ public class PropertySheetPanelPage
   
   /** the parameter panel for displaying the parameters. */
   protected PropertySheetPanel m_PanelSheet;
-  
+
+  /** the panel for the buttons. */
+  protected JPanel m_PanelButtons;
+
+  /** the load props button. */
+  protected JButton m_ButtonLoad;
+
+  /** the save props button. */
+  protected JButton m_ButtonSave;
+
+  /** the filechooser for loading/saving properties. */
+  protected BaseFileChooser m_FileChooser;
+
   /**
    * Default constructor.
    */
@@ -66,13 +87,48 @@ public class PropertySheetPanelPage
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+
     super.initGUI();
     
     m_PanelSheet = new PropertySheetPanel();
     m_PanelSheet.setShowAboutBox(false);
     add(m_PanelSheet, BorderLayout.CENTER);
+
+    m_PanelButtons = new JPanel(new BorderLayout());
+    add(m_PanelButtons, BorderLayout.SOUTH);
+
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    m_PanelButtons.add(panel, BorderLayout.WEST);
+
+    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	loadProperties();
+      }
+    });
+    panel.add(m_ButtonLoad);
+
+    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	saveProperties();
+      }
+    });
+    panel.add(m_ButtonSave);
   }
-  
+
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    setButtonPanelVisible(false);
+  }
+
   /**
    * Returns the underlying property sheet panel.
    * 
@@ -99,7 +155,27 @@ public class PropertySheetPanelPage
   public Object getTarget() {
     return m_PanelSheet.getTarget();
   }
-  
+
+  /**
+   * Sets the properties to base the properties on.
+   *
+   * @param value	the properties to use
+   */
+  public void setProperties(Properties value) {
+    String	cmdline;
+
+    cmdline = value.getProperty(PROPERTY_CMDLINE, OptionUtils.getCommandLine(m_PanelSheet.getTarget()));
+    try {
+      setTarget(OptionUtils.forAnyCommandLine(Object.class, cmdline));
+    }
+    catch (Exception e) {
+      System.err.println("Failed to parse commandline: " + cmdline);
+      e.printStackTrace();
+      setTarget(m_PanelSheet.getTarget());
+    }
+    updateButtons();
+  }
+
   /**
    * Returns the content of the page (ie parameters) as properties.
    * 
@@ -113,5 +189,78 @@ public class PropertySheetPanelPage
     result.setProperty(PROPERTY_CMDLINE, OptionUtils.getCommandLine(m_PanelSheet.getTarget()));
     
     return result;
+  }
+
+  /**
+   * Returns the file chooser to use for loading/saving of props files.
+   *
+   * @return		the file chooser
+   */
+  protected synchronized BaseFileChooser getFileChooser() {
+    FileFilter filter;
+
+    if (m_FileChooser == null) {
+      m_FileChooser = new BaseFileChooser();
+      m_FileChooser.setAutoAppendExtension(true);
+      filter        = ExtensionFileFilter.getPropertiesFileFilter();
+      m_FileChooser.addChoosableFileFilter(filter);
+      m_FileChooser.setFileFilter(filter);
+    }
+
+    return m_FileChooser;
+  }
+
+  /**
+   * Loads properties from a file, prompts the user to select props file.
+   */
+  protected void loadProperties() {
+    int		retVal;
+    Properties	props;
+
+    retVal = getFileChooser().showOpenDialog(this);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    props = new Properties();
+    if (!props.load(getFileChooser().getSelectedFile().getAbsolutePath())) {
+      GUIHelper.showErrorMessage(this, "Failed to load properties from: " + getFileChooser().getSelectedFile());
+      return;
+    }
+
+    setProperties(props);
+  }
+
+  /**
+   * Saves properties to a file, prompts the user to select props file.
+   */
+  protected void saveProperties() {
+    int		retVal;
+    Properties	props;
+
+    retVal = getFileChooser().showSaveDialog(this);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    props = getProperties();
+    if (!props.save(getFileChooser().getSelectedFile().getAbsolutePath()))
+      GUIHelper.showErrorMessage(this, "Failed to save properties to: " + getFileChooser().getSelectedFile());
+  }
+
+  /**
+   * Sets the visibility state of the buttons panel (load/save).
+   *
+   * @param value	true if to show buttons
+   */
+  public void setButtonPanelVisible(boolean value) {
+    m_PanelButtons.setVisible(value);
+  }
+
+  /**
+   * Returns the visibility state of the buttons panel (load/save).
+   *
+   * @return		true if buttons displayed
+   */
+  public boolean isButtonPanelVisible() {
+    return m_PanelButtons.isVisible();
   }
 }
