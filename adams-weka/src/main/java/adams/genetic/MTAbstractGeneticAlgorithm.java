@@ -21,10 +21,12 @@
 package adams.genetic;
 
 import adams.core.ClassLister;
+import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.Randomizable;
 import adams.core.Range;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -47,7 +49,7 @@ import java.util.logging.Level;
  */
 public abstract class MTAbstractGeneticAlgorithm
   extends AbstractOptionHandler
-  implements Randomizable, Stoppable {
+  implements Randomizable, StoppableWithFeedback, Pausable {
 
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
@@ -250,6 +252,12 @@ public abstract class MTAbstractGeneticAlgorithm
   /** whether the algorithm is still running. */
   protected boolean m_Running;
 
+  /** whether the algorithm got stopped. */
+  protected boolean m_Stopped;
+
+  /** whether the algorithm is paused. */
+  protected boolean m_Paused;
+
   /** the maximum number of seconds to train. */
   protected int m_MaxTrainTime;
 
@@ -267,6 +275,7 @@ public abstract class MTAbstractGeneticAlgorithm
 
     m_NumGenes  = 0;  // must be set by the algorithm itself, e.g., in preRun()
     m_BestRange = new Range();
+    m_Paused    = false;
   }
 
   /**
@@ -517,6 +526,41 @@ public abstract class MTAbstractGeneticAlgorithm
    */
   public void stopExecution() {
     m_Running = false;
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
+  }
+
+  /**
+   * Pauses the execution.
+   */
+  public void pauseExecution() {
+    if (m_Running)
+      m_Paused = true;
+  }
+
+  /**
+   * Returns whether the object is currently paused.
+   *
+   * @return		true if object is paused
+   */
+  public boolean isPaused() {
+    return m_Running && m_Paused;
+  }
+
+  /**
+   * Resumes the execution.
+   */
+  public void resumeExecution() {
+    if (m_Running)
+      m_Paused = false;
   }
 
   /**
@@ -546,7 +590,7 @@ public abstract class MTAbstractGeneticAlgorithm
   protected void init(int ch, int genes) {
     m_NumChrom=ch;
     m_NumGenes = genes;
-    getLogger().info("Numchrom="+ch+ "Numgene="+genes);
+    getLogger().info("#chrom=" + ch + ", #gene=" + genes);
     m_Genes = new BitSet[m_NumChrom];
     Vector<int[]> setups=getInitialSetups();
     for (int i = 0; i < m_NumChrom; i++) {
@@ -575,8 +619,6 @@ public abstract class MTAbstractGeneticAlgorithm
       m_Fitness[f] = 0;
     sort();
   }
-
-
 
   /**
    * Returns the value of the specified gene.
@@ -823,27 +865,33 @@ public abstract class MTAbstractGeneticAlgorithm
     if (result) {
       try {
 	for (i = 0; i < getNumIterations(); i++) {
-	  if (i % 100 == 0) {
-	    System.out.println("Iteration " + (i+1) + "/" + m_NumIterations);
+	  if (isPaused() && !isStopped()) {
+	    Utils.wait(this, this, 1000, 100);
+	    continue;
 	  }
+
+	  if (i % 100 == 0)
+	    getLogger().info("Iteration " + (i+1) + "/" + m_NumIterations);
 	  calcFitness();
 	  sort();
 
 	  if (isLoggingEnabled()) {
 	    getLogger().info("Generation " + String.valueOf(i));
+	    StringBuilder info = new StringBuilder();
 	    for (cx = 0; cx < getNumChrom(); cx++) {
-	      System.out.print( " Fitness for chromosome ");
+	      info.append(" Fitness for chromosome ");
 	      if (cx != -1) {
 		for (po = 0; po < getNumGenes(); po++) {
 		  if (getGene(cx,po)) {
-		    System.out.print("1");
+		    info.append("1");
 		  }
 		  else{
-		    System.out.print("0");
+		    info.append("0");
 		  }
 		}
 	      }
-	      System.out.print("--->" + getFitness()[cx] + "\n");
+	      info.append("--->" + getFitness()[cx]);
+	      getLogger().info(info.toString());
 	    }
 	  }
 
