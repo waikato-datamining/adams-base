@@ -61,7 +61,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * For appending datasets into single dataset.
+ * For optimizing datasets (attribute selection) using genetic algorithm.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
