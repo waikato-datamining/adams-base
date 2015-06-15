@@ -140,7 +140,6 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.RemoveActor,\
   -,\
   adams.gui.flow.tree.menu.AddBreakpoint,\
-  adams.gui.flow.tree.menu.Listeners,\
   adams.gui.flow.tree.menu.AddFromTemplate,\
   adams.gui.flow.tree.menu.EncloseActor,\
   adams.gui.flow.tree.menu.CreateCallableActor,\
