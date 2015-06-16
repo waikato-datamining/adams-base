@@ -74,6 +74,15 @@ public class ListVariableUsage
   }
 
   /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return "Variable '" + m_Name + "'";
+  }
+
+  /**
    * Checks whether the located object matches the name that we are looking for.
    *
    * @param obj		the object to check

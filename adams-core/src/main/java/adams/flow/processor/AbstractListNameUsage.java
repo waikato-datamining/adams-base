@@ -20,6 +20,19 @@
 package adams.flow.processor;
 
 import adams.core.option.OptionHandler;
+import adams.flow.control.Flow;
+import adams.flow.core.AbstractActor;
+import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowPanel;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for processors that locate usages of a certain name.
@@ -37,6 +50,9 @@ public abstract class AbstractListNameUsage<T>
   /** the name to look for. */
   protected String m_Name;
 
+  /** the current actor being processed. */
+  protected transient AbstractActor m_Current;
+  
   /**
    * Returns a string describing the object.
    *
@@ -126,6 +142,19 @@ public abstract class AbstractListNameUsage<T>
   }
 
   /**
+   * Performs the actual processing.
+   *
+   * @param actor	the actor to process (is a copy of original for
+   * 			processors implementing ModifyingProcessor)
+   * @see		ModifyingProcessor
+   */
+  protected void processActor(AbstractActor actor) {
+    m_Current = actor;
+    super.processActor(actor);
+  }
+  
+
+  /**
    * Returns whether the list should be sorted.
    *
    * @return		true if the list should get sorted
@@ -143,5 +172,80 @@ public abstract class AbstractListNameUsage<T>
   @Override
   protected boolean isUniqueList() {
     return true;
+  }
+
+  /**
+   * Returns the graphical output that was generated.
+   *
+   * @return		the graphical output
+   */
+  @Override
+  public Component getGraphicalOutput() {
+    final BaseListWithButtons	result;
+    DefaultListModel<String>	model;
+    final JButton		buttonCopy;
+    final JButton		buttonJumpTo;
+    final Flow			flow;
+
+    if (m_Current instanceof Flow)
+      flow = (Flow) m_Current;
+    else if ((m_Current != null) && (m_Current.getRoot() instanceof Flow))
+      flow = (Flow) m_Current.getRoot();
+    else
+      flow = null;
+
+    result = new BaseListWithButtons();
+    model = new DefaultListModel<>();
+    for (String item: m_List)
+      model.addElement(item);
+    result.setModel(model);
+
+    buttonCopy = new JButton("Copy");
+    buttonCopy.setEnabled(false);
+    buttonCopy.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	Object[] values = result.getSelectedValues();
+	StringBuilder content = new StringBuilder();
+	for (Object value: values) {
+	  if (content.length() > 0)
+	    content.append("\n");
+	  content.append("" + value);
+	}
+	GUIHelper.copyToClipboard(content.toString());
+      }
+    });
+    result.addToButtonsPanel(buttonCopy);
+
+    if ((flow != null) && (flow.getParentComponent() != null)) {
+      buttonJumpTo = new JButton("Jump to");
+      buttonJumpTo.setEnabled(false);
+      buttonJumpTo.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  if (result.getSelectedIndex() > -1) {
+	    if (flow.getParentComponent() instanceof FlowPanel) {
+	      ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
+		"" + result.getSelectedValue());
+	    }
+	  }
+	}
+      });
+      result.addToButtonsPanel(buttonJumpTo);
+    }
+    else {
+      buttonJumpTo = null;
+    }
+
+    result.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+	buttonCopy.setEnabled(result.getSelectedIndices().length > 0);
+	if (buttonJumpTo != null)
+	  buttonJumpTo.setEnabled(result.getSelectedIndices().length == 1);
+      }
+    });
+
+    return result;
   }
 }
