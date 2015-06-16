@@ -95,6 +95,11 @@ public class FindUsages
     for (AbstractOption option: actor.getOptionManager().getOptionsList()) {
       if (option instanceof AbstractArgumentOption) {
 	arg = (AbstractArgumentOption) option;
+	if (arg.isVariableAttached()) {
+	  name = arg.getVariableName();
+	  if (!result.contains(name))
+	    result.add(name);
+	}
 	if (ClassLocator.isSubclass(VariableName.class, arg.getBaseClass())) {
 	  if (arg.isMultiple()) {
 	    array = arg.getCurrentValue();
