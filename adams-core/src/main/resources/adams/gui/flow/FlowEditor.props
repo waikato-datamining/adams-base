@@ -136,6 +136,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.ToggleState,\
   adams.gui.flow.tree.menu.Bookmark,\
   adams.gui.flow.tree.menu.RenameActor,\
+  adams.gui.flow.tree.menu.FindUsages,\
   -,\
   adams.gui.flow.tree.menu.RemoveActor,\
   -,\
