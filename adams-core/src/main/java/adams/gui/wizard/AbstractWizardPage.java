@@ -15,20 +15,22 @@
 
 /**
  * AbstractWizardPage.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.html.HTMLEditorKit;
-
 import adams.core.Properties;
+import adams.core.logging.LoggingSupporter;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
+
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.html.HTMLEditorKit;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Ancestor for wizard pages.
@@ -37,7 +39,8 @@ import adams.gui.core.BaseTextPane;
  * @version $Revision$
  */
 public abstract class AbstractWizardPage
-  extends BasePanel {
+  extends BasePanel
+  implements LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 391442213775313771L;
@@ -237,4 +240,22 @@ public abstract class AbstractWizardPage
    * @return		the parameters as properties
    */
   public abstract Properties getProperties();
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public Logger getLogger() {
+    return m_Owner.getLogger();
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    return m_Owner.isLoggingEnabled();
+  }
 }
