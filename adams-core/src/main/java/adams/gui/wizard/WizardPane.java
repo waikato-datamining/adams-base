@@ -19,24 +19,10 @@
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import adams.core.Properties;
 import adams.core.base.BasePassword;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
@@ -47,6 +33,23 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Similar to a {@link BaseTabbedPane}, but with the names of the pages
@@ -59,7 +62,8 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @version $Revision$
  */
 public class WizardPane
-  extends BasePanel {
+  extends BasePanel
+  implements LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 887135856139374858L;
@@ -69,7 +73,13 @@ public class WizardPane
 
   /** the action for finishing the wizard. */
   public final static String ACTION_FINISH = "Finish";
-  
+
+  /** the logger to use. */
+  protected Logger m_Logger;
+
+  /** the ID of the wizard. */
+  protected String m_ID;
+
   /** the model for displaying the page names. */
   protected DefaultListModel<String> m_ModelNames;
 
@@ -111,7 +121,26 @@ public class WizardPane
   
   /** the custom text for the "finish" button. */
   protected String m_CustomFinishText;
-  
+
+  /**
+   * Initializes the wizard with no ID.
+   */
+  public WizardPane() {
+    this("");
+  }
+
+  /**
+   * Initializes the wizard.
+   *
+   * @param id		the ID of the wizard, used for logging purposes
+   */
+  public WizardPane(String id) {
+    super();
+
+    m_ID     = id;
+    m_Logger = null;
+  }
+
   /**
    * Initializes the members.
    */
@@ -204,7 +233,16 @@ public class WizardPane
     
     updateButtons();
   }
-  
+
+  /**
+   * Returns the ID of the wizard, if any.
+   *
+   * @return		the ID
+   */
+  public String getID() {
+    return m_ID;
+  }
+
   /**
    * Returns the underlying split pane.
    * 
@@ -228,7 +266,6 @@ public class WizardPane
   /**
    * Adds the page under the given name.
    * 
-   * @param name	the name of the page
    * @param page	the page
    */
   public void addPage(AbstractWizardPage page) {
@@ -427,7 +464,33 @@ public class WizardPane
   public String getCustomFinishText() {
     return m_CustomFinishText;
   }
-  
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public synchronized Logger getLogger() {
+    if (m_Logger == null) {
+      m_Logger = LoggingHelper.getLogger(getID().isEmpty() ? getClass().getName() : (getClass().getName() + "/" + getID()));
+      m_Logger.setLevel(Level.INFO);
+      m_Logger.removeHandler(LoggingHelper.getDefaultHandler());
+      m_Logger.addHandler(LoggingHelper.getDefaultHandler());
+      m_Logger.setUseParentHandlers(false);
+    }
+
+    return m_Logger;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		always true
+   */
+  public boolean isLoggingEnabled() {
+    return true;
+  }
+
   /**
    * For testing only.
    * 
