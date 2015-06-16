@@ -30,6 +30,7 @@ import adams.flow.processor.ListCallableActorUsage;
 import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -251,6 +252,10 @@ public class FindUsages
     int			count;
 
     result = new JMenu(getName());
+    if (getIcon() != null)
+      result.setIcon(getIcon());
+    else
+      result.setIcon(GUIHelper.getEmptyIcon());
     actor  = m_State.selNode.getActor();
     parent = (m_State.parent != null) ? m_State.parent.getActor() : null;
 
