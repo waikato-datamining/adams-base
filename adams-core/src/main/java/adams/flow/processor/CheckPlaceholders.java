@@ -15,15 +15,9 @@
 
 /**
  * CheckPlaceholders.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.ClassLocator;
 import adams.core.Placeholders;
@@ -37,6 +31,12 @@ import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActor;
 import adams.gui.dialog.TextPanel;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -164,6 +164,15 @@ public class CheckPlaceholders
       return null;
     else
       return Utils.flatten(m_Warnings, "\n");
+  }
+
+  /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return "Placeholder check";
   }
 
   /**

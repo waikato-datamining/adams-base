@@ -94,8 +94,17 @@ public class ListAnnotationTags
   }
 
   /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return "Tags matching '" + m_RegExp + "'";
+  }
+
+  /**
    * Checks whether the object is valid and should be added to the list.
-   * 
+   *
    * @param handler	the option handler this object belongs to
    * @param obj		the object to check
    * @return		true if valid
@@ -105,7 +114,7 @@ public class ListAnnotationTags
     boolean		result;
     BaseAnnotation	ann;
     List<Tag>		tags;
-    
+
     result = (obj instanceof Actor);
     if (result) {
       ann = ((Actor) obj).getAnnotations();
@@ -123,13 +132,13 @@ public class ListAnnotationTags
 	}
       }
     }
-    
+
     return result;
   }
 
   /**
    * Returns the string representation of the object that is added to the list.
-   * 
+   *
    * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
    * @return		the string representation, null if to ignore the item
@@ -161,19 +170,19 @@ public class ListAnnotationTags
       result = null;
     else
       result +=  "," + "\"" + tagStr + "\"";
-    
+
     return result;
   }
-  
+
   /**
    * Finishes up the list.
    */
   @Override
   protected void finalizeList() {
     String	header;
-    
+
     super.finalizeList();
-    
+
     if (m_List.size() > 0) {
       header  = "Actor,";
       header += "Tag(s)";
@@ -183,7 +192,7 @@ public class ListAnnotationTags
 
   /**
    * Returns whether the list should be sorted.
-   * 
+   *
    * @return		true if the list should get sorted
    */
   @Override
@@ -193,7 +202,7 @@ public class ListAnnotationTags
 
   /**
    * Returns whether the list should not contain any duplicates.
-   * 
+   *
    * @return		true if the list contains no duplicates
    */
   @Override

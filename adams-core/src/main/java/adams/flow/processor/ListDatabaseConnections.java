@@ -45,6 +45,15 @@ public class ListDatabaseConnections
   }
 
   /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return "Database connections";
+  }
+
+  /**
    * Checks whether the object is valid and should be added to the list.
    * 
    * @param handler	the option handler this object belongs to

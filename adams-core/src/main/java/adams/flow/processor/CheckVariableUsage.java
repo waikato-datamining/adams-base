@@ -15,18 +15,9 @@
 
 /**
  * CheckVariableUsage.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import adams.core.ClassLocator;
 import adams.core.NamedCounter;
@@ -45,6 +36,15 @@ import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -303,6 +303,15 @@ public class CheckVariableUsage
    */
   public boolean hasGraphicalOutput() {
     return (m_Warnings != null);
+  }
+
+  /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return "Variable check";
   }
 
   /**

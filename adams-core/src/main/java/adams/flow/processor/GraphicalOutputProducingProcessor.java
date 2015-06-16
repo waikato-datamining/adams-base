@@ -42,4 +42,11 @@ public interface GraphicalOutputProducingProcessor {
    * @return		the graphical output
    */
   public Component getGraphicalOutput();
+
+  /**
+   * Returns the title for the dialog.
+   *
+   * @return		the title
+   */
+  public String getTitle();
 }
