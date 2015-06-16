@@ -2375,6 +2375,8 @@ public class Tree
 
     // selected actor or full flow?
     flow = getActor();
+    if (flow instanceof Flow)
+      ((Flow) flow).setParentComponent(getOwner());
     if ((path != null) && (path.getPathCount() == 1))
       path = null;
     if (path == null) {
@@ -2454,7 +2456,7 @@ public class Tree
 	  dialog = new BaseDialog(getParentDialog());
 	else
 	  dialog = new BaseDialog(getParentFrame());
-	dialog.setTitle(processor.getClass().getSimpleName());
+	dialog.setTitle(graphical.getTitle());
 	dialog.getContentPane().setLayout(new BorderLayout());
 	comp = graphical.getGraphicalOutput();
 	if (errorPanel == null) {
