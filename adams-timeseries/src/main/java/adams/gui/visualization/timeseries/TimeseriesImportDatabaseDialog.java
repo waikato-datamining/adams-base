@@ -15,22 +15,9 @@
 
 /**
  * TimeseriesImportDatabaseDialog.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.timeseries;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 
 import adams.core.Constants;
 import adams.core.Properties;
@@ -47,6 +34,19 @@ import adams.gui.wizard.ParameterPanelPage;
 import adams.gui.wizard.ProceedAction;
 import adams.gui.wizard.StartPage;
 import adams.gui.wizard.WizardPane;
+
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Dialog for import timeseries from a database.
@@ -285,8 +285,7 @@ public class TimeseriesImportDatabaseDialog
 	  m_PageIDs.setValues(ids);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to retrieve IDs!");
-	  e.printStackTrace();
+          currPage.getLogger().log(Level.SEVERE, "Failed to retrieve IDs!", e);
 	}
       }
     });
