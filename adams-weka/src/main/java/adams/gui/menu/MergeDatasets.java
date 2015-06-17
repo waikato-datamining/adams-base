@@ -48,6 +48,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * For merging datasets (side-by-side) into single dataset.
@@ -117,8 +118,7 @@ public class MergeDatasets
           return (files.length >= 2);
         }
         catch (Exception e) {
-          System.err.println("Failed to obtain files:");
-          e.printStackTrace();
+          getLogger().log(Level.SEVERE, "Failed to obtain files:", e);
         }
         return false;
       }
