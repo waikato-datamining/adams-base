@@ -22,8 +22,7 @@ package adams.flow.processor;
 
 import adams.core.VariableName;
 import adams.core.Variables;
-import adams.core.option.OptionHandler;
-import adams.flow.core.Actor;
+import adams.core.base.BaseObject;
 
 /**
  <!-- globalinfo-start -->
@@ -96,24 +95,12 @@ public class ListVariableUsage
     else if (obj instanceof String) {
       return ((String) obj).contains(Variables.padName(m_Name));
     }
+    else if (obj instanceof BaseObject) {
+      return ((BaseObject) obj).getValue().contains(Variables.padName(m_Name));
+    }
     else {
       return false;
     }
-  }
-
-  /**
-   * Creates a location string used in the list.
-   *
-   * @param owner	the option handler
-   * @param obj		the object where the name was located
-   * @return		the generated location string
-   */
-  @Override
-  protected String createLocation(OptionHandler owner, Object obj) {
-    if (owner instanceof Actor)
-      return ((Actor) owner).getFullName();
-    else
-      return owner.getClass().getName();
   }
 
   @Override

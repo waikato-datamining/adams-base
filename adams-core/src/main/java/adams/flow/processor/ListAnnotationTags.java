@@ -23,6 +23,7 @@ import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseAnnotation.Tag;
 import adams.core.base.BaseRegExp;
 import adams.core.option.OptionHandler;
+import adams.core.option.OptionTraversalPath;
 import adams.flow.core.Actor;
 
 import java.util.List;
@@ -107,10 +108,11 @@ public class ListAnnotationTags
    *
    * @param handler	the option handler this object belongs to
    * @param obj		the object to check
+   * @param path	the traversal path of properties
    * @return		true if valid
    */
   @Override
-  protected boolean isValid(OptionHandler handler, Object obj) {
+  protected boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path) {
     boolean		result;
     BaseAnnotation	ann;
     List<Tag>		tags;
@@ -141,10 +143,11 @@ public class ListAnnotationTags
    *
    * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
+   * @param path	the traversal path of properties
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(OptionHandler handler, Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
     String		result;
     Actor		actor;
     List<Tag>		tags;

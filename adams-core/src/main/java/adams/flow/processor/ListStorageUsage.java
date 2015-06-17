@@ -20,9 +20,7 @@
 
 package adams.flow.processor;
 
-import adams.core.option.OptionHandler;
 import adams.flow.control.StorageName;
-import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -91,21 +89,6 @@ public class ListStorageUsage
   protected boolean isNameMatch(Object obj) {
     return (obj instanceof StorageName)
       && ((StorageName) obj).getValue().equals(m_Name);
-  }
-
-  /**
-   * Creates a location string used in the list.
-   *
-   * @param owner	the option handler
-   * @param obj		the object where the name was located
-   * @return		the generated location string
-   */
-  @Override
-  protected String createLocation(OptionHandler owner, Object obj) {
-    if (owner instanceof Actor)
-      return ((Actor) owner).getFullName();
-    else
-      return owner.getClass().getName();
   }
 
   @Override

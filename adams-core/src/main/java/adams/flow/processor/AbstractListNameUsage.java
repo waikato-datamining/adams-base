@@ -20,8 +20,10 @@
 package adams.flow.processor;
 
 import adams.core.option.OptionHandler;
+import adams.core.option.OptionTraversalPath;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
@@ -109,13 +111,50 @@ public abstract class AbstractListNameUsage<T>
   protected abstract boolean isNameMatch(Object obj);
 
   /**
+   * Tries to locate the enclosing actor.
+   *
+   * @param owner	the option handler
+   * @param path	the traversal path so far
+   * @return		the actor, null if failed to locate
+   */
+  protected Actor findEnclosingActor(OptionHandler owner, OptionTraversalPath path, int index) {
+    if (path.getObject(index) instanceof Actor)
+      return (Actor) path.getObject(index);
+    if (index > 0)
+      return findEnclosingActor(owner, path, index - 1);
+    return null;
+  }
+
+  /**
+   * Tries to locate the enclosing actor.
+   *
+   * @param owner	the option handler
+   * @param path	the traversal path so far
+   * @return		the actor, null if failed to locate
+   */
+  protected Actor findEnclosingActor(OptionHandler owner, OptionTraversalPath path) {
+    if (owner instanceof Actor)
+      return (Actor) owner;
+    else
+      return findEnclosingActor(owner, path, path.size() - 1);
+  }
+
+  /**
    * Creates a location string used in the list.
    *
    * @param owner	the option handler
    * @param obj		the object where the name was located
    * @return		the generated location string
    */
-  protected abstract String createLocation(OptionHandler owner, Object obj);
+  protected String createLocation(OptionHandler owner, Object obj, OptionTraversalPath path) {
+    Actor	actor;
+
+    actor = findEnclosingActor(owner, path);
+    if (actor != null)
+      return actor.getFullName();
+    else
+      return owner.getClass().getName();
+  }
 
   /**
    * Checks whether the object is valid and should be added to the list.
@@ -125,7 +164,7 @@ public abstract class AbstractListNameUsage<T>
    * @return		true if valid
    */
   @Override
-  protected boolean isValid(OptionHandler handler, Object obj) {
+  protected boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path) {
     return isNameMatch(obj);
   }
 
@@ -137,8 +176,8 @@ public abstract class AbstractListNameUsage<T>
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(OptionHandler handler, Object obj) {
-    return createLocation(handler, obj);
+  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
+    return createLocation(handler, obj, path);
   }
 
   /**

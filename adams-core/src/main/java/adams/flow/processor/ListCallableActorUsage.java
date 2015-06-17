@@ -20,8 +20,6 @@
 
 package adams.flow.processor;
 
-import adams.core.option.OptionHandler;
-import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 
 /**
@@ -91,21 +89,6 @@ public class ListCallableActorUsage
   protected boolean isNameMatch(Object obj) {
     return (obj instanceof CallableActorReference)
       && ((CallableActorReference) obj).getValue().equals(m_Name);
-  }
-
-  /**
-   * Creates a location string used in the list.
-   *
-   * @param owner	the option handler
-   * @param obj		the object where the name was located
-   * @return		the generated location string
-   */
-  @Override
-  protected String createLocation(OptionHandler owner, Object obj) {
-    if (owner instanceof Actor)
-      return ((Actor) owner).getFullName();
-    else
-      return owner.getClass().getName();
   }
 
   @Override

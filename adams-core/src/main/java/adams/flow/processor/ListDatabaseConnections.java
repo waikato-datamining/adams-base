@@ -21,6 +21,7 @@ package adams.flow.processor;
 
 
 import adams.core.option.OptionHandler;
+import adams.core.option.OptionTraversalPath;
 
 /**
  * Processor that lists database connections.
@@ -58,10 +59,11 @@ public class ListDatabaseConnections
    * 
    * @param handler	the option handler this object belongs to
    * @param obj		the object to check
+   * @param path	the traversal path of properties
    * @return		true if valid
    */
   @Override
-  protected boolean isValid(OptionHandler handler, Object obj) {
+  protected boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path) {
     return 
 	   (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) 
 	|| (obj instanceof adams.db.AbstractDatabaseConnection);
@@ -72,10 +74,11 @@ public class ListDatabaseConnections
    * 
    * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
+   * @param path	the traversal path of properties
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(OptionHandler handler, Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
     if (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) {
       adams.flow.standalone.AbstractDatabaseConnection conn = (adams.flow.standalone.AbstractDatabaseConnection) obj;
       return conn.getURL();

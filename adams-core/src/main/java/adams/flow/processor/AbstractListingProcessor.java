@@ -58,9 +58,10 @@ public abstract class AbstractListingProcessor
    * 
    * @param handler	the option handler this object belongs to
    * @param obj		the object to check
+   * @param path	the traversal path of properties
    * @return		true if valid
    */
-  protected abstract boolean isValid(OptionHandler handler, Object obj);
+  protected abstract boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path);
 
   /**
    * Returns the string representation of the object that is added to the list.
@@ -69,9 +70,10 @@ public abstract class AbstractListingProcessor
    * 
    * @param handler	the option handler this object belongs to
    * @param obj		the object to turn into a string
+   * @param path	the traversal path of properties
    * @return		the string representation, null if to ignore the item
    */
-  protected String objectToString(OptionHandler handler, Object obj) {
+  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
     return obj.toString();
   }
   
@@ -80,12 +82,13 @@ public abstract class AbstractListingProcessor
    *
    * @param handler	the option handler this object belongs to
    * @param obj		the object 
+   * @param path	the traversal path of properties
    */
-  protected void process(OptionHandler handler, Object obj) {
+  protected void process(OptionHandler handler, Object obj, OptionTraversalPath path) {
     String	item;
 
-    if (isValid(handler, obj)) {
-      item = objectToString(handler, obj);
+    if (isValid(handler, obj, path)) {
+      item = objectToString(handler, obj, path);
       if (item == null)
 	return;
       if (isUniqueList() && m_List.contains(item))
@@ -139,10 +142,10 @@ public abstract class AbstractListingProcessor
 	Object current = option.getCurrentValue();
 	if (option.isMultiple()) {
 	  for (int i = 0; i < Array.getLength(current); i++)
-	    process(option.getOptionHandler(), Array.get(current, i));
+	    process(option.getOptionHandler(), Array.get(current, i), path);
 	}
 	else {
-	  process(option.getOptionHandler(), current);
+	  process(option.getOptionHandler(), current, path);
 	}
       }
       public boolean canHandle(AbstractOption option) {
