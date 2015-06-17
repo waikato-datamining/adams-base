@@ -49,8 +49,6 @@ public class SelectFilePage
   /** the panel for selecting the file. */
   protected FileChooserPanel m_PanelFile;
 
-  /** whether to show the
-
   /**
    * Default constructor.
    */
