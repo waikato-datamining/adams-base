@@ -49,6 +49,7 @@ import weka.filters.Filter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * For batch filtering datasets using a single filter setup (files get output
@@ -125,8 +126,7 @@ public class BatchFilterDatasets
 	  return (files.length >= 2);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to obtain files:");
-	  e.printStackTrace();
+          getLogger().log(Level.SEVERE, "Failed to obtain files:", e);
 	}
 	return false;
       }
