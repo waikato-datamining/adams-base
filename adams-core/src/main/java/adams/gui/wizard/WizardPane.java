@@ -557,6 +557,14 @@ public class WizardPane
     selmpage.addChoosableFileFilter(filter = new ExtensionFileFilter("Text files", "txt"));
     selmpage.setFileFilter(filter);
     wizard.addPage(selmpage);
+    SelectDirectoryPage seldir = new SelectDirectoryPage();
+    seldir.setPageName("Select directory");
+    seldir.setDescription("Please select any existing file by clicking on the '...' button.");
+    wizard.addPage(seldir);
+    SelectMultipleDirectoriesPage selmdir = new SelectMultipleDirectoriesPage();
+    selmdir.setPageName("Select multiple directories");
+    selmdir.setDescription("Please select as many directories as you like.");
+    wizard.addPage(selmdir);
     TextAreaPage textpage = new TextAreaPage("Free text");
     textpage.setDescription("Please enter some text");
     textpage.setText("blah\nblah\nblah");
