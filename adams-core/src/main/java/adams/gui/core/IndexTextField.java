@@ -34,7 +34,7 @@ public class IndexTextField
   private static final long serialVersionUID = -6624338080908941975L;
 
   /**
-   * A model for checking Index values. It allows a custom date format.
+   * A model for checking Index values.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision: 4584 $
