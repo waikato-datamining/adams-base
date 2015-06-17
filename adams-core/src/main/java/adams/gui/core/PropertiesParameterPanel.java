@@ -138,7 +138,9 @@ public class PropertiesParameterPanel
     /** index (1-based). */
     INDEX,
     /** range (1-based). */
-    RANGE
+    RANGE,
+    /** regular expression. */
+    REGEXP,
   }
   
   /** the panel for the properties. */
@@ -830,6 +832,13 @@ public class PropertiesParameterPanel
 	  addProperty(key, label, indexText);
 	  break;
 	case RANGE:
+	  rangeText = new RangeTextField();
+	  rangeText.setColumns(20);
+	  rangeText.setText(value.getProperty(key));
+	  rangeText.setToolTipText(help);
+	  addProperty(key, label, rangeText);
+	  break;
+	case REGEXP:
 	  rangeText = new RangeTextField();
 	  rangeText.setColumns(20);
 	  rangeText.setText(value.getProperty(key));

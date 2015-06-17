@@ -34,7 +34,7 @@ public class RangeTextField
   private static final long serialVersionUID = -6624338080908941975L;
 
   /**
-   * A model for checking Range values. It allows a custom date format.
+   * A model for checking Range values.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision: 4584 $
