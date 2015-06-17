@@ -19,6 +19,14 @@
  */
 package adams.core.option;
 
+import adams.core.ClassLocator;
+import adams.core.CleanUpHandler;
+import adams.core.EnumWithCustomDisplay;
+import adams.core.Variables;
+import adams.core.VariablesHandler;
+import adams.core.base.BaseObject;
+import adams.flow.core.AbstractActor;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -28,14 +36,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import adams.core.ClassLocator;
-import adams.core.CleanUpHandler;
-import adams.core.EnumWithCustomDisplay;
-import adams.core.Variables;
-import adams.core.VariablesHandler;
-import adams.core.base.BaseObject;
-import adams.flow.core.AbstractActor;
 
 /**
  * Class for managing option definitions.
@@ -100,7 +100,7 @@ public class OptionManager
    * Sets the Variables instance to use (not recursively!).
    *
    * @param value	the instance to use
-   * @see		#updateVariablesInstance()
+   * @see		#updateVariablesInstance(Variables)
    */
   public void setVariables(Variables value) {
     m_Variables = value;
@@ -924,7 +924,7 @@ public class OptionManager
 	    for (n = 0; n < Array.getLength(current); n++) {
 	      element = Array.get(current, n);
 	      if (traverser.canRecurse(element)) {
-		path.push(cloption.getProperty() + "[" + n + "]");
+		path.push(cloption.getProperty() + "[" + n + "]", element);
 		((OptionHandler) element).getOptionManager().traverse(traverser, path, nonAdams);
 		path.pop();
 	      }
@@ -932,7 +932,7 @@ public class OptionManager
 	  }
 	  else {
 	    if (traverser.canRecurse(current)) {
-	      path.push(cloption.getProperty());
+	      path.push(cloption.getProperty(), current);
 	      ((OptionHandler) current).getOptionManager().traverse(traverser, path, nonAdams);
 	      path.pop();
 	    }
@@ -964,7 +964,7 @@ public class OptionManager
 	if ((prop.getReadMethod() != null) && (prop.getWriteMethod() != null)) {
 	  current = prop.getReadMethod().invoke(obj, new Object[]{});
 	  if (current != null) {
-	    path.push(prop.getName());
+	    path.push(prop.getName(), current);
 	    if (current instanceof OptionHandler)
 	      ((OptionHandler) current).getOptionManager().traverse(traverser, path, true);
 	    else
