@@ -59,6 +59,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
 
 /**
  * For optimizing datasets (attribute selection) using genetic algorithm.
@@ -261,8 +262,7 @@ public class DarkLord
 	  return genetic.getDataset().isFile() && genetic.getDataset().exists();
 	}
 	catch (Exception e) {
-          System.err.println("Failed to obtain genetic algorithm setup:");
-          e.printStackTrace();
+          getLogger().log(Level.SEVERE, "Failed to obtain genetic algorithm setup:", e);
 	  return false;
 	}
       }
