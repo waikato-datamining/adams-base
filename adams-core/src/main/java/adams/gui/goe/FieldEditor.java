@@ -15,28 +15,11 @@
 
 /*
  * FieldEditor.java
- * Copyright (C) 2008-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
-
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
@@ -47,6 +30,22 @@ import adams.data.report.FieldType;
 import adams.data.report.PrefixOnlyField;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.selection.SelectFieldPanel;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * A PropertyEditor for Field objects that lets the user select a field.
@@ -234,8 +233,8 @@ public class FieldEditor
    *
    * @param parent	the parent container
    * @return		the objects
-  @Override
    */
+  @Override
   public Object[] getSelectedObjects(Container parent) {
     AbstractField[]		result;
     MultiLineValueDialog	dialog;
