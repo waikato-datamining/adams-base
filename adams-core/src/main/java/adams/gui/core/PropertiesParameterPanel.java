@@ -627,6 +627,7 @@ public class PropertiesParameterPanel
     AbstractChooserPanel	chooserPanel;
     IndexTextField		indexText;
     RangeTextField		rangeText;
+    RegExpTextField		regexpText;
     JComboBox			combo;
     String			help;
     BaseString[]		list;
@@ -839,11 +840,11 @@ public class PropertiesParameterPanel
 	  addProperty(key, label, rangeText);
 	  break;
 	case REGEXP:
-	  rangeText = new RangeTextField();
-	  rangeText.setColumns(20);
-	  rangeText.setText(value.getProperty(key));
-	  rangeText.setToolTipText(help);
-	  addProperty(key, label, rangeText);
+	  regexpText = new RegExpTextField();
+	  regexpText.setColumns(20);
+	  regexpText.setText(value.getProperty(key));
+	  regexpText.setToolTipText(help);
+	  addProperty(key, label, regexpText);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
@@ -880,6 +881,7 @@ public class PropertiesParameterPanel
     BaseTextChooserPanel        textPanel;
     IndexTextField		indexText;
     RangeTextField		rangeText;
+    RegExpTextField		regexpText;
     JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
@@ -984,6 +986,10 @@ public class PropertiesParameterPanel
 	case RANGE:
 	  rangeText = (RangeTextField) comp;
 	  result.setProperty(key, rangeText.getText());
+	  break;
+	case REGEXP:
+	  regexpText = (RegExpTextField) comp;
+	  result.setProperty(key, regexpText.getText());
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
