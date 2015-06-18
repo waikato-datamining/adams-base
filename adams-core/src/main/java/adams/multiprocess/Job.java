@@ -15,22 +15,21 @@
 
 /*
  * Job.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.multiprocess;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.util.Hashtable;
-import java.util.Vector;
-
 import adams.core.CleanUpHandler;
+import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
+
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * A job is a unit of execution.
@@ -223,7 +222,6 @@ public abstract class Job
     JobResult		result;
     boolean		success;
     String		addInfo;
-    StringWriter	writer;
 
     // pre-check
     m_ExecutionError = preProcessCheck();
@@ -237,9 +235,7 @@ public abstract class Job
 	process();
       }
       catch (Exception e) {
-	writer  = new StringWriter();
-	e.printStackTrace(new PrintWriter(writer));
-	m_ExecutionError = "'process' failed with exception: " + writer.toString();
+	m_ExecutionError = "'process' failed with exception: " + Utils.throwableToString(e);
 	success          = false;
       }
     }
