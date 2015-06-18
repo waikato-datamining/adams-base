@@ -15,10 +15,22 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ArffLoader;
+import weka.core.converters.CSVLoader;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,19 +38,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.logging.Level;
-
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.CSVLoader;
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -723,6 +722,7 @@ public class WekaInstanceDumper
     String		result;
     File		outputFile;
     boolean		ok;
+    FileWriter		fwriter;
     BufferedWriter	writer;
 
     result     = null;
@@ -737,9 +737,11 @@ public class WekaInstanceDumper
       ok = FileUtils.writeToFile(outputFile.getAbsolutePath(), createHeader(m_Buffer.get(0).dataset()), false);
 
     if (ok) {
-      writer = null;
+      fwriter = null;
+      writer  = null;
       try {
-	writer = new BufferedWriter(new FileWriter(outputFile.getAbsolutePath(), true));
+	fwriter = new FileWriter(outputFile.getAbsolutePath(), true);
+	writer  = new BufferedWriter(fwriter);
 	while (m_Buffer.size() > 0) {
 	  writer.append(createRow(m_Buffer.get(0)));
 	  writer.newLine();
@@ -751,12 +753,8 @@ public class WekaInstanceDumper
 	result = handleException("Failed to write to '" + outputFile + "': ", e);
       }
       finally {
-	try {
-	  writer.close();
-	}
-	catch (Exception e) {
-	  getLogger().log(Level.SEVERE, "Failed to close writer for '" + outputFile + "'!", e);
-	}
+	FileUtils.closeQuietly(fwriter);
+	FileUtils.closeQuietly(writer);
       }
     }
     
