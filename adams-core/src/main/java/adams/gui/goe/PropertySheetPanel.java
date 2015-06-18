@@ -15,12 +15,38 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.AdditionalInformationHandler;
+import adams.core.Utils;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractNumericOption;
+import adams.core.option.AbstractOption;
+import adams.core.option.HtmlHelpProducer;
+import adams.core.option.OptionHandler;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,33 +70,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSpinner;
-import javax.swing.SwingConstants;
-
-import adams.core.AdditionalInformationHandler;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractNumericOption;
-import adams.core.option.AbstractOption;
-import adams.core.option.HtmlHelpProducer;
-import adams.core.option.OptionHandler;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.ParameterPanel;
 
 /**
  * Displays a property sheet where (supported) properties of the target
@@ -746,12 +745,9 @@ public class PropertySheetPanel extends BasePanel
 		jf = ((JPanel)evt.getSource()).getParent();
 	      else
 		jf = new JFrame();
-	      JOptionPane.showMessageDialog(jf, message,
-		  "error",
-		  JOptionPane.WARNING_MESSAGE);
+	      GUIHelper.showErrorMessage(jf, message, "Error");
 	      if(jf instanceof JFrame)
 		((JFrame)jf).dispose();
-
 	    }
 	    else {
 	      printException(ex.getTargetException().getClass().getName()+
@@ -761,16 +757,14 @@ public class PropertySheetPanel extends BasePanel
 		jf = ((JPanel)evt.getSource()).getParent();
 	      else
 		jf = new JFrame();
-	      JOptionPane.showMessageDialog(jf,
-		  ex.getTargetException().getClass().getName()+
-		  " while updating "+ property.getName()+
-		  ":\n"+
-		  ex.getTargetException().getMessage(),
-		  "error",
-		  JOptionPane.WARNING_MESSAGE);
+	      GUIHelper.showErrorMessage(jf,
+                ex.getTargetException().getClass().getName() +
+                  " while updating " + property.getName() +
+                  ":\n" +
+                  Utils.throwableToString(ex),
+		  "Error");
 	      if (jf instanceof JFrame)
 		((JFrame)jf).dispose();
-
 	    }
 	  }
 	  catch (Exception ex) {
