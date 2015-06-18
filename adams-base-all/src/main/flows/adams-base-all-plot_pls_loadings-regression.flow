@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-04-21 10:41:11
+# Date: 2015-06-18 20:53:24
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -22,7 +22,9 @@ adams.flow.control.Flow
 					-paintlet
 						adams.gui.visualization.sequence.CirclePaintlet
 					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
+						adams.gui.visualization.sequence.StraightLineOverlayPaintlet
+							-color
+							#ff0000
 					-marker-paintlet
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet

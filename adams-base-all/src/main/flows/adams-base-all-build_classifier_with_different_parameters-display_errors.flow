@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-04-21 10:40:12
+# Date: 2015-06-18 20:55:40
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -33,7 +33,21 @@ adams.flow.control.Flow
 					-mouse-click-action
 						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
+						adams.gui.visualization.core.CustomColorProvider
+							-color
+							#0000ff
+							-color
+							#ff0000
+							-color
+							#00ffff
+							-color
+							#00ff00
+							-color
+							#ff00ff
+							-color
+							#ffc800
+							-color
+							#ffafaf
 					-overlay-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-title

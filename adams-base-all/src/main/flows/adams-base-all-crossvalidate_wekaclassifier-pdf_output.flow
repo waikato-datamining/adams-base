@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-04-21 10:40:53
+# Date: 2015-06-18 20:54:26
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -103,6 +103,8 @@ adams.flow.control.Flow
 									0.75
 					-actor
 						adams.flow.sink.PDFViewer
+							-x
+							-3
 							-writer
 								adams.gui.print.NullWriter
 			-num-threads

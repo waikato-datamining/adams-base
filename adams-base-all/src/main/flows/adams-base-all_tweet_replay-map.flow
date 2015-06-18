@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-03-10 11:16:09
+# Date: 2015-06-18 20:39:54
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -26,7 +26,11 @@ adams.flow.control.Flow
 							-max-markers
 							100
 					-map-overlay
-						adams.flow.sink.openstreetmapviewer.NullMapOverlay
+						adams.flow.sink.openstreetmapviewer.TextMapOverlay
+							-width
+							140
+							-variable-name
+							timestamp
 					-initial-zoom
 					1
 					-layer
@@ -35,20 +39,6 @@ adams.flow.control.Flow
 					Tweets.happy
 					-layer
 					Tweets.sad
-			-actor
-				adams.flow.sink.Display
-					-name
-					NZ time
-					-short-title
-					true
-					-width
-					200
-					-height
-					80
-					-x
-					810
-					-always-clear
-					true
 	-actor
 		adams.flow.source.SelectFile
 			-stop-if-canceled
@@ -96,9 +86,9 @@ adams.flow.control.Flow
 									-date-format
 									yyyy-MM-dd HH:mm
 					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							NZ time
+						adams.flow.transformer.SetVariable
+							-var-name
+							timestamp
 			-tee
 				adams.flow.control.ConditionalTee
 					-name
@@ -113,6 +103,8 @@ adams.flow.control.Flow
 									GEO_LATITUDE
 									-field
 									GEO_LONGITUDE
+									-data-row-type
+										adams.data.spreadsheet.DenseDataRow
 									-spreadsheet-type
 										adams.data.spreadsheet.SpreadSheet
 					-tee
@@ -177,6 +169,8 @@ adams.flow.control.Flow
 									GEO_LATITUDE
 									-field
 									GEO_LONGITUDE
+									-data-row-type
+										adams.data.spreadsheet.DenseDataRow
 									-spreadsheet-type
 										adams.data.spreadsheet.SpreadSheet
 					-tee
