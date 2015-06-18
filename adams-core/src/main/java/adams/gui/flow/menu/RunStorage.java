@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionClearGraphicalOutput.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunStorage.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Removes all graphical output.
+ * Brings up dialog with current storage items.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionClearGraphicalOutput
+public class RunStorage
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionClearGraphicalOutput
    */
   @Override
   protected String getTitle() {
-    return "Clear graphical output";
+    return "Storage";
   }
 
   /**
@@ -48,8 +48,7 @@ public class ExecutionClearGraphicalOutput
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.cleanUp();
-    m_State.update();
+    m_State.getCurrentPanel().showStorage();
   }
 
   /**
@@ -57,9 +56,6 @@ public class ExecutionClearGraphicalOutput
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled()
-	&& (m_State.getLastFlow() != null));
+    setEnabled(m_State.isPaused());
   }
 }

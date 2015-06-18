@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionKill.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunClearGraphicalOutput.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Kills the flow.
+ * Removes all graphical output.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionKill
+public class RunClearGraphicalOutput
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionKill
    */
   @Override
   protected String getTitle() {
-    return "Kill";
+    return "Clear graphical output";
   }
 
   /**
@@ -48,7 +48,8 @@ public class ExecutionKill
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.kill();
+    m_State.cleanUp();
+    m_State.update();
   }
 
   /**
@@ -56,6 +57,9 @@ public class ExecutionKill
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning() || m_State.isStopping());
+    setEnabled(
+	   m_State.hasCurrentPanel() 
+	&& isInputEnabled()
+	&& (m_State.getLastFlow() != null));
   }
 }

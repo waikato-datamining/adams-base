@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionRunDebug.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * RunEnableAllBreakpoints.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the flow in debug mode.
+ * Enables all breakpoints.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionRunDebug
+public class RunEnableAllBreakpoints
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionRunDebug
    */
   @Override
   protected String getTitle() {
-    return "Run (debug)";
+    return "Enable all breakpoints";
   }
 
   /**
@@ -48,7 +48,7 @@ public class ExecutionRunDebug
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.run(true, true);
+    m_State.getCurrentPanel().enableBreakpoints(true);
   }
 
   /**
@@ -58,7 +58,6 @@ public class ExecutionRunDebug
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled()
-	&& m_State.getCurrentPanel().getTree().isFlow());
+	&& isInputEnabled());
   }
 }

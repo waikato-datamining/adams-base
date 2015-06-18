@@ -14,20 +14,20 @@
  */
 
 /**
- * DebugDisableAllBreakpoints.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunStop.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Disables all breakpoints.
+ * Stops the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DebugDisableAllBreakpoints
+public class RunStop
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class DebugDisableAllBreakpoints
    */
   @Override
   protected String getTitle() {
-    return "Disable all breakpoints";
+    return "Stop";
   }
 
   /**
@@ -48,7 +48,7 @@ public class DebugDisableAllBreakpoints
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().enableBreakpoints(false);
+    m_State.stop();
   }
 
   /**
@@ -56,8 +56,6 @@ public class DebugDisableAllBreakpoints
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+    setEnabled(m_State.isRunning());
   }
 }

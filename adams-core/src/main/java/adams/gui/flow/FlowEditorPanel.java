@@ -49,11 +49,11 @@ import adams.gui.event.TabVisibilityChangeEvent;
 import adams.gui.event.TabVisibilityChangeListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
-import adams.gui.flow.menu.DebugDisableAllBreakpoints;
-import adams.gui.flow.menu.DebugEnableAllBreakpoints;
-import adams.gui.flow.menu.DebugRemoveAllBreakpoints;
-import adams.gui.flow.menu.DebugStorage;
-import adams.gui.flow.menu.DebugVariables;
+import adams.gui.flow.menu.RunDisableAllBreakpoints;
+import adams.gui.flow.menu.RunEnableAllBreakpoints;
+import adams.gui.flow.menu.RunRemoveAllBreakpoints;
+import adams.gui.flow.menu.RunStorage;
+import adams.gui.flow.menu.RunVariables;
 import adams.gui.flow.menu.EditCheckVariables;
 import adams.gui.flow.menu.EditCleanUpFlow;
 import adams.gui.flow.menu.EditDiff;
@@ -67,16 +67,16 @@ import adams.gui.flow.menu.EditProcessActors;
 import adams.gui.flow.menu.EditRedo;
 import adams.gui.flow.menu.EditTimedActors;
 import adams.gui.flow.menu.EditUndo;
-import adams.gui.flow.menu.ExecutionClearGraphicalOutput;
-import adams.gui.flow.menu.ExecutionDisplayErrors;
-import adams.gui.flow.menu.ExecutionGC;
-import adams.gui.flow.menu.ExecutionHeadless;
-import adams.gui.flow.menu.ExecutionKill;
-import adams.gui.flow.menu.ExecutionPauseResume;
-import adams.gui.flow.menu.ExecutionRun;
-import adams.gui.flow.menu.ExecutionRunDebug;
-import adams.gui.flow.menu.ExecutionStop;
-import adams.gui.flow.menu.ExecutionValidateSetup;
+import adams.gui.flow.menu.RunClearGraphicalOutput;
+import adams.gui.flow.menu.RunDisplayErrors;
+import adams.gui.flow.menu.RunGC;
+import adams.gui.flow.menu.RunHeadless;
+import adams.gui.flow.menu.RunKill;
+import adams.gui.flow.menu.RunPauseResume;
+import adams.gui.flow.menu.RunRun;
+import adams.gui.flow.menu.RunRunDebug;
+import adams.gui.flow.menu.RunStop;
+import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.FileCheckOnSave;
 import adams.gui.flow.menu.FileClose;
 import adams.gui.flow.menu.FileCloseTab;
@@ -150,11 +150,8 @@ public class FlowEditorPanel
   /** the Edit menu text. */
   public static final String MENU_EDIT = "Edit";
 
-  /** the Debug menu text. */
-  public static final String MENU_DEBUG = "Debug";
-
-  /** the Execution menu text. */
-  public static final String MENU_EXECUTION = "Execution";
+  /** the Run menu text. */
+  public static final String MENU_RUN = "Run";
 
   /** the View menu text. */
   public static final String MENU_VIEW = "View";
@@ -277,52 +274,52 @@ public class FlowEditorPanel
   protected FlowEditorAction m_ActionEditProcessActors;
 
   /** the "enable all breakpoints" action. */
-  protected FlowEditorAction m_ActionDebugEnableAllBreakpoints;
+  protected FlowEditorAction m_ActionRunEnableAllBreakpoints;
 
   /** the "remove all breakpoints" action. */
-  protected FlowEditorAction m_ActionDebugRemoveAllBreakpoints;
+  protected FlowEditorAction m_ActionRunRemoveAllBreakpoints;
 
   /** the "disable all breakpoints" action. */
-  protected FlowEditorAction m_ActionDebugDisableAllBreakpoints;
+  protected FlowEditorAction m_ActionRunDisableAllBreakpoints;
 
   /** the "variables" action. */
-  protected FlowEditorAction m_ActionDebugVariables;
+  protected FlowEditorAction m_ActionRunVariables;
 
   /** the "storage" action. */
-  protected FlowEditorAction m_ActionDebugStorage;
+  protected FlowEditorAction m_ActionRunStorage;
 
   /** the "headless" action. */
-  protected FlowEditorAction m_ActionExecutionHeadless;
+  protected FlowEditorAction m_ActionRunHeadless;
 
   /** the "gc" action. */
-  protected FlowEditorAction m_ActionExecutionGC;
+  protected FlowEditorAction m_ActionRunGC;
 
   /** the "check setup" action. */
-  protected FlowEditorAction m_ActionExecutionValidateSetup;
+  protected FlowEditorAction m_ActionRunValidateSetup;
 
   /** the "run" action. */
-  protected FlowEditorAction m_ActionExecutionRun;
+  protected FlowEditorAction m_ActionRunRun;
 
   /** the "run (debug)" action. */
-  protected FlowEditorAction m_ActionExecutionRunDebug;
+  protected FlowEditorAction m_ActionRunRunDebug;
 
   /** the "pause" action. */
-  protected FlowEditorAction m_ActionExecutionPauseAndResume;
+  protected FlowEditorAction m_ActionRunPauseAndResume;
 
   /** the "pause" menu item. */
   protected FlowEditorAction m_MenuItemExecutionPauseAndResume;
 
   /** the "stop" action. */
-  protected FlowEditorAction m_ActionExecutionStop;
+  protected FlowEditorAction m_ActionRunStop;
 
   /** the "kill" action. */
-  protected FlowEditorAction m_ActionExecutionKill;
+  protected FlowEditorAction m_ActionRunKill;
 
   /** the "display errors" action. */
-  protected FlowEditorAction m_ActionExecutionDisplayErrors;
+  protected FlowEditorAction m_ActionRunDisplayErrors;
 
   /** the "Clear graphical output" action. */
-  protected FlowEditorAction m_ActionExecutionClearGraphicalOutput;
+  protected FlowEditorAction m_ActionRunClearGraphicalOutput;
 
   /** the "show toolbar" action. */
   protected FlowEditorAction m_ActionViewShowToolbar;
@@ -618,79 +615,79 @@ public class FlowEditorPanel
     m_ActionEditProcessActors = action;
     m_MenuItems.add(action);
 
-    // Debug/Enable all breakpoints
-    action = new DebugEnableAllBreakpoints();
-    m_ActionDebugEnableAllBreakpoints = action;
-    m_MenuItems.add(action);
-
-    // Debug/Disable all breakpoints
-    action = new DebugDisableAllBreakpoints();
-    m_ActionDebugDisableAllBreakpoints = action;
-    m_MenuItems.add(action);
-
-    // Debug/Remove all breakpoints
-    action = new DebugRemoveAllBreakpoints();
-    m_ActionDebugRemoveAllBreakpoints = action;
-    m_MenuItems.add(action);
-
-    // Debug/Variables
-    action = new DebugVariables();
-    m_ActionDebugVariables = action;
-    m_MenuItems.add(action);
-
-    // Debug/Storage
-    action = new DebugStorage();
-    m_ActionDebugStorage = action;
-    m_MenuItems.add(action);
-
     // Execution/Validate setup
-    action = new ExecutionValidateSetup();
-    m_ActionExecutionValidateSetup = action;
+    action = new RunValidateSetup();
+    m_ActionRunValidateSetup = action;
     m_MenuItems.add(action);
 
     // Execution/Run
-    action = new ExecutionRun();
-    m_ActionExecutionRun = action;
+    action = new RunRun();
+    m_ActionRunRun = action;
     m_MenuItems.add(action);
 
     // Execution/Run (debug)
-    action = new ExecutionRunDebug();
-    m_ActionExecutionRunDebug = action;
+    action = new RunRunDebug();
+    m_ActionRunRunDebug = action;
     m_MenuItems.add(action);
 
     // Execution/Pause+Resume
-    action = new ExecutionPauseResume();
-    m_ActionExecutionPauseAndResume = action;
+    action = new RunPauseResume();
+    m_ActionRunPauseAndResume = action;
     m_MenuItems.add(action);
 
     // Execution/Stop
-    action = new ExecutionStop();
-    m_ActionExecutionStop = action;
+    action = new RunStop();
+    m_ActionRunStop = action;
     m_MenuItems.add(action);
 
     // Execution/Kill
-    action = new ExecutionKill();
-    m_ActionExecutionKill = action;
+    action = new RunKill();
+    m_ActionRunKill = action;
+    m_MenuItems.add(action);
+
+    // Debug/Enable all breakpoints
+    action = new RunEnableAllBreakpoints();
+    m_ActionRunEnableAllBreakpoints = action;
+    m_MenuItems.add(action);
+
+    // Debug/Disable all breakpoints
+    action = new RunDisableAllBreakpoints();
+    m_ActionRunDisableAllBreakpoints = action;
+    m_MenuItems.add(action);
+
+    // Debug/Remove all breakpoints
+    action = new RunRemoveAllBreakpoints();
+    m_ActionRunRemoveAllBreakpoints = action;
+    m_MenuItems.add(action);
+
+    // Debug/Variables
+    action = new RunVariables();
+    m_ActionRunVariables = action;
+    m_MenuItems.add(action);
+
+    // Debug/Storage
+    action = new RunStorage();
+    m_ActionRunStorage = action;
     m_MenuItems.add(action);
 
     // Execution/Display errors
-    action = new ExecutionDisplayErrors();
-    m_ActionExecutionDisplayErrors = action;
+    action = new RunDisplayErrors();
+    m_ActionRunDisplayErrors = action;
     m_MenuItems.add(action);
 
     // Execution/Clear graphical output
-    action = new ExecutionClearGraphicalOutput();
-    m_ActionExecutionClearGraphicalOutput = action;
+    action = new RunClearGraphicalOutput();
+    m_ActionRunClearGraphicalOutput = action;
     m_MenuItems.add(action);
 
     // Execution/Headless
-    action = new ExecutionHeadless();
-    m_ActionExecutionHeadless = action;
+    action = new RunHeadless();
+    m_ActionRunHeadless = action;
     m_MenuItems.add(action);
 
     // Execution/GC
-    action = new ExecutionGC();
-    m_ActionExecutionGC = action;
+    action = new RunGC();
+    m_ActionRunGC = action;
     m_MenuItems.add(action);
 
     // View/Show toolbar
@@ -768,11 +765,11 @@ public class FlowEditorPanel
     addSeparator();
     addToToolBar(m_ActionEditFind);
     addSeparator();
-    addToToolBar(m_ActionExecutionValidateSetup);
-    addToToolBar(m_ActionExecutionRun);
-    addToToolBar(m_ActionExecutionRunDebug);
-    addToToolBar(m_ActionExecutionPauseAndResume);
-    addToToolBar(m_ActionExecutionStop);
+    addToToolBar(m_ActionRunValidateSetup);
+    addToToolBar(m_ActionRunRun);
+    addToToolBar(m_ActionRunRunDebug);
+    addToToolBar(m_ActionRunPauseAndResume);
+    addToToolBar(m_ActionRunStop);
   }
 
   /**
@@ -977,10 +974,10 @@ public class FlowEditorPanel
       menu.addSeparator();
       menu.add(m_ActionEditProcessActors);
 
-      // Debug
-      menu = new BaseMenu(MENU_DEBUG);
+      // Run
+      menu = new BaseMenu(MENU_RUN);
       result.add(menu);
-      menu.setMnemonic('D');
+      menu.setMnemonic('R');
       menu.addChangeListener(new ChangeListener() {
 	@Override
 	public void stateChanged(ChangeEvent e) {
@@ -988,35 +985,24 @@ public class FlowEditorPanel
 	}
       });
 
-      menu.add(m_ActionDebugEnableAllBreakpoints);
-      menu.add(m_ActionDebugDisableAllBreakpoints);
-      menu.add(m_ActionDebugRemoveAllBreakpoints);
-      menu.add(m_ActionDebugVariables);
-      menu.add(m_ActionDebugStorage);
-
-      // Execution
-      menu = new BaseMenu(MENU_EXECUTION);
-      result.add(menu);
-      menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
-
-      menu.add(m_ActionExecutionValidateSetup);
-      menu.add(m_ActionExecutionRun);
-      menu.add(m_ActionExecutionRunDebug);
-      menu.add(m_ActionExecutionPauseAndResume);
-      menu.add(m_ActionExecutionStop);
-      menu.add(m_ActionExecutionKill);
+      menu.add(m_ActionRunValidateSetup);
+      menu.add(m_ActionRunRun);
+      menu.add(m_ActionRunRunDebug);
+      menu.add(m_ActionRunPauseAndResume);
+      menu.add(m_ActionRunStop);
+      menu.add(m_ActionRunKill);
       menu.addSeparator();
-      menu.add(m_ActionExecutionDisplayErrors);
-      menu.add(m_ActionExecutionClearGraphicalOutput);
+      menu.add(m_ActionRunEnableAllBreakpoints);
+      menu.add(m_ActionRunDisableAllBreakpoints);
+      menu.add(m_ActionRunRemoveAllBreakpoints);
+      menu.add(m_ActionRunVariables);
+      menu.add(m_ActionRunStorage);
       menu.addSeparator();
-      menu.add(m_ActionExecutionHeadless);
-      menu.add(m_ActionExecutionGC);
+      menu.add(m_ActionRunDisplayErrors);
+      menu.add(m_ActionRunClearGraphicalOutput);
+      menu.addSeparator();
+      menu.add(m_ActionRunHeadless);
+      menu.add(m_ActionRunGC);
 
       // View
       menu = new BaseMenu(MENU_VIEW);

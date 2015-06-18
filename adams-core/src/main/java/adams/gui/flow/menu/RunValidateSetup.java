@@ -14,23 +14,24 @@
  */
 
 /**
- * ExecutionGC.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunValidateSetup.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorUtils;
+
 import java.awt.event.ActionEvent;
 
-import adams.gui.flow.FlowEditorPanel;
-
 /**
- * Enables/disables running GC after flow execution.
+ * Validates the current setup.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionGC
-  extends AbstractFlowEditorCheckBoxMenuItemAction {
+public class RunValidateSetup
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -42,25 +43,51 @@ public class ExecutionGC
    */
   @Override
   protected String getTitle() {
-    return "GC after execution";
+    return "Validate setup";
   }
 
-  /**
-   * Returns the initial selected state of the menu item.
-   * 
-   * @return		true if selected initially
-   */
-  @Override
-  protected boolean isInitiallySelected() {
-    return FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
-  }
-  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().setRunGC(isSelected());
+    AbstractActor	actor;
+    StringBuilder	errors;
+    String		msg;
+
+    msg    = null;
+    errors = new StringBuilder();
+    actor  = m_State.getCurrentFlow(errors);
+    if (errors.length() > 0)
+      msg = errors.toString();
+
+    if (msg == null) {
+      try {
+	msg = actor.setUp();
+	actor.wrapUp();
+	actor.cleanUp();
+      }
+      catch (Exception ex) {
+	msg = "Actor generated exception: ";
+	System.err.println(msg);
+	ex.printStackTrace();
+	msg += e;
+      }
+    }
+
+    // perform some checks
+    if (msg == null)
+      msg = ActorUtils.checkFlow(actor);
+
+    if (msg == null) {
+      msg = "The flow passed validation!";
+      m_State.getCurrentPanel().showStatus(msg);
+      m_State.getCurrentPanel().showNotification(msg, false);
+    }
+    else {
+      m_State.getCurrentPanel().showStatus(msg);
+      m_State.getCurrentPanel().showNotification("The flow setup failed validation:\n" + msg, true);
+    }
   }
 
   /**

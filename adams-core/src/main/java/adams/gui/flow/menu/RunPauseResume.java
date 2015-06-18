@@ -14,22 +14,22 @@
  */
 
 /**
- * DebugRemoveAllBreakpoints.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunPauseResume.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.gui.core.GUIHelper;
+
 import java.awt.event.ActionEvent;
 
-import adams.flow.processor.RemoveBreakpoints;
-
 /**
- * Removes all breakpoints.
+ * Pauses/resumes the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DebugRemoveAllBreakpoints
+public class RunPauseResume
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -42,7 +42,7 @@ public class DebugRemoveAllBreakpoints
    */
   @Override
   protected String getTitle() {
-    return "Remove all breakpoints";
+    return "Pause";
   }
 
   /**
@@ -50,7 +50,9 @@ public class DebugRemoveAllBreakpoints
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().getTree().processActor(null, new RemoveBreakpoints());
+    m_State.getCurrentPanel().closeStorage();
+    m_State.getCurrentPanel().pauseAndResume();
+    m_State.updateActions();
   }
 
   /**
@@ -58,8 +60,15 @@ public class DebugRemoveAllBreakpoints
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().isPaused()) {
+      setIcon(GUIHelper.getIcon("resume.gif"));
+      setName("Resume");
+    }
+    else {
+      setIcon(GUIHelper.getIcon("pause.gif"));
+      setName("Pause");
+    }
+    
+    setEnabled(m_State.isRunning());
   }
 }

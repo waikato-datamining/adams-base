@@ -14,20 +14,20 @@
  */
 
 /**
- * DebugStorage.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunDisableAllBreakpoints.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Brings up dialog with current storage items.
+ * Disables all breakpoints.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DebugStorage
+public class RunDisableAllBreakpoints
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class DebugStorage
    */
   @Override
   protected String getTitle() {
-    return "Storage";
+    return "Disable all breakpoints";
   }
 
   /**
@@ -48,7 +48,7 @@ public class DebugStorage
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().showStorage();
+    m_State.getCurrentPanel().enableBreakpoints(false);
   }
 
   /**
@@ -56,6 +56,8 @@ public class DebugStorage
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isPaused());
+    setEnabled(
+	   m_State.hasCurrentPanel() 
+	&& isInputEnabled());
   }
 }

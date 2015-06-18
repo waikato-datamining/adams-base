@@ -14,20 +14,20 @@
  */
 
 /**
- * DebugVariables.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunRun.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Brings up dialog with current variables.
+ * Executes the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DebugVariables
+public class RunRun
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class DebugVariables
    */
   @Override
   protected String getTitle() {
-    return "Variables";
+    return "Run";
   }
 
   /**
@@ -48,7 +48,7 @@ public class DebugVariables
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().showVariables();
+    m_State.run(true, false);
   }
 
   /**
@@ -56,6 +56,9 @@ public class DebugVariables
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning());
+    setEnabled(
+	   m_State.hasCurrentPanel() 
+	&& isInputEnabled()
+	&& m_State.getCurrentPanel().getTree().isFlow());
   }
 }

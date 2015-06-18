@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionRun.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunVariables.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the flow.
+ * Brings up dialog with current variables.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionRun
+public class RunVariables
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionRun
    */
   @Override
   protected String getTitle() {
-    return "Run";
+    return "Variables";
   }
 
   /**
@@ -48,7 +48,7 @@ public class ExecutionRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.run(true, false);
+    m_State.getCurrentPanel().showVariables();
   }
 
   /**
@@ -56,9 +56,6 @@ public class ExecutionRun
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled()
-	&& m_State.getCurrentPanel().getTree().isFlow());
+    setEnabled(m_State.isRunning());
   }
 }

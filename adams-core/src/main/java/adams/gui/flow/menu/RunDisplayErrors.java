@@ -14,19 +14,19 @@
  */
 
 /**
- * ExecutionDisplayErrors.java
+ * RunDisplayErrors.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
+
+import adams.db.LogEntryHandler;
+import adams.gui.core.BaseDialog;
+import adams.gui.tools.LogEntryViewerPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-
-import adams.db.LogEntryHandler;
-import adams.gui.core.BaseDialog;
-import adams.gui.tools.LogEntryViewerPanel;
 
 /**
  * Displays errors from last run.
@@ -34,7 +34,7 @@ import adams.gui.tools.LogEntryViewerPanel;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionDisplayErrors
+public class RunDisplayErrors
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */

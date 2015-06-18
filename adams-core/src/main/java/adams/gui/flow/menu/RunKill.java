@@ -14,21 +14,21 @@
  */
 
 /**
- * ExecutionHeadless.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunKill.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Enables/disables headless mode.
+ * Kills the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionHeadless
-  extends AbstractFlowEditorCheckBoxMenuItemAction {
+public class RunKill
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -40,25 +40,15 @@ public class ExecutionHeadless
    */
   @Override
   protected String getTitle() {
-    return "Headless";
+    return "Kill";
   }
 
-  /**
-   * Returns the initial selected state of the menu item.
-   * 
-   * @return		true if selected initially
-   */
-  @Override
-  protected boolean isInitiallySelected() {
-    return false;
-  }
-  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().setHeadless(isSelected());
+    m_State.kill();
   }
 
   /**
@@ -66,8 +56,6 @@ public class ExecutionHeadless
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+    setEnabled(m_State.isRunning() || m_State.isStopping());
   }
 }

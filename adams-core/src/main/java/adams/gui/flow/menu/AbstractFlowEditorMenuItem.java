@@ -89,7 +89,7 @@ public abstract class AbstractFlowEditorMenuItem
    * @return		the name of the menu
    * @see		FlowEditorPanel#MENU_FILE
    * @see		FlowEditorPanel#MENU_DEBUG
-   * @see		FlowEditorPanel#MENU_EXECUTION
+   * @see		FlowEditorPanel#MENU_RUN
    * @see		FlowEditorPanel#MENU_VIEW
    * @see		FlowEditorPanel#MENU_WINDOW
    */

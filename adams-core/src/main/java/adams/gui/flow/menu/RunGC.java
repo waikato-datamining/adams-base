@@ -14,21 +14,23 @@
  */
 
 /**
- * DebugEnableAllBreakpoints.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunGC.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
+
+import adams.gui.flow.FlowEditorPanel;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Enables all breakpoints.
+ * Enables/disables running GC after flow execution.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DebugEnableAllBreakpoints
-  extends AbstractFlowEditorMenuItemAction {
+public class RunGC
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -40,15 +42,25 @@ public class DebugEnableAllBreakpoints
    */
   @Override
   protected String getTitle() {
-    return "Enable all breakpoints";
+    return "GC after execution";
   }
 
+  /**
+   * Returns the initial selected state of the menu item.
+   * 
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
+  }
+  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().enableBreakpoints(true);
+    m_State.getCurrentPanel().setRunGC(isSelected());
   }
 
   /**

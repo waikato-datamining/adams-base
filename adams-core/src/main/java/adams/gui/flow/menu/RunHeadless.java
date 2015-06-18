@@ -14,24 +14,21 @@
  */
 
 /**
- * ExecutionValidateSetup.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunHeadless.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
-import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorUtils;
-
 /**
- * Validates the current setup.
+ * Enables/disables headless mode.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionValidateSetup
-  extends AbstractFlowEditorMenuItemAction {
+public class RunHeadless
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -43,51 +40,25 @@ public class ExecutionValidateSetup
    */
   @Override
   protected String getTitle() {
-    return "Validate setup";
+    return "Headless";
   }
 
+  /**
+   * Returns the initial selected state of the menu item.
+   * 
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return false;
+  }
+  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    AbstractActor	actor;
-    StringBuilder	errors;
-    String		msg;
-
-    msg    = null;
-    errors = new StringBuilder();
-    actor  = m_State.getCurrentFlow(errors);
-    if (errors.length() > 0)
-      msg = errors.toString();
-
-    if (msg == null) {
-      try {
-	msg = actor.setUp();
-	actor.wrapUp();
-	actor.cleanUp();
-      }
-      catch (Exception ex) {
-	msg = "Actor generated exception: ";
-	System.err.println(msg);
-	ex.printStackTrace();
-	msg += e;
-      }
-    }
-
-    // perform some checks
-    if (msg == null)
-      msg = ActorUtils.checkFlow(actor);
-
-    if (msg == null) {
-      msg = "The flow passed validation!";
-      m_State.getCurrentPanel().showStatus(msg);
-      m_State.getCurrentPanel().showNotification(msg, false);
-    }
-    else {
-      m_State.getCurrentPanel().showStatus(msg);
-      m_State.getCurrentPanel().showNotification("The flow setup failed validation:\n" + msg, true);
-    }
+    m_State.getCurrentPanel().setHeadless(isSelected());
   }
 
   /**

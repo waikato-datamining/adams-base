@@ -14,20 +14,20 @@
  */
 
 /**
- * ExecutionStop.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * RunRunDebug.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Stops the flow.
+ * Executes the flow in debug mode.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ExecutionStop
+public class RunRunDebug
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class ExecutionStop
    */
   @Override
   protected String getTitle() {
-    return "Stop";
+    return "Run (debug)";
   }
 
   /**
@@ -48,7 +48,7 @@ public class ExecutionStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.stop();
+    m_State.run(true, true);
   }
 
   /**
@@ -56,6 +56,9 @@ public class ExecutionStop
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning());
+    setEnabled(
+	   m_State.hasCurrentPanel() 
+	&& isInputEnabled()
+	&& m_State.getCurrentPanel().getTree().isFlow());
   }
 }
