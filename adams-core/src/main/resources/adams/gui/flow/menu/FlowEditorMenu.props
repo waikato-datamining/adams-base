@@ -12,6 +12,9 @@
 adams.gui.flow.menu.FileNewFlow-Icon=new.gif
 adams.gui.flow.menu.FileNewFlow-Mnemonic=N
 adams.gui.flow.menu.FileNewFlow-Shortcut=control N
+adams.gui.flow.menu.FileNewFromClipboard-Icon=paste.gif
+adams.gui.flow.menu.FileNewFromClipboard-Mnemonic=C
+adams.gui.flow.menu.FileNewFromClipboard-Shortcut=control alt shift V
 adams.gui.flow.menu.FileOpen-Icon=open.gif
 adams.gui.flow.menu.FileOpen-Mnemonic=O
 adams.gui.flow.menu.FileOpen-Shortcut=control O

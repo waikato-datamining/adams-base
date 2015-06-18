@@ -83,6 +83,7 @@ import adams.gui.flow.menu.FileCloseTab;
 import adams.gui.flow.menu.FileExport;
 import adams.gui.flow.menu.FileImport;
 import adams.gui.flow.menu.FileNewFlow;
+import adams.gui.flow.menu.FileNewFromClipboard;
 import adams.gui.flow.menu.FileOpen;
 import adams.gui.flow.menu.FileOpenRemoteFlow;
 import adams.gui.flow.menu.FileProperties;
@@ -205,6 +206,9 @@ public class FlowEditorPanel
 
   /** the "new" action. */
   protected FlowEditorAction m_ActionFileNew;
+
+  /** the "new from clipboard" action. */
+  protected FlowEditorAction m_ActionFileNewFromClipboard;
 
   /** the "save" action. */
   protected FlowEditorAction m_ActionFileSave;
@@ -487,6 +491,11 @@ public class FlowEditorPanel
     // File/New (flow)
     action = new FileNewFlow();
     m_ActionFileNew = action;
+    m_MenuItems.add(action);
+
+    // File/New from cllipboard
+    action = new FileNewFromClipboard();
+    m_ActionFileNewFromClipboard = action;
     m_MenuItems.add(action);
 
     // File/Open
@@ -869,6 +878,8 @@ public class FlowEditorPanel
       submenu.setMnemonic('N');
       submenu.setIcon(GUIHelper.getIcon("new.gif"));
       m_MenuFileNew = submenu;
+      submenu.add(m_ActionFileNewFromClipboard);
+      submenu.addSeparator();
       actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
       prefixes = new Vector<String>();
       for (i = 0; i < actors.length; i++) {
