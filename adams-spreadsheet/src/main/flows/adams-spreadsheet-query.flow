@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:41:31
+# Date: 2015-06-18 16:49:35
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -11,6 +11,8 @@ adams.flow.control.Flow
 				adams.flow.sink.DisplayPanelManager
 					-provider
 						adams.flow.sink.SpreadSheetDisplay
+							-writer
+								adams.data.io.output.NullWriter
 					-entry-name-variable
 					name
 	-actor
@@ -21,6 +23,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.SpreadSheetFileReader
 			-reader
 				adams.data.io.input.CsvSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
 					-spreadsheet-type
 						adams.data.spreadsheet.SpreadSheet
 	-actor
@@ -40,7 +44,7 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.SpreadSheetQuery
 			-query
-			SELECT RUN,SPEED1 AS SPEED,SENS AS SENSOR,TIME,T20BOLT AS CLASS\nWHERE (SPEED1 < 6)\nAND (RUN >= 10)\nORDER BY T20BOLT
+			SELECT RUN,SPEED1 AS SPEED,SENS AS SENSOR,TIME,T20BOLT AS CLASS\nWHERE (SPEED1 < 6)\nAND (RUN >= 10)\nORDER BY CLASS
 	-actor
 		adams.flow.transformer.SetVariable
 			-var-name
