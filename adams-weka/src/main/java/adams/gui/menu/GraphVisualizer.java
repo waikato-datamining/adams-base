@@ -21,6 +21,7 @@
 
 package adams.gui.menu;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
@@ -28,8 +29,8 @@ import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 
-import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -118,9 +119,8 @@ public class GraphVisualizer
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(
-	  getOwner(), "Error loading file '" + filename + "':\n" + e.getMessage());
+      GUIHelper.showErrorMessage(
+        getOwner(), "Error loading file '" + filename + "':\n" + Utils.throwableToString(e));
       return;
     }
     finally {
