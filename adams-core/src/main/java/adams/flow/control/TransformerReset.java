@@ -15,7 +15,7 @@
 
 /**
  * TransformerReset.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -164,9 +164,11 @@ public class TransformerReset
   public void variableChanged(VariableChangeEvent e) {
     super.variableChanged(e);
     if ((e.getType() == Type.MODIFIED) || (e.getType() == Type.ADDED)) {
-      m_SetUpSubActors = !e.getName().equals(m_VariableName.getValue());
-      if (m_SetUpSubActors && isLoggingEnabled())
-	getLogger().info("Reset required");
+      if (e.getName().equals(m_VariableName.getValue())) {
+        m_SetUpSubActors = false;
+        if (isLoggingEnabled())
+          getLogger().info("Reset required");
+      }
     }
   }
   
