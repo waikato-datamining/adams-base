@@ -15,27 +15,26 @@
 
 /*
  * TreeVisualizer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import java.io.File;
-import java.io.FileReader;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import weka.gui.treevisualizer.Node;
-import weka.gui.treevisualizer.NodePlace;
-import weka.gui.treevisualizer.PlaceNode2;
-import weka.gui.treevisualizer.TreeBuild;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ExtensionFileFilter;
+import weka.gui.treevisualizer.Node;
+import weka.gui.treevisualizer.NodePlace;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeBuild;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Displays data in the tree visualizer.
@@ -169,5 +168,16 @@ public class TreeVisualizer
   @Override
   public UserMode getUserMode() {
     return UserMode.BASIC;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_VISUALIZATION;
   }
 }

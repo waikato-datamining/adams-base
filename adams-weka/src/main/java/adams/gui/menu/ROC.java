@@ -15,27 +15,26 @@
 
 /*
  * ROC.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
+import adams.core.io.PlaceholderFile;
+import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.ChildFrame;
+import adams.gui.application.UserMode;
 import weka.classifiers.evaluation.ThresholdCurve;
 import weka.core.Instances;
 import weka.core.Utils;
 import weka.gui.ConverterFileChooser;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
-import adams.core.io.PlaceholderFile;
-import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.ChildFrame;
-import adams.gui.application.UserMode;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
 
 /**
  * Displays ROC curve data.
@@ -163,5 +162,16 @@ public class ROC
   @Override
   public UserMode getUserMode() {
     return UserMode.BASIC;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_VISUALIZATION;
   }
 }

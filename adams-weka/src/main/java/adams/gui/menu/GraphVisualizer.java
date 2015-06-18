@@ -15,7 +15,7 @@
 
 /*
  * GraphVisualizer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -161,5 +161,16 @@ public class GraphVisualizer
   @Override
   public UserMode getUserMode() {
     return UserMode.BASIC;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_VISUALIZATION;
   }
 }
