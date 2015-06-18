@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import weka.classifiers.evaluation.ThresholdCurve;
 import weka.core.Instances;
 import weka.core.Utils;
@@ -124,9 +125,8 @@ public class ROC
       vmc.addPlot(tempd);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(
-	  getOwner(), "Error adding plot:\n" + e.getMessage());
+      GUIHelper.showErrorMessage(
+        getOwner(), "Error adding plot:\n" + adams.core.Utils.throwableToString(e));
       return;
     }
 

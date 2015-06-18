@@ -21,18 +21,19 @@
 
 package adams.gui.menu;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 import weka.gui.treevisualizer.Node;
 import weka.gui.treevisualizer.NodePlace;
 import weka.gui.treevisualizer.PlaceNode2;
 import weka.gui.treevisualizer.TreeBuild;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileReader;
 
@@ -118,9 +119,8 @@ public class TreeVisualizer
       top = builder.create(reader);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(
-	  getOwner(), "Error loading file '" + filename + "':\n" + e.getMessage());
+      GUIHelper.showErrorMessage(
+        getOwner(), "Error loading file '" + filename + "':\n" + Utils.throwableToString(e));
       return;
     }
     finally {
