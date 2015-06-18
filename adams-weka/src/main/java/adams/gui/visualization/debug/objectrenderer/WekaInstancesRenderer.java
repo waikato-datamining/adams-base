@@ -21,7 +21,10 @@
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.core.ClassLocator;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
+import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.gui.arffviewer.ArffSortedTableModel;
@@ -67,12 +70,35 @@ public class WekaInstancesRenderer
     ArffTable		table;
     BaseScrollPane	scrollPane;
     PlainTextRenderer	plain;
+    SpreadSheet 	sheet;
+    Row			row;
+    int			i;
+    SpreadSheetRenderer	sprenderer;
 
     if (obj instanceof Instances) {
       data = (Instances) obj;
-      table = new ArffTable(new ArffSortedTableModel(data));
-      scrollPane = new BaseScrollPane(table);
-      panel.add(scrollPane, BorderLayout.CENTER);
+      if (data.numInstances() == 0) {
+	sheet = new SpreadSheet();
+	row = sheet.getHeaderRow();
+	row.addCell("I").setContentAsString("Index");
+	row.addCell("N").setContentAsString("Name");
+	row.addCell("T").setContentAsString("Type");
+	row.addCell("C").setContentAsString("Class");
+	for (i = 0; i < data.numAttributes(); i++) {
+	  row = sheet.addRow();
+	  row.addCell("I").setContent(i + 1);
+	  row.addCell("N").setContentAsString(data.attribute(i).name());
+	  row.addCell("T").setContentAsString(Attribute.typeToString(data.attribute(i)));
+	  row.addCell("C").setContent((i == data.classIndex()) ? "true" : "");
+	}
+	sprenderer = new SpreadSheetRenderer();
+	sprenderer.render(sheet, panel);
+      }
+      else {
+        table = new ArffTable(new ArffSortedTableModel(data));
+        scrollPane = new BaseScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);
+      }
     }
     else {
       inst = (Instance) obj;
