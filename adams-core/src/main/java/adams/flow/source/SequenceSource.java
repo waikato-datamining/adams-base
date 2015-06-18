@@ -15,13 +15,10 @@
 
 /*
  * SequenceSource.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.control.MutableConnectedControlActor;
@@ -31,6 +28,10 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -223,7 +224,7 @@ public class SequenceSource
     Class[]		result;
     AbstractActor	last;
 
-    result = new Class[0];
+    result = new Class[]{Unknown.class};
 
     last = lastActive();
     if ((last != null) && (last instanceof OutputProducer))
