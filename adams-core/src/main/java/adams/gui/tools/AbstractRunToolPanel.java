@@ -15,24 +15,10 @@
 
 /*
  * RunTool.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
@@ -48,6 +34,18 @@ import adams.gui.scripting.ScriptingEngineHandler;
 import adams.tools.AbstractTool;
 import adams.tools.InitializeTables;
 import adams.tools.RunTool;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A panel for executing tools from the GUI.
@@ -165,7 +163,7 @@ public abstract class AbstractRunToolPanel
 	adams.gui.scripting.RunTool.ACTION + " " + OptionUtils.getCommandLine(tool),
 	new ScriptingCommandCode() {
 	  public void execute() {
-	    JOptionPane.showMessageDialog(AbstractRunToolPanel.this, "Execution of tool finished!");
+            GUIHelper.showInformationMessage(AbstractRunToolPanel.this, "Execution of tool finished!");
 	  }
 	});
   }
