@@ -15,17 +15,17 @@
 
 /**
  * ModifyValue.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
-
-import java.awt.event.ActionEvent;
 
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Report;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Allows the user to modify values.
@@ -58,7 +58,7 @@ public class ModifyValue
     if ((getFields().length == 0) && (getFields()[0].getDataType() == DataType.BOOLEAN))
       setName("Toggle '" + getFields()[0].toDisplayString() + "'");
     else
-      setName(createName("Modify '", value, 50));
+      setName(createName("Modify", value, 50));
   }
   
   /**
