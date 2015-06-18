@@ -21,10 +21,12 @@
 
 package adams.gui.menu;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
@@ -33,7 +35,6 @@ import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.VisualizePanel;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import java.io.File;
 import java.util.logging.Level;
 
@@ -111,8 +112,8 @@ public class InstancesPlot
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to load: " + file, e);
-      JOptionPane.showMessageDialog(
-	  getOwner(), "Error loading file '" + file + "':\n" + e.getMessage());
+      GUIHelper.showErrorMessage(
+        getOwner(), "Error loading file '" + file + "':\n" + Utils.throwableToString(e));
       return;
     }
 
