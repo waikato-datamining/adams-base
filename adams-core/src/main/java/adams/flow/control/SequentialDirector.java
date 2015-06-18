@@ -122,7 +122,7 @@ public class SequentialDirector
    * @return		the combined error string
    */
   protected String handleException(AbstractActor actor, String msg, Throwable t) {
-    return Utils.handleException(actor, msg, t, m_ControlActor.getSilent());
+    return Utils.handleException(actor, msg, t, !hasControlActor() || m_ControlActor.getSilent());
   }
 
   /**
@@ -480,6 +480,9 @@ public class SequentialDirector
 	    token = null;
 	  }
 	}
+
+        if (!hasControlActor())
+          continue;
 
 	// token from last actor generated? -> store
 	if ((i == m_ControlActor.lastActive().index()) && (token != null)) {

@@ -119,7 +119,7 @@ public abstract class AbstractDirector
    * @return		the full error message (message + stacktrace)
    */
   protected String handleException(String msg, Throwable t) {
-    return Utils.handleException(this, msg, t, m_ControlActor.getSilent());
+    return Utils.handleException(this, msg, t, !hasControlActor() || m_ControlActor.getSilent());
   }
 
   /**
@@ -142,12 +142,24 @@ public abstract class AbstractDirector
   }
 
   /**
+   * Returns whether a control actor is present.
+   *
+   * @return		true if available
+   */
+  public boolean hasControlActor() {
+    return (m_ControlActor != null);
+  }
+
+  /**
    * Return the Variables instance used by the control actor.
    *
    * @return		the instance in use
    */
   protected Variables getVariables() {
-    return m_ControlActor.getVariables();
+    if (hasControlActor())
+      return m_ControlActor.getVariables();
+    else
+      return new Variables();
   }
 
   /**
@@ -216,9 +228,11 @@ public abstract class AbstractDirector
 
     getLogger().info("stop called");
 
-    for (i = m_ControlActor.size() - 1; i >= 0; i--) {
-      if (!m_ControlActor.get(i).getSkip())
-	m_ControlActor.get(i).stopExecution();
+    if (hasControlActor()) {
+      for (i = m_ControlActor.size() - 1; i >= 0; i--) {
+	if (!m_ControlActor.get(i).getSkip())
+	  m_ControlActor.get(i).stopExecution();
+      }
     }
 
     m_Stopped  = true;
@@ -275,6 +289,6 @@ public abstract class AbstractDirector
    */
   @Override
   public String toString() {
-    return getClass().getName() + "/" + hashCode() + ": " + ((m_ControlActor == null) ? "--" : m_ControlActor.getFullName());
+    return getClass().getName() + "/" + hashCode() + ": " + (hasControlActor() ? "--" : m_ControlActor.getFullName());
   }
 }

@@ -193,6 +193,7 @@ public class FlowPanel
 	  }
 	  
 	  showStatus("Running");
+          m_Owner.setLastFlow(m_Flow);
 	  m_Output = m_Flow.execute();
 	  // did the flow get stopped by a critical actor?
 	  if ((m_Output == null) && m_Flow.hasStopMessage())
@@ -238,7 +239,6 @@ public class FlowPanel
       if (m_Owner.getRunGC())
 	System.gc();
 
-      m_Owner.setLastFlow(m_Flow);
       m_Flow = null;
       errors = null;
 
