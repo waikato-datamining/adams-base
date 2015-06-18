@@ -20,41 +20,11 @@
 
 package adams.gui.visualization.instance;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils.DataSink;
-import weka.experiment.InstanceQuery;
-import weka.gui.ConverterFileChooser;
-import weka.gui.sql.SqlViewerDialog;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.StatusMessageHandler;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.instance.Instance;
 import adams.data.statistics.ArrayHistogram;
@@ -89,6 +59,36 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.report.ReportContainerList;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils.DataSink;
+import weka.experiment.InstanceQuery;
+import weka.gui.ConverterFileChooser;
+import weka.gui.sql.SqlViewerDialog;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A panel for exploring Instances visually.
@@ -533,12 +533,10 @@ public class InstanceExplorer
       loadData(dataset, data);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(
-	  this,
-	  "Failed to load data from database:\n" + e,
-	  "Database error",
-	  JOptionPane.ERROR_MESSAGE);
+      GUIHelper.showErrorMessage(
+        this,
+        "Failed to load data from database:\n" + Utils.throwableToString(e),
+        "Database error");
     }
 
     showStatus("");
