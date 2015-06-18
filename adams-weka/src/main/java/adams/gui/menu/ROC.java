@@ -34,7 +34,6 @@ import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import java.io.File;
 
 /**
@@ -103,9 +102,8 @@ public class ROC
       result = m_FileChooser.getLoader().getDataSet();
     }
     catch (Exception e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(
-	  getOwner(), "Error loading file '" + file + "':\n" + e.getMessage());
+      GUIHelper.showErrorMessage(
+	  getOwner(), "Error loading file '" + file + "':\n" + adams.core.Utils.throwableToString(e));
       return;
     }
     result.setClassIndex(result.numAttributes() - 1);
