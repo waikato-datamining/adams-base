@@ -22,6 +22,7 @@
 package weka.gui.explorer;
 
 import adams.core.io.TempUtils;
+import adams.gui.core.GUIHelper;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
@@ -64,7 +65,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -788,13 +788,11 @@ public class ExperimentPanel
 	    m_Log.statusMessage("OK");
 	  }
 	  catch (Exception ex) {
-	    ex.printStackTrace();
 	    m_Log.logMessage(ex.getMessage());
-	    JOptionPane.showMessageDialog(
-		ExperimentPanel.this,
-		"Problem running experiment:\n" + ex.getMessage(),
-		"Running experiment",
-		JOptionPane.ERROR_MESSAGE);
+	    GUIHelper.showErrorMessage(
+              ExperimentPanel.this,
+              "Problem running experiment:\n" + adams.core.Utils.throwableToString(ex),
+              "Running experiment");
 	    m_Log.statusMessage("Problem running experiment");
 	  }
 	  finally {
