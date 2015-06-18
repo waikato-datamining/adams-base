@@ -15,18 +15,18 @@
 
 /*
  * DatasetCompatibility.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import java.io.File;
-
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.tools.DatasetCompatibilityPanel;
+
+import java.io.File;
 
 /**
  * For checking compatibility of datasets.
@@ -119,6 +119,6 @@ public class DatasetCompatibility
    */
   @Override
   public String getCategory() {
-    return CATEGORY_MACHINELEARNING;
+    return CATEGORY_TOOLS;
   }
 }

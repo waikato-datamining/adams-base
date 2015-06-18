@@ -15,19 +15,19 @@
 
 /*
  * PackageManager.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import java.io.PrintStream;
-
-import weka.core.WekaPackageManager;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ConsolePanel.ConsolePanelOutputStream;
 import adams.gui.core.ConsolePanel.OutputType;
+import weka.core.WekaPackageManager;
+
+import java.io.PrintStream;
 
 /**
  * Opens the WEKA PackageManager.
@@ -94,5 +94,16 @@ public class PackageManager
   @Override
   public UserMode getUserMode() {
     return UserMode.EXPERT;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_TOOLS;
   }
 }

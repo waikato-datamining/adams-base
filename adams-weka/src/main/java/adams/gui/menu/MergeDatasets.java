@@ -274,6 +274,6 @@ public class MergeDatasets
    */
   @Override
   public String getCategory() {
-    return CATEGORY_MACHINELEARNING;
+    return CATEGORY_TOOLS;
   }
 }

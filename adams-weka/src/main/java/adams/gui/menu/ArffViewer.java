@@ -15,19 +15,19 @@
 
 /*
  * ArffViewer.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import javax.swing.JPanel;
-
-import weka.gui.arffviewer.ArffViewerMainPanel;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+import weka.gui.arffviewer.ArffViewerMainPanel;
+
+import javax.swing.JPanel;
 
 /**
  * Opens the ARFF viewer.
@@ -97,5 +97,16 @@ public class ArffViewer
    */
   public UserMode getUserMode() {
     return UserMode.BASIC;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_TOOLS;
   }
 }

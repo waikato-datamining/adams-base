@@ -15,7 +15,7 @@
 
 /*
  * WekaOptionsConversion.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -100,6 +100,6 @@ public class WekaOptionsConversion
    */
   @Override
   public String getCategory() {
-    return CATEGORY_MAINTENANCE;
+    return CATEGORY_TOOLS;
   }
 }

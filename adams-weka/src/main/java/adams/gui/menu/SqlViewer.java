@@ -15,17 +15,17 @@
 
 /*
  * SqlViewer.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import javax.swing.JPanel;
-
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+
+import javax.swing.JPanel;
 
 /**
  * Opens the SQL viewer.
@@ -91,5 +91,16 @@ public class SqlViewer
    */
   public UserMode getUserMode() {
     return UserMode.EXPERT;
+  }
+
+  /**
+   * Returns the category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  @Override
+  public String getCategory() {
+    return CATEGORY_TOOLS;
   }
 }
