@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:50:01
+# Date: 2015-06-18 20:23:32
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -28,7 +28,9 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.WekaExtractPLSMatrix
 	-actor
-		adams.flow.sink.Display
+		adams.flow.sink.SpreadSheetDisplay
+			-writer
+				adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
