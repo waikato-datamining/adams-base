@@ -165,7 +165,17 @@ public class WekaForecasting
 	    "num-steps", "numSteps",
 	    1, 1, null);
   }
-  
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Model = null;
+  }
+
   /**
    * Sets the file to load the model from.
    *
