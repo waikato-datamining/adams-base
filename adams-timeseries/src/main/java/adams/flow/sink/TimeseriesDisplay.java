@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.core.option.OptionUtils;
 import adams.data.DecimalFormatString;
 import adams.data.timeseries.PeriodicityType;
 import adams.data.timeseries.Timeseries;
@@ -204,6 +205,8 @@ public class TimeseriesDisplay
 
     protected TimeseriesExplorer m_Panel;
 
+    protected AbstractPlotUpdater m_Updater;
+
     protected DisplayPanel(String name) {
       super(name);
     }
@@ -226,6 +229,7 @@ public class TimeseriesDisplay
 	overlay.setPanel(m_Panel.getTimeseriesPanel());
 	m_Panel.getTimeseriesPanel().addPaintlet(overlay);
       }
+      m_Updater = (AbstractPlotUpdater) OptionUtils.shallowCopy(m_PlotUpdater);
       add(m_Panel, BorderLayout.CENTER);
     }
 
@@ -240,7 +244,7 @@ public class TimeseriesDisplay
       manager.startUpdate();
       manager.add(cont);
 
-      m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel(), cont);
+      m_Updater.update(m_Panel.getTimeseriesPanel(), cont);
     }
 
     @Override
