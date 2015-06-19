@@ -24,6 +24,7 @@ adams.core.NamedSetup=adams.gui.goe.NamedSetupEditor
 adams.core.TriState=adams.gui.goe.TriStateEditor
 adams.core.base.BaseBoolean=adams.gui.goe.BaseBooleanEditor
 adams.core.base.BaseCharacter=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseClassname=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseString=adams.gui.goe.BaseObjectEditor
 adams.core.base.BasePassword=adams.gui.goe.BasePasswordEditor
 adams.core.base.BaseRegExp=adams.gui.goe.BaseRegExpEditor
