@@ -15,7 +15,7 @@
 
 /**
  * Cast.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -115,7 +115,7 @@ public class Cast
 
     m_OptionManager.add(
 	    "classname", "classname",
-	    "java.lang.Object");
+	    Unknown.class.getName());
   }
 
   /**
