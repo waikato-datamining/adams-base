@@ -4,7 +4,7 @@
 # Version: $Revision$
 
 # The initial divider location
-DividerLocation=200
+DividerLocation=300
 
 # The initial directory for browsing.
 # the following placeholders are recognized
