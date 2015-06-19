@@ -15,7 +15,7 @@
 
 /*
  * AbstractBaseString.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -122,7 +122,16 @@ public abstract class AbstractBaseString
    * @return		true if the string is empty, i.e., length 0
    */
   public boolean isEmpty() {
-    return (((String) m_Internal).length() == 0);
+    return (length() == 0);
+  }
+
+  /**
+   * Returns the length of the string.
+   *
+   * @return		the length
+   */
+  public int length() {
+    return ((String) m_Internal).length();
   }
 
   /**
