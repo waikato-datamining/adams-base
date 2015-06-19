@@ -23,7 +23,7 @@ package adams.core.base;
 import adams.core.Utils;
 
 /**
- * Wrapper for a String object to be editable in the GOE. Basically the same
+ * Wrapper for a class name object to be editable in the GOE. Basically the same
  * as BaseString, but used for class names.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -49,6 +49,15 @@ public class BaseClassname
    */
   public BaseClassname(String s) {
     super(s);
+  }
+
+  /**
+   * Initializes the object with the class to use.
+   *
+   * @param cls		the class to use
+   */
+  public BaseClassname(Class cls) {
+    this(cls.getName());
   }
 
   /**
