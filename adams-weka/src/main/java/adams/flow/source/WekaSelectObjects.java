@@ -15,23 +15,22 @@
 
 /**
  * WekaSelectObjects.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
+import adams.core.base.BaseString;
+import adams.core.option.OptionUtils;
+import adams.gui.dialog.ApprovalDialog;
+import weka.gui.GenericArrayEditor;
+
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import javax.swing.SwingUtilities;
-
-import weka.gui.GenericArrayEditor;
-import adams.core.base.BaseString;
-import adams.core.option.OptionUtils;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  <!-- globalinfo-start -->
@@ -57,7 +56,7 @@ import adams.gui.dialog.ApprovalDialog;
  * &nbsp;&nbsp;&nbsp;default: WekaSelectObjects
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -71,6 +70,11 @@ import adams.gui.dialog.ApprovalDialog;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -90,7 +94,7 @@ import adams.gui.dialog.ApprovalDialog;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-super-class &lt;java.lang.String&gt; (property: superClass)
+ * <pre>-super-class &lt;adams.core.base.BaseClassname&gt; (property: superClass)
  * &nbsp;&nbsp;&nbsp;The superclass for the class hierarchy.
  * &nbsp;&nbsp;&nbsp;default: java.lang.Object
  * </pre>
@@ -159,7 +163,7 @@ public class WekaSelectObjects
   @Override
   protected Class getItemClass() {
     try {
-      return Class.forName(m_SuperClass);
+      return m_SuperClass.classValue();
     }
     catch (Exception e) {
       return Object.class;

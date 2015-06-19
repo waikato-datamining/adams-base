@@ -20,6 +20,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseClassname;
 import adams.core.base.BaseString;
 import adams.flow.core.AutomatableInteractiveActor;
 
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ancestor for sources that promp the user to select a nuber of objects to
+ * Ancestor for sources that promp the user to select a number of objects to
  * be broadcasted as tokens.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -41,7 +42,7 @@ public abstract class AbstractSelectObjects
   private static final long serialVersionUID = 8791403891812271704L;
 
   /** the superclass. */
-  protected String m_SuperClass;
+  protected BaseClassname m_SuperClass;
   
   /** the initial objects. */
   protected BaseString[] m_InitialObjects;
@@ -81,8 +82,8 @@ public abstract class AbstractSelectObjects
    * 
    * @return		the default superclass
    */
-  protected String getDefaultSuperClass() {
-    return Object.class.getName();
+  protected BaseClassname getDefaultSuperClass() {
+    return new BaseClassname(Object.class);
   }
   
   /**
@@ -90,7 +91,7 @@ public abstract class AbstractSelectObjects
    *
    * @param value	the superclass
    */
-  public void setSuperClass(String value) {
+  public void setSuperClass(BaseClassname value) {
     m_SuperClass = value;
     reset();
   }
@@ -100,7 +101,7 @@ public abstract class AbstractSelectObjects
    *
    * @return 		the superclass
    */
-  public String getSuperClass() {
+  public BaseClassname getSuperClass() {
     return m_SuperClass;
   }
 

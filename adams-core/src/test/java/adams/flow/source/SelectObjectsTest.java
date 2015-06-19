@@ -15,19 +15,20 @@
 
 /*
  * SelectObjectsTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for SelectObjects actor.
@@ -110,7 +111,7 @@ public class SelectObjectsTest
       // Flow.SelectObjects
       adams.flow.source.SelectObjects selectobjects2 = new adams.flow.source.SelectObjects();
       argOption = (AbstractArgumentOption) selectobjects2.getOptionManager().findByProperty("superClass");
-      selectobjects2.setSuperClass((java.lang.String) argOption.valueOf("adams.flow.core.AbstractActor"));
+      selectobjects2.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.AbstractActor"));
       argOption = (AbstractArgumentOption) selectobjects2.getOptionManager().findByProperty("initialObjects");
       adams.core.base.BaseString[] initialobjects4 = new adams.core.base.BaseString[2];
       initialobjects4[0] = (adams.core.base.BaseString) argOption.valueOf("adams.flow.control.ArrayProcess");

@@ -15,19 +15,20 @@
 
 /*
  * WekaSelectObjectsTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for WekaSelectObjects actor.
@@ -110,7 +111,7 @@ public class WekaSelectObjectsTest
       // Flow.WekaSelectObjects
       adams.flow.source.WekaSelectObjects wekaselectobjects2 = new adams.flow.source.WekaSelectObjects();
       argOption = (AbstractArgumentOption) wekaselectobjects2.getOptionManager().findByProperty("superClass");
-      wekaselectobjects2.setSuperClass((java.lang.String) argOption.valueOf("weka.classifiers.Classifier"));
+      wekaselectobjects2.setSuperClass((BaseClassname) argOption.valueOf("weka.classifiers.Classifier"));
       argOption = (AbstractArgumentOption) wekaselectobjects2.getOptionManager().findByProperty("initialObjects");
       adams.core.base.BaseString[] initialobjects4 = new adams.core.base.BaseString[3];
       initialobjects4[0] = (adams.core.base.BaseString) argOption.valueOf("weka.classifiers.rules.ZeroR");

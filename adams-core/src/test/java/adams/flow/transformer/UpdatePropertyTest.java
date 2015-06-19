@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -123,7 +124,7 @@ public class UpdatePropertyTest
       // Flow.SelectObjects
       adams.flow.source.SelectObjects selectobjects6 = new adams.flow.source.SelectObjects();
       argOption = (AbstractArgumentOption) selectobjects6.getOptionManager().findByProperty("superClass");
-      selectobjects6.setSuperClass((java.lang.String) argOption.valueOf("adams.flow.core.AbstractActor"));
+      selectobjects6.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.AbstractActor"));
       argOption = (AbstractArgumentOption) selectobjects6.getOptionManager().findByProperty("initialObjects");
       adams.core.base.BaseString[] initialobjects8 = new adams.core.base.BaseString[1];
       initialobjects8[0] = (adams.core.base.BaseString) argOption.valueOf("adams.flow.sink.Display");
