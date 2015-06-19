@@ -15,11 +15,12 @@
 
 /*
  * SetArrayElementTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseClassname;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.Index;
@@ -128,7 +129,7 @@ public class SetArrayElementTest
       tmp4.setActors(tmp5);
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("arrayClass");
-      tmp4.setArrayClass((java.lang.String) argOption.valueOf("weka.classifiers.AbstractClassifier"));
+      tmp4.setArrayClass((BaseClassname) argOption.valueOf("weka.classifiers.AbstractClassifier"));
 
       tmp1[1] = tmp4;
       adams.flow.transformer.SetArrayElement tmp10 = new adams.flow.transformer.SetArrayElement();

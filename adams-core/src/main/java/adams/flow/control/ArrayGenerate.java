@@ -15,20 +15,21 @@
 
 /**
  * ArrayGenerate.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.lang.reflect.Array;
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseClassname;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +89,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
- * <pre>-array-class &lt;java.lang.String&gt; (property: arrayClass)
+ * <pre>-array-class &lt;adams.core.base.BaseClassname&gt; (property: arrayClass)
  * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first 
  * &nbsp;&nbsp;&nbsp;element is used.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -110,7 +111,7 @@ public class ArrayGenerate
   public final static String BACKUP_OUTPUT = "output";
 
   /** the class for the array. */
-  protected String m_ArrayClass;
+  protected BaseClassname m_ArrayClass;
 
   /** the output array. */
   protected Token m_OutputToken;
@@ -139,7 +140,7 @@ public class ArrayGenerate
 
     m_OptionManager.add(
 	    "array-class", "arrayClass",
-	    "");
+	    new BaseClassname());
   }
 
   /**
@@ -185,7 +186,7 @@ public class ArrayGenerate
    * @param value	the classname, use empty string to use class of first
    * 			element
    */
-  public void setArrayClass(String value) {
+  public void setArrayClass(BaseClassname value) {
     m_ArrayClass = value;
     reset();
   }
@@ -196,7 +197,7 @@ public class ArrayGenerate
    * @return		the classname, empty string if class of first element
    * 			is used
    */
-  public String getArrayClass() {
+  public BaseClassname getArrayClass() {
     return m_ArrayClass;
   }
 
@@ -257,7 +258,7 @@ public class ArrayGenerate
 
     if (m_ArrayClass.length() > 0) {
       try {
-	result = new Class[]{Utils.newArray(m_ArrayClass, 0).getClass()};
+	result = new Class[]{Utils.newArray(m_ArrayClass.getValue(), 0).getClass()};
       }
       catch (Exception e) {
 	// ignored
@@ -325,7 +326,7 @@ public class ArrayGenerate
       if (m_ArrayClass.length() == 0)
 	output = Array.newInstance(m_CollectedOutput.get(0).getPayload().getClass(), size());
       else
-	output = Utils.newArray(m_ArrayClass, size());
+	output = Utils.newArray(m_ArrayClass.getValue(), size());
       for (i = 0; i < size(); i++) {
 	if (m_CollectedOutput.containsKey(i))
 	  Array.set(output, i, m_CollectedOutput.get(i).getPayload());

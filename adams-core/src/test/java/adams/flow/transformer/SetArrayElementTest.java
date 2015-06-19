@@ -20,15 +20,16 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Index;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for SetArrayElement actor.
@@ -134,7 +135,7 @@ public class SetArrayElementTest
       tmp4.setActors(tmp5);
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("arrayClass");
-      tmp4.setArrayClass((java.lang.String) argOption.valueOf("java.lang.Double"));
+      tmp4.setArrayClass((BaseClassname) argOption.valueOf("java.lang.Double"));
 
       tmp1[1] = tmp4;
       adams.flow.transformer.SetArrayElement tmp10 = new adams.flow.transformer.SetArrayElement();

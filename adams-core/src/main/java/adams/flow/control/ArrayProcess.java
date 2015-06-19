@@ -15,20 +15,21 @@
 
 /**
  * ArrayProcess.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.lang.reflect.Array;
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseClassname;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -37,50 +38,54 @@ import adams.flow.core.Unknown;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ArrayProcess
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-progress (property: showProgress)
- * &nbsp;&nbsp;&nbsp;If set to true, progress information will be output to stdout ('.').
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-actor &lt;adams.flow.core.AbstractActor [options]&gt; [-actor ...] (property: actors)
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-array-class &lt;java.lang.String&gt; (property: arrayClass)
- * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first
+ * 
+ * <pre>-array-class &lt;adams.core.base.BaseClassname&gt; (property: arrayClass)
+ * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first 
  * &nbsp;&nbsp;&nbsp;element is used.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -96,7 +101,7 @@ public class ArrayProcess
   public final static String BACKUP_OUTPUT = "output";
 
   /** the class for the array. */
-  protected String m_ArrayClass;
+  protected BaseClassname m_ArrayClass;
 
   /** the output array. */
   protected Token m_OutputToken;
@@ -120,7 +125,7 @@ public class ArrayProcess
 
     m_OptionManager.add(
 	    "array-class", "arrayClass",
-	    "");
+	    new BaseClassname());
   }
 
   /**
@@ -156,7 +161,7 @@ public class ArrayProcess
    * @param value	the classname, use empty string to use class of first
    * 			element
    */
-  public void setArrayClass(String value) {
+  public void setArrayClass(BaseClassname value) {
     m_ArrayClass = value;
     reset();
   }
@@ -167,7 +172,7 @@ public class ArrayProcess
    * @return		the classname, empty string if class of first element
    * 			is used
    */
-  public String getArrayClass() {
+  public BaseClassname getArrayClass() {
     return m_ArrayClass;
   }
 
@@ -251,7 +256,7 @@ public class ArrayProcess
 
     if (m_ArrayClass.length() > 0) {
       try {
-	result = new Class[]{Utils.newArray(m_ArrayClass, 0).getClass()};
+	result = new Class[]{Utils.newArray(m_ArrayClass.getValue(), 0).getClass()};
       }
       catch (Exception e) {
 	// ignored
@@ -327,7 +332,7 @@ public class ArrayProcess
 	if (m_ArrayClass.length() == 0)
 	  output = Array.newInstance(getOutputTokens().get(0).getPayload().getClass(), getOutputTokens().size());
 	else
-	  output = Utils.newArray(m_ArrayClass, getOutputTokens().size());
+	  output = Utils.newArray(m_ArrayClass.getValue(), getOutputTokens().size());
 	for (i = 0; i < getOutputTokens().size(); i++)
 	  Array.set(output, i, getOutputTokens().get(i).getPayload());
 	m_OutputToken = new Token(output);

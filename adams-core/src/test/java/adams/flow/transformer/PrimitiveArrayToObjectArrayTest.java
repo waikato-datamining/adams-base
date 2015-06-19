@@ -15,11 +15,12 @@
 
 /*
  * PrimitiveArrayToObjectArrayTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseClassname;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -137,7 +138,7 @@ public class PrimitiveArrayToObjectArrayTest
       arrayprocess4.setActors(abstractactor5);
 
       argOption = (AbstractArgumentOption) arrayprocess4.getOptionManager().findByProperty("arrayClass");
-      arrayprocess4.setArrayClass((java.lang.String) argOption.valueOf("java.lang.Integer"));
+      arrayprocess4.setArrayClass((BaseClassname) argOption.valueOf("java.lang.Integer"));
 
       abstractactor1[1] = arrayprocess4;
 

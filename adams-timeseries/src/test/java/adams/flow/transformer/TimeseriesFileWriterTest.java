@@ -15,19 +15,20 @@
 
 /*
  * TimeseriesFileWriterTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for TimeseriesFileWriter actor.
@@ -138,7 +139,7 @@ public class TimeseriesFileWriterTest
       // Flow.Cast
       adams.flow.control.Cast cast11 = new adams.flow.control.Cast();
       argOption = (AbstractArgumentOption) cast11.getOptionManager().findByProperty("classname");
-      cast11.setClassname((java.lang.String) argOption.valueOf("adams.data.timeseries.Timeseries"));
+      cast11.setClassname((BaseClassname) argOption.valueOf("adams.data.timeseries.Timeseries"));
       actors1[3] = cast11;
 
       // Flow.TimeseriesFileWriter

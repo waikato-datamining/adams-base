@@ -15,19 +15,20 @@
 
 /*
  * TimeseriesAddTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for TimeseriesAdd actor.
@@ -153,7 +154,7 @@ public class TimeseriesAddTest
       // Flow.red.Cast
       adams.flow.control.Cast cast17 = new adams.flow.control.Cast();
       argOption = (AbstractArgumentOption) cast17.getOptionManager().findByProperty("classname");
-      cast17.setClassname((java.lang.String) argOption.valueOf("adams.data.timeseries.Timeseries"));
+      cast17.setClassname((BaseClassname) argOption.valueOf("adams.data.timeseries.Timeseries"));
       actors9[2] = cast17;
 
       // Flow.red.TimeseriesAdd
@@ -193,7 +194,7 @@ public class TimeseriesAddTest
       // Flow.white.Cast
       adams.flow.control.Cast cast31 = new adams.flow.control.Cast();
       argOption = (AbstractArgumentOption) cast31.getOptionManager().findByProperty("classname");
-      cast31.setClassname((java.lang.String) argOption.valueOf("adams.data.timeseries.Timeseries"));
+      cast31.setClassname((BaseClassname) argOption.valueOf("adams.data.timeseries.Timeseries"));
       actors23[2] = cast31;
 
       // Flow.white.TimeseriesAdd
