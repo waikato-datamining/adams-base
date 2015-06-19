@@ -15,20 +15,19 @@
 
 /*
  * CastTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import adams.env.Environment;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
-import adams.core.option.OptionUtils;
+import adams.env.Environment;
+import adams.flow.AbstractFlowTest;
+import adams.flow.core.AbstractActor;
+import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.flow.core.AbstractActor;
-import adams.flow.control.Flow;
-import adams.flow.AbstractFlowTest;
-import adams.test.TmpFile;
 
 /**
  * Test for Cast actor.
@@ -117,7 +116,7 @@ public class CastTest
       tmp1[0] = tmp2;
       adams.flow.control.Cast tmp4 = new adams.flow.control.Cast();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("classname");
-      tmp4.setClassname((java.lang.String) argOption.valueOf("java.lang.String"));
+      tmp4.setClassname((BaseClassname) argOption.valueOf("java.lang.String"));
 
       tmp1[1] = tmp4;
       adams.flow.sink.DumpFile tmp6 = new adams.flow.sink.DumpFile();

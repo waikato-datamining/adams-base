@@ -21,6 +21,7 @@ package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseClassname;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -28,7 +29,7 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Casts the incoming data to the specified classname. For arrays, use '[]' at the end.
+ * Casts the incoming data to the specified classname. For arrays, use '[]' at the end (can be used multiple times).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -37,45 +38,48 @@ import adams.flow.transformer.AbstractTransformer;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Cast
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-classname &lt;java.lang.String&gt; (property: classname)
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-classname &lt;adams.core.base.BaseClassname&gt; (property: classname)
  * &nbsp;&nbsp;&nbsp;The classname to cast the incoming data to.
- * &nbsp;&nbsp;&nbsp;default: java.lang.Object
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.Unknown
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -89,7 +93,7 @@ public class Cast
   private static final long serialVersionUID = -6615127883045169960L;
 
   /** the Class to cast to. */
-  protected String m_Classname;
+  protected BaseClassname m_Classname;
 
   /** the actual class to cast to. */
   protected Class m_ActualClass;
@@ -114,8 +118,8 @@ public class Cast
     super.defineOptions();
 
     m_OptionManager.add(
-	    "classname", "classname",
-	    Unknown.class.getName());
+      "classname", "classname",
+      new BaseClassname(Unknown.class.getName()));
   }
 
   /**
@@ -143,14 +147,9 @@ public class Cast
    *
    * @param value	the classname
    */
-  public void setClassname(String value) {
-    if (Utils.stringToClass(value) != null) {
-      m_Classname = value;
-      reset();
-    }
-    else {
-      getLogger().severe("Failed to instantiate class: " + value);
-    }
+  public void setClassname(BaseClassname value) {
+    m_Classname = value;
+    reset();
   }
 
   /**
@@ -158,7 +157,7 @@ public class Cast
    *
    * @return		the classname
    */
-  public String getClassname() {
+  public BaseClassname getClassname() {
     return m_Classname;
   }
 
@@ -184,12 +183,12 @@ public class Cast
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.lang.Object.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.flow.core.Unknown.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
     Class	cls;
 
-    cls = Utils.stringToClass(getClassname());
+    cls = getClassname().classValue();
 
     if (cls == null)
       return new Class[]{Unknown.class};
@@ -209,7 +208,7 @@ public class Cast
     result = super.setUp();
 
     if (result == null) {
-      m_ActualClass = Utils.stringToClass(getClassname());
+      m_ActualClass = getClassname().classValue();
       if (m_ActualClass == null)
 	result = "Failed to instantiate class '" + getClassname() + "'!";
     }
