@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:43:23
+# Date: 2015-06-19 10:46:43
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -15,6 +15,8 @@ adams.flow.control.Flow
 					train
 					-provider
 						adams.flow.sink.SpreadSheetDisplay
+							-writer
+								adams.data.io.output.NullWriter
 					-entry-name-variable
 					entry
 			-actor
@@ -23,6 +25,8 @@ adams.flow.control.Flow
 					prime
 					-provider
 						adams.flow.sink.SpreadSheetDisplay
+							-writer
+								adams.data.io.output.NullWriter
 					-entry-name-variable
 					entry
 			-actor
@@ -31,6 +35,8 @@ adams.flow.control.Flow
 					predict
 					-provider
 						adams.flow.sink.SpreadSheetDisplay
+							-writer
+								adams.data.io.output.NullWriter
 					-entry-name-variable
 					entry
 			-actor
@@ -41,6 +47,8 @@ adams.flow.control.Flow
 						adams.flow.sink.TimeseriesDisplay
 							-writer
 								adams.gui.print.NullWriter
+							-paintlet
+								adams.gui.visualization.timeseries.TimeseriesPaintlet
 							-axis-x
 								adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
 									-label
@@ -67,6 +75,8 @@ adams.flow.control.Flow
 									0
 							-color-provider
 								adams.gui.visualization.core.DefaultColorProvider
+							-plot-updater
+								adams.flow.sink.timeseriesdisplay.SimplePlotUpdater
 					-num-tokens
 					@{num_timeseries}
 					-entry-name-variable
@@ -86,7 +96,7 @@ adams.flow.control.Flow
 									-N
 									0
 									-K
-									weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0
+									weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007
 							-lag-maker
 								adams.flow.core.LagMakerOptions
 									-adjust-for-trends
@@ -153,6 +163,8 @@ adams.flow.control.Flow
 				adams.flow.transformer.Convert
 					-conversion
 						adams.data.conversion.WekaInstancesToSpreadSheet
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
 							-spreadsheet-type
 								adams.data.spreadsheet.SpreadSheet
 			-tee
@@ -285,6 +297,8 @@ adams.flow.control.Flow
 								adams.flow.transformer.Convert
 									-conversion
 										adams.data.conversion.TimeseriesToSpreadSheet
+											-data-row-type
+												adams.data.spreadsheet.DenseDataRow
 											-spreadsheet-type
 												adams.data.spreadsheet.SpreadSheet
 							-tee
@@ -374,7 +388,7 @@ adams.flow.control.Flow
 									-tee
 										adams.flow.source.CombineVariables
 											-expression
-											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR
+											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR -1 DAY
 									-tee
 										adams.flow.transformer.SetVariable
 											-var-name
@@ -393,6 +407,8 @@ adams.flow.control.Flow
 										adams.flow.transformer.Convert
 											-conversion
 												adams.data.conversion.TimeseriesToSpreadSheet
+													-data-row-type
+														adams.data.spreadsheet.DenseDataRow
 													-spreadsheet-type
 														adams.data.spreadsheet.SpreadSheet
 									-tee
@@ -459,6 +475,8 @@ adams.flow.control.Flow
 										adams.flow.transformer.Convert
 											-conversion
 												adams.data.conversion.TimeseriesToSpreadSheet
+													-data-row-type
+														adams.data.spreadsheet.DenseDataRow
 													-spreadsheet-type
 														adams.data.spreadsheet.SpreadSheet
 									-tee
@@ -484,13 +502,17 @@ adams.flow.control.Flow
 							-name
 							forecast
 							-tee
-								adams.flow.source.WekaForecasting
-									-model-actor
-									model
-									-on-the-fly
-									true
-									-num-steps
-									12
+								adams.flow.control.SourceReset
+									-actor
+										adams.flow.source.WekaForecasting
+											-model-actor
+											model
+											-on-the-fly
+											true
+											-num-steps
+											12
+									-var-name
+									wine
 							-tee
 								adams.flow.transformer.Convert
 									-conversion
