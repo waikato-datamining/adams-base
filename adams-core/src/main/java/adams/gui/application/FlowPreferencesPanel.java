@@ -70,6 +70,7 @@ public class FlowPreferencesPanel
     addPropertyType("StatusBar.Width", PropertyType.INTEGER);
     addPropertyType("StatusBar.Height", PropertyType.INTEGER);
     addPropertyType("ToolBar.Location", PropertyType.ENUM);
+    addPropertyType("Toolbar.Actions", PropertyType.COMMA_SEPARATED_LIST);
     setEnum("ToolBar.Location", ToolBarLocation.class);
     addPropertyType("Tabs.ScrollLayout", PropertyType.BOOLEAN);
     addPropertyType("Tree.PopupMenu", PropertyType.COMMA_SEPARATED_LIST);

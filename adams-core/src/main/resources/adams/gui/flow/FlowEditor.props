@@ -111,6 +111,23 @@ ClassTree.ShowGlobalInfo=true
 # The toolbar location (HIDDEN|NORTH|SOUTH|WEST|EAST)
 ToolBar.Location=NORTH
 
+# The toolbar actions
+Toolbar.Actions=\
+  adams.gui.flow.menu.FileNewFlow,\
+  adams.gui.flow.menu.FileOpen,\
+  adams.gui.flow.menu.FileSave,\
+  -,\
+  adams.gui.flow.menu.EditUndo,\
+  adams.gui.flow.menu.EditRedo,\
+  -,\
+  adams.gui.flow.menu.EditFind,\
+  -,\
+  adams.gui.flow.menu.RunValidateSetup,\
+  adams.gui.flow.menu.RunRun,\
+  adams.gui.flow.menu.RunRunDebug,\
+  adams.gui.flow.menu.RunPauseResume,\
+  adams.gui.flow.menu.RunStop
+
 # Whether to scroll through the tabs (true|false)
 Tabs.ScrollLayout=false
 

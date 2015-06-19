@@ -756,20 +756,41 @@ public class FlowEditorPanel
    */
   @Override
   protected void initToolBar() {
-    addToToolBar(m_ActionFileNew);
-    addToToolBar(m_ActionFileOpen);
-    addToToolBar(m_ActionFileSave);
-    addSeparator();
-    addToToolBar(m_ActionEditUndo);
-    addToToolBar(m_ActionEditRedo);
-    addSeparator();
-    addToToolBar(m_ActionEditFind);
-    addSeparator();
-    addToToolBar(m_ActionRunValidateSetup);
-    addToToolBar(m_ActionRunRun);
-    addToToolBar(m_ActionRunRunDebug);
-    addToToolBar(m_ActionRunPauseAndResume);
-    addToToolBar(m_ActionRunStop);
+    Properties		props;
+    String[]		items;
+
+    props = getPropertiesEditor();
+    if (props.getProperty("Toolbar.Actions", "").trim().isEmpty()) {
+      addToToolBar(m_ActionFileNew);
+      addToToolBar(m_ActionFileOpen);
+      addToToolBar(m_ActionFileSave);
+      addSeparator();
+      addToToolBar(m_ActionEditUndo);
+      addToToolBar(m_ActionEditRedo);
+      addSeparator();
+      addToToolBar(m_ActionEditFind);
+      addSeparator();
+      addToToolBar(m_ActionRunValidateSetup);
+      addToToolBar(m_ActionRunRun);
+      addToToolBar(m_ActionRunRunDebug);
+      addToToolBar(m_ActionRunPauseAndResume);
+      addToToolBar(m_ActionRunStop);
+    }
+    else {
+      items = props.getProperty("Toolbar.Actions").replaceAll(" ", "").split(",");
+      for (String item: items) {
+	if (item.equals("-")) {
+	  addSeparator();
+	  continue;
+	}
+	for (FlowEditorAction action: m_MenuItems) {
+	  if (action.getClass().getName().equals(item)) {
+	    addToToolBar(action);
+	    break;
+	  }
+	}
+      }
+    }
   }
 
   /**
