@@ -76,7 +76,7 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  * <pre>-on-pre-input &lt;boolean&gt; (property: onPreInput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-input (of token) time;
  * &nbsp;&nbsp;&nbsp; token available.
- * &nbsp;&nbsp;&nbsp;default: true
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-on-post-input &lt;boolean&gt; (property: onPostInput)
@@ -86,7 +86,7 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  * 
  * <pre>-on-pre-execute &lt;boolean&gt; (property: onPreExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-execute time.
- * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  * <pre>-on-post-execute &lt;boolean&gt; (property: onPostExecute)
@@ -192,7 +192,7 @@ public class Breakpoint
 
     m_OptionManager.add(
 	    "on-pre-input", "onPreInput",
-	    true);
+	    false);
 
     m_OptionManager.add(
 	    "on-post-input", "onPostInput",
@@ -200,7 +200,7 @@ public class Breakpoint
 
     m_OptionManager.add(
 	    "on-pre-execute", "onPreExecute",
-	    false);
+	    true);
 
     m_OptionManager.add(
 	    "on-post-execute", "onPostExecute",
