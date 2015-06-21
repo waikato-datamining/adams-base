@@ -82,7 +82,7 @@ public class BoundaryVisualizer
    * @return 		the title
    */
   public String getTitle() {
-    return "BoundaryVisualizer";
+    return "Boundary visualizer";
   }
 
   /**

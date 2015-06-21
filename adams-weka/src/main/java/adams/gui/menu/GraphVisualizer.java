@@ -140,7 +140,7 @@ public class GraphVisualizer
    */
   @Override
   public String getTitle() {
-    return "GraphVisualizer";
+    return "Graph visualizer";
   }
 
   /**
