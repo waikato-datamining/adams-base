@@ -27,7 +27,7 @@ import java.awt.event.ActionEvent;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RunRunDebug
+public class RunDebug
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class RunRunDebug
    */
   @Override
   protected String getTitle() {
-    return "Run (debug)";
+    return "Debug";
   }
 
   /**

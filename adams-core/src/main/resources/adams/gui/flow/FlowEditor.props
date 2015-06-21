@@ -124,7 +124,7 @@ Toolbar.Actions=\
   -,\
   adams.gui.flow.menu.RunValidateSetup,\
   adams.gui.flow.menu.RunRun,\
-  adams.gui.flow.menu.RunRunDebug,\
+  adams.gui.flow.menu.RunDebug,\
   adams.gui.flow.menu.RunPauseResume,\
   adams.gui.flow.menu.RunStop
 

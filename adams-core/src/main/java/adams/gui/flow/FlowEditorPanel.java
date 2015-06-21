@@ -74,7 +74,7 @@ import adams.gui.flow.menu.RunHeadless;
 import adams.gui.flow.menu.RunKill;
 import adams.gui.flow.menu.RunPauseResume;
 import adams.gui.flow.menu.RunRun;
-import adams.gui.flow.menu.RunRunDebug;
+import adams.gui.flow.menu.RunDebug;
 import adams.gui.flow.menu.RunStop;
 import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.FileCheckOnSave;
@@ -626,7 +626,7 @@ public class FlowEditorPanel
     m_MenuItems.add(action);
 
     // Execution/Run (debug)
-    action = new RunRunDebug();
+    action = new RunDebug();
     m_ActionRunRunDebug = action;
     m_MenuItems.add(action);
 
