@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:46:47
+# Date: 2015-06-22 09:42:08
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -28,7 +28,7 @@ adams.flow.control.Flow
 							-N
 							0
 							-K
-							weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0
+							weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007
 			-actor
 				adams.flow.sink.SequencePlotter
 					-writer
@@ -41,8 +41,24 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
+						adams.gui.visualization.core.CustomColorProvider
+							-color
+							#0000ff
+							-color
+							#ff0000
+							-color
+							#00ffff
+							-color
+							#00ff00
+							-color
+							#ff00ff
+							-color
+							#ffc800
+							-color
+							#ffafaf
 					-overlay-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-title

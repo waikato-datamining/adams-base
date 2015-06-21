@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:50:22
+# Date: 2015-06-22 09:55:22
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -13,6 +13,8 @@ adams.flow.control.Flow
 		adams.flow.transformer.WekaFileReader
 			-loader
 				weka.core.converters.ArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
 	-actor
 		adams.flow.sink.WekaInstancesDisplay
 			-writer

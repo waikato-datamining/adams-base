@@ -18,7 +18,7 @@ interface with the drop-down menu in action.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/explorerext.png}
+  \includegraphics[width=12.0cm]{images/explorerext.png}
   \caption{Explorer interface with menus.}
   \label{explorerext}
 \end{figure}
@@ -33,21 +33,88 @@ that allows you to load/save workspaces.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/explorerext-workspaces.png}
+  \includegraphics[width=12.0cm]{images/explorerext-workspaces.png}
   \caption{Saving/restoring of workspaces.}
   \label{explorerext-workspaces}
 \end{figure}
 
-The extended interface also has a dedicated tab for running experiments, using
-the currently loaded dataset and a single classifier. This allows you to 
-perform 10 runs of cross-validation instead of the Explorer's default single
-run (see Figure \ref{explorerext-experiment}).
+\clearpage
+\section{Append datasets}
+
+If you have datasets with the same structure, i.e., exactly the same
+attributes, then you can use the \textit{Append datasets} tool to combine
+them into a single, large dataset.
+
+The screenshot in Figure \ref{dataset-compatibility} shows the wizard
+interface that guides you through the process.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/explorerext-experiment.png}
-  \caption{Experiment tab in the Explorer.}
-  \label{explorerext-experiment}
+  \includegraphics[width=12.0cm]{images/append_datasets.png}
+  \caption{Appending datasets wizard.}
+  \label{append_datasets}
+\end{figure}
+
+\clearpage
+\section{Arff viewer}
+
+WEKA's \textit{Arff viewer} is available from the ADAMS menu as well.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/arffviewer.png}
+  \caption{WEKA's Arff viewer displaying the iris UCI dataset.}
+  \label{arffviewer}
+\end{figure}
+
+\clearpage
+\section{Batch-filter datasets}
+
+Training and test set are required to have exactly the same structure
+in WEKA. If you need to apply a pre-processing filter to both of the
+files, it is recommended to use \textit{batch-filtering}. This will
+ensure that any statistics that get calculated based on the first
+dataset, get applied to second file as well. An example for this is
+the dictionary of the \textit{StringToWordVector}: the same word
+dictionary needs to be applied to the second file, in order to generate
+the same attributes. However, one usually has to resort to the command-line
+in order to achieve this, which is rather tedious.
+
+The \textit{Batch-filter datasets} wizard allows you to perform the
+batch-filtering conveniently through the GUI:
+\begin{tight_itemize}
+  \item Select the datasets to filter (see \ref{batchfilter_datasets1})
+  \item Configure the filter (see \ref{batchfilter_datasets2})
+  \item Select the output directory (see \ref{batchfilter_datasets3})
+  \item Info dialog after filtering (see \ref{batchfilter_datasets4})
+\end{tight_itemize}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/batchfilter_datasets1.png}
+  \caption{Selecting input files for batch-filtering.}
+  \label{batchfilter_datasets1}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/batchfilter_datasets2.png}
+  \caption{Configuring the filter.}
+  \label{batchfilter_datasets2}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/batchfilter_datasets3.png}
+  \caption{Selecting the output directory for the filtered datasets.}
+  \label{batchfilter_datasets3}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/batchfilter_datasets4.png}
+  \caption{The dialog when batch-filtering was successful.}
+  \label{batchfilter_datasets4}
 \end{figure}
 
 \clearpage
@@ -64,7 +131,59 @@ and the other one a transformed version.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=10.0cm]{images/dataset-compatibility.png}
+  \includegraphics[width=12.0cm]{images/dataset-compatibility.png}
   \caption{Compatibility output for two datasets.}
   \label{dataset-compatibility}
+\end{figure}
+
+\clearpage
+\section{Merge datasets}
+The process of adding reference data to a dataset or performing
+\textit{data fusion}\footnote{\url{https://en.wikipedia.org/wiki/Data_fusion}{}},
+can be quite often a manual process, copy/pasting datasets in a spreadsheet
+application.
+
+The \textit{Merge datasets} wizard allows you to perform the
+process of combining datasets side-by-side conveniently in the GUI:
+\begin{tight_itemize}
+  \item Select the datasets to merge (see \ref{merge_datasets1})
+  \item Configure the merge (see \ref{merge_datasets2})
+  \item Select the output file (see \ref{merge_datasets3})
+  \item Info dialog after merging (see \ref{merge_datasets4})
+\end{tight_itemize}
+Figure \ref{merge_datasets-output} shows an example of a merged file.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/merge_datasets1.png}
+  \caption{Selecting input files for batch-filtering.}
+  \label{merge_datasets1}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/merge_datasets2.png}
+  \caption{Configuring the filter.}
+  \label{merge_datasets2}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/merge_datasets3.png}
+  \caption{Selecting the output directory for the filtered datasets.}
+  \label{merge_datasets3}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/merge_datasets4.png}
+  \caption{The dialog when batch-filtering was successful.}
+  \label{merge_datasets4}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/merge_datasets-output.png}
+  \caption{The merged dataset.}
+  \label{merge_datasets-output}
 \end{figure}

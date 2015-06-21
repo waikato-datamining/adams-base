@@ -78,38 +78,6 @@ memory-efficient, loading is only possible if the underlying loader also
 supports incremental loading. In any other case, the dataset gets loaded fully
 into memory before being forwarded row by row.
 
-Nowadays, a lot of data is available online. Instead of relying on local files,
-one can use the flow also to download remote files. Some of the WEKA file
-loaders, like the \textit{ArffLoader}, natively support the download via a URL.
-Figure \ref{basic-download_dataset} shows a
-flow\footnote{adams-all-weka\_dataset\_download.flow} that downloads (and
-displays) an ARFF file available from a URL that was supplied by the
-\textit{URLSupplier}. If the required dataset is encapsulated in an
-archive, e.g., a ZIP file and not just compressed with GZIP, then one has to
-download the archive first and extract the correct file before working with it.
-The flow\footnote{adams-all-weka\_dataset\_download2.flow} in Figure
-\ref{basic-download_dataset2} downloads an archive from WEKA's sourceforge.net
-web site\footnote{WEKA on sourceforge.net:
-\url{http://sourceforge.net/projects/weka/}{}} using the \textit{DownloadFile}
-sink and extracts all the datasets which filename fit a regular expression. The
-extracted files are then displayed in a \textit{HistoryDisplay} sink.
-
-\begin{figure}[ht]
-  \begin{minipage}[t]{0.5\linewidth}
-    \centering
-    \includegraphics[width=5.5cm]{images/basic-download_dataset.png}
-    \caption{Flow for loading a local dataset.}
-    \label{basic-download_dataset}
-  \end{minipage}
-  \hspace{0.5cm}
-  \begin{minipage}[t]{0.5\linewidth}
-    \centering
-    \includegraphics[width=6.0cm]{images/basic-download_dataset2.png}
-    \caption{The dataset that got loaded from disk.}
-    \label{basic-download_dataset2}
-  \end{minipage}
-\end{figure}
-
 Finally, artificial data can be generated within ADAMS as well. Using the
 \textit{WekaDataGenerator} source, any WEKA data generator can be used to output
 data. The flow\footnote{adams-weka-data\_generator.flow} depicted in Figure
@@ -443,7 +411,7 @@ every 100 instances that come through.
 \begin{figure}[ht]
   \begin{minipage}[t]{0.5\linewidth}
     \centering
-    \includegraphics[width=10.0cm]{images/basic-streameval-flow.png}
+    \includegraphics[width=12.0cm]{images/basic-streameval-flow.png}
     \caption{Flow for evaluating updateable classifier on data stream.}
     \label{basic-streameval-flow}
   \end{minipage}
