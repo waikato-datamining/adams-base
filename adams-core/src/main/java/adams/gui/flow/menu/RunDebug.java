@@ -14,7 +14,7 @@
  */
 
 /**
- * RunRunDebug.java
+ * RunDebug.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
