@@ -30,10 +30,11 @@ HOWTO make a release
    -Darguments="-DskipTests=true"
 +---
 
-  Before issuing the same command for adams-addons, change the "parent version" tag and
-  "adams.version" property to the just released version of ADAMS (no -SNAPSHOT).
-  After the Maven release command has succeeded, change these two tags over to the
-  next -SNAPSHOT version of ADAMS.
+  Before issuing the same command for adams-addons, change the "parent version" tag,
+  "version" tag and "adams.version" property to the just released version of ADAMS
+  (no -SNAPSHOT); commit the changes.
+  After the Maven release command has succeeded, change these three tags over to the
+  next -SNAPSHOT version of ADAMS; commit the changes.
 
 * Uploads/updates
   
