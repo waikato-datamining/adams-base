@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-07-31 12:20:54
+# Date: 2015-06-22 18:17:29
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -90,68 +90,6 @@ adams.flow.control.Flow
 					-var-value
 					1.5
 	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.SequencePlotter
-					-width
-					368
-					-height
-					221
-					-writer
-						adams.gui.print.NullWriter
-					-comparison
-					X_AND_Y
-					-paintlet
-						adams.gui.visualization.sequence.PaintletWithFixedXYRange
-							-min-y
-							@{min_y}
-							-max-y
-							@{max_y}
-							-paintlet
-								adams.gui.visualization.sequence.DotPaintlet
-							-min-x
-							@{min_x}
-							-max-x
-							@{max_x}
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-mouse-click-action
-						adams.flow.sink.sequenceplotter.NullClickAction
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Mandelbrot set
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							real
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							imag
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-	-actor
 		adams.flow.standalone.Stopwatch
 			-width
 			250
@@ -171,6 +109,8 @@ adams.flow.control.Flow
 					@{num_x}
 					-height
 					@{num_y}
+					-conversion
+						adams.data.conversion.BufferedImageToBufferedImage
 			-tee
 				adams.flow.transformer.SetStorageValue
 					-storage-name
