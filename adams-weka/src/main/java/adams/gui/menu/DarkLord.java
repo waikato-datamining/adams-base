@@ -288,7 +288,7 @@ public class DarkLord
 	}
 	catch (Exception ex) {
           GUIHelper.showErrorMessage(
-            getOwner(), "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
+            null, "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
 	  return;
 	}
         doOptimize(frame, genetic);
@@ -365,9 +365,9 @@ public class DarkLord
       @Override
       protected void done() {
 	if (genetic.isStopped())
-	  GUIHelper.showErrorMessage(m_Owner, "Dark Lord stopped!");
+	  GUIHelper.showErrorMessage(null, "Dark Lord stopped!");
 	else
-	  GUIHelper.showInformationMessage(m_Owner, "Dark Lord finished!");
+	  GUIHelper.showInformationMessage(null, "Dark Lord finished!");
 	super.done();
       }
     };
