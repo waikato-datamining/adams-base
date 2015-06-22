@@ -24,6 +24,7 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorPath;
+import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 
 /**
@@ -217,7 +218,8 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePreInput(Actor actor, Token token) {
-    return actor.getFullName().equals(m_Path.toString()) && m_Condition.evaluate(actor, token);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, token);
   }
   
   /**
@@ -228,7 +230,8 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePostInput(Actor actor) {
-    return actor.getFullName().equals(m_Path.toString()) && m_Condition.evaluate(actor, null);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, (actor instanceof InputConsumer) ? ((InputConsumer) actor).currentInput() : null);
   }
   
   /**
@@ -239,7 +242,8 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePreExecute(Actor actor) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, null);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, (actor instanceof InputConsumer) ? ((InputConsumer) actor).currentInput() : null);
   }
   
   /**
@@ -250,7 +254,8 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePostExecute(Actor actor) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, null);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, null);
   }
   
   /**
@@ -261,7 +266,8 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePreOutput(Actor actor) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, null);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, null);
   }
   
   /**
@@ -273,6 +279,7 @@ public class PathBreakpoint
    */
   @Override
   protected boolean evaluatePostOutput(Actor actor, Token token) {
-    return actor.getFullName().equals(m_Path) && m_Condition.evaluate(actor, token);
+    return actor.getFullName().equals(m_Path.toString())
+      && m_Condition.evaluate(actor, token);
   }
 }
