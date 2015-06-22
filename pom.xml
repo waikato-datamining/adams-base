@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.adams</groupId>
   <artifactId>adams-pom</artifactId>
-  <version>0.4.9-SNAPSHOT</version>
+  <version>0.4.9</version>
   <packaging>pom</packaging>
 
   <name>adams-pom</name>
@@ -65,7 +65,7 @@
     <heap.size>-Xmx512m</heap.size>
     <!-- tests -->
     <adams.test.multiprocess.enabled>false</adams.test.multiprocess.enabled>
-    <adams.test.flow.dump.file></adams.test.flow.dump.file>
+    <adams.test.flow.dump.file />
     <adams.test.flow.dump.append>true</adams.test.flow.dump.append>
     <!-- classes -->
     <class.adams.env>adams.env.Environment</class.adams.env>
@@ -84,9 +84,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</connection>
-    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</developerConnection>
-    <url>https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</url>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.9</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.9</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-0.4.9</url>
   </scm>
 
   <distributionManagement>
