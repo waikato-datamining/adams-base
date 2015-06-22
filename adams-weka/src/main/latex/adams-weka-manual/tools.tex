@@ -7,38 +7,6 @@
 
 \chapter{Tools}
 
-\section{Explorer}
-ADAMS contains an extended version of the WEKA Explorer. The interface uses
-menus instead of buttons to declutter the pre-process tab. Also, it keeps track
-of the datasets that the user loads, to make re-loading recent files easier.
-This saves a lot of time when working with the same files on a frequent basis.
-Furthermore, the user can have an arbitrary number of Explorer sessions in the
-same window, distinguished by names. Figure \ref{explorerext} shows the new
-interface with the drop-down menu in action.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/explorerext.png}
-  \caption{Explorer interface with menus.}
-  \label{explorerext}
-\end{figure}
-
-One very useful feature is the notion of \textit{workspaces} in this interface.
-You can save the current setup (current dataset, classifiers, clusterers, 
-evaluation set up, results, etc.) to a file and restore all of it in one go 
-again. Unfortunately, not all data can be stored, such as the log, the undo
-history and the built models or visualizations associated with a results.
-See Figure \ref{explorerext-workspaces} for the button (highlighted in red) 
-that allows you to load/save workspaces.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/explorerext-workspaces.png}
-  \caption{Saving/restoring of workspaces.}
-  \label{explorerext-workspaces}
-\end{figure}
-
-\clearpage
 \section{Append datasets}
 
 If you have datasets with the same structure, i.e., exactly the same
@@ -118,6 +86,42 @@ batch-filtering conveniently through the GUI:
 \end{figure}
 
 \clearpage
+\section{BayesNet Editor}
+WEKA's \textit{BayesNet Editor} allows you to view and modify Bayesian nets.
+Figure \ref{bayesnet_editor} shows an example net loaded.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/bayesnet_editor.png}
+  \caption{BayesNet editor displaying a net.}
+  \label{bayesnet_editor}
+\end{figure}
+
+\clearpage
+\section{Dark Lord}
+The \textit{Dark Lord} wizard allows you to set up and monitor a genetic
+algorithm that determines the best set of attributes, based on the classifier
+and metric you choose to optimize on. The output directory that you define
+(see Figure \ref{darklord_setup}), is used to store all the \textit{reduced/optimized}
+datasets that improved the metric. The optimization can be paused, resumed or
+stopped with the buttons at the bottom right of the view panel (see Figure
+\ref{darklord_run}).
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/darklord_setup.png}
+  \caption{Dark Lord setup.}
+  \label{darklord_setup}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/darklord_run.png}
+  \caption{Dark Lord run.}
+  \label{darklord_run}
+\end{figure}
+
+\clearpage
 \section{Dataset compatibility}
 
 WEKA requires training and test sets to have the same structure, down to the
@@ -134,6 +138,38 @@ and the other one a transformed version.
   \includegraphics[width=12.0cm]{images/dataset-compatibility.png}
   \caption{Compatibility output for two datasets.}
   \label{dataset-compatibility}
+\end{figure}
+
+\clearpage
+\section{Explorer}
+ADAMS contains an extended version of the WEKA Explorer. The interface uses
+menus instead of buttons to declutter the pre-process tab. Also, it keeps track
+of the datasets that the user loads, to make re-loading recent files easier.
+This saves a lot of time when working with the same files on a frequent basis.
+Furthermore, the user can have an arbitrary number of Explorer sessions in the
+same window, distinguished by names. Figure \ref{explorerext} shows the new
+interface with the drop-down menu in action.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/explorerext.png}
+  \caption{Explorer interface with menus.}
+  \label{explorerext}
+\end{figure}
+
+One very useful feature is the notion of \textit{workspaces} in this interface.
+You can save the current setup (current dataset, classifiers, clusterers,
+evaluation set up, results, etc.) to a file and restore all of it in one go
+again. Unfortunately, not all data can be stored, such as the log, the undo
+history and the built models or visualizations associated with a results.
+See Figure \ref{explorerext-workspaces} for the button (highlighted in red)
+that allows you to load/save workspaces.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/explorerext-workspaces.png}
+  \caption{Saving/restoring of workspaces.}
+  \label{explorerext-workspaces}
 \end{figure}
 
 \clearpage
