@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-11-11 12:03:07
+# Date: 2015-06-22 13:07:51
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -37,6 +37,8 @@ adams.flow.control.Flow
 				adams.flow.transformer.pixelselector.ClassificationOverlay
 					-color
 					#ffffff
+					-show-label
+					true
 	-actor
 		adams.flow.control.Cast
 			-classname
