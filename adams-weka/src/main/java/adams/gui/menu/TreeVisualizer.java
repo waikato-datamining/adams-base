@@ -147,7 +147,7 @@ public class TreeVisualizer
    */
   @Override
   public String getTitle() {
-    return "TreeV visualizer";
+    return "Tree visualizer";
   }
 
   /**
