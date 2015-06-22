@@ -35,6 +35,7 @@ HOWTO make a release
   commit the changes.
   After the Maven release command has succeeded, change these two tags over to the
   next -SNAPSHOT version of ADAMS; commit the changes.
+  Update all pom.xml files in adams-incubator, incrementing the version number.
 
 * Uploads/updates
   
