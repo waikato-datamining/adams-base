@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:39:32
+# Date: 2015-06-22 13:47:13
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -49,6 +49,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-overlay-color-provider
@@ -91,6 +93,8 @@ adams.flow.control.Flow
 		adams.flow.control.Branch
 			-branch
 				adams.flow.control.Trigger
+					-name
+					1st spiral
 					-tee
 						adams.flow.standalone.Rserve
 							-logging-level
@@ -116,7 +120,7 @@ adams.flow.control.Flow
 			-branch
 				adams.flow.control.Trigger
 					-name
-					Trigger-1
+					2nd spiral
 					-tee
 						adams.flow.standalone.Rserve
 							-logging-level
