@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:36:45
+# Date: 2015-06-22 13:31:56
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -13,10 +13,12 @@ adams.flow.control.Flow
 		adams.flow.transformer.SpreadSheetFileReader
 			-reader
 				adams.data.io.input.ODFSpreadSheetReader
+					-data-row-type
+						adams.data.spreadsheet.DenseDataRow
 					-spreadsheet-type
 						adams.data.spreadsheet.SpreadSheet
 					-sheets
-					first-last
+					1-2
 	-actor
 		adams.flow.control.Tee
 			-name
@@ -33,6 +35,8 @@ adams.flow.control.Flow
 		adams.flow.sink.DisplayPanelManager
 			-provider
 				adams.flow.sink.SpreadSheetDisplay
+					-writer
+						adams.data.io.output.NullWriter
 			-entry-name-variable
 			sheet
 	-flow-execution-listener
