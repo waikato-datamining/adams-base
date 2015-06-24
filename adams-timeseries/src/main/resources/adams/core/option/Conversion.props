@@ -6,57 +6,8 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=\
-  Rename-transformer_timeseriesreportdbreader,\
-  Rename-baseline_timeseries-lowess,\
-  Rename-baseline_timeseries-savitzkygolay,\
-  Rename-filter_timeseries-changeresolution,\
-  Rename-filter_timeseries-derivative,\
-  Rename-filter_timeseries-equidistance,\
-  Rename-filter_timeseries-fastwavelet,\
-  Rename-filter_timeseries-fft,\
-  Rename-filter_timeseries-histogram,\
-  Rename-filter_timeseries-lowess,\
-  Rename-filter_timeseries-resettimestamps,\
-  Rename-filter_timeseries-round,\
-  Rename-filter_timeseries-rownorm,\
-  Rename-filter_timeseries-savitzkygolay,\
-  Rename-filter_timeseries-sax,\
-  Rename-filter_timeseries-setstart,\
-  Rename-filter_timeseries-shiftvalues,\
-  Rename-filter_timeseries-valuesubset,\
-  Rename-filter_timeseries-window,\
-  Rename-outlier_timeseries-minpoints,\
-  Rename-outlier_timeseries-range,\
-  Rename-outlier_timeseries-timestampcheck,\
-  Rename-smoothing_timeseries-lowessbased,\
-  Rename-smoothing_timeseries-savitzkygolaybased,\
-  Rename-smoothing_timeseries-slidingwindow
+Rename=
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
-Rename-transformer_timeseriesreportdbreader=adams.flow.transformer.TimeseriesReportDbReader-adams.flow.transformer.TimeseriesReportDbUpdater
-Rename-baseline_timeseries-lowess=adams.data.baseline.LOWESSBased-adams.data.baseline.TimeseriesLOWESSBased
-Rename-baseline_timeseries-savitzkygolay=adams.data.baseline.SavitzkyGolayBased-adams.data.baseline.TimeseriesSavitzkyGolayBased
-Rename-filter_timeseries-changeresolution=adams.data.filter.ChangeResolution-adams.data.filter.TimeseriesChangeResolution
-Rename-filter_timeseries-derivative=adams.data.filter.Derivative-adams.data.filter.TimeseriesDerivative
-Rename-filter_timeseries-equidistance=adams.data.filter.EquiDistance-adams.data.filter.TimeseriesEquiDistance
-Rename-filter_timeseries-fastwavelet=adams.data.filter.FastWavelet-adams.data.filter.TimeseriesFastWavelet
-Rename-filter_timeseries-fft=adams.data.filter.FFT-adams.data.filter.TimeseriesFFT
-Rename-filter_timeseries-histogram=adams.data.filter.Histogram-adams.data.filter.TimeseriesHistogram
-Rename-filter_timeseries-lowess=adams.data.filter.LOWESS-adams.data.filter.TimeseriesLOWESS
-Rename-filter_timeseries-resettimestamps=adams.data.filter.ResetTimestamps-adams.data.filter.TimeseriesResetTimestamps
-Rename-filter_timeseries-round=adams.data.filter.Round-adams.data.filter.TimeseriesRound
-Rename-filter_timeseries-rownorm=adams.data.filter.RowNorm-adams.data.filter.TimeseriesRowNorm
-Rename-filter_timeseries-savitzkygolay=adams.data.filter.SavitzkyGolay-adams.data.filter.TimeseriesSavitzkyGolay
-Rename-filter_timeseries-sax=adams.data.filter.SAX-adams.data.filter.TimeseriesSAX
-Rename-filter_timeseries-setstart=adams.data.filter.SetStart-adams.data.filter.TimeseriesSetStart
-Rename-filter_timeseries-shiftvalues=adams.data.filter.ShiftValues-adams.data.filter.TimeseriesShiftValues
-Rename-filter_timeseries-valuesubset=adams.data.filter.ValueSubset-adams.data.filter.TimeseriesValueSubset
-Rename-filter_timeseries-window=adams.data.filter.Window-adams.data.filter.TimeseriesWindow
-Rename-outlier_timeseries-minpoints=adams.data.outlier.MinPoints-adams.data.outlier.TimeseriesMinPoints
-Rename-outlier_timeseries-range=adams.data.outlier.Range-adams.data.outlier.TimeseriesRange
-Rename-outlier_timeseries-timestampcheck=adams.data.outlier.TimestampCheck-adams.data.outlier.TimeseriesTimestampCheck
-Rename-smoothing_timeseries-lowessbased=adams.data.smoothing.LOWESSBased-adams.data.smoothing.TimeseriesLOWESSBased
-Rename-smoothing_timeseries-savitzkygolaybased=adams.data.smoothing.SavitzkyGolayBased-adams.data.smoothing.TimeseriesSavitzkyGolayBased
-Rename-smoothing_timeseries-slidingwindow=adams.data.smoothing.SlidingWindow-adams.data.smoothing.TimeseriesSlidingWindow
+#Rename-transformer_timeseriesreportdbreader=adams.flow.transformer.TimeseriesReportDbReader-adams.flow.transformer.TimeseriesReportDbUpdater

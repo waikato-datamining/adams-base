@@ -6,9 +6,8 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=\
-  Rename-spreadsheetwriter_gnuplot
+Rename=
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
-Rename-spreadsheetwriter_gnuplot=adams.core.io.GnuplotSpreadSheetWriter-adams.data.io.output.GnuplotSpreadSheetWriter
+#Rename-spreadsheetwriter_gnuplot=adams.core.io.GnuplotSpreadSheetWriter-adams.data.io.output.GnuplotSpreadSheetWriter

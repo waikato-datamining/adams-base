@@ -6,25 +6,15 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=\
-  Rename-spreadsheetwriter_gnumeric,\
-  Rename-transformer_spreadsheetcell,\
-  Rename-transformer_spreadsheetreader,\
-  Rename-sink_spreadsheetwriter,\
-  Rename-conversion_mergespreadsheetcolumns
+Rename=
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
-Rename-spreadsheetwriter_gnumeric=adams.core.io.GnumericSpreadSheetWriter-adams.data.io.output.GnumericSpreadSheetWriter
-Rename-transformer_spreadsheetcell=adams.flow.transformer.SpreadSheetCell-adams.flow.transformer.SpreadSheetGetCell
-Rename-transformer_spreadsheetreader=adams.flow.transformer.SpreadSheetReader-adams.flow.transformer.SpreadSheetFileReader
-Rename-sink_spreadsheetwriter=adams.flow.sink.SpreadSheetWriter-adams.flow.sink.SpreadSheetFileWriter
-Rename-conversion_mergespreadsheetcolumns=adams.data.conversion.MergeSpreadSheetColumns-adams.data.conversion.SpreadSheetJoinColumns
+#Rename-spreadsheetwriter_gnumeric=adams.core.io.GnumericSpreadSheetWriter-adams.data.io.output.GnumericSpreadSheetWriter
 
 # Lists the keys that contain partial classname renaming.
-PartialRename=\
-  Rename-statistic
+PartialRename=
 
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
-Rename-statistic=.spreadsheet.statistic.\t.spreadsheet.colstatistic.
+#Rename-statistic=.spreadsheet.statistic.\t.spreadsheet.colstatistic.
