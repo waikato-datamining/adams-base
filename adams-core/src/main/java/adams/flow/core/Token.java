@@ -15,13 +15,11 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-
-import java.io.Serializable;
 
 import adams.core.CloneHandler;
 import adams.core.Utils;
@@ -30,6 +28,8 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.gui.flow.provenance.ProvenanceNode;
+
+import java.io.Serializable;
 
 /**
  * A wrapper object for passing data through the flow.
@@ -173,10 +173,10 @@ public class Token
 
     result = new Token();
 
-    if (!isNull() && (m_Payload instanceof Serializable))
-      result.setPayload(Utils.deepCopy(m_Payload));
-    else if (!isNull() && (m_Payload instanceof CloneHandler))
+    if (!isNull() && (m_Payload instanceof CloneHandler))
       result.setPayload(((CloneHandler) m_Payload).getClone());
+    else if (!isNull() && (m_Payload instanceof Serializable))
+      result.setPayload(Utils.deepCopy(m_Payload));
     else
       result.setPayload(m_Payload);
 
