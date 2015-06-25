@@ -15,11 +15,11 @@ GROUP=pentaho.weka
 mvn deploy:deploy-file \
   -DgroupId=$GROUP \
   -DartifactId=pdm-timeseriesforecasting-ce \
-  -Dversion=2013.10.22 \
+  -Dversion=2015.05.19 \
   -Dpackaging=jar \
-  -Dfile=$LIB_DIR/pdm-timeseriesforecasting-ce-2013.10.22.jar \
-  -Dsources=$LIB_DIR/pdm-timeseriesforecasting-ce-2013.10.22-sources.jar \
-  -DpomFile=$LIB_DIR/pdm-timeseriesforecasting-ce-2013.10.22.pom \
+  -Dfile=$LIB_DIR/pdm-timeseriesforecasting-ce-2015.05.19.jar \
+  -Dsources=$LIB_DIR/pdm-timeseriesforecasting-ce-2015.05.19-sources.jar \
+  -DpomFile=$LIB_DIR/pdm-timeseriesforecasting-ce-2015.05.19.pom \
   -DrepositoryId=$REPO \
   -Durl=$REPO_URL
 
