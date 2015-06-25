@@ -15,11 +15,12 @@
 
 /*
  * SetReportFromFileTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.data.io.input.ImageMagickImageReader;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -125,7 +126,8 @@ public class SetReportFromFileTest
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[0] = tmp2;
-      adams.flow.transformer.ImageMagickReader tmp4 = new adams.flow.transformer.ImageMagickReader();
+      adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
+      tmp4.setReader(new ImageMagickImageReader());
       tmp1[1] = tmp4;
       adams.flow.transformer.SetReportFromFile tmp5 = new adams.flow.transformer.SetReportFromFile();
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("reportFile");

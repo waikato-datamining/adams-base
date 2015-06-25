@@ -4,10 +4,8 @@
 # Revision/weka: 6315:6317
 # Revision/adams: 950:1052MP
 #
-adams.flow.source.InstantiatableSource
-	-actor
-		adams.flow.source.RandomNumberGenerator
-			-max-num
-			20
+adams.flow.source.RandomNumberGenerator
+	-max-num
+	20
 
 

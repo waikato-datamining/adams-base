@@ -15,7 +15,7 @@
 
 /*
  * BoofCVDetectLinesTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -118,7 +118,7 @@ public class BoofCVDetectLinesTest
       actors1[0] = filesupplier2;
 
       // Flow.JAIReader
-      adams.flow.transformer.JAIReader jaireader4 = new adams.flow.transformer.JAIReader();
+      adams.flow.transformer.ImageReader jaireader4 = new adams.flow.transformer.ImageReader();
       actors1[1] = jaireader4;
 
       // Flow.Convert

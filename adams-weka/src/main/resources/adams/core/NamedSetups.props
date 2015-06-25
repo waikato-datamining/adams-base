@@ -18,4 +18,4 @@ weka_predictions_relativescaler=adams.data.weka.predictions.RelativeNumericError
 
 # flow
 source_datagenerator=adams.flow.source.WekaDataGenerator
-transformer_classifier_j48=adams.flow.transformer.WekaClassifier -classifier weka.classifiers.trees.J48
+transformer_filter_removeuseless=adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.RemoveUseless

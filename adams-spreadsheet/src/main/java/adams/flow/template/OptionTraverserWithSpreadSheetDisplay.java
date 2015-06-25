@@ -15,14 +15,15 @@
 
 /**
  * OptionTraverserWithSpreadSheetDisplay.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
+import adams.data.conversion.StringToSpreadSheet;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.SpreadSheetDisplay;
-import adams.flow.transformer.StringToSpreadSheet;
+import adams.flow.transformer.Convert;
 
 /**
  <!-- globalinfo-start -->
@@ -91,9 +92,12 @@ public class OptionTraverserWithSpreadSheetDisplay
   @Override
   protected void addDisplay(MutableActorHandler handler) {
     DisplayPanelManager		manager;
+    Convert conv;
     SpreadSheetDisplay		display;
-    
-    handler.add(new StringToSpreadSheet());
+
+    conv = new Convert();
+    conv.setConversion(new StringToSpreadSheet());
+    handler.add(conv);
     display = new SpreadSheetDisplay();
     
     if (m_Once) {

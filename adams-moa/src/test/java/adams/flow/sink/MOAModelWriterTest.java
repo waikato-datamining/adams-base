@@ -20,19 +20,22 @@
 
 package adams.flow.sink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import moa.options.ClassOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.CallableActorReference;
 import adams.flow.source.FileSupplier;
-import adams.flow.transformer.MOAClassifier;
+import adams.flow.source.MOAClassifierSetup;
+import adams.flow.standalone.CallableActors;
+import adams.flow.transformer.MOATrainClassifier;
 import adams.flow.transformer.WekaClassSelector;
 import adams.flow.transformer.WekaFileReader;
 import adams.flow.transformer.WekaFileReader.OutputType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import moa.options.ClassOption;
 
 /**
  * Tests the FileReader, ClassSelector, Classifier and ModelWriter actor.
@@ -85,13 +88,7 @@ public class MOAModelWriterTest
    */
   @Override
   public AbstractActor getActor() {
-    FileSupplier sfs = new FileSupplier();
-    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("iris.arff")});
-
-    WekaFileReader fr = new WekaFileReader();
-    fr.setOutputType(OutputType.INCREMENTAL);
-
-    WekaClassSelector cs = new WekaClassSelector();
+    CallableActors call = new CallableActors();
 
     ClassOption option = new ClassOption(
 	"classifier",
@@ -101,15 +98,28 @@ public class MOAModelWriterTest
 	"bayes.NaiveBayes",
 	"moa.classifiers.bayes.NaiveBayes");
 
-    MOAClassifier cls = new MOAClassifier();
+    MOAClassifierSetup cls = new MOAClassifierSetup();
+    cls.setName("classifier");
     cls.setClassifier(option);
-    cls.setOutputInterval(150);  // number of instances in dataset
+    call.add(cls);
+
+    FileSupplier sfs = new FileSupplier();
+    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("iris.arff")});
+
+    WekaFileReader fr = new WekaFileReader();
+    fr.setOutputType(OutputType.INCREMENTAL);
+
+    WekaClassSelector cs = new WekaClassSelector();
+
+    MOATrainClassifier train = new MOATrainClassifier();
+    train.setClassifier(new CallableActorReference("classifier"));
+    train.setOutputInterval(150);  // number of instances in dataset
 
     MOAModelWriter mw = new MOAModelWriter();
     mw.setOutputFile(new TmpFile("dumpfile.model"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, cs, cls, mw});
+    flow.setActors(new AbstractActor[]{call, sfs, fr, cs, train, mw});
 
     return flow;
   }

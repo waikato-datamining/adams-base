@@ -3,11 +3,9 @@
 # Revision/weka: 6315:6317
 # Revision/adams: 950:1052MP
 #
-adams.flow.transformer.InstantiatableTransformer
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.Remove
-					-R
-					1-10
-					
+adams.flow.transformer.WekaFilter
+	-filter
+		weka.filters.unsupervised.attribute.Remove
+			-R
+			1-10
+			

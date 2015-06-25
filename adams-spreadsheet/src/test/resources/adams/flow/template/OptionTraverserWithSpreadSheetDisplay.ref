@@ -5,7 +5,15 @@ adams.flow.control.Trigger
 			-traverser
 				adams.core.option.VariableLister
 	-tee
-		adams.flow.transformer.StringToSpreadSheet
+		adams.flow.transformer.Convert
+			-conversion
+				adams.data.conversion.StringToSpreadSheet
+					-reader
+						adams.data.io.input.CsvSpreadSheetReader
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
 	-tee
 		adams.flow.sink.DisplayPanelManager
 			-provider
@@ -23,7 +31,15 @@ adams.flow.control.Once
 					-traverser
 						adams.core.option.VariableLister
 			-tee
-				adams.flow.transformer.StringToSpreadSheet
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.StringToSpreadSheet
+							-reader
+								adams.data.io.input.CsvSpreadSheetReader
+									-data-row-type
+										adams.data.spreadsheet.DenseDataRow
+									-spreadsheet-type
+										adams.data.spreadsheet.SpreadSheet
 			-tee
 				adams.flow.sink.SpreadSheetDisplay
 					-writer

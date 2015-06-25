@@ -92,7 +92,7 @@ public class NamedSetupTest
     WekaClassSelector cs = new WekaClassSelector();
 
     NamedSetup ext = new NamedSetup();
-    ext.setSetup(new adams.core.NamedSetup("transformer_classifier_j48"));
+    ext.setSetup(new adams.core.NamedSetup("transformer_filter_removeuseless"));
 
     AnyToString a2s = new AnyToString();
     Convert con = new Convert();

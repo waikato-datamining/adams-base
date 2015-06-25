@@ -15,13 +15,12 @@
 
 /*
  * WekaClassifierOptimizerTest.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.data.conversion.AnyToCommandline;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -30,6 +29,8 @@ import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the WekaClassifier actor.
@@ -105,14 +106,16 @@ public class WekaClassifierOptimizerTest
     }
     co.setOptimizer(gs);
 
+    Convert conv = new Convert();
     AnyToCommandline a2c = new AnyToCommandline();
+    conv.setConversion(a2c);
 
     DumpFile df = new DumpFile();
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{mfs, fr, cs, co, a2c, df});
+    flow.setActors(new AbstractActor[]{mfs, fr, cs, co, conv, df});
 
     return flow;
   }

@@ -15,7 +15,7 @@
 
 /*
  * BufferedImageTransformerTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -94,7 +94,7 @@ public class BufferedImageTransformerTest
 	    new TmpFile("adams_icon.png")
 	});
 
-    JAIReader ir = new JAIReader();
+    ImageReader ir = new ImageReader();
 
     BufferedImageTransformer itr = new BufferedImageTransformer();
     Resize res = new Resize();

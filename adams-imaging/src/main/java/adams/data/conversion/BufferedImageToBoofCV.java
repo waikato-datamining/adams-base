@@ -15,7 +15,7 @@
 
 /**
  * BufferedImageToBoofCV.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -23,7 +23,6 @@ import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImageContainer;
-import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -117,7 +116,7 @@ public class BufferedImageToBoofCV
    */
   @Override
   public Class accepts() {
-    return BufferedImageContainer.class;
+    return AbstractImageContainer.class;
   }
 
   /**

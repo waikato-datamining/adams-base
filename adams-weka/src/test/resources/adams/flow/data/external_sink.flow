@@ -3,9 +3,7 @@
 # Revision/weka: 6315:6317
 # Revision/adams: 950:1052MP
 #
-adams.flow.sink.InstantiatableSink
-	-actor
-		adams.flow.sink.DumpFile
-			-output
-			${TMP}/dumpfile.txt
-			-append
+adams.flow.sink.DumpFile
+	-output
+	${TMP}/dumpfile.txt
+	-append

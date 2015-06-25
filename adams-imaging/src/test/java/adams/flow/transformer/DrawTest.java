@@ -15,11 +15,12 @@
 
 /*
  * DrawTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.data.io.input.ImageMagickImageReader;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -116,7 +117,8 @@ public class DrawTest
       tmp9.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[1] = tmp9;
-      adams.flow.transformer.ImageMagickReader tmp11 = new adams.flow.transformer.ImageMagickReader();
+      adams.flow.transformer.ImageReader tmp11 = new adams.flow.transformer.ImageReader();
+      tmp11.setReader(new ImageMagickImageReader());
       tmp1[2] = tmp11;
       adams.flow.control.Tee tmp12 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("name");

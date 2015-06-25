@@ -1,10 +1,12 @@
 /*
  * ClusterCentersTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.wekaclusterer;
 
+import adams.flow.core.CallableActorReference;
+import adams.flow.standalone.CallableActors;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -99,6 +101,16 @@ public class ClusterCentersTest
     Flow flow = new Flow();
     
     try {
+      CallableActors call = new CallableActors();
+
+      adams.flow.source.WekaClustererSetup tmp10 = new adams.flow.source.WekaClustererSetup();
+      tmp10.setName("clusterer");
+      argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("clusterer");
+      weka.clusterers.SimpleKMeans tmp12 = new weka.clusterers.SimpleKMeans();
+      tmp12.setOptions(OptionUtils.splitOptions("-N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -S 10"));
+      tmp10.setClusterer(tmp12);
+      call.add(tmp10);
+
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
       adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
       adams.flow.source.FileSupplier tmp2 = new adams.flow.source.FileSupplier();
@@ -119,17 +131,14 @@ public class ClusterCentersTest
       tmp7.setFilter(tmp9);
 
       tmp1[2] = tmp7;
-      adams.flow.transformer.WekaClusterer tmp10 = new adams.flow.transformer.WekaClusterer();
-      argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("clusterer");
-      weka.clusterers.SimpleKMeans tmp12 = new weka.clusterers.SimpleKMeans();
-      tmp12.setOptions(OptionUtils.splitOptions("-N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -S 10"));
-      tmp10.setClusterer(tmp12);
+      adams.flow.transformer.WekaTrainClusterer tmp10b = new adams.flow.transformer.WekaTrainClusterer();
+      tmp10b.setClusterer(new CallableActorReference("clusterer"));
 
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("postProcessor");
       adams.flow.transformer.wekaclusterer.ClusterCenters tmp14 = new adams.flow.transformer.wekaclusterer.ClusterCenters();
-      tmp10.setPostProcessor(tmp14);
+      tmp10b.setPostProcessor(tmp14);
 
-      tmp1[3] = tmp10;
+      tmp1[3] = tmp10b;
       adams.flow.control.ContainerValuePicker tmp15 = new adams.flow.control.ContainerValuePicker();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("valueName");
       tmp15.setValueName((java.lang.String) argOption.valueOf("Clustered dataset"));
@@ -141,6 +150,7 @@ public class ClusterCentersTest
       tmp17.setOutputFile(new TmpFile("dumpfile.txt"));
       tmp1[5] = tmp17;
       flow.setActors(tmp1);
+      flow.add(0, call);
 
     }
     catch (Exception e) {

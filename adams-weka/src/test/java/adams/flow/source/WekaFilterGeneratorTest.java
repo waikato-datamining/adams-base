@@ -14,23 +14,24 @@
  */
 
 /*
- * FilterGeneratorTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * WekaFilterGeneratorTest.java
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.data.conversion.AnyToCommandline;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.sink.DumpFile;
-import adams.flow.transformer.AnyToCommandline;
+import adams.flow.transformer.Convert;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests the FilterGenerator source.
@@ -80,7 +81,9 @@ public class WekaFilterGeneratorTest
   public AbstractActor getActor() {
     WekaFilterGenerator cg = (WekaFilterGenerator) AbstractActor.forCommandLine("adams.flow.source.WekaFilterGenerator -setup \"weka.filters.supervised.attribute.PLSFilter -C 20 -M -A PLS1 -P center\" -parameter \"weka.core.setupgenerator.MathParameter -property numComponents -min 5.0 -max 20.0 -step 1.0 -base 10.0 -expression I\"");
 
+    Convert conv = new Convert();
     AnyToCommandline a2c = new AnyToCommandline();
+    conv.setConversion(a2c);
 
     DumpFile df = new DumpFile();
     df.setAppend(true);
@@ -88,7 +91,7 @@ public class WekaFilterGeneratorTest
 
     Flow flow = new Flow();
     flow.setActors(new AbstractActor[]{
-	cg, a2c, df
+	cg, conv, df
     });
 
     return flow;

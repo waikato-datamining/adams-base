@@ -15,11 +15,13 @@
 
 /*
  * MOAMeasurementPlotGeneratorTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.flow.core.CallableActorReference;
+import adams.flow.source.MOAClassifierSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.base.BaseRegExp;
@@ -81,9 +83,9 @@ public class MOAMeasurementPlotGeneratorTest
       CallableActors tmp2 = new CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
       AbstractActor[] tmp3 = new AbstractActor[1];
-      MOAClassifier tmp4 = new MOAClassifier();
+      MOAClassifierSetup tmp4 = new MOAClassifierSetup();
+      tmp4.setName("classifier");
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputInterval");
-      tmp4.setOutputInterval((Integer) argOption.valueOf("1"));
 
       tmp3[0] = tmp4;
       tmp2.setActors(tmp3);
@@ -95,6 +97,7 @@ public class MOAMeasurementPlotGeneratorTest
 
       tmp1[1] = tmp6;
       MOAClassifierEvaluation tmp8 = new MOAClassifierEvaluation();
+      tmp8.setClassifier(new CallableActorReference("classifier"));
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("outputInterval");
       tmp8.setOutputInterval((Integer) argOption.valueOf("100"));
 
