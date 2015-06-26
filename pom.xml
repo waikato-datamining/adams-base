@@ -127,13 +127,6 @@
         <groupId>nz.ac.waikato.cms.weka.thirdparty</groupId>
         <artifactId>java-cup-11b</artifactId>
         <version>2015.03.26</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>nz.ac.waikato.cms.weka.thirdparty</groupId>
-        <artifactId>java-cup-11b-runtime</artifactId>
-        <version>2015.03.26</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
