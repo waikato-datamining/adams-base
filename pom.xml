@@ -163,9 +163,9 @@
         </plugin>
 
         <plugin>
-          <groupId>com.agiliumlabs.osxappbundle</groupId>
+          <groupId>org.codehaus.mojo</groupId>
           <artifactId>osxappbundle-maven-plugin</artifactId>
-          <version>1.0.1</version>
+          <version>1.0-alpha-2</version>
         </plugin>
 
         <plugin>
