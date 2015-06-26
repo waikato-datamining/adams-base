@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
-      <version>1.8.4</version>
+      <version>1.8.6</version>
       <type>jar</type>
     </dependency>
 
