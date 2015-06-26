@@ -90,7 +90,7 @@
     <dependency>
       <groupId>com.jidesoft</groupId>
       <artifactId>jide-oss</artifactId>
-      <version>3.6.4</version>
+      <version>3.6.9</version>
     </dependency>
 
     <dependency>
