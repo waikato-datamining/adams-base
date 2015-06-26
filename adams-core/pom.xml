@@ -161,7 +161,7 @@
     <dependency>
       <groupId>de.jflex</groupId>
       <artifactId>jflex</artifactId>
-      <version>1.4.2</version>
+      <version>1.4.3</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
