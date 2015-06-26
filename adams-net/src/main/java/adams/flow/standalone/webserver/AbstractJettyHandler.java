@@ -15,29 +15,27 @@
 
 /**
  * AbstractJettyHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone.webserver;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tika.mime.MediaType;
-import org.codehaus.plexus.util.FileUtils;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.util.IO;
-import org.eclipse.jetty.util.resource.Resource;
 
 import adams.core.net.MimeTypeHelper;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.gui.core.GUIHelper;
+import org.apache.tika.mime.MediaType;
+import org.codehaus.plexus.util.FileUtils;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.util.IO;
+import org.eclipse.jetty.util.resource.Resource;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Handler for displaying the currently running flows.
@@ -151,15 +149,15 @@ public abstract class AbstractJettyHandler
    * Serves the favicon.
    */
   protected void serveFavicon(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    if (request.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) == m_ModifiedTimestamp) {
+    if (request.getDateHeader(HttpHeader.IF_MODIFIED_SINCE.toString()) == m_ModifiedTimestamp) {
       response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
     }
     else {
       response.setStatus(HttpServletResponse.SC_OK);
       response.setContentType("image/x-icon");
       response.setContentLength(m_Favicon.length);
-      response.setDateHeader(HttpHeaders.LAST_MODIFIED, m_ModifiedTimestamp);
-      response.setHeader(HttpHeaders.CACHE_CONTROL,"max-age=360000,public");
+      response.setDateHeader(HttpHeader.LAST_MODIFIED.toString(), m_ModifiedTimestamp);
+      response.setHeader(HttpHeader.CACHE_CONTROL.toString(),"max-age=360000,public");
       response.getOutputStream().write(m_Favicon);
     }
   }
@@ -173,7 +171,7 @@ public abstract class AbstractJettyHandler
     
     image = request.getRequestURI().substring(request.getRequestURI().lastIndexOf('/') + 1);
     
-    if (m_ImageModified.containsKey(image) && request.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) == m_ModifiedTimestamp) {
+    if (m_ImageModified.containsKey(image) && request.getDateHeader(HttpHeader.IF_MODIFIED_SINCE.toString()) == m_ModifiedTimestamp) {
       response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
     }
     else {
@@ -181,8 +179,8 @@ public abstract class AbstractJettyHandler
       response.setStatus(HttpServletResponse.SC_OK);
       response.setContentType(getImageMimeType(image));
       response.setContentLength(data.length);
-      response.setDateHeader(HttpHeaders.LAST_MODIFIED, m_ModifiedTimestamp);
-      response.setHeader(HttpHeaders.CACHE_CONTROL,"max-age=360000,public");
+      response.setDateHeader(HttpHeader.LAST_MODIFIED.toString(), m_ModifiedTimestamp);
+      response.setHeader(HttpHeader.CACHE_CONTROL.toString(),"max-age=360000,public");
       response.getOutputStream().write(data);
       m_ImageModified.put(image, m_ModifiedTimestamp);
     }
@@ -206,7 +204,7 @@ public abstract class AbstractJettyHandler
     String method = request.getMethod();
 
     // little cheat for common request
-    if (m_ServeIcon && (m_Favicon != null) && method.equals(HttpMethods.GET) && request.getRequestURI().equals("/favicon.ico")) {
+    if (m_ServeIcon && (m_Favicon != null) && method.equals(HttpMethod.GET) && request.getRequestURI().equals("/favicon.ico")) {
       serveFavicon(target, baseRequest, request, response);
       return;
     }

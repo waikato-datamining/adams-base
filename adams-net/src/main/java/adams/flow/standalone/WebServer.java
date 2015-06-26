@@ -15,18 +15,18 @@
 
 /**
  * WebServer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.standalone.webserver.DefaultHandler;
 import adams.flow.standalone.webserver.Handler;
 import adams.flow.standalone.webserver.ResourceHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
 
 /**
  <!-- globalinfo-start -->
@@ -218,7 +218,7 @@ public class WebServer
   @Override
   protected String doExecute() {
     String				result;
-    SelectChannelConnector 		connector;
+    ServerConnector 			connector;
     HandlerList 			handlers;
     int					i;
     org.eclipse.jetty.server.Handler[]	list;
@@ -226,9 +226,9 @@ public class WebServer
     result = null;
 
     m_Server  = new Server();
-    connector = new SelectChannelConnector();
+    connector = new ServerConnector(m_Server);
     connector.setPort(m_Port);
-    m_Server.addConnector(connector);
+    m_Server.setConnectors(new Connector[]{connector});
 
     list = new org.eclipse.jetty.server.Handler[m_Handlers.length];
     for (i = 0; i < m_Handlers.length; i++)

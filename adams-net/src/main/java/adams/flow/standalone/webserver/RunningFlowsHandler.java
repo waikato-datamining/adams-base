@@ -15,28 +15,26 @@
 
 /**
  * RunningFlowsHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone.webserver;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.util.ByteArrayISO8859Writer;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.flow.control.Flow;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.ActorUtils;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.util.ByteArrayISO8859Writer;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Handler for displaying the currently running flows.
@@ -70,7 +68,7 @@ public class RunningFlowsHandler
     protected void doHandle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
       String method = request.getMethod();
 
-      if (!method.equals(HttpMethods.GET) || !request.getRequestURI().equals("/")) {
+      if (!method.equals(HttpMethod.GET.toString()) || !request.getRequestURI().equals("/")) {
 	response.sendError(HttpServletResponse.SC_NOT_FOUND);
 	return;   
       }
@@ -100,7 +98,7 @@ public class RunningFlowsHandler
       }
 
       response.setStatus(HttpServletResponse.SC_OK);
-      response.setContentType(MimeTypes.TEXT_HTML);
+      response.setContentType(MimeTypes.Type.TEXT_HTML.toString());
 
       ByteArrayISO8859Writer writer = new ByteArrayISO8859Writer(1500);
 
