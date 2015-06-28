@@ -57,11 +57,11 @@ public class JsonProducerTest
 
     assertEquals(
 	"getOutput() differs",
-	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"silent\":false,\"attemptInterval\":1000,\"name\":\"DumpFile\",\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
+	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
 	"" + producer.getOutput());
     assertEquals(
 	"toString() differs",
-	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"silent\":false,\"attemptInterval\":1000,\"name\":\"DumpFile\",\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
+	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
 	producer.toString());
   }
 

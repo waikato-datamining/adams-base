@@ -21,11 +21,16 @@
 package adams.flow.sink;
 
 import adams.core.MultiAttemptWithWaitSupporter;
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -101,6 +106,13 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
+ * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
+ * &nbsp;&nbsp;&nbsp;The number of lines to buffer before writing to disk, in order to improve 
+ * &nbsp;&nbsp;&nbsp;I&#47;O performance.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -113,6 +125,9 @@ public class DumpFile
   /** for serialization. */
   private static final long serialVersionUID = -366362262032858011L;
 
+  /** the key for storing the buffer in the backup. */
+  public final static String BACKUP_BUFFER = "buffer";
+
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
 
@@ -121,6 +136,12 @@ public class DumpFile
 
   /** the interval between attempts. */
   protected int m_AttemptInterval;
+
+  /** the size of the buffer. */
+  protected int m_BufferSize;
+
+  /** the buffer. */
+  protected List<String> m_Buffer;
 
   /** the time in msec to wait between attempts. */
 
@@ -154,6 +175,20 @@ public class DumpFile
     m_OptionManager.add(
       "attempt-interval", "attemptInterval",
       1000, 0, null);
+
+    m_OptionManager.add(
+      "buffer-size", "bufferSize",
+      1, 1, null);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Buffer = new ArrayList<>();
   }
 
   /**
@@ -279,12 +314,134 @@ public class DumpFile
   }
 
   /**
+   * Sets the number of lines to buffer before writing them to disk.
+   *
+   * @param value	the number of lines to buffer
+   */
+  public void setBufferSize(int value) {
+    if (value >= 1) {
+      m_BufferSize = value;
+      reset();
+    }
+    else {
+      getLogger().severe("Buffer size must be >= 1, provided: " + value);
+    }
+  }
+
+  /**
+   * Returns the number of lines to buffer before writing them to disk.
+   *
+   * @return		the number of lines to buffer
+   */
+  public int getBufferSize() {
+    return m_BufferSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bufferSizeTipText() {
+    return
+        "The number of lines to buffer before writing to disk, in order to "
+	+ "improve I/O performance.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+    String	value;
+
+    result = super.getQuickInfo();
+
+    if (result != null) {
+      value = QuickInfoHelper.toString(this, "bufferSize", (m_BufferSize > 1 ? m_BufferSize : null), ", buffering: ");
+      if (value != null)
+        result += value;
+    }
+
+    return result;
+  }
+
+  /**
+   * Backs up the current state of the actor before update the variables.
+   *
+   * @return		the backup
+   */
+  @Override
+  protected Hashtable<String,Object> backupState() {
+    Hashtable<String,Object>	result;
+
+    result = super.backupState();
+
+    result.put(BACKUP_BUFFER, m_Buffer);
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the actor before the variables got updated.
+   *
+   * @param state	the backup of the state to restore from
+   */
+  @Override
+  protected void restoreState(Hashtable<String,Object> state) {
+    if (state.containsKey(BACKUP_BUFFER)) {
+      m_Buffer = (List<String>) state.get(BACKUP_BUFFER);
+      state.remove(BACKUP_BUFFER);
+    }
+
+    super.restoreState(state);
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Unknown.class};
+  }
+
+  /**
+   * Writes the content of the buffer to disk.
+   *
+   * @return		error message is something went wrong, null otherwise
+   */
+  protected String writeToDisk() {
+    String    result;
+    int       attempt;
+    boolean   finished;
+
+    result   = null;
+    finished = false;
+    attempt  = 0;
+    while (!finished) {
+      attempt++;
+      result = FileUtils.writeToFileMsg(
+	m_OutputFile.getAbsolutePath(),
+	Utils.flatten(m_Buffer, System.getProperty("line.separator")),
+	m_Append,
+	m_Encoding.charsetValue().name());
+      finished = (attempt == m_NumAttempts) || (result == null);
+      if (!finished && (result != null)) {
+	if (isLoggingEnabled())
+	  getLogger().info("Attempt " + attempt + "/" + m_NumAttempts + " failed, retrying...");
+	if (m_AttemptInterval > 0)
+	  Utils.wait(this, this, m_AttemptInterval, 100);
+      }
+    }
+
+    m_Buffer.clear();
+
+    return result;
   }
 
   /**
@@ -295,29 +452,24 @@ public class DumpFile
   @Override
   protected String doExecute() {
     String    result;
-    int       attempt;
-    boolean   finished;
 
-    result   = null;
-    attempt  = 0;
-    finished = false;
-
-    while (!finished) {
-      attempt++;
-      result = FileUtils.writeToFileMsg(
-        m_OutputFile.getAbsolutePath(),
-        m_InputToken.getPayload(),
-        m_Append,
-        m_Encoding.charsetValue().name());
-      finished = (attempt == m_NumAttempts) || (result == null);
-      if (!finished && (result != null)) {
-        if (isLoggingEnabled())
-          getLogger().info("Attempt " + attempt + "/" + m_NumAttempts + " failed, retrying...");
-        if (m_AttemptInterval > 0)
-          Utils.wait(this, this, m_AttemptInterval, 100);
-      }
-    }
+    result = null;
+    m_Buffer.add("" + m_InputToken.getPayload());
+    if ((m_Buffer.size() >= m_BufferSize) || !m_Append)
+      result = writeToDisk();
 
     return result;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    // write any left over data to disk
+    if (m_Buffer.size() > 0)
+      writeToDisk();
+
+    super.wrapUp();
   }
 }
