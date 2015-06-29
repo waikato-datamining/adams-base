@@ -14,7 +14,7 @@
  */
 
 /*
- * SubmitHTMLFormTest.java
+ * HttpRequestTest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -28,14 +28,14 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests the SubmitHTMLForm actor.
+ * Tests the HttpRequest actor.
  * <br>
  * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SubmitHTMLFormTest
+public class HttpRequestTest
   extends AbstractFlowTest {
 
   /**
@@ -43,7 +43,7 @@ public class SubmitHTMLFormTest
    *
    * @param name	the name of the test
    */
-  public SubmitHTMLFormTest(String name) {
+  public HttpRequestTest(String name) {
     super(name);
   }
 
@@ -63,7 +63,7 @@ public class SubmitHTMLFormTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(SubmitHTMLFormTest.class);
+    return new TestSuite(HttpRequestTest.class);
   }
 
   /**

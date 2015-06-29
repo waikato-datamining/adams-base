@@ -14,7 +14,7 @@
  */
 
 /**
- * SubmitHTMLForm.java
+ * HttpRequest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -107,7 +107,7 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SubmitHTMLForm
+public class HttpRequest
   extends AbstractSimpleSource {
 
   private static final long serialVersionUID = 3114594997972970790L;
@@ -127,7 +127,7 @@ public class SubmitHTMLForm
   @Override
   public String globalInfo() {
     return
-      "Submits the form parameters to the specified URL and forwards the "
+      "Submits the (optional) form parameters to the specified URL and forwards the "
 	+ "retrieved HTML as text.\n"
 	+ "Cookies can be retrieved and stored in internal storage, to be "
 	+ "re-used with the next request.";
