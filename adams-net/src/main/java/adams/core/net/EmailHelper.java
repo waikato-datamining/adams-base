@@ -14,15 +14,11 @@
  */
 
 /*
- * Email.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * EmailHelper.java
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import adams.core.Properties;
 import adams.core.Utils;
@@ -30,6 +26,10 @@ import adams.core.base.BasePassword;
 import adams.core.option.OptionUtils;
 import adams.env.EmailDefinition;
 import adams.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * A helper class for emails.
@@ -105,7 +105,6 @@ public class EmailHelper {
   /**
    * Writes the specified properties to disk.
    *
-   * @param props	the properties to write to disk
    * @return		true if successfully stored
    */
   public synchronized static boolean writeProperties() {
