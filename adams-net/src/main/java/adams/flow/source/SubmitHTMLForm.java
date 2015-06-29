@@ -24,14 +24,18 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.flow.container.HTMLRequestResult;
+import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
+import java.util.Map;
+
 /**
  <!-- globalinfo-start -->
- * Submits the form parameters to the specified URL and forwards the retrieved HTML as text.
+ * Submits the form parameters to the specified URL and forwards the retrieved HTML as text.<br>
+ * Cookies can be retrieved and stored in internal storage, to be re-used with the next request.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -93,6 +97,11 @@ import org.jsoup.Jsoup;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-cookies &lt;adams.flow.control.StorageName&gt; (property: cookies)
+ * &nbsp;&nbsp;&nbsp;The (optional) storage value with the cookies (map of strings).
+ * &nbsp;&nbsp;&nbsp;default: storage
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -112,9 +121,16 @@ public class SubmitHTMLForm
   /** the form parameters. */
   protected BaseKeyValuePair[] m_Parameters;
 
+  /** the storage value containing the cookies to use. */
+  protected StorageName m_Cookies;
+
   @Override
   public String globalInfo() {
-    return "Submits the form parameters to the specified URL and forwards the retrieved HTML as text.";
+    return
+      "Submits the form parameters to the specified URL and forwards the "
+	+ "retrieved HTML as text.\n"
+	+ "Cookies can be retrieved and stored in internal storage, to be "
+	+ "re-used with the next request.";
   }
 
   /**
@@ -135,6 +151,10 @@ public class SubmitHTMLForm
     m_OptionManager.add(
       "parameter", "parameters",
       new BaseKeyValuePair[0]);
+
+    m_OptionManager.add(
+      "cookies", "cookies",
+      new StorageName());
   }
 
   /**
@@ -148,6 +168,7 @@ public class SubmitHTMLForm
 
     result  = QuickInfoHelper.toString(this, "URL", m_URL, "URL: ");
     result += QuickInfoHelper.toString(this, "method", m_Method, ", method: ");
+    result += QuickInfoHelper.toString(this, "cookies", m_Cookies, ", cookies: ");
 
     return result;
   }
@@ -240,6 +261,35 @@ public class SubmitHTMLForm
   }
 
   /**
+   * Sets the (optional) storage name with the cookies to use.
+   *
+   * @param value	the storage name
+   */
+  public void setCookies(StorageName value) {
+    m_Cookies = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) storage name with the cookies to use.
+   *
+   * @return		the storage name
+   */
+  public StorageName getCookies() {
+    return m_Cookies;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String cookiesTipText() {
+    return "The (optional) storage value with the cookies (map of strings).";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens
@@ -259,14 +309,28 @@ public class SubmitHTMLForm
     String		result;
     Response 		res;
     HTMLRequestResult	cont;
+    Map<String,String> cookies;
 
     result = null;
 
+    cookies = null;
+    if (getStorageHandler().getStorage().has(m_Cookies))
+      cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
+
     try {
-      res = Jsoup.connect(m_URL.getValue())
-	.data(BaseKeyValuePair.toMap(m_Parameters))
-	.method(m_Method)
-	.execute();
+      if (cookies == null) {
+	res = Jsoup.connect(m_URL.getValue())
+	  .data(BaseKeyValuePair.toMap(m_Parameters))
+	  .method(m_Method)
+	  .execute();
+      }
+      else {
+	res = Jsoup.connect(m_URL.getValue())
+	  .data(BaseKeyValuePair.toMap(m_Parameters))
+	  .cookies(cookies)
+	  .method(m_Method)
+	  .execute();
+      }
       cont          = new HTMLRequestResult(res.statusCode(), res.body(), res.cookies());
       m_OutputToken = new Token(cont);
     }
