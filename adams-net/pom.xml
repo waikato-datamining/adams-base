@@ -139,6 +139,12 @@
       <artifactId>jodd-mail</artifactId>
       <version>${jodd.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.8.2</version>
+    </dependency>
   </dependencies>
   
   <build>

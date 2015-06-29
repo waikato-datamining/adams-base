@@ -11,6 +11,18 @@
 adams.core.net.AbstractSendEmail=\
   adams.core.net
 
+# the host name verifiers
+javax.net.ssl.HostnameVerifier=\
+  adams.core.net.hostnameverifier
+
+# the trust managers
+javax.net.ssl.X509TrustManager=\
+  adams.core.net.trustmanager
+
+# the trust managers
+javax.net.ssl.HostnameVerifier=\
+  adams.core.net.hostnameverifier
+
 # classes for email readers
 adams.data.io.input.EmailReader=\
   adams.data.io.input

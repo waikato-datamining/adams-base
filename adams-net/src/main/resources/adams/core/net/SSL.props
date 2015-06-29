@@ -1,0 +1,10 @@
+# Properties file listing SSL related parameters.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The host name verifier (classname + options)
+HostnameVerifier=adams.core.net.hostnameverifier.All
+
+# The trust manager (classname + options)
+TrustManager=adams.core.net.trustmanager.All
