@@ -201,6 +201,11 @@ adams.core.base.BasePointDouble=true
 adams.core.base.BasePointDouble#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.BasePointDouble#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# BaseKeyValuePair objects
+adams.core.base.BaseKeyValuePair=true
+adams.core.base.BaseKeyValuePair#toString=adams.gui.goe.BaseKeyValuePairEditor#toString
+adams.core.base.BaseKeyValuePair#valueOf=adams.gui.goe.BaseKeyValuePairEditor#valueOf
+
 # ArrayDimensions objects
 adams.core.base.ArrayDimensions=true
 adams.core.base.ArrayDimensions#toString=adams.gui.goe.BaseObjectEditor#toString
