@@ -176,13 +176,116 @@ Central, \url{http://search.maven.org/}{}, otherwise they won't be considered.
   \end{verbatim}
 \end{tight_itemize}
 
+\clearpage
 \section{IntelliJ IDEA}
 IntelliJ IDEA\cite{intellij} is a light-weight, but very powerful integrated
 development environment (IDE), developed by JetBrains\footnote{\url{https://www.jetbrains.com/}{}}.
 
-More details on installing and customizing IntelliJ IDEA can be found here: \\
-  \url{https://adams.cms.waikato.ac.nz/dev_start.html}{}
+\subsection{Plug-ins}
+The community edition of IntelliJ IDEA (version 14 at time of writing) already
+comes bundled with all the necessary plugins for ADAMS development. You only
+need to set up ADAMS.
 
+\subsection{Setting up ADAMS}
+You can import ADAMS using the start screen of IntelliJ by clicking on
+\textit{Import project} as seen in Figure \ref{intellij-import_project-adams2}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-import_project-adams2.png}
+  \caption{IDEA: Importing ADAMS a project.}
+  \label{intellij-import_project-adams2}
+\end{figure}
+
+Or by selecting \textit{File -> Import project...} from the main menu (see
+Figure \ref{intellij-import_project-adams2}).
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-import_project-adams.png}
+  \caption{IDEA: Selecting the project path.}
+  \label{intellij-import_project-adams2}
+\end{figure}
+Then, select the top-level directory of ADAMS and import it as Maven project:
+\begin{tight_itemize}
+  \item import module from external model: Maven
+  \item check \textit{import Maven projects automatically}
+  \item check \textit{create module groups for multi-module Maven projects}
+  \item select any relevant Maven profiles (or just use all of them)
+\end{tight_itemize}
+If you want to add other projects, like \textit{adams-addons} or
+\textit{adams-incubator}, you must import them via
+\textit{File -> Project structure...} from the main menu. There, select
+\textit{Modules} and when clicking on the \textit{green plus sign}, select
+\textit{Import module}.
+
+Once you've imported ADAMS, you can configure the JDK that you want to use
+(1.8 at the time of writing). For this, open \textit{Project structure} from
+the main menu.
+
+Under \textit{SDKs} you can define all the SDKs that you want to be able to use.
+Simply click on the green plus and select the top-level directory of your JDK
+(see Figure \ref{intellij-sdks}).
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-sdks.png}
+  \caption{IDEA: Configuring the SDKs.}
+  \label{intellij-sdks}
+\end{figure}
+
+And under \textit{Project}, you can then select the SDK that you want to use
+for the current project (see Figure \ref{intellij-project-sdk}).
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-project-sdk.png}
+  \caption{IDEA: Selecting the project SDK.}
+  \label{intellij-project-sdk}
+\end{figure}
+
+ADAMS uses mixed spaces/tabs for indentation, with indentation being 2 spaces
+and a tab representing 8 spaces. Figure \ref{intellij-indentation} shows where
+to set these values.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-indentation.png}
+  \caption{IDEA: Code formatting.}
+  \label{intellij-indentation}
+\end{figure}
+
+Usually, you don't want to compile when you launch the application, but
+whenever you change the code. Hence, enable "auto make", as shown in
+Figure \ref{intellij-make}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-make.png}
+  \caption{IDEA: Automatic compilation.}
+  \label{intellij-make}
+\end{figure}
+
+Despite having \textit{auto make} enabled, it pays off to have a build
+action before launching applications. Hence change the \textit{Before launch}
+action to use \textit{Make, no error check}. Furthermore, you will most
+likely have the module's top level directory as the default working directory
+when starting up the application. You can set this using the
+\texttt{$MODULE_DIR$} variable (see Figure \ref{intellij-app_defaults}).
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-app_defaults.png}
+  \caption{IDEA: Application defaults.}
+  \label{intellij-app_defaults}
+\end{figure}
+
+For creating a launcher (or \textit{Run configuration}), you select
+\textit{Run -> Edit configurations...} from the main menu. When clicking on
+the green plus sign, use \textit{Application} as template and fill in
+\texttt{adams.gui.Main} as the main class and the amount of RAM that you want
+to use, eg 2GB (see Figure \ref{intellij-main}).
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/intellij-main.png}
+  \caption{IDEA: Launching ADAMS.}
+  \label{intellij-main}
+\end{figure}
+
+\clearpage
 \section{Eclipse}
 Prior to using IntelliJ IDEA, the choice of IDE was Eclipse\cite{eclipse}.
 It offers great support for Maven and LaTeX - provided you install the proper
@@ -243,7 +346,7 @@ sub-dir$>$.pdf} (e.g., \textit{target/latex/adams-core-manual/adams-core-manual.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=10.0cm]{images/eclipse-texlipse_preferences.png}
-  \caption{texlipse configuration for the \textit{adams-core} module.}
+  \caption{Eclipse: texlipse configuration for the \textit{adams-core} module.}
   \label{eclipse-texlipse_preferences}
 \end{figure}
 
@@ -272,7 +375,7 @@ directory. You only need to create a new archive from the ADAMS directory to
 get an extended ADAMS release/snapshot. No need to update any scripts, as all
 jars in the \texttt{lib} directory get added to the classpath automatically.
 
-When using Eclipse with this approach, the only disadvantage is that you will
+When using Eclipse or IntelliJ IDEA with this approach, the only disadvantage is that you will
 have to manually attach the sources to the project (located in the 
 \texttt{src} directory). Otherwise you won't be able to view ADAMS classes
 as source code. This is something that gets handled automatically by the
@@ -578,7 +681,7 @@ the help text in the GUI and command-line, so you should never omit this.}:
 {\small
 \begin{verbatim}
   public void setVolume(int value) {
-    if ((value >= 1) && (value <= 11)) {
+    if (getOptionManager().isValid("volume", value))  // checks numeric bounds
       m_Volume = value;
       reset();   // notify object that the settings have changed
     }
