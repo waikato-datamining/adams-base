@@ -15,12 +15,46 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.ClassLister;
+import adams.core.CloneHandler;
+import adams.core.CustomDisplayStringProvider;
+import adams.core.SerializedObject;
+import adams.core.Utils;
+import adams.core.option.AbstractCommandLineHandler;
+import adams.core.option.OptionHandler;
+import adams.core.option.OptionUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.dotnotationtree.AbstractItemFilter;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
+import adams.gui.goe.Favorites.FavoriteSelectionListener;
+import adams.gui.goe.classtree.ClassTree;
+import adams.gui.goe.classtree.StrictClassTreeFilter;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -45,38 +79,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeSelectionModel;
-
-import adams.core.ClassLister;
-import adams.core.CustomDisplayStringProvider;
-import adams.core.SerializedObject;
-import adams.core.Utils;
-import adams.core.option.AbstractCommandLineHandler;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.ExtensionFileFilter;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.dotnotationtree.AbstractItemFilter;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionListener;
-import adams.gui.goe.classtree.ClassTree;
-import adams.gui.goe.classtree.StrictClassTreeFilter;
 
 /**
  * A PropertyEditor for objects.
@@ -665,7 +667,8 @@ public class GenericObjectEditor
     }
 
     /**
-     * Makes a copy of an object using serialization.
+     * Makes a copy of an object using OptionUtils#shallowCopy(Object),
+     * CloneHandler#getClone() or serialization.
      *
      * @param source 	the object to copy
      * @return 		a copy of the source object
@@ -673,7 +676,7 @@ public class GenericObjectEditor
     protected Object copyObject(Object source) {
       Object 	result;
 
-      result = Utils.deepCopy(source);
+      result = GenericObjectEditor.copyObject(source);
       setCancelButton(result != null);
 
       return result;
@@ -1111,8 +1114,8 @@ public class GenericObjectEditor
     if (m_Object != null)
       m_Backup = m_Object;
     else
-      m_Backup = Utils.deepCopy(c);
-    m_Object = Utils.deepCopy(c);
+      m_Backup = copyObject(c);
+    m_Object = copyObject(c);
 
     if (m_EditorComponent != null)
       m_EditorComponent.updateChildPropertySheet();
@@ -1127,7 +1130,7 @@ public class GenericObjectEditor
    * @return 		the current Object
    */
   public Object getValue() {
-    return Utils.deepCopy(m_Object);
+    return copyObject(m_Object);
   }
 
   /**
@@ -1369,11 +1372,11 @@ public class GenericObjectEditor
     // respond when the user chooses a class
     tree.addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent e) {
-	String classname = tree.getSelectedItem();
-	if (classname == null)
-	  return;
-	classSelected(classname);
-	popup.setVisible(false);
+        String classname = tree.getSelectedItem();
+        if (classname == null)
+          return;
+        classSelected(classname);
+        popup.setVisible(false);
       }
     });
 
@@ -1466,5 +1469,25 @@ public class GenericObjectEditor
    */
   public void firePropertyChange() {
     m_Support.firePropertyChange("", null, null);
+  }
+
+  /**
+   * Makes a copy of an object using OptionUtils#shallowCopy(Object),
+   * CloneHandler#getClone() or serialization.
+   *
+   * @param source 	the object to copy
+   * @return 		a copy of the source object
+   */
+  public static Object copyObject(Object source) {
+    Object 	result;
+
+    if (source instanceof OptionHandler)
+      result = OptionUtils.shallowCopy(source);
+    else if (source instanceof CloneHandler)
+      result = ((CloneHandler) source).getClone();
+    else
+      result = Utils.deepCopy(source);
+
+    return result;
   }
 }

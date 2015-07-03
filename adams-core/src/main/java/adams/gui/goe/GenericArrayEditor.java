@@ -334,7 +334,7 @@ public class GenericArrayEditor
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
     m_ButtonCopy.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	m_ElementEditor.setValue(Utils.deepCopy(m_ElementList.getSelectedValue()));
+	m_ElementEditor.setValue(GenericObjectEditor.copyObject(m_ElementList.getSelectedValue()));
       }
     });
 
@@ -480,7 +480,7 @@ public class GenericArrayEditor
     m_Modified = false;
     obj = Array.newInstance(m_ElementClass, m_ListModel.size());
     for (i = 0; i < m_ListModel.size(); i++)
-      Array.set(obj, i, Utils.deepCopy(m_ListModel.get(i)));
+      Array.set(obj, i, GenericObjectEditor.copyObject(m_ListModel.get(i)));
 
     setValue(obj);
     updateButtons();
@@ -494,7 +494,7 @@ public class GenericArrayEditor
 
     m_ListModel.clear();
     for (i = 0; i < m_ListModelBackup.size(); i++)
-      m_ListModel.addElement(Utils.deepCopy(m_ListModelBackup.get(i)));
+      m_ListModel.addElement(GenericObjectEditor.copyObject(m_ListModelBackup.get(i)));
     apply();
   }
 
@@ -615,12 +615,12 @@ public class GenericArrayEditor
 	m_ElementClass = elementClass;
 	for (i = 0; i < Array.getLength(o); i++) {
 	  if (primitive) {
-	    m_ListModel.addElement(EditorHelper.wrapPrimitive(Utils.deepCopy(Array.get(o, i))));
-	    m_ListModelBackup.addElement(EditorHelper.wrapPrimitive(Utils.deepCopy(Array.get(o, i))));
+	    m_ListModel.addElement(EditorHelper.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
+	    m_ListModelBackup.addElement(EditorHelper.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
 	  }
 	  else {
-	    m_ListModel.addElement(Utils.deepCopy(Array.get(o, i)));
-	    m_ListModelBackup.addElement(Utils.deepCopy(Array.get(o, i)));
+	    m_ListModel.addElement(GenericObjectEditor.copyObject(Array.get(o, i)));
+	    m_ListModelBackup.addElement(GenericObjectEditor.copyObject(Array.get(o, i)));
 	  }
 	}
 	m_ElementList.getComponent().setCellRenderer(lcr);
@@ -717,9 +717,9 @@ public class GenericArrayEditor
       result = Array.newInstance(m_ElementClass, length);
     for (i = 0; i < length; i++) {
       if (m_IsPrimitive)
-	Array.set(result, i, EditorHelper.unwrapPrimitive(Utils.deepCopy(m_ListModel.elementAt(i))));
+	Array.set(result, i, EditorHelper.unwrapPrimitive(GenericObjectEditor.copyObject(m_ListModel.elementAt(i))));
       else
-	Array.set(result, i, Utils.deepCopy(m_ListModel.elementAt(i)));
+	Array.set(result, i, GenericObjectEditor.copyObject(m_ListModel.elementAt(i)));
     }
 
     return result;
@@ -930,7 +930,7 @@ public class GenericArrayEditor
     selected = m_ElementList.getSelectedIndex();
     try {
       // Make a full copy of the object using serialization
-      object = Utils.deepCopy(object);
+      object = GenericObjectEditor.copyObject(object);
       if (selected != -1)
 	m_ListModel.insertElementAt(object, selected);
       else
@@ -984,7 +984,7 @@ public class GenericArrayEditor
 	if (objects[i] instanceof ShallowCopySupporter)
 	  value = ((ShallowCopySupporter) objects[i]).shallowCopy();
 	else
-	  value = Utils.deepCopy(objects[i]);
+	  value = GenericObjectEditor.copyObject(objects[i]);
 	if (selected != -1)
 	  m_ListModel.insertElementAt(value, selected + i);
 	else
