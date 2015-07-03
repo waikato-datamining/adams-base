@@ -620,7 +620,7 @@ public abstract class AbstractActor
    *
    * @return		the root, can be null
    */
-  public synchronized AbstractActor getRoot() {
+  public AbstractActor getRoot() {
     if (m_Root == null) {
       if (getParent() == null)
 	m_Root = this;
