@@ -22,10 +22,12 @@ package adams.gui.tools.spreadsheetviewer;
 import adams.core.CleanUpHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
+import javax.swing.Icon;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
@@ -74,6 +76,7 @@ public class TabbedPane
     super();
     setOwner(owner);
 
+    setShowCloseTabButton(true);
     getModel().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	tabSelected(e);
@@ -516,7 +519,7 @@ public class TabbedPane
     
     return result;
   }
-  
+
   /**
    * Creates a tab title.
    * 

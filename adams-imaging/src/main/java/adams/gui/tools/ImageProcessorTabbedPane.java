@@ -49,6 +49,7 @@ public class ImageProcessorTabbedPane
   public ImageProcessorTabbedPane(ImageProcessorPanel owner) {
     super();
     m_Owner = owner;
+    setShowCloseTabButton(true);
   }
   
   /**

@@ -15,21 +15,23 @@
 
 /**
  * ImageTabbedPane.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
-
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.swing.SwingUtilities;
 
 import adams.core.Properties;
 import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * Specialized {@link BaseTabbedPane} for managing images.
@@ -54,6 +56,7 @@ public class ImageTabbedPane
   public ImageTabbedPane(ImageViewerPanel owner) {
     super();
     m_Owner = owner;
+    setShowCloseTabButton(true);
   }
   
   /**
@@ -210,7 +213,7 @@ public class ImageTabbedPane
   @Override
   protected boolean canCloseTabWithMiddleMouseButton(int index) {
     return checkForModified((ImagePanel) getComponentAt(index));
-  };
+  }
 
   /**
    * Updates the title of all tabs, takes modified state into account.

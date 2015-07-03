@@ -15,17 +15,17 @@
 
 /**
  * BaseTabbedPane.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.CleanUpHandler;
+
+import javax.swing.Icon;
+import javax.swing.JTabbedPane;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JTabbedPane;
-
-import adams.core.CleanUpHandler;
 
 /**
  * Enhanced JTabbedPane. Offers closing of tabs with middle mouse button.
@@ -59,6 +59,9 @@ public class BaseTabbedPane
 
   /** the approver for the middle mouse button. */
   protected MiddleMouseButtonCloseApprover m_MiddleMouseButtonCloseApprover;
+
+  /** whether to show a "close tab" button. */
+  protected boolean m_ShowCloseTabButton;
 
   /**
    * Creates an empty <code>TabbedPane</code> with a default
@@ -108,6 +111,7 @@ public class BaseTabbedPane
    */
   protected void initialize() {
     m_CloseTabsWithMiddleMouseButton = false;
+    m_ShowCloseTabButton             = false;
   }
 
   /**
@@ -117,7 +121,7 @@ public class BaseTabbedPane
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-	tabClicked(e);
+        tabClicked(e);
       }
     });
   }
@@ -221,6 +225,32 @@ public class BaseTabbedPane
   }
 
   /**
+   * Sets whether to show "close tab" buttons.
+   *
+   * @param value	true if to show buttons
+   */
+  public void setShowCloseTabButton(boolean value) {
+    int		i;
+
+    m_ShowCloseTabButton = value;
+
+    for (i = 0; i < getTabCount(); i++) {
+      if (m_ShowCloseTabButton)
+	setTabComponentAt(i, new ButtonTabComponent(this));
+      else
+	setTabComponentAt(i, null);
+    }
+  }
+
+  /**
+   * Returns whether to show "close tab" buttons.
+   * @return
+   */
+  public boolean getShowCloseTabButton() {
+    return m_ShowCloseTabButton;
+  }
+
+  /**
    * Removes the currently selected tab.
    *
    * @return		true if a tab was removed
@@ -231,5 +261,42 @@ public class BaseTabbedPane
 
     removeTabAt(getSelectedIndex());
     return true;
+  }
+
+  /**
+   * Inserts a new tab for the given component, at the given index,
+   * represented by the given title and/or icon, either of which may
+   * be {@code null}.
+   *
+   * @param title the title to be displayed on the tab
+   * @param icon the icon to be displayed on the tab
+   * @param component the component to be displayed when this tab is clicked.
+   * @param tip the tooltip to be displayed for this tab
+   * @param index the position to insert this new tab
+   *       ({@code > 0 and <= getTabCount()})
+   *
+   * @throws IndexOutOfBoundsException if the index is out of range
+   *         ({@code < 0 or > getTabCount()})
+   */
+  public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+    super.insertTab(title, icon, component, tip, index);
+    if (m_ShowCloseTabButton)
+      setTabComponentAt(index, new ButtonTabComponent(this));
+  }
+
+  /**
+   * Sets the title for the tab at the specified position.
+   *
+   * @param index	the position of the tab
+   * @param title	the new title
+   */
+  @Override
+  public void setTitleAt(int index, String title) {
+    super.setTitleAt(index, title);
+    if ((getTabComponentAt(index) != null) && m_ShowCloseTabButton) {
+      getTabComponentAt(index).invalidate();
+      getTabComponentAt(index).validate();
+      getTabComponentAt(index).repaint();
+    }
   }
 }
