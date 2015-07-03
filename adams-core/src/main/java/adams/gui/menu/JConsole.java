@@ -15,7 +15,7 @@
 
 /*
  * JConsole.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -61,7 +61,7 @@ public class JConsole
   protected void doLaunch() {
     // query for options
     String options = GUIHelper.showInputDialog(
-	getOwner(), "Enter the options for " + adams.core.management.JConsole.EXECUTABLE + ":",
+	null, "Enter the options for " + adams.core.management.JConsole.EXECUTABLE + ":",
 	adams.core.management.JConsole.getDefaultOptions());
     if (options == null)
       return;

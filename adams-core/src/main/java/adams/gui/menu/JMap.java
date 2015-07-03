@@ -15,18 +15,18 @@
 
 /*
  * JMap.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import javax.swing.SwingWorker;
-
 import adams.core.management.ProcessUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
+
+import javax.swing.SwingWorker;
 
 /**
  * Runs jmap and displays the result.
@@ -64,7 +64,7 @@ public class JMap
   protected void doLaunch() {
     // query for options
     String options = GUIHelper.showInputDialog(
-	getOwner(), "Enter the options for " + adams.core.management.JMap.EXECUTABLE + ":",
+	null, "Enter the options for " + adams.core.management.JMap.EXECUTABLE + ":",
 	adams.core.management.JMap.getDefaultOptions());
     if (options == null)
       return;
@@ -82,6 +82,7 @@ public class JMap
       @Override
       protected void done() {
 	TextDialog dialog = new TextDialog();
+        dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle(adams.core.management.JMap.EXECUTABLE + " (" + fPid + ")");
 	dialog.setContent(m_Output);
 	dialog.setLocationRelativeTo(getOwner());

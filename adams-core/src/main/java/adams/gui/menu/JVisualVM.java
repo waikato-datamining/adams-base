@@ -15,7 +15,7 @@
 
 /*
  * JVisualVM.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -61,7 +61,7 @@ public class JVisualVM
   protected void doLaunch() {
     // query for options
     String options = GUIHelper.showInputDialog(
-	getOwner(), "Enter the options for " + adams.core.management.JVisualVM.EXECUTABLE + ":",
+	null, "Enter the options for " + adams.core.management.JVisualVM.EXECUTABLE + ":",
 	adams.core.management.JVisualVM.getDefaultOptions());
     if (options == null)
       return;
