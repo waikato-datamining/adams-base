@@ -280,6 +280,7 @@ public class ImageProcessorPanel
       menuitem = new JMenuItem("Close tab");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
+      menuitem.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
