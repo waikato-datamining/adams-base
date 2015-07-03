@@ -15,14 +15,14 @@
 
 /**
  * InstanceTable.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.instance;
 
-import javax.swing.table.TableModel;
-
-import weka.core.Instances;
 import adams.gui.core.SortableAndSearchableTable;
+import weka.core.Instances;
+
+import javax.swing.table.TableModel;
 
 /**
  * A specialized table for displaying an Instances object.
@@ -43,6 +43,7 @@ public class InstanceTable
    */
   public InstanceTable(Instances data) {
     super(new InstanceTableModel(data));
+    setShowSimpleCellPopupMenu(true);
   }
 
   /**

@@ -15,10 +15,12 @@
 
 /*
  * InformativeStatistic.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
+
+import adams.data.spreadsheet.SpreadSheetSupporter;
 
 import java.util.Iterator;
 
@@ -30,7 +32,8 @@ import java.util.Iterator;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface InformativeStatistic {
+public interface InformativeStatistic
+  extends SpreadSheetSupporter {
 
   /**
    * Returns a description for this statistic.

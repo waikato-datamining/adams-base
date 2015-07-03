@@ -15,17 +15,19 @@
 
 /**
  * ActorStatistic.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
+
+import adams.core.NamedCounter;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.InformativeStatistic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.core.NamedCounter;
-import adams.data.statistics.InformativeStatistic;
 
 /**
  * Generates some statistics for an actor.
@@ -214,5 +216,35 @@ public class ActorStatistic
     }
 
     return result.toString();
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet		result;
+    Row row;
+    Iterator<String>	names;
+    String		name;
+
+    result = new SpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    row.addCell("N").setContentAsString("Name");
+    row.addCell("V").setContentAsString("Value");
+
+    // data
+    names = statisticNames();
+    while (names.hasNext()) {
+      name = names.next();
+      row  = result.addRow();
+      row.addCell("N").setContentAsString(name);
+      row.addCell("V").setContent(getStatistic(name));
+    }
+
+    return result;
   }
 }

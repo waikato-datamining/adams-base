@@ -23,7 +23,6 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
@@ -51,8 +50,7 @@ import java.util.HashMap;
  * @version $Revision$
  */
 public class SpreadSheetTable
-  extends SortableAndSearchableTable 
-  implements SpreadSheetSupporter {
+  extends SortableAndSearchableTable {
 
   /** for serialization. */
   private static final long serialVersionUID = 1333317577811620786L;

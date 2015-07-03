@@ -15,25 +15,11 @@
 
 /*
  * InformativeStatisticFactory.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.statistics;
 
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
 
 import adams.data.statistics.InformativeStatistic;
 import adams.gui.core.AbstractBaseTableModel;
@@ -42,6 +28,20 @@ import adams.gui.core.BaseMultiPagePane;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.SortableAndSearchableTable;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A factory for GUI components for InformativeStatistic objects.
@@ -195,7 +195,7 @@ public class InformativeStatisticFactory {
    * @see     InformativeStatistic
    */
   public static class Table
-    extends BaseTable {
+    extends SortableAndSearchableTable {
 
     /** for serialization. */
     private static final long serialVersionUID = 344016476619814279L;
@@ -212,6 +212,7 @@ public class InformativeStatisticFactory {
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       setOptimalColumnWidth();
+      setShowSimpleCellPopupMenu(true);
     }
 
     /**

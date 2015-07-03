@@ -15,21 +15,20 @@
 
 /*
  * XYSequenceTable.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.SortableAndSearchableTable;
+
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Table and Model class for XYSequence objects.
@@ -207,6 +206,7 @@ public class XYSequenceTable
       setModel(newModel(null));
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    setShowSimpleCellPopupMenu(true);
   }
 
   /**

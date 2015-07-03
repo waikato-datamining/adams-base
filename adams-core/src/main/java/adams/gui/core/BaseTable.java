@@ -15,29 +15,36 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.event.PopupMenuListener;
+import adams.gui.event.RemoveItemsEvent;
+import adams.gui.event.RemoveItemsListener;
+
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Vector;
-
-import javax.swing.Action;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-
-import adams.gui.event.PopupMenuListener;
-import adams.gui.event.RemoveItemsEvent;
-import adams.gui.event.RemoveItemsListener;
 
 /**
  * A specialized JTable that allows double-clicking on header for resizing to
@@ -47,7 +54,8 @@ import adams.gui.event.RemoveItemsListener;
  * @version $Revision$
  */
 public class BaseTable
-  extends JTable {
+  extends JTable
+  implements SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -2360462659067336490L;
@@ -63,7 +71,13 @@ public class BaseTable
 
   /** the popup menu listeners for the cells. */
   protected HashSet<PopupMenuListener> m_CellPopupMenuListeners;
-  
+
+  /** whether to show a simple cell popup menu. */
+  protected boolean m_ShowSimpleCellPopupMenu;
+
+  /** the simple cell popup menu listener. */
+  protected PopupMenuListener m_SimpleCellPopupMenuListener;
+
   /**
    * Constructs a default <code>BaseTable</code> that is initialized with a default
    * data model, a default column model, and a default selection
@@ -189,6 +203,16 @@ public class BaseTable
     m_RemoveItemsListeners     = new HashSet<RemoveItemsListener>();
     m_HeaderPopupMenuListeners = new HashSet<PopupMenuListener>();
     m_CellPopupMenuListeners   = new HashSet<PopupMenuListener>();
+    m_ShowSimpleCellPopupMenu  = false;
+
+    m_SimpleCellPopupMenuListener = new PopupMenuListener() {
+      @Override
+      public void showPopupMenu(MouseEvent e) {
+	if (m_ShowSimpleCellPopupMenu) {
+	  showSimpleCellPopupMenu(e);
+	}
+      }
+    };
 
     getTableHeader().addMouseListener(new MouseAdapter() {
       @Override
@@ -409,5 +433,102 @@ public class BaseTable
    */
   public void showCell(int row, int column) {
     scrollRectToVisible(getCellRect(row, column, true));
-  }  
+  }
+
+  /**
+   * Sets whether to show a simple cell popup menu.
+   *
+   * @param value	true if to show menu
+   */
+  public void setShowSimpleCellPopupMenu(boolean value) {
+    m_ShowSimpleCellPopupMenu = value;
+    removeCellPopupMenuListener(m_SimpleCellPopupMenuListener);
+    if (value)
+      addCellPopupMenuListener(m_SimpleCellPopupMenuListener);
+  }
+
+  /**
+   * Returns whether to show a simple cell popup menu.
+   *
+   * @return		true if to show menu
+   */
+  public boolean getShowSimpleCellPopupMenu() {
+    return m_ShowSimpleCellPopupMenu;
+  }
+
+  /**
+   * Pops up a simple cell menu.
+   *
+   * @param e		the trigger event
+   */
+  protected void showSimpleCellPopupMenu(MouseEvent e) {
+    JPopupMenu	menu;
+    JMenuItem	menuitem;
+
+    menu = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	GUIHelper.copyToClipboard(toSpreadSheet().toString());
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	SpreadSheetFileChooser chooser = new SpreadSheetFileChooser();
+	int retVal = chooser.showSaveDialog(BaseTable.this);
+	if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+	  return;
+	SpreadSheetWriter writer = chooser.getWriter();
+	if (!writer.write(toSpreadSheet(), chooser.getSelectedFile()))
+	  GUIHelper.showErrorMessage(BaseTable.this, "Failed to save table to '" + chooser.getSelectedFile() + "'!");
+      }
+    });
+    menu.add(menuitem);
+
+    menu.show(this, e.getX(), e.getY());
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the spread sheet
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet		result;
+    Row			row;
+    int			i;
+    int			n;
+    Object		value;
+
+    if (getModel() instanceof SpreadSheetSupporter)
+      return ((SpreadSheetSupporter) getModel()).toSpreadSheet();
+
+    result = new SpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    for (i = 0; i < getColumnCount(); i++)
+      row.addCell("" + i).setContentAsString(getColumnName(i));
+
+    // data
+    for (n = 0; n < getRowCount(); n++) {
+      row = result.addRow();
+      for (i = 0; i < getColumnCount(); i++) {
+	value = getValueAt(n, i);
+	if (value == null)
+	  row.addCell("" + i).setMissing();
+	else
+	  row.addCell("" + i).setContent("" + value);
+      }
+    }
+
+    return result;
+  }
 }

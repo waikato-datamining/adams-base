@@ -15,20 +15,22 @@
 
 /*
  * DataStatistic.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
 
 
+import adams.core.CleanUpHandler;
+import adams.core.logging.LoggingObject;
+import adams.data.container.DataContainer;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.core.CleanUpHandler;
-import adams.core.logging.LoggingObject;
-import adams.data.container.DataContainer;
 
 /**
  * A class for statistics about data.
@@ -214,5 +216,35 @@ public abstract class AbstractDataStatistic<T extends DataContainer>
     }
 
     return result.toString();
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet		result;
+    Row			row;
+    Iterator<String>	names;
+    String		name;
+
+    result = new SpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    row.addCell("N").setContentAsString("Name");
+    row.addCell("V").setContentAsString("Value");
+
+    // data
+    names = statisticNames();
+    while (names.hasNext()) {
+      name = names.next();
+      row  = result.addRow();
+      row.addCell("N").setContentAsString(name);
+      row.addCell("V").setContent(getStatistic(name));
+    }
+
+    return result;
   }
 }
