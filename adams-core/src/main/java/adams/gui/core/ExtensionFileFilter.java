@@ -15,18 +15,17 @@
 
 /*
  * ExtensionFileFilter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.io.File;
-import java.io.Serializable;
-
-import javax.swing.filechooser.FileFilter;
-
 import adams.core.Utils;
 import adams.flow.core.AbstractActor;
+
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
+import java.io.Serializable;
 
 /**
  * A FileFilter for filtering files base on their extension. Directories are
@@ -331,7 +330,7 @@ public class ExtensionFileFilter
    *
    * @return		the model filter
    */
-  public static ExtensionFileFilter getSerialiedModelFileFilter() {
+  public static ExtensionFileFilter getSerializedModelFileFilter() {
     return new ExtensionFileFilter("Serialized objects", "model");
   }
 }

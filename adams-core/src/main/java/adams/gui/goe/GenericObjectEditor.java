@@ -654,7 +654,7 @@ public class GenericObjectEditor
       
       if (m_FileChooser == null) {
 	fileChooser = new BaseFileChooser(new File(System.getProperty("user.dir")));
-	filter      = ExtensionFileFilter.getSerialiedModelFileFilter();
+	filter      = ExtensionFileFilter.getSerializedModelFileFilter();
 	fileChooser.addChoosableFileFilter(filter);
 	fileChooser.setAcceptAllFileFilterUsed(true);
 	fileChooser.setFileFilter(filter);
