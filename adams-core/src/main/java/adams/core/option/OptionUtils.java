@@ -15,9 +15,18 @@
 
 /**
  * OptionUtils.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.db.DatabaseConnectionEstablisher;
+import adams.db.DatabaseConnectionHandler;
+import adams.env.Environment;
+import adams.env.OptionsDefinition;
+import adams.gui.goe.CustomStringRepresentationHandler;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -25,6 +34,7 @@ import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,14 +42,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.db.DatabaseConnectionEstablisher;
-import adams.db.DatabaseConnectionHandler;
-import adams.env.Environment;
-import adams.env.OptionsDefinition;
-import adams.gui.goe.CustomStringRepresentationHandler;
 
 /**
  * A helper class for option-related things.
@@ -507,6 +509,37 @@ public class OptionUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Returns an object generated from the string representation loaded from
+   * the specified file. The string representation can either be a commandline
+   * or a nested (multi-line) representation.
+   *
+   * @param classType 	the class that the instantiated object should
+   * 			be assignable to -- an exception is thrown if this
+   * 			is not the case
+   * @param file	the file to load the string representation from
+   * @return 		the newly created object, ready for use.
+   * @throws Exception 	if the class name is invalid, or if the
+   * 			class is not assignable to the desired class type, or
+   * 			the options supplied are not acceptable to the object,
+   *			or failed to load representation from file
+   * @see 		#forString(Class, String)
+   */
+  public static Object fromFile(Class classType, File file) throws Exception {
+    List<String>  lines;
+
+    if (!file.exists())
+      throw new IllegalArgumentException("File does not exist: " + file);
+    if (file.isDirectory())
+      throw new IllegalArgumentException("File is pointing to a directory: " + file);
+
+    lines = FileUtils.loadFromFile(file);
+    if (lines == null)
+      throw new IllegalArgumentException("Failed to read string representation from file: " + file);
+
+    return forString(classType, Utils.flatten(lines, "\n"));
   }
 
   /**
