@@ -333,4 +333,13 @@ public class ExtensionFileFilter
   public static ExtensionFileFilter getSerializedModelFileFilter() {
     return new ExtensionFileFilter("Serialized objects", "model");
   }
+
+  /**
+   * Returns a filter for commandline setup files.
+   *
+   * @return		the commandline filter
+   */
+  public static ExtensionFileFilter getCommandLineFileFilter() {
+    return new ExtensionFileFilter("Command-line files", "cmdline");
+  }
 }

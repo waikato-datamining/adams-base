@@ -26,6 +26,7 @@ import adams.core.CloneHandler;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.SerializedObject;
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
@@ -610,9 +611,15 @@ public class GenericObjectEditor
       if (returnVal == BaseFileChooser.APPROVE_OPTION) {
 	File selected = getFileChooser().getSelectedFile();
 	try {
-	  Object obj = SerializedObject.read(selected);
-	  if (!m_ClassType.isAssignableFrom(obj.getClass()))
-	    throw new Exception("Object not of type: " + m_ClassType.getName());
+	  Object obj;
+	  if (FileUtils.isBinary(selected)) {
+	    obj = SerializedObject.read(selected);
+	    if (!m_ClassType.isAssignableFrom(obj.getClass()))
+	      throw new Exception("Object not of type: " + m_ClassType.getName());
+	  }
+	  else {
+	    obj = OptionUtils.fromFile(m_ClassType, selected);
+	  }
 	  return obj;
 	}
 	catch (Exception ex) {
@@ -621,7 +628,7 @@ public class GenericObjectEditor
 	      "Couldn't read object:\n"
 	      + selected
 	      + "\n" + ex.getMessage(),
-	      "Open object file");
+	      "Open object");
 	}
       }
       return null;
@@ -637,11 +644,20 @@ public class GenericObjectEditor
       int returnVal = getFileChooser().showSaveDialog(this);
       if (returnVal == BaseFileChooser.APPROVE_OPTION) {
 	File file = getFileChooser().getSelectedFile();
-	if (!SerializedObject.write(file, (Serializable) object))
-	  GUIHelper.showErrorMessage(
+	if (file.getName().endsWith("." + ExtensionFileFilter.getCommandLineFileFilter().getExtensions()[0])) {
+	  if (!FileUtils.writeToFile(file.getAbsolutePath(), OptionUtils.getCommandLine(object), false))
+	    GUIHelper.showErrorMessage(
 	      this,
-	      "Couldn't write to file:\n" + file,
+	      "Couldn't write to command-line file:\n" + file,
 	      "Save object");
+	}
+	else {
+	  if (!SerializedObject.write(file, (Serializable) object))
+	    GUIHelper.showErrorMessage(
+	      this,
+	      "Couldn't write to model file:\n" + file,
+	      "Save object");
+	}
       }
     }
 
@@ -654,7 +670,8 @@ public class GenericObjectEditor
       
       if (m_FileChooser == null) {
 	fileChooser = new BaseFileChooser(new File(System.getProperty("user.dir")));
-	filter      = ExtensionFileFilter.getSerializedModelFileFilter();
+	fileChooser.addChoosableFileFilter(ExtensionFileFilter.getSerializedModelFileFilter());
+	filter      = ExtensionFileFilter.getCommandLineFileFilter();
 	fileChooser.addChoosableFileFilter(filter);
 	fileChooser.setAcceptAllFileFilterUsed(true);
 	fileChooser.setFileFilter(filter);
