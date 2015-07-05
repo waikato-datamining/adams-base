@@ -86,4 +86,22 @@ public class RegExpTextField
   public RegExpTextField(String index) {
     super(index, new RegExpCheckModel());
   }
+
+  /**
+   * Sets the regular expression.
+   *
+   * @param value	the regular expression
+   */
+  public void setRegExp(BaseRegExp value) {
+    setText(value.getValue());
+  }
+
+  /**
+   * Returns the current regular expression.
+   *
+   * @return		the regular expression
+   */
+  public BaseRegExp getRegExp() {
+    return new BaseRegExp(getText());
+  }
 }
