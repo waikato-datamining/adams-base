@@ -15,22 +15,20 @@
 
 /**
  * ListPage.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.BorderLayout;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.DefaultListModel;
 
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
+import gnu.trove.list.array.TIntArrayList;
+
+import javax.swing.DefaultListModel;
+import java.awt.BorderLayout;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Wizard page that use a {@link BaseList} for displaying a list of values.
@@ -191,12 +189,30 @@ public class ListPage
    * Returns whether to store the full list of items (not just selected ones) 
    * in the properties as well.
    * 
-   * @param return	true if to add
+   * @return		true if to add
    */
   public boolean getAddFullList() {
     return m_AddFullList;
   }
-  
+
+  /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    // elements
+    if (value.hasKey(KEY_LIST))
+      setValues(value.getProperty(KEY_LIST).split(","));
+    else if (value.hasKey(KEY_SELECTED))
+      setValues(value.getProperty(KEY_SELECTED).split(","));
+    else
+      setValues(new String[0]);
+    // selected
+    if (value.hasKey(KEY_SELECTED))
+      setSelectedValues(value.getProperty(KEY_SELECTED).split(","));
+  }
+
   /**
    * Returns the content of the page (ie parameters) as properties.
    * 

@@ -143,6 +143,18 @@ public class WekaSelectDatasetPage
   }
 
   /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    if (value.hasKey(KEY_FILE))
+      m_PanelFile.setCurrent(new PlaceholderFile(value.getProperty(KEY_FILE)));
+    else
+      m_PanelFile.setDefault();
+  }
+
+  /**
    * Returns the content of the page (ie parameters) as properties.
    * 
    * @return		the parameters as properties

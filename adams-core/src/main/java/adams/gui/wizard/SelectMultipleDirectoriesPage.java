@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Wizard page that allows the user to select multiple directories.
@@ -249,6 +250,31 @@ public class SelectMultipleDirectoriesPage
       result.add(new File("" + m_ListDirs.getModel().getElementAt(i)));
 
     return result.toArray(new File[result.size()]);
+  }
+
+  /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    String[]	elements;
+    File[]	dirs;
+    int		i;
+
+    dirs = new File[0];
+    try {
+      if (value.hasKey(KEY_DIRECTORIES)) {
+	elements = OptionUtils.splitOptions(value.getProperty(KEY_DIRECTORIES));
+	dirs     = new File[elements.length];
+	for (i = 0; i < elements.length; i++)
+	  dirs[i] = new PlaceholderFile(elements[i]).getAbsoluteFile();
+      }
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to parse directories: " + value.getProperty(KEY_DIRECTORIES), e);
+    }
+    setCurrent(dirs);
   }
 
   /**

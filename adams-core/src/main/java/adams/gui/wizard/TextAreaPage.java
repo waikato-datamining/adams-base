@@ -139,6 +139,18 @@ public class TextAreaPage
   }
 
   /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    if (value.hasKey(KEY_TEXT))
+      m_TextArea.setText(value.getProperty(KEY_TEXT));
+    else
+      m_TextArea.setText("");
+  }
+
+  /**
    * Returns the content of the page (ie parameters) as properties.
    * 
    * @return		the parameters as properties

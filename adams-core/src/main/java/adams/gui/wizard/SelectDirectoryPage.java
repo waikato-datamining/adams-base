@@ -20,6 +20,7 @@
 package adams.gui.wizard;
 
 import adams.core.Properties;
+import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.DirectoryChooserPanel;
 
 import javax.swing.JPanel;
@@ -123,6 +124,18 @@ public class SelectDirectoryPage
    */
   public File getCurrent() {
     return m_PanelDir.getCurrent();
+  }
+
+  /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    if (value.hasKey(KEY_DIRECTORY))
+      m_PanelDir.setCurrent(new PlaceholderFile(value.getProperty(KEY_DIRECTORY)));
+    else
+      m_PanelDir.setDefault();
   }
 
   /**

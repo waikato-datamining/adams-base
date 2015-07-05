@@ -15,17 +15,16 @@
 
 /**
  * FinalPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
+import adams.core.Properties;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-
-import adams.core.Properties;
-import adams.gui.core.GUIHelper;
+import java.awt.BorderLayout;
 
 /**
  * Simple start/welcome page.
@@ -82,7 +81,16 @@ public class FinalPage
   public Icon getLogo() {
     return m_LabelLogo.getIcon();
   }
-  
+
+  /**
+   * Does nothing.
+   *
+   * @param value	ignored
+   */
+  public void setProperties(Properties value) {
+    // does nothing
+  }
+
   /**
    * Returns the content of the page (ie parameters) as properties.
    * 

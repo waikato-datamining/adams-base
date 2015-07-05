@@ -15,17 +15,16 @@
 
 /**
  * StartPage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
-import java.awt.BorderLayout;
+import adams.core.Properties;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-
-import adams.core.Properties;
-import adams.gui.core.GUIHelper;
+import java.awt.BorderLayout;
 
 /**
  * Simple start/welcome page.
@@ -38,7 +37,7 @@ public class StartPage
 
   /** for serialization. */
   private static final long serialVersionUID = 4561440274465998533L;
-  
+
   /** for displaying a logo. */
   protected JLabel m_LabelLogo;
 
@@ -48,9 +47,9 @@ public class StartPage
   @Override
   protected void initGUI() {
     super.initGUI();
-    
+
     m_LabelLogo = new JLabel(GUIHelper.getIcon("adams_logo.png"));
-    
+
     add(m_LabelLogo, BorderLayout.NORTH);
     add(m_ScrollPaneDescription, BorderLayout.CENTER);
   }
@@ -64,25 +63,34 @@ public class StartPage
     setPageName("Welcome");
     setDescription("<html><h2>Welcome</h2>This wizard will guide you through the process.<br>Please click on <b>Next</b> to continue.</html>");
   }
-  
+
   /**
    * Sets the logo to display.
-   * 
+   *
    * @return		the logo
    */
   public void setLogo(Icon value) {
     m_LabelLogo.setIcon(value);
   }
-  
+
   /**
    * Returns the current logo.
-   * 
+   *
    * @return		the logo
    */
   public Icon getLogo() {
     return m_LabelLogo.getIcon();
   }
-  
+
+  /**
+   * Does nothing.
+   *
+   * @param value	ignored
+   */
+  public void setProperties(Properties value) {
+    // does nothing
+  }
+
   /**
    * Returns the content of the page (ie parameters) as properties.
    * 

@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Wizard page that allows the user to select multiple files. File filters can
@@ -319,6 +320,31 @@ public class SelectMultipleFilesPage
    */
   public FileFilter getFileFilter() {
     return m_FileChooser.getFileFilter();
+  }
+
+  /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public void setProperties(Properties value) {
+    String[]	elements;
+    File[]      files;
+    int		i;
+
+    files = new File[0];
+    try {
+      if (value.hasKey(KEY_FILES)) {
+	elements = OptionUtils.splitOptions(value.getProperty(KEY_FILES));
+	files = new File[elements.length];
+	for (i = 0; i < elements.length; i++)
+	  files[i] = new PlaceholderFile(elements[i]).getAbsoluteFile();
+      }
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to parse files: " + value.getProperty(KEY_FILES), e);
+    }
+    setCurrent(files);
   }
 
   /**

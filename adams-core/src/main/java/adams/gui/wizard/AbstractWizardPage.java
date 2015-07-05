@@ -233,7 +233,14 @@ public abstract class AbstractWizardPage
     if (m_Owner != null)
       m_Owner.updateButtons();
   }
-  
+
+  /**
+   * Sets the content of the page (ie parameters) as properties.
+   *
+   * @param value	the parameters as properties
+   */
+  public abstract void setProperties(Properties value);
+
   /**
    * Returns the content of the page (ie parameters) as properties.
    * 
