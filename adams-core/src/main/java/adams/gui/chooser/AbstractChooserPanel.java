@@ -267,6 +267,14 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
+   * Sets the default value.
+   */
+  public void setDefault() {
+    m_TextSelection.setText(getDefaultString());
+    m_TextSelection.setCaretPosition(0);
+  }
+
+  /**
    * Converts the value into its string representation.
    *
    * @param value	the value to convert
