@@ -27,6 +27,10 @@ PreferredJComponentWriter=adams.gui.print.PNGWriter
 PreferredImageReader=png
 PreferredImageWriter=png
 
+# The preferred Serialized Object format
+PreferredObjectReader=model
+PreferredObjectWriter=model
+
 # The default dimensions of the BaseFileChooser (use -1 to use default)
 BaseFileChooser.Width=750
 BaseFileChooser.Height=500

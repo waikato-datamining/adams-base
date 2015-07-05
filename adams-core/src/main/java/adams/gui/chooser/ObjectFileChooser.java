@@ -23,6 +23,7 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializedObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.io.output.SerializedObjectWriter;
+import adams.gui.core.GUIHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -105,6 +106,56 @@ public class ObjectFileChooser
   @Override
   protected List<ExtensionFileFilterWithClass> getSaveFileFilters() {
     return m_WriterFileFilters;
+  }
+
+  /**
+   * Returns the default file filter to use.
+   *
+   * @param dialogType	the dialog type: open/save
+   * @return		the default file filter, null if unable find default one
+   */
+  @Override
+  protected ExtensionFileFilterWithClass getDefaultFileFilter(int dialogType) {
+    ExtensionFileFilterWithClass	result;
+    boolean				found;
+    String				preferred;
+
+    result = null;
+    found  = false;
+
+    if (dialogType == OPEN_DIALOG) {
+      preferred = GUIHelper.getString("PreferredObjectReader", "model");
+      for (ExtensionFileFilterWithClass reader: m_ReaderFileFilters) {
+	for (String ext: reader.getExtensions()) {
+	  if (ext.equalsIgnoreCase(preferred)) {
+	    found  = true;
+	    result = reader;
+	    break;
+	  }
+	}
+	if (found)
+	  break;
+      }
+    }
+    else if (dialogType == SAVE_DIALOG) {
+      preferred = GUIHelper.getString("PreferredObjectWriter", "model");
+      for (ExtensionFileFilterWithClass writer: m_WriterFileFilters) {
+	for (String ext: writer.getExtensions()) {
+	  if (ext.equalsIgnoreCase(preferred)) {
+	    found  = true;
+	    result = writer;
+	    break;
+	  }
+	}
+	if (found)
+	  break;
+      }
+    }
+
+    if (!found)
+      result = super.getDefaultFileFilter(dialogType);
+
+    return result;
   }
 
   /**
