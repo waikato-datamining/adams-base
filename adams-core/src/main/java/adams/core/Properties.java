@@ -367,6 +367,28 @@ public class Properties
   }
 
   /**
+   * Returns a set of all the keys that have the specified prefix.
+   *
+   * @param prefix	the prefix that the keys must have
+   * @return		a set over all the keys
+   */
+  public Set<String> keySetAll(String prefix) {
+    HashSet<String>	result;
+    Enumeration<String>	enm;
+    String		key;
+
+    result = new HashSet<String>();
+    enm    = (Enumeration<String>) propertyNames();
+    while (enm.hasMoreElements()) {
+      key = enm.nextElement();
+      if (key.startsWith(prefix))
+	result.add(key);
+    }
+
+    return result;
+  }
+
+  /**
    * Returns a set of all the keys that match the specified regular expression.
    *
    * @param regexp	the expression to match the keys against
@@ -602,6 +624,38 @@ public class Properties
       else
 	setProperty(key, props.getProperty(key));
     }
+  }
+
+  /**
+   * Returns a subset of all the keys that match the given prefix.
+   *
+   * @param prefix	the prefix for the property names
+   * @return		the subset
+   */
+  public Properties subset(String prefix) {
+    Properties	result;
+
+    result = new Properties();
+    for (String key: keySetAll(prefix))
+      result.setProperty(key, getProperty(key));
+
+    return result;
+  }
+
+  /**
+   * Returns a subset of all the keys that match the given regular expression.
+   *
+   * @param regexp	the regular expression
+   * @return		the subset
+   */
+  public Properties subset(BaseRegExp regexp) {
+    Properties	result;
+
+    result = new Properties();
+    for (String key: keySetAll(regexp))
+      result.setProperty(key, getProperty(key));
+
+    return result;
   }
 
   /**
