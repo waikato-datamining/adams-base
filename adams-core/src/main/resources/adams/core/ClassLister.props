@@ -113,6 +113,10 @@ adams.data.io.input.AbstractTextReader=\
 adams.data.io.input.AbstractImageReader=\
   adams.data.io.input
 
+# the object readers
+adams.data.io.input.AbstractObjectReader=\
+  adams.data.io.input
+
 # the container writers
 adams.data.io.output.AbstractDataContainerWriter=\
   adams.data.io.output
@@ -135,6 +139,10 @@ adams.data.io.output.AbstractTextWriter=\
 
 # the image writers
 adams.data.io.output.AbstractImageWriter=\
+  adams.data.io.output
+
+# the object writers
+adams.data.io.output.AbstractObjectWriter=\
   adams.data.io.output
 
 # the outlier detector schemes

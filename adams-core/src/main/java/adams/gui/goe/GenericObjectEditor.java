@@ -27,10 +27,13 @@ import adams.core.CustomDisplayStringProvider;
 import adams.core.SerializedObject;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
-import adams.gui.chooser.BaseFileChooser;
+import adams.data.io.input.AbstractObjectReader;
+import adams.data.io.output.AbstractObjectWriter;
+import adams.gui.chooser.ObjectFileChooser;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -368,7 +371,7 @@ public class GenericObjectEditor
     protected JButton m_ButtonRevert;
 
     /** The filechooser for opening and saving object files. */
-    protected transient BaseFileChooser m_FileChooser;
+    protected transient ObjectFileChooser m_FileChooser;
 
     /** the button for choosing the class. */
     protected JButton m_ButtonChoose;
@@ -603,33 +606,26 @@ public class GenericObjectEditor
      * Opens an object from a file selected by the user.
      *
      * @return 		the loaded object, or null if the operation was
-     * 			cancelled
+     * 			cancelled or failed to load object or incompatible type
      */
     protected Object openObject() {
       getFileChooser().setDialogTitle("Load setup from serialized object");
       int returnVal = getFileChooser().showOpenDialog(this);
-      if (returnVal == BaseFileChooser.APPROVE_OPTION) {
+      if (returnVal == ObjectFileChooser.APPROVE_OPTION) {
 	File selected = getFileChooser().getSelectedFile();
-	try {
-	  Object obj;
-	  if (FileUtils.isBinary(selected)) {
-	    obj = SerializedObject.read(selected);
-	    if (!m_ClassType.isAssignableFrom(obj.getClass()))
-	      throw new Exception("Object not of type: " + m_ClassType.getName());
-	  }
-	  else {
-	    obj = OptionUtils.fromFile(m_ClassType, selected);
-	  }
-	  return obj;
-	}
-	catch (Exception ex) {
+	AbstractObjectReader reader = getFileChooser().getObjectReader();
+	Object obj = reader.read(new PlaceholderFile(selected));
+	if (obj == null) {
 	  GUIHelper.showErrorMessage(
-	      this,
-	      "Couldn't read object:\n"
-	      + selected
-	      + "\n" + ex.getMessage(),
-	      "Open object");
+	    this, "Couldn't read object:\n" + selected, "Open object");
+	  return null;
 	}
+	if (!m_ClassType.isAssignableFrom(obj.getClass())) {
+	  GUIHelper.showErrorMessage(
+	    this, "Object loaded from '" + selected + "' not of type:\n" + m_ClassType.getName(), "Open object");
+	  return null;
+	}
+	return obj;
       }
       return null;
     }
@@ -642,41 +638,23 @@ public class GenericObjectEditor
     protected void saveObject(Object object) {
       getFileChooser().setDialogTitle("Save setup as serialized object");
       int returnVal = getFileChooser().showSaveDialog(this);
-      if (returnVal == BaseFileChooser.APPROVE_OPTION) {
+      if (returnVal == ObjectFileChooser.APPROVE_OPTION) {
 	File file = getFileChooser().getSelectedFile();
-	if (file.getName().endsWith("." + ExtensionFileFilter.getCommandLineFileFilter().getExtensions()[0])) {
-	  if (!FileUtils.writeToFile(file.getAbsolutePath(), OptionUtils.getCommandLine(object), false))
-	    GUIHelper.showErrorMessage(
-	      this,
-	      "Couldn't write to command-line file:\n" + file,
-	      "Save object");
-	}
-	else {
-	  if (!SerializedObject.write(file, (Serializable) object))
-	    GUIHelper.showErrorMessage(
-	      this,
-	      "Couldn't write to model file:\n" + file,
-	      "Save object");
-	}
+	AbstractObjectWriter writer = getFileChooser().getObjectWriter();
+	String msg = writer.write(new PlaceholderFile(file), object);
+	if (msg != null)
+	    GUIHelper.showErrorMessage(this, msg, "Save object");
       }
     }
 
     /**
      * Creates the file chooser the user will use to save/load files with.
      */
-    protected BaseFileChooser getFileChooser() {
-      BaseFileChooser		fileChooser;
-      ExtensionFileFilter	filter;
-      
+    protected ObjectFileChooser getFileChooser() {
+      ObjectFileChooser		fileChooser;
+
       if (m_FileChooser == null) {
-	fileChooser = new BaseFileChooser(new File(System.getProperty("user.dir")));
-	fileChooser.addChoosableFileFilter(ExtensionFileFilter.getSerializedModelFileFilter());
-	filter      = ExtensionFileFilter.getCommandLineFileFilter();
-	fileChooser.addChoosableFileFilter(filter);
-	fileChooser.setAcceptAllFileFilterUsed(true);
-	fileChooser.setFileFilter(filter);
-	fileChooser.setAutoAppendExtension(true);
-	fileChooser.setFileSelectionMode(BaseFileChooser.FILES_ONLY);
+	fileChooser   = new ObjectFileChooser(new File(System.getProperty("user.dir")));
 	m_FileChooser = fileChooser;
       }
       
