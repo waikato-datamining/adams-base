@@ -60,6 +60,7 @@ public class FinalPage
   @Override
   protected void finishInit() {
     super.finishInit();
+    setButtonPanelVisible(false);
     setPageName("Finish");
     setDescription("<html><h2>Finished</h2>Please click on <b>Finish</b> to finish up.</html>");
   }
@@ -67,7 +68,7 @@ public class FinalPage
   /**
    * Sets the logo to display.
    * 
-   * @return		the logo
+   * @param value	the logo
    */
   public void setLogo(Icon value) {
     m_LabelLogo.setIcon(value);

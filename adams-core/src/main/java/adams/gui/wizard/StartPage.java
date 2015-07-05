@@ -60,6 +60,7 @@ public class StartPage
   @Override
   protected void finishInit() {
     super.finishInit();
+    setButtonPanelVisible(false);
     setPageName("Welcome");
     setDescription("<html><h2>Welcome</h2>This wizard will guide you through the process.<br>Please click on <b>Next</b> to continue.</html>");
   }
@@ -67,7 +68,7 @@ public class StartPage
   /**
    * Sets the logo to display.
    *
-   * @return		the logo
+   * @param value	the logo
    */
   public void setLogo(Icon value) {
     m_LabelLogo.setIcon(value);

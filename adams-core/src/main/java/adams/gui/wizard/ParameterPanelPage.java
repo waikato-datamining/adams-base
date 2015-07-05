@@ -65,7 +65,6 @@ public class ParameterPanelPage
     super.initGUI();
     
     m_PanelParameter = new PropertiesParameterPanel();
-    m_PanelParameter.setButtonPanelVisible(true);
     add(m_PanelParameter, BorderLayout.CENTER);
   }
   
