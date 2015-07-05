@@ -25,6 +25,7 @@ import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.env.Environment;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseList;
 import adams.gui.core.BasePanel;
@@ -32,6 +33,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 import javax.swing.DefaultListModel;
@@ -40,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -122,6 +125,18 @@ public class WizardPane
   /** the custom text for the "finish" button. */
   protected String m_CustomFinishText;
 
+  /** the panel for the properties buttons. */
+  protected JPanel m_PanelButtonsProperties;
+
+  /** the load props button. */
+  protected JButton m_ButtonLoad;
+
+  /** the save props button. */
+  protected JButton m_ButtonSave;
+
+  /** the filechooser for loading/saving properties. */
+  protected BaseFileChooser m_FileChooser;
+
   /**
    * Initializes the wizard with no ID.
    */
@@ -160,6 +175,8 @@ public class WizardPane
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+
     super.initGUI();
     
     setLayout(new BorderLayout());
@@ -183,9 +200,14 @@ public class WizardPane
     
     m_PageComponent = new JPanel(new BorderLayout());
     m_SplitPane.setRightComponent(m_PageComponent);
-    
+
+    panel = new JPanel(new BorderLayout());
+    add(panel, BorderLayout.SOUTH);
+
+    m_PanelButtonsProperties = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panel.add(m_PanelButtonsProperties, BorderLayout.WEST);
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    add(m_PanelButtons, BorderLayout.SOUTH);
+    panel.add(m_PanelButtons, BorderLayout.EAST);
     
     m_ButtonBack = new JButton("Back");
     m_ButtonBack.addActionListener(new ActionListener() {
@@ -222,6 +244,24 @@ public class WizardPane
       }
     });
     m_PanelButtons.add(m_ButtonCancelFinish);
+
+    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	loadProperties();
+      }
+    });
+    m_PanelButtonsProperties.add(m_ButtonLoad);
+
+    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	saveProperties();
+      }
+    });
+    m_PanelButtonsProperties.add(m_ButtonSave);
   }
   
   /**
@@ -374,6 +414,32 @@ public class WizardPane
   }
 
   /**
+   * Sets the properties of all the pages.
+   *
+   * @param props	the combined properties
+   * @param usePrefix	whether to use the page name as prefix
+   */
+  public void setProperties(Properties props, boolean usePrefix) {
+    Properties		sub;
+    AbstractWizardPage	page;
+
+    for (String name: m_PageOrder) {
+      page = m_PageLookup.get(name);
+      if (usePrefix) {
+	sub = props.subset(page.getPageName() + ".");
+	for (String key: sub.keySetAll()) {
+	  sub.setProperty(key.substring(page.getPageName().length() + 1), sub.getProperty(key));
+	  sub.removeKey(key);
+	}
+	page.setProperties(sub);
+      }
+      else {
+	page.setProperties(props.getClone());
+      }
+    }
+  }
+
+  /**
    * Returns the properties from all the pages.
    * 
    * @param usePrefix	whether to use the page name as prefix
@@ -413,7 +479,62 @@ public class WizardPane
     else
       m_ButtonCancelFinish.setText(ACTION_CANCEL);
   }
-  
+
+  /**
+   * Returns the file chooser to use for loading/saving of props files.
+   *
+   * @return		the file chooser
+   */
+  protected synchronized BaseFileChooser getFileChooser() {
+    FileFilter filter;
+
+    if (m_FileChooser == null) {
+      m_FileChooser = new BaseFileChooser();
+      m_FileChooser.setAutoAppendExtension(true);
+      filter        = ExtensionFileFilter.getPropertiesFileFilter();
+      m_FileChooser.addChoosableFileFilter(filter);
+      m_FileChooser.setFileFilter(filter);
+    }
+
+    return m_FileChooser;
+  }
+
+  /**
+   * Loads properties from a file, prompts the user to select props file.
+   */
+  protected void loadProperties() {
+    int		retVal;
+    Properties	props;
+
+    retVal = getFileChooser().showOpenDialog(this);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    props = new Properties();
+    if (!props.load(getFileChooser().getSelectedFile().getAbsolutePath())) {
+      GUIHelper.showErrorMessage(this, "Failed to load properties from: " + getFileChooser().getSelectedFile());
+      return;
+    }
+
+    setProperties(props, true);
+  }
+
+  /**
+   * Saves properties to a file, prompts the user to select props file.
+   */
+  protected void saveProperties() {
+    int		retVal;
+    Properties	props;
+
+    retVal = getFileChooser().showSaveDialog(this);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    props = getProperties(true);
+    if (!props.save(getFileChooser().getSelectedFile().getAbsolutePath()))
+      GUIHelper.showErrorMessage(this, "Failed to save properties to: " + getFileChooser().getSelectedFile());
+  }
+
   /**
    * Adds the specified listener.
    * 
