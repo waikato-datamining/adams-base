@@ -862,6 +862,7 @@ Some more string conversions:
 	\item \textit{FieldToString} -- turns the Field object into its string
 	representation, with or without data type. The reverse is possible as well,
 	using \textit{StringToField}.
+	\item \textit{JoinOptions} -- Turns an option array into a single string.
 	\item \textit{LeftPad} -- left pads a string up to a maximum number of
 	characters, e.g.: turning ``1'' into ``001''.
 	\item \textit{LowerCase} -- turns a string into its lower case representation.
@@ -869,6 +870,7 @@ Some more string conversions:
 	if it contains blanks or special characters like tabs or new lines. Special
 	characters will get backquoted as well. Thereverse operations is done 
 	using \textit{UnQuote}.
+	\item \textit{SplitOptions} -- Turns an option string into an array of individual options.
 	\item \textit{TimeToString} -- Turns a number representing milli-seconds since
 	1970 (Java date) into a String (see \cite{dateformat}).
 	\item \textit{UpperCase} -- turns a string into its upper case representation.
