@@ -15,14 +15,10 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
@@ -32,6 +28,10 @@ import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.InteractiveActor;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -418,7 +418,7 @@ public class SelectFile
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value) {
     m_CustomStopMessage = value;
