@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-07-06 16:11:53
+# Date: 2015-07-06 16:37:18
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -20,8 +20,8 @@ adams.flow.control.Flow
 					-entry-name-variable
 					label
 	-actor
-		adams.flow.source.FileSupplier
-			-file
+		adams.flow.source.WekaSelectDataset
+			-initial-file
 			${EXAMPLE_FLOWS}/data/bodyfat.arff
 	-actor
 		adams.flow.transformer.WekaFileReader
