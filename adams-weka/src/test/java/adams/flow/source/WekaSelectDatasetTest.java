@@ -20,17 +20,17 @@
 
 package adams.flow.source;
 
-import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
-import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Test for WekaSelectDataset actor.
+ * <br><br>
+ * NB: dummy test.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
@@ -49,40 +49,6 @@ public class WekaSelectDatasetTest
   }
 
   /**
-   * Called by JUnit before each test method.
-   *
-   * @throws Exception 	if an error occurs.
-   */
-  protected void setUp() throws Exception {
-    super.setUp();
-    
-    m_TestHelper.copyResourceToTmp("anneal.arff");
-    m_TestHelper.deleteFileFromTmp("dumpfile.txt");
-  }
-
-  /**
-   * Called by JUnit after each test method.
-   *
-   * @throws Exception	if tear-down fails
-   */
-  protected void tearDown() throws Exception {
-    m_TestHelper.deleteFileFromTmp("anneal.arff");
-    m_TestHelper.deleteFileFromTmp("dumpfile.txt");
-    
-    super.tearDown();
-  }
-
-  /**
-   * Performs a regression test, comparing against previously generated output.
-   */
-  public void testRegression() {
-    performRegressionTest(
-        new TmpFile[]{
-          new TmpFile("dumpfile.txt")
-        });
-  }
-
-  /**
    * 
    * Returns a test suite.
    *
@@ -98,45 +64,7 @@ public class WekaSelectDatasetTest
    * @return a suitably configured <code>AbstractActor</code> value
    */
   public AbstractActor getActor() {
-    AbstractArgumentOption    argOption;
-    
-    Flow flow = new Flow();
-    
-    try {
-      argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
-
-      // Flow.WekaSelectDataset
-      adams.flow.source.WekaSelectDataset wekaselectdataset2 = new adams.flow.source.WekaSelectDataset();
-      argOption = (AbstractArgumentOption) wekaselectdataset2.getOptionManager().findByProperty("initialFiles");
-      adams.core.io.PlaceholderFile[] initialfiles3 = new adams.core.io.PlaceholderFile[1];
-      initialfiles3[0] = (adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/anneal.arff");
-      wekaselectdataset2.setInitialFiles(initialfiles3);
-      wekaselectdataset2.setNonInteractive(true);
-
-      actors1[0] = wekaselectdataset2;
-
-      // Flow.BaseName
-      adams.flow.transformer.BaseName basename4 = new adams.flow.transformer.BaseName();
-      actors1[1] = basename4;
-
-      // Flow.DumpFile
-      adams.flow.sink.DumpFile dumpfile5 = new adams.flow.sink.DumpFile();
-      argOption = (AbstractArgumentOption) dumpfile5.getOptionManager().findByProperty("outputFile");
-      dumpfile5.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
-      actors1[2] = dumpfile5;
-      flow.setActors(actors1);
-
-      argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("flowExecutionListener");
-      adams.flow.execution.NullListener nulllistener8 = new adams.flow.execution.NullListener();
-      flow.setFlowExecutionListener(nulllistener8);
-
-    }
-    catch (Exception e) {
-      fail("Failed to set up actor: " + e);
-    }
-    
-    return flow;
+    return new Flow();
   }
 
   /**
