@@ -256,13 +256,13 @@ public class ProgressBar
       g.fillRect(0, 0, (int) width, getHeight());
       
       // current value
+      g.setFont(m_Owner.getFont());
       if (m_Format == null)
 	m_Format = m_Owner.getFormat().toDecimalFormat();
       curr   = m_Owner.getPrefix() + m_Format.format(perc) + m_Owner.getSuffix();
       layout = new TextLayout(curr, g.getFont(), g2d.getFontRenderContext());
       bounds = layout.getBounds();
       g.setColor(m_Owner.getForeground());
-      g.setFont(m_Owner.getFont());
       g.drawString(curr, (int) ((getWidth() - bounds.getWidth()) / 2), (int) ((getHeight() / 2 + bounds.getHeight() / 2)));
     }
   }
