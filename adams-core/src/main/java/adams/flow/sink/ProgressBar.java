@@ -15,9 +15,15 @@
 
 /**
  * ProgressBar.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.data.DecimalFormatString;
+import adams.flow.core.Token;
+import adams.gui.core.BasePanel;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,12 +32,6 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
-
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.data.DecimalFormatString;
-import adams.flow.core.Token;
-import adams.gui.core.BasePanel;
 
 /**
  <!-- globalinfo-start -->
@@ -57,7 +57,7 @@ import adams.gui.core.BasePanel;
  * &nbsp;&nbsp;&nbsp;default: ProgressBar
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -74,9 +74,20 @@ import adams.gui.core.BasePanel;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -136,10 +147,20 @@ import adams.gui.core.BasePanel;
  * &nbsp;&nbsp;&nbsp;default: #ffffff
  * </pre>
  * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix string to print before the percentage.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-format &lt;adams.data.DecimalFormatString&gt; (property: format)
  * &nbsp;&nbsp;&nbsp;The format string to use for outputting the current value, use empty string 
  * &nbsp;&nbsp;&nbsp;to suppress output.
  * &nbsp;&nbsp;&nbsp;default: #.#%
+ * </pre>
+ * 
+ * <pre>-suffix &lt;java.lang.String&gt; (property: suffix)
+ * &nbsp;&nbsp;&nbsp;The suffix string to print before the percentage.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
@@ -237,7 +258,7 @@ public class ProgressBar
       // current value
       if (m_Format == null)
 	m_Format = m_Owner.getFormat().toDecimalFormat();
-      curr   = m_Format.format(perc);
+      curr   = m_Owner.getPrefix() + m_Format.format(perc) + m_Owner.getSuffix();
       layout = new TextLayout(curr, g.getFont(), g2d.getFontRenderContext());
       bounds = layout.getBounds();
       g.setColor(m_Owner.getForeground());
@@ -264,8 +285,14 @@ public class ProgressBar
   /** the font to use. */
   protected Font m_Font;
 
+  /** the prefix. */
+  protected String m_Prefix;
+
   /** the format of the current value. */
   protected DecimalFormatString m_Format;
+
+  /** the suffix. */
+  protected String m_Suffix;
 
   /**
    * Returns a string describing the object.
@@ -285,32 +312,40 @@ public class ProgressBar
     super.defineOptions();
 
     m_OptionManager.add(
-	    "min", "minimum",
-	    0.0);
+      "min", "minimum",
+      0.0);
 
     m_OptionManager.add(
-	    "max", "maximum",
-	    100.0);
+      "max", "maximum",
+      100.0);
 
     m_OptionManager.add(
-	    "bar", "bar",
-	    Color.BLUE);
+      "bar", "bar",
+      Color.BLUE);
 
     m_OptionManager.add(
-	    "background", "background",
-	    Color.LIGHT_GRAY);
+      "background", "background",
+      Color.LIGHT_GRAY);
 
     m_OptionManager.add(
-	    "foreground", "foreground",
-	    Color.WHITE);
+      "foreground", "foreground",
+      Color.WHITE);
 
     m_OptionManager.add(
-	    "format", "format",
-	    new DecimalFormatString("#.#%"));
+      "prefix", "prefix",
+      "");
 
     m_OptionManager.add(
-	    "font", "font",
-	    new Font("helvetica", Font.BOLD, 16));
+      "format", "format",
+      new DecimalFormatString("#.#%"));
+
+    m_OptionManager.add(
+      "suffix", "suffix",
+      "");
+
+    m_OptionManager.add(
+      "font", "font",
+      new Font("helvetica", Font.BOLD, 16));
   }
 
   /**
@@ -489,6 +524,35 @@ public class ProgressBar
   }
 
   /**
+   * Sets the prefix string.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix string.
+   *
+   * @return		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The prefix string to print before the percentage.";
+  }
+
+  /**
    * Sets the format string for the current value.
    *
    * @param value	the format, empty string to suppress output
@@ -515,6 +579,35 @@ public class ProgressBar
    */
   public String formatTipText() {
     return "The format string to use for outputting the current value, use empty string to suppress output.";
+  }
+
+  /**
+   * Sets the suffix string.
+   *
+   * @param value	the suffix
+   */
+  public void setSuffix(String value) {
+    m_Suffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the suffix string.
+   *
+   * @return		the suffix
+   */
+  public String getSuffix() {
+    return m_Suffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suffixTipText() {
+    return "The suffix string to print before the percentage.";
   }
 
   /**
