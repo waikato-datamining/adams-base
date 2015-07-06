@@ -29,18 +29,15 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.core.DataInfoActor;
-import adams.flow.core.Token;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
 import weka.core.Instances;
 import weka.core.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -120,14 +117,11 @@ import java.util.List;
  * @version $Revision$
  */
 public class WekaInstancesInfo
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements DataInfoActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
-
-  /** the tokens to output. */
-  protected List m_Queue;
 
   /**
    * The type of information to generate.
@@ -154,6 +148,8 @@ public class WekaInstancesInfo
     NUM_CLASS_LABELS,
     /** the name of the attribute (at specified index). */
     ATTRIBUTE_NAME,
+    /** the names of all attributes. */
+    ATTRIBUTE_NAMES,
     /** the labels (selected attribute, only nominal). */
     LABELS,
     /** the class labels (only nominal class attribute). */
@@ -231,22 +227,12 @@ public class WekaInstancesInfo
 	    InfoType.FULL);
 
     m_OptionManager.add(
-	    "attribute-index", "attributeIndex",
-	    new WekaAttributeIndex(WekaAttributeIndex.LAST));
+      "attribute-index", "attributeIndex",
+      new WekaAttributeIndex(WekaAttributeIndex.LAST));
 
     m_OptionManager.add(
 	    "label-index", "labelIndex",
 	    new Index(Index.FIRST));
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Queue = new ArrayList();
   }
 
   /**
@@ -271,6 +257,7 @@ public class WekaInstancesInfo
 		InfoType.NUM_ATTRIBUTES,
 		InfoType.NUM_INSTANCES,
 		InfoType.NUM_CLASS_LABELS,
+		InfoType.ATTRIBUTE_NAMES,
 		InfoType.CLASS_TYPE,
 		InfoType.CLASS_LABELS,
 		InfoType.CLASS_LABEL_COUNT,
@@ -290,6 +277,17 @@ public class WekaInstancesInfo
       result += QuickInfoHelper.toString(this, "labelIndex", m_LabelIndex, ", label: ");
 
     return result;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "Whether to output the values one-by-one or as array (counts or distributions are always output as array).";
   }
 
   /**
@@ -389,21 +387,23 @@ public class WekaInstancesInfo
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
+   * @return		the class
    */
-  public Class[] generates() {
+  @Override
+  protected Class getItemClass() {
     switch (m_Type) {
       case FULL:
       case HEADER:
       case RELATION_NAME:
       case ATTRIBUTE_NAME:
+      case ATTRIBUTE_NAMES:
       case LABELS:
       case CLASS_LABELS:
       case ATTRIBUTE_TYPE:
       case CLASS_TYPE:
-	return new Class[]{String.class};
+	return String.class;
 
       case NUM_ATTRIBUTES:
       case NUM_INSTANCES:
@@ -414,31 +414,31 @@ public class WekaInstancesInfo
       case NUM_MISSING_VALUES:
       case LABEL_COUNT:
       case CLASS_LABEL_COUNT:
-	return new Class[]{Integer.class};
+	return Integer.class;
 
       case LABEL_COUNTS:
       case CLASS_LABEL_COUNTS:
-	return new Class[]{Integer[].class};
+	return Integer[].class;
 
       case MIN:
       case MAX:
       case MEAN:
       case STDEV:
-	return new Class[]{Double.class};
+	return Double.class;
 
       case LABEL_DISTRIBUTION:
       case CLASS_LABEL_DISTRIBUTION:
-	return new Class[]{Double[].class};
+	return Double[].class;
 
       case FULL_ATTRIBUTE:
       case FULL_CLASS:
-	return new Class[]{SpreadSheet.class};
+	return SpreadSheet.class;
 
       default:
 	throw new IllegalStateException("Unhandled info type: " + m_Type);
     }
   }
-  
+
   /**
    * Adds a statistic to the dataset.
    * 
@@ -581,6 +581,11 @@ public class WekaInstancesInfo
 	  m_Queue.add(inst.attribute(index).name());
 	break;
 
+      case ATTRIBUTE_NAMES:
+        for (i = 0; i < inst.numAttributes(); i++)
+	  m_Queue.add(inst.attribute(i).name());
+	break;
+
       case LABELS:
 	if (index != -1) {
 	  enm = inst.attribute(index).enumerateValues();
@@ -711,41 +716,5 @@ public class WekaInstancesInfo
     }
 
     return result;
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    result = new Token(m_Queue.get(0));
-    m_Queue.remove(0);
-
-    return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_Queue.size() > 0);
-  }
-
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void wrapUp() {
-    m_Queue.clear();
-
-    super.wrapUp();
   }
 }
