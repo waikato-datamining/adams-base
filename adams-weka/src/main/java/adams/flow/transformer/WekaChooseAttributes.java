@@ -33,6 +33,7 @@ import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextArea;
 import adams.gui.dialog.ApprovalDialog;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -43,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
@@ -66,13 +66,9 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -80,23 +76,31 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WekaChooseAttributes
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
@@ -105,14 +109,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-message &lt;java.lang.String&gt; (property: message)
+ * &nbsp;&nbsp;&nbsp;The message to display to the user (variables get expanded).
+ * &nbsp;&nbsp;&nbsp;default: Choose attributes to use
+ * </pre>
+ * 
  * <pre>-pre-selection &lt;adams.core.base.BaseRegExp&gt; (property: preSelection)
  * &nbsp;&nbsp;&nbsp;The regular expression to use for pre-selecting attributes.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
- * <pre>-non-interactive (property: nonInteractive)
+ * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, attributes that match the 'pre-selection' pattern get selected 
  * &nbsp;&nbsp;&nbsp;automatically.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -126,6 +136,9 @@ public class WekaChooseAttributes
 
   /** for serialization. */
   private static final long serialVersionUID = -1483735876005865608L;
+
+  /** the message to display to the user. */
+  protected String m_Message;
 
   /** the regular expression for pre-selecting attributes by name. */
   protected BaseRegExp m_PreSelection;
@@ -157,12 +170,16 @@ public class WekaChooseAttributes
     super.defineOptions();
 
     m_OptionManager.add(
-	    "pre-selection", "preSelection",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "message", "message",
+      "Choose attributes to use");
 
     m_OptionManager.add(
-	    "non-interactive", "nonInteractive",
-	    false);
+      "pre-selection", "preSelection",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "non-interactive", "nonInteractive",
+      false);
   }
 
   /**
@@ -193,6 +210,35 @@ public class WekaChooseAttributes
     result += QuickInfoHelper.flatten(options);
 
     return result;
+  }
+
+  /**
+   * Sets the message to display to the user (variables get expanded).
+   *
+   * @param value	the message
+   */
+  public void setMessage(String value) {
+    m_Message = value;
+    reset();
+  }
+
+  /**
+   * Returns the message to display to the user (variables get expanded).
+   *
+   * @return 		the message
+   */
+  public String getMessage() {
+    return m_Message;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String messageTipText() {
+    return "The message to display to the user (variables get expanded).";
   }
 
   /**
@@ -291,12 +337,15 @@ public class WekaChooseAttributes
     JPanel		panelAll;
     JPanel		panelOptions;
     JCheckBox		checkBoxInvert;
+    BaseTextArea	textMessage;
     Range		range;
     int[][]		segments;
     int			numAtts;
+    String		msg;
     
     result = new ArrayList<Integer>();
-    
+
+    msg     = getVariables().expand(m_Message);
     numAtts = inst.numAttributes();
     if (inst.classIndex() > -1)
       numAtts--;
@@ -323,13 +372,18 @@ public class WekaChooseAttributes
     
     panelAll = new JPanel(new BorderLayout());
     panelAll.add(new BaseScrollPane(table), BorderLayout.CENTER);
+    if (msg.trim().length() > 0) {
+      textMessage = new BaseTextArea(msg.split("\n").length + 1, 40);
+      textMessage.setText(msg);
+      panelAll.add(new BaseScrollPane(textMessage), BorderLayout.NORTH);
+    }
     panelOptions = new JPanel(new FlowLayout(FlowLayout.LEFT));
     checkBoxInvert = new JCheckBox("Remove selected attributes rather than keep them");
     panelOptions.add(checkBoxInvert);
     panelAll.add(panelOptions, BorderLayout.SOUTH);
-    dialog = new ApprovalDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
-    dialog.setTitle("Choose attributes to use");
-    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
+    dialog.setTitle("Choose attributes");
+      dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(getParentComponent());
     dialog.setVisible(true);
