@@ -15,7 +15,7 @@
 
 /**
  * NewSpreadSheet.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -152,7 +152,7 @@ public class NewSpreadSheet
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "sheetName", m_Columns, "name: ");
+    result  = QuickInfoHelper.toString(this, "sheetName", m_SheetName, "name: ");
     result += QuickInfoHelper.toString(this, "columns", m_Columns, ", cols: ");
     result += QuickInfoHelper.toString(this, "dataRowType", m_DataRowType, ", row type: ");
     result += QuickInfoHelper.toString(this, "spreadSheetType", m_SpreadSheetType.getClass(), ", sheet: ");
