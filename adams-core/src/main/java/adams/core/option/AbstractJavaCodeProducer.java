@@ -19,16 +19,19 @@
  */
 package adams.core.option;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
+
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for producers that generate Java code.
@@ -63,6 +66,12 @@ public abstract class AbstractJavaCodeProducer
   /** the indentation level. */
   protected int m_Indentation;
 
+  /** for keeping track of the shortened imports. */
+  protected Map<String,String> m_ShortenedImports;
+
+  /** for inserting any additional imports. */
+  protected int m_AdditionalImportsInsertLocation;
+
   /**
    * Initializes the output data structure.
    *
@@ -80,9 +89,10 @@ public abstract class AbstractJavaCodeProducer
   protected void initialize() {
     super.initialize();
 
-    m_OutputBuffer = new StringBuilder();
-    m_TmpCounter   = 0;
-    m_Indentation  = 0;
+    m_OutputBuffer      = new StringBuilder();
+    m_TmpCounter        = 0;
+    m_Indentation       = 0;
+    m_ShortenedImports  = new HashMap<>();
   }
 
   /**
@@ -259,10 +269,38 @@ public abstract class AbstractJavaCodeProducer
   protected abstract String getIndentation();
 
   /**
+   * Tries to shorten the classname. If it's possible, the class is added
+   * as an additional import and the simple name of the class is used (no package).
+   *
+   * @param name	the classname to shorten
+   * @return		the potentially shortened classname
+   */
+  protected String shortenClassname(String name) {
+    String	result;
+    String	simple;
+
+    result = name;
+
+    if (result.contains(".")) {
+      simple = result.substring(result.lastIndexOf('.') + 1);
+      if (!m_ShortenedImports.containsKey(simple)) {
+	m_ShortenedImports.put(simple, name);
+	result = simple;
+      }
+      else if (m_ShortenedImports.get(simple).equals(name)) {
+	result = simple;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Creates the class name.
    *
    * @param cls		the class to create the class name string for
    * @return		the class name string
+   * @see		#shortenClassname(String)
    */
   protected String getClassname(Class cls) {
     String	result;
@@ -307,7 +345,7 @@ public abstract class AbstractJavaCodeProducer
       else if (name.equals(String.class.getName()))
 	result = String.class.getSimpleName();
       else
-	result = name;
+	result = shortenClassname(name);
     }
 
     return result;
@@ -451,7 +489,6 @@ public abstract class AbstractJavaCodeProducer
     AbstractCommandLineHandler	handler;
     String[]			array;
     String[]			newArray;
-    boolean			inc;
 
     if (value instanceof AbstractActor) {
       m_OutputBuffer.append("\n");
@@ -778,6 +815,7 @@ public abstract class AbstractJavaCodeProducer
     addCopyright();
     addPackage();
     addImports();
+    m_AdditionalImportsInsertLocation = m_OutputBuffer.length();
     addClassJavadoc();
     addClassStart();
     addConstructor();
@@ -815,6 +853,24 @@ public abstract class AbstractJavaCodeProducer
   }
 
   /**
+   * Inserts any additional imports, if necessary.
+   */
+  protected void insertAdditionalImports() {
+    List<String>	additional;
+
+    additional = new ArrayList<>();
+
+    for (String key: m_ShortenedImports.keySet())
+      additional.add("import " + m_ShortenedImports.get(key) + ";");
+
+    if (additional.size() > 0) {
+      Collections.sort(additional);
+      m_OutputBuffer.insert(m_AdditionalImportsInsertLocation - 1, "\n");
+      m_OutputBuffer.insert(m_AdditionalImportsInsertLocation - 1, Utils.flatten(additional, "\n"));
+    }
+  }
+
+  /**
    * Hook-method after visiting options.
    */
   @Override
@@ -822,6 +878,7 @@ public abstract class AbstractJavaCodeProducer
     addMethodEnd();
     addMainMethod();
     addClassEnd();
+    insertAdditionalImports();
   }
 
   /**
