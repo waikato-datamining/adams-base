@@ -152,7 +152,7 @@ public class NewSpreadSheet
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "sheetName", m_SheetName, "name: ");
+    result  = QuickInfoHelper.toString(this, "sheetName", (m_SheetName.isEmpty() ? "-none-" : m_SheetName), "name: ");
     result += QuickInfoHelper.toString(this, "columns", m_Columns, ", cols: ");
     result += QuickInfoHelper.toString(this, "dataRowType", m_DataRowType, ", row type: ");
     result += QuickInfoHelper.toString(this, "spreadSheetType", m_SpreadSheetType.getClass(), ", sheet: ");
