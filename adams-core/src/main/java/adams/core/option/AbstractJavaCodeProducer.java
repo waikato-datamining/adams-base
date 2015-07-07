@@ -290,7 +290,24 @@ public abstract class AbstractJavaCodeProducer
 	throw new IllegalStateException("Unhandled primitive: " + name);
     }
     else {
-      result = name;
+      if (name.equals(Byte.class.getName()))
+	result = Byte.class.getSimpleName();
+      else if (name.equals(Short.class.getName()))
+	result = Short.class.getSimpleName();
+      else if (name.equals(Integer.class.getName()))
+	result = Integer.class.getSimpleName();
+      else if (name.equals(Long.class.getName()))
+	result = Long.class.getSimpleName();
+      else if (name.equals(Float.class.getName()))
+	result = Float.class.getSimpleName();
+      else if (name.equals(Double.class.getName()))
+	result = Double.class.getSimpleName();
+      else if (name.equals(Character.class.getName()))
+	result = Character.class.getSimpleName();
+      else if (name.equals(String.class.getName()))
+	result = String.class.getSimpleName();
+      else
+	result = name;
     }
 
     return result;
