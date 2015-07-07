@@ -15,7 +15,7 @@
 
 /**
  * AbstractJavaCodeProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -28,6 +28,7 @@ import java.util.List;
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorHandler;
 
 /**
  * Ancestor for producers that generate Java code.
@@ -59,6 +60,9 @@ public abstract class AbstractJavaCodeProducer
   /** the counter for temporary variables. */
   protected int m_TmpCounter;
 
+  /** the indentation level. */
+  protected int m_Indentation;
+
   /**
    * Initializes the output data structure.
    *
@@ -78,6 +82,7 @@ public abstract class AbstractJavaCodeProducer
 
     m_OutputBuffer = new StringBuilder();
     m_TmpCounter   = 0;
+    m_Indentation  = 0;
   }
 
   /**
@@ -93,8 +98,8 @@ public abstract class AbstractJavaCodeProducer
 	"University of Waikato, Hamilton, New Zealand");
 
     m_OptionManager.add(
-	"output-default-values", "outputDefaultValues",
-	false);
+      "output-default-values", "outputDefaultValues",
+      false);
   }
 
   /**
@@ -399,6 +404,26 @@ public abstract class AbstractJavaCodeProducer
   }
 
   /**
+   * Hook method that gets called before indentation is increased.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param value	the current object
+   */
+  protected void preIndent(Object value) {
+  }
+
+  /**
+   * Hook method that gets called just after the indentation got decreased.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param value	the current object
+   */
+  protected void postIndent(Object value) {
+  }
+
+  /**
    * Processes the value of a class option.
    *
    * @param variable	the name of the tmp variable to use
@@ -409,6 +434,7 @@ public abstract class AbstractJavaCodeProducer
     AbstractCommandLineHandler	handler;
     String[]			array;
     String[]			newArray;
+    boolean			inc;
 
     if (value instanceof AbstractActor) {
       m_OutputBuffer.append("\n");
@@ -424,7 +450,15 @@ public abstract class AbstractJavaCodeProducer
 
     if (value instanceof OptionHandler) {
       m_Nesting.push(variable);
+      if (value instanceof ActorHandler) {
+        preIndent(value);
+	m_Indentation++;
+      }
       doProduce(((OptionHandler) value).getOptionManager());
+      if (value instanceof ActorHandler) {
+	m_Indentation--;
+        postIndent(value);
+      }
       m_Nesting.pop();
     }
     else {

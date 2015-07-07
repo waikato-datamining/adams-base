@@ -15,7 +15,7 @@
 
 /**
  * ActorExecutionClassProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -24,6 +24,7 @@ import java.util.List;
 
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorHandler;
 
 /**
  * Generates a wrapper class for executing an actor.
@@ -60,8 +61,8 @@ public class ActorExecutionClassProducer
 	"Blah");
 
     m_OptionManager.add(
-	"package", "package",
-	"adams");
+      "package", "package",
+      "adams");
   }
 
   /**
@@ -111,7 +112,34 @@ public class ActorExecutionClassProducer
    */
   @Override
   protected String getIndentation() {
-    return "    ";
+    StringBuilder	result;
+    int			i;
+
+    result = new StringBuilder("    ");
+    for (i = 0; i < m_Indentation; i++)
+      result.append("  ");
+
+    return result.toString();
+  }
+
+  /**
+   * Hook method that gets called before nesting is increased.
+   *
+   * @param value	the current object
+   */
+  protected void preIndent(Object value) {
+    m_OutputBuffer.append(getIndentation());
+    m_OutputBuffer.append("{\n");
+  }
+
+  /**
+   * Hook method that gets called just after the nesting got decreased.
+   *
+   * @param value	the current object
+   */
+  protected void postIndent(Object value) {
+    m_OutputBuffer.append(getIndentation());
+    m_OutputBuffer.append("}\n");
   }
 
   /**
@@ -123,7 +151,7 @@ public class ActorExecutionClassProducer
   protected List<String> getRequiredImports() {
     List<String>	result;
 
-    result = new ArrayList<String>(super.getRequiredImports());
+    result = new ArrayList<>(super.getRequiredImports());
 
     result.add(AbstractActor.class.getName());
 
