@@ -499,11 +499,10 @@ public abstract class AbstractJavaCodeProducer
 
     currValue = getCurrentValue(option);
     if (m_OutputDefaultValues || !isDefaultValue(option, currValue) || option.isVariableAttached()) {
-      m_OutputBuffer.append(getIndentation());
-      m_OutputBuffer.append("argOption = (AbstractArgumentOption) " + getCurrentVariable() + ".getOptionManager().findByProperty(\"" + option.getProperty() + "\");\n");
-
       if (option.isVariableAttached()) {
 	m_OutputBuffer.append(getIndentation());
+	m_OutputBuffer.append("argOption = (ClassOption) " + getCurrentVariable() + ".getOptionManager().findByProperty(\"" + option.getProperty() + "\");\n");
+        m_OutputBuffer.append(getIndentation());
 	m_OutputBuffer.append("argOption.setVariable(\"" + option.getVariable() + "\");\n");
       }
       else {
@@ -633,6 +632,7 @@ public abstract class AbstractJavaCodeProducer
 
     result.add("adams.env.Environment");
     result.add("adams.core.option.AbstractArgumentOption");
+    result.add("adams.core.option.ClassOption");
     result.add("adams.core.option.OptionUtils");
 
     return result;
