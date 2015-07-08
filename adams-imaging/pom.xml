@@ -187,6 +187,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.boofcv</groupId>
+      <artifactId>xuggler</artifactId>
+      <version>0.18</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.github.kzwang</groupId>
       <artifactId>lire</artifactId>
       <version>0.9.4-kzwang-beta1</version>
