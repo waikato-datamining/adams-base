@@ -60,6 +60,7 @@ Menu-Maintenance=\
   adams.gui.menu.NestedFormatViewer,\
   adams.gui.menu.OptionTree,\
   adams.gui.menu.OptionsConversion,\
+  adams.gui.menu.RegExpTest,\
   -,\
   adams.gui.menu.PlotPanelTest
 
