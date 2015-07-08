@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -144,8 +145,9 @@ public class MjpegImageSequence
    */
   @Override
   protected String doExecute() {
-    String	result;
-    String	filename;
+    String		result;
+    String		filename;
+    PlaceholderFile	file;
 
     result = null;
 
@@ -153,11 +155,12 @@ public class MjpegImageSequence
       filename = (String) m_InputToken.getPayload();
     else
       filename = ((File) m_InputToken.getPayload()).getAbsolutePath();
+    file = new PlaceholderFile(filename);
 
     if (filename.toLowerCase().endsWith("mjpeg")) {
       try {
 	VideoMjpegCodec codec = new VideoMjpegCodec();
-	List<byte[]> data = codec.read(new FileInputStream(filename));
+	List<byte[]> data = codec.read(new FileInputStream(file.getAbsolutePath()));
 	m_Video = new JpegByteImageSequence<ImageFloat32>(ImageFloat32.class, data, false);
       }
       catch (FileNotFoundException e) {
