@@ -15,13 +15,9 @@
 
 /**
  * NewImage.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import adams.core.QuickInfoHelper;
 import adams.data.conversion.BufferedImageToBufferedImage;
@@ -29,6 +25,10 @@ import adams.data.conversion.BufferedImageToOtherFormatConversion;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -111,7 +111,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class NewImage
-  extends AbstractSource {
+  extends AbstractSimpleSource {
 
   /** for serialization. */
   private static final long serialVersionUID = -5718059337341470131L;
@@ -130,10 +130,12 @@ public class NewImage
   
   /** the conversion to perform. */
   protected BufferedImageToOtherFormatConversion m_Conversion;
-  
-  /** the generated image token. */
-  protected Token m_OutputToken;
-  
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   @Override
   public String globalInfo() {
     return "Generates an empty image with the specified dimensions (Type: RGB or ARBG).";
@@ -413,31 +415,5 @@ public class NewImage
     }
     
     return result;
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-    
-    result        = m_OutputToken;
-    m_OutputToken = null;
-    
-    return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_OutputToken != null);
   }
 }
