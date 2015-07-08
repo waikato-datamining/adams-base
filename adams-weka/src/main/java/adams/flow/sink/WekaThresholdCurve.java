@@ -15,22 +15,11 @@
 
 /*
  * WekaThresholdCurve.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.util.logging.Level;
-
-import javax.swing.JComponent;
-
-import weka.classifiers.Evaluation;
-import weka.classifiers.evaluation.ThresholdCurve;
-import weka.core.Instances;
-import weka.gui.visualize.PlotData2D;
-import weka.gui.visualize.ThresholdVisualizePanel;
-import weka.gui.visualize.VisualizePanel;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
@@ -38,6 +27,15 @@ import adams.core.option.AbstractOption;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
+import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.ThresholdCurve;
+import weka.core.Instances;
+import weka.gui.visualize.PlotData2D;
+import weka.gui.visualize.ThresholdVisualizePanel;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -576,12 +574,12 @@ public class WekaThresholdCurve
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -7362768698548152899L;
-      protected VisualizePanel m_VisualizePanel;
+      protected ThresholdVisualizePanel m_VisualizePanel;
       @Override
       protected void initGUI() {
 	super.initGUI();
 	setLayout(new BorderLayout());
-	m_VisualizePanel = new VisualizePanel();
+	m_VisualizePanel = new ThresholdVisualizePanel();
 	add(m_VisualizePanel, BorderLayout.CENTER);
       }
       @Override
