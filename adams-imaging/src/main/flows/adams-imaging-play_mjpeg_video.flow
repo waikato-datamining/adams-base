@@ -14,7 +14,7 @@ adams.flow.control.Flow
 			-extension
 			mjpeg
 	-actor
-		adams.flow.transformer.MjpegVideoSequence
+		adams.flow.transformer.MjpegImageSequence
 	-actor
 		adams.flow.control.Sleep
 			-interval
