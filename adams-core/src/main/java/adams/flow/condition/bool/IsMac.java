@@ -15,7 +15,7 @@
 
 /**
  * IsMac.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -64,7 +64,7 @@ public class IsMac
    */
   @Override
   public String getQuickInfo() {
-    return null;
+    return "Mac?";
   }
 
   /**
