@@ -15,7 +15,7 @@
 
 /*
  * NewImageTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -29,7 +29,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 
 /**
- * Test for JAICreateImage actor.
+ * Test for NewImage actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
