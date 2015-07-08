@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2015-07-08 17:17:59
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Displays the images obtained from a MJPEG movie file.
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-file-chooser-title
+			Select MJPEG file
+			-extension
+			mjpeg
+	-actor
+		adams.flow.transformer.MjpegVideoSequence
+	-actor
+		adams.flow.control.Sleep
+			-interval
+			20
+	-actor
+		adams.flow.sink.ImageViewer
+			-writer
+				adams.gui.print.NullWriter
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

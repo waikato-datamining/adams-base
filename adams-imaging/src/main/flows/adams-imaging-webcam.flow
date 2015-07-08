@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2015-07-08 16:31:12
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Displays frames obtained from the default webcam, till you stop the flow.\nYour computer must have one to make this work, of course.
+	-actor
+		adams.flow.source.WebcamImage
+			-conversion
+				adams.data.conversion.BufferedImageToBufferedImage
+	-actor
+		adams.flow.sink.ImageViewer
+			-width
+			800
+			-height
+			600
+			-writer
+				adams.gui.print.NullWriter
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
