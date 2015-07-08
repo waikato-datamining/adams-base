@@ -36,7 +36,7 @@ import junit.framework.TestSuite;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  * @version $Revision$
  */
-public class MjpegVideoSequenceTest
+public class MjpegImageSequenceTest
   extends AbstractFlowTest {
 
   /**
@@ -44,7 +44,7 @@ public class MjpegVideoSequenceTest
    *
    * @param name	the name of the test
    */
-  public MjpegVideoSequenceTest(String name) {
+  public MjpegImageSequenceTest(String name) {
     super(name);
   }
 
@@ -55,7 +55,7 @@ public class MjpegVideoSequenceTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(MjpegVideoSequenceTest.class);
+    return new TestSuite(MjpegImageSequenceTest.class);
   }
 
   /**

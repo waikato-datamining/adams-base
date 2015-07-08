@@ -14,7 +14,7 @@
  */
 
 /*
- * MjpegVideoSequence.java
+ * MjpegImageSequence.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -32,6 +32,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 import boofcv.io.image.SimpleImageSequence;
 import boofcv.io.video.VideoMjpegCodec;
 import boofcv.io.wrapper.images.JpegByteImageSequence;
+import boofcv.struct.image.ImageBase;
 import boofcv.struct.image.ImageFloat32;
 
 import java.awt.image.BufferedImage;
@@ -95,7 +96,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class MjpegVideoSequence
+public class MjpegImageSequence
   extends AbstractTransformer
   implements ProvenanceSupporter {
 
@@ -114,7 +115,7 @@ public class MjpegVideoSequence
   public String globalInfo() {
     return
       "Streams the individual frames from the MJPEG video file obtained as input.\n"
-      + "Images are output as " + ImageFloat32.class.getName() + ".";
+      + "Images are output as " + ImageFloat32.class.getName() + " or " + BufferedImage.class.getName() + ".";
   }
 
   /**
@@ -191,8 +192,9 @@ public class MjpegVideoSequence
     Token			result;
     BufferedImageContainer 	cont;
     Field 			field;
+    ImageBase 			frame;
 
-    m_Video.next();
+    frame = m_Video.next();
     cont = new BufferedImageContainer();
     cont.setImage((BufferedImage) m_Video.getGuiImage());
     field = new Field("Frame", DataType.NUMERIC);
