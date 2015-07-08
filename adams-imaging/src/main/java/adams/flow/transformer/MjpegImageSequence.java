@@ -247,10 +247,10 @@ public class MjpegImageSequence
 
     payload = m_InputToken.getPayload();
     if ((payload instanceof String) || (payload instanceof File)) {
-      if (m_InputToken.getPayload() instanceof String)
-	filename = (String) m_InputToken.getPayload();
+      if (payload instanceof String)
+	filename = (String) payload;
       else
-	filename = ((File) m_InputToken.getPayload()).getAbsolutePath();
+	filename = ((File) payload).getAbsolutePath();
       file = new PlaceholderFile(filename);
 
       try {
