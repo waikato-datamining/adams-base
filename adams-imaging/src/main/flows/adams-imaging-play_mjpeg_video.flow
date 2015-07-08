@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-07-08 17:17:59
+# Date: 2015-07-09 11:40:25
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -15,18 +15,54 @@ adams.flow.control.Flow
 			mjpeg
 	-actor
 		adams.flow.transformer.MjpegImageSequence
+			-output-type
+			BOTH
 	-actor
 		adams.flow.control.Sleep
 			-interval
 			20
 	-actor
-		adams.flow.sink.ImageViewer
-			-writer
-				adams.gui.print.NullWriter
-			-selection-processor
-				adams.gui.visualization.image.selection.NullProcessor
-			-image-overlay
-				adams.gui.visualization.image.NullOverlay
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					frame
+					-actor
+						adams.flow.transformer.GetArrayElement
+					-actor
+						adams.flow.sink.ImageViewer
+							-name
+							Frame
+							-short-title
+							true
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+			-branch
+				adams.flow.control.Sequence
+					-name
+					gui image
+					-actor
+						adams.flow.transformer.GetArrayElement
+							-index
+							2
+					-actor
+						adams.flow.sink.ImageViewer
+							-name
+							GUI Image
+							-short-title
+							true
+							-x
+							-3
+							-writer
+								adams.gui.print.NullWriter
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

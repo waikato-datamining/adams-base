@@ -20,7 +20,13 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.base.BaseURI;
+import adams.core.base.BaseURL;
 import adams.core.io.PlaceholderFile;
+import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -39,13 +45,13 @@ import boofcv.struct.image.ImageFloat32;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
  * Streams the individual frames from the MJPEG video file obtained as input.<br>
- * Images are output as boofcv.struct.image.ImageFloat32.
+ * Images are output as boofcv.struct.image.ImageFloat32 (FRAME) or java.awt.image.BufferedImage (GUIIMAGE).<br>
+ * In case of output type BOTH, an array of frame (first) and GUI image (second) is output.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -54,6 +60,8 @@ import java.util.List;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.base.BaseURL<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.base.BaseURI<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
  * <br><br>
@@ -67,7 +75,7 @@ import java.util.List;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: BoofCVMjpegVideoSequence
+ * &nbsp;&nbsp;&nbsp;default: MjpegImageSequence
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -92,6 +100,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-output-type &lt;FRAME|GUIIMAGE|BOTH&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;The output type: frame, GUI image or both.
+ * &nbsp;&nbsp;&nbsp;default: GUIIMAGE
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -104,8 +117,23 @@ public class MjpegImageSequence
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
 
+  /**
+   * Defines the output.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum OutputType {
+    FRAME,
+    GUIIMAGE,
+    BOTH
+  }
+
   /** the video. */
   protected transient SimpleImageSequence m_Video;
+
+  /** the output type. */
+  protected OutputType m_OutputType;
 
   /**
    * Returns a string describing the object.
@@ -116,7 +144,61 @@ public class MjpegImageSequence
   public String globalInfo() {
     return
       "Streams the individual frames from the MJPEG video file obtained as input.\n"
-      + "Images are output as " + ImageFloat32.class.getName() + " or " + BufferedImage.class.getName() + ".";
+	+ "Images are output as " + ImageFloat32.class.getName() + " (" + OutputType.FRAME + ") "
+	+ "or " + BufferedImage.class.getName() + " (" + OutputType.GUIIMAGE + ").\n"
+	+ "In case of output type " + OutputType.BOTH + ", an array of frame (first) "
+	+ "and GUI image (second) is output.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "output-type", "outputType",
+      OutputType.GUIIMAGE);
+  }
+
+  /**
+   * Sets the output type.
+   *
+   * @param value	the type
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns the output type.
+   *
+   * @return		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "The output type: frame, GUI image or both.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "outputType", m_OutputType);
   }
 
   /**
@@ -125,7 +207,7 @@ public class MjpegImageSequence
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, BaseURL.class, BaseURI.class};
   }
 
   /**
@@ -135,7 +217,16 @@ public class MjpegImageSequence
    */
   @Override
   public Class[] generates() {
-    return new Class[]{BufferedImageContainer.class};
+    switch (m_OutputType) {
+      case FRAME:
+	return new Class[]{BoofCVImageContainer.class};
+      case GUIIMAGE:
+	return new Class[]{BufferedImageContainer.class};
+      case BOTH:
+	return new Class[]{AbstractImageContainer[].class};
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+    }
   }
 
   /**
@@ -146,29 +237,46 @@ public class MjpegImageSequence
   @Override
   protected String doExecute() {
     String		result;
+    Object		payload;
     String		filename;
     PlaceholderFile	file;
+    VideoMjpegCodec 	codec;
+    List<byte[]> 	data;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof String)
-      filename = (String) m_InputToken.getPayload();
-    else
-      filename = ((File) m_InputToken.getPayload()).getAbsolutePath();
-    file = new PlaceholderFile(filename);
+    payload = m_InputToken.getPayload();
+    if ((payload instanceof String) || (payload instanceof File)) {
+      if (m_InputToken.getPayload() instanceof String)
+	filename = (String) m_InputToken.getPayload();
+      else
+	filename = ((File) m_InputToken.getPayload()).getAbsolutePath();
+      file = new PlaceholderFile(filename);
 
-    if (filename.toLowerCase().endsWith("mjpeg")) {
       try {
-	VideoMjpegCodec codec = new VideoMjpegCodec();
-	List<byte[]> data = codec.read(new FileInputStream(file.getAbsolutePath()));
+	codec   = new VideoMjpegCodec();
+	data    = codec.read(new FileInputStream(file.getAbsolutePath()));
 	m_Video = new JpegByteImageSequence<ImageFloat32>(ImageFloat32.class, data, false);
       }
-      catch (FileNotFoundException e) {
-	result = handleException("Failed to open vide", e);
+      catch (Exception e) {
+	result = handleException("Failed to open video file: " + payload, e);
+      }
+    }
+    else if ((payload instanceof BaseURL) || (payload instanceof BaseURI)) {
+      try {
+	codec = new VideoMjpegCodec();
+	if (payload instanceof BaseURL)
+	  data = codec.read(((BaseURL) payload).urlValue().openStream());
+	else
+	  data = codec.read(((BaseURI) payload).uriValue().toURL().openStream());
+	m_Video = new JpegByteImageSequence<ImageFloat32>(ImageFloat32.class, data, false);
+      }
+      catch (Exception e) {
+	result = handleException("Failed to open video stream: " + payload, e);
       }
     }
     else {
-      result = "Unknown movie type, must be an mjpeg: " + filename;
+      result = "Unhandled input type: " + Utils.classToString(payload.getClass());
     }
 
     return result;
@@ -193,17 +301,35 @@ public class MjpegImageSequence
   @Override
   public Token output() {
     Token			result;
-    BufferedImageContainer 	cont;
+    BufferedImageContainer 	bicont;
+    BoofCVImageContainer	boofcont;
     Field 			field;
     ImageBase 			frame;
 
-    frame = m_Video.next();
-    cont = new BufferedImageContainer();
-    cont.setImage((BufferedImage) m_Video.getGuiImage());
-    field = new Field("Frame", DataType.NUMERIC);
-    cont.getReport().addField(field);
-    cont.getReport().setValue(field, m_Video.getFrameNumber());
-    result = new Token(cont);
+    frame    = m_Video.next();
+    field    = new Field("Frame", DataType.NUMERIC);
+    bicont   = null;
+    boofcont = null;
+    if ((m_OutputType == OutputType.BOTH) || (m_OutputType == OutputType.FRAME)) {
+      boofcont = new BoofCVImageContainer();
+      boofcont.setImage(frame);
+      boofcont.getReport().addField(field);
+      boofcont.getReport().setValue(field, m_Video.getFrameNumber());
+    }
+    if ((m_OutputType == OutputType.BOTH) || (m_OutputType == OutputType.GUIIMAGE)) {
+      bicont = new BufferedImageContainer();
+      bicont.setImage((BufferedImage) m_Video.getGuiImage());
+      bicont.getReport().addField(field);
+      bicont.getReport().setValue(field, m_Video.getFrameNumber());
+    }
+
+    if ((boofcont != null) && (bicont != null))
+      result = new Token(new AbstractImageContainer[]{boofcont, bicont});
+    else if (boofcont != null)
+      result = new Token(boofcont);
+    else
+      result = new Token(bicont);
+
     updateProvenance(result);
 
     return result;
