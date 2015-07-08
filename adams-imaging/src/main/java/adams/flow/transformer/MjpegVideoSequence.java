@@ -14,7 +14,7 @@
  */
 
 /*
- * BoofCVMjpegVideoSequence.java
+ * MjpegVideoSequence.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -95,7 +95,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class BoofCVMjpegVideoSequence
+public class MjpegVideoSequence
   extends AbstractTransformer
   implements ProvenanceSupporter {
 

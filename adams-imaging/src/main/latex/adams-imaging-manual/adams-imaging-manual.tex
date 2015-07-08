@@ -305,8 +305,6 @@ There are two BoofCV actors available:
 	\texttt{BoofCVImageContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
-	\item \texttt{transformer.BoofCVMjpegVideoSequence} -- loads the image sequence
-	from MJPEG movies, one frame at a time.
 \end{tight_itemize}
 
 
@@ -503,6 +501,8 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{ImageSharpness} -- determines whether image is in focus or not.
 	\item \textit{LocateObjects} -- provides a framework for algorithms that
 	locate objects in images.
+	\item \texttt{transformer.MjpegVideoSequence} -- loads the image sequence
+	from MJPEG movies, one frame at a time.
 \end{tight_itemize}
 
 \noindent Available sinks:

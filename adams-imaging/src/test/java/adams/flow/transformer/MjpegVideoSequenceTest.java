@@ -14,7 +14,7 @@
  */
 
 /*
- * BoofCVMjpegVideoSequenceTest.java
+ * MjpegVideoSequence.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -28,7 +28,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test for BoofCVMjpegVideoSequence actor.
+ * Test for MjpegVideoSequence actor.
  * <br>
  * NB: dummy test.
  *
@@ -36,7 +36,7 @@ import junit.framework.TestSuite;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  * @version $Revision$
  */
-public class BoofCVMjpegVideoSequenceTest
+public class MjpegVideoSequenceTest
   extends AbstractFlowTest {
 
   /**
@@ -44,7 +44,7 @@ public class BoofCVMjpegVideoSequenceTest
    *
    * @param name	the name of the test
    */
-  public BoofCVMjpegVideoSequenceTest(String name) {
+  public MjpegVideoSequenceTest(String name) {
     super(name);
   }
 
@@ -55,7 +55,7 @@ public class BoofCVMjpegVideoSequenceTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(BoofCVMjpegVideoSequenceTest.class);
+    return new TestSuite(MjpegVideoSequenceTest.class);
   }
 
   /**
