@@ -15,9 +15,14 @@
 
 /**
  * ObjectLocationsOverlayFromReport.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
+
+import adams.data.report.AbstractField;
+import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,11 +31,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.data.report.AbstractField;
-import adams.data.report.Report;
-import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  <!-- globalinfo-start -->
@@ -228,8 +228,8 @@ public class ObjectLocationsOverlayFromReport
     determineLocations(panel.getOwner().getAdditionalProperties());
     
     if (m_Locations.size() > 0) {
+      g.setColor(m_Color);
       for (Rectangle rect: m_Locations) {
-	g.setColor(m_Color);
 	g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
       }
     }
