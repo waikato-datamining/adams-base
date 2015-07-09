@@ -1,0 +1,38 @@
+# Project: adams
+# Date: 2015-07-09 13:23:27
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Displays the images obtained from a movie file.
+	-actor
+		adams.flow.source.SelectFile
+			-stop-if-canceled
+			true
+			-file-chooser-title
+			Select MP4 file
+			-extension
+			mp4
+	-actor
+		adams.flow.transformer.MovieImageSequence
+			-interval
+			200
+	-actor
+		adams.flow.control.Sleep
+			-interval
+			200
+	-actor
+		adams.flow.sink.ImageViewer
+			-short-title
+			true
+			-writer
+				adams.gui.print.NullWriter
+			-zoom
+			-1.0
+			-selection-processor
+				adams.gui.visualization.image.selection.NullProcessor
+			-image-overlay
+				adams.gui.visualization.image.NullOverlay
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
