@@ -47,6 +47,7 @@ import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
@@ -582,12 +583,15 @@ public class FlowPanel
    * @param icon	the name of the icon, null to unset it
    */
   public void setTabIcon(String icon) {
-    int		index;
+    int		    	index;
+    ButtonTabComponent  button;
     
     if (getOwner() != null) {
       index = getOwner().indexOfComponent(this);
-      if (index != -1)
-	getOwner().setIconAt(index, (icon == null) ? null : GUIHelper.getIcon(icon));
+      if (index != -1) {
+        button = (ButtonTabComponent) getOwner().getTabComponentAt(index);
+	button.setIcon((icon == null) ? null : GUIHelper.getIcon(icon));
+      }
     }
   }
 

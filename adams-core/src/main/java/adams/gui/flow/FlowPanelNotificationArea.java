@@ -226,7 +226,7 @@ public class FlowPanelNotificationArea
 	getOwner().getSplitPane().setBottomComponentHidden(true);
       }
       else {
-	getOwner().setTabIcon(m_IsError ? "stop.gif" : "validate_blue.png");
+	getOwner().setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
 	getOwner().getSplitPane().setBottomComponentHidden(false);
       }
     }
