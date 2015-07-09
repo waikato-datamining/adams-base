@@ -39,6 +39,7 @@ import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -65,6 +66,10 @@ import java.awt.event.ActionListener;
 public class ButtonTabComponent extends JPanel {
   private final JTabbedPane pane;
 
+  protected JLabel m_Label;
+
+  protected JButton m_Button;
+
   public ButtonTabComponent(final JTabbedPane pane) {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -75,7 +80,7 @@ public class ButtonTabComponent extends JPanel {
     setOpaque(false);
 
     //make JLabel read titles from JTabbedPane
-    JLabel label = new JLabel() {
+    m_Label = new JLabel() {
       public String getText() {
 	int i = pane.indexOfTabComponent(ButtonTabComponent.this);
 	if (i != -1)
@@ -84,14 +89,22 @@ public class ButtonTabComponent extends JPanel {
       }
     };
 
-    add(label);
+    add(m_Label);
     //add more space between the label and the button
-    label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+    m_Label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
     //tab button
-    JButton button = new TabButton();
-    add(button);
+    m_Button = new TabButton();
+    add(m_Button);
     //add more space to the top of the component
     setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+  }
+
+  public void setIcon(Icon value) {
+    m_Label.setIcon(value);
+  }
+
+  public Icon getIcon() {
+    return m_Label.getIcon();
   }
 
   protected class TabButton
