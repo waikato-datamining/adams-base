@@ -67,10 +67,6 @@ adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
 adams.data.boofcv.multiimageoperation.AbstractBoofCVMultiImageOperation=\
   adams.data.boofcv.multiimageoperation
 
-# the ffmpeg plugins
-adams.flow.sink.ffmpeg.AbstractFFmpegPlugin=\
-  adams.flow.sink.ffmpeg
-
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
