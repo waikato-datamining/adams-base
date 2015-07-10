@@ -20,15 +20,16 @@
 
 package adams.flow.transformer;
 
-import java.io.BufferedInputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
+import adams.core.base.BaseURL;
 import adams.flow.core.Token;
 import org.apache.commons.codec.binary.Base64;
+
+import java.io.BufferedInputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  <!-- globalinfo-start -->
@@ -41,6 +42,7 @@ import org.apache.commons.codec.binary.Base64;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;adams.core.base.BaseURL<br>
  * &nbsp;&nbsp;&nbsp;java.net.URL<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
@@ -175,7 +177,7 @@ public class DownloadContent
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.net.URL.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class, URL.class};
+    return new Class[]{String.class, BaseURL.class, URL.class};
   }
 
   /**
@@ -216,6 +218,8 @@ public class DownloadContent
     try {
       if (m_InputToken.getPayload() instanceof String)
 	url = new URL((String) m_InputToken.getPayload());
+      else if (m_InputToken.getPayload() instanceof BaseURL)
+        url = ((BaseURL) m_InputToken.getPayload()).urlValue();
       else
 	url = (URL) m_InputToken.getPayload();
 
