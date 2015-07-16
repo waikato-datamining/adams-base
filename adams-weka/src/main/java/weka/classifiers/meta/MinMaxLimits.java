@@ -618,10 +618,10 @@ public class MinMaxLimits
     result.append("======\n\n");
     result.append("Lower limit:\n");
     result.append("- handling: " + m_MinHandling + "\n");
-    result.append("- actual limit: " + (m_MinActual == null ? "N/A" : m_MinActual));
+    result.append("- actual limit: " + (m_MinActual == null ? "N/A" : m_MinActual) + "\n");
     result.append("Upper limit\n");
     result.append("- handling: " + m_MaxHandling + "\n");
-    result.append("- actual limit: " + (m_MaxActual == null ? "N/A" : m_MaxActual));
+    result.append("- actual limit: " + (m_MaxActual == null ? "N/A" : m_MaxActual) + "\n");
     result.append("\n\n");
 
     result.append(m_Classifier.toString());
