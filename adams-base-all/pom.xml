@@ -494,26 +494,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>osxappbundle-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>${class.adams.main}</mainClass>
-          <jvmVersion>1.6+</jvmVersion>
-          <vmOptions>${heap.size}</vmOptions>
-          <iconFile>${basedir}/src/main/resources/osxappbundle/adams_icon.icns</iconFile>
-          <javaApplicationStub>${basedir}/src/main/resources/osxappbundle/JavaApplicationStub</javaApplicationStub>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>bundle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      
       <!-- for generating the license information -->
       <plugin>
         <groupId>org.bsc.maven</groupId>

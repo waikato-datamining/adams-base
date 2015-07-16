@@ -164,12 +164,6 @@
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>osxappbundle-maven-plugin</artifactId>
-          <version>1.0-alpha-2</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>latex-maven-plugin</artifactId>
           <version>1.1</version>
           <executions>
