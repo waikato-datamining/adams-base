@@ -15,16 +15,29 @@
 
 /**
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
 import gnu.trove.list.array.TIntArrayList;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -33,18 +46,6 @@ import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Hashtable;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 
 /**
  * Abstract ancestor for panels that store a history of objects, e.g., results
@@ -310,6 +311,12 @@ public abstract class AbstractNamedHistoryPanel<T>
   
   /** whether the current search is using regular expressions. */
   protected boolean m_SearchRegexp;
+
+  /** whether to allow removing of entries. */
+  protected boolean m_AllowRemove;
+
+  /** whether to allow renaming of entries. */
+  protected boolean m_AllowRename;
   
   /**
    * Initializes the members.
@@ -325,6 +332,8 @@ public abstract class AbstractNamedHistoryPanel<T>
     m_PopupCustomizer                = null;
     m_SearchString                   = null;
     m_SearchRegexp                   = false;
+    m_AllowRemove                    = true;
+    m_AllowRename                    = false;
     m_HistoryEntrySelectionListeners = new HashSet<HistoryEntrySelectionListener>();
   }
 
@@ -342,13 +351,32 @@ public abstract class AbstractNamedHistoryPanel<T>
     m_List.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-	if (MouseUtils.isRightClick(e)) {
-	  showPopup(e);
-	  e.consume();
+        if (MouseUtils.isRightClick(e)) {
+          showPopup(e);
+          e.consume();
+        }
+        else {
+          super.mouseClicked(e);
+        }
+      }
+    });
+    m_List.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	if (m_AllowRename) {
+	  if ((e.getKeyCode() == KeyEvent.VK_F2) && (e.getModifiers() == 0)) {
+	    e.consume();
+	    renameEntry();
+	  }
 	}
-	else {
-	  super.mouseClicked(e);
+	if (m_AllowRemove) {
+	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiers() == 0)) {
+	    e.consume();
+	    removeEntries(getSelectedIndices());
+	  }
 	}
+	if (!e.isConsumed())
+	  super.keyPressed(e);
       }
     });
     m_List.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -380,6 +408,42 @@ public abstract class AbstractNamedHistoryPanel<T>
       }
     });
     add(m_PanelSearch, BorderLayout.SOUTH);
+  }
+
+  /**
+   * Sets whether entries can be renamed.
+   *
+   * @param value	true if rename allowed
+   */
+  public void setAllowRename(boolean value) {
+    m_AllowRename = value;
+  }
+
+  /**
+   * Returns whether entries can be renamed.
+   *
+   * @return		true if rename allowed
+   */
+  public boolean getAllowRename() {
+    return m_AllowRename;
+  }
+
+  /**
+   * Sets whether entries can be removed.
+   *
+   * @param value	true if remove allowed
+   */
+  public void setAllowRemove(boolean value) {
+    m_AllowRemove = value;
+  }
+
+  /**
+   * Returns whether entries can be removed.
+   *
+   * @return		true if remove allowed
+   */
+  public boolean getAllowRemove() {
+    return m_AllowRemove;
   }
 
   /**
@@ -449,11 +513,11 @@ public abstract class AbstractNamedHistoryPanel<T>
       menuitem.setText("Remove " + indices.length + " entries");
     else
       menuitem.setText("Remove entry");
+    menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(indices.length >= 1);
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	for (int i = indices.length - 1; i >= 0; i--)
-	  removeEntry(getEntryName(indices[0]));
+	removeEntries(indices);
       }
     });
     result.add(menuitem);
@@ -467,6 +531,20 @@ public abstract class AbstractNamedHistoryPanel<T>
       }
     });
     result.add(menuitem);
+
+    // rename - if enabled
+    if (m_AllowRename) {
+      menuitem = new JMenuItem("Rename...");
+      menuitem.setAccelerator(KeyStroke.getKeyStroke("F2"));
+      menuitem.setEnabled(getSelectedIndices().length == 1);
+      menuitem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+	  renameEntry();
+        }
+      });
+      result.add(menuitem);
+    }
 
     return result;
   }
@@ -805,6 +883,47 @@ public abstract class AbstractNamedHistoryPanel<T>
    */
   public void setSelectedIndex(int value) {
     m_List.setSelectedIndex(value);
+  }
+
+  /**
+   * Removes the entries with the specified indices.
+   *
+   * @param indices	the entries to remove
+   */
+  public void removeEntries(int[] indices) {
+    for (int i = indices.length - 1; i >= 0; i--)
+      removeEntry(getEntryName(indices[i]));
+  }
+
+  /**
+   * Attempts to rename the current entry.
+   *
+   * @return		true if renamed
+   * @see		#getAllowRename()
+   */
+  public boolean renameEntry() {
+    String 	entry;
+    String 	newName;
+    String 	msg;
+
+    if (!m_AllowRename)
+      return false;
+
+    entry = getSelectedEntry();
+    if (entry == null)
+      return false;
+
+    newName = GUIHelper.showInputDialog(this, "Please enter the new name:", entry);
+    if (newName == null)
+      return false;
+    if (entry.equals(newName))
+      return false;
+
+    msg = renameEntry(entry, newName);
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, msg);
+
+    return true;
   }
 
   /**

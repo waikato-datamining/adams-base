@@ -24,7 +24,6 @@ import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
-import adams.gui.core.AbstractNamedHistoryPanel.PopupCustomizer;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -53,8 +52,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class MultiExplorer
-  extends BasePanel
-  implements PopupCustomizer {
+  extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
@@ -121,7 +119,7 @@ public class MultiExplorer
     // left
     m_History = new ExplorerEntryPanel();
     m_History.setPanel(m_PanelExplorer);
-    m_History.setPopupCustomizer(this);
+    m_History.setAllowRename(true);
     m_PanelHistory = new BasePanel(new BorderLayout());
     m_PanelHistory.setMinimumSize(new Dimension(100, 0));
     m_PanelHistory.add(m_History, BorderLayout.CENTER);
@@ -382,36 +380,6 @@ public class MultiExplorer
     }
   }
 
-  /**
-   * Gets called before the popup for the entries is displayed.
-   *
-   * @param entries	the selected entries
-   * @param menu	the menu so far
-   */
-  @Override
-  public void customizePopup(final String[] entries, JPopupMenu menu) {
-    JMenuItem	menuitem;
-    
-    if (entries.length == 1) {
-      menuitem = new JMenuItem("Rename...");
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          String newName = GUIHelper.showInputDialog(
-              MultiExplorer.this, "Please enter the new name:", entries[0]);
-          if (newName == null)
-            return;
-          if (entries[0].equals(newName))
-            return;
-          String msg = m_History.renameEntry(entries[0], newName);
-          if (msg != null)
-            GUIHelper.showErrorMessage(MultiExplorer.this, msg);
-        }
-      });
-      menu.add(menuitem);
-    }
-  }
-  
   /**
    * Opens a workspace.
    */

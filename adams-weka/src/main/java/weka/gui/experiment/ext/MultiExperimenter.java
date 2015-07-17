@@ -15,33 +15,29 @@
 
 /**
  * MultiExperimenter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.experiment.ext;
 
+import adams.core.Utils;
+import adams.env.Environment;
+import adams.gui.core.BaseFrame;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import weka.core.Memory;
+import weka.core.logging.Logger;
+import weka.core.logging.Logger.Level;
+import weka.gui.LookAndFeel;
+
+import javax.swing.JButton;
+import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-
-import weka.core.Memory;
-import weka.core.logging.Logger;
-import weka.core.logging.Logger.Level;
-import weka.gui.LookAndFeel;
-import adams.core.Utils;
-import adams.env.Environment;
-import adams.gui.core.AbstractNamedHistoryPanel.PopupCustomizer;
-import adams.gui.core.BaseFrame;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
 
 /**
  * Extended interface for the WEKA Experimenter, allowing for an arbitrary
@@ -51,8 +47,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision: 8799 $
  */
 public class MultiExperimenter
-  extends BasePanel
-  implements PopupCustomizer {
+  extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
@@ -80,7 +75,7 @@ public class MultiExperimenter
   
   /** the button for removing a panel. */
   protected JButton m_ButtonRemove;
-  
+
   /**
    * For initializing the GUI.
    */
@@ -103,7 +98,7 @@ public class MultiExperimenter
     // left
     m_History = new ExperimenterEntryPanel();
     m_History.setPanel(m_PanelExperimenter);
-    m_History.setPopupCustomizer(this);
+    m_History.setAllowRename(true);
     m_PanelHistory = new BasePanel(new BorderLayout());
     m_PanelHistory.setMinimumSize(new Dimension(100, 0));
     m_PanelHistory.add(m_History, BorderLayout.CENTER);
@@ -292,36 +287,6 @@ public class MultiExperimenter
     }
   }
 
-  /**
-   * Gets called before the popup for the entries is displayed.
-   *
-   * @param entries	the selected entries
-   * @param menu	the menu so far
-   */
-  @Override
-  public void customizePopup(final String[] entries, JPopupMenu menu) {
-    JMenuItem	menuitem;
-    
-    if (entries.length == 1) {
-      menuitem = new JMenuItem("Rename...");
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          String newName = GUIHelper.showInputDialog(
-              MultiExperimenter.this, "Please enter the new name:", entries[0]);
-          if (newName == null)
-            return;
-          if (entries[0].equals(newName))
-            return;
-          String msg = m_History.renameEntry(entries[0], newName);
-          if (msg != null)
-            GUIHelper.showErrorMessage(MultiExperimenter.this, msg);
-        }
-      });
-      menu.add(menuitem);
-    }
-  }
-  
   /**
    * Returns the panel with the experimenter panel entries.
    * 
