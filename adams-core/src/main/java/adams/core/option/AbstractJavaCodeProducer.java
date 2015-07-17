@@ -19,6 +19,7 @@
  */
 package adams.core.option;
 
+import adams.core.NamedCounter;
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
@@ -60,9 +61,6 @@ public abstract class AbstractJavaCodeProducer
   /** whether to output default values as well. */
   protected boolean m_OutputDefaultValues;
 
-  /** the counter for temporary variables. */
-  protected int m_TmpCounter;
-
   /** the indentation level. */
   protected int m_Indentation;
 
@@ -71,6 +69,9 @@ public abstract class AbstractJavaCodeProducer
 
   /** for inserting any additional imports. */
   protected int m_AdditionalImportsInsertLocation;
+
+  /** the named counter for the variables. */
+  protected NamedCounter m_VarNames;
 
   /**
    * Initializes the output data structure.
@@ -90,9 +91,9 @@ public abstract class AbstractJavaCodeProducer
     super.initialize();
 
     m_OutputBuffer      = new StringBuilder();
-    m_TmpCounter        = 0;
     m_Indentation       = 0;
     m_ShortenedImports  = new HashMap<>();
+    m_VarNames          = new NamedCounter();
   }
 
   /**
@@ -402,12 +403,28 @@ public abstract class AbstractJavaCodeProducer
   /**
    * Generates the next name for a temporary variable.
    *
+   * @param base	the base name of the temp variable
+   * @return		the actual name of the temp variable
+   */
+  protected String getNextTmpVariable(String base) {
+    int		index;
+
+    index = m_VarNames.next(base);
+
+    if (index == 1)
+      return base;
+    else
+      return base + index;
+  }
+
+  /**
+   * Generates the next name for a temporary variable.
+   *
    * @param option	the option to generate the variable for
    * @return		the name of the temp variable
    */
   protected String getNextTmpVariable(AbstractOption option) {
-    m_TmpCounter++;
-    return option.getProperty().toLowerCase() + m_TmpCounter;
+    return getNextTmpVariable(option.getProperty().toLowerCase());
   }
 
   /**
@@ -417,8 +434,7 @@ public abstract class AbstractJavaCodeProducer
    * @return		the name of the temp variable
    */
   protected String getNextTmpVariable(Class cls) {
-    m_TmpCounter++;
-    return cls.getSimpleName().toLowerCase() + m_TmpCounter;
+    return getNextTmpVariable(cls.getSimpleName().toLowerCase());
   }
 
   /**
@@ -589,7 +605,7 @@ public abstract class AbstractJavaCodeProducer
 	  m_OutputBuffer.append(getCurrentVariable());
 	  m_OutputBuffer.append(".");
 	  m_OutputBuffer.append(option.getWriteMethod().getName());
-	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[" + tmp + ".size()]));\n");
+	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[0]));\n");
 	}
 	else {
 	  value = currValue;
@@ -651,7 +667,7 @@ public abstract class AbstractJavaCodeProducer
 	  m_OutputBuffer.append(getCurrentVariable());
 	  m_OutputBuffer.append(".");
 	  m_OutputBuffer.append(option.getWriteMethod().getName());
-	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[" + tmp + ".size()]));\n");
+	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[0]));\n");
 	}
 	else {
 	  m_OutputBuffer.append(getIndentation());
@@ -819,8 +835,8 @@ public abstract class AbstractJavaCodeProducer
   protected void preProduce() {
     super.preProduce();
 
-    m_TmpCounter   = 0;
     m_OutputBuffer = new StringBuilder();
+    m_VarNames.clear();
 
     addLicensePreamble();
     addCopyright();
