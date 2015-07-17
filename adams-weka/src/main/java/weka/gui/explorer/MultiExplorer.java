@@ -15,27 +15,10 @@
 
 /**
  * MultiExplorer.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-
-import weka.core.Memory;
-import weka.core.logging.Logger;
-import weka.core.logging.Logger.Level;
-import weka.gui.LookAndFeel;
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
@@ -45,6 +28,22 @@ import adams.gui.core.AbstractNamedHistoryPanel.PopupCustomizer;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import weka.core.Memory;
+import weka.core.logging.Logger;
+import weka.core.logging.Logger.Level;
+import weka.gui.LookAndFeel;
+
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Extended interface for the WEKA Explorer, allowing for an arbitrary
@@ -156,16 +155,26 @@ public class MultiExplorer
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	ExplorerExt oldExplorer = m_History.getEntry(m_History.getSelectedIndex());
 	String name = "Copy of " + m_History.getSelectedEntry();
+	name = GUIHelper.showInputDialog(MultiExplorer.this, "Please enter new name:", name);
+	if (name == null)
+	  return;
+	ExplorerExt oldExplorer = m_History.getEntry(m_History.getSelectedIndex());
+        ExplorerExt newExplorer;
 	name = m_History.newEntryName(name);
-	ExplorerExt newExplorer = new ExplorerExt();
+        try {
+          newExplorer = WorkspaceHelper.copy(oldExplorer);
+        }
+        catch (Exception ex) {
+          System.err.println("Failed to copy explorer instance, creating simple copy.");
+          ex.printStackTrace();
+          newExplorer = new ExplorerExt();
+	  if (oldExplorer.getPreprocessPanel().getInstances() != null)
+	    newExplorer.getPreprocessPanel().setInstances(oldExplorer.getPreprocessPanel().getInstances());
+        }
+	newExplorer.getFileChooser().setCurrentDirectory(oldExplorer.getFileChooser().getCurrentDirectory());
 	newExplorer.setCurrentFile(oldExplorer.getCurrentFile());
-	if (oldExplorer.getPreprocessPanel().getInstances() != null) {
-	  newExplorer.getFileChooser().setCurrentDirectory(oldExplorer.getFileChooser().getCurrentDirectory());
-	  newExplorer.getPreprocessPanel().setInstances(oldExplorer.getPreprocessPanel().getInstances());
-	}
-	addPanel(newExplorer, name);
+        addPanel(newExplorer, name);
       }
     });
     m_PanelButtons.add(m_ButtonCopy);
