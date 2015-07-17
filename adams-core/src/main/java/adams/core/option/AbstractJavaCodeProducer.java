@@ -572,7 +572,7 @@ public abstract class AbstractJavaCodeProducer
 	tmp = getNextTmpVariable(option);
 	if (option.isMultiple()) {
 	  m_OutputBuffer.append(getIndentation());
-	  m_OutputBuffer.append(getClassname(option) + "[] " + tmp + " = new " + getClassname(option) + "[" + Array.getLength(currValue) + "];\n");
+	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<" + getClassname(option) + ">();\n");
 	  for (i = 0; i < Array.getLength(currValue); i++) {
 	    value = Array.get(currValue, i);
 	    tmp2  = getNextTmpVariable(value.getClass());
@@ -580,16 +580,16 @@ public abstract class AbstractJavaCodeProducer
 	    processClassOption(tmp2, value);
 
 	    m_OutputBuffer.append(getIndentation());
-	    m_OutputBuffer.append(tmp + "[" + i + "] = ");
+	    m_OutputBuffer.append(tmp + ".add(");
 	    m_OutputBuffer.append(tmp2);
-	    m_OutputBuffer.append(";\n");
+	    m_OutputBuffer.append(");\n");
 	  }
 
 	  m_OutputBuffer.append(getIndentation());
 	  m_OutputBuffer.append(getCurrentVariable());
 	  m_OutputBuffer.append(".");
 	  m_OutputBuffer.append(option.getWriteMethod().getName());
-	  m_OutputBuffer.append("(" + tmp + ");\n");
+	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[" + tmp + ".size()]));\n");
 	}
 	else {
 	  value = currValue;
@@ -638,20 +638,20 @@ public abstract class AbstractJavaCodeProducer
 	tmp = getNextTmpVariable(option);
 	if (option.isMultiple()) {
 	  m_OutputBuffer.append(getIndentation());
-	  m_OutputBuffer.append(getClassname(option) + "[] " + tmp + " = new " + getClassname(option) + "[" + Array.getLength(currValue) + "];\n");
+	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<" + getClassname(option) + ">();\n");
 	  for (i = 0; i < Array.getLength(currValue); i++) {
 	    value = Array.get(currValue, i);
 	    m_OutputBuffer.append(getIndentation());
-	    m_OutputBuffer.append(tmp + "[" + i + "] = ");
+	    m_OutputBuffer.append(tmp + ".add(");
 	    m_OutputBuffer.append("(" + getClassname(option) + ")");
 	    m_OutputBuffer.append(" ");
-	    m_OutputBuffer.append("argOption.valueOf(\"" + option.toString(value).replace("\"", "\\\"") + "\");\n");
+	    m_OutputBuffer.append("argOption.valueOf(\"" + option.toString(value).replace("\"", "\\\"") + "\"));\n");
 	  }
 	  m_OutputBuffer.append(getIndentation());
 	  m_OutputBuffer.append(getCurrentVariable());
 	  m_OutputBuffer.append(".");
 	  m_OutputBuffer.append(option.getWriteMethod().getName());
-	  m_OutputBuffer.append("(" + tmp + ");\n");
+	  m_OutputBuffer.append("(" + tmp + ".toArray(new " + getClassname(option) + "[" + tmp + ".size()]));\n");
 	}
 	else {
 	  m_OutputBuffer.append(getIndentation());
@@ -697,6 +697,8 @@ public abstract class AbstractJavaCodeProducer
     result.add("adams.core.option.AbstractArgumentOption");
     result.add("adams.core.option.ClassOption");
     result.add("adams.core.option.OptionUtils");
+    result.add("java.util.ArrayList");
+    result.add("java.util.List");
 
     return result;
   }
