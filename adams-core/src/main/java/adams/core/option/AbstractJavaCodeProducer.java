@@ -309,23 +309,32 @@ public abstract class AbstractJavaCodeProducer
     name = cls.getName().replace("$", ".");
 
     // primitive?
-    if (name.indexOf(".") == -1) {
-      if (name.equals("byte"))
-	result = "byte";
-      else if (name.equals("short"))
-	result = "short";
-      else if (name.equals("int"))
-	result = "Integer";
-      else if (name.equals("long"))
-	result = "Long";
-      else if (name.equals("float"))
-	result = "Float";
-      else if (name.equals("double"))
-	result = "Double";
-      else if (name.equals("char"))
-	result = "Character";
-      else
-	throw new IllegalStateException("Unhandled primitive: " + name);
+    if (!name.contains(".")) {
+      switch (name) {
+	case "byte":
+	  result = "byte";
+	  break;
+	case "short":
+	  result = "short";
+	  break;
+	case "int":
+	  result = "Integer";
+	  break;
+	case "long":
+	  result = "Long";
+	  break;
+	case "float":
+	  result = "Float";
+	  break;
+	case "double":
+	  result = "Double";
+	  break;
+	case "char":
+	  result = "Character";
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled primitive: " + name);
+      }
     }
     else {
       if (name.equals(Byte.class.getName()))
@@ -423,7 +432,7 @@ public abstract class AbstractJavaCodeProducer
     Object		currValue;
 
     currValue = getCurrentValue(option);
-    if (m_OutputDefaultValues || !((Boolean) currValue).equals(option.getDefaultValue())) {
+    if (m_OutputDefaultValues || !currValue.equals(option.getDefaultValue())) {
       m_OutputBuffer.append(getIndentation());
       m_OutputBuffer.append(getCurrentVariable());
       m_OutputBuffer.append(".");
