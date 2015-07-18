@@ -126,7 +126,7 @@ public class FlowTabManager
 	m_TabList.add(tab);
 	key = createPropertyKey(tab.getClass());
 	if (!props.hasKey(key)) {
-	  props.setBoolean(key, !(tab instanceof RuntimeTab));
+	  props.setBoolean(key, !(tab instanceof RuntimeTab) && !(tab instanceof ActorQuickEditTab));
 	  update = true;
 	}
 	else if (tab instanceof RuntimeTab) {
