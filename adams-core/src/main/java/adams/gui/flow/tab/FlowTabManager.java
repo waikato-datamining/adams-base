@@ -15,24 +15,9 @@
 
 /**
  * FlowTabManager.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.TreePath;
 
 import adams.core.ClassLocator;
 import adams.core.Properties;
@@ -44,6 +29,21 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreePath;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Specialized JTabbedPane for managing tabs in the flow editor.
@@ -74,6 +74,12 @@ public class FlowTabManager
 
   /** all the available tabs. */
   protected List<AbstractEditorTab> m_TabList;
+
+  /** the swing worker for notifying selection aware tabs. */
+  protected transient SwingWorker m_NotifyingSelectionAwareTabs;
+
+  /** the swing worker for notifying tab change listeners. */
+  protected transient SwingWorker m_NotifyingTabChangeListeners;
 
   /**
    * Initializes the tab manager.
@@ -189,13 +195,29 @@ public class FlowTabManager
    * @param paths	the selected paths
    * @param actors	the selected actors
    */
-  public void notifyTabs(TreePath[] paths, AbstractActor[] actors) {
-    int		i;
+  public void notifyTabs(final TreePath[] paths, final AbstractActor[] actors) {
+    if (m_NotifyingSelectionAwareTabs != null)
+      return;
 
-    for (i = 0; i < getTabCount(); i++) {
-      if (getComponentAt(i) instanceof SelectionAwareEditorTab)
-	((SelectionAwareEditorTab) getComponentAt(i)).actorSelectionChanged(paths, actors);
-    }
+    if (getTabCount() == 0)
+      return;
+
+    m_NotifyingSelectionAwareTabs = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	for (int i = 0; i < getTabCount(); i++) {
+	  if (getComponentAt(i) instanceof SelectionAwareEditorTab)
+	    ((SelectionAwareEditorTab) getComponentAt(i)).actorSelectionChanged(paths, actors);
+	}
+	return null;
+      }
+      @Override
+      protected void done() {
+	m_NotifyingSelectionAwareTabs = null;
+	super.done();
+      }
+    };
+    m_NotifyingSelectionAwareTabs.execute();
   }
   
   /**
@@ -204,13 +226,26 @@ public class FlowTabManager
    *
    * @param panel	the current panel
    */
-  public void notifyTabs(FlowPanel panel) {
-    int		i;
+  public void notifyTabs(final FlowPanel panel) {
+    if (m_NotifyingTabChangeListeners != null)
+      return;
 
-    for (i = 0; i < getTabCount(); i++) {
-      if (getComponentAt(i) instanceof TabChangeAwareEditorTab)
-	((TabChangeAwareEditorTab) getComponentAt(i)).flowPanelChanged(panel);
-    }
+    m_NotifyingTabChangeListeners = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	for (int i = 0; i < getTabCount(); i++) {
+	  if (getComponentAt(i) instanceof TabChangeAwareEditorTab)
+	    ((TabChangeAwareEditorTab) getComponentAt(i)).flowPanelChanged(panel);
+	}
+	return null;
+      }
+      @Override
+      protected void done() {
+	m_NotifyingTabChangeListeners = null;
+	super.done();
+      }
+    };
+    m_NotifyingTabChangeListeners.execute();
   }
 
   /**
@@ -240,7 +275,6 @@ public class FlowTabManager
    * Adds all the available tabs.
    *
    * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
    */
   public void addTabsSubmenu(JMenu menu) {
     final JMenu	submenu;
