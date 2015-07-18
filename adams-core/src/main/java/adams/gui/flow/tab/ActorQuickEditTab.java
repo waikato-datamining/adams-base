@@ -19,7 +19,10 @@
  */
 package adams.gui.flow.tab;
 
+import adams.core.CloneHandler;
 import adams.core.Utils;
+import adams.core.option.OptionHandler;
+import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
@@ -233,7 +236,16 @@ public class ActorQuickEditTab
      * @return 		a copy of the source object
      */
     protected Object copyObject(Object source) {
-      return Utils.deepCopy(source);
+      Object 	result;
+
+      if (source instanceof OptionHandler)
+        result = OptionUtils.shallowCopy(source);
+      else if (source instanceof CloneHandler)
+        result = ((CloneHandler) source).getClone();
+      else
+        result = Utils.deepCopy(source);
+
+      return result;
     }
 
     /**
