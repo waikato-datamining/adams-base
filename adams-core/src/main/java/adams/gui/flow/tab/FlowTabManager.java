@@ -20,10 +20,12 @@
 package adams.gui.flow.tab;
 
 import adams.core.ClassLocator;
+import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
+import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.MouseUtils;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
@@ -52,7 +54,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class FlowTabManager
-  extends BaseTabbedPaneWithTabHiding {
+  extends BaseTabbedPaneWithTabHiding
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3685631497946681192L;
@@ -75,11 +78,17 @@ public class FlowTabManager
   /** all the available tabs. */
   protected List<AbstractEditorTab> m_TabList;
 
-  /** the swing worker for notifying selection aware tabs. */
-  protected transient SwingWorker m_NotifyingSelectionAwareTabs;
+  /** the thread for notifying selection aware tabs. */
+  protected transient Thread m_NotifyingSelectionAwareTabsThread;
 
-  /** the swing worker for notifying tab change listeners. */
-  protected transient SwingWorker m_NotifyingTabChangeListeners;
+  /** the runnable for notifying selection aware tabs. */
+  protected transient DelayedActionRunnable m_NotifyingSelectionAwareTabsRunnable;
+
+  /** the thread for notifying tab change listeners. */
+  protected transient Thread m_NotifyingTabChangeListenersThread;
+
+  /** the runnable for notifying tab change listeners. */
+  protected transient DelayedActionRunnable m_NotifyingTabChangeListenersRunnable;
 
   /**
    * Initializes the tab manager.
@@ -141,6 +150,14 @@ public class FlowTabManager
 
     if (update)
       updateProperties();
+
+    m_NotifyingSelectionAwareTabsRunnable = new DelayedActionRunnable(500, 50);
+    m_NotifyingSelectionAwareTabsThread   = new Thread(m_NotifyingSelectionAwareTabsRunnable);
+    m_NotifyingSelectionAwareTabsThread.start();
+
+    m_NotifyingTabChangeListenersRunnable = new DelayedActionRunnable(500, 50);
+    m_NotifyingTabChangeListenersThread   = new Thread(m_NotifyingTabChangeListenersRunnable);
+    m_NotifyingTabChangeListenersThread.start();
   }
 
   /**
@@ -196,28 +213,30 @@ public class FlowTabManager
    * @param actors	the selected actors
    */
   public void notifyTabs(final TreePath[] paths, final AbstractActor[] actors) {
-    if (m_NotifyingSelectionAwareTabs != null)
-      return;
+    DelayedActionRunnable.AbstractAction	action;
 
     if (getTabCount() == 0)
       return;
 
-    m_NotifyingSelectionAwareTabs = new SwingWorker() {
+    action = new DelayedActionRunnable.AbstractAction(m_NotifyingSelectionAwareTabsRunnable) {
       @Override
-      protected Object doInBackground() throws Exception {
-	for (int i = 0; i < getTabCount(); i++) {
-	  if (getComponentAt(i) instanceof SelectionAwareEditorTab)
-	    ((SelectionAwareEditorTab) getComponentAt(i)).actorSelectionChanged(paths, actors);
-	}
+      public String execute() {
+	SwingWorker worker = new SwingWorker() {
+	  @Override
+	  protected Object doInBackground() throws Exception {
+	    for (int i = 0; i < getTabCount(); i++) {
+	      if (getComponentAt(i) instanceof SelectionAwareEditorTab)
+		((SelectionAwareEditorTab) getComponentAt(i)).actorSelectionChanged(paths, actors);
+	    }
+	    return null;
+	  }
+	};
+	worker.execute();
 	return null;
       }
-      @Override
-      protected void done() {
-	m_NotifyingSelectionAwareTabs = null;
-	super.done();
-      }
     };
-    m_NotifyingSelectionAwareTabs.execute();
+
+    m_NotifyingSelectionAwareTabsRunnable.queue(action);
   }
   
   /**
@@ -227,25 +246,27 @@ public class FlowTabManager
    * @param panel	the current panel
    */
   public void notifyTabs(final FlowPanel panel) {
-    if (m_NotifyingTabChangeListeners != null)
-      return;
+    DelayedActionRunnable.AbstractAction	action;
 
-    m_NotifyingTabChangeListeners = new SwingWorker() {
+    action = new DelayedActionRunnable.AbstractAction(m_NotifyingTabChangeListenersRunnable) {
       @Override
-      protected Object doInBackground() throws Exception {
-	for (int i = 0; i < getTabCount(); i++) {
-	  if (getComponentAt(i) instanceof TabChangeAwareEditorTab)
-	    ((TabChangeAwareEditorTab) getComponentAt(i)).flowPanelChanged(panel);
-	}
+      public String execute() {
+	SwingWorker worker = new SwingWorker() {
+	  @Override
+	  protected Object doInBackground() throws Exception {
+	    for (int i = 0; i < getTabCount(); i++) {
+	      if (getComponentAt(i) instanceof TabChangeAwareEditorTab)
+		((TabChangeAwareEditorTab) getComponentAt(i)).flowPanelChanged(panel);
+	    }
+	    return null;
+	  }
+	};
+	worker.execute();
 	return null;
       }
-      @Override
-      protected void done() {
-	m_NotifyingTabChangeListeners = null;
-	super.done();
-      }
     };
-    m_NotifyingTabChangeListeners.execute();
+
+    m_NotifyingTabChangeListenersRunnable.queue(action);
   }
 
   /**
@@ -472,5 +493,22 @@ public class FlowTabManager
     }
 
     return m_Properties;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    if (m_NotifyingTabChangeListenersRunnable != null) {
+      m_NotifyingTabChangeListenersRunnable.stopExecution();
+      m_NotifyingTabChangeListenersRunnable = null;
+      m_NotifyingTabChangeListenersThread   = null;
+    }
+    if (m_NotifyingSelectionAwareTabsRunnable != null) {
+      m_NotifyingSelectionAwareTabsRunnable.stopExecution();
+      m_NotifyingSelectionAwareTabsRunnable = null;
+      m_NotifyingSelectionAwareTabsThread   = null;
+    }
   }
 }

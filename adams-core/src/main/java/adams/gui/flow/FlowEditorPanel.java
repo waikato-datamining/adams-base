@@ -1637,6 +1637,7 @@ public class FlowEditorPanel
     m_FlowPanels.cleanUp();
     for (FlowEditorAction action: m_MenuItems)
       action.cleanUp();
+    m_Tabs.cleanUp();
   }
 
   /**
