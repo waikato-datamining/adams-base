@@ -71,7 +71,7 @@ public class About
   @Override
   public void launch() {
     AboutBoxPanel panel = new AboutBoxPanel();
-    panel.addInfo("<html><font color='red'>A</font>dvanced <font color='red'>D</font>ata mining and <font color='red'>M</font>achine learning <font color='red'>S</font>ystem</html>");
+    panel.addInfo("<html><font color='blue'>A</font>dvanced <font color='blue'>D</font>ata mining and <font color='blue'>M</font>achine learning <font color='blue'>S</font>ystem</html>");
     panel.addInfo("(c) 2009-2015 University of Waikato");
     panel.addInfo("Hamilton, New Zealand");
     ChildFrame frame = createChildFrame(panel);
