@@ -161,7 +161,7 @@ public class MultiExplorer
         ExplorerExt newExplorer;
 	name = m_History.newEntryName(name);
         try {
-          newExplorer = WorkspaceHelper.copy(oldExplorer);
+          newExplorer = WorkspaceHelper.copy(oldExplorer, true);
         }
         catch (Exception ex) {
           System.err.println("Failed to copy explorer instance, creating simple copy.");

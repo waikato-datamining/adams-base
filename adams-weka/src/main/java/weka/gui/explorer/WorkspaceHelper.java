@@ -142,9 +142,10 @@ public class WorkspaceHelper {
    * @param expext	the explorer to serialize
    * @param name	the name of the explorer
    * @param oos		the output stream
+   * @param skipHistory	whether to skip copying the history
    * @throws Exception	if serialization fails
    */
-  protected static void serialize(ExplorerExt expext, String name, ObjectOutputStream oos) throws Exception {
+  protected static void serialize(ExplorerExt expext, String name, ObjectOutputStream oos, boolean skipHistory) throws Exception {
     AbstractExplorerPanelHandler[] 	handlers;
     ArrayList<ExplorerPanel> 		panels;
 
@@ -160,6 +161,7 @@ public class WorkspaceHelper {
     for (ExplorerPanel panel : panels) {
       if (m_AdditionalHandlers.containsKey(panel.getClass())) {
 	AbstractExplorerPanelHandler handler = m_AdditionalHandlers.get(panel.getClass());
+	handler.setSkipHistory(skipHistory);
 	oos.writeObject(panel.getClass().getName());
 	oos.writeObject(handler.getClass().getName());
 	oos.writeObject(handler.serialize(panel));
@@ -167,6 +169,7 @@ public class WorkspaceHelper {
       else {
 	for (AbstractExplorerPanelHandler handler : handlers) {
 	  if (handler.handles(panel)) {
+	    handler.setSkipHistory(skipHistory);
 	    oos.writeObject(panel.getClass().getName());
 	    oos.writeObject(handler.getClass().getName());
 	    oos.writeObject(handler.serialize(panel));
@@ -198,7 +201,7 @@ public class WorkspaceHelper {
     for (i = 0; i < explorer.getEntryPanel().count(); i++) {
       name = explorer.getEntryPanel().getEntryName(i);
       expext = explorer.getEntryPanel().getEntry(i);
-      serialize(expext, name, oos);
+      serialize(expext, name, oos, false);
     }
 
     FileUtils.closeQuietly(oos);
@@ -291,10 +294,11 @@ public class WorkspaceHelper {
    * Copies an explorer instance.
    *
    * @param expext	the explorer instance to copy
+   * @param skipHistory	whether to skip copying the history
    * @return		the copy
    * @throws Exception	if copying fails
    */
-  public static ExplorerExt copy(ExplorerExt expext) throws Exception {
+  public static ExplorerExt copy(ExplorerExt expext, boolean skipHistory) throws Exception {
     Object[]			exp;
     ByteArrayOutputStream	bos;
     ObjectOutputStream		oos;
@@ -304,7 +308,7 @@ public class WorkspaceHelper {
 
     bos = new ByteArrayOutputStream();
     oos = new ObjectOutputStream(bos);
-    serialize(expext, "dummy", oos);
+    serialize(expext, "dummy", oos, skipHistory);
     data = bos.toByteArray();
 
     bis = new ByteArrayInputStream(data);

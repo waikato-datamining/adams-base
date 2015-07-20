@@ -15,25 +15,24 @@
 
 /**
  * AbstractExplorerPanelHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Vector;
+import adams.core.ClassLister;
+import weka.gui.GenericObjectEditor;
+import weka.gui.ResultHistoryPanel;
+import weka.gui.explorer.Explorer.ExplorerPanel;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.text.JTextComponent;
-
-import weka.gui.GenericObjectEditor;
-import weka.gui.ResultHistoryPanel;
-import weka.gui.explorer.Explorer.ExplorerPanel;
-import adams.core.ClassLister;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * Ancestor for handlers for specific Explorer panels.
@@ -46,6 +45,27 @@ public abstract class AbstractExplorerPanelHandler
 
   /** for serialization. */
   private static final long serialVersionUID = 8194827957975338306L;
+
+  /** whether to skip the history panels. */
+  protected boolean m_SkipHistory;
+
+  /**
+   * Sets whether to skip history panels.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipHistory(boolean value) {
+    m_SkipHistory = value;
+  }
+
+  /**
+   * Returns whether history panels are skipped.
+   *
+   * @return		true if skipped
+   */
+  public boolean getSkipHistory() {
+    return m_SkipHistory;
+  }
 
   /**
    * Checks whether this handler can process the given panel.
@@ -76,6 +96,7 @@ public abstract class AbstractExplorerPanelHandler
    * 
    * @param history	the history to serialize
    * @return		the serialized content
+   * @see		#getSkipHistory()
    */
   protected Object serialize(ResultHistoryPanel history) {
     ArrayList	result;
@@ -84,15 +105,20 @@ public abstract class AbstractExplorerPanelHandler
     Object[]	data;
     
     result = new ArrayList();
-    
-    result.add(history.getList().getSelectedIndices());
-    
-    for (i = 0; i < history.getList().getModel().getSize(); i++) {
-      data = new Object[2];
-      name = history.getNameAtIndex(i);
-      data[0] = name;
-      data[1] = history.getNamedBuffer(name);
-      result.add(data);
+
+    if (!m_SkipHistory) {
+      result.add(history.getList().getSelectedIndices());
+
+      for (i = 0; i < history.getList().getModel().getSize(); i++) {
+	data = new Object[2];
+	name = history.getNameAtIndex(i);
+	data[0] = name;
+	data[1] = history.getNamedBuffer(name);
+	result.add(data);
+      }
+    }
+    else {
+      result.add(new int[0]);
     }
     
     return result;
