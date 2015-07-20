@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2015-07-20 22:21:51
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	This flow trains a FIMTDD regressor on a random tree data stream\nand stores the generated model in \"output/fimtdd.model\".
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOARegressorSetup
+	-actor
+		adams.flow.source.MOAStream
+			-stream
+			moa.streams.generators.RandomTreeGenerator
+			-chunk-size
+			1000
+	-actor
+		adams.flow.transformer.MOATrainRegressor
+			-name
+			MOARegressor
+			-output-interval
+			10000
+	-actor
+		adams.flow.sink.MOAModelWriter
+			-output
+			${EXAMPLE_FLOWS}/output/fimtdd.model
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

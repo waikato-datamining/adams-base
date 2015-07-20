@@ -1,0 +1,136 @@
+# Project: adams
+# Date: 2015-07-20 21:55:08
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Compares the mean absolute error of a FIMTDD regressor\nwith SGD on a RandomTree data stream.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOARegressorSetup
+					-name
+					FIMTDD
+			-actor
+				adams.flow.source.MOARegressorSetup
+					-name
+					SGD
+					-regressor
+					moa.classifiers.functions.SGD
+			-actor
+				adams.flow.sink.SequencePlotter
+					-writer
+						adams.gui.print.NullWriter
+					-paintlet
+						adams.gui.visualization.sequence.LinePaintlet
+							-paint-all
+							true
+					-overlay-paintlet
+						adams.gui.visualization.sequence.CirclePaintlet
+					-marker-paintlet
+						adams.flow.sink.sequenceplotter.NoMarkers
+					-error-paintlet
+						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
+					-color-provider
+						adams.gui.visualization.core.CustomColorProvider
+							-color
+							#0000ff
+							-color
+							#ff0000
+							-color
+							#00ffff
+							-color
+							#00ff00
+							-color
+							#ff00ff
+							-color
+							#ffc800
+							-color
+							#ffafaf
+					-overlay-color-provider
+						adams.gui.visualization.core.DefaultColorProvider
+					-title
+					Regressor comparison
+					-axis-x
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Evaluation step
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							40
+							-custom-format
+							0
+					-axis-y
+						adams.gui.visualization.core.AxisPanelOptions
+							-label
+							Mean absolute error
+							-tick-generator
+								adams.gui.visualization.core.axis.FancyTickGenerator
+							-nth-value
+							2
+							-width
+							60
+							-custom-format
+							0.0
+					-plot-updater
+						adams.flow.sink.sequenceplotter.SimplePlotUpdater
+					-post-processor
+						adams.flow.sink.sequenceplotter.PassThrough
+	-actor
+		adams.flow.source.MOAStream
+			-stream
+			moa.streams.generators.RandomTreeGenerator
+	-actor
+		adams.flow.control.Branch
+			-branch
+				adams.flow.control.Sequence
+					-name
+					hoeffding
+					-actor
+						adams.flow.transformer.MOARegressorEvaluation
+							-regressor
+							FIMTDD
+							-output-interval
+							100
+					-actor
+						adams.flow.transformer.MOAMeasurementsFilter
+							-regexp
+							mean absolute error.*
+					-actor
+						adams.flow.transformer.MOAMeasurementPlotGenerator
+							-prefix
+							f: 
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SequencePlotter
+			-branch
+				adams.flow.control.Sequence
+					-name
+					naivebayes
+					-actor
+						adams.flow.transformer.MOARegressorEvaluation
+							-regressor
+							SGD
+							-output-interval
+							100
+					-actor
+						adams.flow.transformer.MOAMeasurementsFilter
+							-regexp
+							mean absolute error.*
+					-actor
+						adams.flow.transformer.MOAMeasurementPlotGenerator
+							-prefix
+							s: 
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							SequencePlotter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

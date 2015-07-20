@@ -105,7 +105,7 @@ with a stream generator and displays it (see Figure \ref{moa-stream-output}).
 \clearpage
 \newpage
 \section{Classification}
-Classification and regression in the flow work very similar to ones for WEKA.
+Classification in the flow work very similar to ones for WEKA.
 But instead of performing cross-validation or train/test splits, you use a
 special stream evaluator which performs an evaluation every X instances that
 come through. The transformer performing the evaluation is 
@@ -176,6 +176,18 @@ the \textit{MOAClassifierEvaluation} outputs into useful output:
   \caption{The classification result.}
   \label{moa-classifying-output}
 \end{figure}
+
+\clearpage
+\newpage
+\section{Regression}
+Regression is very similar to classification with the corresponding actors
+below:
+\begin{tight_itemize}
+  \item \textit{source.MOARegressorSetup} -- outputs a regressor object.
+  \item \textit{transformer.MOARegressing} -- makes predictions on the incoming data.
+  \item \textit{transformer.MOARegressorEvaluation} -- evaluates a regressor on a data stream.
+  \item \textit{transformer.MOATrainRegressor} -- builds a regressor model on a data stream.
+\end{tight_itemize}
 
 \clearpage
 \newpage
