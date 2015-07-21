@@ -25,11 +25,9 @@ import adams.data.io.input.DefaultSimpleCSVReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.Report;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.util.List;
 
@@ -87,12 +85,10 @@ public class ReportHandler
   protected PreviewPanel createPreview(File file) {
     BasePanel				result;
     List<Report> 			reports;
-    ReportFactory.Model			model;
-    SortableAndSearchableTable		table;
     DefaultSimpleCSVReportReader	simpleCSV;
     DefaultSimpleReportReader		simple;
+    ReportFactory.Table			table;
 
-    result = new BasePanel(new BorderLayout());
     if (file.getName().endsWith("csv")) {
       simpleCSV = new DefaultSimpleCSVReportReader();
       simpleCSV.setInput(new PlaceholderFile(file));
@@ -104,13 +100,10 @@ public class ReportHandler
       reports = simple.read();
     }
     if (reports.size() == 0)
-      model = new ReportFactory.Model();
-    else
-      model = new ReportFactory.Model(reports.get(0));
-    table  = new ReportFactory.Table(model);
-    table.setAutoResizeMode(ReportFactory.Table.AUTO_RESIZE_OFF);
-    table.setOptimalColumnWidth();
-    result.add(new BaseScrollPane(table));
+      return new PreviewPanel(new NoPreviewAvailablePanel());
+
+    result = ReportFactory.getPanel(reports.get(0), true);
+    table  = (ReportFactory.Table) GUIHelper.findFirstComponent(result, ReportFactory.Table.class, true, true);
 
     return new PreviewPanel(result, table);
   }
