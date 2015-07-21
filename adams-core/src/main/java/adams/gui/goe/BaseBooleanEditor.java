@@ -15,12 +15,22 @@
 
 /*
  * BaseBooleanEditor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.base.BaseBoolean;
+import adams.core.option.AbstractOption;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -35,17 +45,6 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.core.Utils;
-import adams.core.base.BaseBoolean;
-import adams.core.option.AbstractOption;
-import adams.gui.dialog.ApprovalDialog;
-
 /**
  * A PropertyEditor for {@link BaseBoolean} objects.
  *
@@ -56,8 +55,8 @@ public class BaseBooleanEditor
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler, MultiSelectionEditor {
 
-  /** The text field with the value. */
-  protected JComboBox m_TextValue;
+  /** The combobox with the values. */
+  protected JComboBox m_ComboBoxValue;
 
   /**
    * Returns the {@link BaseBoolean} as string.
@@ -184,8 +183,8 @@ public class BaseBooleanEditor
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.CENTER);
-    m_TextValue = new JComboBox(new String[]{"false", "true"});
-    m_TextValue.addKeyListener(new KeyAdapter() {
+    m_ComboBoxValue = new JComboBox(new String[]{"false", "true"});
+    m_ComboBoxValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -203,9 +202,9 @@ public class BaseBooleanEditor
     });
     label = new JLabel("Boolean value");
     label.setDisplayedMnemonic('v');
-    label.setLabelFor(m_TextValue);
+    label.setLabelFor(m_ComboBoxValue);
     panel.add(label);
-    panel.add(m_TextValue);
+    panel.add(m_ComboBoxValue);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
@@ -257,7 +256,7 @@ public class BaseBooleanEditor
   protected void acceptInput() {
     String 	s;
 
-    s = m_TextValue.getSelectedItem().toString();
+    s = m_ComboBoxValue.getSelectedItem().toString();
     if (isValid(s) && !isUnchanged(s))
       setValue(parse(s));
     closeDialog(APPROVE_OPTION);
@@ -276,10 +275,10 @@ public class BaseBooleanEditor
   @Override
   protected void initForDisplay() {
     super.initForDisplay();
-    if (!m_TextValue.getSelectedItem().toString().equals("" + getValue()))
-      m_TextValue.setSelectedItem("" + getValue());
-    m_TextValue.setToolTipText(((BaseBoolean) getValue()).getTipText());
-    m_TextValue.grabFocus();
+    if (!m_ComboBoxValue.getSelectedItem().toString().equals("" + getValue()))
+      m_ComboBoxValue.setSelectedItem("" + getValue());
+    m_ComboBoxValue.setToolTipText(((BaseBoolean) getValue()).getTipText());
+    m_ComboBoxValue.grabFocus();
   }
 
   /**
