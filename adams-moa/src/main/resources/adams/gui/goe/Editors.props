@@ -16,3 +16,4 @@
 # Version: $Revision$
 
 moa.options.ClassOption=adams.gui.goe.MOAClassOptionEditor
+adams.core.base.BaseMeasureCollection=adams.gui.goe.BaseMeasureCollectionEditor
