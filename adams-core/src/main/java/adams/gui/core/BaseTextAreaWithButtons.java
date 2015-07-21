@@ -15,14 +15,13 @@
 
 /*
  * BaseTextAreaWithButtons.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.awt.Font;
-
 import javax.swing.text.Document;
+import java.awt.Font;
 
 /**
  * Graphical component that consists of a BaseTable with buttons on the
@@ -250,5 +249,23 @@ public class BaseTextAreaWithButtons
    */
   public Font getTextFont() {
     return m_Component.getFont();
+  }
+
+  /**
+   * Sets the caret position.
+   *
+   * @param pos 	the position (0-based)
+   */
+  public void setCaretPosition(int pos) {
+    m_Component.setCaretPosition(pos);
+  }
+
+  /**
+   * Returns the current caret position.
+   *
+   * @return		the position (0-based)
+   */
+  public int getCaretPosition() {
+    return m_Component.getCaretPosition();
   }
 }
