@@ -887,6 +887,7 @@ public class MOAClusterVisualization
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_StreamPanel.setActiveXDim(m_ComboBoxDimX.getSelectedIndex());
+	m_StreamPanel.repaint();
       }
     });
     m_ComboBoxDimY = new JComboBox(new String[0]);
@@ -894,6 +895,7 @@ public class MOAClusterVisualization
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_StreamPanel.setActiveYDim(m_ComboBoxDimY.getSelectedIndex());
+	m_StreamPanel.repaint();
       }
     });
 
