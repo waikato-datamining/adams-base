@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2015-07-21 21:30:34
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Visualizes the clustering of the data stream.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.source.MOAClustererSetup
+					-clusterer
+					moa.clusterers.ClusterGenerator
+	-actor
+		adams.flow.source.MOAStream
+			-stream
+			moa.streams.clustering.RandomRBFGeneratorEvents -n
+			-num-examples
+			500000
+			-chunk-size
+			1000
+	-actor
+		adams.flow.sink.MOAClusterVisualization
+			-writer
+				adams.gui.print.NullWriter
+			-measure
+			F1
+			-measure
+			SSQ
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
