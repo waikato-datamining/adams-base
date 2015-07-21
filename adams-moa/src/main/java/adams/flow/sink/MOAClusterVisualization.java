@@ -46,6 +46,8 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -185,6 +187,21 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-draw-ground-truth &lt;boolean&gt; (property: drawGroundTruth)
+ * &nbsp;&nbsp;&nbsp;Whether to draw the ground truth.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-draw-micro-clustering &lt;boolean&gt; (property: drawMicroClustering)
+ * &nbsp;&nbsp;&nbsp;Whether to draw the micro clustering.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-draw-clustering &lt;boolean&gt; (property: drawClustering)
+ * &nbsp;&nbsp;&nbsp;Whether to draw the clustering.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author Jansen moa@cs.rwth-aachen.de (original MOA code)
@@ -220,6 +237,15 @@ public class MOAClusterVisualization
 
   /** whether to draw the points. */
   protected boolean m_DrawPoints;
+
+  /** whether to draw the ground truth. */
+  protected boolean m_DrawGroundTruth;
+
+  /** whether to draw the micro clustering. */
+  protected boolean m_DrawMicroClustering;
+
+  /** whether to draw the clustering. */
+  protected boolean m_DrawClustering;
 
   /** amount of instances to process in one step */
   protected int m_ProcessFrequency;
@@ -265,6 +291,12 @@ public class MOAClusterVisualization
 
   /** the speed counter. */
   protected int m_SpeedCounter;
+
+  /** the combobox for the X dimension. */
+  protected JComboBox m_ComboBoxDimX;
+
+  /** the combobox for the Y dimension. */
+  protected JComboBox m_ComboBoxDimY;
 
   /**
    * Returns a string describing the object.
@@ -322,6 +354,18 @@ public class MOAClusterVisualization
 
     m_OptionManager.add(
       "draw-points", "drawPoints",
+      true);
+
+    m_OptionManager.add(
+      "draw-ground-truth", "drawGroundTruth",
+      true);
+
+    m_OptionManager.add(
+      "draw-micro-clustering", "drawMicroClustering",
+      true);
+
+    m_OptionManager.add(
+      "draw-clustering", "drawClustering",
       true);
   }
 
@@ -468,6 +512,93 @@ public class MOAClusterVisualization
    */
   public String drawPointsTipText() {
     return "Whether to draw the points.";
+  }
+
+  /**
+   * Sets whether to draw the ground truth.
+   *
+   * @param value	true if to draw
+   */
+  public void setDrawGroundTruth(boolean value) {
+    m_DrawGroundTruth = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the ground truth.
+   *
+   * @return		true if to draw
+   */
+  public boolean getDrawGroundTruth() {
+    return m_DrawGroundTruth;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String drawGroundTruthTipText() {
+    return "Whether to draw the ground truth.";
+  }
+
+  /**
+   * Sets whether to draw the micro clustering.
+   *
+   * @param value	true if to draw
+   */
+  public void setDrawMicroClustering(boolean value) {
+    m_DrawMicroClustering = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the micro clustering.
+   *
+   * @return		true if to draw
+   */
+  public boolean getDrawMicroClustering() {
+    return m_DrawMicroClustering;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String drawMicroClusteringTipText() {
+    return "Whether to draw the micro clustering.";
+  }
+
+  /**
+   * Sets whether to draw the clustering.
+   *
+   * @param value	true if to draw
+   */
+  public void setDrawClustering(boolean value) {
+    m_DrawClustering = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the clustering.
+   *
+   * @return		true if to draw
+   */
+  public boolean getDrawClustering() {
+    return m_DrawClustering;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String drawClusteringTipText() {
+    return "Whether to draw the clustering.";
   }
 
   /**
@@ -625,12 +756,18 @@ public class MOAClusterVisualization
   @Override
   protected void display(Token token) {
     List<Instance>	list;
+    boolean		first;
+    int			i;
+    List<String>	atts;
+
+    first = false;
 
     if (m_ActualClusterer == null) {
       m_ActualClusterer = getClustererInstance();
       if (m_ActualClusterer == null)
 	throw new IllegalStateException("Failed to get instance of clusterer '" + m_Clusterer + "'!");
       m_ActualClusterer.prepareForUse();
+      first = true;
     }
 
     if (m_ActualMeasures.length == 0)
@@ -644,6 +781,22 @@ public class MOAClusterVisualization
     }
     else {
       list = new ArrayList<>((Instances) token.getPayload());
+    }
+
+    // dimensions
+    if (first) {
+      atts = new ArrayList<>();
+      for (i = 0; i < list.get(0).dataset().numAttributes(); i++) {
+	if (i == list.get(0).classIndex())
+	  continue;
+	atts.add(list.get(0).dataset().attribute(i).name());
+      }
+      if (atts.size() > 0) {
+	m_ComboBoxDimX.setModel(new DefaultComboBoxModel<String>(atts.toArray(new String[atts.size()])));
+	m_ComboBoxDimX.setSelectedIndex(0);
+	m_ComboBoxDimY.setModel(new DefaultComboBoxModel<String>(atts.toArray(new String[atts.size()])));
+	m_ComboBoxDimY.setSelectedIndex(atts.size() > 1 ? 1 : 0);
+      }
     }
 
     for (Instance item : list) {
@@ -702,8 +855,9 @@ public class MOAClusterVisualization
     BasePanel			result;
     BaseSplitPane		split;
     BaseTabbedPane		tabs;
+    JPanel			panelClusters;
     JPanel			panelGraph;
-    BaseScrollPane		graphScrollPanel;
+    BaseScrollPane 		graphScrollPanel;
     JPanel 			panel;
     JPanel 			panel2;
     JLabel 			label;
@@ -718,8 +872,49 @@ public class MOAClusterVisualization
     split.setOneTouchExpandable(true);
     result.add(split, BorderLayout.CENTER);
 
+    panelClusters = new JPanel(new BorderLayout());
+    split.setTopComponent(panelClusters);
+
     m_StreamPanel = new StreamPanel();
-    split.setTopComponent(new BaseScrollPane(m_StreamPanel));
+    m_StreamPanel.setGroundTruthLayerVisibility(m_DrawGroundTruth);
+    m_StreamPanel.setMicroLayerVisibility(m_DrawMicroClustering);
+    m_StreamPanel.setMacroLayerVisibility(m_DrawClustering);
+    m_StreamPanel.setPointVisibility(m_DrawPoints);
+    panelClusters.add(new BaseScrollPane(m_StreamPanel), BorderLayout.CENTER);
+
+    m_ComboBoxDimX = new JComboBox(new String[0]);
+    m_ComboBoxDimX.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	m_StreamPanel.setActiveXDim(m_ComboBoxDimX.getSelectedIndex());
+      }
+    });
+    m_ComboBoxDimY = new JComboBox(new String[0]);
+    m_ComboBoxDimY.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	m_StreamPanel.setActiveYDim(m_ComboBoxDimY.getSelectedIndex());
+      }
+    });
+
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+    panelClusters.add(panel, BorderLayout.WEST);
+
+    panel2 = new JPanel(new GridLayout(4, 1));
+    panel.add(panel2, BorderLayout.NORTH);
+
+    label = new JLabel("Dim X");
+    label.setDisplayedMnemonic('X');
+    label.setLabelFor(m_ComboBoxDimX);
+    panel2.add(label);
+    panel2.add(m_ComboBoxDimX);
+
+    label = new JLabel("Dim Y");
+    label.setDisplayedMnemonic('Y');
+    label.setLabelFor(m_ComboBoxDimY);
+    panel2.add(label);
+    panel2.add(m_ComboBoxDimY);
 
     tabs = new BaseTabbedPane();
     split.setBottomComponent(tabs);
@@ -743,6 +938,7 @@ public class MOAClusterVisualization
 
     // measures
     panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     panelGraph.add(panel, BorderLayout.WEST);
 
     panel2   = new JPanel(new GridLayout(2, 1));
@@ -784,6 +980,7 @@ public class MOAClusterVisualization
 
     // zoom
     panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     panelGraph.add(panel, BorderLayout.EAST);
 
     panel2 = new JPanel(new GridLayout(4, 1));
