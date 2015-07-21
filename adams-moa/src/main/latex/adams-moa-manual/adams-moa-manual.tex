@@ -184,18 +184,29 @@ Regression is very similar to classification with the corresponding actors
 below:
 \begin{tight_itemize}
   \item \textit{source.MOARegressorSetup} -- outputs a regressor object.
-  \item \textit{transformer.MOARegressing} -- makes predictions on the incoming data.
-  \item \textit{transformer.MOARegressorEvaluation} -- evaluates a regressor on a data stream.
-  \item \textit{transformer.MOATrainRegressor} -- builds a regressor model on a data stream.
+  \item \textit{transformer.MOARegressing} -- makes predictions on the incoming
+  data\footnote{adams-moa-regressing\_with\_model.flow}.
+  \item \textit{transformer.MOARegressorEvaluation} -- evaluates a regressor on
+  a data stream\footnote{adams-moa-regressor\_evaluation.flow}.
+  \item \textit{transformer.MOATrainRegressor} -- builds a regressor model on
+  a data stream.
 \end{tight_itemize}
 
 \clearpage
 \newpage
 \section{Clustering}
-Clustering is still under active development in MOA and not yet ready 
-for prime time. The actors, however, are already in place. This means,
-as soon as MOA's API has stabilized, a full integration of stream 
-clustering techniques will be made available. Stay tuned!
+At the moment, only cluster visualization is available in the flow\footnote{adams-moa-cluster\_visualization.flow}:
+\begin{tight_itemize}
+  \item \textit{MOAClustererSetup} -- source for defining cluster algorithm setups
+  \item \textit{MOAClusterVisualization} -- sink that visualizes clusterings
+\end{tight_itemize}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/moa-cluster_visualization.png}
+  \caption{Cluster visualization.}
+  \label{moa-cluster_visualization}
+\end{figure}
 
 \clearpage
 \newpage
