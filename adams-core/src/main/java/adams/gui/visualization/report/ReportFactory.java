@@ -21,6 +21,7 @@
 package adams.gui.visualization.report;
 
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.option.AbstractOption;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -32,12 +33,14 @@ import adams.db.DatabaseConnection;
 import adams.db.ReportProvider;
 import adams.gui.chooser.AbstractReportFileChooser;
 import adams.gui.chooser.DefaultReportFileChooser;
+import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.CustomSearchTableModel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -1752,23 +1755,39 @@ public class ReportFactory {
    * Returns a new panel for the given report.
    *
    * @param report	the report to create a table/panel for
+   * @param preview	whether to add a preview text field for the cell value
    * @return		the panel
    */
-  public static BasePanel getPanel(Report report) {
-    BasePanel	result;
-    final Table	table;
-    JPanel	panel;
+  public static BasePanel getPanel(Report report, boolean preview) {
+    final BasePanel			result;
+    final Table				table;
+    JPanel				panel;
+    JPanel				panelTop;
+    JPanel				panelBottom;
+    BaseSplitPane			split;
+    final BaseTextAreaWithButtons	textArea;
+    JButton				button;
 
     result = new BasePanel(new BorderLayout());
     result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+    split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    split.setOneTouchExpandable(true);
+    result.add(split, BorderLayout.CENTER);
+
+    panelTop = new JPanel(new BorderLayout());
+    split.setTopComponent(panelTop);
+
+    panelBottom = new JPanel(new BorderLayout());
+    split.setBottomComponent(panelBottom);
+
     // table
     table = new Table(new Model(report));
-    result.add(new BaseScrollPane(table), BorderLayout.CENTER);
+    panelTop.add(new BaseScrollPane(table), BorderLayout.CENTER);
 
     // search
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    result.add(panel, BorderLayout.SOUTH);
+    panelTop.add(panel, BorderLayout.SOUTH);
     final SearchPanel searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
     searchPanel.addSearchListener(new SearchListener() {
       public void searchInitiated(SearchEvent e) {
@@ -1777,6 +1796,46 @@ public class ReportFactory {
       }
     });
     panel.add(searchPanel);
+
+    // preview
+    if (preview) {
+      textArea = new BaseTextAreaWithButtons(5, 40);
+      textArea.setFont(GUIHelper.getMonospacedFont());
+      panelBottom.add(new BaseScrollPane(textArea), BorderLayout.CENTER);
+      table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+	  if (table.getSelectedRows().length == 1) {
+	    Object value = table.getValueAt(table.getSelectedRow(), 2);
+	    textArea.setText((value == null ? "" : value.toString()));
+	    textArea.setCaretPosition(0);
+	  }
+	}
+      });
+      button = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+      button.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  GUIHelper.copyToClipboard(textArea.getText());
+	}
+      });
+      textArea.addToButtonsPanel(button);
+      button = new JButton("Save as...", GUIHelper.getIcon("save.gif"));
+      button.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  TextFileChooser fileChooser = new TextFileChooser();
+	  int retVal = fileChooser.showSaveDialog(result);
+	  if (retVal != TextFileChooser.APPROVE_OPTION)
+	    return;
+	  String encoding = fileChooser.getEncoding();
+	  String filename = fileChooser.getSelectedFile().getAbsolutePath();
+	  if (!FileUtils.writeToFile(filename, textArea.getText(), false, encoding))
+	    GUIHelper.showErrorMessage(result, "Failed to save text to file: " + filename);
+	}
+      });
+      textArea.addToButtonsPanel(button);
+    }
 
     return result;
   }
@@ -1848,7 +1907,7 @@ public class ReportFactory {
    * Returns a new dialog for displaying reports.
    *
    * @param owner	the owning component
-   * @param modality	the type of modality
+   * @param modal	whether modal or not
    * @return		the dialog
    */
   public static StandardsDialog getStandardsDialog(java.awt.Frame owner, boolean modal) {
