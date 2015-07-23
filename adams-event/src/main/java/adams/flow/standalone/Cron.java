@@ -29,6 +29,7 @@ import adams.flow.control.Sequence;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
+import adams.flow.core.EventHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.template.EndlessLoop;
 import org.quartz.CronTrigger;
@@ -37,7 +38,6 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.Date;
 
@@ -528,7 +528,7 @@ public class Cron
 
     try {
       if (m_Scheduler == null)
-	m_Scheduler = StdSchedulerFactory.getDefaultScheduler();
+	m_Scheduler = EventHelper.getDefaultScheduler();
       job         = new JobDetail(getFullName() + ".job", getFullName() + ".group", CronJob.class);
       job.getJobDataMap().put(KEY_OWNER, this);
       trigger     = new CronTrigger(

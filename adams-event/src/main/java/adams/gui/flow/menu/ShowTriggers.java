@@ -15,23 +15,11 @@
 
 /**
  * ShowTriggers.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.swing.JButton;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.quartz.impl.StdSchedulerFactory;
-
+import adams.flow.core.EventHelper;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTable;
@@ -40,6 +28,16 @@ import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.flow.FlowEditorPanel;
+
+import javax.swing.JButton;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Shows a dialog that lists all currently active triggers.
@@ -80,7 +78,7 @@ public class ShowTriggers
     
     groups = new String[0];
     try {
-      groups = StdSchedulerFactory.getDefaultScheduler().getTriggerGroupNames();
+      groups = EventHelper.getDefaultScheduler().getTriggerGroupNames();
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to get trigger group names:", e);
@@ -90,7 +88,7 @@ public class ShowTriggers
     list = new ArrayList<String>();
     for (String group: groups) {
       try {
-	triggers = StdSchedulerFactory.getDefaultScheduler().getTriggerNames(group);
+	triggers = EventHelper.getDefaultScheduler().getTriggerNames(group);
 	for (String trigger: triggers)
 	  list.add(group + "\t" + trigger);
       }

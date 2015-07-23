@@ -15,16 +15,19 @@
 
 /*
  * EventHelper.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.util.List;
-
 import adams.core.logging.LoggingObject;
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.standalone.Events;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.List;
 
 /**
  * Helper class for events.
@@ -129,5 +132,15 @@ public class EventHelper
     }
 
     return result;
+  }
+
+  /**
+   * Synchronized access for the default scheduler.
+   *
+   * @return			the default scheduler
+   * @throws SchedulerException	if scheduler cannot be initialized
+   */
+  public static synchronized Scheduler getDefaultScheduler() throws SchedulerException {
+    return StdSchedulerFactory.getDefaultScheduler();
   }
 }
