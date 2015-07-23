@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-07-23 11:22:32
+# Date: 2015-07-23 12:08:41
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -42,11 +42,11 @@ adams.flow.control.Flow
 					-name
 					filtered
 					-actor
-						adams.flow.transformer.WekaFilter
+						adams.flow.transformer.WekaStreamFilter
 							-filter
 								weka.filters.MultiFilter
 									-F
-									weka.filters.unsupervised.attribute.SavitzkyGolay -left 3 -right 3 -polynomial 2 -derivative 1
+									weka.filters.unsupervised.attribute.AndrewsCurves -num-points 10
 									-F
 									weka.filters.unsupervised.instance.Scale -min 0.0 -max 1.0
 					-actor
