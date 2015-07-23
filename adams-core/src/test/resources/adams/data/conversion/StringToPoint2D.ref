@@ -1,0 +1,6 @@
+--> out-0.txt
+Point2D.Double[1.0, 1.0]
+Point2D.Double[1.1, 2.2]
+Point2D.Double[31.0, -5.67]
+Point2D.Double[-31.0, 5.6]
+
