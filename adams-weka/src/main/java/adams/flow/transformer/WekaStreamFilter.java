@@ -15,14 +15,11 @@
 
 /*
  * WekaStreamFilter.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.filters.unsupervised.attribute.Add;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -30,6 +27,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Add;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -136,8 +137,8 @@ public class WekaStreamFilter
 	    new Add());
 
     m_OptionManager.add(
-	    "keep", "keepRelationName",
-	    false);
+      "keep", "keepRelationName",
+      false);
   }
 
   /**
@@ -264,37 +265,56 @@ public class WekaStreamFilter
   @Override
   protected String doExecute() {
     String				result;
+    weka.core.Instances			data;
     weka.core.Instance			inst;
     adams.data.instance.Instance	instA;
     weka.core.Instance			filteredInst;
+    weka.core.Instances			filteredData;
     String				relation;
     weka.filters.Filter			filter;
 
     result = null;
 
-    inst   = null;
-    filter = (weka.filters.Filter) m_Filter;
+    inst         = null;
+    data         = null;
+    filteredInst = null;
+    filteredData = null;
+    filter       = (weka.filters.Filter) m_Filter;
     if (m_InputToken.getPayload() instanceof weka.core.Instance)
       inst = (weka.core.Instance) m_InputToken.getPayload();
+    else if (m_InputToken.getPayload() instanceof weka.core.Instances)
+      data = (weka.core.Instances) m_InputToken.getPayload();
     else
       inst = ((adams.data.instance.Instance) m_InputToken.getPayload()).toInstance();
+    if (data == null)
+      data = inst.dataset();
 
     try {
       // initialize filter?
       if (!m_Initialized)
-	filter.setInputFormat(new weka.core.Instances(inst.dataset(), 0));
+	filter.setInputFormat(new weka.core.Instances(data, 0));
 
       // filter data
-      relation = inst.dataset().relationName();
-      filter.input(inst);
-      filter.batchFinished();
-      filteredInst = filter.output();
-      if (m_KeepRelationName)
-	filteredInst.dataset().setRelationName(relation);
+      relation = data.relationName();
+      if (inst == null) {
+	filteredData = Filter.useFilter(data, filter);
+	if (m_KeepRelationName)
+	  filteredData.setRelationName(relation);
+      }
+      else {
+	filter.input(inst);
+	filter.batchFinished();
+	filteredInst = filter.output();
+	if (m_KeepRelationName)
+	  filteredInst.dataset().setRelationName(relation);
+      }
 
       // build output token
       if (m_InputToken.getPayload() instanceof weka.core.Instance) {
 	m_OutputToken = new Token(filteredInst);
+      }
+      else if (m_InputToken.getPayload() instanceof weka.core.Instances) {
+	m_OutputToken = new Token(filteredData);
       }
       else {
 	instA = new adams.data.instance.Instance();
