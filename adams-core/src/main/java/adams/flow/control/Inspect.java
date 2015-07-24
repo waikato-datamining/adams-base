@@ -148,6 +148,12 @@ import java.awt.event.ActionListener;
  * &nbsp;&nbsp;&nbsp;default: _Accept
  * </pre>
  * 
+ * <pre>-close-dialog &lt;boolean&gt; (property: closeDialog)
+ * &nbsp;&nbsp;&nbsp;If enabled, the dialog gets closed after the skip or accept butotn has been 
+ * &nbsp;&nbsp;&nbsp;clicked.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -173,7 +179,10 @@ public class Inspect
 
   /** the label for the accept button. */
   protected String m_LabelAccept;
-  
+
+  /** whether to close the dialog after skipping/accepting. */
+  protected boolean m_CloseDialog;
+
   /** the button for turning on/off the interactive state of the viewer. */
   protected JButton m_ButtonToggle;
 
@@ -227,6 +236,10 @@ public class Inspect
     m_OptionManager.add(
 	    "label-accept", "labelAccept",
 	    "_Accept");
+
+    m_OptionManager.add(
+	    "close-dialog", "closeDialog",
+	    false);
   }
 
   /**
@@ -325,6 +338,35 @@ public class Inspect
   }
 
   /**
+   * Sets whether to close the dialog after clicking skip/accept.
+   *
+   * @param value	true if to close
+   */
+  public void setCloseDialog(boolean value) {
+    m_CloseDialog = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to close the dialog after clicking skip/accept.
+   *
+   * @return		true if to close
+   */
+  public boolean getCloseDialog() {
+    return m_CloseDialog;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String closeDialogTipText() {
+    return "If enabled, the dialog gets closed after the skip or accept butotn has been clicked.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -401,9 +443,9 @@ public class Inspect
    */
   @Override
   protected BaseDialog doCreateDialog(BasePanel panel) {
-    BaseDialog	result;
-    JPanel	panelButtons;
-    JPanel	panelPart;
+    final BaseDialog	result;
+    JPanel		panelButtons;
+    JPanel		panelPart;
     
     result = super.doCreateDialog(panel);
     result.setModalityType(ModalityType.MODELESS);
@@ -445,6 +487,8 @@ public class Inspect
       public void actionPerformed(ActionEvent e) {
 	m_Accepted = false;
 	m_Waiting  = false;
+        if (m_CloseDialog)
+	  result.setVisible(false);
       }
     });
     panelPart.add(m_ButtonSkip);
@@ -458,6 +502,8 @@ public class Inspect
       public void actionPerformed(ActionEvent e) {
 	m_Accepted = true;
 	m_Waiting  = false;
+        if (m_CloseDialog)
+	  result.setVisible(false);
       }
     });
     panelPart.add(m_ButtonAccept);
