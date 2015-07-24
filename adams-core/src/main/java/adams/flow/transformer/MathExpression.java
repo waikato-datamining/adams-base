@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.RoundingType;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.Token;
@@ -219,6 +220,17 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-round-output &lt;boolean&gt; (property: roundOutput)
+ * &nbsp;&nbsp;&nbsp;If enabled, the output of the expression is rounding with the specified 
+ * &nbsp;&nbsp;&nbsp;type of rounding.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The rounding type to perform on the doubles passing through.
+ * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -240,6 +252,12 @@ public class MathExpression
 
   /** whether to output X and Y as double array or just Y. */
   protected boolean m_OutputValuePair;
+
+  /** whether to round the output of the expression. */
+  protected boolean m_RoundOutput;
+
+  /** the rounding type to perform. */
+  protected RoundingType m_RoundingType;
 
   /**
    * Returns a string describing the object.
@@ -274,12 +292,20 @@ public class MathExpression
     super.defineOptions();
 
     m_OptionManager.add(
-	    "expression", "expression",
-	    new MathematicalExpressionText(PLACEHOLDER_INPUT));
+      "expression", "expression",
+      new MathematicalExpressionText(PLACEHOLDER_INPUT));
 
     m_OptionManager.add(
-	    "output-value-pair", "outputValuePair",
-	    false);
+      "output-value-pair", "outputValuePair",
+      false);
+
+    m_OptionManager.add(
+      "round-output", "roundOutput",
+      false);
+
+    m_OptionManager.add(
+      "rounding-type", "roundingType",
+      RoundingType.ROUND);
   }
 
   /**
@@ -289,7 +315,12 @@ public class MathExpression
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "expression", m_Expression);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "expression", m_Expression);
+    result += QuickInfoHelper.toString(this, "roundingType", (m_RoundOutput ? "" + m_RoundingType : "no rounding"), ", ");
+
+    return result;
   }
 
   /**
@@ -353,6 +384,64 @@ public class MathExpression
   }
 
   /**
+   * Sets whether to round the output of the expression.
+   *
+   * @param value	if true then round output
+   */
+  public void setRoundOutput(boolean value) {
+    m_RoundOutput = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to round the output of the expression.
+   *
+   * @return		true if to round output
+   */
+  public boolean getRoundOutput() {
+    return m_RoundOutput;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String roundOutputTipText() {
+    return "If enabled, the output of the expression is rounding with the specified type of rounding.";
+  }
+
+  /**
+   * Sets the roundingType to perform on the doubles.
+   *
+   * @param value	the roundingType
+   */
+  public void setRoundingType(RoundingType value) {
+    m_RoundingType = value;
+    reset();
+  }
+
+  /**
+   * Returns the roundingType to perform on the doubles.
+   *
+   * @return		the roundingType
+   */
+  public RoundingType getRoundingType() {
+    return m_RoundingType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String roundingTypeTipText() {
+    return "The rounding type to perform on the doubles passing through.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.Integer.class, java.lang.Long.class, java.lang.Double.class, adams.data.report.Report.class, adams.data.report.ReportHandler.class<!-- flow-accepts-end -->
@@ -369,6 +458,8 @@ public class MathExpression
   public Class[] generates() {
     if (m_OutputValuePair)
       return new Class[]{Double[].class};
+    else if (m_RoundOutput)
+      return new Class[]{Integer.class};
     else
       return new Class[]{Double.class};
   }
@@ -390,6 +481,29 @@ public class MathExpression
     }
 
     return result;
+  }
+
+  /**
+   * Applies rounding if necessary.
+   *
+   * @param value	the value to round
+   * @return		the potentially modified value
+   * @see		#getRoundOutput()
+   */
+  protected Double applyRounding(double value) {
+    if (!getRoundOutput())
+      return value;
+
+    switch (m_RoundingType) {
+      case ROUND:
+	return (double) Math.round(value);
+      case CEILING:
+	return Math.ceil(value);
+      case FLOOR:
+	return Math.floor(value);
+      default:
+	throw new IllegalStateException("Unhandled action: " + m_RoundingType);
+    }
   }
 
   /**
@@ -443,12 +557,15 @@ public class MathExpression
       }
 
       if (y != null) {
+	y = applyRounding(y);
 	if (m_OutputValuePair)
 	  m_OutputToken = new Token(new Double[]{x, y});
+	else if (getRoundOutput())
+	  m_OutputToken = new Token(y.intValue());
 	else
-	  m_OutputToken = new Token(new Double(y));
+	  m_OutputToken = new Token(y);
 	if (isLoggingEnabled())
-	  getLogger().info("--> y: " + y);
+	  getLogger().info("--> y" + (getRoundOutput() ? " (" + m_RoundingType + ")" : "") + ": " + y);
       }
       else {
 	result = "Failed to generate output?";
