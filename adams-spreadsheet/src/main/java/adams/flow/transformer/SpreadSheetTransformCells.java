@@ -20,6 +20,7 @@
 package adams.flow.transformer;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
 import adams.core.Utils;
@@ -714,6 +715,9 @@ public class SpreadSheetTransformCells
 	  break;
 	case DATETIME:
 	  classIn = new Class[]{DateTime.class};
+	  break;
+	case DATETIMEMSEC:
+	  classIn = new Class[]{DateTimeMsec.class};
 	  break;
 	case OBJECT:
 	  classIn = new Class[]{Object.class};

@@ -210,6 +210,9 @@ public class CsvSpreadSheetWriter
   /** the format string for the date/times. */
   protected DateFormatString m_DateTimeFormat;
 
+  /** the format string for the date/time msecs. */
+  protected DateFormatString m_DateTimeMsecFormat;
+
   /** the format string for the times. */
   protected DateFormatString m_TimeFormat;
 
@@ -218,6 +221,9 @@ public class CsvSpreadSheetWriter
 
   /** the date/time formatter. */
   protected transient DateFormat m_DateTimeFormatter;
+
+  /** the date/time msec formatter. */
+  protected transient DateFormat m_DateTimeMsecFormatter;
 
   /** the time formatter. */
   protected transient DateFormat m_TimeFormatter;
@@ -240,8 +246,8 @@ public class CsvSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "enncoding", "encoding",
-	    new BaseCharset());
+      "enncoding", "encoding",
+      new BaseCharset());
 
     m_OptionManager.add(
 	    "comment", "comment",
@@ -290,6 +296,10 @@ public class CsvSpreadSheetWriter
     m_OptionManager.add(
 	    "datetime-format", "dateTimeFormat",
 	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+
+    m_OptionManager.add(
+	    "datetimemsec-format", "dateTimeMsecFormat",
+	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
 
     m_OptionManager.add(
 	    "time-format", "timeFormat",
@@ -713,6 +723,35 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Sets the format for date/time msec columns.
+   *
+   * @param value	the format
+   */
+  public void setDateTimeMsecFormat(DateFormatString value) {
+    m_DateTimeMsecFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for date/time msec columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getDateTimeMsecFormat() {
+    return m_DateTimeMsecFormat;
+  }
+
+  /**
+   * Returns the tip date/time for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeMsecFormatTipText() {
+    return "The format for date/time msecs.";
+  }
+
+  /**
    * Sets the format for time columns.
    *
    * @param value	the format
@@ -832,7 +871,18 @@ public class CsvSpreadSheetWriter
       m_DateTimeFormatter = m_DateTimeFormat.toDateFormat();
     return m_DateTimeFormatter;
   }
-  
+
+  /**
+   * Returns the formatter for date/time msecs.
+   *
+   * @return		the formatter
+   */
+  protected DateFormat getDateTimeMsecFormatter() {
+    if (m_DateTimeMsecFormatter == null)
+      m_DateTimeMsecFormatter = m_DateTimeMsecFormat.toDateFormat();
+    return m_DateTimeMsecFormatter;
+  }
+
   /**
    * Returns the formatter for times.
    * 
@@ -975,14 +1025,16 @@ public class CsvSpreadSheetWriter
     Cell			cell;
     DateFormat			dformat;
     DateFormat			dtformat;
+    DateFormat			dtmformat;
     DateFormat			tformat;
 
     result = true;
 
     try {
-      dformat  = getDateFormatter();
-      dtformat = getDateTimeFormatter();
-      tformat  = getTimeFormatter();
+      dformat   = getDateFormatter();
+      dtformat  = getDateTimeFormatter();
+      dtmformat = getDateTimeMsecFormatter();
+      tformat   = getTimeFormatter();
 
       // write data rows
       first = true;
@@ -1011,6 +1063,9 @@ public class CsvSpreadSheetWriter
 		break;
 	      case DATETIME:
 		writer.write(quoteString(dtformat.format(cell.toDateTime())));
+		break;
+              case DATETIMEMSEC:
+		writer.write(quoteString(dtmformat.format(cell.toDateTimeMsec())));
 		break;
 	      case TIME:
 		writer.write(quoteString(tformat.format(cell.toTime())));

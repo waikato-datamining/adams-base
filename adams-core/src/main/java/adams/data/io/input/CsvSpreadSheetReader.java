@@ -22,6 +22,7 @@ package adams.data.io.input;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.Range;
 import adams.core.Time;
 import adams.core.Utils;
@@ -264,6 +265,12 @@ public class CsvSpreadSheetReader
     /** the date/time column indices. */
     protected TIntHashSet m_DateTimeCols;
 
+    /** whether any date/time msec columns are defined. */
+    protected boolean m_HasDateTimeMsecCols;
+
+    /** the date/time msec column indices. */
+    protected TIntHashSet m_DateTimeMsecCols;
+
     /** whether any time columns are defined. */
     protected boolean m_HasTimeCols;
     
@@ -275,6 +282,9 @@ public class CsvSpreadSheetReader
 
     /** the date/time format. */
     protected DateFormat m_DateTimeFormat;
+
+    /** the date/time msec format. */
+    protected DateFormat m_DateTimeMsecFormat;
 
     /** the date format. */
     protected DateFormat m_TimeFormat;
@@ -547,13 +557,15 @@ public class CsvSpreadSheetReader
 
 	    m_TextCols.addAll(m_Owner.getTextColumns().getIntIndices());
 	    m_DateTimeCols.addAll(m_Owner.getDateTimeColumns().getIntIndices());
+	    m_DateTimeMsecCols.addAll(m_Owner.getDateTimeMsecColumns().getIntIndices());
 	    m_DateCols.addAll(m_Owner.getDateColumns().getIntIndices());
 	    m_TimeCols.addAll(m_Owner.getTimeColumns().getIntIndices());
 
-	    m_HasTextCols     = (m_TextCols.size()     > 0);
-	    m_HasDateTimeCols = (m_DateTimeCols.size() > 0);
-	    m_HasDateCols     = (m_DateCols.size()     > 0);
-	    m_HasTimeCols     = (m_TimeCols.size()     > 0);
+	    m_HasTextCols         = (m_TextCols.size()     > 0);
+	    m_HasDateTimeCols     = (m_DateTimeCols.size() > 0);
+	    m_HasDateTimeMsecCols = (m_DateTimeMsecCols.size() > 0);
+	    m_HasDateCols         = (m_DateCols.size()     > 0);
+	    m_HasTimeCols         = (m_TimeCols.size()     > 0);
 	  }
 
 	  // window not yet reached?
@@ -577,6 +589,8 @@ public class CsvSpreadSheetReader
 		  if (cell != null) {
 		    if (m_HasTextCols && m_TextCols.contains(i))
 		      cell.setContentAsString(cells.get(i));
+		    else if (m_HasDateTimeMsecCols && m_DateTimeMsecCols.contains(i) && m_DateTimeMsecFormat.check(cells.get(i)))
+		      cell.setContent(new DateTimeMsec(m_DateTimeMsecFormat.parse(cells.get(i))));
 		    else if (m_HasDateTimeCols && m_DateTimeCols.contains(i) && m_DateTimeFormat.check(cells.get(i)))
 		      cell.setContent(new DateTime(m_DateTimeFormat.parse(cells.get(i))));
 		    else if (m_HasDateCols && m_DateCols.contains(i) && m_DateFormat.check(cells.get(i)))
@@ -652,27 +666,32 @@ public class CsvSpreadSheetReader
       else
         m_Reader = new BufferedReader(r);
 
-      m_Header          = null;
-      m_HeaderCells     = null;
-      m_ChunkSize       = m_Owner.getChunkSize();
-      m_MissingValue    = m_Owner.getMissingValue();
-      m_QuoteChar       = m_Owner.getQuoteCharacter().charAt(0);
-      m_Separator       = Utils.unbackQuoteChars(m_Owner.getSeparator()).charAt(0);
-      m_Comment         = m_Owner.getComment().trim();
-      m_HasTextCols     = false;
-      m_TextCols        = new TIntHashSet();
-      m_HasDateTimeCols = false;
-      m_DateTimeCols    = new TIntHashSet();
-      m_HasDateCols     = false;
-      m_DateCols        = new TIntHashSet();
-      m_HasTimeCols     = false;
-      m_TimeCols        = new TIntHashSet();
-      m_Trim            = m_Owner.getTrim();
-      m_LastChar        = '\0';
-      m_FirstRow        = m_Owner.getFirstRow();
-      m_NumRows         = m_Owner.getNumRows();
-      m_RowCount        = 0;
+      m_Header              = null;
+      m_HeaderCells         = null;
+      m_ChunkSize           = m_Owner.getChunkSize();
+      m_MissingValue        = m_Owner.getMissingValue();
+      m_QuoteChar           = m_Owner.getQuoteCharacter().charAt(0);
+      m_Separator           = Utils.unbackQuoteChars(m_Owner.getSeparator()).charAt(0);
+      m_Comment             = m_Owner.getComment().trim();
+      m_HasTextCols         = false;
+      m_TextCols            = new TIntHashSet();
+      m_HasDateTimeCols     = false;
+      m_DateTimeCols        = new TIntHashSet();
+      m_HasDateTimeMsecCols = false;
+      m_DateTimeMsecCols    = new TIntHashSet();
+      m_HasDateCols         = false;
+      m_DateCols            = new TIntHashSet();
+      m_HasTimeCols         = false;
+      m_TimeCols            = new TIntHashSet();
+      m_Trim                = m_Owner.getTrim();
+      m_LastChar            = '\0';
+      m_FirstRow            = m_Owner.getFirstRow();
+      m_NumRows             = m_Owner.getNumRows();
+      m_RowCount            = 0;
 
+      m_DateTimeMsecFormat = m_Owner.getDateTimeMsecFormat().toDateFormat();
+      m_DateTimeMsecFormat.setLenient(m_Owner.isDateTimeMsecLenient());
+      m_DateTimeMsecFormat.setTimeZone(m_Owner.getTimeZone());
       m_DateTimeFormat = m_Owner.getDateTimeFormat().toDateFormat();
       m_DateTimeFormat.setLenient(m_Owner.isDateTimeLenient());
       m_DateTimeFormat.setTimeZone(m_Owner.getTimeZone());
@@ -717,6 +736,15 @@ public class CsvSpreadSheetReader
 
   /** whether date/time parsing is lenient. */
   protected boolean m_DateTimeLenient;
+
+  /** the columns to treat as date/time msec. */
+  protected Range m_DateTimeMsecColumns;
+
+  /** the format string for the date/times. */
+  protected DateFormatString m_DateTimeMsecFormat;
+
+  /** whether date/time msec parsing is lenient. */
+  protected boolean m_DateTimeMsecLenient;
 
   /** the columns to treat as text. */
   protected Range m_TimeColumns;
@@ -786,8 +814,8 @@ public class CsvSpreadSheetReader
 	    SpreadSheet.COMMENT);
 
     m_OptionManager.add(
-	    "quote-char", "quoteCharacter",
-	    "\"");
+      "quote-char", "quoteCharacter",
+      "\"");
 
     m_OptionManager.add(
 	    "separator", "separator",
@@ -823,6 +851,18 @@ public class CsvSpreadSheetReader
 
     m_OptionManager.add(
 	    "datetime-lenient", "dateTimeLenient",
+	    false);
+
+    m_OptionManager.add(
+	    "datetimemsec-columns", "dateTimeMsecColumns",
+	    new Range());
+
+    m_OptionManager.add(
+	    "datetimemsec-format", "dateTimeMsecFormat",
+	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+
+    m_OptionManager.add(
+	    "datetimemsec-lenient", "dateTimeMsecLenient",
 	    false);
 
     m_OptionManager.add(
@@ -1168,6 +1208,95 @@ public class CsvSpreadSheetReader
    */
   public String dateTimeLenientTipText() {
     return "Whether date/time parsing is lenient or not.";
+  }
+
+  /**
+   * Sets the range of columns to treat as date/time msec.
+   *
+   * @param value	the range
+   */
+  public void setDateTimeMsecColumns(Range value) {
+    m_DateTimeMsecColumns = value;
+    reset();
+  }
+
+  /**
+   * Returns the range of columns to treat as date/time msec.
+   *
+   * @return		the range
+   */
+  public Range getDateTimeMsecColumns() {
+    return m_DateTimeMsecColumns;
+  }
+
+  /**
+   * Returns the tip date for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeMsecColumnsTipText() {
+    return "The range of columns to treat as date/time msec.";
+  }
+
+  /**
+   * Sets the format for date/time msec columns.
+   *
+   * @param value	the format
+   */
+  public void setDateTimeMsecFormat(DateFormatString value) {
+    m_DateTimeMsecFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for date/time msec columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getDateTimeMsecFormat() {
+    return m_DateTimeMsecFormat;
+  }
+
+  /**
+   * Returns the tip date/time for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeMsecFormatTipText() {
+    return "The format for date/time msecs.";
+  }
+
+  /**
+   * Sets whether parsing of date/time msecs is to be lenient or not.
+   *
+   * @param value	if true lenient parsing is used, otherwise not
+   * @see		SimpleDateFormat#setLenient(boolean)
+   */
+  public void setDateTimeMsecLenient(boolean value) {
+    m_DateTimeMsecLenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the parsing of date/time msecs is lenient or not.
+   *
+   * @return		true if parsing is lenient
+   * @see		SimpleDateFormat#isLenient()
+   */
+  public boolean isDateTimeMsecLenient() {
+    return m_DateTimeMsecLenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeMsecLenientTipText() {
+    return "Whether date/time msec parsing is lenient or not.";
   }
 
   /**

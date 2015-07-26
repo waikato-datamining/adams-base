@@ -19,20 +19,21 @@
  */
 package adams.data.spreadsheet;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.HashSet;
-
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.db.SQL;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Helper class for SQL related functionality for spreadsheets.
@@ -138,6 +139,7 @@ public class SqlUtils {
 	    case TIME:
 	    case DATE:
 	    case DATETIME:
+	    case DATETIMEMSEC:
 	      m_ContentTypes[i] = type;
 	      break;
 	  }
@@ -283,6 +285,7 @@ public class SqlUtils {
 	    result.append(m_ColumnNames[i] + " DATE");
 	    break;
 	  case DATETIME:
+	  case DATETIMEMSEC:
 	    result.append(m_ColumnNames[i] + " TIMESTAMP");
 	    break;
 	  case TIME:
@@ -432,6 +435,7 @@ public class SqlUtils {
 		    stmt.setDate(i + 1, new java.sql.Date(cell.toAnyDateType().getTime()));
 		    break;
 		  case DATETIME:
+		  case DATETIMEMSEC:
 		    stmt.setTimestamp(i + 1, new java.sql.Timestamp(cell.toAnyDateType().getTime()));
 		    break;
 		  case TIME:
@@ -627,6 +631,9 @@ public class SqlUtils {
 	    case DATETIME:
 	      row.addCell(i - 1).setContent(new DateTime(rs.getTimestamp(i)));
 	      break;
+	    case DATETIMEMSEC:
+	      row.addCell(i - 1).setContent(new DateTimeMsec(rs.getTimestamp(i)));
+	      break;
 	    case LONG:
 	      row.addCell(i - 1).setContent(rs.getLong(i));
 	      break;
@@ -697,7 +704,7 @@ public class SqlUtils {
       case Types.DATE:
 	return ContentType.DATE;
       case Types.TIMESTAMP:
-	return ContentType.DATETIME;
+	return ContentType.DATETIMEMSEC;
       case Types.INTEGER:
 	return ContentType.LONG;
       case Types.BIGINT:
@@ -723,6 +730,8 @@ public class SqlUtils {
       case DATE:
 	return Types.DATE;
       case DATETIME:
+	return Types.TIMESTAMP;
+      case DATETIMEMSEC:
 	return Types.TIMESTAMP;
       case TIME:
 	return Types.TIME;

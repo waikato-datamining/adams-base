@@ -202,6 +202,9 @@ public abstract class AbstractChartGenerator
       case DATETIME:
 	result = Type.DATETIME;
 	break;
+      case DATETIMEMSEC:
+	result = Type.DATETIMEMSEC;
+	break;
       default:
 	result = Type.ABSOLUTE;
     }

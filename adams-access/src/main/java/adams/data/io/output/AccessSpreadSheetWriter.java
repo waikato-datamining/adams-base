@@ -403,8 +403,6 @@ public class AccessSpreadSheetWriter
   protected boolean doWriteHeader(Row header, String filename) {
     boolean	          result;
     int		          i;
-    boolean	          first;
-    Cell	          cell;
     SpreadSheet           sheet;
     TableBuilder          builder;
     String                name;
@@ -441,6 +439,7 @@ public class AccessSpreadSheetWriter
             case TIME:
             case DATE:
             case DATETIME:
+            case DATETIMEMSEC:
               colType = DataType.SHORT_DATE_TIME;
               break;
             case DOUBLE:

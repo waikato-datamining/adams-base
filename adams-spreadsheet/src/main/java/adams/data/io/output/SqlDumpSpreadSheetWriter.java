@@ -588,15 +588,17 @@ public class SqlDumpSpreadSheetWriter
     SqlUtils.Writer	wrter;
     DateFormat		dformat;
     DateFormat		dtformat;
+    DateFormat		dtmformat;
     DateFormat		tformat;
 
     result = true;
 
     try {
-      newline  = System.getProperty("line.separator");
-      dformat  = content.getDateFormat();
-      dtformat = content.getDateTimeFormat();
-      tformat  = content.getTimeFormat();
+      newline   = System.getProperty("line.separator");
+      dformat   = content.getDateFormat();
+      dtformat  = content.getDateTimeFormat();
+      dtmformat = content.getDateTimeMsecFormat();
+      tformat   = content.getTimeFormat();
 
       if (m_Header == null) {
 	// comments?
@@ -649,6 +651,9 @@ public class SqlDumpSpreadSheetWriter
 		  break;
 		case DATETIME:
 		  writer.write(quoteString(dtformat.format(cell.toDateTime())));
+		  break;
+                case DATETIMEMSEC:
+		  writer.write(quoteString(dtmformat.format(cell.toDateTime())));
 		  break;
 		case TIME:
 		  writer.write(quoteString(tformat.format(cell.toTime())));

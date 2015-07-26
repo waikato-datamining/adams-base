@@ -21,6 +21,7 @@
 package adams.gui.core;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.Time;
 import adams.core.Utils;
 import adams.data.spreadsheet.Cell;
@@ -544,6 +545,8 @@ public class SpreadSheetTableModel
 	  return Time.class;
 	case DATETIME:
 	  return DateTime.class;
+	case DATETIMEMSEC:
+	  return DateTimeMsec.class;
 	case OBJECT:
 	  return Comparable.class;
 	default:

@@ -21,6 +21,7 @@
 package adams.data.spreadsheet;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.Utils;
@@ -383,6 +384,17 @@ public class DoubleCell
    */
   protected boolean checkDateTime(String s) {
     return DateUtils.checkDateTime(s, getSpreadSheet().getDateTimeFormat());
+  }
+
+  /**
+   * Checks whether the string represents a date/time msec.
+   *
+   * @param s		the string to check
+   * @return		true if date/time
+   * @see		SpreadSheet#getDateTimeMsecFormat()
+   */
+  protected boolean checkDateTimeMsec(String s) {
+    return DateUtils.checkDateTimeMsec(s, getSpreadSheet().getDateTimeFormat());
   }
 
   /**
@@ -777,7 +789,10 @@ public class DoubleCell
    */
   public boolean isAnyDateType() {
     calculateIfRequired();
-    return (m_ContentType == ContentType.TIME) || (m_ContentType == ContentType.DATE) || (m_ContentType == ContentType.DATETIME);
+    return (m_ContentType == ContentType.TIME)
+      || (m_ContentType == ContentType.DATE)
+      || (m_ContentType == ContentType.DATETIME)
+      || (m_ContentType == ContentType.DATETIMEMSEC);
   }
 
   /**
@@ -792,6 +807,8 @@ public class DoubleCell
       return toDate();
     else if (isDateTime())
       return toDateTime();
+    else if (isDateTimeMsec())
+      return toDateTimeMsec();
     else
       return null;
   }
@@ -838,6 +855,29 @@ public class DoubleCell
     calculateIfRequired();
     if (m_ContentType == ContentType.DATETIME)
       return new DateTime((long) m_Content);
+    else
+      return null;
+  }
+
+  /**
+   * Checks whether the cell represents a date/time value.
+   *
+   * @return		true if date/time value
+   */
+  public boolean isDateTimeMsec() {
+    calculateIfRequired();
+    return (m_ContentType == ContentType.DATETIMEMSEC);
+  }
+
+  /**
+   * Returns the date/time content, null if not a date/time.
+   *
+   * @return		the date/time, null if not date/time
+   */
+  public DateTimeMsec toDateTimeMsec() {
+    calculateIfRequired();
+    if (m_ContentType == ContentType.DATETIMEMSEC)
+      return new DateTimeMsec((long) m_Content);
     else
       return null;
   }

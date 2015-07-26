@@ -19,9 +19,6 @@
  */
 package adams.flow.transformer;
 
-import java.util.Date;
-import java.util.HashSet;
-
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -31,6 +28,9 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.Date;
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -332,6 +332,7 @@ public class SpreadSheetToTimeseries
 	types.remove(ContentType.TIME);
 	types.remove(ContentType.DATE);
 	types.remove(ContentType.DATETIME);
+	types.remove(ContentType.DATETIMEMSEC);
 	if (types.size() != 0)
 	  result = "Timestamp column ('" + m_ColumnTimestamp.getIndex() + "') contains other types than time/date/datetime: " + types;
       }
@@ -398,6 +399,9 @@ public class SpreadSheetToTimeseries
 	    break;
 	  case DATETIME:
 	    timestamp = new Date(cell.toDateTime().getTime());
+	    break;
+	  case DATETIMEMSEC:
+	    timestamp = new Date(cell.toDateTimeMsec().getTime());
 	    break;
 	  default:
 	    getLogger().severe("Unhandled cell type (for timestamp column): " + cell.getContentType());

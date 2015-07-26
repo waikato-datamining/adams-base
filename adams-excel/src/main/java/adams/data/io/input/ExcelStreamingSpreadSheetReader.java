@@ -21,6 +21,7 @@
 package adams.data.io.input;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.ExcelHelper;
 import adams.core.License;
 import adams.core.Stoppable;
@@ -414,6 +415,9 @@ public class ExcelStreamingSpreadSheetReader
 		  break;
 		case DATETIME:
 		  cell.setContent(new DateTime(DateUtil.getJavaDate(Double.parseDouble(content))));
+		  break;
+		case DATETIMEMSEC:
+		  cell.setContent(new DateTimeMsec(DateUtil.getJavaDate(Double.parseDouble(content))));
 		  break;
 		case TIME:
 		  cell.setContent(new Time(DateUtil.getJavaDate(Double.parseDouble(content))));

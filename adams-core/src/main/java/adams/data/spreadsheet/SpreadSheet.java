@@ -90,6 +90,9 @@ public class SpreadSheet
   /** for formatting date/times. */
   protected DateFormat m_DateTimeFormat;
 
+  /** for formatting date/time msecs. */
+  protected DateFormat m_DateTimeMsecFormat;
+
   /** for formatting times. */
   protected DateFormat m_TimeFormat;
 
@@ -117,18 +120,19 @@ public class SpreadSheet
    * Initializes the members.
    */
   protected void initialize() {
-    m_RowKeys        = new ArrayList<String>();
-    m_Rows           = new HashMap<String, DataRow>();
-    m_HeaderRow      = new HeaderRow(this);
-    m_Comments       = new ArrayList<String>();
-    m_Name           = null;
-    m_DateFormat     = DateUtils.getDateFormatter();
-    m_DateTimeFormat = DateUtils.getTimestampFormatter();
-    m_TimeFormat     = DateUtils.getTimeFormatter();
-    m_StringsTable   = new SharedStringsTable();
-    m_DataRowClass   = DenseDataRow.class;
-    m_Locale         = LocaleHelper.getSingleton().getDefault();
-    m_NumberFormat   = LocaleHelper.getSingleton().getNumberFormat(m_Locale);
+    m_RowKeys            = new ArrayList<String>();
+    m_Rows               = new HashMap<String, DataRow>();
+    m_HeaderRow          = new HeaderRow(this);
+    m_Comments           = new ArrayList<String>();
+    m_Name               = null;
+    m_DateFormat         = DateUtils.getDateFormatter();
+    m_DateTimeFormat     = DateUtils.getTimestampFormatter();
+    m_DateTimeMsecFormat = DateUtils.getTimestampFormatterMsecs();
+    m_TimeFormat         = DateUtils.getTimeFormatter();
+    m_StringsTable       = new SharedStringsTable();
+    m_DataRowClass       = DenseDataRow.class;
+    m_Locale             = LocaleHelper.getSingleton().getDefault();
+    m_NumberFormat       = LocaleHelper.getSingleton().getNumberFormat(m_Locale);
   }
   
   /**
@@ -147,6 +151,8 @@ public class SpreadSheet
     setDateLenient(sheet.isDateLenient());
     m_DateTimeFormat.applyPattern(sheet.getDateTimeFormat().toPattern());
     setDateTimeLenient(sheet.isDateTimeLenient());
+    m_DateTimeMsecFormat.applyPattern(sheet.getDateTimeMsecFormat().toPattern());
+    setDateTimeMsecLenient(sheet.isDateTimeMsecLenient());
     m_TimeFormat.applyPattern(sheet.getTimeFormat().toPattern());
     setTimeLenient(sheet.isTimeLenient());
 
@@ -274,6 +280,16 @@ public class SpreadSheet
    */
   public DateFormat getDateTimeFormat() {
     return m_DateTimeFormat;
+  }
+
+  /**
+   * Returns the date/time msec formatter.
+   *
+   * @return		the formatter
+   * @see		DateUtils#getTimestampFormatterMsecs()
+   */
+  public DateFormat getDateTimeMsecFormat() {
+    return m_DateTimeMsecFormat;
   }
 
   /**
@@ -1378,6 +1394,26 @@ public class SpreadSheet
    */
   public boolean isDateTimeLenient() {
     return m_DateTimeFormat.isLenient();
+  }
+
+  /**
+   * Sets whether parsing of date/time mses is to be lenient or not.
+   *
+   * @param value	if true lenient parsing is used, otherwise not
+   * @see		SimpleDateFormat#setLenient(boolean)
+   */
+  public void setDateTimeMsecLenient(boolean value) {
+    m_DateTimeMsecFormat.setLenient(value);
+  }
+
+  /**
+   * Returns whether the parsing of date/time msecs is lenient or not.
+   *
+   * @return		true if parsing is lenient
+   * @see		SimpleDateFormat#isLenient()
+   */
+  public boolean isDateTimeMsecLenient() {
+    return m_DateTimeMsecFormat.isLenient();
   }
 
   /**

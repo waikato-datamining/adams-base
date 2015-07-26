@@ -20,11 +20,12 @@
 
 package adams.data.spreadsheet;
 
+import adams.core.DateTime;
+import adams.core.DateTimeMsec;
+import adams.core.Time;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import adams.core.DateTime;
-import adams.core.Time;
 
 /**
  * Represents a single cell.
@@ -51,6 +52,8 @@ public interface Cell
     DATE,
     /** date+time. */
     DATETIME,
+    /** date+time with msec. */
+    DATETIMEMSEC,
     /** time. */
     TIME,
     /** object (needs custom handler, must implement Comparable). */
@@ -349,6 +352,20 @@ public interface Cell
    * @return		the date/time, null if not date/time
    */
   public DateTime toDateTime();
+
+  /**
+   * Checks whether the cell represents a date/time with msec value.
+   *
+   * @return		true if date/time msec value
+   */
+  public boolean isDateTimeMsec();
+
+  /**
+   * Returns the date/time msec content, null if not a date/time.
+   *
+   * @return		the date/time msec, null if not date/time
+   */
+  public DateTimeMsec toDateTimeMsec();
 
   /**
    * Checks whether the cell represents a time value.

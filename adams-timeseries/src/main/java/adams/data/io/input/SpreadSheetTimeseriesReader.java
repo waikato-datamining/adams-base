@@ -19,15 +19,15 @@
  */
 package adams.data.io.input;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -333,6 +333,7 @@ public class SpreadSheetTimeseriesReader
       case DATE:
       case TIME:
       case DATETIME:
+      case DATETIMEMSEC:
 	timestamp = cell.toAnyDateType();
 	break;
       case LONG:

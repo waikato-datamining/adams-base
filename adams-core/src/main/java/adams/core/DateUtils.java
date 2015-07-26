@@ -698,7 +698,7 @@ public class DateUtils {
    * @return		true if date/time
    */
   public static boolean checkDateTime(String s) {
-    return checkDate(s, null);
+    return checkDateTime(s, null);
   }
 
   /**
@@ -712,6 +712,32 @@ public class DateUtils {
     if (df == null)
       df = getTimestampFormatter();
     if ((s.indexOf('-') > -1) && (s.indexOf(':') > -1))
+      return df.check(s);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the string represents a date/time msec.
+   *
+   * @param s		the string to check
+   * @return		true if date/time msec
+   */
+  public static boolean checkDateTimeMsec(String s) {
+    return checkDate(s, null);
+  }
+
+  /**
+   * Checks whether the string represents a date/time msec.
+   *
+   * @param s		the string to check
+   * @param df          the format, can be null
+   * @return		true if date/time msec
+   */
+  public static boolean checkDateTimeMsec(String s, DateFormat df) {
+    if (df == null)
+      df = getTimestampFormatterMsecs();
+    if ((s.indexOf('-') > -1) && (s.indexOf(':') > -1) && (s.indexOf('.') > -1))
       return df.check(s);
     else
       return false;

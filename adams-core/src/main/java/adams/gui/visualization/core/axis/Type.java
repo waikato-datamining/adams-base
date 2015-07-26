@@ -15,7 +15,7 @@
 
 /*
  * Type.java
- * Copyright (C) 2008-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -46,10 +46,12 @@ public enum Type
   LOG_PERCENTAGE(LogPercentageAxisModel.class),
   /** displaying dates. */
   DATE(DateAxisModel.class),
-  /** displaying dates. */
+  /** displaying times. */
   TIME(TimeAxisModel.class),
-  /** displaying dates. */
-  DATETIME(DateTimeAxisModel.class);
+  /** displaying date/times. */
+  DATETIME(DateTimeAxisModel.class),
+  /** displaying date/times. */
+  DATETIMEMSEC(DateTimeMsecAxisModel.class);
 
   /** the display string of the type. */
   private String m_Display;

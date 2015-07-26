@@ -126,6 +126,9 @@ public class FixedTabularSpreadSheetWriter
   /** the format string for the date/times. */
   protected DateFormatString m_DateTimeFormat;
 
+  /** the format string for the date/times msec. */
+  protected DateFormatString m_DateTimeMsecFormat;
+
   /** the format string for the times. */
   protected DateFormatString m_TimeFormat;
 
@@ -182,8 +185,8 @@ public class FixedTabularSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "enncoding", "encoding",
-	    new BaseCharset());
+      "enncoding", "encoding",
+      new BaseCharset());
 
     m_OptionManager.add(
 	    "column-width", "columnWidth",
@@ -200,6 +203,10 @@ public class FixedTabularSpreadSheetWriter
     m_OptionManager.add(
 	    "datetime-format", "dateTimeFormat",
 	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+
+    m_OptionManager.add(
+	    "datetimemsec-format", "dateTimeMsecFormat",
+	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
 
     m_OptionManager.add(
 	    "time-format", "timeFormat",
@@ -327,6 +334,35 @@ public class FixedTabularSpreadSheetWriter
    */
   public String dateTimeFormatTipText() {
     return "The format for date/times.";
+  }
+
+  /**
+   * Sets the format for date/time msec columns.
+   *
+   * @param value	the format
+   */
+  public void setDateTimeMsecFormat(DateFormatString value) {
+    m_DateTimeMsecFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for date/time msec columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getDateTimeMsecFormat() {
+    return m_DateTimeMsecFormat;
+  }
+
+  /**
+   * Returns the tip date/time for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeMsecFormatTipText() {
+    return "The format for date/time msecs.";
   }
 
   /**
@@ -466,6 +502,7 @@ public class FixedTabularSpreadSheetWriter
     boolean	result;
     DateFormat	dformat;
     DateFormat	dtformat;
+    DateFormat	dtmformat;
     DateFormat	tformat;
     Cell	cell;
     String	missing;
@@ -475,10 +512,11 @@ public class FixedTabularSpreadSheetWriter
     result = true;
 
     try {
-      dformat  = m_DateFormat.toDateFormat();
-      dtformat = m_DateTimeFormat.toDateFormat();
-      tformat  = m_TimeFormat.toDateFormat();
-      missing  = pad(m_MissingValue, false);
+      dformat   = m_DateFormat.toDateFormat();
+      dtformat  = m_DateTimeFormat.toDateFormat();
+      dtmformat = m_DateTimeMsecFormat.toDateFormat();
+      tformat   = m_TimeFormat.toDateFormat();
+      missing   = pad(m_MissingValue, false);
       
       // header
       addSeparatorLine(content, writer);
@@ -520,6 +558,9 @@ public class FixedTabularSpreadSheetWriter
 		break;
 	      case DATETIME:
 		writer.write(pad(dtformat.format(drow.getCell(i).toDateTime()), false));
+		break;
+	      case DATETIMEMSEC:
+		writer.write(pad(dtmformat.format(drow.getCell(i).toDateTimeMsec()), false));
 		break;
 	      case TIME:
 		writer.write(pad(tformat.format(drow.getCell(i).toTime()), false));
