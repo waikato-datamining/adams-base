@@ -38,6 +38,7 @@ adams.core.base.BaseFloat=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseDouble=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseDate=adams.gui.goe.BaseDateEditor
 adams.core.base.BaseDateTime=adams.gui.goe.BaseDateTimeEditor
+adams.core.base.BaseDateTimeMsec=adams.gui.goe.BaseDateTimeMsecEditor
 adams.core.base.BaseTime=adams.gui.goe.BaseTimeEditor
 adams.core.base.BaseList=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseURI=adams.gui.goe.BaseObjectEditor

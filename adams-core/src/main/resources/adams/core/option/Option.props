@@ -151,6 +151,11 @@ adams.core.base.BaseDateTime=true
 adams.core.base.BaseDateTime#toString=adams.gui.goe.BaseDateTimeEditor#toString
 adams.core.base.BaseDateTime#valueOf=adams.gui.goe.BaseDateTimeEditor#valueOf
 
+# BaseDateTimeMsec objects
+adams.core.base.BaseDateTimeMsec=true
+adams.core.base.BaseDateTimeMsec#toString=adams.gui.goe.BaseDateTimeMsecEditor#toString
+adams.core.base.BaseDateTimeMsec#valueOf=adams.gui.goe.BaseDateTimeMsecEditor#valueOf
+
 # BaseTime objects
 adams.core.base.BaseTime=true
 adams.core.base.BaseTime#toString=adams.gui.goe.BaseTimeEditor#toString

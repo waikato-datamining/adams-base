@@ -1,0 +1,277 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ */
+
+package adams.parser.basedatetimemsec;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+
+import adams.core.DateUtils;
+import adams.parser.ParserHelper;
+
+/**
+ * A parser for parsing date/time with msec expressions.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision: 8890 $
+ */
+
+parser code {:
+  /** for storing the result of the expression. */
+  protected Date m_Result = null;
+
+  /** optional start datetime. */
+  protected Date m_Start = null;
+
+  /** optional end datetime. */
+  protected Date m_End = null;
+
+  /** an instance of a gregorian calendar. */
+  protected Calendar m_Calendar = DateUtils.getCalendar();
+
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
+  /**
+   * Returns the calendar used for calculating the dates.
+   *
+   * @return the calendar
+   */
+  protected Calendar getCalendar() {
+    return m_Calendar;
+  }
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
+
+  /**
+   * Sets the result of the evaluation.
+   *
+   * @param value the result
+   */
+  public void setResult(Date value) {
+    m_Result = value;
+  }
+
+  /**
+   * Returns the result of the evaluation.
+   *
+   * @return the result
+   */
+  public Date getResult() {
+    return m_Result;
+  }
+
+  /**
+   * Sets the optional start datetime.
+   *
+   * @param value the start datetime
+   */
+  public void setStart(Date value) {
+    m_Start = value;
+  }
+
+  /**
+   * Returns the optional start datetime.
+   *
+   * @return the start datetime
+   */
+  public Date getStart() {
+    return m_Start;
+  }
+
+  /**
+   * Sets the optional end datetime.
+   *
+   * @param value the end datetime
+   */
+  public void setEnd(Date value) {
+    m_End = value;
+  }
+
+  /**
+   * Returns the optional end datetime.
+   *
+   * @return the end datetime
+   */
+  public Date getEnd() {
+    return m_End;
+  }
+
+  /**
+   * Runs the parser from commandline. Either reads lines from System.in
+   * or from a provided file (line by line).
+   *
+   * @param args the commandline arguments
+   * @throws Exception if something goes wrong
+   */
+  public static void main(String args[]) throws Exception {
+    // setup input stream
+    int index = -1;
+    if (args.length == 1)
+      index = 0;
+    BufferedReader input = null;
+    if (index == -1) {
+      System.out.println("\nPlease type in date expressions (and press <Enter>), exit with <Ctrl+D>:");
+      input = new BufferedReader(new InputStreamReader(System.in));
+    }
+    else {
+      System.out.println("\nReading expressions from file '" + args[index] + "':");
+      input = new BufferedReader(new FileReader(args[index]));
+    }
+
+    // process stream
+    SymbolFactory sf = new DefaultSymbolFactory();
+    String line;
+    while ((line = input.readLine()) != null) {
+      ByteArrayInputStream parserInput = new ByteArrayInputStream(line.getBytes());
+      Parser parser = new Parser(new Scanner(parserInput,sf), sf);
+      parser.parse();
+      System.out.println(line + " = " + parser.getResult());
+    }
+  }
+:}
+
+terminal Amount TYPE;
+terminal Double NUMBER;
+terminal Date DATE_ACTUAL;
+terminal Date DATE_START;
+terminal Date DATE_END;
+terminal LPAREN, RPAREN, COMMA;
+terminal MINUS, UMINUS, PLUS, UPLUS, TIMES, DIVISION, EXPONENT, MODULO;
+terminal ABS, SQRT, LOG, EXP, RINT, FLOOR, POW, CEIL;
+
+non terminal date;
+non terminal date_act;
+non terminal expr_list;
+non terminal expr;
+non terminal Double calc;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVISION, MODULO;
+precedence left EXPONENT;
+precedence left LPAREN, RPAREN;
+precedence left ABS, SQRT, LOG, EXP, RINT, FLOOR, POW, CEIL;
+precedence left UMINUS, UPLUS;
+
+date      ::=   date_act expr_list
+              | date_act
+              ;
+
+date_act  ::=   DATE_ACTUAL:d
+                {:
+                   parser.setResult(d);
+                :}
+
+              | DATE_START:d
+                {:
+                  if (parser.getStart() != null)
+                    parser.setResult(parser.getStart());
+                  else
+                    parser.setResult(d);
+                :}
+
+              | DATE_END:d
+                {:
+                  if (parser.getEnd() != null)
+                    parser.setResult(parser.getEnd());
+                  else
+                    parser.setResult(d);
+                :}
+              ;
+
+expr_list ::=   expr_list expr
+              | expr
+              ;
+
+expr      ::=   calc:n TYPE:t
+                {:
+                  parser.getCalendar().setTime(parser.getResult());
+                  parser.getCalendar().add(t.getType(), (int) (n*t.getAmount()));
+                  parser.setResult(parser.getCalendar().getTime());
+                :}
+              ;
+
+calc      ::=   LPAREN calc:e RPAREN
+                {: RESULT = e; :}
+                
+              | MINUS calc:e
+                {: RESULT = -parser.getHelper().toDouble(e); :}
+                %prec UMINUS
+                
+              | PLUS calc:e
+                {: RESULT = parser.getHelper().toDouble(e); :}
+                %prec UPLUS
+                
+              | calc:l PLUS calc:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+              | calc:l MINUS calc:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+              | calc:l TIMES calc:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+              | calc:l DIVISION calc:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+              | calc:l MODULO calc:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+              | calc:b EXPONENT calc:e
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                
+              | ABS LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
+              | SQRT LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.sqrt(parser.getHelper().toDouble(e))); :}
+              | LOG LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.log(parser.getHelper().toDouble(e))); :}
+              | EXP LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.exp(parser.getHelper().toDouble(e))); :}
+              | RINT LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.rint(parser.getHelper().toDouble(e))); :}
+              | FLOOR LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.floor(parser.getHelper().toDouble(e))); :}
+              | POW LPAREN calc:b COMMA calc:e RPAREN
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+              | CEIL LPAREN calc:e RPAREN
+                {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+
+              | NUMBER:n
+                {: RESULT = n; :}
+              ;
+              
