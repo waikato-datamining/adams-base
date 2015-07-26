@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
+import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.data.conversion.ConvertDateTimeType;
 import adams.flow.core.Token;
@@ -244,6 +245,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDate[].class};
       case BASEDATETIME:
 	return new Class[]{BaseDateTime[].class};
+      case BASEDATETIMEMSEC:
+	return new Class[]{BaseDateTimeMsec[].class};
       case BASETIME:
 	return new Class[]{BaseTime[].class};
       case JULIANDATE:
@@ -277,6 +280,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDate.class};
       case BASEDATETIME:
 	return new Class[]{BaseDateTime.class};
+      case BASEDATETIMEMSEC:
+	return new Class[]{BaseDateTimeMsec.class};
       case BASETIME:
 	return new Class[]{BaseTime.class};
       case JULIANDATE:

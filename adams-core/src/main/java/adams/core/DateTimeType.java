@@ -40,6 +40,8 @@ public enum DateTimeType {
   BASEDATE,
   /** BaseDateTime. */
   BASEDATETIME,
+  /** BaseDateTimeMsec. */
+  BASEDATETIMEMSEC,
   /** BaseTime. */
   BASETIME,
   /** Julian date. */

@@ -26,6 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
+import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import jodd.datetime.JDateTime;
 
@@ -192,6 +193,8 @@ public class ConvertDateTimeType
 	return BaseDate.class;
       case BASEDATETIME:
 	return BaseDateTime.class;
+      case BASEDATETIMEMSEC:
+	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
       case JULIANDATE:
@@ -225,6 +228,8 @@ public class ConvertDateTimeType
 	return BaseDate.class;
       case BASEDATETIME:
 	return BaseDateTime.class;
+      case BASEDATETIMEMSEC:
+	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
       case JULIANDATE:
@@ -272,6 +277,9 @@ public class ConvertDateTimeType
       case BASEDATETIME:
 	msecs = ((BaseDateTime) m_Input).dateValue().getTime();
 	break;
+      case BASEDATETIMEMSEC:
+	msecs = ((BaseDateTimeMsec) m_Input).dateValue().getTime();
+	break;
       case BASETIME:
 	msecs = ((BaseTime) m_Input).dateValue().getTime();
 	break;
@@ -300,6 +308,8 @@ public class ConvertDateTimeType
 	return new BaseDate(new Date(msecs));
       case BASEDATETIME:
 	return new BaseDateTime(new DateTime(msecs));
+      case BASEDATETIMEMSEC:
+	return new BaseDateTimeMsec(new DateTime(msecs));
       case BASETIME:
 	return new BaseTime(new Time(msecs));
       case JULIANDATE:

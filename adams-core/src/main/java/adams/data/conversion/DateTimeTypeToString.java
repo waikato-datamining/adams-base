@@ -27,6 +27,7 @@ import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
+import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.data.DateFormatString;
 import jodd.datetime.JDateTime;
@@ -192,6 +193,8 @@ public class DateTimeTypeToString
 	return BaseDate.class;
       case BASEDATETIME:
 	return BaseDateTime.class;
+      case BASEDATETIMEMSEC:
+	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
       case JULIANDATE:
@@ -229,6 +232,8 @@ public class DateTimeTypeToString
 	return m_Formatter.format(((BaseDate) m_Input).dateValue());
       case BASEDATETIME:
 	return m_Formatter.format(((BaseDateTime) m_Input).dateValue());
+      case BASEDATETIMEMSEC:
+	return m_Formatter.format(((BaseDateTimeMsec) m_Input).dateValue());
       case BASETIME:
 	return m_Formatter.format(((BaseTime) m_Input).dateValue());
       case JULIANDATE:

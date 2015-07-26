@@ -27,6 +27,7 @@ import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
+import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.data.DateFormatString;
 import jodd.datetime.JDateTime;
@@ -314,6 +315,8 @@ public class ExtractDateTimeField
 	return BaseDate.class;
       case BASEDATETIME:
 	return BaseDateTime.class;
+      case BASEDATETIMEMSEC:
+	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
       case JULIANDATE:
@@ -387,6 +390,9 @@ public class ExtractDateTimeField
 	break;
       case BASEDATETIME:
 	m_Calendar.setTime(((BaseDateTime) m_Input).dateValue());
+	break;
+      case BASEDATETIMEMSEC:
+	m_Calendar.setTime(((BaseDateTimeMsec) m_Input).dateValue());
 	break;
       case BASETIME:
 	m_Calendar.setTime(((BaseTime) m_Input).dateValue());
