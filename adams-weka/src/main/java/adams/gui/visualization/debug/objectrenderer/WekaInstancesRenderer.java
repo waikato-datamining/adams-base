@@ -103,7 +103,7 @@ public class WekaInstancesRenderer
     else {
       inst = (Instance) obj;
       if (inst.dataset() != null) {
-	data = new Instances(inst.dataset());
+	data = new Instances(inst.dataset(), 0);
 	data.add((Instance) inst.copy());
 	table      = new ArffTable(new ArffSortedTableModel(data));
 	scrollPane = new BaseScrollPane(table);
