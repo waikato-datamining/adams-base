@@ -48,6 +48,16 @@ public class BaseKeyValuePair
   }
 
   /**
+   * Initializes the object with the key/value pair.
+   *
+   * @param key		the key to use
+   * @param value	the value to use
+   */
+  public BaseKeyValuePair(String key, String value) {
+    super(key + SEPARATOR + value);
+  }
+
+  /**
    * Initializes the object with the string to parse.
    *
    * @param s		the string to parse
