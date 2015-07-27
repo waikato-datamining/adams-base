@@ -34,6 +34,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Helper class for gzip related operations.
@@ -89,7 +91,7 @@ public class GzipUtils {
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
       fis = new FileInputStream(archiveFile.getAbsolutePath());
-      out = new FileOutputStream(outputFile.getAbsolutePath()); 
+      out = new FileOutputStream(outputFile.getAbsolutePath());
       in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis);
       IOUtils.copy(in, out, buffer);
     }
@@ -121,15 +123,13 @@ public class GzipUtils {
       url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
   )
   public static byte[] decompress(byte[] input, int buffer) {
-    ByteArrayInputStream 	bis;
+    GZIPInputStream	 	bis;
     ByteArrayOutputStream	bos;
-    CompressorInputStream 	in;
 
     try {
-      bis = new ByteArrayInputStream(input);
+      bis = new GZIPInputStream(new ByteArrayInputStream(input));
       bos = new ByteArrayOutputStream();
-      in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, bis);
-      IOUtils.copy(in, bos, buffer);
+      IOUtils.copy(bis, bos, buffer);
       return bos.toByteArray();
     }
     catch (Exception e) {
@@ -230,24 +230,21 @@ public class GzipUtils {
    * Compresses the specified bytes using gzip.
    *
    * @param input	the bytes to compress
-   * @param buffer	the buffer size to use
    * @return		the compressed bytes, null in case of error
    */
-  @MixedCopyright(
-      copyright = "Apache compress commons",
-      license = License.APACHE2,
-      url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
-  )
-  public static byte[] compress(byte[] input, int buffer) {
+  public static byte[] compress(byte[] input) {
     ByteArrayInputStream	bis;
     ByteArrayOutputStream	bos;
-    CompressorOutputStream 	out;
+    GZIPOutputStream 		gos;
+    int				i;
 
     try {
       bis = new ByteArrayInputStream(input);
       bos = new ByteArrayOutputStream();
-      out = new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.GZIP, bos);
-      IOUtils.copy(bis, out, buffer);
+      gos = new GZIPOutputStream(bos);
+      while ((i = bis.read()) != -1)
+	gos.write(i);
+      gos.finish();
       return bos.toByteArray();
     }
     catch (Exception e) {
