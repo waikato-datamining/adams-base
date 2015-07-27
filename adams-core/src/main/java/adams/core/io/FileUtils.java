@@ -190,13 +190,43 @@ public class FileUtils {
    * @return		the binary content as hex, null in case of an error
    */
   public static String loadHexFromBinaryFile(File file, int columns) {
-    byte[]	content;
-    
-    content = loadFromBinaryFile(file);
-    if (content == null)
+    byte[]		binary;
+    StringBuilder	hex;
+    StringBuilder	human;
+    int			width;
+    int			i;
+
+    binary = loadFromBinaryFile(file);
+    if (binary == null)
       return null;
-    else
-      return Utils.toHex(content, columns);
+
+    width  = ("" + binary.length).length();
+    hex    = new StringBuilder(binary.length * 5);
+    human  = new StringBuilder();
+
+    for (i = 0; i < binary.length; i++) {
+      if (i % columns == 0) {
+	if (i > 0) {
+	  hex.append(" | ");
+	  hex.append(human.toString());
+	  hex.append("\n");
+	  human.delete(0, human.length());
+	}
+	hex.append(Utils.padLeft("" + (i+1), '0', width));
+	hex.append("-");
+	hex.append(Utils.padLeft("" + (i+columns), '0', width));
+	hex.append(" |");
+      }
+
+      hex.append(" ");
+      hex.append(Utils.toHex(binary[i]));
+      if (binary[i] > 31)
+	human.append((char) binary[i]);
+      else
+	human.append(".");
+    }
+
+    return hex.toString();
   }
 
   /**
