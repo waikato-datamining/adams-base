@@ -177,6 +177,14 @@ public interface Cell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  public Cell setContent(DateTimeMsec value);
+
+  /**
+   * Sets the content of the cell.
+   *
+   * @param value	the content; null is intepreted as missing value
+   * @return		the cell itself
+   */
   public Cell setContent(Time value);
 
   /**

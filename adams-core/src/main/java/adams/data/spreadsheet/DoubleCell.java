@@ -315,6 +315,23 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  public Cell setContent(DateTimeMsec value) {
+    if (value == null) {
+      setMissing();
+    }
+    else {
+      m_Content     = value.getTime();
+      m_ContentType = ContentType.DATETIMEMSEC;
+    }
+    return this;
+  }
+
+  /**
+   * Sets the content of the cell.
+   *
+   * @param value	the content; null is intepreted as missing value
+   * @return		the cell itself
+   */
   public Cell setContent(Time value) {
     if (value == null) {
       setMissing();
@@ -639,6 +656,8 @@ public class DoubleCell
 	return getSpreadSheet().getDateFormat().format(new Date((long) m_Content));
       case DATETIME:
 	return getSpreadSheet().getDateTimeFormat().format(new Date((long) m_Content));
+      case DATETIMEMSEC:
+	return getSpreadSheet().getDateTimeMsecFormat().format(new Date((long) m_Content));
       case STRING:
 	return getSpreadSheet().getSharedStringsTable().getString((int) m_Content);
       case LONG:
