@@ -496,6 +496,7 @@ public class CsvSpreadSheetReader
 	result = m_Owner.getSpreadSheetType().newInstance();
 	result.setDateLenient(m_Owner.isDateLenient());
 	result.setDateTimeLenient(m_Owner.isDateTimeLenient());
+	result.setDateTimeMsecLenient(m_Owner.isDateTimeMsecLenient());
 	result.setTimeLenient(m_Owner.isTimeLenient());
 	result.setTimeZone(m_Owner.getTimeZone());
 	result.setLocale(m_Owner.getLocale());
@@ -552,6 +553,7 @@ public class CsvSpreadSheetReader
 
 	    m_Owner.getTextColumns().setMax(m_HeaderCells.size());
 	    m_Owner.getDateTimeColumns().setMax(m_HeaderCells.size());
+	    m_Owner.getDateTimeMsecColumns().setMax(m_HeaderCells.size());
 	    m_Owner.getDateColumns().setMax(m_HeaderCells.size());
 	    m_Owner.getTimeColumns().setMax(m_HeaderCells.size());
 
