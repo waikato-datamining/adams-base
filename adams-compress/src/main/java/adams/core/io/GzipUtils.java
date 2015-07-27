@@ -27,6 +27,8 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -104,6 +106,37 @@ public class GzipUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Decompresses the specified gzipped bytes.
+   *
+   * @param input	the gzip compressed bytes
+   * @param buffer	the buffer size to use
+   * @return		the decompressed bytes, null in case of error
+   */
+  @MixedCopyright(
+      copyright = "Apache compress commons",
+      license = License.APACHE2,
+      url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
+  )
+  public static byte[] decompress(byte[] input, int buffer) {
+    ByteArrayInputStream 	bis;
+    ByteArrayOutputStream	bos;
+    CompressorInputStream 	in;
+
+    try {
+      bis = new ByteArrayInputStream(input);
+      bos = new ByteArrayOutputStream();
+      in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, bis);
+      IOUtils.copy(in, bos, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      System.err.println("Failed to decompress bytes!");
+      e.printStackTrace();
+      return null;
+    }
   }
 
   /**
@@ -191,5 +224,36 @@ public class GzipUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Compresses the specified bytes using gzip.
+   *
+   * @param input	the bytes to compress
+   * @param buffer	the buffer size to use
+   * @return		the compressed bytes, null in case of error
+   */
+  @MixedCopyright(
+      copyright = "Apache compress commons",
+      license = License.APACHE2,
+      url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
+  )
+  public static byte[] compress(byte[] input, int buffer) {
+    ByteArrayInputStream	bis;
+    ByteArrayOutputStream	bos;
+    CompressorOutputStream 	out;
+
+    try {
+      bis = new ByteArrayInputStream(input);
+      bos = new ByteArrayOutputStream();
+      out = new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.GZIP, bos);
+      IOUtils.copy(bis, out, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      System.err.println("Failed to compress bytes!");
+      e.printStackTrace();
+      return null;
+    }
   }
 }
