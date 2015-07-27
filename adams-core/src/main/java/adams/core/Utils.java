@@ -16,7 +16,8 @@
 /*
  * Utils.java
  * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
- * Copyright (C) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+ * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
+ * Copyright (C) 2008 Dave L., stackoverflow
  */
 
 package adams.core;
@@ -34,6 +35,8 @@ import java.util.logging.Level;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingObject;
 import adams.core.management.LocaleHelper;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Class implementing some simple utility methods.
@@ -1342,32 +1345,54 @@ public class Utils {
    * @param value	the value to convert
    * @return		the hexadecimal representation
    */
-  @MixedCopyright(
-      copyright = "2006 Dr. Herong Yang",
-      author = "Dr. Herong Yang",
-      license = License.PUBLIC_DOMAIN,
-      url = "http://www.herongyang.com/Cryptography/SHA1-Message-Digest-in-Java.html"
-  )
   public static String toHex(byte value) {
     StringBuilder	result;
 
     result = new StringBuilder();
     result.append(HEX_DIGIT[(value >> 4) & 0x0f]);
-    result.append(HEX_DIGIT[(value     ) & 0x0f]);
+    result.append(HEX_DIGIT[(value) & 0x0f]);
 
     return result.toString();
   }
-  
+
+  /**
+   * Parses the hex string (00 - FF) and returns the byte.
+   *
+   * @param s		the string to parse
+   * @return		the byte value
+   */
+  @MixedCopyright(
+    copyright = "2008 Dave L.",
+    license = License.CC_BY_SA_3,
+    url = "http://stackoverflow.com/a/140861/4698227"
+  )
+  public static byte fromHex(String s) {
+    s = s.toUpperCase();
+    if (s.length() == 0) {
+      return 0;
+    }
+    if (s.length() == 1) {
+      return (byte) Character.digit(s.charAt(0), 16);
+    }
+    else if (s.length() == 2) {
+      return (byte) ((Character.digit(s.charAt(0), 16) << 4)
+	+ Character.digit(s.charAt(1), 16));
+    }
+    else {
+      throw new IllegalArgumentException("Must be 0-2 characters long, provided: " + s);
+    }
+  }
+
   /**
    * Turns the binary array to a hexadecimal representation, using 16 columns.
-   * 
+   *
    * @param binary	the array to convert
    * @return		the human-readable representation
    */
   public static String toHex(byte[] binary) {
     return toHex(binary, 16);
   }
-  
+
   /**
    * Turns the binary array to a hexadecimal representation.
    * 
