@@ -50,7 +50,7 @@ public class Constants
   public final static String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   /** the date format for timestamps (incl msecs). */
-  public final static String TIMESTAMP_FORMAT_MSECS = "yyyy-MM-dd HH:mm:ss.S";
+  public final static String TIMESTAMP_FORMAT_MSECS = "yyyy-MM-dd HH:mm:ss.SSS";
 
   /** the date format for timestamps (ISO-8601). */
   public final static String TIMESTAMP_FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss";
