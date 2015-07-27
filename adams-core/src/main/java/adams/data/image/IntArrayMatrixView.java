@@ -15,10 +15,11 @@
 
 /**
  * IntArrayMatrixView.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 /**
@@ -147,5 +148,20 @@ public class IntArrayMatrixView
   @Override
   public String toString() {
     return "w=" + m_Width + ", h=" + m_Height;
+  }
+
+  /**
+   * Turns the matrix into an image.
+   *
+   * @param type	the BufferedImage type
+   * @return		the image
+   */
+  public BufferedImage toBufferedImage(int type) {
+    BufferedImage 	result;
+
+    result = new BufferedImage(getWidth(), getHeight(), type);
+    result.setRGB(0, 0, getWidth(), getHeight(), getData(), 0, getWidth());
+
+    return result;
   }
 }
