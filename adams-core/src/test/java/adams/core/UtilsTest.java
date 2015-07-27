@@ -20,12 +20,12 @@
 
 package adams.core;
 
-import java.lang.reflect.Array;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.lang.reflect.Array;
 
 /**
  * Tests the adams.core.Utils class. Run from commandline with: <br><br>
@@ -249,7 +249,7 @@ public class UtilsTest
   }
   
   /**
-   * Test the {@link Utils#unDoubleUpQuotes(String, char, char[], String[])}
+   * Test the {@link Utils#unDoubleUpQuotes(String, char, String[], char[])}
    * method.
    */
   public void testUnDoubleUpQuotes() {
@@ -279,7 +279,7 @@ public class UtilsTest
   }
 
   /**
-   * Tests the {@link Utils#classesToString(Class)} method.
+   * Tests the {@link Utils#classesToString(Class[])} method.
    */
   public void testClassesToString() {
     assertEquals("java.lang.String", Utils.classesToString(new Class[]{String.class}));
@@ -311,6 +311,48 @@ public class UtilsTest
     obj = Utils.newArray("java.lang.String[]", 3);
     assertEquals(obj.getClass(), String[][].class);
     assertEquals(Array.getLength(obj), 3);
+  }
+
+  /**
+   * Tests the {@link Utils#toHex(byte)} method.
+   */
+  public void testToHex() {
+    assertEquals("00", Utils.toHex((byte) 0));
+    assertEquals("01", Utils.toHex((byte) 1));
+    assertEquals("0A", Utils.toHex((byte) 10));
+    assertEquals("10", Utils.toHex((byte) 16));
+    assertEquals("FF", Utils.toHex((byte) 255));
+    assertEquals("80", Utils.toHex(Byte.MIN_VALUE));
+    assertEquals("7F", Utils.toHex(Byte.MAX_VALUE));
+  }
+
+  /**
+   * Tests the {@link Utils#toHexArray(byte[])} method.
+   */
+  public void testToHexArray() {
+    assertEquals("00", Utils.toHexArray(new byte[]{0}));
+    assertEquals("00010A10FF807F", Utils.toHexArray(new byte[]{0, 1, 10, 16, (byte) 255, Byte.MIN_VALUE, Byte.MAX_VALUE}));
+  }
+
+  /**
+   * Tests the {@link Utils#fromHexArray(String)} method.
+   */
+  public void testFromHexArray() {
+    assertEqualsArrays(new byte[]{0}, Utils.fromHexArray("00"));
+    assertEqualsArrays(new byte[]{0, 1, 10, 16, (byte) 255, Byte.MIN_VALUE, Byte.MAX_VALUE}, Utils.fromHexArray("00010A10FF807F"));
+  }
+
+  /**
+   * Tests the {@link Utils#fromHex(String)} method.
+   */
+  public void testFromHex() {
+    assertEquals((byte) 0, Utils.fromHex("00"));
+    assertEquals((byte) 1, Utils.fromHex("01"));
+    assertEquals((byte) 10, Utils.fromHex("0A"));
+    assertEquals((byte) 16, Utils.fromHex("10"));
+    assertEquals((byte) 255, Utils.fromHex("FF"));
+    assertEquals(Byte.MIN_VALUE, Utils.fromHex("80"));
+    assertEquals(Byte.MAX_VALUE, Utils.fromHex("7F"));
   }
   
   /**

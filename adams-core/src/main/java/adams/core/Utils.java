@@ -35,8 +35,7 @@ import java.util.logging.Level;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingObject;
 import adams.core.management.LocaleHelper;
-
-import javax.xml.bind.DatatypeConverter;
+import gnu.trove.list.array.TByteArrayList;
 
 /**
  * Class implementing some simple utility methods.
@@ -485,9 +484,9 @@ public class Utils {
    */
   public static String unbackQuoteChars(String string) {
     return unbackQuoteChars(
-	string,
-	new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""},
-	new char[]  {'\\',   '\'',  '\t',  '\n',  '\r',  '"'});
+      string,
+      new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""},
+      new char[]{'\\', '\'', '\t', '\n', '\r', '"'});
   }
 
   /**
@@ -1368,71 +1367,46 @@ public class Utils {
   )
   public static byte fromHex(String s) {
     s = s.toUpperCase();
-    if (s.length() == 0) {
-      return 0;
-    }
-    if (s.length() == 1) {
-      return (byte) Character.digit(s.charAt(0), 16);
-    }
-    else if (s.length() == 2) {
-      return (byte) ((Character.digit(s.charAt(0), 16) << 4)
-	+ Character.digit(s.charAt(1), 16));
+    if (s.length() == 2) {
+      return (byte) ((Character.digit(s.charAt(0), 16) << 4) + Character.digit(s.charAt(1), 16));
     }
     else {
-      throw new IllegalArgumentException("Must be 0-2 characters long, provided: " + s);
+      throw new IllegalArgumentException("Must be 2 characters long, provided: " + s);
     }
   }
 
   /**
-   * Turns the binary array to a hexadecimal representation, using 16 columns.
+   * Turns the binary array to a hexadecimal string.
    *
    * @param binary	the array to convert
-   * @return		the human-readable representation
+   * @return		the hex string
    */
-  public static String toHex(byte[] binary) {
-    return toHex(binary, 16);
+  public static String toHexArray(byte[] binary) {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+    for (byte b: binary)
+      result.append(toHex(b));
+
+    return result.toString();
   }
 
   /**
-   * Turns the binary array to a hexadecimal representation.
-   * 
-   * @param binary	the array to convert
-   * @param columns	the number of columns to display
-   * @return		the human-readable representation
+   * Turns the hex string (even number of chars) into an array of bytes.
+   *
+   * @param hex		the string to convert
+   * @return		the extracted bytes
    */
-  public static String toHex(byte[] binary, int columns) {
-    StringBuilder	hex;
-    StringBuilder	human;
-    int			width;
+  public static byte[] fromHexArray(String hex) {
+    TByteArrayList	result;
     int			i;
 
-    width  = ("" + binary.length).length();
-    hex    = new StringBuilder(binary.length * 5);
-    human  = new StringBuilder();
+    result = new TByteArrayList();
 
-    for (i = 0; i < binary.length; i++) {
-      if (i % columns == 0) {
-	if (i > 0) {
-	  hex.append(" | ");
-	  hex.append(human.toString());
-	  hex.append("\n");
-	  human.delete(0, human.length());
-	}
-	hex.append(Utils.padLeft("" + (i+1), '0', width));
-	hex.append("-");
-	hex.append(Utils.padLeft("" + (i+columns), '0', width));
-	hex.append(" |");
-      }
+    for (i = 0; i < hex.length() / 2; i++)
+      result.add(fromHex(hex.substring(i * 2, i * 2 + 2)));
 
-      hex.append(" ");
-      hex.append(Utils.toHex(binary[i]));
-      if (binary[i] > 31)
-	human.append((char) binary[i]);
-      else
-	human.append(".");
-    }
-    
-    return hex.toString();
+    return result.toArray();
   }
 
   /**
@@ -1666,7 +1640,6 @@ public class Utils {
    * Swaps the two integers in the array.
    * 
    * @param array	the array with two elements to swap
-   * @return		the array with the swapped elements
    */
   public static void swap(int[] array) {
     int		tmp;
@@ -1682,7 +1655,6 @@ public class Utils {
    * Swaps the two longs in the array.
    * 
    * @param array	the array with two elements to swap
-   * @return		the array with the swapped elements
    */
   public static void swap(long[] array) {
     long	tmp;
@@ -1698,7 +1670,6 @@ public class Utils {
    * Swaps the two floats in the array.
    * 
    * @param array	the array with two elements to swap
-   * @return		the array with the swapped elements
    */
   public static void swap(float[] array) {
     float	tmp;
@@ -1714,7 +1685,6 @@ public class Utils {
    * Swaps the two doubles in the array.
    * 
    * @param array	the array with two elements to swap
-   * @return		the array with the swapped elements
    */
   public static void swap(double[] array) {
     double		tmp;
@@ -1730,7 +1700,6 @@ public class Utils {
    * Swaps the two objects in the array.
    * 
    * @param array	the array with two elements to swap
-   * @return		the array with the swapped elements
    */
   public static void swap(Object[] array) {
     Object	tmp;
