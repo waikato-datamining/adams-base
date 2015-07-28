@@ -15,12 +15,13 @@
 
 /*
  * Console.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
@@ -29,32 +30,44 @@ import adams.core.QuickInfoHelper;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Console
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
- * &nbsp;&nbsp;&nbsp;The prefix to output before the actual data.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;The prefix to output before the actual data; you can use \n for a line feed 
+ * &nbsp;&nbsp;&nbsp;and \t for a tab.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -99,7 +112,7 @@ public class Console
    * @param value 	the index
    */
   public void setPrefix(String value) {
-    m_Prefix = value;
+    m_Prefix = Utils.unbackQuoteChars(value);
     reset();
   }
 
@@ -109,7 +122,7 @@ public class Console
    * @return 		the index
    */
   public String getPrefix() {
-    return m_Prefix;
+    return Utils.backQuoteChars(m_Prefix);
   }
 
   /**
@@ -119,7 +132,7 @@ public class Console
    * 			displaying in the GUI or for listing the options.
    */
   public String prefixTipText() {
-    return "The prefix to output before the actual data.";
+    return "The prefix to output before the actual data; you can use \\n for a line feed and \\t for a tab.";
   }
 
   /**
@@ -129,7 +142,7 @@ public class Console
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "prefix", (m_Prefix.length() > 0 ? m_Prefix : null));
+    return QuickInfoHelper.toString(this, "prefix", (getPrefix().length() > 0 ? getPrefix() : null));
   }
 
   /**
