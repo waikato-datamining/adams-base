@@ -15,20 +15,10 @@
 
 /**
  * AdamsTestCase.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
 import adams.core.ClassLocator;
 import adams.core.DateUtils;
 import adams.core.QuickInfoSupporter;
@@ -40,6 +30,16 @@ import adams.core.management.ProcessUtils;
 import adams.core.option.OptionHandler;
 import adams.data.statistics.StatUtils;
 import adams.gui.scripting.ScriptingEngine;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.textui.TestRunner;
+
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Ancestor for all test cases.
@@ -378,8 +378,10 @@ public class AdamsTestCase
 	msg = "Cannot run test on Mac";
       if ((msg == null) && OS.isWindows() && !platforms.contains(Platform.WINDOWS))
 	msg = "Cannot run test on Windows";
-      if ((msg == null) && (!OS.isWindows() && !OS.isMac()) && !platforms.contains(Platform.LINUX))
+      if ((msg == null) && (OS.isLinux()) && !platforms.contains(Platform.LINUX))
 	msg = "Cannot run test on Linux";
+      if ((msg == null) && (OS.isAndroid()) && !platforms.contains(Platform.ANDROID))
+	msg = "Cannot run test on Android";
     }
 
     if ((msg == null) && m_Headless && !canHandleHeadless())
