@@ -15,22 +15,10 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
 
 import adams.core.Properties;
 import adams.core.StaticClassLister;
@@ -38,6 +26,19 @@ import adams.core.logging.LoggingObject;
 import adams.core.management.OS;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Manages properties files and returns merged versions.
@@ -70,6 +71,9 @@ public abstract class AbstractEnvironment
 
   /** the directory to use as home directory. */
   protected static File m_HomeDirectory;
+
+  /** the instantiation time. */
+  protected static Date m_InstantiationTimestamp;
 
   /** the key - setups relation. */
   protected Hashtable<String,List<Setup>> m_Properties;
@@ -534,9 +538,21 @@ public abstract class AbstractEnvironment
 	e.printStackTrace();
 	m_Environment = new Environment();
       }
+      m_InstantiationTimestamp = new Date();
     }
 
     return m_Environment;
+  }
+
+  /**
+   * Returns the timestamp this environment was initialized (ie startup time of
+   * the application).
+   *
+   * @return		the timestamp
+   */
+  public static synchronized Date getInstantiationTimestamp() {
+    getInstance();
+    return m_InstantiationTimestamp;
   }
 
   /**

@@ -63,6 +63,9 @@ public class SystemInfo {
   /** the environment prefix. */
   public final static String ENV_PREFIX = "env.";
 
+  /** the key for the ADAMS startup time. */
+  public final static String ADAMS_STARTUP = "adams.startup";
+
   /**
    * Initializes the object.
    */
@@ -113,6 +116,7 @@ public class SystemInfo {
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());
     m_Info.put(OS_BITNESS, "" + OS.getBitness());
+    m_Info.put(ADAMS_STARTUP, DateUtils.getTimestampFormatterMsecs().format(Environment.getInstance().getInstantiationTimestamp()));
   }
 
   /**
