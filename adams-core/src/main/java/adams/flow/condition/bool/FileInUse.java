@@ -28,11 +28,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
-import java.io.FileWriter;
-
 /**
  <!-- globalinfo-start -->
- * WINDOWS ONLY<br>
  * Evaluates to 'true' if the file is currently being used by another process.<br>
  * If a filename generator other than adams.core.io.NullFilenameGenerator is specified, then this takes precedence over the supplied filename (uses the token passing through).
  * <br><br>
@@ -80,8 +77,7 @@ public class FileInUse
   @Override
   public String globalInfo() {
     return
-        "WINDOWS ONLY\n"
-          + "Evaluates to 'true' if the file is currently being used by another process.\n"
+            "Evaluates to 'true' if the file is currently being used by another process.\n"
           + "If a filename generator other than "
           + NullFilenameGenerator.class.getName() + " is specified, then this "
           + "takes precedence over the supplied filename (uses the token passing through).";
@@ -217,7 +213,6 @@ public class FileInUse
   protected boolean doEvaluate(Actor owner, Token token) {
     boolean		result;
     PlaceholderFile	file;
-    FileWriter writer;
 
     result = false;
 
@@ -226,19 +221,8 @@ public class FileInUse
     else
       file = m_File;
 
-    if (file.exists() && !file.isDirectory()) {
-      writer = null;
-      try {
-	writer = new FileWriter(file.getAbsolutePath(), true);
-	result = false;
-      }
-      catch (Exception e) {
-	result = true;
-      }
-      finally {
-	FileUtils.closeQuietly(writer);
-      }
-    }
+    if (file.exists() && !file.isDirectory())
+      result = FileUtils.isOpen(file);
 
     return result;
   }

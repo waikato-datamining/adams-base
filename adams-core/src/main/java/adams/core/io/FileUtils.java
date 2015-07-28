@@ -20,16 +20,21 @@
 
 package adams.core.io;
 
+import adams.core.License;
 import adams.core.Placeholders;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.annotation.MixedCopyright;
 import adams.core.management.OS;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -1134,5 +1139,64 @@ public class FileUtils {
 	// ignored
       }
     }
+  }
+
+  /**
+   * Checks whether the file is open/accessed by another process (Windows/*nix).
+   *
+   * @param file	the file to check
+   * @return		true if still open/accessed by another process
+   */
+  @MixedCopyright(
+    copyright = "Hans Frankenstein - http://stackoverflow.com/users/2406808/hans-frankenstein",
+    license = License.CC_BY_SA_3,
+    url = "http://stackoverflow.com/a/16686031/4698227"
+  )
+  public static boolean isOpen(File file) {
+    boolean		result;
+    FileWriter 		writer;
+    Process 		plsof;
+    BufferedReader 	reader;
+    String 		line;
+
+    result = false;
+
+    if (OS.isWindows()) {
+      writer = null;
+      try {
+	writer = new java.io.FileWriter(file.getAbsolutePath(), true);
+      }
+      catch (Exception e) {
+	result = true;
+      }
+      finally {
+	FileUtils.closeQuietly(writer);
+      }
+    }
+    else {
+      plsof  = null;
+      reader = null;
+      try {
+	plsof  = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
+	reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
+	while ((line = reader.readLine()) != null) {
+	  if (line.contains(file.getAbsolutePath())) {
+	    result = true;
+	    break;
+	  }
+	}
+      }
+      catch (Exception ex) {
+	System.err.println("Failed to check file open status of: " + file);
+	ex.printStackTrace();
+      }
+      finally {
+	FileUtils.closeQuietly(reader);
+	if (plsof != null)
+	  plsof.destroy();
+      }
+    }
+
+    return result;
   }
 }
