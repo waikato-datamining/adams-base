@@ -86,6 +86,6 @@ public class IsLinux
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    return !(OS.isMac() || OS.isWindows());
+    return OS.isLinux();
   }
 }
