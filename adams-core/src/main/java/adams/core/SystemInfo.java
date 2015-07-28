@@ -45,9 +45,6 @@ public class SystemInfo {
   /** the key for the JVM PID. */
   public final static String JVM_PID = "java.vm.pid";
 
-  /** the key for the OS bitness. */
-  public final static String OS_BITNESS = "os.bitness";
-
   /** the project prefix. */
   public final static String PROJECT_PREFIX = "project.";
 
@@ -65,6 +62,21 @@ public class SystemInfo {
 
   /** the key for the ADAMS startup time. */
   public final static String ADAMS_STARTUP = "adams.startup";
+
+  /** the key for the OS bitness. */
+  public final static String OS_BITNESS = "os.bitness";
+
+  /** the key for the is windows?. */
+  public final static String OS_ISWINDOWS = "os.isWindows";
+
+  /** the key for the is mac?. */
+  public final static String OS_ISMAC = "os.isMac";
+
+  /** the key for the is linux?. */
+  public final static String OS_ISLINUX = "os.isLinux";
+
+  /** the key for the is android?. */
+  public final static String OS_ISANDROID = "os.isAndroid";
 
   /**
    * Initializes the object.
@@ -116,6 +128,10 @@ public class SystemInfo {
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());
     m_Info.put(OS_BITNESS, "" + OS.getBitness());
+    m_Info.put(OS_ISWINDOWS, "" + OS.isWindows());
+    m_Info.put(OS_ISMAC, "" + OS.isMac());
+    m_Info.put(OS_ISLINUX, "" + OS.isLinux());
+    m_Info.put(OS_ISANDROID, "" + OS.isAndroid());
     m_Info.put(ADAMS_STARTUP, DateUtils.getTimestampFormatterMsecs().format(Environment.getInstance().getInstantiationTimestamp()));
   }
 
