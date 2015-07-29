@@ -31,7 +31,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1154,7 +1154,7 @@ public class FileUtils {
   )
   public static boolean isOpen(File file) {
     boolean		result;
-    FileWriter 		writer;
+    FileOutputStream 	fos;
     Process 		plsof;
     BufferedReader 	reader;
     String 		line;
@@ -1162,15 +1162,15 @@ public class FileUtils {
     result = false;
 
     if (OS.isWindows()) {
-      writer = null;
+      fos = null;
       try {
-	writer = new java.io.FileWriter(file.getAbsolutePath(), true);
+	fos = new FileOutputStream(file.getAbsolutePath(), true);
       }
       catch (Exception e) {
 	result = true;
       }
       finally {
-	FileUtils.closeQuietly(writer);
+	FileUtils.closeQuietly(fos);
       }
     }
     else {
