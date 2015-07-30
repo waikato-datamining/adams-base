@@ -54,7 +54,7 @@ MaxWindowWidth=1.00
 # E.g. on Windows, this would be the height of the taskbar ("Bottom").
 ScreenBorder.Top=0
 ScreenBorder.Left=0
-ScreenBorder.Bottom=0
+ScreenBorder.Bottom=50
 ScreenBorder.Right=0
 
 # Dimensions and location
