@@ -1336,8 +1336,10 @@ public class GenericObjectEditor
 	// show the popup where the source component is
 	if (e.getSource() instanceof Component) {
 	  Component comp = (Component) e.getSource();
-	  popup.show(comp, comp.getWidth(), 0);
 	  popup.pack();
+	  Point p = comp.getLocationOnScreen();
+          popup.show(comp, comp.getWidth(), 0);
+          GUIHelper.setSizeAndLocation(popup, (int) p.getY(), (int) p.getX() + comp.getWidth());
 	}
       }
     });
