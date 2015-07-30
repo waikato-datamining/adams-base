@@ -321,7 +321,7 @@ public class GUIHelper {
    * @param c		the component to use for lookup in the props file;
    * 			null can be used to bypass the lookup in the props file
    */
-  public static void setSize(Window window, Component c) {
+  public static void setSize(Component window, Component c) {
     int		width;
     int		height;
 
@@ -329,8 +329,10 @@ public class GUIHelper {
 
     // custom size?
     if (c != null) {
-      if (m_Properties.getBoolean(c.getClass().getName() + ".pack", false))
-	window.pack();
+      if (m_Properties.getBoolean(c.getClass().getName() + ".pack", false)) {
+        if (window instanceof Window)
+          ((Window) window).pack();
+      }
 
       width = m_Properties.getInteger(c.getClass().getName() + ".width", window.getWidth());
       if (width == -1)
@@ -349,9 +351,9 @@ public class GUIHelper {
    * Sets size and location stored in the props file.
    *
    * @param window	the frame to work on
-   * @see		#setSizeAndLocation(Window, Component)
+   * @see		#setSizeAndLocation(Component, Component)
    */
-  public static void setSizeAndLocation(Window window) {
+  public static void setSizeAndLocation(Component window) {
     setSizeAndLocation(window, null);
   }
 
@@ -361,7 +363,7 @@ public class GUIHelper {
    * @param window	the window to work on
    * @param left	the left position, -1: centered, -2: right-justified
    */
-  public static int calcLeftPosition(Window window, int left) {
+  public static int calcLeftPosition(Component window, int left) {
     int		result;
     
     if (left == -1)
@@ -382,7 +384,7 @@ public class GUIHelper {
    * @param window	the window to work on
    * @param top		the top position, -1: centered, -2: bottom-justified
    */
-  public static int calcTopPosition(Window window, int top) {
+  public static int calcTopPosition(Component window, int top) {
     int		result;
     
     if (top == -1)
@@ -404,9 +406,9 @@ public class GUIHelper {
    * @param c		the component to use for lookup in the props file;
    * 			null can be used to bypass the lookup in the props file
    * 			(in that case, "top" and "left" are initialized with 0)
-   * @see		#setSizeAndLocation(Window, int, int, Component)
+   * @see		#setSizeAndLocation(Component, int, int, Component)
    */
-  public static void setSizeAndLocation(Window window, Component c) {
+  public static void setSizeAndLocation(Component window, Component c) {
     int		left;
     int		top;
 
@@ -444,9 +446,9 @@ public class GUIHelper {
    * @param window	the frame to work on
    * @param top		the y position
    * @param left	the x position
-   * @see		#setSizeAndLocation(Window, int, int, Component)
+   * @see		#setSizeAndLocation(Component, int, int, Component)
    */
-  public static void setSizeAndLocation(Window window, int top, int left) {
+  public static void setSizeAndLocation(Component window, int top, int left) {
     setSizeAndLocation(window, top, left, null);
   }
 
@@ -462,7 +464,7 @@ public class GUIHelper {
    * @param c		the component to use for lookup in the props file;
    * 			null can be used to bypass the lookup in the props file
    */
-  public static void setSizeAndLocation(Window window, int top, int left, Component c) {
+  public static void setSizeAndLocation(Component window, int top, int left, Component c) {
     int		width;
     int		height;
     Rectangle	screen;
@@ -506,7 +508,7 @@ public class GUIHelper {
    * @param window	the window to get the graphics config from
    * @return		the "inner" rectangle where we can display stuff
    */
-  public static synchronized Rectangle getScreenBounds(Window window) {
+  public static synchronized Rectangle getScreenBounds(Component window) {
     int		height;
     int 	width;
     int		top;
@@ -534,9 +536,9 @@ public class GUIHelper {
    * Adjusts the size of the window, that it fits onto the screen.
    *
    * @param window	the window to adjust
-   * @see		#getScreenBounds(Window)
+   * @see		#getScreenBounds(Component)
    */
-  public static void adjustSize(Window window) {
+  public static void adjustSize(Component window) {
     Rectangle	screen;
     double	percHeight;
     double	percWidth;
