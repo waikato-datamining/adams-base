@@ -530,6 +530,10 @@ adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer=\
 adams.gui.visualization.image.ImageOverlay=\
   adams.gui.visualization.image
 
+# the paintlets
+adams.gui.visualization.image.paintlet.Paintlet=\
+  adams.gui.visualization.image.paintlet
+
 # plugins for the image viewer
 adams.gui.visualization.image.plugins.AbstractImageViewerPlugin=\
   adams.gui.visualization.image.plugins

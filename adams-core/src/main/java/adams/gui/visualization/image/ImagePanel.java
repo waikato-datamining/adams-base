@@ -56,6 +56,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.print.PrintMouseListener;
+import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.report.ReportFactory;
 
 import javax.swing.JMenu;
@@ -161,6 +162,9 @@ public class ImagePanel
     /** the selection listeners. */
     protected HashSet<ImagePanelSelectionListener> m_SelectionListeners;
 
+    /** additional paintlets to execute. */
+    protected HashSet<Paintlet> m_Paintlets;
+
     /**
      * Initializes the panel.
      *
@@ -188,6 +192,7 @@ public class ImagePanel
       m_SelectionBoxColor       = Color.GRAY;
       m_SelectionEnabled        = false;
       m_SelectionListeners      = new HashSet<ImagePanelSelectionListener>();
+      m_Paintlets = new HashSet<Paintlet>();
     }
 
     /**
@@ -318,6 +323,39 @@ public class ImagePanel
     }
 
     /**
+     * Adds the paintlet to the internal list.
+     *
+     * @param p		the paintlet to add.
+     */
+    public void addPaintlet(Paintlet p) {
+      synchronized(m_Paintlets) {
+        m_Paintlets.add(p);
+      }
+    }
+
+    /**
+     * Removes this paintlet from its internal list.
+     *
+     * @param p		the paintlet to remove
+     */
+    public void removePaintlet(Paintlet p) {
+      synchronized(m_Paintlets) {
+        m_Paintlets.remove(p);
+      }
+    }
+
+    /**
+     * Returns an iterator over all currently stored paintlets.
+     *
+     * @return		the paintlets
+     */
+    public Iterator<Paintlet> paintlets() {
+      synchronized(m_Paintlets) {
+        return m_Paintlets.iterator();
+      }
+    }
+
+    /**
      * Updates the status bar.
      */
     protected void updateStatus() {
@@ -370,7 +408,7 @@ public class ImagePanel
 
       loc = mouseToPixelLocation(pos);
       getOwner().showStatus(
-  	    "X: " + (int) (loc.getX() + 1)
+	"X: " + (int) (loc.getX() + 1)
 	  + "   "
 	  + "Y: " + (int) (loc.getY() + 1)
 	  + "   "
@@ -690,10 +728,10 @@ public class ImagePanel
         }
 
         g.drawRect(
-            topX,
-            topY,
-            (bottomX - topX + 1),
-            (bottomY - topY + 1));
+	  topX,
+	  topY,
+	  (bottomX - topX + 1),
+	  (bottomY - topY + 1));
       }
     }
 
@@ -705,6 +743,7 @@ public class ImagePanel
     @Override
     public void paint(Graphics g) {
       ImageOverlay[]	overlays;
+      Paintlet[]	paintlets;
 
       g.setColor(getBackground());
       g.fillRect(0, 0, getWidth(), getHeight());
@@ -719,7 +758,14 @@ public class ImagePanel
         }
         for (ImageOverlay overlay: overlays)
           overlay.paintOverlay(this, g);
-        
+
+	// paintlets
+	synchronized (m_Paintlets) {
+	  paintlets = m_Paintlets.toArray(new Paintlet[m_Paintlets.size()]);
+	}
+	for (Paintlet p: paintlets)
+	  p.paint(g);
+
         paintSelectionBox(g);
       }
     }
@@ -1732,7 +1778,34 @@ public class ImagePanel
   public boolean isSelectionEnabled() {
     return m_PaintPanel.isSelectionEnabled();
   }
-  
+
+  /**
+   * Adds the paintlet to the internal list.
+   *
+   * @param p		the paintlet to add.
+   */
+  public void addPaintlet(Paintlet p) {
+    m_PaintPanel.addPaintlet(p);
+  }
+
+  /**
+   * Removes this paintlet from its internal list.
+   *
+   * @param p		the paintlet to remove
+   */
+  public void removePaintlet(Paintlet p) {
+    m_PaintPanel.removePaintlet(p);
+  }
+
+  /**
+   * Returns an iterator over all currently stored paintlets.
+   *
+   * @return		the paintlets
+   */
+  public Iterator<Paintlet> paintlets() {
+    return m_PaintPanel.paintlets();
+  }
+
   /**
    * Cleans up data structures, frees up memory.
    */
