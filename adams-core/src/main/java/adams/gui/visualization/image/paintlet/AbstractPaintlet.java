@@ -218,7 +218,7 @@ public abstract class AbstractPaintlet
    *
    * @param g		the graphics context to use for painting
    */
-  public abstract void performPaint(Graphics g);
+  protected abstract void performPaint(Graphics g);
 
   /**
    * The paint routine of the paintlet.
