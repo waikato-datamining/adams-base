@@ -736,6 +736,8 @@ public class FloatCell
 	return toDate();
       case DATETIME:
 	return toDateTime();
+      case DATETIMEMSEC:
+	return toDateTimeMsec();
       case LONG:
 	return toLong();
       case DOUBLE:
