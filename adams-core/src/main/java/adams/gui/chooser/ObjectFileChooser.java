@@ -246,8 +246,7 @@ public class ObjectFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -311,8 +310,7 @@ public class ObjectFileChooser
 	  result = (AbstractObjectReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -337,8 +335,7 @@ public class ObjectFileChooser
 	  result = (AbstractObjectWriter) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

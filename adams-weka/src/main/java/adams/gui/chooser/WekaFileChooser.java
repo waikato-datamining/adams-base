@@ -20,9 +20,6 @@
 
 package adams.gui.chooser;
 
-import adams.core.Utils;
-import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import weka.core.converters.AArffLoader;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
@@ -100,9 +97,7 @@ public class WekaFileChooser
       initFilters(false, GenericObjectEditor.getClassnames(AbstractFileSaver.class.getName()));
     }
     catch (Exception e) {
-      ConsolePanel.getSingleton().append(
-        OutputType.ERROR,
-        "Failed to initialize Weka loader/saver filters!\n" + Utils.throwableToString(e));
+      handleException("Failed to initialize Weka loader/saver filters!", e);
     }
   }
 
@@ -143,8 +138,7 @@ public class WekaFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+	handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -248,8 +242,7 @@ public class WekaFileChooser
 	  result = (AbstractFileLoader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+	  handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -274,8 +267,7 @@ public class WekaFileChooser
 	  result = (AbstractFileSaver) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+	  handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

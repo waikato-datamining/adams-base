@@ -41,6 +41,19 @@ public class ObjectExporterFileChooser
   /** the file filters for the writers. */
   protected static List<ExtensionFileFilterWithClass> m_WriterFileFilters;
 
+  /** the current class to export (null for all). */
+  protected Class m_CurrentClass;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CurrentClass = null;
+  }
+
   /**
    * Returns whether the filters have already been initialized.
    *
@@ -82,8 +95,7 @@ public class ObjectExporterFileChooser
 	ext       = ((AbstractObjectExporter) converter).getFormatExtensions();
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+	handleException("Failed to set up '" + classname + "':", e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -117,7 +129,27 @@ public class ObjectExporterFileChooser
    */
   @Override
   protected List<ExtensionFileFilterWithClass> getSaveFileFilters() {
-    return m_WriterFileFilters;
+    List<ExtensionFileFilterWithClass>	result;
+    AbstractObjectExporter		exporter;
+    Class				cls;
+
+    if (m_CurrentClass == null)
+      return m_WriterFileFilters;
+
+    result = new ArrayList<>();
+    for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
+      try {
+	cls      = Class.forName(filter.getClassname());
+	exporter = (AbstractObjectExporter) cls.newInstance();
+	if (exporter.handles(m_CurrentClass))
+	  result.add(filter);
+      }
+      catch (Exception e) {
+	handleException("Failed to check filter: " + filter.getClassname(), e);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -158,6 +190,24 @@ public class ObjectExporterFileChooser
   @Override
   protected Class getWriterClass() {
     return AbstractObjectExporter.class;
+  }
+
+  /**
+   * Sets the class to initialize the file chooser for.
+   *
+   * @param value	the class, null to list all exporters
+   */
+  public void setCurrentClass(Class value) {
+    m_CurrentClass = value;
+  }
+
+  /**
+   * Returns the class used to initialize the file chooser with.
+   *
+   * @return		the class, null if listing all exporters
+   */
+  public Class getCurrentClass() {
+    return m_CurrentClass;
   }
 
   /**

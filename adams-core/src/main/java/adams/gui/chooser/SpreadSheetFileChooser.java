@@ -15,15 +15,10 @@
 
 /*
  * SpreadSheetFileChooser.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import adams.data.io.input.AbstractSpreadSheetReader;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -31,6 +26,11 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.io.output.AbstractSpreadSheetWriter;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -133,8 +133,7 @@ public class SpreadSheetFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+	handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -238,8 +237,7 @@ public class SpreadSheetFileChooser
 	  result = (SpreadSheetReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -264,8 +262,7 @@ public class SpreadSheetFileChooser
 	  result = (SpreadSheetWriter) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

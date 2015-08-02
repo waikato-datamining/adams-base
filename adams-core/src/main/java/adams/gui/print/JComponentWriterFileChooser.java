@@ -15,11 +15,23 @@
 
 /*
  * JComponentWriterFileChooser.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.print;
 
+import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.ImagePreview;
+import adams.gui.core.GUIHelper;
+import adams.gui.goe.GenericObjectEditor;
+import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,18 +40,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
-
-import adams.core.io.PlaceholderFile;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.ImagePreview;
-import adams.gui.core.GUIHelper;
-import adams.gui.goe.GenericObjectEditor;
-import adams.gui.goe.GenericObjectEditorDialog;
 
 /**
  * A specialized JFileChooser that lists all available file Writers
@@ -366,7 +366,7 @@ public class JComponentWriterFileChooser
     }
     catch (Exception e) {
       m_CurrentConverter = null;
-      e.printStackTrace();
+      handleException("Failed to update current converter:", e);
     }
   }
 
@@ -398,7 +398,7 @@ public class JComponentWriterFileChooser
 	((JComponentWriter) m_CurrentConverter).setFile(selFile);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      handleException("Failed to configure current converter: " + OptionUtils.getCommandLine(m_CurrentConverter), e);
     }
   }
 

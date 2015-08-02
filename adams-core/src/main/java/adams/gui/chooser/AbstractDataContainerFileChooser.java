@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.output.AbstractDataContainerWriter;
@@ -117,6 +118,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
 	}
       }
       catch (Exception e) {
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -197,7 +199,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     }
     catch (Exception e) {
       m_CurrentHandler = null;
-      e.printStackTrace();
+      handleException("Failed to update current handler:", e);
     }
   }
 
@@ -221,8 +223,8 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
 	m_CurrentHandler = Class.forName(classname).newInstance();
       }
       catch (Exception e) {
-	e.printStackTrace();
-	m_CurrentHandler = null;
+        m_CurrentHandler = null;
+        handleException("Failed to update current handler:", e);
       }
 
       // none found?
@@ -251,7 +253,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      handleException("Failed to update current handler: " + OptionUtils.getCommandLine(m_CurrentHandler), e);
     }
   }
 

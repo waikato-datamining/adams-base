@@ -15,16 +15,10 @@
 
 /*
  * EmailFileChooser.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
-
-import java.awt.Component;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import adams.core.ClassLister;
 import adams.data.io.input.EmailFileReader;
@@ -33,6 +27,12 @@ import adams.data.io.output.EmailFileWriter;
 import adams.data.io.output.PropertiesEmailFileWriter;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Component;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -135,8 +135,7 @@ public class EmailFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -320,7 +319,7 @@ public class EmailFileChooser
     }
     catch (Exception e) {
       m_CurrentHandler = null;
-      e.printStackTrace();
+      handleException("Failed to update current handler:", e);
     }
   }
 
@@ -339,8 +338,8 @@ public class EmailFileChooser
 	m_CurrentHandler = Class.forName(classname).newInstance();
       }
       catch (Exception e) {
-	e.printStackTrace();
-	m_CurrentHandler = null;
+        m_CurrentHandler = null;
+        handleException("Failed to configure current handler:", e);
       }
 
       // none found?
@@ -366,8 +365,7 @@ public class EmailFileChooser
 	  result = (EmailFileReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -392,8 +390,7 @@ public class EmailFileChooser
 	  result = (EmailFileWriter) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

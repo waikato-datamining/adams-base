@@ -364,11 +364,13 @@ public class Tree
   /**
    * Returns the file chooser to use.
    *
+   * @param cls		the class that the exporters must be able to handle, null for all
    * @return		the file chooser
    */
-  protected ObjectExporterFileChooser getFileChooser() {
+  protected ObjectExporterFileChooser getFileChooser(Class cls) {
     if (m_FileChooser == null)
       m_FileChooser = new ObjectExporterFileChooser();
+    m_FileChooser.setCurrentClass(cls);
     return m_FileChooser;
   }
 
@@ -453,17 +455,19 @@ public class Tree
    * @param obj		the object to export
    */
   protected void export(Object obj) {
+    ObjectExporterFileChooser	fileChooser;
     int 			retVal;
     File 			file;
     AbstractObjectExporter 	exporter;
     String 			msg;
 
-    retVal = getFileChooser().showSaveDialog(this);
+    fileChooser = getFileChooser(obj.getClass());
+    retVal = fileChooser.showSaveDialog(this);
     if (retVal != ObjectExporterFileChooser.APPROVE_OPTION)
       return;
 
-    file     = getFileChooser().getSelectedFile();
-    exporter = getFileChooser().getWriter();
+    file     = fileChooser.getSelectedFile();
+    exporter = fileChooser.getWriter();
     msg      = exporter.export(obj, file);
     if (msg != null)
       GUIHelper.showErrorMessage(

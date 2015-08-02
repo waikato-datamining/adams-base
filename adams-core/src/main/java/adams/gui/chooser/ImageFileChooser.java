@@ -15,10 +15,19 @@
 
 /**
  * ImageFileChooser.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
+import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.JAIImageReader;
+import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.JAIImageWriter;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -27,16 +36,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import adams.data.io.input.AbstractImageReader;
-import adams.data.io.input.JAIImageReader;
-import adams.data.io.output.AbstractImageWriter;
-import adams.data.io.output.JAIImageWriter;
-import adams.gui.core.GUIHelper;
 
 /**
  * A file chooser for images.
@@ -304,8 +303,7 @@ public class ImageFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -369,8 +367,7 @@ public class ImageFileChooser
 	  result = (AbstractImageReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -395,8 +392,7 @@ public class ImageFileChooser
 	  result = (AbstractImageWriter) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

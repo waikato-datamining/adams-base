@@ -15,25 +15,24 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import adams.core.ClassLocator;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.io.File;
+import java.util.List;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -233,7 +232,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
 	  m_LastOpenHandler = Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  e.printStackTrace();
+          handleException("Failed to instantiate last open handler: " + filter.getClassname(), e);
 	}
       }
       m_CurrentHandler = (m_LastOpenHandler == null) ? getDefaultReader() : m_LastOpenHandler;
@@ -245,7 +244,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
 	  m_LastSaveHandler = Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  e.printStackTrace();
+          handleException("Failed to instantiate last save handler: " + filter.getClassname(), e);
 	}
       }
       m_CurrentHandler = (m_LastSaveHandler == null) ? getDefaultWriter() : m_LastSaveHandler;
@@ -396,7 +395,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     }
     catch (Exception e) {
       m_CurrentHandler = null;
-      e.printStackTrace();
+      handleException("Failed to update current handler:", e);
     }
   }
 
@@ -415,8 +414,8 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
 	m_CurrentHandler = Class.forName(classname).newInstance();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	m_CurrentHandler = null;
+        handleException("Failed to configure current handler:", e);
       }
 
       // none found?

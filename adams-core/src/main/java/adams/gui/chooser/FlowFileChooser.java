@@ -15,15 +15,10 @@
 
 /*
  * FlowFileChooser.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import adams.data.io.input.AbstractFlowReader;
 import adams.data.io.input.DefaultFlowReader;
@@ -31,6 +26,11 @@ import adams.data.io.input.FlowReader;
 import adams.data.io.output.AbstractFlowWriter;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -133,8 +133,7 @@ public class FlowFileChooser
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to set up '" + classname + "':");
-	e.printStackTrace();
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -238,8 +237,7 @@ public class FlowFileChooser
 	  result = (FlowReader) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate reader '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate reader: " + filter.getClassname(), e);
 	}
       }
     }
@@ -264,8 +262,7 @@ public class FlowFileChooser
 	  result = (FlowWriter) Class.forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate writer '" + filter.getClassname() + "':");
-	  e.printStackTrace();
+          handleException("Failed to instantiate writer: " + filter.getClassname(), e);
 	}
       }
     }

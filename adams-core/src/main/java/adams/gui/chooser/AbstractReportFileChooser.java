@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportFileChooser.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.Report;
@@ -119,6 +120,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
 	}
       }
       catch (Exception e) {
+        handleException("Failed to set up: " + classname, e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -272,7 +274,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
     }
     catch (Exception e) {
       m_CurrentHandler = null;
-      e.printStackTrace();
+      handleException("Failed to update current handler:", e);
     }
   }
 
@@ -295,8 +297,8 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
 	m_CurrentHandler = Class.forName(classname).newInstance();
       }
       catch (Exception e) {
-	e.printStackTrace();
 	m_CurrentHandler = null;
+	handleException("Failed to configure current handler:", e);
       }
 
       // none found?
@@ -321,7 +323,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      handleException("Failed to configure current handler: " + OptionUtils.getCommandLine(m_CurrentHandler), e);
     }
   }
 
