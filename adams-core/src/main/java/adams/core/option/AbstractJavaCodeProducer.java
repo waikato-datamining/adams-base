@@ -691,6 +691,16 @@ public abstract class AbstractJavaCodeProducer
   }
 
   /**
+   * Properly escapes double quotes.
+   *
+   * @param s		the string to process
+   * @return		the processed string
+   */
+  protected String escapeDoubleQuotes(String s) {
+    return Utils.backQuoteChars(Utils.backQuoteChars(s, new char[]{'"'}, new String[]{"\\\""}), new char[]{'"'}, new String[]{"\\\""});
+  }
+
+  /**
    * Visits an argument option.
    *
    * @param option	the argument option
@@ -723,7 +733,7 @@ public abstract class AbstractJavaCodeProducer
 	    m_OutputBuffer.append(tmp + ".add(");
 	    m_OutputBuffer.append("(" + getClassname(option) + ")");
 	    m_OutputBuffer.append(" ");
-	    m_OutputBuffer.append("argOption.valueOf(\"" + option.toString(value).replace("\"", "\\\"") + "\"));\n");
+	    m_OutputBuffer.append("argOption.valueOf(\"" + escapeDoubleQuotes(option.toString(value)) + "\"));\n");
 	  }
 	  m_OutputBuffer.append(getIndentation());
 	  m_OutputBuffer.append(getCurrentVariable());
@@ -738,7 +748,7 @@ public abstract class AbstractJavaCodeProducer
 	  m_OutputBuffer.append(option.getWriteMethod().getName());
 	  m_OutputBuffer.append("(");
 	  m_OutputBuffer.append(getCast(option));
-	  m_OutputBuffer.append("argOption.valueOf(\"" + option.toString(currValue).replace("\"", "\\\"") + "\"));\n");
+	  m_OutputBuffer.append("argOption.valueOf(\"" + escapeDoubleQuotes(option.toString(currValue)) + "\"));\n");
 	}
       }
     }
