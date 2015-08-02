@@ -25,6 +25,7 @@ import adams.data.io.output.AbstractSpreadSheetWriter;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -137,7 +138,8 @@ public class SpreadSheetExporter
    */
   @Override
   public boolean handles(Class cls) {
-    return (ClassLocator.isSubclass(SpreadSheet.class, cls));
+    return (ClassLocator.isSubclass(SpreadSheet.class, cls))
+      || (ClassLocator.hasInterface(SpreadSheetSupporter.class, cls));
   }
 
   /**
@@ -149,7 +151,14 @@ public class SpreadSheetExporter
    */
   @Override
   protected String doExport(Object obj, File file) {
-    if (!m_Writer.write((SpreadSheet) obj, file))
+    SpreadSheet 	sheet;
+
+    if (obj instanceof SpreadSheet)
+      sheet = (SpreadSheet) obj;
+    else
+      sheet = ((SpreadSheetSupporter) obj).toSpreadSheet();
+
+    if (!m_Writer.write(sheet, file))
       return "Failed to export spreadsheet to '" + file + "'!";
     else
       return null;
