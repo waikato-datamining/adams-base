@@ -20,6 +20,18 @@
 
 package adams.gui.flow.tree;
 
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
+import adams.flow.core.ActorUtils;
+import adams.gui.core.ColorHelper;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -28,19 +40,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.Hashtable;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
-import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorExecution;
-import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorUtils;
-import adams.gui.core.ColorHelper;
-import adams.gui.core.GUIHelper;
 
 /**
  * A specialized renderer for the tree elements.
@@ -160,15 +159,17 @@ public class Renderer
       int		h;
       int		w;
       float		width;
+      int		margin;
       Graphics2D 	g2d;
 
       if (m_Icon == null)
 	return;
 
-      w     = getIconWidth();
-      h     = getIconHeight();
-      g2d   = null;
-      width = 1.0f;
+      w      = getIconWidth();
+      h      = getIconHeight();
+      g2d    = null;
+      width  = 1.0f;
+      margin = (int) (BORDER_MARGIN * m_ScaleFactor);
 
       paintBackground(g, x, y, w, h);
 
@@ -184,7 +185,7 @@ public class Renderer
       g.setColor(COLOR_VISUALCUES);
 
       if (m_HasSubActors && m_HasInput && m_ForwardsInput)
-	g.drawLine(x + w, y + h / 2, x + w + BORDER_MARGIN, y + h / 2);  // right
+	g.drawLine(x + w, y + h / 2, x + w + margin, y + h / 2);  // right
 
       if (m_Execution != ActorExecution.UNDEFINED) {
 	switch (m_Execution) {
@@ -197,9 +198,9 @@ public class Renderer
 
 	  case PARALLEL:
 	    if (m_HasInput)
-	      g.drawLine(x - BORDER_MARGIN, y + h / 2, x, y + h / 2);          // left
+	      g.drawLine(x - margin, y + h / 2, x, y + h / 2);          // left
 	    if (m_HasOutput)
-	      g.drawLine(x + w, y + h / 2, x + w + BORDER_MARGIN, y + h / 2);  // right
+	      g.drawLine(x + w, y + h / 2, x + w + margin, y + h / 2);  // right
 	    break;
 	}
       }
@@ -548,7 +549,8 @@ public class Renderer
 	  icon = new DisabledIcon(icon);
 	  setDisabledIcon(icon);
 	}
-        setBorder(BorderFactory.createEmptyBorder(BORDER_MARGIN, BORDER_MARGIN, BORDER_MARGIN, BORDER_MARGIN));
+        int margin = (int) (BORDER_MARGIN * m_ScaleFactor);
+        setBorder(BorderFactory.createEmptyBorder(margin, margin, margin, margin));
       }
     }
 
