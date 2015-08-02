@@ -173,6 +173,49 @@ that allows you to load/save workspaces.
 \end{figure}
 
 \clearpage
+\section{Make compatible datasets}
+When dealing with data across multiple spreadsheets, e.g., training, test
+and validation set, then it can happen that these datasets are not compatible
+in the strict Weka sense.
+
+The \textit{Make compatible datasets} wizard allows you to turn spreadsheets
+into compatible ARFF files:
+\begin{tight_itemize}
+  \item Select the datasets to make compatible (see \ref{makecompatible1})
+  \item Configure how the datasets are being read (see \ref{merge_datasets2})
+  \item Select the output directory for the compatible ARFF files (see \ref{merge_datasets3})
+  \item Info dialog after processing the datasets (see \ref{merge_datasets4})
+\end{tight_itemize}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/makecompatible1.png}
+  \caption{Selecting input files for making compatible datasets.}
+  \label{makecompatible1}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/makecompatible2.png}
+  \caption{Configuring the readers for the datasets.}
+  \label{makecompatible2}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/makecompatible3.png}
+  \caption{Selecting the output directory for the compatible ARFF files.}
+  \label{makecompatible3}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=8.0cm]{images/makecompatible4.png}
+  \caption{The dialog when dataset generation was successful.}
+  \label{makecompatible4}
+\end{figure}
+
+\clearpage
 \section{Merge datasets}
 The process of adding reference data to a dataset or performing
 \textit{data fusion}\footnote{\url{https://en.wikipedia.org/wiki/Data_fusion}{}},
@@ -192,14 +235,14 @@ Figure \ref{merge_datasets-output} shows an example of a merged file.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=12.0cm]{images/merge_datasets1.png}
-  \caption{Selecting input files for batch-filtering.}
+  \caption{Selecting input files for merging.}
   \label{merge_datasets1}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=12.0cm]{images/merge_datasets2.png}
-  \caption{Configuring the filter.}
+  \caption{Configuring the merge.}
   \label{merge_datasets2}
 \end{figure}
 
@@ -213,7 +256,7 @@ Figure \ref{merge_datasets-output} shows an example of a merged file.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=12.0cm]{images/merge_datasets4.png}
-  \caption{The dialog when batch-filtering was successful.}
+  \caption{The dialog when merging was successful.}
   \label{merge_datasets4}
 \end{figure}
 
