@@ -15,14 +15,17 @@
 
 /*
  * Renderer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.Hashtable;
 
@@ -78,6 +81,9 @@ public class Renderer
     /** the actual icon. */
     protected ImageIcon m_Icon;
 
+    /** the scale factor. */
+    protected double m_ScaleFactor;
+
     /** how to paint visual cues. */
     protected ActorExecution m_Execution;
 
@@ -103,6 +109,7 @@ public class Renderer
      * Initializes the icon.
      *
      * @param icon		the actual icon
+     * @param scaleFactor	the scale factor (1.0 = default size)
      * @param execution		how to paint the visual cues
      * @param debugOn		whether debugging is on
      * @param hasInput		whether the actor accepts input
@@ -111,10 +118,11 @@ public class Renderer
      * @param forwardsInput	whether the input is forwarded to the sub-actors
      * @param deprecated	whether the actor is deprecated
      */
-    public ActorIcon(ImageIcon icon, ActorExecution execution, boolean debugOn, boolean hasInput, boolean hasOutput, boolean hasSubActors, boolean forwardsInput, boolean deprecated) {
+    public ActorIcon(ImageIcon icon, double scaleFactor, ActorExecution execution, boolean debugOn, boolean hasInput, boolean hasOutput, boolean hasSubActors, boolean forwardsInput, boolean deprecated) {
       super();
 
       m_Icon          = icon;
+      m_ScaleFactor   = scaleFactor;
       m_Execution     = execution;
       m_DebugOn       = debugOn;
       m_HasInput      = hasInput;
@@ -149,22 +157,34 @@ public class Renderer
      * @param y		the y position
      */
     public void paintIcon(Component c, Graphics g, int x, int y) {
-      int	h;
-      int	w;
+      int		h;
+      int		w;
+      float		width;
+      Graphics2D 	g2d;
 
       if (m_Icon == null)
 	return;
 
-      w = getIconWidth();
-      h = getIconHeight();
+      w     = getIconWidth();
+      h     = getIconHeight();
+      g2d   = null;
+      width = 1.0f;
 
       paintBackground(g, x, y, w, h);
+
+      // set width
+      if (g instanceof Graphics2D) {
+	g2d = (Graphics2D) g;
+	if (g2d.getStroke() instanceof BasicStroke)
+	  width = ((BasicStroke) g2d.getStroke()).getLineWidth();
+	g2d.setStroke(new BasicStroke(1.0f * (float) m_ScaleFactor));
+      }
 
       // visual cues
       g.setColor(COLOR_VISUALCUES);
 
       if (m_HasSubActors && m_HasInput && m_ForwardsInput)
-	g.drawLine(x + w, y + h / 2, x + w + BORDER_WIDTH, y + h / 2);  // right
+	g.drawLine(x + w, y + h / 2, x + w + BORDER_MARGIN, y + h / 2);  // right
 
       if (m_Execution != ActorExecution.UNDEFINED) {
 	switch (m_Execution) {
@@ -177,9 +197,9 @@ public class Renderer
 
 	  case PARALLEL:
 	    if (m_HasInput)
-	      g.drawLine(x - BORDER_WIDTH, y + h / 2, x, y + h / 2);          // left
+	      g.drawLine(x - BORDER_MARGIN, y + h / 2, x, y + h / 2);          // left
 	    if (m_HasOutput)
-	      g.drawLine(x + w, y + h / 2, x + w + BORDER_WIDTH, y + h / 2);  // right
+	      g.drawLine(x + w, y + h / 2, x + w + BORDER_MARGIN, y + h / 2);  // right
 	    break;
 	}
       }
@@ -191,6 +211,10 @@ public class Renderer
 	g.drawLine(x, y,     x + w, y + h);
 	g.drawLine(x, y + h, x + w, y);
       }
+
+      // restore width
+      if (g2d != null)
+	g2d.setStroke(new BasicStroke(width));
     }
 
     /**
@@ -200,6 +224,15 @@ public class Renderer
      */
     public ImageIcon getIcon() {
       return m_Icon;
+    }
+
+    /**
+     * Returns the scale factor in use.
+     *
+     * @return		the scale factor
+     */
+    public double getScaleFactor() {
+      return m_ScaleFactor;
     }
 
     /**
@@ -325,23 +358,24 @@ public class Renderer
      * @param icon		the actual icon
      */
     public DisabledIcon(ActorIcon icon) {
-      this(icon.getIcon(), icon.getExecution(), icon.getDebugOn(), icon.hasInput(), icon.hasOutput(), icon.hasSubActors(), icon.getForwardsInput(), icon.isDeprecated());
+      this(icon.getIcon(), icon.getScaleFactor(), icon.getExecution(), icon.getDebugOn(), icon.hasInput(), icon.hasOutput(), icon.hasSubActors(), icon.getForwardsInput(), icon.isDeprecated());
     }
 
     /**
      * Initializes the icon.
      *
      * @param icon		the actual icon
+     * @param scaleFactor	the scale factor (1.0 = default size)
      * @param execution		how to paint the visual cues
      * @param debugOn		whether the actor has debugging enabled
      * @param hasInput		whether the actor accepts input
      * @param hasOutput		whether the actor generates output
      * @param hasSubActors	whether the actor manages actors
-     * @param fowardsInput	whether the actor forwards the input to its sub-actors
+     * @param forwardsInput	whether the actor forwards the input to its sub-actors
      * @param deprecated	whether the actor is deprecated
      */
-    public DisabledIcon(ImageIcon icon, ActorExecution execution, boolean debugOn, boolean hasInput, boolean hasOutput, boolean hasSubActors, boolean forwardsInput, boolean deprecated) {
-      super(icon, execution, debugOn, hasInput, hasOutput, hasSubActors, forwardsInput, deprecated);
+    public DisabledIcon(ImageIcon icon, double scaleFactor, ActorExecution execution, boolean debugOn, boolean hasInput, boolean hasOutput, boolean hasSubActors, boolean forwardsInput, boolean deprecated) {
+      super(icon, scaleFactor, execution, debugOn, hasInput, hasOutput, hasSubActors, forwardsInput, deprecated);
     }
 
     /**
@@ -366,8 +400,8 @@ public class Renderer
   /** the prefix for the icons. */
   public final static String ICON_PREFIX = "adams.flow.";
 
-  /** the border width. */
-  public final static int BORDER_WIDTH = 3;
+  /** the border margin. */
+  public final static int BORDER_MARGIN = 3;
 
   /** stores the classname/icon relationship. */
   protected Hashtable<String,ImageIcon> m_Icons;
@@ -385,17 +419,17 @@ public class Renderer
   /**
    * Initializes the renderer.
    *
-   * @param scaleFactor	the scale factor for the icons
+   * @param scaleFactor	the scale factor for text/icon
    */
   public Renderer(double scaleFactor) {
     super();
 
-    m_Icons       = new Hashtable<String,ImageIcon>();
+    m_Icons       = new Hashtable<>();
     m_ScaleFactor = scaleFactor;
   }
 
   /**
-   * Returns the current scale factor for the icons.
+   * Returns the current scale factor for text/icon.
    *
    * @return		the scale factor
    */
@@ -457,14 +491,15 @@ public class Renderer
 
     if (icon != null) {
       result = new ActorIcon(
-	  icon,
-	  execution,
-	  actor.isLoggingEnabled(),
-	  ActorUtils.isSink(actor) || ActorUtils.isTransformer(actor),
-	  ActorUtils.isSource(actor) || ActorUtils.isTransformer(actor),
-	  ActorUtils.isActorHandler(actor),
-	  (ActorUtils.isActorHandler(actor) ? ((ActorHandler) actor).getActorHandlerInfo().getForwardsInput() : false),
-	  (actor.getClass().getAnnotation(Deprecated.class) != null));
+	icon,
+	m_ScaleFactor,
+	execution,
+	actor.isLoggingEnabled(),
+	ActorUtils.isSink(actor) || ActorUtils.isTransformer(actor),
+	ActorUtils.isSource(actor) || ActorUtils.isTransformer(actor),
+	ActorUtils.isActorHandler(actor),
+	ActorUtils.isActorHandler(actor) && ((ActorHandler) actor).getActorHandlerInfo().getForwardsInput(),
+	(actor.getClass().getAnnotation(Deprecated.class) != null));
     }
 
     return result;
@@ -490,6 +525,8 @@ public class Renderer
     super.getTreeCellRendererComponent(
         tree, value, sel, expanded, leaf, row, hasFocus);
 
+    setFont(new Font("helvetica", Font.PLAIN, (int) (12 * m_ScaleFactor)));
+
     // icon available?
     ActorIcon icon = null;
     if (value instanceof Node) {
@@ -511,7 +548,7 @@ public class Renderer
 	  icon = new DisabledIcon(icon);
 	  setDisabledIcon(icon);
 	}
-        setBorder(BorderFactory.createEmptyBorder(BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH));
+        setBorder(BorderFactory.createEmptyBorder(BORDER_MARGIN, BORDER_MARGIN, BORDER_MARGIN, BORDER_MARGIN));
       }
     }
 

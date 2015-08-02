@@ -515,7 +515,7 @@ public class FlowPanel
     m_Tree.setPlaceholdersSize(props.getProperty("Tree.Placeholders.Size", "-2"));
     m_Tree.setStateUsesNested(props.getBoolean("Tree.StateUsesNested", true));
     m_Tree.setIgnoreNameChanges(props.getBoolean("Tree.IgnoreNameChanges", false));
-    m_Tree.setIconScaleFactor(props.getDouble("Tree.IconScaleFactor", 1.0));
+    m_Tree.setScaleFactor(props.getDouble("Tree.ScaleFactor", 1.0));
     m_Tree.setRecordAdd(props.getBoolean("Tree.RecordAdd", false));
     m_Tree.setVariableHighlightBackground(props.getProperty("VariableHighlight.Background", "#FFDD88"));
     m_Tree.setShowQuickInfo(props.getBoolean("ShowQuickInfo", true));

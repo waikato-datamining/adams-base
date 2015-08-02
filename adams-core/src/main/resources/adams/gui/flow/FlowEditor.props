@@ -101,8 +101,8 @@ Tree.StateUsesNested=false
 # propagate the changes throughout the tree (true|false)
 Tree.IgnoreNameChanges=false
 
-# The scale factor for the icons (1.0 is actual size)
-Tree.IconScaleFactor=1.0
+# The scale factor for text/icons (1.0 is actual size)
+Tree.ScaleFactor=1.0
 
 # Whether to show the global info in the class tree as child node of the
 # actor class (true|false)

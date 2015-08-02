@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -395,7 +395,7 @@ public class Node
 	newSize = 3 - Integer.parseInt(size.substring(1));
       else
 	newSize = Integer.parseInt(size);
-      newSize = (int) (newSize * m_Owner.getIconScaleFactor());
+      newSize = (int) (newSize * m_Owner.getScaleFactor());
       if (newSize < 1)
 	newSize = 1;
       if (newSize > 7)
@@ -484,13 +484,13 @@ public class Node
 	    size = tag.getOptions().get("size");
 	  if (font)
 	    result.append("</font>");
-	  result.append("<font size='" + scaleFontSize(size) + "' color='" + color + "'>");
+	  result.append("<font " + generateSizeAttribute(size) + " color='" + color + "'>");
 	  result.append(tag.getName());
 	  font = true;
 	}
 	else {
 	  if (!font)
-	    result.append("<font size='" + scaleFontSize(sizeDef) + "' color='" + colorDef + "'>");
+	    result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
 	  result.append(insertLineBreaks(part.toString()));
 	  font = true;
 	}
@@ -498,14 +498,30 @@ public class Node
       result.append("</font>");
     }
     else {
-      result.append("<font size='" + scaleFontSize(sizeDef) + "' color='" + colorDef + "'>");
+      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
       result.append(insertLineBreaks(actor.getAnnotations().getValue()));
       result.append("</font>");
     }
     
     return result.toString();
   }
-  
+
+  /**
+   * Generates the size attribute HTML string. Gets skipped if the scale
+   * factor differs from 1.0, as the rendering doesn't take this properly
+   * into account.
+   *
+   * @param size	the size string to parse/use
+   * @return		the HTML code, can be empty string
+   * @see		#scaleFontSize(String)
+   */
+  protected String generateSizeAttribute(String size) {
+    if (m_Owner.getScaleFactor() != 1.0)
+      return "";
+    else
+      return "size='" + scaleFontSize(size) + "'";
+  }
+
   /**
    * Returns the actor in HTML.
    *
@@ -526,7 +542,7 @@ public class Node
       }
       else {
 	html.append(
-	    "<font size='" + scaleFontSize(m_Owner.getActorNameSize()) + "' color='" + m_Owner.getActorNameColor() + "'>"
+	    "<font " + generateSizeAttribute(m_Owner.getActorNameSize()) + " color='" + m_Owner.getActorNameColor() + "'>"
 	    + HtmlUtils.toHTML(actor.getName()) + "</font>");
 
 	// skip this actor?
@@ -543,7 +559,7 @@ public class Node
 	if (m_Owner.getShowInputOutput() && (actor instanceof InputConsumer)) {
 	  html.insert(
 	      0,
-	      "<font size='" + scaleFontSize(m_Owner.getInputOutputSize()) + "' color='" + m_Owner.getInputOutputColor() + "'>"
+	      "<font " + generateSizeAttribute(m_Owner.getInputOutputSize()) + " color='" + m_Owner.getInputOutputColor() + "'>"
 	      + HtmlUtils.toHTML(classArrayToString(((InputConsumer) actor).accepts())) + "</font>"
 	      + "<br>");
 	}
@@ -553,7 +569,7 @@ public class Node
 	  quickInfo = actor.getQuickInfo();
 	  if ((quickInfo != null) && (quickInfo.trim().length() > 0)) {
 	    html.append("&nbsp;&nbsp;"
-		+ "<font size='" + scaleFontSize(m_Owner.getQuickInfoSize()) + "' color='" + m_Owner.getQuickInfoColor() + "'>"
+		+ "<font " + generateSizeAttribute(m_Owner.getQuickInfoSize()) + " color='" + m_Owner.getQuickInfoColor() + "'>"
 		+ HtmlUtils.toHTML(quickInfo)
 		+ "</font>");
 	  }
@@ -569,7 +585,7 @@ public class Node
 	if (m_Owner.getShowInputOutput() && (actor instanceof OutputProducer)) {
 	  html.append("<br>");
 	  html.append(
-	      "<font size='" + scaleFontSize(m_Owner.getInputOutputSize()) + "' color='" + m_Owner.getInputOutputColor() + "'>"
+	      "<font " + generateSizeAttribute(m_Owner.getInputOutputSize()) + " color='" + m_Owner.getInputOutputColor() + "'>"
 	      + HtmlUtils.toHTML(classArrayToString(((OutputProducer) actor).generates())) + "</font>");
 	}
 

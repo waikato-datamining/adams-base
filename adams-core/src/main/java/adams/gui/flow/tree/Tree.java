@@ -2064,21 +2064,21 @@ public class Tree
   }
 
   /**
-   * Sets the scale factor for the icons.
+   * Sets the scale factor for the text/icons.
    *
    * @param value	the scale factor (1.0 is actual size)
    */
-  public void setIconScaleFactor(double value) {
+  public void setScaleFactor(double value) {
     if (value != ((Renderer) getCellRenderer()).getScaleFactor())
       setCellRenderer(new Renderer(value));
   }
 
   /**
-   * Returns the scale factor for the icons.
+   * Returns the scale factor for the text/icons.
    *
    * @return		the scale factor (1.0 is actual size)
    */
-  public double getIconScaleFactor() {
+  public double getScaleFactor() {
     return ((Renderer) getCellRenderer()).getScaleFactor();
   }
 

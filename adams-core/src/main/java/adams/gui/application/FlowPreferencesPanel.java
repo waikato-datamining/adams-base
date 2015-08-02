@@ -15,7 +15,7 @@
 
 /**
  * FlowPreferencesPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -64,7 +64,7 @@ public class FlowPreferencesPanel
     addPropertyType("Tree.BookmarkHighlight.Background", PropertyType.COLOR);
     addPropertyType("Tree.StateUsesNested", PropertyType.BOOLEAN);
     addPropertyType("Tree.IgnoreNameChanges", PropertyType.BOOLEAN);
-    addPropertyType("Tree.IconScaleFactor", PropertyType.DOUBLE);
+    addPropertyType("Tree.ScaleFactor", PropertyType.DOUBLE);
     addPropertyType("Tree.RecordActor", PropertyType.BOOLEAN);
     addPropertyType("ClassTree.ShowGlobalInfo", PropertyType.BOOLEAN);
     addPropertyType("StatusBar.Width", PropertyType.INTEGER);
