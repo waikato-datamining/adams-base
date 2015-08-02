@@ -42,7 +42,7 @@ public class PlainTextExporter
    * 				file chooser
    */
   public String getFormatDescription() {
-    return "Plain text (simple)";
+    return "Plain text (dump)";
   }
 
   /**
