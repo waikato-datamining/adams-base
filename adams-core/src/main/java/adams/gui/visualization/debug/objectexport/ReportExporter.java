@@ -21,6 +21,7 @@
 package adams.gui.visualization.debug.objectexport;
 
 import adams.core.ClassLocator;
+import adams.core.io.PlaceholderFile;
 import adams.data.io.output.DefaultSimpleReportWriter;
 import adams.data.report.Report;
 
@@ -81,6 +82,7 @@ public class ReportExporter
 
     report = (Report) obj;
     writer = new DefaultSimpleReportWriter();
+    writer.setOutput(new PlaceholderFile(file));
     if (!writer.write(report))
       return "Failed to write report to '" + file + "'!";
 
