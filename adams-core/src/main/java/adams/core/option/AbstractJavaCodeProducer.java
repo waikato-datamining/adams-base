@@ -28,9 +28,11 @@ import adams.flow.core.ActorHandler;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +47,60 @@ public abstract class AbstractJavaCodeProducer
 
   /** for serialization. */
   private static final long serialVersionUID = 6441039650955464738L;
+
+  /** Java keywords. */
+  public final static String[] JAVA_KEYWORDS = {
+    "abstract",
+    "assert",
+    "boolean",
+    "break",
+    "byte",
+    "case",
+    "catch",
+    "char",
+    "class",
+    "const",
+    "continue",
+    "default",
+    "do",
+    "double",
+    "else",
+    "enum",
+    "extends",
+    "final",
+    "finally",
+    "float",
+    "for",
+    "goto",
+    "if",
+    "implements",
+    "import",
+    "instanceof",
+    "int",
+    "interface",
+    "long",
+    "native",
+    "new",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "return",
+    "short",
+    "static",
+    "strictfp",
+    "super",
+    "switch",
+    "synchronized",
+    "this",
+    "throw",
+    "throws",
+    "transient",
+    "try",
+    "void",
+    "volatile",
+    "while"
+  };
 
   /** the buffer for assembling the help. */
   protected StringBuilder m_OutputBuffer;
@@ -73,6 +129,9 @@ public abstract class AbstractJavaCodeProducer
   /** the named counter for the variables. */
   protected NamedCounter m_VarNames;
 
+  /** for checking the keywords. */
+  protected HashSet<String> m_JavaKeywords;
+
   /**
    * Initializes the output data structure.
    *
@@ -94,6 +153,7 @@ public abstract class AbstractJavaCodeProducer
     m_Indentation       = 0;
     m_ShortenedImports  = new HashMap<>();
     m_VarNames          = new NamedCounter();
+    m_JavaKeywords      = new HashSet<>(Arrays.asList(JAVA_KEYWORDS));
   }
 
   /**
@@ -409,6 +469,8 @@ public abstract class AbstractJavaCodeProducer
   protected String getNextTmpVariable(String base) {
     int		index;
 
+    if (m_JavaKeywords.contains(base))
+      base = base + "_";
     index = m_VarNames.next(base);
 
     if (index == 1)
