@@ -24,6 +24,7 @@ import adams.core.ClassLocator;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.DefaultSimpleReportWriter;
 import adams.data.report.Report;
+import adams.data.report.ReportHandler;
 
 import java.io.File;
 
@@ -65,7 +66,8 @@ public class ReportExporter
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(Report.class, cls);
+    return ClassLocator.isSubclass(Report.class, cls)
+      || ClassLocator.hasInterface(ReportHandler.class, cls);
   }
 
   /**
@@ -80,7 +82,10 @@ public class ReportExporter
     Report			report;
     DefaultSimpleReportWriter	writer;
 
-    report = (Report) obj;
+    if (obj instanceof Report)
+      report = (Report) obj;
+    else
+      report = ((ReportHandler) obj).getReport();
     writer = new DefaultSimpleReportWriter();
     writer.setOutput(new PlaceholderFile(file));
     if (!writer.write(report))
