@@ -64,6 +64,7 @@ import weka.core.Instances;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils.DataSink;
 import weka.experiment.InstanceQuery;
+import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
 import weka.gui.sql.SqlViewerDialog;
 
@@ -771,6 +772,7 @@ public class InstanceExplorer
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	ConverterFileChooser fc = new ConverterFileChooser();
+        AdamsHelper.updateFileChooserAccessory(fc);
 	int retval = fc.showSaveDialog(InstanceExplorer.this);
 	if (retval != ConverterFileChooser.APPROVE_OPTION)
 	  return;
