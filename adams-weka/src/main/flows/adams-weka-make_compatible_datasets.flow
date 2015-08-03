@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-08-02 22:39:24
+# Date: 2015-08-03 12:24:16
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -260,30 +260,54 @@ adams.flow.control.Flow
 							-var-name
 							outfile
 			-tee
-				adams.flow.control.UpdateProperties
-					-property
-					filter.instancesIndices
-					-variable
-					range
-					-sub-actor
-						adams.flow.transformer.WekaFilter
-							-filter
-								weka.filters.unsupervised.instance.RemoveRange
-									-V
-									-R
-									first-last
+				adams.flow.control.Tee
+					-name
+					save file
+					-tee
+						adams.flow.control.UpdateProperties
+							-property
+							filter.instancesIndices
+							-variable
+							range
+							-sub-actor
+								adams.flow.transformer.WekaFilter
+									-filter
+										weka.filters.unsupervised.instance.RemoveRange
+											-V
+											-R
+											first-last
+					-tee
+						adams.flow.transformer.WekaRenameRelation
+							-replace
+							@{name}
+					-tee
+						adams.flow.sink.WekaFileWriter
+							-output
+							@{outfile}
+							-saver
+								weka.core.converters.ArffSaver
+									-decimal
+									6
 			-tee
-				adams.flow.transformer.WekaRenameRelation
-					-replace
-					@{name}
-			-tee
-				adams.flow.sink.WekaFileWriter
-					-output
-					@{outfile}
-					-saver
-						weka.core.converters.ArffSaver
-							-decimal
-							6
+				adams.flow.control.SubProcess
+					-name
+					update dataset
+					-actor
+						adams.flow.control.UpdateProperties
+							-property
+							filter.instancesIndices
+							-variable
+							range
+							-sub-actor
+								adams.flow.transformer.WekaFilter
+									-filter
+										weka.filters.unsupervised.instance.RemoveRange
+											-R
+											first-last
+					-actor
+						adams.flow.transformer.SetStorageValue
+							-storage-name
+							combined_arff
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

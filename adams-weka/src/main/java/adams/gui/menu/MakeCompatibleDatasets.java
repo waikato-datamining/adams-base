@@ -275,13 +275,13 @@ public class MakeCompatibleDatasets
       msg  = flow.setUp();
       if (msg != null) {
 	GUIHelper.showErrorMessage(
-	  getOwner(), "Failed to get setup flow!\n" + msg);
+	  getOwner(), "Failed to setup flow!\n" + msg);
 	return;
       }
       msg = flow.execute();
       if (msg != null) {
 	GUIHelper.showErrorMessage(
-	  getOwner(), "Failed to get execute flow!\n" + msg);
+	  getOwner(), "Failed to execute flow!\n" + msg);
 	flow.wrapUp();
 	flow.cleanUp();
 	return;
@@ -291,7 +291,7 @@ public class MakeCompatibleDatasets
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	getOwner(), "Failed to get setup/execute flow!\n" + Utils.throwableToString(e));
+	getOwner(), "Failed to setup/execute flow!\n" + Utils.throwableToString(e));
       return;
     }
 
@@ -836,44 +836,85 @@ public class MakeCompatibleDatasets
       }
       actors15.add(trigger12);
 
-      // Flow.create separate arff.UpdateProperties
-      UpdateProperties updateproperties = new UpdateProperties();
+      // save ARFF
+      Tee teeSave = new Tee();
+      teeSave.setName("save ARFF");
+      actors15.add(teeSave);
       {
-        argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("properties");
-        List<BaseString> properties = new ArrayList<BaseString>();
-        properties.add((BaseString) argOption.valueOf("filter.instancesIndices"));
-        updateproperties.setProperties(properties.toArray(new BaseString[0]));
-        argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("variableNames");
-        List<VariableName> variablenames = new ArrayList<VariableName>();
-        variablenames.add((VariableName) argOption.valueOf("range"));
-        updateproperties.setVariableNames(variablenames.toArray(new VariableName[0]));
+        // Flow.create separate arff.save ARFF.UpdateProperties
+        UpdateProperties updateproperties = new UpdateProperties();
+        {
+          argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("properties");
+          List<BaseString> properties = new ArrayList<BaseString>();
+          properties.add((BaseString) argOption.valueOf("filter.instancesIndices"));
+          updateproperties.setProperties(properties.toArray(new BaseString[0]));
+          argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("variableNames");
+          List<VariableName> variablenames = new ArrayList<VariableName>();
+          variablenames.add((VariableName) argOption.valueOf("range"));
+          updateproperties.setVariableNames(variablenames.toArray(new VariableName[0]));
 
-        // Flow.create separate arff.UpdateProperties.WekaFilter
-        WekaFilter wekafilter = new WekaFilter();
-        RemoveRange removerange = new RemoveRange();
-        removerange.setOptions(OptionUtils.splitOptions("-V -R first-last"));
-        wekafilter.setFilter(removerange);
+          // Flow.create separate arff.save ARFF.UpdateProperties.WekaFilter
+          WekaFilter wekafilter = new WekaFilter();
+          RemoveRange removerange = new RemoveRange();
+          removerange.setOptions(OptionUtils.splitOptions("-V -R first-last"));
+          wekafilter.setFilter(removerange);
 
-        updateproperties.setSubActor(wekafilter);
+          updateproperties.setSubActor(wekafilter);
 
+        }
+        teeSave.add(updateproperties);
+
+        // Flow.create separate arff.save ARFF.WekaRenameRelation
+        WekaRenameRelation wekarenamerelation = new WekaRenameRelation();
+        argOption = (AbstractArgumentOption) wekarenamerelation.getOptionManager().findByProperty("replace");
+        argOption.setVariable("@{name}");
+        teeSave.add(wekarenamerelation);
+
+        // Flow.create separate arff.save ARFF.WekaFileWriter
+        WekaFileWriter wekafilewriter = new WekaFileWriter();
+        argOption = (AbstractArgumentOption) wekafilewriter.getOptionManager().findByProperty("outputFile");
+        argOption.setVariable("@{outfile}");
+        ArffSaver arffsaver = new ArffSaver();
+        arffsaver.setOptions(OptionUtils.splitOptions("-decimal 6"));
+        wekafilewriter.setCustomSaver(arffsaver);
+
+        teeSave.add(wekafilewriter);
       }
-      actors15.add(updateproperties);
 
-      // Flow.create separate arff.WekaRenameRelation
-      WekaRenameRelation wekarenamerelation = new WekaRenameRelation();
-      argOption = (AbstractArgumentOption) wekarenamerelation.getOptionManager().findByProperty("replace");
-      argOption.setVariable("@{name}");
-      actors15.add(wekarenamerelation);
+      // update dataset
+      SubProcess subUpdate = new SubProcess();
+      subUpdate.setName("update dataset");
+      actors15.add(subUpdate);
+      {
+        // Flow.create separate arff.update dataset.UpdateProperties
+        UpdateProperties updateproperties = new UpdateProperties();
+        {
+          argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("properties");
+          List<BaseString> properties = new ArrayList<BaseString>();
+          properties.add((BaseString) argOption.valueOf("filter.instancesIndices"));
+          updateproperties.setProperties(properties.toArray(new BaseString[0]));
+          argOption = (AbstractArgumentOption) updateproperties.getOptionManager().findByProperty("variableNames");
+          List<VariableName> variablenames = new ArrayList<VariableName>();
+          variablenames.add((VariableName) argOption.valueOf("range"));
+          updateproperties.setVariableNames(variablenames.toArray(new VariableName[0]));
 
-      // Flow.create separate arff.WekaFileWriter
-      WekaFileWriter wekafilewriter = new WekaFileWriter();
-      argOption = (AbstractArgumentOption) wekafilewriter.getOptionManager().findByProperty("outputFile");
-      argOption.setVariable("@{outfile}");
-      ArffSaver arffsaver = new ArffSaver();
-      arffsaver.setOptions(OptionUtils.splitOptions("-decimal 6"));
-      wekafilewriter.setCustomSaver(arffsaver);
+          // Flow.create separate arff.update dataset.UpdateProperties.WekaFilter
+          WekaFilter wekafilter = new WekaFilter();
+          RemoveRange removerange = new RemoveRange();
+          removerange.setOptions(OptionUtils.splitOptions("-R first-last"));
+          wekafilter.setFilter(removerange);
 
-      actors15.add(wekafilewriter);
+          updateproperties.setSubActor(wekafilter);
+        }
+        subUpdate.add(updateproperties);
+
+        // Flow.create separate arff.update dataset.SetStorageValue
+        SetStorageValue setstoragevalue6 = new SetStorageValue();
+        argOption = (AbstractArgumentOption) setstoragevalue6.getOptionManager().findByProperty("storageName");
+        setstoragevalue6.setStorageName((StorageName) argOption.valueOf("combined_arff"));
+        subUpdate.add(setstoragevalue6);
+      }
+
       trigger8.setActors(actors15.toArray(new AbstractActor[0]));
 
     }
