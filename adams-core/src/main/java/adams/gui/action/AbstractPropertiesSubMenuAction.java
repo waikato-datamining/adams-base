@@ -15,14 +15,15 @@
 
 /**
  * AbstractPropertiesSubMenuAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
-import java.awt.Dialog;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import java.awt.Dialog;
 
 /**
  * Ancestor for actions in the flow editor that generate a submenu.
@@ -48,6 +49,14 @@ public abstract class AbstractPropertiesSubMenuAction<T, D extends Dialog>
    */
   @Override
   public JMenuItem getMenuItem() {
-    return createMenu();
+    JMenuItem	result;
+
+    result = createMenu();
+    if (getIcon() != null)
+      result.setIcon(getIcon());
+    else
+      result.setIcon(GUIHelper.getEmptyIcon());
+
+    return result;
   }
 }
