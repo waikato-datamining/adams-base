@@ -49,11 +49,6 @@ import adams.gui.event.TabVisibilityChangeEvent;
 import adams.gui.event.TabVisibilityChangeListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
-import adams.gui.flow.menu.RunDisableAllBreakpoints;
-import adams.gui.flow.menu.RunEnableAllBreakpoints;
-import adams.gui.flow.menu.RunRemoveAllBreakpoints;
-import adams.gui.flow.menu.RunStorage;
-import adams.gui.flow.menu.RunVariables;
 import adams.gui.flow.menu.EditCheckVariables;
 import adams.gui.flow.menu.EditCleanUpFlow;
 import adams.gui.flow.menu.EditDiff;
@@ -67,16 +62,6 @@ import adams.gui.flow.menu.EditProcessActors;
 import adams.gui.flow.menu.EditRedo;
 import adams.gui.flow.menu.EditTimedActors;
 import adams.gui.flow.menu.EditUndo;
-import adams.gui.flow.menu.RunClearGraphicalOutput;
-import adams.gui.flow.menu.RunDisplayErrors;
-import adams.gui.flow.menu.RunGC;
-import adams.gui.flow.menu.RunHeadless;
-import adams.gui.flow.menu.RunKill;
-import adams.gui.flow.menu.RunPauseResume;
-import adams.gui.flow.menu.RunRun;
-import adams.gui.flow.menu.RunDebug;
-import adams.gui.flow.menu.RunStop;
-import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.FileCheckOnSave;
 import adams.gui.flow.menu.FileClose;
 import adams.gui.flow.menu.FileCloseTab;
@@ -91,6 +76,21 @@ import adams.gui.flow.menu.FileRevert;
 import adams.gui.flow.menu.FileSave;
 import adams.gui.flow.menu.FileSaveAs;
 import adams.gui.flow.menu.FlowEditorAction;
+import adams.gui.flow.menu.RunClearGraphicalOutput;
+import adams.gui.flow.menu.RunDebug;
+import adams.gui.flow.menu.RunDisableAllBreakpoints;
+import adams.gui.flow.menu.RunDisplayErrors;
+import adams.gui.flow.menu.RunEnableAllBreakpoints;
+import adams.gui.flow.menu.RunGC;
+import adams.gui.flow.menu.RunHeadless;
+import adams.gui.flow.menu.RunKill;
+import adams.gui.flow.menu.RunPauseResume;
+import adams.gui.flow.menu.RunRemoveAllBreakpoints;
+import adams.gui.flow.menu.RunRun;
+import adams.gui.flow.menu.RunStop;
+import adams.gui.flow.menu.RunStorage;
+import adams.gui.flow.menu.RunValidateSetup;
+import adams.gui.flow.menu.RunVariables;
 import adams.gui.flow.menu.ViewHighlightVariables;
 import adams.gui.flow.menu.ViewRedraw;
 import adams.gui.flow.menu.ViewRemoveVariableHighlights;
@@ -100,6 +100,7 @@ import adams.gui.flow.menu.ViewShowQuickInfo;
 import adams.gui.flow.menu.ViewShowSource;
 import adams.gui.flow.menu.ViewShowToolbar;
 import adams.gui.flow.menu.ViewStatistics;
+import adams.gui.flow.menu.ViewZoom;
 import adams.gui.flow.menu.WindowDuplicateInTab;
 import adams.gui.flow.menu.WindowDuplicateInWindow;
 import adams.gui.flow.menu.WindowNew;
@@ -347,6 +348,9 @@ public class FlowEditorPanel
 
   /** the "redraw" action. */
   protected FlowEditorAction m_ActionViewRedraw;
+
+  /** the "zoom" action. */
+  protected FlowEditorAction m_ActionViewZoom;
 
   /** the "new window" action. */
   protected FlowEditorAction m_ActionNewWindow;
@@ -735,6 +739,11 @@ public class FlowEditorPanel
     m_ActionViewRedraw = action;
     m_MenuItems.add(action);
 
+    // View/Zoom
+    action = new ViewZoom();
+    m_ActionViewZoom = action;
+    m_MenuItems.add(action);
+
     // Window/New Window
     action = new WindowNew();
     m_ActionNewWindow = action;
@@ -1045,6 +1054,7 @@ public class FlowEditorPanel
       menu.add(m_ActionViewHighlightVariables);
       menu.add(m_ActionViewRemoveVariableHighlights);
       menu.add(m_ActionViewRedraw);
+      menu.add(m_ActionViewZoom);
       menu.addSeparator();
       menu.add(m_ActionViewShowSource);
       menu.add(m_ActionViewStatistics);

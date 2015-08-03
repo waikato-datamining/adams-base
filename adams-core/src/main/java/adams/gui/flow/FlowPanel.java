@@ -1495,6 +1495,24 @@ public class FlowPanel
   }
 
   /**
+   * Sets the zoom to use.
+   *
+   * @param value 	the zoom, 1.0 is default
+   */
+  public void setZoom(double value) {
+    m_Tree.setScaleFactor(value);
+  }
+
+  /**
+   * Returns the current zoom.
+   *
+   * @return		the zoom, 1.0 is default
+   */
+  public double getZoom() {
+    return m_Tree.getScaleFactor();
+  }
+
+  /**
    * Displays a message.
    *
    * @param msg		the message to display

@@ -159,6 +159,9 @@ adams.gui.flow.menu.ViewStatistics-Shortcut=
 adams.gui.flow.menu.ViewRedraw-Icon=
 adams.gui.flow.menu.ViewRedraw-Mnemonic=R
 adams.gui.flow.menu.ViewRedraw-Shortcut=F5
+adams.gui.flow.menu.ViewZoom-Icon=glasses.gif
+adams.gui.flow.menu.ViewZoom-Mnemonic=Z
+adams.gui.flow.menu.ViewZoom-Shortcut=
 
 # Window
 adams.gui.flow.menu.WindowNew-Icon=
