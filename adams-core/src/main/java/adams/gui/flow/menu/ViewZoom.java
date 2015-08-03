@@ -75,7 +75,9 @@ public class ViewZoom
     zooms = new int[]{
       100,
       125,
-      150
+      150,
+      175,
+      200
     };
     for (final int zoom: zooms) {
       menuitem = new JMenuItem(zoom + "%");
