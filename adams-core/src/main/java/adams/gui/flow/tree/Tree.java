@@ -1545,8 +1545,8 @@ public class Tree
 
     result = null;
 
-    if (getModel().getRoot() != null)
-      result = ((Node) getModel().getRoot()).getFullActor(errors);
+    if (getRootNode() != null)
+      result = getRootNode().getFullActor(errors);
 
     return result;
   }
@@ -1562,8 +1562,24 @@ public class Tree
 
     result = null;
 
+    if (getRootNode() != null)
+      result = getRootNode().getActor();
+
+    return result;
+  }
+
+  /**
+   * Returns the root node.
+   *
+   * @return		the root, null if not available
+   */
+  public Node getRootNode() {
+    Node	result;
+
+    result = null;
+
     if (getModel().getRoot() != null)
-      result = ((Node) getModel().getRoot()).getActor();
+      result = (Node) getModel().getRoot();
 
     return result;
   }
@@ -1574,10 +1590,10 @@ public class Tree
    * @return		true if actor is a Flow
    */
   public boolean isFlow() {
-    if (getModel().getRoot() == null)
+    if (getRootNode() == null)
       return false;
     else
-      return (((Node) getModel().getRoot()).getActor() instanceof Flow);
+      return (getRootNode().getActor() instanceof Flow);
   }
 
   /**
@@ -1799,7 +1815,7 @@ public class Tree
     result = null;
 
     actorPath = new ActorPath(path);
-    root      = (Node) getModel().getRoot();
+    root      = getRootNode();
     if (actorPath.getFirstPathComponent().equals(root.getActor().getName())) {
       if (actorPath.getPathCount() == 1)
 	result = root;
@@ -1854,7 +1870,7 @@ public class Tree
 
     // search whole tree?
     if (subtree == null)
-      subtree = (Node) getModel().getRoot();
+      subtree = getRootNode();
 
     enm = subtree.preorderEnumeration();
 
@@ -1995,7 +2011,7 @@ public class Tree
    */
   public void setShowQuickInfo(boolean value) {
     m_ShowQuickInfo = value;
-    nodeStructureChanged((Node) getModel().getRoot());
+    nodeStructureChanged(getRootNode());
   }
 
   /**
@@ -2014,7 +2030,7 @@ public class Tree
    */
   public void setShowAnnotations(boolean value) {
     m_ShowAnnotations = value;
-    nodeStructureChanged((Node) getModel().getRoot());
+    nodeStructureChanged(getRootNode());
   }
 
   /**
@@ -2033,7 +2049,7 @@ public class Tree
    */
   public void setShowInputOutput(boolean value) {
     m_ShowInputOutput = value;
-    nodeStructureChanged((Node) getModel().getRoot());
+    nodeStructureChanged(getRootNode());
   }
 
   /**
@@ -2069,8 +2085,10 @@ public class Tree
    * @param value	the scale factor (1.0 is actual size)
    */
   public void setScaleFactor(double value) {
-    if (value != ((Renderer) getCellRenderer()).getScaleFactor())
+    if (value != ((Renderer) getCellRenderer()).getScaleFactor()) {
+      getRootNode().invalidateRendering();
       setCellRenderer(new Renderer(value));
+    }
   }
 
   /**
@@ -2274,8 +2292,8 @@ public class Tree
    * @param nameRegExp	the regular expression to match variable names against
    */
   public void highlightVariables(String nameRegExp) {
-    highlightVariables((Node) getModel().getRoot(), nameRegExp);
-    ((Node) getModel().getRoot()).invalidateRendering();
+    highlightVariables(getRootNode(), nameRegExp);
+    getRootNode().invalidateRendering();
     treeDidChange();
   }
 
@@ -2301,7 +2319,7 @@ public class Tree
    * @param enable	if true all breakpoint actors get enabled, otherwise disabled
    */
   public void enableBreakpoints(boolean enable) {
-    enableBreakpoints((Node) getModel().getRoot(), enable);
+    enableBreakpoints(getRootNode(), enable);
     treeDidChange();
   }
   
@@ -2381,7 +2399,7 @@ public class Tree
       path = null;
     if (path == null) {
       selected = flow;
-      node     = (Node) getModel().getRoot();
+      node     = getRootNode();
     }
     else {
       selected = ActorUtils.locate(TreeHelper.treePathToActorPath(path).getChildPath(), flow);
