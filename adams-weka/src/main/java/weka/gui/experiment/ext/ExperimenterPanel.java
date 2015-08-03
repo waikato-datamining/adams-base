@@ -15,27 +15,10 @@
 
 /**
  * ExperimenterPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.experiment.ext;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils;
-import weka.experiment.Experiment;
-import weka.gui.ConverterFileChooser;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -51,6 +34,23 @@ import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils;
+import weka.experiment.Experiment;
+import weka.gui.AdamsHelper;
+import weka.gui.ConverterFileChooser;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * The Experimenter panel.
@@ -146,6 +146,7 @@ public class ExperimenterPanel
     m_TitleGenerator            = new TitleGenerator("Experimenter", true);
     m_Experiment                = null;
     m_FileChooserResults        = new ConverterFileChooser();
+    AdamsHelper.updateFileChooserAccessory(m_FileChooserResults);
     m_Runner                    = null;
   }
 
