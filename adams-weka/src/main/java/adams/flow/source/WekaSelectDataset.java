@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.InteractiveActor;
+import weka.gui.AdamsHelper;
 import weka.gui.ConverterFileChooser;
 
 import java.io.File;
@@ -427,6 +428,7 @@ public class WekaSelectDataset
     }
     
     fileChooser = new ConverterFileChooser();
+    AdamsHelper.updateFileChooserAccessory(fileChooser);
     if (m_FileChooserTitle.length() > 0)
       fileChooser.setDialogTitle(m_FileChooserTitle);
     if (m_InitialFiles.length > 0)
