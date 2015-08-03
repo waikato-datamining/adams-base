@@ -68,6 +68,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoveItemsEvent;
 import adams.gui.event.RemoveItemsListener;
+import gnu.trove.set.hash.TIntHashSet;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
@@ -490,11 +491,14 @@ public class GenericArrayEditor
    * Restores the values to the original ones.
    */
   protected void restore() {
-    int 	i;
+    int 		i;
+    DefaultListModel	listModel;
 
-    m_ListModel.clear();
+    listModel = new DefaultListModel();
     for (i = 0; i < m_ListModelBackup.size(); i++)
-      m_ListModel.addElement(GenericObjectEditor.copyObject(m_ListModelBackup.get(i)));
+      listModel.addElement(m_ListModelBackup.get(i));
+    m_ListModel = listModel;
+    m_ElementList.setModel(m_ListModel);
     apply();
   }
 
@@ -981,25 +985,22 @@ public class GenericArrayEditor
     selected = m_ElementList.getSelectedIndex();
     for (i = 0; i < objects.length; i++) {
       try {
-	if (objects[i] instanceof ShallowCopySupporter)
-	  value = ((ShallowCopySupporter) objects[i]).shallowCopy();
-	else
-	  value = GenericObjectEditor.copyObject(objects[i]);
+        value = GenericObjectEditor.copyObject(objects[i]);
 	if (selected != -1)
 	  m_ListModel.insertElementAt(value, selected + i);
 	else
 	  m_ListModel.addElement(value);
 	m_Modified = true;
-	updateButtons();
       }
       catch (Exception ex) {
 	result = false;
 	GUIHelper.showErrorMessage(
 	    GenericArrayEditor.this, 
-	    "Could not create an object copy/add object:\n" + Utils.throwableToString(ex));
+	    "Could not create an object copy/add object #" + (i+1) + ":\n" + Utils.throwableToString(ex));
       }
     }
-    
+    updateButtons();
+
     return result;
   }
   
@@ -1016,19 +1017,23 @@ public class GenericArrayEditor
    * Removes all currently selected objects.
    */
   protected void removeSelectedObjects() {
-    int[] 	selected;
-    int 	i;
-    int 	current;
-    
+    int[] 		selected;
+    int 		i;
+    DefaultListModel	listModel;
+    TIntHashSet		selIndices;
+
     selected = m_ElementList.getSelectedIndices();
     if (selected != null) {
-      for (i = selected.length - 1; i >= 0; i--) {
-	current = selected[i];
-	m_ListModel.removeElementAt(current);
-	if (m_ListModel.size() > current)
-	  m_ElementList.setSelectedIndex(current);
-	m_Modified = true;
+      selIndices = new TIntHashSet(selected);
+      listModel = new DefaultListModel();
+      for (i = 0; i < m_ListModel.getSize(); i++) {
+	if (selIndices.contains(i))
+	  continue;
+	listModel.addElement(m_ListModel.getElementAt(i));
       }
+      m_Modified  = true;
+      m_ListModel = listModel;
+      m_ElementList.setModel(m_ListModel);
       updateButtons();
     }
   }
