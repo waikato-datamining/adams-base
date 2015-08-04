@@ -21,8 +21,8 @@
 package adams.flow.core;
 
 import adams.core.QuickInfoHelper;
-import adams.gui.goe.PropertyPath;
-import adams.gui.goe.PropertyPath.PropertyContainer;
+import adams.core.discovery.PropertyPath;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 /**
  * Abstract ancestor for actors that manipulate properties of callable actors,

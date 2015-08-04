@@ -18,7 +18,9 @@
  * Copyright (C) 2006-2012 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.goe;
+package adams.core.discovery;
+
+import adams.core.CloneHandler;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -26,8 +28,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import adams.core.CloneHandler;
 
 /**
  * A helper class for accessing properties in nested objects, e.g., accessing

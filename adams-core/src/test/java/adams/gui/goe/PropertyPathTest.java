@@ -21,6 +21,7 @@ package adams.gui.goe;
 
 import java.util.ArrayList;
 
+import adams.core.discovery.PropertyPath;
 import adams.core.logging.LoggingLevel;
 import adams.data.filter.AbstractFilter;
 import adams.data.filter.BaselineCorrection;
@@ -28,7 +29,7 @@ import adams.data.filter.MultiFilter;
 import adams.data.filter.NamedSetup;
 import adams.data.filter.RemoveNoise;
 import adams.data.filter.ReportFilter;
-import adams.gui.goe.PropertyPath.Path;
+import adams.core.discovery.PropertyPath.Path;
 import adams.test.AdamsTestCase;
 
 /**

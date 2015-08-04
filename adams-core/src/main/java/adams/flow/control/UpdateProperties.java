@@ -34,8 +34,8 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.PropertyHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.PassThrough;
-import adams.gui.goe.PropertyPath;
-import adams.gui.goe.PropertyPath.PropertyContainer;
+import adams.core.discovery.PropertyPath;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 import java.util.Hashtable;
 

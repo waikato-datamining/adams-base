@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.gui.goe.PropertyPath;
+import adams.core.discovery.PropertyPath;
 
 /**
  <!-- globalinfo-start -->

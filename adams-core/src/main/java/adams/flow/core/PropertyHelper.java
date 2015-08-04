@@ -19,7 +19,7 @@
  */
 package adams.flow.core;
 
-import adams.gui.goe.PropertyPath.PropertyContainer;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 import java.util.ArrayList;
 import java.util.List;
