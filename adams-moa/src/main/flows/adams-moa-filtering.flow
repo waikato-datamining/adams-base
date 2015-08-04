@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-06-22 13:25:48
+# Date: 2015-08-04 16:38:14
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -32,7 +32,7 @@ adams.flow.control.Flow
 							-color
 							#ff0000
 							-color
-							#00ff00
+							#009900
 							-color
 							#00ffff
 							-color
@@ -98,7 +98,7 @@ adams.flow.control.Flow
 							-color
 							#ff0000
 							-color
-							#00ff00
+							#009900
 							-color
 							#00ffff
 							-color
@@ -149,6 +149,8 @@ adams.flow.control.Flow
 				adams.flow.source.MOAClassifierSetup
 					-name
 					MOAClassifier
+					-classifier
+					moa.classifiers.trees.HoeffdingTree
 	-actor
 		adams.flow.source.MOAStream
 			-stream
