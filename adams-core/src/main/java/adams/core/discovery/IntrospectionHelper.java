@@ -55,13 +55,25 @@ public class IntrospectionHelper {
   }
 
   /**
-   * Introspects the specified object.
+   * Introspects the specified object. Uses the blacklist.
    *
    * @param obj	the object to introspect
    * @return		the information gathered
    * @throws Exception	if introspection fails
    */
-  public static IntrospectionContainer introspect(Object obj) throws Exception{
+  public static IntrospectionContainer introspect(Object obj) throws Exception {
+    return introspect(obj, true);
+  }
+
+  /**
+   * Introspects the specified object.
+   *
+   * @param obj			the object to introspect
+   * @param useBlacklist	whether to apply the GOE blacklist
+   * @return			the information gathered
+   * @throws Exception		if introspection fails
+   */
+  public static IntrospectionContainer introspect(Object obj, boolean useBlacklist) throws Exception{
     IntrospectionContainer	result;
     BeanInfo 			bi;
     List<AbstractOption> 	optionsTmp;
@@ -82,11 +94,13 @@ public class IntrospectionHelper {
       propdesc    = new ArrayList<PropertyDescriptor>();
       for (i = 0; i < optionsTmp.size(); i++) {
 	if (optionsTmp.get(i) instanceof AbstractArgumentOption) {
-	  opt = (AbstractArgumentOption) optionsTmp.get(i);
-	  if (Editors.isBlacklisted(opt.getBaseClass(), opt.isMultiple()))
-	    continue;
-	  if (Editors.isBlacklisted(obj.getClass(), opt.getProperty()))
-	    continue;
+          if (useBlacklist) {
+            opt = (AbstractArgumentOption) optionsTmp.get(i);
+            if (Editors.isBlacklisted(opt.getBaseClass(), opt.isMultiple()))
+              continue;
+            if (Editors.isBlacklisted(obj.getClass(), opt.getProperty()))
+              continue;
+          }
 	}
 	propdesc.add(optionsTmp.get(i).getDescriptor());
 	options.add(optionsTmp.get(i));
@@ -97,7 +111,7 @@ public class IntrospectionHelper {
       properties = bi.getPropertyDescriptors();
       propdesc   = new ArrayList<PropertyDescriptor>();
       for (PropertyDescriptor desc: properties) {
-	if ((desc == null) || (desc.getReadMethod() == null))
+	if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
 	  continue;
 	cls = desc.getReadMethod().getReturnType();
 	if (Editors.isBlacklisted(cls, cls.isArray()))
