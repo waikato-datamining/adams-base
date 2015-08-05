@@ -33,6 +33,16 @@ import java.util.Locale;
 import java.util.logging.Level;
 
 import adams.core.annotation.MixedCopyright;
+import adams.core.base.BaseBoolean;
+import adams.core.base.BaseByte;
+import adams.core.base.BaseCharacter;
+import adams.core.base.BaseDouble;
+import adams.core.base.BaseFloat;
+import adams.core.base.BaseInteger;
+import adams.core.base.BaseLong;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseShort;
+import adams.core.base.BaseString;
 import adams.core.logging.LoggingObject;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.array.TByteArrayList;
@@ -1962,5 +1972,173 @@ public class Utils {
 	  break;
       }
     }
+  }
+
+  /**
+   * Checks whether the class is a wrapper for a primitive.
+   *
+   * @param cls		the class to test
+   * @return		true if primitve
+   */
+  public static boolean isPrimitive(Class cls) {
+    if (cls == Boolean.class)
+      return true;
+    else if (cls == Character.class)
+      return true;
+    else if (cls == String.class)
+      return true;
+    else if (cls == Byte.class)
+      return true;
+    else if (cls == Short.class)
+      return true;
+    else if (cls == Integer.class)
+      return true;
+    else if (cls == Long.class)
+      return true;
+    else if (cls == Float.class)
+      return true;
+    else if (cls == Double.class)
+      return true;
+    return false;
+  }
+
+  /**
+   * Returns the corresponding BaseObject-derived wrapper class.
+   *
+   * @param cls		the primitive class to wrap
+   * @return		the wrapper class, null if not available
+   */
+  public static Class getWrapperClass(Class cls) {
+    if (cls == Boolean.class)
+      return BaseBoolean.class;
+    else if (cls == Character.class)
+      return BaseCharacter.class;
+    else if (cls == String.class)
+      return BaseString.class;
+    else if (cls == Byte.class)
+      return BaseByte.class;
+    else if (cls == Short.class)
+      return BaseShort.class;
+    else if (cls == Integer.class)
+      return BaseInteger.class;
+    else if (cls == Long.class)
+      return BaseLong.class;
+    else if (cls == Float.class)
+      return BaseFloat.class;
+    else if (cls == Double.class)
+      return BaseDouble.class;
+    return null;
+  }
+
+  /**
+   * Returns the corresponding BaseObject-derived wrapper class.
+   *
+   * @param cls		the primitive class to wrap
+   * @return		the wrapper class, null if not available
+   */
+  public static Class getPrimitiveClass(Class cls) {
+    if (cls == BaseBoolean.class)
+      return Boolean.class;
+    else if (cls == BaseCharacter.class)
+      return Character.class;
+    else if (cls == BaseString.class)
+      return String.class;
+    else if (cls == BaseByte.class)
+      return Byte.class;
+    else if (cls == BaseShort.class)
+      return Short.class;
+    else if (cls == BaseInteger.class)
+      return Integer.class;
+    else if (cls == BaseLong.class)
+      return Long.class;
+    else if (cls == BaseFloat.class)
+      return Float.class;
+    else if (cls == BaseDouble.class)
+      return Double.class;
+    return null;
+  }
+
+  /**
+   * Checks whether the object is a wrapper for a primitive.
+   *
+   * @param obj		the object to test
+   * @return		true if primitve
+   */
+  public static boolean isPrimitive(Object obj) {
+    if (obj instanceof Boolean)
+      return true;
+    else if (obj instanceof Character)
+      return true;
+    else if (obj instanceof String)
+      return true;
+    else if (obj instanceof Byte)
+      return true;
+    else if (obj instanceof Short)
+      return true;
+    else if (obj instanceof Integer)
+      return true;
+    else if (obj instanceof Long)
+      return true;
+    else if (obj instanceof Float)
+      return true;
+    else if (obj instanceof Double)
+      return true;
+    return false;
+  }
+
+  /**
+   * Wraps the primitive in a BaseObject-derived object.
+   *
+   * @param obj		the primitive to wrap
+   * @return		the wrapped object, null if failed to wrap
+   */
+  public static BaseObject wrapPrimitive(Object obj) {
+    if (obj instanceof Boolean)
+      return new BaseBoolean((Boolean) obj);
+    else if (obj instanceof Character)
+      return new BaseCharacter((Character) obj);
+    else if (obj instanceof String)
+      return new BaseString((String) obj);
+    else if (obj instanceof Byte)
+      return new BaseByte((Byte) obj);
+    else if (obj instanceof Short)
+      return new BaseShort((Short) obj);
+    else if (obj instanceof Integer)
+      return new BaseInteger((Integer) obj);
+    else if (obj instanceof Long)
+      return new BaseLong((Long) obj);
+    else if (obj instanceof Float)
+      return new BaseFloat((Float) obj);
+    else if (obj instanceof Double)
+      return new BaseDouble((Double) obj);
+    return null;
+  }
+
+  /**
+   * Unwraps the primitve from the BaseObject-derived object.
+   *
+   * @param obj		the BaseObject to unwrap
+   * @return		the primitve, null if failed to unwrap
+   */
+  public static Object unwrapPrimitive(Object obj) {
+    if (obj instanceof BaseBoolean)
+      return ((BaseBoolean) obj).booleanValue();
+    else if (obj instanceof BaseCharacter)
+      return ((BaseCharacter) obj).charValue();
+    else if (obj instanceof BaseString)
+      return ((BaseString) obj).stringValue();
+    else if (obj instanceof BaseByte)
+      return ((BaseByte) obj).byteValue();
+    else if (obj instanceof BaseShort)
+      return ((BaseShort) obj).shortValue();
+    else if (obj instanceof BaseInteger)
+      return ((BaseInteger) obj).intValue();
+    else if (obj instanceof BaseLong)
+      return ((BaseLong) obj).longValue();
+    else if (obj instanceof BaseFloat)
+      return ((BaseFloat) obj).floatValue();
+    else if (obj instanceof BaseDouble)
+      return ((BaseDouble) obj).doubleValue();
+    return null;
   }
 }

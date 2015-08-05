@@ -23,6 +23,8 @@ package adams.gui.goe;
 
 import adams.core.AdditionalInformationHandler;
 import adams.core.Utils;
+import adams.core.discovery.IntrospectionHelper;
+import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
@@ -69,6 +71,7 @@ import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -255,51 +258,16 @@ public class PropertySheetPanel extends BasePanel
    * @see		#m_Methods
    */
   protected void initSheet() {
-    BeanInfo 			bi;
-    List<AbstractOption> 	options;
-    List<PropertyDescriptor> 	propdesc;
-    int 			i;
-    AbstractArgumentOption 	opt;
-    Class			cls;
+    IntrospectionContainer  cont;
 
-    m_Options = null;
+    m_Options    = null;
+    m_Properties = new PropertyDescriptor[0];
+    m_Methods    = new MethodDescriptor[0];
     try {
-      bi = Introspector.getBeanInfo(m_Target.getClass());
-      // in case of OptionHandlers we only display the properties that are
-      // accessible via commandline options!
-      if (m_Target instanceof OptionHandler) {
-	options = ((OptionHandler) m_Target).getOptionManager().getOptionsList();
-	m_Options = new ArrayList<AbstractOption>();
-	propdesc = new ArrayList<PropertyDescriptor>();
-	for (i = 0; i < options.size(); i++) {
-	  if (options.get(i) instanceof AbstractArgumentOption) {
-	    opt = (AbstractArgumentOption) options.get(i);
-	    if (Editors.isBlacklisted(opt.getBaseClass(), opt.isMultiple()))
-	      continue;
-	    if (Editors.isBlacklisted(m_Target.getClass(), opt.getProperty()))
-	      continue;
-	  }
-	  propdesc.add(options.get(i).getDescriptor());
-	  m_Options.add(options.get(i));
-	}
-	m_Properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
-      }
-      else {
-	m_Properties = bi.getPropertyDescriptors();
-	propdesc     = new ArrayList<PropertyDescriptor>();
-	for (PropertyDescriptor desc: m_Properties) {
-	  if ((desc == null) || (desc.getReadMethod() == null))
-	    continue;
-	  cls = desc.getReadMethod().getReturnType();
-	  if (Editors.isBlacklisted(cls, cls.isArray()))
-	    continue;
-	  if (Editors.isBlacklisted(m_Target.getClass(), desc.getDisplayName()))
-	    continue;
-	  propdesc.add(desc);
-	}
-	m_Properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
-      }
-      m_Methods = bi.getMethodDescriptors();
+      cont        = IntrospectionHelper.introspect(m_Target);
+      m_Options    = new ArrayList<>(Arrays.asList(cont.options));
+      m_Properties = cont.properties;
+      m_Methods    = cont.methods;
     }
     catch (Exception ex) {
       printException("Couldn't introspect!", ex);

@@ -25,9 +25,9 @@ import adams.core.CloneHandler;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * A helper class for accessing properties in nested objects, e.g., accessing
@@ -188,7 +188,10 @@ public class PropertyPath {
   public static class Path {
 
     /** the structure. */
-    protected Vector m_Elements;
+    protected List<PathElement> m_Elements;
+
+    /** the full path. */
+    protected String m_FullPath;
 
     /**
      * default constructor, only used internally.
@@ -196,7 +199,8 @@ public class PropertyPath {
     protected Path() {
       super();
 
-      m_Elements = new Vector();
+      m_Elements = new ArrayList<>();
+      m_FullPath = null;
     }
 
     /**
@@ -208,6 +212,7 @@ public class PropertyPath {
       this();
 
       m_Elements = breakUp(path);
+      m_FullPath = null;
     }
 
     /**
@@ -215,11 +220,13 @@ public class PropertyPath {
      *
      * @param elements	the PathElements to use
      */
-    public Path(Vector elements) {
+    public Path(List<PathElement> elements) {
       this();
 
       for (int i = 0; i < elements.size(); i++)
-	m_Elements.add(((PathElement) elements.get(i)).getClone());
+	m_Elements.add((elements.get(i)).getClone());
+
+      m_FullPath = null;
     }
 
     /**
@@ -232,6 +239,8 @@ public class PropertyPath {
 
       for (int i = 0; i < elements.length; i++)
 	m_Elements.add(new PathElement(elements[i]));
+
+      m_FullPath = null;
     }
 
     /**
@@ -240,11 +249,11 @@ public class PropertyPath {
      * @param path	the path to break up
      * @return		the single elements of the path
      */
-    protected Vector breakUp(String path) {
-      Vector		result;
-      StringTokenizer	tok;
+    protected List<PathElement> breakUp(String path) {
+      List<PathElement>		result;
+      StringTokenizer		tok;
 
-      result = new Vector();
+      result = new ArrayList<>();
 
       tok = new StringTokenizer(path, ".");
       while (tok.hasMoreTokens())
@@ -260,7 +269,7 @@ public class PropertyPath {
      * @return		the specified element
      */
     public PathElement get(int index) {
-      return (PathElement) m_Elements.get(index);
+      return m_Elements.get(index);
     }
 
     /**
@@ -304,12 +313,27 @@ public class PropertyPath {
      * @return			the new subpath
      */
     public Path subpath(int startIndex, int endIndex) {
-      Vector	list;
-      int	i;
+      List<PathElement>		list;
+      int			i;
 
-      list = new Vector();
+      list = new ArrayList<>();
       for (i = startIndex; i < endIndex; i++)
 	list.add(get(i));
+
+      return new Path(list);
+    }
+
+    /**
+     * Adds the subpath to the current list of path elements and returns
+     * the extended Path object. Does not change this path object.
+     *
+     * @return			the new path
+     */
+    public Path append(String subpath) {
+      List<PathElement>		list;
+
+      list = new ArrayList<>(m_Elements);
+      list.add(new PathElement(subpath));
 
       return new Path(list);
     }
@@ -320,19 +344,32 @@ public class PropertyPath {
      * @return		the path structure as dot-path
      */
     @Override
-    public String toString() {
-      String	result;
-      int	i;
+    public synchronized String toString() {
+      return getFullPath();
+    }
 
-      result = "";
+    /**
+     * returns the structure again as a dot-path.
+     *
+     * @return		the path structure as dot-path
+     */
+    public synchronized String getFullPath() {
+      StringBuilder	path;
+      int		i;
 
-      for (i = 0; i < m_Elements.size(); i++) {
-	if (i > 0)
-	  result += ".";
-	result += m_Elements.get(i);
+      if (m_FullPath == null) {
+	path = new StringBuilder();
+
+	for (i = 0; i < m_Elements.size(); i++) {
+	  if (i > 0)
+	    path.append(".");
+	  path.append(m_Elements.get(i));
+	}
+
+	m_FullPath = path.toString();
       }
 
-      return result;
+      return m_FullPath;
     }
   }
 
@@ -343,6 +380,9 @@ public class PropertyPath {
    * @version $Revision$
    */
   public static class PropertyContainer {
+
+    /** the path to this property. */
+    protected Path m_Path;
 
     /** the descriptor. */
     protected PropertyDescriptor m_Descriptor;
@@ -359,12 +399,14 @@ public class PropertyPath {
     /**
      * Initializes the container.
      *
+     * @param path	the path to this property
      * @param desc	the property descriptor
      * @param obj	the associated object
      */
-    public PropertyContainer(PropertyDescriptor desc, Object obj) {
+    public PropertyContainer(Path path, PropertyDescriptor desc, Object obj) {
       super();
 
+      m_Path       = path;
       m_Descriptor = desc;
       m_Read       = null;
       m_Write      = null;
@@ -374,17 +416,28 @@ public class PropertyPath {
     /**
      * Initializes the container.
      *
+     * @param path	the path to this property
      * @param read	the read method
      * @param write	the write method
      * @param obj	the associated object
      */
-    public PropertyContainer(Method read, Method write, Object obj) {
+    public PropertyContainer(Path path, Method read, Method write, Object obj) {
       super();
 
+      m_Path       = path;
       m_Descriptor = null;
       m_Read       = read;
       m_Write      = write;
       m_Object     = obj;
+    }
+
+    /**
+     * Returns the associated path.
+     *
+     * @return		the path
+     */
+    public Path getPath() {
+      return m_Path;
     }
 
     /**
@@ -442,6 +495,19 @@ public class PropertyPath {
    * @return		not null, if the property could be found
    */
   public static PropertyContainer find(Object src, Path path) {
+    return find(src, path, path);
+  }
+
+  /**
+   * returns the property and object associated with the given path, null if
+   * a problem occurred.
+   *
+   * @param src		the object to start from
+   * @param current	the path to follow
+   * @param full	the full path
+   * @return		not null, if the property could be found
+   */
+  protected static PropertyContainer find(Object src, Path current, Path full) {
     PropertyContainer	result;
     PropertyDescriptor	desc;
     Object		newSrc;
@@ -451,7 +517,7 @@ public class PropertyPath {
     Method		read;
     Method		write;
 
-    part  = path.get(0);
+    part  = current.get(0);
     desc  = null;
     read  = null;
     write = null;
@@ -471,8 +537,8 @@ public class PropertyPath {
 	return null;
 
       // end of path reached?
-      if (path.size() == 1) {
-	result = new PropertyContainer(read, write, src);
+      if (current.size() == 1) {
+	result = new PropertyContainer(full, read, write, src);
       }
       // recurse further
       else {
@@ -482,7 +548,7 @@ public class PropertyPath {
 	    newSrc = Array.get(methodResult, part.getIndex());
 	  else
 	    newSrc = methodResult;
-	  result = find(newSrc, path.subpath(1));
+	  result = find(newSrc, current.subpath(1));
 	}
 	catch (Exception e) {
 	  result = null;
@@ -504,8 +570,8 @@ public class PropertyPath {
 	return null;
 
       // end of path reached?
-      if (path.size() == 1) {
-	result = new PropertyContainer(desc, src);
+      if (current.size() == 1) {
+	result = new PropertyContainer(full, desc, src);
       }
       // recurse further
       else {
@@ -516,7 +582,7 @@ public class PropertyPath {
 	    newSrc = Array.get(methodResult, part.getIndex());
 	  else
 	    newSrc = methodResult;
-	  result = find(newSrc, path.subpath(1));
+	  result = find(newSrc, current.subpath(1));
 	}
 	catch (Exception e) {
 	  result = null;

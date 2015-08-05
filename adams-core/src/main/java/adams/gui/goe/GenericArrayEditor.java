@@ -57,7 +57,6 @@ import javax.swing.event.ListSelectionListener;
 
 import adams.core.ClassLocator;
 import adams.core.CustomDisplayStringProvider;
-import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.AbstractOptionProducer;
@@ -536,9 +535,9 @@ public class GenericArrayEditor
 
     if ((o != null) && (o.getClass().isArray())) {
       elementClass = o.getClass().getComponentType();
-      primitive    = EditorHelper.isPrimitive(elementClass);
+      primitive    = Utils.isPrimitive(elementClass);
       if (primitive)
-	elementClass = EditorHelper.getWrapperClass(elementClass);
+	elementClass = Utils.getWrapperClass(elementClass);
       editor = PropertyEditorManager.findEditor(elementClass);
       view         = null;
       lcr          = new DefaultListCellRenderer();
@@ -553,7 +552,7 @@ public class GenericArrayEditor
 	//PropertyValueSelector()
 	if (Array.getLength(o) > 0) {
 	  if (primitive)
-	    editor.setValue(EditorHelper.wrapPrimitive(Array.get(o,0)));
+	    editor.setValue(Utils.wrapPrimitive(Array.get(o, 0)));
 	  else
 	    editor.setValue(Array.get(o,0));
 	}
@@ -619,8 +618,8 @@ public class GenericArrayEditor
 	m_ElementClass = elementClass;
 	for (i = 0; i < Array.getLength(o); i++) {
 	  if (primitive) {
-	    m_ListModel.addElement(EditorHelper.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
-	    m_ListModelBackup.addElement(EditorHelper.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
+	    m_ListModel.addElement(Utils.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
+	    m_ListModelBackup.addElement(Utils.wrapPrimitive(GenericObjectEditor.copyObject(Array.get(o, i))));
 	  }
 	  else {
 	    m_ListModel.addElement(GenericObjectEditor.copyObject(Array.get(o, i)));
@@ -716,12 +715,12 @@ public class GenericArrayEditor
     // Convert the listmodel to an array and return it.
     length = m_ListModel.getSize();
     if (m_IsPrimitive)
-      result = Array.newInstance(EditorHelper.getPrimitiveClass(m_ElementClass), length);
+      result = Array.newInstance(Utils.getPrimitiveClass(m_ElementClass), length);
     else
       result = Array.newInstance(m_ElementClass, length);
     for (i = 0; i < length; i++) {
       if (m_IsPrimitive)
-	Array.set(result, i, EditorHelper.unwrapPrimitive(GenericObjectEditor.copyObject(m_ListModel.elementAt(i))));
+	Array.set(result, i, Utils.unwrapPrimitive(GenericObjectEditor.copyObject(m_ListModel.elementAt(i))));
       else
 	Array.set(result, i, GenericObjectEditor.copyObject(m_ListModel.elementAt(i)));
     }
