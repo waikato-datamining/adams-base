@@ -264,14 +264,14 @@ public class PropertySheetPanel extends BasePanel
     m_Properties = new PropertyDescriptor[0];
     m_Methods    = new MethodDescriptor[0];
     try {
-      cont        = IntrospectionHelper.introspect(m_Target);
-      m_Options    = new ArrayList<>(Arrays.asList(cont.options));
+      cont         = IntrospectionHelper.introspect(m_Target);
+      if (cont.options != null)
+	m_Options = new ArrayList<>(Arrays.asList(cont.options));
       m_Properties = cont.properties;
       m_Methods    = cont.methods;
     }
     catch (Exception ex) {
       printException("Couldn't introspect!", ex);
-      return;
     }
 
     m_Editors  = new PropertyEditor[m_Properties.length];
