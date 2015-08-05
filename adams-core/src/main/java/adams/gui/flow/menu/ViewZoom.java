@@ -21,6 +21,7 @@ package adams.gui.flow.menu;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -69,6 +70,8 @@ public class ViewZoom
     JMenu	result;
     JMenuItem	menuitem;
     int[]	zooms;
+    String[]	shortcuts;
+    int		i;
 
     result = new JMenu("Zoom");
 
@@ -79,8 +82,17 @@ public class ViewZoom
       175,
       200
     };
-    for (final int zoom: zooms) {
+    shortcuts = new String[]{
+      "ctrl shift 1",
+      "ctrl shift 2",
+      "ctrl shift 3",
+      "ctrl shift 4",
+      "ctrl shift 5",
+    };
+    for (i = 0; i < zooms.length; i++) {
+      final int zoom = zooms[i];
       menuitem = new JMenuItem(zoom + "%");
+      menuitem.setAccelerator(KeyStroke.getKeyStroke(shortcuts[i]));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
