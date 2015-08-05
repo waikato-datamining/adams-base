@@ -824,7 +824,7 @@ public class ControlPanel
    */
   protected void highlightActor() {
     Component comp;
-    Tree	tree;
+    final Tree	tree;
     Runnable	run;
 
     if (getFlow().getParentComponent() == null)
