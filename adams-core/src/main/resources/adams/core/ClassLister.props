@@ -53,6 +53,10 @@ adams.core.option.OptionTraverser=\
 adams.core.scripting.AbstractScriptingHandler=\
   adams.core.scripting
 
+# the object discovery handlers
+adams.core.discovery.AbstractDiscoveryHandler=\
+  adams.core.discovery
+
 # the autocorrelation algorithms
 adams.data.autocorrelation.AbstractAutoCorrelation=\
   adams.data.autocorrelation
