@@ -15,10 +15,11 @@
 
 /**
  * AbstractDcrawOperation.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.imagemagick.dcraw;
 
+import adams.core.AtomicMoveSupporter;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -32,10 +33,57 @@ import adams.data.imagemagick.DCRawHelper;
  * @version $Revision$
  */
 public abstract class AbstractDcrawOperation
-  extends AbstractImageOperation {
+  extends AbstractImageOperation
+  implements AtomicMoveSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4447009209054143230L;
+
+  /** whether to perform an atomic move. */
+  protected boolean m_AtomicMove;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "atomic-move", "atomicMove",
+      false);
+  }
+
+  /**
+   * Sets whether to attempt atomic move operation.
+   *
+   * @param value	if true then attempt atomic move operation
+   */
+  public void setAtomicMove(boolean value) {
+    m_AtomicMove = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to attempt atomic move operation.
+   *
+   * @return 		true if to attempt atomic move operation
+   */
+  public boolean getAtomicMove() {
+    return m_AtomicMove;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String atomicMoveTipText() {
+    return
+        "If true, then an atomic move operation will be attempted "
+	  + "(NB: not supported by all operating systems).";
+  }
 
   /**
    * Hook method for performing checks before applying the operation.
@@ -70,7 +118,7 @@ public abstract class AbstractDcrawOperation
       getLogger().info("Moving tmp file '" + tmp + "' to '" + output + "'...");
     
     try {
-      if (!FileUtils.move(tmp, output))
+      if (!FileUtils.move(tmp, output, m_AtomicMove))
 	result = "Failed to move file '" + tmp + "' to '" + output + "'!";
     }
     catch (Exception e) {

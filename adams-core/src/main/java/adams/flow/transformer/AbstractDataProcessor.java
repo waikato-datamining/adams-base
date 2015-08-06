@@ -15,17 +15,18 @@
 
 /*
  * AbstractDataProcessor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.AtomicMoveSupporter;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
 
 /**
  * Abstract ancestor for classes that process data on disk.
@@ -34,7 +35,8 @@ import adams.core.io.PlaceholderDirectory;
  * @version $Revision$
  */
 public abstract class AbstractDataProcessor
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements AtomicMoveSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9062714175599800719L;
@@ -61,6 +63,9 @@ public abstract class AbstractDataProcessor
   /** the final resting place of the processed file (failed or not). */
   protected File m_DestinationFile;
 
+  /** whether to perform an atomic move. */
+  protected boolean m_AtomicMove;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -69,20 +74,24 @@ public abstract class AbstractDataProcessor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "processing", "processing",
-	    new PlaceholderDirectory("processing"));
+      "processing", "processing",
+      new PlaceholderDirectory("processing"));
 
     m_OptionManager.add(
-	    "processed", "processed",
-	    new PlaceholderDirectory("processed"));
+      "processed", "processed",
+      new PlaceholderDirectory("processed"));
 
     m_OptionManager.add(
-	    "failed", "failed",
-	    new PlaceholderDirectory("failed"));
+      "failed", "failed",
+      new PlaceholderDirectory("failed"));
 
     m_OptionManager.add(
-	    "use-timestamp-dirs", "useTimestampDirs",
-	    false);
+      "use-timestamp-dirs", "useTimestampDirs",
+      false);
+
+    m_OptionManager.add(
+      "atomic-move", "atomicMove",
+      false);
   }
 
   /**
@@ -216,6 +225,37 @@ public abstract class AbstractDataProcessor
   }
 
   /**
+   * Sets whether to attempt atomic move operation.
+   *
+   * @param value	if true then attempt atomic move operation
+   */
+  public void setAtomicMove(boolean value) {
+    m_AtomicMove = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to attempt atomic move operation.
+   *
+   * @return 		true if to attempt atomic move operation
+   */
+  public boolean getAtomicMove() {
+    return m_AtomicMove;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String atomicMoveTipText() {
+    return
+        "If true, then an atomic move operation will be attempted "
+	  + "(NB: not supported by all operating systems).";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->String.class, File.class<!-- flow-accepts-end -->
@@ -287,7 +327,7 @@ public abstract class AbstractDataProcessor
 	dest.getParentFile().mkdirs();
 
       // move data
-      FileUtils.move(source, dest);
+      FileUtils.move(source, dest, m_AtomicMove);
 
       result = dest;
     }
@@ -337,7 +377,7 @@ public abstract class AbstractDataProcessor
 	m_DestinationFile.getParentFile().mkdirs();
 
       // move data
-      FileUtils.move(source, m_DestinationFile);
+      FileUtils.move(source, m_DestinationFile, m_AtomicMove);
 
       // remove temporary timestamp dir again
       if (m_UseTimestampDirs)

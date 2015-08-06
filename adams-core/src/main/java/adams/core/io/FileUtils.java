@@ -398,14 +398,16 @@ public class FileUtils {
    * @param targetLocation	the target file/dir
    * @param move		if true then the source files/dirs get deleted
    * 				as soon as copying finished
+   * @param atomic		whether to perform an atomic move operation
    * @return			false if failed to delete when moving or failed to create target directory
    * @throws IOException	if copying/moving fails
    */
-  public static boolean copyOrMove(File sourceLocation, File targetLocation, boolean move) throws IOException {
-    String[] 		children;
-    int 		i;
-    Path		source;
-    Path 		target;
+  public static boolean copyOrMove(File sourceLocation, File targetLocation, boolean move, boolean atomic) throws IOException {
+    String[] 			children;
+    int 			i;
+    Path			source;
+    Path 			target;
+    StandardCopyOption[]	options;
 
     if (sourceLocation.isDirectory()) {
       if (!targetLocation.exists()) {
@@ -418,7 +420,7 @@ public class FileUtils {
         if (!copyOrMove(
             new File(sourceLocation.getAbsoluteFile(), children[i]),
             new File(targetLocation.getAbsoluteFile(), children[i]),
-            move))
+            move, atomic))
           return false;
       }
 
@@ -433,10 +435,15 @@ public class FileUtils {
         target = FileSystems.getDefault().getPath(targetLocation.getAbsolutePath() + File.separator + sourceLocation.getName());
       else
         target = FileSystems.getDefault().getPath(targetLocation.getAbsolutePath());
-      if (move)
-	Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
-      else
+      if (move) {
+	if (atomic)
+	  Files.move(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+	else
+	  Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+      }
+      else {
 	Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+      }
       return true;
     }
   }
@@ -450,7 +457,7 @@ public class FileUtils {
    * @throws IOException	if copying fails
    */
   public static boolean copy(File sourceLocation, File targetLocation) throws IOException {
-    return copyOrMove(sourceLocation, targetLocation, false);
+    return copyOrMove(sourceLocation, targetLocation, false, false);
   }
 
   /**
@@ -462,7 +469,20 @@ public class FileUtils {
    * @throws IOException	if moving fails
    */
   public static boolean move(File sourceLocation, File targetLocation) throws IOException {
-    return copyOrMove(sourceLocation, targetLocation, true);
+    return move(sourceLocation, targetLocation, false);
+  }
+
+  /**
+   * Moves the file/directory (recursively).
+   *
+   * @param sourceLocation	the source file/dir
+   * @param targetLocation	the target file/dir
+   * @param atomic		whether to perform an atomic move operation
+   * @return			if successfully moved
+   * @throws IOException	if moving fails
+   */
+  public static boolean move(File sourceLocation, File targetLocation, boolean atomic) throws IOException {
+    return copyOrMove(sourceLocation, targetLocation, true, atomic);
   }
 
   /**

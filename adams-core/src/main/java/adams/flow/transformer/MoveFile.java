@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.AtomicMoveSupporter;
 import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -93,6 +94,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-atomic-move &lt;boolean&gt; (property: atomicMove)
+ * &nbsp;&nbsp;&nbsp;If true, then an atomic move operation will be attempted (NB: not supported 
+ * &nbsp;&nbsp;&nbsp;by all operating systems).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-num-attempts &lt;int&gt; (property: numAttempts)
  * &nbsp;&nbsp;&nbsp;The number of attempts for moving.
  * &nbsp;&nbsp;&nbsp;default: 1
@@ -112,7 +119,7 @@ import java.util.List;
  */
 public class MoveFile
   extends AbstractTransformer
-  implements MultiAttemptWithWaitSupporter {
+  implements MultiAttemptWithWaitSupporter, AtomicMoveSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1725398133887399010L;
@@ -122,6 +129,9 @@ public class MoveFile
 
   /** whether the input token is the target instead. */
   protected boolean m_InputIsTarget;
+
+  /** whether to perform an atomic move. */
+  protected boolean m_AtomicMove;
 
   /** the number of tries for writing the data. */
   protected int m_NumAttempts;
@@ -158,6 +168,10 @@ public class MoveFile
       false);
 
     m_OptionManager.add(
+      "atomic-move", "atomicMove",
+      false);
+
+    m_OptionManager.add(
       "num-attempts", "numAttempts",
       1, 1, null);
 
@@ -180,6 +194,7 @@ public class MoveFile
 
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "inputIsTarget", m_InputIsTarget, "input is target"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "atomicMove", m_AtomicMove, "atomic move"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -245,6 +260,37 @@ public class MoveFile
     return
         "If true, then the input token will be used as target and the file "
       + "parameter as source.";
+  }
+
+  /**
+   * Sets whether to attempt atomic move operation.
+   *
+   * @param value	if true then attempt atomic move operation
+   */
+  public void setAtomicMove(boolean value) {
+    m_AtomicMove = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to attempt atomic move operation.
+   *
+   * @return 		true if to attempt atomic move operation
+   */
+  public boolean getAtomicMove() {
+    return m_AtomicMove;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String atomicMoveTipText() {
+    return
+        "If true, then an atomic move operation will be attempted "
+	  + "(NB: not supported by all operating systems).";
   }
 
   /**
@@ -375,11 +421,11 @@ public class MoveFile
       attempt++;
       result = null;
       try {
-	if (!FileUtils.move(source.getAbsoluteFile(), target.getAbsoluteFile()))
-	  result = "Failed to move file: " + source + " -> " + target;
+	if (!FileUtils.move(source.getAbsoluteFile(), target.getAbsoluteFile(), m_AtomicMove))
+	  result = "Failed to move file" + (m_AtomicMove ? "(atomic)" : "") + ": " + source + " -> " + target;
       }
       catch (Exception e) {
-	result = handleException("Failed to move file: " + source + " -> " + target, e);
+	result = handleException("Failed to move file" + (m_AtomicMove ? "(atomic)" : "") + ": " + source + " -> " + target, e);
       }
       finished = (attempt == m_NumAttempts) || (result == null);
       if (!finished && (result != null)) {
