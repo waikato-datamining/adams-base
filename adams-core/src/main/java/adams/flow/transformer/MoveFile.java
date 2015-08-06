@@ -112,6 +112,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
+ * <pre>-output-moved-file &lt;boolean&gt; (property: outputMovedFile)
+ * &nbsp;&nbsp;&nbsp;If true, then the moved file rather than the input file gets forwarded.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -138,6 +143,9 @@ public class MoveFile
 
   /** the interval between attempts. */
   protected int m_AttemptInterval;
+
+  /** whether to output the moved file rather than the input. */
+  protected boolean m_OutputMovedFile;
 
   /**
    * Returns a string describing the object.
@@ -178,6 +186,10 @@ public class MoveFile
     m_OptionManager.add(
       "attempt-interval", "attemptInterval",
       1000, 0, null);
+
+    m_OptionManager.add(
+      "output-moved-file", "outputMovedFile",
+      false);
   }
 
   /**
@@ -195,6 +207,7 @@ public class MoveFile
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "inputIsTarget", m_InputIsTarget, "input is target"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "atomicMove", m_AtomicMove, "atomic move"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputMovedFile", m_OutputMovedFile, "output moved file"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -365,6 +378,35 @@ public class MoveFile
   }
 
   /**
+   * Sets whether to output the moved file rather than the input file.
+   *
+   * @param value	if true then the moved file is output
+   */
+  public void setOutputMovedFile(boolean value) {
+    m_OutputMovedFile = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the moved file rather than the input file.
+   *
+   * @return 		true if to output the moved file
+   */
+  public boolean getOutputMovedFile() {
+    return m_OutputMovedFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputMovedFileTipText() {
+    return "If true, then the moved file rather than the input file gets forwarded.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
@@ -436,8 +478,21 @@ public class MoveFile
       }
     }
 
-    if (result == null)
-      m_OutputToken = new Token(m_InputToken.getPayload());
+    if (result == null) {
+      if (m_OutputMovedFile) {
+	if (target.isDirectory())
+	  file = new PlaceholderFile(target.getAbsolutePath() + File.separator + source.getName());
+	else
+	  file = new PlaceholderFile(target.getAbsolutePath());
+	if (m_InputToken.getPayload() instanceof File)
+	  m_OutputToken = new Token(file);
+	else
+	  m_OutputToken = new Token(file.getAbsolutePath());
+      }
+      else {
+	m_OutputToken = new Token(m_InputToken.getPayload());
+      }
+    }
 
     return result;
   }
