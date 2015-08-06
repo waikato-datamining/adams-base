@@ -769,7 +769,7 @@ public class ActorUtils {
       }
       // check children of handlers
       result.addAll(findClosestTypes(handlers.get(i), type));
-      if (result != null)
+      if (result.size() > 0)
 	break;
     }
 
@@ -801,25 +801,25 @@ public class ActorUtils {
 
     // X
     if (x == -1)
-      actX = 0;
+      actX = bounds.x;
     else if (x == -2)
-      actX = (int) ((bounds.width - size.getWidth()) / 2);
+      actX = bounds.x + (int) ((bounds.width - size.getWidth()) / 2);
     else if (x == -3)
-      actX = (int) (bounds.width - size.getWidth());
+      actX = bounds.x + (int) (bounds.width - size.getWidth());
     else
-      actX = x;
+      actX = bounds.x + x;
 
     // Y
     main       = Environment.getInstance().getApplicationFrame();
     diffHeight = ((main != null) ? main.getSize().height : 0);
     if (y == -1)
-      actY = diffHeight;
+      actY = bounds.y + diffHeight;
     else if (y == -2)
-      actY = (int) ((bounds.height - size.getHeight() - diffHeight) / 2);
+      actY = bounds.y + (int) ((bounds.height - size.getHeight() - diffHeight) / 2);
     else if (y == -3)
-      actY = (int) (bounds.height - size.getHeight());
+      actY = bounds.y + (int) (bounds.height - size.getHeight());
     else
-      actY = y;
+      actY = bounds.y + y;
 
     result.setLocation(actX, actY);
 

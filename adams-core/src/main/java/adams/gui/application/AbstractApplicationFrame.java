@@ -21,28 +21,6 @@
 
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Image;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.ConsolePanelHandler;
@@ -69,6 +47,27 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Image;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Abstract frame class for applications.
@@ -612,6 +611,8 @@ public abstract class AbstractApplicationFrame
     }
 
     // display frame
+    if (owner != null)
+      GUIHelper.moveToScreen(result, owner.getGraphicsConfiguration().getDevice(), false);
     result.setVisible(true);
 
     return result;
@@ -685,6 +686,8 @@ public abstract class AbstractApplicationFrame
     }
 
     // display frame
+    if (owner != null)
+      GUIHelper.moveToScreen(result, owner.getGraphicsConfiguration().getDevice(), false);
     result.setVisible(true);
 
     return result;
