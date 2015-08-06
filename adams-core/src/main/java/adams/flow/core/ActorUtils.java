@@ -54,6 +54,7 @@ import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.Paintlet;
 
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -777,16 +778,34 @@ public class ActorUtils {
   }
 
   /**
-   * Determines the initial location of the frame.
+   * Determines the initial location of the window.
    *
-   * @param window	the frame/dialog to determine the location for
+   * @param window	the window to determine the location for
    * @param x		the position (-1: left, -2: middle, -3: right)
    * @param y		the position (-1: top, -2: middle, -3: bottom)
    * @return		the position
    */
   public static Point determineLocation(Window window, int x, int y) {
+    Dimension	size;
+
+    size   = window.getSize();
+    if ((size.getWidth() == 0) || (size.getHeight() == 0))
+      size = window.getPreferredSize();
+
+    return determineLocation(window.getGraphicsConfiguration(), size, x, y);
+  }
+
+  /**
+   * Determines the initial location of the window.
+   *
+   * @param gc		the graphics configuration
+   * @param size	the size of the window
+   * @param x		the position (-1: left, -2: middle, -3: right)
+   * @param y		the position (-1: top, -2: middle, -3: bottom)
+   * @return		the position
+   */
+  public static Point determineLocation(GraphicsConfiguration gc, Dimension size, int x, int y) {
     Point			result;
-    Dimension			size;
     int				actX;
     int				actY;
     AbstractApplicationFrame	main;
@@ -794,10 +813,7 @@ public class ActorUtils {
     Rectangle			bounds;
 
     result = new Point();
-    size   = window.getSize();
-    if ((size.getWidth() == 0) || (size.getHeight() == 0))
-      size = window.getPreferredSize();
-    bounds = GUIHelper.getScreenBounds(window);
+    bounds = GUIHelper.getScreenBounds(gc);
 
     // X
     if (x == -1)

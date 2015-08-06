@@ -33,6 +33,7 @@ import adams.gui.flow.FlowPanel;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.GraphicsConfiguration;
 import java.util.Hashtable;
 
 /**
@@ -565,10 +566,22 @@ public abstract class AbstractDisplay
    * @return		the created frame
    */
   protected BaseFrame doCreateFrame(BasePanel panel) {
-    BaseFrame	result;
-    ImageIcon	icon;
+    BaseFrame			result;
+    ImageIcon			icon;
+    Flow			flow;
+    GraphicsConfiguration	gc;
 
-    result = new BaseFrame(createTitle());
+    gc = null;
+    if (getRoot() instanceof Flow) {
+      flow = (Flow) getRoot();
+      if (flow.getParentComponent() != null)
+	gc = GUIHelper.getGraphicsConfiguration(flow.getParentComponent());
+    }
+
+    if (gc != null)
+      result = new BaseFrame(createTitle(), gc);
+    else
+      result = new BaseFrame(createTitle());
 
     result.getContentPane().setLayout(new BorderLayout());
     result.getContentPane().add(panel, BorderLayout.CENTER);

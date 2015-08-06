@@ -21,10 +21,8 @@
 package adams.gui.core;
 
 import adams.core.ClassLocator;
-import adams.core.License;
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.annotation.MixedCopyright;
 import adams.core.management.OS;
 import adams.core.net.HtmlUtils;
 import adams.core.option.OptionHandler;
@@ -62,8 +60,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -116,9 +114,6 @@ public class GUIHelper {
 
   /** the properties. */
   protected static Properties m_Properties;
-
-  /** the screen boundaries. */
-  protected static Rectangle m_ScreenBoundaries;
 
   /**
    * Helper class that allows external callers to communicate with input
@@ -380,8 +375,8 @@ public class GUIHelper {
     else
       result = bounds.x + left;
     if (result < 0)
-      result = 0;
-    
+      result = bounds.x;
+
     return result;
   }
 
@@ -403,8 +398,8 @@ public class GUIHelper {
     else
       result = bounds.y + top;
     if (result < 0)
-      result = 0;
-    
+      result = bounds.y;
+
     return result;
   }
   
@@ -432,7 +427,7 @@ public class GUIHelper {
       left = calcLeftPosition(window, left);
     }
     else {
-      left = 0;
+      left = calcLeftPosition(window, -1);
     }
 
     if (c != null) {
@@ -440,7 +435,7 @@ public class GUIHelper {
       top = calcTopPosition(window, top);
     }
     else {
-      top = 0;
+      top = calcTopPosition(window, -1);
     }
 
     setSizeAndLocation(window, top, left, c);
@@ -488,10 +483,10 @@ public class GUIHelper {
     height = window.getHeight();
     width  = window.getWidth();
     screen = getScreenBounds(window);
-    if (left + width > screen.width)
-      left = screen.width - width;
-    if (top + height > screen.height)
-      top = screen.height - height;
+    if (left + width > screen.width + screen.x)
+      left = screen.width - width + screen.x;
+    if (top + height > screen.height + screen.y)
+      top = screen.height - height + screen.y;
 
     window.setLocation(left, top);
   }
@@ -518,6 +513,32 @@ public class GUIHelper {
    * @return		the "inner" rectangle where we can display stuff
    */
   public static synchronized Rectangle getScreenBounds(Component window) {
+    return getScreenBounds(window.getGraphicsConfiguration());
+  }
+
+  /**
+   * Returns the actual screen real estate bounds according to
+   * ScreenBorder.Top/Left/Bottom/Right in the props file.
+   *
+   * <pre>
+   * +----------------------------+  physical screen
+   * |                            |
+   * |   +--------------------+   |
+   * |   |                    |   |
+   * |   |  available screen  |   |
+   * |   |                    |   |
+   * |   |                    |   |
+   * |   +--------------------+   |
+   * |                            |
+   * |                            |
+   * +----------------------------+
+   * </pre>
+   *
+   * @param gc		the graphics config to use
+   * @return		the "inner" rectangle where we can display stuff
+   */
+  public static synchronized Rectangle getScreenBounds(GraphicsConfiguration gc) {
+    Rectangle	result;
     int		height;
     int 	width;
     int		top;
@@ -526,23 +547,21 @@ public class GUIHelper {
     int		right;
     Rectangle	bounds;
 
-    if (m_ScreenBoundaries == null) {
-      initializeProperties();
+    initializeProperties();
 
-      bounds  = window.getGraphicsConfiguration().getBounds();
-      top     = m_Properties.getInteger("ScreenBorder.Top", 0);
-      left    = m_Properties.getInteger("ScreenBorder.Left", 0);
-      bottom  = m_Properties.getInteger("ScreenBorder.Bottom", 0);
-      right   = m_Properties.getInteger("ScreenBorder.Right", 0);
-      height  = bounds.height - top - bottom;
-      width   = bounds.width - left - right;
-      top     += bounds.y;
-      left    += bounds.x;
+    bounds  = gc.getBounds();
+    top     = m_Properties.getInteger("ScreenBorder.Top", 0);
+    left    = m_Properties.getInteger("ScreenBorder.Left", 0);
+    bottom  = m_Properties.getInteger("ScreenBorder.Bottom", 0);
+    right   = m_Properties.getInteger("ScreenBorder.Right", 0);
+    height  = bounds.height - top - bottom;
+    width   = bounds.width - left - right;
+    top     += bounds.y;
+    left    += bounds.x;
 
-      m_ScreenBoundaries = new Rectangle(left, top, width, height);
-    }
+    result = new Rectangle(left, top, width, height);
 
-    return m_ScreenBoundaries;
+    return result;
   }
 
   /**
@@ -576,6 +595,32 @@ public class GUIHelper {
 
     window.setSize(width, height);
     window.validate();
+  }
+
+  /**
+   * Returns the relative top Y position in its screen.
+   *
+   * @param window	the window to determine the top Y for
+   * @return		the top Y
+   */
+  public int getRelativeTop(Window window) {
+    Rectangle	bounds;
+
+    bounds = window.getGraphicsConfiguration().getBounds();
+    return bounds.y - window.getBounds().y;
+  }
+
+  /**
+   * Returns the relative left X position in its screen.
+   *
+   * @param window	the window to determine the left X for
+   * @return		the left X
+   */
+  public int getRelativeLeft(Window window) {
+    Rectangle	bounds;
+
+    bounds = window.getGraphicsConfiguration().getBounds();
+    return bounds.x - window.getBounds().x;
   }
 
   /**
@@ -2281,6 +2326,27 @@ public class GUIHelper {
   }
 
   /**
+   * Tries to determine the {@link GraphicsConfiguration} that the specified component
+   * is located on.
+   *
+   * @param comp	the component to determine the graphics config for
+   * @return		the config, null if failed to determine
+   */
+  public static GraphicsConfiguration getGraphicsConfiguration(Component comp) {
+    if (comp == null)
+      return null;
+
+    if (getParentDialog(comp) != null)
+      return getParentDialog(comp).getGraphicsConfiguration();
+    else if (getParentFrame(comp) != null)
+      return getParentFrame(comp).getGraphicsConfiguration();
+    else if (getParentInternalFrame(comp) != null)
+      return getParentInternalFrame(comp).getGraphicsConfiguration();
+    else
+      return null;
+  }
+
+  /**
    * Tries to determine the {@link GraphicsDevice} that the specified component
    * is located on.
    *
@@ -2288,47 +2354,12 @@ public class GUIHelper {
    * @return		the device, null if failed to determine
    */
   public static GraphicsDevice getGraphicsDevice(Component comp) {
-    if (comp == null)
-      return null;
+    GraphicsConfiguration	gc;
 
-    if (getParentDialog(comp) != null)
-      return getParentDialog(comp).getGraphicsConfiguration().getDevice();
-    else if (getParentFrame(comp) != null)
-      return getParentFrame(comp).getGraphicsConfiguration().getDevice();
-    else if (getParentInternalFrame(comp) != null)
-      return getParentInternalFrame(comp).getGraphicsConfiguration().getDevice();
+    gc = getGraphicsConfiguration(comp);
+    if (gc == null)
+      return null;
     else
-      return null;
-  }
-
-  /**
-   * Moves a window to the specified screen.
-   *
-   * @param window	the window to move
-   * @param screen	the screen to move to
-   * @param hide	whether to hide the window first and the display again
-   */
-  @MixedCopyright(
-    author = "Vicky Ronnen - http://stackoverflow.com/users/3063123/vicky-ronnen",
-    license = License.CC_BY_SA_3,
-    url = "http://stackoverflow.com/a/24891353/4698227"
-  )
-  public static void moveToScreen(final Window window, GraphicsDevice screen, boolean hide) {
-    GraphicsDevice[] 	screens;
-
-    if (hide)
-      window.setVisible(false);
-
-    screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-    for (GraphicsDevice scr: screens) {
-      if (scr.getIDstring().contentEquals(screen.getIDstring())) {
-	JFrame dummy = new JFrame(scr.getDefaultConfiguration());
-	window.setLocationRelativeTo(dummy);
-	dummy.dispose();
-      }
-    }
-
-    if (hide)
-      window.setVisible(true);
+    return gc.getDevice();
   }
 }

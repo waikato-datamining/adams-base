@@ -15,26 +15,25 @@
 
 /*
  * ChildWindow.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.application;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.logging.Logger;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.core.BaseWindow;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.logging.Logger;
 
 /**
  * Specialized JWindow class.
@@ -88,7 +87,7 @@ public class ChildWindow
    * @param icon	the name of the icon to use, null to use default
    */
   public ChildWindow(AbstractApplicationFrame parent, String title, String icon) {
-    super();
+    super(parent.getGraphicsConfiguration());
 
     m_Self                       = this;
     m_Parent                     = parent;

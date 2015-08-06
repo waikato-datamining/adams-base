@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -611,8 +611,6 @@ public abstract class AbstractApplicationFrame
     }
 
     // display frame
-    if (owner != null)
-      GUIHelper.moveToScreen(result, owner.getGraphicsConfiguration().getDevice(), false);
     result.setVisible(true);
 
     return result;
@@ -686,8 +684,6 @@ public abstract class AbstractApplicationFrame
     }
 
     // display frame
-    if (owner != null)
-      GUIHelper.moveToScreen(result, owner.getGraphicsConfiguration().getDevice(), false);
     result.setVisible(true);
 
     return result;

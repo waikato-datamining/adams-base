@@ -15,15 +15,9 @@
 
 /**
  * AbstractInteractiveTransformerDialog.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
@@ -33,6 +27,13 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 
 /**
  * Ancestor for graphical actors that are interactive.
@@ -467,16 +468,20 @@ public abstract class AbstractInteractiveTransformerDialog
    * @return		the created dialog
    */
   protected BaseDialog doCreateDialog(BasePanel panel) {
-    BaseDialog	result;
-    ImageIcon	icon;
-    int		width;
-    int		height;
+    BaseDialog			result;
+    ImageIcon			icon;
+    int				width;
+    int				height;
+    GraphicsConfiguration	gc;
+
+    gc = GUIHelper.getGraphicsConfiguration(getParentComponent());
 
     result = new BaseDialog(null, createTitle(), ModalityType.DOCUMENT_MODAL);
+    result.setLocation(gc.getBounds().x, gc.getBounds().y);
 
     // limit width/height to screen size (taking X/Y into account)
-    width  = Math.min(GUIHelper.getScreenBounds(result).width - m_X, getWidth());
-    height = Math.min(GUIHelper.getScreenBounds(result).height - m_Y, getHeight());
+    width  = Math.min(GUIHelper.getScreenBounds(gc).width - (m_X >= 0 ? m_X : 0), getWidth());
+    height = Math.min(GUIHelper.getScreenBounds(gc).height - (m_Y >= 0 ? m_Y : 0), getHeight());
 
     result.getContentPane().setLayout(new BorderLayout());
     result.getContentPane().add(panel, BorderLayout.CENTER);
@@ -492,7 +497,7 @@ public abstract class AbstractInteractiveTransformerDialog
       result.setJMenuBar(((MenuBarProvider) panel).getMenuBar());
     else if (this instanceof MenuBarProvider)
       result.setJMenuBar(((MenuBarProvider) this).getMenuBar());
-    result.setLocation(ActorUtils.determineLocation(result, m_X, m_Y));
+    result.setLocation(ActorUtils.determineLocation(gc, new Dimension(width, height), m_X, m_Y));
 
     return result;
   }

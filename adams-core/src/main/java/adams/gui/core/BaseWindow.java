@@ -15,19 +15,19 @@
 
 /*
  * BaseWindow.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JWindow;
-
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+
+import javax.swing.JWindow;
+import java.awt.GraphicsConfiguration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A window that loads the size and location from the props file automatically.
@@ -49,6 +49,16 @@ public class BaseWindow
    */
   public BaseWindow() {
     super();
+    performInitialization();
+  }
+
+  /**
+   * Initializes the frame with no title.
+   *
+   * @param gc		the configuration to use
+   */
+  public BaseWindow(GraphicsConfiguration gc) {
+    super(gc);
     performInitialization();
   }
 

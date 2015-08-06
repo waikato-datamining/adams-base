@@ -15,19 +15,19 @@
 
 /*
  * BaseFrame.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+
+import javax.swing.JFrame;
+import java.awt.GraphicsConfiguration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A frame that loads the size and location from the props file automatically.
@@ -58,6 +58,27 @@ public class BaseFrame
    */
   public BaseFrame(String title) {
     super(title);
+
+    performInitialization();
+  }
+
+  /**
+   * Initializes the frame with no title.
+   *
+   * @param gc		the graphics configuration to use
+   */
+  public BaseFrame(GraphicsConfiguration gc) {
+    this("", gc);
+  }
+
+  /**
+   * Initializes the frame with the specified title.
+   *
+   * @param title	the title of the frame
+   * @param gc		the graphics configuration to use
+   */
+  public BaseFrame(String title, GraphicsConfiguration gc) {
+    super(title, gc);
 
     performInitialization();
   }

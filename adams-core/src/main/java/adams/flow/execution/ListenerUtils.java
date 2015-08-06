@@ -15,7 +15,7 @@
 
 /**
  * ListenerUtils.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -28,6 +28,7 @@ import adams.gui.goe.FlowHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.GraphicsConfiguration;
 
 /**
  * Helper class for flow execution listening related stuff.
@@ -67,6 +68,25 @@ public class ListenerUtils {
     public ListenerFrame(String title) {
       super(title);
     }
+
+  /**
+   * Initializes the frame with no title.
+   *
+   * @param gc		the graphics configuration to use
+   */
+  public ListenerFrame(GraphicsConfiguration gc) {
+    super(gc);
+  }
+
+  /**
+   * Initializes the frame with the specified title.
+   *
+   * @param title	the title of the frame
+   * @param gc		the graphics configuration to use
+   */
+  public ListenerFrame(String title, GraphicsConfiguration gc) {
+    super(title, gc);
+  }
 
     /**
      * Sets the listener.
@@ -119,12 +139,25 @@ public class ListenerUtils {
   public static BaseFrame createFrame(FlowExecutionListeningSupporter supporter) {
     ListenerFrame			result;
     GraphicalFlowExecutionListener	graphical;
-    
+    Flow				flow;
+    GraphicsConfiguration 		gc;
+
     result = null;
     
     if (supporter.getFlowExecutionListener() instanceof GraphicalFlowExecutionListener) {
       graphical = (GraphicalFlowExecutionListener) supporter.getFlowExecutionListener();
-      result    = new ListenerFrame();
+
+      gc = null;
+      if (supporter instanceof Flow) {
+	flow = (Flow) supporter;
+	if (flow.getParentComponent() != null)
+	  gc = GUIHelper.getGraphicsConfiguration(flow.getParentComponent());
+      }
+
+      if (gc != null)
+	result = new ListenerFrame(gc);
+      else
+	result = new ListenerFrame();
       result.setListener(graphical);
       result.setTitle(graphical.getListenerTitle());
       result.setDefaultCloseOperation(BaseFrame.HIDE_ON_CLOSE);
