@@ -15,33 +15,31 @@
 
 /**
  * DOMTreeWithPreview.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core.dom;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SortableAndSearchableTable;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+
+import javax.swing.JMenuItem;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * DOMTree with a preview table for the attributes.
@@ -258,10 +256,10 @@ public class DOMTreeWithPreview
    * @param e		the event that triggered the menu
    */
   protected void showPopupMenu(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
+    BasePopupMenu 	menu;
+    JMenuItem		menuitem;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
@@ -274,6 +272,6 @@ public class DOMTreeWithPreview
     });
     menu.add(menuitem);
 
-    menu.show(m_Table, e.getX(), e.getY());
+    menu.showAbsolute(m_Table, e);
   }
 }

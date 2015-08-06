@@ -15,19 +15,30 @@
 
 /*
  * AbstractManagementPanel.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.List;
+import adams.core.CleanUpHandler;
+import adams.data.id.IDHandler;
+import adams.data.io.output.SpreadSheetWriter;
+import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.BaseTextPaneWithWordWrap;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanelWithButtons;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.event.PopupMenuListener;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,25 +57,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
-
-import adams.core.CleanUpHandler;
-import adams.data.id.IDHandler;
-import adams.data.io.output.SpreadSheetWriter;
-import adams.gui.chooser.AbstractChooserPanel;
-import adams.gui.chooser.SpreadSheetFileChooser;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.BaseTextPaneWithWordWrap;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.ParameterPanelWithButtons;
-import adams.gui.core.SearchPanel;
-import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.core.SortableAndSearchableTable;
-import adams.gui.core.SortableAndSearchableTableWithButtons;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.event.PopupMenuListener;
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * A panel for managing objects.
@@ -182,9 +182,9 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     });
     m_TableValues.addCellPopupMenuListener(new PopupMenuListener() {
       public void showPopupMenu(MouseEvent e) {
-	JPopupMenu menu = createPopupMenu(e);
+	BasePopupMenu menu = createPopupMenu(e);
 	if (menu != null)
-	  menu.show(m_TableValues.getComponent(), e.getX(), e.getY());
+	  menu.showAbsolute(m_TableValues.getComponent(), e);
       }
     });
     m_PanelTable.add(m_TableValues, BorderLayout.CENTER);
@@ -260,11 +260,11 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @param e		the mouse event that triggered the popup
    * @return		the popup menu, null if to suppress menu
    */
-  protected JPopupMenu createPopupMenu(MouseEvent e) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
+  protected BasePopupMenu createPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
     
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));

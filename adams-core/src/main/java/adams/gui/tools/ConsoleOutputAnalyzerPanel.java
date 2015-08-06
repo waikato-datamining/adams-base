@@ -15,36 +15,9 @@
 
 /**
  * ConsoleOutputAnalyzerPanel.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
@@ -56,6 +29,7 @@ import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
@@ -74,6 +48,32 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.menu.ConsoleWindow;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Frontend for analyzing the {@link ConsoleWindow}'s output.
@@ -691,9 +691,9 @@ public class ConsoleOutputAnalyzerPanel
     m_Table.addCellPopupMenuListener(new PopupMenuListener() {
       @Override
       public void showPopupMenu(MouseEvent e) {
-	JPopupMenu menu = createCellPopup(e);
+	BasePopupMenu menu = createCellPopup(e);
 	if (menu != null)
-	  menu.show(m_Table, e.getX(), e.getY());
+	  menu.showAbsolute(m_Table, e);
       }
     });
     
@@ -742,8 +742,8 @@ public class ConsoleOutputAnalyzerPanel
    * @param e		the event that triggered the call
    * @return		the popup menu, null if not applicable
    */
-  protected JPopupMenu createCellPopup(MouseEvent e) {
-    JPopupMenu		result;
+  protected BasePopupMenu createCellPopup(MouseEvent e) {
+    BasePopupMenu	result;
     JMenuItem		menuitem;
     final int		row;
     final int		col;
@@ -758,7 +758,7 @@ public class ConsoleOutputAnalyzerPanel
     if (value == null)
       return result;
     
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     // origin
     if (col == 1) {

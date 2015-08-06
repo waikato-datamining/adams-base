@@ -15,12 +15,29 @@
 
 /*
  *    InlineEditor.java
- *    Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
  *
+ *    Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -42,23 +59,6 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import adams.core.Utils;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 
 /** 
  * Support for inline editing of editors that support this, in order to reduce
@@ -175,11 +175,11 @@ public class InlineEditor
       public void mouseClicked(MouseEvent e) {
         if (MouseUtils.isRightClick(e)) {
           e.consume();
-          JPopupMenu menu = new JPopupMenu();
+          BasePopupMenu menu = new BasePopupMenu();
           customizePopupMenu(InlineEditor.this, menu);
           if (m_PropertySheetPanel != null)
             VariableSupport.updatePopup(m_PropertySheetPanel, InlineEditor.this, menu);
-          menu.show(m_TextField, e.getX(), e.getY());
+          menu.showAbsolute(m_TextField, e);
         }
         else {
           super.mouseClicked(e);

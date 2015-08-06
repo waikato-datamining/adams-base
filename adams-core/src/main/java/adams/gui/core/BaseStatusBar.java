@@ -15,10 +15,20 @@
 
 /**
  * BaseStatusBar.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.StatusMessageHandler;
+import adams.gui.dialog.TextDialog;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -30,17 +40,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
-
-import adams.core.StatusMessageHandler;
-import adams.gui.dialog.TextDialog;
 
 /**
  * A bar for displaying a status message.
@@ -279,8 +278,8 @@ public class BaseStatusBar
 	    }
 	    else if (MouseUtils.isRightClick(e)) {
 	      e.consume();
-	      JPopupMenu menu = getPopup();
-	      menu.show(m_LabelStatus, e.getX(), e.getY());
+	      BasePopupMenu menu = getPopup();
+	      menu.showAbsolute(m_LabelStatus, e);
 	    }
 	    else {
 	      super.mouseClicked(e);
@@ -309,11 +308,11 @@ public class BaseStatusBar
    *
    * @return		the popup menu
    */
-  protected JPopupMenu getPopup() {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
+  protected BasePopupMenu getPopup() {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     menuitem = new JMenuItem("Show status");
     menuitem.setEnabled(m_Status.length() > 0);

@@ -31,7 +31,6 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
@@ -292,14 +291,14 @@ public class SpreadSheetTable
    * @param e		the event that triggered the menu
    */
   protected void showHeaderPopupMenu(MouseEvent e) {
-    JPopupMenu		menu;
+    BasePopupMenu	menu;
     JMenuItem		menuitem;
     final boolean	asc;
     final int           row;
     final int           col;
     final int           actCol;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
     row  = rowAtPoint(e.getPoint());
     col  = columnAtPoint(e.getPoint());
     if (getShowRowColumn())
@@ -425,7 +424,7 @@ public class SpreadSheetTable
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
 
-    menu.show(getTableHeader(), e.getX(), e.getY());
+    menu.showAbsolute(getTableHeader(), e);
   }
 
   /**
@@ -434,14 +433,14 @@ public class SpreadSheetTable
    * @param e		the event that triggered the menu
    */
   protected void showCellPopupMenu(final MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
-    JMenu	submenu;
-    final int   row;
-    final int[]	rows;
-    final int   col;
+    BasePopupMenu	menu;
+    JMenuItem		menuitem;
+    JMenu		submenu;
+    final int   	row;
+    final int[]		rows;
+    final int   	col;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
     col  = columnAtPoint(e.getPoint());
     row  = rowAtPoint(e.getPoint());
     if (getSelectedRows().length == 0)
@@ -565,7 +564,7 @@ public class SpreadSheetTable
     if (m_CellPopupMenuCustomizer != null)
       m_CellPopupMenuCustomizer.customizePopupMenu(e, menu);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**

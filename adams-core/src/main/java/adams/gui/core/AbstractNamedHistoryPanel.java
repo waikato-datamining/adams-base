@@ -453,7 +453,7 @@ public abstract class AbstractNamedHistoryPanel<T>
    * @see		#createPopup(MouseEvent)
    */
   protected void showPopup(MouseEvent e) {
-    JPopupMenu	menu;
+    BasePopupMenu	menu;
 
     menu = createPopup(e);
 
@@ -461,7 +461,7 @@ public abstract class AbstractNamedHistoryPanel<T>
     if (m_PopupCustomizer != null)
       m_PopupCustomizer.customizePopup(getSelectedEntries(), menu);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**
@@ -474,12 +474,12 @@ public abstract class AbstractNamedHistoryPanel<T>
    * @return		the generated menu
    * @see		#showPopup(MouseEvent)
    */
-  protected JPopupMenu createPopup(MouseEvent e) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
-    final int[]	indices;
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem	  	menuitem;
+    final int[]		indices;
 
-    result  = new JPopupMenu();
+    result  = new BasePopupMenu();
     indices = getSelectedIndices();
 
     // show

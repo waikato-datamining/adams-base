@@ -15,27 +15,25 @@
 
 /**
  * DOMTree.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core.dom;
 
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTree;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.JMenuItem;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import adams.gui.core.BaseTree;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
 
 /**
  * Specialized tree for displaying JSON objects/arrays.
@@ -137,7 +135,7 @@ public class DOMTree
    * @param e		the event
    */
   protected void showNodePopupMenu(MouseEvent e) {
-    JPopupMenu		menu;
+    BasePopupMenu menu;
     JMenuItem		menuitem;
     int 		selRow;
 
@@ -149,7 +147,7 @@ public class DOMTree
     final DOMNode selNode = (DOMNode) selPath.getLastPathComponent();
 
     if (selRow > -1) {
-      menu = new JPopupMenu();
+      menu = new BasePopupMenu();
 
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.setEnabled(selNode.hasValue());
@@ -162,7 +160,7 @@ public class DOMTree
     }
 
     if (menu != null)
-      menu.show(this, e.getX(), e.getY());
+      menu.showAbsolute(this, e);
   }
   
   /**

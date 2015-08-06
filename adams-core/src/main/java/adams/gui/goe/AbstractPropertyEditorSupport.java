@@ -15,12 +15,18 @@
 
 /*
  * AbstractEditor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
 
+import adams.core.HelpProvider;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+
+import javax.swing.JComponent;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -29,13 +35,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyEditorSupport;
-
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-
-import adams.core.HelpProvider;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
 
 /**
  * A superclass for editors with custom editors.
@@ -158,7 +157,7 @@ public abstract class AbstractPropertyEditorSupport
   /**
    * Closes the dialog.
    * 
-   * @param int		the chosen option
+   * @param option	the chosen option
    * @see		#getChosenOption()
    */
   protected void closeDialog(int option) {
@@ -222,9 +221,9 @@ public abstract class AbstractPropertyEditorSupport
       m_CustomEditor.addMouseListener(new MouseAdapter() {
 	@Override
 	public void mouseClicked(MouseEvent e) {
-	  JPopupMenu popup = createPopup();
+	  BasePopupMenu popup = createPopup();
 	  if (MouseUtils.isRightClick(e) && (popup != null))
-	    popup.show(m_CustomEditor, e.getX(), e.getY());
+	    popup.showAbsolute(m_CustomEditor, e);
 	  else
 	    super.mouseClicked(e);
 	}
@@ -244,7 +243,7 @@ public abstract class AbstractPropertyEditorSupport
    *
    * @return		the popup menu, null if not supported
    */
-  protected JPopupMenu createPopup() {
+  protected BasePopupMenu createPopup() {
     return VariableSupport.createPopup(VariableSupport.findParent(m_CustomEditor), this);
   }
   

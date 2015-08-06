@@ -15,28 +15,28 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.HistorySelectionEvent;
 import adams.gui.event.HistorySelectionListener;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.Favorites.FavoriteSelectionListener;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A panel that contains text field with the current setup of the object
@@ -200,7 +200,7 @@ public class GenericObjectEditorPanel
    * @return		the generated menu
    */
   @Override
-  protected JPopupMenu getPopupMenu() {
+  protected BasePopupMenu getPopupMenu() {
     GenericObjectEditorPopupMenu 	menu;
     JMenuItem				item;
 

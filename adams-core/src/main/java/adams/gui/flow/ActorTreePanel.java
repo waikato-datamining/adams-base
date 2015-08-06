@@ -15,28 +15,15 @@
 
 /**
  * ActorTreePanel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Arrays;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.tree.TreePath;
 
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
@@ -52,6 +39,18 @@ import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.goe.classtree.ClassNode;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.GlobalInfoNodeGenerator;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 /**
  * Displays all the actors in a tree and offers search functionality as well.
@@ -149,11 +148,11 @@ public class ActorTreePanel
    * @param classname	the class that the popup is for
    * @return		the popup
    */
-  protected JPopupMenu getNodePopup(final String classname) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
+  protected BasePopupMenu getNodePopup(final String classname) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke("control C"));
@@ -234,7 +233,7 @@ public class ActorTreePanel
    * 			branch
    * @return		the popup or null if no popup available
    */
-  public JPopupMenu getItemNodePopup(DotNotationNode node, boolean isLeaf) {
+  public BasePopupMenu getItemNodePopup(DotNotationNode node, boolean isLeaf) {
     if (isLeaf)
       return getNodePopup(node.getItem());
     else
@@ -247,7 +246,7 @@ public class ActorTreePanel
    * @param node	the info node
    * @return		the popup or null if no popup available
    */
-  public JPopupMenu getInfoNodePopup(AbstractInfoNode node) {
+  public BasePopupMenu getInfoNodePopup(AbstractInfoNode node) {
     return getNodePopup(node.getItem());
   }
 

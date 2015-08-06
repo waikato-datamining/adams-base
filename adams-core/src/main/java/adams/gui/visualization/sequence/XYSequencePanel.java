@@ -34,6 +34,7 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.Undo;
@@ -51,10 +52,10 @@ import adams.gui.visualization.core.AbstractPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
-import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PaintletWithFixedYRange;
+import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.FixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
@@ -545,12 +546,12 @@ public class XYSequencePanel
    * @return		the popup menu
    */
   @Override
-  public JPopupMenu getContainerListPopupMenu(final ContainerTable table, final int row) {
-    JPopupMenu			result;
+  public BasePopupMenu getContainerListPopupMenu(final ContainerTable table, final int row) {
+    BasePopupMenu		result;
     JMenuItem			item;
     final int[] 		indices;
 
-    result    = new JPopupMenu();
+    result    = new BasePopupMenu();
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};
     else

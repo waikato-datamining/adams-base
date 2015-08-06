@@ -15,30 +15,29 @@
 
 /**
  * JsonTree.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core.json;
 
+import adams.core.JsonSupporter;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTree;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
+
+import javax.swing.JMenuItem;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
-import adams.core.JsonSupporter;
-import adams.gui.core.BaseTree;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
 
 /**
  * Specialized tree for displaying JSON objects/arrays.
@@ -191,7 +190,7 @@ public class JsonTree
    * @param e		the event
    */
   protected void showNodePopupMenu(MouseEvent e) {
-    JPopupMenu		menu;
+    BasePopupMenu menu;
     JMenuItem		menuitem;
     int 		selRow;
 
@@ -203,7 +202,7 @@ public class JsonTree
     final JsonNode selNode = (JsonNode) selPath.getLastPathComponent();
 
     if (selRow > -1) {
-      menu = new JPopupMenu();
+      menu = new BasePopupMenu();
 
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.setEnabled(selNode.hasValue());
@@ -216,7 +215,7 @@ public class JsonTree
     }
 
     if (menu != null)
-      menu.show(this, e.getX(), e.getY());
+      menu.showAbsolute(this, e);
   }
   
   /**

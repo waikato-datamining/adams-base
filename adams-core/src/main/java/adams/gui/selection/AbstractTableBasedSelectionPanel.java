@@ -15,10 +15,34 @@
 
 /**
  * AbstractTableBasedSelectionPanel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.selection;
 
+import adams.core.Utils;
+import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTable;
+import adams.gui.core.CustomSearchTableModel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.event.DoubleClickEvent;
+import adams.gui.event.DoubleClickListener;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -32,31 +56,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import adams.core.Utils;
-import adams.gui.core.AbstractBaseTableModel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTable;
-import adams.gui.core.CustomSearchTableModel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.SearchPanel;
-import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.core.SortableAndSearchableTable;
-import adams.gui.event.DoubleClickEvent;
-import adams.gui.event.DoubleClickListener;
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 
 /**
  * Abstract ancestor for selection panels that use a JTable for displaying
@@ -118,7 +117,7 @@ public abstract class AbstractTableBasedSelectionPanel<T>
      * @param row	the row the mouse is currently over
      * @return		the popup menu
      */
-    public JPopupMenu getSelectionPopupMenu(SortableAndSearchableTable table, int row);
+    public BasePopupMenu getSelectionPopupMenu(SortableAndSearchableTable table, int row);
   }
 
   /** the panel itself. */
@@ -213,9 +212,9 @@ public abstract class AbstractTableBasedSelectionPanel<T>
 	  else if (MouseUtils.isRightClick(e)) {
 	    e.consume();
 	    int row = m_TableData.rowAtPoint(new Point(e.getX(), e.getY()));
-	    JPopupMenu menu = m_PopupMenuSupplier.getSelectionPopupMenu(m_TableData, row);
+	    BasePopupMenu menu = m_PopupMenuSupplier.getSelectionPopupMenu(m_TableData, row);
 	    if (menu != null)
-	      menu.show(m_TableData, e.getX(), e.getY());
+	      menu.showAbsolute(m_TableData, e);
 	  }
 	}
 	if (!e.isConsumed())
@@ -624,8 +623,8 @@ public abstract class AbstractTableBasedSelectionPanel<T>
    */
   public void setDefaultPopupMenuSupplier() {
     setPopupMenuSupplier(new SelectionPopupMenuSupplier() {
-      public JPopupMenu getSelectionPopupMenu(SortableAndSearchableTable table, int row) {
-	JPopupMenu result = new JPopupMenu();
+      public BasePopupMenu getSelectionPopupMenu(SortableAndSearchableTable table, int row) {
+	BasePopupMenu result = new BasePopupMenu();
 	for (int i = 0; i < m_TableDataModel.getColumnCount(); i++) {
 	  JMenuItem menuitem = new JMenuItem("Copy '" + m_TableDataModel.getColumnName(i) + "'");
 	  final Object obj = m_TableData.getValueAt(row, i);

@@ -15,34 +15,14 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.io.File;
-import java.text.DecimalFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.MouseUtils;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.event.PlotPanelPanningEvent;
@@ -59,6 +39,25 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.Tick;
 import adams.gui.visualization.core.axis.Visibility;
+
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A specialized panel that can notify listeners of paint updates.
@@ -256,9 +255,9 @@ public class ContentPanel
       public void mouseClicked(MouseEvent e) {
         if (!MouseUtils.isPrintScreenClick(e)) {
           if (MouseUtils.isRightClick(e)) {
-            JPopupMenu menu = getPopupMenu(e);
+            BasePopupMenu menu = getPopupMenu(e);
             if (menu != null)
-              menu.show(m_Self, e.getX(), e.getY());
+              menu.showAbsolute(m_Self, e);
           }
           else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 1)) {
             detectHits(e);
@@ -594,15 +593,15 @@ public class ContentPanel
    * @return		the popup menu
    * @see		#m_PopupMenuCustomizer
    */
-  public JPopupMenu getPopupMenu(MouseEvent e) {
-    JPopupMenu		result;
+  public BasePopupMenu getPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
     JMenuItem		item;
 
     result = null;
 
     if (m_ZoomingEnabled) {
       if (result == null)
-	result = new JPopupMenu();
+	result = new BasePopupMenu();
 
       item = new JMenuItem("Zoom out");
       item.setEnabled(getOwner().isZoomed());
@@ -627,7 +626,7 @@ public class ContentPanel
 
     if (m_PanningEnabled) {
       if (result == null)
-	result = new JPopupMenu();
+	result = new BasePopupMenu();
 
       item = new JMenuItem("Undo panning");
       item.setEnabled(getOwner().isPanned());
@@ -639,6 +638,9 @@ public class ContentPanel
       });
       result.add(item);
     }
+
+    if (result == null)
+      result = new BasePopupMenu();
 
     item = new JMenuItem("Save plot...");
     item.addActionListener(new ActionListener() {

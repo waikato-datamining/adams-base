@@ -15,13 +15,11 @@
 
 /**
  * CustomPopupMenuProvider.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import java.awt.event.MouseEvent;
-
-import javax.swing.JPopupMenu;
 
 /**
  * For classes that provide a custom popup menu.
@@ -37,5 +35,5 @@ public interface CustomPopupMenuProvider {
    * @param e		the event that triggered the request
    * @return		the menu, null if none was generated
    */
-  public JPopupMenu getCustomPopupMenu(MouseEvent e);
+  public BasePopupMenu getCustomPopupMenu(MouseEvent e);
 }

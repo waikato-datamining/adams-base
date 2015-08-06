@@ -32,6 +32,7 @@ import adams.env.ImageViewerPanelDefinition;
 import adams.env.Modules;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
@@ -55,7 +56,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -227,8 +227,8 @@ public class ImageViewerPanel
       public void mouseClicked(MouseEvent e) {
 	if (!MouseUtils.isPrintScreenClick(e)) {
 	  if (MouseUtils.isRightClick(e)) {
-	    JPopupMenu menu = getPopupMenu(e);
-	    menu.show(m_Self, e.getX(), e.getY());
+	    BasePopupMenu menu = getPopupMenu(e);
+	    menu.showAbsolute(m_Self, e);
 	  }
 	}
       }
@@ -1037,10 +1037,10 @@ public class ImageViewerPanel
    * @return		the popup menu
    * @see		#m_PopupMenuCustomizer
    */
-  public JPopupMenu getPopupMenu(MouseEvent e) {
-    JPopupMenu	result;
+  public BasePopupMenu getPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     // customize it?
     if (m_PopupMenuCustomizer != null)

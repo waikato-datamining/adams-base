@@ -15,10 +15,23 @@
 
 /**
  * FileProperties.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.core.ByteFormat;
+import adams.data.statistics.InformativeStatistic;
+import adams.flow.core.ActorStatistic;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.statistics.InformativeStatisticFactory;
+
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -26,20 +39,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-
-import adams.core.ByteFormat;
-import adams.data.statistics.InformativeStatistic;
-import adams.flow.core.ActorStatistic;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 /**
  * Displays properties of a flow.
@@ -128,7 +127,7 @@ public class FileProperties
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isRightClick(e)) {
 	  e.consume();
-	  JPopupMenu menu = new JPopupMenu();
+	  BasePopupMenu menu = new BasePopupMenu();
 	  JMenuItem menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	  menuitem.addActionListener(new ActionListener() {
 	    @Override
@@ -137,7 +136,7 @@ public class FileProperties
 	    }
 	  });
 	  menu.add(menuitem);
-	  menu.show(textFile, e.getX(), e.getY());
+	  menu.showAbsolute(textFile, e);
 	}
 	else {
 	  super.mouseClicked(e);

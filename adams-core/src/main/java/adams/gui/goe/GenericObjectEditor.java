@@ -24,9 +24,7 @@ package adams.gui.goe;
 import adams.core.ClassLister;
 import adams.core.CloneHandler;
 import adams.core.CustomDisplayStringProvider;
-import adams.core.SerializedObject;
 import adams.core.Utils;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
@@ -34,8 +32,8 @@ import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
@@ -79,7 +77,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -168,7 +165,7 @@ public class GenericObjectEditor
    * @version $Revision$
    */
   public class GOETreePopupMenu
-    extends JPopupMenu {
+    extends BasePopupMenu {
 
     /** for serialization. */
     static final long serialVersionUID = -3404546329655057387L;
@@ -1354,7 +1351,7 @@ public class GenericObjectEditor
    * @return 		a JPopupMenu that when shown will let the user choose
    * 			the class
    */
-  public JPopupMenu getChooseClassPopupMenu() {
+  public BasePopupMenu getChooseClassPopupMenu() {
     updateObjectNames();
 
     final ClassTree tree = new ClassTree();
@@ -1364,7 +1361,7 @@ public class GenericObjectEditor
     tree.setSelectedItem(getValue().getClass().getName());
 
     // create the popup
-    final JPopupMenu popup = new GOETreePopupMenu(tree);
+    final BasePopupMenu popup = new GOETreePopupMenu(tree);
 
     // respond when the user chooses a class
     tree.addTreeSelectionListener(new TreeSelectionListener() {

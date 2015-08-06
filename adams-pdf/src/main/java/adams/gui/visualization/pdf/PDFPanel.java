@@ -15,10 +15,23 @@
 
 /**
  * PDFPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
+import adams.core.Utils;
+import adams.core.io.JPod;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import de.intarsys.pdf.pd.PDDocument;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -27,20 +40,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-
-import adams.core.Utils;
-import adams.core.io.JPod;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import de.intarsys.pdf.pd.PDDocument;
 
 /**
  * Panel for displaying a PDF file.
@@ -283,11 +282,11 @@ public class PDFPanel
    * @param e		the event that triggered the popup
    */
   protected void showPopup(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
-    int		i;
+    BasePopupMenu 	menu;
+    JMenuItem		menuitem;
+    int			i;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     //View/Zoom/Zoom in
     menuitem = new JMenuItem("Zoom in");
@@ -323,6 +322,6 @@ public class PDFPanel
       });
     }
 
-    menu.show(e.getComponent(), e.getX(), e.getY());
+    menu.showAbsolute(e.getComponent(), e);
   }
 }

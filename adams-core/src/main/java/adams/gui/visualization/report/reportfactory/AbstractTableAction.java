@@ -15,12 +15,9 @@
 
 /**
  * AbstractTableAction.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
-
-import javax.swing.Icon;
-import javax.swing.JPopupMenu;
 
 import adams.core.Utils;
 import adams.data.report.AbstractField;
@@ -28,8 +25,11 @@ import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.chooser.AbstractReportFileChooser;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
+
+import javax.swing.Icon;
 
 /**
  * Ancestor for actions populating the popup menu of the Table class of the 
@@ -37,7 +37,6 @@ import adams.gui.visualization.report.ReportFactory;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <T> the type of table we are dealing with
  */
 public abstract class AbstractTableAction
   extends AbstractBaseAction {
@@ -286,8 +285,8 @@ public abstract class AbstractTableAction
    * @return		the popup menu
    * @see		#SEPARATOR
    */
-  public static JPopupMenu createPopup(String[] actions, ReportFactory.Table table, int[] rows) {
-    JPopupMenu		result;
+  public static BasePopupMenu createPopup(String[] actions, ReportFactory.Table table, int[] rows) {
+    BasePopupMenu	result;
     AbstractTableAction	taction;
     AbstractField[]	fields;
     Object[]		values;
@@ -297,7 +296,7 @@ public abstract class AbstractTableAction
     boolean		multiAppl;
     boolean		singleAppl;
     
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     fields    = new AbstractField[rows.length];
     values    = new Object[rows.length];

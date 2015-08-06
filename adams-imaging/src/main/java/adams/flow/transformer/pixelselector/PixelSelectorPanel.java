@@ -15,38 +15,15 @@
 
 /**
  * PixelSelectorPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import adams.core.CleanUpHandler;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
@@ -62,6 +39,29 @@ import adams.gui.visualization.report.reportfactory.CopyFieldName;
 import adams.gui.visualization.report.reportfactory.CopyFieldValue;
 import adams.gui.visualization.report.reportfactory.ModifyValue;
 import adams.gui.visualization.report.reportfactory.RemoveField;
+
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Combines an ImagePanel and a Report table.
@@ -439,16 +439,16 @@ public class PixelSelectorPanel
    * @param e		the event that triggered the request
    * @return		the menu, null if none was generated
    */
-  public JPopupMenu getCustomPopupMenu(MouseEvent e) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
-    Point	loc;
+  public BasePopupMenu getCustomPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
+    Point		loc;
     
     result = null;
 
     if (m_Actions.length > 0) {
       loc    = m_ImagePanel.mouseToPixelLocation(e.getPoint());
-      result = new JPopupMenu();
+      result = new BasePopupMenu();
       for (AbstractPixelSelectorAction action: m_Actions) {
 	// store necessary information in action
 	action.setMousePosition(e.getPoint());

@@ -21,6 +21,7 @@ package adams.gui.visualization.debug.objecttree;
 
 import adams.core.option.OptionHandler;
 import adams.gui.chooser.ObjectExporterFileChooser;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -30,7 +31,6 @@ import adams.gui.visualization.debug.objecttree.Node.NodeType;
 import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
@@ -394,7 +394,7 @@ public class Tree
    * @param e		the mouse event that triggered the popup menu
    */
   protected void showPopup(MouseEvent e) {
-    JPopupMenu				menu;
+    BasePopupMenu menu;
     JMenuItem				menuitem;
     TreePath 				path;
     final Node 				node;
@@ -407,7 +407,7 @@ public class Tree
     node = (Node) path.getLastPathComponent();
     obj  = node.getUserObject();
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(obj != null);
@@ -432,7 +432,7 @@ public class Tree
     });
     menu.add(menuitem);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**

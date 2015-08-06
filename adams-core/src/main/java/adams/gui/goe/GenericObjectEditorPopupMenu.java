@@ -15,10 +15,25 @@
 
 /**
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.NestedProducer;
+import adams.core.option.OptionHandler;
+import adams.core.option.OptionUtils;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.TextEditorPanel;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -28,22 +43,6 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
 import java.util.HashSet;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.NestedProducer;
-import adams.core.option.OptionHandler;
-import adams.core.option.OptionUtils;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.TextEditorPanel;
-
 /**
  * Generic GOE popup menu, for copy/paste, etc.
  *
@@ -51,7 +50,7 @@ import adams.gui.core.TextEditorPanel;
  * @version $Revision$
  */
 public class GenericObjectEditorPopupMenu
-  extends JPopupMenu {
+  extends BasePopupMenu {
 
   /** for serialization. */
   private static final long serialVersionUID = -5216584001020734521L;

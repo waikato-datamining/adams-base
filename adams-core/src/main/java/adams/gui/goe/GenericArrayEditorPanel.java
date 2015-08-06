@@ -15,22 +15,21 @@
 
 /*
  * GenericArrayEditorPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-
-import adams.core.Utils;
-import adams.gui.chooser.AbstractChooserPanel;
-import adams.gui.core.GUIHelper;
 
 /**
  * A panel that contains text field with the current setup of the array
@@ -216,11 +215,11 @@ public class GenericArrayEditorPanel
    * @return		the generated menu
    */
   @Override
-  protected JPopupMenu getPopupMenu() {
-    JPopupMenu 	menu;
-    JMenuItem	item;
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu 	menu;
+    JMenuItem		item;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     if (isEditable())
       item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));

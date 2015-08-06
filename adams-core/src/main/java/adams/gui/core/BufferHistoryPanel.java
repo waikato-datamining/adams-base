@@ -26,7 +26,6 @@ import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
 import adams.gui.core.ConsolePanel.OutputType;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -260,10 +259,10 @@ public class BufferHistoryPanel
    * @return		the generated menu
    */
   @Override
-  protected JPopupMenu createPopup(MouseEvent e) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
-    final int[]	indices;
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
+    final int[]		indices;
 
     result  = super.createPopup(e);
     indices = getSelectedIndices();

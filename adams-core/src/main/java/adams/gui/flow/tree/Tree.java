@@ -973,12 +973,12 @@ public class Tree
    * @param e		the event
    */
   public void showNodePopupMenu(MouseEvent e) {
-    JPopupMenu 	menu;
+    BasePopupMenu 	menu;
 
     if (m_AllowNodePopup) {
       menu = createNodePopupMenu(e);
       if (menu != null)
-	menu.show(this, e.getX(), e.getY());
+        menu.showAbsolute(this, e);
     }
   }
 
@@ -988,8 +988,8 @@ public class Tree
    * @param e		the event
    * @return		the popup menu, null if not possible
    */
-  public JPopupMenu createNodePopupMenu(MouseEvent e) {
-    JPopupMenu		menu;
+  public BasePopupMenu createNodePopupMenu(MouseEvent e) {
+    BasePopupMenu	menu;
     StateContainer	state;
     String[]		items;
     TreePopupAction	action;
@@ -998,7 +998,7 @@ public class Tree
     if (state == null)
       return null;
 
-    menu  = new JPopupMenu();
+    menu  = new BasePopupMenu();
     items = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
     for (String item: items) {
       if (item.trim().length() == 0)

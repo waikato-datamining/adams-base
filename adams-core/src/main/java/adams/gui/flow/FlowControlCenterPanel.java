@@ -15,38 +15,10 @@
 
 /*
  * FlowControlCenterPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -59,6 +31,7 @@ import adams.gui.application.ChildFrame;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.StatusProcessor;
@@ -76,6 +49,32 @@ import adams.gui.event.UndoEvent;
 import adams.gui.flow.setup.FlowSetupCellEditor;
 import adams.gui.flow.setup.FlowSetupTableModel;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 
 /**
  * A panel that functions as control center for flows.
@@ -363,10 +362,10 @@ public class FlowControlCenterPanel
    * @param e		the mouse event that triggered the popup
    */
   protected void showTablePopup(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
+    BasePopupMenu 	menu;
+    JMenuItem		menuitem;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     // edit
     menuitem = new JMenuItem(m_ButtonEdit.getText());
@@ -447,7 +446,7 @@ public class FlowControlCenterPanel
     });
     menu.add(menuitem);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**

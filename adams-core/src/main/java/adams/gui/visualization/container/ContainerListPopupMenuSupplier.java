@@ -15,12 +15,12 @@
 
 /*
  * ContainerListPopupMenuSupplier.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import javax.swing.JPopupMenu;
+import adams.gui.core.BasePopupMenu;
 
 /**
  * Interface for components that can supply a popup menu for the
@@ -40,5 +40,5 @@ public interface ContainerListPopupMenuSupplier<M extends AbstractContainerManag
    * @param row	the row the mouse is currently over
    * @return		the popup menu
    */
-  public JPopupMenu getContainerListPopupMenu(ContainerTable<M,C> table, int row);
+  public BasePopupMenu getContainerListPopupMenu(ContainerTable<M,C> table, int row);
 }

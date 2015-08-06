@@ -15,20 +15,11 @@
 
 /*
  * JComponentList.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Hashtable;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -38,9 +29,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  * A specialized JList that displays/renders arbitrary JComponents.
@@ -80,7 +78,7 @@ public class JComponentList
      * @return		the popup menu
      * @see		#hasPopupMenu()
      */
-    public JPopupMenu getPopupMenu();
+    public BasePopupMenu getPopupMenu();
   }
 
   /**
@@ -241,11 +239,11 @@ public class JComponentList
      * @return		the popup menu
      * @see		#hasPopupMenu()
      */
-    public JPopupMenu getPopupMenu() {
-      JPopupMenu	result;
+    public BasePopupMenu getPopupMenu() {
+      BasePopupMenu	result;
       JMenuItem		item;
 
-      result = new JPopupMenu();
+      result = new BasePopupMenu();
 
       for (Actions action: Actions.values()) {
 	if (!isEnabled(action))
@@ -432,11 +430,11 @@ public class JComponentList
      * @return		the popup menu
      * @see		#hasPopupMenu()
      */
-    public JPopupMenu getPopupMenu() {
-      JPopupMenu	result;
+    public BasePopupMenu getPopupMenu() {
+      BasePopupMenu	result;
       JMenuItem		item;
 
-      result = new JPopupMenu();
+      result = new BasePopupMenu();
 
       for (Actions action: Actions.values()) {
 	if (!isEnabled(action))
@@ -619,8 +617,8 @@ public class JComponentList
 	      PopupMenuProvider provider = (PopupMenuProvider) element;
 	      if (provider.hasPopupMenu()) {
 		e.consume();
-		JPopupMenu menu = provider.getPopupMenu();
-		menu.show(m_Self, e.getX(), e.getY());
+		BasePopupMenu menu = provider.getPopupMenu();
+		menu.showAbsolute(m_Self, e);
 	      }
 	    }
 	  }

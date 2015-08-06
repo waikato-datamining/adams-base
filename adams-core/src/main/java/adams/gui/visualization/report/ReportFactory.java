@@ -37,6 +37,7 @@ import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
@@ -79,7 +80,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -358,10 +358,10 @@ public class ReportFactory {
 	      rows = new int[]{rowAtPoint(e.getPoint())};
 	    else
 	      rows = getSelectedRows();
-	    JPopupMenu menu = getPopupMenu(rows);
+	    BasePopupMenu menu = getPopupMenu(rows);
 	    if (menu != null) {
 	      e.consume();
-	      menu.show(Table.this, e.getX(), e.getY());
+	      menu.showAbsolute(Table.this, e);
 	    }
 	  }
 
@@ -540,8 +540,8 @@ public class ReportFactory {
      * @param rows	the row that got the click or the currently selected rows
      * @return		the menu if appropriate, otherwise null
      */
-    protected JPopupMenu getPopupMenu(final int[] rows) {
-      JPopupMenu	result;
+    protected BasePopupMenu getPopupMenu(final int[] rows) {
+      BasePopupMenu	result;
 
       result = null;
 

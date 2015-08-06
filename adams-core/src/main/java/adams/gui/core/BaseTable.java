@@ -31,7 +31,6 @@ import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.Action;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -462,10 +461,10 @@ public class BaseTable
    * @param e		the trigger event
    */
   protected void showSimpleCellPopupMenu(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
+    BasePopupMenu	menu;
+    JMenuItem		menuitem;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.addActionListener(new ActionListener() {
@@ -491,7 +490,7 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**

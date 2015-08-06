@@ -22,6 +22,7 @@ package adams.gui.chooser;
 
 import adams.core.CleanUpHandler;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
@@ -159,9 +160,9 @@ public abstract class AbstractChooserPanel<T>
         }
         else if (MouseUtils.isRightClick(e)) {
           e.consume();
-          JPopupMenu menu = getPopupMenu();
+          BasePopupMenu menu = getPopupMenu();
           if (menu != null)
-            menu.show(m_TextSelection, e.getX(), e.getY());
+            menu.showAbsolute(m_TextSelection, e);
         }
         else {
           super.mouseClicked(e);
@@ -543,11 +544,11 @@ public abstract class AbstractChooserPanel<T>
    *
    * @return		the menu, null if non available
    */
-  protected JPopupMenu getPopupMenu() {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu	result;
+    JMenuItem	        menuitem;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy");
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed C"));

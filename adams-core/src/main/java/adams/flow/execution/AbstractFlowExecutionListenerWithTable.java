@@ -15,21 +15,9 @@
 
 /**
  * AbstractFlowExecutionListenerWithTable.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableModel;
 
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
@@ -38,10 +26,21 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SortableAndSearchableTable;
+
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableModel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
  * Ancestor for graphical listeners that display their data in a table.
@@ -155,10 +154,10 @@ public abstract class AbstractFlowExecutionListenerWithTable
    * @param e		the event that triggered the menu
    */
   protected void showPopupMenu(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
+    BasePopupMenu menu;
+    JMenuItem	  menuitem;
 
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
@@ -190,7 +189,7 @@ public abstract class AbstractFlowExecutionListenerWithTable
     });
     menu.add(menuitem);
 
-    menu.show(m_Table, e.getX(), e.getY());
+    menu.showAbsolute(m_Table, e);
   }
   
   /**

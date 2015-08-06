@@ -37,6 +37,7 @@ import adams.gui.chooser.DefaultReportFileChooser;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BaseLogPanel;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
@@ -62,7 +63,6 @@ import adams.gui.visualization.report.ReportFactory;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -423,7 +423,7 @@ public class ImagePanel
      * @see		#m_CustomPopupMenuProvider
      */
     protected void showPopup(MouseEvent e) {
-      JPopupMenu	menu;
+      BasePopupMenu 	menu;
       JMenuItem		menuitem;
       JMenu		submenu;
       int[]		zooms;
@@ -434,7 +434,7 @@ public class ImagePanel
 	menu = m_CustomPopupMenuProvider.getCustomPopupMenu(e);
 	
       if (menu == null) {
-	menu = new JPopupMenu();
+	menu = new BasePopupMenu();
 
 	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
@@ -498,7 +498,7 @@ public class ImagePanel
         }
       }
 
-      menu.show(this, e.getX(), e.getY());
+      menu.showAbsolute(this, e);
     }
 
     /**

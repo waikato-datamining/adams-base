@@ -15,29 +15,10 @@
 
 /*
  * VariableManagementPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.core.CleanUpHandler;
 import adams.core.Variables;
@@ -47,6 +28,7 @@ import adams.event.VariableChangeListener;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
@@ -56,6 +38,23 @@ import adams.gui.dialog.TextDialog;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Panel for managing the variables (at runtime).
@@ -361,7 +360,7 @@ public class VariableManagementPanel
     });
     m_Table.addCellPopupMenuListener(new PopupMenuListener() {
       public void showPopupMenu(MouseEvent e) {
-	JPopupMenu menu = new JPopupMenu();
+	BasePopupMenu menu = new BasePopupMenu();
 	JMenuItem menuitem;
 	final int row = m_Table.rowAtPoint(e.getPoint());
 	boolean enabled = (m_Table.getSelectedRowCount() == 1);
@@ -394,7 +393,7 @@ public class VariableManagementPanel
 	menu.addSeparator();
 	menu.add(menuitem);
 	
-	menu.show(m_Table.getComponent(), e.getX(), e.getY());
+	menu.showAbsolute(m_Table.getComponent(), e);
       }
     });
     add(m_Table, BorderLayout.CENTER);

@@ -31,6 +31,7 @@ import adams.core.option.AbstractOption;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
@@ -46,7 +47,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
@@ -57,9 +57,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.BeanInfo;
 import java.beans.Beans;
-import java.beans.Introspector;
 import java.beans.MethodDescriptor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -558,7 +556,7 @@ public class PropertySheetPanel extends BasePanel
 	public void mouseClicked(MouseEvent evt) {
 	  if (MouseUtils.isRightClick(evt)) {
 	    evt.consume();
-	    JPopupMenu menu = new JPopupMenu();
+	    BasePopupMenu menu = new BasePopupMenu();
 	    VariableSupport.updatePopup(PropertySheetPanel.this, editor, menu);
 	    // revert to default menu item
 	    if (option != null) {
@@ -573,7 +571,7 @@ public class PropertySheetPanel extends BasePanel
 	      menu.addSeparator();
 	      menu.add(menuitem);
 	    }
-	    menu.show(label, evt.getX(), evt.getY());
+	    menu.showAbsolute(label, evt);
 	  }
 	  else {
 	    super.mouseClicked(evt);

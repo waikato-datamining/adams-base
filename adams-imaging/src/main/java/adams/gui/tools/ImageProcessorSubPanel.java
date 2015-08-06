@@ -32,6 +32,7 @@ import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.PassThrough;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
@@ -46,7 +47,6 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -121,14 +121,14 @@ public class ImageProcessorSubPanel
      * @return		the menu, null if none was generated
      */
     @Override
-    public JPopupMenu getCustomPopupMenu(MouseEvent e) {
-      JPopupMenu	menu;
+    public BasePopupMenu getCustomPopupMenu(MouseEvent e) {
+      BasePopupMenu	menu;
       JMenuItem		menuitem;
       JMenu		submenu;
       int		i;
       int[]		zooms;
 
-      menu = new JPopupMenu();
+      menu = new BasePopupMenu();
 
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.setEnabled(getPanel().getCurrentImage() != null);

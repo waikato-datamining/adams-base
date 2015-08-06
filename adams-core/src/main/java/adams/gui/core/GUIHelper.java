@@ -71,6 +71,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -2240,5 +2241,30 @@ public class GUIHelper {
     }
     
     return true;
+  }
+
+  /**
+   * Displays a popup menu.
+   *
+   * @param menu	the menu to show
+   * @param invoker	the invoking component
+   * @param e		the absolute positions on screen of the event are used
+   */
+  public static void showPopupMenu(JPopupMenu menu, Component invoker, MouseEvent e) {
+    showPopupMenu(menu, invoker, e.getXOnScreen(), e.getYOnScreen());
+  }
+
+  /**
+   * Displays a popup menu.
+   *
+   * @param menu	the menu to show
+   * @param invoker	the invoking component
+   * @param x		the absolute X position on screen
+   * @param y		the absolute Y position on screen
+   */
+  public static void showPopupMenu(JPopupMenu menu, Component invoker, int x, int y) {
+    menu.setInvoker(invoker);
+    menu.setLocation(x, y);
+    menu.setVisible(true);
   }
 }

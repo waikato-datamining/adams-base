@@ -30,6 +30,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ExtensionFileFilter;
@@ -50,7 +51,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
@@ -141,11 +141,11 @@ public class SystemInfoPanel
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isRightClick(e)) {
-	    JPopupMenu menu = getPopupMenu(m_Table.rowAtPoint(e.getPoint()));
+	    BasePopupMenu menu = getPopupMenu(m_Table.rowAtPoint(e.getPoint()));
 	    if (menu == null)
 	      return;
 	    e.consume();
-	    menu.show(m_Table, e.getX(), e.getY());
+	    menu.showAbsolute(m_Table, e);
 	  }
 
 	  if (!e.isConsumed())
@@ -172,11 +172,11 @@ public class SystemInfoPanel
    * @param row	the row that got the click
    * @return		the menu if appropriate, otherwise null
    */
-  protected JPopupMenu getPopupMenu(int row) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
-    String	field;
-    String	valueStr;
+  protected BasePopupMenu getPopupMenu(int row) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
+    String		field;
+    String		valueStr;
 
     result = null;
 
@@ -188,7 +188,7 @@ public class SystemInfoPanel
       if (field.equals(SystemInfo.JVM_PID)) {
 	final int pid = Integer.parseInt(valueStr);
 	if (result == null)
-	  result = new JPopupMenu();
+	  result = new BasePopupMenu();
 	menuitem = new JMenuItem("Run " + JMap.EXECUTABLE);
 	menuitem.setEnabled(JMap.isAvailable());
 	menuitem.addActionListener(new ActionListener() {

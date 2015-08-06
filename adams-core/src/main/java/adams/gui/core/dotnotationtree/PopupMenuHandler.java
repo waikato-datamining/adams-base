@@ -15,11 +15,11 @@
 
 /**
  * PopupMenuHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core.dotnotationtree;
 
-import javax.swing.JPopupMenu;
+import adams.gui.core.BasePopupMenu;
 
 /**
  * Interface for classes that generate a popup menu in the class tree.
@@ -37,7 +37,7 @@ public interface PopupMenuHandler {
    * 			excluding any info nodes
    * @return		the popup or null if no popup available
    */
-  public JPopupMenu getItemNodePopup(DotNotationNode node, boolean isLeaf);
+  public BasePopupMenu getItemNodePopup(DotNotationNode node, boolean isLeaf);
 
   /**
    * Returns the popup menu for an info node.
@@ -45,5 +45,5 @@ public interface PopupMenuHandler {
    * @param node	the info node
    * @return		the popup or null if no popup available
    */
-  public JPopupMenu getInfoNodePopup(AbstractInfoNode node);
+  public BasePopupMenu getInfoNodePopup(AbstractInfoNode node);
 }

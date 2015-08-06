@@ -31,7 +31,6 @@ import adams.gui.chooser.TextFileChooser;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -915,10 +914,10 @@ public class TextEditorPanel
    * @param e		the event that triggered the action
    */
   protected void showPopupMenu(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
+    BasePopupMenu	menu;
+    JMenuItem		menuitem;
     
-    menu = new JPopupMenu();
+    menu = new BasePopupMenu();
     
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(m_TextArea.getSelectedText() != null);
@@ -957,7 +956,7 @@ public class TextEditorPanel
     if (m_PopupMenuCustomizer != null)
       m_PopupMenuCustomizer.customizePopupMenu(this, menu);
     
-    menu.show(m_TextArea, e.getX(), e.getY());
+    menu.showAbsolute(m_TextArea, e);
   }
 
   /**

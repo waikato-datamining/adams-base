@@ -15,29 +15,28 @@
 
 /**
  * ProvenanceTree.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.provenance;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.env.ProvenanceTreeDefinition;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.TextDialog;
+
+import javax.swing.JMenuItem;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The tree used for displaying provenance information.
@@ -293,7 +292,7 @@ public class ProvenanceTree
    * @param e		the event
    */
   protected void showNodePopupMenu(MouseEvent e) {
-    JPopupMenu		menu;
+    BasePopupMenu 	menu;
     JMenuItem		menuitem;
     int 		selRow;
 
@@ -305,7 +304,7 @@ public class ProvenanceTree
     final ProvenanceNode selNode = (ProvenanceNode) selPath.getLastPathComponent();
 
     if (selRow > -1) {
-      menu = new JPopupMenu();
+      menu = new BasePopupMenu();
 
       menuitem = new JMenuItem(selNode.getProvenanceInformation().getClassname(), GUIHelper.getIcon("provenance.png"));
       menuitem.setEnabled(false);
@@ -329,7 +328,7 @@ public class ProvenanceTree
     }
 
     if (menu != null)
-      menu.show(this, e.getX(), e.getY());
+      menu.showAbsolute(this, e);
   }
 
   /**

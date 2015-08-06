@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -36,6 +36,7 @@ import adams.data.timeseries.TimeseriesPoint;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.PaintListener;
@@ -441,12 +442,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		the popup menu
    */
   @Override
-  public JPopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
-    JPopupMenu		result;
+  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
+    BasePopupMenu	result;
     JMenuItem		item;
     final int[]		indices;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};

@@ -33,6 +33,7 @@ import adams.data.weka.ArffUtils;
 import adams.env.Environment;
 import adams.env.InstanceExplorerDefinition;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
@@ -808,12 +809,12 @@ public class InstanceExplorer
    * @param row	the row the mouse is currently over
    * @return		the popup menu
    */
-  public JPopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
-    JPopupMenu			result;
-    JMenuItem			item;
-    final int[] 		indices;
+  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
+    BasePopupMenu	result;
+    JMenuItem		item;
+    final int[] 	indices;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};
     else

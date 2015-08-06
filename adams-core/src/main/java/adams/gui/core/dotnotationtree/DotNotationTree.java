@@ -15,23 +15,20 @@
 
 /*
  * DotNotationTree.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dotnotationtree;
 
-import java.awt.BorderLayout;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import adams.core.base.BaseString;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.DragAndDropTree;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.TransferableString;
 
 import javax.swing.JFrame;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -41,13 +38,15 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import adams.core.base.BaseString;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.DragAndDropTree;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.TransferableString;
+import java.awt.BorderLayout;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Displays dot-notation names in a tree structure.
@@ -172,7 +171,7 @@ public class DotNotationTree<N extends DotNotationNode>
    * @param e		the mouse event that triggered the popup menu request
    */
   protected void showPopup(MouseEvent e) {
-    JPopupMenu 		menu;
+    BasePopupMenu 	menu;
     TreePath 		path;
     BaseTreeNode 	node;
 
@@ -188,7 +187,7 @@ public class DotNotationTree<N extends DotNotationNode>
     }
 
     if (menu != null)
-      menu.show(this, e.getX(), e.getY());
+      menu.showAbsolute(this, e);
   }
 
   /**

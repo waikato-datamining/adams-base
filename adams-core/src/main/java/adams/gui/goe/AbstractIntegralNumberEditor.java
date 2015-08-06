@@ -15,21 +15,20 @@
 
 /**
  * AbstractIntegralNumberEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.MouseUtils;
 
 import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import adams.gui.core.MouseUtils;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * An abstract ancestor for custom editors for integral numbers, like bytes,
@@ -94,9 +93,9 @@ public abstract class AbstractIntegralNumberEditor
     // http://bugs.sun.com/view_bug.do?bug_id=4760088
     ((JSpinner.NumberEditor) result.getEditor()).getTextField().addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-	JPopupMenu popup = createPopup();
+	BasePopupMenu popup = createPopup();
 	if (MouseUtils.isRightClick(e) && (popup != null))
-	  popup.show(m_CustomEditor, e.getX(), e.getY());
+	  popup.showAbsolute(m_CustomEditor, e);
 	else
 	  super.mouseClicked(e);
       }

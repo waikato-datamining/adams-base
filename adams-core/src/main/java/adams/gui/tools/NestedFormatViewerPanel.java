@@ -15,32 +15,10 @@
 
 /*
  * NestedFormatViewerPanel.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -51,6 +29,7 @@ import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTree;
 import adams.gui.core.BaseTreeNode;
@@ -58,6 +37,26 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
+
+import javax.swing.ImageIcon;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JTree;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * A viewer for files that contain the nested format, like the flow editor
@@ -200,9 +199,9 @@ public class NestedFormatViewerPanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isRightClick(e)) {
-	  JPopupMenu menu = createPopup(e);
+	  BasePopupMenu menu = createPopup(e);
 	  if (menu != null)
-	    menu.show(m_Tree, e.getX(), e.getY());
+	    menu.showAbsolute(m_Tree, e);
 	  e.consume();
 	}
 	else {
@@ -219,8 +218,8 @@ public class NestedFormatViewerPanel
    * @param e		the event that triggered the popup
    * @return		the generated menu, null if none available
    */
-  protected JPopupMenu createPopup(MouseEvent e) {
-    JPopupMenu		result;
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	result;
     final TreePath 	path;
     JMenuItem		menuitem;
     
@@ -228,7 +227,7 @@ public class NestedFormatViewerPanel
 
     path = m_Tree.getPathForLocation(e.getX(), e.getY());
     if (path != null) {
-      result = new JPopupMenu();
+      result = new BasePopupMenu();
 
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.addActionListener(new ActionListener() {

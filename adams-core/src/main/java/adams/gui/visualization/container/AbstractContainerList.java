@@ -15,27 +15,14 @@
 
 /*
  * AbstractContainerList.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import java.awt.BorderLayout;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
 import adams.core.CleanUpHandler;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
@@ -44,6 +31,18 @@ import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+
+import javax.swing.JLabel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
 
 /**
  * An abstract panel that lists containers in a JTable.
@@ -113,9 +112,9 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
 	  if (MouseUtils.isRightClick(e)) {
 	    e.consume();
 	    int row = m_Table.rowAtPoint(new Point(e.getX(), e.getY()));
-	    JPopupMenu menu = m_PopupMenuSupplier.getContainerListPopupMenu(m_Table, row);
+	    BasePopupMenu menu = m_PopupMenuSupplier.getContainerListPopupMenu(m_Table, row);
 	    if (menu != null)
-	      menu.show(m_Table, e.getX(), e.getY());
+	      menu.showAbsolute(m_Table, e);
 	  }
 	}
 

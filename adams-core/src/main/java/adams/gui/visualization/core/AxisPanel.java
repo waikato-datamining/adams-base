@@ -15,11 +15,37 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
+import adams.core.Utils;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.core.axis.AbsoluteAxisModel;
+import adams.gui.visualization.core.axis.AbstractAxisModel;
+import adams.gui.visualization.core.axis.Direction;
+import adams.gui.visualization.core.axis.FlippableAxisModel;
+import adams.gui.visualization.core.axis.Orientation;
+import adams.gui.visualization.core.axis.Tick;
+import adams.gui.visualization.core.axis.TickGenerator;
+import adams.gui.visualization.core.axis.Type;
+import adams.gui.visualization.core.axis.Visibility;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -39,32 +65,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.Utils;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.visualization.core.axis.AbsoluteAxisModel;
-import adams.gui.visualization.core.axis.AbstractAxisModel;
-import adams.gui.visualization.core.axis.Direction;
-import adams.gui.visualization.core.axis.FlippableAxisModel;
-import adams.gui.visualization.core.axis.Orientation;
-import adams.gui.visualization.core.axis.Tick;
-import adams.gui.visualization.core.axis.TickGenerator;
-import adams.gui.visualization.core.axis.Type;
-import adams.gui.visualization.core.axis.Visibility;
 
 /**
  * Specialized panel for displaying an axis.
@@ -176,8 +176,8 @@ public class AxisPanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isRightClick(e)) {
-	  JPopupMenu menu = getPopupMenu(e);
-	  menu.show(m_Self, e.getX(), e.getY());
+	  BasePopupMenu menu = getPopupMenu(e);
+	  menu.showAbsolute(m_Self, e);
 	}
       }
     });
@@ -861,12 +861,12 @@ public class AxisPanel
    * @return		the popup menu
    * @see		#m_PopupMenuCustomizer
    */
-  public JPopupMenu getPopupMenu(MouseEvent e) {
-    JPopupMenu		result;
+  public BasePopupMenu getPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
     JMenuItem		item;
     ButtonGroup 	group;
 
-    result = new JPopupMenu();
+    result = new BasePopupMenu();
 
     // type
     group = new ButtonGroup();

@@ -15,10 +15,34 @@
 
 /**
  * VariableSupport.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
+import adams.core.Variables;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
+import adams.flow.control.StorageName;
+import adams.flow.core.FlowVariables;
+import adams.flow.source.StorageValue;
+import adams.flow.standalone.CallableActors;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.flow.tree.Node;
+import adams.gui.goe.actorpathtree.ActorPathNode;
+import adams.gui.goe.callableactorstree.CallableActorsTree;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog.ModalityType;
@@ -32,31 +56,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.tree.TreePath;
-
-import adams.core.Variables;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
-import adams.flow.control.StorageName;
-import adams.flow.core.FlowVariables;
-import adams.flow.source.StorageValue;
-import adams.flow.standalone.CallableActors;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.flow.tree.Node;
-import adams.gui.goe.actorpathtree.ActorPathNode;
-import adams.gui.goe.callableactorstree.CallableActorsTree;
 
 /**
  * Helper class for managing variables in the GOE.
@@ -103,8 +102,8 @@ public class VariableSupport {
    * @param editor	the property editor this menu is generated for
    * @return		the popup menu
    */
-  public static JPopupMenu createPopup(PropertySheetPanel parent, PropertyEditor editor) {
-    JPopupMenu		result;
+  public static BasePopupMenu createPopup(PropertySheetPanel parent, PropertyEditor editor) {
+    BasePopupMenu	result;
     AbstractOption	option;
 
     result = null;
@@ -112,7 +111,7 @@ public class VariableSupport {
     if (parent != null) {
       option = parent.findOption(editor);
       if (option != null)
-	result = updatePopup(parent, editor, new JPopupMenu());
+	result = updatePopup(parent, editor, new BasePopupMenu());
     }
 
     return result;
@@ -311,8 +310,8 @@ public class VariableSupport {
    * @param menu	the menu to update
    * @return		the updated popup menu
    */
-  public static JPopupMenu updatePopup(final PropertySheetPanel parent, PropertyEditor editor, JPopupMenu menu) {
-    JPopupMenu			result;
+  public static BasePopupMenu updatePopup(final PropertySheetPanel parent, PropertyEditor editor, BasePopupMenu menu) {
+    BasePopupMenu		result;
     JMenuItem			item;
     AbstractOption 		option;
     JLabel			label;
