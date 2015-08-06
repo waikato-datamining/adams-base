@@ -58,10 +58,13 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -442,10 +445,21 @@ public abstract class AbstractApplicationFrame
 
     setJMenuBar(createMenuBar());
 
+    addWindowStateListener(new WindowAdapter() {
+      @Override
+      public void windowStateChanged(WindowEvent e) {
+	int state = e.getNewState();
+	if (((state & Frame.MAXIMIZED_VERT) != 0)
+	  || ((state & Frame.MAXIMIZED_HORIZ) != 0)
+	  || ((state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH)) {
+	  setExtendedState(Frame.NORMAL);
+	  setSizeAndLocation();
+	}
+      }
+    });
+
     // size + position
-    pack();
-    setSize(getGraphicsConfiguration().getBounds().width, getHeight());
-    setLocation(0, 0);
+    setSizeAndLocation();
   }
 
   /**
@@ -459,6 +473,15 @@ public abstract class AbstractApplicationFrame
     m_InitFinished = true;
     setUserMode(m_UserMode);
     LoggingHelper.setDefaultHandler(new ConsolePanelHandler());
+  }
+
+  /**
+   * Sets the size and location of the main window.
+   */
+  protected void setSizeAndLocation() {
+    pack();
+    setSize(getGraphicsConfiguration().getBounds().width, getHeight());
+    setLocation(0, 0);
   }
 
   /**
