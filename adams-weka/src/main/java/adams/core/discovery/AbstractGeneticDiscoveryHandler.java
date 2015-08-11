@@ -20,6 +20,8 @@
 
 package adams.core.discovery;
 
+import adams.core.discovery.PropertyPath.PropertyContainer;
+
 /**
  * Ancestor for genetic algorithm related discovery handlers.
  *
@@ -34,14 +36,16 @@ public abstract class AbstractGeneticDiscoveryHandler
   /**
    * Returns the packed bits for the genetic algorithm.
    *
+   * @param cont	the container to obtain the value from to turn into a string
    * @return		the bits
    */
-  public abstract String pack();
+  public abstract String pack(PropertyContainer cont);
 
   /**
    * Unpacks and applies the bits from the genetic algorithm.
    *
+   * @param cont	the container to set the value for created from the string
    * @param bits	the bits to use
    */
-  public abstract void unpack(String bits);
+  public abstract void unpack(PropertyContainer cont, String bits);
 }

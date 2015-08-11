@@ -20,6 +20,7 @@
 
 package adams.core.discovery;
 
+import adams.core.discovery.PropertyPath.PropertyContainer;
 import weka.classifiers.functions.GPD;
 
 /**
@@ -66,20 +67,22 @@ public class GPDNoise
   /**
    * Returns the packed bits for the genetic algorithm.
    *
+   * @param cont	the container to obtain the value from to turn into a string
    * @return		the bits
    */
   @Override
-  public String pack() {
+  public String pack(PropertyContainer cont) {
     return "TODO";
   }
 
   /**
    * Unpacks and applies the bits from the genetic algorithm.
    *
+   * @param cont	the container to set the value for created from the string
    * @param bits	the bits to use
    */
   @Override
-  public void unpack(String bits) {
+  public void unpack(PropertyContainer cont, String bits) {
     // TODO
   }
 
