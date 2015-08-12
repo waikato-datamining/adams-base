@@ -172,10 +172,14 @@ public abstract class AbstractChooserPanel<T>
     m_TextSelection.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-        if (KeyUtils.isCopy(e))
+        if (KeyUtils.isCopy(e)) {
+          e.consume();
           copyToClipboard();
-        else if (KeyUtils.isPaste(e) && GUIHelper.canPasteStringFromClipboard())
+        }
+        else if (KeyUtils.isPaste(e) && GUIHelper.canPasteStringFromClipboard()) {
+          e.consume();
           pasteFromClipboard();
+        }
 
         if (!e.isConsumed())
           super.keyPressed(e);
