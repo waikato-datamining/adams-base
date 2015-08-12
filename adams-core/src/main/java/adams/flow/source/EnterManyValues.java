@@ -506,6 +506,7 @@ public class EnterManyValues
     JPanel			panelMsg;
     List<String>		order;
     Boolean                     sync;
+    String			msg;
 
     m_Queue.clear();
 
@@ -529,7 +530,9 @@ public class EnterManyValues
     panel.setPropertyOrder(order);
     panel.setProperties(getDefaultProperties());
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panelMsg.add(new JLabel(m_Message));
+    msg = m_Message;
+    msg = getVariables().expand(msg);
+    panelMsg.add(new JLabel(msg));
     dialog = new ApprovalDialog(null, ModalityType.MODELESS);
     dialog.setTitle(getName());
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
