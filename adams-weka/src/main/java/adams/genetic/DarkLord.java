@@ -400,6 +400,7 @@ public class DarkLord
           data.add("Measure: " + getMeasure());
           data.add("Fitness: " + m_fitness);
 	  data.add("Setup: " + OptionUtils.getCommandLine(newClassifier));
+	  data.add("Mask: " + getMaskAsString());
 	  String msg = FileUtils.saveToFileMsg(data, file, null);
           if (msg != null)
             getLogger().warning("Failed to write setup to '" + file + "': " + msg);
