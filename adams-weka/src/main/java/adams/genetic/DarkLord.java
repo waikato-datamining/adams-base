@@ -22,6 +22,7 @@ package adams.genetic;
 
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -44,9 +45,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -389,6 +392,17 @@ public class DarkLord
 	  }
 	  writer.flush();
 	  writer.close();
+
+	  file = new File(
+	      ((DarkLord) m_genetic).getOutputDirectory().getAbsolutePath()
+	      + File.separator + Double.toString(getMeasure().adjust(measure)) + ".txt");
+          List<String> data = new ArrayList<>();
+          data.add("Measure: " + getMeasure());
+          data.add("Fitness: " + m_fitness);
+	  data.add("Setup: " + OptionUtils.getCommandLine(newClassifier));
+	  String msg = FileUtils.saveToFileMsg(data, file, null);
+          if (msg != null)
+            getLogger().warning("Failed to write setup to '" + file + "': " + msg);
 
 	  // notify the listeners
 	  ((DarkLord) m_genetic).notifyFitnessChangeListeners(getMeasure().adjust(measure));
