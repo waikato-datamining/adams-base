@@ -128,6 +128,4 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
   public String maximumTipText() {
     return "The maximum to use.";
   }
-
-
 }

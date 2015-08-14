@@ -1,9 +1,30 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * AbstractGeneticDoubleDiscoveryHandlerResolution.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ */
+
 package adams.core.discovery;
 
 /**
  * Created by dale on 13/08/2015.
  */
-public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution extends AbstractGeneticDoubleDiscoveryHandler{
+public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
+  extends AbstractGeneticDoubleDiscoveryHandler{
 
   private static final long serialVersionUID = -4401650612139991644L;
 
@@ -11,6 +32,7 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution extends Ab
 
   /** numbits. */
   protected int m_numBits;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -68,6 +90,15 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution extends Ab
    */
   public String splitsTipText() {
     return "The number of doubles to use between max and min.";
+  }
+
+  /**
+   * Returns the number of required bits.
+   *
+   * @return		the number of bits
+   */
+  public int getNumBits() {
+    return calcNumBits(getSplits());
   }
 
   public static double bitsToDouble(String bits, double min, double max, int splits){

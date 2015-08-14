@@ -14,7 +14,7 @@
  */
 
 /**
- * AbstractGeneticIntegerDiscoveryHandler.java
+ * AbstractGeneticIntegerArrayDiscoveryHandler.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -186,6 +186,15 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
    */
   protected int calcNumBits(){
     return calcNumBits(getMinimum(), getMaximum());
+  }
+
+  /**
+   * Returns the number of required bits.
+   *
+   * @return		the number of bits
+   */
+  public int getNumBits() {
+    return calcNumBits() * getSize();
   }
 
   /**

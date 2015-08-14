@@ -34,6 +34,13 @@ public abstract class AbstractGeneticDiscoveryHandler
   private static final long serialVersionUID = 9187636596983559404L;
 
   /**
+   * Returns the number of required bits.
+   *
+   * @return		the number of bits
+   */
+  public abstract int getNumBits();
+
+  /**
    * Returns the packed bits for the genetic algorithm.
    *
    * @param cont	the container to obtain the value from to turn into a string

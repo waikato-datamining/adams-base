@@ -143,6 +143,15 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
     return "The maximum to use.";
   }
 
+  /**
+   * Returns the number of required bits.
+   *
+   * @return		the number of bits
+   */
+  public int getNumBits() {
+    return calcNumBits(getMinimum(), getMaximum());
+  }
+
 
   public static int bitsToInt(String bits, int min, int max){
     double j=0;
