@@ -308,7 +308,7 @@ public abstract class MTAbstractGeneticAlgorithm
 
     m_OptionManager.add(
 	    "seed", "seed",
-	    1);
+	    1L);
 
     m_OptionManager.add(
 	    "favor-zeroes", "favorZeroes",
