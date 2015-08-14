@@ -21,7 +21,7 @@
 package adams.genetic.stopping;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.event.FitnessChangeEvent;
+import adams.genetic.MTAbstractGeneticAlgorithm;
 
 /**
  * Ancestor for stopping criteria.
@@ -35,33 +35,44 @@ public abstract class AbstractStoppingCriterion
   private static final long serialVersionUID = -3789025381945184863L;
 
   /**
-   * Hook method for checking the event before attempting the actual stop check.
-   * <br>
-   * Default implementation only ensures that event was provided.
-   *
-   * @param e		the event to check
+   * Gets called when the genetic algorithm starts.
    */
-  protected void check(FitnessChangeEvent e) {
-    if (e == null)
-      throw new IllegalArgumentException("No fitness event provided!");
+  public abstract void start();
+
+  /**
+   * Hook method for checking the algorithm before attempting the actual stop check.
+   * <br>
+   * Default implementation only ensures that an algorithm was provided.
+   *
+   * @param genetic		the algorithm to check
+   */
+  protected void check(MTAbstractGeneticAlgorithm genetic) {
+    if (genetic == null)
+      throw new IllegalArgumentException("No genetic algorithm provided!");
   }
 
   /**
    * Performs the actual check of the stopping criterion.
    *
-   * @param e		the event
+   * @param genetic	the algorithm
    * @return		true if to stop
    */
-  protected abstract boolean doCheckStopping(FitnessChangeEvent e);
+  protected abstract boolean doCheckStopping(MTAbstractGeneticAlgorithm genetic);
 
   /**
    * Performs the check of the stopping criterion.
    *
-   * @param e		the event
+   * @param genetic	the algorithm
    * @return		true if to stop
    */
-  public boolean checkStopping(FitnessChangeEvent e) {
-    check(e);
-    return doCheckStopping(e);
+  public boolean checkStopping(MTAbstractGeneticAlgorithm genetic) {
+    boolean	result;
+
+    check(genetic);
+    result = doCheckStopping(genetic);
+    if (isLoggingEnabled())
+      getLogger().info("checkStopping: " + result);
+
+    return result;
   }
 }

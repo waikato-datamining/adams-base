@@ -35,6 +35,8 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeListener;
+import adams.genetic.stopping.AbstractStoppingCriterion;
+import adams.genetic.stopping.MaxIterations;
 import adams.multiprocess.Job;
 import weka.core.Instances;
 
@@ -232,8 +234,11 @@ public abstract class MTAbstractGeneticAlgorithm
   /** number of chromosomes. */
   protected int m_NumChrom;
 
-  /** number of iterations to perform. */
-  protected int m_NumIterations;
+  /** the stopping criterion. */
+  protected AbstractStoppingCriterion m_StoppingCriterion;
+
+  /** the current iteration. */
+  protected int m_CurrentIteration;
 
   /** the genes. */
   protected BitSet[] m_Genes;
@@ -261,12 +266,6 @@ public abstract class MTAbstractGeneticAlgorithm
 
   /** whether the algorithm is paused. */
   protected boolean m_Paused;
-
-  /** the maximum number of seconds to train. */
-  protected int m_MaxTrainTime;
-
-  /** the time when training commenced. */
-  protected long m_TrainStart;
 
   /** the fitness change listeners. */
   protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
@@ -305,28 +304,24 @@ public abstract class MTAbstractGeneticAlgorithm
     super.defineOptions();
 
     m_OptionManager.add(
-	    "num-chrom", "numChrom",
-	    50);
+      "num-chrom", "numChrom",
+      50);
 
     m_OptionManager.add(
-	    "num-iter", "numIterations",
-	    10000000);
+      "stopping-criterion", "stoppingCriterion",
+      new MaxIterations());
 
     m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
+      "seed", "seed",
+      1L);
 
     m_OptionManager.add(
       "favor-zeroes", "favorZeroes",
       false);
 
     m_OptionManager.add(
-	    "best", "bestRange",
-	    "-none-");
-
-    m_OptionManager.add(
-	    "max-train", "maxTrainTime",
-	    0);
+      "best", "bestRange",
+      "-none-");
   }
 
   /**
@@ -470,22 +465,22 @@ public abstract class MTAbstractGeneticAlgorithm
   }
 
   /**
-   * Sets the number of iterations to perform.
+   * Sets the stopping criterion to use.
    *
-   * @param value	the number
+   * @param value	the criterion
    */
-  public void setNumIterations(int value) {
-    m_NumIterations = value;
+  public void setStoppingCriterion(AbstractStoppingCriterion value) {
+    m_StoppingCriterion = value;
     reset();
   }
 
   /**
-   * Returns the number of iterations to perform.
+   * Returns the stopping criterion in use.
    *
-   * @return		the number
+   * @return		the criterion
    */
-  public int getNumIterations() {
-    return m_NumIterations;
+  public AbstractStoppingCriterion getStoppingCriterion() {
+    return m_StoppingCriterion;
   }
 
   /**
@@ -494,37 +489,17 @@ public abstract class MTAbstractGeneticAlgorithm
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String numIterationsTipText() {
-    return "The number of iterations to perform.";
+  public String stoppingCriterionTipText() {
+    return "The stopping criterion to use.";
   }
 
   /**
-   * Sets the maximum number of seconds to perform training.
+   * Returns the current iteration.
    *
-   * @param value	the number of seconds
+   * @return		the iteration
    */
-  public void setMaxTrainTime(int value) {
-    m_MaxTrainTime = value;
-    reset();
-  }
-
-  /**
-   * Returns the maximum number of seconds to perform training.
-   *
-   * @return		the seed value
-   */
-  public int getMaxTrainTime() {
-    return m_MaxTrainTime;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String maxTrainTimeTipText() {
-    return "The maximum number of seconds to training time (0 = unlimited time).";
+  public int getCurrentIteration() {
+    return m_CurrentIteration;
   }
 
   /**
@@ -841,8 +816,7 @@ public abstract class MTAbstractGeneticAlgorithm
    * Further initializations in derived classes.
    */
   protected void preRun() {
-    m_Running    = true;
-    m_TrainStart = System.currentTimeMillis();
+    m_Running = true;
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
       getLogger().fine("Size preRun: " + sizeOf());
   }
@@ -853,7 +827,6 @@ public abstract class MTAbstractGeneticAlgorithm
    * @return		true if successfully finished, false when interrupted
    */
   public boolean run() {
-    int		i;
     int		cx;
     int 	po;
     boolean	result;
@@ -870,19 +843,22 @@ public abstract class MTAbstractGeneticAlgorithm
 
     if (result) {
       try {
-	for (i = 0; i < getNumIterations(); i++) {
+	m_CurrentIteration = 0;
+	do {
 	  if (isPaused() && !isStopped()) {
 	    Utils.wait(this, this, 1000, 100);
 	    continue;
 	  }
 
-	  if (i % 100 == 0)
-	    getLogger().info("Iteration " + (i+1) + "/" + m_NumIterations);
+	  m_CurrentIteration++;
+	  if (m_CurrentIteration % 100 == 0)
+	    getLogger().info("Iteration " + m_CurrentIteration);
+
 	  calcFitness();
 	  sort();
 
 	  if (isLoggingEnabled()) {
-	    getLogger().info("Generation " + String.valueOf(i));
+	    getLogger().info("Generation " + String.valueOf(m_CurrentIteration));
 	    StringBuilder info = new StringBuilder();
 	    for (cx = 0; cx < getNumChrom(); cx++) {
 	      info.append(" Fitness for chromosome ");
@@ -904,19 +880,12 @@ public abstract class MTAbstractGeneticAlgorithm
 	  doCrossovers();
 	  doMutations2();
 
-	  // time limit exceeded?
-	  if (m_MaxTrainTime > 0) {
-	    if ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime) {
-	      getLogger().info("Training time limit of " + m_MaxTrainTime + " seconds exceeded - stopping.");
-	      break;
-	    }
-	  }
-
 	  if (!isRunning()) {
 	    getLogger().severe("Interrupted!");
 	    break;
 	  }
 	}
+	while (!getStoppingCriterion().checkStopping(this));
       }
       catch (Exception e) {
 	result = false;
