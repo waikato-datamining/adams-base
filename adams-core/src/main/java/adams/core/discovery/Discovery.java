@@ -101,7 +101,7 @@ public class Discovery
         if (child.getClass().isArray()) {
           len = Array.getLength(child);
           for (i = 0; i < len; i++)
-            discover(handlers, Array.get(child, i), path.append(prop.getDisplayName()));
+            discover(handlers, Array.get(child, i), path.append(prop.getDisplayName() + "[" + i + "]"));
         }
         else {
           discover(handlers, child, path.append(prop.getDisplayName()));
