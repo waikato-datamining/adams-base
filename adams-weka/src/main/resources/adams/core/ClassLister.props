@@ -7,6 +7,10 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
+# the genetic object discovery handlers
+adams.core.discovery.AbstractGeneticDiscoveryHandler=\
+  adams.core.discovery
+
 # instance generators
 adams.data.instances.AbstractInstanceGenerator=\
   adams.data.instances
