@@ -305,22 +305,7 @@ public class DarkLord
           new Random(((DarkLord) m_genetic).getCrossValidationSeed()));
 
         // obtain measure
-        double measure = 0;
-        if (getMeasure() == Measure.ACC)
-          measure = evaluation.pctCorrect();
-        else if (getMeasure() == Measure.CC)
-          measure = evaluation.correlationCoefficient();
-        else if (getMeasure() == Measure.MAE)
-          measure = evaluation.meanAbsoluteError();
-        else if (getMeasure() == Measure.RAE)
-          measure = evaluation.relativeAbsoluteError();
-        else if (getMeasure() == Measure.RMSE)
-          measure = evaluation.rootMeanSquaredError();
-        else if (getMeasure() == Measure.RRSE)
-          measure = evaluation.rootRelativeSquaredError();
-        else
-          throw new IllegalStateException("Unhandled measure '" + getMeasure() + "'!");
-        measure = getMeasure().adjust(measure);
+        double measure = getMeasure().extract(evaluation, true);
 
         // process fitness
         m_fitness = measure;

@@ -20,6 +20,7 @@
 
 package adams.genetic;
 
+import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.UnassignedClassException;
 
@@ -65,6 +66,39 @@ public enum Measure {
     m_Negative = negative;
     m_Nominal  = nominal;
     m_Numeric  = numeric;
+  }
+
+  /**
+   * Extracts the measure from the Evaluation object.
+   *
+   * @param evaluation	the evaluation to use
+   * @param adjust	whether to just the measure
+   * @return		the measure
+   * @see		#adjust(double)
+   * @throws Exception	in case the retrieval of the measure fails
+   */
+  public double extract(Evaluation evaluation, boolean adjust) throws Exception {
+    double result;
+
+    if (this == Measure.ACC)
+      result = evaluation.pctCorrect();
+    else if (this == Measure.CC)
+      result = evaluation.correlationCoefficient();
+    else if (this == Measure.MAE)
+      result = evaluation.meanAbsoluteError();
+    else if (this == Measure.RAE)
+      result = evaluation.relativeAbsoluteError();
+    else if (this == Measure.RMSE)
+      result = evaluation.rootMeanSquaredError();
+    else if (this == Measure.RRSE)
+      result = evaluation.rootRelativeSquaredError();
+    else
+      throw new IllegalStateException("Unhandled measure '" + this + "'!");
+
+    if (adjust)
+      result = adjust(result);
+
+    return result;
   }
 
   /**
