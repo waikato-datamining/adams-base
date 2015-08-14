@@ -24,6 +24,8 @@ import adams.core.option.OptionUtils;
 import adams.gui.goe.PropertySheetPanel;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Wizard page that use a {@link PropertySheetPanel} for displaying
@@ -70,6 +72,12 @@ public class PropertySheetPanelPage
     
     m_PanelSheet = new PropertySheetPanel();
     m_PanelSheet.setShowAboutBox(false);
+    m_PanelSheet.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        updateButtons();
+      }
+    });
     add(m_PanelSheet, BorderLayout.CENTER);
   }
 
