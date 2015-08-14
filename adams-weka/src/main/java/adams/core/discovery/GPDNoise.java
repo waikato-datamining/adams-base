@@ -82,8 +82,8 @@ public class GPDNoise
    */
   @Override
   public String pack(PropertyContainer cont) {
-    GPD gpd=(GPD)cont.getObject();
-    double val=gpd.getNoise();
+    GPD gpd = (GPD)cont.getObject();
+    double val = gpd.getNoise();
     return(doubleToBits(val));
   }
 
@@ -95,8 +95,8 @@ public class GPDNoise
    */
   @Override
   public void unpack(PropertyContainer cont, String bits) {
-    double val=bitsToDouble(bits);
-    GPD gpd=(GPD)cont.getObject();
+    double val = bitsToDouble(bits);
+    GPD gpd = (GPD)cont.getObject();
     gpd.setNoise(val);
   }
 
@@ -108,6 +108,6 @@ public class GPDNoise
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof GPD) || (obj instanceof GPD[]);
+    return (obj instanceof GPD);
   }
 }

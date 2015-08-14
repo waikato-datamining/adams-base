@@ -14,7 +14,7 @@
  */
 
 /**
- * SavitzkyGolay2NumPoints.java
+ * PLSFilterNumComponents.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -22,7 +22,6 @@ package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import weka.filters.supervised.attribute.PLSFilter;
-import weka.filters.unsupervised.attribute.SavitzkyGolay2;
 
 /**
  * SavitzkyGolay numPoints handler.
@@ -74,9 +73,9 @@ public class PLSFilterNumComponents
    */
   @Override
   public String pack(PropertyContainer cont) {
-    PLSFilter pls=(PLSFilter)cont.getObject();
-    int val=pls.getNumComponents();
-    return(intToBits(val));
+    PLSFilter pls = (PLSFilter) cont.getObject();
+    int val = pls.getNumComponents();
+    return intToBits(val);
   }
 
   /**
@@ -87,8 +86,8 @@ public class PLSFilterNumComponents
    */
   @Override
   public void unpack(PropertyContainer cont, String bits) {
-    int val=bitsToInt(bits);
-    PLSFilter pls=(PLSFilter)cont.getObject();
+    int val = bitsToInt(bits);
+    PLSFilter pls = (PLSFilter) cont.getObject();
     pls.setNumComponents(val);
   }
 
@@ -100,6 +99,6 @@ public class PLSFilterNumComponents
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof PLSFilter) || (obj instanceof PLSFilter[]);
+    return (obj instanceof PLSFilter);
   }
 }

@@ -72,9 +72,9 @@ public class SavitzkyGolay2NumPoints
    */
   @Override
   public String pack(PropertyContainer cont) {
-    SavitzkyGolay2 sg2=(SavitzkyGolay2)cont.getObject();
-    int val=sg2.getNumPoints();
-    return(intToBits(val));
+    SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
+    int val = sg2.getNumPoints();
+    return intToBits(val);
   }
 
   /**
@@ -85,8 +85,8 @@ public class SavitzkyGolay2NumPoints
    */
   @Override
   public void unpack(PropertyContainer cont, String bits) {
-    int val=bitsToInt(bits);
-    SavitzkyGolay2 sg2=(SavitzkyGolay2)cont.getObject();
+    int val = bitsToInt(bits);
+    SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
     sg2.setNumPoints(val);
   }
 
@@ -98,6 +98,6 @@ public class SavitzkyGolay2NumPoints
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof SavitzkyGolay2) || (obj instanceof SavitzkyGolay2[]);
+    return (obj instanceof SavitzkyGolay2);
   }
 }

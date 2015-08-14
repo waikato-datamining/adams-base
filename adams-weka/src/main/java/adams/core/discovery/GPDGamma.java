@@ -108,6 +108,6 @@ public class GPDGamma
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof GPD) || (obj instanceof GPD[]);
+    return (obj instanceof GPD);
   }
 }
