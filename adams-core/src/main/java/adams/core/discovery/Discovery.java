@@ -86,8 +86,8 @@ public class Discovery
           len = Array.getLength(child);
           for (i = 0; i < len; i++) {
 	    for (AbstractDiscoveryHandler handler : handlers) {
-	      if (handler.handles(child))
-		handler.addContainer(new PropertyContainer(path.append(prop.getDisplayName() + "[" + i + "]"), prop, child));
+	      if (handler.handles(Array.get(child, i)))
+		handler.addContainer(new PropertyContainer(path.append(prop.getDisplayName() + "[" + i + "]"), prop, Array.get(child, i)));
 	    }
 	  }
 	}
