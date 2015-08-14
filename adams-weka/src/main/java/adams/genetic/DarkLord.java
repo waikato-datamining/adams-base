@@ -15,7 +15,7 @@
 
 /*
  * DarkLord.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.genetic;
@@ -115,41 +115,7 @@ public class DarkLord
   protected Long m_LastNotificationTime;
 
   /** the cache for results. */
-  public static Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
-
-  /**
-   * Adds a result to the cache.
-   *
-   * @param key		the key of the result
-   * @param val		the value to add
-   */
-  protected static synchronized void addResult(String key, Double val) {
-    m_StoredResults.put(key, val);
-  }
-
-  /**
-   * Returns a value from the cache.
-   *
-   * @param key		the key of the result
-   * @return		the result or null if not present
-   */
-  protected static synchronized Double getResult(String key){
-    Double res = m_StoredResults.get(key);
-    return res;
-  }
-
-  /**
-   * Clears all currently stored results.
-   */
-  protected static synchronized void clearResults() {
-    m_StoredResults.clear();
-  }
-
-  @Override
-  public Vector<int[]> getInitialSetups()
-  {
-      return new Vector<int[]>();
-  }
+  public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
 
   /**
    * A job class specific to The Dark Lord.
@@ -209,44 +175,44 @@ public class DarkLord
       boolean thefirst = true;
       for(int a = 0; a < getInstances().numAttributes(); a++)
       {
-	if(a == getInstances().classIndex())
-	  continue;
-	if(m_weights[a] == 0)
-	{
-	  if(last == -1)
-	    continue;
-	  if(thefirst)
-	    thefirst = false;
-	  else
-	    ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
-	  if(pos - last > 1)
-	    ret = (new StringBuilder(String.valueOf(ret))).append(last).append("-").append(pos).toString();
-	  else
-	    if(pos - last == 1)
-	      ret = (new StringBuilder(String.valueOf(ret))).append(last).append(",").append(pos).toString();
-	    else
-	      ret = (new StringBuilder(String.valueOf(ret))).append(last).toString();
-	  last = -1;
-	}
-	if(m_weights[a] != 0)
-	{
-	  if(last == -1)
-	    last = a;
-	  pos = a;
-	}
+        if(a == getInstances().classIndex())
+          continue;
+        if(m_weights[a] == 0)
+        {
+          if(last == -1)
+            continue;
+          if(thefirst)
+            thefirst = false;
+          else
+            ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
+          if(pos - last > 1)
+            ret = (new StringBuilder(String.valueOf(ret))).append(last).append("-").append(pos).toString();
+          else
+          if(pos - last == 1)
+            ret = (new StringBuilder(String.valueOf(ret))).append(last).append(",").append(pos).toString();
+          else
+            ret = (new StringBuilder(String.valueOf(ret))).append(last).toString();
+          last = -1;
+        }
+        if(m_weights[a] != 0)
+        {
+          if(last == -1)
+            last = a;
+          pos = a;
+        }
       }
 
       if(last != -1)
       {
-	if(!thefirst)
-	  ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
-	if(pos - last > 1)
-	  ret = (new StringBuilder(String.valueOf(ret))).append(last).append("-").append(pos).toString();
-	else
-	  if(pos - last == 1)
-	    ret = (new StringBuilder(String.valueOf(ret))).append(last).append(",").append(pos).toString();
-	  else
-	    ret = (new StringBuilder(String.valueOf(ret))).append(last).toString();
+        if(!thefirst)
+          ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
+        if(pos - last > 1)
+          ret = (new StringBuilder(String.valueOf(ret))).append(last).append("-").append(pos).toString();
+        else
+        if(pos - last == 1)
+          ret = (new StringBuilder(String.valueOf(ret))).append(last).append(",").append(pos).toString();
+        else
+          ret = (new StringBuilder(String.valueOf(ret))).append(last).toString();
       }
       return (new StringBuilder(String.valueOf(ret))).append("]").toString();
 
@@ -265,42 +231,42 @@ public class DarkLord
       boolean thefirst = true;
       for(int a = 0; a < getInstances().numAttributes(); a++)
       {
-          if(m_weights[a] == 0 && a != getInstances().classIndex())
-          {
-              if(last == -1)
-                  continue;
-              if(thefirst)
-                  thefirst = false;
-              else
-                  ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
-              if(pos - last > 1)
-                  ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append("-").append(pos + 1).toString();
-              else
-              if(pos - last == 1)
-                  ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append(",").append(pos + 1).toString();
-              else
-                  ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).toString();
-              last = -1;
-          }
-          if(m_weights[a] != 0 || a == getInstances().classIndex())
-          {
-              if(last == -1)
-                  last = a;
-              pos = a;
-          }
+        if(m_weights[a] == 0 && a != getInstances().classIndex())
+        {
+          if(last == -1)
+            continue;
+          if(thefirst)
+            thefirst = false;
+          else
+            ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
+          if(pos - last > 1)
+            ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append("-").append(pos + 1).toString();
+          else
+          if(pos - last == 1)
+            ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append(",").append(pos + 1).toString();
+          else
+            ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).toString();
+          last = -1;
+        }
+        if(m_weights[a] != 0 || a == getInstances().classIndex())
+        {
+          if(last == -1)
+            last = a;
+          pos = a;
+        }
       }
 
       if(last != -1)
       {
-          if(!thefirst)
-              ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
-          if(pos - last > 1)
-              ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append("-").append(pos + 1).toString();
-          else
-          if(pos - last == 1)
-              ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append(",").append(pos + 1).toString();
-          else
-              ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).toString();
+        if(!thefirst)
+          ret = (new StringBuilder(String.valueOf(ret))).append(",").toString();
+        if(pos - last > 1)
+          ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append("-").append(pos + 1).toString();
+        else
+        if(pos - last == 1)
+          ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).append(",").append(pos + 1).toString();
+        else
+          ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).toString();
       }
       return ret;
 
@@ -312,111 +278,111 @@ public class DarkLord
     @Override
     public void calcNewFitness(){
       try {
-	getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
+        getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
 
-	// was measure already calculated for this attribute setup?
-	Double cc = DarkLord.getResult(weightsToString());
-	if (cc != null){
-	  getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
-	  m_fitness = cc;
-	  return;
-	}
-	// set the weights
-	int cnt = 0;
-	Instances newInstances = new Instances(getInstances());
-	for (int i = 0; i < getInstances().numInstances(); i++) {
-	  Instance in = newInstances.instance(i);
-	  cnt = 0;
-	  for (int a = 0; a < getInstances().numAttributes(); a++) {
-	    if (a == getInstances().classIndex())
-	      continue;
-	    if (m_weights[cnt++] == 0){
-	      in.setValue(a,0);
-	    }else {
-	      in.setValue(a,in.value(a));
-	    }
-	  }
-	}
+        // was measure already calculated for this attribute setup?
+        Double cc = ((DarkLord) getGenetic()).getResult(weightsToString());
+        if (cc != null){
+          getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
+          m_fitness = cc;
+          return;
+        }
+        // set the weights
+        int cnt = 0;
+        Instances newInstances = new Instances(getInstances());
+        for (int i = 0; i < getInstances().numInstances(); i++) {
+          Instance in = newInstances.instance(i);
+          cnt = 0;
+          for (int a = 0; a < getInstances().numAttributes(); a++) {
+            if (a == getInstances().classIndex())
+              continue;
+            if (m_weights[cnt++] == 0){
+              in.setValue(a,0);
+            }else {
+              in.setValue(a,in.value(a));
+            }
+          }
+        }
 
-	// obtain classifier
-	Classifier newClassifier = null;
-	File model = ((DarkLord) m_genetic).getSerializedModel();
-	if (model.isDirectory() || !model.exists()) {
-	  newClassifier = AbstractClassifier.makeCopy(((DarkLord) m_genetic).getClassifier());
-	}
-	else {
-	  newClassifier = (Classifier) SerializationHelper.read(((DarkLord) m_genetic).getSerializedModel().getAbsolutePath());
-	}
+        // obtain classifier
+        Classifier newClassifier = null;
+        File model = ((DarkLord) m_genetic).getSerializedModel();
+        if (model.isDirectory() || !model.exists()) {
+          newClassifier = AbstractClassifier.makeCopy(((DarkLord) m_genetic).getClassifier());
+        }
+        else {
+          newClassifier = (Classifier) SerializationHelper.read(((DarkLord) m_genetic).getSerializedModel().getAbsolutePath());
+        }
 
-	// evaluate classifier on data
-	Evaluation evaluation = new Evaluation(newInstances);
-	evaluation.crossValidateModel(
-	    newClassifier,
-	    newInstances,
-	    ((DarkLord) m_genetic).getFolds(),
-	    new Random(((DarkLord) m_genetic).getCrossValidationSeed()));
+        // evaluate classifier on data
+        Evaluation evaluation = new Evaluation(newInstances);
+        evaluation.crossValidateModel(
+          newClassifier,
+          newInstances,
+          ((DarkLord) m_genetic).getFolds(),
+          new Random(((DarkLord) m_genetic).getCrossValidationSeed()));
 
-	// obtain measure
-	double measure = 0;
-	if (getMeasure() == Measure.ACC)
-	  measure = evaluation.pctCorrect();
-	else if (getMeasure() == Measure.CC)
-	  measure = evaluation.correlationCoefficient();
-	else if (getMeasure() == Measure.MAE)
-	  measure = evaluation.meanAbsoluteError();
-	else if (getMeasure() == Measure.RAE)
-	  measure = evaluation.relativeAbsoluteError();
-	else if (getMeasure() == Measure.RMSE)
-	  measure = evaluation.rootMeanSquaredError();
-	else if (getMeasure() == Measure.RRSE)
-	  measure = evaluation.rootRelativeSquaredError();
-	else
-	  throw new IllegalStateException("Unhandled measure '" + getMeasure() + "'!");
-	measure = getMeasure().adjust(measure);
+        // obtain measure
+        double measure = 0;
+        if (getMeasure() == Measure.ACC)
+          measure = evaluation.pctCorrect();
+        else if (getMeasure() == Measure.CC)
+          measure = evaluation.correlationCoefficient();
+        else if (getMeasure() == Measure.MAE)
+          measure = evaluation.meanAbsoluteError();
+        else if (getMeasure() == Measure.RAE)
+          measure = evaluation.relativeAbsoluteError();
+        else if (getMeasure() == Measure.RMSE)
+          measure = evaluation.rootMeanSquaredError();
+        else if (getMeasure() == Measure.RRSE)
+          measure = evaluation.rootRelativeSquaredError();
+        else
+          throw new IllegalStateException("Unhandled measure '" + getMeasure() + "'!");
+        measure = getMeasure().adjust(measure);
 
-	// process fitness
-	m_fitness = measure;
-	if (((DarkLord) m_genetic).setNewFitness(m_fitness)) {
-	  File file = new File(
-	      ((DarkLord) m_genetic).getOutputDirectory().getAbsolutePath()
-	      + File.separator + Double.toString(getMeasure().adjust(measure)) + ".arff");
-	  file.createNewFile();
-	  Writer writer = new BufferedWriter(new FileWriter(file));
-	  Instances header = new Instances(newInstances, 0);
-	  header = m_genetic.updateHeader(header, this);
-	  writer.write(header.toString());
-	  writer.write("\n");
-	  for (int i = 0; i < newInstances.numInstances(); i++) {
-	    writer.write(newInstances.instance(i).toString());
-	    writer.write("\n");
-	  }
-	  writer.flush();
-	  writer.close();
+        // process fitness
+        m_fitness = measure;
+        if (((DarkLord) m_genetic).setNewFitness(m_fitness)) {
+          File file = new File(
+            ((DarkLord) m_genetic).getOutputDirectory().getAbsolutePath()
+              + File.separator + Double.toString(getMeasure().adjust(measure)) + ".arff");
+          file.createNewFile();
+          Writer writer = new BufferedWriter(new FileWriter(file));
+          Instances header = new Instances(newInstances, 0);
+          header = m_genetic.updateHeader(header, this);
+          writer.write(header.toString());
+          writer.write("\n");
+          for (int i = 0; i < newInstances.numInstances(); i++) {
+            writer.write(newInstances.instance(i).toString());
+            writer.write("\n");
+          }
+          writer.flush();
+          writer.close();
 
-	  file = new File(
-	      ((DarkLord) m_genetic).getOutputDirectory().getAbsolutePath()
-	      + File.separator + Double.toString(getMeasure().adjust(measure)) + ".txt");
+          file = new File(
+            ((DarkLord) m_genetic).getOutputDirectory().getAbsolutePath()
+              + File.separator + Double.toString(getMeasure().adjust(measure)) + ".txt");
           List<String> data = new ArrayList<>();
           data.add("Measure: " + getMeasure());
           data.add("Fitness: " + m_fitness);
-	  data.add("Setup: " + OptionUtils.getCommandLine(newClassifier));
-	  data.add("Mask: " + getMaskAsString());
-	  String msg = FileUtils.saveToFileMsg(data, file, null);
+          data.add("Setup: " + OptionUtils.getCommandLine(newClassifier));
+          data.add("Mask: " + getMaskAsString());
+          String msg = FileUtils.saveToFileMsg(data, file, null);
           if (msg != null)
             getLogger().warning("Failed to write setup to '" + file + "': " + msg);
 
-	  // notify the listeners
-	  ((DarkLord) m_genetic).notifyFitnessChangeListeners(getMeasure().adjust(measure));
-	}
-	else {
-	  getLogger().fine(getMaskAsString());
-	}
+          // notify the listeners
+          ((DarkLord) m_genetic).notifyFitnessChangeListeners(getMeasure().adjust(measure));
+        }
+        else {
+          getLogger().fine(getMaskAsString());
+        }
 
-	DarkLord.addResult(weightsToString(), m_fitness);
+        ((DarkLord) getGenetic()).addResult(weightsToString(), m_fitness);
       }
       catch(Exception e){
-	getLogger().log(Level.SEVERE, "Error: ", e);
-	m_fitness = null;
+        getLogger().log(Level.SEVERE, "Error: ", e);
+        m_fitness = null;
       }
     }
 
@@ -432,8 +398,8 @@ public class DarkLord
       result = super.preProcessCheck();
 
       if (result == null) {
-	if (getInstances() == null)
-	  result = "Null instances, which is poor..";
+        if (getInstances() == null)
+          result = "Null instances, which is poor..";
       }
 
       return result;
@@ -492,9 +458,9 @@ public class DarkLord
      */
     public double adjust(double measure) {
       if (m_Negative)
-	return -measure;
+        return -measure;
       else
-	return measure;
+        return measure;
     }
 
     /**
@@ -505,15 +471,15 @@ public class DarkLord
      */
     public boolean isValid(Instances data) {
       if (data.classIndex() == -1)
-	throw new UnassignedClassException("No class attribute set!");
+        throw new UnassignedClassException("No class attribute set!");
 
       if (data.classAttribute().isNominal())
-	return m_Nominal;
+        return m_Nominal;
       else if (data.classAttribute().isNumeric())
-	return m_Numeric;
+        return m_Numeric;
       else
-	throw new IllegalStateException(
-	    "Class attribute '" + data.classAttribute().type() + "' not handled!");
+        throw new IllegalStateException(
+          "Class attribute '" + data.classAttribute().type() + "' not handled!");
     }
   }
 
@@ -554,44 +520,44 @@ public class DarkLord
     super.defineOptions();
 
     m_OptionManager.add(
-	    "bits-per-gene", "bitsPerGene",
-	    1);
+      "bits-per-gene", "bitsPerGene",
+      1);
 
     m_OptionManager.add(
-	    "folds", "folds",
-	    10);
+      "folds", "folds",
+      10);
 
     m_OptionManager.add(
-	    "cv-seed", "crossValidationSeed",
-	    55);
+      "cv-seed", "crossValidationSeed",
+      55);
 
     m_OptionManager.add(
-	    "serialized", "serializedModel",
-	    new PlaceholderFile("."));
+      "serialized", "serializedModel",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "classifier", "classifier",
-	    new ZeroR());
+      "classifier", "classifier",
+      new ZeroR());
 
     m_OptionManager.add(
-	    "output-dir", "outputDirectory",
-	    new PlaceholderDirectory("."));
+      "output-dir", "outputDirectory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "dataset", "dataset",
-	    new PlaceholderFile("./data.arff"));
+      "dataset", "dataset",
+      new PlaceholderFile("./data.arff"));
 
     m_OptionManager.add(
-	    "class", "classIndex",
-  	    "last");
+      "class", "classIndex",
+      "last");
 
     m_OptionManager.add(
-	    "measure", "measure",
-	    Measure.RMSE);
+      "measure", "measure",
+      Measure.RMSE);
 
     m_OptionManager.add(
-	    "notify", "notificationInterval",
-	    -1);
+      "notify", "notificationInterval",
+      -1);
   }
 
   /**
@@ -900,9 +866,9 @@ public class DarkLord
    */
   public String notificationIntervalTipText() {
     return
-    "The time interval in seconds after which notification events about "
-    + "changes in the fitness can be sent (-1 = never send notifications; "
-    + "0 = whenever a change occurs).";
+      "The time interval in seconds after which notification events about "
+        + "changes in the fitness can be sent (-1 = never send notifications; "
+        + "0 = whenever a change occurs).";
   }
 
   /**
@@ -949,12 +915,12 @@ public class DarkLord
     if (m_NotificationInterval >= 0) {
       currTime = System.currentTimeMillis();
       notify   =    (m_NotificationInterval == 0)
-      || ( (m_NotificationInterval > 0) && (m_LastNotificationTime == null) )
-      || (    (m_NotificationInterval > 0)
-	  && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
+        || ( (m_NotificationInterval > 0) && (m_LastNotificationTime == null) )
+        || (    (m_NotificationInterval > 0)
+        && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
       if (notify) {
-	m_LastNotificationTime = currTime;
-	notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness));
+        m_LastNotificationTime = currTime;
+        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness));
       }
     }
   }
@@ -969,13 +935,13 @@ public class DarkLord
     for (int i = 0; i < getNumChrom(); i++) {
       int[] weights = new int[getNumGenes()];
       for (int j = 0; j < getNumGenes(); j++)  {
-	int weight = 0;
-	for (int k = 0; k < getBitsPerGene(); k++){
-	  weight <<= 1;
-	  if (getGene(i, (j*getBitsPerGene())+k))
-	    weight += 1;
-	}
-	weights[j] = weight;
+        int weight = 0;
+        for (int k = 0; k < getBitsPerGene(); k++){
+          weight <<= 1;
+          if (getGene(i, (j*getBitsPerGene())+k))
+            weight += 1;
+        }
+        weights[j] = weight;
       }
       jobs.add(new DarkLordJob(this, i, weights));
     }
@@ -987,10 +953,10 @@ public class DarkLord
       DarkLordJob job = jobs.get(i);
       // success? If not, just add the header of the original data
       if (job.getFitness() == null) {
-	m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
+        m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
       }
       else {
-	m_Fitness[job.getNumChrom()] = job.getFitness();
+        m_Fitness[job.getNumChrom()] = job.getFitness();
       }
       job.cleanUp();
     }
@@ -1061,8 +1027,8 @@ public class DarkLord
     // does the measure handle the data?
     if (!m_Measure.isValid(m_Instances))
       throw new IllegalArgumentException(
-	  "Measure '" + m_Measure + "' cannot process class of type '"
-	  + m_Instances.classAttribute().type() + "'!");
+        "Measure '" + m_Measure + "' cannot process class of type '"
+          + m_Instances.classAttribute().type() + "'!");
 
     if (m_BestRange.getRange().length() != 0)
       m_BestRange.setMax(m_Instances.numAttributes());
@@ -1116,8 +1082,41 @@ public class DarkLord
   @Override
   public String toString() {
     return
-    super.toString()
-    + "\n"
-    + getCurrentFitness() + " (measure: " + getMeasure() + ")";
+      super.toString()
+        + "\n"
+        + getCurrentFitness() + " (measure: " + getMeasure() + ")";
+  }
+
+  /**
+   * Adds a result to the cache.
+   *
+   * @param key		the key of the result
+   * @param val		the value to add
+   */
+  protected synchronized void addResult(String key, Double val) {
+    m_StoredResults.put(key, val);
+  }
+
+  /**
+   * Returns a value from the cache.
+   *
+   * @param key		the key of the result
+   * @return		the result or null if not present
+   */
+  protected synchronized Double getResult(String key){
+    Double res = m_StoredResults.get(key);
+    return res;
+  }
+
+  /**
+   * Clears all currently stored results.
+   */
+  protected synchronized void clearResults() {
+    m_StoredResults.clear();
+  }
+
+  @Override
+  public Vector<int[]> getInitialSetups() {
+    return new Vector<int[]>();
   }
 }
