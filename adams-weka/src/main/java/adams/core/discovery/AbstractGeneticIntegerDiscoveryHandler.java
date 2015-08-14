@@ -37,6 +37,9 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   /** the maximum. */
   protected int m_Maximum;
 
+  /** numbits. */
+  protected int m_numBits;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -51,6 +54,15 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
     m_OptionManager.add(
       "maximum", "maximum",
       getDefaultMaximum());
+  }
+
+  public static double log2(int n) {
+    return (Math.log(n) / Math.log(2));
+  }
+
+  protected int calcNumBits(){
+    int range=getMaximum()-getMinimum();
+    return((int)(Math.floor(log2(range))+1));
   }
 
   /**
@@ -68,6 +80,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   public void setMinimum(int value) {
     if (getOptionManager().isValid("minimum", value)) {
       m_Minimum = value;
+      calcNumBits();
       reset();
     }
   }
@@ -106,6 +119,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   public void setMaximum(int value) {
     if (getOptionManager().isValid("maximum", value)) {
       m_Maximum = value;
+      calcNumBits();
       reset();
     }
   }
@@ -127,5 +141,65 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    */
   public String maximumTipText() {
     return "The maximum to use.";
+  }
+
+
+  public static int bitsToInt(String bits, int min, int max){
+    double j=0;
+
+    for (int i=0;i<bits.length();i++) {
+      if (bits.charAt(i)=='1') {
+        j = j + Math.pow(2, bits.length()-i-1);
+      }
+    }
+    j+=min;
+    return(Math.min((int) j, max));
+  }
+
+  public int bitsToInt(String bits){
+    double j=0;
+    for (int i=0;i<bits.length();i++) {
+      if (bits.charAt(i)=='1') {
+        j = j + Math.pow(2, bits.length()-i-1);
+      }
+    }
+    j+=getMinimum();
+    return(Math.min((int) j, getMaximum()));
+  }
+
+  public String intToBits(int in){
+    in=in-getMinimum();
+    in=Math.min(in, getMaximum()-getMinimum());
+    String bits = Integer.toBinaryString(in);
+    while (bits.length() < m_numBits){
+      bits="0"+bits;
+    }
+    return(bits);
+  }
+
+  protected static int calcNumBits(int min, int max){
+    int range=max-min;
+    return((int)(Math.floor(log2(range))+1));
+  }
+
+  public static String intToBits(int in,int min, int max){
+    in=in-min;
+    in=Math.min(in, max-min);
+    String bits = Integer.toBinaryString(in);
+    while (bits.length() <calcNumBits(min,max)){
+      bits="0"+bits;
+    }
+    return(bits);
+  }
+
+
+  public static void main(String[] args) {
+    //runGeneticAlgorithm(Environment.class, DarkLord.class, args);
+    int i= 55;
+    String s=intToBits(i,1,128);
+    System.err.println(s);
+    i=bitsToInt(s,1,128);
+    System.err.println(i);
+
   }
 }

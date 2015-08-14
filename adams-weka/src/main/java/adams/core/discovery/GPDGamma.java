@@ -30,7 +30,7 @@ import weka.classifiers.functions.GPD;
  * @version $Revision$
  */
 public class GPDGamma
-  extends AbstractGeneticDoubleDiscoveryHandler {
+  extends AbstractGeneticDoubleDiscoveryHandlerResolution {
 
   private static final long serialVersionUID = 9168998412950337023L;
 
@@ -42,6 +42,16 @@ public class GPDGamma
   @Override
   public String globalInfo() {
     return "Handles the gamma parameter of the GPD.";
+  }
+
+  /**
+   * Returns the default splits.
+   *
+   * @return		the default
+   */
+  @Override
+  protected int getDefaultSplits() {
+    return 4;
   }
 
   /**
@@ -61,7 +71,7 @@ public class GPDGamma
    */
   @Override
   protected double getDefaultMaximum() {
-    return 0.1;
+    return 0.04;
   }
 
   /**
@@ -72,7 +82,9 @@ public class GPDGamma
    */
   @Override
   public String pack(PropertyContainer cont) {
-    return "TODO";
+    GPD gpd=(GPD)cont.getObject();
+    double val=gpd.getGamma();
+    return(doubleToBits(val));
   }
 
   /**
@@ -83,7 +95,9 @@ public class GPDGamma
    */
   @Override
   public void unpack(PropertyContainer cont, String bits) {
-    // TODO
+    double val=bitsToDouble(bits);
+    GPD gpd=(GPD)cont.getObject();
+    gpd.setGamma(val);
   }
 
   /**
