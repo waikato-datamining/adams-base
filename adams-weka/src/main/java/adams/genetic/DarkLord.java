@@ -21,7 +21,6 @@
 package adams.genetic;
 
 import adams.core.Properties;
-import adams.core.SerializationHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -78,10 +77,7 @@ public class DarkLord
   /** the filename of the data to use for cross-validation. */
   protected PlaceholderFile m_Dataset;
 
-  /** the filename for the serialized classifier. */
-  protected PlaceholderFile m_SerializedModel;
-
-  /** the classifier to use if no serialized model is given. */
+  /** the classifier to use. */
   protected Classifier m_Classifier;
 
   /** the directory to store the generated ARFF files in. */
@@ -299,14 +295,7 @@ public class DarkLord
         }
 
         // obtain classifier
-        Classifier newClassifier = null;
-        File model = ((DarkLord) m_genetic).getSerializedModel();
-        if (model.isDirectory() || !model.exists()) {
-          newClassifier = AbstractClassifier.makeCopy(((DarkLord) m_genetic).getClassifier());
-        }
-        else {
-          newClassifier = (Classifier) SerializationHelper.read(((DarkLord) m_genetic).getSerializedModel().getAbsolutePath());
-        }
+        Classifier newClassifier = AbstractClassifier.makeCopy(((DarkLord) m_genetic).getClassifier());
 
         // evaluate classifier on data
         Evaluation evaluation = new Evaluation(newInstances);
@@ -525,10 +514,6 @@ public class DarkLord
       55);
 
     m_OptionManager.add(
-      "serialized", "serializedModel",
-      new PlaceholderFile("."));
-
-    m_OptionManager.add(
       "classifier", "classifier",
       new ZeroR());
 
@@ -659,36 +644,7 @@ public class DarkLord
   }
 
   /**
-   * Sets the filename for the serialized classifier.
-   *
-   * @param value	the filename
-   */
-  public void setSerializedModel(PlaceholderFile value) {
-    m_SerializedModel = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set filename for the serialized classifier.
-   *
-   * @return		the filename
-   */
-  public PlaceholderFile getSerializedModel() {
-    return m_SerializedModel;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String serializedModelTipText() {
-    return "The filename for the serialized classifier.";
-  }
-
-  /**
-   * Sets the classifier to use (if no serialized model is used).
+   * Sets the classifier to use.
    *
    * @param value	the classifier
    */
@@ -713,7 +669,7 @@ public class DarkLord
    * 			displaying in the GUI or for listing the options.
    */
   public String classifierTipText() {
-    return "The classifier to use if no serialized is supplied.";
+    return "The classifier to use.";
   }
 
   /**
