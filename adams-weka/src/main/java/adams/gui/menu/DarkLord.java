@@ -49,7 +49,7 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.wizard.AbstractWizardPage;
 import adams.gui.wizard.FinalPage;
 import adams.gui.wizard.PageCheck;
-import adams.gui.wizard.WekaPropertySheetPanelPage;
+import adams.gui.wizard.PropertySheetPanelPage;
 import adams.gui.wizard.WizardPane;
 
 import javax.swing.JButton;
@@ -238,7 +238,7 @@ public class DarkLord
   public void launch() {
     adams.genetic.DarkLord	setup;
     final WizardPane		wizard;
-    WekaPropertySheetPanelPage	algorithm;
+    PropertySheetPanelPage	algorithm;
     FinalPage			finalpage;
     final ChildFrame		frame;
 
@@ -248,7 +248,7 @@ public class DarkLord
     setup = new adams.genetic.DarkLord();
     setup.setLoggingLevel(LoggingLevel.FINE);
     setup.setNotificationInterval(10);
-    algorithm = new WekaPropertySheetPanelPage("Setup");
+    algorithm = new PropertySheetPanelPage("Setup");
     algorithm.setButtonPanelVisible(true);
     algorithm.setTarget(setup);
     algorithm.setDescription("Configure the genetic algorithm setup.\nSelect the dataset that you want to have optimized and the classifier to use for optimizing.");
@@ -257,7 +257,7 @@ public class DarkLord
       public boolean checkPage(AbstractWizardPage page) {
         Properties props = page.getProperties();
 	try {
-	  String cmdline = props.getProperty(WekaPropertySheetPanelPage.PROPERTY_CMDLINE);
+	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
 	  adams.genetic.DarkLord genetic = (adams.genetic.DarkLord) OptionUtils.forAnyCommandLine(adams.genetic.DarkLord.class, cmdline);
 	  return genetic.getDataset().isFile() && genetic.getDataset().exists();
 	}
@@ -283,7 +283,7 @@ public class DarkLord
         Properties props = wizard.getProperties(false);
 	adams.genetic.DarkLord genetic = null;
 	try {
-	  String cmdline = props.getProperty(WekaPropertySheetPanelPage.PROPERTY_CMDLINE);
+	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
 	  genetic = (adams.genetic.DarkLord) OptionUtils.forAnyCommandLine(adams.genetic.DarkLord.class, cmdline);
 	}
 	catch (Exception ex) {
