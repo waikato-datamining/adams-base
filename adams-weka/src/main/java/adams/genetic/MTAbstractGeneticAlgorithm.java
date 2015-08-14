@@ -33,10 +33,14 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.event.FitnessChangeEvent;
+import adams.event.FitnessChangeListener;
 import adams.multiprocess.Job;
 import weka.core.Instances;
 
 import java.util.BitSet;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -264,7 +268,8 @@ public abstract class MTAbstractGeneticAlgorithm
   /** the time when training commenced. */
   protected long m_TrainStart;
 
-  public abstract Vector<int[]> getInitialSetups();
+  /** the fitness change listeners. */
+  protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
 
   /**
    * Initializes the members.
@@ -273,9 +278,10 @@ public abstract class MTAbstractGeneticAlgorithm
   protected void initialize() {
     super.initialize();
 
-    m_NumGenes  = 0;  // must be set by the algorithm itself, e.g., in preRun()
-    m_BestRange = new Range();
-    m_Paused    = false;
+    m_NumGenes               = 0;  // must be set by the algorithm itself, e.g., in preRun()
+    m_BestRange              = new Range();
+    m_Paused                 = false;
+    m_FitnessChangeListeners = new HashSet<FitnessChangeListener>();
   }
 
   /**
@@ -311,8 +317,8 @@ public abstract class MTAbstractGeneticAlgorithm
 	    1L);
 
     m_OptionManager.add(
-	    "favor-zeroes", "favorZeroes",
-	    false);
+      "favor-zeroes", "favorZeroes",
+      false);
 
     m_OptionManager.add(
 	    "best", "bestRange",
@@ -939,6 +945,39 @@ public abstract class MTAbstractGeneticAlgorithm
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
       getLogger().fine("Size postRun: " + sizeOf());
   }
+
+  /**
+   * Adds the given listener to its internal list of listeners.
+   *
+   * @param l		the listener to add
+   */
+  public void addFitnessChangeListener(FitnessChangeListener l) {
+    m_FitnessChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the given listener from its internal list of listeners.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeFitnessChangeListener(FitnessChangeListener l) {
+    m_FitnessChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the fitness change listeners of a change.
+   *
+   * @param e		the event to send
+   */
+  protected void notifyFitnessChangeListeners(FitnessChangeEvent e) {
+    Iterator<FitnessChangeListener> iter;
+
+    iter = m_FitnessChangeListeners.iterator();
+    while (iter.hasNext())
+      iter.next().fitnessChanged(e);
+  }
+
+  public abstract Vector<int[]> getInitialSetups();
 
   /**
    * Runs the genetic algorithm with the given options.

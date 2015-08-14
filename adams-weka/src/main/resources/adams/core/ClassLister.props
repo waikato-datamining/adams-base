@@ -39,6 +39,10 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
 adams.genetic.MTAbstractGeneticAlgorithm=\
   adams.genetic
 
+# the stopping criteria
+adams.genetic.stopping.AbstractStoppingCriterion=\
+  adams.genetic.stopping
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters

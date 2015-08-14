@@ -27,7 +27,6 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.event.FitnessChangeEvent;
-import adams.event.FitnessChangeListener;
 import adams.event.FitnessChangeNotifier;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
@@ -46,9 +45,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -107,9 +104,6 @@ public class DarkLord
 
   /** the time period in seconds after which to notify "fitness" listeners. */
   protected int m_NotificationInterval;
-
-  /** the fitness change listeners. */
-  protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
 
   /** the timestamp the last notification got sent. */
   protected Long m_LastNotificationTime;
@@ -508,7 +502,6 @@ public class DarkLord
     super.initialize();
 
     m_BestFitness            = Double.NEGATIVE_INFINITY;
-    m_FitnessChangeListeners = new HashSet<FitnessChangeListener>();
     m_LastNotificationTime   = null;
   }
 
@@ -1041,37 +1034,6 @@ public class DarkLord
 
     // clear cache
     clearResults();
-  }
-
-  /**
-   * Adds the given listener to its internal list of listeners.
-   *
-   * @param l		the listener to add
-   */
-  public void addFitnessChangeListener(FitnessChangeListener l) {
-    m_FitnessChangeListeners.add(l);
-  }
-
-  /**
-   * Removes the given listener from its internal list of listeners.
-   *
-   * @param l		the listener to remove
-   */
-  public void removeFitnessChangeListener(FitnessChangeListener l) {
-    m_FitnessChangeListeners.remove(l);
-  }
-
-  /**
-   * Notifies all the fitness change listeners of a change.
-   *
-   * @param e		the event to send
-   */
-  protected void notifyFitnessChangeListeners(FitnessChangeEvent e) {
-    Iterator<FitnessChangeListener>	iter;
-
-    iter = m_FitnessChangeListeners.iterator();
-    while (iter.hasNext())
-      iter.next().fitnessChanged(e);
   }
 
   /**
