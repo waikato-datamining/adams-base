@@ -71,7 +71,7 @@ public class SavitzkyGolay2NumPoints
    * @return		the bits
    */
   @Override
-  public String pack(PropertyContainer cont) {
+  protected String doPack(PropertyContainer cont) {
     SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
     int val = sg2.getNumPoints();
     return intToBits(val);
@@ -84,7 +84,7 @@ public class SavitzkyGolay2NumPoints
    * @param bits	the bits to use
    */
   @Override
-  public void unpack(PropertyContainer cont, String bits) {
+  protected void doUnpack(PropertyContainer cont, String bits) {
     int val = bitsToInt(bits);
     SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
     sg2.setNumPoints(val);

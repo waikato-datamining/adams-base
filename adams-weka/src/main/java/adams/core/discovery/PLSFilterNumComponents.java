@@ -72,7 +72,7 @@ public class PLSFilterNumComponents
    * @return		the bits
    */
   @Override
-  public String pack(PropertyContainer cont) {
+  protected String doPack(PropertyContainer cont) {
     PLSFilter pls = (PLSFilter) cont.getObject();
     int val = pls.getNumComponents();
     return intToBits(val);
@@ -85,7 +85,7 @@ public class PLSFilterNumComponents
    * @param bits	the bits to use
    */
   @Override
-  public void unpack(PropertyContainer cont, String bits) {
+  protected void doUnpack(PropertyContainer cont, String bits) {
     int val = bitsToInt(bits);
     PLSFilter pls = (PLSFilter) cont.getObject();
     pls.setNumComponents(val);

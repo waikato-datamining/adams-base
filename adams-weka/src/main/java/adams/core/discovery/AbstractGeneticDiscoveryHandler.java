@@ -21,6 +21,7 @@
 package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.option.OptionUtils;
 
 /**
  * Ancestor for genetic algorithm related discovery handlers.
@@ -46,7 +47,23 @@ public abstract class AbstractGeneticDiscoveryHandler
    * @param cont	the container to obtain the value from to turn into a string
    * @return		the bits
    */
-  public abstract String pack(PropertyContainer cont);
+  protected abstract String doPack(PropertyContainer cont);
+
+  /**
+   * Returns the packed bits for the genetic algorithm.
+   *
+   * @param cont	the container to obtain the value from to turn into a string
+   * @return		the bits
+   */
+  public String pack(PropertyContainer cont) {
+    String	result;
+
+    result = doPack(cont);
+    if (isLoggingEnabled())
+      getLogger().info(OptionUtils.getCommandLine(cont.getObject()) + "\n--> " + result);
+
+    return result;
+  }
 
   /**
    * Unpacks and applies the bits from the genetic algorithm.
@@ -54,5 +71,17 @@ public abstract class AbstractGeneticDiscoveryHandler
    * @param cont	the container to set the value for created from the string
    * @param bits	the bits to use
    */
-  public abstract void unpack(PropertyContainer cont, String bits);
+  protected abstract void doUnpack(PropertyContainer cont, String bits);
+
+  /**
+   * Unpacks and applies the bits from the genetic algorithm.
+   *
+   * @param cont	the container to set the value for created from the string
+   * @param bits	the bits to use
+   */
+  public void unpack(PropertyContainer cont, String bits) {
+    doUnpack(cont, bits);
+    if (isLoggingEnabled())
+      getLogger().info(bits + "\n--> " + OptionUtils.getCommandLine(cont.getObject()));
+  }
 }

@@ -81,7 +81,7 @@ public class GPDGamma
    * @return		the bits
    */
   @Override
-  public String pack(PropertyContainer cont) {
+  protected String doPack(PropertyContainer cont) {
     GPD gpd=(GPD)cont.getObject();
     double val=gpd.getGamma();
     return(doubleToBits(val));
@@ -94,7 +94,7 @@ public class GPDGamma
    * @param bits	the bits to use
    */
   @Override
-  public void unpack(PropertyContainer cont, String bits) {
+  protected void doUnpack(PropertyContainer cont, String bits) {
     double val=bitsToDouble(bits);
     GPD gpd=(GPD)cont.getObject();
     gpd.setGamma(val);

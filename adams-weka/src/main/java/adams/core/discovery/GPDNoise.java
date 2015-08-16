@@ -81,7 +81,7 @@ public class GPDNoise
    * @return		the bits
    */
   @Override
-  public String pack(PropertyContainer cont) {
+  protected String doPack(PropertyContainer cont) {
     GPD gpd = (GPD)cont.getObject();
     double val = gpd.getNoise();
     return(doubleToBits(val));
@@ -94,7 +94,7 @@ public class GPDNoise
    * @param bits	the bits to use
    */
   @Override
-  public void unpack(PropertyContainer cont, String bits) {
+  protected void doUnpack(PropertyContainer cont, String bits) {
     double val = bitsToDouble(bits);
     GPD gpd = (GPD)cont.getObject();
     gpd.setNoise(val);
