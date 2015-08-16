@@ -14,7 +14,7 @@
  */
 
 /*
- * MTAbstractGeneticAlgorithm.java
+ * AbstractGeneticAlgorithm.java
  * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
@@ -53,7 +53,7 @@ import java.util.logging.Level;
  * @author Dale (dale at cs dot waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class MTAbstractGeneticAlgorithm
+public abstract class AbstractGeneticAlgorithm
   extends AbstractOptionHandler
   implements Randomizable, StoppableWithFeedback, Pausable {
 
@@ -75,7 +75,7 @@ public abstract class MTAbstractGeneticAlgorithm
     protected int[] m_weights;
 
     /** the algorithm object this job belongs to. */
-    protected MTAbstractGeneticAlgorithm m_genetic;
+    protected AbstractGeneticAlgorithm m_genetic;
 
     /** the current fitness. */
     protected Double m_fitness;
@@ -90,7 +90,7 @@ public abstract class MTAbstractGeneticAlgorithm
      * @param num	the number of chromsomes
      * @param w		the initial weights
      */
-    public GeneticAlgorithmJob(MTAbstractGeneticAlgorithm g, int num, int[] w) {
+    public GeneticAlgorithmJob(AbstractGeneticAlgorithm g, int num, int[] w) {
       super();
 
       m_weights   = w;
@@ -104,7 +104,7 @@ public abstract class MTAbstractGeneticAlgorithm
      *
      * @return		the owner
      */
-    public MTAbstractGeneticAlgorithm getGenetic() {
+    public AbstractGeneticAlgorithm getGenetic() {
       return m_genetic;
     }
 
@@ -956,7 +956,7 @@ public abstract class MTAbstractGeneticAlgorithm
    * @param options	the options to set
    */
   public static void runGeneticAlgorithm(Class env, Class genetic, String[] options) {
-    MTAbstractGeneticAlgorithm	geneticInst;
+    AbstractGeneticAlgorithm geneticInst;
 
     Environment.setEnvironmentClass(env);
 
@@ -982,7 +982,7 @@ public abstract class MTAbstractGeneticAlgorithm
    * @return		the genetic algorithm classnames
    */
   public static String[] getGeneticAlgorithms() {
-    return ClassLister.getSingleton().getClassnames(MTAbstractGeneticAlgorithm.class);
+    return ClassLister.getSingleton().getClassnames(AbstractGeneticAlgorithm.class);
   }
 
   /**
@@ -992,11 +992,11 @@ public abstract class MTAbstractGeneticAlgorithm
    * @param options	the options for the genetic algorithm
    * @return		the instantiated genetic algorithm or null if an error occurred
    */
-  public static MTAbstractGeneticAlgorithm forName(String classname, String[] options) {
-    MTAbstractGeneticAlgorithm	result;
+  public static AbstractGeneticAlgorithm forName(String classname, String[] options) {
+    AbstractGeneticAlgorithm result;
 
     try {
-      result = (MTAbstractGeneticAlgorithm) OptionUtils.forName(MTAbstractGeneticAlgorithm.class, classname, options);
+      result = (AbstractGeneticAlgorithm) OptionUtils.forName(AbstractGeneticAlgorithm.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -1015,7 +1015,7 @@ public abstract class MTAbstractGeneticAlgorithm
    * @return		the instantiated genetic algorithm
    * 			or null if an error occurred
    */
-  public static MTAbstractGeneticAlgorithm forCommandLine(String cmdline) {
-    return (MTAbstractGeneticAlgorithm) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static AbstractGeneticAlgorithm forCommandLine(String cmdline) {
+    return (AbstractGeneticAlgorithm) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

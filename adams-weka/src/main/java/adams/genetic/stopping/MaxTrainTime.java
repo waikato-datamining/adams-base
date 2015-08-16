@@ -20,7 +20,7 @@
 
 package adams.genetic.stopping;
 
-import adams.genetic.MTAbstractGeneticAlgorithm;
+import adams.genetic.AbstractGeneticAlgorithm;
 
 /**
  <!-- globalinfo-start -->
@@ -123,7 +123,7 @@ public class MaxTrainTime
    * @return		true if to stop
    */
   @Override
-  protected boolean doCheckStopping(MTAbstractGeneticAlgorithm genetic) {
+  protected boolean doCheckStopping(AbstractGeneticAlgorithm genetic) {
     return ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime);
   }
 }

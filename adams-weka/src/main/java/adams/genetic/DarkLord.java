@@ -22,8 +22,6 @@ package adams.genetic;
 
 import adams.core.Properties;
 import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeNotifier;
@@ -61,7 +59,7 @@ import java.util.logging.Level;
  * @version $Revision: 4322 $
  */
 public class DarkLord
-  extends MTAbstractGeneticAlgorithm
+  extends AbstractGeneticAlgorithmWithDataset
   implements FitnessChangeNotifier {
 
   /** for serialization. */
@@ -70,17 +68,8 @@ public class DarkLord
   /** the bits per gene to use. */
   protected int m_BitsPerGene;
 
-  /** the data to use for cross-validation. */
-  protected Instances m_Instances;
-
-  /** the filename of the data to use for cross-validation. */
-  protected PlaceholderFile m_Dataset;
-
   /** the classifier to use. */
   protected Classifier m_Classifier;
-
-  /** the directory to store the generated ARFF files in. */
-  protected PlaceholderDirectory m_OutputDirectory;
 
   /** the number of folds for cross-validation. */
   protected int m_Folds;
@@ -90,9 +79,6 @@ public class DarkLord
 
   /** the best fitness so far. */
   protected double m_BestFitness;
-
-  /** the class index. */
-  protected String m_ClassIndex;
 
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
@@ -113,7 +99,7 @@ public class DarkLord
    * @version $Revision: 4322 $
    */
   public static class DarkLordJob
-    extends GeneticAlgorithmJob {
+    extends GeneticAlgorithmJobWithDataset {
 
     /** for serialization. */
     private static final long serialVersionUID = 8259167463381721274L;
@@ -141,15 +127,6 @@ public class DarkLord
      */
     public Measure getMeasure() {
       return m_Measure;
-    }
-
-    /**
-     * Returns the instances in use by the genetic algorithm.
-     *
-     * @return		the instances
-     */
-    protected Instances getInstances() {
-      return ((DarkLord) m_genetic).getInstances();
     }
 
     /**
@@ -352,25 +329,6 @@ public class DarkLord
         m_fitness = null;
       }
     }
-
-    /**
-     * Checks whether all pre-conditions have been met.
-     *
-     * @return		null if everything is OK, otherwise an error message
-     */
-    @Override
-    protected String preProcessCheck() {
-      String	result;
-
-      result = super.preProcessCheck();
-
-      if (result == null) {
-        if (getInstances() == null)
-          result = "Null instances, which is poor..";
-      }
-
-      return result;
-    }
   }
 
   /**
@@ -423,18 +381,6 @@ public class DarkLord
     m_OptionManager.add(
       "classifier", "classifier",
       new ZeroR());
-
-    m_OptionManager.add(
-      "output-dir", "outputDirectory",
-      new PlaceholderDirectory("."));
-
-    m_OptionManager.add(
-      "dataset", "dataset",
-      new PlaceholderFile("./data.arff"));
-
-    m_OptionManager.add(
-      "class", "classIndex",
-      "last");
 
     m_OptionManager.add(
       "measure", "measure",
@@ -504,53 +450,6 @@ public class DarkLord
   }
 
   /**
-   * Sets the data to use for cross-validation.
-   *
-   * @param value	the dataset
-   */
-  public void setInstances(Instances value) {
-    m_Instances = value;
-  }
-
-  /**
-   * Returns the currently set dataset for cross-validation.
-   *
-   * @return		the dataset
-   */
-  public Instances getInstances() {
-    return m_Instances;
-  }
-
-  /**
-   * Sets the filename of the dataset to use for cross-validation.
-   *
-   * @param value	the filename
-   */
-  public void setDataset(PlaceholderFile value) {
-    m_Dataset = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set filename of the dataset for cross-validation.
-   *
-   * @return		the filename
-   */
-  public PlaceholderFile getDataset() {
-    return m_Dataset;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String datasetTipText() {
-    return "The dataset to use for cross-validation.";
-  }
-
-  /**
    * Sets the classifier to use.
    *
    * @param value	the classifier
@@ -580,35 +479,6 @@ public class DarkLord
   }
 
   /**
-   * Sets the directory for the generated ARFF files.
-   *
-   * @param value	the directory
-   */
-  public void setOutputDirectory(PlaceholderDirectory value) {
-    m_OutputDirectory = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set directory for the generated ARFF files.
-   *
-   * @return		the directory
-   */
-  public PlaceholderDirectory getOutputDirectory() {
-    return m_OutputDirectory;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String outputDirectoryTipText() {
-    return "The directory for storing the generated ARFF files.";
-  }
-
-  /**
    * Sets the bits per gene to use.
    *
    * @param value	the number of bits
@@ -635,35 +505,6 @@ public class DarkLord
    */
   public String bitsPerGeneTipText() {
     return "The number of bits per gene to use.";
-  }
-
-  /**
-   * Sets the class index.
-   *
-   * @param value	the class index
-   */
-  public void setClassIndex(String value) {
-    m_ClassIndex = value;
-    reset();
-  }
-
-  /**
-   * Returns the current class index.
-   *
-   * @return		the class index
-   */
-  public String getClassIndex() {
-    return m_ClassIndex;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String classIndexTipText() {
-    return "The class index of the dataset ('first' and 'last' are accepted as well).";
   }
 
   /**

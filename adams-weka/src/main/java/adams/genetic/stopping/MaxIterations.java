@@ -20,7 +20,7 @@
 
 package adams.genetic.stopping;
 
-import adams.genetic.MTAbstractGeneticAlgorithm;
+import adams.genetic.AbstractGeneticAlgorithm;
 
 /**
  <!-- globalinfo-start -->
@@ -120,7 +120,7 @@ public class MaxIterations
    * @return		true if to stop
    */
   @Override
-  protected boolean doCheckStopping(MTAbstractGeneticAlgorithm genetic) {
+  protected boolean doCheckStopping(AbstractGeneticAlgorithm genetic) {
     return genetic.getCurrentIteration() >= getNumIterations();
   }
 }

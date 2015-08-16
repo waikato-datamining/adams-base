@@ -21,7 +21,7 @@
 package adams.genetic.stopping;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.genetic.MTAbstractGeneticAlgorithm;
+import adams.genetic.AbstractGeneticAlgorithm;
 
 /**
  * Ancestor for stopping criteria.
@@ -46,7 +46,7 @@ public abstract class AbstractStoppingCriterion
    *
    * @param genetic		the algorithm to check
    */
-  protected void check(MTAbstractGeneticAlgorithm genetic) {
+  protected void check(AbstractGeneticAlgorithm genetic) {
     if (genetic == null)
       throw new IllegalArgumentException("No genetic algorithm provided!");
   }
@@ -57,7 +57,7 @@ public abstract class AbstractStoppingCriterion
    * @param genetic	the algorithm
    * @return		true if to stop
    */
-  protected abstract boolean doCheckStopping(MTAbstractGeneticAlgorithm genetic);
+  protected abstract boolean doCheckStopping(AbstractGeneticAlgorithm genetic);
 
   /**
    * Performs the check of the stopping criterion.
@@ -65,7 +65,7 @@ public abstract class AbstractStoppingCriterion
    * @param genetic	the algorithm
    * @return		true if to stop
    */
-  public boolean checkStopping(MTAbstractGeneticAlgorithm genetic) {
+  public boolean checkStopping(AbstractGeneticAlgorithm genetic) {
     boolean	result;
 
     check(genetic);

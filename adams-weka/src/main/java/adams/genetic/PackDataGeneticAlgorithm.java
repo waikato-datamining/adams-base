@@ -14,16 +14,16 @@
  */
 
 /*
- * MTPackDataGeneticAlgorithm.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * PackDataGeneticAlgorithm.java
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.genetic;
 
-import java.util.Vector;
-
 import adams.optimise.genetic.PackData;
 import adams.optimise.genetic.PackDataDef;
+
+import java.util.Vector;
 
 
 /**
@@ -32,8 +32,8 @@ import adams.optimise.genetic.PackDataDef;
  * @author Dale (dale at cs dot waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class MTPackDataGeneticAlgorithm
-  extends MTAbstractGeneticAlgorithm {
+public abstract class PackDataGeneticAlgorithm
+  extends AbstractGeneticAlgorithm {
 
   /** suid.*/
   private static final long serialVersionUID = 4301615908806659455L;

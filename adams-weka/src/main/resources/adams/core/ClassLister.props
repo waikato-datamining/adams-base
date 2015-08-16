@@ -36,7 +36,7 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
 # the genetic algorithms
-adams.genetic.MTAbstractGeneticAlgorithm=\
+adams.genetic.AbstractGeneticAlgorithm=\
   adams.genetic
 
 # the stopping criteria

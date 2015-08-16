@@ -20,10 +20,9 @@
 
 package adams.event;
 
-import java.util.EventObject;
+import adams.genetic.AbstractGeneticAlgorithm;
 
-import adams.genetic.MTAbstractGeneticAlgorithm;
-import adams.optimise.genetic.AbstractGeneticAlgorithm;
+import java.util.EventObject;
 
 /**
  * Event that gets sent whenever the fitness of a genetic algorithm 
@@ -47,7 +46,7 @@ public class FitnessChangeEvent
    * @param source	the algorithm that triggered the event
    * @param fitness	the fitness that triggered this event
    */
-  public FitnessChangeEvent(MTAbstractGeneticAlgorithm source, double fitness) {
+  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness) {
     super(source);
     
     m_Fitness = fitness;
@@ -58,8 +57,8 @@ public class FitnessChangeEvent
    * 
    * @return		the genetic algorithm
    */
-  public AbstractGeneticAlgorithm getGeneticAlgorithm() {
-    return (AbstractGeneticAlgorithm) getSource();
+  public adams.optimise.genetic.AbstractGeneticAlgorithm getGeneticAlgorithm() {
+    return (adams.optimise.genetic.AbstractGeneticAlgorithm) getSource();
   }
   
   /**
