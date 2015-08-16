@@ -57,8 +57,8 @@ public class FitnessChangeEvent
    * 
    * @return		the genetic algorithm
    */
-  public adams.optimise.genetic.AbstractGeneticAlgorithm getGeneticAlgorithm() {
-    return (adams.optimise.genetic.AbstractGeneticAlgorithm) getSource();
+  public adams.genetic.AbstractGeneticAlgorithm getGeneticAlgorithm() {
+    return (adams.genetic.AbstractGeneticAlgorithm) getSource();
   }
   
   /**

@@ -35,14 +35,6 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
-# the genetic algorithms
-adams.genetic.AbstractGeneticAlgorithm=\
-  adams.genetic
-
-# the stopping criteria
-adams.genetic.stopping.AbstractStoppingCriterion=\
-  adams.genetic.stopping
-
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters

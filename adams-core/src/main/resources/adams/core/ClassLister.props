@@ -389,6 +389,14 @@ adams.flow.transformer.report.AbstractReportPreProcessor=\
 adams.flow.transformer.splitfile.AbstractFileSplitter=\
   adams.flow.transformer.splitfile
 
+# the genetic algorithms
+adams.genetic.AbstractGeneticAlgorithm=\
+  adams.genetic
+
+# the stopping criteria
+adams.genetic.stopping.AbstractStoppingCriterion=\
+  adams.genetic.stopping
+
 # the flow tabs
 adams.gui.flow.tab.AbstractEditorTab=\
   adams.gui.flow.tab
