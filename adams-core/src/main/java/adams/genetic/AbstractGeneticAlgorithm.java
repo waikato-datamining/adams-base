@@ -63,7 +63,7 @@ public abstract class AbstractGeneticAlgorithm
    * @author  dale
    * @version $Revision$
    */
-  public static abstract class GeneticAlgorithmJob
+  public static abstract class GeneticAlgorithmJob<T extends AbstractGeneticAlgorithm>
     extends Job {
 
     /** for serialization. */
@@ -73,7 +73,7 @@ public abstract class AbstractGeneticAlgorithm
     protected int[] m_weights;
 
     /** the algorithm object this job belongs to. */
-    protected AbstractGeneticAlgorithm m_genetic;
+    protected T m_genetic;
 
     /** the current fitness. */
     protected Double m_fitness;
@@ -88,7 +88,7 @@ public abstract class AbstractGeneticAlgorithm
      * @param num	the number of chromsomes
      * @param w		the initial weights
      */
-    public GeneticAlgorithmJob(AbstractGeneticAlgorithm g, int num, int[] w) {
+    public GeneticAlgorithmJob(T g, int num, int[] w) {
       super();
 
       m_weights   = w;
@@ -102,7 +102,7 @@ public abstract class AbstractGeneticAlgorithm
      *
      * @return		the owner
      */
-    public AbstractGeneticAlgorithm getGenetic() {
+    public T getGenetic() {
       return m_genetic;
     }
 

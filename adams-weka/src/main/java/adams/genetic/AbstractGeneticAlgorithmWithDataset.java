@@ -52,8 +52,8 @@ public abstract class AbstractGeneticAlgorithmWithDataset
    * @author  dale
    * @version $Revision: 4322 $
    */
-  public static abstract class GeneticAlgorithmJobWithDataset
-    extends GeneticAlgorithmJob {
+  public static abstract class GeneticAlgorithmJobWithDataset<T extends AbstractGeneticAlgorithmWithDataset>
+    extends GeneticAlgorithmJob<T> {
 
     /** for serialization. */
     private static final long serialVersionUID = 8259167463381721274L;
@@ -65,7 +65,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
      * @param num	the number of chromsomes
      * @param w		the initial weights
      */
-    public GeneticAlgorithmJobWithDataset(AbstractGeneticAlgorithm g, int num, int[] w) {
+    public GeneticAlgorithmJobWithDataset(T g, int num, int[] w) {
       super(g, num, w);
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
      * @return		the instances
      */
     protected Instances getInstances() {
-      return ((AbstractGeneticAlgorithmWithDataset) m_genetic).getInstances();
+      return m_genetic.getInstances();
     }
 
     /**
