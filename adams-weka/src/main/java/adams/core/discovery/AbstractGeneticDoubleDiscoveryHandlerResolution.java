@@ -141,10 +141,6 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
     return(bits);
   }
 
-  protected static int calcNumBits(int min, int max){
-    int range=max-min;
-    return((int)(Math.floor(log2(range))+1));
-  }
 
   public static String doubleToBits(double in,double min, double max, int splits){
     double sdist=(max-min)/((double)splits-1);
@@ -162,10 +158,10 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
 
   public static void main(String[] args) {
     //runGeneticAlgorithm(Environment.class, DarkLord.class, args);
-    double i= 12;
-    String s=doubleToBits(i,1.0,128.0,25);
+    double i= .04;
+    String s=doubleToBits(i,0.01,.08,8);
     System.err.println(s);
-    i=bitsToDouble(s,1.0,128.0,25);
+    i=bitsToDouble(s,.01,.08,8);
     System.err.println(i);
 
   }

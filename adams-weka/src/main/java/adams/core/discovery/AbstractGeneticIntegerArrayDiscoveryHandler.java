@@ -185,7 +185,8 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
    * @return		the number of bits
    */
   protected int calcNumBits(){
-    return calcNumBits(getMinimum(), getMaximum());
+    m_numBits=calcNumBits(getMinimum(), getMaximum());
+    return m_numBits;
   }
 
   /**
@@ -282,10 +283,10 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
    * @param args	ignored
    */
   public static void main(String[] args) {
-    int[] i = {1,2,4,5,129};
-    String s = intArrayToBits(i, 1, 128, i.length);
+    int[] i = {3,6,4,5,129};
+    String s = intArrayToBits(i, 3, 64, i.length);
     System.err.println(s);
-    i = bitsToIntArray(s,1,128,i.length);
+    i = bitsToIntArray(s,3,64,i.length);
     for (int k = 0; k < i.length; k++){
       System.err.print(i[k] + " ");
     }
