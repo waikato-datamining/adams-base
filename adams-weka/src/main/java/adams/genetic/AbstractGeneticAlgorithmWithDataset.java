@@ -20,6 +20,7 @@
 
 package adams.genetic;
 
+import adams.core.Properties;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import weka.core.Instances;
@@ -34,6 +35,16 @@ public abstract class AbstractGeneticAlgorithmWithDataset
   extends AbstractGeneticAlgorithm {
 
   private static final long serialVersionUID = 2081325389083203901L;
+
+  /** the key for the relation name in the generated properties file.
+   * @see #storeSetup(Instances,GeneticAlgorithmJob). */
+  public final static String PROPS_RELATION = "relation";
+
+  /** the key for a filter setup in the setup properties. */
+  public final static String PROPS_FILTER = "filter";
+
+  /** the key for the mask in the setup properties. */
+  public final static String PROPS_MASK = "mask";
 
   /**
    * Job class for algorithms with datasets.
@@ -224,4 +235,45 @@ public abstract class AbstractGeneticAlgorithmWithDataset
     return m_Instances;
   }
 
+  /**
+   * Generates a Properties file that stores information on the setup of
+   * the genetic algorithm. E.g., it backs up the original relation name.
+   * The generated properties file will be used as new relation name for
+   * the data. Derived classes can add additional parameters to this
+   * properties file.
+   *
+   * @param data	the data to create the setup for
+   * @param job		the associated job
+   * @see		#PROPS_RELATION
+   * @return		the generated setup
+   */
+  protected Properties storeSetup(Instances data, GeneticAlgorithmJob job) {
+    Properties	result;
+
+    result = new Properties();
+
+    // relation name
+    result.setProperty(PROPS_RELATION, data.relationName());
+
+    // filter (default is empty)
+    result.setProperty(PROPS_FILTER, "");
+
+    return result;
+  }
+
+  /**
+   * Creates a new dataset, with the setup as the new relation name.
+   *
+   * @param data	the data to replace the relation name with the setup
+   * @param job		the associated job
+   * @return		the updated dataset
+   */
+  public Instances updateHeader(Instances data, GeneticAlgorithmJob job) {
+    Properties 	props;
+
+    props = storeSetup(data, job);
+    data.setRelationName(props.toString());
+
+    return data;
+  }
 }

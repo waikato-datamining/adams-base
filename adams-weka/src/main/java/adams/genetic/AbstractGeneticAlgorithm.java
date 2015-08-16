@@ -22,7 +22,6 @@ package adams.genetic;
 
 import adams.core.ClassLister;
 import adams.core.Pausable;
-import adams.core.Properties;
 import adams.core.Randomizable;
 import adams.core.Range;
 import adams.core.StoppableWithFeedback;
@@ -38,7 +37,6 @@ import adams.event.FitnessChangeListener;
 import adams.genetic.stopping.AbstractStoppingCriterion;
 import adams.genetic.stopping.MaxIterations;
 import adams.multiprocess.Job;
-import weka.core.Instances;
 
 import java.util.BitSet;
 import java.util.HashSet;
@@ -216,16 +214,6 @@ public abstract class AbstractGeneticAlgorithm
         + ",weights=" + weightsToString();
     }
   }
-
-  /** the key for the relation name in the generated properties file.
-   * @see #storeSetup(Instances,GeneticAlgorithmJob). */
-  public final static String PROPS_RELATION = "relation";
-
-  /** the key for a filter setup in the setup properties. */
-  public final static String PROPS_FILTER = "filter";
-
-  /** the key for the mask in the setup properties. */
-  public final static String PROPS_MASK = "mask";
 
   /** number of genes per chromosome.
    * NB: must be initialized by the algorithm! */
@@ -769,48 +757,6 @@ public abstract class AbstractGeneticAlgorithm
    * Override the following function in sub-classes.
    */
   public abstract void calcFitness();
-
-  /**
-   * Generates a Properties file that stores information on the setup of
-   * the genetic algorithm. E.g., it backs up the original relation name.
-   * The generated properties file will be used as new relation name for
-   * the data. Derived classes can add additional parameters to this
-   * properties file.
-   *
-   * @param data	the data to create the setup for
-   * @param job		the associated job
-   * @see		#PROPS_RELATION
-   * @return		the generated setup
-   */
-  protected Properties storeSetup(Instances data, GeneticAlgorithmJob job) {
-    Properties	result;
-
-    result = new Properties();
-
-    // relation name
-    result.setProperty(PROPS_RELATION, data.relationName());
-
-    // filter (default is empty)
-    result.setProperty(PROPS_FILTER, "");
-
-    return result;
-  }
-
-  /**
-   * Creates a new dataset, with the setup as the new relation name.
-   *
-   * @param data	the data to replace the relation name with the setup
-   * @param job		the associated job
-   * @return		the updated dataset
-   */
-  public Instances updateHeader(Instances data, GeneticAlgorithmJob job) {
-    Properties 	props;
-
-    props = storeSetup(data, job);
-    data.setRelationName(props.toString());
-
-    return data;
-  }
 
   /**
    * Further initializations in derived classes.

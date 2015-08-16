@@ -293,7 +293,7 @@ public class DarkLord
           file.createNewFile();
           Writer writer = new BufferedWriter(new FileWriter(file));
           Instances header = new Instances(newInstances, 0);
-          header = m_genetic.updateHeader(header, this);
+          header = ((DarkLord) m_genetic).updateHeader(header, this);
           writer.write(header.toString());
           writer.write("\n");
           for (int i = 0; i < newInstances.numInstances(); i++) {
