@@ -28,7 +28,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
 
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -187,11 +186,11 @@ public class DarkLord
      * @param cls	the current classifier
      * @return		the data
      */
-    protected List<String> assembleSetup(double fitness, Classifier cls) {
-      List<String> result;
+    protected Properties assembleSetup(double fitness, Classifier cls) {
+      Properties	result;
 
       result = super.assembleSetup(fitness, cls);
-      result.add("Mask: " + getMaskAsString());
+      result.setProperty("Mask", getMaskAsString());
 
       return result;
     }
@@ -312,6 +311,6 @@ public class DarkLord
     super.preRun();
 
     // setup structures
-    init(20,m_Instances.numAttributes() * m_BitsPerGene);
+    init(20, m_Instances.numAttributes() * m_BitsPerGene);
   }
 }

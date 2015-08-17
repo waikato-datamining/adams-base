@@ -20,7 +20,7 @@
 
 package adams.genetic;
 
-import adams.core.io.FileUtils;
+import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeNotifier;
@@ -35,9 +35,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -171,38 +169,34 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param cls	the current classifier
      * @return		the data
      */
-    protected List<String> assembleSetup(double fitness, Classifier cls) {
-      List<String>	result;
+    protected Properties assembleSetup(double fitness, Classifier cls) {
+      Properties result;
 
-      result = new ArrayList<>();
-      result.add(getGenetic().getClass().getSimpleName() + ": " + OptionUtils.getCommandLine(getGenetic()));
-      result.add("Measure: " + getMeasure());
-      result.add("Fitness: " + fitness);
-      result.add("Setup: " + OptionUtils.getCommandLine(cls));
+      result = new Properties();
+      result.setProperty("Commandline", OptionUtils.getCommandLine(getGenetic()));
+      result.setProperty("Measure", "" + getMeasure());
+      result.setDouble("Fitness", fitness);
+      result.setProperty("Setup", OptionUtils.getCommandLine(cls));
 
       return result;
     }
 
     /**
-     * Saves the setup to a file.
+     * Saves the setup to a props file.
      *
      * @param fitness		the current measure/fitness
      * @param data		the dataset
      * @param cls		the current classifier setup
      * @throws Exception	if saving the file fails
      */
-    protected boolean outputSetup(double fitness, Instances data, Classifier cls) throws Exception {
+    protected void outputSetup(double fitness, Instances data, Classifier cls) throws Exception {
       File 		file;
-      List<String> 	list;
-      String 		msg;
+      Properties 	props;
 
-      file = createFileName(fitness, data, "txt");
-      list = assembleSetup(fitness, cls);
-      msg  = FileUtils.saveToFileMsg(list, file, null);
-      if (msg != null)
-	getLogger().warning("Failed to write setup to '" + file + "': " + msg);
-
-      return (msg == null);
+      file  = createFileName(fitness, data, "props");
+      props = assembleSetup(fitness, cls);
+      if (!props.save(file.getAbsolutePath()))
+	getLogger().warning("Failed to write setup to '" + file + "'!");
     }
 
     /**
