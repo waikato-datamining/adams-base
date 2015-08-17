@@ -20,12 +20,23 @@
 
 package adams.genetic;
 
+import adams.core.io.FileUtils;
+import adams.core.option.OptionUtils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeNotifier;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
+import weka.core.Instances;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -75,6 +86,94 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      */
     public Measure getMeasure() {
       return m_Measure;
+    }
+
+    /**
+     * Evaluates the classifier on the dataset and returns the metric.
+     *
+     * @param cls		the classifier to evaluate
+     * @param data		the data to use for evaluation
+     * @return			the metric
+     * @throws Exception	if the evaluation fails
+     */
+    protected double evaluateClassifier(Classifier cls, Instances data) throws Exception {
+      Evaluation 	evaluation;
+
+      evaluation = new Evaluation(data);
+      evaluation.crossValidateModel(
+	cls,
+	data,
+	m_genetic.getFolds(),
+	new Random(m_genetic.getCrossValidationSeed()));
+
+      return getMeasure().extract(evaluation, true);
+    }
+
+    /**
+     * Saves the instances to a file.
+     *
+     * @param fitness		the current measure/fitness
+     * @param data		the instances to save
+     * @throws Exception	if saving the file fails
+     */
+    protected void outputDataset(double fitness, Instances data) throws Exception {
+      File file = new File(
+        m_genetic.getOutputDirectory().getAbsolutePath()
+          + File.separator + Double.toString(getMeasure().adjust(fitness)) + ".arff");
+      file.createNewFile();
+      Writer writer = new BufferedWriter(new FileWriter(file));
+      Instances header = new Instances(data, 0);
+      header = m_genetic.updateHeader(header, this);
+      writer.write(header.toString());
+      writer.write("\n");
+      for (int i = 0; i < data.numInstances(); i++) {
+        writer.write(data.instance(i).toString());
+        writer.write("\n");
+      }
+      writer.flush();
+      writer.close();
+    }
+
+    /**
+     * Assembles the data for the textual setup output.
+     *
+     * @param fitness	the current fitness
+     * @param cls	the current classifier
+     * @return		the data
+     */
+    protected List<String> assembleSetup(double fitness, Classifier cls) {
+      List<String>	result;
+
+      result = new ArrayList<>();
+      result.add(getGenetic().getClass().getSimpleName() + ": " + OptionUtils.getCommandLine(getGenetic()));
+      result.add("Measure: " + getMeasure());
+      result.add("Fitness: " + fitness);
+      result.add("Setup: " + OptionUtils.getCommandLine(cls));
+
+      return result;
+    }
+
+    /**
+     * Saves the setup to a file.
+     *
+     * @param fitness		the current measure/fitness
+     * @param cls	the current classifier setup
+     * @throws Exception	if saving the file fails
+     */
+    protected boolean outputSetup(double fitness, Classifier cls) throws Exception {
+      File 		file;
+      List<String> 	data;
+      String 		msg;
+
+      file = new File(
+	m_genetic.getOutputDirectory().getAbsolutePath()
+	  + File.separator + Double.toString(getMeasure().adjust(fitness)) + ".txt");
+      data = assembleSetup(fitness, cls);
+      msg  = FileUtils.saveToFileMsg(data, file, null);
+      if (msg != null)
+	getLogger().warning("Failed to write setup to '" + file + "': " + msg);
+
+      return (msg == null);
     }
   }
 

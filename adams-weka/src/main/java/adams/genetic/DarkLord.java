@@ -21,25 +21,17 @@
 package adams.genetic;
 
 import adams.core.Properties;
-import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 
 /**
@@ -192,6 +184,22 @@ public class DarkLord
     }
 
     /**
+     * Assembles the data for the textual setup output.
+     *
+     * @param fitness	the current fitness
+     * @param cls	the current classifier
+     * @return		the data
+     */
+    protected List<String> assembleSetup(double fitness, Classifier cls) {
+      List<String> result;
+
+      result = super.assembleSetup(fitness, cls);
+      result.add("Mask: " + getMaskAsString());
+
+      return result;
+    }
+
+    /**
      * Calculates the new fitness.
      */
     @Override
@@ -207,11 +215,10 @@ public class DarkLord
           return;
         }
         // set the weights
-        int cnt = 0;
         Instances newInstances = new Instances(getInstances());
         for (int i = 0; i < getInstances().numInstances(); i++) {
           Instance in = newInstances.instance(i);
-          cnt = 0;
+          int cnt = 0;
           for (int a = 0; a < getInstances().numAttributes(); a++) {
             if (a == getInstances().classIndex())
               continue;
@@ -223,51 +230,15 @@ public class DarkLord
           }
         }
 
-        // obtain classifier
-        Classifier newClassifier = AbstractClassifier.makeCopy(m_genetic.getClassifier());
-
-        // evaluate classifier on data
-        Evaluation evaluation = new Evaluation(newInstances);
-        evaluation.crossValidateModel(
-          newClassifier,
-          newInstances,
-          m_genetic.getFolds(),
-          new Random(m_genetic.getCrossValidationSeed()));
-
-        // obtain measure
-        double measure = getMeasure().extract(evaluation, true);
+	// evaluate classifier
+	Classifier newClassifier = AbstractClassifier.makeCopy(m_genetic.getClassifier());
+	double measure = evaluateClassifier(newClassifier, newInstances);
 
         // process fitness
         m_fitness = measure;
         if (m_genetic.setNewFitness(m_fitness)) {
-          File file = new File(
-            m_genetic.getOutputDirectory().getAbsolutePath()
-              + File.separator + Double.toString(getMeasure().adjust(measure)) + ".arff");
-          file.createNewFile();
-          Writer writer = new BufferedWriter(new FileWriter(file));
-          Instances header = new Instances(newInstances, 0);
-          header = m_genetic.updateHeader(header, this);
-          writer.write(header.toString());
-          writer.write("\n");
-          for (int i = 0; i < newInstances.numInstances(); i++) {
-            writer.write(newInstances.instance(i).toString());
-            writer.write("\n");
-          }
-          writer.flush();
-          writer.close();
-
-          file = new File(
-            m_genetic.getOutputDirectory().getAbsolutePath()
-              + File.separator + Double.toString(getMeasure().adjust(measure)) + ".txt");
-          List<String> data = new ArrayList<>();
-          data.add("Measure: " + getMeasure());
-          data.add("Fitness: " + m_fitness);
-          data.add("Setup: " + OptionUtils.getCommandLine(newClassifier));
-          data.add("Mask: " + getMaskAsString());
-          String msg = FileUtils.saveToFileMsg(data, file, null);
-          if (msg != null)
-            getLogger().warning("Failed to write setup to '" + file + "': " + msg);
-
+	  outputDataset(m_fitness, newInstances);
+	  outputSetup(m_fitness, newClassifier);
           // notify the listeners
           m_genetic.notifyFitnessChangeListeners(getMeasure().adjust(measure));
         }
@@ -282,13 +253,6 @@ public class DarkLord
         m_fitness = null;
       }
     }
-  }
-
-  /**
-   * The default constructor.
-   */
-  public DarkLord() {
-    super();
   }
 
   /**
