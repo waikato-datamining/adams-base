@@ -25,6 +25,7 @@ import adams.core.Pausable;
 import adams.core.Randomizable;
 import adams.core.Range;
 import adams.core.StoppableWithFeedback;
+import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
@@ -53,7 +54,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractGeneticAlgorithm
   extends AbstractOptionHandler
-  implements Randomizable, StoppableWithFeedback, Pausable {
+  implements Randomizable, StoppableWithFeedback, Pausable, ThreadLimiter {
 
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
@@ -215,6 +216,9 @@ public abstract class AbstractGeneticAlgorithm
     }
   }
 
+  /** the number of threads to use (-1 for #of cores). */
+  protected int m_NumThreads;
+
   /** number of genes per chromosome.
    * NB: must be initialized by the algorithm! */
   protected int m_NumGenes;
@@ -292,6 +296,10 @@ public abstract class AbstractGeneticAlgorithm
     super.defineOptions();
 
     m_OptionManager.add(
+      "num-threads", "numThreads",
+      -1, -1, null);
+
+    m_OptionManager.add(
       "num-chrom", "numChrom",
       50);
 
@@ -310,6 +318,37 @@ public abstract class AbstractGeneticAlgorithm
     m_OptionManager.add(
       "best", "bestRange",
       "-none-");
+  }
+
+  /**
+   * Sets the number of threads to use.
+   *
+   * @param value 	the number of threads: -1 = # of CPUs/cores
+   */
+  public void setNumThreads(int value) {
+    if (getOptionManager().isValid("numThreads", value)) {
+      m_NumThreads = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of threads to use.
+   *
+   * @return 		the number of threads: -1 = # of CPUs/cores
+   */
+  public int getNumThreads() {
+    return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numThreadsTipText() {
+    return "The number of threads to use for executing the jobs; use -1 for all available cores.";
   }
 
   /**

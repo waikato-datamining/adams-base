@@ -21,6 +21,7 @@
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorExecution;
@@ -107,7 +108,7 @@ import java.util.logging.Level;
  */
 public class Branch
   extends AbstractControlActor
-  implements InputConsumer, MutableActorHandler, AtomicExecution {
+  implements InputConsumer, MutableActorHandler, AtomicExecution, ThreadLimiter {
 
   /** for serialization. */
   private static final long serialVersionUID = -706232800503932715L;

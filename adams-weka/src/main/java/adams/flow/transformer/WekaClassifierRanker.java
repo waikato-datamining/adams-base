@@ -15,30 +15,16 @@
 
 /*
  * WekaClassifierRanker.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Level;
-
-import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Evaluation;
-import weka.classifiers.meta.FilteredClassifier;
-import weka.classifiers.meta.GridSearch;
-import weka.classifiers.meta.MultiSearch;
-import weka.classifiers.meta.multisearch.Performance;
-import weka.classifiers.meta.multisearch.PerformanceComparator;
-import weka.core.Instances;
-import weka.core.setupgenerator.Point;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
@@ -59,6 +45,21 @@ import adams.flow.core.Token;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import weka.classifiers.AbstractClassifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.meta.GridSearch;
+import weka.classifiers.meta.MultiSearch;
+import weka.classifiers.meta.multisearch.Performance;
+import weka.classifiers.meta.multisearch.PerformanceComparator;
+import weka.core.Instances;
+import weka.core.setupgenerator.Point;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -157,7 +158,7 @@ import adams.multiprocess.JobRunner;
  */
 public class WekaClassifierRanker
   extends AbstractTransformer
-  implements Randomizable, Pausable, FlowPauseStateListener {
+  implements Randomizable, Pausable, FlowPauseStateListener, ThreadLimiter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;

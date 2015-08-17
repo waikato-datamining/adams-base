@@ -699,7 +699,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int[] 						weights;
     int 						weight;
 
-    runner = new JobRunner<ClassifierBasedGeneticAlgorithmJob>();
+    runner = new JobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
     jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];

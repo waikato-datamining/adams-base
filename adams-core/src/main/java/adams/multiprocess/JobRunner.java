@@ -15,7 +15,7 @@
 
 /*
  * JobRunner.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.multiprocess;
@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import adams.core.Pausable;
 import adams.core.Performance;
+import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
@@ -41,7 +42,7 @@ import adams.event.JobCompleteListener;
  * @param <T> the type of job to handle
  */
 public class JobRunner<T extends Job>
-  implements Pausable {
+  implements Pausable, ThreadLimiter {
 
   /** the number of threads to use. */
   protected int m_NumThreads;
@@ -76,13 +77,21 @@ public class JobRunner<T extends Job>
 
     m_queue                = new Vector<T>();
     m_JobCompleteListeners = new HashSet<JobCompleteListener>();
-    m_NumThreads           = numThreads;
+    setNumThreads(numThreads);
+    addJobCompleteListener(JobCompleteManager.getSingleton());
+  }
+
+  /**
+   * Sets the number of threads to use.
+   *
+   * @param value 	the number of threads: -1 = # of CPUs/cores
+   */
+  public void setNumThreads(int value) {
+    m_NumThreads = value;
     if (m_NumThreads < 1)
       m_NumThreads = Performance.getMaxNumProcessors();
     if ((m_NumThreads < 1) || (m_NumThreads > ProcessUtils.getAvailableProcessors()))
       m_NumThreads = ProcessUtils.getAvailableProcessors();
-
-    addJobCompleteListener(JobCompleteManager.getSingleton());
   }
 
   /**
