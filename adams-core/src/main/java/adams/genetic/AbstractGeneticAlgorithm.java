@@ -269,6 +269,12 @@ public abstract class AbstractGeneticAlgorithm
   /** the fitness change listeners. */
   protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
 
+  /** the best fitness so far. */
+  protected double m_BestFitness;
+
+  /** the best setup so far. */
+  protected Object m_BestSetup;
+
   /**
    * Initializes the members.
    */
@@ -281,6 +287,8 @@ public abstract class AbstractGeneticAlgorithm
     m_Paused                 = false;
     m_FitnessChangeListeners = new HashSet<FitnessChangeListener>();
     m_LastNotificationTime   = null;
+    m_BestFitness            = Double.NEGATIVE_INFINITY;
+    m_BestSetup              = null;
   }
 
   /**
@@ -576,7 +584,6 @@ public abstract class AbstractGeneticAlgorithm
    * Stops the execution of the algorithm.
    */
   public void stopExecution() {
-    m_Running = false;
     m_Stopped = true;
   }
 
@@ -841,15 +848,57 @@ public abstract class AbstractGeneticAlgorithm
   public abstract void calcFitness();
 
   /**
+   * Sets a fitness and keep it if better. Also notifies the fitness change
+   * listeners if setup.
+   *
+   * @param fitness	the new fitness
+   * @return		true if the new fitness was better
+   * @see		#m_FitnessChangeListeners
+   * @see		#m_NotificationInterval
+   */
+  protected synchronized boolean setNewFitness(double fitness, Object setup) {
+    boolean 	result;
+
+    result = false;
+
+    if (fitness > m_BestFitness) {
+      m_BestFitness = fitness;
+      m_BestSetup   = setup;
+      result        = true;
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the currently best fitness.
+   *
+   * @return		the best fitness so far
+   */
+  public double getCurrentFitness() {
+    return m_BestFitness;
+  }
+
+  /**
+   * Returns the currently best setup.
+   *
+   * @return		the best setup so far
+   */
+  public Object getCurrentSetup() {
+    return m_BestSetup;
+  }
+
+  /**
    * Further initializations in derived classes.
    */
   protected void preRun() {
-    m_Running = true;
-    m_Stopped = false;
-    m_Random  = new Random(m_Seed);
-    m_StoppingCriterion.start();
-    // reset timestamp of notification
+    m_Running              = true;
+    m_Stopped              = false;
+    m_Random               = new Random(m_Seed);
     m_LastNotificationTime = null;
+    m_BestFitness          = Double.NEGATIVE_INFINITY;
+    m_BestSetup            = null;
+    m_StoppingCriterion.start();
   }
 
   /**
@@ -911,7 +960,7 @@ public abstract class AbstractGeneticAlgorithm
 	  doCrossovers();
 	  doMutations2();
 
-	  if (!isRunning()) {
+	  if (isStopped()) {
 	    getLogger().severe("Interrupted!");
 	    break;
 	  }
@@ -981,7 +1030,7 @@ public abstract class AbstractGeneticAlgorithm
    *
    * @param fitness	the fitness to broadcast
    */
-  protected synchronized void notifyFitnessChangeListeners(double fitness) {
+  protected synchronized void notifyFitnessChangeListeners(double fitness, Object setup) {
     boolean 	notify;
     long	currTime;
 
@@ -993,7 +1042,7 @@ public abstract class AbstractGeneticAlgorithm
         && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
       if (notify) {
         m_LastNotificationTime = currTime;
-        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness));
+        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness, setup));
       }
     }
   }

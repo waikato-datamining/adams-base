@@ -231,10 +231,10 @@ public class DarkLord
 	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
         // process fitness
-        if (getGenetic().setNewFitness(m_Fitness)) {
+        if (getGenetic().setNewFitness(m_Fitness, newClassifier)) {
 	  generateOutput(m_Fitness, newInstances, newClassifier);
           // notify the listeners
-          getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness));
+          getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier);
 	}
         else {
           getLogger().fine(getMaskAsString());

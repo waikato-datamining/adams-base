@@ -284,9 +284,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the cross-validation seed. */
   protected int m_CrossValidationSeed;
 
-  /** the best fitness so far. */
-  protected double m_BestFitness;
-
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
 
@@ -304,16 +301,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
   /** the cache for results. */
   public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_BestFitness = Double.NEGATIVE_INFINITY;
-  }
 
   /**
    * Adds options to the internal list of options.
@@ -687,28 +674,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   public double getCurrentFitness() {
     return m_Measure.adjust(m_BestFitness);
-  }
-
-  /**
-   * Sets a fitness and keep it if better. Also notifies the fitness change
-   * listeners if setup.
-   *
-   * @param fitness	the new fitness
-   * @return		true if the new fitness was better
-   * @see		#m_FitnessChangeListeners
-   * @see		#m_NotificationInterval
-   */
-  protected synchronized boolean setNewFitness(double fitness) {
-    boolean 	result;
-
-    result = false;
-
-    if (fitness > m_BestFitness) {
-      m_BestFitness = fitness;
-      result        = true;
-    }
-
-    return result;
   }
 
   /**

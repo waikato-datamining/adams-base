@@ -15,7 +15,7 @@
 
 /*
  * FitnessChangeEvent.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.event;
@@ -39,17 +39,21 @@ public class FitnessChangeEvent
 
   /** the fitness that triggered this event. */
   protected double m_Fitness;
-  
+
+  /** the associated setup, if any. */
+  protected Object m_Setup;
+
   /**
    * Initializes the event.
    * 
    * @param source	the algorithm that triggered the event
    * @param fitness	the fitness that triggered this event
    */
-  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness) {
+  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness, Object setup) {
     super(source);
     
     m_Fitness = fitness;
+    m_Setup   = null;
   }
   
   /**
@@ -68,5 +72,14 @@ public class FitnessChangeEvent
    */
   public double getFitness() {
     return m_Fitness;
+  }
+
+  /**
+   * Returns the associated setup.
+   *
+   * @return		the setup
+   */
+  public Object getSetup() {
+    return m_Setup;
   }
 }

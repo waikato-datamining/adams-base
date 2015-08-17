@@ -11,6 +11,10 @@
 adams.core.discovery.AbstractGeneticDiscoveryHandler=\
   adams.core.discovery
 
+# the genetic algorithms for classifiers
+adams.genetic.AbstractClassifierBasedGeneticAlgorithm=\
+  adams.genetic
+
 # instance generators
 adams.data.instances.AbstractInstanceGenerator=\
   adams.data.instances
