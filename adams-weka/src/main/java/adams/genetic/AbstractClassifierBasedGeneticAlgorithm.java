@@ -112,6 +112,37 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     }
 
     /**
+     * Generates a file name for the fitness.
+     *
+     * @param fitness	the current fitness
+     * @param data	the dataset
+     * @param ext	the extension (not dot!)
+     * @return		the file
+     */
+    protected File createFileName(double fitness, Instances data, String ext) {
+      String	filename;
+
+      filename = m_genetic.getOutputDirectory().getAbsolutePath() + File.separator;
+
+      switch (getGenetic().getOutputPrefixType()) {
+	case NONE:
+	  break;
+	case RELATION:
+	  filename += data.relationName() + "-";
+	  break;
+	case SUPPLIED:
+	  filename += getGenetic().getSuppliedPrefix() + "-";
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled output prefix type: " + getGenetic().getOutputPrefixType());
+      }
+
+      filename += Double.toString(getMeasure().adjust(fitness)) + "." + ext;
+
+      return new File(filename);
+    }
+
+    /**
      * Saves the instances to a file.
      *
      * @param fitness		the current measure/fitness
@@ -119,10 +150,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if saving the file fails
      */
     protected void outputDataset(double fitness, Instances data) throws Exception {
-      File file = new File(
-        m_genetic.getOutputDirectory().getAbsolutePath()
-          + File.separator + Double.toString(getMeasure().adjust(fitness)) + ".arff");
-      file.createNewFile();
+      File file = createFileName(fitness, data, "arff");
       Writer writer = new BufferedWriter(new FileWriter(file));
       Instances header = new Instances(data, 0);
       header = m_genetic.updateHeader(header, this);
@@ -159,23 +187,49 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * Saves the setup to a file.
      *
      * @param fitness		the current measure/fitness
-     * @param cls	the current classifier setup
+     * @param data		the dataset
+     * @param cls		the current classifier setup
      * @throws Exception	if saving the file fails
      */
-    protected boolean outputSetup(double fitness, Classifier cls) throws Exception {
+    protected boolean outputSetup(double fitness, Instances data, Classifier cls) throws Exception {
       File 		file;
-      List<String> 	data;
+      List<String> 	list;
       String 		msg;
 
-      file = new File(
-	m_genetic.getOutputDirectory().getAbsolutePath()
-	  + File.separator + Double.toString(getMeasure().adjust(fitness)) + ".txt");
-      data = assembleSetup(fitness, cls);
-      msg  = FileUtils.saveToFileMsg(data, file, null);
+      file = createFileName(fitness, data, "txt");
+      list = assembleSetup(fitness, cls);
+      msg  = FileUtils.saveToFileMsg(list, file, null);
       if (msg != null)
 	getLogger().warning("Failed to write setup to '" + file + "': " + msg);
 
       return (msg == null);
+    }
+
+    /**
+     * Generates the output requested output.
+     *
+     * @param fitness		the current fitness
+     * @param data		the dataset
+     * @param cls		the current classifier
+     * @throws Exception	if output fails
+     */
+    protected void generateOutput(double fitness, Instances data, Classifier cls) throws Exception {
+      switch (getGenetic().getOutputType()) {
+	case NONE:
+	  break;
+	case SETUP:
+	  outputSetup(fitness, data, cls);
+	  break;
+	case DATA:
+	  outputDataset(fitness, data);
+	  break;
+	case ALL:
+	  outputDataset(fitness, data);
+	  outputSetup(fitness, data, cls);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled output type: " + getGenetic().getOutputType());
+      }
     }
   }
 
@@ -199,6 +253,15 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
   /** the time period in seconds after which to notify "fitness" listeners. */
   protected int m_NotificationInterval;
+
+  /** the type of output to generate. */
+  protected OutputType m_OutputType;
+
+  /** the type of prefix to use for the output. */
+  protected OutputPrefixType m_OutputPrefixType;
+
+  /** the supplied prefix. */
+  protected String m_SuppliedPrefix;
 
   /** the timestamp the last notification got sent. */
   protected Long m_LastNotificationTime;
@@ -247,6 +310,18 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "notify", "notificationInterval",
       -1);
+
+    m_OptionManager.add(
+      "output-type", "outputType",
+      OutputType.ALL);
+
+    m_OptionManager.add(
+      "output-prefix-type", "outputPrefixType",
+      OutputPrefixType.NONE);
+
+    m_OptionManager.add(
+      "supplied-prefix", "suppliedPrefix",
+      "");
   }
 
   /**
@@ -433,6 +508,93 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       "The time interval in seconds after which notification events about "
         + "changes in the fitness can be sent (-1 = never send notifications; "
         + "0 = whenever a change occurs).";
+  }
+
+  /**
+   * Sets the type of output to generate.
+   *
+   * @param value	the type
+   */
+  public void setOutputType(OutputType value){
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of output to generate.
+   *
+   * @return		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "The type of output to generate.";
+  }
+
+  /**
+   * Sets the type of prefix to use for the output.
+   *
+   * @param value	the type
+   */
+  public void setOutputPrefixType(OutputPrefixType value){
+    m_OutputPrefixType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of prefix to use for the output.
+   *
+   * @return		the type
+   */
+  public OutputPrefixType getOutputPrefixType() {
+    return m_OutputPrefixType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputPrefixTypeTipText() {
+    return "The type of prefix to use for the output.";
+  }
+
+  /**
+   * Sets the prefix to use in case of {@link OutputPrefixType#SUPPLIED}.
+   *
+   * @param value	the prefix
+   */
+  public void setSuppliedPrefix(String value){
+    m_SuppliedPrefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix to use in case of {@link OutputPrefixType#SUPPLIED}.
+   *
+   * @return		the number of folds
+   */
+  public String getSuppliedPrefix() {
+    return m_SuppliedPrefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppliedPrefixTipText() {
+    return "The prefix to use in case of " + OutputPrefixType.SUPPLIED + ".";
   }
 
   /**

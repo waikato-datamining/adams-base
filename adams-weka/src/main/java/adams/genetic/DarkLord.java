@@ -234,8 +234,7 @@ public class DarkLord
         // process fitness
         m_fitness = measure;
         if (m_genetic.setNewFitness(m_fitness)) {
-	  outputDataset(m_fitness, newInstances);
-	  outputSetup(m_fitness, newClassifier);
+	  generateOutput(m_fitness, newInstances, newClassifier);
           // notify the listeners
           m_genetic.notifyFitnessChangeListeners(getMeasure().adjust(measure));
         }

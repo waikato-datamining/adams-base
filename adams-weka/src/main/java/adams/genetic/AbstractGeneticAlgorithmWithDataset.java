@@ -127,7 +127,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
 
     m_OptionManager.add(
       "dataset", "dataset",
-      new PlaceholderFile("./data.arff"));
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
       "class", "classIndex",
