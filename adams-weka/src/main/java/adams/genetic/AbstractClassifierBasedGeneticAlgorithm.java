@@ -574,6 +574,26 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
+   * Some more initializations.
+   */
+  @Override
+  protected void preRun() {
+    super.preRun();
+
+    // does the measure handle the data?
+    if (!m_Measure.isValid(m_Instances))
+      throw new IllegalArgumentException(
+        "Measure '" + m_Measure + "' cannot process class of type '"
+          + m_Instances.classAttribute().type() + "'!");
+
+    // reset timestamp of notification
+    m_LastNotificationTime = null;
+
+    // clear cache
+    clearResults();
+  }
+
+  /**
    * Returns a short string of the algorithm with the currently best fitness.
    *
    * @return		a short info string

@@ -23,7 +23,11 @@ package adams.genetic;
 import adams.core.Properties;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.weka.WekaAttributeIndex;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+import java.util.logging.Level;
 
 /**
  * Ancestor for genetic algorithms that use a dataset.
@@ -102,7 +106,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
   protected PlaceholderFile m_Dataset;
 
   /** the class index. */
-  protected String m_ClassIndex;
+  protected WekaAttributeIndex m_ClassIndex;
 
   /** the directory to store the generated ARFF files in. */
   protected PlaceholderDirectory m_OutputDirectory;
@@ -127,7 +131,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
 
     m_OptionManager.add(
       "class", "classIndex",
-      "last");
+      new WekaAttributeIndex(WekaAttributeIndex.LAST));
   }
 
   /**
@@ -164,7 +168,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
    *
    * @param value	the class index
    */
-  public void setClassIndex(String value) {
+  public void setClassIndex(WekaAttributeIndex value) {
     m_ClassIndex = value;
     reset();
   }
@@ -174,7 +178,7 @@ public abstract class AbstractGeneticAlgorithmWithDataset
    *
    * @return		the class index
    */
-  public String getClassIndex() {
+  public WekaAttributeIndex getClassIndex() {
     return m_ClassIndex;
   }
 
@@ -275,5 +279,29 @@ public abstract class AbstractGeneticAlgorithmWithDataset
     data.setRelationName(props.toString());
 
     return data;
+  }
+
+  /**
+   * Some more initializations.
+   */
+  @Override
+  protected void preRun() {
+    super.preRun();
+
+    // loading the dataset
+    try {
+      m_Instances = DataSource.read(m_Dataset.getAbsolutePath());
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to read: " + m_Dataset, e);
+      throw new IllegalStateException("Error loading dataset '" + m_Dataset + "': " + e);
+    }
+
+    // class index
+    m_ClassIndex.setData(m_Instances);
+    m_Instances.setClassIndex(m_ClassIndex.getIntIndex());
+
+    if (m_BestRange.getRange().length() != 0)
+      m_BestRange.setMax(m_Instances.numAttributes());
   }
 }

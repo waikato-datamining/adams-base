@@ -28,7 +28,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
 
-import java.io.FileReader;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -311,47 +310,9 @@ public class DarkLord
    */
   @Override
   protected void preRun() {
-    FileReader	reader;
-    int		classIndex;
-
     super.preRun();
-
-    // loading the dataset
-    try {
-      reader      = new FileReader(m_Dataset.getAbsolutePath());
-      m_Instances = new Instances(reader);
-      reader.close();
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to read: " + m_Dataset, e);
-      throw new IllegalStateException("Error loading dataset '" + m_Dataset + "': " + e);
-    }
-
-    // class index
-    if (m_ClassIndex.equals("first"))
-      classIndex = 0;
-    else if (m_ClassIndex.equals("last"))
-      classIndex = m_Instances.numAttributes() - 1;
-    else
-      classIndex = Integer.parseInt(m_ClassIndex);
-    m_Instances.setClassIndex(classIndex);
-
-    // does the measure handle the data?
-    if (!m_Measure.isValid(m_Instances))
-      throw new IllegalArgumentException(
-        "Measure '" + m_Measure + "' cannot process class of type '"
-          + m_Instances.classAttribute().type() + "'!");
-
-    if (m_BestRange.getRange().length() != 0)
-      m_BestRange.setMax(m_Instances.numAttributes());
 
     // setup structures
     init(20,m_Instances.numAttributes() * m_BitsPerGene);
-
-    // reset timestamp of notification
-    m_LastNotificationTime = null;
-
-    // clear cache
-    clearResults();
   }
 }
