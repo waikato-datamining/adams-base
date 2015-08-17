@@ -24,10 +24,10 @@ import adams.core.ClassLister;
 import adams.core.Pausable;
 import adams.core.Randomizable;
 import adams.core.Range;
+import adams.core.ShallowCopySupporter;
 import adams.core.StoppableWithFeedback;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
-import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -54,7 +54,8 @@ import java.util.logging.Level;
  */
 public abstract class AbstractGeneticAlgorithm
   extends AbstractOptionHandler
-  implements Randomizable, StoppableWithFeedback, Pausable, ThreadLimiter {
+  implements Randomizable, StoppableWithFeedback, Pausable, ThreadLimiter,
+             ShallowCopySupporter<AbstractGeneticAlgorithm> {
 
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
@@ -71,16 +72,16 @@ public abstract class AbstractGeneticAlgorithm
     private static final long serialVersionUID = -4974865548501195622L;
 
     /** the weights of the chromosomes (0 = turned off, 1 = turned on). */
-    protected int[] m_weights;
+    protected int[] m_Weights;
 
     /** the algorithm object this job belongs to. */
-    protected T m_genetic;
+    protected T m_Genetic;
 
     /** the current fitness. */
-    protected Double m_fitness;
+    protected Double m_Fitness;
 
     /** the number of chromosomes. */
-    protected int m_chrom_num;
+    protected int m_ChromNum;
 
     /**
      * Initializes the job.
@@ -92,10 +93,10 @@ public abstract class AbstractGeneticAlgorithm
     public GeneticAlgorithmJob(T g, int num, int[] w) {
       super();
 
-      m_weights   = w;
-      m_genetic   = g;
-      m_chrom_num = num;
-      m_fitness   = null;
+      m_Weights  = w;
+      m_Genetic  = g;
+      m_ChromNum = num;
+      m_Fitness  = null;
     }
 
     /**
@@ -104,7 +105,7 @@ public abstract class AbstractGeneticAlgorithm
      * @return		the owner
      */
     public T getGenetic() {
-      return m_genetic;
+      return m_Genetic;
     }
 
     /**
@@ -113,7 +114,7 @@ public abstract class AbstractGeneticAlgorithm
      * @return		the weights
      */
     public int[] getWeights() {
-      return m_weights;
+      return m_Weights;
     }
 
     /**
@@ -122,7 +123,7 @@ public abstract class AbstractGeneticAlgorithm
      * @return		the number of chromosomes
      */
     public int getNumChrom() {
-      return m_chrom_num;
+      return m_ChromNum;
     }
 
     /**
@@ -131,7 +132,7 @@ public abstract class AbstractGeneticAlgorithm
      * @return		the fitness
      */
     public Double getFitness() {
-      return m_fitness;
+      return m_Fitness;
     }
 
     /**
@@ -141,8 +142,8 @@ public abstract class AbstractGeneticAlgorithm
      */
     public String weightsToString() {
       String ret = "";
-      for (int i = 0; i < m_weights.length; i++) {
-	if (m_weights[i] == 0) {
+      for (int i = 0; i < m_Weights.length; i++) {
+	if (m_Weights[i] == 0) {
 	  ret += "0";
 	} else {
 	  ret += "1";
@@ -163,7 +164,7 @@ public abstract class AbstractGeneticAlgorithm
      */
     @Override
     protected String preProcessCheck() {
-      if (m_genetic == null)
+      if (m_Genetic == null)
 	return("Doesn't belong to genetic algorithm!");
       else
 	return null;
@@ -197,8 +198,8 @@ public abstract class AbstractGeneticAlgorithm
     public void cleanUp() {
       super.cleanUp();
 
-      m_weights = null;
-      m_genetic = null;
+      m_Weights = null;
+      m_Genetic = null;
     }
 
     /**
@@ -209,9 +210,9 @@ public abstract class AbstractGeneticAlgorithm
     @Override
     public String toString() {
       return
-          m_genetic.getClass().getName()
-        + ",#chrom=" + m_chrom_num
-        + ",fitness=" + m_fitness
+          m_Genetic.getClass().getName()
+        + ",#chrom=" + m_ChromNum
+        + ",fitness=" + m_Fitness
         + ",weights=" + weightsToString();
     }
   }
@@ -259,6 +260,12 @@ public abstract class AbstractGeneticAlgorithm
   /** whether the algorithm is paused. */
   protected boolean m_Paused;
 
+  /** the time period in seconds after which to notify "fitness" listeners. */
+  protected int m_NotificationInterval;
+
+  /** the timestamp the last notification got sent. */
+  protected Long m_LastNotificationTime;
+
   /** the fitness change listeners. */
   protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
 
@@ -273,6 +280,7 @@ public abstract class AbstractGeneticAlgorithm
     m_BestRange              = new Range();
     m_Paused                 = false;
     m_FitnessChangeListeners = new HashSet<FitnessChangeListener>();
+    m_LastNotificationTime   = null;
   }
 
   /**
@@ -284,7 +292,6 @@ public abstract class AbstractGeneticAlgorithm
   protected void reset() {
     super.reset();
 
-    m_Random  = new Random(m_Seed);
     m_Running = false;
   }
 
@@ -318,6 +325,10 @@ public abstract class AbstractGeneticAlgorithm
     m_OptionManager.add(
       "best", "bestRange",
       "-none-");
+
+    m_OptionManager.add(
+      "notify", "notificationInterval",
+      -1);
   }
 
   /**
@@ -518,6 +529,38 @@ public abstract class AbstractGeneticAlgorithm
    */
   public String stoppingCriterionTipText() {
     return "The stopping criterion to use.";
+  }
+
+  /**
+   * Sets the notification interval in seconds.
+   *
+   * @param value	the interval in seconds
+   */
+  public void setNotificationInterval(int value) {
+    m_NotificationInterval = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set number of bits per gene.
+   *
+   * @return		the number of bits
+   */
+  public int getNotificationInterval() {
+    return m_NotificationInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String notificationIntervalTipText() {
+    return
+      "The time interval in seconds after which notification events about "
+        + "changes in the fitness can be sent (-1 = never send notifications; "
+        + "0 = whenever a change occurs).";
   }
 
   /**
@@ -727,7 +770,7 @@ public abstract class AbstractGeneticAlgorithm
 
     int num = m_NumChrom / 4; //originally set to /4
     for (int i = 0; i < num; i++) {
-      int c1 = 2+ (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99);
+      int c1 = 2 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99);
       int c2 = 2 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99);
       // finds two different chromosomes
       if (c1 != c2) {
@@ -802,8 +845,11 @@ public abstract class AbstractGeneticAlgorithm
    */
   protected void preRun() {
     m_Running = true;
-    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-      getLogger().fine("Size preRun: " + sizeOf());
+    m_Stopped = false;
+    m_Random  = new Random(m_Seed);
+    m_StoppingCriterion.start();
+    // reset timestamp of notification
+    m_LastNotificationTime = null;
   }
 
   /**
@@ -896,8 +942,6 @@ public abstract class AbstractGeneticAlgorithm
    */
   protected void postRun() throws Exception {
     m_Running = false;
-    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-      getLogger().fine("Size postRun: " + sizeOf());
   }
 
   /**
@@ -931,7 +975,49 @@ public abstract class AbstractGeneticAlgorithm
       iter.next().fitnessChanged(e);
   }
 
+  /**
+   * Sends out a notification to all listeners that the fitness has changed, if
+   * notifications is wanted and due.
+   *
+   * @param fitness	the fitness to broadcast
+   */
+  protected synchronized void notifyFitnessChangeListeners(double fitness) {
+    boolean 	notify;
+    long	currTime;
+
+    if (m_NotificationInterval >= 0) {
+      currTime = System.currentTimeMillis();
+      notify   =    (m_NotificationInterval == 0)
+        || ( (m_NotificationInterval > 0) && (m_LastNotificationTime == null) )
+        || (    (m_NotificationInterval > 0)
+        && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
+      if (notify) {
+        m_LastNotificationTime = currTime;
+        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness));
+      }
+    }
+  }
+
   public abstract Vector<int[]> getInitialSetups();
+
+  /**
+   * Returns a shallow copy of itself, i.e., based on the commandline options.
+   *
+   * @return		the shallow copy
+   */
+  public AbstractGeneticAlgorithm shallowCopy() {
+    return shallowCopy(false);
+  }
+
+  /**
+   * Returns a shallow copy of itself, i.e., based on the commandline options.
+   *
+   * @param expand	whether to expand variables to their current values
+   * @return		the shallow copy
+   */
+  public AbstractGeneticAlgorithm shallowCopy(boolean expand) {
+    return (AbstractGeneticAlgorithm) OptionUtils.shallowCopy(this, expand);
+  }
 
   /**
    * Runs the genetic algorithm with the given options.

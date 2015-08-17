@@ -84,7 +84,7 @@ public class DarkLord
       {
         if(a == getInstances().classIndex())
           continue;
-        if(m_weights[a] == 0)
+        if(m_Weights[a] == 0)
         {
           if(last == -1)
             continue;
@@ -101,7 +101,7 @@ public class DarkLord
             ret = (new StringBuilder(String.valueOf(ret))).append(last).toString();
           last = -1;
         }
-        if(m_weights[a] != 0)
+        if(m_Weights[a] != 0)
         {
           if(last == -1)
             last = a;
@@ -138,7 +138,7 @@ public class DarkLord
       boolean thefirst = true;
       for(int a = 0; a < getInstances().numAttributes(); a++)
       {
-        if(m_weights[a] == 0 && a != getInstances().classIndex())
+        if(m_Weights[a] == 0 && a != getInstances().classIndex())
         {
           if(last == -1)
             continue;
@@ -155,7 +155,7 @@ public class DarkLord
             ret = (new StringBuilder(String.valueOf(ret))).append(last + 1).toString();
           last = -1;
         }
-        if(m_weights[a] != 0 || a == getInstances().classIndex())
+        if(m_Weights[a] != 0 || a == getInstances().classIndex())
         {
           if(last == -1)
             last = a;
@@ -207,7 +207,7 @@ public class DarkLord
         Double cc = getGenetic().getResult(weightsToString());
         if (cc != null){
           getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
-          m_fitness = cc;
+          m_Fitness = cc;
           return;
         }
         // set the weights
@@ -218,7 +218,7 @@ public class DarkLord
           for (int a = 0; a < getInstances().numAttributes(); a++) {
             if (a == getInstances().classIndex())
               continue;
-            if (m_weights[cnt++] == 0){
+            if (m_Weights[cnt++] == 0){
               in.setValue(a,0);
             }else {
               in.setValue(a,in.value(a));
@@ -227,25 +227,24 @@ public class DarkLord
         }
 
 	// evaluate classifier
-	Classifier newClassifier = AbstractClassifier.makeCopy(m_genetic.getClassifier());
-	double measure = evaluateClassifier(newClassifier, newInstances);
+	Classifier newClassifier = AbstractClassifier.makeCopy(getGenetic().getClassifier());
+	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
         // process fitness
-        m_fitness = measure;
-        if (m_genetic.setNewFitness(m_fitness)) {
-	  generateOutput(m_fitness, newInstances, newClassifier);
+        if (getGenetic().setNewFitness(m_Fitness)) {
+	  generateOutput(m_Fitness, newInstances, newClassifier);
           // notify the listeners
-          m_genetic.notifyFitnessChangeListeners(getMeasure().adjust(measure));
-        }
+          getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness));
+	}
         else {
           getLogger().fine(getMaskAsString());
         }
 
-        getGenetic().addResult(weightsToString(), m_fitness);
+        getGenetic().addResult(weightsToString(), m_Fitness);
       }
       catch(Exception e){
         getLogger().log(Level.SEVERE, "Error: ", e);
-        m_fitness = null;
+        m_Fitness = null;
       }
     }
   }

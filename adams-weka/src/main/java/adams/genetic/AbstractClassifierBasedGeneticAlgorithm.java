@@ -21,8 +21,9 @@
 package adams.genetic;
 
 import adams.core.Properties;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.option.OptionUtils;
-import adams.event.FitnessChangeEvent;
+import adams.data.weka.WekaAttributeIndex;
 import adams.event.FitnessChangeNotifier;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
@@ -46,7 +47,7 @@ import java.util.Vector;
  * @version $Revision$
  */
 public abstract class AbstractClassifierBasedGeneticAlgorithm
-  extends AbstractGeneticAlgorithmWithDataset
+  extends AbstractGeneticAlgorithm
   implements FitnessChangeNotifier {
 
   private static final long serialVersionUID = 1615849384907266578L;
@@ -58,7 +59,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    * @version $Revision: 4322 $
    */
   public static abstract class ClassifierBasedGeneticAlgorithmJob<T extends AbstractClassifierBasedGeneticAlgorithm>
-    extends GeneticAlgorithmJobWithDataset<T> {
+    extends GeneticAlgorithmJob<T> {
 
     /** for serialization. */
     private static final long serialVersionUID = 8259167463381721274L;
@@ -80,12 +81,40 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     }
 
     /**
+     * Returns the instances in use by the genetic algorithm.
+     *
+     * @return		the instances
+     */
+    protected Instances getInstances() {
+      return getGenetic().getInstances();
+    }
+
+    /**
      * Returns the measure used for evaluating the fitness.
      *
      * @return		the measure
      */
     public Measure getMeasure() {
       return m_Measure;
+    }
+
+    /**
+     * Checks whether all pre-conditions have been met.
+     *
+     * @return		null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String preProcessCheck() {
+      String	result;
+
+      result = super.preProcessCheck();
+
+      if (result == null) {
+        if (getInstances() == null)
+          result = "No instances provided!";
+      }
+
+      return result;
     }
 
     /**
@@ -103,8 +132,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       evaluation.crossValidateModel(
 	cls,
 	data,
-	m_genetic.getFolds(),
-	new Random(m_genetic.getCrossValidationSeed()));
+	getGenetic().getFolds(),
+	new Random(getGenetic().getCrossValidationSeed()));
 
       return getMeasure().extract(evaluation, true);
     }
@@ -120,7 +149,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     protected File createFileName(double fitness, Instances data, String ext) {
       String	filename;
 
-      filename = m_genetic.getOutputDirectory().getAbsolutePath() + File.separator;
+      filename = getGenetic().getOutputDirectory().getAbsolutePath() + File.separator;
 
       switch (getGenetic().getOutputPrefixType()) {
 	case NONE:
@@ -151,7 +180,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       File file = createFileName(fitness, data, "arff");
       Writer writer = new BufferedWriter(new FileWriter(file));
       Instances header = new Instances(data, 0);
-      header = m_genetic.updateHeader(header, this);
+      header = getGenetic().updateHeader(header, this);
       writer.write(header.toString());
       writer.write("\n");
       for (int i = 0; i < data.numInstances(); i++) {
@@ -227,6 +256,22 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     }
   }
 
+  /** the key for the relation name in the generated properties file.
+   * @see #storeSetup(Instances,GeneticAlgorithmJob). */
+  public final static String PROPS_RELATION = "relation";
+
+  /** the key for a filter setup in the setup properties. */
+  public final static String PROPS_FILTER = "filter";
+
+  /** the key for the mask in the setup properties. */
+  public final static String PROPS_MASK = "mask";
+
+  /** the class index. */
+  protected WekaAttributeIndex m_ClassIndex;
+
+  /** the data to use for cross-validation. */
+  protected Instances m_Instances;
+
   /** the bits per gene to use. */
   protected int m_BitsPerGene;
 
@@ -245,8 +290,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
 
-  /** the time period in seconds after which to notify "fitness" listeners. */
-  protected int m_NotificationInterval;
+  /** the directory to store the generated ARFF files in. */
+  protected PlaceholderDirectory m_OutputDirectory;
 
   /** the type of output to generate. */
   protected OutputType m_OutputType;
@@ -256,9 +301,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
   /** the supplied prefix. */
   protected String m_SuppliedPrefix;
-
-  /** the timestamp the last notification got sent. */
-  protected Long m_LastNotificationTime;
 
   /** the cache for results. */
   public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
@@ -270,8 +312,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   protected void initialize() {
     super.initialize();
 
-    m_BestFitness            = Double.NEGATIVE_INFINITY;
-    m_LastNotificationTime   = null;
+    m_BestFitness = Double.NEGATIVE_INFINITY;
   }
 
   /**
@@ -284,6 +325,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "bits-per-gene", "bitsPerGene",
       1, 1, null);
+
+    m_OptionManager.add(
+      "class", "classIndex",
+      new WekaAttributeIndex(WekaAttributeIndex.LAST));
 
     m_OptionManager.add(
       "folds", "folds",
@@ -302,8 +347,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       Measure.RMSE);
 
     m_OptionManager.add(
-      "notify", "notificationInterval",
-      -1);
+      "output-dir", "outputDirectory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
       "output-type", "outputType",
@@ -316,6 +361,53 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "supplied-prefix", "suppliedPrefix",
       "");
+  }
+
+  /**
+   * Sets the class index.
+   *
+   * @param value	the class index
+   */
+  public void setClassIndex(WekaAttributeIndex value) {
+    m_ClassIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns the current class index.
+   *
+   * @return		the class index
+   */
+  public WekaAttributeIndex getClassIndex() {
+    return m_ClassIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classIndexTipText() {
+    return "The class index of the dataset, in case no class attribute is set.";
+  }
+
+  /**
+   * Sets the data to use for cross-validation.
+   *
+   * @param value	the dataset
+   */
+  public void setInstances(Instances value) {
+    m_Instances = value;
+  }
+
+  /**
+   * Returns the currently set dataset for cross-validation.
+   *
+   * @return		the dataset
+   */
+  public Instances getInstances() {
+    return m_Instances;
   }
 
   /**
@@ -473,22 +565,22 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
-   * Sets the notification interval in seconds.
+   * Sets the directory for the generated ARFF files.
    *
-   * @param value	the interval in seconds
+   * @param value	the directory
    */
-  public void setNotificationInterval(int value) {
-    m_NotificationInterval = value;
+  public void setOutputDirectory(PlaceholderDirectory value) {
+    m_OutputDirectory = value;
     reset();
   }
 
   /**
-   * Returns the currently set number of bits per gene.
+   * Returns the currently set directory for the generated ARFF files.
    *
-   * @return		the number of bits
+   * @return		the directory
    */
-  public int getNotificationInterval() {
-    return m_NotificationInterval;
+  public PlaceholderDirectory getOutputDirectory() {
+    return m_OutputDirectory;
   }
 
   /**
@@ -497,11 +589,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String notificationIntervalTipText() {
-    return
-      "The time interval in seconds after which notification events about "
-        + "changes in the fitness can be sent (-1 = never send notifications; "
-        + "0 = whenever a change occurs).";
+  public String outputDirectoryTipText() {
+    return "The directory for storing the generated ARFF files.";
   }
 
   /**
@@ -623,26 +712,45 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
-   * Sends out a notification to all listeners that the fitness has changed, if
-   * notifications is wanted and due.
+   * Generates a Properties file that stores information on the setup of
+   * the genetic algorithm. E.g., it backs up the original relation name.
+   * The generated properties file will be used as new relation name for
+   * the data. Derived classes can add additional parameters to this
+   * properties file.
    *
-   * @param fitness	the fitness to broadcast
+   * @param data	the data to create the setup for
+   * @param job		the associated job
+   * @see		#PROPS_RELATION
+   * @return		the generated setup
    */
-  protected synchronized void notifyFitnessChangeListeners(double fitness) {
-    boolean 	notify;
-    long	currTime;
+  protected Properties storeSetup(Instances data, GeneticAlgorithmJob job) {
+    Properties	result;
 
-    if (m_NotificationInterval >= 0) {
-      currTime = System.currentTimeMillis();
-      notify   =    (m_NotificationInterval == 0)
-        || ( (m_NotificationInterval > 0) && (m_LastNotificationTime == null) )
-        || (    (m_NotificationInterval > 0)
-        && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
-      if (notify) {
-        m_LastNotificationTime = currTime;
-        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness));
-      }
-    }
+    result = new Properties();
+
+    // relation name
+    result.setProperty(PROPS_RELATION, data.relationName());
+
+    // filter (default is empty)
+    result.setProperty(PROPS_FILTER, "");
+
+    return result;
+  }
+
+  /**
+   * Creates a new dataset, with the setup as the new relation name.
+   *
+   * @param data	the data to replace the relation name with the setup
+   * @param job		the associated job
+   * @return		the updated dataset
+   */
+  public Instances updateHeader(Instances data, GeneticAlgorithmJob job) {
+    Properties 	props;
+
+    props = storeSetup(data, job);
+    data.setRelationName(props.toString());
+
+    return data;
   }
 
   /**
@@ -736,14 +844,19 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   protected void preRun() {
     super.preRun();
 
+    // class index?
+    m_ClassIndex.setData(m_Instances);
+    if (m_Instances.classIndex() == -1)
+      m_Instances.setClassIndex(m_ClassIndex.getIntIndex());
+
+    if (m_BestRange.getRange().length() != 0)
+      m_BestRange.setMax(m_Instances.numAttributes());
+
     // does the measure handle the data?
     if (!m_Measure.isValid(m_Instances))
       throw new IllegalArgumentException(
         "Measure '" + m_Measure + "' cannot process class of type '"
           + m_Instances.classAttribute().type() + "'!");
-
-    // reset timestamp of notification
-    m_LastNotificationTime = null;
 
     // clear cache
     clearResults();

@@ -21,45 +21,8 @@
 
 package adams.gui.menu;
 
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.logging.LoggingLevel;
-import adams.core.option.OptionUtils;
-import adams.data.DecimalFormatString;
-import adams.data.sequence.XYSequence;
-import adams.data.sequence.XYSequencePointComparator.Comparison;
-import adams.event.FitnessChangeEvent;
-import adams.event.FitnessChangeListener;
-import adams.flow.sink.sequenceplotter.SequencePlotPoint;
-import adams.flow.sink.sequenceplotter.SequencePlotSequence;
-import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
-import adams.gui.application.ChildFrame;
-import adams.gui.application.UserMode;
-import adams.gui.core.GUIHelper;
-import adams.gui.visualization.core.AxisPanelOptions;
-import adams.gui.visualization.core.axis.FancyTickGenerator;
-import adams.gui.visualization.core.axis.Type;
-import adams.gui.visualization.core.axis.Visibility;
-import adams.gui.visualization.core.plot.Axis;
-import adams.gui.visualization.sequence.CirclePaintlet;
-import adams.gui.visualization.sequence.XYSequenceContainer;
-import adams.gui.visualization.sequence.XYSequenceContainerManager;
-import adams.gui.wizard.AbstractWizardPage;
-import adams.gui.wizard.FinalPage;
-import adams.gui.wizard.PageCheck;
-import adams.gui.wizard.PropertySheetPanelPage;
-import adams.gui.wizard.WizardPane;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.logging.Level;
 
 /**
  * For optimizing datasets (attribute selection) using genetic algorithm.
@@ -68,142 +31,10 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class DarkLord
-  extends AbstractMenuItemDefinition {
+  extends AbstractClassifierBasedGeneticAlgorithmWizard {
 
   /** for serialization. */
   private static final long serialVersionUID = 7586443345167287461L;
-
-  /**
-   * For plotting the performance of the genetic algorithm.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class PerformancePlot
-    extends SequencePlotterPanel
-    implements FitnessChangeListener {
-
-    private static final long serialVersionUID = -4899150268392572586L;
-
-    /** the owner. */
-    protected adams.genetic.DarkLord m_Owner;
-
-    /**
-     * Initializes plot.
-     *
-     * @param owner	the dark lord setup
-     */
-    public PerformancePlot(adams.genetic.DarkLord owner) {
-      super("Dark Lord");
-      m_Owner = owner;
-      m_Owner.addFitnessChangeListener(this);
-      setTitle(owner.getMeasure().toString());
-    }
-
-    /**
-     * Initializes the widgets.
-     */
-    @Override
-    protected void initGUI() {
-      AxisPanelOptions	axis;
-
-      super.initGUI();
-
-      getPlot().setAxisVisibility(Axis.BOTTOM, Visibility.VISIBLE);
-      axis = getDefaultAxisX();
-      axis.configure(getPlot(), Axis.BOTTOM);
-
-      getPlot().setAxisVisibility(Axis.LEFT, Visibility.VISIBLE);
-      axis = getDefaultAxisY();
-      axis.configure(getPlot(), Axis.LEFT);
-
-      setPaintlet(new CirclePaintlet());
-    }
-
-  /**
-   * Returns the setup for the X axis.
-   *
-   * @return 		the setup
-   */
-  protected AxisPanelOptions getDefaultAxisX() {
-    AxisPanelOptions	result;
-    FancyTickGenerator tick;
-
-    result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
-    result.setLabel("iteration");
-    result.setShowGridLines(true);
-    result.setLengthTicks(4);
-    result.setNthValueToShow(2);
-    result.setWidth(40);
-    result.setTopMargin(0.0);
-    result.setBottomMargin(0.0);
-    result.setCustomFormat(new DecimalFormatString("0"));
-    tick = new FancyTickGenerator();
-    tick.setNumTicks(20);
-    result.setTickGenerator(tick);
-
-    return result;
-  }
-
-  /**
-   * Returns the setup for the Y axis.
-   *
-   * @return 		the setup
-   */
-  protected AxisPanelOptions getDefaultAxisY() {
-    AxisPanelOptions	result;
-    FancyTickGenerator	tick;
-
-    result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
-    result.setLabel("measure");
-    result.setShowGridLines(true);
-    result.setLengthTicks(4);
-    result.setNthValueToShow(2);
-    result.setWidth(60);
-    result.setTopMargin(0.0);
-    result.setBottomMargin(0.0);
-    result.setCustomFormat(new DecimalFormatString("0.0"));
-    tick = new FancyTickGenerator();
-    tick.setNumTicks(10);
-    result.setTickGenerator(tick);
-
-    return result;
-  }
-
-    /**
-     * Adds the fitness measure to the plot.
-     *
-     * @param e                the event
-     */
-    @Override
-    public void fitnessChanged(FitnessChangeEvent e) {
-      String				plotName;
-      SequencePlotPoint			point;
-      XYSequenceContainerManager	manager;
-      XYSequence			seq;
-      XYSequenceContainer 		cont;
-
-      plotName = m_Owner.getMeasure().toString();
-      manager  = getContainerManager();
-      manager.startUpdate();
-      if (manager.indexOf(plotName) == -1) {
-	seq  = new SequencePlotSequence();
-	seq.setComparison(Comparison.X_AND_Y);
-	seq.setID(plotName);
-	cont = manager.newContainer(seq);
-	manager.add(cont);
-      }
-      else {
-	cont = manager.get(manager.indexOf(plotName));
-	seq  = cont.getData();
-      }
-      point = new SequencePlotPoint(seq.size() + 1, e.getFitness());
-      seq.add(point);
-      manager.finishUpdate();
-    }
-  }
 
   /**
    * Initializes the menu item with no owner.
@@ -222,159 +53,6 @@ public class DarkLord
   }
 
   /**
-   * Returns the file name of the icon.
-   *
-   * @return		the filename or null if no icon available
-   */
-  @Override
-  public String getIconName() {
-    return "genetic.png";
-  }
-
-  /**
-   * Launches the functionality of the menu item.
-   */
-  @Override
-  public void launch() {
-    adams.genetic.DarkLord	setup;
-    final WizardPane		wizard;
-    PropertySheetPanelPage	algorithm;
-    FinalPage			finalpage;
-    final ChildFrame		frame;
-
-    // wizard
-    wizard = new WizardPane();
-    wizard.setCustomFinishText("Execute");
-    setup = new adams.genetic.DarkLord();
-    setup.setLoggingLevel(LoggingLevel.FINE);
-    setup.setNotificationInterval(10);
-    algorithm = new PropertySheetPanelPage("Setup");
-    algorithm.setButtonPanelVisible(true);
-    algorithm.setTarget(setup);
-    algorithm.setDescription("Configure the genetic algorithm setup.\nSelect the dataset that you want to have optimized and the classifier to use for optimizing.");
-    algorithm.setPageCheck(new PageCheck() {
-      @Override
-      public boolean checkPage(AbstractWizardPage page) {
-        Properties props = page.getProperties();
-	try {
-	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
-	  adams.genetic.DarkLord genetic = (adams.genetic.DarkLord) OptionUtils.forAnyCommandLine(adams.genetic.DarkLord.class, cmdline);
-	  return genetic.getDataset().isFile() && genetic.getDataset().exists();
-	}
-	catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to obtain genetic algorithm setup:", e);
-	  return false;
-	}
-      }
-    });
-    wizard.addPage(algorithm);
-    finalpage = new FinalPage();
-    finalpage.setLogo(null);
-    finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Execute</b> to start the optimization.</html>");
-    wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, 800, 600);
-    wizard.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-          frame.dispose();
-          return;
-        }
-        Properties props = wizard.getProperties(false);
-	adams.genetic.DarkLord genetic = null;
-	try {
-	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
-	  genetic = (adams.genetic.DarkLord) OptionUtils.forAnyCommandLine(adams.genetic.DarkLord.class, cmdline);
-	}
-	catch (Exception ex) {
-          GUIHelper.showErrorMessage(
-            null, "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
-	  return;
-	}
-        doOptimize(frame, genetic);
-      }
-    });
-  }
-
-  /**
-   * Performs the optimization.
-   *
-   * @param frame       the frame to close
-   * @param genetic	the genetic algorithm setup
-   */
-  protected void doOptimize(ChildFrame frame, final adams.genetic.DarkLord genetic) {
-    JPanel		panelAll;
-    JPanel		panelButtons;
-    PerformancePlot	plot;
-    final JButton	buttonPause;
-    final JButton	buttonResume;
-    final JButton	buttonStop;
-    SwingWorker		worker;
-
-    frame.dispose();
-
-    panelAll = new JPanel(new BorderLayout());
-
-    plot = new PerformancePlot(genetic);
-    panelAll.add(plot, BorderLayout.CENTER);
-
-    buttonPause  = new JButton(GUIHelper.getIcon("pause.gif"));
-    buttonResume = new JButton(GUIHelper.getIcon("resume.gif"));
-    buttonStop   = new JButton(GUIHelper.getIcon("stop_blue.gif"));
-    buttonPause.setEnabled(true);
-    buttonResume.setEnabled(false);
-    buttonStop.setEnabled(true);
-    buttonPause.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	genetic.pauseExecution();
-	buttonPause.setEnabled(!genetic.isPaused());
-	buttonResume.setEnabled(genetic.isPaused());
-      }
-    });
-    buttonResume.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	genetic.resumeExecution();
-	buttonPause.setEnabled(!genetic.isPaused());
-	buttonResume.setEnabled(genetic.isPaused());
-      }
-    });
-    buttonStop.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	genetic.stopExecution();
-	buttonPause.setEnabled(false);
-	buttonResume.setEnabled(false);
-	buttonStop.setEnabled(false);
-      }
-    });
-    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panelAll.add(panelButtons, BorderLayout.SOUTH);
-    panelButtons.add(buttonPause);
-    panelButtons.add(buttonResume);
-    panelButtons.add(buttonStop);
-
-    createChildFrame(panelAll, 800, 300);
-    worker = new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
-	genetic.run();
-	return null;
-      }
-      @Override
-      protected void done() {
-	if (genetic.isStopped())
-	  GUIHelper.showErrorMessage(null, "Dark Lord stopped!");
-	else
-	  GUIHelper.showInformationMessage(null, "Dark Lord finished!");
-	super.done();
-      }
-    };
-    worker.execute();
-  }
-
-  /**
    * Returns the title of the window (and text of menuitem).
    *
    * @return 		the title
@@ -385,33 +63,11 @@ public class DarkLord
   }
 
   /**
-   * Whether the panel can only be displayed once.
+   * Returns the genetic algorithm setup to use.
    *
-   * @return		true if the panel can only be displayed once
+   * @return		the setup
    */
-  @Override
-  public boolean isSingleton() {
-    return false;
-  }
-
-  /**
-   * Returns the user mode, which determines visibility as well.
-   *
-   * @return		the user mode
-   */
-  @Override
-  public UserMode getUserMode() {
-    return UserMode.EXPERT;
-  }
-
-  /**
-   * Returns the category of the menu item in which it should appear, i.e.,
-   * the name of the menu.
-   *
-   * @return		the category/menu name
-   */
-  @Override
-  public String getCategory() {
-    return CATEGORY_MACHINELEARNING;
+  protected AbstractClassifierBasedGeneticAlgorithm getSetup() {
+    return new adams.genetic.DarkLord();
   }
 }
