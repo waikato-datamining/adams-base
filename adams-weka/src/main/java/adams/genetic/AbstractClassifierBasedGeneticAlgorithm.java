@@ -24,6 +24,8 @@ import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeNotifier;
+import adams.multiprocess.JobList;
+import adams.multiprocess.JobRunner;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
@@ -517,6 +519,58 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   @Override
   public Vector<int[]> getInitialSetups() {
     return new Vector<int[]>();
+  }
+
+  /**
+   * Creates a new Job instance.
+   *
+   * @param num		the number of chromosomes
+   * @param w		the initial weights
+   * @return		the instance
+   */
+  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int num, int[] w);
+
+  /**
+   * Calculates the fitness of the population.
+   */
+  @Override
+  public void calcFitness() {
+    JobRunner<ClassifierBasedGeneticAlgorithmJob> 	runner;
+    JobList<ClassifierBasedGeneticAlgorithmJob> 	jobs;
+    ClassifierBasedGeneticAlgorithmJob 			job;
+    int 						i;
+    int 						k;
+    int[] 						weights;
+    int 						weight;
+
+    runner = new JobRunner<ClassifierBasedGeneticAlgorithmJob>();
+    jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
+    for (i = 0; i < getNumChrom(); i++) {
+      weights = new int[getNumGenes()];
+      for (int j = 0; j < getNumGenes(); j++)  {
+        weight = 0;
+        for (k = 0; k < getBitsPerGene(); k++){
+          weight <<= 1;
+          if (getGene(i, (j*getBitsPerGene())+k))
+            weight += 1;
+        }
+        weights[j] = weight;
+      }
+      jobs.add(newJob(i, weights));
+    }
+    runner.add(jobs);
+    runner.start();
+    runner.stop();
+
+    for (i = 0; i < jobs.size(); i++) {
+      job = jobs.get(i);
+      // success? If not, just add the header of the original data
+      if (job.getFitness() == null)
+        m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
+      else
+        m_Fitness[job.getNumChrom()] = job.getFitness();
+      job.cleanUp();
+    }
   }
 
   /**

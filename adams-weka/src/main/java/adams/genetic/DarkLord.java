@@ -22,8 +22,6 @@ package adams.genetic;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
@@ -266,40 +264,14 @@ public class DarkLord
   }
 
   /**
-   * Calculates the fitness of the population.
+   * Creates a new Job instance.
+   *
+   * @param num		the number of chromosomes
+   * @param w		the initial weights
+   * @return		the instance
    */
-  @Override
-  public void calcFitness() {
-    JobRunner<DarkLordJob> runner = new JobRunner<DarkLordJob>();
-    JobList<DarkLordJob> jobs = new JobList<DarkLordJob>();
-    for (int i = 0; i < getNumChrom(); i++) {
-      int[] weights = new int[getNumGenes()];
-      for (int j = 0; j < getNumGenes(); j++)  {
-        int weight = 0;
-        for (int k = 0; k < getBitsPerGene(); k++){
-          weight <<= 1;
-          if (getGene(i, (j*getBitsPerGene())+k))
-            weight += 1;
-        }
-        weights[j] = weight;
-      }
-      jobs.add(new DarkLordJob(this, i, weights));
-    }
-    runner.add(jobs);
-    runner.start();
-    runner.stop();
-
-    for (int i = 0; i < jobs.size(); i++) {
-      DarkLordJob job = jobs.get(i);
-      // success? If not, just add the header of the original data
-      if (job.getFitness() == null) {
-        m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
-      }
-      else {
-        m_Fitness[job.getNumChrom()] = job.getFitness();
-      }
-      job.cleanUp();
-    }
+  protected DarkLordJob newJob(int num, int[] w) {
+    return new DarkLordJob(this, num, w);
   }
 
   /**
