@@ -24,11 +24,13 @@ import adams.core.Utils;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageHandler;
 import adams.flow.control.StorageName;
+import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
@@ -36,6 +38,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.InspectionPanel;
+import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
 import javax.swing.JButton;
@@ -282,6 +285,9 @@ public class StoragePanel
   /** the button for editing an item. */
   protected JButton m_ButtonEdit;
 
+  /** the button for exporting an item. */
+  protected JButton m_ButtonExport;
+
   /** the checkbox for previewing items. */
   protected JCheckBox m_CheckBoxPreview;
 
@@ -299,6 +305,9 @@ public class StoragePanel
 
   /** the split pane for table and preview. */
   protected BaseSplitPane m_SplitPane;
+
+  /** the filechooser for exporting the object. */
+  protected ObjectExporterFileChooser m_FileChooser;
 
   /**
    * Initializes the widgets.
@@ -340,7 +349,7 @@ public class StoragePanel
     m_ButtonInspect.setMnemonic('I');
     m_ButtonInspect.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	inspect();
+        inspect();
       }
     });
     m_Table.addToButtonsPanel(m_ButtonInspect);
@@ -350,10 +359,19 @@ public class StoragePanel
     m_ButtonEdit.setMnemonic('E');
     m_ButtonEdit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	edit();
+        edit();
       }
     });
     m_Table.addToButtonsPanel(m_ButtonEdit);
+
+    m_ButtonExport = new JButton("Export...");
+    m_ButtonExport.setMnemonic('x');
+    m_ButtonExport.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	export();
+      }
+    });
+    m_Table.addToButtonsPanel(m_ButtonExport);
 
     m_CheckBoxPreview = new JCheckBox("Preview");
     m_CheckBoxPreview.setSelected(true);
@@ -392,6 +410,7 @@ public class StoragePanel
 
     m_ButtonInspect.setEnabled(selCount == 1);
     m_ButtonEdit.setEnabled((selCount == 1) && canEdit(selObj));
+    m_ButtonExport.setEnabled(selCount == 1);
   }
 
   /**
@@ -498,6 +517,27 @@ public class StoragePanel
       m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 2);
       updatePreview();
     }
+  }
+
+  /**
+   * Brings up the dialog for exporting an item.
+   */
+  protected void export() {
+    int				retVal;
+    AbstractObjectExporter	exporter;
+    String			msg;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new ObjectExporterFileChooser();
+    m_FileChooser.setCurrentClass(getSelectedObject().getClass());
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != ObjectExporterFileChooser.APPROVE_OPTION)
+      return;
+
+    exporter = m_FileChooser.getWriter();
+    msg      = exporter.export(getSelectedObject(), m_FileChooser.getSelectedFile());
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, "Failed to export object '" + getSelectedObjectID() + "':\n" + msg);
   }
 
   /**
