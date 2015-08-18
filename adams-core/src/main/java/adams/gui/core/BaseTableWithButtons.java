@@ -15,7 +15,7 @@
 
 /*
  * BaseTableWithButtons.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -93,7 +93,7 @@ public class BaseTableWithButtons
     result = new BaseTable();
     result.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-	updateCounts();
+        updateCounts();
       }
     });
 
@@ -602,8 +602,8 @@ public class BaseTableWithButtons
    */
   protected void updateCounts() {
     updateInfo(
-	"Total: " + m_Component.getRowCount()
-	+ ", Selected: " + m_Component.getSelectedRowCount());
+      "Total: " + m_Component.getRowCount()
+        + ", Selected: " + m_Component.getSelectedRowCount());
   }
 
   /**
@@ -615,4 +615,22 @@ public class BaseTableWithButtons
   public void showCell(int row, int column) {
     m_Component.showCell(row, column);
   }  
+
+  /**
+   * Sets whether to show a simple cell popup menu.
+   *
+   * @param value	true if to show menu
+   */
+  public void setShowSimpleCellPopupMenu(boolean value) {
+    m_Component.setShowSimpleCellPopupMenu(value);
+  }
+
+  /**
+   * Returns whether to show a simple cell popup menu.
+   *
+   * @return		true if to show menu
+   */
+  public boolean getShowSimpleCellPopupMenu() {
+    return m_Component.getShowSimpleCellPopupMenu();
+  }
 }
