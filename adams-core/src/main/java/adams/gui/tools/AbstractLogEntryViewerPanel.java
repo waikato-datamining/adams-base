@@ -15,21 +15,9 @@
 
 /**
  * LogEntryViewer.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.core.Properties;
 import adams.db.LogEntry;
@@ -40,6 +28,17 @@ import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.PropertiesTableModel;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.dialog.TextDialog;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * For viewing LogEntry records.
@@ -85,6 +84,7 @@ public abstract class AbstractLogEntryViewerPanel
     m_TableEntries = new BaseTableWithButtons(m_TableModelEntries);
     m_TableEntries.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_TableEntries.setInfoVisible(true);
+    m_TableEntries.setShowSimpleCellPopupMenu(true);
     m_TableEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
 	update();
@@ -100,6 +100,7 @@ public abstract class AbstractLogEntryViewerPanel
     m_TableMessage = new BaseTableWithButtons(new PropertiesTableModel());
     m_TableMessage.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_TableMessage.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
+    m_TableMessage.setShowSimpleCellPopupMenu(true);
     m_TableMessage.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
 	updateButtons();

@@ -15,12 +15,9 @@
 
 /**
  * PropertiesHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
-
-import java.awt.BorderLayout;
-import java.io.File;
 
 import adams.core.Properties;
 import adams.core.Utils;
@@ -28,6 +25,9 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.PropertiesTableModel;
 import adams.gui.core.SortableAndSearchableTable;
+
+import java.awt.BorderLayout;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -95,6 +95,7 @@ public class PropertiesHandler
     props.load(file.getAbsolutePath());
     model  = new PropertiesTableModel(props);
     table  = new SortableAndSearchableTable(model);
+    table.setShowSimpleCellPopupMenu(true);
     table.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     table.setOptimalColumnWidth();
     result.add(new BaseScrollPane(table));

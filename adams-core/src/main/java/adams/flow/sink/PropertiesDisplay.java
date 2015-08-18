@@ -15,12 +15,9 @@
 
 /**
  * PropertiesDisplay.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.util.Properties;
 
 import adams.data.io.output.NullWriter;
 import adams.flow.core.Token;
@@ -33,6 +30,9 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+
+import java.awt.BorderLayout;
+import java.util.Properties;
 
 /**
  <!-- globalinfo-start -->
@@ -201,6 +201,7 @@ public class PropertiesDisplay
     
     m_Model = new PropertiesTableModel();
     m_Table = new SortableAndSearchableTable(m_Model);
+    m_Table.setShowSimpleCellPopupMenu(true);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
