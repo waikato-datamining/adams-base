@@ -201,12 +201,6 @@
       <artifactId>core</artifactId>
       <version>3.1.0</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.gphoto</groupId>
-      <artifactId>gphoto2-java</artifactId>
-      <version>1.4</version>
-    </dependency>
   </dependencies>
 
   <build>
