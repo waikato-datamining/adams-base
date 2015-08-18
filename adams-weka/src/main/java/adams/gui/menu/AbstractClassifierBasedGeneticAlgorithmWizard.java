@@ -220,10 +220,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	case NONE:
 	  break;
 	case RELATION:
-	  plotName = ((adams.genetic.DarkLord) e.getGeneticAlgorithm()).getInstances().relationName() + "-" + plotName;
+	  plotName = ((AbstractClassifierBasedGeneticAlgorithm) e.getGeneticAlgorithm()).getInstances().relationName() + "-" + plotName;
 	  break;
 	case SUPPLIED:
-	  plotName = ((adams.genetic.DarkLord) e.getGeneticAlgorithm()).getSuppliedPrefix() + "-" + plotName;
+	  plotName = ((AbstractClassifierBasedGeneticAlgorithm) e.getGeneticAlgorithm()).getSuppliedPrefix() + "-" + plotName;
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled output prefix type: " + algorithm.getOutputPrefixType());
@@ -334,7 +334,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	Properties props = page.getProperties();
 	try {
 	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
-	  OptionUtils.forAnyCommandLine(adams.genetic.DarkLord.class, cmdline);
+	  OptionUtils.forAnyCommandLine(AbstractClassifierBasedGeneticAlgorithm.class, cmdline);
 	  return true;
 	}
 	catch (Exception e) {
@@ -354,24 +354,24 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     wizard.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-          frame.dispose();
-          return;
-        }
-        Properties props = wizard.getProperties(false);
+	if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
+	  frame.dispose();
+	  return;
+	}
+	Properties props = wizard.getProperties(false);
 	AbstractClassifierBasedGeneticAlgorithm genetic = null;
-        String[] files = null;
+	String[] files = null;
 	try {
 	  String cmdline = props.getProperty(PropertySheetPanelPage.PROPERTY_CMDLINE);
 	  genetic = (AbstractClassifierBasedGeneticAlgorithm) OptionUtils.forAnyCommandLine(AbstractClassifierBasedGeneticAlgorithm.class, cmdline);
-          files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
+	  files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
 	}
 	catch (Exception ex) {
-          GUIHelper.showErrorMessage(
-            null, "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
+	  GUIHelper.showErrorMessage(
+	    null, "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
 	  return;
 	}
-        doOptimize(frame, genetic, files);
+	doOptimize(frame, genetic, files);
       }
     });
   }
