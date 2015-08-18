@@ -474,6 +474,8 @@ public class BaseTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+	if ((row == -1) || (col == -1))
+	  return;
 	Object value = getValueAt(row, col);
 	if (value != null)
 	  GUIHelper.copyToClipboard("" + value);
