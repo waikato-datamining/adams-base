@@ -463,10 +463,25 @@ public class BaseTable
   protected void showSimpleCellPopupMenu(MouseEvent e) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
+    final int		row;
+    final int		col;
 
     menu = new BasePopupMenu();
+    row  = rowAtPoint(e.getPoint());
+    col = columnAtPoint(e.getPoint());
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	Object value = getValueAt(row, col);
+	if (value != null)
+	  GUIHelper.copyToClipboard("" + value);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy table", GUIHelper.getEmptyIcon());
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -475,7 +490,9 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Save table as...", GUIHelper.getIcon("save.gif"));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
