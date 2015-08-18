@@ -305,7 +305,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	Properties props = page.getProperties();
 	try {
 	  String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-	  return (files.length >= 2);
+	  return (files.length > 0);
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to obtain files:", e);
