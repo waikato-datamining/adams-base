@@ -20,10 +20,13 @@
 
 package adams.flow.transformer;
 
+import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeListener;
+import adams.event.FlowPauseStateEvent;
+import adams.event.FlowPauseStateListener;
 import adams.flow.container.WekaGeneticAlgorithmContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
@@ -31,6 +34,8 @@ import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.PauseStateHandler;
+import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
 import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
 import adams.genetic.DarkLord;
@@ -117,7 +122,7 @@ import java.util.Hashtable;
  */
 public class WekaGeneticAlgorithm
   extends AbstractTransformer
-  implements FitnessChangeListener, CallableActorUser {
+  implements FitnessChangeListener, CallableActorUser, FlowPauseStateListener, Pausable {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
@@ -148,6 +153,9 @@ public class WekaGeneticAlgorithm
 
   /** whether the callable actor is optional. */
   protected boolean m_Optional;
+
+  /** the pause state manager. */
+  protected PauseStateManager m_PauseStateManager;
 
   /**
    * Returns a string describing the object.
@@ -465,6 +473,15 @@ public class WekaGeneticAlgorithm
 	result = setUpCallableActor();
     }
 
+    if (getRoot() instanceof PauseStateHandler) {
+      m_PauseStateManager = ((PauseStateHandler) getRoot()).getPauseStateManager();
+      if (m_PauseStateManager != null)
+	m_PauseStateManager.addListener(this);
+    }
+    else {
+      m_PauseStateManager = null;
+    }
+
     return result;
   }
 
@@ -520,6 +537,10 @@ public class WekaGeneticAlgorithm
       }
       m_ActualAlgorithm.removeFitnessChangeListener(this);
     }
+    if (m_PauseStateManager != null) {
+      if (m_PauseStateManager.isPaused())
+	m_PauseStateManager.resume(this);
+    }
     super.stopExecution();
   }
 
@@ -556,5 +577,47 @@ public class WekaGeneticAlgorithm
 	}
       }
     }
+  }
+
+  /**
+   * Pauses the execution.
+   */
+  @Override
+  public void pauseExecution() {
+    if (m_PauseStateManager != null)
+      m_PauseStateManager.pause(this);
+  }
+
+  /**
+   * Returns whether the object is currently paused.
+   *
+   * @return		true if object is paused
+   */
+  @Override
+  public boolean isPaused() {
+    if (m_PauseStateManager != null)
+      return m_PauseStateManager.isPaused();
+    else
+      return false;
+  }
+
+  /**
+   * Resumes the execution.
+   */
+  @Override
+  public void resumeExecution() {
+    if (m_PauseStateManager != null)
+      m_PauseStateManager.resume(this);
+  }
+
+  /**
+   * Gets called when the pause state of the flow changes.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void flowPauseStateChanged(FlowPauseStateEvent e) {
+    if (m_ActualAlgorithm != null)
+      m_ActualAlgorithm.pauseExecution();
   }
 }

@@ -585,6 +585,7 @@ public abstract class AbstractGeneticAlgorithm
    */
   public void stopExecution() {
     m_Stopped = true;
+    m_Paused  = false;
   }
 
   /**
@@ -928,6 +929,11 @@ public abstract class AbstractGeneticAlgorithm
 	  if (isPaused() && !isStopped()) {
 	    Utils.wait(this, this, 1000, 100);
 	    continue;
+	  }
+
+	  if (isStopped()) {
+	    getLogger().severe("Interrupted!");
+	    break;
 	  }
 
 	  m_CurrentIteration++;
