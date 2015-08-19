@@ -247,6 +247,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     }
   }
 
+  /** the current algorithm. */
+  protected AbstractClassifierBasedGeneticAlgorithm m_Current;
+
   /**
    * Initializes the menu item with no owner.
    */
@@ -279,6 +282,15 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
    * @return		the setup
    */
   protected abstract AbstractClassifierBasedGeneticAlgorithm getSetup();
+
+  /**
+   * Returns the current algorithm in use.
+   *
+   * @return		the algorithm, null if none in use
+   */
+  public AbstractClassifierBasedGeneticAlgorithm getCurrent() {
+    return m_Current;
+  }
 
   /**
    * Launches the functionality of the menu item.
@@ -408,23 +420,23 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     buttonPause.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	genetic.pauseExecution();
-	buttonPause.setEnabled(!genetic.isPaused());
-	buttonResume.setEnabled(genetic.isPaused());
+	getCurrent().pauseExecution();
+	buttonPause.setEnabled(!getCurrent().isPaused());
+	buttonResume.setEnabled(getCurrent().isPaused());
       }
     });
     buttonResume.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	genetic.resumeExecution();
-	buttonPause.setEnabled(!genetic.isPaused());
-	buttonResume.setEnabled(genetic.isPaused());
+	getCurrent().resumeExecution();
+	buttonPause.setEnabled(!getCurrent().isPaused());
+	buttonResume.setEnabled(getCurrent().isPaused());
       }
     });
     buttonStop.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	genetic.stopExecution();
+	getCurrent().stopExecution();
 	buttonPause.setEnabled(false);
 	buttonResume.setEnabled(false);
 	buttonStop.setEnabled(false);
@@ -438,17 +450,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 
     createChildFrame(panelAll, 800, 300);
     worker = new SwingWorker() {
-      protected AbstractClassifierBasedGeneticAlgorithm m_Actual;
       @Override
       protected Object doInBackground() throws Exception {
 	for (String file: files) {
 	  Instances data = DataSource.read(file);
-	  m_Actual = (AbstractClassifierBasedGeneticAlgorithm) genetic.shallowCopy();
-	  plot.setOwner(m_Actual);
-	  m_Actual.setSuppliedPrefix(FileUtils.replaceExtension(new File(file).getName(), ""));
-	  m_Actual.setInstances(data);
-	  m_Actual.run();
-	  if (m_Actual.isStopped())
+	  m_Current = (AbstractClassifierBasedGeneticAlgorithm) genetic.shallowCopy();
+	  plot.setOwner(m_Current);
+	  m_Current.setSuppliedPrefix(FileUtils.replaceExtension(new File(file).getName(), ""));
+	  m_Current.setInstances(data);
+	  m_Current.run();
+	  if (m_Current.isStopped())
 	    break;
 	}
 	return null;
@@ -458,7 +469,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	buttonPause.setEnabled(false);
 	buttonResume.setEnabled(false);
 	buttonStop.setEnabled(false);
-	if (m_Actual.isStopped())
+	if (m_Current.isStopped())
 	  GUIHelper.showErrorMessage(null, getTitle() + " stopped!");
 	else
 	  GUIHelper.showInformationMessage(null, getTitle() + " finished!");
