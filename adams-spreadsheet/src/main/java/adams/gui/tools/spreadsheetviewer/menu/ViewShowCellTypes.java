@@ -15,7 +15,7 @@
 
 /**
  * ViewShowCellTypes.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -70,5 +70,7 @@ public class ViewShowCellTypes
   @Override
   protected void doUpdate() {
     setEnabled(m_State.getTabbedPane().getTabCount() > 0);
+    if (isEnabled() && (getTabbedPane().getSelectedIndex() > -1))
+      setSelected(m_State.getTabbedPane().getShowCellTypes(getTabbedPane().getSelectedIndex()));
   }
 }
