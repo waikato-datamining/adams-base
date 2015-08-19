@@ -124,6 +124,9 @@ public class MaxTrainTime
    */
   @Override
   protected boolean doCheckStopping(AbstractGeneticAlgorithm genetic) {
-    return ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime);
+    if (m_MaxTrainTime == 0)
+      return false;
+    else
+      return ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime);
   }
 }
