@@ -72,6 +72,9 @@ public class SpreadSheetTableModel
   /** whether the model is modified. */
   protected boolean m_Modified;
 
+  /** whether to show the types instead of the values. */
+  protected boolean m_ShowCellTypes;
+
   /** the type of a column. */
   protected ContentType[] m_ColumnType;
 
@@ -110,6 +113,7 @@ public class SpreadSheetTableModel
     m_UseSimpleHeader    = false;
     m_ReadOnly           = true;
     m_Modified           = false;
+    m_ShowCellTypes      = false;
     m_ColumnType         = new ContentType[sheet.getColumnCount()];
   }
 
@@ -166,7 +170,7 @@ public class SpreadSheetTableModel
    * @return		true if read-only
    */
   public boolean isReadOnly() {
-    return m_ReadOnly;
+    return m_ReadOnly || m_ShowCellTypes;
   }
 
   /**
@@ -185,6 +189,25 @@ public class SpreadSheetTableModel
    */
   public boolean isModified() {
     return m_Modified;
+  }
+
+  /**
+   * Sets whether to show the cell types rather than the cell values.
+   *
+   * @param value	true if to show cell types
+   */
+  public void setShowCellTypes(boolean value) {
+    m_ShowCellTypes = value;
+    fireTableDataChanged();
+  }
+
+  /**
+   * Returns whether to show the cell types rather than the cell values.
+   *
+   * @return		true if showing the cell types
+   */
+  public boolean getShowCellTypes() {
+    return m_ShowCellTypes;
   }
 
   /**
@@ -292,7 +315,7 @@ public class SpreadSheetTableModel
    */
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
-    if (m_ReadOnly)
+    if (isReadOnly())
       return false;
     if (m_ShowRowColumn)
       return (columnIndex > 0);
@@ -311,7 +334,7 @@ public class SpreadSheetTableModel
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     Cell	cell;
 
-    if (m_ReadOnly)
+    if (isReadOnly())
       return;
     if (m_ShowRowColumn && (columnIndex == 0))
       return;
@@ -355,6 +378,9 @@ public class SpreadSheetTableModel
 	if (cell.isMissing()) {
 	  result = null;
 	}
+        else if (m_ShowCellTypes) {
+          result = "" + cell.getContentType();
+        }
 	else if (cell.isFormula() && m_ShowFormulas) {
 	  result = cell.getFormula();
 	}

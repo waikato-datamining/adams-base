@@ -22,12 +22,10 @@ package adams.gui.tools.spreadsheetviewer;
 import adams.core.CleanUpHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
-import javax.swing.Icon;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
@@ -377,6 +375,38 @@ public class TabbedPane
 
     for (i = 0; i < getTabCount(); i++)
       setShowFormulasAt(i, value);
+  }
+
+  /**
+   * Sets whether to show the cell types rather than values.
+   *
+   * @param index	the tab index
+   * @param value	whether to show the cell types
+   */
+  public void setShowCellTypesAt(int index, boolean value) {
+    getTableAt(index).setShowCellTypes(value);
+  }
+
+  /**
+   * Returns whether to show the cell types.
+   *
+   * @param index	the tab index
+   * @return		whether to show the cell types
+   */
+  public boolean getShowCellTypes(int index) {
+    return getTableAt(index).getShowCellTypes();
+  }
+
+  /**
+   * Sets whether to show the cell types.
+   *
+   * @param value	whether to show the cell types
+   */
+  public void setShowCellTypes(boolean value) {
+    int	i;
+
+    for (i = 0; i < getTabCount(); i++)
+      setShowCellTypesAt(i, value);
   }
 
   /**

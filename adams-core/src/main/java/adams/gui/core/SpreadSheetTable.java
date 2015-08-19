@@ -484,13 +484,13 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	SpreadSheet sheet = toSpreadSheet();
-	boolean readOnly = isReadOnly();
+        SpreadSheet sheet = toSpreadSheet();
+        boolean readOnly = isReadOnly();
         sheet.insertRow(row);
-	setModel(new SpreadSheetTableModel(sheet));
-	setReadOnly(readOnly);
-	setModified(true);
-	((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
+        setModel(new SpreadSheetTableModel(sheet));
+        setReadOnly(readOnly);
+        setModified(true);
+        ((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
       }
     });
     menu.add(menuitem);
@@ -531,7 +531,7 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	saveAs(TableRowRange.SELECTED);
+        saveAs(TableRowRange.SELECTED);
       }
     });
     submenu.add(menuitem);
@@ -556,7 +556,19 @@ public class SpreadSheetTable
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-	setShowFormulas(!getShowFormulas());
+        setShowFormulas(!getShowFormulas());
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JCheckBoxMenuItem("Show cell types");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setEnabled(getRowCount() > 0);
+    menuitem.setSelected(getShowCellTypes());
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+	setShowCellTypes(!getShowCellTypes());
       }
     });
     menu.add(menuitem);
@@ -727,6 +739,24 @@ public class SpreadSheetTable
    */
   public boolean isModified() {
     return ((SpreadSheetTableModel) getUnsortedModel()).isModified();
+  }
+
+  /**
+   * Sets whether to show the cell types rather than the cell values.
+   *
+   * @param value	true if to show cell types
+   */
+  public void setShowCellTypes(boolean value) {
+    ((SpreadSheetTableModel) getUnsortedModel()).setShowCellTypes(value);
+  }
+
+  /**
+   * Returns whether to show the cell types rather than the cell values.
+   *
+   * @return		true if showing the cell types
+   */
+  public boolean getShowCellTypes() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).getShowCellTypes();
   }
 
   /**

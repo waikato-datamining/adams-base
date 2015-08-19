@@ -334,6 +334,24 @@ public class SpreadSheetPanel
   }
 
   /**
+   * Sets whether to show the cell types rather than the cell values.
+   *
+   * @param value	true if to show cell types
+   */
+  public void setShowCellTypes(boolean value) {
+    m_Table.setShowCellTypes(value);
+  }
+
+  /**
+   * Returns whether to show the cell types rather than the cell values.
+   *
+   * @return		true if showing the cell types
+   */
+  public boolean getShowCellTypes() {
+    return m_Table.getShowCellTypes();
+  }
+
+  /**
    * Returns the underlying table.
    * 
    * @return		the table

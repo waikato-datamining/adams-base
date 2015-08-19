@@ -63,6 +63,9 @@ adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground-Shortcut=
 adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Icon=formula.png
 adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Mnemonic=f
 adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas-Shortcut=
+adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes-Icon=
+adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes-Mnemonic=t
+adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes-Shortcut=
 
 # Help
 adams.gui.tools.spreadsheetviewer.menu.HelpFormulas-Icon=formula.png

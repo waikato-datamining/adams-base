@@ -71,6 +71,7 @@ import adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll;
 import adams.gui.tools.spreadsheetviewer.menu.ViewDecimals;
 import adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground;
 import adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground;
+import adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
 
@@ -187,6 +188,9 @@ public class SpreadSheetViewerPanel
 
   /** the "show formulas" menu item. */
   protected SpreadSheetViewerAction m_ActionViewShowFormulas;
+
+  /** the "show cell types" menu item. */
+  protected SpreadSheetViewerAction m_ActionViewShowCellTypes;
 
   /** the "formulas" help menu item. */
   protected SpreadSheetViewerAction m_ActionHelpFormulas;
@@ -357,6 +361,11 @@ public class SpreadSheetViewerPanel
     m_ActionViewShowFormulas = action;
     m_Actions.add(action);
 
+    // View/Show cellt types
+    action = new ViewShowCellTypes();
+    m_ActionViewShowCellTypes = action;
+    m_Actions.add(action);
+
     // Help/Formulas
     action = new HelpFormulas();
     m_ActionHelpFormulas = action;
@@ -522,10 +531,10 @@ public class SpreadSheetViewerPanel
       result.add(menu);
       menu.setMnemonic('V');
       menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
+        @Override
+        public void stateChanged(ChangeEvent e) {
+          updateMenu();
+        }
       });
 
       menu.add(m_ActionViewApplyToAll.getMenuItem());
@@ -533,6 +542,7 @@ public class SpreadSheetViewerPanel
       menu.add(m_ActionViewNegativeBackground);
       menu.add(m_ActionViewPositiveBackground);
       menu.add(m_ActionViewShowFormulas.getMenuItem());
+      menu.add(m_ActionViewShowCellTypes.getMenuItem());
 
       // View/Tabs
       m_ViewerTabs.addTabsSubmenu(menu);
