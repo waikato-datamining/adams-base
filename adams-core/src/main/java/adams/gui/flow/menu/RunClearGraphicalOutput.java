@@ -48,7 +48,7 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.cleanUp();
+    m_State.getCurrentPanel().cleanUp();
     m_State.update();
   }
 
