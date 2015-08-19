@@ -561,10 +561,12 @@ public class InstanceExplorer
     int[]			additional;
     int				i;
     Instances 			dataset;
+    weka.core.Instance		winst;
     Instance			inst;
     List<InstanceContainer>	data;
     Range			range;
     HashSet<Integer>		attTypes;
+    int 			id;
 
     if (m_LoadFromDiskDialog == null) {
       if (getParentDialog() != null)
@@ -608,10 +610,20 @@ public class InstanceExplorer
     dataset    = m_LoadFromDiskDialog.getDataset();
     additional = m_LoadFromDiskDialog.getAdditionalAttributes();
     range      = m_LoadFromDiskDialog.getCurrentAttributeRange();
+    id         = m_LoadFromDiskDialog.getCurrentIDIndex();
     for (i = 0; i < indices.length; i++) {
+      winst = dataset.instance(indices[i]);
       inst = new Instance();
-      inst.set(dataset.instance(indices[i]), i, additional, range, attTypes);
-      inst.setID((indices[i] + 1) + "." + dataset.relationName());
+      inst.set(winst, i, additional, range, attTypes);
+      if (id == -1) {
+	inst.setID((indices[i] + 1) + "." + dataset.relationName());
+      }
+      else {
+	if (winst.attribute(id).isNumeric())
+	  inst.setID("" + winst.value(id));
+	else
+	  inst.setID(winst.stringValue(id));
+      }
       data.add(getContainerManager().newContainer(inst));
       showStatus("Loading data " + (i+1) + "/" + dataset.numInstances());
     }

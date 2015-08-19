@@ -20,15 +20,19 @@
 
 package adams.gui.visualization.instance;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.core.Index;
+import adams.core.Range;
+import adams.gui.chooser.DatasetFileChooserPanel;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
+import weka.core.Attribute;
+import weka.core.Instances;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -42,20 +46,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import adams.core.Index;
-import adams.core.Range;
-import adams.gui.chooser.DatasetFileChooserPanel;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.SearchPanel;
-import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * A dialog for loading datasets from disk.
@@ -74,6 +73,9 @@ public class LoadDatasetDialog
 
   /** the "no sorting" constant. */
   public final static String NO_SORTING = "-no sorting-";
+
+  /** the "no id" constant. */
+  public final static String NO_ID = "-no ID-";
 
   /** the dialog itself. */
   protected LoadDatasetDialog m_Self;
@@ -107,6 +109,12 @@ public class LoadDatasetDialog
 
   /** the soriting index model. */
   protected DefaultComboBoxModel m_ComboBoxSortingModel;
+
+  /** the ID index. */
+  protected JComboBox m_ComboBoxID;
+
+  /** the ID index model. */
+  protected DefaultComboBoxModel m_ComboBoxIDModel;
 
   /** the list of additional attribute values to store in the report. */
   protected JList m_ListAdditionalAttributes;
@@ -146,6 +154,9 @@ public class LoadDatasetDialog
 
   /** the default class index. */
   protected Index m_DefaultClassIndex;
+
+  /** the default ID index. */
+  protected Index m_DefaultIDIndex;
 
   /** the default sort index. */
   protected Index m_DefaultSortIndex;
@@ -215,8 +226,11 @@ public class LoadDatasetDialog
     m_ComboBoxClassModel.addElement(NO_CLASS);
     m_ComboBoxSortingModel               = new DefaultComboBoxModel();
     m_ComboBoxSortingModel.addElement(NO_SORTING);
+    m_ComboBoxIDModel                    = new DefaultComboBoxModel();
+    m_ComboBoxIDModel.addElement(NO_ID);
     m_ListAdditionalAttributesModel      = new DefaultListModel();
     m_DefaultClassIndex                  = new Index();
+    m_DefaultIDIndex                     = new Index();
     m_DefaultSortIndex                   = new Index();
     m_DefaultIncludeNumericAttributes    = false;
     m_DefaultIncludeDateAttributes       = false;
@@ -305,8 +319,18 @@ public class LoadDatasetDialog
     panelAttributes.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_TabbedPane.addTab("Attributes", panelAttributes);
 
-    panel = new JPanel(new GridLayout(12, 1));
+    panel = new JPanel(new GridLayout(14, 1));
     panelAttributes.add(panel, BorderLayout.NORTH);
+
+    // ID
+    m_ComboBoxID = new JComboBox(m_ComboBoxIDModel);
+    m_ComboBoxID.setSelectedIndex(0);
+    m_ComboBoxID.setToolTipText("The selected attribute gets used as ID for the instances, rather than the row index");
+    label = new JLabel("ID");
+    label.setDisplayedMnemonic('I');
+    label.setLabelFor(m_ComboBoxID);
+    panel.add(label);
+    panel.add(m_ComboBoxID);
 
     // class
     m_ComboBoxClass = new JComboBox(m_ComboBoxClassModel);
@@ -463,6 +487,40 @@ public class LoadDatasetDialog
   public int getCurrentClassIndex() {
     if (m_ComboBoxClass.getSelectedIndex() > -1)
       return m_ComboBoxClass.getSelectedIndex() - 1;
+    else
+      return -1;
+  }
+
+  /**
+   * Sets the default ID index to use.
+   *
+   * @param value	the ID index, 1-based integer or 'first'/'last',
+   * 			use empty string for none
+   * @see		Index
+   */
+  public void setDefaultIDIndex(String value) {
+    m_DefaultIDIndex.setIndex(value);
+  }
+
+  /**
+   * Returns the default ID index in use.
+   *
+   * @return		the ID index, 1-based integer or 'first'/'last',
+   * 			empty string for none
+   * @see		Index
+   */
+  public String getDefaultIDIndex() {
+    return m_DefaultIDIndex.getIndex();
+  }
+
+  /**
+   * Returns the currently selected ID index.
+   *
+   * @return		the ID index, -1 if none selected
+   */
+  public int getCurrentIDIndex() {
+    if (m_ComboBoxID.getSelectedIndex() > -1)
+      return m_ComboBoxID.getSelectedIndex() - 1;
     else
       return -1;
   }
@@ -658,6 +716,8 @@ public class LoadDatasetDialog
     int			i;
     String		oldClass;
     int			oldClassIndex;
+    String		oldID;
+    int			oldIDIndex;
     String		oldSorting;
     int			oldSortingIndex;
     int[]		oldAdditional;
@@ -666,17 +726,23 @@ public class LoadDatasetDialog
       return;
 
     // class
-    oldClassIndex = -1;
-    oldClass      = null;
+    oldClass = null;
     if (reload && (m_Instances != null)) {
       oldClassIndex = m_ComboBoxClass.getSelectedIndex() - 1;
       if (oldClassIndex > -1)
 	oldClass = m_Instances.attribute(oldClassIndex).name();
     }
 
+    // ID
+    oldID = null;
+    if (reload && (m_Instances != null)) {
+      oldIDIndex = m_ComboBoxID.getSelectedIndex() - 1;
+      if (oldIDIndex > -1)
+	oldID = m_Instances.attribute(oldIDIndex).name();
+    }
+
     // sorting
-    oldSortingIndex = -1;
-    oldSorting      = null;
+    oldSorting = null;
     if (reload && (m_Instances != null)) {
       oldSortingIndex = m_ComboBoxSorting.getSelectedIndex() - 1;
       if (oldSortingIndex > -1)
@@ -708,21 +774,31 @@ public class LoadDatasetDialog
     m_ComboBoxClassModel.removeAllElements();
     m_ComboBoxClassModel.addElement(NO_CLASS);
     m_ComboBoxClass.setSelectedIndex(0);
+    m_ComboBoxIDModel.removeAllElements();
+    m_ComboBoxIDModel.addElement(NO_ID);
+    m_ComboBoxID.setSelectedIndex(0);
     m_ComboBoxSortingModel.removeAllElements();
     m_ComboBoxSortingModel.addElement(NO_SORTING);
     m_ComboBoxSorting.setSelectedIndex(0);
     m_ListAdditionalAttributesModel.clear();
     if (m_Instances != null) {
       oldClassIndex   = -1;
+      oldIDIndex      = -1;
       oldSortingIndex = -1;
       m_TableData.setModel(new InstanceTableModel(m_Instances));
       for (i = 0; i < m_Instances.numAttributes(); i++) {
 	m_ComboBoxClassModel.addElement((i+1) + ": " + m_Instances.attribute(i).name());
+	m_ComboBoxIDModel.addElement((i+1) + ": " + m_Instances.attribute(i).name());
 	m_ComboBoxSortingModel.addElement((i+1) + ": " + m_Instances.attribute(i).name());
 	m_ListAdditionalAttributesModel.addElement((i+1) + ": " + m_Instances.attribute(i).name());
 	if (oldClass != null) {
 	  if (m_Instances.attribute(i).name().equals(oldClass)) {
 	    oldClassIndex = i;
+	  }
+	}
+	if (oldID != null) {
+	  if (m_Instances.attribute(i).name().equals(oldID)) {
+	    oldIDIndex = i;
 	  }
 	}
 	if (oldSorting != null) {
@@ -739,6 +815,15 @@ public class LoadDatasetDialog
 	m_DefaultClassIndex.setMax(m_Instances.numAttributes());
 	if (m_DefaultClassIndex.getIntIndex() != -1)
 	  m_ComboBoxClass.setSelectedIndex(m_DefaultClassIndex.getIntIndex() + 1);  // +1 because of NO_CLASS at index 0
+      }
+      // ID index
+      if (oldIDIndex != -1) {
+	m_ComboBoxID.setSelectedIndex(oldIDIndex + 1);  // +1 because of NO_ID at index 0
+      }
+      else if (!reload && m_DefaultIDIndex.hasIndex()) {
+	m_DefaultIDIndex.setMax(m_Instances.numAttributes());
+	if (m_DefaultIDIndex.getIntIndex() != -1)
+	  m_ComboBoxID.setSelectedIndex(m_DefaultIDIndex.getIntIndex() + 1);  // +1 because of NO_ID at index 0
       }
       // only numeric attributes
       if (!reload)
