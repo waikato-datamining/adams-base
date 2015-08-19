@@ -823,10 +823,12 @@ public class InstanceExplorer
     item = new JMenuItem("Toggle visibility");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        getContainerManager().startUpdate();
 	for (int i = 0; i < indices.length; i++) {
 	  InstanceContainer cont = getContainerManager().get(indices[i]);
 	  cont.setVisible(!cont.isVisible());
 	}
+        getContainerManager().finishUpdate();
       }
     });
     result.add(item);
@@ -848,8 +850,10 @@ public class InstanceExplorer
 	      getContainerManager().get(row).getColor());
 	}
 	if (c != null) {
+          getContainerManager().startUpdate();
 	  for (int index: indices)
 	    getContainerManager().get(index).setColor(c);
+          getContainerManager().finishUpdate();
 	}
       }
     });
