@@ -92,7 +92,7 @@ public class MaxTrainTime
   /**
    * Returns the maximum number of seconds to perform training.
    *
-   * @return		the seed value
+   * @return		the number of seconds
    */
   public int getMaxTrainTime() {
     return m_MaxTrainTime;
