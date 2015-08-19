@@ -82,6 +82,10 @@ public class Discovery
 	continue;
       try {
 	child = prop.getReadMethod().invoke(obj, new Object[0]);
+	if (child == null) {
+	  getLogger().info("Read method of property '" + prop.getDisplayName() + "' returned 'null': " + path);
+	  continue;
+	}
         if (child.getClass().isArray()) {
           len = Array.getLength(child);
           for (i = 0; i < len; i++) {
