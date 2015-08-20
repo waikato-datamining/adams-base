@@ -85,8 +85,10 @@ public class MaxTrainTime
    * @param value	the number of seconds
    */
   public void setMaxTrainTime(int value) {
-    m_MaxTrainTime = value;
-    reset();
+    if (getOptionManager().isValid("maxTrainTime", value)) {
+      m_MaxTrainTime = value;
+      reset();
+    }
   }
 
   /**
