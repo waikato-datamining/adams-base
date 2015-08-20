@@ -41,6 +41,13 @@ import adams.genetic.AbstractGeneticAlgorithm;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
+ * <pre>-min-improvement &lt;double&gt; (property: minimumImprovement)
+ * &nbsp;&nbsp;&nbsp;The minimum improvement in percent (0-1) to achieve in the alotted time.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  *
@@ -54,6 +61,9 @@ public class MaxTrainTimeWithoutImprovement
 
   /** the maximum number of seconds to train. */
   protected int m_MaxTrainTime;
+
+  /** the minimum required improvement (percent: 0-1). */
+  protected double m_MinimumImprovement;
 
   /** the time of last improvement. */
   protected long m_TrainStart;
@@ -81,6 +91,10 @@ public class MaxTrainTimeWithoutImprovement
     m_OptionManager.add(
       "max-train", "maxTrainTime",
       0, 0, null);
+
+    m_OptionManager.add(
+      "min-improvement", "minimumImprovement",
+      0.0, 0.0, 1.0);
   }
 
   /**
@@ -99,14 +113,16 @@ public class MaxTrainTimeWithoutImprovement
    * @param value	the number of seconds
    */
   public void setMaxTrainTime(int value) {
-    m_MaxTrainTime = value;
-    reset();
+    if (getOptionManager().isValid("maxTrainTime", value)) {
+      m_MaxTrainTime = value;
+      reset();
+    }
   }
 
   /**
    * Returns the maximum number of seconds to wait for improvement.
    *
-   * @return		the seed value
+   * @return		the number of seconds
    */
   public int getMaxTrainTime() {
     return m_MaxTrainTime;
@@ -123,11 +139,52 @@ public class MaxTrainTimeWithoutImprovement
   }
 
   /**
+   * Sets the minimum improvement in percent (0-1) to achieve in the alotted time.
+   *
+   * @param value	the minimum
+   */
+  public void setMinimumImprovement(double value) {
+    if (getOptionManager().isValid("minimumImprovement", value)) {
+      m_MinimumImprovement = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the minimum improvement in percent (0-1) to achieve in the alotted time.
+   *
+   * @return		the minimum
+   */
+  public double getMinimumImprovement() {
+    return m_MinimumImprovement;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minimumImprovementTipText() {
+    return "The minimum improvement in percent (0-1) to achieve in the alotted time.";
+  }
+
+  /**
    * Gets called when the genetic algorithm starts.
    */
   @Override
   public void start() {
     m_LastFitness = null;
+    m_TrainStart  = System.currentTimeMillis();
+  }
+
+  /**
+   * Records time and fitness.
+   *
+   * @param genetic	the algorithm
+   */
+  protected void record(AbstractGeneticAlgorithm genetic) {
+    m_LastFitness = genetic.getCurrentFitness();
     m_TrainStart  = System.currentTimeMillis();
   }
 
@@ -139,16 +196,29 @@ public class MaxTrainTimeWithoutImprovement
    */
   @Override
   protected boolean doCheckStopping(AbstractGeneticAlgorithm genetic) {
-    if (m_MaxTrainTime == 0) {
+    double	improvement;
+
+    if (m_MaxTrainTime == 0)
+      return false;
+
+    if (m_LastFitness == null) {
+      record(genetic);
       return false;
     }
-    else if ((m_LastFitness == null) || (m_LastFitness != genetic.getCurrentFitness())) {
-      m_LastFitness = genetic.getCurrentFitness();
-      m_TrainStart  = System.currentTimeMillis();
-      return false;
+
+    if (m_LastFitness != 0) {
+      improvement = Math.abs(m_LastFitness - genetic.getCurrentFitness()) / m_LastFitness;
     }
     else {
-      return ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime);
+      getLogger().warning("Last fitness is 0. To avoid divByZero using 0 as improvement!");
+      improvement = 0.0;
     }
+
+    if (improvement >= m_MinimumImprovement) {
+      record(genetic);
+      return false;
+    }
+
+    return ((double) (System.currentTimeMillis() - m_TrainStart) / 1000.0 >= m_MaxTrainTime);
   }
 }
