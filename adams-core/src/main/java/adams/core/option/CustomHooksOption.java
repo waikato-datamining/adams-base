@@ -15,21 +15,19 @@
 
 /**
  * ClassOption.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.lang.reflect.Method;
-
 import adams.core.Utils;
+
+import java.lang.reflect.Method;
 
 /**
  * Option class for options with custom hooks for valueOf and toString.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see AbstractOption#m_HooksValueOf
- * @see AbstractOption#m_HooksToString
  */
 public class CustomHooksOption
   extends AbstractArgumentOption {
@@ -115,7 +113,8 @@ public class CustomHooksOption
   /**
    * Returns a string representation of the specified object.
    * <br><br>
-   * Needs to be overridden if no custom hook available.
+   * Needs to be overridden if no custom hook available. Returns empty string
+   * in case the provided object is null.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
@@ -126,6 +125,9 @@ public class CustomHooksOption
     Method	method;
 
     result = "";
+
+    if (obj == null)
+      return result;
 
     method = OptionUtils.getToStringHook(getBaseClass());
     if (method == null) {
