@@ -15,12 +15,9 @@
 
 /**
  * HashSetInit.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.lang.reflect.Array;
-import java.util.HashSet;
 
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
@@ -28,6 +25,9 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
+
+import java.lang.reflect.Array;
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -57,7 +57,7 @@ import adams.flow.control.StorageUpdater;
  * &nbsp;&nbsp;&nbsp;default: HashSetInit
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -74,6 +74,11 @@ import adams.flow.control.StorageUpdater;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name for the hashset in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: hashset
@@ -82,7 +87,7 @@ import adams.flow.control.StorageUpdater;
  * <pre>-column &lt;adams.core.Index&gt; (property: column)
  * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet which values to store in the 
  * &nbsp;&nbsp;&nbsp;hashset.
- * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;default: first
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
@@ -129,7 +134,7 @@ public class HashSetInit
 
     m_OptionManager.add(
 	    "column", "column",
-	    new Index("1"));
+	    new Index(Index.FIRST));
   }
 
   /**
