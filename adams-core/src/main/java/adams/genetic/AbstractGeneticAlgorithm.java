@@ -141,15 +141,27 @@ public abstract class AbstractGeneticAlgorithm
      * @return		the weights as string
      */
     public String weightsToString() {
-      String ret = "";
-      for (int i = 0; i < m_Weights.length; i++) {
-	if (m_Weights[i] == 0) {
-	  ret += "0";
-	} else {
-	  ret += "1";
-	}
+      return weightsToString(m_Weights);
+    }
+
+    /**
+     * Turns the weights into a string representation.
+     *
+     * @param weights	the weights to turn into string
+     * @return		the weights as string
+     */
+    public static String weightsToString(int[] weights) {
+      StringBuilder 	result;
+
+      result = new StringBuilder();
+      for (int weight: weights) {
+	if (weight == 0)
+	  result.append("0");
+	else
+	  result.append("1");
       }
-      return ret;
+
+      return result.toString();
     }
 
     /**
@@ -248,6 +260,9 @@ public abstract class AbstractGeneticAlgorithm
   /** the seed value. */
   protected long m_Seed;
 
+  /** the initial weights. */
+  protected String m_InitialWeights;
+
   /** the random number generator. */
   protected Random m_Random;
 
@@ -275,6 +290,9 @@ public abstract class AbstractGeneticAlgorithm
   /** the best setup so far. */
   protected Object m_BestSetup;
 
+  /** the best weights/bits so far. */
+  protected int[] m_BestWeights;
+
   /**
    * Initializes the members.
    */
@@ -289,6 +307,7 @@ public abstract class AbstractGeneticAlgorithm
     m_LastNotificationTime   = null;
     m_BestFitness            = Double.NEGATIVE_INFINITY;
     m_BestSetup              = null;
+    m_BestWeights            = null;
   }
 
   /**
@@ -325,6 +344,10 @@ public abstract class AbstractGeneticAlgorithm
     m_OptionManager.add(
       "seed", "seed",
       1L);
+
+    m_OptionManager.add(
+      "initial-weights", "initialWeights",
+      "");
 
     m_OptionManager.add(
       "favor-zeroes", "favorZeroes",
@@ -441,6 +464,35 @@ public abstract class AbstractGeneticAlgorithm
    */
   public String seedTipText() {
     return "The seed value for the random number generator.";
+  }
+
+  /**
+   * Sets the initial weights to use rather than random ones.
+   *
+   * @param value	the initial weights
+   */
+  public void setInitialWeights(String value) {
+    m_InitialWeights = value;
+    reset();
+  }
+
+  /**
+   * Returns the initial weights to use rather than random ones.
+   *
+   * @return		the initial weights
+   */
+  public String getInitialWeights() {
+    return m_InitialWeights;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String initialWeightsTipText() {
+    return "The initial weights to use, rather than random ones (string of 0s and 1s).";
   }
 
   /**
@@ -647,27 +699,43 @@ public abstract class AbstractGeneticAlgorithm
    * @param genes	the number of genes
    */
   protected void init(int ch, int genes) {
-    m_NumChrom=ch;
-    m_NumGenes = genes;
+    Vector<int[]> 	setups;
+    int 		weightIndex;
+    int			i;
+    int			j;
+    int[] 		gene;
+    double 		set;
+
     getLogger().info("#chrom=" + ch + ", #gene=" + genes);
-    m_Genes = new BitSet[m_NumChrom];
-    Vector<int[]> setups=getInitialSetups();
-    for (int i = 0; i < m_NumChrom; i++) {
+
+    m_NumChrom = ch;
+    m_NumGenes = genes;
+    m_Genes    = new BitSet[m_NumChrom];
+
+    setups      = getInitialSetups();
+    weightIndex = 0;
+    for (i = 0; i < m_NumChrom; i++) {
       m_Genes[i] = new BitSet(m_NumGenes);
 
       if (i < setups.size()) {
-	int[] gene=setups.get(i);
-	for (int j = 0; j < m_NumGenes; j++) {
+	gene = setups.get(i);
+	for (j = 0; j < m_NumGenes; j++) {
 	  if (gene[j] == 1) {
 	    m_Genes[i].set(j);
 	  }
 	}
 	continue;
       }
-      for (int j = 0; j < m_NumGenes; j++) {
-	double set = m_Random.nextDouble();
-	if (set < 0.5) {
-	  m_Genes[i].set(j);
+      for (j = 0; j < m_NumGenes; j++) {
+	set = m_Random.nextDouble();
+	if (weightIndex < m_InitialWeights.length()) {
+	  if (m_InitialWeights.charAt(weightIndex) == '1')
+	    m_Genes[i].set(j);
+	  weightIndex++;
+	}
+	else {
+	  if (set < 0.5)
+	    m_Genes[i].set(j);
 	}
       }
 
@@ -676,6 +744,7 @@ public abstract class AbstractGeneticAlgorithm
     m_Fitness = new double[m_NumChrom];
     for (int f = 0; f < m_NumChrom; f++)
       m_Fitness[f] = 0;
+
     sort();
   }
 
@@ -853,11 +922,13 @@ public abstract class AbstractGeneticAlgorithm
    * listeners if setup.
    *
    * @param fitness	the new fitness
+   * @param setup	the new setup
+   * @param weights	the new weights
    * @return		true if the new fitness was better
    * @see		#m_FitnessChangeListeners
    * @see		#m_NotificationInterval
    */
-  protected synchronized boolean setNewFitness(double fitness, Object setup) {
+  protected synchronized boolean setNewFitness(double fitness, Object setup, int[] weights) {
     boolean 	result;
 
     result = false;
@@ -865,6 +936,7 @@ public abstract class AbstractGeneticAlgorithm
     if (fitness > m_BestFitness) {
       m_BestFitness = fitness;
       m_BestSetup   = setup;
+      m_BestWeights = weights.clone();
       result        = true;
     }
 
@@ -890,6 +962,15 @@ public abstract class AbstractGeneticAlgorithm
   }
 
   /**
+   * Returns the currently best weights/bits.
+   *
+   * @return		the best weights/bits so far
+   */
+  public int[] getCurrentWeights() {
+    return m_BestWeights;
+  }
+
+  /**
    * Further initializations in derived classes.
    */
   protected void preRun() {
@@ -899,6 +980,7 @@ public abstract class AbstractGeneticAlgorithm
     m_LastNotificationTime = null;
     m_BestFitness          = Double.NEGATIVE_INFINITY;
     m_BestSetup            = null;
+    m_BestWeights          = null;
     m_StoppingCriterion.start();
   }
 
@@ -1034,9 +1116,11 @@ public abstract class AbstractGeneticAlgorithm
    * Sends out a notification to all listeners that the fitness has changed, if
    * notifications is wanted and due.
    *
-   * @param fitness	the fitness to broadcast
+   * @param fitness	the fitness
+   * @param setup	the setup
+   * @param weights 	the weights
    */
-  protected synchronized void notifyFitnessChangeListeners(double fitness, Object setup) {
+  protected synchronized void notifyFitnessChangeListeners(double fitness, Object setup, int[] weights) {
     boolean 	notify;
     long	currTime;
 
@@ -1048,7 +1132,7 @@ public abstract class AbstractGeneticAlgorithm
         && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
       if (notify) {
         m_LastNotificationTime = currTime;
-        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness, setup));
+        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness, setup, weights));
       }
     }
   }

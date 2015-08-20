@@ -38,6 +38,7 @@ import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
 import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.genetic.AbstractGeneticAlgorithm.GeneticAlgorithmJob;
 import adams.genetic.DarkLord;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -511,7 +512,9 @@ public class WekaGeneticAlgorithm
 	cont = new WekaGeneticAlgorithmContainer(
 	  (Classifier) m_ActualAlgorithm.getCurrentSetup(),
 	  m_ActualAlgorithm.getMeasure(),
-	  m_ActualAlgorithm.getCurrentFitness());
+	  m_ActualAlgorithm.getCurrentFitness(),
+          GeneticAlgorithmJob.weightsToString(m_ActualAlgorithm.getCurrentWeights()),
+          m_ActualAlgorithm.getCurrentWeights());
       m_ActualAlgorithm.removeFitnessChangeListener(this);
       m_ActualAlgorithm = null;
     }
@@ -564,7 +567,9 @@ public class WekaGeneticAlgorithm
 	cont = new WekaGeneticAlgorithmContainer(
 	  (Classifier) e.getSetup(),
 	  ((AbstractClassifierBasedGeneticAlgorithm) e.getGeneticAlgorithm()).getMeasure(),
-	  e.getFitness());
+	  e.getFitness(),
+          GeneticAlgorithmJob.weightsToString(e.getWeights()),
+          e.getWeights());
 	if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped()) {
 	  synchronized(m_CallableActor) {
 	    if (isLoggingEnabled())

@@ -43,10 +43,16 @@ public class WekaGeneticAlgorithmContainer
   public final static String VALUE_SETUP = "Setup";
 
   /** the identifier for the measure. */
-  public final static String VALUE_Measure = "Measure";
+  public final static String VALUE_MEASURE = "Measure";
 
   /** the identifier for the fitness. */
   public final static String VALUE_FITNESS = "Fitness";
+
+  /** the identifier for the weights string. */
+  public final static String VALUE_WEIGHTSSTR = "WeightsStr";
+
+  /** the identifier for the weights. */
+  public final static String VALUE_WEIGHTS = "Weights";
 
   /**
    * Initializes the container.
@@ -63,7 +69,7 @@ public class WekaGeneticAlgorithmContainer
    * @param cls	  	the setup to use
    */
   public WekaGeneticAlgorithmContainer(Classifier cls) {
-    this(cls, null, null);
+    this(cls, null, null, null, null);
   }
 
   /**
@@ -72,13 +78,17 @@ public class WekaGeneticAlgorithmContainer
    * @param cls	  	the setup to use
    * @param measure	the measure to use, can be null
    * @param fitness	the fitness to use, can be null
+   * @param weightsStr	the weights string to use, can be null
+   * @param weights	the weights to use, can be null
    */
-  public WekaGeneticAlgorithmContainer(Classifier cls, Measure measure, Double fitness) {
+  public WekaGeneticAlgorithmContainer(Classifier cls, Measure measure, Double fitness, String weightsStr, int[] weights) {
     super();
 
     store(VALUE_SETUP, cls);
-    store(VALUE_Measure, measure);
+    store(VALUE_MEASURE, measure);
     store(VALUE_FITNESS, fitness);
+    store(VALUE_WEIGHTSSTR, weightsStr);
+    store(VALUE_WEIGHTS, (weights != null ? weights.clone() : weights));
   }
 
   /**
@@ -93,8 +103,10 @@ public class WekaGeneticAlgorithmContainer
     result = new ArrayList<String>();
 
     result.add(VALUE_SETUP);
-    result.add(VALUE_Measure);
+    result.add(VALUE_MEASURE);
     result.add(VALUE_FITNESS);
+    result.add(VALUE_WEIGHTSSTR);
+    result.add(VALUE_WEIGHTS);
 
     return result.iterator();
   }

@@ -43,17 +43,23 @@ public class FitnessChangeEvent
   /** the associated setup, if any. */
   protected Object m_Setup;
 
+  /** the associated weights. */
+  protected int[] m_Weights;
+
   /**
    * Initializes the event.
    * 
    * @param source	the algorithm that triggered the event
    * @param fitness	the fitness that triggered this event
+   * @param setup 	the setup
+   * @param weights	the weights/bits
    */
-  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness, Object setup) {
+  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness, Object setup, int[] weights) {
     super(source);
     
     m_Fitness = fitness;
-    m_Setup   = null;
+    m_Setup   = setup;
+    m_Weights = weights.clone();
   }
   
   /**
@@ -81,5 +87,14 @@ public class FitnessChangeEvent
    */
   public Object getSetup() {
     return m_Setup;
+  }
+
+  /**
+   * Returns the associated weights/bits.
+   *
+   * @return		the weights
+   */
+  public int[] getWeights() {
+    return m_Weights;
   }
 }

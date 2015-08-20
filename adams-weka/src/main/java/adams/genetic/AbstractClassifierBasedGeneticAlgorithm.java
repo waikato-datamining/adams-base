@@ -198,7 +198,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param cls	the current classifier
      * @return		the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls) {
+    protected Properties assembleSetup(double fitness, Classifier cls, int[] weights) {
       Properties result;
 
       result = new Properties();
@@ -206,6 +206,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       result.setProperty("Measure", "" + getMeasure());
       result.setDouble("Fitness", fitness);
       result.setProperty("Setup", OptionUtils.getCommandLine(cls));
+      result.setProperty("Weights", weightsToString(weights));
 
       return result;
     }
@@ -216,14 +217,15 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param fitness		the current measure/fitness
      * @param data		the dataset
      * @param cls		the current classifier setup
+     * @param weights		the current weights/bits
      * @throws Exception	if saving the file fails
      */
-    protected void outputSetup(double fitness, Instances data, Classifier cls) throws Exception {
+    protected void outputSetup(double fitness, Instances data, Classifier cls, int[] weights) throws Exception {
       File 		file;
       Properties 	props;
 
       file  = createFileName(fitness, data, "props");
-      props = assembleSetup(fitness, cls);
+      props = assembleSetup(fitness, cls, weights);
       if (!props.save(file.getAbsolutePath()))
 	getLogger().warning("Failed to write setup to '" + file + "'!");
     }
@@ -234,21 +236,22 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param fitness		the current fitness
      * @param data		the dataset
      * @param cls		the current classifier
+     * @param weights		the current weights/bits
      * @throws Exception	if output fails
      */
-    protected void generateOutput(double fitness, Instances data, Classifier cls) throws Exception {
+    protected void generateOutput(double fitness, Instances data, Classifier cls, int[] weights) throws Exception {
       switch (getGenetic().getOutputType()) {
 	case NONE:
 	  break;
 	case SETUP:
-	  outputSetup(fitness, data, cls);
+	  outputSetup(fitness, data, cls, weights);
 	  break;
 	case DATA:
 	  outputDataset(fitness, data);
 	  break;
 	case ALL:
 	  outputDataset(fitness, data);
-	  outputSetup(fitness, data, cls);
+	  outputSetup(fitness, data, cls, weights);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled output type: " + getGenetic().getOutputType());

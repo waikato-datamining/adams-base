@@ -184,12 +184,13 @@ public class DarkLord
      *
      * @param fitness	the current fitness
      * @param cls	the current classifier
+     * @param weights	the current weights
      * @return		the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls) {
+    protected Properties assembleSetup(double fitness, Classifier cls, int[] weights) {
       Properties	result;
 
-      result = super.assembleSetup(fitness, cls);
+      result = super.assembleSetup(fitness, cls, weights);
       result.setProperty("Mask", getMaskAsString());
 
       return result;
@@ -231,10 +232,10 @@ public class DarkLord
 	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
         // process fitness
-        if (getGenetic().setNewFitness(m_Fitness, newClassifier)) {
-	  generateOutput(m_Fitness, newInstances, newClassifier);
+        if (getGenetic().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
+	  generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
           // notify the listeners
-          getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier);
+          getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
 	}
         else {
           getLogger().fine(getMaskAsString());
