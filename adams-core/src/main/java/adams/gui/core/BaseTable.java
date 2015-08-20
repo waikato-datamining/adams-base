@@ -470,7 +470,7 @@ public class BaseTable
     row  = rowAtPoint(e.getPoint());
     col = columnAtPoint(e.getPoint());
 
-    menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy_cell.gif"));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -483,7 +483,47 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy table", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Copy row", GUIHelper.getIcon("copy_row.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	if (row == -1)
+	  return;
+        StringBuilder content = new StringBuilder();
+        for (int i = 0; i < getColumnCount(); i++) {
+          Object value = getValueAt(row, i);
+          if (i > 0)
+            content.append("\t");
+          if (value != null)
+            content.append(value.toString());
+        }
+        GUIHelper.copyToClipboard(content.toString());
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	if (col == -1)
+	  return;
+        String sep = System.getProperty("line.separator");
+        StringBuilder content = new StringBuilder(getColumnName(col));
+        for (int i = 0; i < getRowCount(); i++) {
+          content.append(sep);
+          Object value = getValueAt(i, col);
+          if (value != null)
+            content.append(value.toString());
+          else
+            content.append("");
+        }
+        GUIHelper.copyToClipboard(content.toString());
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy table", GUIHelper.getIcon("copy_table.gif"));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

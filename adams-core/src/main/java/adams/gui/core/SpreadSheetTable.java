@@ -306,7 +306,7 @@ public class SpreadSheetTable
     else
       actCol = col;
     
-    menuitem = new JMenuItem("Copy column name", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -316,7 +316,7 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
     
-    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -452,7 +452,7 @@ public class SpreadSheetTable
       menuitem = new JMenuItem("Copy rows");
     else
       menuitem = new JMenuItem("Copy row");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
     menuitem.setEnabled(getSelectedRowCount() > 0);
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -463,7 +463,7 @@ public class SpreadSheetTable
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy cell");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener(new ActionListener() {
       @Override
