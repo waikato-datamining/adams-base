@@ -20,11 +20,8 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
+import adams.core.Stoppable;
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
@@ -35,6 +32,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Abstract ancestor for actors that read data containers from disk.
@@ -218,6 +219,16 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     }
 
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    super.stopExecution();
+    if (m_Reader instanceof Stoppable)
+      ((Stoppable) m_Reader).stopExecution();
   }
 
   /**
