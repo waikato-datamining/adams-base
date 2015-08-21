@@ -551,7 +551,7 @@ public class MinMaxLimits
 	m_MinActual = m_MinManual;
 	break;
       case CLASS_RANGE:
-	m_MinActual = min - range * m_MaxClassRangePercentage;
+	m_MinActual = min - range * m_MinClassRangePercentage;
 	break;
     }
     if (getDebug())
