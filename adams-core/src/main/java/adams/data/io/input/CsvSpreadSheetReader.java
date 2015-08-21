@@ -33,6 +33,7 @@ import adams.data.DateFormatString;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
@@ -45,6 +46,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -64,9 +66,9 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
  * 
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
@@ -146,6 +148,23 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-datetimemsec-columns &lt;adams.core.Range&gt; (property: dateTimeMsecColumns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time msec.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-datetimemsec-format &lt;adams.data.DateFormatString&gt; (property: dateTimeMsecFormat)
+ * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
+ * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss.SSS
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ * 
+ * <pre>-datetimemsec-lenient &lt;boolean&gt; (property: dateTimeMsecLenient)
+ * &nbsp;&nbsp;&nbsp;Whether date&#47;time msec parsing is lenient or not.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-time-columns &lt;adams.core.Range&gt; (property: timeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as time.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -195,6 +214,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-num-rows-col-type-discovery &lt;int&gt; (property: numRowsColumnTypeDiscovery)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to use for automatically determining the column 
+ * &nbsp;&nbsp;&nbsp;(= speed up for large files with consistent cell types); use 0 to turn off 
+ * &nbsp;&nbsp;&nbsp;feature.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
  * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
@@ -321,6 +348,12 @@ public class CsvSpreadSheetReader
     
     /** the number of rows to retrieve (less than 1 = unlimited). */
     protected int m_NumRows;
+
+    /** the number of rows to use for automatically determining the column types. */
+    protected int m_NumRowsAuto;
+
+    /** the automatically determined column types. */
+    protected ContentType[] m_AutoTypes;
 
     /**
      * Initializes the low-level reader.
@@ -483,14 +516,17 @@ public class CsvSpreadSheetReader
      * @return		the next chunk
      */
     public SpreadSheet next() {
-      SpreadSheet	result;
-      List<String>	cells;
-      boolean		isHeader;
-      boolean		comments;
-      Row		row;
-      Cell		cell;
-      int		i;
-      boolean		canAdd;
+      SpreadSheet		result;
+      List<String>		cells;
+      boolean			isHeader;
+      boolean			comments;
+      Row			row;
+      Cell			cell;
+      int			i;
+      boolean			canAdd;
+      HashSet<ContentType>	types;
+      Object			autoObj;
+      boolean			autoSuccess;
 
       if (m_Header == null) {
 	result = m_Owner.getSpreadSheetType().newInstance();
@@ -589,18 +625,28 @@ public class CsvSpreadSheetReader
 		else {
 		  cell = row.addCell("" + i);
 		  if (cell != null) {
-		    if (m_HasTextCols && m_TextCols.contains(i))
-		      cell.setContentAsString(cells.get(i));
-		    else if (m_HasDateTimeMsecCols && m_DateTimeMsecCols.contains(i) && m_DateTimeMsecFormat.check(cells.get(i)))
-		      cell.setContent(new DateTimeMsec(m_DateTimeMsecFormat.parse(cells.get(i))));
-		    else if (m_HasDateTimeCols && m_DateTimeCols.contains(i) && m_DateTimeFormat.check(cells.get(i)))
-		      cell.setContent(new DateTime(m_DateTimeFormat.parse(cells.get(i))));
-		    else if (m_HasDateCols && m_DateCols.contains(i) && m_DateFormat.check(cells.get(i)))
-		      cell.setContent(m_DateFormat.parse(cells.get(i)));
-		    else if (m_HasTimeCols && m_TimeCols.contains(i) && m_TimeFormat.check(cells.get(i)))
-		      cell.setContent(new Time(m_TimeFormat.parse(cells.get(i))));
-		    else
-		      cell.setContent(cells.get(i));
+		    autoSuccess = false;
+		    if ((m_AutoTypes != null) && (m_AutoTypes[i] != null)) {
+		      autoObj = cell.parseContent(cells.get(i), m_AutoTypes[i]);
+		      if (!autoObj.equals(SpreadSheet.MISSING_VALUE)) {
+			cell.setNative(autoObj);
+			autoSuccess = true;
+		      }
+		    }
+		    if (!autoSuccess) {
+		      if (m_HasTextCols && m_TextCols.contains(i))
+			cell.setContentAsString(cells.get(i));
+		      else if (m_HasDateTimeMsecCols && m_DateTimeMsecCols.contains(i) && m_DateTimeMsecFormat.check(cells.get(i)))
+			cell.setContent(new DateTimeMsec(m_DateTimeMsecFormat.parse(cells.get(i))));
+		      else if (m_HasDateTimeCols && m_DateTimeCols.contains(i) && m_DateTimeFormat.check(cells.get(i)))
+			cell.setContent(new DateTime(m_DateTimeFormat.parse(cells.get(i))));
+		      else if (m_HasDateCols && m_DateCols.contains(i) && m_DateFormat.check(cells.get(i)))
+			cell.setContent(m_DateFormat.parse(cells.get(i)));
+		      else if (m_HasTimeCols && m_TimeCols.contains(i) && m_TimeFormat.check(cells.get(i)))
+			cell.setContent(new Time(m_TimeFormat.parse(cells.get(i))));
+		      else
+			cell.setContent(cells.get(i));
+		    }
 		  }
 		}
 	      }
@@ -610,7 +656,18 @@ public class CsvSpreadSheetReader
 	  // keep as reference
 	  if (m_Header == null)
 	    m_Header = result.getHeader();
-	  
+
+	  // automatically determining column type?
+	  if ((m_NumRowsAuto > 0) && (m_RowCount >= m_NumRowsAuto) && (m_AutoTypes == null)) {
+	    m_AutoTypes = new ContentType[result.getColumnCount()];
+	    for (i = 0; i < m_AutoTypes.length; i++) {
+	      types = new HashSet<>(result.getContentTypes(i));
+	      types.remove(ContentType.MISSING);
+	      if (types.size() == 1)
+		m_AutoTypes[i] = types.iterator().next();
+	    }
+	  }
+
 	  // end of window reached?
 	  if (m_NumRows > -1) {
 	    if (m_RowCount >= m_FirstRow + m_NumRows - 1) {
@@ -690,6 +747,8 @@ public class CsvSpreadSheetReader
       m_FirstRow            = m_Owner.getFirstRow();
       m_NumRows             = m_Owner.getNumRows();
       m_RowCount            = 0;
+      m_AutoTypes           = null;
+      m_NumRowsAuto         = m_Owner.getNumRowsColumnTypeDiscovery();
 
       m_DateTimeMsecFormat = m_Owner.getDateTimeMsecFormat().toDateFormat();
       m_DateTimeMsecFormat.setLenient(m_Owner.isDateTimeMsecLenient());
@@ -780,6 +839,9 @@ public class CsvSpreadSheetReader
   
   /** the number of rows to retrieve (less than 1 = unlimited). */
   protected int m_NumRows;
+
+  /** the number of rows to use for automatic discovery of column types (0 = off). */
+  protected int m_NumRowsColumnTypeDiscovery;
 
   /** for reading the actual data. */
   protected ChunkReader m_Reader;
@@ -902,6 +964,10 @@ public class CsvSpreadSheetReader
     m_OptionManager.add(
 	    "num-rows", "numRows",
 	    -1, -1, null);
+
+    m_OptionManager.add(
+	    "num-rows-col-type-discovery", "numRowsColumnTypeDiscovery",
+	    0, 0, null);
 
     m_OptionManager.add(
 	    "chunk-size", "chunkSize",
@@ -1636,6 +1702,42 @@ public class CsvSpreadSheetReader
    */
   public String numRowsTipText() {
     return "The number of data rows to retrieve; use -1 for unlimited.";
+  }
+
+  /**
+   * Sets the number of data rows to use for automatically determining the
+   * column type.
+   *
+   * @param value	the number of rows, 0 to turn off feature
+   */
+  public void setNumRowsColumnTypeDiscovery(int value) {
+    if (getOptionManager().isValid("numRowsColumnTypeDiscovery", value)) {
+      m_NumRowsColumnTypeDiscovery = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of data rows to use for automatically determining the
+   * column type.
+   *
+   * @return		the number of rows, 0 to turn off feature
+   */
+  public int getNumRowsColumnTypeDiscovery() {
+    return m_NumRowsColumnTypeDiscovery;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsColumnTypeDiscoveryTipText() {
+    return
+      "The number of data rows to use for automatically determining the "
+	+ "column (= speed up for large files with consistent cell types); "
+	+ "use 0 to turn off feature.";
   }
 
   /**
