@@ -9,15 +9,47 @@
       </includes>
     </fileSet>
     <fileSet filtered="true">
-      <directory>src/main/resources/adams/env</directory>
+      <directory>src/main/assembly</directory>
       <includes>
-        <include>Module.props</include>
+        <include>**/*.*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false">
+      <directory>src/main/flows</directory>
+      <includes>
+        <include>**/*.*</include>
+        <include>*.*</include>
+        <include>README</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false">
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.*</include>
       </includes>
     </fileSet>
     <fileSet filtered="true">
       <directory>src/main/latex/manual</directory>
       <includes>
-        <include>manual.tex</include>
+        <include>*.tex</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false">
+      <directory>src/main/latex/manual/images</directory>
+      <includes>
+        <include>*.*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true">
+      <directory>src/main/resources/adams/env</directory>
+      <includes>
+        <include>Module.props</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false">
+      <directory>src/main/scripts</directory>
+      <includes>
+        <include>*.*</include>
       </includes>
     </fileSet>
   </fileSets>
