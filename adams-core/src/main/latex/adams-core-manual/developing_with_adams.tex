@@ -871,16 +871,16 @@ that you should remove temporary files that you use for regression tests in the
 \textit{setUp()} and \textit{tearDown()} methods of the unit test, to provide a
 clean environment to this and other tests.
 
-\section{Creating a new module}
-First, you have to make sure that your local repository catalog is up-to-date:
-\begin{verbatim}
-mvn archetype:update-local-catalog
-\end{verbatim}
-Second, run the following command to create a new module called
-\textit{adams-funky}:
+\section{Creating a new module (or project)}
+The following instructions are for creating a new module or project, in
+which you will place your own code like actors. The aim is not to create
+a new module \textit{inside} the existing ADAMS source tree, but rather \textit{outside},
+since you don't need the source code of ADAMS for this to compile (Maven will
+automatically pull in the required dependencies).
+
+Run the following command to create a new module called \textit{adams-funky}:
 \begin{verbatim}
 mvn archetype:generate \
-     -DarchetypeCatalog=local \
      -DinteractiveMode=false \
      -DarchetypeGroupId=nz.ac.waikato.cms.adams \
      -DarchetypeArtifactId=adams-archetype-module \
@@ -900,21 +900,6 @@ that you have to perform is to set the correct module name, specified under the
 \textit{Name} key. Apart from the name, this properties file contains
 information about your module, which gets displayed automatically in the
 \textit{About} dialog in the GUI.
-
-\heading{Official modules}
-If you run the above command within the top-level directory that hosts all the
-other ADAMS modules, then it will automatically add this module to the
-\texttt{pom.xml} configuration file as a new dependent module. This means that
-each time you issue a command in this directory (e.g., \texttt{mvn package}),
-your module will be processed accordingly. This is the preferred approach when
-adding a new module to be added to the ADAMS subversion repository.
-
-\heading{Other modules}
-Otherwise, if you created that module outside the ADAMS module hierarchy, it
-will use the artifacts that you have installed in your local repository (of
-course, maven will occasionally check the Nexus repository manager for updates).
-Use this approach if there is no intention on adding the module to the official
-ADAMS subversion repository.
 
 \section{Main menu}
 \label{mainmenu}
