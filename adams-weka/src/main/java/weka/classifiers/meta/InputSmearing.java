@@ -171,7 +171,7 @@ public class InputSmearing
 
   private static final long serialVersionUID = 8040692114355993432L;
 
-  /** the standard variation multiplier to use. */
+  /** the standard deviation multiplier to use. */
   protected double m_StdDev = 1.0;
 
   /**
