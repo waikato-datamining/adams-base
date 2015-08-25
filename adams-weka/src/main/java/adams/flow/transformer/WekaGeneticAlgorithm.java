@@ -622,7 +622,15 @@ public class WekaGeneticAlgorithm
    */
   @Override
   public void flowPauseStateChanged(FlowPauseStateEvent e) {
-    if (m_ActualAlgorithm != null)
-      m_ActualAlgorithm.pauseExecution();
+    if (m_ActualAlgorithm != null) {
+      switch (e.getType()) {
+        case PAUSED:
+          m_ActualAlgorithm.pauseExecution();
+          break;
+        case RESUMED:
+          m_ActualAlgorithm.resumeExecution();
+          break;
+      }
+    }
   }
 }
