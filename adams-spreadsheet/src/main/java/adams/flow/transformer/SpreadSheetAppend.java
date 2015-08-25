@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetAppend.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.flow.control.StorageName;
+import adams.flow.control.StorageUpdater;
 import adams.flow.core.Token;
 
 /**
@@ -91,7 +92,8 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class SpreadSheetAppend
-  extends AbstractInPlaceSpreadSheetTransformer {
+  extends AbstractInPlaceSpreadSheetTransformer
+  implements StorageUpdater {
 
   /** for serialization. */
   private static final long serialVersionUID = -253714973019682939L;
@@ -169,6 +171,15 @@ public class SpreadSheetAppend
    */
   public String storageNameTipText() {
     return "The name of the stored spreadsheet to append the incoming one.";
+  }
+
+  /**
+   * Returns whether storage items are being updated.
+   *
+   * @return		true if storage items are updated
+   */
+  public boolean isUpdatingStorage() {
+    return !getSkip();
   }
 
   /**
