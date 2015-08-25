@@ -20,11 +20,15 @@
 
 package weka.classifiers.meta;
 
+import adams.data.statistics.StatUtils;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
+import weka.core.TechnicalInformation;
+import weka.core.TechnicalInformation.Field;
+import weka.core.TechnicalInformation.Type;
 import weka.core.Utils;
 
 import java.util.Collections;
@@ -39,7 +43,9 @@ import java.util.Vector;
  * <br/>
  * For more information, see<br/>
  * <br/>
- * Leo Breiman (1996). Bagging predictors. Machine Learning. 24(2):123-140.
+ * Leo Breiman (1996). Bagging predictors. Machine Learning. 24(2):123-140.<br/>
+ * <br/>
+ * Frank, Eibe, Pfahringer, Bernhard: Improving on Bagging with Input Smearing. In Ng, Wee-Keong and Kitsuregawa, Masaru and Li, Jianzhong and Chang, Kuiyu, editors, Advances in Knowledge Discovery and Data Mining, 97-106, 2006.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -55,6 +61,20 @@ import java.util.Vector;
  *    volume = {24},
  *    year = {1996}
  * }
+ * 
+ * &#64;incollection{Frank2006,
+ *    author = {Frank, Eibe and Pfahringer, Bernhard},
+ *    booktitle = {Advances in Knowledge Discovery and Data Mining},
+ *    editor = {Ng, Wee-Keong and Kitsuregawa, Masaru and Li, Jianzhong and Chang, Kuiyu},
+ *    pages = {97-106},
+ *    publisher = {Springer Berlin Heidelberg},
+ *    series = {Lecture Notes in Computer Science},
+ *    title = {Improving on Bagging with Input Smearing},
+ *    volume = {3918},
+ *    year = {2006},
+ *    ISBN = {978-3-540-33206-0},
+ *    URL = {http://dx.doi.org/10.1007/11731139_14}
+ * }
  * </pre>
  * <p/>
  <!-- technical-bibtex-end -->
@@ -63,7 +83,8 @@ import java.util.Vector;
  * Valid options are: <p/>
  * 
  * <pre> -stddev &lt;number&gt;
- *  The standard deviation to use for the smearing (default 1.0)</pre>
+ *  The multiplier for the standard deviation of a numeric attribute
+ *  to use for performing the smearing (default 1.0)</pre>
  * 
  * <pre> -P
  *  Size of each bag, as a percentage of the
@@ -167,6 +188,38 @@ public class InputSmearing
   }
 
   /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return the technical information about this class
+   */
+  @Override
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation	result;
+    TechnicalInformation	additional;
+
+    result = super.getTechnicalInformation();
+
+    additional = new TechnicalInformation(Type.INCOLLECTION);
+    additional.setValue(Field.BOOKTITLE, "Advances in Knowledge Discovery and Data Mining");
+    additional.setValue(Field.EDITOR, "Ng, Wee-Keong and Kitsuregawa, Masaru and Li, Jianzhong and Chang, Kuiyu");
+    additional.setValue(Field.TITLE, "Improving on Bagging with Input Smearing");
+    additional.setValue(Field.AUTHOR, "Frank, Eibe and Pfahringer, Bernhard");
+    additional.setValue(Field.SERIES, "Lecture Notes in Computer Science");
+    additional.setValue(Field.VOLUME, "3918");
+    additional.setValue(Field.PAGES, "97-106");
+    additional.setValue(Field.YEAR, "2006");
+    additional.setValue(Field.ISBN, "978-3-540-33206-0");
+    additional.setValue(Field.URL, "http://dx.doi.org/10.1007/11731139_14");
+    additional.setValue(Field.PUBLISHER, "Springer Berlin Heidelberg");
+
+    result.add(additional);
+
+    return result;
+  }
+
+  /**
    * Returns an enumeration describing the available options.
    *
    * @return an enumeration of all the available options.
@@ -176,7 +229,8 @@ public class InputSmearing
     Vector<Option> result = new Vector<Option>();
 
     result.addElement(new Option(
-      "\tThe standard deviation to use for the smearing (default 1.0)",
+      "\tThe multiplier for the standard deviation of a numeric attribute\n"
+        + "\tto use for performing the smearing (default 1.0)",
       "stddev", 1, "-stddev <number>"));
 
     result.addAll(Collections.list(super.listOptions()));
@@ -224,18 +278,18 @@ public class InputSmearing
   }
 
   /**
-   * Gets the standard deviation to use for input smearing.
+   * Gets the multiplier for the standard deviation to use for input smearing.
    *
-   * @return the standard deviation
+   * @return the multiplier
    */
   public double getStdDev() {
     return m_StdDev;
   }
 
   /**
-   * Sets the standard deviation to use for input smearing.
+   * Sets the multiplier for the standard deviation to use for input smearing.
    *
-   * @param value the standard deviation.
+   * @param value the multiplier
    */
   public void setStdDev(double value) {
     m_StdDev = value;
@@ -262,11 +316,15 @@ public class InputSmearing
     Instances bagData = super.getTrainingSet(iteration);
     Random rnd = new Random(m_Seed + iteration);
 
-    for (Instance inst: bagData) {
-      for (int i = 0; i < inst.numAttributes(); i++) {
-	if (inst.attribute(i).type() == Attribute.NUMERIC) {
-	  inst.setValue(i, inst.value(i) + rnd.nextGaussian() * m_StdDev);
-	}
+    for (int i = 0; i < bagData.numAttributes(); i++) {
+      if (bagData.attribute(i).type() == Attribute.NUMERIC) {
+        double[] values = bagData.attributeToDoubleArray(i);
+        double stdev = StatUtils.stddev(values, true);
+        for (Instance inst : bagData) {
+          if (inst.attribute(i).type() == Attribute.NUMERIC) {
+            inst.setValue(i, inst.value(i) + rnd.nextGaussian() * stdev * m_StdDev);
+          }
+        }
       }
     }
 
