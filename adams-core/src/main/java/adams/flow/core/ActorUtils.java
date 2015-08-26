@@ -1049,6 +1049,12 @@ public class ActorUtils {
     if (!(parent instanceof ActorHandler))
       return result;
 
+    if (path.getPathCount() == 0) {
+      if (!quiet)
+	LOGGER.warning("Empty path? " + path);
+      return null;
+    }
+
     if (included) {
       if (path.getFirstPathComponent().equals(parent.getName())) {
 	if (path.getPathCount() == 1)
