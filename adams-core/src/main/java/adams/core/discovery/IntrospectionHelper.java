@@ -62,7 +62,7 @@ public class IntrospectionHelper {
    * @throws Exception	if introspection fails
    */
   public static IntrospectionContainer introspect(Object obj) throws Exception {
-    return introspect(obj.getClass(), true);
+    return introspect(obj, true);
   }
 
   /**
