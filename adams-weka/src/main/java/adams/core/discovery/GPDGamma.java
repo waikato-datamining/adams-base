@@ -75,29 +75,23 @@ public class GPDGamma
   }
 
   /**
-   * Returns the packed bits for the genetic algorithm.
+   * Returns the double value from the property container.
    *
-   * @param cont	the container to obtain the value from to turn into a string
-   * @return		the bits
+   * @param cont	the container
+   * @return		the value
    */
-  @Override
-  protected String doPack(PropertyContainer cont) {
-    GPD gpd=(GPD)cont.getObject();
-    double val=gpd.getGamma();
-    return GeneticHelper.doubleToBits(val, getMinimum(), getMaximum(), calcNumBits(), getSplits());
+  protected double getValue(PropertyContainer cont) {
+    return ((GPD) cont.getObject()).getGamma();
   }
 
   /**
-   * Unpacks and applies the bits from the genetic algorithm.
+   * Sets the double value in the property container.
    *
-   * @param cont	the container to set the value for created from the string
-   * @param bits	the bits to use
+   * @param cont	the container
+   * @param value	the value to set
    */
-  @Override
-  protected void doUnpack(PropertyContainer cont, String bits) {
-    double val = GeneticHelper.bitsToDouble(bits, getMinimum(), getMaximum(), getSplits());
-    GPD gpd=(GPD)cont.getObject();
-    gpd.setGamma(val);
+  protected void setValue(PropertyContainer cont, double value) {
+    ((GPD) cont.getObject()).setGamma(value);
   }
 
   /**

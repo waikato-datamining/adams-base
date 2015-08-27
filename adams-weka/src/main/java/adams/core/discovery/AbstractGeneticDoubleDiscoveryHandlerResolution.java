@@ -21,6 +21,7 @@
 package adams.core.discovery;
 
 import adams.core.Utils;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 /**
  * Ancestor for genetic discovery handlers that handle double properties with
@@ -103,5 +104,43 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
    */
   protected int calcNumBits(){
     return((int)(Math.floor(Utils.log2(m_Splits))+1));
+  }
+
+  /**
+   * Returns the double value from the property container.
+   *
+   * @param cont	the container
+   * @return		the value
+   */
+  protected abstract double getValue(PropertyContainer cont);
+
+  /**
+   * Returns the packed bits for the genetic algorithm.
+   *
+   * @param cont	the container to obtain the value from to turn into a string
+   * @return		the bits
+   */
+  @Override
+  protected String doPack(PropertyContainer cont) {
+    return GeneticHelper.doubleToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits(), getSplits());
+  }
+
+  /**
+   * Sets the double value in the property container.
+   *
+   * @param cont	the container
+   * @param value	the value to set
+   */
+  protected abstract void setValue(PropertyContainer cont, double value);
+
+  /**
+   * Unpacks and applies the bits from the genetic algorithm.
+   *
+   * @param cont	the container to set the value for created from the string
+   * @param bits	the bits to use
+   */
+  @Override
+  protected void doUnpack(PropertyContainer cont, String bits) {
+    setValue(cont, GeneticHelper.bitsToDouble(bits, getMinimum(), getMaximum(), getSplits()));
   }
 }
