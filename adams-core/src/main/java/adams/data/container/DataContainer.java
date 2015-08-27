@@ -15,19 +15,19 @@
 
 /**
  * DataContainer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.container;
+
+import adams.core.CloneHandler;
+import adams.core.Mergeable;
+import adams.data.id.MutableIDHandler;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-
-import adams.core.CloneHandler;
-import adams.core.Mergeable;
-import adams.data.id.MutableIDHandler;
 
 /**
  * Generic Interface for data containers.
@@ -97,13 +97,35 @@ public interface DataContainer<T extends DataPoint>
   public int compareToHeader(Object o);
 
   /**
-   * Indicates whether some other chromatogram's header is "equal to" this ones.
+   * Indicates whether some other container's header is "equal to" this ones.
    *
    * @param obj		the reference object with which to compare.
    * @return		true if this object is the same as the obj argument;
    * 			false otherwise.
    */
   public boolean equalsHeader(Object obj);
+
+  /**
+   * Compares this object with the specified object for order.  Returns a
+   * negative integer, zero, or a positive integer as this object is less
+   * than, equal to, or greater than the specified object.
+   *
+   * @param   o the object to be compared.
+   * @return  a negative integer, zero, or a positive integer as this object
+   *		is less than, equal to, or greater than the specified object.
+   * @throws ClassCastException if the specified object's type prevents it
+   *         from being compared to this object.
+   */
+  public int compareToData(Object o);
+
+  /**
+   * Indicates whether some other container's header is "equal to" this ones.
+   *
+   * @param obj		the reference object with which to compare.
+   * @return		true if this object is the same as the obj argument;
+   * 			false otherwise.
+   */
+  public boolean equalsData(Object obj);
 
   /**
    * Returns a vector with the points.

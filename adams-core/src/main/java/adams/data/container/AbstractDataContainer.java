@@ -143,13 +143,10 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 
     if (o == null)
       return 1;
-    else
-      result = 0;
 
     c = (AbstractDataContainer) o;
 
-    if (result == 0)
-      result = Utils.compare(getID(), c.getID());
+    result = Utils.compare(getID(), c.getID());
 
     return result;
   }
@@ -165,34 +162,65 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    * @throws ClassCastException if the specified object's type prevents it
    *         from being compared to this object.
    */
-  public int compareTo(Object o) {
+  public int compareToData(Object o) {
     int				result;
-    AbstractDataContainer	other;
     Iterator<T>			iter;
     Iterator<T>			iterOther;
+    AbstractDataContainer	c;
 
     if (o == null)
       return 1;
-    else
-      result = 0;
 
-    if (!(o instanceof AbstractDataContainer))
-      return -1;
+    c = (AbstractDataContainer) o;
 
-    other = (AbstractDataContainer) o;
-
-    result = new Integer(size()).compareTo(new Integer(other.size()));
-
-    if (result == 0)
-      result = compareToHeader(o);
+    result = new Integer(size()).compareTo(new Integer(c.size()));
 
     if (result == 0) {
       iter      = iterator();
-      iterOther = other.iterator();
+      iterOther = c.iterator();
 
       while (iter.hasNext() && (result == 0))
 	result = iter.next().compareTo(iterOther.next());
     }
+
+    return result;
+  }
+
+  /**
+   * Indicates whether some other container's header is "equal to" this ones.
+   *
+   * @param obj		the reference object with which to compare.
+   * @return		true if this object is the same as the obj argument;
+   * 			false otherwise.
+   */
+  public boolean equalsData(Object obj) {
+    return (compareToData(obj) == 0);
+  }
+
+  /**
+   * Compares this object with the specified object for order.  Returns a
+   * negative integer, zero, or a positive integer as this object is less
+   * than, equal to, or greater than the specified object.
+   *
+   * @param   o the object to be compared.
+   * @return  a negative integer, zero, or a positive integer as this object
+   *		is less than, equal to, or greater than the specified object.
+   * @throws ClassCastException if the specified object's type prevents it
+   *         from being compared to this object.
+   */
+  public int compareTo(Object o) {
+    int		result;
+
+    if (o == null)
+      return 1;
+
+    if (!(o instanceof AbstractDataContainer))
+      return -1;
+
+    result = compareToHeader(o);
+
+    if (result == 0)
+      result = compareToData(o);
 
     return result;
   }
@@ -217,10 +245,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    */
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof DataContainer)
-      return (compareTo(obj) == 0);
-    else
-      return false;
+    return (obj instanceof DataContainer) && (compareTo(obj) == 0);
   }
 
   /**

@@ -65,6 +65,10 @@ adams.data.autocorrelation.AbstractAutoCorrelation=\
 adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline
 
+# data object compare schemes
+adams.data.compare.AbstractObjectCompare=\
+  adams.data.compare
+
 # data conversion schemes
 adams.data.conversion.Conversion=\
   adams.data.conversion
