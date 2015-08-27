@@ -55,11 +55,6 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
       getDefaultMaximum());
   }
 
-  protected int calcNumBits(){
-    int range=getMaximum()-getMinimum();
-    return((int)(Math.floor(Utils.log2(range))+1));
-  }
-
   /**
    * Returns the default minimum.
    *
@@ -75,7 +70,6 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   public void setMinimum(int value) {
     if (getOptionManager().isValid("minimum", value)) {
       m_Minimum = value;
-      calcNumBits();
       reset();
     }
   }
@@ -114,7 +108,6 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   public void setMaximum(int value) {
     if (getOptionManager().isValid("maximum", value)) {
       m_Maximum = value;
-      calcNumBits();
       reset();
     }
   }
@@ -139,13 +132,22 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   }
 
   /**
+   * Calculates the number of bits.
+   *
+   * @return		the number of bits
+   */
+  protected int calcNumBits(){
+    int range = getMaximum() - getMinimum();
+    return (int) (Math.floor(Utils.log2(range)) + 1);
+  }
+
+  /**
    * Returns the number of required bits.
    *
    * @return		the number of bits
    */
   public int getNumBits() {
-    int range=getMaximum()-getMinimum();
-    return((int)(Math.floor(Utils.log2(range))+1));
+    return calcNumBits();
   }
 
   /**
@@ -175,7 +177,8 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
     in=in-getMinimum();
     in=Math.min(in, getMaximum()-getMinimum());
     String bits = Integer.toBinaryString(in);
-    while (bits.length() < calcNumBits())
+    int numBits = calcNumBits();
+    while (bits.length() < numBits)
       bits="0"+bits;
     return bits;
   }

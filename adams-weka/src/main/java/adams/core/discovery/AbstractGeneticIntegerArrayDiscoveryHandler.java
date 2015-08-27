@@ -114,7 +114,6 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
   public void setMinimum(int value) {
     if (getOptionManager().isValid("minimum", value)) {
       m_Minimum = value;
-      calcNumBits();
       reset();
     }
   }
@@ -154,7 +153,6 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
   public void setMaximum(int value) {
     if (getOptionManager().isValid("maximum", value)) {
       m_Maximum = value;
-      calcNumBits();
       reset();
     }
   }
