@@ -2141,4 +2141,14 @@ public class Utils {
       return ((BaseDouble) obj).doubleValue();
     return null;
   }
+
+  /**
+   * Calculates the log2 of the specified integer.
+   *
+   * @param n		the number to calculate log2 for
+   * @return		the log2
+   */
+  public static double log2(int n) {
+    return (Math.log(n) / Math.log(2));
+  }
 }

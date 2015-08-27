@@ -20,6 +20,8 @@
 
 package adams.core.discovery;
 
+import adams.core.Utils;
+
 /**
  * Ancestor for genetic discovery handlers that handle integer array properties.
  *
@@ -207,7 +209,7 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
    */
   protected static int calcNumBits(int min, int max){
     int range = max - min;
-    return (int) (Math.floor(log2(range)) + 1);
+    return (int) (Math.floor(Utils.log2(range)) + 1);
   }
 
   public static int[] bitsToIntArray(String bits, int min, int max, int size){
@@ -271,10 +273,6 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
       buff.append(bits);
     }
     return(buff.toString());
-  }
-
-  public static double log2(int n) {
-    return (Math.log(n) / Math.log(2));
   }
 
   /**

@@ -20,6 +20,8 @@
 
 package adams.core.discovery;
 
+import adams.core.Utils;
+
 /**
  * Ancestor for genetic discovery handlers that handle integer properties.
  *
@@ -53,13 +55,9 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
       getDefaultMaximum());
   }
 
-  public static double log2(int n) {
-    return (Math.log(n) / Math.log(2));
-  }
-
   protected int calcNumBits(){
     int range=getMaximum()-getMinimum();
-    return((int)(Math.floor(log2(range))+1));
+    return((int)(Math.floor(Utils.log2(range))+1));
   }
 
   /**
@@ -184,7 +182,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
 
   protected static int calcNumBits(int min, int max){
     int range=max-min;
-    return((int)(Math.floor(log2(range))+1));
+    return((int)(Math.floor(Utils.log2(range))+1));
   }
 
   public static String intToBits(int in,int min, int max){

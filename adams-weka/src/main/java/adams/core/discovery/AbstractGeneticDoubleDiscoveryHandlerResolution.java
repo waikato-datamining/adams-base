@@ -20,6 +20,8 @@
 
 package adams.core.discovery;
 
+import adams.core.Utils;
+
 /**
  * Created by dale on 13/08/2015.
  */
@@ -54,12 +56,8 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
       getDefaultSplits());
   }
 
-  public static double log2(int n) {
-    return (Math.log(n) / Math.log(2));
-  }
-
   protected int calcNumBits(){
-    return((int)(Math.floor(log2(m_Splits))+1));
+    return((int)(Math.floor(Utils.log2(m_Splits))+1));
   }
 
   /**
@@ -134,7 +132,7 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
   }
 
   protected static int calcNumBits(int num){
-    return((int)(Math.floor(log2(num))+1));
+    return((int)(Math.floor(Utils.log2(num))+1));
   }
 
   public String doubleToBits(double in){
