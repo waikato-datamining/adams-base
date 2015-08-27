@@ -23,26 +23,19 @@ package adams.core.discovery;
 import adams.core.Utils;
 
 /**
- * Created by dale on 13/08/2015.
+ * Ancestor for genetic discovery handlers that handle double properties with
+ * a specified number of splits.
+ *
+ * @author Dale (dale at waikato dot ac dot nz)
+ * @version $Revision$
  */
 public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
   extends AbstractGeneticDoubleDiscoveryHandler{
 
   private static final long serialVersionUID = -4401650612139991644L;
 
+  /** the number of splits. */
   protected int m_Splits;
-
-
-  /** numbits. */
-  protected int m_numBits;
-
-  public static  double[]  calcsplits(double min, double max, int splits){
-    double ret[] = new double[splits];
-    for (int j=0;j<splits;j++){
-      ret[j]=min+((double)j)*((max-min)/(double)(splits-1));
-    }
-    return(ret);
-  }
 
   /**
    * Adds options to the internal list of options.
@@ -54,10 +47,6 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
     m_OptionManager.add(
       "splits", "splits",
       getDefaultSplits());
-  }
-
-  protected int calcNumBits(){
-    return((int)(Math.floor(Utils.log2(m_Splits))+1));
   }
 
   /**
@@ -75,7 +64,6 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
   public void setSplits(int value) {
     if (getOptionManager().isValid("splits", value)) {
       m_Splits = value;
-      m_numBits=calcNumBits();
       reset();
     }
   }
@@ -105,10 +93,15 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
    * @return		the number of bits
    */
   public int getNumBits() {
-    return calcNumBits(getSplits());
+    return calcNumBits();
   }
 
-  protected static int calcNumBits(int num){
-    return((int)(Math.floor(Utils.log2(num))+1));
+  /**
+   * Calculates the number of bits to use.
+   *
+   * @return		the number of bits
+   */
+  protected int calcNumBits(){
+    return((int)(Math.floor(Utils.log2(m_Splits))+1));
   }
 }
