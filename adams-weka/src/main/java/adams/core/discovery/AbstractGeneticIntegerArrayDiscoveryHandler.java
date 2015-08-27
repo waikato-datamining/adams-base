@@ -21,6 +21,7 @@
 package adams.core.discovery;
 
 import adams.core.Utils;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 /**
  * Ancestor for genetic discovery handlers that handle integer array properties.
@@ -174,6 +175,44 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
    */
   public String maximumTipText() {
     return "The maximum to use.";
+  }
+
+  /**
+   * Returns the integer value from the property container.
+   *
+   * @param cont	the container
+   * @return		the value
+   */
+  protected abstract int[] getValue(PropertyContainer cont);
+
+  /**
+   * Returns the packed bits for the genetic algorithm.
+   *
+   * @param cont	the container to obtain the value from to turn into a string
+   * @return		the bits
+   */
+  @Override
+  protected String doPack(PropertyContainer cont) {
+    return GeneticHelper.intArrayToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits());
+  }
+
+  /**
+   * Sets the integer value in the property container.
+   *
+   * @param cont	the container
+   * @param value	the value to set
+   */
+  protected abstract void setValue(PropertyContainer cont, int[] value);
+
+  /**
+   * Unpacks and applies the bits from the genetic algorithm.
+   *
+   * @param cont	the container to set the value for created from the string
+   * @param bits	the bits to use
+   */
+  @Override
+  protected void doUnpack(PropertyContainer cont, String bits) {
+    setValue(cont, GeneticHelper.bitsToIntArray(bits, getMinimum(), getMaximum(), calcNumBits(), getSize()));
   }
 
   /**
