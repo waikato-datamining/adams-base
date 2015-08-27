@@ -66,29 +66,23 @@ public class PLSFilterNumComponents
   }
 
   /**
-   * Returns the packed bits for the genetic algorithm.
+   * Returns the integer value from the property container.
    *
-   * @param cont	the container to obtain the value from to turn into a string
-   * @return		the bits
+   * @param cont	the container
+   * @return		the value
    */
-  @Override
-  protected String doPack(PropertyContainer cont) {
-    PLSFilter pls = (PLSFilter) cont.getObject();
-    int val = pls.getNumComponents();
-    return GeneticHelper.intToBits(val, getMinimum(), getMaximum(), calcNumBits());
+  protected int getIntValue(PropertyContainer cont) {
+    return ((PLSFilter) cont.getObject()).getNumComponents();
   }
 
   /**
-   * Unpacks and applies the bits from the genetic algorithm.
+   * Sets the integer value in the property container.
    *
-   * @param cont	the container to set the value for created from the string
-   * @param bits	the bits to use
+   * @param cont	the container
+   * @param value	the value to set
    */
-  @Override
-  protected void doUnpack(PropertyContainer cont, String bits) {
-    int val = GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum());
-    PLSFilter pls = (PLSFilter) cont.getObject();
-    pls.setNumComponents(val);
+  protected void setIntValue(PropertyContainer cont, int value) {
+    ((PLSFilter) cont.getObject()).setNumComponents(value);
   }
 
   /**

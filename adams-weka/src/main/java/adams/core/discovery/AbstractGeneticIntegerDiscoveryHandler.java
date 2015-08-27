@@ -21,6 +21,7 @@
 package adams.core.discovery;
 
 import adams.core.Utils;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 
 /**
  * Ancestor for genetic discovery handlers that handle integer properties.
@@ -148,5 +149,43 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    */
   public int getNumBits() {
     return calcNumBits();
+  }
+
+  /**
+   * Returns the integer value from the property container.
+   *
+   * @param cont	the container
+   * @return		the value
+   */
+  protected abstract int getIntValue(PropertyContainer cont);
+
+  /**
+   * Returns the packed bits for the genetic algorithm.
+   *
+   * @param cont	the container to obtain the value from to turn into a string
+   * @return		the bits
+   */
+  @Override
+  protected String doPack(PropertyContainer cont) {
+    return GeneticHelper.intToBits(getIntValue(cont), getMinimum(), getMaximum(), calcNumBits());
+  }
+
+  /**
+   * Sets the integer value in the property container.
+   *
+   * @param cont	the container
+   * @param value	the value to set
+   */
+  protected abstract void setIntValue(PropertyContainer cont, int value);
+
+  /**
+   * Unpacks and applies the bits from the genetic algorithm.
+   *
+   * @param cont	the container to set the value for created from the string
+   * @param bits	the bits to use
+   */
+  @Override
+  protected void doUnpack(PropertyContainer cont, String bits) {
+    setIntValue(cont, GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum()));
   }
 }
