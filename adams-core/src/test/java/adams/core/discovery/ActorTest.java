@@ -31,7 +31,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * TODO: What class does.
+ * Tests the Actor discovery handler. Use the following to run from command-line:<br>
+ * adams.core.discovery.ActorTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
