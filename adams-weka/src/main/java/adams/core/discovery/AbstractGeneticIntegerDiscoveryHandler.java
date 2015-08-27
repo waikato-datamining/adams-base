@@ -157,7 +157,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    * @param cont	the container
    * @return		the value
    */
-  protected abstract int getIntValue(PropertyContainer cont);
+  protected abstract int getValue(PropertyContainer cont);
 
   /**
    * Returns the packed bits for the genetic algorithm.
@@ -167,7 +167,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    */
   @Override
   protected String doPack(PropertyContainer cont) {
-    return GeneticHelper.intToBits(getIntValue(cont), getMinimum(), getMaximum(), calcNumBits());
+    return GeneticHelper.intToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits());
   }
 
   /**
@@ -176,7 +176,7 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    * @param cont	the container
    * @param value	the value to set
    */
-  protected abstract void setIntValue(PropertyContainer cont, int value);
+  protected abstract void setValue(PropertyContainer cont, int value);
 
   /**
    * Unpacks and applies the bits from the genetic algorithm.
@@ -186,6 +186,6 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    setIntValue(cont, GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum()));
+    setValue(cont, GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum()));
   }
 }

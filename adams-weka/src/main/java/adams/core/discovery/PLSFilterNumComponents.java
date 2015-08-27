@@ -71,7 +71,7 @@ public class PLSFilterNumComponents
    * @param cont	the container
    * @return		the value
    */
-  protected int getIntValue(PropertyContainer cont) {
+  protected int getValue(PropertyContainer cont) {
     return ((PLSFilter) cont.getObject()).getNumComponents();
   }
 
@@ -81,7 +81,7 @@ public class PLSFilterNumComponents
    * @param cont	the container
    * @param value	the value to set
    */
-  protected void setIntValue(PropertyContainer cont, int value) {
+  protected void setValue(PropertyContainer cont, int value) {
     ((PLSFilter) cont.getObject()).setNumComponents(value);
   }
 

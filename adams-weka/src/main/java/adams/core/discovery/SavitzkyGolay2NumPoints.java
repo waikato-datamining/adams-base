@@ -70,7 +70,7 @@ public class SavitzkyGolay2NumPoints
    * @param cont	the container
    * @return		the value
    */
-  protected int getIntValue(PropertyContainer cont) {
+  protected int getValue(PropertyContainer cont) {
     return ((SavitzkyGolay2) cont.getObject()).getNumPoints();
   }
 
@@ -80,7 +80,7 @@ public class SavitzkyGolay2NumPoints
    * @param cont	the container
    * @param value	the value to set
    */
-  protected void setIntValue(PropertyContainer cont, int value) {
+  protected void setValue(PropertyContainer cont, int value) {
     ((SavitzkyGolay2) cont.getObject()).setNumPoints(value);
   }
 
