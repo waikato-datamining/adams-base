@@ -1,9 +1,9 @@
 --> out-0.txt
-classifier.filter
-filter
+classifier.filter: 010
+filter: 010
 
 
 --> out-1.txt
-filter
+filter: 010
 
 

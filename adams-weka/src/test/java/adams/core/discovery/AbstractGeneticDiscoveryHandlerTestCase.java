@@ -22,6 +22,8 @@ package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
 
+import java.util.List;
+
 /**
  * Ancestor for genetic discovery handler test cases.
  *
@@ -38,6 +40,29 @@ public abstract class AbstractGeneticDiscoveryHandlerTestCase
    */
   public AbstractGeneticDiscoveryHandlerTestCase(String name) {
     super(name);
+  }
+
+  /**
+   * Turns the algorithm (and its containers) into a useful string representation.
+   *
+   * @param scheme	the algorithm to convert
+   * @return		the string representation
+   */
+  protected String toString(AbstractDiscoveryHandler scheme) {
+    List<PropertyContainer> 		conts;
+    StringBuilder			result;
+    AbstractGeneticDiscoveryHandler	handler;
+
+    handler = (AbstractGeneticDiscoveryHandler) scheme;
+    result = new StringBuilder();
+
+    conts = scheme.getContainers();
+    for (PropertyContainer cont: conts) {
+      result.append(cont.getPath().getFullPath() + ": " + handler.pack(cont));
+      result.append("\n");
+    }
+
+    return result.toString();
   }
 
   /**

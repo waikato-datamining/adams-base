@@ -72,26 +72,28 @@ public abstract class AbstractDiscoveryHandlerTestCase
    * @param obj		the object to use
    * @return		the processed data (header/row)
    */
-  protected List<PropertyContainer> process(Object obj, AbstractDiscoveryHandler scheme) {
+  protected AbstractDiscoveryHandler process(Object obj, AbstractDiscoveryHandler scheme) {
     PropertyDiscovery	discovery;
 
     discovery = getDiscovery();
     discovery.discover(new AbstractDiscoveryHandler[]{scheme}, obj);
 
-    return scheme.getContainers();
+    return scheme;
   }
 
   /**
-   * Turns the containers into a useful string representation.
+   * Turns the algorithm (and its containers) into a useful string representation.
    *
-   * @param conts	the containers to convert
+   * @param scheme	the algorithm to convert
    * @return		the string representation
    */
-  protected String toString(List<PropertyContainer> conts) {
-    StringBuilder	result;
+  protected String toString(AbstractDiscoveryHandler scheme) {
+    List<PropertyContainer> 	conts;
+    StringBuilder		result;
 
     result = new StringBuilder();
 
+    conts = scheme.getContainers();
     for (PropertyContainer cont: conts) {
       result.append(cont.getPath().getFullPath());
       result.append("\n");
@@ -148,7 +150,7 @@ public abstract class AbstractDiscoveryHandlerTestCase
    * Compares the processed data against previously saved output data.
    */
   public void testRegression() {
-    List<PropertyContainer>	processed;
+    AbstractDiscoveryHandler	processed;
     boolean			ok;
     String			regression;
     int				n;
