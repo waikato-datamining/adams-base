@@ -37,9 +37,6 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   /** the maximum. */
   protected int m_Maximum;
 
-  /** numbits. */
-  protected int m_numBits;
-
   /**
    * Adds options to the internal list of options.
    */
@@ -180,10 +177,9 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
     in=in-getMinimum();
     in=Math.min(in, getMaximum()-getMinimum());
     String bits = Integer.toBinaryString(in);
-    while (bits.length() < m_numBits){
+    while (bits.length() < calcNumBits())
       bits="0"+bits;
-    }
-    return(bits);
+    return bits;
   }
 
   protected static int calcNumBits(int min, int max){
