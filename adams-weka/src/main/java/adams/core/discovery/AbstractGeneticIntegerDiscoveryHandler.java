@@ -144,23 +144,17 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
    * @return		the number of bits
    */
   public int getNumBits() {
-    return calcNumBits(getMinimum(), getMaximum());
+    int range=getMaximum()-getMinimum();
+    return((int)(Math.floor(Utils.log2(range))+1));
   }
 
-
-  public static int bitsToInt(String bits, int min, int max){
-    double j=0;
-
-    for (int i=0;i<bits.length();i++) {
-      if (bits.charAt(i)=='1') {
-        j = j + Math.pow(2, bits.length()-i-1);
-      }
-    }
-    j+=min;
-    return(Math.min((int) j, max));
-  }
-
-  public int bitsToInt(String bits){
+  /**
+   * Turns the bit string back into an integer.
+   *
+   * @param bits	the bit string (0s and 1s)
+   * @return		the integer
+   */
+  protected int bitsToInt(String bits){
     double j=0;
     for (int i=0;i<bits.length();i++) {
       if (bits.charAt(i)=='1') {
@@ -171,38 +165,18 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
     return(Math.min((int) j, getMaximum()));
   }
 
-  public String intToBits(int in){
+  /**
+   * Turns an integer into a bitstring (0s and 1s).
+   *
+   * @param in		the integer to convert
+   * @return		the bit string
+   */
+  protected String intToBits(int in){
     in=in-getMinimum();
     in=Math.min(in, getMaximum()-getMinimum());
     String bits = Integer.toBinaryString(in);
     while (bits.length() < calcNumBits())
       bits="0"+bits;
     return bits;
-  }
-
-  protected static int calcNumBits(int min, int max){
-    int range=max-min;
-    return((int)(Math.floor(Utils.log2(range))+1));
-  }
-
-  public static String intToBits(int in,int min, int max){
-    in=in-min;
-    in=Math.min(in, max-min);
-    String bits = Integer.toBinaryString(in);
-    while (bits.length() <calcNumBits(min,max)){
-      bits="0"+bits;
-    }
-    return(bits);
-  }
-
-
-  public static void main(String[] args) {
-    //runGeneticAlgorithm(Environment.class, DarkLord.class, args);
-    int i= 55;
-    String s=intToBits(i,1,128);
-    System.err.println(s);
-    i=bitsToInt(s,1,128);
-    System.err.println(i);
-
   }
 }
