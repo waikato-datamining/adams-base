@@ -75,6 +75,15 @@ public class GPDGamma
   }
 
   /**
+   * Returns the default list.
+   *
+   * @return		the default
+   */
+  protected String getDefaultList() {
+    return "0.01 0.02 0.03 0.04";
+  }
+
+  /**
    * Returns the double value from the property container.
    *
    * @param cont	the container

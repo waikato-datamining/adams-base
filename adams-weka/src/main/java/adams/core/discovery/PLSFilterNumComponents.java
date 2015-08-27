@@ -66,6 +66,15 @@ public class PLSFilterNumComponents
   }
 
   /**
+   * Returns the default list.
+   *
+   * @return		the default
+   */
+  protected String getDefaultList() {
+    return "5 10 15";
+  }
+
+  /**
    * Returns the integer value from the property container.
    *
    * @param cont	the container

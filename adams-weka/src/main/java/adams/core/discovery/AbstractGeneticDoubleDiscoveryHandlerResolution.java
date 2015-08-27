@@ -122,7 +122,29 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
    */
   @Override
   protected String doPack(PropertyContainer cont) {
-    return GeneticHelper.doubleToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits(), getSplits());
+    double	value;
+    int		index;
+    int		i;
+
+    value = getValue(cont);
+
+    switch (m_Type) {
+      case RANGE:
+	return GeneticHelper.doubleToBits(value, getMinimum(), getMaximum(), calcNumBits(), getSplits());
+
+      case LIST:
+	index = 0;
+	for (i = 0; i < m_List.length; i++) {
+	  if (m_List[i] == value) {
+	    index = i;
+	    break;
+	  }
+	}
+	return GeneticHelper.intToBits(index, 0, m_List.length, calcNumBits());
+
+      default:
+	throw new IllegalStateException("Unhandled numeric value type: " + m_Type);
+    }
   }
 
   /**
@@ -141,6 +163,22 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    setValue(cont, GeneticHelper.bitsToDouble(bits, getMinimum(), getMaximum(), getSplits()));
+    int 	index;
+
+    switch (m_Type) {
+      case RANGE:
+	setValue(cont, GeneticHelper.bitsToDouble(bits, getMinimum(), getMaximum(), getSplits()));
+	break;
+
+      case LIST:
+	index = GeneticHelper.bitsToInt(bits, 0, m_List.length);
+	index = Math.max(0, index);
+	index = Math.min(m_List.length - 1, index);
+	setValue(cont, m_List[index]);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled numeric value type: " + m_Type);
+    }
   }
 }

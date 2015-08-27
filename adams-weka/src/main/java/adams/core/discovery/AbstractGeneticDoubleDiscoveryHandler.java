@@ -20,6 +20,9 @@
 
 package adams.core.discovery;
 
+import adams.core.Utils;
+import adams.data.statistics.StatUtils;
+
 /**
  * Ancestor for genetic discovery handlers that handle integer properties.
  *
@@ -31,11 +34,17 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
 
   private static final long serialVersionUID = -5442076178374142588L;
 
+  /** the type of values to use. */
+  protected NumericValueType m_Type;
+
   /** the minimum. */
   protected double m_Minimum;
 
   /** the maximum. */
   protected double m_Maximum;
+
+  /** the list of values. */
+  protected double[] m_List;
 
   /**
    * Adds options to the internal list of options.
@@ -45,12 +54,58 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
     super.defineOptions();
 
     m_OptionManager.add(
+      "type", "type",
+      getDefaultType());
+
+    m_OptionManager.add(
       "minimum", "minimum",
       getDefaultMinimum());
 
     m_OptionManager.add(
       "maximum", "maximum",
       getDefaultMaximum());
+
+    m_OptionManager.add(
+      "list", "list",
+      getDefaultList());
+  }
+
+  /**
+   * Returns the default type.
+   *
+   * @return		the default
+   */
+  protected NumericValueType getDefaultType() {
+    return NumericValueType.RANGE;
+  }
+
+  /**
+   * Sets the type.
+   *
+   * @param value	the type
+   */
+  public void setType(NumericValueType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns the type.
+   *
+   * @return		the type
+   */
+  public NumericValueType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "The type of value to use.";
   }
 
   /**
@@ -127,5 +182,57 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    */
   public String maximumTipText() {
     return "The maximum to use.";
+  }
+
+  /**
+   * Returns the default list.
+   *
+   * @return		the default
+   */
+  protected abstract String getDefaultList();
+
+  /**
+   * Sets the list of values to use (blank-separated).
+   *
+   * @param value	the list
+   */
+  public void setList(String value) {
+    String[]	parts;
+    int		i;
+    double[]	list;
+
+    parts = value.replaceAll("  ", " ").split(" ");
+    list  = new double[parts.length];
+    for (i = 0; i < parts.length; i++) {
+      try {
+	list[i] = Double.parseDouble(parts[i]);
+      }
+      catch (Exception e) {
+	getLogger().warning("Failed to parse '" + parts[i] + "' from list: " + value);
+	return;
+      }
+    }
+    m_List = list;
+
+    reset();
+  }
+
+  /**
+   * Returns the list of values to use (blank-separated).
+   *
+   * @return		the list
+   */
+  public String getList() {
+    return Utils.flatten(StatUtils.toNumberArray(m_List), " ");
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String listTipText() {
+    return "The list to values to use.";
   }
 }

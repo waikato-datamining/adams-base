@@ -65,6 +65,15 @@ public class SavitzkyGolay2NumPoints
   }
 
   /**
+   * Returns the default list.
+   *
+   * @return		the default
+   */
+  protected String getDefaultList() {
+    return "1 3 5 7";
+  }
+
+  /**
    * Returns the integer value from the property container.
    *
    * @param cont	the container
