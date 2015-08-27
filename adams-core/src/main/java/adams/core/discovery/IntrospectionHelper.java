@@ -62,7 +62,18 @@ public class IntrospectionHelper {
    * @throws Exception	if introspection fails
    */
   public static IntrospectionContainer introspect(Object obj) throws Exception {
-    return introspect(obj, true);
+    return introspect(obj.getClass(), true);
+  }
+
+  /**
+   * Introspects the specified class. Uses the blacklist.
+   *
+   * @param cls		the class to introspect
+   * @return		the information gathered
+   * @throws Exception	if introspection fails
+   */
+  public static IntrospectionContainer introspect(Class cls) throws Exception {
+    return introspect(cls, true);
   }
 
   /**
@@ -73,7 +84,7 @@ public class IntrospectionHelper {
    * @return			the information gathered
    * @throws Exception		if introspection fails
    */
-  public static IntrospectionContainer introspect(Object obj, boolean useBlacklist) throws Exception{
+  public static IntrospectionContainer introspect(Object obj, boolean useBlacklist) throws Exception {
     IntrospectionContainer	result;
     BeanInfo 			bi;
     List<AbstractOption> 	optionsTmp;
@@ -82,16 +93,14 @@ public class IntrospectionHelper {
     List<PropertyDescriptor> 	propdesc;
     int 			i;
     AbstractArgumentOption 	opt;
-    Class			cls;
 
-    options = null;
-    bi      = Introspector.getBeanInfo(obj.getClass());
     // in case of OptionHandlers we only display the properties that are
     // accessible via commandline options!
     if (obj instanceof OptionHandler) {
+      bi         = Introspector.getBeanInfo(obj.getClass());
       optionsTmp = ((OptionHandler) obj).getOptionManager().getOptionsList();
       options    = new ArrayList<AbstractOption>();
-      propdesc    = new ArrayList<PropertyDescriptor>();
+      propdesc   = new ArrayList<PropertyDescriptor>();
       for (i = 0; i < optionsTmp.size(); i++) {
 	if (optionsTmp.get(i) instanceof AbstractArgumentOption) {
           if (useBlacklist) {
@@ -106,27 +115,52 @@ public class IntrospectionHelper {
 	options.add(optionsTmp.get(i));
       }
       properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
+
+      // assemble result
+      result            = new IntrospectionContainer();
+      result.options    = options.toArray(new AbstractOption[options.size()]);
+      result.properties = properties;
+      result.methods    = bi.getMethodDescriptors();
+
+      return result;
     }
     else {
-      properties = bi.getPropertyDescriptors();
-      propdesc   = new ArrayList<PropertyDescriptor>();
-      for (PropertyDescriptor desc: properties) {
-	if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
-	  continue;
-	cls = desc.getReadMethod().getReturnType();
-	if (Editors.isBlacklisted(cls, cls.isArray()))
-	  continue;
-	if (Editors.isBlacklisted(obj.getClass(), desc.getDisplayName()))
-	  continue;
-	propdesc.add(desc);
-      }
-      properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
+      return introspect(obj.getClass());
     }
+  }
+
+  /**
+   * Introspects the specified class.
+   *
+   * @param cls			the class to introspect
+   * @param useBlacklist	whether to apply the GOE blacklist
+   * @return			the information gathered
+   * @throws Exception		if introspection fails
+   */
+  public static IntrospectionContainer introspect(Class cls, boolean useBlacklist) throws Exception{
+    IntrospectionContainer	result;
+    BeanInfo 			bi;
+    PropertyDescriptor[] 	properties;
+    List<PropertyDescriptor> 	propdesc;
+    Class 			cl;
+
+    bi         = Introspector.getBeanInfo(cls);
+    properties = bi.getPropertyDescriptors();
+    propdesc   = new ArrayList<PropertyDescriptor>();
+    for (PropertyDescriptor desc: properties) {
+      if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
+        continue;
+      cl = desc.getReadMethod().getReturnType();
+      if (Editors.isBlacklisted(cl, cl.isArray()))
+        continue;
+      if (Editors.isBlacklisted(cls, desc.getDisplayName()))
+        continue;
+      propdesc.add(desc);
+    }
+    properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
 
     // assemble result
-    result = new IntrospectionContainer();
-    if (options != null)
-      result.options = options.toArray(new AbstractOption[options.size()]);
+    result            = new IntrospectionContainer();
     result.properties = properties;
     result.methods    = bi.getMethodDescriptors();
 
