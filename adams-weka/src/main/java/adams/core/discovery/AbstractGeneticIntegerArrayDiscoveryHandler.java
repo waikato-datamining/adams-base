@@ -194,49 +194,4 @@ public abstract class AbstractGeneticIntegerArrayDiscoveryHandler
   public int getNumBits() {
     return calcNumBits() * getSize();
   }
-
-  /**
-   * Turns a bit string (0s and 1s) into an integer array.
-   *
-   * @param bits	the string
-   * @return		the reconstructed integer array
-   */
-  protected int[] bitsToIntArray(String bits){
-    int ret[] = new int[getSize()];
-    int numBits = calcNumBits();
-    for (int k = 0; k < getSize(); k++) {
-      int start = numBits * k;
-      double j = 0;
-      for (int i = start; i < start + numBits; i++) {
-        if (bits.charAt(i) == '1') {
-          j = j + Math.pow(2, start + numBits - i - 1);
-        }
-      }
-      j += getMinimum();
-      ret[k] = (Math.min((int)j, getMaximum()));
-    }
-    return(ret);
-  }
-
-  /**
-   * Creates a bit string (0s and 1s) from an integer array.
-   *
-   * @param ina		the integer array
-   * @return		the bit string
-   */
-  protected String intArrayToBits(int[] ina){
-    StringBuilder buff = new StringBuilder();
-    int numBits = calcNumBits();
-    for (int i = 0; i < getSize(); i++) {
-      int in = ina[i];
-      in = in - getMinimum();
-      in = Math.min(in, getMaximum() - getMinimum());
-      String bits = Integer.toBinaryString(in);
-      while (bits.length() < numBits) {
-        bits = "0" + bits;
-      }
-      buff.append(bits);
-    }
-    return buff.toString();
-  }
 }

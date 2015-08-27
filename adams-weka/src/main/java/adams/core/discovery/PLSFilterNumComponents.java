@@ -75,7 +75,7 @@ public class PLSFilterNumComponents
   protected String doPack(PropertyContainer cont) {
     PLSFilter pls = (PLSFilter) cont.getObject();
     int val = pls.getNumComponents();
-    return intToBits(val);
+    return GeneticHelper.intToBits(val, getMinimum(), getMaximum(), calcNumBits());
   }
 
   /**
@@ -86,7 +86,7 @@ public class PLSFilterNumComponents
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    int val = bitsToInt(bits);
+    int val = GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum());
     PLSFilter pls = (PLSFilter) cont.getObject();
     pls.setNumComponents(val);
   }

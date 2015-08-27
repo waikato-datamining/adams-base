@@ -74,7 +74,7 @@ public class SavitzkyGolay2NumPoints
   protected String doPack(PropertyContainer cont) {
     SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
     int val = sg2.getNumPoints();
-    return intToBits(val);
+    return GeneticHelper.intToBits(val, getMinimum(), getMaximum(), calcNumBits());
   }
 
   /**
@@ -85,7 +85,7 @@ public class SavitzkyGolay2NumPoints
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    int val = bitsToInt(bits);
+    int val = GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum());
     SavitzkyGolay2 sg2 = (SavitzkyGolay2) cont.getObject();
     sg2.setNumPoints(val);
   }

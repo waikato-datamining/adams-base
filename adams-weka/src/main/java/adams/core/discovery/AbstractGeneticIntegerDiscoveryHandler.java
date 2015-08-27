@@ -149,37 +149,4 @@ public abstract class AbstractGeneticIntegerDiscoveryHandler
   public int getNumBits() {
     return calcNumBits();
   }
-
-  /**
-   * Turns the bit string back into an integer.
-   *
-   * @param bits	the bit string (0s and 1s)
-   * @return		the integer
-   */
-  protected int bitsToInt(String bits){
-    double j=0;
-    for (int i=0;i<bits.length();i++) {
-      if (bits.charAt(i)=='1') {
-        j = j + Math.pow(2, bits.length()-i-1);
-      }
-    }
-    j+=getMinimum();
-    return(Math.min((int) j, getMaximum()));
-  }
-
-  /**
-   * Turns an integer into a bitstring (0s and 1s).
-   *
-   * @param in		the integer to convert
-   * @return		the bit string
-   */
-  protected String intToBits(int in){
-    in=in-getMinimum();
-    in=Math.min(in, getMaximum()-getMinimum());
-    String bits = Integer.toBinaryString(in);
-    int numBits = calcNumBits();
-    while (bits.length() < numBits)
-      bits="0"+bits;
-    return bits;
-  }
 }
