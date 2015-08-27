@@ -14,44 +14,25 @@
  */
 
 /**
- * ActorDiscoveryHandler.java
+ * PropertyDiscovery.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
 
-import adams.flow.core.AbstractActor;
-import adams.flow.core.Actor;
-
 /**
- * Handles actors.
+ * Interface for classes that perform object discovery.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ActorDiscoveryHandler
-  extends AbstractDiscoveryHandler {
-
-  private static final long serialVersionUID = -6202276435982373970L;
+public interface PropertyDiscovery {
 
   /**
-   * Returns a string describing the object.
+   * Performs the object discovery.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @param handlers		the handlers to use and configure
+   * @param obj			the object to analyze
    */
-  @Override
-  public String globalInfo() {
-    return "Locates actors.";
-  }
-
-  /**
-   * Checks whether this object is handled by this discovery handler.
-   *
-   * @param obj		the object to check
-   * @return		true if handled
-   */
-  @Override
-  protected boolean handles(Object obj) {
-    return (obj instanceof Actor) || (obj instanceof Actor[]) || (obj instanceof AbstractActor[]);
-  }
+  public void discover(AbstractDiscoveryHandler[] handlers, Object obj);
 }

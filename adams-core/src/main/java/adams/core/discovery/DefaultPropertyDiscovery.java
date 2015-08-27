@@ -14,7 +14,7 @@
  */
 
 /**
- * Discovery.java
+ * DefaultPropertyDiscovery.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -44,8 +44,9 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Discovery
-  extends CustomLoggingLevelObject {
+public class DefaultPropertyDiscovery
+  extends CustomLoggingLevelObject
+  implements PropertyDiscovery {
 
   private static final long serialVersionUID = -5792552578076134111L;
 
@@ -81,7 +82,7 @@ public class Discovery
       if (Utils.isPrimitive(prop.getReadMethod().getReturnType()))
 	continue;
       try {
-	child = prop.getReadMethod().invoke(obj, new Object[0]);
+	child = prop.getReadMethod().invoke(obj);
 	if (child == null) {
 	  getLogger().info("Read method of property '" + prop.getDisplayName() + "' returned 'null': " + path);
 	  continue;
@@ -123,6 +124,7 @@ public class Discovery
    * @param handlers		the handlers to use and configure
    * @param obj			the object to analyze
    */
+  @Override
   public void discover(AbstractDiscoveryHandler[] handlers, Object obj) {
     discover(handlers, obj, new Path());
   }
@@ -148,10 +150,10 @@ public class Discovery
     flow.add(new Display());
 
     AbstractDiscoveryHandler[] handlers = new AbstractDiscoveryHandler[]{
-      new ActorDiscoveryHandler()
+      new Actor()
     };
 
-    Discovery d = new Discovery();
+    DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
     d.setLoggingLevel(LoggingLevel.FINE);
     d.discover(handlers, flow);
 

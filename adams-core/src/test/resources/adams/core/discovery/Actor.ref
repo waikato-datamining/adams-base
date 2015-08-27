@@ -1,0 +1,9 @@
+--> out-0.txt
+actors[0]
+actors[1]
+actors[2]
+actors[3]
+actors[2].actors[0]
+actors[2].actors[1]
+
+
