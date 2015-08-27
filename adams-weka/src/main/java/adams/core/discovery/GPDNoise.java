@@ -84,7 +84,7 @@ public class GPDNoise
   protected String doPack(PropertyContainer cont) {
     GPD gpd = (GPD)cont.getObject();
     double val = gpd.getNoise();
-    return(doubleToBits(val));
+    return GeneticHelper.doubleToBits(val, getMinimum(), getMaximum(), calcNumBits(), getSplits());
   }
 
   /**
@@ -95,7 +95,7 @@ public class GPDNoise
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    double val = bitsToDouble(bits);
+    double val = GeneticHelper.bitsToDouble(bits, getMinimum(), getMaximum(), getSplits());
     GPD gpd = (GPD)cont.getObject();
     gpd.setNoise(val);
   }

@@ -108,77 +108,7 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
     return calcNumBits(getSplits());
   }
 
-  public static double bitsToDouble(String bits, double min, double max, int splits){
-    double j=0;
-
-    for (int i=0;i<bits.length();i++) {
-      if (bits.charAt(i)=='1') {
-	j = j + Math.pow(2, bits.length()-i-1);
-      }
-    }
-    j=Math.min(splits,j);
-    return(min+((double)j)*((max-min)/(double)(splits-1)));
-  }
-
-  public double bitsToDouble(String bits){
-    double j=0;
-    for (int i=0;i<bits.length();i++) {
-      if (bits.charAt(i)=='1') {
-	j = j + Math.pow(2, bits.length()-i-1);
-      }
-    }
-    j=Math.min(j,getSplits());
-    return(getMinimum()+((double)j)*((getMaximum()-getMinimum())/(double)(getSplits()-1)));
-  }
-
   protected static int calcNumBits(int num){
     return((int)(Math.floor(Utils.log2(num))+1));
-  }
-
-  public String doubleToBits(double in){
-    double sdist=(getMaximum()-getMinimum())/((double)getSplits()-1);
-    double dist=in-getMinimum();
-    double rat=dist/sdist;
-    int split=(int)Math.round(rat);
-
-    String bits = Integer.toBinaryString(split);
-    while (bits.length() < m_numBits){
-      bits="0"+bits;
-    }
-    return(bits);
-  }
-
-
-  public static String doubleToBits(double in,double min, double max, int splits){
-    double sdist=(max-min)/((double)splits-1);
-    double dist=in-min;
-    double rat=dist/sdist;
-    int split=(int)Math.round(rat);
-
-    String bits = Integer.toBinaryString(split);
-    while (bits.length() < calcNumBits(splits)){
-      bits="0"+bits;
-    }
-    return(bits);
-  }
-
-
-  public static void main(String[] args) {
-    //runGeneticAlgorithm(Environment.class, DarkLord.class, args);
-    double i= .04;
-    double min=.01;
-    double max=.03;
-    int splits=4;
-    double[] splitsa=calcsplits(min,max,splits);
-    for (double d:splitsa){
-      System.err.println(d);
-    }
-    System.err.println();
-    String s=doubleToBits(i,min,max,splits);
-
-    System.err.println(s);
-    i=bitsToDouble(s,min,max,splits);
-    System.err.println(i);
-
   }
 }

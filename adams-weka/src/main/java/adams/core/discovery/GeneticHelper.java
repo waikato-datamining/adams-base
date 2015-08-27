@@ -89,7 +89,7 @@ public class GeneticHelper {
       j += min;
       ret[k] = (Math.min((int)j, max));
     }
-    return(ret);
+    return ret;
   }
 
   /**
@@ -108,11 +108,53 @@ public class GeneticHelper {
       in = in - min;
       in = Math.min(in, max - min);
       String bits = Integer.toBinaryString(in);
-      while (bits.length() < numBits) {
+      while (bits.length() < numBits)
         bits = "0" + bits;
-      }
       buff.append(bits);
     }
     return buff.toString();
+  }
+
+  /**
+   * Turns a bit string (0s and 1s) into a double.
+   *
+   * @param bits	the bit string
+   * @param min		the minimum
+   * @param max		the maximum
+   * @param splits	the number of splits
+   * @return		the reconstructed double value
+   */
+  public static double bitsToDouble(String bits, double min, double max, int splits){
+    double j = 0;
+    for (int i = 0; i < bits.length(); i++) {
+      if (bits.charAt(i) == '1') {
+	j = j + Math.pow(2, bits.length() - i - 1);
+      }
+    }
+    j = Math.min(j, splits);
+    return (min + j*((max - min)/(double)(splits - 1)));
+  }
+
+  /**
+   * Turns a double into a bit string (0s and 1s).
+   *
+   * @param in		the double value
+   * @param min		the minimum
+   * @param max		the maximum
+   * @param numBits	the number of bits
+   * @param splits	the number of splits
+   * @return		the generated bit string
+   */
+  public static String doubleToBits(double in, double min, double max, int numBits, int splits){
+    double sdist = (max - min) / ((double) splits - 1);
+    double dist = in - min;
+    double rat = dist / sdist;
+    int split = (int) Math.round(rat);
+
+    String bits = Integer.toBinaryString(split);
+    while (bits.length() < numBits)
+      bits="0"+bits;
+
+    return bits;
   }
 }
