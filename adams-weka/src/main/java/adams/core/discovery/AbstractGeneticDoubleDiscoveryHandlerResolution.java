@@ -30,8 +30,17 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
 
   protected int m_Splits;
 
+
   /** numbits. */
   protected int m_numBits;
+
+  public static  double[]  calcsplits(double min, double max, int splits){
+    double ret[] = new double[splits];
+    for (int j=0;j<splits;j++){
+      ret[j]=min+((double)j)*((max-min)/(double)(splits-1));
+    }
+    return(ret);
+  }
 
   /**
    * Adds options to the internal list of options.
@@ -159,9 +168,18 @@ public abstract class AbstractGeneticDoubleDiscoveryHandlerResolution
   public static void main(String[] args) {
     //runGeneticAlgorithm(Environment.class, DarkLord.class, args);
     double i= .04;
-    String s=doubleToBits(i,0.01,.08,8);
+    double min=.01;
+    double max=.03;
+    int splits=4;
+    double[] splitsa=calcsplits(min,max,splits);
+    for (double d:splitsa){
+      System.err.println(d);
+    }
+    System.err.println();
+    String s=doubleToBits(i,min,max,splits);
+
     System.err.println(s);
-    i=bitsToDouble(s,.01,.08,8);
+    i=bitsToDouble(s,min,max,splits);
     System.err.println(i);
 
   }
