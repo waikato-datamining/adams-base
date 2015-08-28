@@ -74,7 +74,7 @@ public class DarkLord
     result = new StartPage();
     result.setLogo(null);
     result.setDescription(
-      "<html>The <b>" + getTitle() + "<b> genetic optimization algorithm allows you "
+      "<html>The <b>" + getTitle() + "</b> genetic optimization algorithm allows you "
 	+ "to optimize attribute selection on a range of datasets, using "
 	+ "a specific classifier setup.</html>");
 
