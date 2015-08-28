@@ -393,7 +393,6 @@ public class RemoveTestInstances
   protected Instances process(Instances instances) throws Exception {
     Instances		result;
     Instances		test;
-    String		msg;
     HashSet<String> 	ids;
     int			index;
     boolean		numeric;
@@ -403,13 +402,11 @@ public class RemoveTestInstances
     if (m_FirstBatchDone)
       return new Instances(instances);
 
-    test = loadTestSet();
-    test.setClassIndex(instances.classIndex());
-    msg = instances.equalHeadersMsg(test);
-    if (msg != null)
-      throw new IllegalStateException("Current dataset is not compatible with test set:\n" + msg);
-
-    index   = m_ID.getIntIndex();
+    test  = loadTestSet();
+    m_ID.setData(test);
+    index = m_ID.getIntIndex();
+    if (index == -1)
+      throw new IllegalStateException("ID attribute not found in test set: " + m_ID);
     numeric = test.attribute(index).isNumeric();
     ids     = new HashSet<String>();
     for (Instance inst: test) {
@@ -420,6 +417,10 @@ public class RemoveTestInstances
     }
 
     result = new Instances(instances, instances.numInstances());
+    m_ID.setData(instances);
+    index  = m_ID.getIntIndex();
+    if (index == -1)
+      throw new IllegalStateException("ID attribute not found in dataset: " + m_ID);
 
     for (Instance inst: instances) {
       if (numeric)
