@@ -53,6 +53,7 @@ import adams.gui.wizard.AbstractWizardPage;
 import adams.gui.wizard.FinalPage;
 import adams.gui.wizard.PageCheck;
 import adams.gui.wizard.PropertySheetPanelPage;
+import adams.gui.wizard.StartPage;
 import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
 import adams.gui.wizard.WizardPane;
 import weka.core.Instances;
@@ -293,6 +294,13 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
   }
 
   /**
+   * Returns the start page for the wizard.
+   *
+   * @return		the page
+   */
+  protected abstract StartPage getStartPage();
+
+  /**
    * Launches the functionality of the menu item.
    */
   @Override
@@ -308,9 +316,12 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     wizard = new WizardPane();
     wizard.setCustomFinishText("Execute");
 
+    // start
+    wizard.addPage(getStartPage());
+
     // files
     datasets = new WekaSelectMultipleDatasetsPage("Input");
-    datasets.setDescription("Select all the files that you want to process, one after the other.");
+    datasets.setDescription("Select all the dataset files that you want to process, one after the other.");
     datasets.setPageCheck(new PageCheck() {
       @Override
       public boolean checkPage(AbstractWizardPage page) {
@@ -338,8 +349,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     algorithm.setTarget(setup);
     algorithm.setDescription(
       "Configure the genetic algorithm setup.\n"
-	+ "Select the dataset that you want to have optimized and the classifier to use for optimizing.\n"
-	+ "The file name (without path and extension) is automatically set as the 'supplied prefix'.");
+	+ "Select the classifier to use for optimizing.\n"
+	+ "The dataset file name (without path and extension) is automatically set as the 'supplied prefix'.");
     algorithm.setPageCheck(new PageCheck() {
       @Override
       public boolean checkPage(AbstractWizardPage page) {

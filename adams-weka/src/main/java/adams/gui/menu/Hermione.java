@@ -14,7 +14,7 @@
  */
 
 /*
- * DarkLord.java
+ * Hermione.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  *
  */
@@ -26,12 +26,12 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.wizard.StartPage;
 
 /**
- * For optimizing datasets (attribute selection) using genetic algorithm.
+ * For optimizing datasets (parameter selection) using genetic algorithm.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 11103 $
  */
-public class DarkLord
+public class Hermione
   extends AbstractClassifierBasedGeneticAlgorithmWizard {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class DarkLord
   /**
    * Initializes the menu item with no owner.
    */
-  public DarkLord() {
+  public Hermione() {
     this(null);
   }
 
@@ -49,7 +49,7 @@ public class DarkLord
    *
    * @param owner	the owning application
    */
-  public DarkLord(AbstractApplicationFrame owner) {
+  public Hermione(AbstractApplicationFrame owner) {
     super(owner);
   }
 
@@ -60,7 +60,7 @@ public class DarkLord
    */
   @Override
   public String getTitle() {
-    return "Dark Lord";
+    return "Hermione";
   }
 
   /**
@@ -74,9 +74,9 @@ public class DarkLord
     result = new StartPage();
     result.setLogo(null);
     result.setDescription(
-      "<html>The <b>" + getTitle() + "<b> genetic optimization algorithm allows you "
-	+ "to optimize attribute selection on a range of datasets, using "
-	+ "a specific classifier setup.</html>");
+      "<html>The <b>" + getTitle() + "</b> genetic optimization algorithm allows you "
+	+ "to optimize classifier/filter parameters on a range of datasets, using "
+	+ "a user-supplied initial classifier setup.</html>");
 
     return result;
   }
@@ -87,6 +87,6 @@ public class DarkLord
    * @return		the setup
    */
   protected AbstractClassifierBasedGeneticAlgorithm getSetup() {
-    return new adams.genetic.DarkLord();
+    return new adams.genetic.Hermione();
   }
 }
