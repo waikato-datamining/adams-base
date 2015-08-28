@@ -1,8 +1,8 @@
 --> out-0.txt
-classifier.classifier.filter
+classifier.classifier.filter: 01111
 
 
 --> out-1.txt
-classifier.filter
+classifier.filter: 01111
 
 
