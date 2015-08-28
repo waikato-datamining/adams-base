@@ -173,6 +173,30 @@ that allows you to load/save workspaces.
 \end{figure}
 
 \clearpage
+\section{Hermione}
+The \textit{Hermione} wizard allows you to set up and monitor a genetic
+algorithm that determines the best parameter settings, based on the classifier
+and metric you choose to optimize on. The output directory that you define
+(see Figure \ref{hermione_setup}), is used to store all the setups/datasets
+that improved the metric. The optimization can be paused, resumed or
+stopped with the buttons at the bottom right of the view panel (see Figure
+\ref{hermione_run}).
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/hermione_setup.png}
+  \caption{Hermione setup.}
+  \label{hermione_setup}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/hermione_run.png}
+  \caption{Hermione run.}
+  \label{hermione_run}
+\end{figure}
+
+\clearpage
 \section{Make compatible datasets}
 When dealing with data across multiple spreadsheets, e.g., training, test
 and validation set, then it can happen that these datasets are not compatible
