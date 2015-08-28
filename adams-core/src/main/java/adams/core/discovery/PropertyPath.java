@@ -65,7 +65,7 @@ public class PropertyPath {
     /** list. */
     LIST
   }
-  
+
   /**
    * Represents a single element of a property path.
    *
@@ -187,6 +187,9 @@ public class PropertyPath {
    */
   public static class Path {
 
+    /** the path for the current object (only used at root). */
+    public final static String CURRENT_OBJECT = ".";
+
     /** the structure. */
     protected List<PathElement> m_Elements;
 
@@ -255,9 +258,14 @@ public class PropertyPath {
 
       result = new ArrayList<>();
 
-      tok = new StringTokenizer(path, ".");
-      while (tok.hasMoreTokens())
-        result.add(new PathElement(tok.nextToken()));
+      if (path.equals(CURRENT_OBJECT)) {
+	result.add(new PathElement(CURRENT_OBJECT));
+      }
+      else {
+	tok = new StringTokenizer(path, ".");
+	while (tok.hasMoreTokens())
+	  result.add(new PathElement(tok.nextToken()));
+      }
 
       return result;
     }
@@ -336,6 +344,16 @@ public class PropertyPath {
       list.add(new PathElement(subpath));
 
       return new Path(list);
+    }
+
+    /**
+     * Checks whether this is the special path denoting the current object.
+     *
+     * @return		true if the current object
+     * @see		#CURRENT_OBJECT
+     */
+    public boolean isCurrentObject() {
+      return getFullPath().equals(CURRENT_OBJECT);
     }
 
     /**
@@ -448,8 +466,10 @@ public class PropertyPath {
     public Method getReadMethod() {
       if (m_Read != null)
 	return m_Read;
-      else
+      else if (m_Descriptor != null)
 	return m_Descriptor.getReadMethod();
+      else
+	return null;
     }
 
     /**
@@ -460,8 +480,10 @@ public class PropertyPath {
     public Method getWriteMethod() {
       if (m_Write != null)
 	return m_Write;
-      else
+      else if (m_Descriptor != null)
 	return m_Descriptor.getWriteMethod();
+      else
+	return null;
     }
     
     /**

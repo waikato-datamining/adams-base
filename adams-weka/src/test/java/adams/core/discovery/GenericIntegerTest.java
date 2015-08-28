@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 import weka.classifiers.functions.PLSClassifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.AllFilter;
+import weka.filters.supervised.attribute.PLSFilter;
 
 /**
  * Tests the GenericInteger discovery handler. Use the following to run from command-line:<br>
@@ -94,7 +95,7 @@ public class GenericIntegerTest
     outer.setClassifier(inner);
     outer.setFilter(new AllFilter());
 
-    return new Object[]{outer, inner};
+    return new Object[]{outer, inner, new PLSFilter()};
   }
 
   /**
@@ -105,6 +106,7 @@ public class GenericIntegerTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
+      new GenericInteger(),
       new GenericInteger(),
       new GenericInteger(),
     };

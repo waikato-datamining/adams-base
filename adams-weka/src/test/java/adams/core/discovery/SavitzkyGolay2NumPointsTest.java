@@ -94,7 +94,7 @@ public class SavitzkyGolay2NumPointsTest
     outer.setClassifier(inner);
     outer.setFilter(new SavitzkyGolay2());
 
-    return new Object[]{outer, inner};
+    return new Object[]{outer, inner, new SavitzkyGolay2()};
   }
 
   /**
@@ -105,6 +105,7 @@ public class SavitzkyGolay2NumPointsTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
+      new SavitzkyGolay2NumPoints(),
       new SavitzkyGolay2NumPoints(),
       new SavitzkyGolay2NumPoints(),
     };

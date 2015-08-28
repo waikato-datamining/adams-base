@@ -94,7 +94,7 @@ public class GPDGammaTest
     outer.setClassifier(inner);
     outer.setFilter(new AllFilter());
 
-    return new Object[]{outer};
+    return new Object[]{outer, new GPD()};
   }
 
   /**
@@ -105,7 +105,8 @@ public class GPDGammaTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
-      new GPDGamma()
+      new GPDGamma(),
+      new GPDGamma(),
     };
   }
 

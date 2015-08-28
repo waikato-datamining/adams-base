@@ -126,6 +126,12 @@ public class DefaultPropertyDiscovery
    */
   @Override
   public void discover(AbstractDiscoveryHandler[] handlers, Object obj) {
+    // check current object
+    for (AbstractDiscoveryHandler handler : handlers) {
+      if (handler.handles(obj))
+	handler.addContainer(new PropertyContainer(new Path(Path.CURRENT_OBJECT), null, obj));
+    }
+    // check object's properties
     discover(handlers, obj, new Path());
   }
 
