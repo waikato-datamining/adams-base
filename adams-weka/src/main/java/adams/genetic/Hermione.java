@@ -292,6 +292,15 @@ public class Hermione
   }
 
   /**
+   * Returns the default output type to use.
+   *
+   * @return		the type
+   */
+  protected OutputType getDefaultOutputType() {
+    return OutputType.SETUP;
+  }
+
+  /**
    * Creates a new Job instance.
    *
    * @param num		the number of chromosomes

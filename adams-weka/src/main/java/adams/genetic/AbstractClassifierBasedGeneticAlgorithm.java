@@ -342,7 +342,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
     m_OptionManager.add(
       "output-type", "outputType",
-      OutputType.ALL);
+      getDefaultOutputType());
 
     m_OptionManager.add(
       "output-prefix-type", "outputPrefixType",
@@ -582,6 +582,13 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   public String outputDirectoryTipText() {
     return "The directory for storing the generated ARFF files.";
   }
+
+  /**
+   * Returns the default output type to use.
+   *
+   * @return		the type
+   */
+  protected abstract OutputType getDefaultOutputType();
 
   /**
    * Sets the type of output to generate.

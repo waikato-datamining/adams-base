@@ -261,6 +261,15 @@ public class DarkLord
   }
 
   /**
+   * Returns the default output type to use.
+   *
+   * @return		the type
+   */
+  protected OutputType getDefaultOutputType() {
+    return OutputType.ALL;
+  }
+
+  /**
    * Creates a new Job instance.
    *
    * @param num		the number of chromosomes
