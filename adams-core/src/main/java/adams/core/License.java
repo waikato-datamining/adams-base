@@ -15,7 +15,7 @@
 
 /**
  * License.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -47,12 +47,24 @@ public enum License {
   BSD3("BSD", "3-clause", "http://opensource.org/licenses/BSD-3-Clause"),
   /** CC public domain. */
   CC_PD("CC Public Domain", null, "http://creativecommons.org/licenses/publicdomain/"),
+  /** CC BY 2.5. */
+  CC_BY_25("CC BY", "2.5", "http://creativecommons.org/licenses/by/2.5/"),
+  /** CC BY 3.0. */
+  CC_BY_3("CC BY", "3.0", "http://creativecommons.org/licenses/by/3.0/"),
+  /** CC BY 3.0. */
+  CC_BY_4("CC BY", "4.0", "http://creativecommons.org/licenses/by/4.0/"),
   /** CC BY-SA 2.5. */
   CC_BY_SA_25("CC BY-SA", "2.5", "http://creativecommons.org/licenses/by-sa/2.5/"),
   /** CC BY-SA 3.0. */
   CC_BY_SA_3("CC BY-SA", "3.0", "http://creativecommons.org/licenses/by-sa/3.0/"),
+  /** CC BY-SA 4.0. */
+  CC_BY_SA_4("CC BY-SA", "4.0", "http://creativecommons.org/licenses/by-sa/4.0/"),
   /** CC BY-NC-SA 2.5. */
   CC_BY_NC_SA_25("CC BY-NC-SA", "2.5", "http://creativecommons.org/licenses/by-nc-sa/2.5/"),
+  /** CC BY-NC-SA 3.0. */
+  CC_BY_NC_SA_3("CC BY-NC-SA", "3.0", "http://creativecommons.org/licenses/by-nc-sa/3.0/"),
+  /** CC BY-NC-SA 4.0. */
+  CC_BY_NC_SA_4("CC BY-NC-SA", "4.0", "http://creativecommons.org/licenses/by-nc-sa/4.0/"),
   /** GPL 2. */
   GPL2("GPL", "2", "http://opensource.org/licenses/GPL-2.0"),
   /** GPL 3. */
@@ -78,8 +90,6 @@ public enum License {
 
   /**
    * The constructor for versioned licenses.
-   *
-   * @param version	the version to use
    */
   private License() {
     this(null, null, null);
@@ -89,7 +99,6 @@ public enum License {
    * The constructor for versioned licenses.
    *
    * @param license	the license to use
-   * @param version	the version to use
    */
   private License(String license) {
     this(license, null, null);
