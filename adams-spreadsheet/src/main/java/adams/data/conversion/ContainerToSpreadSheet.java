@@ -15,16 +15,17 @@
 
 /**
  * ContainerToSpreadSheet.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Iterator;
-
 import adams.core.Utils;
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.AbstractContainer;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -97,6 +98,7 @@ public class ContainerToSpreadSheet
     Iterator<String>	names;
     String		name;
     Object		value;
+    Cell		cell;
 
     result = new SpreadSheet();
     cont   = (AbstractContainer) getInput();
@@ -115,7 +117,11 @@ public class ContainerToSpreadSheet
       row.addCell("key").setContent(name);
       if ((value != null) && (value.getClass().isArray()))
 	value = Utils.arrayToString(value);
-      row.addCell("value").setContent("" + value);
+      cell = row.addCell("value");
+      cell.setNative(value);
+      // if failed to determine type, set as string
+      if (cell.isObject())
+	cell.setContentAsString("" + value);
     }
 
     return result;
