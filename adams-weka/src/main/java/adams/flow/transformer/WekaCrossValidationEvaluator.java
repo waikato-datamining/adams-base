@@ -20,18 +20,9 @@
 
 package adams.flow.transformer;
 
-import java.util.Random;
-
-import adams.core.ThreadLimiter;
-import weka.classifiers.AbstractClassifier;
-import weka.classifiers.AggregateableEvaluation;
-import weka.classifiers.Classifier;
-import weka.classifiers.CrossValidationFoldGenerator;
-import weka.classifiers.Evaluation;
-import weka.classifiers.evaluation.output.prediction.Null;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaEvaluationContainer;
@@ -45,6 +36,15 @@ import adams.flow.provenance.ProvenanceSupporter;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import weka.classifiers.AbstractClassifier;
+import weka.classifiers.AggregateableEvaluation;
+import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.output.prediction.Null;
+import weka.core.Instances;
+
+import java.util.Random;
 
 /**
  <!-- globalinfo-start -->
@@ -174,7 +174,6 @@ public class WekaCrossValidationEvaluator
      * Initializes the job.
      * 
      * @param classifier	the classifier to evaluate
-     * @param full		the full dataset (needed for priors)
      * @param train		the training set
      * @param test		the test set
      * @param fold		the fold index
@@ -312,6 +311,9 @@ public class WekaCrossValidationEvaluator
 
   /** the actual number of threads to use. */
   protected int m_ActualNumThreads;
+
+  /** the runner in use. */
+  protected transient JobRunner m_JobRunner;
 
   /**
    * Returns a string describing the object.
@@ -531,7 +533,6 @@ public class WekaCrossValidationEvaluator
     AggregateableEvaluation		evalAgg;
     int					folds;
     CrossValidationFoldGenerator	generator;
-    JobRunner				runner;
     JobList<CrossValidationJob>		list;
     CrossValidationJob			job;
     WekaTrainTestSetContainer		cont;
@@ -563,14 +564,16 @@ public class WekaCrossValidationEvaluator
 	eval  = new Evaluation(data);
 	eval.setDiscardPredictions(m_DiscardPredictions);
 	eval.crossValidateModel(cls, data, folds, new Random(m_Seed), m_Output);
-	if (m_Output instanceof Null)
-	  m_OutputToken = new Token(new WekaEvaluationContainer(eval));
-	else
-	  m_OutputToken = new Token(m_Output.getBuffer().toString());
+	if (!isStopped()) {
+	  if (m_Output instanceof Null)
+	    m_OutputToken = new Token(new WekaEvaluationContainer(eval));
+	  else
+	    m_OutputToken = new Token(m_Output.getBuffer().toString());
+	}
       }
       else {
 	generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
-	runner    = new JobRunner(m_ActualNumThreads);
+	m_JobRunner = new JobRunner(m_ActualNumThreads);
 	list      = new JobList<CrossValidationJob>();
 	while (generator.hasNext()) {
 	  cont = generator.next();
@@ -582,25 +585,29 @@ public class WekaCrossValidationEvaluator
 	      m_DiscardPredictions);
 	  list.add(job);
 	}
-	runner.add(list);
-	runner.start();
-	runner.stop();
+	m_JobRunner.add(list);
+	m_JobRunner.start();
+	m_JobRunner.stop();
 	// aggregate data
 	evalAgg = new AggregateableEvaluation(data);
-	for (i = 0; i < list.size(); i++) {
-	  if (list.get(i).getEvaluation() == null) {
-	    result = "Fold #" + (i+1) + " failed to evaluate";
-	    if (!list.get(i).hasExecutionError())
-	      result += "?";
-	    else
-	      result += ":\n" + list.get(i).getExecutionError();
-	    break;
+	if (!isStopped()) {
+	  for (i = 0; i < list.size(); i++) {
+	    if (list.get(i).getEvaluation() == null) {
+	      result = "Fold #" + (i + 1) + " failed to evaluate";
+	      if (!list.get(i).hasExecutionError())
+		result += "?";
+	      else
+		result += ":\n" + list.get(i).getExecutionError();
+	      break;
+	    }
+	    evalAgg.aggregate(list.get(i).getEvaluation());
+	    list.get(i).cleanUp();
 	  }
-	  evalAgg.aggregate(list.get(i).getEvaluation());
-	  list.get(i).cleanUp();
 	}
 	list.cleanUp();
-	m_OutputToken = new Token(new WekaEvaluationContainer(evalAgg));
+	m_JobRunner = null;
+	if (!isStopped())
+	  m_OutputToken = new Token(new WekaEvaluationContainer(evalAgg));
       }
 
     }
@@ -626,5 +633,15 @@ public class WekaCrossValidationEvaluator
 	cont.setProvenance(m_InputToken.getProvenance().getClone());
       cont.addProvenance(new ProvenanceInformation(ActorType.EVALUATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
     }
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_JobRunner != null)
+      m_JobRunner.terminate();
+    super.stopExecution();
   }
 }
