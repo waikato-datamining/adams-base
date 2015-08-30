@@ -204,6 +204,8 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
 
     result = true;
 
+    preWriteFile(filename);
+
     writer = null;
     fw     = null;
     fos    = null;

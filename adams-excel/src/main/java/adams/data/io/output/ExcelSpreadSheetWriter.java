@@ -207,16 +207,13 @@ public class ExcelSpreadSheetWriter
   }
 
   /**
-   * Writes the spreadsheet in CSV format to the given file.
+   * Hook method before writing to a file.
    *
-   * @param content	the spreadsheet to write
-   * @param filename	the file to write the spreadsheet to
-   * @return		true if successfully written
+   * @param filename	the filename to check
    */
-  @Override
-  public boolean write(SpreadSheet[] content, String filename) {
+  protected void preWriteFile(String filename) {
+    super.preWriteFile(filename);
     setWriteOOXML(filename.endsWith(FILE_EXTENSION_OOXML));
-    return super.write(content, filename);
   }
 
   /**

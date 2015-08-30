@@ -173,6 +173,16 @@ public abstract class AbstractSpreadSheetWriter
   }
 
   /**
+   * Hook method before writing to a file.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param filename	the filename to check
+   */
+  protected void preWriteFile(String filename) {
+  }
+
+  /**
    * Writes the given content to the specified file.
    * Handles compression automatically, if the filename ends with ".gz",
    * {@link #supportsCompressedOutput()} returns true and file is not
@@ -210,6 +220,8 @@ public abstract class AbstractSpreadSheetWriter
     AppendableSpreadSheetWriter	appendable;
 
     result = true;
+
+    preWriteFile(filename);
 
     append = false;
     if (this instanceof AppendableSpreadSheetWriter) {
