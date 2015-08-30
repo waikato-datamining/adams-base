@@ -696,22 +696,32 @@ public class FloatCell
   public Cell setNative(Object value) {
     if (value == null)
       setMissing();
+    // common
     else if (value instanceof String)
       setContentAsString((String) value);
+    else if (value instanceof Integer)
+      setContent((Integer) value);
     else if (value instanceof Long)
       setContent((Long) value);
     else if (value instanceof Double)
       setContent((Double) value);
-    else if (value instanceof Float)
-      setContent((Float) value);
     else if (value instanceof DateTime)
       setContent((DateTime) value);
+    else if (value instanceof DateTimeMsec)
+      setContent((DateTimeMsec) value);
     else if (value instanceof Time)
       setContent((Time) value);
     else if (value instanceof Date)
       setContent((Date) value);
     else if (value instanceof Boolean)
       setContent((Boolean) value);
+    // less common
+    else if (value instanceof Byte)
+      setContent((Byte) value);
+    else if (value instanceof Short)
+      setContent((Short) value);
+    else if (value instanceof Float)
+      setContent((Float) value);
     else
       setObject(value);
     return this;
