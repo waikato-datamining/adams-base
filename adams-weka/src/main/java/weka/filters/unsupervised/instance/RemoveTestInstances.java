@@ -66,6 +66,10 @@ import java.util.Vector;
  *  The index/name of ID attribute to use for identifying rows.
  * </pre>
  * 
+ * <pre> -invert
+ *  Whether to invert the matching (ie keep rather than remove).
+ * </pre>
+ * 
  * <pre> -output-debug-info
  *  If set, filter is run in debug mode and
  *  may output additional info to the console</pre>
@@ -97,6 +101,9 @@ public class RemoveTestInstances
 
   /** the attribute to use for identifying instances. */
   protected WekaAttributeIndex m_ID = new WekaAttributeIndex(WekaAttributeIndex.FIRST);
+
+  /** whether to invert the matching. */
+  protected boolean m_Invert = false;
 
   /**
    * Returns a string describing this classifier.
@@ -136,6 +143,10 @@ public class RemoveTestInstances
     result.addElement(new Option(
 	"\tThe index/name of ID attribute to use for identifying rows.\n",
 	"id", 1, "-id <1-based index or name>"));
+
+    result.addElement(new Option(
+	"\tWhether to invert the matching (ie keep rather than remove).\n",
+	"invert", 0, "-invert"));
 
     enm = super.listOptions();
     while (enm.hasMoreElements())
@@ -179,6 +190,8 @@ public class RemoveTestInstances
     else
       setID(new WekaAttributeIndex(WekaAttributeIndex.FIRST));
 
+    setInvert(Utils.getFlag("invert", options));
+
     super.setOptions(options);
   }
 
@@ -203,6 +216,9 @@ public class RemoveTestInstances
 
     result.add("-id");
     result.add("" + getID().getIndex());
+
+    if (getInvert())
+      result.add("-invert");
 
     result.addAll(Arrays.asList(super.getOptions()));
 
@@ -326,6 +342,36 @@ public class RemoveTestInstances
   }
 
   /**
+   * Sets whether to invert the matching sense (ie keep rather than remove).
+   *
+   * @param value     true if to invert
+   */
+  public void setInvert(boolean value) {
+    m_Invert = value;
+  }
+
+  /**
+   * Returns whether to invert the matching sense (ie keep rather than remove).
+   *
+   * @return		true if to invert
+   */
+  public boolean getInvert() {
+    return m_Invert;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return    tip text for this property suitable for
+   *            displaying in the explorer/experimenter gui
+   */
+  public String invertTipText() {
+    return
+      "If enabled, the matching sense gets inverted and the instances with "
+	+ "the matching ID are kept rather than removed.";
+  }
+
+  /**
    * Returns the Capabilities of this filter.
    *
    * @return            the capabilities of this object
@@ -427,7 +473,7 @@ public class RemoveTestInstances
 	exists = ids.contains("" + inst.value(index));
       else
 	exists = ids.contains(inst.stringValue(index));
-      if (exists)
+      if ((exists && !m_Invert) || (!exists && m_Invert))
 	continue;
       result.add((Instance) inst.copy());
     }
