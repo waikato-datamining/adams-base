@@ -352,7 +352,8 @@ public class WekaFilter
 	  }
 	  if (isLoggingEnabled())
 	    getLogger().info("Creating copy of: " + OptionUtils.getCommandLine(m_Filter));
-	  m_ActualFilter = (Filter) OptionUtils.forAnyCommandLine(Filter.class, OptionUtils.getCommandLine(m_Filter));
+	  m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
+	  Filter.makeCopy(m_Filter);
 	  m_ActualFilter.setInputFormat(data);
 	}
 

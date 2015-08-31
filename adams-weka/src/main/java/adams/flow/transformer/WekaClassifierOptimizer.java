@@ -15,17 +15,17 @@
 
 /*
  * WekaClassifierOptimizer.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import weka.classifiers.AbstractClassifier;
+import adams.core.option.OptionUtils;
+import adams.flow.core.Token;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
 import weka.core.Instances;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -195,7 +195,7 @@ public class WekaClassifierOptimizer
     try {
       // determine best classifier
       data = (Instances) m_InputToken.getPayload();
-      cls  = AbstractClassifier.makeCopy(m_Optimizer);
+      cls  = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Optimizer);
       cls.buildClassifier(data);
       if (cls instanceof GridSearch) {
 	best = new FilteredClassifier();

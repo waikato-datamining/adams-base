@@ -14,14 +14,13 @@
  */
 
 /*
- * LeastMedianSq.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * HighLowSplitSingleClassifier.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
 
-import adams.core.option.WekaCommandLineHandler;
-import weka.classifiers.AbstractClassifier;
+import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.rules.ZeroR;
@@ -30,13 +29,11 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
-import weka.core.OptionHandler;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
@@ -461,7 +458,7 @@ implements WeightedInstancesHandler{
 		getCapabilities().testWithFail(data);
 		
 		LogTargetRegressor ltr=new LogTargetRegressor();
-		Classifier c=AbstractClassifier.makeCopy(getClassifier());
+		Classifier c = (Classifier) OptionUtils.shallowCopy(getClassifier());
 		ltr.setClassifier(c);
 		m_loClassifier=ltr;
 		

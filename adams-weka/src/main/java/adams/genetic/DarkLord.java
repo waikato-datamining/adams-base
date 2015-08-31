@@ -22,7 +22,6 @@ package adams.genetic;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -228,7 +227,7 @@ public class DarkLord
         }
 
 	// evaluate classifier
-	Classifier newClassifier = AbstractClassifier.makeCopy(getGenetic().getClassifier());
+	Classifier newClassifier = (Classifier) OptionUtils.shallowCopy(getGenetic().getClassifier());
 	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
         // process fitness

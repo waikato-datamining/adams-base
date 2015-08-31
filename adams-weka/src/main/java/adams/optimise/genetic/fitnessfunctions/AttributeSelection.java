@@ -15,10 +15,19 @@
 
 /*
  * AttributeSelection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.optimise.genetic.fitnessfunctions;
+
+import adams.core.option.OptionUtils;
+import adams.optimise.OptData;
+import adams.optimise.OptVar;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,16 +35,6 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Random;
 import java.util.logging.Level;
-
-import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.filters.unsupervised.attribute.Remove;
-import adams.core.option.OptionUtils;
-import adams.optimise.OptData;
-import adams.optimise.OptVar;
 
 /**
  * Perform attribute selection using WEKA classification.
@@ -96,7 +95,7 @@ public class AttributeSelection extends AbstractWEKAFitnessFunction {
     Classifier newClassifier = null;
 
     try {
-      newClassifier = AbstractClassifier.makeCopy(getClassifier());
+      newClassifier = (Classifier) OptionUtils.shallowCopy(getClassifier());
       // evaluate classifier on data
       Evaluation evaluation = new Evaluation(newInstances);
       evaluation.crossValidateModel(

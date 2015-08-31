@@ -20,6 +20,7 @@
 package weka.filters.unsupervised.attribute;
 
 import adams.core.base.BaseRegExp;
+import adams.core.option.OptionUtils;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -482,7 +483,7 @@ public class MetaPartitionedMultiFilter
 	  aRange = new adams.core.Range();
 	  aRange.setIndices(range);
 	  ranges.add(new Range(aRange.getRange()));
-	  filters.add(Filter.makeCopy(m_Filters[i]));
+	  filters.add((Filter) OptionUtils.shallowCopy(m_Filters[i]));
 	}
       }
 

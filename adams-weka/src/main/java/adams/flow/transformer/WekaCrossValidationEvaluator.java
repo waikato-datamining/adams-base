@@ -36,7 +36,6 @@ import adams.flow.provenance.ProvenanceSupporter;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.AggregateableEvaluation;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
@@ -183,7 +182,7 @@ public class WekaCrossValidationEvaluator
       super();
       
       try {
-	m_Classifier = AbstractClassifier.makeCopy(classifier);
+	m_Classifier = (Classifier) OptionUtils.shallowCopy(classifier);
       }
       catch (Exception e) {
 	m_Classifier = null;

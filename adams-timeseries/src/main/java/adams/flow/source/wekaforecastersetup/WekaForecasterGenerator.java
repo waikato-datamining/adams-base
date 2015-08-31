@@ -15,19 +15,18 @@
 
 /**
  * WekaForecasterGenerator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.wekaforecastersetup;
 
-import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Classifier;
-import weka.classifiers.functions.LinearRegression;
-import weka.classifiers.timeseries.AbstractForecaster;
-import weka.classifiers.timeseries.WekaForecaster;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.LagMakerOptions;
+import weka.classifiers.Classifier;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.timeseries.AbstractForecaster;
+import weka.classifiers.timeseries.WekaForecaster;
 
 /**
  <!-- globalinfo-start -->
@@ -345,7 +344,7 @@ public class WekaForecasterGenerator
     WekaForecaster result;
 
     result = new WekaForecaster();
-    result.setBaseForecaster(AbstractClassifier.makeCopy(m_Classifier));
+    result.setBaseForecaster((Classifier) OptionUtils.shallowCopy(m_Classifier));
     result.setFieldsToForecast(m_ForecastFields);
     if (m_OverlayFields.length() > 0)
       result.setOverlayFields(m_OverlayFields);

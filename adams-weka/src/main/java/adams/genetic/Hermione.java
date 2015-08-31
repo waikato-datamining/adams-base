@@ -25,7 +25,6 @@ import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.core.option.OptionUtils;
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
@@ -452,7 +451,7 @@ public class Hermione
     }
     Classifier c= null;
     try {
-      c = AbstractClassifier.makeCopy(getClassifier());
+      c = (Classifier) OptionUtils.shallowCopy(getClassifier());
     } catch (Exception e) {
       e.printStackTrace();
     }

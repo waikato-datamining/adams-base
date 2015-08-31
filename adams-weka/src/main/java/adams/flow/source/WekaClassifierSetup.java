@@ -170,7 +170,7 @@ public class WekaClassifierSetup
     result = null;
 
     try {
-      cls           = weka.classifiers.AbstractClassifier.makeCopy(m_Classifier);
+      cls           = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
       m_OutputToken = new Token(cls);
     }
     catch (Exception e) {

@@ -45,7 +45,6 @@ import adams.flow.core.Token;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.GridSearch;
@@ -369,7 +368,7 @@ public class WekaClassifierRanker
 	}
 	else if (trained instanceof MultiSearch) {
 	  try {
-	    result = AbstractClassifier.makeCopy(((MultiSearch) trained).getBestClassifier());
+	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
 	  }
 	  catch (Exception e) {
 	    getLogger().log(Level.SEVERE, "Failed to copy best MultiSearch classifier:", e);
@@ -398,7 +397,7 @@ public class WekaClassifierRanker
 	eval.crossValidateModel(m_Classifier, m_Train, m_Folds, new Random(m_Seed));
       }
       else {
-	cls = AbstractClassifier.makeCopy(m_Classifier);
+	cls = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
 	cls.buildClassifier(m_Train);
 	eval.evaluateModel(cls, m_Test);
 	m_BestClassifier = getBestClassifier(m_Classifier, cls);

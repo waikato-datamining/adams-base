@@ -15,14 +15,12 @@
 
 /*
  * PLSClassifierWeighted.java
- * Copyright (C) 2006 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.functions;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
+import adams.core.option.OptionUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -35,7 +33,9 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilter;
-import adams.core.option.OptionUtils;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -315,7 +315,7 @@ public class PLSClassifierWeighted
     data.deleteWithMissingClass();
 
     // initialize filter
-    m_ActualFilter = (PLSFilter) Filter.makeCopy(m_Filter);
+    m_ActualFilter = (PLSFilter) OptionUtils.shallowCopy(m_Filter);
     m_ActualFilter.setPerformPrediction(false);
     m_ActualFilter.setInputFormat(data);
     Filter.useFilter(data, m_ActualFilter);

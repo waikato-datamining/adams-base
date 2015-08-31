@@ -22,8 +22,8 @@
 package weka.gui.explorer;
 
 import adams.core.io.TempUtils;
+import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Capabilities;
@@ -665,7 +665,7 @@ public class ExperimentPanel
 
 	  // classifier
 	  try {
-	    exp.setPropertyArray(new Classifier[]{AbstractClassifier.makeCopy((Classifier) m_ClassifierEditor.getValue())}); 
+	    exp.setPropertyArray(new Classifier[]{(Classifier) OptionUtils.shallowCopy(m_ClassifierEditor.getValue())});
 	  }
 	  catch (Exception ex) {
 	    m_Log.logMessage("Problem creating copy of classifier: " + ex.getMessage());
