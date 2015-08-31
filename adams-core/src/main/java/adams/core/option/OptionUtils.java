@@ -762,9 +762,14 @@ public class OptionUtils {
 
   /**
    * Attempts to create an object object with the same options as the specified one.
+   * Works for objects implementing {@link OptionHandler} and other command-line
+   * handling objects.
    *
    * @param o		the object
    * @return		the copy with the same options, null in case of an error
+   * @see		#getCommandLine(Object)
+   * @see		#forCommandLine(Class, String)
+   * @see		#forAnyCommandLine(Class, String)
    */
   public static Object shallowCopy(Object o) {
     Object	result;
@@ -772,7 +777,10 @@ public class OptionUtils {
     
     try {
       cmdline = getCommandLine(o);
-      result  = forCommandLine(Object.class, cmdline);
+      if (o instanceof OptionHandler)
+        result = forCommandLine(Object.class, cmdline);
+      else
+        result = forAnyCommandLine(Object.class, cmdline);
     }
     catch (Exception e) {
       result = null;
