@@ -21,6 +21,8 @@
 package adams.gui.core;
 
 import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingSupporter;
+import adams.core.management.OS;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 
@@ -36,14 +38,18 @@ import java.util.logging.Logger;
  * @version $Revision$
  */
 public class BaseFrame
-  extends JFrame {
+  extends JFrame
+  implements LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4853427519044621963L;
 
   /** for logging. */
   protected transient Logger m_Logger;
-  
+
+  /** the maximization fix listener. */
+  protected MaximizationFixWindowListener m_MaximizationFixWindowListener;
+
   /**
    * Initializes the frame with no title.
    */
@@ -97,6 +103,7 @@ public class BaseFrame
    */
   protected void initialize() {
     initializeLogger();
+    m_MaximizationFixWindowListener = new MaximizationFixWindowListener(this, OS.isLinux(), 200);
   }
 
   /**
@@ -107,6 +114,22 @@ public class BaseFrame
       setIconImage(GUIHelper.getLogoIcon().getImage());
 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+    addWindowStateListener(m_MaximizationFixWindowListener);
+  }
+
+  /**
+   * Updates the bounds of the window.
+   *
+   * @param x		the new x of the frame
+   * @param y		the new y of the frame
+   * @param width	the new width of the frame
+   * @param height	the new height of the frame
+   */
+  @Override
+  public void setBounds(int x, int y, int width, int height) {
+    m_MaximizationFixWindowListener.updateBounds(x, y, width, height);
+    super.setBounds(x, y, width, height);
   }
 
   /**
