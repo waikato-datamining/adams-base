@@ -65,7 +65,7 @@ public class OptionManager
   protected boolean m_ThrowExceptions;
 
   /** the Variables instance to use for resolving variables. */
-  protected Variables m_Variables;
+  protected transient Variables m_Variables;
   
   /** whether to suppress error messages. */
   protected boolean m_Quiet;
