@@ -15,15 +15,11 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.filters.AllFilter;
-import weka.filters.Filter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -33,6 +29,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.filters.AllFilter;
+import weka.filters.Filter;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -352,7 +352,7 @@ public class WekaFilter
 	  }
 	  if (isLoggingEnabled())
 	    getLogger().info("Creating copy of: " + OptionUtils.getCommandLine(m_Filter));
-	  m_ActualFilter = Filter.makeCopy(m_Filter);
+	  m_ActualFilter = (Filter) OptionUtils.forAnyCommandLine(Filter.class, OptionUtils.getCommandLine(m_Filter));
 	  m_ActualFilter.setInputFormat(data);
 	}
 
