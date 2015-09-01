@@ -1466,7 +1466,7 @@ public class ActorUtils {
 	path  = new ActorPath(line.trim());
 	actor = ActorUtils.locate(path, current, true, true);
 	if (actor != null) {
-	  if (!result.contains(path))
+	  if (!result.contains(path.toString()))
 	    result.add(path.toString());
 	}
 	// nested?
@@ -1476,7 +1476,7 @@ public class ActorUtils {
 	    path  = new ActorPath(part.trim());
 	    actor = ActorUtils.locate(path, current, true, true);
 	    if (actor != null) {
-	      if (!result.contains(path))
+	      if (!result.contains(path.toString()))
 		result.add(path.toString());
 	    }
 	  }
