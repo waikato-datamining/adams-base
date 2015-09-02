@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
-import weka.classifiers.meta.multisearch.Performance;
+import weka.classifiers.meta.multisearch.DefaultEvaluationMetrics;
 import weka.classifiers.trees.J48;
 import weka.core.SelectedTag;
 import weka.core.setupgenerator.AbstractParameter;
@@ -61,7 +61,7 @@ public class MultiSearchTest
 
     result = new MultiSearch();
 
-    result.setEvaluation(new SelectedTag(Performance.EVALUATION_ACC, MultiSearch.TAGS_EVALUATION));
+    result.setEvaluation(new SelectedTag(DefaultEvaluationMetrics.EVALUATION_ACC, new DefaultEvaluationMetrics().getTags()));
     result.setClassifier(new J48());
 
     param = new MathParameter();

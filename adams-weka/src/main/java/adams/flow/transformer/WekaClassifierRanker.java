@@ -49,6 +49,8 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
+import weka.classifiers.meta.multisearch.DefaultEvaluationMetrics;
+import weka.classifiers.meta.multisearch.DefaultEvaluationWrapper;
 import weka.classifiers.meta.multisearch.Performance;
 import weka.classifiers.meta.multisearch.PerformanceComparator;
 import weka.core.Instances;
@@ -403,7 +405,7 @@ public class WekaClassifierRanker
 	m_BestClassifier = getBestClassifier(m_Classifier, cls);
 	cls              = null;
       }
-      m_Performance = new Performance(new Point(new Integer[]{m_Index}), eval, m_Measure.getMeasure());
+      m_Performance = new Performance(new Point(new Integer[]{m_Index}), new DefaultEvaluationWrapper(eval, new DefaultEvaluationMetrics()), m_Measure.getMeasure());
       eval = null;
     }
 
@@ -472,21 +474,21 @@ public class WekaClassifierRanker
   public enum Measure
     implements EnumWithCustomDisplay<Measure> {
     /** evaluation via: Correlation coefficient. */
-    CC("Correlation coefficient", Performance.EVALUATION_CC),
+    CC("Correlation coefficient", DefaultEvaluationMetrics.EVALUATION_CC),
     /** evaluation via: Root mean squared error. */
-    RMSE("Root mean squared error", Performance.EVALUATION_RMSE),
+    RMSE("Root mean squared error", DefaultEvaluationMetrics.EVALUATION_RMSE),
     /** evaluation via: Root relative squared error. */
-    RRSE("Root relative squared error", Performance.EVALUATION_RRSE),
+    RRSE("Root relative squared error", DefaultEvaluationMetrics.EVALUATION_RRSE),
     /** evaluation via: Mean absolute error. */
-    MAE("Mean absolute error", Performance.EVALUATION_MAE),
+    MAE("Mean absolute error", DefaultEvaluationMetrics.EVALUATION_MAE),
     /** evaluation via: Relative absolute error. */
-    RAE("Root absolute error", Performance.EVALUATION_RAE),
+    RAE("Root absolute error", DefaultEvaluationMetrics.EVALUATION_RAE),
     /** evaluation via: Combined = ("", Performance.1-CC) + RRSE + RAE. */
-    COMBINED("Combined: (1-abs(CC)) + RRSE + RAE", Performance.EVALUATION_COMBINED),
+    COMBINED("Combined: (1-abs(CC)) + RRSE + RAE", DefaultEvaluationMetrics.EVALUATION_COMBINED),
     /** evaluation via: Accuracy. */
-    ACC("Accuracy", Performance.EVALUATION_ACC),
+    ACC("Accuracy", DefaultEvaluationMetrics.EVALUATION_ACC),
     /** evaluation via: Kappa statistic. */
-    KAPPA("Kapp", Performance.EVALUATION_KAPPA);
+    KAPPA("Kapp", DefaultEvaluationMetrics.EVALUATION_KAPPA);
 
     /** the display string. */
     private String m_Display;
@@ -502,7 +504,6 @@ public class WekaClassifierRanker
      *
      * @param display	the string to use as display
      * @param measure	the performance measure
-     * @see		MultiSearch#TAGS_EVALUATION
      */
     private Measure(String display, int measure) {
       m_Display = display;
@@ -514,7 +515,6 @@ public class WekaClassifierRanker
      * Returns the associated measure.
      *
      * @return		the measure
-     * @see		MultiSearch#TAGS_EVALUATION
      */
     public int getMeasure() {
       return m_Measure;
@@ -1135,7 +1135,7 @@ public class WekaClassifierRanker
 	    }
 	  }
 	}
-	Collections.sort(ranking, new PerformanceComparator(m_Measure.getMeasure()));
+	Collections.sort(ranking, new PerformanceComparator(m_Measure.getMeasure(), new DefaultEvaluationMetrics()));
 
 	// generate output
 	  if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
