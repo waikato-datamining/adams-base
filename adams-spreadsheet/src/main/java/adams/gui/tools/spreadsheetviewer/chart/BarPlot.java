@@ -15,7 +15,7 @@
 
 /**
  * BarPlot.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -239,6 +239,7 @@ public class BarPlot
 
     paintlet = new BarPaintlet();
     paintlet.setOffset(3);
+    paintlet.setPaintAll(true);
     paintlet.setWidth(m_BarWidth);
     plotter.setPaintlet(paintlet);
 

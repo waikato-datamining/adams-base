@@ -15,7 +15,7 @@
 
 /**
  * LinePlot.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -129,6 +129,7 @@ public class LinePlot
     configureSequencePlotter(sheet, plotter);
 
     paintlet = new LinePaintlet();
+    paintlet.setPaintAll(true);
     plotter.setPaintlet(paintlet);
 
     action = new ViewDataClickAction();
