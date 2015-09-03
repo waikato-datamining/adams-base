@@ -48,6 +48,9 @@ public class BaseFrame
   /** for logging. */
   protected transient Logger m_Logger;
 
+  /** whether to use the fix. */
+  protected static Boolean m_UseMaximizationFix;
+
   /** the maximization fix listener. */
   protected MaximizationFixWindowListener m_MaximizationFixWindowListener;
 
@@ -104,20 +107,23 @@ public class BaseFrame
    */
   protected void initialize() {
     String		useFix;
-    boolean		fixEnabled;
     OperatingSystems	os;
 
     initializeLogger();
-    useFix = GUIHelper.getString("UseFrameMaximizationFix", "" + OperatingSystems.LINUX);
-    try {
-      os = OperatingSystems.valueOf(useFix);
+    if (m_UseMaximizationFix == null) {
+      useFix = GUIHelper.getString("UseFrameMaximizationFix", "" + OperatingSystems.LINUX);
+      try {
+	os = OperatingSystems.valueOf(useFix);
+      }
+      catch (Exception e) {
+	os = null;
+      }
+      m_UseMaximizationFix = useFix.equals("true") || ((os != null) && (OS.isOS(os)));
+      if (m_UseMaximizationFix)
+	getLogger().log(Level.WARNING, "Using frame maximization fix (GUIHelper.props)");
     }
-    catch (Exception e) {
-      os = null;
-    }
-    fixEnabled= useFix.equals("true") || ((os != null) && (OS.isOS(os)));
     m_MaximizationFixWindowListener = new MaximizationFixWindowListener(
-      this, fixEnabled, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
+      this, m_UseMaximizationFix, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
   }
 
   /**
