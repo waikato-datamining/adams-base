@@ -46,8 +46,8 @@ BaseDirectoryChooser.Height=500
 # Whether the BaseDirectoryChooser shows bookmarks
 BaseDirectoryChooser.ShowBookmarks=false
 
-# Whether to use the frame maximization fix (affects only Linux) (true|false)
-UseFrameMaximizationFix=true
+# Whether to use the frame maximization fix (affects only Linux) (true|false|LINUX|ANDROID|MAC|WINDOWS)
+UseFrameMaximizationFix=LINUX
 
 # The delay in msec used by the frame maximization fix
 FrameMaximizationFixDelay=200

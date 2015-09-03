@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.OS;
+import adams.core.management.OS.OperatingSystems;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 
@@ -102,11 +103,21 @@ public class BaseFrame
    * For initializing members.
    */
   protected void initialize() {
+    String		useFix;
+    boolean		fixEnabled;
+    OperatingSystems	os;
+
     initializeLogger();
+    useFix = GUIHelper.getString("UseFrameMaximizationFix", "" + OperatingSystems.LINUX);
+    try {
+      os = OperatingSystems.valueOf(useFix);
+    }
+    catch (Exception e) {
+      os = null;
+    }
+    fixEnabled= useFix.equals("true") || ((os != null) && (OS.isOS(os)));
     m_MaximizationFixWindowListener = new MaximizationFixWindowListener(
-      this,
-      GUIHelper.getBoolean("UseFrameMaximizationFix", OS.isLinux()),
-      GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
+      this, fixEnabled, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
   }
 
   /**
