@@ -46,6 +46,12 @@ BaseDirectoryChooser.Height=500
 # Whether the BaseDirectoryChooser shows bookmarks
 BaseDirectoryChooser.ShowBookmarks=false
 
+# Whether to use the frame maximization fix (affects only Linux) (true|false)
+UseFrameMaximizationFix=false
+
+# The delay in msec used by the frame maximization fix
+FrameMaximizationFixDelay=200
+
 # The maximum percentage for the height/width of frames and dialogs (0-1)
 MaxWindowHeight=0.95
 MaxWindowWidth=1.00

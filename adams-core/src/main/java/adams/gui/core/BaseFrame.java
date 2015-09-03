@@ -103,7 +103,10 @@ public class BaseFrame
    */
   protected void initialize() {
     initializeLogger();
-    m_MaximizationFixWindowListener = new MaximizationFixWindowListener(this, OS.isLinux(), 200);
+    m_MaximizationFixWindowListener = new MaximizationFixWindowListener(
+      this,
+      GUIHelper.getBoolean("UseFrameMaximizationFix", OS.isLinux()),
+      GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
   }
 
   /**
@@ -128,7 +131,8 @@ public class BaseFrame
    */
   @Override
   public void setBounds(int x, int y, int width, int height) {
-    m_MaximizationFixWindowListener.updateBounds(x, y, width, height);
+    if (m_MaximizationFixWindowListener != null)
+      m_MaximizationFixWindowListener.updateBounds(x, y, width, height);
     super.setBounds(x, y, width, height);
   }
 
