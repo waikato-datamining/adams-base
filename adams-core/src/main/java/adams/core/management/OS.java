@@ -27,6 +27,16 @@ package adams.core.management;
  */
 public class OS {
 
+  /**
+   * Enumeration of OS.
+   */
+  public enum OperatingSystems {
+    LINUX,
+    ANDROID,
+    MAC,
+    WINDOWS
+  }
+
   /** whether the OS is Windows. */
   protected static Boolean m_IsWindows;
 
@@ -90,6 +100,27 @@ public class OS {
     }
 
     return m_IsAndroid;
+  }
+
+  /**
+   * Tests whether the current OS is the same as the provided parameter.
+   *
+   * @param os		the OS to test
+   * @return		true if it is the OS
+   */
+  public synchronized static boolean isOS(OperatingSystems os) {
+    switch (os) {
+      case LINUX:
+        return isLinux();
+      case MAC:
+        return isMac();
+      case ANDROID:
+        return isAndroid();
+      case WINDOWS:
+        return isWindows();
+      default:
+        throw new IllegalStateException("Unhandled OS: " + os);
+    }
   }
 
   /**
