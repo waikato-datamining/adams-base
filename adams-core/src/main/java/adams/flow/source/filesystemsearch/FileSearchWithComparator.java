@@ -14,14 +14,14 @@
  */
 
 /**
- * FileSearchWithCustomSort.java
+ * FileSearchWithComparator.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files, but uses a regular expression to reassemble the name and perform the sorting.
+ * Searches only for files, but uses the comparator for sorting the files.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -36,27 +36,20 @@ package adams.flow.source.filesystemsearch;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-max-items &lt;int&gt; (property: maxItems)
- * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
- * &nbsp;&nbsp;&nbsp;default: -1
- * </pre>
- * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression that the dirs must match (empty string matches all
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-sort-find &lt;adams.core.base.BaseRegExp&gt; (property: sortFind)
- * &nbsp;&nbsp;&nbsp;The regular expression that extracts groups to be used in reassembling the 
- * &nbsp;&nbsp;&nbsp;string for sorting.
- * &nbsp;&nbsp;&nbsp;default: ([\\\\s\\\\S]+)
+ * <pre>-max-items &lt;int&gt; (property: maxItems)
+ * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
+ * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
- * <pre>-sort-replace &lt;java.lang.String&gt; (property: sortReplace)
- * &nbsp;&nbsp;&nbsp;The reassmbly string making use of the groups extracted with the regular 
- * &nbsp;&nbsp;&nbsp;expression.
- * &nbsp;&nbsp;&nbsp;default: $0
+ * <pre>-comparator &lt;java.util.Comparator&gt; (property: comparator)
+ * &nbsp;&nbsp;&nbsp;The comparator to use; must implement java.util.Comparator and java.io.Serializable
+ * &nbsp;&nbsp;&nbsp;default: adams.core.DefaultCompare
  * </pre>
  * 
  * <pre>-descending &lt;boolean&gt; (property: sortDescending)
