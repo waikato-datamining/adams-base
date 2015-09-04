@@ -15,15 +15,15 @@
 
 /**
  * WekaInstances.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
+import adams.core.ClassLocator;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.ClassLocator;
+
+import java.util.Hashtable;
 
 /**
  * Provides further insight into {@link Instance} and {@link Instances} objects.
@@ -68,6 +68,7 @@ public class WekaInstances
       data = inst.dataset();
     }
     
+    result.put("relation", data.relationName());
     result.put("num attributes", data.numAttributes());
     result.put("class attribute", (data.classIndex() == -1) ? "-none-" : ((data.classIndex()+1) + " (" + data.classAttribute().name() + ")"));
     if (inst == null) {
