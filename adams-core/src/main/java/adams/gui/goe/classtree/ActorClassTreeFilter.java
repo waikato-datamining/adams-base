@@ -15,11 +15,9 @@
 
 /**
  * ActorClassTreeFilter.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe.classtree;
-
-import java.util.Hashtable;
 
 import adams.core.ClassLocator;
 import adams.core.Utils;
@@ -29,6 +27,8 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
+
+import java.util.Hashtable;
 
 /**
  * Filter for actors. Takes the generates/accepts of each actor into account
@@ -197,6 +197,7 @@ public class ActorClassTreeFilter
     AbstractActor	actor;
     boolean		result;
     Class		cls;
+    boolean met;
 
     result = true;
 
@@ -247,14 +248,17 @@ public class ActorClassTreeFilter
     }
 
     if (result && m_Restrictions != null) {
+      met = (m_Restrictions.length == 0);
       for (Class restriction: m_Restrictions) {
 	if (restriction.isInterface())
-	  result = ClassLocator.hasInterface(restriction, cls);
+	  met = ClassLocator.hasInterface(restriction, cls);
 	else
-	  result = ClassLocator.isSubclass(restriction, cls);
-	if (!result)
+	  met = ClassLocator.isSubclass(restriction, cls);
+	if (met)
 	  break;
       }
+      if (!met)
+	result = false;
     }
 
     return result;
