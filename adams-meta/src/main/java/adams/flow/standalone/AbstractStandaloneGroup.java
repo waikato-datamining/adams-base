@@ -19,6 +19,8 @@
  */
 package adams.flow.standalone;
 
+import adams.core.ClassLocator;
+import adams.core.Utils;
 import adams.core.Variables;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
@@ -63,6 +65,15 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   protected abstract List<T> getDefaultActors();
 
   /**
+   * Returns the classes that the flow editor uses for filtering.
+   *
+   * @return		the classes
+   */
+  protected Class[] getActorFilter() {
+    return new Class[]{StandaloneGroupItem.class};
+  }
+
+  /**
    * Returns some information about the actor handler, e.g., whether it can
    * contain standalones and the actor execution.
    *
@@ -70,7 +81,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, new Class[]{StandaloneGroupItem.class});
+    return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
   }
 
   /**
@@ -121,7 +132,31 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @param index	the index of actor, ignored if -1
    * @return		null if OK, otherwise the error message
    */
-  protected abstract String checkActor(AbstractActor actor, int index);
+  protected String checkActor(AbstractActor actor, int index) {
+    String	result;
+    Class[]	accepted;
+    boolean	found;
+
+    result   = null;
+    accepted = getActorFilter();
+    found    = false;
+
+    for (Class cls: accepted) {
+      if (ClassLocator.isSubclass(cls, actor.getClass())) {
+	found = true;
+	break;
+      }
+      else if (ClassLocator.hasInterface(cls, actor.getClass())) {
+	found = true;
+	break;
+      }
+    }
+
+    if (!found)
+      result = "Actor #" + (index+1) + " is not of type: " + Utils.classesToString(accepted);
+
+    return result;
+  }
 
   /**
    * Returns the size of the group.
