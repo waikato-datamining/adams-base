@@ -15,17 +15,17 @@
 
 /**
  * LogEntryProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone.logevent;
 
-import java.util.Date;
-import java.util.logging.LogRecord;
-
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingLevel;
 import adams.db.LogEntry;
+
+import java.util.Date;
+import java.util.logging.LogRecord;
 
 /**
  <!-- globalinfo-start -->
@@ -82,7 +82,7 @@ public class LogEntryProcessor
     props.setProperty("Message", msg);
     result.setGeneration(new Date());
     result.setSource(record.getLoggerName());
-    result.setType(LoggingHelper.levelToOutputType(record.getLevel()).toString());
+    result.setType(LoggingLevel.valueOf(record.getLevel()).toString());
     result.setStatus(LogEntry.STATUS_NEW);
     result.setMessage(props);
 

@@ -14,20 +14,12 @@
  */
 
 /**
- * AbstractImageFlattener.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * AbstractSelectedImagesFeatureGenerator.java
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.swing.SwingWorker;
-
+import adams.core.logging.LoggingLevel;
 import adams.data.conversion.SpreadSheetAddRowID;
 import adams.data.conversion.TransposeSpreadSheet;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -40,10 +32,17 @@ import adams.flow.core.ActorUtils;
 import adams.flow.transformer.Convert;
 import adams.flow.transformer.SpreadSheetColumnFilter;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.spreadsheetviewer.chart.LinePlot;
 import adams.gui.visualization.image.ImagePanel;
+
+import javax.swing.SwingWorker;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for image feature generator plugins.
@@ -269,8 +268,8 @@ public abstract class AbstractSelectedImagesFeatureGenerator
 	    super.done();
 	    if (msg != null) {
 	      GUIHelper.showErrorMessage(m_CurrentPanel, msg);
-	      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
-	      ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine() + "\n");
+	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n");
+	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, flow.toCommandLine() + "\n");
 	      flow.destroy();
 	    }
 	    else {

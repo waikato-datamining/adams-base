@@ -23,8 +23,8 @@ package adams.gui.chooser;
 import adams.core.Utils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 
@@ -606,7 +606,7 @@ public class BaseFileChooser
    * @param t 		the exception
    */
   protected static void handleException(String msg, Throwable t) {
-    ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n" + Utils.throwableToString(t));
+    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n" + Utils.throwableToString(t));
     System.err.println(msg);
     t.printStackTrace();
   }

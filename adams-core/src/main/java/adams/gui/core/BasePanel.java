@@ -21,8 +21,8 @@
 package adams.gui.core;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.gui.application.Child;
-import adams.gui.core.ConsolePanel.OutputType;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -234,7 +234,7 @@ public class BasePanel
    * @param msg		the message to output
    */
   public void printErrorMessage(String msg) {
-    ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
     System.err.println(msg);
   }
 
@@ -246,7 +246,7 @@ public class BasePanel
    */
   public void printException(String msg, Exception e) {
     msg = getClass().getName() + ": " + msg + "\n" + Utils.throwableToString(e);
-    ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
     System.err.println(msg);
   }
 

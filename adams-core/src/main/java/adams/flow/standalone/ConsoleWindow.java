@@ -22,6 +22,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingLevel;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
@@ -30,7 +31,6 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -146,8 +146,8 @@ public class ConsoleWindow
   /** the key for storing the lookup in the backup. */
   public final static String BACKUP_INPUT = "lookup";
 
-  /** the output types to display. */
-  protected OutputType[] m_Types;
+  /** the logging levels to display. */
+  protected LoggingLevel[] m_Levels;
   
   /** the font to use. */
   protected Font m_Font;
@@ -156,7 +156,7 @@ public class ConsoleWindow
   protected BaseTextArea m_TextArea;
   
   /** the lookup for the types. */
-  protected HashSet<OutputType> m_LookUp;
+  protected HashSet<LoggingLevel> m_LookUp;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -191,11 +191,11 @@ public class ConsoleWindow
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "types",
-	    new OutputType[]{
-		OutputType.INFO,
-		OutputType.DEBUG,
-		OutputType.ERROR,
+	    "level", "levels",
+	    new LoggingLevel[]{
+		LoggingLevel.INFO,
+		LoggingLevel.WARNING,
+		LoggingLevel.SEVERE,
 	    });
 
     m_OptionManager.add(
@@ -247,7 +247,7 @@ public class ConsoleWindow
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_INPUT)) {
-      m_LookUp = (HashSet<OutputType>) state.get(BACKUP_INPUT);
+      m_LookUp = (HashSet<LoggingLevel>) state.get(BACKUP_INPUT);
       state.remove(BACKUP_INPUT);
     }
 
@@ -255,22 +255,22 @@ public class ConsoleWindow
   }
 
   /**
-   * Sets the {@link OutputType}s to display.
+   * Sets the {@link LoggingLevel}s to display.
    *
-   * @param value	the types
+   * @param value	the levels
    */
-  public void setTypes(OutputType[] value) {
-    m_Types = value;
+  public void setLevels(LoggingLevel[] value) {
+    m_Levels = value;
     reset();
   }
 
   /**
-   * Returns the {@link OutputType}s to display .
+   * Returns the {@link LoggingLevel}s to display .
    *
-   * @return		the types
+   * @return		the levels
    */
-  public OutputType[] getTypes() {
-    return m_Types;
+  public LoggingLevel[] getLevels() {
+    return m_Levels;
   }
 
   /**
@@ -279,8 +279,8 @@ public class ConsoleWindow
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String typesTipText() {
-    return "The types of messages to display.";
+  public String levelsTipText() {
+    return "The logging levels of messages to display.";
   }
 
   /**
@@ -328,7 +328,7 @@ public class ConsoleWindow
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "types", Utils.flatten(m_Types, ", "));
+    return QuickInfoHelper.toString(this, "types", Utils.flatten(m_Levels, ", "));
   }
   
   /**
@@ -628,7 +628,7 @@ public class ConsoleWindow
     if (result == null) {
       if (!isHeadless()) {
 	ConsolePanel.getSingleton().addListener(this);
-	m_LookUp = new HashSet<OutputType>(Arrays.asList(m_Types));
+	m_LookUp = new HashSet<LoggingLevel>(Arrays.asList(m_Levels));
       }
     }
     
@@ -641,7 +641,7 @@ public class ConsoleWindow
    * @param e		the generated event
    */
   public void consolePanelMessageReceived(ConsolePanelEvent e) {
-    if (m_LookUp.contains(e.getOutputType())) {
+    if (m_LookUp.contains(e.getLevel())) {
       if (m_TextArea != null)
 	m_TextArea.append(e.getMessage());
     }

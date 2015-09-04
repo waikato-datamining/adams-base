@@ -15,7 +15,7 @@
 
 /**
  * LoggingLevel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -65,5 +65,26 @@ public enum LoggingLevel {
    */
   public Level getLevel() {
     return m_Level;
+  }
+
+  /**
+   * Determines the associated LoggingLevel.
+   *
+   * @param level	the level to get the LoggingLevel for
+   * @return		the LoggingLevel, null if not found
+   */
+  public static LoggingLevel valueOf(Level level) {
+    LoggingLevel	result;
+
+    result = null;
+
+    for (LoggingLevel l: values()) {
+      if (l.getLevel() == level) {
+	result = l;
+	break;
+      }
+    }
+
+    return result;
   }
 }

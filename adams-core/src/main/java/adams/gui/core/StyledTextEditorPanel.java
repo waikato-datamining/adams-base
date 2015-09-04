@@ -15,17 +15,17 @@
 
 /**
  * StyledTextEditorPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
+import adams.core.License;
+import adams.core.Utils;
+import adams.core.annotation.MixedCopyright;
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.TextFileChooser;
 
 import javax.swing.AbstractAction;
 import javax.swing.event.ChangeEvent;
@@ -34,15 +34,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
-
-import adams.core.License;
-import adams.core.Utils;
-import adams.core.annotation.MixedCopyright;
-import adams.core.io.FileUtils;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.TextFileChooser;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A panel that allows the editing of text, including undo/redo support.
@@ -279,7 +279,7 @@ public class StyledTextEditorPanel
    * @return		the document
    */
   public Document getDocument() {
-    return m_TextPane.getTextPane().getDocument();
+    return m_TextPane.getDocument();
   }
 
   /**
@@ -288,7 +288,7 @@ public class StyledTextEditorPanel
    * @param value	the position
    */
   public void setCaretPosition(int value) {
-    m_TextPane.getTextPane().setCaretPosition(value);
+    m_TextPane.setCaretPosition(value);
   }
 
   /**
@@ -297,7 +297,14 @@ public class StyledTextEditorPanel
    * @return		the cursor position
    */
   public int getCaretPosition() {
-    return m_TextPane.getTextPane().getCaretPosition();
+    return m_TextPane.getCaretPosition();
+  }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  public void setCaretPositionLast() {
+    m_TextPane.setCaretPositionLast();
   }
 
   /**
@@ -664,5 +671,24 @@ public class StyledTextEditorPanel
     e = new ChangeEvent(this);
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   */
+  public void append(String text) {
+    m_TextPane.append(text);
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   * @param a		the attribute set, null if to use current
+   */
+  public  void append(String text, AttributeSet a) {
+    m_TextPane.append(text, a);
   }
 }

@@ -15,21 +15,13 @@
 
 /**
  * EncloseActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JMenuItem;
-import javax.swing.tree.TreePath;
-
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
@@ -41,13 +33,20 @@ import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
+
+import javax.swing.JMenuItem;
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * For enclosing the actors in an actor handler.
@@ -163,7 +162,7 @@ public class EncloseActor
       else
 	msg = "Failed to enclose " + paths.length + " actors";
       msg += " in a " + handler.getClass().getSimpleName() + ": ";
-      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n" + Utils.throwableToString(e));
+      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n" + Utils.throwableToString(e));
       GUIHelper.showErrorMessage(
 	  m_State.tree, msg + "\n" + e.getMessage());
     }

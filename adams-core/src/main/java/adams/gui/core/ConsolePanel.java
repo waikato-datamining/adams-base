@@ -15,19 +15,16 @@
 
 /**
  * ConsolePanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.HashSet;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingLevel;
+import adams.gui.event.ConsolePanelEvent;
+import adams.gui.event.ConsolePanelListener;
+import adams.gui.sendto.SendToActionSupporter;
+import adams.gui.sendto.SendToActionUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,12 +36,21 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.JTextComponent;
-
-import adams.gui.event.ConsolePanelEvent;
-import adams.gui.event.ConsolePanelListener;
-import adams.gui.sendto.SendToActionSupporter;
-import adams.gui.sendto.SendToActionUtils;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  * Global panel for capturing output via PrintObject instances.
@@ -58,21 +64,6 @@ public class ConsolePanel
 
   /** for serialization. */
   private static final long serialVersionUID = -2339480199106797838L;
-
-  /**
-   * The type of output to handle.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum OutputType {
-    /** informational messages. */
-    INFO,
-    /** errors and warnings. */
-    ERROR,
-    /** debugging information. */
-    DEBUG
-  }
 
   /**
    * Represents a single panel for a specific type of output.
@@ -93,7 +84,7 @@ public class ConsolePanel
     protected boolean m_OutputEnabled;
 
     /** the text area for the output. */
-    protected TextEditorPanel m_TextArea;
+    protected StyledTextEditorPanel m_TextArea;
 
     /** the button for enabling/disabling the output. */
     protected JButton m_ButtonEnabledDisable;
@@ -104,27 +95,26 @@ public class ConsolePanel
     /** the button for clearing the output. */
     protected JButton m_ButtonClear;
 
+    /** the level/color association. */
+    protected HashMap<LoggingLevel,AttributeSet> m_LevelAttributeSets;
+
     /**
      * Initializes the panel.
      *
      * @param title	the title of the panel
      */
     public OutputPanel(String title) {
-      this(title, Color.BLACK);
-    }
-
-    /**
-     * Initializes the panel.
-     *
-     * @param title	the title of the panel
-     * @param color	the font color
-     */
-    public OutputPanel(String title, Color color) {
       super();
 
       m_Title         = title;
       m_OutputEnabled = true;
-      m_TextArea.getTextArea().setForeground(color);
+      m_LevelAttributeSets = new HashMap<>();
+      for (LoggingLevel l: LoggingLevel.values()) {
+	SimpleAttributeSet set = new SimpleAttributeSet();
+	StyleConstants.setForeground(set, levelToColor(l));
+	StyleConstants.setFontFamily(set, "monospaced");
+	m_LevelAttributeSets.put(l, set);
+      }
     }
 
     /**
@@ -139,7 +129,7 @@ public class ConsolePanel
 
       setLayout(new BorderLayout());
 
-      m_TextArea = new TextEditorPanel();
+      m_TextArea = new StyledTextEditorPanel();
       add(m_TextArea, BorderLayout.CENTER);
 
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -241,7 +231,7 @@ public class ConsolePanel
      * @param value	if true line wrap is enabled
      */
     public void setLineWrap(boolean value) {
-      m_TextArea.setLineWrap(value);
+      m_TextArea.setWordWrap(value);
     }
 
     /**
@@ -250,7 +240,7 @@ public class ConsolePanel
      * @return		true if line wrap is enabled
      */
     public boolean getLineWrap() {
-      return m_TextArea.getLineWrap();
+      return m_TextArea.getWordWrap();
     }
 
     /**
@@ -261,7 +251,7 @@ public class ConsolePanel
       int		index;
 
       synchronized(m_TextArea) {
-	if (m_TextArea.getTextArea().getLineCount() > ((Number) m_SpinnerMaxLines.getValue()).intValue()) {
+	if (m_TextArea.getTextPane().getLineCount() > ((Number) m_SpinnerMaxLines.getValue()).intValue()) {
 	  buf   = new StringBuilder(m_TextArea.getContent());
 	  index = buf.indexOf("\n", (int) (buf.length() * 0.2));
 	  if (index == -1)
@@ -276,16 +266,17 @@ public class ConsolePanel
     /**
      * Appends the given string.
      *
+     * @param level	the logging level
      * @param msg	the message to append
      */
-    public void append(final String msg) {
+    public void append(final LoggingLevel level, final String msg) {
       if (!m_OutputEnabled)
 	return;
 
       synchronized(m_TextArea) {
-	m_TextArea.append(msg);
+	m_TextArea.getTextPane().append(msg, m_LevelAttributeSets.get(level));
 	trimOutput();
-	m_TextArea.setCaretPosition(m_TextArea.getContent().length());
+	m_TextArea.setCaretPositionLast();
       }
     }
     
@@ -301,21 +292,17 @@ public class ConsolePanel
 
   /**
    * The type of panel.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public enum PanelType {
     /** contains all the output. */
     ALL,
-    /** only the debug output. */
-    DEBUG,
-    /** only output on stdout. */
-    STDOUT,
-    /** only output on stderr. */
-    STDERR
+    /** only error output. */
+    ERRORS,
   }
-  
+
   /**
    * For letting {@link PrintStream} objects print to the {@link ConsolePanel}.
    * 
@@ -325,8 +312,8 @@ public class ConsolePanel
   public static class ConsolePanelOutputStream
     extends OutputStream {
     
-    /** the output type to use. */
-    protected OutputType m_OutputType;
+    /** the level to use. */
+    protected LoggingLevel m_Level;
     
     /** the current buffer. */
     protected StringBuilder m_Buffer;
@@ -334,13 +321,13 @@ public class ConsolePanel
     /**
      * Initializes the output stream.
      * 
-     * @param outputType	the output type to use
+     * @param level 	the logging level
      */
-    public ConsolePanelOutputStream(OutputType outputType) {
+    public ConsolePanelOutputStream(LoggingLevel level) {
       super();
       
-      m_OutputType = outputType;
-      m_Buffer     = new StringBuilder();
+      m_Level  = level;
+      m_Buffer = new StringBuilder();
     }
     
     /**
@@ -363,7 +350,7 @@ public class ConsolePanel
       m_Buffer.append(c);
       
       if (c == '\n') {
-	getSingleton().append(m_OutputType, m_Buffer.toString());
+	getSingleton().append(m_Level, m_Buffer.toString());
 	m_Buffer.delete(0, m_Buffer.length());
       }
     }
@@ -378,14 +365,8 @@ public class ConsolePanel
   /** the ALL panel. */
   protected OutputPanel m_PanelAll;
 
-  /** the info panel. */
-  protected OutputPanel m_PanelInfo;
-
   /** the error panel. */
   protected OutputPanel m_PanelError;
-
-  /** the debug panel. */
-  protected OutputPanel m_PanelDebug;
 
   /** the menu bar. */
   protected JMenuBar m_MenuBar;
@@ -449,14 +430,8 @@ public class ConsolePanel
     m_PanelAll = new OutputPanel("All");
     m_TabbedPane.addTab(m_PanelAll.getTitle(), m_PanelAll);
 
-    m_PanelInfo = new OutputPanel("Info");
-    m_TabbedPane.addTab(m_PanelInfo.getTitle(), m_PanelInfo);
-
-    m_PanelError = new OutputPanel("Error", Color.RED.darker());
+    m_PanelError = new OutputPanel("Error");
     m_TabbedPane.addTab(m_PanelError.getTitle(), m_PanelError);
-
-    m_PanelDebug = new OutputPanel("Debug", Color.BLUE.darker());
-    m_TabbedPane.addTab(m_PanelDebug.getTitle(), m_PanelDebug);
   }
 
   /**
@@ -632,12 +607,8 @@ public class ConsolePanel
     switch (type) {
       case ALL:
 	return m_PanelAll;
-      case DEBUG:
-	return m_PanelDebug;
-      case STDERR:
+      case ERRORS:
 	return m_PanelError;
-      case STDOUT:
-	return m_PanelInfo;
       default:
 	throw new IllegalArgumentException("Unhandled panel type: " + type);
     }
@@ -668,16 +639,16 @@ public class ConsolePanel
   /**
    * Notifies the listeners.
    * 
-   * @param outputType	the type of output the string represents
+   * @param level	the logging level of output the string represents
    * @param msg		the message to append
    */
-  protected void notifyListeners(OutputType outputType, String msg) {
+  protected void notifyListeners(LoggingLevel level, String msg) {
     ConsolePanelEvent	e;
     
     if (m_Listeners.size() == 0)
       return;
     
-    e = new ConsolePanelEvent(this, outputType, msg);
+    e = new ConsolePanelEvent(this, level, msg);
     try {
       synchronized(m_Listeners) {
 	for (ConsolePanelListener l: m_Listeners)
@@ -692,28 +663,15 @@ public class ConsolePanel
   /**
    * Appends the given string to the according panels.
    *
-   * @param outputType	the type of output the string represents
+   * @param level	the logging level
    * @param msg		the message to append
    */
-  public void append(OutputType outputType, String msg) {
-    switch (outputType) {
-      case INFO:
-	m_PanelAll.append(msg);
-	m_PanelInfo.append(msg);
-	break;
-      case ERROR:
-	m_PanelAll.append(msg);
-	m_PanelError.append(msg);
-	break;
-      case DEBUG:
-	m_PanelAll.append(msg);
-	m_PanelDebug.append(msg);
-	break;
-      default:
-	throw new IllegalArgumentException("Unhandled output type: " + outputType);
-    }
-    
-    notifyListeners(outputType, msg);
+  public void append(LoggingLevel level, String msg) {
+    m_PanelAll.append(level, msg);
+    if (LoggingHelper.isAtMost(level.getLevel(), Level.WARNING))
+      m_PanelError.append(level, msg);
+
+    notifyListeners(level, msg);
   }
 
   /**
@@ -761,6 +719,39 @@ public class ConsolePanel
     }
 
     return result;
+  }
+
+  /**
+   * Turns the logging level into a color.
+   *
+   * @param level	the level
+   * @return		the associated color
+   */
+  public static Color levelToColor(LoggingLevel level) {
+    return levelToColor(level.getLevel());
+  }
+
+  /**
+   * Turns the logging level into a color.
+   *
+   * @param level	the level
+   * @return		the associated color
+   */
+  public static Color levelToColor(Level level) {
+    if (level == Level.SEVERE)
+      return Color.RED.darker();
+    else if (level == Level.WARNING)
+      return Color.RED.brighter();
+    else if (level == Level.CONFIG)
+      return Color.DARK_GRAY;
+    else if (level == Level.FINE)
+      return Color.MAGENTA.darker().darker();
+    else if (level == Level.FINER)
+      return Color.MAGENTA.darker();
+    else if (level == Level.FINEST)
+      return Color.MAGENTA;
+    else
+      return Color.BLACK;
   }
 
   /**

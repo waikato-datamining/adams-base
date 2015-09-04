@@ -20,10 +20,10 @@
 package adams.gui.core;
 
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
-import adams.gui.core.ConsolePanel.OutputType;
 
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
@@ -306,7 +306,7 @@ public class BufferHistoryPanel
 	getFileChooser().getEncoding());
 
     if (msg != null)
-      ConsolePanel.getSingleton().append(OutputType.ERROR, "Error saving text to '" + getFileChooser().getSelectedFile() + "':\n" + msg);
+      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Error saving text to '" + getFileChooser().getSelectedFile() + "':\n" + msg);
   }
 
   /**

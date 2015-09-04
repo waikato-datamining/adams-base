@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -44,7 +45,6 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -1333,7 +1333,7 @@ public class ImagePanel
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	  OutputType.ERROR, 
+	  LoggingLevel.SEVERE,
 	  "Failed to read '" + file + "':\n" + Utils.throwableToString(e));
       clear();
       result = false;
@@ -1393,7 +1393,7 @@ public class ImagePanel
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
-	    OutputType.ERROR, 
+	    LoggingLevel.SEVERE,
 	    "Failed to save image to '" + file + "':\n" + Utils.throwableToString(e));
 	result = false;
       }

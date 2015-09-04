@@ -22,6 +22,7 @@ package adams.gui.visualization.image;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.AbstractImageTransformer;
@@ -34,7 +35,6 @@ import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
@@ -932,7 +932,7 @@ public class ImageViewerPanel
     catch (Exception e) {
       msg = "Failed to " + operation + ":\n" + Utils.throwableToString(e);
       GUIHelper.showErrorMessage(this, msg);
-      ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
+      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n");
     }
   }
   

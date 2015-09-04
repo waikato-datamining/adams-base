@@ -15,14 +15,13 @@
 
 /**
  * LoggingHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
-import java.util.logging.LogRecord;
-
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
+
+import java.util.logging.LogRecord;
 
 /**
  * Specialized logger for outputting the logging in the {@link ConsolePanel}.
@@ -51,14 +50,14 @@ public class ConsolePanelHandler
   @Override
   protected void doPublish(LogRecord record) {
     StringBuilder	msg;
-    OutputType		type;
+    LoggingLevel	level;
     
-    type = LoggingHelper.levelToOutputType(record.getLevel());
-    msg  = LoggingHelper.assembleMessage(record);
+    level = LoggingLevel.valueOf(record.getLevel());
+    msg   = LoggingHelper.assembleMessage(record);
     msg.append("\n");
     if (m_ConsolePanel == null)
       m_ConsolePanel = ConsolePanel.getSingleton();
-    m_ConsolePanel.append(type, msg.toString());
+    m_ConsolePanel.append(level, msg.toString());
     System.out.print(msg.toString());
   }
 }

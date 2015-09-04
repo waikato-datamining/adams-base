@@ -15,24 +15,23 @@
 
 /**
  * AbstractEditPostProcessor.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree.postprocessor;
 
-import java.util.List;
-
-import javax.swing.JOptionPane;
-import javax.swing.tree.TreePath;
-
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.JOptionPane;
+import javax.swing.tree.TreePath;
+import java.util.List;
 
 /**
  * Ancestor for post-processors for edits in the tree.
@@ -69,7 +68,7 @@ public abstract class AbstractEditPostProcessor
    * Restores the expanded state of the tree.
    * 
    * @param tree	the tree to restore
-   * @param exp		the list of expanded nodes
+   * @param expanded	the list of expanded nodes
    * @return		true if successfully restored
    */
   protected boolean restoreExpandedState(Tree tree, List<TreePath> expanded) {
@@ -136,7 +135,7 @@ public abstract class AbstractEditPostProcessor
 	}
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(OutputType.ERROR, "Error applying edit post-processor '" + processor + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Error applying edit post-processor '" + processor + "':\n" + Utils.throwableToString(e));
       }
     }
 

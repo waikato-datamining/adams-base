@@ -26,6 +26,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.filter.AbstractFilter;
 import adams.data.io.input.AbstractDataContainerReader;
@@ -53,7 +54,6 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SearchPanel;
@@ -1080,7 +1080,7 @@ public class TimeseriesExplorer
     manager.finishUpdate();
 
     ConsolePanel.getSingleton().append(
-	OutputType.INFO, "Timeseries from database:\n" + seq.toCommandLine());
+	LoggingLevel.INFO, "Timeseries from database:\n" + seq.toCommandLine());
   }
 
   /**

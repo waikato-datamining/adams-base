@@ -120,7 +120,7 @@ public class BaseFrame
       }
       m_UseMaximizationFix = useFix.equals("true") || ((os != null) && (OS.isOS(os)));
       if (m_UseMaximizationFix)
-	getLogger().log(Level.WARNING, "Using frame maximization fix (GUIHelper.props)");
+	getLogger().log(Level.INFO, "Using frame maximization fix (GUIHelper.props)");
     }
     m_MaximizationFixWindowListener = new MaximizationFixWindowListener(
       this, m_UseMaximizationFix, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));

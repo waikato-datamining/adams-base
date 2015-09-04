@@ -15,29 +15,13 @@
 
 /**
  * OpenStreetMapViewerPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.osm;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
-
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.gps.AbstractGPS;
 import adams.data.gps.GPSDecimalDegrees;
@@ -47,12 +31,26 @@ import adams.flow.sink.openstreetmapviewer.OpenStreetMapLoader;
 import adams.flow.sink.openstreetmapviewer.OpenStreetMapSource;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Viewer for OpenStreetMap.
@@ -134,7 +132,7 @@ public class OpenStreetMapViewerPanel
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	  OutputType.ERROR, 
+	  LoggingLevel.SEVERE,
 	  "Failed to use tile source from provider: " + props.getProperty("TileSourceProvider") + "\n" 
 	  + Utils.throwableToString(e) + "\n");
       m_Viewer.getViewer().setTileSource(new Mapnik());
@@ -149,7 +147,7 @@ public class OpenStreetMapViewerPanel
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	  OutputType.ERROR, 
+	  LoggingLevel.SEVERE,
 	  "Failed to use tile loader from provider: " + props.getProperty("TileLoaderProvider") + "\n" 
 	  + Utils.throwableToString(e));
       m_Viewer.getViewer().setTileLoader(new OsmTileLoader(m_Viewer.getViewer()));

@@ -15,17 +15,17 @@
 
 /*
  * ConsoleObject.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.logging;
 
+import adams.core.SizeOf;
+import adams.core.SizeOfHandler;
+
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import adams.core.SizeOf;
-import adams.core.SizeOfHandler;
 
 /**
  * A basic object with logging support.
@@ -92,21 +92,12 @@ public class LoggingObject
   /**
    * Returns whether logging is enabled.
    * 
-   * @return		true if at least {@link Level#CONFIG}
-   */
-  public boolean isLoggingEnabled() {
-    return LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.CONFIG);
-  }
-  
-  /**
-   * Returns whether info logging is enabled.
-   * 
    * @return		true if at least {@link Level#INFO}
    */
-  public boolean isInfoLoggingEnabled() {
+  public boolean isLoggingEnabled() {
     return LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.INFO);
   }
-  
+
   /**
    * Returns the size of the object.
    *

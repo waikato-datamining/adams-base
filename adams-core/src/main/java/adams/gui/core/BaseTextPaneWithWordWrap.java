@@ -15,14 +15,14 @@
 
 /**
  * BaseTextPaneWithWordWrap.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JPanel;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
+import java.awt.BorderLayout;
 
 /**
  * A panel containing a {@link BaseTextPane}, to allow wordwrap functionality.
@@ -116,5 +116,49 @@ public class BaseTextPaneWithWordWrap
    */
   public boolean getWordWrap() {
     return m_WordWrap;
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   */
+  public void append(String text) {
+    m_TextPane.append(text);
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   * @param a		the attribute set, null if to use current
+   */
+  public void append(String text, AttributeSet a) {
+    m_TextPane.append(text, a);
+  }
+
+  /**
+   * Sets the position of the cursor.
+   *
+   * @param value	the position
+   */
+  public void setCaretPosition(int value) {
+    m_TextPane.setCaretPosition(value);
+  }
+
+  /**
+   * Returns the current position of the cursor.
+   *
+   * @return		the cursor position
+   */
+  public int getCaretPosition() {
+    return m_TextPane.getCaretPosition();
+  }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  public void setCaretPositionLast() {
+    m_TextPane.setCaretPositionLast();
   }
 }

@@ -15,26 +15,26 @@
 
 /**
  * BaseTextPane.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2003-2007 Philip Isenhour (setting font)
  */
 package adams.gui.core;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.Font;
-import java.awt.Frame;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.gui.chooser.FontChooser;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.gui.chooser.FontChooser;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.Font;
+import java.awt.Frame;
 
 /**
  * A customized JTextPane. Adds functionality for wordwrap, printing and
@@ -178,7 +178,7 @@ public class BaseTextPane
   /**
    * Returns the number of lines in the document (= # of elements).
    * 
-   * @return
+   * @return		the number of lines
    */
   public int getLineCount() {
     return getDocument().getDefaultRootElement().getElementCount();
@@ -187,7 +187,7 @@ public class BaseTextPane
   /**
    * Jumps to the specified line.
    * 
-   * @param index	the 0-based index for the line
+   * @param line	the 0-based index for the line
    * @return		true if successfully jumped
    */
   public boolean gotoLine(int line) {
@@ -250,5 +250,41 @@ public class BaseTextPane
     }
     
     return result;
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   */
+  public synchronized void append(String text) {
+    append(text, null);
+  }
+
+  /**
+   * Appends the text at the end.
+   *
+   * @param text	the text to append
+   * @param a		the attribute set, null if to use current
+   */
+  public synchronized void append(String text, AttributeSet a) {
+    StyledDocument	doc;
+
+    doc = getStyledDocument();
+    try {
+      doc.insertString(doc.getLength(), text, a);
+    }
+    catch (Exception e) {
+      System.err.println("Failed to insert text: " + text);
+      e.printStackTrace();
+    }
+    setCaretPosition(doc.getLength());
+  }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  public void setCaretPositionLast() {
+    setCaretPosition(getDocument().getLength());
   }
 }

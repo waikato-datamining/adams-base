@@ -15,27 +15,16 @@
 
 /**
  * OpenStreetMapView.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.SpreadSheetJoinColumns;
 import adams.data.conversion.SpreadSheetStringColumnToObject;
@@ -57,12 +46,22 @@ import adams.flow.source.StorageValue;
 import adams.flow.transformer.Convert;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.DescriptionPanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.goe.GenericObjectEditorPanel;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Displays the GIS data in OpenStreetMap (OSM).
@@ -404,8 +403,8 @@ public class OpenStreetMapView
         super.done();
         if (msg != null) {
           GUIHelper.showErrorMessage(m_CurrentPanel, msg);
-          ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
-          ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine() + "\n");
+          ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n");
+          ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, flow.toCommandLine() + "\n");
           flow.destroy();
         }
         else {

@@ -15,14 +15,13 @@
 
 /**
  * TypeFilter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone.logevent;
 
-import java.util.logging.LogRecord;
+import adams.core.logging.LoggingLevel;
 
-import adams.core.logging.LoggingHelper;
-import adams.gui.core.ConsolePanel.OutputType;
+import java.util.logging.LogRecord;
 
 /**
  <!-- globalinfo-start -->
@@ -47,7 +46,6 @@ import adams.gui.core.ConsolePanel.OutputType;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see	LoggingHelper#levelToOutputType(java.util.logging.Level)
  */
 public class TypeFilter
   extends AbstractLogRecordFilter {
@@ -56,7 +54,7 @@ public class TypeFilter
   private static final long serialVersionUID = 7462983936603453991L;
 
   /** the type of log record to accept. */
-  protected OutputType m_Type;
+  protected LoggingLevel m_Level;
   
   /**
    * Returns a string describing the object.
@@ -65,7 +63,7 @@ public class TypeFilter
    */
   @Override
   public String globalInfo() {
-    return "Filters records based on their output type (INFO, DEBUG, ERROR).";
+    return "Filters records based on their logging level.";
   }
 
   /**
@@ -76,27 +74,27 @@ public class TypeFilter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    OutputType.INFO);
+	    "level", "level",
+	    LoggingLevel.INFO);
   }
 
   /**
-   * Sets the type of records to accept.
+   * Sets the logging level of records to accept.
    *
-   * @param value	the type
+   * @param value	the level
    */
-  public void setType(OutputType value) {
-    m_Type = value;
+  public void setLevel(LoggingLevel value) {
+    m_Level = value;
     reset();
   }
 
   /**
-   * Returns the type of records to accept.
+   * Returns the logging level of records to accept.
    *
-   * @return		the type
+   * @return		the level
    */
-  public OutputType getType() {
-    return m_Type;
+  public LoggingLevel getLevel() {
+    return m_Level;
   }
 
   /**
@@ -105,7 +103,7 @@ public class TypeFilter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String typeTipText() {
+  public String levelTipText() {
     return "The type of records to accept.";
   }
 
@@ -114,10 +112,9 @@ public class TypeFilter
    * 
    * @param record	the record to check
    * @return		true if the record's level matches the specified type
-   * @see		LoggingHelper#levelToOutputType(java.util.logging.Level)
    */
   @Override
   public boolean acceptRecord(LogRecord record) {
-    return (m_Type == LoggingHelper.levelToOutputType(record.getLevel()));
+    return (m_Level == getLevel());
   }
 }

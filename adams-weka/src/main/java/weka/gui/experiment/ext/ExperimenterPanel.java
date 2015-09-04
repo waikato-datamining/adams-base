@@ -22,12 +22,12 @@ package weka.gui.experiment.ext;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
@@ -847,7 +847,7 @@ public class ExperimenterPanel
       }
       catch (Exception e) {
 	msg = "Failed to load " + FILENAME + "\n" + Utils.throwableToString(e);
-	ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
 	System.err.println(msg);
 	m_Properties = new Properties();
       }

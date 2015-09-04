@@ -29,6 +29,7 @@ import adams.core.VariablesHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
 import adams.data.io.input.FlowReader;
@@ -49,7 +50,6 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -867,7 +867,7 @@ public class FlowPanel
 	if (!m_Warnings.isEmpty()) {
           msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
           if (canExecute)
-            ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+            ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
           else
             GUIHelper.showErrorMessage(m_Owner, msg);
         }

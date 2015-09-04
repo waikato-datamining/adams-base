@@ -20,6 +20,7 @@
 package adams.gui.tools.spreadsheetviewer;
 
 import adams.core.CleanUpHandler;
+import adams.core.logging.LoggingLevel;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
@@ -28,7 +29,6 @@ import adams.flow.control.Flow;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -441,8 +441,8 @@ public class SpreadSheetPanel
         super.done();
         if (msg != null) {
           GUIHelper.showErrorMessage(SpreadSheetPanel.this, msg);
-          ConsolePanel.getSingleton().append(OutputType.ERROR, msg + "\n");
-          ConsolePanel.getSingleton().append(OutputType.ERROR, flow.toCommandLine() + "\n");
+          ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n");
+          ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, flow.toCommandLine() + "\n");
           flow.destroy();
         }
         else {

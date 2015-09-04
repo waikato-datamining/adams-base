@@ -25,6 +25,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.net.HtmlUtils;
 import adams.data.io.input.FlowReader;
 import adams.db.LogEntryHandler;
@@ -47,7 +48,6 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.StatusProcessor;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
@@ -807,7 +807,7 @@ public class FlowRunnerPanel
 	  if (!m_Warnings.isEmpty()) {
             msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
             if (canExecute)
-              ConsolePanel.getSingleton().append(OutputType.ERROR, msg);
+              ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
             else
               GUIHelper.showErrorMessage(m_Self, msg);
           }

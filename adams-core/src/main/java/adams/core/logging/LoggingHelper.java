@@ -15,9 +15,13 @@
 
 /**
  * LoggingHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
+
+import adams.core.DateFormat;
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -27,12 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import adams.core.DateFormat;
-import adams.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.gui.core.ConsolePanel.OutputType;
-
 
 /**
  * Helper class for logging related stuff.
@@ -132,7 +130,7 @@ public class LoggingHelper {
    * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
    * returned.
    *
-   * @param cls		the class to return the logger for
+   * @param name	the name of the class to return the logger for
    * @return		the logger
    */
   public static Logger getLogger(String name) {
@@ -173,7 +171,7 @@ public class LoggingHelper {
    * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
    * returned.
    *
-   * @param cls		the class to return the logger for
+   * @param name	the name of the class to return the logger for
    * @return		the logger
    */
   public static Logger getConsoleLogger(String name) {
@@ -202,7 +200,7 @@ public class LoggingHelper {
    * Checks whether the level meets the minimum.
    * 
    * @param level	the level to check
-   * @param level2	the minimum level to meet
+   * @param levelMin	the minimum level to meet
    * @return		if minimum logging level met
    */
   public static boolean isAtLeast(Level level, Level levelMin) {
@@ -316,21 +314,6 @@ public class LoggingHelper {
     System.out.println("\t" + "logging handler to use");
     System.out.println("\t" + "default: " + ConsolePanelHandler.class.getName());
   }
-  
-  /**
-   * Turns the logging level into an output type (error/info/debug).
-   * 
-   * @param level	the level to convert
-   * @return		the output type
-   */
-  public static OutputType levelToOutputType(Level level) {
-    if ((level == Level.SEVERE) || (level == Level.WARNING))
-      return OutputType.ERROR;
-    else if ((level == Level.INFO) || (level == Level.CONFIG))
-      return OutputType.INFO;
-    else
-      return OutputType.DEBUG;
-  }
 
   /**
    * Publish a <tt>LogRecord</tt>.
@@ -351,32 +334,17 @@ public class LoggingHelper {
     String		suffix;
     String		actualPrefix;
     String		msg;
-    OutputType		type;
     String		prefix;
-    
+
     msg = record.getMessage() + "\n";
     if (record.getThrown() != null)
       msg += Utils.throwableToString(record.getThrown()) + "\n";
-    
+
     result = new StringBuilder();
     lines  = msg.split("\n");
-    type   = levelToOutputType(record.getLevel());
+    suffix = "-" + LoggingLevel.valueOf(record.getLevel());
     prefix = record.getLoggerName();
 
-    switch (type) {
-      case INFO:
-	suffix = "-INFO";
-	break;
-      case ERROR:
-	suffix = "-ERROR";
-	break;
-      case DEBUG:
-	suffix = "-DEBUG";
-	break;
-      default:
-	suffix = "";
-    }
-    
     // any prefix to print?
     if (prefix.length() > 0)
       actualPrefix = "[" + prefix + suffix + "/" + m_DateFormat.format(new Date()) + "] ";

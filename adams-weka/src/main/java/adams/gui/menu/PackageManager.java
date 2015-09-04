@@ -21,10 +21,10 @@
 
 package adams.gui.menu;
 
+import adams.core.logging.LoggingLevel;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ConsolePanel.ConsolePanelOutputStream;
-import adams.gui.core.ConsolePanel.OutputType;
 import weka.core.WekaPackageManager;
 
 import java.io.PrintStream;
@@ -62,7 +62,7 @@ public class PackageManager
    */
   @Override
   public void launch() {
-    WekaPackageManager.establishCacheIfNeeded(new PrintStream(new ConsolePanelOutputStream(OutputType.INFO)));
+    WekaPackageManager.establishCacheIfNeeded(new PrintStream(new ConsolePanelOutputStream(LoggingLevel.INFO)));
     createChildFrame(new weka.gui.PackageManager(), 800, 600);
   }
 

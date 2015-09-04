@@ -22,6 +22,7 @@ package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.control.Breakpoint;
@@ -33,7 +34,6 @@ import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.template.AbstractActorTemplate;
 import adams.gui.core.*;
-import adams.gui.core.ConsolePanel.OutputType;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -297,7 +297,7 @@ public class Tree
 	  m_Shortcuts.add(action);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(OutputType.ERROR, "Failed to instantiate action '" + cls + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action '" + cls + "':\n" + Utils.throwableToString(e));
       }
     }
     addKeyListener(new KeyAdapter() {
@@ -1013,7 +1013,7 @@ public class Tree
 	  menu.add(action.getMenuItem());
 	}
 	catch (Exception ex) {
-	  ConsolePanel.getSingleton().append(OutputType.ERROR, "Failed to instantiate tree popup menu item '" + item + "':\n" + Utils.throwableToString(ex));
+	  ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate tree popup menu item '" + item + "':\n" + Utils.throwableToString(ex));
 	}
       }
     }
@@ -1794,7 +1794,7 @@ public class Tree
 	  result = locate(child, path.getChildPath());
       }
       else {
-	ConsolePanel.getSingleton().append(OutputType.ERROR, "Malformed path?\n");
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Malformed path?\n");
       }
     }
 

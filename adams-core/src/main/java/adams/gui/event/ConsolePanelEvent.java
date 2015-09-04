@@ -15,15 +15,15 @@
 
 /*
  * ConsolePanelEvent.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.event;
 
-import java.util.EventObject;
-
+import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.ConsolePanel.OutputType;
+
+import java.util.EventObject;
 
 /**
  * Event that gets sent when the {@link ConsolePanel} receives new data.
@@ -37,8 +37,8 @@ public class ConsolePanelEvent
   /** for serialization. */
   private static final long serialVersionUID = -3065555728637944776L;
 
-  /** the output type. */
-  protected OutputType m_OutputType;
+  /** the logging level. */
+  protected LoggingLevel m_Level;
 
   /** the message. */
   protected String m_Message;
@@ -47,23 +47,23 @@ public class ConsolePanelEvent
    * Initializes the object.
    * 
    * @param src		the source that triggered the event
-   * @param outputType	the type of output
+   * @param level	the logging level
    * @param msg		the message
    */
-  public ConsolePanelEvent(Object src, OutputType outputType, String msg) {
+  public ConsolePanelEvent(Object src, LoggingLevel level, String msg) {
     super(src);
     
-    m_OutputType = outputType;
-    m_Message    = msg;
+    m_Level   = level;
+    m_Message = msg;
   }
   
   /**
-   * Returns the output type.
+   * Returns the logging level.
    * 
-   * @return		the type
+   * @return		the level
    */
-  public OutputType getOutputType() {
-    return m_OutputType;
+  public LoggingLevel getLevel() {
+    return m_Level;
   }
   
   /**
