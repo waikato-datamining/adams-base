@@ -273,6 +273,9 @@ public class GeneticAlgorithm
       result.append("Genetic algorithm: ")
 	.append(OptionUtils.getCommandLine(m_Algorithm))
 	.append("\n")
+	.append("Best setup: ")
+	.append(OptionUtils.getCommandLine(m_Model))
+	.append("\n")
 	.append(m_Model.toString());
 
     return result.toString();
