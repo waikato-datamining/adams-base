@@ -759,7 +759,18 @@ public class WekaInstanceDumper
     
     return result;
   }
-  
+
+  /**
+   * Gets called when the actor needs to be re-setUp when a variable changes.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  protected String updateVariables() {
+    if (m_Buffer.size() > 0)
+      writeToDisk(true);
+    return super.updateVariables();
+  }
+
   /**
    * Executes the flow item.
    *

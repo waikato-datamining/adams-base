@@ -443,6 +443,17 @@ public class DumpFile
   }
 
   /**
+   * Gets called when the actor needs to be re-setUp when a variable changes.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  protected String updateVariables() {
+    if (m_Buffer.size() > 0)
+      writeToDisk();
+    return super.updateVariables();
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
