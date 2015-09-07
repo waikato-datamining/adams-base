@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.BufferSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -129,7 +130,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class WekaInstanceDumper
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements BufferSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
@@ -454,12 +456,9 @@ public class WekaInstanceDumper
    * @param value	the number of instances to buffer
    */
   public void setBufferSize(int value) {
-    if (value >= 1) {
+    if (getOptionManager().isValid("bufferSize", value)) {
       m_BufferSize = value;
       reset();
-    }
-    else {
-      getLogger().severe("Buffer size must be >= 1, provided: " + value);
     }
   }
 

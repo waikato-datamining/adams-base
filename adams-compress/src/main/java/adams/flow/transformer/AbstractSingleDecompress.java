@@ -15,17 +15,18 @@
 
 /*
  * AbstractSingleDecompress.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.BufferSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  * Ancestor for decompression algorithms that only work with archives
@@ -35,7 +36,8 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public abstract class AbstractSingleDecompress
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements BufferSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8337511248726861039L;
@@ -176,8 +178,10 @@ public abstract class AbstractSingleDecompress
    * @param value	the size in bytes
    */
   public void setBufferSize(int value) {
-    m_BufferSize = value;
-    reset();
+    if (getOptionManager().isValid("bufferSize", value)) {
+      m_BufferSize = value;
+      reset();
+    }
   }
 
   /**

@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.BufferSupporter;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
@@ -94,7 +95,8 @@ import java.net.URLConnection;
  * @version $Revision$
  */
 public class DownloadContent
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements BufferSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8688918591152139449L;
@@ -143,12 +145,9 @@ public class DownloadContent
    * @param value	the size
    */
   public void setBufferSize(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("bufferSize", value)) {
       m_BufferSize = value;
       reset();
-    }
-    else {
-      getLogger().severe("Buffer must be >0, provided: " + value);
     }
   }
 

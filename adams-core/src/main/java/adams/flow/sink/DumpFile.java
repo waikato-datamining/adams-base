@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.core.BufferSupporter;
 import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -120,7 +121,7 @@ import java.util.List;
  */
 public class DumpFile
   extends AbstractAppendableFileWriter 
-  implements FileEncodingSupporter, MultiAttemptWithWaitSupporter {
+  implements FileEncodingSupporter, MultiAttemptWithWaitSupporter, BufferSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -366362262032858011L;
@@ -319,12 +320,9 @@ public class DumpFile
    * @param value	the number of lines to buffer
    */
   public void setBufferSize(int value) {
-    if (value >= 1) {
+    if (getOptionManager().isValid("bufferSize", value)) {
       m_BufferSize = value;
       reset();
-    }
-    else {
-      getLogger().severe("Buffer size must be >= 1, provided: " + value);
     }
   }
 
