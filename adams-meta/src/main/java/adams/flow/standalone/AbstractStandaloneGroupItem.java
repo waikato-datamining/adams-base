@@ -15,7 +15,7 @@
 
 /**
  * AbstractStandaloneGroupItem.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -24,10 +24,11 @@ package adams.flow.standalone;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @param <T> the type of the enclosing group
  */
-public abstract class AbstractStandaloneGroupItem
+public abstract class AbstractStandaloneGroupItem<T extends StandaloneGroup>
   extends AbstractStandalone
-  implements StandaloneGroupItem {
+  implements StandaloneGroupItem<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -739244942139022557L;
@@ -37,12 +38,12 @@ public abstract class AbstractStandaloneGroupItem
    * 
    * @return		the group, null if not available (eg if parent not set)
    */
-  public StandaloneGroup getEnclosingGroup() {
+  public T getEnclosingGroup() {
     if (getParent() == null)
       return null;
     
     if (getParent() instanceof StandaloneGroup)
-      return (StandaloneGroup) getParent();
+      return (T) getParent();
     
     return null;
   }

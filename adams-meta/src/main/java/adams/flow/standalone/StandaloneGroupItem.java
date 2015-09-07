@@ -15,7 +15,7 @@
 
 /**
  * StandaloneGroupItem.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -26,8 +26,9 @@ import adams.flow.core.Actor;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @param <T> the type of the enclosing group
  */
-public interface StandaloneGroupItem
+public interface StandaloneGroupItem<T extends Actor>
   extends Actor {
 
   /**
@@ -35,5 +36,5 @@ public interface StandaloneGroupItem
    * 
    * @return		the group, null if not available (eg if parent not set)
    */
-  public StandaloneGroup getEnclosingGroup();
+  public T getEnclosingGroup();
 }

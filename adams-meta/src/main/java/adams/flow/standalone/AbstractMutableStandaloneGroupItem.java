@@ -24,6 +24,7 @@ import adams.core.logging.LoggingLevel;
 import adams.flow.control.AbstractControlActor;
 import adams.flow.control.Sequence;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.MutableActorHandler;
 
@@ -32,10 +33,11 @@ import adams.flow.core.MutableActorHandler;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @param <T> the type of the enclosing group
  */
-public abstract class AbstractMutableStandaloneGroupItem
+public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   extends AbstractControlActor
-  implements MutableActorHandler, StandaloneGroupItem {
+  implements MutableActorHandler, StandaloneGroupItem<T> {
 
   private static final long serialVersionUID = -2130921331341838430L;
 
@@ -80,12 +82,12 @@ public abstract class AbstractMutableStandaloneGroupItem
    *
    * @return		the group, null if not available (eg if parent not set)
    */
-  public StandaloneGroup getEnclosingGroup() {
+  public T getEnclosingGroup() {
     if (getParent() == null)
       return null;
 
     if (getParent() instanceof StandaloneGroup)
-      return (StandaloneGroup) getParent();
+      return (T) getParent();
 
     return null;
   }
