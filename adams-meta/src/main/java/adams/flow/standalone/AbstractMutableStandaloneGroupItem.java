@@ -22,7 +22,6 @@ package adams.flow.standalone;
 
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.AbstractControlActor;
-import adams.flow.control.Sequence;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
@@ -42,7 +41,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   private static final long serialVersionUID = -2130921331341838430L;
 
   /** the flow items. */
-  protected Sequence m_Actors;
+  protected MutableActorHandler m_Actors;
 
   /**
    * Adds options to the internal list of options.
@@ -63,8 +62,15 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   protected void initialize() {
     super.initialize();
 
-    m_Actors = new Sequence();
+    m_Actors = newActorHandler();
   }
+
+  /**
+   * Creates an instance of the actor handler taking care of the sub-actors.
+   *
+   * @return		the handler
+   */
+  protected abstract MutableActorHandler newActorHandler();
 
   /**
    * Sets the logging level.
@@ -131,7 +137,9 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
 
     msg = checkSubActors(value);
     if (msg == null) {
-      m_Actors.setActors(value);
+      m_Actors.removeAll();
+      for (AbstractActor actor: value)
+        m_Actors.add(actor);
       reset();
       updateParent();
     }
@@ -146,7 +154,14 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @return		the actors
    */
   public AbstractActor[] getActors() {
-    return m_Actors.getActors();
+    AbstractActor[]	result;
+    int			i;
+
+    result = new AbstractActor[m_Actors.size()];
+    for (i = 0; i < m_Actors.size(); i++)
+      result[i] = m_Actors.get(i);
+
+    return result;
   }
 
   /**
@@ -279,7 +294,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @return		the internal actors
    */
-  protected Sequence getInternalActors() {
+  protected MutableActorHandler getInternalActors() {
     return m_Actors;
   }
 
