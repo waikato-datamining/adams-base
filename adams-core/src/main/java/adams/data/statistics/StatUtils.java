@@ -512,7 +512,7 @@ public class StatUtils {
    * NaN is returned in case of zero-length arrays.
    *
    * @param array	the array to work on
-   * @return		the median
+   * @return		the iqr
    */
   public static double iqr(Number[] array) {
     Number[]	sorted;
@@ -529,6 +529,53 @@ public class StatUtils {
     iqr3 = sorted[(int) (sorted.length * 0.75)].doubleValue();
 
     return iqr3 - iqr1;
+  }
+
+  /**
+   * Returns the quartile of the given array.
+   * NaN is returned in case of zero-length arrays.
+   *
+   * @param array	the array to work on
+   * @param quartile	the quartile to return (0-1)
+   * @return		the quartile
+   */
+  public static double quartile(double[] array, double quartile) {
+    return quartile(toNumberArray(array), quartile);
+  }
+
+  /**
+   * Returns the quartile of the given array.
+   * NaN is returned in case of zero-length arrays.
+   *
+   * @param array	the array to work on
+   * @param quartile	the quartile to return (0-1)
+   * @return		the quartile
+   */
+  public static double quartile(int[] array, double quartile) {
+    return quartile(toNumberArray(array), quartile);
+  }
+
+  /**
+   * Returns the quartile of the given array.
+   * NaN is returned in case of zero-length arrays.
+   *
+   * @param array	the array to work on
+   * @param quartile	the quartile to return (0-1)
+   * @return		the quartile
+   */
+  public static double quartile(Number[] array, double quartile) {
+    double  result;
+    Number[]	sorted;
+
+    if (array.length == 0)
+      return Double.NaN;
+
+    sorted = array.clone();
+    Arrays.sort(sorted);
+
+    result = sorted[(int) (sorted.length * quartile)].doubleValue();
+
+    return result;
   }
 
   /**
