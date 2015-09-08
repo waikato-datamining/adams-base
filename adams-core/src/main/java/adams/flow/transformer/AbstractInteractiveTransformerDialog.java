@@ -75,9 +75,6 @@ public abstract class AbstractInteractiveTransformerDialog
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
-  /** whether the interaction was successful. */
-  protected Boolean m_SuccessfulInteraction;
-  
   /**
    * Adds options to the internal list of options.
    */
@@ -365,7 +362,7 @@ public abstract class AbstractInteractiveTransformerDialog
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   @Override
   public void setCustomStopMessage(String value) {
