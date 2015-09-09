@@ -43,13 +43,18 @@ import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.LinearRegressionOverlayPaintlet;
+import adams.gui.visualization.sequence.MultiPaintlet;
+import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -371,18 +376,21 @@ public class RemoveOutliers
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel		result;
-    AxisPanelOptions	axis;
-    JPanel 		panelRight;
-    JPanel 		panelButtonsRight;
-    JPanel 		panelBottom;
-    JPanel 		panelButtonsBottom;
-    final JButton	buttonReset;
-    final JButton	buttonClear;
-    final JButton	buttonOK;
-    final JButton	buttonCancel;
-    OutlierPaintlet	paintlet;
-    ToggleOutlier 	mouseClick;
+    BasePanel				result;
+    AxisPanelOptions			axis;
+    JPanel 				panelRight;
+    JPanel 				panelButtonsRight;
+    JPanel 				panelBottom;
+    JPanel 				panelButtonsBottom;
+    final JButton			buttonReset;
+    final JButton			buttonClear;
+    final JButton			buttonOK;
+    final JButton			buttonCancel;
+    OutlierPaintlet			paintlet;
+    ToggleOutlier 			mouseClick;
+    MultiPaintlet 			overlays;
+    StraightLineOverlayPaintlet 	diagonal;
+    LinearRegressionOverlayPaintlet 	lrPaintlet;
 
     result = new BasePanel(new BorderLayout());
 
@@ -413,8 +421,16 @@ public class RemoveOutliers
     mouseClick = new ToggleOutlier();
     mouseClick.setHitDetector(paintlet.getHitDetector());
 
+    overlays = new MultiPaintlet();
+    diagonal = new StraightLineOverlayPaintlet();
+    diagonal.setColor(Color.RED.darker());
+    lrPaintlet = new LinearRegressionOverlayPaintlet();
+    lrPaintlet.setOutputSlopeIntercept(true);
+    overlays.setSubPaintlets(new XYSequencePaintlet[]{diagonal, lrPaintlet});
+
     m_PlotterPanel.setPaintlet(paintlet);
     m_PlotterPanel.setMouseClickAction(mouseClick);
+    m_PlotterPanel.setOverlayPaintlet(overlays);
     ActorUtils.updateFlowAwarePaintlet(m_PlotterPanel.getPaintlet(), this);
     result.add(m_PlotterPanel, BorderLayout.CENTER);
 
