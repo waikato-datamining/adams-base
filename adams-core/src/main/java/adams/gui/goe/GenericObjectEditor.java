@@ -1328,16 +1328,16 @@ public class GenericObjectEditor
     // to choose the class they want
     setButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	JPopupMenu popup = getChooseClassPopupMenu();
+        JPopupMenu popup = getChooseClassPopupMenu();
 
-	// show the popup where the source component is
-	if (e.getSource() instanceof Component) {
-	  Component comp = (Component) e.getSource();
-	  popup.pack();
-	  Point p = comp.getLocationOnScreen();
+        // show the popup where the source component is
+        if (e.getSource() instanceof Component) {
+          Component comp = (Component) e.getSource();
+          popup.pack();
+          Point p = comp.getLocationOnScreen();
           popup.show(comp, comp.getWidth(), 0);
           GUIHelper.setSizeAndLocation(popup, (int) p.getY(), (int) p.getX() + comp.getWidth());
-	}
+        }
       }
     });
 
@@ -1420,18 +1420,17 @@ public class GenericObjectEditor
    * @see		#setProposedClasses(Class[])
    */
   public void setProposedClasses(Object[] value) {
-    Class[]	classes;
+    List<Class>	classes;
     int		i;
 
-    if (value == null) {
-      classes = new Class[0];
+    classes = new ArrayList<>();
+    if (value != null) {
+      for (i = 0; i < value.length; i++) {
+        if (!classes.contains(value[i].getClass()))
+          classes.add(value[i].getClass());
+      }
     }
-    else {
-      classes = new Class[value.length];
-      for (i = 0; i < value.length; i++)
-	classes[i] = value[i].getClass();
-    }
-    setProposedClasses(classes);
+    setProposedClasses(classes.toArray(new Class[classes.size()]));
   }
 
   /**
