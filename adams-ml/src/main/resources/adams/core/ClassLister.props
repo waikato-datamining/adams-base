@@ -10,3 +10,7 @@
 # The types of spreadsheets
 adams.data.spreadsheet.SpreadSheet=\
   adams.ml.data
+
+# the outlier detectors
+adams.flow.control.removeoutliers.AbstractOutlierDetector=\
+  adams.flow.control.removeoutliers
