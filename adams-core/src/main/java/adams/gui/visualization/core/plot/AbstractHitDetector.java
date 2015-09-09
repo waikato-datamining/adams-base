@@ -20,11 +20,11 @@
 
 package adams.gui.visualization.core.plot;
 
+import adams.core.CleanUpHandler;
+import adams.core.option.AbstractOptionHandler;
+
 import java.awt.event.MouseEvent;
 import java.util.logging.Level;
-
-import adams.core.CleanUpHandler;
-import adams.core.logging.LoggingObject;
 
 /**
  * Abstract ancestor for classes that detect hits in in the plot panel.
@@ -33,7 +33,7 @@ import adams.core.logging.LoggingObject;
  * @version $Revision$
  */
 public abstract class AbstractHitDetector
-  extends LoggingObject
+  extends AbstractOptionHandler
   implements CleanUpHandler {
 
   /** for serialization. */

@@ -15,15 +15,10 @@
 
 /*
  * BarHitDetector.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Vector;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -31,6 +26,11 @@ import adams.data.sequence.XYSequenceUtils;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Detects selections of sequence points in the sequence panel.
@@ -61,6 +61,16 @@ public class BarHitDetector
    */
   public BarHitDetector(XYSequencePaintlet owner) {
     super(owner);
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Detects selections of sequence points in the sequence panel.";
   }
 
   /**

@@ -15,21 +15,21 @@
 
 /*
  * InstancePointHitDetector.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
-
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.instance.Instance;
 import adams.data.instance.InstancePoint;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Detects selections of instance points in the instance panel.
@@ -55,6 +55,16 @@ public class InstancePointHitDetector
     super();
 
     m_Owner = owner;
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Detects selections of instance points in the instance panel.";
   }
 
   /**

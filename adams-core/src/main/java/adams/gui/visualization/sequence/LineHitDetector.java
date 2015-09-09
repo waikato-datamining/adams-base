@@ -15,25 +15,24 @@
 
 /*
  * LineHitDetector.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
+
+import adams.data.sequence.XYSequence;
+import adams.data.sequence.XYSequencePoint;
+import adams.data.sequence.XYSequenceUtils;
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Vector;
 
-import adams.data.sequence.XYSequence;
-import adams.data.sequence.XYSequencePoint;
-import adams.data.sequence.XYSequenceUtils;
-import adams.gui.visualization.container.VisibilityContainer;
-import adams.gui.visualization.core.AxisPanel;
-import adams.gui.visualization.core.plot.Axis;
-
 /**
- * Detects selections of sequence points in the sequence panel.
+ * Detects selections of lines.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -58,6 +57,16 @@ public class LineHitDetector
    */
   public LineHitDetector(XYSequencePaintlet owner) {
     super(owner);
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Detects selections of lines.";
   }
 
   /**
@@ -91,12 +100,12 @@ public class LineHitDetector
     result     = new Vector<XYSequencePoint>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
-    y          = axisLeft.posToValue((int) e.getY());
-    x          = axisBottom.posToValue((int) e.getX());
+    y          = axisLeft.posToValue(e.getY());
+    x          = axisBottom.posToValue(e.getX());
     logging    = isLoggingEnabled();
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getSequencePanel().getContainerManager().get(i)).isVisible())
+      if (!m_Owner.getSequencePanel().getContainerManager().get(i).isVisible())
 	continue;
 
       // check for hit

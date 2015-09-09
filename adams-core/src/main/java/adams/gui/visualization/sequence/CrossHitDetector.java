@@ -15,24 +15,23 @@
 
 /*
  * CrossHitDetector.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
+
+import adams.data.sequence.XYSequence;
+import adams.data.sequence.XYSequencePoint;
+import adams.data.sequence.XYSequenceUtils;
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
-import adams.data.sequence.XYSequence;
-import adams.data.sequence.XYSequencePoint;
-import adams.data.sequence.XYSequenceUtils;
-import adams.gui.visualization.container.VisibilityContainer;
-import adams.gui.visualization.core.AxisPanel;
-import adams.gui.visualization.core.plot.Axis;
-
 /**
- * Detects selections of sequence points in the sequence panel.
+ * Detects selections of crosses.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 8896 $
@@ -42,6 +41,9 @@ public class CrossHitDetector
 
   /** for serialization. */
   private static final long serialVersionUID = -3363546923840405674L;
+
+  /** the default diameter to use. */
+  protected int m_Diameter;
 
   /**
    * Initializes the hit detector (constructor only for GOE) with no owner.
@@ -57,8 +59,66 @@ public class CrossHitDetector
    */
   public CrossHitDetector(XYSequencePaintlet owner) {
     super(owner);
-    
-    m_MinimumPixelDifference = 1;
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Detects selections of crosses.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "diameter", "diameter",
+      7, 1, null);
+  }
+
+  /**
+   * Returns the default minimum pixel difference.
+   *
+   * @return		the minimum
+   */
+  protected int getDefaultMinimumPixelDifference() {
+    return 1;
+  }
+
+  /**
+   * Sets the cross diameter.
+   *
+   * @param value	the diameter
+   */
+  public void setDiameter(int value) {
+    m_Diameter = value;
+    reset();
+  }
+
+  /**
+   * Returns the diameter of the cross.
+   *
+   * @return		the diameter
+   */
+  public int getDiameter() {
+    return m_Diameter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diameterTipText() {
+    return "The diameter of the cross in pixels.";
   }
 
   /**
@@ -96,15 +156,15 @@ public class CrossHitDetector
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue((int) e.getY());
     x          = axisBottom.posToValue((int) e.getX());
-    if (m_Owner instanceof CrossPaintlet)
-      diameter = ((CrossPaintlet) m_Owner).getDiameter();
+    if (m_Owner instanceof DiameterBasedPaintlet)
+      diameter = ((DiameterBasedPaintlet) m_Owner).getDiameter();
     else
       diameter = 1;
-    diameterActual = axisBottom.posToValue(diameter);
+    diameterActual = Math.abs(axisBottom.posToValue(diameter));
     logging    = isLoggingEnabled();
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getSequencePanel().getContainerManager().get(i)).isVisible())
+      if (!m_Owner.getSequencePanel().getContainerManager().get(i).isVisible())
 	continue;
 
       // check for hit

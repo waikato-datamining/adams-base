@@ -15,23 +15,23 @@
 
 /*
  * ZScoreHitDetector.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
-
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 
+import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
+
 /**
- * Hit detector for the zscore visualisation
+ * Hit detector for the zscore visualisation.
+ *
  * @author msf8
  * @version $Revision$
- *
  */
 public class ZScoreHitDetector
 extends AbstractDistanceBasedHitDetector {
@@ -49,6 +49,16 @@ extends AbstractDistanceBasedHitDetector {
   public ZScoreHitDetector(ZScore owner) {
     super();
     m_Owner = owner;
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Hit detector for the zscore visualisation";
   }
 
   /**

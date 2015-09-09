@@ -15,14 +15,10 @@
 
 /*
  * ErrorCrossHitDetector.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
-
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Vector;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -33,8 +29,12 @@ import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Vector;
+
 /**
- * Detects selections of sequence points in the sequence panel.
+ * Detects selections of error crosses.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 8896 $
@@ -59,8 +59,25 @@ public class ErrorCrossHitDetector
    */
   public ErrorCrossHitDetector(XYSequencePaintlet owner) {
     super(owner);
-    
-    m_MinimumPixelDifference = 1;
+  }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Detects selections of error crosses.";
+  }
+
+  /**
+   * Returns the default minimum pixel difference.
+   *
+   * @return		the minimum
+   */
+  protected int getDefaultMinimumPixelDifference() {
+    return 1;
   }
 
   /**

@@ -15,16 +15,16 @@
 
 /*
  * AbstractDistanceBasedHitDetector.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2008 Pieter Iserbyt <pieter.iserbyt@gmail.com> (distance calculation between point and line)
  */
 
 package adams.gui.visualization.core.plot;
 
-import java.awt.geom.Point2D;
-
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+
+import java.awt.geom.Point2D;
 
 /**
  * Detects hits based on the difference between two points in the plot,
@@ -57,8 +57,27 @@ public abstract class AbstractDistanceBasedHitDetector
    */
   public AbstractDistanceBasedHitDetector() {
     super();
+  }
 
-    m_MinimumPixelDifference = 2;
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "min-pixel-difference", "minimumPixelDifference",
+      getDefaultMinimumPixelDifference());
+  }
+
+  /**
+   * Returns the default minimum pixel difference.
+   *
+   * @return		the minimum
+   */
+  protected int getDefaultMinimumPixelDifference() {
+    return 2;
   }
 
   /**
@@ -80,6 +99,16 @@ public abstract class AbstractDistanceBasedHitDetector
    */
   public int getMinimumPixelDifference() {
     return m_MinimumPixelDifference;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minimumPixelDifferenceDetectorTipText() {
+    return "The minimum pixel difference to use.";
   }
 
   /**

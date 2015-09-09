@@ -15,14 +15,10 @@
 
 /*
  * CirclePaintlet.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.List;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -31,6 +27,10 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -69,7 +69,7 @@ import adams.gui.visualization.core.plot.Axis;
  */
 public class CirclePaintlet
   extends AbstractXYSequencePaintlet 
-  implements AntiAliasingSupporter, PaintletWithCustomDataSupport {
+  implements AntiAliasingSupporter, PaintletWithCustomDataSupport, DiameterBasedPaintlet {
 
   /** for serialization. */
   private static final long serialVersionUID = -8772546156227148237L;
