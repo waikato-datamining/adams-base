@@ -71,6 +71,12 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     /** the data to use. */
     protected Instances m_Data;
 
+    /** the cross-validation seed. */
+    protected int m_Seed;
+
+    /** the cross-validation folds. */
+    protected int m_Folds;
+
     /**
      * Initializes the job.
      *
@@ -84,6 +90,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
       m_Measure = g.getMeasure();
       m_Data    = data;
+      m_Seed    = g.getCrossValidationSeed();
+      m_Folds   = g.getFolds();
     }
 
     /**
@@ -102,6 +110,24 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      */
     public Measure getMeasure() {
       return m_Measure;
+    }
+
+    /**
+     * Returns the cross-validation seed.
+     *
+     * @return		the seed
+     */
+    public int getSeed() {
+      return m_Seed;
+    }
+
+    /**
+     * Returns the number of cross-validation folds.
+     *
+     * @return		the number of folds
+     */
+    public int getFolds() {
+      return m_Folds;
     }
 
     /**
@@ -138,8 +164,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       evaluation.crossValidateModel(
 	cls,
 	data,
-	getGenetic().getFolds(),
-	new Random(getGenetic().getCrossValidationSeed()));
+	getFolds(),
+	new Random(getSeed()));
 
       return getMeasure().extract(evaluation, true);
     }
