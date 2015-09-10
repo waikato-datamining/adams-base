@@ -64,9 +64,10 @@ public class DarkLord
      * @param g		the algorithm object this job belongs to
      * @param num	the number of chromsomes
      * @param w		the initial weights
+     * @param data	the data to use
      */
-    public DarkLordJob(DarkLord g, int num, int[] w) {
-      super(g, num, w);
+    public DarkLordJob(DarkLord g, int num, int[] w, Instances data) {
+      super(g, num, w, data);
     }
 
     /**
@@ -274,9 +275,10 @@ public class DarkLord
    * @param num		the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
+   * @param data	the data to use
    */
-  protected DarkLordJob newJob(int num, int[] w) {
-    return new DarkLordJob(this, num, w);
+  protected DarkLordJob newJob(int num, int[] w, Instances data) {
+    return new DarkLordJob(this, num, w, data);
   }
 
   /**

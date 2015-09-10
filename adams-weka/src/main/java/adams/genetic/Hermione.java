@@ -186,9 +186,10 @@ public class Hermione
      * @param g		the algorithm object this job belongs to
      * @param num	the number of chromsomes
      * @param w		the initial weights
+     * @param data	the data to use
      */
-    public HermioneJob(Hermione g, int num, int[] w) {
-      super(g, num, w);
+    public HermioneJob(Hermione g, int num, int[] w, Instances data) {
+      super(g, num, w, data);
     }
 
     /**
@@ -305,9 +306,10 @@ public class Hermione
    * @param num		the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
+   * @param data	the data to use
    */
-  protected HermioneJob newJob(int num, int[] w) {
-    return new HermioneJob(this, num, w);
+  protected HermioneJob newJob(int num, int[] w, Instances data) {
+    return new HermioneJob(this, num, w, data);
   }
 
   /**

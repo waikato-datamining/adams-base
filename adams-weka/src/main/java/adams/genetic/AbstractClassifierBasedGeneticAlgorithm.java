@@ -68,17 +68,22 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     /** the measure to use for evaluating the fitness. */
     protected Measure m_Measure;
 
+    /** the data to use. */
+    protected Instances m_Data;
+
     /**
      * Initializes the job.
      *
-     * @param g   the algorithm object this job belongs to
-     * @param num the number of chromsomes
-     * @param w   the initial weights
+     * @param g   	the algorithm object this job belongs to
+     * @param num 	the number of chromsomes
+     * @param w   	the initial weights
+     * @param data	the data to use
      */
-    public ClassifierBasedGeneticAlgorithmJob(T g, int num, int[] w) {
+    public ClassifierBasedGeneticAlgorithmJob(T g, int num, int[] w, Instances data) {
       super(g, num, w);
 
       m_Measure = g.getMeasure();
+      m_Data    = data;
     }
 
     /**
@@ -87,7 +92,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @return		the instances
      */
     protected Instances getInstances() {
-      return getGenetic().getInstances();
+      return m_Data;
     }
 
     /**
@@ -767,8 +772,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    * @param num		the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
+   * @param data	the data to use
    */
-  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int num, int[] w);
+  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int num, int[] w, Instances data);
 
   /**
    * Calculates the fitness of the population.
@@ -796,7 +802,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
         }
         weights[j] = weight;
       }
-      jobs.add(newJob(i, weights));
+      jobs.add(newJob(i, weights, m_Instances));
     }
     runner.add(jobs);
     runner.start();
