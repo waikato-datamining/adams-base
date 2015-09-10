@@ -20,9 +20,6 @@
 
 package adams.data.noise;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Performance;
@@ -38,6 +35,10 @@ import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract super class for algorithms that remove noise from data.
@@ -502,7 +503,7 @@ public abstract class AbstractDenoiser<T extends DataContainer>
     result = new ArrayList<DataContainer>();
 
     if (Performance.getMultiProcessingEnabled()) {
-      runner = new JobRunner<DenoiserJob>();
+      runner = new LocalJobRunner<DenoiserJob>();
       jobs   = new JobList<DenoiserJob>();
 
       // fill job list

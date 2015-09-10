@@ -36,6 +36,7 @@ import adams.flow.provenance.ProvenanceSupporter;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.AggregateableEvaluation;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
@@ -574,7 +575,7 @@ public class WekaCrossValidationEvaluator
       }
       else {
 	generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
-	m_JobRunner = new JobRunner(m_ActualNumThreads);
+	m_JobRunner = new LocalJobRunner(m_ActualNumThreads);
 	list      = new JobList<CrossValidationJob>();
 	while (generator.hasNext()) {
 	  cont = generator.next();

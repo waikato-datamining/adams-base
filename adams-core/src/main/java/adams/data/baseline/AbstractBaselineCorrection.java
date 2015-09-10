@@ -20,9 +20,6 @@
 
 package adams.data.baseline;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Performance;
@@ -37,6 +34,10 @@ import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract base class for baseline correction schemes.
@@ -475,7 +476,7 @@ public abstract class AbstractBaselineCorrection<T extends DataContainer>
     result = new ArrayList<List<DataContainer>>();
 
     if (Performance.getMultiProcessingEnabled()) {
-      runner = new JobRunner<BaselineCorrectionJob>();
+      runner = new LocalJobRunner<BaselineCorrectionJob>();
       jobs   = new JobList<BaselineCorrectionJob>();
 
       // fill job list

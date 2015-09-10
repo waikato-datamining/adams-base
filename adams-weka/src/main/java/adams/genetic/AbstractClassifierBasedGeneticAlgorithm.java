@@ -27,6 +27,7 @@ import adams.data.weka.WekaAttributeIndex;
 import adams.event.FitnessChangeNotifier;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
@@ -782,7 +783,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int[] 						weights;
     int 						weight;
 
-    runner = new JobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
+    runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
     jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];

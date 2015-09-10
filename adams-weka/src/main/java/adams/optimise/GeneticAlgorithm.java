@@ -20,9 +20,17 @@
 
 package adams.optimise;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
+import adams.core.logging.LoggingLevel;
+import adams.core.option.ArrayConsumer;
+import adams.env.Environment;
+import adams.multiprocess.Job;
+import adams.multiprocess.JobList;
+import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
+import adams.optimise.genetic.PackData;
+import adams.optimise.genetic.PackDataDef;
+import adams.optimise.genetic.PackDataGeneticAlgorithm;
+import adams.optimise.genetic.fitnessfunctions.AttributeSelection;
 import weka.classifiers.functions.GPD;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.PLSClassifier;
@@ -32,16 +40,9 @@ import weka.filters.Filter;
 import weka.filters.MultiFilter;
 import weka.filters.supervised.attribute.PLSFilter;
 import weka.filters.unsupervised.attribute.Remove;
-import adams.core.logging.LoggingLevel;
-import adams.core.option.ArrayConsumer;
-import adams.env.Environment;
-import adams.multiprocess.Job;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.optimise.genetic.PackData;
-import adams.optimise.genetic.PackDataDef;
-import adams.optimise.genetic.PackDataGeneticAlgorithm;
-import adams.optimise.genetic.fitnessfunctions.AttributeSelection;
+
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -344,7 +345,7 @@ public class GeneticAlgorithm
    */
   @Override
   public void calcFitness() {
-    JobRunner<GAJob> runner = new JobRunner<GAJob>();
+    JobRunner<GAJob> runner = new LocalJobRunner<GAJob>();
     JobList<GAJob> jobs = new JobList<GAJob>();
     GAJob[] jbs=new GAJob[getNumChrom()];
     for (int i = 0; i < getNumChrom(); i++) {

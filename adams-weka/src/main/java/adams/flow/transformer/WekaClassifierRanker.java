@@ -45,6 +45,7 @@ import adams.flow.core.Token;
 import adams.multiprocess.Job;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.Evaluation;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.GridSearch;
@@ -1097,7 +1098,7 @@ public class WekaClassifierRanker
 	job = new RankingJob(cls[i], i, train, test, m_Seed, m_Folds, m_Measure, m_OutputBestSetup);
 	jobs.add(job);
       }
-      m_JobRunner = new JobRunner<RankingJob>(m_NumThreads);
+      m_JobRunner = new LocalJobRunner<RankingJob>(m_NumThreads);
       m_JobRunner.addJobCompleteListener(new JobCompleteListener() {
 	private static final long serialVersionUID = 4773790554588513879L;
 	public void jobCompleted(JobCompleteEvent e) {

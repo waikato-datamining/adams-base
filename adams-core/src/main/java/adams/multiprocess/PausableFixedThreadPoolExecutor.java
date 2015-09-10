@@ -15,10 +15,14 @@
 
 /**
  * PausableThreadPoolExecutor.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Doug Lea with assistance from members of JCP JSR-166 Expert Group
  */
 package adams.multiprocess;
+
+import adams.core.License;
+import adams.core.Pausable;
+import adams.core.annotation.MixedCopyright;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -26,16 +30,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import adams.core.License;
-import adams.core.Pausable;
-import adams.core.annotation.MixedCopyright;
-
 /**
- * The thread pool executor for the JobRunner class.
+ * The thread pool executor for the {@link LocalJobRunner} class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see JobRunner
+ * @see LocalJobRunner
  */
 @MixedCopyright(
     copyright = "Doug Lea with assistance from members of JCP JSR-166 Expert Group",
