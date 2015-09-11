@@ -201,7 +201,7 @@ public class Hermione
 	getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
 
 	// was measure already calculated for this attribute setup?
-	Double cc = getGenetic().getResult(weightsToString());
+	Double cc = getOwner().getResult(weightsToString());
 	if (cc != null){
 	  getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
 	  m_Fitness = cc;
@@ -211,17 +211,17 @@ public class Hermione
 	Instances newInstances = new Instances(getInstances());
 
 	// evaluate classifier
-	Classifier newClassifier = getGenetic().generateClassifier(m_Weights);
+	Classifier newClassifier = getOwner().generateClassifier(m_Weights);
 	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
 	// process fitness
-	if (getGenetic().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
+	if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
 	  generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
 	  // notify the listeners
-	  getGenetic().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
+	  getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
 	}
 
-	getGenetic().addResult(weightsToString(), m_Fitness);
+	getOwner().addResult(weightsToString(), m_Fitness);
       }
       catch(Exception e){
 	getLogger().log(Level.SEVERE, "Error: ", e);

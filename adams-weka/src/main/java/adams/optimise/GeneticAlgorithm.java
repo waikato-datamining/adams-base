@@ -26,6 +26,7 @@ import adams.env.Environment;
 import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.JobWithOwner;
 import adams.multiprocess.LocalJobRunner;
 import adams.optimise.genetic.PackData;
 import adams.optimise.genetic.PackDataDef;
@@ -292,7 +293,8 @@ public class GeneticAlgorithm
    *
    */
   public static class GAJob
-  	extends AbstractJob {
+  	extends AbstractJob
+  	implements JobWithOwner<GeneticAlgorithm> {
 
     /** ga. */
     protected GeneticAlgorithm m_ga=null;
@@ -312,6 +314,15 @@ public class GeneticAlgorithm
       m_ff=ff;
       m_weights=weights;
       m_ga=ga;
+    }
+
+    /**
+     * Returns the owner.
+     *
+     * @return    the owner
+     */
+    public GeneticAlgorithm getOwner() {
+      return m_ga;
     }
 
     @Override

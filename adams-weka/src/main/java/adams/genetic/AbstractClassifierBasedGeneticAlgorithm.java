@@ -181,19 +181,19 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     protected File createFileName(double fitness, Instances data, String ext) {
       String	filename;
 
-      filename = getGenetic().getOutputDirectory().getAbsolutePath() + File.separator;
+      filename = getOwner().getOutputDirectory().getAbsolutePath() + File.separator;
 
-      switch (getGenetic().getOutputPrefixType()) {
+      switch (getOwner().getOutputPrefixType()) {
 	case NONE:
 	  break;
 	case RELATION:
 	  filename += data.relationName() + "-";
 	  break;
 	case SUPPLIED:
-	  filename += getGenetic().getSuppliedPrefix() + "-";
+	  filename += getOwner().getSuppliedPrefix() + "-";
 	  break;
 	default:
-	  throw new IllegalStateException("Unhandled output prefix type: " + getGenetic().getOutputPrefixType());
+	  throw new IllegalStateException("Unhandled output prefix type: " + getOwner().getOutputPrefixType());
       }
 
       filename += Double.toString(getMeasure().adjust(fitness)) + "." + ext;
@@ -212,7 +212,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       File file = createFileName(fitness, data, "arff");
       Writer writer = new BufferedWriter(new FileWriter(file));
       Instances header = new Instances(data, 0);
-      header = getGenetic().updateHeader(header, this);
+      header = getOwner().updateHeader(header, this);
       writer.write(header.toString());
       writer.write("\n");
       for (int i = 0; i < data.numInstances(); i++) {
@@ -234,7 +234,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       Properties result;
 
       result = new Properties();
-      result.setProperty("Commandline", OptionUtils.getCommandLine(getGenetic()));
+      result.setProperty("Commandline", OptionUtils.getCommandLine(getOwner()));
       result.setProperty("Measure", "" + getMeasure());
       result.setDouble("Fitness", fitness);
       result.setProperty("Setup", OptionUtils.getCommandLine(cls));
@@ -272,7 +272,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if output fails
      */
     protected void generateOutput(double fitness, Instances data, Classifier cls, int[] weights) throws Exception {
-      switch (getGenetic().getOutputType()) {
+      switch (getOwner().getOutputType()) {
 	case NONE:
 	  break;
 	case SETUP:
@@ -286,7 +286,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 	  outputSetup(fitness, data, cls, weights);
 	  break;
 	default:
-	  throw new IllegalStateException("Unhandled output type: " + getGenetic().getOutputType());
+	  throw new IllegalStateException("Unhandled output type: " + getOwner().getOutputType());
       }
     }
   }
