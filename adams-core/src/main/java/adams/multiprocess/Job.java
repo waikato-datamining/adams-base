@@ -27,10 +27,6 @@ import adams.core.logging.LoggingObject;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
-import java.io.Serializable;
-import java.util.Hashtable;
-import java.util.Vector;
-
 /**
  * A job is a unit of execution.
  *
@@ -46,12 +42,6 @@ public abstract class Job
 
   /** identifying name of job. */
   protected String m_jobInfo;
-
-  /** parameters necessary to process job. */
-  protected Hashtable<String,Serializable> m_jobParams;
-
-  /** Jobs this Job requires to have finished first. */
-  protected Vector<Job> m_depends;
 
   /** Has this job completed processing? */
   protected boolean m_complete;
@@ -77,8 +67,6 @@ public abstract class Job
   public Job(String info) {
     super();
 
-    m_jobParams      = new Hashtable<String,Serializable>();
-    m_depends        = new Vector<Job>();
     m_jobInfo        = info;
     m_complete       = false;
     m_completed      = null;
@@ -95,17 +83,6 @@ public abstract class Job
   }
 
   /**
-   * Get this Job as a Vector.
-   *
-   * @return		Job Vector
-   */
-  public Vector<Job> getAsVector() {
-    Vector<Job> vj = new Vector<Job>();
-    vj.add(this);
-    return(vj);
-  }
-
-  /**
    * Called once a job has completed execution.
    *
    * @param j		Job
@@ -114,45 +91,6 @@ public abstract class Job
   public void jobCompleted(Job j, JobResult jr) {
     if (m_completed != null)
       m_completed.jobCompleted(new JobCompleteEvent(this, j,jr));
-  }
-
-
-  /**
-   * Add a dependency to this Job.
-   *
-   * @param j		Job that needs to be completed before this one can run
-   */
-  public void addDependency(Job j) {
-    m_depends.add(j);
-  }
-
-  /**
-   * Returns all jobs this job depends on.
-   *
-   * @return		the dependencies
-   */
-  public Vector<Job> getDependencies() {
-    return new Vector<Job>(m_depends);
-  }
-
-  /**
-   * Add a parameter to this Job.
-   *
-   * @param name 	paramater name
-   * @param o 		parameter to be used by JobProcessor
-   */
-  public void addParam(String name, Serializable o) {
-    m_jobParams.put(name,o);
-  }
-
-  /**
-   * Get Parameter with given name.
-   *
-   * @param  name   	parameter name
-   * @return     	paramater object
-   */
-  public Serializable getParam(String name) {
-    return(m_jobParams.get(name));
   }
 
   /**
@@ -284,8 +222,6 @@ public abstract class Job
    * Removes dependencies and job parameters.
    */
   public void cleanUp() {
-    m_depends.clear();
-    m_jobParams.clear();
   }
 
   /**
