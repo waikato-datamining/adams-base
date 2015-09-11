@@ -23,7 +23,7 @@ package adams.optimise;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.ArrayConsumer;
 import adams.env.Environment;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -292,7 +292,7 @@ public class GeneticAlgorithm
    *
    */
   public static class GAJob
-  	extends Job {
+  	extends AbstractJob {
 
     /** ga. */
     protected GeneticAlgorithm m_ga=null;

@@ -31,7 +31,7 @@ import adams.core.option.OptionUtils;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -64,7 +64,7 @@ public abstract class AbstractSmoother<T extends DataContainer>
    * @version $Revision$
    */
   public static class SmootherJob<T extends DataContainer>
-    extends Job {
+    extends AbstractJob {
 
     /** for serialization. */
     private static final long serialVersionUID = 5544327082749651329L;

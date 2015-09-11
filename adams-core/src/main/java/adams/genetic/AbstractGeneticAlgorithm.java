@@ -37,7 +37,7 @@ import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeListener;
 import adams.genetic.stopping.AbstractStoppingCriterion;
 import adams.genetic.stopping.MaxIterations;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 
 import java.util.BitSet;
 import java.util.HashSet;
@@ -66,7 +66,7 @@ public abstract class AbstractGeneticAlgorithm
    * @version $Revision$
    */
   public static abstract class GeneticAlgorithmJob<T extends AbstractGeneticAlgorithm>
-    extends Job {
+    extends AbstractJob {
 
     /** for serialization. */
     private static final long serialVersionUID = -4974865548501195622L;

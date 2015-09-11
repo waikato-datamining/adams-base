@@ -22,65 +22,23 @@
 package adams.multiprocess;
 
 import adams.core.CleanUpHandler;
-import adams.core.Utils;
-import adams.core.logging.LoggingObject;
-import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
 /**
  * A job is a unit of execution.
  *
  * @author dale
- * @version $Revision$
+ * @version $Revision: 11631 $
  */
-public abstract class Job
-  extends LoggingObject
-  implements CleanUpHandler {
-
-  /** for serialization. */
-  private static final long serialVersionUID = -4365906331615932775L;
-
-  /** identifying name of job. */
-  protected String m_jobInfo;
-
-  /** Has this job completed processing? */
-  protected boolean m_complete;
-
-  /** Object to call once job has been completed. */
-  protected JobCompleteListener m_completed;
-
-  /** whether an error occurred in the execution. */
-  protected String m_ExecutionError;
-
-  /**
-   * Job constructor. Create a new Job with no identifier.
-   */
-  public Job() {
-    this("");
-  }
-
-  /**
-   * Job constructor. Create a new Job with given identifier.
-   *
-   * @param info  	Job function
-   */
-  public Job(String info) {
-    super();
-
-    m_jobInfo        = info;
-    m_complete       = false;
-    m_completed      = null;
-    m_ExecutionError = null;
-  }
+public interface Job
+  extends CleanUpHandler {
 
   /**
    * Returns the job info/identifier.
    *
    * @return		the info
    */
-  public String getJobInfo() {
-    return m_jobInfo;
-  }
+  public String getJobInfo();
 
   /**
    * Called once a job has completed execution.
@@ -88,147 +46,53 @@ public abstract class Job
    * @param j		Job
    * @param jr		Result of Job
    */
-  public void jobCompleted(Job j, JobResult jr) {
-    if (m_completed != null)
-      m_completed.jobCompleted(new JobCompleteEvent(this, j,jr));
-  }
+  public void jobCompleted(Job j, JobResult jr);
 
   /**
    * Sets the listener that gets notified when the job got finished.
    *
    * @param l		the listener
    */
-  public void setJobCompleteListener(JobCompleteListener l) {
-    m_completed = l;
-  }
+  public void setJobCompleteListener(JobCompleteListener l);
 
   /**
    * Returns the listener that gets notified when the job got finished.
    *
    * @return		the listener, can be null
    */
-  public JobCompleteListener getJobCompleteListener() {
-    return m_completed;
-  }
+  public JobCompleteListener getJobCompleteListener();
 
   /**
    * Whether the job has been finished.
    *
    * @return		true if the job has finished, false otherwise
    */
-  public boolean isComplete() {
-    return m_complete;
-  }
-
-  /**
-   * Checks whether all pre-conditions have been met.
-   *
-   * @return		null if everything is OK, otherwise an error message
-   */
-  protected abstract String preProcessCheck();
-
-  /**
-   * Does the actual execution of the job.
-   * 
-   * @throws Exception if fails to execute job
-   */
-  protected abstract void process() throws Exception;
-
-  /**
-   * Checks whether all post-conditions have been met.
-   *
-   * @return		null if everything is OK, otherwise an error message
-   */
-  protected abstract String postProcessCheck();
-
-  /**
-   * Returns additional information to be added to the error message.
-   * Default returns an empty string.
-   *
-   * @return		the additional information
-   */
-  protected String getAdditionalErrorInformation() {
-    return "";
-  }
+  public boolean isComplete();
 
   /**
    * Override to do computation.
    *
    * @return		JobResult
    */
-  public JobResult execute() {
-    JobResult		result;
-    boolean		success;
-    String		addInfo;
-
-    // pre-check
-    m_ExecutionError = preProcessCheck();
-    success          = (m_ExecutionError == null);
-    if (!success)
-      m_ExecutionError = "'pre-check' failed: " + m_ExecutionError;
-
-    // process data
-    if (success) {
-      try {
-	process();
-      }
-      catch (Exception e) {
-	m_ExecutionError = "'process' failed with exception: " + Utils.throwableToString(e);
-	success          = false;
-      }
-    }
-
-    // post-check
-    if (success) {
-      m_ExecutionError = postProcessCheck();
-      success          = (m_ExecutionError == null);
-      if (!success)
-	m_ExecutionError = "'post-check' failed: " + m_ExecutionError;
-    }
-
-    if (!success) {
-      addInfo = getAdditionalErrorInformation();
-      if (addInfo.length() > 0)
-	m_ExecutionError += "\n" + addInfo;
-    }
-
-    // assemble result
-    m_complete = true;
-    result     = new JobResult(success ? toString() : m_ExecutionError, success);
-
-    return result;
-  }
+  public JobResult execute();
 
   /**
    * Checks whether there was a problem with the job execution.
    *
    * @return		true if an error occurred
    */
-  public boolean hasExecutionError() {
-    return (m_ExecutionError != null);
-  }
+  public boolean hasExecutionError();
 
   /**
    * Returns the execution error, if any.
    *
    * @return		the error, null if none occurred
    */
-  public String getExecutionError() {
-    return m_ExecutionError;
-  }
+  public String getExecutionError();
 
   /**
    * Cleans up data structures, frees up memory.
    * Removes dependencies and job parameters.
    */
-  public void cleanUp() {
-  }
-
-  /**
-   * Returns a string representation of this job.
-   *
-   * @return		the job as string
-   */
-  @Override
-  public abstract String toString();
+  public void cleanUp();
 }

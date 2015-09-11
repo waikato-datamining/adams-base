@@ -33,7 +33,7 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -147,7 +147,7 @@ public class WekaCrossValidationEvaluator
    * @version $Revision$
    */
   public static class CrossValidationJob
-    extends Job {
+    extends AbstractJob {
 
     /** for serialization. */
     private static final long serialVersionUID = -9085803857529039559L;

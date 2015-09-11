@@ -42,7 +42,7 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.Token;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -172,7 +172,7 @@ public class WekaClassifierRanker
    * @version $Revision$
    */
   public static class RankingJob
-    extends Job {
+    extends AbstractJob {
 
     /** for serialization. */
     private static final long serialVersionUID = 6105881068149718863L;

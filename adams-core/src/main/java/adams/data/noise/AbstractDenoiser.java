@@ -32,7 +32,7 @@ import adams.data.NotesHandler;
 import adams.data.RegionRecorder;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
-import adams.multiprocess.Job;
+import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -61,7 +61,7 @@ public abstract class AbstractDenoiser<T extends DataContainer>
    * @version $Revision$
    */
   public static class DenoiserJob<T extends DataContainer>
-    extends Job {
+    extends AbstractJob {
 
     /** for serialization. */
     private static final long serialVersionUID = -6605973712371846881L;
