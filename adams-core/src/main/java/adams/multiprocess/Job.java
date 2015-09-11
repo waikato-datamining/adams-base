@@ -22,7 +22,10 @@
 package adams.multiprocess;
 
 import adams.core.CleanUpHandler;
+import adams.core.logging.LoggingSupporter;
 import adams.event.JobCompleteListener;
+
+import java.io.Serializable;
 
 /**
  * A job is a unit of execution.
@@ -31,7 +34,7 @@ import adams.event.JobCompleteListener;
  * @version $Revision: 11631 $
  */
 public interface Job
-  extends CleanUpHandler {
+  extends Serializable, LoggingSupporter, CleanUpHandler {
 
   /**
    * Returns the job info/identifier.
