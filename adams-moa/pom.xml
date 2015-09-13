@@ -119,7 +119,7 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>com.github.fracpete</groupId>
         <artifactId>latex-maven-plugin</artifactId>
       </plugin>
 
