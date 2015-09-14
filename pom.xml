@@ -81,6 +81,7 @@
     <postgresql.version>9.4-1201-jdbc41</postgresql.version>
     <postgis.version>1.5.3</postgis.version>
     <jodd.version>3.5.2</jodd.version>
+    <boofcv.version>0.18</boofcv.version>
   </properties>
 
   <scm>
