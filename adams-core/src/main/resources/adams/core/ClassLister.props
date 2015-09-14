@@ -580,6 +580,10 @@ adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector=\
   adams.gui.visualization.sequence,\
   adams.flow.sink.sequenceplotter
 
+# the job runners to use
+adams.multiprocess.JobRunner=\
+  adams.multiprocess
+
 # the optimization schemes
 adams.optimise.AbstractOptimiser=\
   adams.optimise

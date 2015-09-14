@@ -27,12 +27,14 @@ import adams.core.management.ProcessUtils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
@@ -312,6 +314,9 @@ public class WekaCrossValidationEvaluator
   /** the actual number of threads to use. */
   protected int m_ActualNumThreads;
 
+  /** the jobrunner setup. */
+  protected transient JobRunnerSetup m_JobRunnerSetup;
+
   /** the runner in use. */
   protected transient JobRunner m_JobRunner;
 
@@ -512,9 +517,9 @@ public class WekaCrossValidationEvaluator
     String	result;
     
     result = super.setUp();
-    
-    if (result == null) {
-    }
+
+    if (result == null)
+      m_JobRunnerSetup = (JobRunnerSetup) ActorUtils.findClosestType(this, JobRunnerSetup.class);
     
     return result;
   }
@@ -575,8 +580,15 @@ public class WekaCrossValidationEvaluator
       }
       else {
 	generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
-	m_JobRunner = new LocalJobRunner(m_ActualNumThreads);
-	list      = new JobList<CrossValidationJob>();
+        if (m_JobRunnerSetup == null) {
+          m_JobRunner = new LocalJobRunner<CrossValidationJob>(m_NumThreads);
+        }
+        else {
+          m_JobRunner = m_JobRunnerSetup.newInstance();
+          if (m_JobRunner instanceof ThreadLimiter)
+            ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
+        }
+	list = new JobList<CrossValidationJob>();
 	while (generator.hasNext()) {
 	  cont = generator.next();
 	  job  = new CrossValidationJob(

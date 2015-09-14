@@ -21,10 +21,12 @@
 package adams.genetic;
 
 import adams.core.Properties;
+import adams.core.ThreadLimiter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeIndex;
 import adams.event.FitnessChangeNotifier;
+import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -336,6 +338,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
   /** the cache for results. */
   public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
+
+  /** the jobrunner setup. */
+  protected transient JobRunnerSetup m_JobRunnerSetup;
 
   /**
    * Adds options to the internal list of options.
@@ -710,6 +715,24 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
+   * Sets the jobrunner setup to use.
+   *
+   * @param value	the setup, can be null to use default
+   */
+  public void setJobRunnerSetup(JobRunnerSetup value) {
+    m_JobRunnerSetup = value;
+  }
+
+  /**
+   * Returns the jobrunner setup in use.
+   *
+   * @return		the setup, null if using default
+   */
+  public JobRunnerSetup getJobRunnerSetup() {
+    return m_JobRunnerSetup;
+  }
+
+  /**
    * Returns the currently best fitness.
    *
    * @return		the best fitness so far
@@ -815,7 +838,14 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int[] 						weights;
     int 						weight;
 
-    runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
+    if (m_JobRunnerSetup == null) {
+      runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
+    }
+    else {
+      runner = m_JobRunnerSetup.newInstance();
+      if (runner instanceof ThreadLimiter)
+	((ThreadLimiter) runner).setNumThreads(getNumThreads());
+    }
     jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];

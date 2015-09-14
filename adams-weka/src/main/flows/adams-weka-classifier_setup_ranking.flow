@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:48:36
+# Date: 2015-09-14 16:18:38
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -21,6 +21,10 @@ adams.flow.control.Flow
 								weka.core.converters.ArffLoader
 					-actor
 						adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.standalone.JobRunnerSetup
+			-job-runner
+				adams.multiprocess.LocalJobRunner
 	-actor
 		adams.flow.source.WekaClassifierGenerator
 			-setup
@@ -82,6 +86,8 @@ adams.flow.control.Flow
 				adams.data.conversion.AnyToCommandline
 	-actor
 		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 

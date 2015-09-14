@@ -42,6 +42,7 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.Token;
+import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
@@ -631,8 +632,11 @@ public class WekaClassifierRanker
   /** the helper class. */
   protected CallableActorHelper m_Helper;
 
+  /** the jobrunner setup. */
+  protected transient JobRunnerSetup m_JobRunnerSetup;
+
   /** the job runner for evaluating the setups. */
-  protected JobRunner<RankingJob> m_JobRunner;
+  protected JobRunner m_JobRunner;
 
   /**
    * Returns a string describing the object.
@@ -680,8 +684,8 @@ public class WekaClassifierRanker
 	    new CallableActorReference("test"));
 
     m_OptionManager.add(
-	    "output-best", "outputBestSetup",
-	    false);
+      "output-best", "outputBestSetup",
+      false);
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
@@ -1022,7 +1026,10 @@ public class WekaClassifierRanker
       if (getRoot() instanceof PauseStateHandler)
 	((PauseStateHandler) getRoot()).getPauseStateManager().addListener(this);
     }
-    
+
+    if (result == null)
+      m_JobRunnerSetup = (JobRunnerSetup) ActorUtils.findClosestType(this, JobRunnerSetup.class);
+
     return result;
   }
 
@@ -1098,7 +1105,14 @@ public class WekaClassifierRanker
 	job = new RankingJob(cls[i], i, train, test, m_Seed, m_Folds, m_Measure, m_OutputBestSetup);
 	jobs.add(job);
       }
-      m_JobRunner = new LocalJobRunner<RankingJob>(m_NumThreads);
+      if (m_JobRunnerSetup == null) {
+	m_JobRunner = new LocalJobRunner<RankingJob>(m_NumThreads);
+      }
+      else {
+	m_JobRunner = m_JobRunnerSetup.newInstance();
+	if (m_JobRunner instanceof ThreadLimiter)
+	  ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
+      }
       m_JobRunner.addJobCompleteListener(new JobCompleteListener() {
 	private static final long serialVersionUID = 4773790554588513879L;
 	public void jobCompleted(JobCompleteEvent e) {

@@ -37,6 +37,7 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
+import adams.flow.standalone.JobRunnerSetup;
 import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
 import adams.genetic.AbstractGeneticAlgorithm.GeneticAlgorithmJob;
 import adams.genetic.DarkLord;
@@ -157,6 +158,9 @@ public class WekaGeneticAlgorithm
 
   /** the pause state manager. */
   protected PauseStateManager m_PauseStateManager;
+
+  /** the jobrunner setup. */
+  protected transient JobRunnerSetup m_JobRunnerSetup;
 
   /**
    * Returns a string describing the object.
@@ -483,6 +487,9 @@ public class WekaGeneticAlgorithm
       m_PauseStateManager = null;
     }
 
+    if (result == null)
+      m_JobRunnerSetup = (JobRunnerSetup) ActorUtils.findClosestType(this, JobRunnerSetup.class);
+
     return result;
   }
 
@@ -503,6 +510,7 @@ public class WekaGeneticAlgorithm
     cont              = null;
     m_ActualAlgorithm = (AbstractClassifierBasedGeneticAlgorithm) m_Algorithm.shallowCopy(true);
     m_ActualAlgorithm.addFitnessChangeListener(this);
+    m_ActualAlgorithm.setJobRunnerSetup(m_JobRunnerSetup);
     try {
       m_ActualAlgorithm.setInstances(data);
       m_ActualAlgorithm.run();

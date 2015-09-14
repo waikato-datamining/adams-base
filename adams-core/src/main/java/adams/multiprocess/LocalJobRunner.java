@@ -100,8 +100,8 @@ public class LocalJobRunner<T extends Job>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "num-threads", "numThreads",
-	    -1, -1, null);
+      "num-threads", "numThreads",
+      -1, -1, null);
   }
 
   /**
@@ -111,10 +111,7 @@ public class LocalJobRunner<T extends Job>
    */
   public void setNumThreads(int value) {
     m_NumThreads = value;
-    if (m_NumThreads < 1)
-      m_NumThreads = Performance.getMaxNumProcessors();
-    if ((m_NumThreads < 1) || (m_NumThreads > ProcessUtils.getAvailableProcessors()))
-      m_NumThreads = ProcessUtils.getAvailableProcessors();
+    reset();
   }
 
   /**
@@ -249,8 +246,16 @@ public class LocalJobRunner<T extends Job>
    * Starts the thread pool and execution of jobs.
    */
   public void start() {
-    if (m_Executor == null)
-      m_Executor = new PausableFixedThreadPoolExecutor(m_NumThreads);
+    int		numThreads;
+
+    if (m_Executor == null) {
+      numThreads = m_NumThreads;
+      if (numThreads < 1)
+	numThreads = Performance.getMaxNumProcessors();
+      if ((numThreads < 1) || (numThreads > ProcessUtils.getAvailableProcessors()))
+	numThreads = ProcessUtils.getAvailableProcessors();
+      m_Executor = new PausableFixedThreadPoolExecutor(numThreads);
+    }
     enqueue();
   }
 
