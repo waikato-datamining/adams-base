@@ -45,6 +45,8 @@ public class LocalJobRunner<T extends Job>
   extends AbstractOptionHandler
   implements JobRunner<T>, ThreadLimiter {
 
+  private static final long serialVersionUID = -7957101716595901777L;
+
   /** the number of threads to use. */
   protected int m_NumThreads;
 
