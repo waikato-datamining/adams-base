@@ -62,7 +62,7 @@ public interface JobRunner<T extends Job>
   public void add(JobList<T> jobs);
 
   /**
-   * Starts the thread pool and execution of jobs.
+   * Starts the execution of jobs.
    */
   public void start();
 
