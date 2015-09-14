@@ -15,14 +15,14 @@
 
 /**
  * Notes.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
+import adams.core.ClassLocator;
+
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import adams.core.ClassLocator;
 
 /**
  * Provides further insight into notes.
@@ -41,7 +41,8 @@ public class Notes
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(adams.data.Notes.class, cls);
+    return ClassLocator.isSubclass(adams.data.Notes.class, cls)
+      || ClassLocator.hasInterface(adams.data.NotesHandler.class, cls);
   }
 
   /**
@@ -59,7 +60,10 @@ public class Notes
 
     result = new Hashtable<String,Object>();
 
-    notes = (adams.data.Notes) obj;
+    if (obj instanceof Notes)
+      notes = (adams.data.Notes) obj;
+    else
+      notes = ((adams.data.NotesHandler) obj).getNotes();
     names = notes.notes();
     while (names.hasNext()) {
       name = names.next();
