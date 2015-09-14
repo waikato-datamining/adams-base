@@ -34,7 +34,25 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Job Running engine.
+ <!-- globalinfo-start -->
+ * Executes the jobs on the local machine.
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-num-threads &lt;int&gt; (property: numThreads)
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for executing the branches; -1 = number of 
+ * &nbsp;&nbsp;&nbsp;CPUs&#47;cores; 0 or 1 = sequential execution.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author  dale (dale at cs dot waikato dot ac dot nz)
  * @author  FracPete (fracpete at waikato dot ac dot nz)
