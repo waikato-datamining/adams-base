@@ -21,6 +21,7 @@
 package adams.multiprocess;
 
 import adams.core.Pausable;
+import adams.core.option.OptionHandler;
 import adams.event.JobCompleteListener;
 
 /**
@@ -30,7 +31,7 @@ import adams.event.JobCompleteListener;
  * @version $Revision$
  */
 public interface JobRunner<T extends Job>
-  extends Pausable {
+  extends Pausable, OptionHandler {
 
   /**
    * Adds the listener.

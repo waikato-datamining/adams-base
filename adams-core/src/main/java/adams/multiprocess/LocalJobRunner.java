@@ -23,6 +23,7 @@ package adams.multiprocess;
 import adams.core.Performance;
 import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
+import adams.core.option.AbstractOptionHandler;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit;
  * @param <T> the type of job to handle
  */
 public class LocalJobRunner<T extends Job>
+  extends AbstractOptionHandler
   implements JobRunner<T>, ThreadLimiter {
 
   /** the number of threads to use. */
@@ -81,6 +83,28 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Executes the jobs on the local machine.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "num-threads", "numThreads",
+	    -1, -1, null);
+  }
+
+  /**
    * Sets the number of threads to use.
    *
    * @param value 	the number of threads: -1 = # of CPUs/cores
@@ -100,6 +124,16 @@ public class LocalJobRunner<T extends Job>
    */
   public int getNumThreads() {
     return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numThreadsTipText() {
+    return "The number of threads to use for executing the branches; -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
   }
 
   /**
@@ -154,7 +188,7 @@ public class LocalJobRunner<T extends Job>
   /**
    * Adds the jobs to the execution queue.
    *
-   * @param job		the jobs to add
+   * @param jobs	the jobs to add
    */
   public void add(JobList<T> jobs) {
     synchronized(m_queue) {
