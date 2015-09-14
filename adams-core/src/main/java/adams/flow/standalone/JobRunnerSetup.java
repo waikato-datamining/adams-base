@@ -104,7 +104,7 @@ public class JobRunnerSetup
 
     m_OptionManager.add(
       "job-runner", "jobRunner",
-      new LocalJobRunner(-1));
+      new LocalJobRunner());
   }
 
   /**

@@ -60,27 +60,14 @@ public class LocalJobRunner<T extends Job>
   protected PausableFixedThreadPoolExecutor m_Executor;
 
   /**
-   * Initialise Job Runner with maximum number of threads.
+   * Initializes the members.
    */
-  public LocalJobRunner() {
-    this(-1);
-  }
-
-  /**
-   * Initialise Job Runner with specified number of threads (gets limited to
-   * maximum number of cores/cpus).
-   *
-   * @param numThreads	the number of threads to use, if less than 1, the
-   * 			maximum number of processors found in Performance.props
-   * 			is used
-   * @see		Performance#getMaxNumProcessors()
-   */
-  public LocalJobRunner(int numThreads) {
-    super();
+  @Override
+  protected void initialize() {
+    super.initialize();
 
     m_queue                = new Vector<T>();
     m_JobCompleteListeners = new HashSet<JobCompleteListener>();
-    setNumThreads(numThreads);
     addJobCompleteListener(JobCompleteManager.getSingleton());
   }
 

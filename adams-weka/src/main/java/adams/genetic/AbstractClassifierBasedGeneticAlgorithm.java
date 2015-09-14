@@ -838,14 +838,12 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int[] 						weights;
     int 						weight;
 
-    if (m_JobRunnerSetup == null) {
-      runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>(getNumThreads());
-    }
-    else {
+    if (m_JobRunnerSetup == null)
+      runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>();
+    else
       runner = m_JobRunnerSetup.newInstance();
-      if (runner instanceof ThreadLimiter)
-	((ThreadLimiter) runner).setNumThreads(getNumThreads());
-    }
+    if (runner instanceof ThreadLimiter)
+      ((ThreadLimiter) runner).setNumThreads(getNumThreads());
     jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];

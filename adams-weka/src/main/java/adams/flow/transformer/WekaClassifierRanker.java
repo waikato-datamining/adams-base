@@ -1105,14 +1105,12 @@ public class WekaClassifierRanker
 	job = new RankingJob(cls[i], i, train, test, m_Seed, m_Folds, m_Measure, m_OutputBestSetup);
 	jobs.add(job);
       }
-      if (m_JobRunnerSetup == null) {
-	m_JobRunner = new LocalJobRunner<RankingJob>(m_NumThreads);
-      }
-      else {
+      if (m_JobRunnerSetup == null)
+	m_JobRunner = new LocalJobRunner<RankingJob>();
+      else
 	m_JobRunner = m_JobRunnerSetup.newInstance();
-	if (m_JobRunner instanceof ThreadLimiter)
-	  ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
-      }
+      if (m_JobRunner instanceof ThreadLimiter)
+	((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
       m_JobRunner.addJobCompleteListener(new JobCompleteListener() {
 	private static final long serialVersionUID = 4773790554588513879L;
 	public void jobCompleted(JobCompleteEvent e) {

@@ -580,14 +580,12 @@ public class WekaCrossValidationEvaluator
       }
       else {
 	generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
-        if (m_JobRunnerSetup == null) {
-          m_JobRunner = new LocalJobRunner<CrossValidationJob>(m_NumThreads);
-        }
-        else {
+        if (m_JobRunnerSetup == null)
+          m_JobRunner = new LocalJobRunner<CrossValidationJob>();
+        else
           m_JobRunner = m_JobRunnerSetup.newInstance();
-          if (m_JobRunner instanceof ThreadLimiter)
-            ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
-        }
+        if (m_JobRunner instanceof ThreadLimiter)
+          ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
 	list = new JobList<CrossValidationJob>();
 	while (generator.hasNext()) {
 	  cont = generator.next();
