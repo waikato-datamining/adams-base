@@ -15,19 +15,11 @@
 
 /*
  * SSHConnection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
 package adams.flow.standalone;
-
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.License;
 import adams.core.QuickInfoHelper;
@@ -40,9 +32,16 @@ import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
-
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -58,13 +57,9 @@ import com.jcraft.jsch.Session;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -72,19 +67,26 @@ import com.jcraft.jsch.Session;
  * &nbsp;&nbsp;&nbsp;default: SSHConnection
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-host &lt;java.lang.String&gt; (property: host)
@@ -99,6 +101,11 @@ import com.jcraft.jsch.Session;
  * &nbsp;&nbsp;&nbsp;maximum: 65535
  * </pre>
  * 
+ * <pre>-authentication-type &lt;CREDENTIALS|PUBLIC_KEY&gt; (property: authenticationType)
+ * &nbsp;&nbsp;&nbsp;The type of authentication to use.
+ * &nbsp;&nbsp;&nbsp;default: CREDENTIALS
+ * </pre>
+ * 
  * <pre>-user &lt;java.lang.String&gt; (property: user)
  * &nbsp;&nbsp;&nbsp;The SSH user to use for connecting.
  * </pre>
@@ -107,13 +114,23 @@ import com.jcraft.jsch.Session;
  * &nbsp;&nbsp;&nbsp;The password of the SSH user to use for connecting.
  * </pre>
  * 
+ * <pre>-private-key-file &lt;adams.core.io.PlaceholderFile&gt; (property: privateKeyFile)
+ * &nbsp;&nbsp;&nbsp;The location of the private key.
+ * &nbsp;&nbsp;&nbsp;default: ${HOME}&#47;.ssh&#47;id_rsa
+ * </pre>
+ * 
+ * <pre>-private-key-passphrase &lt;adams.core.base.BasePassword&gt; (property: privateKeyPassphrase)
+ * &nbsp;&nbsp;&nbsp;The passphrase for the private key file, ignored if empty.
+ * </pre>
+ * 
  * <pre>-known-hosts &lt;adams.core.io.PlaceholderFile&gt; (property: knownHosts)
  * &nbsp;&nbsp;&nbsp;The file storing the known hosts.
  * &nbsp;&nbsp;&nbsp;default: ${HOME}&#47;.ssh&#47;known_hosts
  * </pre>
  * 
- * <pre>-forward-x (property: forwardX)
+ * <pre>-forward-x &lt;boolean&gt; (property: forwardX)
  * &nbsp;&nbsp;&nbsp;If set to true, then X is forwarded.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-x-host &lt;java.lang.String&gt; (property: XHost)
@@ -126,13 +143,15 @@ import com.jcraft.jsch.Session;
  * &nbsp;&nbsp;&nbsp;default: 0:0
  * </pre>
  * 
- * <pre>-prompt-for-password (property: promptForPassword)
+ * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been 
  * &nbsp;&nbsp;&nbsp;provided in the setup.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
@@ -147,9 +166,9 @@ import com.jcraft.jsch.Session;
  * @version $Revision$
  */
 @MixedCopyright(
-    copyright = "JCraft",
-    license = License.BSD3,
-    url = "http://www.jcraft.com/jsch/"
+  copyright = "JCraft",
+  license = License.BSD3,
+  url = "http://www.jcraft.com/jsch/"
 )
 public class SSHConnection
   extends AbstractStandalone
@@ -158,17 +177,32 @@ public class SSHConnection
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
 
+  /** the type of authentication. */
+  public enum AuthenticationType {
+    CREDENTIALS,
+    PUBLIC_KEY
+  }
+
   /** the SSH host. */
   protected String m_Host;
 
   /** the SSH port. */
   protected int m_Port;
 
+  /** the type of authentication to use. */
+  protected AuthenticationType m_AuthenticationType;
+
   /** the SSH user to use. */
   protected String m_User;
 
   /** the SSH password to use. */
   protected BasePassword m_Password;
+
+  /** the location of the private key. */
+  protected PlaceholderFile m_PrivateKeyFile;
+
+  /** the passphrase for the private key. */
+  protected BasePassword m_PrivateKeyPassphrase;
 
   /** the file with known hosts. */
   protected PlaceholderFile m_KnownHosts;
@@ -205,9 +239,9 @@ public class SSHConnection
   @Override
   public String globalInfo() {
     return
-        "Provides access to a remote host via SSH.\n\n"
-      + "For more information see:\n\n"
-      + getTechnicalInformation().toString();
+      "Provides access to a remote host via SSH.\n\n"
+        + "For more information see:\n\n"
+        + getTechnicalInformation().toString();
   }
 
   /**
@@ -236,53 +270,70 @@ public class SSHConnection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "host", "host",
-	    "");
+      "host", "host",
+      "");
 
     m_OptionManager.add(
-	    "port", "port",
-	    22, 1, 65535);
+      "port", "port",
+      22, 1, 65535);
 
     m_OptionManager.add(
-	    "user", "user",
-	    System.getProperty("user.name"), false);
+      "authentication-type", "authenticationType",
+      AuthenticationType.CREDENTIALS);
 
     m_OptionManager.add(
-	    "password", "password",
-	    new BasePassword(""), false);
+      "user", "user",
+      System.getProperty("user.name"), false);
 
     m_OptionManager.add(
-	    "known-hosts", "knownHosts",
-	    new PlaceholderFile(
-		System.getProperty("user.home")
-		+ File.separator
-		+ ".ssh"
-		+ File.separator
-		+ "known_hosts"));
+      "password", "password",
+      new BasePassword(""), false);
 
     m_OptionManager.add(
-	    "forward-x", "forwardX",
-	    false);
+      "private-key-file", "privateKeyFile",
+      new PlaceholderFile(
+        System.getProperty("user.home")
+          + File.separator
+          + ".ssh"
+          + File.separator
+          + "id_rsa"));
 
     m_OptionManager.add(
-	    "x-host", "XHost",
-	    "");
+      "private-key-passphrase", "privateKeyPassphrase",
+      new BasePassword(""), false);
 
     m_OptionManager.add(
-	    "x-port", "XPort",
-	    "0:0");
+      "known-hosts", "knownHosts",
+      new PlaceholderFile(
+        System.getProperty("user.home")
+          + File.separator
+          + ".ssh"
+          + File.separator
+          + "known_hosts"));
 
     m_OptionManager.add(
-	    "prompt-for-password", "promptForPassword",
-	    false);
+      "forward-x", "forwardX",
+      false);
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "x-host", "XHost",
+      "");
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "x-port", "XPort",
+      "0:0");
+
+    m_OptionManager.add(
+      "prompt-for-password", "promptForPassword",
+      false);
+
+    m_OptionManager.add(
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
+
+    m_OptionManager.add(
+      "custom-stop-message", "customStopMessage",
+      "");
   }
 
   /**
@@ -306,11 +357,16 @@ public class SSHConnection
     List<String>	options;
     String		value;
 
-    result  = QuickInfoHelper.toString(this, "user", m_User);
-    value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
-    if (value != null)
-      result += ":" + value;
-    value = QuickInfoHelper.toString(this, "host", (m_Host.length() == 0 ? "??" : m_Host), "@");
+    if (m_AuthenticationType == AuthenticationType.CREDENTIALS) {
+      result = QuickInfoHelper.toString(this, "user", m_User);
+      value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
+      if (value != null)
+        result += ":" + value;
+    }
+    else {
+      result = QuickInfoHelper.toString(this, "privateKeyFile", m_PrivateKeyFile);
+    }
+    result += QuickInfoHelper.toString(this, "host", (m_Host.length() == 0 ? "??" : m_Host), "@");
     result += QuickInfoHelper.toString(this, "port", m_Port, ":");
 
     options = new ArrayList<String>();
@@ -382,6 +438,35 @@ public class SSHConnection
   }
 
   /**
+   * Sets the type of authentication to use.
+   *
+   * @param value	the type
+   */
+  public void setAuthenticationType(AuthenticationType value) {
+    m_AuthenticationType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of authentication to use.
+   *
+   * @return		the type
+   */
+  public AuthenticationType getAuthenticationType() {
+    return m_AuthenticationType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String authenticationTypeTipText() {
+    return "The type of authentication to use.";
+  }
+
+  /**
    * Sets the SSH user to use.
    *
    * @param value	the user name
@@ -437,6 +522,64 @@ public class SSHConnection
    */
   public String passwordTipText() {
     return "The password of the SSH user to use for connecting.";
+  }
+
+  /**
+   * Sets the location of the private key file.
+   *
+   * @param value	the key file
+   */
+  public void setPrivateKeyFile(PlaceholderFile value) {
+    m_PrivateKeyFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the location of the private key file.
+   *
+   * @return		the key file
+   */
+  public PlaceholderFile getPrivateKeyFile() {
+    return m_PrivateKeyFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String privateKeyFileTipText() {
+    return "The location of the private key.";
+  }
+
+  /**
+   * Sets the passphrase for the private key file, ignored if empty.
+   *
+   * @param value	the passphrase
+   */
+  public void setPrivateKeyPassphrase(BasePassword value) {
+    m_PrivateKeyPassphrase = value;
+    reset();
+  }
+
+  /**
+   * Returns the passphrase for the private key file, ignored if empty.
+   *
+   * @return		the passphrase
+   */
+  public BasePassword getPrivateKeyPassphrase() {
+    return m_PrivateKeyPassphrase;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String privateKeyPassphraseTipText() {
+    return "The passphrase for the private key file, ignored if empty.";
   }
 
   /**
@@ -557,17 +700,17 @@ public class SSHConnection
 
   /**
    * Sets whether to prompt for a password if none currently provided.
-   * 
+   *
    * @param value	true if to prompt for a password
    */
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
   }
-  
+
   /**
    * Returns whether to prompt for a password if none currently provided.
-   * 
+   *
    * @return		true if to prompt for a password
    */
   public boolean getPromptForPassword() {
@@ -581,9 +724,9 @@ public class SSHConnection
    * 			displaying in the GUI or for listing the options.
    */
   public String promptForPasswordTipText() {
-    return 
-	"If enabled, the user gets prompted "
-	+ "for enter a password if none has been provided in the setup.";
+    return
+      "If enabled, the user gets prompted "
+        + "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -618,7 +761,7 @@ public class SSHConnection
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value) {
     m_CustomStopMessage = value;
@@ -642,8 +785,8 @@ public class SSHConnection
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
   }
 
   /**
@@ -654,15 +797,15 @@ public class SSHConnection
   public boolean doInteract() {
     boolean		result;
     PasswordDialog	dlg;
-    
+
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
     dlg.setVisible(true);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
-    
+
     if (result)
       m_ActualPassword = dlg.getPassword();
-    
+
     return result;
   }
 
@@ -686,39 +829,62 @@ public class SSHConnection
     JSch	jsch;
 
     result = null;
-    
-    m_ActualPassword = m_Password;
-    
+
+    // password
+    switch (m_AuthenticationType) {
+      case CREDENTIALS:
+	m_ActualPassword = m_Password;
+	break;
+      case PUBLIC_KEY:
+	m_ActualPassword = m_PrivateKeyPassphrase;
+	break;
+      default:
+	throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+    }
+
     if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
-	if (!doInteract()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      stopExecution("Flow canceled: " + getFullName());
-	    else
-	      stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
+        if (!doInteract()) {
+          if (m_StopFlowIfCanceled) {
+            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+              stopExecution("Flow canceled: " + getFullName());
+            else
+              stopExecution(m_CustomStopMessage);
+            result = getStopMessage();
+          }
+        }
       }
     }
 
     if (result == null) {
       try {
-	jsch = new JSch();
-	// TODO choose RSA, DSA, ECDSA?
-	jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
-	m_Session = jsch.getSession(m_User, m_Host, m_Port);
-	m_Session.setPassword(m_ActualPassword.getValue());
-	if (m_ForwardX) {
-	  m_Session.setX11Host(m_Host);
-	  m_Session.setX11Port(6000 + 0);
+        jsch = new JSch();
+        // TODO choose RSA, DSA, ECDSA?
+        jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
+	switch (m_AuthenticationType) {
+	  case CREDENTIALS:
+	    m_Session = jsch.getSession(m_User, m_Host, m_Port);
+	    m_Session.setPassword(m_ActualPassword.getValue());
+	    break;
+	  case PUBLIC_KEY:
+	    if (m_ActualPassword.getValue().isEmpty())
+	      jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath());
+	    else
+	      jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
+	    m_Session = jsch.getSession(m_User, m_Host, m_Port);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
 	}
-	m_Session.connect();
+        if (m_ForwardX) {
+          m_Session.setX11Host(m_Host);
+          m_Session.setX11Port(6000 + 0);
+        }
+        m_Session.connect();
       }
       catch (Exception e) {
-	result    = handleException("Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
-	m_Session = null;
+        result    = handleException("Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+        m_Session = null;
       }
     }
 
@@ -731,12 +897,12 @@ public class SSHConnection
   protected void disconnect() {
     if (m_Session != null) {
       if (m_Session.isConnected()) {
-	try {
-	  m_Session.disconnect();
-	}
-	catch (Exception e) {
-	  handleException("Failed to disconnect from '" + m_Host + "':", e);
-	}
+        try {
+          m_Session.disconnect();
+        }
+        catch (Exception e) {
+          handleException("Failed to disconnect from '" + m_Host + "':", e);
+        }
       }
     }
     m_Session = null;
@@ -772,18 +938,18 @@ public class SSHConnection
     if ((result == 1) || (result == 2)) {
       output = new StringBuilder();
       do {
-	c = in.read();
-	output.append((char) c);
+        c = in.read();
+        output.append((char) c);
       }
       while (c != '\n');
 
       // error
       if (result == 1)
-	System.out.print(output.toString());
+        System.out.print(output.toString());
 
       // fatal error
       if (result == 2)
-	System.out.print(output.toString());
+        System.out.print(output.toString());
     }
 
     return result;
