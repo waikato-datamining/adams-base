@@ -28,17 +28,13 @@ import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.net.SCP;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
-import com.jcraft.jsch.ChannelExec;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -246,81 +242,19 @@ public class ScpTo
    */
   @Override
   protected String doExecute() {
-    String		result;
-    String		filename;
-    File		file;
-    String		remotefile;
-    ChannelExec		channel;
-    OutputStream	out;
-    InputStream		in;
-    byte[]		buffer;
-    String		command;
-    long 		filesize;
-    FileInputStream	fis;
-    int			len;
-
-    result = null;
+    String	result;
+    String	filename;
+    File 	localFile;
+    String 	remoteFile;
 
     filename   = (String) m_InputToken.getPayload();
-    file       = new PlaceholderFile(filename);
-    remotefile = m_RemoteDir + "/" + file.getName();
-    channel    = null;
-    try {
-      channel = (ChannelExec) m_Connection.getSession().openChannel("exec");
-      channel.setCommand("scp -p -t " + remotefile);
-      if (isLoggingEnabled())
-	getLogger().info("Uploading " + file + " to " + remotefile);
-      in     = channel.getInputStream();
-      out    = channel.getOutputStream();
-
-      channel.connect();
-
-      if (SSHConnection.checkAck(in) != 0) {
-	result = "Input stream check failed after opening channel!";
-	return result;
-      }
-
-      // send "C0644 filesize filename", where filename should not include '/'
-      filesize = file.length();
-      command  = "C0644 " + filesize + " " + file.getName() + "\n";
-      out.write(command.getBytes());
-      out.flush();
-      if (SSHConnection.checkAck(in) != 0)
-	result = "Sending of filename failed!";
-
-      // send a content of lfile
-      fis    = new FileInputStream(file.getAbsoluteFile());
-      buffer = new byte[1024];
-      while (true) {
-	len = fis.read(buffer, 0, buffer.length);
-	if (len <= 0)
-	  break;
-	out.write(buffer, 0, len);
-      }
-      FileUtils.closeQuietly(fis);
-      fis = null;
-
-      // send '\0'
-      buffer[0]=0;
-      out.write(buffer, 0, 1);
-      out.flush();
-
-      if (SSHConnection.checkAck(in) != 0)
-	result = "Left-over data in input stream!";
-      FileUtils.closeQuietly(out);
-
-      if (result == null)
-	m_OutputToken = new Token(filename);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to upload file '" + file + "' to '" + remotefile + "': ", e);
+    localFile  = new PlaceholderFile(filename);
+    remoteFile = m_RemoteDir + "/" + localFile.getName();
+    result     = SCP.copyTo(this, m_Connection, localFile, remoteFile);
+    if (result == null)
+      m_OutputToken = new Token(filename);
+    else
       m_OutputToken = null;
-    }
-    finally {
-      if (channel != null) {
-	channel.disconnect();
-      }
-    }
 
     return result;
   }

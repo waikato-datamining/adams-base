@@ -25,17 +25,14 @@ import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
+import adams.core.net.SCP;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
-import com.jcraft.jsch.ChannelExec;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -283,113 +280,22 @@ public class ScpFrom
    */
   @Override
   protected String doExecute() {
-    String		result;
-    String		file;
-    String		remotefile;
-    String		outFile;
-    ChannelExec		channel;
-    OutputStream	out;
-    InputStream		in;
-    byte[]		buffer;
-    int			c;
-    long 		filesize;
-    FileOutputStream	fos;
-    int 		foo;
-    int			i;
-
-    result = null;
+    String	result;
+    String	file;
+    String 	remoteFile;
+    File	localFile;
 
     file       = (String) m_InputToken.getPayload();
-    remotefile = m_RemoteDir + "/" + file;
-    outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
-    channel    = null;
-    fos        = null;
-    try {
-      channel = (ChannelExec) m_Connection.getSession().openChannel("exec");
-      channel.setCommand("scp -f " + remotefile);
-      if (isLoggingEnabled())
-	getLogger().info("Downloading " + remotefile);
-      in     = channel.getInputStream();
-      out    = channel.getOutputStream();
-      buffer = new byte[1024];
-
-      channel.connect();
-
-      // send '\0'
-      buffer[0] = 0;
-      out.write(buffer, 0, 1);
-      out.flush();
-
-      while (true) {
-	c = SSHConnection.checkAck(in);
-        if (c != 'C')
-	  break;
-
-        // read '0644 '
-        in.read(buffer, 0, 5);
-
-        filesize = 0L;
-        while(true){
-          // error?
-          if (in.read(buffer, 0, 1) < 0)
-            break;
-          if (buffer[0]== ' ')
-            break;
-          filesize = filesize * 10L + (long) (buffer[0] - '0');
-        }
-
-        for (i = 0; ; i++) {
-          in.read(buffer, i, 1);
-          if(buffer[i] == (byte) 0x0a)
-            break;
-        }
-
-        // send '\0'
-        buffer[0] = 0;
-        out.write(buffer, 0, 1);
-        out.flush();
-
-        // read a content of lfile
-        fos = new FileOutputStream(outFile);
-        while(true){
-          if (buffer.length < filesize)
-            foo = buffer.length;
-	  else
-	    foo = (int) filesize;
-          foo = in.read(buffer, 0, foo);
-          // error
-          if (foo < 0)
-            break;
-          fos.write(buffer, 0, foo);
-          filesize -= foo;
-          if (filesize == 0L)
-            break;
-        }
-        FileUtils.closeQuietly(fos);
-        fos = null;
-
-	if (SSHConnection.checkAck(in) != 0)
-	  result = "Error occurred!";
-
-        // send '\0'
-        buffer[0] = 0;
-        out.write(buffer, 0, 1);
-        out.flush();
-      }
-      if (result == null)
-	m_OutputToken = new Token(outFile);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to download file '" + remotefile + "' to '" + outFile + "': ", e);
+    remoteFile = m_RemoteDir + "/" + file;
+    localFile  = new PlaceholderFile(m_OutputDirectory.getAbsolutePath() + File.separator + file);
+    result     = SCP.copyFrom(this, m_Connection, remoteFile, localFile);
+    if (result == null)
+      m_OutputToken = new Token(localFile);
+    else
       m_OutputToken = null;
-    }
-    finally {
-      FileUtils.closeQuietly(fos);
-      if (channel != null) {
-	channel.disconnect();
-      }
-    }
 
     return result;
   }
+
+
 }
