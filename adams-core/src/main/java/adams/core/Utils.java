@@ -15,7 +15,7 @@
 
 /*
  * Utils.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
  * Copyright (C) 2008 Dave L., stackoverflow
  */
@@ -1890,7 +1890,7 @@ public class Utils {
    * Outputs the stacktrace along with the message on stderr and returns a 
    * combination of both of them as string.
    * 
-   * @param source	the object that generated the exception
+   * @param source	the object that generated the exception, can be null
    * @param msg		the message for the exception
    * @param t		the exception
    * @return		the full error message (message + stacktrace)
@@ -1904,7 +1904,7 @@ public class Utils {
    * that. Depending on the silent flag, this string is also forwarded to the
    * source's logger.
    * 
-   * @param source	the object that generated the exception
+   * @param source	the object that generated the exception, can be null
    * @param msg		the message for the exception
    * @param t		the exception
    * @param silent	if true then the generated message is not forwarded
@@ -1915,8 +1915,12 @@ public class Utils {
     String	result;
 
     result = msg.trim() + "\n" + Utils.throwableToString(t);
-    if (!silent)
-      source.getLogger().log(Level.SEVERE, msg, t);
+    if (!silent) {
+      if (source != null)
+        source.getLogger().log(Level.SEVERE, msg, t);
+      else
+        System.err.println(result);
+    }
     
     return result;
   }
