@@ -14,7 +14,7 @@
  */
 
 /**
- * SCP.java
+ * Scp.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -38,7 +38,7 @@ import java.io.OutputStream;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SCP {
+public class Scp {
 
   /**
    * Copies a local file to a remote server.

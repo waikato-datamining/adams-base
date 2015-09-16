@@ -29,7 +29,7 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.SCP;
+import adams.core.net.Scp;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
@@ -250,7 +250,7 @@ public class ScpTo
     filename   = (String) m_InputToken.getPayload();
     localFile  = new PlaceholderFile(filename);
     remoteFile = m_RemoteDir + "/" + localFile.getName();
-    result     = SCP.copyTo(this, m_Connection, localFile, remoteFile);
+    result     = Scp.copyTo(this, m_Connection, localFile, remoteFile);
     if (result == null)
       m_OutputToken = new Token(filename);
     else

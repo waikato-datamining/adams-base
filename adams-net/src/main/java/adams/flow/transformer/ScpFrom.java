@@ -27,7 +27,7 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.SCP;
+import adams.core.net.Scp;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
@@ -288,7 +288,7 @@ public class ScpFrom
     file       = (String) m_InputToken.getPayload();
     remoteFile = m_RemoteDir + "/" + file;
     localFile  = new PlaceholderFile(m_OutputDirectory.getAbsolutePath() + File.separator + file);
-    result     = SCP.copyFrom(this, m_Connection, remoteFile, localFile);
+    result     = Scp.copyFrom(this, m_Connection, remoteFile, localFile);
     if (result == null)
       m_OutputToken = new Token(localFile);
     else
