@@ -47,12 +47,12 @@ import java.util.logging.Level;
  * </pre>
  * 
  * <pre>-export &lt;adams.core.io.PlaceholderFile&gt; (property: export)
- * &nbsp;&nbsp;&nbsp;The file to serialized the un-executed jobs to.
+ * &nbsp;&nbsp;&nbsp;The file to serialize the un-executed jobs to.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-import &lt;adams.core.io.PlaceholderFile&gt; (property: import)
- * &nbsp;&nbsp;&nbsp;The file to serialized the executed jobs from.
+ * &nbsp;&nbsp;&nbsp;The file to deserialize the executed jobs from.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
@@ -181,7 +181,7 @@ public class SerializingJobRunner
    * 			displaying in the GUI or for listing the options.
    */
   public String exportTipText() {
-    return "The file to serialized the un-executed jobs to.";
+    return "The file to serialize the un-executed jobs to.";
   }
 
   /**
@@ -219,7 +219,7 @@ public class SerializingJobRunner
    * 			displaying in the GUI or for listing the options.
    */
   public String importTipText() {
-    return "The file to serialized the executed jobs from.";
+    return "The file to deserialize the executed jobs from.";
   }
 
   /**
