@@ -20,7 +20,7 @@
 
 package adams.multiprocess;
 
-import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for meta-jobrunners, that wrap around a base jobrunner.
@@ -29,13 +29,15 @@ import adams.core.option.AbstractOptionHandler;
  * @version $Revision$
  */
 public abstract class AbstractMetaJobRunner
-  extends AbstractOptionHandler
-  implements JobRunner {
+  extends AbstractJobRunner {
 
   private static final long serialVersionUID = 6615050794532600520L;
 
   /** the base jobrunner to use. */
   protected JobRunner m_JobRunner;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Adds options to the internal list of options.
@@ -47,6 +49,16 @@ public abstract class AbstractMetaJobRunner
     m_OptionManager.add(
       "job-runner", "jobRunner",
       getDefaultJobRunner());
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FlowContext = null;
   }
 
   /**
@@ -63,6 +75,7 @@ public abstract class AbstractMetaJobRunner
    */
   public void setJobRunner(JobRunner value) {
     m_JobRunner = value;
+    m_JobRunner.setFlowContext(getFlowContext());
     reset();
   }
 
@@ -83,5 +96,23 @@ public abstract class AbstractMetaJobRunner
    */
   public String jobRunnerTipText() {
     return "The base jobrunner to use.";
+  }
+
+  /**
+   * Sets the flow context, if any.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Return the flow context, if any.
+   *
+   * @return		the context, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 }

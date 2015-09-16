@@ -23,9 +23,9 @@ package adams.multiprocess;
 import adams.core.Performance;
 import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
-import adams.core.option.AbstractOptionHandler;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
+import adams.flow.core.Actor;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,8 +60,8 @@ import java.util.concurrent.TimeUnit;
  * @param <T> the type of job to handle
  */
 public class LocalJobRunner<T extends Job>
-  extends AbstractOptionHandler
-  implements JobRunner<T>, ThreadLimiter {
+  extends AbstractJobRunner<T>
+  implements ThreadLimiter {
 
   private static final long serialVersionUID = -7957101716595901777L;
 
@@ -77,6 +77,9 @@ public class LocalJobRunner<T extends Job>
   /** the executor service to use for parallel execution. */
   protected PausableFixedThreadPoolExecutor m_Executor;
 
+  /** the flow context. */
+  protected Actor m_FlowContext;
+
   /**
    * Initializes the members.
    */
@@ -84,6 +87,7 @@ public class LocalJobRunner<T extends Job>
   protected void initialize() {
     super.initialize();
 
+    m_FlowContext          = null;
     m_queue                = new Vector<T>();
     m_JobCompleteListeners = new HashSet<JobCompleteListener>();
     addJobCompleteListener(JobCompleteManager.getSingleton());
@@ -250,10 +254,16 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
-   * Starts the thread pool and execution of jobs.
+   * Before actual start up.
+   * Only gets executed if {@link #preStart()} was successful.
+   *
+   * @return		null if successful, otherwise error message
    */
-  public void start() {
+  @Override
+  protected String preStart() {
     int		numThreads;
+
+    super.preStart();
 
     if (m_Executor == null) {
       numThreads = m_NumThreads;
@@ -263,15 +273,29 @@ public class LocalJobRunner<T extends Job>
 	numThreads = ProcessUtils.getAvailableProcessors();
       m_Executor = new PausableFixedThreadPoolExecutor(numThreads);
     }
+
+    return null;
+  }
+
+  /**
+   * Starts the thread pool and execution of jobs.
+   * Only gets executed if {@link #preStart()} was successful.
+   *
+   * @return		null if successful, otherwise error message
+   */
+  protected String doStart() {
     enqueue();
+    return null;
   }
 
   /**
    * Stops the execution after all currently queued jobs have been executed.
+   *
+   * @return		null if successful, otherwise error message
    */
-  public void stop() {
+  protected String doStop() {
     if (m_Executor == null)
-      return;
+      return null;
 
     try {
       if (m_Executor.isPaused())
@@ -283,14 +307,18 @@ public class LocalJobRunner<T extends Job>
     }
 
     waitForComplete();
+
+    return null;
   }
 
   /**
    * Stops the execution immediately.
+   *
+   * @return		null if successful, otherwise error message
    */
-  public void terminate() {
+  protected String doTerminate() {
     if (m_Executor == null)
-      return;
+      return null;
 
     try {
       if (m_Executor.isPaused())
@@ -302,6 +330,8 @@ public class LocalJobRunner<T extends Job>
     }
 
     waitForComplete();
+
+    return null;
   }
 
   /**
@@ -339,6 +369,7 @@ public class LocalJobRunner<T extends Job>
   public void pauseExecution() {
     if (m_Executor != null)
       m_Executor.pauseExecution();
+    super.pauseExecution();
   }
 
   /**
@@ -359,5 +390,24 @@ public class LocalJobRunner<T extends Job>
   public void resumeExecution() {
     if (m_Executor != null)
       m_Executor.resumeExecution();
+    super.resumeExecution();
+  }
+
+  /**
+   * Sets the flow context, if any.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Return the flow context, if any.
+   *
+   * @return		the context, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 }

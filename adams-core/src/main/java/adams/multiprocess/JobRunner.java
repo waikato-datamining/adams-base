@@ -23,6 +23,7 @@ package adams.multiprocess;
 import adams.core.Pausable;
 import adams.core.option.OptionHandler;
 import adams.event.JobCompleteListener;
+import adams.flow.core.Actor;
 
 /**
  * Interface for runners that execute jobs.
@@ -85,6 +86,13 @@ public interface JobRunner<T extends Job>
   public void complete(T j, JobResult jr);
 
   /**
+   * Returns whether the job are being executed.
+   *
+   * @return		true if jobs are being executed
+   */
+  public boolean isRunning();
+
+  /**
    * Pauses the execution.
    */
   public void pauseExecution();
@@ -100,4 +108,18 @@ public interface JobRunner<T extends Job>
    * Resumes the execution.
    */
   public void resumeExecution();
+
+  /**
+   * Sets the flow context, if any.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value);
+
+  /**
+   * Return the flow context, if any.
+   *
+   * @return		the context, null if none available
+   */
+  public Actor getFlowContext();
 }

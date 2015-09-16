@@ -27,7 +27,6 @@ import adams.core.option.OptionUtils;
 import adams.event.JobCompleteListener;
 
 import java.util.HashSet;
-import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -75,12 +74,6 @@ public class SerializingJobRunner
   /** the file to deserialize the finished jobs from. */
   protected PlaceholderFile m_Import;
 
-  /** whether the jobs are being executed. */
-  protected boolean m_Running;
-
-  /** whether the execution is paused. */
-  protected boolean m_Paused;
-
   /** the actual jobrunner. */
   protected JobRunner m_ActualJobRunner;
 
@@ -121,8 +114,6 @@ public class SerializingJobRunner
     super.initialize();
 
     m_JobCompleteListeners = new HashSet<>();
-    m_Running              = false;
-    m_Paused               = false;
   }
 
   /**
@@ -144,6 +135,7 @@ public class SerializingJobRunner
   public void setJobRunner(JobRunner value) {
     super.setJobRunner(value);
     m_ActualJobRunner = (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+    m_ActualJobRunner.setFlowContext(getFlowContext());
   }
 
   /**
@@ -264,49 +256,56 @@ public class SerializingJobRunner
 
   /**
    * Serializes the jobs to the specified export file.
+   *
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void start() {
+  protected String doStart() {
     try {
       SerializationHelper.write(m_Export.getAbsolutePath(), m_ActualJobRunner);
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to serialize jobrunner to: " + m_Export);
+      return Utils.handleException(this, "Failed to serialize jobrunner to: " + m_Export, e);
     }
+
+    return null;
   }
 
   /**
    * Waits for the import file to appear.
+   *
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void stop() {
-    while (m_Running || m_Paused) {
-      if (!m_Paused) {
+  protected String doStop() {
+    while (isRunning() || isPaused()) {
+      if (!isPaused()) {
 	if (m_Import.exists())
 	  break;
       }
       Utils.wait(this, 100, 100);
     }
-    if (m_Running) {
-      m_Paused  = false;
-      m_Running = false;
+    if (isRunning()) {
       try {
 	m_ActualJobRunner = (JobRunner) SerializationHelper.read(m_Import.getAbsolutePath());
       }
       catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to deserialize jobrunner form: " + m_Import, e);
 	m_ActualJobRunner = null;
+	return Utils.handleException(this, "Failed to deserialize jobrunner form: " + m_Import, e);
       }
     }
+
+    return null;
   }
 
   /**
    * Has no influence on the actual execution of the jobs.
+   *
+   * @return		always null
    */
   @Override
-  public void terminate() {
-    m_Paused  = false;
-    m_Running = false;
+  protected String doTerminate() {
+    return null;
   }
 
   /**
@@ -318,31 +317,5 @@ public class SerializingJobRunner
   @Override
   public void complete(Job j, JobResult jr) {
     // ignored
-  }
-
-  /**
-   * Has no influence on the actual execution of the jobs.
-   */
-  @Override
-  public void pauseExecution() {
-    m_Paused = true;
-  }
-
-  /**
-   * Has no influence on the actual execution of the jobs.
-   *
-   * @return		true if object is paused
-   */
-  @Override
-  public boolean isPaused() {
-    return m_Paused;
-  }
-
-  /**
-   * Has no influence on the actual execution of the jobs.
-   */
-  @Override
-  public void resumeExecution() {
-    m_Paused = false;
   }
 }
