@@ -819,21 +819,21 @@ public class SSHConnection
   }
 
   /**
-   * Returns a new session for the host defined in the options.
+   * Returns a new session for the host/port defined in the options.
    *
    * @return		the session
    */
   public Session newSession() {
-    return newSession(m_Host);
+    return newSession(m_Host, m_Port);
   }
 
   /**
-   * Returns a new session for the givben host.
+   * Returns a new session for the given host/port.
    *
    * @param host	the host to create the session for
    * @return		the session
    */
-  public Session newSession(String host) {
+  public Session newSession(String host, int port) {
     Session	result;
     JSch	jsch;
 
@@ -843,7 +843,7 @@ public class SSHConnection
       jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
       switch (m_AuthenticationType) {
 	case CREDENTIALS:
-	  result = jsch.getSession(m_User, m_Host, m_Port);
+	  result = jsch.getSession(m_User, host, port);
 	  result.setPassword(m_ActualPassword.getValue());
 	  break;
 	case PUBLIC_KEY:
@@ -851,19 +851,19 @@ public class SSHConnection
 	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath());
 	  else
 	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
-	  result = jsch.getSession(m_User, m_Host, m_Port);
+	  result = jsch.getSession(m_User, host, port);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
       if (m_ForwardX) {
-	result.setX11Host(m_Host);
+	result.setX11Host(host);
 	result.setX11Port(6000 + 0);
       }
       result.connect();
     }
     catch (Exception e) {
-      handleException("Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+      handleException("Failed to connect to '" + host + "' as user '" + m_User + "': ", e);
       result = null;
     }
 
