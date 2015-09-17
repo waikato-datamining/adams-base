@@ -21,6 +21,7 @@
 package adams.multiprocess;
 
 import adams.core.option.OptionUtils;
+import adams.data.distribution.T;
 import adams.event.JobCompleteListener;
 import adams.flow.core.Actor;
 
@@ -153,6 +154,18 @@ public abstract class AbstractMetaJobRunner
   @Override
   public void add(JobList jobs) {
     m_Jobs.addAll(jobs);
+  }
+
+  /**
+   * Returns the list of queued jobs.
+   *
+   * @return		the jobs
+   */
+  public List<T> getJobs() {
+    if (m_ActualJobRunner != null)
+      return m_ActualJobRunner.getJobs();
+    else
+      return new ArrayList<>();
   }
 
   /**

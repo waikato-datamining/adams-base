@@ -25,6 +25,8 @@ import adams.core.option.OptionHandler;
 import adams.event.JobCompleteListener;
 import adams.flow.core.Actor;
 
+import java.util.List;
+
 /**
  * Interface for runners that execute jobs.
  *
@@ -61,6 +63,13 @@ public interface JobRunner<T extends Job>
    * @param jobs	the jobs to add
    */
   public void add(JobList<T> jobs);
+
+  /**
+   * Returns the list of queued jobs.
+   *
+   * @return		the jobs
+   */
+  public List<T> getJobs();
 
   /**
    * Starts the execution of jobs.

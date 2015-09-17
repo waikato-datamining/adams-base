@@ -27,9 +27,10 @@ import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 import adams.flow.core.Actor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -72,7 +73,7 @@ public class LocalJobRunner<T extends Job>
   protected HashSet<JobCompleteListener> m_JobCompleteListeners;
 
   /** stores Jobs. add to job queue when dependencies complete. */
-  protected Vector<T> m_queue;
+  protected List<T> m_Queue;
 
   /** the executor service to use for parallel execution. */
   protected PausableFixedThreadPoolExecutor m_Executor;
@@ -88,7 +89,7 @@ public class LocalJobRunner<T extends Job>
     super.initialize();
 
     m_FlowContext          = null;
-    m_queue                = new Vector<T>();
+    m_Queue                = new ArrayList<>();
     m_JobCompleteListeners = new HashSet<JobCompleteListener>();
     addJobCompleteListener(JobCompleteManager.getSingleton());
   }
@@ -187,8 +188,8 @@ public class LocalJobRunner<T extends Job>
    * @param job		the job to add
    */
   public void add(T job) {
-    synchronized(m_queue) {
-      m_queue.add(job);
+    synchronized(m_Queue) {
+      m_Queue.add(job);
     }
     enqueue();
   }
@@ -199,10 +200,19 @@ public class LocalJobRunner<T extends Job>
    * @param jobs	the jobs to add
    */
   public void add(JobList<T> jobs) {
-    synchronized(m_queue) {
-      m_queue.addAll(jobs);
+    synchronized(m_Queue) {
+      m_Queue.addAll(jobs);
     }
     enqueue();
+  }
+
+  /**
+   * Returns the list of queued jobs.
+   *
+   * @return		the jobs
+   */
+  public List<T> getJobs() {
+    return m_Queue;
   }
 
   /**
@@ -213,19 +223,19 @@ public class LocalJobRunner<T extends Job>
   protected boolean enqueue() {
     boolean			result;
     Callable<String>		job;
-    Vector<T> 			queue;
+    List<T> 			queue;
 
     result = false;
 
     if (m_Executor == null)
       return result;
 
-    if (m_queue.size() > 0) {
-      synchronized(m_queue) {
-	queue = new Vector<T>();
+    if (m_Queue.size() > 0) {
+      synchronized(m_Queue) {
+	queue = new ArrayList<>();
 
 	// queue jobs
-	for (final T j: m_queue) {
+	for (final T j: m_Queue) {
 	  queue.add(j);
 	  job = new Callable<String>() {
 	    public String call() throws Exception {
@@ -245,7 +255,7 @@ public class LocalJobRunner<T extends Job>
 	  }
 	}
 
-	m_queue.removeAll(queue);
+	m_Queue.removeAll(queue);
       }
       result = true;
     }
