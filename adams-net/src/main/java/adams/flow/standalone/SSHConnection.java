@@ -819,6 +819,58 @@ public class SSHConnection
   }
 
   /**
+   * Returns a new session for the host defined in the options.
+   *
+   * @return		the session
+   */
+  public Session newSession() {
+    return newSession(m_Host);
+  }
+
+  /**
+   * Returns a new session for the givben host.
+   *
+   * @param host	the host to create the session for
+   * @return		the session
+   */
+  public Session newSession(String host) {
+    Session	result;
+    JSch	jsch;
+
+    try {
+      jsch = new JSch();
+      // TODO choose RSA, DSA, ECDSA?
+      jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
+      switch (m_AuthenticationType) {
+	case CREDENTIALS:
+	  result = jsch.getSession(m_User, m_Host, m_Port);
+	  result.setPassword(m_ActualPassword.getValue());
+	  break;
+	case PUBLIC_KEY:
+	  if (m_ActualPassword.getValue().isEmpty())
+	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath());
+	  else
+	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
+	  result = jsch.getSession(m_User, m_Host, m_Port);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+      }
+      if (m_ForwardX) {
+	result.setX11Host(m_Host);
+	result.setX11Port(6000 + 0);
+      }
+      result.connect();
+    }
+    catch (Exception e) {
+      handleException("Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if ok, otherwise error message
@@ -826,7 +878,6 @@ public class SSHConnection
   @Override
   protected String doExecute() {
     String	result;
-    JSch	jsch;
 
     result = null;
 
@@ -857,35 +908,9 @@ public class SSHConnection
     }
 
     if (result == null) {
-      try {
-        jsch = new JSch();
-        // TODO choose RSA, DSA, ECDSA?
-        jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
-	switch (m_AuthenticationType) {
-	  case CREDENTIALS:
-	    m_Session = jsch.getSession(m_User, m_Host, m_Port);
-	    m_Session.setPassword(m_ActualPassword.getValue());
-	    break;
-	  case PUBLIC_KEY:
-	    if (m_ActualPassword.getValue().isEmpty())
-	      jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath());
-	    else
-	      jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
-	    m_Session = jsch.getSession(m_User, m_Host, m_Port);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
-	}
-        if (m_ForwardX) {
-          m_Session.setX11Host(m_Host);
-          m_Session.setX11Port(6000 + 0);
-        }
-        m_Session.connect();
-      }
-      catch (Exception e) {
-        result    = handleException("Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
-        m_Session = null;
-      }
+      m_Session = newSession();
+      if (m_Session == null)
+	result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
     }
 
     return result;
