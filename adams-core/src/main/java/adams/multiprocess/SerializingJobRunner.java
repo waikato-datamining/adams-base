@@ -234,6 +234,6 @@ public class SerializingJobRunner
    */
   @Override
   public void complete(Job j, JobResult jr) {
-    // ignored
+    getLogger().warning("complete(Job,JobResult) - ignored");
   }
 }
