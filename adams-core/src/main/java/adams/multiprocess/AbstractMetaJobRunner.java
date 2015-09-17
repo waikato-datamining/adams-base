@@ -20,7 +20,13 @@
 
 package adams.multiprocess;
 
+import adams.core.option.OptionUtils;
+import adams.event.JobCompleteListener;
 import adams.flow.core.Actor;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Ancestor for meta-jobrunners, that wrap around a base jobrunner.
@@ -38,6 +44,15 @@ public abstract class AbstractMetaJobRunner
 
   /** the flow context. */
   protected Actor m_FlowContext;
+
+  /** the list of jobs. */
+  protected List<Job> m_Jobs;
+
+  /** call when job complete. */
+  protected HashSet<JobCompleteListener> m_JobCompleteListeners;
+
+  /** the actual jobrunner. */
+  protected JobRunner m_ActualJobRunner;
 
   /**
    * Adds options to the internal list of options.
@@ -58,7 +73,9 @@ public abstract class AbstractMetaJobRunner
   protected void initialize() {
     super.initialize();
 
-    m_FlowContext = null;
+    m_FlowContext          = null;
+    m_Jobs                 = new ArrayList<>();
+    m_JobCompleteListeners = new HashSet<>();
   }
 
   /**
@@ -66,7 +83,9 @@ public abstract class AbstractMetaJobRunner
    *
    * @return		the jobrunner
    */
-  protected abstract JobRunner getDefaultJobRunner();
+  protected JobRunner getDefaultJobRunner() {
+    return new LocalJobRunner<>();
+  }
 
   /**
    * Sets the base jobrunner.
@@ -114,5 +133,76 @@ public abstract class AbstractMetaJobRunner
    */
   public Actor getFlowContext() {
     return m_FlowContext;
+  }
+
+  /**
+   * Adds the job to the execution queue.
+   *
+   * @param job		the job to add
+   */
+  @Override
+  public void add(Job job) {
+    m_Jobs.add(job);
+  }
+
+  /**
+   * Adds the jobs to the execution queue.
+   *
+   * @param jobs	the jobs to add
+   */
+  @Override
+  public void add(JobList jobs) {
+    m_Jobs.addAll(jobs);
+  }
+
+  /**
+   * Adds the listener.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addJobCompleteListener(JobCompleteListener l) {
+    m_JobCompleteListeners.add(l);
+  }
+
+  /**
+   * Removes the listener.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeJobCompleteListener(JobCompleteListener l) {
+    m_JobCompleteListeners.remove(l);
+  }
+
+  /**
+   * Returns whether to transfer the listeners to the actual job runner.
+   *
+   * @return		true if to transfer
+   * @see		#addJobCompleteListener(JobCompleteListener)
+   * @see		#removeJobCompleteListener(JobCompleteListener)
+   */
+  protected boolean getTransferJobCompleteListeners() {
+    return true;
+  }
+
+  @Override
+  protected String preStart() {
+    String	result;
+
+    result = super.preStart();
+
+    if (result == null) {
+      m_ActualJobRunner = (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+      m_ActualJobRunner.setFlowContext(getFlowContext());
+      for (Job job: m_Jobs)
+	m_ActualJobRunner.add(job);
+      if (getTransferJobCompleteListeners()) {
+	for (JobCompleteListener l : m_JobCompleteListeners)
+	  m_ActualJobRunner.addJobCompleteListener(l);
+      }
+    }
+
+    return result;
   }
 }

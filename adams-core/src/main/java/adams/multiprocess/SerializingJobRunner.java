@@ -23,10 +23,6 @@ package adams.multiprocess;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.OptionUtils;
-import adams.event.JobCompleteListener;
-
-import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -65,17 +61,11 @@ public class SerializingJobRunner
 
   private static final long serialVersionUID = 6656064128031953130L;
 
-  /** call when job complete. */
-  protected HashSet<JobCompleteListener> m_JobCompleteListeners;
-
   /** the file to serialize the unexecuted jobs to. */
   protected PlaceholderFile m_Export;
 
   /** the file to deserialize the finished jobs from. */
   protected PlaceholderFile m_Import;
-
-  /** the actual jobrunner. */
-  protected JobRunner m_ActualJobRunner;
 
   /**
    * Returns a string describing the object.
@@ -104,38 +94,6 @@ public class SerializingJobRunner
     m_OptionManager.add(
       "import", "import",
       getDefaultImport());
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_JobCompleteListeners = new HashSet<>();
-  }
-
-  /**
-   * Returns the default jobrunner.
-   *
-   * @return		the jobrunner
-   */
-  @Override
-  protected JobRunner getDefaultJobRunner() {
-    return new LocalJobRunner<>();
-  }
-
-  /**
-   * Sets the base jobrunner.
-   *
-   * @param value 	the jobrunner
-   */
-  @Override
-  public void setJobRunner(JobRunner value) {
-    super.setJobRunner(value);
-    m_ActualJobRunner = (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
-    m_ActualJobRunner.setFlowContext(getFlowContext());
   }
 
   /**
@@ -212,46 +170,6 @@ public class SerializingJobRunner
    */
   public String importTipText() {
     return "The file to deserialize the executed jobs from.";
-  }
-
-  /**
-   * Adds the listener.
-   *
-   * @param l		the listener to add
-   */
-  @Override
-  public void addJobCompleteListener(JobCompleteListener l) {
-    m_JobCompleteListeners.add(l);
-  }
-
-  /**
-   * Removes the listener.
-   *
-   * @param l		the listener to remove
-   */
-  @Override
-  public void removeJobCompleteListener(JobCompleteListener l) {
-    m_JobCompleteListeners.remove(l);
-  }
-
-  /**
-   * Adds the job to the execution queue.
-   *
-   * @param job		the job to add
-   */
-  @Override
-  public void add(Job job) {
-    m_ActualJobRunner.add(job);
-  }
-
-  /**
-   * Adds the jobs to the execution queue.
-   *
-   * @param jobs	the jobs to add
-   */
-  @Override
-  public void add(JobList jobs) {
-    m_ActualJobRunner.add(jobs);
   }
 
   /**
