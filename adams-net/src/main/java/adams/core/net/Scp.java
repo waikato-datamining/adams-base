@@ -25,6 +25,7 @@ import adams.core.io.FileUtils;
 import adams.core.logging.LoggingObject;
 import adams.flow.standalone.SSHConnection;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.Session;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +51,23 @@ public class Scp {
    * @return		null if successful, otherwise error message
    */
   public static String copyTo(LoggingObject owner, SSHConnection conn, File localFile, String remoteFile) {
+    return copyTo(owner, conn, null, -1, localFile, remoteFile);
+  }
+
+  /**
+   * Copies a local file to a remote server.
+   *
+   * @param owner	the owner that initiates the transfer, can be null
+   * @param conn	the SSH connection to use
+   * @param host	an alternative host, null if to use one from connection
+   * @param port	an alternative port, ignored if host null
+   * @param localFile	the local file
+   * @param remoteFile	the remote file
+   * @return		null if successful, otherwise error message
+   */
+  public static String copyTo(LoggingObject owner, SSHConnection conn, String host, int port, File localFile, String remoteFile) {
     String		result;
+    Session		session;
     ChannelExec		channel;
     OutputStream 	out;
     InputStream 	in;
@@ -61,9 +78,16 @@ public class Scp {
     int			len;
 
     result  = null;
+    session = null;
     channel = null;
     try {
-      channel = (ChannelExec) conn.getSession().openChannel("exec");
+      if (host == null) {
+	channel = (ChannelExec) conn.getSession().openChannel("exec");
+      }
+      else {
+	session = conn.newSession(host, port);
+	channel = (ChannelExec) session.openChannel("exec");
+      }
       channel.setCommand("scp -p -t " + remoteFile);
       if ((owner != null) && owner.isLoggingEnabled())
 	owner.getLogger().info("Uploading " + localFile + " to " + remoteFile);
@@ -115,6 +139,17 @@ public class Scp {
       }
     }
 
+    if (session != null) {
+      if (session.isConnected()) {
+        try {
+          session.disconnect();
+        }
+        catch (Exception e) {
+          Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
+        }
+      }
+    }
+
     return result;
   }
 
@@ -128,7 +163,23 @@ public class Scp {
    * @return		null if successful, otherwise error message
    */
   public static String copyFrom(LoggingObject owner, SSHConnection conn, String remoteFile, File localFile) {
+    return copyFrom(owner, conn, null, -1, remoteFile, localFile);
+  }
+
+  /**
+   * Copies a remote file onto the local machine.
+   *
+   * @param owner	the owner that initiates the transfer
+   * @param conn	the SSH connection to use
+   * @param host	an alternative host, null if to use one from connection
+   * @param port	an alternative port, ignored if host null
+   * @param remoteFile	the remote file to copy
+   * @param localFile	the local file
+   * @return		null if successful, otherwise error message
+   */
+  public static String copyFrom(LoggingObject owner, SSHConnection conn, String host, int port, String remoteFile, File localFile) {
     String		result;
+    Session		session;
     ChannelExec		channel;
     OutputStream	out;
     InputStream		in;
@@ -140,10 +191,17 @@ public class Scp {
     int			i;
 
     result  = null;
+    session = null;
     channel = null;
     fos     = null;
     try {
-      channel = (ChannelExec) conn.getSession().openChannel("exec");
+      if (host == null) {
+	channel = (ChannelExec) conn.getSession().openChannel("exec");
+      }
+      else {
+	session = conn.newSession(host, port);
+	channel = (ChannelExec) session.openChannel("exec");
+      }
       channel.setCommand("scp -f " + remoteFile);
       if ((owner != null) && owner.isLoggingEnabled())
 	owner.getLogger().info("Downloading " + remoteFile);
@@ -222,6 +280,17 @@ public class Scp {
       FileUtils.closeQuietly(fos);
       if (channel != null) {
 	channel.disconnect();
+      }
+    }
+
+    if (session != null) {
+      if (session.isConnected()) {
+        try {
+          session.disconnect();
+        }
+        catch (Exception e) {
+          Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
+        }
       }
     }
 
