@@ -40,36 +40,36 @@ public abstract class AbstractJob
   private static final long serialVersionUID = -4365906331615932775L;
 
   /** identifying name of job. */
-  protected String m_jobInfo;
+  protected String m_JobInfo;
 
   /** Has this job completed processing? */
-  protected boolean m_complete;
+  protected boolean m_Complete;
 
   /** Object to call once job has been completed. */
-  protected JobCompleteListener m_completed;
+  protected JobCompleteListener m_JobCompleteListener;
 
   /** whether an error occurred in the execution. */
   protected String m_ExecutionError;
 
   /**
-   * Job constructor. Create a new Job with no identifier.
+   * Job constructor.
    */
   public AbstractJob() {
-    this("");
+    super();
+
+    m_JobInfo             = "";
+    m_Complete            = false;
+    m_JobCompleteListener = null;
+    m_ExecutionError      = null;
   }
 
   /**
-   * Job constructor. Create a new Job with given identifier.
+   * Sets the job info/identifier.
    *
-   * @param info  	Job function
+   * @param value   the info
    */
-  public AbstractJob(String info) {
-    super();
-
-    m_jobInfo        = info;
-    m_complete       = false;
-    m_completed      = null;
-    m_ExecutionError = null;
+  public void setJobInfo(String value) {
+    m_JobInfo = value;
   }
 
   /**
@@ -78,7 +78,7 @@ public abstract class AbstractJob
    * @return		the info
    */
   public String getJobInfo() {
-    return m_jobInfo;
+    return m_JobInfo;
   }
 
   /**
@@ -88,8 +88,8 @@ public abstract class AbstractJob
    * @param jr		Result of Job
    */
   public void jobCompleted(Job j, JobResult jr) {
-    if (m_completed != null)
-      m_completed.jobCompleted(new JobCompleteEvent(this, j,jr));
+    if (m_JobCompleteListener != null)
+      m_JobCompleteListener.jobCompleted(new JobCompleteEvent(this, j,jr));
   }
 
   /**
@@ -98,7 +98,7 @@ public abstract class AbstractJob
    * @param l		the listener
    */
   public void setJobCompleteListener(JobCompleteListener l) {
-    m_completed = l;
+    m_JobCompleteListener = l;
   }
 
   /**
@@ -107,7 +107,7 @@ public abstract class AbstractJob
    * @return		the listener, can be null
    */
   public JobCompleteListener getJobCompleteListener() {
-    return m_completed;
+    return m_JobCompleteListener;
   }
 
   /**
@@ -116,7 +116,7 @@ public abstract class AbstractJob
    * @return		true if the job has finished, false otherwise
    */
   public boolean isComplete() {
-    return m_complete;
+    return m_Complete;
   }
 
   /**
@@ -192,7 +192,7 @@ public abstract class AbstractJob
     }
 
     // assemble result
-    m_complete = true;
+    m_Complete = true;
     result     = new JobResult(success ? toString() : m_ExecutionError, success);
 
     return result;
