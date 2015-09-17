@@ -176,6 +176,15 @@ public abstract class AbstractMetaJobRunner
   }
 
   /**
+   * Returns an instance of the actual job runner to use.
+   *
+   * @return		the job runner to use
+   */
+  protected JobRunner newActualJobRunner() {
+    return (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+  }
+
+  /**
    * Returns whether to transfer the listeners to the actual job runner.
    *
    * @return		true if to transfer
@@ -186,6 +195,11 @@ public abstract class AbstractMetaJobRunner
     return true;
   }
 
+  /**
+   * Before actual start up.
+   *
+   * @return		null if successful, otherwise error message
+   */
   @Override
   protected String preStart() {
     String	result;
@@ -193,7 +207,7 @@ public abstract class AbstractMetaJobRunner
     result = super.preStart();
 
     if (result == null) {
-      m_ActualJobRunner = (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+      m_ActualJobRunner = newActualJobRunner();
       m_ActualJobRunner.setFlowContext(getFlowContext());
       for (Job job: m_Jobs)
 	m_ActualJobRunner.add(job);
