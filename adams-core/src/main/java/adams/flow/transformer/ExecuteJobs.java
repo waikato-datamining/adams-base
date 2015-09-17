@@ -132,6 +132,7 @@ public class ExecuteJobs
 
     try {
       m_JobRunner = (JobRunner) m_InputToken.getPayload();
+      m_JobRunner.setFlowContext(this);
       m_JobRunner.start();
       m_JobRunner.stop();
     }
