@@ -1109,6 +1109,7 @@ public class WekaClassifierRanker
 	m_JobRunner = new LocalJobRunner<RankingJob>();
       else
 	m_JobRunner = m_JobRunnerSetup.newInstance();
+      m_JobRunner.setFlowContext(this);
       if (m_JobRunner instanceof ThreadLimiter)
 	((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
       m_JobRunner.addJobCompleteListener(new JobCompleteListener() {
@@ -1127,8 +1128,8 @@ public class WekaClassifierRanker
 	if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
 	  getLogger().fine("\nEvaluations:");
 	ranking = new ArrayList<Performance>();
-	for (i = 0; i < jobs.size(); i++) {
-	  job = jobs.get(i);
+	for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
+	  job = (RankingJob) m_JobRunner.getJobs().get(i);
 	  if (job.getPerformance() != null) {
 	    ranking.add(job.getPerformance());
 	    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
@@ -1173,6 +1174,7 @@ public class WekaClassifierRanker
 	job = (RankingJob) jobs.get(i);
 	job.cleanUp();
       }
+      m_JobRunner.cleanUp();
     }
     catch (Exception e) {
       m_OutputToken = null;

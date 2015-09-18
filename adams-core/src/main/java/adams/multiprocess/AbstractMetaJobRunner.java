@@ -23,7 +23,6 @@ package adams.multiprocess;
 import adams.core.option.OptionUtils;
 import adams.data.distribution.T;
 import adams.event.JobCompleteListener;
-import adams.flow.core.Actor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,9 +41,6 @@ public abstract class AbstractMetaJobRunner
 
   /** the base jobrunner to use. */
   protected JobRunner m_JobRunner;
-
-  /** the flow context. */
-  protected Actor m_FlowContext;
 
   /** the list of jobs. */
   protected List<Job> m_Jobs;
@@ -119,21 +115,11 @@ public abstract class AbstractMetaJobRunner
   }
 
   /**
-   * Sets the flow context, if any.
-   *
-   * @param value	the context
+   * Clears all jobs.
    */
-  public void setFlowContext(Actor value) {
-    m_FlowContext = value;
-  }
-
-  /**
-   * Return the flow context, if any.
-   *
-   * @return		the context, null if none available
-   */
-  public Actor getFlowContext() {
-    return m_FlowContext;
+  public void clear() {
+    if (m_ActualJobRunner != null)
+      m_ActualJobRunner.clear();
   }
 
   /**
@@ -231,5 +217,16 @@ public abstract class AbstractMetaJobRunner
     }
 
     return result;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    if (m_ActualJobRunner != null) {
+      m_ActualJobRunner.cleanUp();
+      m_ActualJobRunner = null;
+    }
   }
 }

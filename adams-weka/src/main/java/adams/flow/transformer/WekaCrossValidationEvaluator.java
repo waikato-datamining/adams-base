@@ -603,20 +603,22 @@ public class WekaCrossValidationEvaluator
 	// aggregate data
 	evalAgg = new AggregateableEvaluation(data);
 	if (!isStopped()) {
-	  for (i = 0; i < list.size(); i++) {
-	    if (list.get(i).getEvaluation() == null) {
+	for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
+          job = (CrossValidationJob) m_JobRunner.getJobs().get(i);
+	    if (job.getEvaluation() == null) {
 	      result = "Fold #" + (i + 1) + " failed to evaluate";
-	      if (!list.get(i).hasExecutionError())
+	      if (!job.hasExecutionError())
 		result += "?";
 	      else
-		result += ":\n" + list.get(i).getExecutionError();
+		result += ":\n" + job.getExecutionError();
 	      break;
 	    }
-	    evalAgg.aggregate(list.get(i).getEvaluation());
-	    list.get(i).cleanUp();
+	    evalAgg.aggregate(job.getEvaluation());
+	    job.cleanUp();
 	  }
 	}
 	list.cleanUp();
+        m_JobRunner.cleanUp();
 	m_JobRunner = null;
 	if (!isStopped())
 	  m_OutputToken = new Token(new WekaEvaluationContainer(evalAgg));

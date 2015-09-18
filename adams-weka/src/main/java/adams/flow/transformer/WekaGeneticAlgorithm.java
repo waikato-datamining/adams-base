@@ -511,6 +511,7 @@ public class WekaGeneticAlgorithm
     m_ActualAlgorithm = (AbstractClassifierBasedGeneticAlgorithm) m_Algorithm.shallowCopy(true);
     m_ActualAlgorithm.addFitnessChangeListener(this);
     m_ActualAlgorithm.setJobRunnerSetup(m_JobRunnerSetup);
+    m_ActualAlgorithm.setFlowContext(this);
     try {
       m_ActualAlgorithm.setInstances(data);
       m_ActualAlgorithm.run();

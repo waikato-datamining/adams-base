@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeIndex;
 import adams.event.FitnessChangeNotifier;
+import adams.flow.core.Actor;
 import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
@@ -341,6 +342,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
   /** the jobrunner setup. */
   protected transient JobRunnerSetup m_JobRunnerSetup;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Adds options to the internal list of options.
@@ -733,6 +737,24 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
+   * Sets the flow context, if any.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Return the flow context, if any.
+   *
+   * @return		the context, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
+  /**
    * Returns the currently best fitness.
    *
    * @return		the best fitness so far
@@ -844,6 +866,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       runner = m_JobRunnerSetup.newInstance();
     if (runner instanceof ThreadLimiter)
       ((ThreadLimiter) runner).setNumThreads(getNumThreads());
+    runner.setFlowContext(getFlowContext());
     jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];
@@ -862,8 +885,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     runner.start();
     runner.stop();
 
-    for (i = 0; i < jobs.size(); i++) {
-      job = jobs.get(i);
+    for (i = 0; i < runner.getJobs().size(); i++) {
+      job = runner.getJobs().get(i);
       // success? If not, just add the header of the original data
       if (job.getFitness() == null)
         m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
@@ -871,6 +894,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
         m_Fitness[job.getNumChrom()] = job.getFitness();
       job.cleanUp();
     }
+    runner.cleanUp();
   }
 
   /**

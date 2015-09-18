@@ -30,6 +30,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
+import adams.core.net.SSHSessionProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
 import com.jcraft.jsch.JSch;
@@ -38,8 +39,6 @@ import com.jcraft.jsch.Session;
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,6 +127,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${HOME}&#47;.ssh&#47;known_hosts
  * </pre>
  * 
+ * <pre>-strict-host-key-checking &lt;boolean&gt; (property: strictHostKeyChecking)
+ * &nbsp;&nbsp;&nbsp;Enables&#47;disables strict host key checking - strict checking is the recommended 
+ * &nbsp;&nbsp;&nbsp;setting, as disabling it is very insecure!
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  * <pre>-forward-x &lt;boolean&gt; (property: forwardX)
  * &nbsp;&nbsp;&nbsp;If set to true, then X is forwarded.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -172,7 +177,7 @@ import java.util.List;
 )
 public class SSHConnection
   extends AbstractStandalone
-  implements TechnicalInformationHandler, OptionalPasswordPrompt {
+  implements TechnicalInformationHandler, OptionalPasswordPrompt, SSHSessionProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -207,6 +212,9 @@ public class SSHConnection
   /** the file with known hosts. */
   protected PlaceholderFile m_KnownHosts;
 
+  /** whether to perform strict host key checking (only disable for testing!! insecure!!). */
+  protected boolean m_StrictHostKeyChecking;
+
   /** whether to forward X11. */
   protected boolean m_ForwardX;
 
@@ -229,7 +237,7 @@ public class SSHConnection
   protected String m_CustomStopMessage;
 
   /** the SSH session. */
-  protected Session m_Session;
+  protected transient Session m_Session;
 
   /**
    * Returns a string describing the object.
@@ -312,6 +320,10 @@ public class SSHConnection
           + "known_hosts"));
 
     m_OptionManager.add(
+      "strict-host-key-checking", "strictHostKeyChecking",
+      true);
+
+    m_OptionManager.add(
       "forward-x", "forwardX",
       false);
 
@@ -373,6 +385,7 @@ public class SSHConnection
     if (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow"));
+      QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "strictHostKeyChecking", m_StrictHostKeyChecking, "strict hostkey"));
     }
     result += QuickInfoHelper.flatten(options);
 
@@ -612,6 +625,39 @@ public class SSHConnection
   }
 
   /**
+   * Sets whether to perform strict host key checking.
+   * NB: only disabled for testing, as it is very insecure to disable it!
+   *
+   * @param value	if true then strict checking is on
+   */
+  public void setStrictHostKeyChecking(boolean value) {
+    m_StrictHostKeyChecking = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to perform strict host key checking.
+   * NB: only disabled for testing, as it is very insecure to disable it!
+   *
+   * @return 		true if strict checking is on
+   */
+  public boolean getStrictHostKeyChecking() {
+    return m_StrictHostKeyChecking;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String strictHostKeyCheckingTipText() {
+    return
+      "Enables/disables strict host key checking - strict checking is the "
+	+ "recommended setting, as disabling it is very insecure!";
+  }
+
+  /**
    * Sets whether to forward X11.
    *
    * @param value	if true then X11 is forwarded
@@ -834,7 +880,7 @@ public class SSHConnection
    * @return		the session
    */
   public Session newSession(String host, int port) {
-    Session	result;
+    Session result;
     JSch	jsch;
 
     try {
@@ -845,6 +891,7 @@ public class SSHConnection
 	case CREDENTIALS:
 	  result = jsch.getSession(m_User, host, port);
 	  result.setPassword(m_ActualPassword.getValue());
+	  result.setConfig("StrictHostKeyChecking", m_StrictHostKeyChecking ? "yes" : "no");
 	  break;
 	case PUBLIC_KEY:
 	  if (m_ActualPassword.getValue().isEmpty())
@@ -852,6 +899,7 @@ public class SSHConnection
 	  else
 	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
 	  result = jsch.getSession(m_User, host, port);
+	  result.setConfig("StrictHostKeyChecking", m_StrictHostKeyChecking ? "yes" : "no");
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
@@ -908,9 +956,14 @@ public class SSHConnection
     }
 
     if (result == null) {
-      m_Session = newSession();
-      if (m_Session == null)
-	result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+      if (!m_Host.isEmpty()) {
+        m_Session = newSession();
+        if (m_Session == null)
+          result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+      }
+      else {
+        getLogger().warning("No host supplied, not initiating session!");
+      }
     }
 
     return result;
@@ -940,43 +993,5 @@ public class SSHConnection
   public void wrapUp() {
     disconnect();
     super.wrapUp();
-  }
-
-  /**
-   * Checks the stream (scp).
-   *
-   * @param in		the stream to use
-   * @return		0 = success, 1 = error, 2 = fatal error, -1 = end of stream
-   */
-  public static int checkAck(InputStream in) throws IOException {
-    int			result;
-    StringBuilder 	output;
-    int			c;
-
-    result = in.read();
-
-    if (result == 0)
-      return result;
-    if (result == -1)
-      return result;
-
-    if ((result == 1) || (result == 2)) {
-      output = new StringBuilder();
-      do {
-        c = in.read();
-        output.append((char) c);
-      }
-      while (c != '\n');
-
-      // error
-      if (result == 1)
-        System.out.print(output.toString());
-
-      // fatal error
-      if (result == 2)
-        System.out.print(output.toString());
-    }
-
-    return result;
   }
 }

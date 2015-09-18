@@ -56,6 +56,20 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
+ * <pre>-local-host &lt;java.lang.String&gt; (property: localHost)
+ * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) that the remote host will connect to when sending 
+ * &nbsp;&nbsp;&nbsp;back the executed jobs; leave empty to use auto-detection.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-local-port &lt;int&gt; (property: localPort)
+ * &nbsp;&nbsp;&nbsp;The local port that the remote host will use for sending back the executed 
+ * &nbsp;&nbsp;&nbsp;jobs.
+ * &nbsp;&nbsp;&nbsp;default: 22
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;maximum: 65535
+ * </pre>
+ * 
  * <pre>-local-file &lt;adams.core.io.PlaceholderFile&gt; (property: localFile)
  * &nbsp;&nbsp;&nbsp;The file to deserialize the executed jobs from.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
@@ -83,7 +97,7 @@ public class ScpJobRunner
     protected int m_Port;
 
     /** the remote file to serialize the unexecuted jobs to. */
-    protected PlaceholderFile m_RemoteFile;
+    protected File m_RemoteFile;
 
     /** the ssh connection to use. */
     protected transient SSHConnection m_Connection;
@@ -186,8 +200,8 @@ public class ScpJobRunner
    *
    * @return		the remote file
    */
-  protected PlaceholderFile getDefaultRemoteFile() {
-    return new PlaceholderFile(".");
+  protected File getDefaultRemoteFile() {
+    return new File(".");
   }
 
   /**
@@ -195,7 +209,7 @@ public class ScpJobRunner
    *
    * @param value 	the remote file
    */
-  public void setRemoteFile(PlaceholderFile value) {
+  public void setRemoteFile(File value) {
     m_RemoteFile = value;
     reset();
   }
@@ -205,7 +219,7 @@ public class ScpJobRunner
    *
    * @return		the remote file
    */
-  public PlaceholderFile getRemoteFile() {
+  public File getRemoteFile() {
     return m_RemoteFile;
   }
 
@@ -271,7 +285,9 @@ public class ScpJobRunner
       m_ActualJobRunner.stop();
 
       // serialize jobs
-      tmpFile = TempUtils.createTempFile("adams-jobs-" + m_Connection.getHost(), ".ser");
+      tmpFile = TempUtils.createTempFile("adams-jobs-" + m_Host + "-", ".ser");
+      if (isLoggingEnabled())
+	getLogger().info("Serializing jobs to " + tmpFile);
       try {
 	SerializationHelper.write(tmpFile.getAbsolutePath(), m_ActualJobRunner);
       }
@@ -283,16 +299,16 @@ public class ScpJobRunner
 
       // scp to remote host
       try {
+	if (isLoggingEnabled())
+	  getLogger().info("Scp'ing jobs to " + m_Host + ":" + m_Port + m_RemoteFile.getAbsolutePath());
 	msg = Scp.copyTo(this, m_Connection, m_Host, m_Port, tmpFile, m_RemoteFile.getAbsolutePath());
 	if (msg != null)
-	  getLogger().severe(
-	    "Failed to copy serialized jobrunner to remote host "
-	      + m_Host + ":" + m_Connection.getPort() + ": " + msg);
+	  return "Failed to copy serialized jobrunner to original host " + m_Host + ":" + m_Port + ": " + msg;
+	tmpFile.delete();
       }
       catch (Exception e) {
 	tmpFile.delete();
-	return Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
-	  + m_Connection.getHost() + ":" + m_Connection.getPort(), e);
+	return Utils.handleException(this, "Failed to copy serialized jobrunner to original host " + m_Host + ":" + m_Port, e);
       }
 
       return null;
@@ -324,6 +340,12 @@ public class ScpJobRunner
   /** the remote file to serialize the unexecuted jobs to. */
   protected PlaceholderFile m_RemoteFile;
 
+  /** the local host. */
+  protected String m_LocalHost;
+
+  /** the local port. */
+  protected int m_LocalPort;
+
   /** the local file to deserialize the finished jobs from. */
   protected PlaceholderFile m_LocalFile;
 
@@ -354,6 +376,14 @@ public class ScpJobRunner
     m_OptionManager.add(
       "remote-file", "remoteFile",
       getDefaultRemoteFile());
+
+    m_OptionManager.add(
+      "local-host", "localHost",
+      "");
+
+    m_OptionManager.add(
+      "local-port", "localPort",
+      22, 1, 65535);
 
     m_OptionManager.add(
       "local-file", "localFile",
@@ -406,6 +436,70 @@ public class ScpJobRunner
    */
   public String remoteFileTipText() {
     return "The remote file for the un-executed jobs.";
+  }
+
+  /**
+   * Sets the host that the remote host will connect to for sending back
+   * the executed jobs. Leave empty to use auto-discovery.
+   *
+   * @param value	the host name/ip
+   */
+  public void setLocalHost(String value) {
+    m_LocalHost = value;
+    reset();
+  }
+
+  /**
+   * Returns the host that the remote host will connect to for sending back
+   * the executed jobs. Leave empty to use auto-discovery.
+   *
+   * @return		the host name/ip
+   */
+  public String getLocalHost() {
+    return m_LocalHost;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String localHostTipText() {
+    return
+      "The host (name/IP address) that the remote host will connect to when "
+	+ "sending back the executed jobs; leave empty to use auto-detection.";
+  }
+
+  /**
+   * Sets the local port for the remote host to connect when sending back
+   * the executed jobs.
+   *
+   * @param value	the port
+   */
+  public void setLocalPort(int value) {
+    m_LocalPort = value;
+    reset();
+  }
+
+  /**
+   * Returns the local port for the remote host to connect when sending back
+   * the executed jobs.
+   *
+   * @return 		the port
+   */
+  public int getLocalPort() {
+    return m_LocalPort;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String localPortTipText() {
+    return "The local port that the remote host will use for sending back the executed jobs.";
   }
 
   /**
@@ -467,10 +561,16 @@ public class ScpJobRunner
     RemoteJobRunner	result;
 
     result = new RemoteJobRunner();
-    result.setHost(InternetHelper.getHostnameFromNetworkInterface());
-    // result.setPort(??);  TODO
-    result.setRemoteFile(getLocalFile());
+    if (m_LocalHost.isEmpty())
+      result.setHost(InternetHelper.getHostnameFromNetworkInterface());
+    else
+      result.setHost(getLocalHost());
+    result.setPort(getLocalPort());
+    result.setRemoteFile(getLocalFile().getAbsoluteFile());
     result.setJobRunner(getJobRunner());
+    result.setLoggingLevel(getLoggingLevel());
+    if (isLoggingEnabled())
+      getLogger().info("Remote jobrunner: " + result.toCommandLine());
 
     return result;
   }
@@ -510,8 +610,10 @@ public class ScpJobRunner
     String	msg;
 
     // serialize jobs
-    tmpFile = TempUtils.createTempFile("adams-jobs-" + m_Connection.getHost(), ".ser");
+    tmpFile = TempUtils.createTempFile("adams-jobs-" + m_Connection.getHost() + "-", ".ser");
     try {
+      if (isLoggingEnabled())
+        getLogger().info("Serializing jobs to " + tmpFile);
       SerializationHelper.write(tmpFile.getAbsolutePath(), m_ActualJobRunner);
     }
     catch (Exception e) {
@@ -522,11 +624,14 @@ public class ScpJobRunner
 
     // scp to remote host
     try {
+      if (isLoggingEnabled())
+        getLogger().info("Scp'ing jobs to " + m_Connection.getHost() + ":" + m_Connection.getPort() + m_RemoteFile.getAbsolutePath());
       msg = Scp.copyTo(this, m_Connection, tmpFile, m_RemoteFile.getAbsolutePath());
       if (msg != null)
 	getLogger().severe(
 	  "Failed to copy serialized jobrunner to remote host "
 	    + m_Connection.getHost() + ":" + m_Connection.getPort() + ": " + msg);
+      tmpFile.delete();
     }
     catch (Exception e) {
       tmpFile.delete();
@@ -553,6 +658,8 @@ public class ScpJobRunner
     }
     if (isRunning()) {
       try {
+        if (isLoggingEnabled())
+          getLogger().info("Reading jobs from " + m_LocalFile);
 	m_ActualJobRunner = (JobRunner) SerializationHelper.read(m_LocalFile.getAbsolutePath());
       }
       catch (Exception e) {

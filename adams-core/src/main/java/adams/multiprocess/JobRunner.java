@@ -20,6 +20,7 @@
 
 package adams.multiprocess;
 
+import adams.core.CleanUpHandler;
 import adams.core.Pausable;
 import adams.core.option.OptionHandler;
 import adams.event.JobCompleteListener;
@@ -34,7 +35,7 @@ import java.util.List;
  * @version $Revision$
  */
 public interface JobRunner<T extends Job>
-  extends Pausable, OptionHandler {
+  extends Pausable, OptionHandler, CleanUpHandler {
 
   /**
    * Adds the listener.
@@ -49,6 +50,11 @@ public interface JobRunner<T extends Job>
    * @param l		the listener to remove
    */
   public void removeJobCompleteListener(JobCompleteListener l);
+
+  /**
+   * Clears all jobs.
+   */
+  public void clear();
 
   /**
    * Adds the job to the execution queue.

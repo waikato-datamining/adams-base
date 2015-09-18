@@ -21,6 +21,7 @@
 package adams.multiprocess;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for jobrunner classes.
@@ -41,14 +42,45 @@ public abstract class AbstractJobRunner<T extends Job>
   /** whether the execution is paused. */
   protected boolean m_Paused;
 
+  /** the flow context. */
+  protected Actor m_FlowContext;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FlowContext = null;
+  }
+
+  /**
+   * Sets the flow context, if any.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Return the flow context, if any.
+   *
+   * @return		the context, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
   /**
    * Before actual start up.
+   * <br>
+   * Default implementation does nothing.
    *
    * @return		null if successful, otherwise error message
    */
   protected String preStart() {
-    m_Running = false;
-    m_Paused  = false;
     return null;
   }
 
@@ -65,7 +97,7 @@ public abstract class AbstractJobRunner<T extends Job>
    * After actual start up.
    * Only gets executed if {@link #preStart()} was successful.
    * <br>
-   * Default implementation does nothing
+   * Default implementation does nothing.
    *
    * @return		null if successful, otherwise error message
    */
@@ -79,11 +111,16 @@ public abstract class AbstractJobRunner<T extends Job>
   public void start() {
     String	msg;
 
+    m_Running = false;
+    m_Paused  = false;
+
     msg = preStart();
     if (msg == null) {
       msg = doStart();
       if (msg != null)
 	getLogger().severe("doStart failed (skipping rest): " + msg);
+      else
+        m_Running = true;
 
       msg = postStart();
       if (msg != null)
@@ -221,5 +258,13 @@ public abstract class AbstractJobRunner<T extends Job>
    */
   public void resumeExecution() {
     m_Paused = false;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
   }
 }

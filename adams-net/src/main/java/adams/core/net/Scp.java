@@ -23,13 +23,13 @@ package adams.core.net;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingObject;
-import adams.flow.standalone.SSHConnection;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -45,27 +45,27 @@ public class Scp {
    * Copies a local file to a remote server.
    *
    * @param owner	the owner that initiates the transfer, can be null
-   * @param conn	the SSH connection to use
+   * @param provider	the SSH session provider to use
    * @param localFile	the local file
    * @param remoteFile	the remote file
    * @return		null if successful, otherwise error message
    */
-  public static String copyTo(LoggingObject owner, SSHConnection conn, File localFile, String remoteFile) {
-    return copyTo(owner, conn, null, -1, localFile, remoteFile);
+  public static String copyTo(LoggingObject owner, SSHSessionProvider provider, File localFile, String remoteFile) {
+    return copyTo(owner, provider, null, -1, localFile, remoteFile);
   }
 
   /**
    * Copies a local file to a remote server.
    *
    * @param owner	the owner that initiates the transfer, can be null
-   * @param conn	the SSH connection to use
+   * @param provider	the SSH session provider to use
    * @param host	an alternative host, null if to use one from connection
    * @param port	an alternative port, ignored if host null
    * @param localFile	the local file
    * @param remoteFile	the remote file
    * @return		null if successful, otherwise error message
    */
-  public static String copyTo(LoggingObject owner, SSHConnection conn, String host, int port, File localFile, String remoteFile) {
+  public static String copyTo(LoggingObject owner, SSHSessionProvider provider, String host, int port, File localFile, String remoteFile) {
     String		result;
     Session		session;
     ChannelExec		channel;
@@ -76,27 +76,32 @@ public class Scp {
     long 		filesize;
     FileInputStream	fis;
     int			len;
+    boolean		closeSession;
 
-    result  = null;
-    session = null;
-    channel = null;
+    result       = null;
+    session      = null;
+    channel      = null;
+    closeSession = (host != null);
     try {
-      if (host == null) {
-	channel = (ChannelExec) conn.getSession().openChannel("exec");
+      if (host == null)
+	session = provider.getSession();
+      else
+	session = provider.newSession(host, port);
+      if (session != null) {
+	host = session.getHost();
+	port = session.getPort();
       }
-      else {
-	session = conn.newSession(host, port);
-	channel = (ChannelExec) session.openChannel("exec");
-      }
+      channel = (ChannelExec) session.openChannel("exec");
       channel.setCommand("scp -p -t " + remoteFile);
       if ((owner != null) && owner.isLoggingEnabled())
-	owner.getLogger().info("Uploading " + localFile + " to " + remoteFile);
+	owner.getLogger().info(
+          "Uploading " + localFile + " to " + host + ":" + port + remoteFile);
       in     = channel.getInputStream();
       out    = channel.getOutputStream();
 
       channel.connect();
 
-      if (SSHConnection.checkAck(in) != 0) {
+      if (checkAck(in) != 0) {
 	result = "Input stream check failed after opening channel!";
 	return result;
       }
@@ -106,7 +111,7 @@ public class Scp {
       command  = "C0644 " + filesize + " " + localFile.getName() + "\n";
       out.write(command.getBytes());
       out.flush();
-      if (SSHConnection.checkAck(in) != 0)
+      if (checkAck(in) != 0)
 	result = "Sending of filename failed!";
 
       // send a content of lfile
@@ -126,12 +131,13 @@ public class Scp {
       out.write(buffer, 0, 1);
       out.flush();
 
-      if (SSHConnection.checkAck(in) != 0)
+      if (checkAck(in) != 0)
 	result = "Left-over data in input stream!";
       FileUtils.closeQuietly(out);
     }
     catch (Exception e) {
-      result = Utils.handleException(owner, "Failed to upload file '" + localFile + "' to '" + remoteFile + "': ", e);
+      result = Utils.handleException(
+        owner, "Failed to upload file '" + localFile + "' to '" + host + ":" + port + remoteFile + "': ", e);
     }
     finally {
       if (channel != null) {
@@ -139,14 +145,14 @@ public class Scp {
       }
     }
 
-    if (session != null) {
+    if (closeSession) {
       if (session.isConnected()) {
-        try {
-          session.disconnect();
-        }
-        catch (Exception e) {
-          Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
-        }
+	try {
+	  session.disconnect();
+	}
+	catch (Exception e) {
+	  Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
+	}
       }
     }
 
@@ -157,27 +163,27 @@ public class Scp {
    * Copies a remote file onto the local machine.
    *
    * @param owner	the owner that initiates the transfer
-   * @param conn	the SSH connection to use
+   * @param provider	the SSH session provider to use
    * @param remoteFile	the remote file to copy
    * @param localFile	the local file
    * @return		null if successful, otherwise error message
    */
-  public static String copyFrom(LoggingObject owner, SSHConnection conn, String remoteFile, File localFile) {
-    return copyFrom(owner, conn, null, -1, remoteFile, localFile);
+  public static String copyFrom(LoggingObject owner, SSHSessionProvider provider, String remoteFile, File localFile) {
+    return copyFrom(owner, provider, null, -1, remoteFile, localFile);
   }
 
   /**
    * Copies a remote file onto the local machine.
    *
    * @param owner	the owner that initiates the transfer
-   * @param conn	the SSH connection to use
+   * @param provider	the SSH session provider to use
    * @param host	an alternative host, null if to use one from connection
    * @param port	an alternative port, ignored if host null
    * @param remoteFile	the remote file to copy
    * @param localFile	the local file
    * @return		null if successful, otherwise error message
    */
-  public static String copyFrom(LoggingObject owner, SSHConnection conn, String host, int port, String remoteFile, File localFile) {
+  public static String copyFrom(LoggingObject owner, SSHSessionProvider provider, String host, int port, String remoteFile, File localFile) {
     String		result;
     Session		session;
     ChannelExec		channel;
@@ -189,22 +195,26 @@ public class Scp {
     FileOutputStream	fos;
     int 		foo;
     int			i;
+    boolean		closeSession;
 
-    result  = null;
-    session = null;
-    channel = null;
-    fos     = null;
+    result       = null;
+    session      = null;
+    channel      = null;
+    fos          = null;
+    closeSession = (host != null);
     try {
-      if (host == null) {
-	channel = (ChannelExec) conn.getSession().openChannel("exec");
+      if (host == null)
+	session = provider.getSession();
+      else
+	session = provider.newSession(host, port);
+      if (session != null) {
+	host = session.getHost();
+	port = session.getPort();
       }
-      else {
-	session = conn.newSession(host, port);
-	channel = (ChannelExec) session.openChannel("exec");
-      }
+      channel = (ChannelExec) session.openChannel("exec");
       channel.setCommand("scp -f " + remoteFile);
       if ((owner != null) && owner.isLoggingEnabled())
-	owner.getLogger().info("Downloading " + remoteFile);
+	owner.getLogger().info("Downloading " + host + ":" + port + remoteFile);
       in     = channel.getInputStream();
       out    = channel.getOutputStream();
       buffer = new byte[1024];
@@ -217,7 +227,7 @@ public class Scp {
       out.flush();
 
       while (true) {
-	c = SSHConnection.checkAck(in);
+	c = checkAck(in);
         if (c != 'C')
 	  break;
 
@@ -264,7 +274,7 @@ public class Scp {
         FileUtils.closeQuietly(fos);
         fos = null;
 
-	if (SSHConnection.checkAck(in) != 0)
+	if (checkAck(in) != 0)
 	  result = "Error occurred!";
 
         // send '\0'
@@ -274,7 +284,10 @@ public class Scp {
       }
     }
     catch (Exception e) {
-      result = Utils.handleException(owner, "Failed to download file '" + remoteFile + "' to '" + localFile + "': ", e);
+      result = Utils.handleException(
+        owner,
+        "Failed to download file '" + host + ":" + port + remoteFile
+          + "' to '" + localFile + "': ", e);
     }
     finally {
       FileUtils.closeQuietly(fos);
@@ -283,7 +296,7 @@ public class Scp {
       }
     }
 
-    if (session != null) {
+    if (closeSession) {
       if (session.isConnected()) {
         try {
           session.disconnect();
@@ -292,6 +305,44 @@ public class Scp {
           Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
         }
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks the stream (scp).
+   *
+   * @param in		the stream to use
+   * @return		0 = success, 1 = error, 2 = fatal error, -1 = end of stream
+   */
+  public static int checkAck(InputStream in) throws IOException {
+    int			result;
+    StringBuilder 	output;
+    int			c;
+
+    result = in.read();
+
+    if (result == 0)
+      return result;
+    if (result == -1)
+      return result;
+
+    if ((result == 1) || (result == 2)) {
+      output = new StringBuilder();
+      do {
+        c = in.read();
+        output.append((char) c);
+      }
+      while (c != '\n');
+
+      // error
+      if (result == 1)
+        System.out.print(output.toString());
+
+      // fatal error
+      if (result == 2)
+        System.out.print(output.toString());
     }
 
     return result;

@@ -25,7 +25,6 @@ import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
-import adams.flow.core.Actor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,14 +71,14 @@ public class LocalJobRunner<T extends Job>
   /** call when job complete. */
   protected HashSet<JobCompleteListener> m_JobCompleteListeners;
 
+  /** all the jobs. */
+  protected List<T> m_Jobs;
+
   /** stores Jobs. add to job queue when dependencies complete. */
   protected List<T> m_Queue;
 
   /** the executor service to use for parallel execution. */
   protected PausableFixedThreadPoolExecutor m_Executor;
-
-  /** the flow context. */
-  protected Actor m_FlowContext;
 
   /**
    * Initializes the members.
@@ -88,7 +87,7 @@ public class LocalJobRunner<T extends Job>
   protected void initialize() {
     super.initialize();
 
-    m_FlowContext          = null;
+    m_Jobs                 = new ArrayList<>();
     m_Queue                = new ArrayList<>();
     m_JobCompleteListeners = new HashSet<JobCompleteListener>();
     addJobCompleteListener(JobCompleteManager.getSingleton());
@@ -183,11 +182,22 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
+   * Clears all jobs.
+   */
+  public void clear() {
+    m_Jobs.clear();
+    synchronized(m_Queue) {
+      m_Queue.clear();
+    }
+  }
+
+  /**
    * Adds the job to the execution queue.
    *
    * @param job		the job to add
    */
   public void add(T job) {
+    m_Jobs.add(job);
     synchronized(m_Queue) {
       m_Queue.add(job);
     }
@@ -200,6 +210,7 @@ public class LocalJobRunner<T extends Job>
    * @param jobs	the jobs to add
    */
   public void add(JobList<T> jobs) {
+    m_Jobs.addAll(jobs);
     synchronized(m_Queue) {
       m_Queue.addAll(jobs);
     }
@@ -207,12 +218,12 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
-   * Returns the list of queued jobs.
+   * Returns the list of all jobs.
    *
    * @return		the jobs
    */
   public List<T> getJobs() {
-    return m_Queue;
+    return m_Jobs;
   }
 
   /**
@@ -404,20 +415,10 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
-   * Sets the flow context, if any.
-   *
-   * @param value	the context
+   * Cleans up data structures, frees up memory.
    */
-  public void setFlowContext(Actor value) {
-    m_FlowContext = value;
-  }
-
-  /**
-   * Return the flow context, if any.
-   *
-   * @return		the context, null if none available
-   */
-  public Actor getFlowContext() {
-    return m_FlowContext;
+  public void cleanUp() {
+    super.cleanUp();
+    m_Jobs.clear();
   }
 }
