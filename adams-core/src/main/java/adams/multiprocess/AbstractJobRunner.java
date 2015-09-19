@@ -43,7 +43,7 @@ public abstract class AbstractJobRunner<T extends Job>
   protected boolean m_Paused;
 
   /** the flow context. */
-  protected Actor m_FlowContext;
+  protected transient Actor m_FlowContext;
 
   /**
    * Initializes the members.

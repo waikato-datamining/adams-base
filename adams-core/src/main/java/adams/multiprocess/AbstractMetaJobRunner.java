@@ -46,7 +46,7 @@ public abstract class AbstractMetaJobRunner
   protected List<Job> m_Jobs;
 
   /** call when job complete. */
-  protected HashSet<JobCompleteListener> m_JobCompleteListeners;
+  protected transient HashSet<JobCompleteListener> m_JobCompleteListeners;
 
   /** the actual jobrunner. */
   protected JobRunner m_ActualJobRunner;
@@ -204,6 +204,9 @@ public abstract class AbstractMetaJobRunner
     String	result;
 
     result = super.preStart();
+
+    if (m_JobCompleteListeners == null)
+      m_JobCompleteListeners = new HashSet<>();
 
     if (result == null) {
       m_ActualJobRunner = newActualJobRunner();

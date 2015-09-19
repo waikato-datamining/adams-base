@@ -69,7 +69,7 @@ public class LocalJobRunner<T extends Job>
   protected int m_NumThreads;
 
   /** call when job complete. */
-  protected HashSet<JobCompleteListener> m_JobCompleteListeners;
+  protected transient HashSet<JobCompleteListener> m_JobCompleteListeners;
 
   /** all the jobs. */
   protected List<T> m_Jobs;
@@ -285,6 +285,9 @@ public class LocalJobRunner<T extends Job>
     int		numThreads;
 
     super.preStart();
+
+    if (m_JobCompleteListeners == null)
+      m_JobCompleteListeners = new HashSet<>();
 
     if (m_Executor == null) {
       numThreads = m_NumThreads;

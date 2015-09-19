@@ -168,6 +168,9 @@ public class Hermione
 
   protected List<Integer> m_start=null;
 
+  /** whether the handlers have been initialized. */
+  protected transient Boolean m_HandlersInitialized;
+
   /**
    * A job class specific to Hermione.
    *
@@ -247,7 +250,8 @@ public class Hermione
   protected void initialize() {
     super.initialize();
 
-    m_ActualHandlers = new AbstractGeneticDiscoveryHandler[0];
+    m_ActualHandlers     = new AbstractGeneticDiscoveryHandler[0];
+    m_HandlersInitialized = null;
   }
 
   /**
@@ -313,16 +317,33 @@ public class Hermione
   }
 
   /**
+   * Initializes the handlers only if required.
+   *
+   * @see		#m_HandlersInitialized
+   * @see		#initializeHandlers()
+   */
+  protected void initializeHandlersIfRequired() {
+    if ((m_HandlersInitialized == null) || !m_HandlersInitialized)
+      initializeHandlers();
+  }
+
+  /**
+   * Initializes the handlers.
+   */
+  protected void initializeHandlers() {
+    setupParamsAndClassifier(m_Handlers, m_Classifier);
+    m_HandlersInitialized = true;
+    init(20, getNumBits() * m_BitsPerGene);
+  }
+
+  /**
    * Some more initializations.
    */
   @Override
   protected void preRun() {
     super.preRun();
 
-    setupParamsAndClassifier(m_Handlers, m_Classifier);
-
-    // setup structures
-    init(20, getNumBits() * m_BitsPerGene);
+    initializeHandlers();
   }
 
   /**
@@ -368,6 +389,7 @@ public class Hermione
    * @return
    */
   public int[] getBitsForPosition(int[] w,List<Integer> spoints, List<Integer> numbits,int pos){
+    initializeHandlersIfRequired();
     int[] ret=new int[numbits.get(pos)];
     int c=0;
     for (int i=spoints.get(pos);i<spoints.get(pos)+numbits.get(pos);i++) {
@@ -381,6 +403,7 @@ public class Hermione
    * @return
    */
   public List<Integer> getNumBitsForAll(){
+    initializeHandlersIfRequired();
     ArrayList<Integer> al=new ArrayList<>();
     for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
       List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
@@ -397,6 +420,7 @@ public class Hermione
    * @return
    */
   public List<Integer> getStartPoints(){
+    initializeHandlersIfRequired();
     ArrayList<Integer> al=new ArrayList<>();
     int count=0;
     for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
@@ -415,6 +439,7 @@ public class Hermione
    * @return
    */
   public int getNumBits(){
+    initializeHandlersIfRequired();
     int count=0;
     for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
       List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
@@ -431,6 +456,7 @@ public class Hermione
    * @return
    */
   public Classifier generateClassifier(int weights[]){
+    initializeHandlersIfRequired();
     // foreach handler, pack according to bits in weights
     if (m_numbits==null){
       m_numbits=getNumBitsForAll();
