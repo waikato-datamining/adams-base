@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-18 14:30:09
+# Date: 2015-09-18 16:22:44
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -28,7 +28,7 @@ adams.flow.control.Flow
 									-directory
 									${TMP}
 									-regexp
-									.*\\.ser
+									to_rank.ser
 					-tee
 						adams.flow.control.Tee
 							-name
