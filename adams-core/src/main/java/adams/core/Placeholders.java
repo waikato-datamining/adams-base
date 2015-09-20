@@ -20,11 +20,11 @@
 
 package adams.core;
 
-import java.io.File;
-import java.util.Enumeration;
-
 import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
+
+import java.io.File;
+import java.util.Enumeration;
 
 /**
  * A class for accessing the system-wide defined placeholders.
@@ -275,7 +275,7 @@ public class Placeholders {
       while (pholders.hasMoreElements()) {
 	key   = pholders.nextElement();
 	value = get(key);
-	if ((value != null) && (result.indexOf(value) > -1)) {
+	if ((value != null) && (result.indexOf(value) == 0)) {
 	  currLeft = result.replace(value, "").length();
 	  if (currLeft < bestLeft) {
 	    bestKey  = key;

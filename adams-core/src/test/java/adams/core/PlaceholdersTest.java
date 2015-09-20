@@ -20,13 +20,15 @@
 
 package adams.core;
 
-import java.io.File;
-import java.util.Enumeration;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.io.TempUtils;
+import adams.core.management.OS;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
+import java.util.Enumeration;
 
 /**
  * Tests the adams.core.Placeholders class. Run from commandline with: <br><br>
@@ -65,6 +67,16 @@ public class PlaceholdersTest
       expanded  = ph.expand(ph.get(key)) + File.separator + "hello.world";
       assertEquals(expanded, ph.expand(collapsed));
     }
+  }
+
+  /**
+   * Tests the collapse functionality (only linux/mac).
+   */
+  public void testCollapseLinux() {
+    if (!(OS.isLinux() || OS.isMac()))
+      return;
+    String path = "/some/where" + TempUtils.getTempDirectoryStr();
+    assertEquals("shouldn't collapse at end", path, Placeholders.getSingleton().collapse(path));
   }
 
   /**
