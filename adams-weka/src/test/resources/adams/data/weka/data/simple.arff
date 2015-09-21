@@ -1,0 +1,12 @@
+@relation simple
+
+@attribute sample_id string
+@attribute att1 numeric
+@attribute att_2 numeric
+@attribute att_3_4 {a,b,c}
+
+@data
+"id 1",1.1,1.2,a
+"id 2",2.1,2.2,b
+"id 3",3.1,3.2,c
+"id 4",4.1,4.2,a

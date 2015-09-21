@@ -15,22 +15,23 @@
 
 /**
  * WekaAttributeIndexTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka;
 
-import java.io.FileNotFoundException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Index;
 import adams.core.IndexTest;
+import adams.core.Utils;
 import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+import java.io.FileNotFoundException;
 
 /**
  * Tests the WekaAttributeIndex class. Run from commandline with: <br><br>
@@ -77,10 +78,9 @@ public class WekaAttributeIndexTest
     
     filename = "labor.arff";
     m_TestHelper.copyResourceToTmp(filename);
-    
-    m_Data = DataSource.read(new TmpFile(filename).getAbsolutePath());
-    if (m_Data == null)
-      throw new FileNotFoundException("Test file '" + filename + "' not found?");
+    m_Data = loadDataset(filename);
+
+    m_TestHelper.copyResourceToTmp("simple.arff");
   }
   
   /**
@@ -91,8 +91,26 @@ public class WekaAttributeIndexTest
   @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("labor.arff");
-    
+    m_TestHelper.deleteFileFromTmp("simple.arff");
+
     super.tearDown();
+  }
+
+  /**
+   * Loads the specified dataset from the tmp directory.
+   *
+   * @param filename	the dataset to load (no path)
+   * @return		the dataset
+   * @throws Exception	if loading of dataset failed
+   */
+  protected Instances loadDataset(String filename) throws Exception {
+    Instances 	result;
+
+    result = DataSource.read(new TmpFile(filename).getAbsolutePath());
+    if (result == null)
+      throw new FileNotFoundException("Test file '" + filename + "' not found?");
+
+    return result;
   }
 
   /**
@@ -135,6 +153,45 @@ public class WekaAttributeIndexTest
     index.setIndex("class");
     assertEquals("should be valid", 16, index.getIntIndex());
     assertEquals("should be same", "class", index.getIndex());
+  }
+
+  /**
+   * Tests various indices.
+   */
+  public void testVariousIndices() {
+    Instances data = null;
+    try {
+      data = loadDataset("simple.arff");
+    }
+    catch (Exception e) {
+      fail("Failed loading simple.arff: " + Utils.throwableToString(e));
+    }
+
+    WekaAttributeIndex index;
+
+    index = new WekaAttributeIndex("sample_id");
+    index.setData(data);
+    assertEquals("wrong index", 0, index.getIntIndex());
+
+    index = new WekaAttributeIndex("\"sample_id\"");
+    index.setData(data);
+    assertEquals("wrong index", -1, index.getIntIndex());
+
+    index = new WekaAttributeIndex("att1");
+    index.setData(data);
+    assertEquals("wrong index", 1, index.getIntIndex());
+
+    index = new WekaAttributeIndex("att_2");
+    index.setData(data);
+    assertEquals("wrong index", 2, index.getIntIndex());
+
+    index = new WekaAttributeIndex("att_3_4");
+    index.setData(data);
+    assertEquals("wrong index", 3, index.getIntIndex());
+
+    index = new WekaAttributeIndex("sampleid");
+    index.setData(data);
+    assertEquals("not an index", -1, index.getIntIndex());
   }
   
   /**
