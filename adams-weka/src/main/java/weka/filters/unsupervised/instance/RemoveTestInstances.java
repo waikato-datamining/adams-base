@@ -186,9 +186,9 @@ public class RemoveTestInstances
 
     tmpStr = Utils.getOption("id", options);
     if (tmpStr.isEmpty())
-      setID(new WekaAttributeIndex(tmpStr));
-    else
       setID(new WekaAttributeIndex(WekaAttributeIndex.FIRST));
+    else
+      setID(new WekaAttributeIndex(tmpStr));
 
     setInvert(Utils.getFlag("invert", options));
 
@@ -215,7 +215,7 @@ public class RemoveTestInstances
     }
 
     result.add("-id");
-    result.add("" + getID().getIndex());
+    result.add(getID().getIndex());
 
     if (getInvert())
       result.add("-invert");
@@ -414,6 +414,12 @@ public class RemoveTestInstances
     return new Instances(inputFormat, 0);
   }
 
+  /**
+   * Loads the test set.
+   *
+   * @return		the dataset
+   * @throws Exception	if loader fails
+   */
   protected Instances loadTestSet() throws Exception {
     Instances	result;
 
@@ -424,6 +430,9 @@ public class RemoveTestInstances
     else {
       result = DataSource.read(getTestSet().getAbsolutePath());
     }
+
+    if (result == null)
+      throw new IllegalStateException("Failed to load test set: " + getTestSet());
 
     return result;
   }
@@ -452,7 +461,8 @@ public class RemoveTestInstances
     m_ID.setData(test);
     index = m_ID.getIntIndex();
     if (index == -1)
-      throw new IllegalStateException("ID attribute not found in test set: " + m_ID);
+      throw new IllegalStateException(
+        "ID attribute not found in test set: " + m_ID.getIndex() + "\n" + new Instances(test, 0));
     numeric = test.attribute(index).isNumeric();
     ids     = new HashSet<String>();
     for (Instance inst: test) {
@@ -466,7 +476,8 @@ public class RemoveTestInstances
     m_ID.setData(instances);
     index  = m_ID.getIntIndex();
     if (index == -1)
-      throw new IllegalStateException("ID attribute not found in dataset: " + m_ID);
+      throw new IllegalStateException(
+        "ID attribute not found in dataset: " + m_ID.getIndex() + "\n" + new Instances(instances, 0));
 
     for (Instance inst: instances) {
       if (numeric)
