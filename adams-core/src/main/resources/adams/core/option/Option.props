@@ -81,6 +81,11 @@ adams.core.base.BaseClassname=true
 adams.core.base.BaseClassname#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.BaseClassname#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# BaseCommandLine objects
+adams.core.base.BaseCommandLine=true
+adams.core.base.BaseCommandLine#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseCommandLine#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # BaseRegExp objects
 adams.core.base.BaseRegExp=true
 adams.core.base.BaseRegExp#toString=adams.gui.goe.BaseRegExpEditor#toString

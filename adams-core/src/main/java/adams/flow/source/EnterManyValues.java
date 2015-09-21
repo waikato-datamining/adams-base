@@ -141,7 +141,7 @@ public class EnterManyValues
   protected String m_Message;
 
   /** the value definitions. */
-  protected ValueDefinition[] m_Values;
+  protected AbstractValueDefinition[] m_Values;
 
   /** how to output the data. */
   protected OutputType m_OutputType;
@@ -175,7 +175,7 @@ public class EnterManyValues
 
     m_OptionManager.add(
 	    "value", "values",
-	    new ValueDefinition[0]);
+	    new AbstractValueDefinition[0]);
 
     m_OptionManager.add(
 	    "output-type", "outputType",
@@ -261,7 +261,7 @@ public class EnterManyValues
    *
    * @param value	the definitions
    */
-  public void setValues(ValueDefinition[] value) {
+  public void setValues(AbstractValueDefinition[] value) {
     m_Values = value;
     reset();
   }
@@ -271,7 +271,7 @@ public class EnterManyValues
    *
    * @return 		the definitions
    */
-  public ValueDefinition[] getValues() {
+  public AbstractValueDefinition[] getValues() {
     return m_Values;
   }
 
@@ -389,8 +389,8 @@ public class EnterManyValues
     Properties	result;
     
     result = new Properties();
-    for (ValueDefinition val: m_Values)
-      result.setProperty(val.getName(), getVariables().expand(val.getDefaultValue()));
+    for (AbstractValueDefinition val: m_Values)
+      result.setProperty(val.getName(), getVariables().expand(val.getDefaultValueAsString()));
     
     return result;
   }
@@ -410,12 +410,12 @@ public class EnterManyValues
     
     // header
     row   = result.getHeaderRow();
-    for (ValueDefinition val: m_Values)
+    for (AbstractValueDefinition val: m_Values)
       row.addCell(val.getName()).setContent(val.getName());
     
     // data
     row = result.addRow();
-    for (ValueDefinition val: m_Values) {
+    for (AbstractValueDefinition val: m_Values) {
       switch (val.getType()) {
 	case INTEGER:
 	  row.addCell(val.getName()).setContent(props.getInteger(val.getName()));
@@ -519,13 +519,12 @@ public class EnterManyValues
     panel = new PropertiesParameterPanel();
     panel.setButtonPanelVisible(true);
     order = new ArrayList<String>();
-    for (ValueDefinition val: m_Values) {
+    for (AbstractValueDefinition val: m_Values) {
       order.add(val.getName());
-      panel.addPropertyType(val.getName(), val.getType());
-      if (!val.getDisplay().trim().isEmpty())
-        panel.setLabel(val.getName(), val.getDisplay());
-      if (!val.getHelp().trim().isEmpty())
-	panel.setHelp(val.getName(), val.getHelp());
+      if (!val.addToPanel(panel)) {
+	getLogger().severe("Failed to add value definition: " + val.toCommandLine());
+	return false;
+      }
     }
     panel.setPropertyOrder(order);
     panel.setProperties(getDefaultProperties());

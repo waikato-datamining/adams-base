@@ -14,12 +14,13 @@
  */
 
 /*
- * ValueDefinition.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * AbstractValueDefinition.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
@@ -30,27 +31,20 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @version $Revision$
  * @see EnterManyValues
  */
-public class ValueDefinition
-  extends AbstractValueDefinition {
+public abstract class AbstractValueDefinition
+  extends AbstractOptionHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1003051563895321458L;
 
-  /** the type of the value. */
-  protected PropertyType m_Type;
-  
-  /** the default value (string representation). */
-  protected String m_DefaultValue;
-  
-  /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return "Defintition for a value: name, type and default value.";
-  }
+  /** the name of the value. */
+  protected String m_Name;
+
+  /** the display text. */
+  protected String m_Display;
+
+  /** the help text. */
+  protected String m_Help;
 
   /**
    * Adds options to the internal list of options.
@@ -60,22 +54,103 @@ public class ValueDefinition
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    PropertyType.STRING);
+	    "name", "name",
+	    "");
 
     m_OptionManager.add(
-	    "default-value", "defaultValue",
+	    "display", "display",
+	    "");
+
+    m_OptionManager.add(
+	    "help", "help",
 	    "");
   }
 
   /**
-   * Sets the type of the value.
+   * Sets the name of the value.
    *
-   * @param value	the type
+   * @param value	the name
    */
-  public void setType(PropertyType value) {
-    m_Type = value;
+  public void setName(String value) {
+    m_Name = value;
     reset();
+  }
+
+  /**
+   * Returns the name of the value.
+   *
+   * @return 		the name
+   */
+  public String getName() {
+    return m_Name;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String nameTipText() {
+    return "The name of the value.";
+  }
+
+  /**
+   * Sets the display text for the value.
+   *
+   * @param value	the display text
+   */
+  public void setDisplay(String value) {
+    m_Display = value;
+    reset();
+  }
+
+  /**
+   * Returns the display text for the value.
+   *
+   * @return 		the display text
+   */
+  public String getDisplay() {
+    return m_Display;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String displayTipText() {
+    return "The text to use as label for the value.";
+  }
+
+  /**
+   * Sets the help text for the value.
+   *
+   * @param value	the help text
+   */
+  public void setHelp(String value) {
+    m_Help = value;
+    reset();
+  }
+
+  /**
+   * Returns the help text for the value.
+   *
+   * @return 		the help text
+   */
+  public String getHelp() {
+    return m_Help;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String helpTipText() {
+    return "The help text to use for the value.";
   }
 
   /**
@@ -83,57 +158,14 @@ public class ValueDefinition
    *
    * @return 		the type
    */
-  public PropertyType getType() {
-    return m_Type;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return		tip text for this property suitable for
-   *             	displaying in the GUI or for listing the options.
-   */
-  public String typeTipText() {
-    return "The type of the value.";
-  }
-
-  /**
-   * Sets the default of the value.
-   *
-   * @param value	the default
-   */
-  public void setDefaultValue(String value) {
-    m_DefaultValue = value;
-    reset();
-  }
-
-  /**
-   * Returns the default of the value.
-   *
-   * @return 		the default
-   */
-  public String getDefaultValue() {
-    return m_DefaultValue;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return		tip text for this property suitable for
-   *             	displaying in the GUI or for listing the options.
-   */
-  public String defaultValueTipText() {
-    return "The default of the value in its string representation.";
-  }
+  public abstract PropertyType getType();
 
   /**
    * Returns the default of the value as string.
    *
    * @return 		the default
    */
-  public String getDefaultValueAsString() {
-    return getDefaultValue();
-  }
+  public abstract String getDefaultValueAsString();
 
   /**
    * Adds the value to the panel.
@@ -141,12 +173,5 @@ public class ValueDefinition
    * @param panel	the panel to add to
    * @return		true if successfully added
    */
-  public boolean addToPanel(PropertiesParameterPanel panel) {
-    panel.addPropertyType(getName(), getType());
-    if (!getDisplay().trim().isEmpty())
-      panel.setLabel(getName(), getDisplay());
-    if (!getHelp().trim().isEmpty())
-      panel.setHelp(getName(), getHelp());
-    return true;
-  }
+  public abstract boolean addToPanel(PropertiesParameterPanel panel);
 }

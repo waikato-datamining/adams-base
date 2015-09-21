@@ -329,6 +329,10 @@ adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet=\
 adams.flow.source.newlist.AbstractListGenerator=\
   adams.flow.source.newlist
 
+# the value definitions
+adams.flow.source.AbstractValueDefinition=\
+  adams.flow.source
+
 # flow conditions
 adams.flow.condition.test.TestCondition=\
   adams.flow.condition.test
