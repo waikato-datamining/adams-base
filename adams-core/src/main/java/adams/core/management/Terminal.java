@@ -15,18 +15,18 @@
 
 /**
  * Terminal.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
-
-import java.io.File;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 
+import java.io.File;
+
 /**
- * 
+ * Handles the terminal setup and can launch a terminal.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
