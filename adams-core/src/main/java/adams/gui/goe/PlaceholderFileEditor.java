@@ -30,6 +30,8 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
@@ -270,28 +272,33 @@ public class PlaceholderFileEditor
     file     = (PlaceholderFile) getValue();
     menuitem = new JMenuItem("Open in preview browser...");
     menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-    menuitem.setEnabled(file.exists() && !file.isDirectory());
+    menuitem.setEnabled(FileUtils.directoryExists(file));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	PreviewBrowserDialog dialog = new PreviewBrowserDialog();
-	dialog.open(file);
-	dialog.setLocationRelativeTo(dialog.getOwner());
-	dialog.setVisible(true);
+        PreviewBrowserDialog dialog = new PreviewBrowserDialog();
+	if (file.isDirectory())
+	  dialog.open(new PlaceholderDirectory(file));
+	else
+	  dialog.open(file);
+        dialog.setLocationRelativeTo(dialog.getOwner());
+        dialog.setVisible(true);
       }
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in file browser...");
     menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.setEnabled(FileUtils.directoryExists(file));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	FileBrowser.launch(file);
+        FileBrowser.launch(file);
       }
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in terminal...");
     menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
+    menuitem.setEnabled(FileUtils.directoryExists(file));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	Terminal.launch(file);

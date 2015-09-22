@@ -1219,4 +1219,20 @@ public class FileUtils {
 
     return result;
   }
+
+  /**
+   * Checks whether the directory exists. If this file object represents a
+   * file, then the parent directory is checked.
+   *
+   * @param file	the file object to check
+   * @return		true if directory exists
+   */
+  public static boolean directoryExists(File file) {
+    if (file.isDirectory())
+      return file.exists();
+    else if (file.isFile())
+      return file.getParentFile().exists();
+    else
+      return false;
+  }
 }
