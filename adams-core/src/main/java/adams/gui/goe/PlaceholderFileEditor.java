@@ -15,7 +15,7 @@
 
 /*
  *    PlaceholderFileEditor.java
- *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.chooser.BaseFileChooser;
@@ -276,6 +277,15 @@ public class PlaceholderFileEditor
 	dialog.open(file);
 	dialog.setLocationRelativeTo(dialog.getOwner());
 	dialog.setVisible(true);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Open in file browser...");
+    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	FileBrowser.launch(file);
       }
     });
     menu.add(menuitem);

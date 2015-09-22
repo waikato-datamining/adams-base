@@ -15,23 +15,14 @@
 
 /*
  *    FileEditor.java
- *    Copyright (C) 1999-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import java.awt.Container;
-import java.awt.FontMetrics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import adams.core.io.PlaceholderFile;
+import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.chooser.BaseFileChooser;
@@ -39,6 +30,15 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
+
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.Container;
+import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * A PropertyEditor for File objects that lets the user select a file.
@@ -281,6 +281,15 @@ public class FileEditor
 	dialog.open(file);
 	dialog.setLocationRelativeTo(dialog.getOwner());
 	dialog.setVisible(true);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Open in file browser...");
+    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	FileBrowser.launch(file);
       }
     });
     menu.add(menuitem);

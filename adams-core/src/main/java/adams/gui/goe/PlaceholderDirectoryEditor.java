@@ -15,7 +15,7 @@
 
 /*
  *    PlaceholderDirectoryEditor.java
- *    Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.chooser.BaseDirectoryChooser;
@@ -236,6 +237,15 @@ public class PlaceholderDirectoryEditor
 	dialog.open(file);
 	dialog.setLocationRelativeTo(dialog.getOwner());
 	dialog.setVisible(true);
+      }
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Open in file browser...");
+    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	FileBrowser.launch(file);
       }
     });
     menu.add(menuitem);
