@@ -40,6 +40,11 @@
     <module>adams-groovy</module>
     <module>adams-gnuplot</module>
     <module>adams-imaging</module>
+    <module>adams-imaging-boofcv</module>
+    <module>adams-imaging-imagej</module>
+    <module>adams-imaging-imagemagick</module>
+    <module>adams-imaging-lire</module>
+    <module>adams-imaging-openimaj</module>
     <module>adams-jython</module>
     <module>adams-latex</module>
     <module>adams-maps</module>
@@ -82,6 +87,7 @@
     <postgis.version>1.5.3</postgis.version>
     <jodd.version>3.5.2</jodd.version>
     <boofcv.version>0.18</boofcv.version>
+    <openimaj.version>1.3.1</openimaj.version>
   </properties>
 
   <scm>
