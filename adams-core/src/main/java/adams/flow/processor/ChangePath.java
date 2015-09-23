@@ -20,6 +20,8 @@
 package adams.flow.processor;
 
 import adams.core.ClassLocator;
+import adams.core.Utils;
+import adams.core.base.BaseString;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.BooleanOption;
@@ -44,11 +46,11 @@ public class ChangePath
   /** for serialization. */
   private static final long serialVersionUID = -3031404150902143297L;
   
-  /** the old path. */
-  protected String m_OldPath;
+  /** the old path(s). */
+  protected BaseString[] m_OldPath;
   
   /** the old path (with forward slashes). */
-  protected String m_OldPathLinux;
+  protected BaseString[] m_OldPathLinux;
   
   /** whether the old path is a regular expression. */
   protected boolean m_OldPathIsRegExp;
@@ -56,8 +58,8 @@ public class ChangePath
   /** whether to use lowercase for matching. */
   protected boolean m_UseLowerCase;
 
-  /** the new path. */
-  protected String m_NewPath;
+  /** the new path(s). */
+  protected BaseString[] m_NewPath;
 
   /**
    * Returns a string describing the object.
@@ -83,38 +85,39 @@ public class ChangePath
     super.defineOptions();
 
     m_OptionManager.add(
-	    "old-path", "oldPath",
-	    "");
+      "old-path", "oldPath",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	    "old-path-is-regexp", "oldPathIsRegExp",
-	    false);
+      "old-path-is-regexp", "oldPathIsRegExp",
+      false);
 
     m_OptionManager.add(
-	    "use-lower-case", "useLowerCase",
-	    false);
+      "use-lower-case", "useLowerCase",
+      false);
 
     m_OptionManager.add(
-	    "new-path", "newPath",
-	    "");
+      "new-path", "newPath",
+      new BaseString[0]);
   }
 
   /**
-   * Sets the old Path to replace.
+   * Sets the old paths to replace.
    *
-   * @param value	the old Path
+   * @param value	the old paths
    */
-  public void setOldPath(String value) {
+  public void setOldPath(BaseString[] value) {
     m_OldPath = value;
+    m_NewPath = (BaseString[]) Utils.adjustArray(m_NewPath, m_OldPath.length, new BaseString(""));
     reset();
   }
 
   /**
-   * Returns the old Path to replace.
+   * Returns the old paths to replace.
    *
-   * @return		the old Path
+   * @return		the old paths
    */
-  public String getOldPath() {
+  public BaseString[] getOldPath() {
     return m_OldPath;
   }
 
@@ -125,7 +128,7 @@ public class ChangePath
    * 			displaying in the gui
    */
   public String oldPathTipText() {
-    return "The old JDBC Path to replace.";
+    return "The old paths to replace.";
   }
 
   /**
@@ -187,12 +190,13 @@ public class ChangePath
   }
 
   /**
-   * Sets the new Path to replace with.
+   * Sets the new paths to replace with.
    *
-   * @param value	the new Path
+   * @param value	the new paths
    */
-  public void setNewPath(String value) {
+  public void setNewPath(BaseString[] value) {
     m_NewPath = value;
+    m_OldPath = (BaseString[]) Utils.adjustArray(m_OldPath, m_NewPath.length, new BaseString(""));
     reset();
   }
 
@@ -201,7 +205,7 @@ public class ChangePath
    *
    * @return		the new Path
    */
-  public String getNewPath() {
+  public BaseString[] getNewPath() {
     return m_NewPath;
   }
 
@@ -216,6 +220,19 @@ public class ChangePath
   }
 
   /**
+   * The default implementation only checks whether there is any actor set.
+   *
+   * @param actor	the actor to process
+   */
+  protected void checkData(AbstractActor actor) {
+    super.checkData(actor);
+
+    if (m_OldPath.length != m_NewPath.length)
+      throw new IllegalArgumentException("Differing number of old and new paths: "
+	+ m_OldPath.length + " != " + m_NewPath.length);
+  }
+
+  /**
    * Performs the actual processing.
    *
    * @param actor	the actor to process (is a copy of original for
@@ -224,40 +241,56 @@ public class ChangePath
    */
   @Override
   protected void processActor(AbstractActor actor) {
-    // UNC path?
-    if (m_OldPath.startsWith("\\\\") || m_OldPath.startsWith("//"))
-      m_OldPathLinux = "\\\\" + m_OldPath.substring(2).replace("\\", "/");
-    else
-      m_OldPathLinux = m_OldPath;
+    int		i;
+
+    m_OldPathLinux = new BaseString[m_OldPath.length];
+    for (i = 0; i < m_OldPath.length; i++) {
+      // UNC path?
+      if (m_OldPath[i].getValue().startsWith("\\\\") || m_OldPath[i].getValue().startsWith("//"))
+	m_OldPathLinux[i] = new BaseString("\\\\" + m_OldPath[i].getValue().substring(2).replace("\\", "/"));
+      else
+	m_OldPathLinux[i] = new BaseString(m_OldPath[i].getValue());
+    }
     
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected boolean isMatch(String path) {
+	boolean result = false;
 	if (m_UseLowerCase)
 	  path = path.toLowerCase();
-	if (m_OldPathIsRegExp)
-	  return path.matches(m_OldPath) || path.matches(m_OldPathLinux);
-	else
-	  return path.startsWith(m_OldPath) || path.startsWith(m_OldPathLinux);
+	for (int i = 0; i < m_OldPath.length; i++) {
+	  if (m_OldPathIsRegExp)
+	    result = path.matches(m_OldPath[i].getValue()) || path.matches(m_OldPathLinux[i].getValue());
+	  else
+	    result = path.startsWith(m_OldPath[i].getValue()) || path.startsWith(m_OldPathLinux[i].getValue());
+	  if (result)
+	    break;
+	}
+	return result;
       }
+
       protected Object update(Object obj) {
 	Object result = null;
 	Class cls = obj.getClass();
 	String str = ((File) obj).toString();
 	if (m_UseLowerCase)
 	  str = str.toLowerCase();
-	String newStr = null;
-	if (m_OldPathIsRegExp) {
-	  if (str.matches(m_OldPath))
-	    newStr = str.replaceFirst(m_OldPath, m_NewPath);
-	  else
-	    newStr = str.replaceFirst(m_OldPathLinux, m_NewPath);
+	String newStr = str;
+
+	for (int i = 0; i < m_OldPath.length; i++) {
+	  if (m_OldPathIsRegExp) {
+	    if (newStr.matches(m_OldPath[i].getValue()))
+	      newStr = newStr.replaceFirst(m_OldPath[i].getValue(), m_NewPath[i].getValue());
+	    else
+	      newStr = newStr.replaceFirst(m_OldPathLinux[i].getValue(), m_NewPath[i].getValue());
+	  }
+	  else {
+	    if (newStr.startsWith(m_OldPath[i].getValue()))
+	      newStr = newStr.replace(m_OldPath[i].getValue(), m_NewPath[i].getValue());
+	    else
+	      newStr = newStr.replace(m_OldPathLinux[i].getValue(), m_NewPath[i].getValue());
+	  }
 	}
-	else {
-	  if (str.startsWith(m_OldPath))
-	    newStr = str.replace(m_OldPath, m_NewPath);
-	  else
-	    newStr = str.replace(m_OldPathLinux, m_NewPath);
-	}
+
 	try {
 	  Constructor constr = cls.getConstructor(new Class[]{String.class});
 	  result = constr.newInstance(new Object[]{newStr});
