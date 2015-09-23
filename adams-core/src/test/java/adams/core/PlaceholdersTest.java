@@ -80,6 +80,17 @@ public class PlaceholdersTest
   }
 
   /**
+   * Tests whether partial collapse is avoided (only linux/mac).
+   */
+  public void testPartialCollapseLinux() {
+    if (!(OS.isLinux() || OS.isMac()))
+      return;
+    Placeholders.getSingleton().set("BLAH", "/some/where");
+    String path = "/some/where.else/completely";
+    assertEquals("shouldn't do a partial collapse", path, Placeholders.getSingleton().collapse(path));
+  }
+
+  /**
    * Returns a test suite.
    *
    * @return		the test suite
