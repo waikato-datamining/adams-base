@@ -183,7 +183,7 @@ public class ChangePath
    * 			displaying in the gui
    */
   public String useLowerCaseTipText() {
-    return "If enabled, the paths are converted to lowercase before attempting the matching.";
+    return "If enabled, the paths are converted to lowercase before attempting the matching/replacing.";
   }
 
   /**
@@ -243,6 +243,8 @@ public class ChangePath
 	Object result = null;
 	Class cls = obj.getClass();
 	String str = ((File) obj).toString();
+	if (m_UseLowerCase)
+	  str = str.toLowerCase();
 	String newStr = null;
 	if (m_OldPathIsRegExp) {
 	  if (str.matches(m_OldPath))
