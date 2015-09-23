@@ -15,13 +15,9 @@
 
 /**
  * ChangePath.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.io.File;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 
 import adams.core.ClassLocator;
 import adams.core.option.AbstractArgumentOption;
@@ -31,6 +27,10 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActor;
+
+import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 
 /**
  * Processor that updates paths of classes that are derived from {@link File}.
@@ -52,7 +52,10 @@ public class ChangePath
   
   /** whether the old path is a regular expression. */
   protected boolean m_OldPathIsRegExp;
-  
+
+  /** whether to use lowercase for matching. */
+  protected boolean m_UseLowerCase;
+
   /** the new path. */
   protected String m_NewPath;
 
@@ -85,6 +88,10 @@ public class ChangePath
 
     m_OptionManager.add(
 	    "old-path-is-regexp", "oldPathIsRegExp",
+	    false);
+
+    m_OptionManager.add(
+	    "use-lower-case", "useLowerCase",
 	    false);
 
     m_OptionManager.add(
@@ -151,6 +158,35 @@ public class ChangePath
   }
 
   /**
+   * Sets whether to lowercase the paths before matching.
+   *
+   * @param value	true if to lowercase paths
+   */
+  public void setUseLowerCase(boolean value) {
+    m_UseLowerCase = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to lowercase the paths before matching.
+   *
+   * @return		true if to lowercase paths
+   */
+  public boolean getUseLowerCase() {
+    return m_UseLowerCase;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String useLowerCaseTipText() {
+    return "If enabled, the paths are converted to lowercase before attempting the matching.";
+  }
+
+  /**
    * Sets the new Path to replace with.
    *
    * @param value	the new Path
@@ -196,6 +232,8 @@ public class ChangePath
     
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected boolean isMatch(String path) {
+	if (m_UseLowerCase)
+	  path = path.toLowerCase();
 	if (m_OldPathIsRegExp)
 	  return path.matches(m_OldPath) || path.matches(m_OldPathLinux);
 	else
