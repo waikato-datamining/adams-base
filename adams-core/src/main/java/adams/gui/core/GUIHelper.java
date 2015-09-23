@@ -1555,6 +1555,25 @@ public class GUIHelper {
    * @see		ApprovalDialog#CANCEL_OPTION
    */
   public static int showConfirmMessage(Component parent, String header, String msg, String title) {
+    return showConfirmMessage(parent, header, msg, title, null, null, null);
+  }
+
+  /**
+   * Displays a confirmation dialog (yes/no/cancel).
+   *
+   * @param parent	the parent, to make the dialog modal; can be null
+   * @param header	the text explaining the message, null to ignore
+   * @param msg		the error message to display
+   * @param title	the title of the error message
+   * @param labelYes	the label for the "Yes" button, null to use default
+   * @param labelNo	the label for the "No" button, null to use default
+   * @param labelCancel	the label for the "Cancel" button, null to use default
+   * @return		the selected option
+   * @see		ApprovalDialog#APPROVE_OPTION
+   * @see		ApprovalDialog#DISCARD_OPTION
+   * @see		ApprovalDialog#CANCEL_OPTION
+   */
+  public static int showConfirmMessage(Component parent, String header, String msg, String title, String labelYes, String labelNo, String labelCancel) {
     final ApprovalDialog	dlg;
     String[]			lines;
     int				height;
@@ -1573,6 +1592,12 @@ public class GUIHelper {
     dlg.setTitle(title);
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dlg.setIconImage(GUIHelper.getIcon("question.png").getImage());
+    if (labelYes != null)
+      dlg.setApproveCaption(labelYes);
+    if (labelNo != null)
+      dlg.setDiscardCaption(labelNo);
+    if (labelCancel != null)
+      dlg.setCancelCaption(labelCancel);
     editor = new TextPanel();
     editor.setTitle(title);
     editor.setEditable(false);
