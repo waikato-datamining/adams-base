@@ -133,6 +133,7 @@ public class SystemInfoPanel
     // table
     m_TableModel = new HashtableTableModel(m_SystemInfo.getInfo());
     m_Table      = new SortableAndSearchableTable(m_TableModel);
+    m_Table.setShowSimpleCellPopupMenu(true);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     m_Table.setOptimalColumnWidth();
