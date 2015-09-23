@@ -77,6 +77,7 @@ public class RegExpTest
     final JTextField		fieldInput;
     final RegExpTextField	fieldFind;
     final JTextField		fieldReplace;
+    final JCheckBox 		checkboxLowerCase;
     final JCheckBox 		checkboxAll;
     final JTextField		fieldOutput;
     JButton			buttonTest;
@@ -91,6 +92,8 @@ public class RegExpTest
     panelParams.addParameter("Find", fieldFind);
     fieldReplace = new JTextField();
     panelParams.addParameter("Replace", fieldReplace);
+    checkboxLowerCase = new JCheckBox();
+    panelParams.addParameter("Use lower case", checkboxLowerCase);
     checkboxAll = new JCheckBox();
     checkboxAll.setSelected(true);
     panelParams.addParameter("Replace all", checkboxAll);
@@ -105,6 +108,8 @@ public class RegExpTest
       @Override
       public void actionPerformed(ActionEvent e) {
 	String input = fieldInput.getText();
+        if (checkboxLowerCase.isSelected())
+          input = input.toLowerCase();
 	BaseRegExp regexp = fieldFind.getRegExp();
 	String replace = fieldReplace.getText();
 	String output = null;
