@@ -263,6 +263,7 @@ public class Placeholders {
     String		bestKey;
     int			bestLeft;
     int			currLeft;
+    boolean		valid;
 
     if (s == null)
       return s;
@@ -276,10 +277,17 @@ public class Placeholders {
 	key   = pholders.nextElement();
 	value = get(key);
 	if ((value != null) && (result.indexOf(value) == 0)) {
-	  currLeft = result.replace(value, "").length();
-	  if (currLeft < bestLeft) {
-	    bestKey  = key;
-	    bestLeft = currLeft;
+	  valid = false;
+          if (result.length() == value.length())
+	    valid = true;
+	  if ((result.length() > value.length()) && ((result.charAt(value.length()) == '/') || (result.charAt(value.length()) == '\\')))
+	    valid = true;
+	  if (valid) {
+	    currLeft = result.replace(value, "").length();
+	    if (currLeft < bestLeft) {
+	      bestKey = key;
+	      bestLeft = currLeft;
+	    }
 	  }
 	}
       }
