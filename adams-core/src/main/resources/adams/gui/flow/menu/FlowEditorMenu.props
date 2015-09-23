@@ -82,7 +82,7 @@ adams.gui.flow.menu.EditIgnoreNameChanges-Mnemonic=N
 adams.gui.flow.menu.EditIgnoreNameChanges-Shortcut=
 adams.gui.flow.menu.EditProcessActors-Icon=
 adams.gui.flow.menu.EditProcessActors-Mnemonic=P
-adams.gui.flow.menu.EditProcessActors-Shortcut=
+adams.gui.flow.menu.EditProcessActors-Shortcut=control shift P
 
 # Run
 adams.gui.flow.menu.RunValidateSetup-Icon=validate.png
