@@ -236,6 +236,11 @@ adams.core.base.JsonPathExpression=true
 adams.core.base.JsonPathExpression#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.JsonPathExpression#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# BaseShortcut objects
+adams.gui.core.BaseShortcut=true
+adams.gui.core.BaseShortcut#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.gui.core.BaseShortcut#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # Index objects
 adams.core.Index=true
 adams.core.Index#toString=adams.gui.goe.IndexEditor#toString
