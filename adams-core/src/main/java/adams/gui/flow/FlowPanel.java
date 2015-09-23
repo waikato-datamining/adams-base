@@ -1377,9 +1377,11 @@ public class FlowPanel
 
     if ((getTree().getSelectionCount() == 1) && !getTree().isRootSelected()) {
       retVal = GUIHelper.showConfirmMessage(
-	  this,
-	  "Process only below selected actor instead of complete flow?\n"
-	      + getTree().getSelectedFullName());
+        this,
+        "<html>Process only below selected actor or process complete flow?<br><br>Currently selected actor:</html>",
+	getTree().getSelectedFullName(),
+        "Confirm",
+        "Below selected actor", "Complete flow", "Cancel");
       if (retVal == GUIHelper.CANCEL_OPTION)
 	return;
       selected = (retVal == GUIHelper.APPROVE_OPTION);
