@@ -213,6 +213,7 @@ public abstract class AbstractListingProcessor
     result = new TextPanel();
     result.setPreferredSize(getDefaultSize());
     result.setEditable(false);
+    result.setUpdateParentTitle(false);
     result.setContent(Utils.flatten(m_List, "\n"));
     result.setInfoText(getHeader());
     
