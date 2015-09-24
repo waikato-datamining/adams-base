@@ -113,7 +113,7 @@ public class ImageInfoTest
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[0] = tmp2;
-      adams.flow.transformer.ImageJReader tmp4 = new adams.flow.transformer.ImageJReader();
+      adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
       tmp1[1] = tmp4;
       adams.flow.transformer.ImageInfo tmp5 = new adams.flow.transformer.ImageInfo();
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("type");

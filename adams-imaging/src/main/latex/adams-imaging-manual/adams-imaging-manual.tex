@@ -130,91 +130,6 @@ Since the JAI actors, readers and writers use \texttt{BufferedImageContainer}, t
 \texttt{BufferedImageTransformer} and \texttt{BufferedImageFeatureGenerator}
 transformers can be used.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter[ImageJ]{\parbox[b]{1.2cm}{\includegraphics[width=1cm]{images/imagej.png}}\parbox[c]{14cm}{ImageJ}}
-ImageJ is a public domain software suite written in Java (using AWT, opposed to
-Swing which ADAMS uses) for image processing, developed at National Institutes 
-of Health (\cite{imagej}).
-
-\section{Flow}
-There are four ImageJ actors available:
-\begin{tight_itemize}
-	\item \texttt{transformer.ImageJReader} -- for reading any image file that
-	JAI supports\footnote{\url{http://imagejdocu.tudor.lu/doku.php?id=faq:general:which_file_formats_are_supported_by_imagej}{}}
-	and forwarding an \texttt{ImagePlusContainer} object.
-	\item \texttt{transformer.ImageJTransformer} -- performs a transformation
-	using an existing ImageJ transformer class on the incoming image and
-	outputs another image again. ImageJ plugin filters, commands and pre-recorded
-	macros can be used to perform transformations.
-	\item \texttt{transformer.ImageJFeatureGenerator} -- turns an
-	\texttt{ImagePlusContainer} into an \texttt{weka.core.Instance} object to
-	be used in WEKA. The attaced meta-data in form of a report can be added to the
-	output object as well.
-	\item \texttt{transformer.ImageJReleaseAllImages} -- removes all images
-	currently listed in ImageJ's batch mode list, freeing up memory.
-	\item \texttt{sink.ImageJReleaseImage} -- removes the incoming image from
-	ImageJ's batch mode list of images, freeing up memory.
-	\item \texttt{sink.ImageJWriter} -- for writing an \texttt{ImagePlusContainer}
-	to a file format that ImageJ supports. If the image type cannot be
-	determined based on the extension, you can also specify which type to generate.
-\end{tight_itemize}
-
-Figure \ref{imagej-greyscale-flow} shows a
-flow\footnote{adams-imaging-transform\_to\_greyscale.flow} for reading images,
-turning them into greyscale using a  transformer and displaying them
-side-by-side.
-Figures \ref{imagej-greyscale-output-original} and
-\ref{imagej-greyscale-output-grey} show original and greyscale image.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/imagej-greyscale-flow.png}
-  \caption{ImageJ flow for turning images stored in a directory into greyscale
-  ones.}
-  \label{imagej-greyscale-flow}
-\end{figure}
-
-\begin{figure}[htb]
-  \begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \includegraphics[height=3.7cm]{images/imagej-greyscale-output-original.png}
-  \caption{The original image.}
-  \label{imagej-greyscale-output-original}
-  \end{minipage}%
-  \begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \includegraphics[height=3.7cm]{images/imagej-greyscale-output-grey.png}
-  \caption{The greyscale image.}
-  \label{imagej-greyscale-output-grey}
-  \end{minipage}
-\end{figure}
-
-\clearpage
-\section{Plugins}
-By default, ADAMS includes plugins located in the following 
-directory on Linux/Unix/Mac:
-\begin{verbatim}
-  $HOME/.adams/imagej/plugins
-\end{verbatim}
-and on Windows here:
-\begin{verbatim}
-  %USERPROFILE%/_adams/imagej/plugins
-\end{verbatim}
-You can override this directory by using the \texttt{ADAMS\_IMAGEJ\_DIR}
-environment variable, which defines the directory one level above the 
-\textit{plugins} directory. For instance, if your plugins directory is located
-at:
-\begin{verbatim}
-  /home/user/imagej/plugins
-\end{verbatim}
-You have to define the \texttt{ADAMS\_IMAGEJ\_DIR} environment variable as 
-follows:
-\begin{verbatim}
-  ADAMS_IMAGEJ_DIR=/home/user/imagej
-\end{verbatim}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter[ImageMagick]{\parbox[b]{1.2cm}{\includegraphics[width=1cm]{images/imagemagick.png}}\parbox[c]{14cm}{ImageMagick}}
 ImageMagick$\textsuperscript{\textregistered}$ is a software suite to create,
@@ -428,30 +343,7 @@ Of course, the data can be turned into a format that is suitable for machine
 learning applications like WEKA (\cite{weka}). For JAI and ImageMagick 
 transformers, both generating \textit{BufferedImageContainer} tokens, the 
 \textit{BufferedImageFeatureGenerator} can be used to
-generate such output. For ImageJ generated tokens, outputting 
-\textit{ImagePlusContainer} tokens, you have to use the 
-\textit{ImageJFeatureGenerator} instead. What kind of output is generated,
-depends on the \textit{feature converter} defined in those feature generator
-transformers. By default, spreadsheet data is generated, which can be stored
-in CSV files. Figure \ref{imagej-csv-generation-flow} shows a
-flow\footnote{adams-imaging-csv\_generation.flow} that generates a CSV file
-from images using ImageJ. The resulting dataset, as displayed in the spreadsheet
-viewer, is shown in Figure \ref{imagej-csv-generation-dataset}.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/imagej-csv-generation-flow.png}
-  \caption{Generating a CSV file using ImageJ.}
-  \label{imagej-csv-generation-flow}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/imagej-csv-generation-dataset.png}
-  \caption{The ImageJ generated CSV file.}
-  \label{imagej-csv-generation-dataset}
-\end{figure}
-
+generate such output.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Miscellaneous actors}

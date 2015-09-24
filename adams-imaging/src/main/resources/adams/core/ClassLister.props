@@ -21,18 +21,6 @@ adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
   adams.data.jai.features,\
   adams.data.lire.features
 
-# the ImageJ feature generators
-adams.data.imagej.features.AbstractImageJFeatureGenerator=\
-  adams.data.imagej.features
-
-# the ImageJ transformers
-adams.data.imagej.transformer.AbstractImageJTransformer=\
-  adams.data.imagej.transformer
-
-# the ImageJ crop algorithms
-adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
-  adams.data.imagej.transformer.crop
-
 # the buffered image transformers
 adams.data.image.transformer.AbstractBufferedImageTransformer=\
   adams.data.image.transformer,\

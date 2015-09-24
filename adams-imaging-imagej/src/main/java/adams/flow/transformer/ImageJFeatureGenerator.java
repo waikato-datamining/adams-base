@@ -20,10 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.imagej.ImageJHelper;
@@ -36,6 +32,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->

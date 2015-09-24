@@ -1,0 +1,20 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the ImageJ feature generators
+adams.data.imagej.features.AbstractImageJFeatureGenerator=\
+  adams.data.imagej.features
+
+# the ImageJ transformers
+adams.data.imagej.transformer.AbstractImageJTransformer=\
+  adams.data.imagej.transformer
+
+# the ImageJ crop algorithms
+adams.data.imagej.transformer.crop.AbstractCropAlgorithm=\
+  adams.data.imagej.transformer.crop

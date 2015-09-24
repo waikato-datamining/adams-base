@@ -99,13 +99,6 @@
     </dependency>
 
     <dependency>
-      <groupId>gov.nih.imagej</groupId>
-      <artifactId>imagej</artifactId>
-      <version>1.47</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.im4java</groupId>
       <artifactId>im4java</artifactId>
       <version>1.4.0</version>

@@ -24,18 +24,6 @@ adams-imaging.ImageReader3=\
 adams-imaging.ImageReader4=\
   IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageReader
 
-adams-imaging.ImageJReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
-
-adams-imaging.ImageJReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
-
-adams-imaging.ImageJReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
-
-adams-imaging.ImageJReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
-
 adams-imaging.ImageMagickOperation1=\
   IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickOperation
 
@@ -61,12 +49,6 @@ adams-imaging.ImageMagickTransformer1=\
 adams-imaging.ImageMagickTransformer2=\
   IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.transformer.ImageMagickTransformer
 
-adams-imaging.ImageJTransformer1=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
-
-adams-imaging.ImageJTransformer2=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJTransformer
-
 # features
 adams-imaging.BufferedImageFeatureGenerator1=\
   IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
@@ -74,25 +56,10 @@ adams-imaging.BufferedImageFeatureGenerator1=\
 adams-imaging.BufferedImageFeatureGenerator2=\
   IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageFeatureGenerator
 
-adams-imaging.ImageJFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
-  
-adams-imaging.ImageJFeatureGenerator2=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJFeatureGenerator
-
-adams-imaging.Convert=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
-
 # viewer
 adams-imaging.ImageViewer1=\
   IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.sink.ImageViewer
 
-adams-imaging.ImageViewer3=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.sink.ImageViewer
-  
-adams-imaging.ImageViewer4=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.sink.ImageViewer
-  
 adams-imaging.ImageViewer5=\
   IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.sink.ImageViewer
   

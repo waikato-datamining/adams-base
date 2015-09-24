@@ -85,6 +85,14 @@
     </dependency>
 
     <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
       <groupId>gov.nih.imagej</groupId>
       <artifactId>imagej</artifactId>
       <version>1.47</version>

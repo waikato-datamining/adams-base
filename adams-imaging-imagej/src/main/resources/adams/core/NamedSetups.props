@@ -12,5 +12,5 @@
 # Version: $Revision$
 
 # data
-adams_features_pixels=adams.data.image.features.Pixels
-adams_transformer_passthrough=adams.data.image.transformer.PassThrough
+imagej_features_pixels=adams.data.imagej.features.Pixels
+imagej_transformer_passthrough=adams.data.imagej.transformer.PassThrough

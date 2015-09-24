@@ -146,6 +146,36 @@ follows:
 \end{verbatim}
 
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Feature output}
+Of course, the data can be turned into a format that is suitable for machine
+learning applications like WEKA (\cite{weka}). For JAI and ImageMagick
+transformers, both generating \textit{BufferedImageContainer} tokens, the
+\textit{BufferedImageFeatureGenerator} can be used to
+generate such output. For ImageJ generated tokens, outputting
+\textit{ImagePlusContainer} tokens, you have to use the
+\textit{ImageJFeatureGenerator} instead. What kind of output is generated,
+depends on the \textit{feature converter} defined in those feature generator
+transformers. By default, spreadsheet data is generated, which can be stored
+in CSV files. Figure \ref{imagej-csv-generation-flow} shows a
+flow\footnote{adams-imaging-csv\_generation.flow} that generates a CSV file
+from images using ImageJ. The resulting dataset, as displayed in the spreadsheet
+viewer, is shown in Figure \ref{imagej-csv-generation-dataset}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/imagej-csv-generation-flow.png}
+  \caption{Generating a CSV file using ImageJ.}
+  \label{imagej-csv-generation-flow}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/imagej-csv-generation-dataset.png}
+  \caption{The ImageJ generated CSV file.}
+  \label{imagej-csv-generation-dataset}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Object conversion}
 The following conversions are available to convert from one

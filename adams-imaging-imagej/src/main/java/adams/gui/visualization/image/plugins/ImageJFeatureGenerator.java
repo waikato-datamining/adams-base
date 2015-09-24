@@ -25,7 +25,6 @@ import adams.data.featureconverter.SpreadSheet;
 import adams.data.image.BufferedImageContainer;
 import adams.data.imagej.ImagePlusContainer;
 import adams.data.imagej.features.AbstractImageJFeatureGenerator;
-import adams.data.imagej.features.Histogram;
 import adams.data.spreadsheet.Row;
 
 import java.awt.image.BufferedImage;
@@ -90,7 +89,7 @@ public class ImageJFeatureGenerator
    */
   @Override
   protected Object getDefaultValue() {
-    return new Histogram();
+    return new adams.gui.visualization.image.plugins.Histogram();
   }
 
   /**
