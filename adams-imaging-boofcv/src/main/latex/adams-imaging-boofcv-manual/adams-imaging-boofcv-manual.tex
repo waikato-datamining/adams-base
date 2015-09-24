@@ -1,0 +1,103 @@
+% Copyright (c) 2009-2015 by the University of Waikato, Hamilton, NZ.
+% This work is made available under the terms of the 
+% Creative Commons Attribution-ShareAlike 3.0 license, 
+% http://creativecommons.org/licenses/by-sa/3.0/. 
+%
+% Version: $Revision: 3363 $
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+\usepackage{varwidth}
+
+% watermark -- for draft stage
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.9}
+\SetWatermarkScale{5}
+
+\hyphenation{ImageMagick}
+\hyphenation{ImageJ}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-imaging-boofcv} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/imaging-boofcv-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2009-2015} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{BoofCV}
+BoofCV is an API for real-time computer vision and robotics applications\cite{boofcv}.
+
+The following actors are available:
+\begin{tight_itemize}
+	\item \texttt{source.WebcamImage} -- obtains frames from the default webcam.
+	\item \texttt{transformer.BoofCVTransformer} -- performs a transformation
+	using an existing BoofCV transformer class on the incoming image and
+	outputs another image again.
+	\item \texttt{transformer.BoofCVDetectLines} -- detects lines in images
+	using a Hough line detector based on polar parametrization.
+	\item \texttt{transformer.BoofCVFeatureGenerator} -- turns a
+	\texttt{BoofCVImageContainer} into an \texttt{weka.core.Instance} object to
+	be used in WEKA. The attaced meta-data in form of a report can be added to the
+	output object as well.
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Object tracking}
+TODO
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Object conversion}
+The following conversions are available to convert from one
+format into another:
+\begin{tight_itemize}
+	\item \textit{BoofCVImageToBufferedImage} -- for BoofCV to JAI/ImageMagick
+	conversion.
+	\item \textit{BufferedImageToBoofCV} -- for JAI/ImageMagick to BoofCV
+	conversion.
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

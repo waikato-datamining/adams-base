@@ -43,7 +43,6 @@
     <module>adams-imaging-boofcv</module>
     <module>adams-imaging-imagej</module>
     <module>adams-imaging-imagemagick</module>
-    <module>adams-imaging-lire</module>
     <module>adams-imaging-openimaj</module>
     <module>adams-jython</module>
     <module>adams-latex</module>

@@ -95,7 +95,7 @@
           <descriptors>
             <descriptor>src/main/assembly/sources.xml</descriptor>
             <!--descriptor>src/main/assembly/test-sources.xml</descriptor-->
-            <!--descriptor>src/main/assembly/doc.xml</descriptor-->
+            <descriptor>src/main/assembly/doc.xml</descriptor>
             <!--descriptor>src/main/assembly/flows.xml</descriptor-->
           </descriptors>
         </configuration>
