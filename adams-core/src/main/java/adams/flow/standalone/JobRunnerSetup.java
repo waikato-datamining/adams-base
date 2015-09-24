@@ -147,12 +147,12 @@ public class JobRunnerSetup
   }
 
   /**
-   * Returns a new instance of the job runner.
+   * Returns a new instance of the job runner (expands any variables).
    *
    * @return		the new instance
    */
   public JobRunner newInstance() {
-    return (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+    return (JobRunner) OptionUtils.shallowCopy(m_JobRunner, true);
   }
 
   /**
