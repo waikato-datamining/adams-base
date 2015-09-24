@@ -911,7 +911,7 @@ public class SSHConnection
       result.connect();
     }
     catch (Exception e) {
-      handleException("Failed to connect to '" + host + "' as user '" + m_User + "': ", e);
+      handleException("Failed to establish connection to '" + host + "' (using " + m_AuthenticationType + "): ", e);
       result = null;
     }
 
