@@ -22,6 +22,11 @@ adams.core.base.HtmlCode=true
 adams.core.base.HtmlCode#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.HtmlCode#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# BaseHostname objects
+adams.core.base.BaseHostname=true
+adams.core.base.BaseHostname#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseHostname#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # EmailAddress objects
 adams.core.net.EmailAddress=true
 adams.core.net.EmailAddress#toString=adams.gui.goe.EmailAddressEditor#toString
