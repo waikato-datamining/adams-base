@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-07-31 12:21:22
+# Date: 2015-09-25 09:51:32
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -10,25 +10,33 @@ adams.flow.control.Flow
 			-file
 			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
 	-actor
-		adams.flow.transformer.ImageJReader
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.JAIImageReader
 	-actor
-		adams.flow.transformer.ImageJTransformer
+		adams.flow.transformer.BufferedImageTransformer
 			-transformer
-				adams.data.imagej.transformer.Gray8
+				adams.data.jai.transformer.Gray8
 	-actor
-		adams.flow.transformer.ImageJTransformer
+		adams.flow.transformer.BufferedImageTransformer
 			-name
-			ImageJTransformer-1
+			BufferedImageTransformer-1
 			-transformer
-				adams.data.imagej.transformer.Resize
+				adams.data.jai.transformer.Resize
 					-width
-					50
+					0.5
 					-height
-					50
+					0.5
 	-actor
-		adams.flow.transformer.ImageJFeatureGenerator
+		adams.flow.transformer.BufferedImageFeatureGenerator
 			-algorithm
-				adams.data.imagej.features.Pixels
+				adams.data.image.features.Pixels
+					-converter
+						adams.data.featureconverter.SpreadSheet
+							-data-row-type
+								adams.data.spreadsheet.DenseDataRow
+							-spreadsheet-type
+								adams.data.spreadsheet.SpreadSheet
 	-actor
 		adams.flow.sink.ProvenanceDisplay
 			-writer

@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-06-22 13:07:51
+# Date: 2015-09-25 09:40:27
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -18,11 +18,15 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.ImageReader
 			-reader
-				adams.data.io.input.ImageMagickImageReader
+				adams.data.io.input.JAIImageReader
 	-actor
-		adams.flow.transformer.ImageMagickTransformer
-			-commands
-			-scale 75%
+		adams.flow.transformer.BufferedImageTransformer
+			-transformer
+				adams.data.jai.transformer.Resize
+					-width
+					0.75
+					-height
+					0.75
 	-actor
 		adams.flow.transformer.PixelSelector
 			-action
