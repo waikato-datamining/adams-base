@@ -1,0 +1,27 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+adams-imaging-boofcv.BoofCVTransformer1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging-boofcv.BoofCVTransformer2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVTransformer
+
+adams-imaging-boofcv.BoofCVFeatureGenerator1=\
+  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVFeatureGenerator
+
+adams-imaging.BoofCVFeatureGenerator2=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVFeatureGenerator
+
+adams-imaging-boofcv.ImageViewer=\
+  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.sink.ImageViewer

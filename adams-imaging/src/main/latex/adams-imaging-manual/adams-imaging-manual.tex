@@ -49,7 +49,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2014} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2015} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -288,25 +288,6 @@ the image viewer.
   \label{imagemagick-resize-output}
   \end{minipage}
 \end{figure}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter[BoofCV]{\parbox[b]{1.2cm}{\includegraphics[width=1cm]{images/boofcv.png}}\parbox[c]{14cm}{BoofCV}}
-BoofCV is an API for real-time computer vision and robotics applications\footnote{\url{http://boofcv.org/}{}}.
-
-There are two BoofCV actors available:
-\begin{tight_itemize}
-	\item \texttt{source.WebcamImage} -- obtains frames from the default webcam.
-	\item \texttt{transformer.BoofCVTransformer} -- performs a transformation
-	using an existing BoofCV transformer class on the incoming image and
-	outputs another image again.
-	\item \texttt{transformer.BoofCVDetectLines} -- detects lines in images
-	using a Hough line detector based on polar parametrization.
-	\item \texttt{transformer.BoofCVFeatureGenerator} -- turns a
-	\texttt{BoofCVImageContainer} into an \texttt{weka.core.Instance} object to
-	be used in WEKA. The attaced meta-data in form of a report can be added to the
-	output object as well.
-\end{tight_itemize}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{LIRE}

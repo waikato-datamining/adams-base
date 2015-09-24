@@ -73,6 +73,14 @@
     </dependency>
 
     <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
       <groupId>org.boofcv</groupId>
       <artifactId>feature</artifactId>
       <version>${boofcv.version}</version>

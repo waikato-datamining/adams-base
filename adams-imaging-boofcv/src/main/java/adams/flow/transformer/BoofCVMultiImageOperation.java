@@ -14,17 +14,17 @@
  */
 
 /*
- * BufferedImageMultiImageOperation.java
+ * BoofCVMultiImageOperation.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.boofcv.BoofCVHelper;
+import adams.data.boofcv.BoofCVImageContainer;
+import adams.data.boofcv.multiimageoperation.AbstractBoofCVMultiImageOperation;
 import adams.data.image.AbstractImageContainer;
-import adams.data.image.BufferedImageContainer;
-import adams.data.image.BufferedImageHelper;
-import adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation;
 import adams.flow.core.Token;
 import adams.flow.provenance.*;
 
@@ -35,7 +35,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Applies a BufferedImage multi-image operation to the incoming image(s) and outputs the generated image(s).
+ * Applies a BoofCV multi-image operation to the incoming image(s) and outputs the generated image(s).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -44,7 +44,7 @@ import java.util.List;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer[]<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.boofcv.BufferedImageImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;BoofCVImageContainer<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -56,7 +56,7 @@ import java.util.List;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: BufferedImageMultiImageOperation
+ * &nbsp;&nbsp;&nbsp;default: BoofCVMultiImageOperation
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -86,7 +86,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-operation &lt;adams.data.boofcv.multiimageoperation.AbstractBufferedImageMultiImageOperation&gt; (property: operation)
+ * <pre>-operation &lt;AbstractBoofCVMultiImageOperation&gt; (property: operation)
  * &nbsp;&nbsp;&nbsp;The operation to apply to the images.
  * &nbsp;&nbsp;&nbsp;default: PassThrough
  * </pre>
@@ -96,7 +96,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class BufferedImageMultiImageOperation
+public class BoofCVMultiImageOperation
   extends AbstractArrayProvider
   implements ProvenanceSupporter {
 
@@ -107,10 +107,10 @@ public class BufferedImageMultiImageOperation
   public final static String BACKUP_CURRENTIMAGES = "current images";
 
   /** the transformer to apply to the image. */
-  protected AbstractBufferedImageMultiImageOperation m_Operation;
+  protected AbstractBoofCVMultiImageOperation m_Operation;
 
   /** the generated images. */
-  protected List<BufferedImageContainer> m_CurrentImages;
+  protected List<BoofCVImageContainer> m_CurrentImages;
 
   /**
    * Returns a string describing the object.
@@ -120,7 +120,7 @@ public class BufferedImageMultiImageOperation
   @Override
   public String globalInfo() {
     return
-        "Applies a BufferedImage multi-image operation to the incoming image(s) and outputs "
+        "Applies a BoofCV multi-image operation to the incoming image(s) and outputs "
       + "the generated image(s).";
   }
 
@@ -133,7 +133,7 @@ public class BufferedImageMultiImageOperation
 
     m_OptionManager.add(
 	    "operation", "operation",
-	    new adams.data.image.multiimageoperation.PassThrough());
+	    new adams.data.boofcv.multiimageoperation.PassThrough());
   }
 
   /**
@@ -162,7 +162,7 @@ public class BufferedImageMultiImageOperation
    *
    * @param value	the operation
    */
-  public void setOperation(AbstractBufferedImageMultiImageOperation value) {
+  public void setOperation(AbstractBoofCVMultiImageOperation value) {
     m_Operation = value;
     reset();
   }
@@ -172,7 +172,7 @@ public class BufferedImageMultiImageOperation
    *
    * @return		the operation
    */
-  public AbstractBufferedImageMultiImageOperation getOperation() {
+  public AbstractBoofCVMultiImageOperation getOperation() {
     return m_Operation;
   }
 
@@ -212,7 +212,7 @@ public class BufferedImageMultiImageOperation
    */
   @Override
   protected Class getItemClass() {
-    return BufferedImageContainer.class;
+    return BoofCVImageContainer.class;
   }
 
   /**
@@ -249,7 +249,7 @@ public class BufferedImageMultiImageOperation
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_CURRENTIMAGES)) {
-      m_CurrentImages = (List<BufferedImageContainer>) state.get(BACKUP_CURRENTIMAGES);
+      m_CurrentImages = (List<BoofCVImageContainer>) state.get(BACKUP_CURRENTIMAGES);
       state.remove(BACKUP_CURRENTIMAGES);
     }
 
@@ -265,16 +265,16 @@ public class BufferedImageMultiImageOperation
   protected String doExecute() {
     String			result;
     AbstractImageContainer[]	input;
-    BufferedImageContainer[]	img;
+    BoofCVImageContainer[]	img;
     int				i;
 
     result = null;
 
     try {
       input = (AbstractImageContainer[]) m_InputToken.getPayload();
-      img   = new BufferedImageContainer[input.length];
+      img   = new BoofCVImageContainer[input.length];
       for (i = 0; i < input.length; i++)
-	img[i] = BufferedImageHelper.toBufferedImageContainer(input[i]);
+	img[i] = BoofCVHelper.toBoofCVImageContainer(input[i]);
 
       m_CurrentImages = new ArrayList<>(
 	  Arrays.asList(

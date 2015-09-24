@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-18 14:30:27
+# Date: 2015-09-24 17:00:04
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -21,12 +21,32 @@ adams.flow.control.Flow
 								weka.core.converters.ArffLoader
 					-actor
 						adams.flow.transformer.WekaClassSelector
+			-actor
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
 	-actor
 		adams.flow.standalone.SSHConnection
 			-host
-			somehost
+			storm.cms.waikato.ac.nz
 			-authentication-type
 			PUBLIC_KEY
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			remote file
+			-var-name
+			remotefile
+			-var-value
+			${TMP}/to_rank.ser
+	-actor
+		adams.flow.standalone.SetVariable
+			-name
+			local file
+			-var-name
+			localfile
+			-var-value
+			${TMP}/ranked.ser
 	-actor
 		adams.flow.standalone.JobRunnerSetup
 			-job-runner
@@ -36,72 +56,104 @@ adams.flow.control.Flow
 					-job-runner
 						adams.multiprocess.LocalJobRunner
 					-remote-file
-					${TMP}/to_rank.ser
+					@{remotefile}
+					-local-host
+					bluster.cms.waikato.ac.nz:22
 					-local-file
-					${TMP}/ranked.ser
+					@{localfile}
+					-allow-local-execution
+					true
 	-actor
-		adams.flow.source.WekaClassifierGenerator
-			-setup
-				weka.classifiers.meta.FilteredClassifier
-					-F
-					weka.filters.supervised.attribute.PLSFilter -C 20 -M -A PLS1 -P center
-					-W
-					weka.classifiers.functions.LinearRegression
-					--
-					-S
-					0
-					-R
-					1.0E-8
-			-parameter
-				weka.core.setupgenerator.MathParameter
-					-property
-					classifier.ridge
-					-min
-					-5.0
-					-max
-					3.0
-					-step
-					1.0
-					-base
-					10.0
-					-expression
-					pow(BASE,I)
-			-parameter
-				weka.core.setupgenerator.MathParameter
-					-property
-					filter.numComponents
-					-min
-					5.0
-					-max
-					8.0
-					-step
-					1.0
-					-base
-					10.0
-					-expression
-					I
-			-parameter
-				weka.core.setupgenerator.ListParameter
-					-property
-					filter.algorithm
-					-list
-					PLS1 SIMPLS
-			-array
-			true
+		adams.flow.source.Start
 	-actor
-		adams.flow.transformer.WekaClassifierRanker
-			-folds
-			2
+		adams.flow.control.Trigger
+			-name
+			clean up
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					localfile
+			-tee
+				adams.flow.transformer.DeleteFile
 	-actor
-		adams.flow.transformer.ArrayToSequence
+		adams.flow.control.Trigger
+			-name
+			run jobs
+			-tee
+				adams.flow.source.WekaClassifierGenerator
+					-setup
+						weka.classifiers.meta.FilteredClassifier
+							-F
+							weka.filters.supervised.attribute.PLSFilter -C 20 -M -A PLS1 -P center
+							-W
+							weka.classifiers.functions.LinearRegression
+							--
+							-S
+							0
+							-R
+							1.0E-8
+					-parameter
+						weka.core.setupgenerator.MathParameter
+							-property
+							classifier.ridge
+							-min
+							-5.0
+							-max
+							3.0
+							-step
+							1.0
+							-base
+							10.0
+							-expression
+							pow(BASE,I)
+					-parameter
+						weka.core.setupgenerator.MathParameter
+							-property
+							filter.numComponents
+							-min
+							5.0
+							-max
+							8.0
+							-step
+							1.0
+							-base
+							10.0
+							-expression
+							I
+					-parameter
+						weka.core.setupgenerator.ListParameter
+							-property
+							filter.algorithm
+							-list
+							PLS1 SIMPLS
+					-array
+					true
+			-tee
+				adams.flow.transformer.WekaClassifierRanker
+					-folds
+					2
+			-tee
+				adams.flow.transformer.ArrayToSequence
+			-tee
+				adams.flow.transformer.Convert
+					-conversion
+						adams.data.conversion.AnyToCommandline
+			-tee
+				adams.flow.sink.CallableSink
+					-callable
+					Display
 	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.AnyToCommandline
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
+		adams.flow.control.Trigger
+			-name
+			clean up again
+			-tee
+				adams.flow.source.Variable
+					-var-name
+					localfile
+			-tee
+				adams.flow.transformer.DeleteFile
+	-error-handling
+	ACTORS_DECIDE_TO_STOP_ON_ERROR
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
