@@ -40,7 +40,7 @@ public class BaseHostname
    * Initializes the string with localhost and no port.
    */
   public BaseHostname() {
-    super("localhost");
+    super("");
   }
 
   /**
@@ -65,30 +65,28 @@ public class BaseHostname
     String[]	parts;
     int		port;
 
+    result = true;
     value  = value.toLowerCase();
-    result = (value.length() > 0);
 
-    if (result) {
-      // only valid chars?
-      for (i = 0; i < value.length(); i++) {
-	if (VALID_CHARS.indexOf(value.charAt(i)) == -1) {
-	  result = false;
-	  break;
-	}
+    // only valid chars?
+    for (i = 0; i < value.length(); i++) {
+      if (VALID_CHARS.indexOf(value.charAt(i)) == -1) {
+	result = false;
+	break;
       }
-      // check optional port
-      if (result) {
-	if (value.indexOf(':') > -1) {
-	  parts  = value.split(":");
-	  result = (parts.length == 2);
-	  if (result) {
-	    try {
-	      port   = Integer.parseInt(parts[1]);
-	      result = (port >= 0) && (port <= 65535);
-	    }
-	    catch (Exception e) {
-	      result = false;
-	    }
+    }
+    // check optional port
+    if (result) {
+      if (value.indexOf(':') > -1) {
+	parts  = value.split(":");
+	result = (parts.length == 2);
+	if (result) {
+	  try {
+	    port   = Integer.parseInt(parts[1]);
+	    result = (port >= 0) && (port <= 65535);
+	  }
+	  catch (Exception e) {
+	    result = false;
 	  }
 	}
       }
