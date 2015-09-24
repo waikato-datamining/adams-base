@@ -1,0 +1,27 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# ImageMagick operations
+adams.data.imagemagick.AbstractImageOperation=\
+  adams.data.imagemagick,\
+  adams.data.imagemagick.dcraw,\
+  adams.data.imagemagick.im,\
+  adams.data.imagemagick.ufraw
+
+# ImageMagick (IM) operations
+adams.data.imagemagick.im.AbstractIMOperation=\
+  adams.data.imagemagick.im
+
+# Dcraw operations
+adams.data.imagemagick.dcraw.AbstractDcrawOperation=\
+  adams.data.imagemagick.dcraw
+
+# Ufraw operations
+adams.data.imagemagick.ufraw.AbstractUfrawOperation=\
+  adams.data.imagemagick.ufraw

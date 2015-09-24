@@ -20,15 +20,15 @@
 
 package adams.flow.transformer;
 
-import adams.data.io.input.ImageMagickImageReader;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.io.input.JAIImageReader;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for SetReportFromFile actor.
@@ -127,7 +127,7 @@ public class SetReportFromFileTest
 
       tmp1[0] = tmp2;
       adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
-      tmp4.setReader(new ImageMagickImageReader());
+      tmp4.setReader(new JAIImageReader());
       tmp1[1] = tmp4;
       adams.flow.transformer.SetReportFromFile tmp5 = new adams.flow.transformer.SetReportFromFile();
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("reportFile");

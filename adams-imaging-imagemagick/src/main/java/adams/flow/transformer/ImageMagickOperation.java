@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
@@ -33,6 +31,8 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->

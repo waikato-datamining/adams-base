@@ -20,14 +20,14 @@
 
 package adams.flow.transformer;
 
-import adams.data.io.input.ImageMagickImageReader;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.io.input.JAIImageReader;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for Draw actor.
@@ -118,7 +118,7 @@ public class DrawTest
 
       tmp1[1] = tmp9;
       adams.flow.transformer.ImageReader tmp11 = new adams.flow.transformer.ImageReader();
-      tmp11.setReader(new ImageMagickImageReader());
+      tmp11.setReader(new JAIImageReader());
       tmp1[2] = tmp11;
       adams.flow.control.Tee tmp12 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("name");

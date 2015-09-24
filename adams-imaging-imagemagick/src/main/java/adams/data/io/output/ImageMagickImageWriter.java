@@ -19,13 +19,6 @@
  */
 package adams.data.io.output;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IMOperation;
-
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
@@ -33,6 +26,12 @@ import adams.data.imagemagick.ImageMagickHelper;
 import adams.data.imagemagick.ImageType;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ImageMagickImageReader;
+import org.im4java.core.ConvertCmd;
+import org.im4java.core.IMOperation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->

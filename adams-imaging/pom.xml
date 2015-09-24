@@ -99,13 +99,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.im4java</groupId>
-      <artifactId>im4java</artifactId>
-      <version>1.4.0</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.sanselan</groupId>
       <artifactId>sanselan</artifactId>
       <version>0.97-incubator</version>
