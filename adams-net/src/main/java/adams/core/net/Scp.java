@@ -145,7 +145,7 @@ public class Scp {
       }
     }
 
-    if (closeSession) {
+    if (closeSession && (session != null)) {
       if (session.isConnected()) {
 	try {
 	  session.disconnect();
@@ -296,7 +296,7 @@ public class Scp {
       }
     }
 
-    if (closeSession) {
+    if (closeSession && (session != null)) {
       if (session.isConnected()) {
         try {
           session.disconnect();
