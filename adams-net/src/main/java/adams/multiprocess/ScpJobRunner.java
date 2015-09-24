@@ -49,48 +49,52 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-job-runner &lt;adams.multiprocess.JobRunner&gt; (property: jobRunner)
  * &nbsp;&nbsp;&nbsp;The base jobrunner to use.
  * &nbsp;&nbsp;&nbsp;default: adams.multiprocess.LocalJobRunner
  * </pre>
- *
+ * 
  * <pre>-remote-file &lt;adams.core.io.PlaceholderFile&gt; (property: remoteFile)
  * &nbsp;&nbsp;&nbsp;The remote file for the un-executed jobs.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
- * <pre>-local-host &lt;java.lang.String&gt; (property: localHost)
- * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) that the remote host will connect to when sending 
- * &nbsp;&nbsp;&nbsp;back the executed jobs; leave empty to use auto-detection.
- * &nbsp;&nbsp;&nbsp;default: 
+ * 
+ * <pre>-local-host &lt;adams.core.base.BaseHostname&gt; (property: localHost)
+ * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address:port) that the remote host will connect to when 
+ * &nbsp;&nbsp;&nbsp;sending back the executed jobs; leave empty to use auto-detection.
+ * &nbsp;&nbsp;&nbsp;default: :22
  * </pre>
- *
- * <pre>-local-port &lt;int&gt; (property: localPort)
- * &nbsp;&nbsp;&nbsp;The local port that the remote host will use for sending back the executed 
- * &nbsp;&nbsp;&nbsp;jobs.
- * &nbsp;&nbsp;&nbsp;default: 22
- * &nbsp;&nbsp;&nbsp;minimum: 1
- * &nbsp;&nbsp;&nbsp;maximum: 65535
- * </pre>
- *
+ * 
  * <pre>-local-file &lt;adams.core.io.PlaceholderFile&gt; (property: localFile)
  * &nbsp;&nbsp;&nbsp;The file to deserialize the executed jobs from.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
+ * <pre>-max-wait &lt;int&gt; (property: maxWait)
+ * &nbsp;&nbsp;&nbsp;The maximum time to wait in milli-seconds before giving up on remote jobs;
+ * &nbsp;&nbsp;&nbsp; -1 for indefinite.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
  * <pre>-max-attempts &lt;int&gt; (property: numAttempts)
  * &nbsp;&nbsp;&nbsp;The maximum number of intervals to wait.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
- * <pre>-attempt-nterval &lt;int&gt; (property: attemptInterval)
+ * 
+ * <pre>-attempt-interval &lt;int&gt; (property: attemptInterval)
  * &nbsp;&nbsp;&nbsp;The interval in milli-seconds to wait before continuing with the execution.
- * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;default: 1000
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
+ * 
+ * <pre>-allow-local-execution &lt;boolean&gt; (property: allowLocalExecution)
+ * &nbsp;&nbsp;&nbsp;If enabled, executes the jobs locally in case the SCP operation fails.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -327,17 +331,29 @@ public class ScpJobRunner
   /** the local file to deserialize the finished jobs from. */
   protected PlaceholderFile m_LocalFile;
 
+  /** the maxomum time in milli-seconds to wait. */
+  protected int m_MaxWait;
+
   /** the maximum number of interval to wait. */
   protected int m_NumAttempts;
 
   /** the interval in milli-seconds to wait. */
   protected int m_AttemptInterval;
 
+  /** whether to allow fallback for local execution. */
+  protected boolean m_AllowLocalExecution;
+
   /** the ssh connection to use. */
   protected transient SSHConnection m_Connection;
 
   /** the actual host to connect to. */
   protected BaseHostname m_ActualHost;
+
+  /** whether jobs are run locally as fallback. */
+  protected boolean m_RunLocally;
+
+  /** the start time. */
+  protected long m_StartTime;
 
   /**
    * Returns a string describing the object.
@@ -373,12 +389,20 @@ public class ScpJobRunner
       getDefaultLocalFile());
 
     m_OptionManager.add(
+      "max-wait", "maxWait",
+      -1, -1, null);
+
+    m_OptionManager.add(
       "max-attempts", "numAttempts",
       10, 1, null);
 
     m_OptionManager.add(
-      "attempt-nterval", "attemptInterval",
-      100, 1, null);
+      "attempt-interval", "attemptInterval",
+      1000, 1, null);
+
+    m_OptionManager.add(
+      "allow-local-execution", "allowLocalExecution",
+      false);
   }
 
   /**
@@ -502,6 +526,39 @@ public class ScpJobRunner
   }
 
   /**
+   * Sets the maximum time in milli-seconds to wait before giving up on
+   * the remote jobs.
+   *
+   * @param value	the time in milli-second, -1 for indefinite
+   */
+  public void setMaxWait(int value) {
+    if (getOptionManager().isValid("maxWait", value)) {
+      m_MaxWait = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum time in milli-seconds to wait before giving up on
+   * the remote jobs.
+   *
+   * @return		the time in milli-second, -1 for indefinite
+   */
+  public int getMaxWait() {
+    return m_MaxWait;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxWaitTipText() {
+    return "The maximum time to wait in milli-seconds before giving up on remote jobs; -1 for indefinite.";
+  }
+
+  /**
    * Sets the maximum number of intervals to wait.
    *
    * @param value	the maximum
@@ -561,6 +618,35 @@ public class ScpJobRunner
    */
   public String attemptIntervalTipText() {
     return "The interval in milli-seconds to wait before continuing with the execution.";
+  }
+
+  /**
+   * Sets whether to allow local execution of jobs in case SCP fails.
+   *
+   * @param value	true if to allow local execution
+   */
+  public void setAllowLocalExecution(boolean value) {
+    m_AllowLocalExecution = value;
+    reset();
+  }
+
+  /**
+   * Returns whether local execution of jobs is allowed in case SCP fails.
+   *
+   * @return		true if local execution allowed
+   */
+  public boolean getAllowLocalExecution() {
+    return m_AllowLocalExecution;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String allowLocalExecutionTipText() {
+    return "If enabled, executes the jobs locally in case the SCP operation fails.";
   }
 
   /**
@@ -638,11 +724,15 @@ public class ScpJobRunner
    */
   @Override
   protected String doStart() {
-    File	tmpFile;
-    String	msg;
-    String	host;
-    int		port;
+    File		tmpFile;
+    String		msg;
+    String		host;
+    int			port;
+    String		actualHost;
+    int			actualPort;
+    int			i;
 
+    m_RunLocally = false;
     if (m_ActualHost != null) {
       host = m_ActualHost.hostnameValue();
       port = m_ActualHost.portValue(22);
@@ -652,12 +742,15 @@ public class ScpJobRunner
       port = -1;
     }
 
+    actualHost = (host == null ? m_Connection.getHost() : host);
+    actualPort = (host == null ? m_Connection.getPort() : port);
+
     // serialize jobs
-    tmpFile = TempUtils.createTempFile("adams-jobs-" + m_Connection.getHost() + "-", ".ser");
+    tmpFile = TempUtils.createTempFile("adams-jobs-" + actualHost + "-", ".ser");
     try {
       if (isLoggingEnabled())
         getLogger().info("Serializing jobs to " + tmpFile);
-      SerializationHelper.write(tmpFile.getAbsolutePath(), m_ActualJobRunner);
+      SerializationHelper.write(tmpFile.getAbsolutePath(), this.m_ActualJobRunner);
     }
     catch (Exception e) {
       if (tmpFile.exists())
@@ -665,21 +758,41 @@ public class ScpJobRunner
       return Utils.handleException(this, "Failed to serialize jobrunner to: " + m_RemoteFile, e);
     }
 
+    m_StartTime = System.currentTimeMillis();
+
     // scp to remote host
     try {
       if (isLoggingEnabled())
-        getLogger().info("Scp'ing jobs to " + m_Connection.getHost() + ":" + m_Connection.getPort() + m_RemoteFile.getAbsolutePath());
+        getLogger().info("Scp'ing jobs to " + actualHost + ":" + actualPort + m_RemoteFile.getAbsolutePath());
       msg = Scp.copyTo(this, m_Connection, host, port, tmpFile, m_RemoteFile.getAbsolutePath());
       if (msg != null)
         getLogger().severe(
           "Failed to copy serialized jobrunner to remote host "
-            + m_Connection.getHost() + ":" + m_Connection.getPort() + ": " + msg);
+            + actualHost + ":" + actualPort + ": " + msg);
       tmpFile.delete();
     }
     catch (Exception e) {
       tmpFile.delete();
-      return Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
-        + m_Connection.getHost() + ":" + m_Connection.getPort(), e);
+      if (!m_AllowLocalExecution) {
+	return Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
+	  + actualHost + ":" + actualPort, e);
+      }
+      else {
+	Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
+	  + actualHost + ":" + actualPort, e);
+	m_RunLocally = true;
+      }
+    }
+
+    if (m_RunLocally) {
+      getLogger().info("Executing jobs locally");
+      m_ActualJobRunner = new LocalJobRunner();
+      for (i = 0; i < m_Jobs.size(); i++)
+	m_ActualJobRunner.add(m_Jobs.get(i));
+      for (JobCompleteListener l: m_JobCompleteListeners)
+	m_ActualJobRunner.addJobCompleteListener(l);
+      m_ActualJobRunner.start();
+      m_ActualJobRunner.stop();
     }
 
     return null;
@@ -695,45 +808,53 @@ public class ScpJobRunner
     int		count;
     boolean	inUse;
 
-    // wait for file to appear
-    while (isRunning() || isPaused()) {
-      if (!isPaused()) {
-        if (m_LocalFile.exists())
-          break;
-      }
-      Utils.wait(this, 100, 100);
-    }
-
-    // file still in use?
-    count = 0;
-    if (isRunning()) {
-      while ((count < m_NumAttempts) && isRunning()) {
-        if (!FileUtils.isOpen(m_LocalFile))
-          break;
-        count++;
-        Utils.wait(this, m_AttemptInterval, Math.min(100, m_AttemptInterval));
-      }
-    }
-
-    // read jobs
-    if (isRunning()) {
-      inUse = FileUtils.isOpen(m_LocalFile);
-      if (isLoggingEnabled())
-        getLogger().info("count=" + count + ", inUse=" + inUse + ", file=" + m_LocalFile);
-
-      // still open?
-      if ((count == m_NumAttempts) && inUse) {
-        return "File '" + m_LocalFile + "' is still in use after " + m_NumAttempts + " * " + m_AttemptInterval + "msec!";
+    if (!m_RunLocally) {
+      // wait for file to appear
+      while (isRunning() || isPaused()) {
+	if (!isPaused()) {
+	  if (m_LocalFile.exists())
+	    break;
+	  if (m_MaxWait > -1) {
+	    if (System.currentTimeMillis() >= m_StartTime + m_MaxWait) {
+	      m_Running = false;
+	      return "Max wait reached (" + m_MaxWait + "msec)";
+	    }
+	  }
+	}
+	Utils.wait(this, 100, 100);
       }
 
-      try {
-        if (isLoggingEnabled())
-          getLogger().info("Reading jobs from " + m_LocalFile);
-        m_ActualJobRunner = (JobRunner) SerializationHelper.read(m_LocalFile.getAbsolutePath());
+      // file still in use?
+      count = 0;
+      if (isRunning()) {
+	while ((count < m_NumAttempts) && isRunning()) {
+	  if (!FileUtils.isOpen(m_LocalFile))
+	    break;
+	  count++;
+	  Utils.wait(this, m_AttemptInterval, Math.min(100, m_AttemptInterval));
+	}
       }
-      catch (Exception e) {
-        m_ActualJobRunner = null;
-        return Utils.handleException(this, "Failed to deserialize jobrunner form: " + m_LocalFile, e);
+
+      // read jobs
+      if (isRunning()) {
+	inUse = FileUtils.isOpen(m_LocalFile);
+	if (isLoggingEnabled())
+	  getLogger().info("count=" + count + ", inUse=" + inUse + ", file=" + m_LocalFile);
+
+	// still open?
+	if ((count == m_NumAttempts) && inUse) {
+	  return "File '" + m_LocalFile + "' is still in use after " + m_NumAttempts + " * " + m_AttemptInterval + "msec!";
+	}
+
+	try {
+	  if (isLoggingEnabled())
+	    getLogger().info("Reading jobs from " + m_LocalFile);
+	  m_ActualJobRunner = (JobRunner) SerializationHelper.read(m_LocalFile.getAbsolutePath());
+	}
+	catch (Exception e) {
+	  m_ActualJobRunner = null;
+	  return Utils.handleException(this, "Failed to deserialize jobrunner form: " + m_LocalFile, e);
+	}
       }
     }
 
@@ -741,10 +862,13 @@ public class ScpJobRunner
   }
 
   /**
-   * Has no influence on the actual execution of the jobs.
+   * Has no influence on the actual execution of the remote jobs, only when
+   * jobs are run locally (as fallback).
    */
   @Override
   public String doTerminate() {
+    if (m_RunLocally && (m_ActualJobRunner != null))
+      m_ActualJobRunner.terminate();
     return null;
   }
 
