@@ -91,6 +91,9 @@ public class Scp {
 	host = session.getHost();
 	port = session.getPort();
       }
+      else {
+        return "Failed to initialize session (provider=" + provider + ", host=" + host + ", port=" + port + ")!";
+      }
       channel = (ChannelExec) session.openChannel("exec");
       channel.setCommand("scp -p -t " + remoteFile);
       if ((owner != null) && owner.isLoggingEnabled())
@@ -210,6 +213,9 @@ public class Scp {
       if (session != null) {
 	host = session.getHost();
 	port = session.getPort();
+      }
+      else {
+        return "Failed to initialize session (provider=" + provider + ", host=" + host + ", port=" + port + ")!";
       }
       channel = (ChannelExec) session.openChannel("exec");
       channel.setCommand("scp -f " + remoteFile);
