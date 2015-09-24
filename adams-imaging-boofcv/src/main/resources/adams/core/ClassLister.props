@@ -1,0 +1,20 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# the BoofCV feature generators
+adams.data.boofcv.features.AbstractBoofCVFeatureGenerator=\
+  adams.data.boofcv.features
+
+# the BoofCV transformers
+adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
+  adams.data.boofcv.transformer
+
+# the BoofCV multi-image operations
+adams.data.boofcv.multiimageoperation.AbstractBoofCVMultiImageOperation=\
+  adams.data.boofcv.multiimageoperation

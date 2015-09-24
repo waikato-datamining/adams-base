@@ -25,10 +25,6 @@ adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
 adams.data.imagej.features.AbstractImageJFeatureGenerator=\
   adams.data.imagej.features
 
-# the BoofCV feature generators
-adams.data.boofcv.features.AbstractBoofCVFeatureGenerator=\
-  adams.data.boofcv.features
-
 # the ImageJ transformers
 adams.data.imagej.transformer.AbstractImageJTransformer=\
   adams.data.imagej.transformer
@@ -55,17 +51,9 @@ adams.data.image.transformer.subimages.AbstractSubImagesGenerator=\
 adams.data.image.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
   adams.data.image.transformer.whitebalance
 
-# the BoofCV transformers
-adams.data.boofcv.transformer.AbstractBoofCVTransformer=\
-  adams.data.boofcv.transformer
-
 # the buffered image multi-image operations
 adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
   adams.data.image.multiimageoperation
-
-# the BoofCV multi-image operations
-adams.data.boofcv.multiimageoperation.AbstractBoofCVMultiImageOperation=\
-  adams.data.boofcv.multiimageoperation
 
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
