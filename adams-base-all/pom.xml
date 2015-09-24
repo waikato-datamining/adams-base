@@ -229,13 +229,13 @@
       <type>test-jar</type>
     </dependency>
 
-    <!--dependency>
+    <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-imaging-openimaj</artifactId>
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-imaging-openimaj</artifactId>
       <version>${project.version}</version>
