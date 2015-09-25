@@ -77,6 +77,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -1474,12 +1475,26 @@ public class GenericObjectEditor
   public static Object copyObject(Object source) {
     Object 	result;
 
-    if (source instanceof OptionHandler)
+    if (source == null)
+      return null;
+
+    if (source instanceof OptionHandler) {
       result = OptionUtils.shallowCopy(source);
-    else if (source instanceof CloneHandler)
+    }
+    else if (source instanceof CloneHandler) {
       result = ((CloneHandler) source).getClone();
-    else
+    }
+    else if (source instanceof Serializable) {
       result = Utils.deepCopy(source);
+    }
+    else {
+      try {
+        result = source.getClass().newInstance();
+      }
+      catch (Exception e) {
+        throw new IllegalStateException("Failed to create copy of object!", e);
+      }
+    }
 
     return result;
   }
