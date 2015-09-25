@@ -20,6 +20,7 @@
 
 package adams.flow.transformer.locateobjects;
 
+import adams.core.QuickInfoHelper;
 import adams.data.conversion.BufferedImageToOpenIMAJ;
 import adams.data.image.BufferedImageContainer;
 import adams.data.openimaj.OpenIMAJImageContainer;
@@ -216,6 +217,16 @@ public class OpenIMAJFaceDetector
    */
   public String alphaTipText() {
     return "Whether to include an alpha channel in case of multi-band images.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "detector", m_Detector, "detector: ");
   }
 
   /**
