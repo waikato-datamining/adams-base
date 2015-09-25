@@ -1,0 +1,96 @@
+# Project: adams
+# Date: 2015-09-25 12:14:58
+# User: fracpete
+#
+adams.flow.control.Flow
+	-annotation
+	Shows how to detect faces in images.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/three-generation.jpg
+			-file
+			${EXAMPLE_FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
+	-actor
+		adams.flow.transformer.SetVariable
+			-var-name
+			index
+			-var-value
+			0
+	-actor
+		adams.flow.control.Tee
+			-name
+			file name
+			-tee
+				adams.flow.transformer.BaseName
+					-remove-extensions
+					true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					file
+	-actor
+		adams.flow.transformer.ImageReader
+			-reader
+				adams.data.io.input.JAIImageReader
+	-actor
+		adams.flow.control.Tee
+			-name
+			original image
+			-tee
+				adams.flow.sink.DisplayPanelManager
+					-x
+					-3
+					-provider
+						adams.flow.sink.ImageViewer
+							-writer
+								adams.gui.print.NullWriter
+							-zoom
+							-1.0
+							-selection-processor
+								adams.gui.visualization.image.selection.NullProcessor
+							-image-overlay
+								adams.gui.visualization.image.NullOverlay
+					-entry-name-variable
+					file
+	-actor
+		adams.flow.transformer.LocateObjects
+			-locator
+				adams.flow.transformer.locateobjects.OpenIMAJFaceDetector
+					-detector
+						org.openimaj.image.processing.face.detection.HaarCascadeDetector
+					-image-type
+					FIMAGE
+	-actor
+		adams.flow.transformer.IncVariable
+			-var-name
+			index
+	-actor
+		adams.flow.control.Trigger
+			-name
+			create entry name
+			-tee
+				adams.flow.source.CombineVariables
+					-expression
+					@{file}-@{index}
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					entry
+	-actor
+		adams.flow.sink.DisplayPanelManager
+			-provider
+				adams.flow.sink.ImageViewer
+					-writer
+						adams.gui.print.NullWriter
+					-zoom
+					-1.0
+					-selection-processor
+						adams.gui.visualization.image.selection.NullProcessor
+					-image-overlay
+						adams.gui.visualization.image.ObjectLocationsOverlayFromReport
+			-entry-name-variable
+			entry
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+

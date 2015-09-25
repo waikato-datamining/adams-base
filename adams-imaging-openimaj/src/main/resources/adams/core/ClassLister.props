@@ -6,3 +6,7 @@
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
+
+# The face detection algorithms
+org.openimaj.image.processing.face.detection.FaceDetector=\
+  org.openimaj.image.processing.face.detection
