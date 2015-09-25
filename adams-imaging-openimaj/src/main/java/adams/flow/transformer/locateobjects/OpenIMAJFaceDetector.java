@@ -21,13 +21,9 @@
 package adams.flow.transformer.locateobjects;
 
 import adams.core.QuickInfoHelper;
-import adams.data.conversion.BufferedImageToOpenIMAJ;
 import adams.data.image.BufferedImageContainer;
-import adams.data.openimaj.OpenIMAJImageContainer;
-import adams.data.openimaj.OpenIMAJImageType;
 import adams.data.openimaj.facedetector.AbstractFaceDetector;
 import adams.data.openimaj.facedetector.HaarCascade;
-import org.openimaj.image.Image;
 import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.detection.DetectedFace;
 
@@ -68,19 +64,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: #ffffff
  * </pre>
  * 
- * <pre>-detector &lt;org.openimaj.image.processing.face.detection.FaceDetector&gt; (property: detector)
+ * <pre>-detector &lt;adams.data.openimaj.facedetector.AbstractFaceDetector&gt; (property: detector)
  * &nbsp;&nbsp;&nbsp;The detector algorithm to use.
- * &nbsp;&nbsp;&nbsp;default: org.openimaj.image.processing.face.detection.HaarCascadeDetector
- * </pre>
- * 
- * <pre>-image-type &lt;FIMAGE|MBFIMAGE&gt; (property: imageType)
- * &nbsp;&nbsp;&nbsp;The OpenIMAJ image type to use.
- * &nbsp;&nbsp;&nbsp;default: FIMAGE
- * </pre>
- * 
- * <pre>-alpha &lt;boolean&gt; (property: alpha)
- * &nbsp;&nbsp;&nbsp;Whether to include an alpha channel in case of multi-band images.
- * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;default: adams.data.openimaj.facedetector.HaarCascade
  * </pre>
  * 
  <!-- options-end -->
@@ -95,12 +81,6 @@ public class OpenIMAJFaceDetector
 
   /** the detector to use. */
   protected AbstractFaceDetector m_Detector;
-
-  /** the image type to generate. */
-  protected OpenIMAJImageType m_ImageType;
-
-  /** whether to add an alpha channel for multi-band images. */
-  protected boolean m_Alpha;
 
   /**
    * Returns a string describing the object.
@@ -122,14 +102,6 @@ public class OpenIMAJFaceDetector
     m_OptionManager.add(
       "detector", "detector",
       new HaarCascade());
-
-    m_OptionManager.add(
-      "image-type", "imageType",
-      OpenIMAJImageType.FIMAGE);
-
-    m_OptionManager.add(
-      "alpha", "alpha",
-      false);
   }
 
   /**
@@ -162,64 +134,6 @@ public class OpenIMAJFaceDetector
   }
 
   /**
-   * Sets the image type to use.
-   *
-   * @param value	the type
-   */
-  public void setImageType(OpenIMAJImageType value) {
-    m_ImageType = value;
-    reset();
-  }
-
-  /**
-   * Returns the image type to use.
-   *
-   * @return		the type
-   */
-  public OpenIMAJImageType getImageType() {
-    return m_ImageType;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String imageTypeTipText() {
-    return "The OpenIMAJ image type to use.";
-  }
-
-  /**
-   * Sets whether to use an alpha channel in case of multi-band images.
-   *
-   * @param value	true if to use alpha channel
-   */
-  public void setAlpha(boolean value) {
-    m_Alpha = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use an alpha channel in case of multi-band images.
-   *
-   * @return		true if to use alpha channel
-   */
-  public boolean getAlpha() {
-    return m_Alpha;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String alphaTipText() {
-    return "Whether to include an alpha channel in case of multi-band images.";
-  }
-
-  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -239,32 +153,16 @@ public class OpenIMAJFaceDetector
   @Override
   protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects		result;
-    BufferedImageToOpenIMAJ	conv;
-    BufferedImageContainer 	bicont;
-    OpenIMAJImageContainer	oicont;
-    Image			img;
-    String			msg;
+    BufferedImageContainer 	cont;
     List<DetectedFace>		detected;
     LocatedObject		obj;
 
     // convert image
-    bicont = new BufferedImageContainer();
-    bicont.setImage(image);
-    conv = new BufferedImageToOpenIMAJ();
-    conv.setImageType(m_ImageType);
-    conv.setAlpha(m_Alpha);
-    conv.setInput(bicont);
-    msg = conv.convert();
-    if (msg != null) {
-      addError("Failed to convert BufferedImage to OpenIMAJ one: " + msg);
-      conv.cleanUp();
-      return null;
-    }
-    oicont = (OpenIMAJImageContainer) conv.getOutput();
-    conv.cleanUp();
+    cont = new BufferedImageContainer();
+    cont.setImage(image);
 
     // detect faces
-    detected = m_Detector.detectFaces(oicont);
+    detected = m_Detector.detectFaces(cont);
     result   = new LocatedObjects();
     for (DetectedFace face: detected) {
       obj = new LocatedObject(
