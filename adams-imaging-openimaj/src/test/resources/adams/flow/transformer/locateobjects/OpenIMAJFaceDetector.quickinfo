@@ -1,1 +1,1 @@
-detector: HaarCascadeDetector[cascade=haarcascade_frontalface_default]
+detector: HaarCascade

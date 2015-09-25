@@ -7,6 +7,6 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
-# The face detection algorithms
-org.openimaj.image.processing.face.detection.FaceDetector=\
-  org.openimaj.image.processing.face.detection
+# the face detector wrappers
+adams.data.openimaj.facedetector.AbstractFaceDetector=\
+  adams.data.openimaj.facedetector

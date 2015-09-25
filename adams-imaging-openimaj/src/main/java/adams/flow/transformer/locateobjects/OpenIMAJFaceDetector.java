@@ -25,11 +25,12 @@ import adams.data.conversion.BufferedImageToOpenIMAJ;
 import adams.data.image.BufferedImageContainer;
 import adams.data.openimaj.OpenIMAJImageContainer;
 import adams.data.openimaj.OpenIMAJImageType;
+import adams.data.openimaj.facedetector.AbstractFaceDetector;
+import adams.data.openimaj.facedetector.HaarCascade;
 import org.openimaj.image.Image;
 import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.detection.DetectedFace;
 import org.openimaj.image.processing.face.detection.FaceDetector;
-import org.openimaj.image.processing.face.detection.HaarCascadeDetector;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -94,13 +95,16 @@ public class OpenIMAJFaceDetector
   private static final long serialVersionUID = -5521919703087480870L;
 
   /** the detector to use. */
-  protected FaceDetector m_Detector;
+  protected AbstractFaceDetector m_Detector;
 
   /** the image type to generate. */
   protected OpenIMAJImageType m_ImageType;
 
   /** whether to add an alpha channel for multi-band images. */
   protected boolean m_Alpha;
+
+  /** the actual detector in use. */
+  protected transient FaceDetector m_ActualDetector;
 
   /**
    * Returns a string describing the object.
@@ -121,7 +125,7 @@ public class OpenIMAJFaceDetector
 
     m_OptionManager.add(
       "detector", "detector",
-      new HaarCascadeDetector());
+      new HaarCascade());
 
     m_OptionManager.add(
       "image-type", "imageType",
@@ -133,11 +137,21 @@ public class OpenIMAJFaceDetector
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActualDetector = null;
+  }
+
+  /**
    * Sets the detector to use.
    *
    * @param value	the detector
    */
-  public void setDetector(FaceDetector value) {
+  public void setDetector(AbstractFaceDetector value) {
     m_Detector = value;
     reset();
   }
@@ -147,7 +161,7 @@ public class OpenIMAJFaceDetector
    *
    * @return		the detector
    */
-  public FaceDetector getDetector() {
+  public AbstractFaceDetector getDetector() {
     return m_Detector;
   }
 
@@ -265,7 +279,9 @@ public class OpenIMAJFaceDetector
     img = oicont.getImage();
 
     // detect faces
-    detected = m_Detector.detectFaces(img);
+    if (m_ActualDetector == null)
+      m_ActualDetector = m_Detector.newInstance();
+    detected = m_ActualDetector.detectFaces(img);
     result   = new LocatedObjects();
     for (DetectedFace face: detected) {
       obj = new LocatedObject(

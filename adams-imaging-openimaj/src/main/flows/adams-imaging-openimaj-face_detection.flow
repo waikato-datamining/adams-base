@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-25 12:14:58
+# Date: 2015-09-25 12:39:17
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -58,9 +58,7 @@ adams.flow.control.Flow
 			-locator
 				adams.flow.transformer.locateobjects.OpenIMAJFaceDetector
 					-detector
-						org.openimaj.image.processing.face.detection.HaarCascadeDetector
-					-image-type
-					FIMAGE
+						adams.data.openimaj.facedetector.HaarCascade
 	-actor
 		adams.flow.transformer.IncVariable
 			-var-name
