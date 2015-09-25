@@ -30,7 +30,6 @@ import adams.data.openimaj.facedetector.HaarCascade;
 import org.openimaj.image.Image;
 import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.detection.DetectedFace;
-import org.openimaj.image.processing.face.detection.FaceDetector;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -103,9 +102,6 @@ public class OpenIMAJFaceDetector
   /** whether to add an alpha channel for multi-band images. */
   protected boolean m_Alpha;
 
-  /** the actual detector in use. */
-  protected transient FaceDetector m_ActualDetector;
-
   /**
    * Returns a string describing the object.
    *
@@ -134,16 +130,6 @@ public class OpenIMAJFaceDetector
     m_OptionManager.add(
       "alpha", "alpha",
       false);
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_ActualDetector = null;
   }
 
   /**
@@ -276,12 +262,9 @@ public class OpenIMAJFaceDetector
     }
     oicont = (OpenIMAJImageContainer) conv.getOutput();
     conv.cleanUp();
-    img = oicont.getImage();
 
     // detect faces
-    if (m_ActualDetector == null)
-      m_ActualDetector = m_Detector.newInstance();
-    detected = m_ActualDetector.detectFaces(img);
+    detected = m_Detector.detectFaces(oicont);
     result   = new LocatedObjects();
     for (DetectedFace face: detected) {
       obj = new LocatedObject(

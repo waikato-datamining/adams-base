@@ -20,15 +20,39 @@
 
 package adams.data.openimaj.facedetector;
 
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.AbstractImageContainer;
+import org.openimaj.image.Image;
+import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.detection.FaceDetector;
 import org.openimaj.image.processing.face.detection.HaarCascadeDetector;
 
 /**
  <!-- globalinfo-start -->
- * A face detector based on a Haar cascade. The cascades provided by HaarCascadeDetector.BuiltInCascade are the same as those available in OpenCV.
+ * A face detector based on a Haar cascade. The cascades provided by HaarCascadeDetector.BuiltInCascade are the same as those available in OpenCV.<br>
+ * <br>
+ * For more information see:<br>
+ * Viola, P., Jones, M.: Rapid object detection using a boosted cascade of simple features. In: Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on, I, 511, I, 518 vol.1, 2001.
  * <br><br>
  <!-- globalinfo-end -->
+ *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;inproceedings{Viola2001,
+ *    author = {Viola, P. and Jones, M.},
+ *    booktitle = {Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on},
+ *    pages = {I, 511, I, 518 vol.1},
+ *    title = {Rapid object detection using a boosted cascade of simple features},
+ *    volume = {1},
+ *    year = {2001}
+ * }
+ * </pre>
+ * <br><br>
+ <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
@@ -53,7 +77,8 @@ import org.openimaj.image.processing.face.detection.HaarCascadeDetector;
  * @version $Revision$
  */
 public class HaarCascade
-  extends AbstractFaceDetector {
+  extends AbstractFaceDetector
+  implements TechnicalInformationHandler {
 
   private static final long serialVersionUID = 4304163800543325831L;
 
@@ -68,7 +93,30 @@ public class HaarCascade
     return
       "A face detector based on a Haar cascade. The cascades provided "
 	+ "by HaarCascadeDetector.BuiltInCascade are the same as those "
-	+ "available in OpenCV.";
+	+ "available in OpenCV.\n\n"
+	+ "For more information see:\n"
+	+ getTechnicalInformation();
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(Type.INPROCEEDINGS);
+    result.setValue(Field.AUTHOR, "Viola, P. and Jones, M.");
+    result.setValue(Field.TITLE, "Rapid object detection using a boosted cascade of simple features");
+    result.setValue(Field.BOOKTITLE, "Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on");
+    result.setValue(Field.PAGES, "I, 511, I, 518 vol.1");
+    result.setValue(Field.VOLUME, "1");
+    result.setValue(Field.YEAR, "2001");
+
+    return result;
   }
 
   /**
@@ -151,7 +199,7 @@ public class HaarCascade
    * @return		the instance
    */
   @Override
-  public FaceDetector newInstance() {
+  protected FaceDetector newInstance() {
     if (m_Cascade.exists() && m_Cascade.isFile()) {
       if (m_MinSize > -1)
 	return new HaarCascadeDetector(m_Cascade.getAbsolutePath(), m_MinSize);
@@ -164,5 +212,15 @@ public class HaarCascade
       else
 	return new HaarCascadeDetector();
     }
+  }
+
+  /**
+   * Converts the image container into the required image type for the detector.
+   *
+   * @param cont	the container to convert
+   * @return		the generated image
+   */
+  protected Image convert(AbstractImageContainer cont) {
+    return ImageUtilities.createFImage(cont.toBufferedImage());
   }
 }

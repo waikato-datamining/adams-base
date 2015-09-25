@@ -21,7 +21,12 @@
 package adams.data.openimaj.facedetector;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.data.image.AbstractImageContainer;
+import org.openimaj.image.Image;
+import org.openimaj.image.processing.face.detection.DetectedFace;
 import org.openimaj.image.processing.face.detection.FaceDetector;
+
+import java.util.List;
 
 /**
  * Ancestor for face detector wrappers.
@@ -34,10 +39,43 @@ public abstract class AbstractFaceDetector
 
   private static final long serialVersionUID = -2154246904015540410L;
 
+  /** the actual detector. */
+  protected transient FaceDetector m_ActualDetector;
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActualDetector = null;
+  }
+
   /**
    * Creates a new instance of the face detector.
    *
    * @return		the instance
    */
-  public abstract FaceDetector newInstance();
+  protected abstract FaceDetector newInstance();
+
+  /**
+   * Converts the image container into the required image type for the detector.
+   *
+   * @param cont	the container to convert
+   * @return		the generated image
+   */
+  protected abstract Image convert(AbstractImageContainer cont);
+
+  /**
+   * Detects the faces in the image.
+   *
+   * @param cont	the container with the image to analyze
+   * @return		the detected faces
+   */
+  public List<DetectedFace> detectFaces(AbstractImageContainer cont) {
+    if (m_ActualDetector == null)
+      m_ActualDetector = newInstance();
+    return m_ActualDetector.detectFaces(convert(cont));
+  }
 }
