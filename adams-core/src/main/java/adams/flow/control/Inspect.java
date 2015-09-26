@@ -37,6 +37,8 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  <!-- globalinfo-start -->
@@ -238,8 +240,8 @@ public class Inspect
 	    "_Accept");
 
     m_OptionManager.add(
-	    "close-dialog", "closeDialog",
-	    false);
+      "close-dialog", "closeDialog",
+      false);
   }
 
   /**
@@ -449,6 +451,16 @@ public class Inspect
     
     result = super.doCreateDialog(panel);
     result.setModalityType(ModalityType.MODELESS);
+    result.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+	super.windowClosing(e);
+	if (m_Waiting) {
+	  m_Accepted = false;
+	  m_Waiting  = false;
+	}
+      }
+    });
 
     panelButtons = new JPanel(new BorderLayout());
     result.getContentPane().add(panelButtons, BorderLayout.SOUTH);
@@ -566,6 +578,9 @@ public class Inspect
 	m_OutputToken = ((UpdateableDisplayPanel) m_Panel).getUpdatedToken();
       else
 	m_OutputToken = m_InputToken;
+    }
+    else {
+      result = false;
     }
 
     updateButtons(false);
