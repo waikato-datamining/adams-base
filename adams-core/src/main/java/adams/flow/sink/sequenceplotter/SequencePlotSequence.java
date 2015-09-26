@@ -19,14 +19,15 @@
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
+import adams.data.container.DataPointComparator;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Extended {@link XYSequence}.
@@ -39,6 +40,46 @@ public class SequencePlotSequence
 
   /** for serialization. */
   private static final long serialVersionUID = 331392414841660594L;
+
+  /** the meta-data key to include in the comparison of data points. */
+  protected String m_MetaDataKey;
+
+  /**
+   * Initializes the sequence.
+   */
+  public SequencePlotSequence() {
+    super();
+    m_MetaDataKey = null;
+  }
+
+  /**
+   * Returns the comparator in use.
+   *
+   * @return		the comparator to use
+   */
+  @Override
+  public DataPointComparator<XYSequencePoint> newComparator() {
+    return new SequencePlotPointComparator(m_Comparison, true, m_MetaDataKey);
+  }
+
+  /**
+   * Sets the meta-data key to use.
+   *
+   * @param value	the key, null if not to use
+   */
+  public void setMetaDataKey(String value) {
+    m_MetaDataKey = value;
+    m_Comparator  = newComparator();
+  }
+
+  /**
+   * Returns the meta-data key in use.
+   *
+   * @return		the key, null if not used
+   */
+  public String getMetaDataKey() {
+    return m_MetaDataKey;
+  }
 
   /**
    * Returns the content as spreadsheet.

@@ -164,6 +164,12 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
  * 
+ * <pre>-meta-data-key &lt;java.lang.String&gt; (property: metaDataKey)
+ * &nbsp;&nbsp;&nbsp;The optional meta-data key to use for comparing data points (apart from 
+ * &nbsp;&nbsp;&nbsp;X&#47;Y).
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
@@ -246,6 +252,9 @@ public class SequencePlotter
   /** the comparison to use for the X/Y points. */
   protected Comparison m_ComparisonType;
 
+  /** an optional meta-data key to use in the comparison of the data points. */
+  protected String m_MetaDataKey;
+
   /** the paintlet to use for painting the XY data. */
   protected XYSequencePaintlet m_Paintlet;
 
@@ -309,60 +318,64 @@ public class SequencePlotter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "comparison", "comparisonType",
-	     Comparison.X);
+      "comparison", "comparisonType",
+      Comparison.X);
 
     m_OptionManager.add(
-	    "paintlet", "paintlet",
-	    new CirclePaintlet());
+      "meta-data-key", "metaDataKey",
+      "");
 
     m_OptionManager.add(
-	    "overlay-paintlet", "overlayPaintlet",
-	    new NullPaintlet());
+      "paintlet", "paintlet",
+      new CirclePaintlet());
 
     m_OptionManager.add(
-	    "marker-paintlet", "markerPaintlet",
-	    new NoMarkers());
+      "overlay-paintlet", "overlayPaintlet",
+      new NullPaintlet());
 
     m_OptionManager.add(
-	    "error-paintlet", "errorPaintlet",
-	    new NoErrorPaintlet());
+      "marker-paintlet", "markerPaintlet",
+      new NoMarkers());
 
     m_OptionManager.add(
-	    "mouse-click-action", "mouseClickAction",
-	    new NullClickAction());
+      "error-paintlet", "errorPaintlet",
+      new NoErrorPaintlet());
 
     m_OptionManager.add(
-	    "color-provider", "colorProvider",
-	    new DefaultColorProvider());
+      "mouse-click-action", "mouseClickAction",
+      new NullClickAction());
 
     m_OptionManager.add(
-	    "overlay-color-provider", "overlayColorProvider",
-	    new DefaultColorProvider());
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	    "title", "title",
-	    "Plot");
+      "overlay-color-provider", "overlayColorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	    "axis-x", "axisX",
-	    getDefaultAxisX());
+      "title", "title",
+      "Plot");
 
     m_OptionManager.add(
-	    "axis-y", "axisY",
-	    getDefaultAxisY());
+      "axis-x", "axisX",
+      getDefaultAxisX());
 
     m_OptionManager.add(
-	    "plot-updater", "plotUpdater",
-	    new SimplePlotUpdater());
+      "axis-y", "axisY",
+      getDefaultAxisY());
 
     m_OptionManager.add(
-	    "post-processor", "postProcessor",
-	    new PassThrough());
+      "plot-updater", "plotUpdater",
+      new SimplePlotUpdater());
 
     m_OptionManager.add(
-	    "output", "outputFile",
-	    getDefaultOutputFile());
+      "post-processor", "postProcessor",
+      new PassThrough());
+
+    m_OptionManager.add(
+      "output", "outputFile",
+      getDefaultOutputFile());
   }
 
   /**
@@ -442,6 +455,35 @@ public class SequencePlotter
    */
   public String comparisonTypeTipText() {
     return "The type of comparison to use for the data points of the sequence.";
+  }
+
+  /**
+   * Sets the optional meta-data key to use for comparing data points.
+   *
+   * @param value	the key, ignored in comparison if empty
+   */
+  public void setMetaDataKey(String value) {
+    m_MetaDataKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the optional meta-data key to use for comparing data points.
+   *
+   * @return		the key, ignored in comparison if empty
+   */
+  public String getMetaDataKey() {
+    return m_MetaDataKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataKeyTipText() {
+    return "The optional meta-data key to use for comparing data points (apart from X/Y).";
   }
 
   /**
@@ -1043,7 +1085,7 @@ public class SequencePlotter
   protected void display(Token token) {
     XYSequenceContainer		cont;
     XYSequenceContainerManager	manager;
-    XYSequence			seq;
+    SequencePlotSequence	seq;
     SequencePlotPoint		point;
     SequencePlotterContainer	plotCont;
     String			plotName;
@@ -1088,18 +1130,19 @@ public class SequencePlotter
     if (manager.indexOf(plotName) == -1) {
       seq  = new SequencePlotSequence();
       seq.setComparison(m_ComparisonType);
+      seq.setMetaDataKey((m_MetaDataKey.isEmpty()) ? null : m_MetaDataKey);
       seq.setID(plotName);
       cont = manager.newContainer(seq);
       manager.add(cont);
     }
     else {
       cont = manager.get(manager.indexOf(plotName));
-      seq  = cont.getData();
+      seq  = (SequencePlotSequence) cont.getData();
     }
 
     // create and add new point
     if (x == null)
-      x = new Double(m_Counter.next(plotName));
+      x = m_Counter.next(plotName);
     if (x instanceof Number)
       dX = ((Number) x).doubleValue();
     else
@@ -1186,13 +1229,13 @@ public class SequencePlotter
 
 	switch (type) {
 	  case PLOT:
-	    manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
+	    manager = m_Panel.getContainerManager();
 	    break;
 	  case MARKER:
-	    manager = ((SequencePlotterPanel) m_Panel).getMarkerContainerManager();
+	    manager = m_Panel.getMarkerContainerManager();
 	    break;
 	  case OVERLAY:
-	    manager = ((SequencePlotterPanel) m_Panel).getOverlayContainerManager();
+	    manager = m_Panel.getOverlayContainerManager();
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled plot container content type: " + type);
