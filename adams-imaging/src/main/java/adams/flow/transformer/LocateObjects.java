@@ -121,6 +121,9 @@ public class LocateObjects
   /** the key for storing the height in the report. */
   public final static String FIELD_HEIGHT = "Height";
 
+  /** the key for storing the quadrilateral location in the report. */
+  public final static String FIELD_LOCATION = "Location";
+
   /** the algorithm to use. */
   protected AbstractObjectLocator m_Locator;
 
@@ -380,6 +383,7 @@ public class LocateObjects
 	  reportNew.setNumericValue(FIELD_Y, object.getY());
 	  reportNew.setNumericValue(FIELD_WIDTH, object.getWidth());
 	  reportNew.setNumericValue(FIELD_HEIGHT, object.getHeight());
+	  reportNew.setStringValue(FIELD_LOCATION, object.getLocation().getValue());
 	  cont.setReport(reportNew);
 	  cont.getReport().mergeWith(report);
 	  m_Queue.add(cont);

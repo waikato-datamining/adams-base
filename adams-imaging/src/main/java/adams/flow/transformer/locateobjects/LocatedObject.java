@@ -19,6 +19,8 @@
  */
 package adams.flow.transformer.locateobjects;
 
+import adams.core.base.QuadrilateralLocation;
+
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
@@ -110,7 +112,21 @@ public class LocatedObject
   public int getHeight() {
     return m_Height;
   }
-  
+
+  /**
+   * Returns the quadrilateral location.
+   *
+   * @return 		the location
+   */
+  public QuadrilateralLocation getLocation() {
+    return new QuadrilateralLocation(
+      m_X, m_Y,
+      m_X + m_Width - 1, m_Y,
+      m_X + m_Width - 1, m_Y + m_Height - 1,
+      m_X, m_Y + m_Height - 1
+    );
+  }
+
   /**
    * Returns a short decription of the container.
    * 

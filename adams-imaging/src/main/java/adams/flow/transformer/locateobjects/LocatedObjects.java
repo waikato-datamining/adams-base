@@ -49,6 +49,9 @@ public class LocatedObjects
   /** the key for the height. */
   public final static String KEY_HEIGHT = ".height";
 
+  /** the key for the location. */
+  public final static String KEY_LOCATION = ".location";
+
   /** the key for the overall count. */
   public final static String KEY_COUNT = "count";
 
@@ -92,6 +95,10 @@ public class LocatedObjects
       field = new Field(prefix + count + KEY_HEIGHT, DataType.NUMERIC);
       result.addField(field);
       result.setValue(field, obj.getHeight());
+      // location
+      field = new Field(prefix + count + KEY_LOCATION, DataType.STRING);
+      result.addField(field);
+      result.setValue(field, obj.getLocation().getValue());
     }
     // count
     field = new Field(prefix + KEY_COUNT, DataType.NUMERIC);

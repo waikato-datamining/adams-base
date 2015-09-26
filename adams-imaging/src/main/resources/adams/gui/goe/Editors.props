@@ -16,3 +16,4 @@
 # Version: $Revision$
 
 com.google.zxing.BarcodeFormat=adams.gui.goe.EnumEditor
+adams.core.base.QuadrilateralLocation=adams.gui.goe.BaseObjectEditor
