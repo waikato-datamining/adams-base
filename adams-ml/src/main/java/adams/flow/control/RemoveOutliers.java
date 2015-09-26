@@ -525,7 +525,7 @@ public class RemoveOutliers
     Set<Integer> 		outlierIndices;
     XYSequenceContainerManager 	manager;
     XYSequenceContainer 	cont;
-    XYSequence 			seq;
+    SequencePlotSequence 	seq;
     SequencePlotPoint 		point;
     int				i;
     Double			act;
@@ -547,6 +547,7 @@ public class RemoveOutliers
     manager.startUpdate();
     seq      = new SequencePlotSequence();
     seq.setComparison(Comparison.X_AND_Y);
+    seq.setMetaDataKey(KEY_INDEX);
     if (original.hasName())
       seq.setID(original.getName());
     else
