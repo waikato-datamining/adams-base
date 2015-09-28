@@ -44,7 +44,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -76,10 +76,20 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;weka.classifiers.evaluation.output.prediction.AbstractOutput&gt; (property: output)
  * &nbsp;&nbsp;&nbsp;The class for generating prediction output; if 'Null' is used, then an Evaluation 
  * &nbsp;&nbsp;&nbsp;object is forwarded instead of a String.
  * &nbsp;&nbsp;&nbsp;default: weka.classifiers.evaluation.output.prediction.Null
+ * </pre>
+ * 
+ * <pre>-always-use-container &lt;boolean&gt; (property: alwaysUseContainer)
+ * &nbsp;&nbsp;&nbsp;If enabled, always outputs an evaluation container.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-classifier &lt;adams.flow.core.CallableActorReference&gt; (property: classifier)
@@ -387,10 +397,15 @@ public class WekaStreamEvaluator
     // output?
     m_Current++;
     if (m_Current % m_Interval == 0) {
-      if (m_Output instanceof Null)
-	m_OutputToken = new Token(new WekaEvaluationContainer(m_Evaluation));
-      else
-	m_OutputToken = new Token(m_Output.getBuffer().toString());
+	if (m_Output instanceof Null) {
+          m_OutputToken = new Token(new WekaEvaluationContainer(m_Evaluation));
+        }
+	else {
+          if (m_AlwaysUseContainer)
+            m_OutputToken = new Token(new WekaEvaluationContainer(m_Evaluation, null, m_Output.getBuffer().toString()));
+          else
+            m_OutputToken = new Token(m_Output.getBuffer().toString());
+        }
     }
     
     return result;

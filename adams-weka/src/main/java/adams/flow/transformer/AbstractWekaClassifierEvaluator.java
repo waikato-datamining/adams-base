@@ -42,6 +42,9 @@ public abstract class AbstractWekaClassifierEvaluator
   /** the buffer for the predictions. */
   protected StringBuffer m_OutputBuffer;
 
+  /** whether to always use a container. */
+  protected boolean m_AlwaysUseContainer;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -52,6 +55,10 @@ public abstract class AbstractWekaClassifierEvaluator
     m_OptionManager.add(
 	    "output", "output",
 	    new Null());
+
+    m_OptionManager.add(
+	    "always-use-container", "alwaysUseContainer",
+	    false);
   }
 
   /**
@@ -86,12 +93,42 @@ public abstract class AbstractWekaClassifierEvaluator
   }
 
   /**
+   * Sets whether to always use an evaluation container as output.
+   *
+   * @param value	true if to always use container
+   */
+  public void setAlwaysUseContainer(boolean value) {
+    m_AlwaysUseContainer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to always use an evaluation container as output.
+   *
+   * @return		true if to always use container
+   */
+  public boolean getAlwaysUseContainer() {
+    return m_AlwaysUseContainer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alwaysUseContainerTipText() {
+    return
+        "If enabled, always outputs an evaluation container.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		String.class or weka.classifiers.Evaluation.class
    */
   public Class[] generates() {
-    if ((m_Output == null) || (m_Output instanceof Null))
+    if ((m_Output == null) || (m_Output instanceof Null) || m_AlwaysUseContainer)
       return new Class[]{WekaEvaluationContainer.class};
     else
       return new Class[]{String.class};

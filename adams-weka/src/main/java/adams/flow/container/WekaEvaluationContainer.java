@@ -15,16 +15,16 @@
 
 /*
  * WekaEvaluationContainer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.classifiers.Evaluation;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.classifiers.Evaluation;
 
 /**
  * A container for {@link Evaluation} objects, with optional trained model.
@@ -43,6 +43,9 @@ public class WekaEvaluationContainer
 
   /** the identifier for the Model. */
   public final static String VALUE_MODEL = "Model";
+
+  /** the identifier for the prediction output. */
+  public final static String VALUE_PREDICTIONOUTPUT = "Prediction output";
 
   /**
    * Initializes the container.
@@ -69,10 +72,22 @@ public class WekaEvaluationContainer
    * @param model	the model to use
    */
   public WekaEvaluationContainer(Evaluation eval, Object model) {
+    this(eval, model, null);
+  }
+
+  /**
+   * Initializes the container with no header.
+   *
+   * @param eval	the evaluation to use
+   * @param model	the model to use, can be null
+   * @param predOutput  the prediction output string, can be null
+   */
+  public WekaEvaluationContainer(Evaluation eval, Object model, String predOutput) {
     super();
 
-    store(VALUE_EVALUATION, eval);
-    store(VALUE_MODEL,      model);
+    store(VALUE_EVALUATION,       eval);
+    store(VALUE_MODEL,            model);
+    store(VALUE_PREDICTIONOUTPUT, predOutput);
   }
 
   /**
@@ -88,6 +103,7 @@ public class WekaEvaluationContainer
 
     result.add(VALUE_EVALUATION);
     result.add(VALUE_MODEL);
+    result.add(VALUE_PREDICTIONOUTPUT);
 
     return result.iterator();
   }

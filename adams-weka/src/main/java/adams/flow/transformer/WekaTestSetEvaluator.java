@@ -51,7 +51,7 @@ import adams.flow.source.CallableSource;
  * <br><br>
  * Container information:<br>
  * - adams.flow.container.WekaModelContainer: Model, Header, Dataset<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -66,7 +66,7 @@ import adams.flow.source.CallableSource;
  * &nbsp;&nbsp;&nbsp;default: WekaTestSetEvaluator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -83,10 +83,20 @@ import adams.flow.source.CallableSource;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;weka.classifiers.evaluation.output.prediction.AbstractOutput&gt; (property: output)
  * &nbsp;&nbsp;&nbsp;The class for generating prediction output; if 'Null' is used, then an Evaluation 
  * &nbsp;&nbsp;&nbsp;object is forwarded instead of a String.
  * &nbsp;&nbsp;&nbsp;default: weka.classifiers.evaluation.output.prediction.Null
+ * </pre>
+ * 
+ * <pre>-always-use-container &lt;boolean&gt; (property: alwaysUseContainer)
+ * &nbsp;&nbsp;&nbsp;If enabled, always outputs an evaluation container.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-testset &lt;adams.flow.core.CallableActorReference&gt; (property: testset)
@@ -275,10 +285,15 @@ public class WekaTestSetEvaluator
 	eval.evaluateModel(cls, test, m_Output);
 
 	// broadcast result
-	if (m_Output instanceof Null)
-	  m_OutputToken = new Token(new WekaEvaluationContainer(eval, cls));
-	else
-	  m_OutputToken = new Token(m_Output.getBuffer().toString());
+	if (m_Output instanceof Null) {
+          m_OutputToken = new Token(new WekaEvaluationContainer(eval, cls));
+        }
+	else {
+          if (m_AlwaysUseContainer)
+            m_OutputToken = new Token(new WekaEvaluationContainer(eval, cls, m_Output.getBuffer().toString()));
+          else
+            m_OutputToken = new Token(m_Output.getBuffer().toString());
+        }
       }
     }
     catch (Exception e) {

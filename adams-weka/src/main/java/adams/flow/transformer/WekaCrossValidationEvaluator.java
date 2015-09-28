@@ -62,7 +62,7 @@ import java.util.Random;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -77,7 +77,7 @@ import java.util.Random;
  * &nbsp;&nbsp;&nbsp;default: WekaCrossValidationEvaluator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -94,10 +94,20 @@ import java.util.Random;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;weka.classifiers.evaluation.output.prediction.AbstractOutput&gt; (property: output)
  * &nbsp;&nbsp;&nbsp;The class for generating prediction output; if 'Null' is used, then an Evaluation 
  * &nbsp;&nbsp;&nbsp;object is forwarded instead of a String; not used when using parallel execution.
  * &nbsp;&nbsp;&nbsp;default: weka.classifiers.evaluation.output.prediction.Null
+ * </pre>
+ * 
+ * <pre>-always-use-container &lt;boolean&gt; (property: alwaysUseContainer)
+ * &nbsp;&nbsp;&nbsp;If enabled, always outputs an evaluation container.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-classifier &lt;adams.flow.core.CallableActorReference&gt; (property: classifier)
@@ -572,10 +582,15 @@ public class WekaCrossValidationEvaluator
 	eval.setDiscardPredictions(m_DiscardPredictions);
 	eval.crossValidateModel(cls, data, folds, new Random(m_Seed), m_Output);
 	if (!isStopped()) {
-	  if (m_Output instanceof Null)
+	  if (m_Output instanceof Null) {
 	    m_OutputToken = new Token(new WekaEvaluationContainer(eval));
-	  else
-	    m_OutputToken = new Token(m_Output.getBuffer().toString());
+	  }
+	  else {
+	    if (m_AlwaysUseContainer)
+	      m_OutputToken = new Token(new WekaEvaluationContainer(eval, null, m_Output.getBuffer().toString()));
+	    else
+	      m_OutputToken = new Token(m_Output.getBuffer().toString());
+	  }
 	}
       }
       else {
