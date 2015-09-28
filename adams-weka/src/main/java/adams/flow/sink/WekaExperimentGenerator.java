@@ -15,17 +15,13 @@
 
 /*
  * WekaExperimentGenerator.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.io.File;
-
-import javax.swing.DefaultListModel;
-
+import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import weka.classifiers.Classifier;
 import weka.experiment.CSVResultListener;
 import weka.experiment.ClassifierSplitEvaluator;
@@ -36,8 +32,11 @@ import weka.experiment.PropertyNode;
 import weka.experiment.RandomSplitResultProducer;
 import weka.experiment.RegressionSplitEvaluator;
 import weka.experiment.SplitEvaluator;
-import adams.core.QuickInfoHelper;
-import adams.core.io.PlaceholderFile;
+
+import javax.swing.DefaultListModel;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -517,27 +516,6 @@ public class WekaExperimentGenerator
   }
 
   /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      if (m_ResultFile.isDirectory())
-	result = "Result file points to a directory: " + m_ResultFile;
-      else if (m_OutputFile.isDirectory())
-	result = "Output file points to a directory: " + m_OutputFile;
-    }
-
-    return result;
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -557,115 +535,122 @@ public class WekaExperimentGenerator
 
     result = null;
 
-    exp = new Experiment();
-    exp.setPropertyArray(new Classifier[0]);
-    exp.setUsePropertyIterator(true);
+    if (m_ResultFile.isDirectory())
+      result = "Result file points to a directory: " + m_ResultFile;
+    else if (m_OutputFile.isDirectory())
+      result = "Output file points to a directory: " + m_OutputFile;
 
-    // classification or regression
-    se  = null;
-    sec = null;
-    if (m_ExperimentType == ExperimentType.CLASSIFICATION) {
-      se  = new ClassifierSplitEvaluator();
-      sec = ((ClassifierSplitEvaluator) se).getClassifier();
-    }
-    else     if (m_ExperimentType == ExperimentType.REGRESSION) {
-      se  = new RegressionSplitEvaluator();
-      sec = ((RegressionSplitEvaluator) se).getClassifier();
-    }
-    else {
-      throw new IllegalStateException("Unhandled experiment type: " + m_ExperimentType);
-    }
+    if (result == null) {
+      exp = new Experiment();
+      exp.setPropertyArray(new Classifier[0]);
+      exp.setUsePropertyIterator(true);
 
-    // crossvalidation or train/test split
-    if (m_EvaluationType == EvaluationType.CROSS_VALIDATION) {
-      cvrp = new CrossValidationResultProducer();
-      cvrp.setNumFolds(m_Folds);
-      cvrp.setSplitEvaluator(se);
+      // classification or regression
+      se = null;
+      sec = null;
+      if (m_ExperimentType == ExperimentType.CLASSIFICATION) {
+        se = new ClassifierSplitEvaluator();
+        sec = ((ClassifierSplitEvaluator) se).getClassifier();
+      }
+      else if (m_ExperimentType == ExperimentType.REGRESSION) {
+        se = new RegressionSplitEvaluator();
+        sec = ((RegressionSplitEvaluator) se).getClassifier();
+      }
+      else {
+        throw new IllegalStateException("Unhandled experiment type: " + m_ExperimentType);
+      }
 
-      propertyPath = new PropertyNode[2];
+      // crossvalidation or train/test split
+      if (m_EvaluationType == EvaluationType.CROSS_VALIDATION) {
+        cvrp = new CrossValidationResultProducer();
+        cvrp.setNumFolds(m_Folds);
+        cvrp.setSplitEvaluator(se);
+
+        propertyPath = new PropertyNode[2];
+        try {
+          propertyPath[0] = new PropertyNode(
+            se,
+            new PropertyDescriptor("splitEvaluator",
+              CrossValidationResultProducer.class),
+            CrossValidationResultProducer.class);
+          propertyPath[1] = new PropertyNode(
+            sec,
+            new PropertyDescriptor("classifier",
+              se.getClass()),
+            se.getClass());
+        }
+        catch (IntrospectionException e) {
+          e.printStackTrace();
+        }
+
+        exp.setResultProducer(cvrp);
+        exp.setPropertyPath(propertyPath);
+
+      }
+      else if ((m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_RANDOMIZED)
+        || (m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_ORDER_PRESERVED)) {
+        rsrp = new RandomSplitResultProducer();
+        rsrp.setRandomizeData(m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_RANDOMIZED);
+        rsrp.setTrainPercent(m_SplitPercentage);
+        rsrp.setSplitEvaluator(se);
+
+        propertyPath = new PropertyNode[2];
+        try {
+          propertyPath[0] = new PropertyNode(
+            se,
+            new PropertyDescriptor("splitEvaluator",
+              RandomSplitResultProducer.class),
+            RandomSplitResultProducer.class);
+          propertyPath[1] = new PropertyNode(
+            sec,
+            new PropertyDescriptor("classifier",
+              se.getClass()),
+            se.getClass());
+        }
+        catch (IntrospectionException e) {
+          e.printStackTrace();
+        }
+
+        exp.setResultProducer(rsrp);
+        exp.setPropertyPath(propertyPath);
+      }
+      else {
+        throw new IllegalStateException("Unhandled evaluation type: " + m_EvaluationType);
+      }
+
+      // runs
+      exp.setRunLower(1);
+      exp.setRunUpper(m_Runs);
+
+      // classifier
+      exp.setPropertyArray((Classifier[]) m_InputToken.getPayload());
+
+      // datasets (empty for the template)
+      model = new DefaultListModel();
+      exp.setDatasets(model);
+
+      // result
+      if (m_ResultFormat == ResultFormat.ARFF) {
+        irl = new InstancesResultListener();
+        irl.setOutputFile(new File(m_ResultFile.getAbsolutePath()));
+        exp.setResultListener(irl);
+      }
+      else if (m_ResultFormat == ResultFormat.CSV) {
+        crl = new CSVResultListener();
+        crl.setOutputFile(new File(m_ResultFile.getAbsolutePath()));
+        exp.setResultListener(crl);
+      }
+      else {
+        throw new IllegalStateException("Unhandled result format: " + m_ResultFormat);
+      }
+
+      // save template
       try {
-	propertyPath[0] = new PropertyNode(
-	    se,
-	    new PropertyDescriptor("splitEvaluator",
-		CrossValidationResultProducer.class),
-		CrossValidationResultProducer.class);
-	propertyPath[1] = new PropertyNode(
-	    sec,
-	    new PropertyDescriptor("classifier",
-		se.getClass()),
-		se.getClass());
+        Experiment.write(m_OutputFile.getAbsolutePath(), exp);
       }
-      catch (IntrospectionException e) {
-	e.printStackTrace();
+      catch (Exception e) {
+        result = handleException("Failed to save experiment to '" + m_OutputFile + "': ", e);
       }
-
-      exp.setResultProducer(cvrp);
-      exp.setPropertyPath(propertyPath);
-
-    }
-    else if (    (m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_RANDOMIZED)
-	      || (m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_ORDER_PRESERVED) ) {
-      rsrp = new RandomSplitResultProducer();
-      rsrp.setRandomizeData(m_EvaluationType == EvaluationType.TRAIN_TEST_SPLIT_RANDOMIZED);
-      rsrp.setTrainPercent(m_SplitPercentage);
-      rsrp.setSplitEvaluator(se);
-
-      propertyPath = new PropertyNode[2];
-      try {
-	propertyPath[0] = new PropertyNode(
-	    se,
-	    new PropertyDescriptor("splitEvaluator",
-		RandomSplitResultProducer.class),
-		RandomSplitResultProducer.class);
-	propertyPath[1] = new PropertyNode(
-	    sec,
-	    new PropertyDescriptor("classifier",
-		se.getClass()),
-		se.getClass());
-      }
-      catch (IntrospectionException e) {
-	e.printStackTrace();
-      }
-
-      exp.setResultProducer(rsrp);
-      exp.setPropertyPath(propertyPath);
-    }
-    else {
-      throw new IllegalStateException("Unhandled evaluation type: " + m_EvaluationType);
-    }
-
-    // runs
-    exp.setRunLower(1);
-    exp.setRunUpper(m_Runs);
-
-    // classifier
-    exp.setPropertyArray((Classifier[]) m_InputToken.getPayload());
-
-    // datasets (empty for the template)
-    model = new DefaultListModel();
-    exp.setDatasets(model);
-
-    // result
-    if (m_ResultFormat == ResultFormat.ARFF) {
-      irl = new InstancesResultListener();
-      irl.setOutputFile(new File(m_ResultFile.getAbsolutePath()));
-      exp.setResultListener(irl);
-    }
-    else if (m_ResultFormat == ResultFormat.CSV) {
-      crl = new CSVResultListener();
-      crl.setOutputFile(new File(m_ResultFile.getAbsolutePath()));
-      exp.setResultListener(crl);
-    }
-    else {
-      throw new IllegalStateException("Unhandled result format: " + m_ResultFormat);
-    }
-
-    // save template
-    try {
-      Experiment.write(m_OutputFile.getAbsolutePath(), exp);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to save experiment to '" + m_OutputFile + "': ", e);
     }
 
     return result;
