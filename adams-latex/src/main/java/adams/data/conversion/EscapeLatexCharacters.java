@@ -22,11 +22,9 @@ package adams.data.conversion;
 
 import adams.core.Utils;
 
-import java.util.Arrays;
-
 /**
  <!-- globalinfo-start -->
- * Simply escapes [C&#64;4f4a7090 with a backslash.
+ * Simply escapes %,_,$ with a backslash.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -44,11 +42,13 @@ import java.util.Arrays;
 public class EscapeLatexCharacters
   extends AbstractStringConversion {
 
+  private static final long serialVersionUID = -8987744505136943381L;
+
   /** the characters to escape. */
-  public final static char[] CHARACTERS = {'%', '_'};
+  public final static char[] CHARACTERS = {'%', '_', '$'};
 
   /** the escaped characters. */
-  public final static String[] ESCAPED = {"\\%", "\\_"};
+  public final static String[] ESCAPED = {"\\%", "\\_", "\\$"};
 
   /**
    * Returns a string describing the object.
@@ -57,7 +57,7 @@ public class EscapeLatexCharacters
    */
   @Override
   public String globalInfo() {
-    return "Simply escapes " + Utils.flatten(Arrays.asList(CHARACTERS), ", ") + " with a backslash.";
+    return "Simply escapes " + Utils.arrayToString(CHARACTERS) + " with a backslash.";
   }
 
   /**
