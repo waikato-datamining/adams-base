@@ -40,7 +40,7 @@ import java.util.List;
  * 
  * <pre>-character &lt;PERCENTAGE|UNDERSCORE|DOLLAR|AMPERSAND|BACKSLASH&gt; [-character ...] (property: characters)
  * &nbsp;&nbsp;&nbsp;The characters to escape.
- * &nbsp;&nbsp;&nbsp;default: PERCENTAGE, UNDERSCORE
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  * 
  <!-- options-end -->
@@ -89,7 +89,7 @@ public class EscapeLatexCharacters
 
     m_OptionManager.add(
 	    "character", "characters",
-	    new Characters[]{Characters.PERCENTAGE, Characters.UNDERSCORE});
+	    new Characters[0]);
   }
 
   /**
@@ -145,7 +145,7 @@ public class EscapeLatexCharacters
 	  break;
 	case BACKSLASH:
 	  chars.add('\\');
-	  escaped.add("\textbackslash ");
+	  escaped.add("\\textbackslash ");
 	  break;
 	case DOLLAR:
 	  chars.add('$');
