@@ -20,6 +20,7 @@
 
 package adams.data.conversion;
 
+import adams.data.conversion.EscapeLatexCharacters.Characters;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -63,9 +64,13 @@ public class EscapeLatexCharactersTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{
-	new EscapeLatexCharacters()
-    };
+    EscapeLatexCharacters[] result;
+
+    result = new EscapeLatexCharacters[1];
+    result[0] = new EscapeLatexCharacters();
+    result[0].setCharacters(Characters.values());
+
+    return result;
   }
 
   /**
