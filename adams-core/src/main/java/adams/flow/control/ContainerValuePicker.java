@@ -15,12 +15,13 @@
 
 /*
  * ContainerValuePicker.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.Token;
 
@@ -221,7 +222,9 @@ public class ContainerValuePicker
   }
 
   /**
+   * Extracts the container value, if possible.
    *
+   * @param token	the token to get the container value from
    */
   protected Token extract(Token token) {
     Token		result;
@@ -235,6 +238,11 @@ public class ContainerValuePicker
       value  = cont.getValue(m_ValueName);
       if (value != null)
 	result = new Token(value);
+    }
+    else {
+      getLogger().warning(
+	"Token did not contain a container, but: "
+	  + (token.getPayload() == null ? "null" : Utils.classToString(token.getPayload().getClass())));
     }
 
     return result;
