@@ -60,12 +60,12 @@ public class EscapeLatexCharacters
    * @version $Revision$
    */
   public enum Characters {
+    BACKSLASH,
     PERCENTAGE,
     UNDERSCORE,
     DOLLAR,
     AMPERSAND,
-    CARET,
-    BACKSLASH
+    CARET
   }
 
   /** the characters to escaped. */
