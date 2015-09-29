@@ -15,16 +15,16 @@
 
 /*
  * WekaExperimentEvaluation.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.base.BaseString;
+import adams.flow.core.ExperimentStatistic;
+import adams.flow.core.Token;
 import weka.core.Instances;
 import weka.core.Range;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -36,11 +36,11 @@ import weka.experiment.PairedCorrectedTTester;
 import weka.experiment.ResultMatrix;
 import weka.experiment.Tester;
 import weka.gui.experiment.ExperimenterDefaults;
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.base.BaseString;
-import adams.flow.core.ExperimentStatistic;
-import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -52,19 +52,16 @@ import adams.flow.core.Token;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.experiment.Experiment<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -72,19 +69,26 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: WekaExperimentEvaluation
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-tester &lt;weka.experiment.Tester&gt; (property: tester)
@@ -92,7 +96,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: weka.experiment.PairedCorrectedTTester -R 0 -S 0.05
  * </pre>
  * 
- * <pre>-comparison &lt;Elapsed_Time_training|Elapsed_Time_testing|UserCPU_Time_training|UserCPU_Time_testing|Serialized_Model_Size|Serialized_Train_Set_Size|Serialized_Test_Set_Size|Number_of_training_instances|Number_of_testing_instances|Number_correct (nominal)|Number_incorrect (nominal)|Number_unclassified (nominal)|Percent_correct (nominal)|Percent_incorrect (nominal)|Percent_unclassified (nominal)|Kappa_statistic (nominal)|Mean_absolute_error|Root_mean_squared_error|Relative_absolute_error|Root_relative_squared_error|Correlation_coefficient (numeric)|SF_prior_entropy|SF_scheme_entropy|SF_entropy_gain|SF_mean_prior_entropy|SF_mean_scheme_entropy|SF_mean_entropy_gain|KB_information (nominal)|KB_mean_information (nominal)|KB_relative_information (nominal)|True_positive_rate (nominal)|Num_true_positives (nominal)|False_positive_rate (nominal)|Num_false_positives (nominal)|True_negative_rate (nominal)|Num_true_negatives (nominal)|False_negative_rate (nominal)|Num_false_negatives (nominal)|IR_precision (nominal)|IR_recall (nominal)|F_measure (nominal)|Area_under_ROC (nominal)|Area_under_PRC (nominal)|Weighted_avg_true_positive_rate|Weighted_avg_false_positive_rate|Weighted_avg_true_negative_rate|Weighted_avg_false_negative_rate|Weighted_avg_IR_precision|Weighted_avg_IR_recall|Weighted_avg_F_measure|Weighted_avg_area_under_ROC|Weighted_avg_area_under_PRC&gt; (property: comparisonField)
+ * <pre>-comparison &lt;ELAPSED_TIME_TRAINING|ELAPSED_TIME_TESTING|USERCPU_TIME_TRAINING|USERCPU_TIME_TESTING|SERIALIZED_MODEL_SIZE|SERIALIZED_TRAIN_SET_SIZE|SERIALIZED_TEST_SET_SIZE|NUMBER_OF_TRAINING_INSTANCES|NUMBER_OF_TESTING_INSTANCES|NUMBER_CORRECT|NUMBER_INCORRECT|NUMBER_UNCLASSIFIED|PERCENT_CORRECT|PERCENT_INCORRECT|PERCENT_UNCLASSIFIED|KAPPA_STATISTIC|MEAN_ABSOLUTE_ERROR|ROOT_MEAN_SQUARED_ERROR|RELATIVE_ABSOLUTE_ERROR|ROOT_RELATIVE_SQUARED_ERROR|CORRELATION_COEFFICIENT|SF_PRIOR_ENTROPY|SF_SCHEME_ENTROPY|SF_ENTROPY_GAIN|SF_MEAN_PRIOR_ENTROPY|SF_MEAN_SCHEME_ENTROPY|SF_MEAN_ENTROPY_GAIN|KB_INFORMATION|KB_MEAN_INFORMATION|KB_RELATIVE_INFORMATION|TRUE_POSITIVE_RATE|NUM_TRUE_POSITIVES|FALSE_POSITIVE_RATE|NUM_FALSE_POSITIVES|TRUE_NEGATIVE_RATE|NUM_TRUE_NEGATIVES|FALSE_NEGATIVE_RATE|NUM_FALSE_NEGATIVES|IR_PRECISION|IR_RECALL|F_MEASURE|MATTHEWS_CORRELATION_COEFFICIENT|AREA_UNDER_ROC|AREA_UNDER_PRC|WEIGHTED_TRUE_POSITIVE_RATE|WEIGHTED_FALSE_POSITIVE_RATE|WEIGHTED_TRUE_NEGATIVE_RATE|WEIGHTED_FALSE_NEGATIVE_RATE|WEIGHTED_IR_PRECISION|WEIGHTED_IR_RECALL|WEIGHTED_F_MEASURE|WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT|WEIGHTED_AREA_UNDER_ROC|WEIGHTED_AREA_UNDER_PRC&gt; (property: comparisonField)
  * &nbsp;&nbsp;&nbsp;The field to base the comparison of algorithms on.
  * &nbsp;&nbsp;&nbsp;default: PERCENT_CORRECT
  * </pre>
@@ -120,18 +124,20 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: Key_Scheme, Key_Scheme_options, Key_Scheme_version_ID
  * </pre>
  * 
- * <pre>-swap (property: swapRowsAndColumns)
+ * <pre>-swap &lt;boolean&gt; (property: swapRowsAndColumns)
  * &nbsp;&nbsp;&nbsp;If set to true, rows and columns will be swapped.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-format &lt;weka.experiment.ResultMatrix&gt; (property: outputFormat)
  * &nbsp;&nbsp;&nbsp;The output format for generating the output.
- * &nbsp;&nbsp;&nbsp;default: weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -remove-filter -print-col-names -print-row-names -enum-col-names
+ * &nbsp;&nbsp;&nbsp;default: weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -print-col-names -print-row-names -enum-col-names
  * </pre>
  * 
- * <pre>-header (property: outputHeader)
+ * <pre>-header &lt;boolean&gt; (property: outputHeader)
  * &nbsp;&nbsp;&nbsp;If set to true, then a header describing the experiment evaluation will 
  * &nbsp;&nbsp;&nbsp;get output as well.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  <!-- options-end -->
@@ -518,10 +524,10 @@ public class WekaExperimentEvaluation
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.experiment.Experiment.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.experiment.Experiment.class, weka.core.Instances.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Experiment.class};
+    return new Class[]{Experiment.class, Instances.class};
   }
 
   /**
@@ -531,19 +537,12 @@ public class WekaExperimentEvaluation
    *
    * @param list           list of attribute names
    * @param defaultList    the default list of attribute names
-   * @param inst           the instances to get the attribute names from
    * @return               a vector containing attribute names
    */
-  protected List<String> determineColumnNames(BaseString[] list, String defaultList, Instances inst) {
+  protected List<String> determineColumnNames(BaseString[] list, String defaultList) {
     List<String>	result;
-    List<String>	atts;
     StringTokenizer	tok;
     int			i;
-
-    // get attribute names
-    atts = new ArrayList<String>();
-    for (i = 0; i < inst.numAttributes(); i++)
-      atts.add(inst.attribute(i).name().toLowerCase());
 
     // process list
     result = new ArrayList<String>();
@@ -614,13 +613,12 @@ public class WekaExperimentEvaluation
   /**
    * Sets up the testing algorithm and returns it.
    *
-   * @param exp		the experiment to evaluate
    * @param data	the experimental data
    * @return		the configured testing algorithm
    * @throws Exception 	If something goes wrong, like testing algorithm of
    * 			result matrix cannot be instantiated
    */
-  protected Tester getTester(weka.experiment.Experiment exp, Instances data) throws Exception {
+  protected Tester getTester(Instances data) throws Exception {
     Tester			ttester;
     ResultMatrix		matrix;
     String			tmpStr;
@@ -642,12 +640,12 @@ public class WekaExperimentEvaluation
     ttester.setSortColumn(-1);
 
     if (!m_SwapRowsAndColumns) {
-      rows = determineColumnNames(m_Row, ExperimenterDefaults.getRow(), data);
-      cols = determineColumnNames(m_Column, ExperimenterDefaults.getColumn(), data);
+      rows = determineColumnNames(m_Row, ExperimenterDefaults.getRow());
+      cols = determineColumnNames(m_Column, ExperimenterDefaults.getColumn());
     }
     else {
-      cols = determineColumnNames(m_Row, ExperimenterDefaults.getRow(), data);
-      rows = determineColumnNames(m_Column, ExperimenterDefaults.getColumn(), data);
+      cols = determineColumnNames(m_Row, ExperimenterDefaults.getRow());
+      rows = determineColumnNames(m_Column, ExperimenterDefaults.getColumn());
     }
     selectedList = "";
     selectedListDataset = "";
@@ -667,10 +665,10 @@ public class WekaExperimentEvaluation
       else if (cols.contains(name.toLowerCase())) {
 	selectedList += "," + (i + 1);
       }
-      else if (name.toLowerCase().indexOf(ExperimenterDefaults.getComparisonField()) != -1) {
+      else if (name.toLowerCase().contains(ExperimenterDefaults.getComparisonField())) {
 	comparisonFieldSet = true;
       }
-      else if ((name.toLowerCase().indexOf("root_relative_squared_error") != -1) && (!comparisonFieldSet)) {
+      else if ((name.toLowerCase().contains("root_relative_squared_error")) && (!comparisonFieldSet)) {
 	comparisonFieldSet = true;
       }
     }
@@ -707,26 +705,22 @@ public class WekaExperimentEvaluation
   }
 
   /**
-   * Evaluates the experiment.
+   * Evaluates the experiment data.
    *
-   * @param exp		the experiment to evaluate
+   * @param data	the data to evaluate
    * @throws Exception 	If something goes wrong, like loading
    * 			data fails or comparison field invalid
    */
-  protected void evaluateExperiment(weka.experiment.Experiment exp) throws Exception {
+  protected void evaluateExperiment(Instances data) throws Exception {
     Tester			ttester;
-    Instances			data;
     StringBuilder 		outBuff;
     int 			compareCol;
     int 			tType;
     String			tmpStr;
     weka.core.Attribute		att;
 
-    // load experiment data
-    data = getData(exp);
-
     // setup testing algorithm
-    ttester = getTester(exp, data);
+    ttester = getTester(data);
 
     // evaluate experiment
     tmpStr = m_ComparisonField.getField();
@@ -769,7 +763,10 @@ public class WekaExperimentEvaluation
     result = null;
 
     try {
-      evaluateExperiment((weka.experiment.Experiment) m_InputToken.getPayload());
+      if (m_InputToken.getPayload() instanceof weka.experiment.Experiment)
+        evaluateExperiment(getData((weka.experiment.Experiment) m_InputToken.getPayload()));
+      else
+        evaluateExperiment((Instances) m_InputToken.getPayload());
     }
     catch (Exception e) {
       result = handleException("Error evaluating the experiment: ", e);
