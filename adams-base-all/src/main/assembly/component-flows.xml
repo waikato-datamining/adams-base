@@ -8,7 +8,7 @@
       <directory>${project.basedir}/src/main/flows</directory>
       <outputDirectory>/flows/</outputDirectory>
       <excludes>
-        <exclude>output/*.*</exclude>
+        <exclude>output/**.*</exclude>
       </excludes>
     </fileSet>
 
