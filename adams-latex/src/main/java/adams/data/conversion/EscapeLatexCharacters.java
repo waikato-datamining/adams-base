@@ -38,9 +38,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-character &lt;PERCENTAGE|UNDERSCORE|DOLLAR|AMPERSAND|BACKSLASH&gt; [-character ...] (property: characters)
+ * <pre>-character &lt;PERCENTAGE|UNDERSCORE|DOLLAR|AMPERSAND|CARET|BACKSLASH&gt; [-character ...] (property: characters)
  * &nbsp;&nbsp;&nbsp;The characters to escape.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -64,6 +64,7 @@ public class EscapeLatexCharacters
     UNDERSCORE,
     DOLLAR,
     AMPERSAND,
+    CARET,
     BACKSLASH
   }
 
@@ -154,6 +155,10 @@ public class EscapeLatexCharacters
 	case UNDERSCORE:
 	  chars.add('_');
 	  escaped.add("\\_");
+	  break;
+	case CARET:
+	  chars.add('^');
+	  escaped.add("\\^");
 	  break;
 	case PERCENTAGE:
 	  chars.add('%');
