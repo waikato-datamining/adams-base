@@ -1,0 +1,271 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * AbstainMinimumPercentage.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ */
+
+package weka.classifiers.meta;
+
+import weka.classifiers.AbstainingClassifier;
+import weka.classifiers.SingleClassifierEnhancer;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.Utils;
+import weka.core.WekaOptionUtils;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
+/**
+ <!-- globalinfo-start -->
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ <!-- options-end -->
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+public class AbstainMinimumPercentage
+  extends SingleClassifierEnhancer
+  implements AbstainingClassifier {
+
+  private static final long serialVersionUID = 5699323936859571421L;
+
+  /** the minimum percentage that the classification must meet (0-1). */
+  protected double m_MinPercentage = getDefaultMinPercentage();
+
+  /** the number of class labels. */
+  protected int m_NumLabels;
+
+  /**
+   * Returns a string describing classifier.
+   *
+   * @return 		a description suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String globalInfo() {
+    return "Abstains if the percentage of the chosen class label is below the specified threshold.";
+  }
+
+  /**
+   * Returns the default minimum percentage that the chosen class label must meet.
+   *
+   * @return value the default
+   */
+  protected double getDefaultMinPercentage() {
+    return 0.8;
+  }
+
+  /**
+   * Sets the minimum percentage that the chosen class label must meet.
+   *
+   * @param value the minimum percentage
+   */
+  public void setMinPercentage(double value) {
+    if ((value >= 0) && (value <= 1.0))
+      m_MinPercentage = value;
+    else
+      System.err.println("Min percentage must meet 0 < x < 1, provided: " + value);
+  }
+
+  /**
+   * Returns the minimum percentage that the chosen class label must meet.
+   *
+   * @return value the minimum percentage
+   */
+  public double getMinPercentage() {
+    return m_MinPercentage;
+  }
+
+  /**
+   * Returns the tip text for this property
+   * @return tip text for this property suitable for
+   * displaying in the explorer/experimenter gui
+   */
+  public String minPercentageTipText() {
+    return "The minimum percentage that the chosen label must meet.";
+  }
+
+  /**
+   * Returns an enumeration describing the available options.
+   *
+   * @return an enumeration of all the available options.
+   */
+  @Override
+  public Enumeration listOptions() {
+    Vector result = new Vector();
+    WekaOptionUtils.add(result, super.listOptions());
+    WekaOptionUtils.addOption(result, minPercentageTipText(), ""+ getDefaultMinPercentage(), "min-percentage");
+    return WekaOptionUtils.toEnumeration(result);
+  }
+
+  /**
+   * Sets the OptionHandler's options using the given list. All options
+   * will be set (or reset) during this call (i.e. incremental setting
+   * of options is not possible).
+   *
+   * @param options the list of options as an array of strings
+   * @throws Exception if an option is not supported
+   */
+  @Override
+  public void setOptions(String[] options) throws Exception {
+    setMinPercentage(WekaOptionUtils.parse(options, "min-percentage", getDefaultMinPercentage()));
+    super.setOptions(options);
+  }
+
+  /**
+   * Gets the current option settings for the OptionHandler.
+   *
+   * @return the list of current option settings as an array of strings
+   */
+  @Override
+  public String[] getOptions() {
+    List<String> result = new ArrayList<>();
+    WekaOptionUtils.add(result, "min-percentage", getMinPercentage());
+    WekaOptionUtils.add(result, super.getOptions());
+    return WekaOptionUtils.toArray(result);
+  }
+
+  /**
+   * Returns default capabilities of the base classifier.
+   *
+   * @return      the capabilities of the base classifier
+   */
+  @Override
+  public Capabilities getCapabilities() {
+    Capabilities	result;
+
+    result = super.getCapabilities();
+    result.disable(Capability.DATE_CLASS);
+    result.disable(Capability.NUMERIC_CLASS);
+    result.disable(Capability.RELATIONAL_CLASS);
+
+    return result;
+  }
+
+  /**
+   * Generates a classifier. Must initialize all fields of the classifier
+   * that are not being set via options (ie. multiple calls of buildClassifier
+   * must always lead to the same result). Must not change the dataset
+   * in any way.
+   *
+   * @param data set of instances serving as training data
+   * @exception Exception if the classifier has not been
+   * generated successfully
+   */
+  @Override
+  public void buildClassifier(Instances data) throws Exception {
+    m_Classifier.buildClassifier(data);
+    m_NumLabels = data.classAttribute().numValues();
+  }
+
+  /**
+   * Whether abstaining is possible, e.g., used in meta-classifiers.
+   *
+   * @return		true if abstaining is possible
+   */
+  @Override
+  public boolean canAbstain() {
+    return true;
+  }
+
+  /**
+   * Makes a prediction for the instance.
+   *
+   * @param instance	the instance to make a prediction for
+   * @return		the 0-based class label index
+   * @throws Exception	if classification fails
+   */
+  @Override
+  public double classifyInstance(Instance instance) throws Exception {
+    double result = getAbstentionClassification(instance);
+
+    if (result >= m_MinPercentage)
+      return Utils.missingValue();
+
+    return result;
+  }
+
+  /**
+   * Returns the class distribution for an instance.
+   *
+   * @param instance	the instance to get the distribution for
+   * @return		the distribution
+   * @throws Exception	if classification fails
+   */
+  @Override
+  public double[] distributionForInstance(Instance instance) throws Exception {
+    if (Double.isNaN(classifyInstance(instance)))
+      return new double[m_NumLabels];
+    else
+      return super.distributionForInstance(instance);
+  }
+
+  /**
+   * The prediction that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the prediction
+   * @throws Exception	if fails to make prediction
+   */
+  @Override
+  public double getAbstentionClassification(Instance inst) throws Exception {
+    if (m_Classifier instanceof AbstainingClassifier)
+      return ((AbstainingClassifier) m_Classifier).getAbstentionClassification(inst);
+    else
+      return m_Classifier.classifyInstance(inst);
+  }
+
+  /**
+   * The class distribution that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the class distribution
+   * @throws Exception	if fails to make prediction
+   */
+  @Override
+  public double[] getAbstentionDistribution(Instance inst) throws Exception {
+    if (m_Classifier instanceof AbstainingClassifier)
+      return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(inst);
+    else
+      return m_Classifier.distributionForInstance(inst);
+  }
+
+  /**
+   * Returns the model.
+   *
+   * @return		the model
+   */
+  @Override
+  public String toString() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+    result.append(getClass().getSimpleName() + "\n");
+    result.append(getClass().getSimpleName().replaceAll(".", "=") + "\n");
+    result.append("\n");
+    result.append("Minimum percentage: " + m_MinPercentage + "\n");
+    result.append("\n");
+    result.append(m_Classifier.toString());
+    return result.toString();
+  }
+}
