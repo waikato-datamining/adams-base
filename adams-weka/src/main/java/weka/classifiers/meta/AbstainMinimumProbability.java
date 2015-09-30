@@ -145,8 +145,8 @@ public class AbstainMinimumProbability
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.add(result, super.listOptions());
     WekaOptionUtils.addOption(result, minProbabilityTipText(), ""+ getDefaultMinProbability(), "min-probability");
+    WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
 
