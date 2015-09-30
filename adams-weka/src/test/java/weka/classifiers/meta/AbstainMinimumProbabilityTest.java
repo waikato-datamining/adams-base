@@ -32,7 +32,7 @@ import weka.classifiers.Classifier;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class AbstainMinimumPercentageTest
+public class AbstainMinimumProbabilityTest
   extends AbstractAdamsClassifierTest {
 
   /**
@@ -40,7 +40,7 @@ public class AbstainMinimumPercentageTest
    *
    * @param name	the name of the test
    */
-  public AbstainMinimumPercentageTest(String name) {
+  public AbstainMinimumProbabilityTest(String name) {
     super(name);
   }
 
@@ -51,10 +51,10 @@ public class AbstainMinimumPercentageTest
    */
   @Override
   public Classifier getClassifier() {
-    AbstainMinimumPercentage	result;
+    AbstainMinimumProbability result;
 
     try {
-      result = new AbstainMinimumPercentage();
+      result = new AbstainMinimumProbability();
     }
     catch (Exception e) {
       result = null;
@@ -69,7 +69,7 @@ public class AbstainMinimumPercentageTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(AbstainMinimumPercentageTest.class);
+    return new TestSuite(AbstainMinimumProbabilityTest.class);
   }
 
   /**

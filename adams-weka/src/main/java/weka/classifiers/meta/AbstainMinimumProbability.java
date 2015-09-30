@@ -14,7 +14,7 @@
  */
 
 /**
- * AbstainMinimumPercentage.java
+ * AbstainMinimumProbability.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
@@ -36,7 +36,7 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * Abstains if the percentage of the chosen class label is below the specified threshold.
+ * Abstains if the probability of the chosen class label is below the specified threshold.
  * <p/>
  <!-- globalinfo-end -->
  *
@@ -67,8 +67,8 @@ import java.util.Vector;
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
  * 
- * <pre> -min-percentage &lt;value&gt;
- *  The minimum percentage that the chosen label must meet.
+ * <pre> -min-probability &lt;value&gt;
+ *  The minimum probability that the chosen label must meet.
  *  (default: 0.8)</pre>
  * 
  <!-- options-end -->
@@ -76,14 +76,14 @@ import java.util.Vector;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class AbstainMinimumPercentage
+public class AbstainMinimumProbability
   extends SingleClassifierEnhancer
   implements AbstainingClassifier {
 
   private static final long serialVersionUID = 5699323936859571421L;
 
-  /** the minimum percentage that the classification must meet (0-1). */
-  protected double m_MinPercentage = getDefaultMinPercentage();
+  /** the minimum probability that the classification must meet (0-1). */
+  protected double m_MinProbability = getDefaultMinProbability();
 
   /** the number of class labels. */
   protected int m_NumLabels;
@@ -95,37 +95,37 @@ public class AbstainMinimumPercentage
    * 			displaying in the explorer/experimenter gui
    */
   public String globalInfo() {
-    return "Abstains if the percentage of the chosen class label is below the specified threshold.";
+    return "Abstains if the probability of the chosen class label is below the specified threshold.";
   }
 
   /**
-   * Returns the default minimum percentage that the chosen class label must meet.
+   * Returns the default minimum probability that the chosen class label must meet.
    *
    * @return value the default
    */
-  protected double getDefaultMinPercentage() {
+  protected double getDefaultMinProbability() {
     return 0.8;
   }
 
   /**
-   * Sets the minimum percentage that the chosen class label must meet.
+   * Sets the minimum probability that the chosen class label must meet.
    *
-   * @param value the minimum percentage
+   * @param value the minimum probability
    */
-  public void setMinPercentage(double value) {
+  public void setMinProbability(double value) {
     if ((value >= 0) && (value <= 1.0))
-      m_MinPercentage = value;
+      m_MinProbability = value;
     else
-      System.err.println("Min percentage must meet 0 < x < 1, provided: " + value);
+      System.err.println("Min probability must meet 0 < x < 1, provided: " + value);
   }
 
   /**
-   * Returns the minimum percentage that the chosen class label must meet.
+   * Returns the minimum probability that the chosen class label must meet.
    *
-   * @return value the minimum percentage
+   * @return value the minimum probability
    */
-  public double getMinPercentage() {
-    return m_MinPercentage;
+  public double getMinProbability() {
+    return m_MinProbability;
   }
 
   /**
@@ -133,8 +133,8 @@ public class AbstainMinimumPercentage
    * @return tip text for this property suitable for
    * displaying in the explorer/experimenter gui
    */
-  public String minPercentageTipText() {
-    return "The minimum percentage that the chosen label must meet.";
+  public String minProbabilityTipText() {
+    return "The minimum probability that the chosen label must meet.";
   }
 
   /**
@@ -146,7 +146,7 @@ public class AbstainMinimumPercentage
   public Enumeration listOptions() {
     Vector result = new Vector();
     WekaOptionUtils.add(result, super.listOptions());
-    WekaOptionUtils.addOption(result, minPercentageTipText(), ""+ getDefaultMinPercentage(), "min-percentage");
+    WekaOptionUtils.addOption(result, minProbabilityTipText(), ""+ getDefaultMinProbability(), "min-probability");
     return WekaOptionUtils.toEnumeration(result);
   }
 
@@ -160,7 +160,7 @@ public class AbstainMinimumPercentage
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setMinPercentage(WekaOptionUtils.parse(options, "min-percentage", getDefaultMinPercentage()));
+    setMinProbability(WekaOptionUtils.parse(options, "min-probability", getDefaultMinProbability()));
     super.setOptions(options);
   }
 
@@ -172,7 +172,7 @@ public class AbstainMinimumPercentage
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "min-percentage", getMinPercentage());
+    WekaOptionUtils.add(result, "min-probability", getMinProbability());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
@@ -235,7 +235,7 @@ public class AbstainMinimumPercentage
 
     result = m_Classifier.distributionForInstance(instance);
     max    = result[Utils.maxIndex(result)];
-    if (max < m_MinPercentage)
+    if (max < m_MinProbability)
       return new double[m_NumLabels];
     else
       return result;
@@ -284,7 +284,7 @@ public class AbstainMinimumPercentage
     result.append(getClass().getSimpleName() + "\n");
     result.append(getClass().getSimpleName().replaceAll(".", "=") + "\n");
     result.append("\n");
-    result.append("Minimum percentage: " + m_MinPercentage + "\n");
+    result.append("Minimum probability: " + m_MinProbability + "\n");
     result.append("\n");
     result.append(m_Classifier.toString());
     return result.toString();
