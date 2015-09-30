@@ -36,9 +36,41 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
+ * Abstains if the percentage of the chosen class label is below the specified threshold.
+ * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * Valid options are: <p/>
+ * 
+ * <pre> -W
+ *  Full name of base classifier.
+ *  (default: weka.classifiers.rules.ZeroR)</pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ * 
+ * <pre> 
+ * Options specific to classifier weka.classifiers.rules.ZeroR:
+ * </pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ * 
+ * <pre> -min-percentage &lt;value&gt;
+ *  The minimum percentage that the chosen label must meet.
+ *  (default: 0.8)</pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -174,6 +206,7 @@ public class AbstainMinimumPercentage
    */
   @Override
   public void buildClassifier(Instances data) throws Exception {
+    getCapabilities().testWithFail(data);
     m_Classifier.buildClassifier(data);
     m_NumLabels = data.classAttribute().numValues();
   }
@@ -189,23 +222,6 @@ public class AbstainMinimumPercentage
   }
 
   /**
-   * Makes a prediction for the instance.
-   *
-   * @param instance	the instance to make a prediction for
-   * @return		the 0-based class label index
-   * @throws Exception	if classification fails
-   */
-  @Override
-  public double classifyInstance(Instance instance) throws Exception {
-    double result = getAbstentionClassification(instance);
-
-    if (result >= m_MinPercentage)
-      return Utils.missingValue();
-
-    return result;
-  }
-
-  /**
    * Returns the class distribution for an instance.
    *
    * @param instance	the instance to get the distribution for
@@ -214,10 +230,15 @@ public class AbstainMinimumPercentage
    */
   @Override
   public double[] distributionForInstance(Instance instance) throws Exception {
-    if (Double.isNaN(classifyInstance(instance)))
+    double[]	result;
+    double	max;
+
+    result = m_Classifier.distributionForInstance(instance);
+    max    = result[Utils.maxIndex(result)];
+    if (max < m_MinPercentage)
       return new double[m_NumLabels];
     else
-      return super.distributionForInstance(instance);
+      return result;
   }
 
   /**
