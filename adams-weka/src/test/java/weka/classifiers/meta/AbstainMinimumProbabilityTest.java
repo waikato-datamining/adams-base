@@ -26,8 +26,8 @@ import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 
 /**
- * Tests AbstainMinimumPercentage. Run from the command line with:<br><br>
- * java weka.classifiers.meta.AbstainMinimumPercentageTest
+ * Tests AbstainMinimumProbability. Run from the command line with:<br><br>
+ * java weka.classifiers.meta.AbstainMinimumProbabilityTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -45,7 +45,7 @@ public class AbstainMinimumProbabilityTest
   }
 
   /**
-   * Creates a default AbstainMinimumPercentage.
+   * Creates a default AbstainMinimumProbability.
    *
    * @return		the configured classifier
    */
