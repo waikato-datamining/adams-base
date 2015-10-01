@@ -158,7 +158,7 @@ public class EscapeLatexCharacters
 	  break;
 	case CARET:
 	  chars.add('^');
-	  escaped.add("\\^");
+	  escaped.add("$^\\wedge$");
 	  break;
 	case PERCENTAGE:
 	  chars.add('%');
