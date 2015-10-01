@@ -41,6 +41,7 @@ import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.Favorites.FavoriteSelectionListener;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
+import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -399,8 +400,7 @@ public class GenericObjectEditor
             return;
           // update property sheet
           try {
-            Class cls = Class.forName("" + m_ComboBoxClassname.getSelectedItem());
-            setValue(cls.newInstance());
+            setValue(newInstance("" + m_ComboBoxClassname.getSelectedItem()));
           }
           catch (Exception ex) {
             ex.printStackTrace();
@@ -998,7 +998,7 @@ public class GenericObjectEditor
 	if (defaultValue == null)
 	  throw new IllegalStateException("No classes available!");
 	else
-	  m_DefaultValue = Class.forName(defaultValue).newInstance();
+	  m_DefaultValue = newInstance(defaultValue);
       }
       catch (Exception e) {
 	System.err.println("Problem loading the first class: " + defaultValue);
@@ -1388,7 +1388,7 @@ public class GenericObjectEditor
       if ((m_Object != null) && m_Object.getClass().getName().equals(className))
 	return;
 
-      setValue(Class.forName(className).newInstance());
+      setValue(newInstance(className));
       if (m_EditorComponent != null)
 	m_EditorComponent.updateChildPropertySheet();
     }
@@ -1489,7 +1489,7 @@ public class GenericObjectEditor
     }
     else {
       try {
-        result = source.getClass().newInstance();
+        result = newInstance(source.getClass());
       }
       catch (Exception e) {
         throw new IllegalStateException("Failed to create copy of object!", e);
@@ -1497,5 +1497,33 @@ public class GenericObjectEditor
     }
 
     return result;
+  }
+
+  /**
+   * Creates a new instance of the given class.
+   *
+   * @param cls		the class to create an instance from
+   * @return		the object, null if failed
+   * @throws Exception	if instantiation fails
+   */
+  public static Object newInstance(String cls) throws Exception {
+    return newInstance(Class.forName(cls));
+  }
+
+  /**
+   * Creates a new instance of the given class.
+   *
+   * @param cls		the class to create an instance from
+   * @return		the object, null if failed
+   * @throws Exception	if instantiation fails
+   */
+  public static Object newInstance(Class cls) throws Exception {
+    AbstractObjectInstanceHandler	instHandler;
+
+    instHandler = AbstractObjectInstanceHandler.getHandler(cls);
+    if (instHandler != null)
+      return instHandler.newInstance(cls);
+    else
+      return cls.newInstance();
   }
 }

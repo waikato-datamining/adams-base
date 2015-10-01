@@ -469,6 +469,10 @@ adams.gui.goe.AbstractGenericObjectEditorHandler=\
 adams.gui.goe.AbstractEditorRegistration=\
   adams.gui.goe
 
+# handlers for object instantiations
+adams.gui.goe.objectinstance.AbstractObjectInstanceHandler=\
+  adams.gui.goe.objectinstance
+
 # the menu items for the application menu
 adams.gui.application.AbstractMenuItemDefinition=\
   adams.gui.menu

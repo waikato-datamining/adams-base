@@ -67,6 +67,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoveItemsEvent;
 import adams.gui.event.RemoveItemsListener;
+import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
 import gnu.trove.set.hash.TIntHashSet;
 
 /**
@@ -524,7 +525,7 @@ public class GenericArrayEditor
     JPanel 				panelRemove;
     JPanel 				panelLeft;
     JPanel 				panelRight;
-    
+
     // Determine if the current object is an array
     m_ElementEditor = null;
     m_View          = null;
@@ -572,7 +573,7 @@ public class GenericArrayEditor
 	  }
 	  else {
 	    try {
-	      editor.setValue(elementClass.newInstance());
+	      editor.setValue(GenericObjectEditor.newInstance(elementClass));
 	    }
 	    catch(Exception ex) {
 	      m_ElementEditor = null;
