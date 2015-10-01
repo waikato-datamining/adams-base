@@ -20,9 +20,9 @@
 package weka.classifiers.meta;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
 
@@ -34,7 +34,9 @@ import weka.classifiers.trees.J48;
  * @version $Revision$
  */
 public class AbstainingClassifierWrapperTest
-  extends AbstractAdamsClassifierTest {
+  // currently disabled
+  //extends AbstractAdamsClassifierTest {
+  extends TestCase {
 
   /**
    * Initializes the test.
@@ -50,7 +52,6 @@ public class AbstainingClassifierWrapperTest
    *
    * @return		the configured classifier
    */
-  @Override
   public Classifier getClassifier() {
     AbstainingClassifierWrapper result;
     AbstainMinimumProbability   min;
@@ -65,6 +66,11 @@ public class AbstainingClassifierWrapperTest
     }
 
     return result;
+  }
+
+  // to avoid junit warning about no tests available
+  public void testNothing() {
+
   }
 
   /**
