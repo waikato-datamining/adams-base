@@ -15,13 +15,30 @@
 
 /*
  * DragAndDropTree.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 tony@stupidjavatricks.com (original drag'n'drop)
  * Copyright (C) 2011 Matt Crinklaw-Vogt (delayed opening of collapsed node when hovering over it during d'n'd)
  */
 
 package adams.gui.core;
 
+import adams.core.EnumWithCustomDisplay;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.gui.event.NodeDroppedEvent;
+import adams.gui.event.NodeDroppedEvent.NotificationTime;
+import adams.gui.event.NodeDroppedListener;
+import adams.gui.flow.tree.Node;
+
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
@@ -52,23 +69,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import adams.core.EnumWithCustomDisplay;
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.gui.event.NodeDroppedEvent;
-import adams.gui.event.NodeDroppedEvent.NotificationTime;
-import adams.gui.event.NodeDroppedListener;
-import adams.gui.flow.tree.Node;
 
 /**
  * A BaseTree ehanced with drag'n'drop.
@@ -612,7 +612,6 @@ public class DragAndDropTree
     boolean	result;
     Node	parent;
 
-    result = true;
     parent = (Node) target.getParent();
 
     switch (position) {
@@ -746,40 +745,46 @@ public class DragAndDropTree
    * @param position	the drop position
    */
   protected void doDrop(Transferable source, BaseTreeNode target, DropPosition position) {
-    BaseTreeNode	top;
-    BaseTreeNode 	parent;
-    int 		targetIndex;
-    int 		sourceIndex;
-    BaseTreeNode[]	newNodes;
-    List<TreePath>	exp;
+    BaseTreeNode		top;
+    final BaseTreeNode		fTop;
+    BaseTreeNode 		parent;
+    final BaseTreeNode 		fParent;
+    int 			targetIndex;
+    final int 			fTargetIndex;
+    int 			sourceIndex;
+    BaseTreeNode[]		newNodes;
+    final BaseTreeNode[]	fNewNodes;
+    final List<TreePath>	exp;
 
-    newNodes = null;
-    parent   = null;
-    top      = null;
-    exp      = getExpandedNodes();
+    exp = getExpandedNodes();
 
     if (m_SourceNode != null)
-      newNodes = (BaseTreeNode[]) m_SourceNode;
+      newNodes = m_SourceNode;
     else
       newNodes = newTreeNodes(source);
+    fNewNodes = newNodes;
 
     notifyNodeDroppedListeners(
 	new NodeDroppedEvent(this, newNodes, NotificationTime.BEFORE));
 
+    top     = null;
+    parent  = null;
     try {
       switch (position) {
 	case BENEATH:
-	  parent = target;
-	  if (m_SourceNode != null) {
+	  parent  = target;
+	  fParent = parent;
+	  if (m_SourceNode != null)
 	    top = getCommonAncestor((BaseTreeNode) m_SourceNode[0].getParent(), parent);
-	    for (BaseTreeNode node: newNodes)
-	      parent.add(node);
-	  }
-	  else {
+	  else
 	    top = parent;
-	    for (BaseTreeNode node: newNodes)
-	      parent.add(node);
-	  }
+	  SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+	      for (BaseTreeNode node: fNewNodes)
+		fParent.add(node);
+	    }
+	  });
 	  break;
 
 	case HERE:
@@ -795,26 +800,26 @@ public class DragAndDropTree
 	      sourceIndex = parent.getIndex(newNodes[0]);
 	      if (sourceIndex < targetIndex)
 		targetIndex--;
-	      for (BaseTreeNode node: newNodes) {
-		parent.insert(node, targetIndex);
-		targetIndex++;
-	      }
 	    }
 	    else {
 	      top = getCommonAncestor(newNodes[0], parent);
-	      for (BaseTreeNode node: newNodes) {
-		parent.insert(node, targetIndex);
-		targetIndex++;
-	      }
 	    }
 	  }
 	  else {
 	    top = parent;
-	    for (BaseTreeNode node: newNodes) {
-	      parent.insert(node, targetIndex);
-	      targetIndex++;
-	    }
 	  }
+	  fParent      = parent;
+	  fTargetIndex = targetIndex;
+	  SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+	      int targetIndex = fTargetIndex;
+	      for (BaseTreeNode node: fNewNodes) {
+		fParent.insert(node, targetIndex);
+		targetIndex++;
+	      }
+	    }
+	  });
 	  break;
 
 	default:
@@ -822,25 +827,39 @@ public class DragAndDropTree
       }
     }
     catch (IllegalArgumentException ex) {
-      parent  = null;
-      top     = null;
-      newNodes = null;
       ex.printStackTrace();
     }
 
     // update tree
-    if (top != null)
-      ((DefaultTreeModel) getModel()).nodeStructureChanged(top);
+    if (top != null) {
+      final BaseTreeNode finTop = top;
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  ((DefaultTreeModel) getModel()).nodeStructureChanged(finTop);
+	}
+      });
+    }
     
     // restore expansion state
-    setExpandedNodes(exp);
-    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+	setExpandedNodes(exp);
+      }
+    });
+
     if (parent != null) {
-      // expand the parent
-      expand(parent);
-      // notify listeners
-      if (newNodes != null)
-	notifyNodeDroppedListeners(new NodeDroppedEvent(this, newNodes, NotificationTime.FINISHED));
+      final BaseTreeNode finParent = parent;
+      SwingUtilities.invokeLater(new Runnable() {
+	public void run() {
+	  // expand the parent
+	  expand(finParent);
+	  // notify listeners
+	  if (newNodes != null)
+	    notifyNodeDroppedListeners(new NodeDroppedEvent(DragAndDropTree.this, fNewNodes, NotificationTime.FINISHED));
+	}
+      });
     }
   }
 
@@ -933,12 +952,12 @@ public class DragAndDropTree
     if (    (m_SourceNode == null)
 	 || (m_SourceNode[0] == null)
 	 || (m_SourceNode[0] == getModel().getRoot())
-	 || !canStartDrag((BaseTreeNode[]) m_SourceNode) )
+	 || !canStartDrag(m_SourceNode) )
       return;
 
     // start drag
     cursor = selectCursor(e.getDragAction());
-    m_DragSource.startDrag(e, cursor, newNodeCollection((BaseTreeNode[]) m_SourceNode), this);
+    m_DragSource.startDrag(e, cursor, newNodeCollection(m_SourceNode), this);
   }
 
   /**
