@@ -328,6 +328,8 @@ public class Tree
 	BaseTreeNode[] tnodes = e.getNodes();
 	ArrayList<Node> nodes = new ArrayList<Node>();
 
+	// TODO queue
+
 	// update actor name, if necessary
 	if (e.getNotificationTime() == NotificationTime.FINISHED) {
 	  for (BaseTreeNode node: tnodes) {
@@ -377,7 +379,7 @@ public class Tree
    * @param root	the root actor, can be null
    */
   public void buildTree(AbstractActor root) {
-    DefaultTreeModel		model;
+    final DefaultTreeModel	model;
     TreeModel			modelOld;
     DefaultMutableTreeNode	rootNode;
 
@@ -393,10 +395,21 @@ public class Tree
       model    = new DefaultTreeModel(rootNode);
     }
 
-    setModel(model);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+	setModel(model);
+      }
+    });
 
-    if (model.getRoot() != null)
-      expandPath(new TreePath(model.getRoot()));
+    if (model.getRoot() != null) {
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  expandPath(new TreePath(model.getRoot()));
+	}
+      });
+    }
 
     // clean up old model
     if (modelOld != null)
@@ -425,21 +438,29 @@ public class Tree
    * 			return it (recursive calls always append the sub-tree!)
    * @return		the generated nodes
    */
-  protected Node[] buildTree(Node parent, AbstractActor[] actors, boolean append) {
-    Node[]	result;
-    int		n;
-    int		i;
+  protected Node[] buildTree(final Node parent, AbstractActor[] actors, boolean append) {
+    final Node[]	result;
+    int			n;
+    int			i;
 
     result = new Node[actors.length];
     for (n = 0; n < actors.length; n++) {
       result[n] = new Node(this, actors[n]);
-      if ((parent != null) && append)
-	parent.add(result[n]);
 
       if (actors[n] instanceof ActorHandler) {
 	for (i = 0; i < ((ActorHandler) actors[n]).size(); i++)
 	  buildTree(result[n], ((ActorHandler) actors[n]).get(i), true);
       }
+    }
+
+    if ((parent != null) && append) {
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  for (Node node : result)
+	      parent.add(node);
+	}
+      });
     }
 
     return result;
@@ -453,7 +474,7 @@ public class Tree
    * @param node	the actor to check
    * @return		true if the actor's name was modified
    */
-  public boolean updateActorName(Node node) {
+  public boolean updateActorName(final Node node) {
     boolean		result;
     Node 		parent;
     AbstractActor	actor;
@@ -463,6 +484,7 @@ public class Tree
 
     result = false;
 
+    actor  = null;
     parent = (Node) node.getParent();
     if (parent != null) {
       if (parent.getActor() instanceof FixedNameActorHandler) {
@@ -487,6 +509,16 @@ public class Tree
 	if (result)
 	  node.setActor(actor);
       }
+    }
+
+    if (result && (actor != null)) {
+      final AbstractActor fActor = actor;
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  node.setActor(fActor);
+	}
+      });
     }
 
     return result;
@@ -1037,9 +1069,8 @@ public class Tree
    * @param paths	the paths to the actors
    */
   public void toggleEnabledState(TreePath[] paths) {
-    Node[]		nodes;
-    AbstractActor	actor;
-    int			i;
+    Node[]	nodes;
+    int		i;
 
     nodes = TreeHelper.pathsToNodes(paths);
     if (nodes.length == 1)
@@ -1048,17 +1079,28 @@ public class Tree
       addUndoPoint("Toggling enabled state of " + nodes.length + " actors");
 
     for (i = 0; i < nodes.length; i++) {
-      actor = nodes[i].getActor();
-      actor.setSkip(!actor.getSkip());
-      nodes[i].setActor(actor);
-      ((DefaultTreeModel) getModel()).nodeChanged(nodes[i]);
+      final Node fNode = nodes[i];
+      final AbstractActor actor = nodes[i].getActor();
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  actor.setSkip(!actor.getSkip());
+	  fNode.setActor(actor);
+	  ((DefaultTreeModel) getModel()).nodeChanged(fNode);
+	}
+      });
     }
 
-    setModified(true);
-    if (nodes.length == 1)
-      notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.MODIFY));
-    else
-      notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.MODIFY_RANGE));
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+	setModified(true);
+	if (nodes.length == 1)
+	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.MODIFY));
+	else
+	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.MODIFY_RANGE));
+      }
+    });
   }
 
   /**
@@ -1347,13 +1389,13 @@ public class Tree
    */
   public void addActor(TreePath path, AbstractActor actor, InsertPosition position, boolean record) {
     GenericObjectEditorDialog	dialog;
-    Node			node;
-    Node			parent;
+    final Node			node;
+    final Node			parent;
     int				index;
     Node[]			children;
     AbstractActor[]		actors;
     String			txt;
-    List<TreePath> 		exp;
+    final List<TreePath> 	exp;
 
     if (actor == null) {
       node = TreeHelper.pathToNode(path);
@@ -1408,10 +1450,15 @@ public class Tree
 	children = buildTree(node, actors, true);
 	for (Node child: children)
 	  updateActorName(child);
-	nodeStructureChanged(node);
-	setExpandedNodes(exp);
-	expand(node);
-	
+	SwingUtilities.invokeLater(new Runnable() {
+	  @Override
+	  public void run() {
+	    nodeStructureChanged(node);
+	    setExpandedNodes(exp);
+	    expand(node);
+	  }
+	});
+
 	// record
 	if (m_RecordAdd && (actors.length == 1)) {
 	  ActorSuggestion.getSingleton().record(
@@ -1450,13 +1497,24 @@ public class Tree
 	exp      = getExpandedNodes();
 	children = buildTree(node, actors, false);
 	for (Node child: children) {
-	  parent.insert(child, index);
-	  updateActorName(child);
+	  final int fIndex = index;
+	  SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+	      parent.insert(child, fIndex);
+	      updateActorName(child);
+	    }
+	  });
 	  index++;
 	}
-	nodeStructureChanged(parent);
-	setExpandedNodes(exp);
-	
+	SwingUtilities.invokeLater(new Runnable() {
+	  @Override
+	  public void run() {
+	    nodeStructureChanged(parent);
+	    setExpandedNodes(exp);
+	  }
+	});
+
 	// record
 	if (m_RecordAdd && (actors.length == 1)) {
 	  ActorSuggestion.getSingleton().record(
@@ -1466,10 +1524,14 @@ public class Tree
 	}
       }
 
-      setModified(true);
-
-      // notify listeners
-      notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  setModified(true);
+	  // notify listeners
+	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
+	}
+      });
     }
   }
 
@@ -1578,8 +1640,10 @@ public class Tree
 
     result = null;
 
-    if (getModel().getRoot() != null)
-      result = (Node) getModel().getRoot();
+    if (getModel().getRoot() != null) {
+      if (getModel().getRoot() instanceof Node)
+	result = (Node) getModel().getRoot();
+    }
 
     return result;
   }
@@ -2106,11 +2170,11 @@ public class Tree
    * @param value	the state to use
    */
   public void setState(Vector value) {
-    AbstractActor	actor;
-    boolean[]		expanded;
-    Boolean		modified;
+    final AbstractActor	actor;
+    final boolean[]	expanded;
+    final Boolean	modified;
+    final File		file;
     NestedConsumer	consumer;
-    File		file;
 
     if (m_StateUsesNested) {
       if (value.get(0) != null) {
@@ -2130,10 +2194,15 @@ public class Tree
     modified = (Boolean) value.get(2);
     file     = (File) value.get(3);
 
-    setActor(actor);
-    setExpandedState(expanded);
     setModified(modified);
     setFile(file);
+    setActor(actor);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+	setExpandedState(expanded);
+      }
+    });
   }
 
   /**
@@ -2348,9 +2417,14 @@ public class Tree
       if (node != null)
 	exp.add(new TreePath(node.getPath()));
     }
-    
-    setExpandedNodes(exp);
-    
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+	setExpandedNodes(exp);
+      }
+    });
+
     return true;
   }
 
@@ -2382,9 +2456,9 @@ public class Tree
     Node				node;
     AbstractActor			flow;
     AbstractActor			selected;
-    Node				newNode;
-    Node				parent;
-    int					index;
+    final Node				newNode;
+    final Node				parent;
+    final int				index;
     final Component			comp;
     ErrorMessagePanel			errorPanel;
     final ErrorMessagePanel		fErrorPanel;
@@ -2447,13 +2521,23 @@ public class Tree
 	  newNode = buildTree((Node) node.getParent(), modifying.getModifiedActor(), false);
 	  parent  = (Node) node.getParent();
 	  index   = parent.getIndex(node);
-	  parent.remove(index);
-	  parent.insert(newNode, index);
+	  SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+	      parent.remove(index);
+	      parent.insert(newNode, index);
+	    }
+	  });
 	}
-	setModified(true);
-	nodeStructureChanged(newNode);
-	restoreExpandedNodes(exp);
-	notifyActorChangeListeners(new ActorChangeEvent(this, newNode, Type.MODIFY));
+	SwingUtilities.invokeLater(new Runnable() {
+	  @Override
+	  public void run() {
+	    setModified(true);
+	    nodeStructureChanged(newNode);
+	    restoreExpandedNodes(exp);
+	    notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
+	  }
+	});
       }
     }
 
