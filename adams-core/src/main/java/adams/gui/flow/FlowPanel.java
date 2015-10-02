@@ -834,12 +834,20 @@ public class FlowPanel
 
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
 	showStatus("Loading '" + file + "'...");
+        setTabIcon("hourglass.png");
+	setTitle(FileUtils.replaceExtension(file.getName(), ""));
+	updateTitle();
 
 	m_Flow = (AbstractActor) reader.read(file);
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
-	m_Tree.redraw();
+	SwingUtilities.invokeLater(new Runnable() {
+	  @Override
+	  public void run() {
+	    m_Tree.redraw();
+	  }
+	});
 
 	showStatus("");
 
@@ -853,6 +861,7 @@ public class FlowPanel
 
 	m_RunningSwingWorker = false;
         canExecute           = execute && m_Errors.isEmpty();
+        setTabIcon(null);
 
 	if (m_Errors.isEmpty())
 	  setCurrentFile(file);
