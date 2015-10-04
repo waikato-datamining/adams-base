@@ -15,7 +15,7 @@
 
 /*
  * JTableHelper.java
- * Copyright (C) 2005 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2015 University of Waikato, Hamilton, New Zealand
  * Copyright http://fopps.sourceforge.net/
  */
 
@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -189,20 +190,23 @@ public class JTableHelper {
    * @param table	the table to work on
    * @param col		the column index
    */
-  public static void setOptimalColumnWidth(JTable table, int col) {
-    int			width;
-    TableColumn		column;
-    JTableHeader	header;
+  public static void setOptimalColumnWidth(final JTable table, final int col) {
+    final int	  width;
 
     if ( (col >= 0) && (col < table.getColumnModel().getColumnCount()) ) {
       width = calcColumnWidth(table, col);
 
       if (width >= 0) {
-        header = table.getTableHeader();
-        column = table.getColumnModel().getColumn(col);
-        column.setPreferredWidth(width);
-        table.doLayout();
-        header.repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            JTableHeader header = table.getTableHeader();
+            TableColumn column = table.getColumnModel().getColumn(col);
+            column.setPreferredWidth(width);
+            table.doLayout();
+            header.repaint();
+          }
+        });
       }
     }
   }
@@ -241,20 +245,23 @@ public class JTableHelper {
    * @param table	the table to work on
    * @param col		the column index
    */
-  public static void setOptimalHeaderWidth(JTable table, int col) {
-    int			width;
-    TableColumn		column;
-    JTableHeader	header;
+  public static void setOptimalHeaderWidth(final JTable table, final int col) {
+    final int   width;
 
     if ( (col >= 0) && (col < table.getColumnModel().getColumnCount()) ) {
       width = calcHeaderWidth(table, col);
 
       if (width >= 0) {
-        header = table.getTableHeader();
-        column = table.getColumnModel().getColumn(col);
-        column.setPreferredWidth(width);
-        table.doLayout();
-        header.repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            JTableHeader header = table.getTableHeader();
+            TableColumn column = table.getColumnModel().getColumn(col);
+            column.setPreferredWidth(width);
+            table.doLayout();
+            header.repaint();
+          }
+        });
       }
     }
   }
