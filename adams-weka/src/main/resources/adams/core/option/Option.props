@@ -40,3 +40,8 @@ adams.data.weka.WekaAttributeIndex#valueOf=adams.gui.goe.WekaAttributeIndexEdito
 adams.data.weka.WekaAttributeRange=true
 adams.data.weka.WekaAttributeRange#toString=adams.gui.goe.WekaAttributeRangeEditor#toString
 adams.data.weka.WekaAttributeRange#valueOf=adams.gui.goe.WekaAttributeRangeEditor#valueOf
+
+# WekaLabelIndex objects
+adams.data.weka.WekaLabelIndex=true
+adams.data.weka.WekaLabelIndex#toString=adams.gui.goe.WekaLabelIndexEditor#toString
+adams.data.weka.WekaLabelIndex#valueOf=adams.gui.goe.WekaLabelIndexEditor#valueOf
