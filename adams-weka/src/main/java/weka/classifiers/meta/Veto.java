@@ -54,7 +54,7 @@ import java.util.Vector;
  *  (default: 1.0)</pre>
  * 
  * <pre> -suppress-model-output
- *  The percentage (0-1 excl) or number of base-classifiers (&gt;= 1) that need to chose the label in order to predict it</pre>
+ *  If enabled, suppresses any large model output.</pre>
  * 
  * <pre> -B &lt;classifier specification&gt;
  *  Full class name of classifier to include, followed
@@ -241,7 +241,7 @@ public class Veto
     Vector result = new Vector();
     WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), "label");
     WekaOptionUtils.addOption(result, supportTipText(), "" + getDefaultSupport(), "support");
-    WekaOptionUtils.addFlag(result, supportTipText(), "suppress-model-output");
+    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), "suppress-model-output");
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
