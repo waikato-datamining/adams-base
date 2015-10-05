@@ -26,7 +26,9 @@ import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.ModelOutputHandler;
 import weka.core.SelectedTag;
+import weka.core.Utils;
 import weka.core.WekaOptionUtils;
 
 import java.util.ArrayList;
@@ -50,6 +52,9 @@ import java.util.Vector;
  * <pre> -support &lt;value&gt;
  *  The percentage (0-1 excl) or number of base-classifiers (&gt;= 1) that need to chose the label in order to predict it
  *  (default: 1.0)</pre>
+ * 
+ * <pre> -suppress-model-output
+ *  The percentage (0-1 excl) or number of base-classifiers (&gt;= 1) that need to chose the label in order to predict it</pre>
  * 
  * <pre> -B &lt;classifier specification&gt;
  *  Full class name of classifier to include, followed
@@ -82,7 +87,8 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class Veto
-  extends MultipleClassifiersCombiner  {
+  extends MultipleClassifiersCombiner
+  implements ModelOutputHandler {
 
   private static final long serialVersionUID = 943666951855888860L;
 
@@ -101,6 +107,9 @@ public class Veto
 
   /** the ensemble. */
   protected Vote m_Vote = null;
+
+  /** whether to suppress the model output. */
+  protected boolean m_SuppressModelOutput = false;
 
   /**
    * Returns a string describing classifier
@@ -195,6 +204,34 @@ public class Veto
   }
 
   /**
+   * Sets whether to output the model with the toString() method or not.
+   *
+   * @param value 	true if to suppress model output
+   */
+  public void setSuppressModelOutput(boolean value) {
+    m_SuppressModelOutput = value;
+  }
+
+  /**
+   * Returns whether to output the model with the toString() method or not.
+   *
+   * @return 		the label index
+   */
+  public boolean getSuppressModelOutput() {
+    return m_SuppressModelOutput;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String suppressModelOutputTipText() {
+    return "If enabled, suppresses any large model output.";
+  }
+
+  /**
    * Returns an enumeration describing the available options.
    *
    * @return an enumeration of all the available options.
@@ -204,6 +241,7 @@ public class Veto
     Vector result = new Vector();
     WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), "label");
     WekaOptionUtils.addOption(result, supportTipText(), "" + getDefaultSupport(), "support");
+    WekaOptionUtils.addFlag(result, supportTipText(), "suppress-model-output");
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -220,6 +258,7 @@ public class Veto
   public void setOptions(String[] options) throws Exception {
     setLabel(new WekaLabelIndex(WekaOptionUtils.parse(options, "label", getDefaultLabel().getIndex())));
     setSupport(WekaOptionUtils.parse(options, "support", getDefaultSupport()));
+    setSuppressModelOutput(Utils.getFlag("suppress-model-output", options));
     super.setOptions(options);
   }
 
@@ -233,6 +272,7 @@ public class Veto
     List<String> result = new ArrayList<>();
     WekaOptionUtils.add(result, "label", getLabel().getIndex());
     WekaOptionUtils.add(result, "support", getSupport());
+    WekaOptionUtils.add(result, "suppress-model-output", getSuppressModelOutput());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
@@ -334,11 +374,13 @@ public class Veto
     result.append("Label: " + m_Label.getIndex() + "\n");
     result.append("Actual label index: " + m_ActualLabel + "\n");
 
-    for (i = 0; i < m_Classifiers.length; i++) {
-      result.append("\n");
-      result.append("Classifier #" + (i+1) + "\n");
-      result.append(new String("Classifier #" + (i+1)).replaceAll(".", "-") + "\n\n");
-      result.append(m_Classifiers[i].toString());
+    if (!m_SuppressModelOutput) {
+      for (i = 0; i < m_Classifiers.length; i++) {
+	result.append("\n");
+	result.append("Classifier #" + (i + 1) + "\n");
+	result.append(new String("Classifier #" + (i + 1)).replaceAll(".", "-") + "\n\n");
+	result.append(m_Classifiers[i].toString());
+      }
     }
 
     return result.toString();

@@ -29,6 +29,7 @@ import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.ModelOutputHandler;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.SelectedTag;
@@ -49,17 +50,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  <!-- globalinfo-start -->
- * Generates an ensemble using the following approach:<br>
- * - do x times:<br>
- *   * create new dataset, resampled with specified bias<br>
- *   * build base classifier with it<br>
- * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br>
+ * Generates an ensemble using the following approach:<br/>
+ * - do x times:<br/>
+ *   * create new dataset, resampled with specified bias<br/>
+ *   * build base classifier with it<br/>
+ * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br/>
  * At prediction time, the Vote meta-classifier (using the pre-built classifiers) is used to determining the class probabilities or regression value.
- * <br><br>
+ * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * Valid options are: <p/>
  * 
  * <pre> -num-slots &lt;num&gt;
  *  Number of execution slots.
@@ -85,6 +86,10 @@ import java.util.concurrent.TimeUnit;
  * <pre> -no-replacement
  *  Disables replacement of instances
  *  (default: with replacement)</pre>
+ * 
+ * <pre> -suppress-model-output
+ *  Suppress model output
+ *  (default: no)</pre>
  * 
  * <pre> -S &lt;num&gt;
  *  Random number seed.
@@ -122,7 +127,8 @@ import java.util.concurrent.TimeUnit;
  * @version $Revision$
  */
 public class VotedImbalance
-  extends RandomizableSingleClassifierEnhancer {
+  extends RandomizableSingleClassifierEnhancer
+  implements ModelOutputHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7637300579884789439L;
@@ -170,6 +176,9 @@ public class VotedImbalance
 
   /** the sample percentage to use (0-100). */
   protected double m_SamplePercentage;
+
+  /** whether to suppress the model output. */
+  protected boolean m_SuppressModelOutput = false;
 
   /**
    * Returns a string describing the classifier.
@@ -231,6 +240,11 @@ public class VotedImbalance
         + "\t(default: with replacement)",
       "no-replacement", 0, "-no-replacement"));
 
+    result.addElement(new Option(
+      "\tSuppress model output\n"
+        + "\t(default: no)",
+      "suppress-model-output", 0, "-suppress-model-output"));
+
     enm = super.listOptions();
     while (enm.hasMoreElements())
       result.addElement(enm.nextElement());
@@ -272,6 +286,7 @@ public class VotedImbalance
       setBias(0);
 
     setNoReplacement(Utils.getFlag("no-replacement", options));
+    setSuppressModelOutput(Utils.getFlag("suppress-model-output", options));
 
     super.setOptions(options);
   }
@@ -300,6 +315,9 @@ public class VotedImbalance
 
     if (getNoReplacement())
       result.add("-no-replacement");
+
+    if (getSuppressModelOutput())
+      result.add("-suppress-model-output");
 
     result.addAll(Arrays.asList(super.getOptions()));
 
@@ -473,6 +491,34 @@ public class VotedImbalance
    */
   public String noReplacementTipText() {
     return "Disables the replacement of instances.";
+  }
+
+  /**
+   * Sets whether to output the model with the toString() method or not.
+   *
+   * @param value 	true if to suppress model output
+   */
+  public void setSuppressModelOutput(boolean value) {
+    m_SuppressModelOutput = value;
+  }
+
+  /**
+   * Returns whether to output the model with the toString() method or not.
+   *
+   * @return 		the label index
+   */
+  public boolean getSuppressModelOutput() {
+    return m_SuppressModelOutput;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String suppressModelOutputTipText() {
+    return "If enabled, suppresses any large model output.";
   }
 
   /**
@@ -763,9 +809,14 @@ public class VotedImbalance
       result.append("No model built yet!");
     }
     else {
-      result.append("--> Model\n");
-      result.append(m_Ensemble.toString());
-      result.append("\n");
+      if (!m_SuppressModelOutput) {
+	result.append("--> Model\n");
+	result.append(m_Ensemble.toString());
+	result.append("\n");
+      }
+      else {
+	result.append("Model suppressed\n");
+      }
     }
 
     return result.toString();
