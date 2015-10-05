@@ -299,24 +299,37 @@ public class WekaOptionUtils {
    * @throws Exception    if parsing of value fails
    */
   public static <T> T[] parse(String[] options, String option, Class<T> cls) throws Exception {
-    Constructor constr = cls.getConstructor(String.class);
-    if (constr == null)
-      throw new IllegalArgumentException("Class '" + cls.getName() + "' does not have a constructor that takes a String!");
     // gather all options
     List<String> list = new ArrayList<>();
     while (Utils.getOptionPos(option, options) > -1)
       list.add(Utils.getOption(option, options));
-    // convert to type
-    Object result = Array.newInstance(cls, list.size());
-    for (int i = 0; i < list.size(); i++) {
-      try {
-	Array.set(result, i, constr.newInstance(Utils.getOption(option, options)));
+    // Optionhandler?
+    if (ClassDiscovery.hasInterface(OptionHandler.class, cls)) {
+      Object result = Array.newInstance(cls, list.size());
+      for (int i = 0; i < list.size(); i++) {
+        try {
+          Array.set(result, i, OptionUtils.forAnyCommandLine(cls, list.get(i)));
+        } catch (Exception e) {
+          System.err.println("Failed to instantiate class '" + cls.getName() + "' with command-line: " + list.get(i));
+        }
       }
-      catch (Exception e) {
-	System.err.println("Failed to instantiate class '" + cls.getName() + "' with string value: " + list.get(i));
-      }
+      return (T[]) result;
     }
-    return (T[]) result;
+    else {
+      Constructor constr = cls.getConstructor(String.class);
+      if (constr == null)
+        throw new IllegalArgumentException("Class '" + cls.getName() + "' does not have a constructor that takes a String!");
+      // convert to type
+      Object result = Array.newInstance(cls, list.size());
+      for (int i = 0; i < list.size(); i++) {
+        try {
+          Array.set(result, i, constr.newInstance(list.get(i)));
+        } catch (Exception e) {
+          System.err.println("Failed to instantiate class '" + cls.getName() + "' with string value: " + list.get(i));
+        }
+      }
+      return (T[]) result;
+    }
   }
 
   /**
@@ -527,11 +540,11 @@ public class WekaOptionUtils {
     for (int i = 0; i < Array.getLength(value); i++) {
       Object element = Array.get(value, i);
       if (element instanceof OptionHandler) {
-	add(options, option, (OptionHandler) element);
+        add(options, option, (OptionHandler) element);
       }
       else {
-	options.add("-" + option);
-	options.add("" + value);
+        options.add("-" + option);
+        options.add("" + element);
       }
     }
   }
