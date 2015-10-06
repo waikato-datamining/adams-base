@@ -23,6 +23,7 @@ import adams.core.ClassLister;
 import adams.gui.goe.DefaultGenericObjectEditorHandler;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -103,9 +104,10 @@ public abstract class AbstractObjectInstanceHandler
    * @return		the handler
    */
   public static synchronized AbstractObjectInstanceHandler getHandler(Class cls) {
-    AbstractObjectInstanceHandler result;
-    AbstractObjectInstanceHandler handler;
-    int				i;
+    AbstractObjectInstanceHandler 	result;
+    AbstractObjectInstanceHandler 	handler;
+    int				  	i;
+    Constructor				constr;
 
     result = null;
 
@@ -148,7 +150,13 @@ public abstract class AbstractObjectInstanceHandler
       m_Cache.put(cls, result.getClass());
     }
     else {
-      System.err.println("No handler for instantiating default objects of class: " + cls.getName());
+      // default constructor available?
+      try {
+	constr = cls.getConstructor();
+      }
+      catch (Exception e) {
+	System.err.println("No handler for instantiating default objects of class: " + cls.getName());
+      }
       m_NoHandlers.add(cls);
     }
 
