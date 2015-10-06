@@ -399,7 +399,7 @@ public class WekaCrossValidationEvaluator
       cls = getClassifierInstance();
       if (cls == null)
 	throw new IllegalStateException("Classifier '" + getClassifier() + "' not found!");
-      if ((cls != null) && isLoggingEnabled())
+      if (isLoggingEnabled())
         getLogger().info(OptionUtils.getCommandLine(cls));
 
       data = (Instances) m_InputToken.getPayload();
