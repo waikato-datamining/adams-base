@@ -35,12 +35,11 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.standalone.JobRunnerSetup;
-import adams.multiprocess.AbstractJob;
+import adams.multiprocess.WekaCrossValidationJob;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.AggregateableEvaluation;
-import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.Null;
@@ -152,166 +151,6 @@ public class WekaCrossValidationEvaluator
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
 
-  /**
-   * For evaluation a single train/test fold in parallel.
-   * 
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class CrossValidationJob
-    extends AbstractJob {
-
-    /** for serialization. */
-    private static final long serialVersionUID = -9085803857529039559L;
-
-    /** the classifier to evaluate. */
-    protected Classifier m_Classifier;
-    
-    /** the fold. */
-    protected int m_Fold;
-    
-    /** the training set. */
-    protected Instances m_Train;
-    
-    /** the test set. */
-    protected Instances m_Test;
-    
-    /** whether to discard the predictions. */
-    protected boolean m_DiscardPredictions;
-    
-    /** the evaluation. */
-    protected Evaluation m_Evaluation;
-    
-    /**
-     * Initializes the job.
-     * 
-     * @param classifier	the classifier to evaluate
-     * @param train		the training set
-     * @param test		the test set
-     * @param fold		the fold index
-     * @param discardPred	whether to discard the predictions
-     */
-    public CrossValidationJob(Classifier classifier, Instances train, Instances test, int fold, boolean discardPred) {
-      super();
-      
-      try {
-	m_Classifier = (Classifier) OptionUtils.shallowCopy(classifier);
-      }
-      catch (Exception e) {
-	m_Classifier = null;
-      }
-      
-      m_Train              = train;
-      m_Test               = test;
-      m_Fold               = fold;
-      m_DiscardPredictions = discardPred;
-    }
-    
-    /**
-     * Returns the training set.
-     * 
-     * @return		the dataset
-     */
-    public Instances getTrain() {
-      return m_Train;
-    }
-    
-    /**
-     * Returns the test set.
-     * 
-     * @return		the dataset
-     */
-    public Instances getTest() {
-      return m_Test;
-    }
-    
-    /**
-     * Returns the fold index.
-     * 
-     * @return		the fold
-     */
-    public int getFold() {
-      return m_Fold;
-    }
-    
-    /**
-     * Returns whether the predictions are discarded.
-     * 
-     * @return		true if discarded
-     */
-    public boolean getDiscardPredictions() {
-      return m_DiscardPredictions;
-    }
-    
-    /**
-     * Returns the generated evaluation object.
-     * 
-     * @return		the evaluation, null if not available
-     */
-    public Evaluation getEvaluation() {
-      return m_Evaluation;
-    }
-    
-    @Override
-    protected String preProcessCheck() {
-      if (m_Classifier == null)
-	return "No classifier set/failed to copy!";
-      if (m_Train == null)
-	return "No training set!";
-      if (m_Test == null)
-	return "No test set!";
-      return null;
-    }
-
-    /**
-     * Does the actual execution of the job.
-     * 
-     * @throws Exception if fails to execute job
-     */
-    @Override
-    protected void process() throws Exception {
-      m_Classifier.buildClassifier(m_Train);
-      m_Evaluation = new Evaluation(m_Train);
-      m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
-      m_Evaluation.evaluateModel(m_Classifier, m_Test);
-    }
-
-    /**
-     * Checks whether all post-conditions have been met.
-     *
-     * @return		null if everything is OK, otherwise an error message
-     */
-    @Override
-    protected String postProcessCheck() {
-      if (m_Evaluation == null)
-	return "Failed to evaluate?";
-      return null;
-    }
-
-    /**
-     * Cleans up data structures, frees up memory.
-     * Removes dependencies and job parameters.
-     */
-    @Override
-    public void cleanUp() {
-      super.cleanUp();
-      
-      m_Train      = null;
-      m_Test       = null;
-      m_Evaluation = null;
-    }
-
-    /**
-     * Returns a string representation of this job.
-     *
-     * @return		the job as string
-     */
-    @Override
-    public String toString() {
-      return "classifier=" + OptionUtils.getCommandLine(m_Classifier) + ", fold=" + m_Fold;
-    }
-  }
-  
   /** the number of folds. */
   protected int m_Folds;
 
@@ -548,8 +387,8 @@ public class WekaCrossValidationEvaluator
     AggregateableEvaluation		evalAgg;
     int					folds;
     CrossValidationFoldGenerator	generator;
-    JobList<CrossValidationJob>		list;
-    CrossValidationJob			job;
+    JobList<WekaCrossValidationJob>		list;
+    WekaCrossValidationJob job;
     WekaTrainTestSetContainer		cont;
     int					i;
 
@@ -596,15 +435,15 @@ public class WekaCrossValidationEvaluator
       else {
 	generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
         if (m_JobRunnerSetup == null)
-          m_JobRunner = new LocalJobRunner<CrossValidationJob>();
+          m_JobRunner = new LocalJobRunner<WekaCrossValidationJob>();
         else
           m_JobRunner = m_JobRunnerSetup.newInstance();
         if (m_JobRunner instanceof ThreadLimiter)
           ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
-	list = new JobList<CrossValidationJob>();
+	list = new JobList<WekaCrossValidationJob>();
 	while (generator.hasNext()) {
 	  cont = generator.next();
-	  job  = new CrossValidationJob(
+	  job  = new WekaCrossValidationJob(
 	      getClassifierInstance(), 
 	      (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN), 
 	      (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST), 
@@ -619,7 +458,7 @@ public class WekaCrossValidationEvaluator
 	evalAgg = new AggregateableEvaluation(data);
 	if (!isStopped()) {
 	for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
-          job = (CrossValidationJob) m_JobRunner.getJobs().get(i);
+          job = (WekaCrossValidationJob) m_JobRunner.getJobs().get(i);
 	    if (job.getEvaluation() == null) {
 	      result = "Fold #" + (i + 1) + " failed to evaluate";
 	      if (!job.hasExecutionError())
