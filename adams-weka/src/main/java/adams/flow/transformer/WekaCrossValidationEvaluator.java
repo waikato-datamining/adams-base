@@ -387,8 +387,8 @@ public class WekaCrossValidationEvaluator
     AggregateableEvaluation		evalAgg;
     int					folds;
     CrossValidationFoldGenerator	generator;
-    JobList<WekaCrossValidationJob>		list;
-    WekaCrossValidationJob job;
+    JobList<WekaCrossValidationJob>	list;
+    WekaCrossValidationJob 		job;
     WekaTrainTestSetContainer		cont;
     int					i;
 
