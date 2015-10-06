@@ -133,7 +133,7 @@ import java.util.Random;
  * </pre>
  * 
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
- * &nbsp;&nbsp;&nbsp;The number of threads to use for executing the branches; -1 = number of 
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for cross-validation; -1 = number of
  * &nbsp;&nbsp;&nbsp;CPUs&#47;cores; 0 or 1 = sequential execution.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
@@ -324,7 +324,7 @@ public class WekaCrossValidationEvaluator
   }
 
   /**
-   * Sets the number of threads to use for executing the branches.
+   * Sets the number of threads to use for cross-validation.
    *
    * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
@@ -334,7 +334,7 @@ public class WekaCrossValidationEvaluator
   }
 
   /**
-   * Returns the number of threads to use for executing the branches.
+   * Returns the number of threads to use for cross-validation.
    *
    * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
@@ -349,7 +349,7 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return "The number of threads to use for executing the branches; -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
+    return "The number of threads to use for cross-validation -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
   }
 
   /**
