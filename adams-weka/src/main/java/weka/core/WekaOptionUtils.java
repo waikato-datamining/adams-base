@@ -20,6 +20,7 @@
 
 package weka.core;
 
+import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionUtils;
 
 import java.io.File;
@@ -250,6 +251,36 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Parses an adams.core.option.OptionHandler option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.option.OptionHandler parse(String[] options, char option, adams.core.option.OptionHandler defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses an adams.core.option.OptionHandler option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.option.OptionHandler parse(String[] options, String option, adams.core.option.OptionHandler defValue) throws Exception {
+    String value = Utils.getOption(option, options);
+    if (value.isEmpty())
+      return defValue;
+    else
+      return (adams.core.option.OptionHandler) OptionUtils.forAnyCommandLine(adams.core.option.OptionHandler.class, value);
+  }
+
+  /**
    * Parses an array option, returns all the occurrences of the option as a string array.
    *
    * @param options       the option array to use
@@ -304,11 +335,12 @@ public class WekaOptionUtils {
     while (Utils.getOptionPos(option, options) > -1)
       list.add(Utils.getOption(option, options));
     // Optionhandler?
-    if (ClassDiscovery.hasInterface(OptionHandler.class, cls)) {
+    AbstractCommandLineHandler handler = AbstractCommandLineHandler.getHandler(cls);
+    if (handler != null) {
       Object result = Array.newInstance(cls, list.size());
       for (int i = 0; i < list.size(); i++) {
         try {
-          Array.set(result, i, OptionUtils.forAnyCommandLine(cls, list.get(i)));
+          Array.set(result, i, handler.fromCommandLine(list.get(i)));
         } catch (Exception e) {
           System.err.println("Failed to instantiate class '" + cls.getName() + "' with command-line: " + list.get(i));
         }
@@ -517,6 +549,29 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Adds the adams.core.option.OptionHandler to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, adams.core.option.OptionHandler value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the adams.core.option.OptionHandler to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, adams.core.option.OptionHandler value) {
+    options.add("-" + option);
+    options.add("" + Utils.toCommandLine(value));
+  }
+
+  /**
    * Adds the array to the options.
    *
    * @param options   the current list of options to extend
@@ -539,8 +594,10 @@ public class WekaOptionUtils {
       throw new IllegalArgumentException("Value is not an array!");
     for (int i = 0; i < Array.getLength(value); i++) {
       Object element = Array.get(value, i);
-      if (element instanceof OptionHandler) {
-        add(options, option, (OptionHandler) element);
+      AbstractCommandLineHandler handler = AbstractCommandLineHandler.getHandler(element);
+      if (handler != null) {
+        options.add("-" + option);
+        options.add("" + handler.toCommandLine(element));
       }
       else {
         options.add("-" + option);
