@@ -568,7 +568,7 @@ public class WekaOptionUtils {
    */
   public static void add(List<String> options, String option, adams.core.option.OptionHandler value) {
     options.add("-" + option);
-    options.add("" + Utils.toCommandLine(value));
+    options.add("" + OptionUtils.getCommandLine(value));
   }
 
   /**
