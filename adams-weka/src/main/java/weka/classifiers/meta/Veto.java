@@ -291,7 +291,7 @@ public class Veto
     result.disable(Capability.NUMERIC_CLASS);
     result.disable(Capability.RELATIONAL_CLASS);
 
-    return super.getCapabilities();
+    return result;
   }
 
   /**
