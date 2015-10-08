@@ -515,6 +515,7 @@ public class MinMaxLimits
     result = super.getCapabilities();
     result.disableAllClasses();
     result.enable(Capability.NUMERIC_CLASS);
+    result.enable(Capability.MISSING_CLASS_VALUES);
 
     return result;
   }
@@ -532,6 +533,9 @@ public class MinMaxLimits
     AttributeStats	stats;
 
     getCapabilities().testWithFail(data);
+
+    data = new Instances(data);
+    data.deleteWithMissingClass();
 
     stats = data.attributeStats(data.classIndex());
     min   = stats.numericStats.min;
