@@ -15,7 +15,7 @@
 
 /**
  * RemoveActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -26,8 +26,8 @@ import adams.gui.flow.tree.TreeHelper;
 
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * For removing actors.
@@ -81,7 +81,7 @@ public class RemoveActor
       addUndoPoint("Removing nodes");
 
     // backup expanded state
-    state = new Vector<Boolean>(m_State.tree.getExpandedStateList());
+    state = new ArrayList<Boolean>(m_State.tree.getExpandedStateList());
 
     selNode = null;
     for (i = nodes.length - 1; i >= 0; i--) {
