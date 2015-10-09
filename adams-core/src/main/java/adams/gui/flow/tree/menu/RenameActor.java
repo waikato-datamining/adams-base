@@ -19,12 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-
 import adams.flow.core.AbstractActor;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
@@ -32,6 +26,12 @@ import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
+
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 /**
  * For removing breakpoints either below currently selected node or everywhere
@@ -97,12 +97,22 @@ public class RenameActor
       ((DefaultTreeModel) m_State.tree.getModel()).nodeChanged(node);
       m_State.tree.setModified(m_State.tree.isModified() || !oldName.equals(node.getActor().getName()));
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, node, Type.MODIFY));
-      m_State.tree.setExpandedNodes(exp);
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  m_State.tree.setExpandedNodes(exp);
+	}
+      });
       // update all occurrences, if necessary
       parent = (Node) node.getParent();
       if (!m_State.tree.getIgnoreNameChanges())
 	AbstractEditPostProcessor.apply(m_State.tree, ((parent != null) ? parent.getActor() : null), actorOld, actorNew);
-      m_State.tree.locateAndDisplay(node.getFullName());
+      SwingUtilities.invokeLater(new Runnable() {
+	@Override
+	public void run() {
+	  m_State.tree.locateAndDisplay(node.getFullName());
+	}
+      });
     }
   }
 
