@@ -21,6 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import adams.core.Utils;
@@ -124,14 +125,25 @@ public class ExternalizeActor
     m_State.tree.updateActorName(newNode);
     m_State.tree.setModified(true);
     if (paths.length == 1) {
-      m_State.tree.nodeStructureChanged(newNode);
-      m_State.tree.locateAndDisplay(newNode.getFullName());
-      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, newNode, Type.MODIFY));
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          m_State.tree.nodeStructureChanged(newNode);
+          m_State.tree.locateAndDisplay(newNode.getFullName());
+          m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, newNode, Type.MODIFY));
+        }
+      });
     }
     else {
-      m_State.tree.nodeStructureChanged(parent);
-      m_State.tree.locateAndDisplay(parent.getFullName());
-      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, parent, Type.MODIFY));
+      final Node fParent = parent;
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          m_State.tree.nodeStructureChanged(fParent);
+          m_State.tree.locateAndDisplay(fParent.getFullName());
+          m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, fParent, Type.MODIFY));
+        }
+      });
     }
 
     externalizeActor(new TreePath(newNode.getPath()));
