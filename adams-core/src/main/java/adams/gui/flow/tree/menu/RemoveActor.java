@@ -19,16 +19,15 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.tree.TreePath;
-
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
+
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * For removing actors.
@@ -63,7 +62,7 @@ public class RemoveActor
   /**
    * Removes the nodes (incl. sub-tree).
    *
-   * @param path	the paths of the nodes to remove
+   * @param paths	the paths of the nodes to remove
    */
   protected void removeActor(TreePath[] paths) {
     Node		node;
