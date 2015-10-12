@@ -258,7 +258,7 @@ public class InterquartileRangeSamp
       double[] q1s  = new double[v.size()];
       double[] q3s  = new double[v.size()];
       double[] meds = new double[v.size()];
-      for(int k=0;k<v.size();k++) {
+      for(int k = 0; k < v.size(); k++) {
 	IQRs iqrs = v.get(k);
 	q1s[k]  = iqrs.quartile1;
 	q3s[k]  = iqrs.quartile3;
