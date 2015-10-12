@@ -21,7 +21,6 @@ package adams.gui.visualization.osm;
 
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.gps.AbstractGPS;
 import adams.data.gps.GPSDecimalDegrees;
@@ -132,9 +131,7 @@ public class OpenStreetMapViewerPanel
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to use tile source from provider: " + props.getProperty("TileSourceProvider") + "\n" 
-	  + Utils.throwableToString(e) + "\n");
+	  this, "Failed to use tile source from provider: " + props.getProperty("TileSourceProvider"), e);
       m_Viewer.getViewer().setTileSource(new Mapnik());
     }
 
@@ -147,9 +144,7 @@ public class OpenStreetMapViewerPanel
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to use tile loader from provider: " + props.getProperty("TileLoaderProvider") + "\n" 
-	  + Utils.throwableToString(e));
+	  this, "Failed to use tile loader from provider: " + props.getProperty("TileLoaderProvider"), e);
       m_Viewer.getViewer().setTileLoader(new OsmTileLoader(m_Viewer.getViewer()));
     }
 
