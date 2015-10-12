@@ -15,11 +15,28 @@
 
 /**
  * TelnetPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original TelnetClientExample)
  */
 package adams.gui.tools;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
+import org.apache.commons.net.telnet.EchoOptionHandler;
+import org.apache.commons.net.telnet.SuppressGAOptionHandler;
+import org.apache.commons.net.telnet.TelnetClient;
+import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -30,24 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-
-import org.apache.commons.net.telnet.EchoOptionHandler;
-import org.apache.commons.net.telnet.SuppressGAOptionHandler;
-import org.apache.commons.net.telnet.TelnetClient;
-import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.GUIHelper;
 
 /**
  * A simple telnet interface. Mainly used for testing.
@@ -345,8 +344,7 @@ public class TelnetPanel
 	      while (ret_read >= 0);
 	    }
 	    catch (IOException e) {
-	      System.err.println("Exception while reading socket: ");
-	      e.printStackTrace();
+              ConsolePanel.getSingleton().append(this, "Exception while reading socket:", e);
 	    }
 	    updateButtons();
 	  }
@@ -356,8 +354,7 @@ public class TelnetPanel
     }
     catch (Exception e) {
       append("Failed to " + msg + ": " + e);
-      System.err.println("Failed to " + msg + ":");
-      e.printStackTrace();
+      ConsolePanel.getSingleton().append(this, "Failed to " + msg + ":", e);
     }
   }
 
@@ -386,8 +383,7 @@ public class TelnetPanel
     }
     catch (Exception e) {
       append("Failed to execute command " + cmd + ": " + e);
-      System.err.println("Failed to execute command: " + cmd);
-      e.printStackTrace();
+      ConsolePanel.getSingleton().append(this, "Failed to execute command " + cmd + ": ", e);
     }
   }
   
