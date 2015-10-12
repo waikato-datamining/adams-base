@@ -21,7 +21,6 @@
 package adams.gui.core.spreadsheettable;
 
 import adams.core.ClassLister;
-import adams.core.logging.LoggingLevel;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -60,7 +59,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	result.add((SpreadSheetTablePopupMenuItem) Class.forName(c).newInstance());
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate SpreadSheetTable menu item: " + c + "\n" + e);
+	ConsolePanel.getSingleton().append("Failed to instantiate SpreadSheetTable menu item: " + c, e);
       }
     }
 
