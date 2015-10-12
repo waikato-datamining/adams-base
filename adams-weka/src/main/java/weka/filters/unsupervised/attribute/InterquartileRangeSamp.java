@@ -20,12 +20,13 @@
 
 package weka.filters.unsupervised.attribute;
 
+import gnu.trove.list.array.TDoubleArrayList;
 import weka.core.Instances;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -100,12 +101,13 @@ public class InterquartileRangeSamp
   /** for serialization */
   protected static final long serialVersionUID = 3811630774543798261L;
 
-  protected Hashtable<Integer,Vector<Double>> ht = new Hashtable<Integer,Vector<Double>>();
-  protected int m_sample_size=150;
-  protected int count=0;
-  protected int min_samples=5;
+  protected Hashtable<Integer,TDoubleArrayList> ht = new Hashtable<Integer,TDoubleArrayList>();
 
-  protected Hashtable<Integer,Vector<IQRs>> m_iqrs=new Hashtable<Integer,Vector<IQRs>>();
+  protected Hashtable<Integer,List<IQRs>> m_iqrs = new Hashtable<Integer,List<IQRs>>();
+
+  protected int m_sample_size = 150;
+
+  protected int min_samples = 5;
 
   /**
    * Container class for the IQR values.
@@ -116,10 +118,10 @@ public class InterquartileRangeSamp
     public double quartile3;
     public double maxval;
     public IQRs(double q1, double q3, double mval, double med) {
-      quartile1=q1;
-      quartile3=q3;
-      maxval=mval;
-      median=med;
+      quartile1 = q1;
+      quartile3 = q3;
+      maxval    = mval;
+      median    = med;
     }
   }
 
@@ -151,53 +153,65 @@ public class InterquartileRangeSamp
 	+ "  EVF = Extreme Value Factor";
   }
 
-  protected void addIQR_For(Integer key, Vector v) {
+  /**
+   * Calculates and adds the IQR stats for this key.
+   *
+   * @param key		the key for the stats
+   * @param v		the values
+   */
+  protected void addIQR(Integer key, TDoubleArrayList v) {
     if (v.size() >= min_samples) {
-      Object arr[]=v.toArray();
+      double[] arr = v.toArray();
       Arrays.sort(arr);
-      double q3val = valueAtPct(arr,0.75);
-      double q1val = valueAtPct(arr,0.25);
-      double med = valueAtPct(arr,0.5);
-      Double d=(Double)arr[arr.length-1];
-      IQRs is=new IQRs(q1val,q3val,d.doubleValue(),med);
-      Vector<IQRs> viqr=m_iqrs.get(key);
-      if (viqr== null) {
-	viqr=new Vector<IQRs>();
+      double q3val = valueAtPct(arr, 0.75);
+      double q1val = valueAtPct(arr, 0.25);
+      double med   = valueAtPct(arr, 0.5);
+      double d     = arr[arr.length-1];
+      IQRs is = new IQRs(q1val, q3val, d, med);
+      List<IQRs> viqr = m_iqrs.get(key);
+      if (viqr == null) {
+	viqr = new ArrayList<IQRs>();
 	m_iqrs.put(key,viqr);
       }
       viqr.add(is);
     }
   }
 
-  protected double valueAtPct(Object[] sorted_arr,double pct) {
-    // array is doubles
+  /**
+   * Calculates the value at the specified percentage.
+   *
+   * @param sorted_arr	the sorted array to use
+   * @param pct		the percent
+   * @return		the value
+   */
+  protected double valueAtPct(double[] sorted_arr, double pct) {
     double qindex = (pct * sorted_arr.length);
-    int iqindex = (int)Math.floor(qindex);
-
+    int iqindex = (int) Math.floor(qindex);
     double qval;
 
-    if ((double)iqindex == qindex) {
-      Double d=(Double) sorted_arr[iqindex];
-      qval= d.doubleValue();
-    }   else {
-      Double d1=(Double)sorted_arr[iqindex];
-      Double d2=(Double)sorted_arr[iqindex+1];
-      double pcte = qindex - (double)iqindex;
-      qval= d1.doubleValue() + (d2.doubleValue() - d1.doubleValue())* pcte;
+    if (iqindex == qindex) {
+      qval = sorted_arr[iqindex];
     }
-    return(qval);
+    else {
+      double d1= sorted_arr[iqindex];
+      double d2= sorted_arr[iqindex+1];
+      double pcte = qindex - (double)iqindex;
+      qval = d1 + (d2 - d1) * pcte;
+    }
+
+    return qval;
   }
 
   protected void clearRemainder() {
-    for (Enumeration<Integer> enu = ht.keys() ; enu.hasMoreElements() ;) {
-      Integer key = enu.nextElement();
-      Vector<IQRs> viqr = m_iqrs.get(key);
+    for (Integer key: ht.keySet()) {
+      List<IQRs> viqr = m_iqrs.get(key);
       if (viqr == null) { //nothing there, so lets add this remainder
-	Vector<Double> v = ht.get(key);
-	addIQR_For(key,v);
+	TDoubleArrayList v = ht.get(key);
+	addIQR(key, v);
       }
     }
   }
+
   /**
    * computes the thresholds for outliers and extreme values
    *
@@ -222,31 +236,28 @@ public class InterquartileRangeSamp
 	continue;
 
       // sort attribute data
-      values        = instances.attributeToDoubleArray(m_AttributeIndices[i]);
-      Vector<Double> v=new Vector<Double>();
-
+      values = instances.attributeToDoubleArray(m_AttributeIndices[i]);
+      TDoubleArrayList v = new TDoubleArrayList();
       ht.put(i,v);
 
-      for (int j=0;j<values.length;j++) {
+      for (int j = 0; j < values.length; j++) {
 	v.add(values[j]);
 	if (v.size() == m_sample_size) {
-	  addIQR_For(i,v);
+	  addIQR(i, v);
 	  v.clear();
 	}
       }
       clearRemainder();
     }
 
-    for (Enumeration<Integer> enu = m_iqrs.keys() ; enu.hasMoreElements() ;) {
-      Integer key = enu.nextElement();
-      double dmax=Double.NEGATIVE_INFINITY;
-      Vector<IQRs> v = m_iqrs.get(key);
-      if (v.size() == 0) {
+    for (Integer key: m_iqrs.keySet()) {
+      double dmax = Double.NEGATIVE_INFINITY;
+      List<IQRs> v = m_iqrs.get(key);
+      if (v.size() == 0)
 	continue;
-      }
-      Object[] q1s=new Object[v.size()];
-      Object[] q3s=new Object[v.size()];
-      Object[] meds=new Object[v.size()];
+      double[] q1s  = new double[v.size()];
+      double[] q3s  = new double[v.size()];
+      double[] meds = new double[v.size()];
       for(int k=0;k<v.size();k++) {
 	IQRs iqrs = v.get(k);
 	q1s[k]  = iqrs.quartile1;
@@ -266,9 +277,9 @@ public class InterquartileRangeSamp
 	q2 = valueAtPct(meds,0.5);
       }
       else {
-	q3 = (Double) q3s[0];
-	q1 = (Double) q1s[0];
-	q2 = (Double) meds[0];
+	q3 = q3s[0];
+	q1 = q1s[0];
+	q2 = meds[0];
       }
 
       // determine thresholds and other values
@@ -280,8 +291,8 @@ public class InterquartileRangeSamp
       m_LowerExtremeValue[key] = q1 - getExtremeValuesFactor() * m_IQR[key];
     }
 
-    ht = new Hashtable<Integer,Vector<Double>>(); // clear current store
-    m_iqrs = new Hashtable<Integer,Vector<IQRs>>(); // clear IQRs of samples
+    ht     = new Hashtable<>(); // clear current store
+    m_iqrs = new Hashtable<>(); // clear IQRs of samples
   }
 
   /**
@@ -293,4 +304,3 @@ public class InterquartileRangeSamp
     runFilter(new InterquartileRangeSamp(), args);
   }
 }
-
