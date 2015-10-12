@@ -1,4 +1,4 @@
-@relation Testdata-weka.filters.unsupervised.attribute.InterquartileRangeSamp-Rfirst-last-O0.2-E1.0
+@relation Testdata-weka.filters.unsupervised.attribute.InterquartileRangeSamp-sample-size150-min-samples5-ignored-attributes^.*_id$-Rfirst-last-O0.2-E1.0
 
 @attribute Numeric1 numeric
 @attribute Numeric2 numeric
