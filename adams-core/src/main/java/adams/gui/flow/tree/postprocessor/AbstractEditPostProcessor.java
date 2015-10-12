@@ -21,8 +21,6 @@
 package adams.gui.flow.tree.postprocessor;
 
 import adams.core.ClassLister;
-import adams.core.Utils;
-import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.ConsolePanel;
@@ -135,7 +133,7 @@ public abstract class AbstractEditPostProcessor
 	}
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Error applying edit post-processor '" + processor + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append("Error applying edit post-processor '" + processor + "':", e);
       }
     }
 
