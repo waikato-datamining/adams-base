@@ -24,7 +24,6 @@ import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.core.logging.LoggingLevel;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -1332,9 +1331,7 @@ public class ImagePanel
       }
     }
     catch (Exception e) {
-      ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to read '" + file + "':\n" + Utils.throwableToString(e));
+      ConsolePanel.getSingleton().append(this, "Failed to read '" + file + "':", e);
       clear();
       result = false;
     }
@@ -1392,9 +1389,7 @@ public class ImagePanel
 	  log("saved: " + file);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	    LoggingLevel.SEVERE,
-	    "Failed to save image to '" + file + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append(this, "Failed to save image to '" + file + "':", e);
 	result = false;
       }
     }
