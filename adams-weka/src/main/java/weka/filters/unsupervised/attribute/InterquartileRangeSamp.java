@@ -15,17 +15,17 @@
 
 /*
  * InterquartileRangeSamp.java
- * Copyright (C) 2006-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.attribute;
+
+import weka.core.Instances;
 
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
@@ -95,27 +95,27 @@ import weka.core.Instances;
  * @version $Revision$
  */
 public class InterquartileRangeSamp
-extends InterquartileRange {
+  extends InterquartileRange {
 
   /** for serialization */
+  protected static final long serialVersionUID = 3811630774543798261L;
 
-  private static final long serialVersionUID = 3811630774543798261L;
+  protected Hashtable<Integer,Vector<Double>> ht = new Hashtable<Integer,Vector<Double>>();
+  protected int m_sample_size=150;
+  protected int count=0;
+  protected int min_samples=5;
 
+  protected Hashtable<Integer,Vector<IQRs>> m_iqrs=new Hashtable<Integer,Vector<IQRs>>();
 
-  private Hashtable<Integer,Vector<Double>> ht = new Hashtable<Integer,Vector<Double>>();
-  private int m_sample_size=150;
-  private int count=0;
-  private int min_samples=5;
-
-  private Hashtable<Integer,Vector<IQRs>> m_iqrs=new Hashtable<Integer,Vector<IQRs>>();
-
-
-  private class IQRs{
+  /**
+   * Container class for the IQR values.
+   */
+  public static class IQRs{
     public double quartile1;
     public double median;
     public double quartile3;
     public double maxval;
-    public IQRs(double q1, double q3, double mval, double med){
+    public IQRs(double q1, double q3, double mval, double med) {
       quartile1=q1;
       quartile3=q3;
       maxval=mval;
@@ -123,8 +123,36 @@ extends InterquartileRange {
     }
   }
 
-  private void addIQR_For(Integer key, Vector v){
-    if (v.size() >= min_samples){
+  /**
+   * Returns a string describing this filter
+   *
+   * @return 		a description of the filter suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String globalInfo() {
+    return
+      "A sampling filter made to behave like S2 for detecting outliers and extreme values based on "
+	+ "interquartile ranges. The filter skips the class attribute.\n\n"
+	+ "Outliers:\n"
+	+ "  Q3 + OF*IQR < x <= Q3 + EVF*IQR\n"
+	+ "  or\n"
+	+ "  Q1 - EVF*IQR <= x < Q1 - OF*IQR\n"
+	+ "\n"
+	+ "Extreme values:\n"
+	+ "  x > Q3 + EVF*IQR\n"
+	+ "  or\n"
+	+ "  x < Q1 - EVF*IQR\n"
+	+ "\n"
+	+ "Key:\n"
+	+ "  Q1  = 25% quartile\n"
+	+ "  Q3  = 75% quartile\n"
+	+ "  IQR = Interquartile Range, difference between Q1 and Q3\n"
+	+ "  OF  = Outlier Factor\n"
+	+ "  EVF = Extreme Value Factor";
+  }
+
+  protected void addIQR_For(Integer key, Vector v) {
+    if (v.size() >= min_samples) {
       Object arr[]=v.toArray();
       Arrays.sort(arr);
       double q3val = valueAtPct(arr,0.75);
@@ -133,7 +161,7 @@ extends InterquartileRange {
       Double d=(Double)arr[arr.length-1];
       IQRs is=new IQRs(q1val,q3val,d.doubleValue(),med);
       Vector<IQRs> viqr=m_iqrs.get(key);
-      if (viqr== null){
+      if (viqr== null) {
 	viqr=new Vector<IQRs>();
 	m_iqrs.put(key,viqr);
       }
@@ -141,15 +169,15 @@ extends InterquartileRange {
     }
   }
 
-  private double valueAtPct(Object[] sorted_arr,double pct){
+  protected double valueAtPct(Object[] sorted_arr,double pct) {
     // array is doubles
     double qindex = (pct * sorted_arr.length);
     int iqindex = (int)Math.floor(qindex);
 
     double qval;
 
-    if ((double)iqindex == qindex){
-      Double d=(Double)sorted_arr[iqindex];
+    if ((double)iqindex == qindex) {
+      Double d=(Double) sorted_arr[iqindex];
       qval= d.doubleValue();
     }   else {
       Double d1=(Double)sorted_arr[iqindex];
@@ -160,42 +188,12 @@ extends InterquartileRange {
     return(qval);
   }
 
-
-  /**
-   * Returns a string describing this filter
-   *
-   * @return 		a description of the filter suitable for
-   * 			displaying in the explorer/experimenter gui
-   */
-  public String globalInfo() {
-    return
-    "A sampling filter made to behave like S2 for detecting outliers and extreme values based on "
-    + "interquartile ranges. The filter skips the class attribute.\n\n"
-    + "Outliers:\n"
-    + "  Q3 + OF*IQR < x <= Q3 + EVF*IQR\n"
-    + "  or\n"
-    + "  Q1 - EVF*IQR <= x < Q1 - OF*IQR\n"
-    + "\n"
-    + "Extreme values:\n"
-    + "  x > Q3 + EVF*IQR\n"
-    + "  or\n"
-    + "  x < Q1 - EVF*IQR\n"
-    + "\n"
-    + "Key:\n"
-    + "  Q1  = 25% quartile\n"
-    + "  Q3  = 75% quartile\n"
-    + "  IQR = Interquartile Range, difference between Q1 and Q3\n"
-    + "  OF  = Outlier Factor\n"
-    + "  EVF = Extreme Value Factor";
-  }
-
-
-  private void clearRemainder(){
+  protected void clearRemainder() {
     for (Enumeration<Integer> enu = ht.keys() ; enu.hasMoreElements() ;) {
-      Integer key =(Integer)enu.nextElement();
-      Vector<IQRs> viqr=(Vector<IQRs>)m_iqrs.get(key);
-      if (viqr == null){ //nothing there, so lets add this reminder
-	Vector<Double> v = (Vector<Double>)ht.get(key);
+      Integer key = enu.nextElement();
+      Vector<IQRs> viqr = m_iqrs.get(key);
+      if (viqr == null) { //nothing there, so lets add this remainder
+	Vector<Double> v = ht.get(key);
 	addIQR_For(key,v);
       }
     }
@@ -206,11 +204,7 @@ extends InterquartileRange {
    * @param instances	the data to work on
    */
   protected void computeThresholds(Instances instances) {
-    //int		i;
     double[]	values;
-    int[]	sortedIndices;
-    int		half;
-    int		quarter;
     double	q1;
     double	q2;
     double	q3;
@@ -233,52 +227,49 @@ extends InterquartileRange {
 
       ht.put(i,v);
 
-      for (int j=0;j<values.length;j++){
+      for (int j=0;j<values.length;j++) {
 	v.add(values[j]);
-	if (v.size() == m_sample_size){
+	if (v.size() == m_sample_size) {
 	  addIQR_For(i,v);
 	  v.clear();
 	}
       }
       clearRemainder();
-
     }
 
     for (Enumeration<Integer> enu = m_iqrs.keys() ; enu.hasMoreElements() ;) {
-      Integer key =(Integer)enu.nextElement();
-      //System.err.println("IQR:"+key);
+      Integer key = enu.nextElement();
       double dmax=Double.NEGATIVE_INFINITY;
       Vector<IQRs> v = m_iqrs.get(key);
-      if (v.size() == 0){
+      if (v.size() == 0) {
 	continue;
       }
       Object[] q1s=new Object[v.size()];
       Object[] q3s=new Object[v.size()];
       Object[] meds=new Object[v.size()];
-      for(int k=0;k<v.size();k++){
-	IQRs iqrs=(IQRs)v.get(k);
-	q1s[k]=new Double(iqrs.quartile1);
-	q3s[k]=new Double(iqrs.quartile3);
-	meds[k]=new Double(iqrs.median);
-	if (iqrs.maxval > dmax){
-	  dmax =  iqrs.maxval;
+      for(int k=0;k<v.size();k++) {
+	IQRs iqrs = v.get(k);
+	q1s[k]  = iqrs.quartile1;
+	q3s[k]  = iqrs.quartile3;
+	meds[k] = iqrs.median;
+	if (iqrs.maxval > dmax) {
+	  dmax = iqrs.maxval;
 	}
       }
       Arrays.sort(q1s);
       Arrays.sort(q3s);
       Arrays.sort(meds);
 
-      if (v.size() > 1){
+      if (v.size() > 1) {
 	q3 = valueAtPct(q3s,0.5);
 	q1 = valueAtPct(q1s,0.5);
 	q2 = valueAtPct(meds,0.5);
-      }else {
-	q3 = ((Double)q3s[0]).doubleValue();
-	q1 = ((Double)q1s[0]).doubleValue();
-	q2 = ((Double)meds[0]).doubleValue();
-
       }
-      double iqrange = q3 - q1;
+      else {
+	q3 = (Double) q3s[0];
+	q1 = (Double) q1s[0];
+	q2 = (Double) meds[0];
+      }
 
       // determine thresholds and other values
       m_Median[key]            = q2;
@@ -287,14 +278,11 @@ extends InterquartileRange {
       m_UpperOutlier[key]      = q3 + getOutlierFactor()       * m_IQR[key];
       m_LowerOutlier[key]      = q1 - getOutlierFactor()       * m_IQR[key];
       m_LowerExtremeValue[key] = q1 - getExtremeValuesFactor() * m_IQR[key];
-
     }
 
     ht = new Hashtable<Integer,Vector<Double>>(); // clear current store
     m_iqrs = new Hashtable<Integer,Vector<IQRs>>(); // clear IQRs of samples
-
   }
-
 
   /**
    * Main method for testing this class.
@@ -305,3 +293,4 @@ extends InterquartileRange {
     runFilter(new InterquartileRangeSamp(), args);
   }
 }
+
