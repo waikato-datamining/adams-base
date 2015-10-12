@@ -297,7 +297,7 @@ public class Tree
 	  m_Shortcuts.add(action);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action '" + cls + "':\n" + Utils.throwableToString(e));
+	ConsolePanel.getSingleton().append("Failed to instantiate action '" + cls + "':", e);
       }
     }
     addKeyListener(new KeyAdapter() {
@@ -1045,7 +1045,7 @@ public class Tree
 	  menu.add(action.getMenuItem());
 	}
 	catch (Exception ex) {
-	  ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate tree popup menu item '" + item + "':\n" + Utils.throwableToString(ex));
+	  ConsolePanel.getSingleton().append("Failed to instantiate tree popup menu item '" + item + "':", ex);
 	}
       }
     }
