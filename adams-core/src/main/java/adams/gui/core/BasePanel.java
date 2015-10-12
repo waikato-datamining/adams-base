@@ -20,7 +20,6 @@
 
 package adams.gui.core;
 
-import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.application.Child;
 
@@ -245,8 +244,7 @@ public class BasePanel
    * @param e		the exception to output
    */
   public void printException(String msg, Exception e) {
-    msg = getClass().getName() + ": " + msg + "\n" + Utils.throwableToString(e);
-    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
+    ConsolePanel.getSingleton().append(this, msg, e);
     System.err.println(msg);
   }
 
