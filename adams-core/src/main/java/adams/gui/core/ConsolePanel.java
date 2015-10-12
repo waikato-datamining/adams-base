@@ -664,6 +664,16 @@ public class ConsolePanel
   /**
    * Convenience method for outputting exceptions.
    *
+   * @param msg		the message to precede the stacktrace
+   * @param t           the exception (stacktrace will be output)
+   */
+  public void append(String msg, Throwable t) {
+    append(LoggingLevel.SEVERE, msg + "\n" + Utils.throwableToString(t));
+  }
+
+  /**
+   * Convenience method for outputting exceptions.
+   *
    * @param source	the source object
    * @param msg		the message to precede the stacktrace
    * @param t           the exception (stacktrace will be output)
