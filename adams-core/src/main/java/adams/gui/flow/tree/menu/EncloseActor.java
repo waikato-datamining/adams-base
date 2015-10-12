@@ -20,8 +20,6 @@
 package adams.gui.flow.tree.menu;
 
 import adams.core.ClassLister;
-import adams.core.Utils;
-import adams.core.logging.LoggingLevel;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
@@ -162,7 +160,7 @@ public class EncloseActor
       else
 	msg = "Failed to enclose " + paths.length + " actors";
       msg += " in a " + handler.getClass().getSimpleName() + ": ";
-      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n" + Utils.throwableToString(e));
+      ConsolePanel.getSingleton().append(this, msg, e);
       GUIHelper.showErrorMessage(
 	  m_State.tree, msg + "\n" + e.getMessage());
     }
