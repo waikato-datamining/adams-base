@@ -200,7 +200,7 @@ public class TelnetPanel
       }
     });
     m_TextOutput = new BaseTextAreaWithButtons(10, 40);
-    m_TextOutput.setFont(GUIHelper.getMonospacedFont());
+    m_TextOutput.setTextFont(GUIHelper.getMonospacedFont());
     m_TextOutput.addToButtonsPanel(m_ButtonClear);
     m_TextOutput.addToButtonsPanel(m_ButtonCopy);
     add(m_TextOutput, BorderLayout.CENTER);
