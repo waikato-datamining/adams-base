@@ -846,9 +846,9 @@ public class ExperimenterPanel
 	m_Properties = Properties.read(FILENAME);
       }
       catch (Exception e) {
-	msg = "Failed to load " + FILENAME + "\n" + Utils.throwableToString(e);
-	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
-	System.err.println(msg);
+	msg = "Failed to load " + FILENAME;
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg, e);
+	System.err.println(msg + "\n" + e);
 	m_Properties = new Properties();
       }
     }
