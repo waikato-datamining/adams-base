@@ -19,6 +19,7 @@
  */
 package adams.gui.core;
 
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.event.ConsolePanelEvent;
@@ -659,7 +660,18 @@ public class ConsolePanel
       // ignored
     }
   }
-  
+
+  /**
+   * Convenience method for outputting exceptions.
+   *
+   * @param source	the source object
+   * @param msg		the message to precede the stacktrace
+   * @param t           the exception (stacktrace will be output)
+   */
+  public void append(Object source, String msg, Throwable t) {
+    append(LoggingLevel.SEVERE, source.getClass().getName() + ": " + msg + "\n" + Utils.throwableToString(t));
+  }
+
   /**
    * Appends the given string to the according panels.
    *
