@@ -430,6 +430,7 @@ public class InterquartileRangeSamp
       }
       // ignored attribute?
       if (m_IgnoredAttributes.isMatch(name)) {
+	m_AttributeIndices[i] = NON_NUMERIC;
 	if (getDebug())
 	  System.out.println("Ignored attribute: " + name);
 	continue;
