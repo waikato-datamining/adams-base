@@ -21,6 +21,7 @@ package adams.flow.transformer.datacontainer;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.container.DataContainer;
+import adams.flow.transformer.DataContainerDbReader;
 
 /**
  * Ancestor for {@link DataContainer} post-processors.
@@ -33,6 +34,27 @@ public abstract class AbstractDataContainerPostProcessor<T extends DataContainer
 
   /** for serialization. */
   private static final long serialVersionUID = 4489141650668803307L;
+
+  /** the owning transformer of this preprocessor. */
+  protected DataContainerDbReader m_Owner;
+  
+  /**
+   * Sets the owner of this preprocessor.
+   * 
+   * @param value	the owner
+   */
+  public void setOwner(DataContainerDbReader value) {
+    m_Owner = value;
+  }
+  
+  /**
+   * Returns the current owner.
+   * 
+   * @return		the owner, null if none set
+   */
+  public DataContainerDbReader getOwner() {
+    return m_Owner;
+  }
 
   /**
    * Checks the data to post-process.

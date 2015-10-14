@@ -38,7 +38,8 @@ import adams.flow.transformer.datacontainer.NoPreProcessing;
  * @param <T> the type of data to write to the database
  */
 public abstract class AbstractDataContainerDbWriter<T extends DataContainer & DatabaseIDHandler>
-  extends AbstractDbTransformer {
+  extends AbstractDbTransformer
+  implements DataContainerDbWriter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7382952208593440101L;

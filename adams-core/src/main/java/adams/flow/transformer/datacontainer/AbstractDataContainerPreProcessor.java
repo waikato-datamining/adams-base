@@ -21,7 +21,7 @@ package adams.flow.transformer.datacontainer;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.container.DataContainer;
-import adams.flow.transformer.AbstractDataContainerDbWriter;
+import adams.flow.transformer.DataContainerDbWriter;
 
 /**
  * Ancestor for {@link DataContainer} pre-processors.
@@ -36,14 +36,14 @@ public abstract class AbstractDataContainerPreProcessor<T extends DataContainer>
   private static final long serialVersionUID = 4489141650668803307L;
 
   /** the owning transformer of this preprocessor. */
-  protected AbstractDataContainerDbWriter m_Owner;
+  protected DataContainerDbWriter m_Owner;
   
   /**
    * Sets the owner of this preprocessor.
    * 
    * @param value	the owner
    */
-  public void setOwner(AbstractDataContainerDbWriter value) {
+  public void setOwner(DataContainerDbWriter value) {
     m_Owner = value;
   }
   
@@ -52,7 +52,7 @@ public abstract class AbstractDataContainerPreProcessor<T extends DataContainer>
    * 
    * @return		the owner, null if none set
    */
-  public AbstractDataContainerDbWriter getOwner() {
+  public DataContainerDbWriter getOwner() {
     return m_Owner;
   }
   

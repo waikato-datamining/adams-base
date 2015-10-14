@@ -41,7 +41,7 @@ import adams.flow.transformer.datacontainer.NoPostProcessing;
  */
 public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   extends AbstractDbTransformer
-  implements ProvenanceSupporter {
+  implements ProvenanceSupporter, DataContainerDbReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4736058667429890220L;
@@ -108,6 +108,7 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
    */
   public void setPostProcessor(AbstractDataContainerPostProcessor value) {
     m_PostProcessor = value;
+    m_PostProcessor.setOwner(this);
     reset();
   }
 
@@ -149,13 +150,6 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   public abstract Class[] generates();
 
   /**
-   * Returns the data provider to use for storing the container in the database.
-   *
-   * @return		the data provider
-   */
-  protected abstract DataProvider<T> getDataProvider();
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -185,6 +179,13 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
 
     return result;
   }
+
+  /**
+   * Returns the data provider to use for storing the container in the database.
+   *
+   * @return		the data provider
+   */
+  public abstract DataProvider<T> getDataProvider();
 
   /**
    * Updates the provenance information in the provided container.
