@@ -441,7 +441,7 @@ public class RemoveOutliers
     panelButtonsRight = new JPanel(new GridLayout(3, 1, 5, 5));
     panelRight.add(panelButtonsRight, BorderLayout.NORTH);
 
-    buttonReset = new JButton("Reset", GUIHelper.getIcon("refresh.gif"));
+    buttonReset = new JButton("Reset", GUIHelper.getIcon("revert.png"));
     buttonReset.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

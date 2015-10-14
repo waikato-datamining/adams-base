@@ -749,7 +749,7 @@ public class FlowControlCenterPanel
       menuitem = new JMenuItem("Revert");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(GUIHelper.getIcon("revert.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  revert();

@@ -19,16 +19,15 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Collections;
-import java.util.Vector;
+import adams.core.ClassLister;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
+import adams.gui.goe.Favorites;
+import adams.gui.goe.Favorites.Favorite;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -44,16 +43,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import adams.core.ClassLister;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseListWithButtons;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
-import adams.gui.goe.Favorites;
-import adams.gui.goe.Favorites.Favorite;
-import adams.gui.goe.GenericObjectEditorDialog;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Collections;
+import java.util.Vector;
 
 /**
  * A panel for managing one's GOE favorites.
@@ -764,7 +763,7 @@ public class FavoritesManagementPanel
       menuitem = new JMenuItem("Revert");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(GUIHelper.getIcon("revert.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  revert();

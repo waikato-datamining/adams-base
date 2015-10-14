@@ -20,18 +20,19 @@
 
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import adams.core.Placeholders;
+import adams.core.Properties;
+import adams.core.base.BaseString;
+import adams.env.Environment;
+import adams.env.PlaceholdersDefinition;
+import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTableWithButtons;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -48,20 +49,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-
-import adams.core.Placeholders;
-import adams.core.Properties;
-import adams.core.base.BaseString;
-import adams.env.Environment;
-import adams.env.PlaceholdersDefinition;
-import adams.gui.chooser.BaseDirectoryChooser;
-import adams.gui.core.AbstractBaseTableModel;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTable;
-import adams.gui.core.BaseTableWithButtons;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
-import adams.gui.core.MouseUtils;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Panel for managing the placeholders.
@@ -565,7 +564,7 @@ public class PlaceholderManagementPanel
       menuitem = new JMenuItem("Revert");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(GUIHelper.getIcon("revert.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  revert();
