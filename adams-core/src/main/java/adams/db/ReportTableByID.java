@@ -14,12 +14,11 @@
  */
 
 /**
- * ReportTable.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * ReportTableByID.java
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
-import adams.core.Constants;
 import adams.core.Utils;
 import adams.data.id.IDHandler;
 import adams.data.report.AbstractField;
@@ -127,7 +126,7 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     // build SQL statement
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
-      + "WHERE ID = " + id;
+      + "WHERE ID = " + backquote(id);
 
     // execute SQL
     try {
