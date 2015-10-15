@@ -81,7 +81,6 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    * Returns a clone of itself. Note: resets the read-only flag!
    *
    * @return		the clone
-   * @see		#setReadOnly(boolean)
    */
   public Object getClone() {
     AbstractDataContainer<T>	result;
@@ -173,7 +172,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 
     c = (AbstractDataContainer) o;
 
-    result = new Integer(size()).compareTo(new Integer(c.size()));
+    result = new Integer(size()).compareTo(c.size());
 
     if (result == 0) {
       iter      = iterator();
@@ -585,7 +584,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     DataContainer	result;
 
     try {
-      result = (DataContainer) cont.getClass().newInstance();
+      result = cont.getClass().newInstance();
     }
     catch (Exception e) {
       result = null;
