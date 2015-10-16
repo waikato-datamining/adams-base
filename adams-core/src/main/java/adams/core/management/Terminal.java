@@ -191,6 +191,21 @@ public class Terminal {
   }
 
   /**
+   * Replaces the placeholder for the current directory in the command with
+   * the directory presented by this file object. If the file object points
+   * to a file, the parent directory is used in the replacement.
+   *
+   * @param cmd		the command to process
+   * @return		the processed command
+   * @see		#PLACEHOLDR_DIR
+   */
+  protected static String replaceCurrentDir(String cmd, File dir) {
+    if (!dir.isDirectory())
+      dir = dir.getParentFile();
+    return cmd.replace(PLACEHOLDR_DIR, dir.getAbsolutePath());
+  }
+
+  /**
    * Returns the platform-specific executable with its expanded options.
    * 
    * @param dir		the directory to use in the command; if pointing to a
@@ -199,9 +214,7 @@ public class Terminal {
    * @see		#PLACEHOLDR_DIR
    */
   public static String getCommand(File dir) {
-    if (!dir.isDirectory())
-      dir = dir.getParentFile();
-    return getExecutable() + " " + getOptions().replace(PLACEHOLDR_DIR, dir.getAbsolutePath());
+    return getExecutable() + " " + replaceCurrentDir(getOptions(), dir);
   }
   
   /**
@@ -220,6 +233,7 @@ public class Terminal {
     try {
       parts = OptionUtils.splitOptions(cmd);
       pb    = new ProcessBuilder(parts);
+      pb.directory(new File(replaceCurrentDir(PLACEHOLDR_DIR, dir)));
       pb.start();
       return true;
     }

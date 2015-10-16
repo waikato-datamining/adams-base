@@ -28,4 +28,4 @@ MacOptions=
 # Terminal for Windows
 WindowsExecutable=cmd.exe
 # Terminal options for Windows (use %d for the initial directory)
-WindowsOptions=/k "cd /d %d"
+WindowsOptions=/c start
