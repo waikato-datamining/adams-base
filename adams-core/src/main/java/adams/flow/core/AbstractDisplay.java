@@ -522,7 +522,7 @@ public abstract class AbstractDisplay
   /**
    * Sets whether to create the frame or just the panel.
    * 
-   * @param value	if true, only the panel is created
+   * @param value	if false, only the panel is created
    */
   public void setCreateFrame(boolean value) {
     m_CreateFrame = value;
@@ -686,7 +686,7 @@ public abstract class AbstractDisplay
     if (!isHeadless()) {
       if (m_Panel == null) {
 	m_Panel = newPanel();
-	if (m_CreateFrame)
+	if (getCreateFrame())
 	  m_Frame = createFrame(m_Panel);
 	else if (m_DisplayInEditor)
 	  registerWithEditor();

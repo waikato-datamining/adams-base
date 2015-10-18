@@ -646,7 +646,7 @@ public abstract class AbstractMultiView
 
     result = new Runnable() {
       public void run() {
-	if (m_CreateFrame && !m_Frame.isVisible())
+	if (getCreateFrame() && !m_Frame.isVisible())
 	  m_Frame.setVisible(true);
 	synchronized(m_Self) {
 	  m_Self.notifyAll();

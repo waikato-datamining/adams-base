@@ -78,7 +78,7 @@ public abstract class AbstractDisplay
     input  = m_InputToken;
     result = new Runnable() {
       public void run() {
-	if (m_CreateFrame && !m_Frame.isVisible())
+	if (getCreateFrame() && !m_Frame.isVisible())
 	  m_Frame.setVisible(true);
 	if (input != null) {
 	  try {

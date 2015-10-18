@@ -392,7 +392,7 @@ public class MissionControl
 
     result = new Runnable() {
       public void run() {
-	if (m_CreateFrame && !m_Frame.isVisible())
+	if (getCreateFrame() && !m_Frame.isVisible())
 	  m_Frame.setVisible(true);
 	((ControlPanel) m_Panel).updateButtons();
 	synchronized(m_Self) {
