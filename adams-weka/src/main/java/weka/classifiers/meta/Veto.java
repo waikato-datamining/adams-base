@@ -92,6 +92,12 @@ public class Veto
 
   private static final long serialVersionUID = 943666951855888860L;
 
+  public static final String LABEL = "label";
+
+  public static final String SUPPORT = "support";
+
+  public static final String SUPPRESS_MODEL_OUTPUT = "suppress-model-output";
+
   /** the label to check. */
   protected WekaLabelIndex m_Label = new WekaLabelIndex(WekaLabelIndex.FIRST);
 
@@ -239,9 +245,9 @@ public class Veto
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), "label");
-    WekaOptionUtils.addOption(result, supportTipText(), "" + getDefaultSupport(), "support");
-    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), "suppress-model-output");
+    WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), LABEL);
+    WekaOptionUtils.addOption(result, supportTipText(), "" + getDefaultSupport(), SUPPORT);
+    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), SUPPRESS_MODEL_OUTPUT);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -256,9 +262,9 @@ public class Veto
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setLabel(new WekaLabelIndex(WekaOptionUtils.parse(options, "label", getDefaultLabel().getIndex())));
-    setSupport(WekaOptionUtils.parse(options, "support", getDefaultSupport()));
-    setSuppressModelOutput(Utils.getFlag("suppress-model-output", options));
+    setLabel(new WekaLabelIndex(WekaOptionUtils.parse(options, LABEL, getDefaultLabel().getIndex())));
+    setSupport(WekaOptionUtils.parse(options, SUPPORT, getDefaultSupport()));
+    setSuppressModelOutput(Utils.getFlag(SUPPRESS_MODEL_OUTPUT, options));
     super.setOptions(options);
   }
 
@@ -270,9 +276,9 @@ public class Veto
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "label", getLabel().getIndex());
-    WekaOptionUtils.add(result, "support", getSupport());
-    WekaOptionUtils.add(result, "suppress-model-output", getSuppressModelOutput());
+    WekaOptionUtils.add(result, LABEL, getLabel().getIndex());
+    WekaOptionUtils.add(result, SUPPORT, getSupport());
+    WekaOptionUtils.add(result, SUPPRESS_MODEL_OUTPUT, getSuppressModelOutput());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
