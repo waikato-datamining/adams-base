@@ -233,6 +233,7 @@ public class ApplicationMenu
     HashSet<String>	listAdded;
     HashSet<String>	additional;
     List<String>	additionalList;
+    List<AbstractMenuItemDefinition>	additionalDefs;
     Enumeration<String>	keys;
     String		key;
     int			indexToolsMenu;
@@ -367,63 +368,67 @@ public class ApplicationMenu
       }
 
       // add items according to their category
-      additionalList = new ArrayList<String>(additional);
-      Collections.sort(additionalList);
+      additionalList = new ArrayList<>(additional);
+      additionalDefs = new ArrayList<>();
       for (String add: additionalList) {
 	try {
-	  cls      = Class.forName(add);
-	  constr   = cls.getConstructor(AbstractApplicationFrame.class);
-	  definition  = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
+	  cls = Class.forName(add);
+	  constr = cls.getConstructor(AbstractApplicationFrame.class);
+	  definition = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
 	  if (m_UserMode.compareTo(definition.getUserMode()) < 0)
 	    continue;
-	  menuitem = definition.getMenuItem();
-	  added    = false;
-	  for (i = 0; i < menus.length; i++) {
-	    if (menus[i].getText().equals(definition.getCategory())) {
-	      added = true;
-	      menus[i].setVisible(true);
-	      // check for "Exit", "Restart" or "Close" (these are always last!)
-	      if (menus[i].getMenuComponentCount() > 0) {
-		indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close"}, menus[i]);
-		if (indexLast != -1) {
-		  menus[i].insertSeparator(indexLast);
-		  menus[i].insert(menuitem, indexLast);
-		  continue;
-		}
-	      }
-	      if (!separators[i] && menus[i].getMenuComponentCount() > 0) {
-		menus[i].addSeparator();
-		separators[i] = true;
-	      }
-	      menus[i].add(menuitem);
-	    }
-	  }
-	  // add new menu
-	  if (!added) {
-	    for (i = 0; i < result.getMenuCount(); i++) {
-	      if (result.getMenu(i).getText().equals(definition.getCategory())) {
-		added = true;
-		result.getMenu(i).add(menuitem);
-	      }
-	    }
-	    // no menu/category added yet?
-	    if (!added) {
-	      menu = new JMenu(definition.getCategory());
-	      menu.add(menuitem);
-	      if (indexToolsMenu == -1) {
-		result.add(menu);
-	      }
-	      else {
-		result.add(menu, indexToolsMenu);
-		indexToolsMenu++;
-	      }
-	      added = true;
-	    }
-	  }
+	  additionalDefs.add(definition);
 	}
 	catch (Exception e) {
 	    getLogger().log(Level.SEVERE,
 		"Error processing additional menu item '" + add + "':", e);
+	}
+      }
+      Collections.sort(additionalDefs);
+      for (AbstractMenuItemDefinition def: additionalDefs) {
+	menuitem = def.getMenuItem();
+	added    = false;
+	for (i = 0; i < menus.length; i++) {
+	  if (menus[i].getText().equals(def.getCategory())) {
+	    added = true;
+	    menus[i].setVisible(true);
+	    // check for "Exit", "Restart" or "Close" (these are always last!)
+	    if (menus[i].getMenuComponentCount() > 0) {
+	      indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close"}, menus[i]);
+	      if (indexLast != -1) {
+		menus[i].insertSeparator(indexLast);
+		menus[i].insert(menuitem, indexLast);
+		continue;
+	      }
+	    }
+	    if (!separators[i] && menus[i].getMenuComponentCount() > 0) {
+	      menus[i].addSeparator();
+	      separators[i] = true;
+	    }
+	    menus[i].add(menuitem);
+	  }
+	}
+	// add new menu
+	if (!added) {
+	  for (i = 0; i < result.getMenuCount(); i++) {
+	    if (result.getMenu(i).getText().equals(def.getCategory())) {
+	      added = true;
+	      result.getMenu(i).add(menuitem);
+	    }
+	  }
+	  // no menu/category added yet?
+	  if (!added) {
+	    menu = new JMenu(def.getCategory());
+	    menu.add(menuitem);
+	    if (indexToolsMenu == -1) {
+	      result.add(menu);
+	    }
+	    else {
+	      result.add(menu, indexToolsMenu);
+	      indexToolsMenu++;
+	    }
+	    added = true;
+	  }
 	}
       }
     }
