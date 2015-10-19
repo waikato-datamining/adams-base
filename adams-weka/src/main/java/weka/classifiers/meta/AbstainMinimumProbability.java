@@ -82,6 +82,8 @@ public class AbstainMinimumProbability
 
   private static final long serialVersionUID = 5699323936859571421L;
 
+  public static final String MIN_PROBABILITY = "min-probability";
+
   /** the minimum probability that the classification must meet (0-1). */
   protected double m_MinProbability = getDefaultMinProbability();
 
@@ -145,7 +147,7 @@ public class AbstainMinimumProbability
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, minProbabilityTipText(), ""+ getDefaultMinProbability(), "min-probability");
+    WekaOptionUtils.addOption(result, minProbabilityTipText(), ""+ getDefaultMinProbability(), MIN_PROBABILITY);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -160,7 +162,7 @@ public class AbstainMinimumProbability
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setMinProbability(WekaOptionUtils.parse(options, "min-probability", getDefaultMinProbability()));
+    setMinProbability(WekaOptionUtils.parse(options, MIN_PROBABILITY, getDefaultMinProbability()));
     super.setOptions(options);
   }
 
@@ -172,7 +174,7 @@ public class AbstainMinimumProbability
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "min-probability", getMinProbability());
+    WekaOptionUtils.add(result, MIN_PROBABILITY, getMinProbability());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
