@@ -21,21 +21,20 @@
 
 package adams.gui.application;
 
+import adams.core.ClassLister;
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-
-import adams.core.ClassLister;
-import adams.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.gui.core.GUIHelper;
 
 /**
  * Abstract ancestor for definining menu items in the ApplicationFrame menu.
@@ -44,7 +43,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public abstract class AbstractMenuItemDefinition
-  implements Serializable {
+  implements Serializable, Comparable<AbstractMenuItemDefinition> {
 
   /** for serialization. */
   private static final long serialVersionUID = -2406133385745656034L;
@@ -234,6 +233,40 @@ public abstract class AbstractMenuItemDefinition
   public abstract String getTitle();
 
   /**
+   * Uses category and title for sorting.
+   *
+   * @param o		the other definition to compare with
+   * @return		less than zero, zero, or greater than zero if this
+   * 			menuitem is less than, equal to or greater than the
+   * 			other definition
+   * @see 		#getCategory()
+   * @see		#getTitle()
+   */
+  @Override
+  public int compareTo(AbstractMenuItemDefinition o) {
+    int		result;
+
+    result = getCategory().compareTo(o.getCategory());
+    if (result == 0)
+      result = getTitle().compareTo(o.getTitle());
+
+    return result;
+  }
+
+  /**
+   * Checks whether the obj is the same definition (using category/title).
+   *
+   * @param obj		the object to compare with
+   * @return		true if the same definition
+   * @see		#compareTo(AbstractMenuItemDefinition)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof AbstractMenuItemDefinition)
+      && (compareTo((AbstractMenuItemDefinition) obj) == 0);
+  }
+
+  /**
    * Whether the panel can only be displayed once.
    *
    * @return		true if the panel can only be displayed once
@@ -244,7 +277,6 @@ public abstract class AbstractMenuItemDefinition
    * Returns the user mode, which determines visibility as well.
    *
    * @return		the user mode
-   * @see		#isVisible()
    */
   public abstract UserMode getUserMode();
 
