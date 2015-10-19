@@ -73,7 +73,7 @@ public class PackageManager
    */
   @Override
   public String getTitle() {
-    return "PackageManager";
+    return "[Weka] Package manager";
   }
 
   /**

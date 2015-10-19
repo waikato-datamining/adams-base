@@ -139,7 +139,7 @@ public class ROC
    */
   @Override
   public String getTitle() {
-    return "ROC";
+    return "[Weka] ROC";
   }
 
   /**

@@ -226,7 +226,7 @@ public class AppendDatasets
    */
   @Override
   public String getTitle() {
-    return "Append datasets";
+    return "[Weka] Append datasets";
   }
 
   /**

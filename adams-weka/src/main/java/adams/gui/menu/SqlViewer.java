@@ -72,7 +72,7 @@ public class SqlViewer
    * @return 		the title
    */
   public String getTitle() {
-    return "Sql Viewer";
+    return "[Weka] SQL Viewer";
   }
 
   /**

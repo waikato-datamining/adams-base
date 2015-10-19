@@ -81,7 +81,7 @@ public class InstanceCompare
    * @return 		the title
    */
   public String getTitle() {
-    return "Instance Compare";
+    return "[Weka] Instance Compare";
   }
 
   /**

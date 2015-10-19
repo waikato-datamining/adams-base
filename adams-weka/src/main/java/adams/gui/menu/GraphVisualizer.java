@@ -140,7 +140,7 @@ public class GraphVisualizer
    */
   @Override
   public String getTitle() {
-    return "Graph visualizer";
+    return "[Weka] Graph visualizer";
   }
 
   /**

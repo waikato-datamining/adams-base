@@ -78,7 +78,7 @@ public class BayesNetEditor
    * @return 		the title
    */
   public String getTitle() {
-    return "BayesNet Editor";
+    return "[Weka] BayesNet Editor";
   }
 
   /**

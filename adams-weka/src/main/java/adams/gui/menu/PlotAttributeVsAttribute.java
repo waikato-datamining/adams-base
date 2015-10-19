@@ -398,7 +398,7 @@ public class PlotAttributeVsAttribute
    */
   @Override
   public String getTitle() {
-    return "Plot attribute vs attribute";
+    return "[Weka] Plot attribute vs attribute";
   }
 
   /**

@@ -131,7 +131,7 @@ public class MarginCurve
    */
   @Override
   public String getTitle() {
-    return "Margin curve";
+    return "[Weka] Margin curve";
   }
 
   /**

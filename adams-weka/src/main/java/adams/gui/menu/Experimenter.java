@@ -65,7 +65,7 @@ public class Experimenter
    * @return 		the title
    */
   public String getTitle() {
-    return "Experimenter";
+    return "[Weka] Experimenter";
   }
 
   /**

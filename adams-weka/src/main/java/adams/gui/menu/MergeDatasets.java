@@ -243,7 +243,7 @@ public class MergeDatasets
    */
   @Override
   public String getTitle() {
-    return "Merge datasets";
+    return "[Weka] Merge datasets";
   }
 
   /**
