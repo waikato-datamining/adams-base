@@ -290,7 +290,7 @@ public class ApplicationMenu
 	    if (listAdded.contains(classname))
 	      continue;
 	    listAdded.add(classname);
-	    if (classname.indexOf(SEPARATOR) > -1) {
+	    if (classname.contains(SEPARATOR)) {
 	      title     = classname.substring(classname.indexOf(SEPARATOR) + 1);
 	      classname = classname.substring(0, classname.indexOf(SEPARATOR));
 	    }
@@ -308,8 +308,8 @@ public class ApplicationMenu
 	      setUnavailable(classname);
 	      continue;
 	    }
-	    constr     = cls.getConstructor(new Class[]{AbstractApplicationFrame.class});
-	    definition = (AbstractMenuItemDefinition) constr.newInstance(new Object[]{getOwner()});
+	    constr     = cls.getConstructor(AbstractApplicationFrame.class);
+	    definition = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
 	    if (m_UserMode.compareTo(definition.getUserMode()) < 0)
 	      continue;
 	    if (definition.requiresRestartableApplication() && !m_Owner.getEnableRestart())
@@ -349,7 +349,7 @@ public class ApplicationMenu
       mnemonics = GUIHelper.getMnemonics(items);
       for (n = 0; n < menus[i].getItemCount(); n++) {
 	if (menus[i].getItem(n) instanceof JMenuItem)
-	  ((JMenuItem) menus[i].getItem(n)).setMnemonic(mnemonics[n]);
+	  menus[i].getItem(n).setMnemonic(mnemonics[n]);
       }
     }
 
@@ -372,8 +372,8 @@ public class ApplicationMenu
       for (String add: additionalList) {
 	try {
 	  cls      = Class.forName(add);
-	  constr   = cls.getConstructor(new Class[]{AbstractApplicationFrame.class});
-	  definition  = (AbstractMenuItemDefinition) constr.newInstance(new Object[]{getOwner()});
+	  constr   = cls.getConstructor(AbstractApplicationFrame.class);
+	  definition  = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
 	  if (m_UserMode.compareTo(definition.getUserMode()) < 0)
 	    continue;
 	  menuitem = definition.getMenuItem();
