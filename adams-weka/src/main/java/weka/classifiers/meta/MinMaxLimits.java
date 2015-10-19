@@ -21,6 +21,7 @@
 package weka.classifiers.meta;
 
 import adams.core.EnumHelper;
+import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.core.AttributeStats;
 import weka.core.Capabilities;
@@ -107,7 +108,7 @@ import java.util.Vector;
  */
 public class MinMaxLimits
   extends SingleClassifierEnhancer
-  implements WeightedInstancesHandler{
+  implements WeightedInstancesHandler, AbstainingClassifier {
 
   /** for serialization. */
   private static final long serialVersionUID = 1233549562504476266L;
@@ -168,6 +169,9 @@ public class MinMaxLimits
 
   /** the actual limit to use for the upper limit. */
   protected Double m_MaxActual;
+
+  /** whether the base classifier can abstain. */
+  protected boolean m_CanAbstain = false;
 
   /**
    * Returns a string describing classifier.
@@ -576,6 +580,7 @@ public class MinMaxLimits
       System.out.println("Actual upper limit: " + (m_MaxActual == null ? "-none-" : "" + m_MaxActual));
 
     m_Classifier.buildClassifier(data);
+    m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
 
   /**
@@ -607,6 +612,43 @@ public class MinMaxLimits
     }
 
     return result;
+  }
+
+  /**
+   * Whether abstaining is possible, e.g., used in meta-classifiers.
+   *
+   * @return		true if abstaining is possible
+   */
+  public boolean canAbstain() {
+    return m_CanAbstain;
+  }
+
+  /**
+   * The prediction that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the prediction
+   * @throws Exception	if fails to make prediction
+   */
+  public double getAbstentionClassification(Instance inst) throws Exception {
+    if (m_CanAbstain)
+      return ((AbstainingClassifier) m_Classifier).getAbstentionClassification(inst);
+    else
+      return Utils.missingValue();
+  }
+
+  /**
+   * The class distribution that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the class distribution
+   * @throws Exception	if fails to make prediction
+   */
+  public double[] getAbstentionDistribution(Instance inst) throws Exception {
+    if (m_CanAbstain)
+      return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(inst);
+    else
+      return null;
   }
 
   /**
