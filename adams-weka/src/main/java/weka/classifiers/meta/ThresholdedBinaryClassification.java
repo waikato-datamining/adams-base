@@ -90,6 +90,12 @@ public class ThresholdedBinaryClassification
 
   private static final long serialVersionUID = -4208248826900762835L;
 
+  public static final String LABEL = "label";
+
+  public static final String MIN_PROBABILITY = "min-probability";
+
+  public static final String SUPPRESS_MODEL_OUTPUT = "suppress-model-output";
+
   /** the label to check. */
   protected WekaLabelIndex m_Label = new WekaLabelIndex(WekaLabelIndex.FIRST);
 
@@ -232,9 +238,9 @@ public class ThresholdedBinaryClassification
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), "label");
-    WekaOptionUtils.addOption(result, minProbabilityTipText(), "" + getDefaultMinProbability(), "min-probability");
-    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), "suppress-model-output");
+    WekaOptionUtils.addOption(result, labelTipText(), "" + getDefaultLabel().getIndex(), LABEL);
+    WekaOptionUtils.addOption(result, minProbabilityTipText(), "" + getDefaultMinProbability(), MIN_PROBABILITY);
+    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), SUPPRESS_MODEL_OUTPUT);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -249,9 +255,9 @@ public class ThresholdedBinaryClassification
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setLabel(new WekaLabelIndex(WekaOptionUtils.parse(options, "label", getDefaultLabel().getIndex())));
-    setMinProbability(WekaOptionUtils.parse(options, "min-probability", getDefaultMinProbability()));
-    setSuppressModelOutput(Utils.getFlag("suppress-model-output", options));
+    setLabel(new WekaLabelIndex(WekaOptionUtils.parse(options, LABEL, getDefaultLabel().getIndex())));
+    setMinProbability(WekaOptionUtils.parse(options, MIN_PROBABILITY, getDefaultMinProbability()));
+    setSuppressModelOutput(Utils.getFlag(SUPPRESS_MODEL_OUTPUT, options));
     super.setOptions(options);
   }
 
@@ -263,9 +269,9 @@ public class ThresholdedBinaryClassification
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "label", getLabel().getIndex());
-    WekaOptionUtils.add(result, "min-probability", getMinProbability());
-    WekaOptionUtils.add(result, "suppress-model-output", getSuppressModelOutput());
+    WekaOptionUtils.add(result, LABEL, getLabel().getIndex());
+    WekaOptionUtils.add(result, MIN_PROBABILITY, getMinProbability());
+    WekaOptionUtils.add(result, SUPPRESS_MODEL_OUTPUT, getSuppressModelOutput());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
