@@ -80,6 +80,8 @@ public class SuppressModelOutput
 
   private static final long serialVersionUID = 6575314591188728994L;
 
+  public static final String SUPPRESS_MODEL_OUTPUT = "suppress-model-output";
+
   /** whether to suppress the model output. */
   protected boolean m_SuppressModelOutput = false;
 
@@ -130,7 +132,7 @@ public class SuppressModelOutput
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), "suppress-model-output");
+    WekaOptionUtils.addFlag(result, suppressModelOutputTipText(), SUPPRESS_MODEL_OUTPUT);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -145,7 +147,7 @@ public class SuppressModelOutput
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setSuppressModelOutput(Utils.getFlag("suppress-model-output", options));
+    setSuppressModelOutput(Utils.getFlag(SUPPRESS_MODEL_OUTPUT, options));
     super.setOptions(options);
   }
 
@@ -157,7 +159,7 @@ public class SuppressModelOutput
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "suppress-model-output", getSuppressModelOutput());
+    WekaOptionUtils.add(result, SUPPRESS_MODEL_OUTPUT, getSuppressModelOutput());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
