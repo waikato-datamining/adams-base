@@ -96,12 +96,16 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class AbstainingClassifierWrapper
-  extends SingleClassifierEnhancer {
+  extends SingleClassifierEnhancer
+  implements AbstainingClassifier {
 
   private static final long serialVersionUID = 5699323936859571421L;
 
   /** whether to turn off abstaining. */
   protected boolean m_TurnOffAbstaining = false;
+
+  /** whether the base classifier can abstain. */
+  protected boolean m_CanAbstain = false;
 
   /**
    * Initializes the classifier.
@@ -206,7 +210,7 @@ public class AbstainingClassifierWrapper
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "turn-off-absaining", getTurnOffAbstaining());
+    WekaOptionUtils.add(result, "turn-off-abstaining", getTurnOffAbstaining());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
@@ -225,6 +229,7 @@ public class AbstainingClassifierWrapper
   public void buildClassifier(Instances data) throws Exception {
     getCapabilities().testWithFail(data);
     m_Classifier.buildClassifier(data);
+    m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
 
   /**
@@ -240,6 +245,43 @@ public class AbstainingClassifierWrapper
       return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(instance);
     else
       return m_Classifier.distributionForInstance(instance);
+  }
+
+  /**
+   * Whether abstaining is possible, e.g., used in meta-classifiers.
+   *
+   * @return		true if abstaining is possible
+   */
+  public boolean canAbstain() {
+    return m_CanAbstain && !m_TurnOffAbstaining;
+  }
+
+  /**
+   * The prediction that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the prediction
+   * @throws Exception	if fails to make prediction
+   */
+  public double getAbstentionClassification(Instance inst) throws Exception {
+    if (canAbstain())
+      return ((AbstainingClassifier) m_Classifier).getAbstentionClassification(inst);
+    else
+      return Utils.missingValue();
+  }
+
+  /**
+   * The class distribution that made the classifier abstain.
+   *
+   * @param inst	the instance to get the prediction for
+   * @return		the class distribution
+   * @throws Exception	if fails to make prediction
+   */
+  public double[] getAbstentionDistribution(Instance inst) throws Exception {
+    if (canAbstain())
+      return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(inst);
+    else
+      return null;
   }
 
   /**
