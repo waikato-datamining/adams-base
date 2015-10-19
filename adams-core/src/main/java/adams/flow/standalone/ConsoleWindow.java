@@ -22,6 +22,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.sink.TextSupplier;
@@ -89,9 +90,20 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -121,14 +133,26 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  * 
- * <pre>-type &lt;INFO|ERROR|DEBUG&gt; [-type ...] (property: types)
- * &nbsp;&nbsp;&nbsp;The types of messages to display.
- * &nbsp;&nbsp;&nbsp;default: INFO, DEBUG, ERROR
+ * <pre>-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; [-level ...] (property: levels)
+ * &nbsp;&nbsp;&nbsp;The logging levels of messages to display.
+ * &nbsp;&nbsp;&nbsp;default: INFO, WARNING, SEVERE
  * </pre>
  * 
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font of the dialog.
  * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
+ * </pre>
+ * 
+ * <pre>-log-file &lt;adams.core.io.PlaceholderFile&gt; (property: logFile)
+ * &nbsp;&nbsp;&nbsp;The file to save the log messages to as they come in; ignored if pointing 
+ * &nbsp;&nbsp;&nbsp;to a directory.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-file-only-output &lt;boolean&gt; (property: fileOnlyOutput)
+ * &nbsp;&nbsp;&nbsp;If enabled, log messages are only output to the specified log file, no window 
+ * &nbsp;&nbsp;&nbsp;with text.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -148,13 +172,19 @@ public class ConsoleWindow
 
   /** the logging levels to display. */
   protected LoggingLevel[] m_Levels;
-  
+
   /** the font to use. */
   protected Font m_Font;
 
+  /** the file to save the log messages to. */
+  protected PlaceholderFile m_LogFile;
+
+  /** whether to only use file output. */
+  protected boolean m_FileOnlyOutput;
+
   /** the text area for displaying the messages. */
   protected BaseTextArea m_TextArea;
-  
+
   /** the lookup for the types. */
   protected HashSet<LoggingLevel> m_LookUp;
 
@@ -170,7 +200,7 @@ public class ConsoleWindow
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
 
-  /** the filedialog for loading/saving flows. */
+  /** the filedialog for saving the output. */
   protected transient TextFileChooser m_FileChooser;
 
   /**
@@ -191,16 +221,24 @@ public class ConsoleWindow
     super.defineOptions();
 
     m_OptionManager.add(
-	    "level", "levels",
-	    new LoggingLevel[]{
-		LoggingLevel.INFO,
-		LoggingLevel.WARNING,
-		LoggingLevel.SEVERE,
-	    });
+      "level", "levels",
+      new LoggingLevel[]{
+        LoggingLevel.INFO,
+        LoggingLevel.WARNING,
+        LoggingLevel.SEVERE,
+      });
 
     m_OptionManager.add(
-	"font", "font",
-	getDefaultFont());
+      "font", "font",
+      getDefaultFont());
+
+    m_OptionManager.add(
+      "log-file", "logFile",
+      new PlaceholderFile());
+
+    m_OptionManager.add(
+      "file-only-output", "fileOnlyOutput",
+      false);
   }
 
   /**
@@ -209,10 +247,10 @@ public class ConsoleWindow
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_LookUp = null;
   }
-  
+
   /**
    * Removes entries from the backup.
    */
@@ -322,38 +360,101 @@ public class ConsoleWindow
   }
 
   /**
+   * Sets the file to save the log messages to, ignored if directory.
+   *
+   * @param value 	the output file
+   */
+  public void setLogFile(PlaceholderFile value) {
+    m_LogFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file to save the log messages to, ignored if directory.
+   *
+   * @return 		the output file
+   */
+  public PlaceholderFile getLogFile() {
+    return m_LogFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String logFileTipText() {
+    return "The file to save the log messages to as they come in; ignored if pointing to a directory.";
+  }
+
+  /**
+   * Sets whether to output the log messages only to the file and suppress
+   * GUI output.
+   *
+   * @param value 	true if only log file output
+   */
+  public void setFileOnlyOutput(boolean value) {
+    m_FileOnlyOutput = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the log messages only to the file and suppress
+   * GUI output.
+   *
+   * @return 		true if only log file output
+   */
+  public boolean getFileOnlyOutput() {
+    return m_FileOnlyOutput;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fileOnlyOutputTipText() {
+    return "If enabled, log messages are only output to the specified log file, no window with text.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "types", Utils.flatten(m_Levels, ", "));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "types", Utils.flatten(m_Levels, ", "), "types: ");
+    result += QuickInfoHelper.toString(this, "logFile", m_LogFile, ", log: ");
+
+    return result;
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser.
-   * 
+   *
    * @return 		the file chooser
    */
   protected TextFileChooser getFileChooser() {
     TextFileChooser	fileChooser;
     ExtensionFileFilter	filter;
-    
+
     if (m_FileChooser == null) {
       fileChooser = new TextFileChooser();
-      filter      = null;
-      if (this instanceof TextSupplier)
-	filter = ((TextSupplier) this).getCustomTextFileFilter();
+      filter      = getCustomTextFileFilter();
       if (filter != null) {
-	fileChooser.resetChoosableFileFilters();
-	fileChooser.addChoosableFileFilter(filter);
-	fileChooser.setFileFilter(filter);
-	fileChooser.setDefaultExtension(filter.getExtensions()[0]);
+        fileChooser.resetChoosableFileFilters();
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setFileFilter(filter);
+        fileChooser.setDefaultExtension(filter.getExtensions()[0]);
       }
       m_FileChooser = fileChooser;
     }
-    
+
     return m_FileChooser;
   }
 
@@ -380,7 +481,7 @@ public class ConsoleWindow
     result.setMnemonic('F');
     result.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-	updateMenu();
+        updateMenu();
       }
     });
 
@@ -392,9 +493,9 @@ public class ConsoleWindow
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
       menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clear();
-	}
+        public void actionPerformed(ActionEvent e) {
+          clear();
+        }
       });
       m_MenuItemFileClear = menuitem;
     }
@@ -407,7 +508,7 @@ public class ConsoleWindow
     menuitem.setIcon(GUIHelper.getIcon("save.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	saveAs();
+        saveAs();
       }
     });
     m_MenuItemFileSaveAs = menuitem;
@@ -425,7 +526,7 @@ public class ConsoleWindow
     menuitem.setIcon(GUIHelper.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	close();
+        close();
       }
     });
     m_MenuItemFileClose = menuitem;
@@ -448,8 +549,8 @@ public class ConsoleWindow
 
     for (i = 0; i < menu.getItemCount(); i++) {
       if (menu.getItem(i) == menuitem) {
-	result = i;
-	break;
+        result = i;
+        break;
       }
     }
 
@@ -533,10 +634,10 @@ public class ConsoleWindow
       return;
 
     msg = FileUtils.writeToFileMsg(
-	getFileChooser().getSelectedFile().getAbsolutePath(),
-	supplyText(),
-	false,
-	getFileChooser().getEncoding());
+      getFileChooser().getSelectedFile().getAbsolutePath(),
+      supplyText(),
+      false,
+      getFileChooser().getEncoding());
 
     if (msg != null)
       getLogger().severe("Error saving text to '" + getFileChooser().getSelectedFile() + "':\n" + msg);
@@ -553,7 +654,7 @@ public class ConsoleWindow
    * Returns a custom file filter for the file chooser.
    * <br><br>
    * Default implementation returns null.
-   * 
+   *
    * @return		the file filter, null if to use default one
    */
   public ExtensionFileFilter getCustomTextFileFilter() {
@@ -580,13 +681,26 @@ public class ConsoleWindow
   @Override
   protected BasePanel newPanel() {
     BasePanel	result;
-    
+
+    if (m_FileOnlyOutput)
+      return null;
+
     result     = new BasePanel(new BorderLayout());
     m_TextArea = new BaseTextArea();
     m_TextArea.setFont(m_Font);
     result.add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
-    
+
     return result;
+  }
+
+  /**
+   * Returns whether the frame is created as well as the panel.
+   *
+   * @return		true if the frame is created as well
+   */
+  @Override
+  public boolean getCreateFrame() {
+    return super.getCreateFrame() && !m_FileOnlyOutput;
   }
 
   /**
@@ -599,15 +713,13 @@ public class ConsoleWindow
   protected Runnable newDisplayRunnable() {
     Runnable	result;
 
-    result = new Runnable() {
-      public void run() {
-	if (m_CreateFrame && !m_Frame.isVisible())
-	  m_Frame.setVisible(true);
-	synchronized(m_Self) {
-	  m_Self.notifyAll();
-	}
-	m_Updating = false;
+    result = () -> {
+      if (getCreateFrame() && !m_Frame.isVisible())
+	m_Frame.setVisible(true);
+      synchronized(m_Self) {
+	m_Self.notifyAll();
       }
+      m_Updating = false;
     };
 
     return result;
@@ -622,31 +734,35 @@ public class ConsoleWindow
   @Override
   public String setUp() {
     String	result;
-    
+
     result = super.setUp();
-    
+
     if (result == null) {
       if (!isHeadless()) {
-	ConsolePanel.getSingleton().addListener(this);
-	m_LookUp = new HashSet<LoggingLevel>(Arrays.asList(m_Levels));
+        ConsolePanel.getSingleton().addListener(this);
+        m_LookUp = new HashSet<LoggingLevel>(Arrays.asList(m_Levels));
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Gets called when the {@link ConsolePanel} receives a message.
-   * 
+   *
    * @param e		the generated event
    */
   public void consolePanelMessageReceived(ConsolePanelEvent e) {
     if (m_LookUp.contains(e.getLevel())) {
+      if (!m_FileOnlyOutput && !isHeadless() && m_Panel == null)
+	doExecute();
       if (m_TextArea != null)
-	m_TextArea.append(e.getMessage());
+        m_TextArea.append(e.getMessage());
+      if (!m_LogFile.isDirectory())
+	FileUtils.writeToFile(m_LogFile.getAbsolutePath(), e.getMessage(), true);
     }
   }
-  
+
   /**
    * Cleans up after the execution has finished.
    */
@@ -656,7 +772,7 @@ public class ConsoleWindow
       ConsolePanel.getSingleton().removeListener(this);
     if (m_LookUp != null)
       m_LookUp = null;
-    
+
     super.wrapUp();
   }
 
@@ -717,7 +833,7 @@ public class ConsoleWindow
     if (SendToActionUtils.isAvailable(String.class, cls)) {
       result = supplyText();
       if (result.length() == 0)
-	result = null;
+        result = null;
     }
 
     return result;

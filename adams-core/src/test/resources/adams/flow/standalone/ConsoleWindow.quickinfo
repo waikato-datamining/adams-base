@@ -1,0 +1,1 @@
+types: INFO, WARNING, SEVERE, log: ${CWD}
