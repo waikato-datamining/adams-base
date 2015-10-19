@@ -753,7 +753,6 @@ public class ConsoleWindow
    * @param e		the generated event
    */
   public void consolePanelMessageReceived(ConsolePanelEvent e) {
-    System.err.println("--> " + m_LogFile);
     if (m_LookUp.contains(e.getLevel())) {
       if (!m_FileOnlyOutput && !isHeadless() && (m_Panel == null))
 	execute();
