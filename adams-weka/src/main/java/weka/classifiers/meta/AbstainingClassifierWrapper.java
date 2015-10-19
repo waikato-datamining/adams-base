@@ -101,6 +101,8 @@ public class AbstainingClassifierWrapper
 
   private static final long serialVersionUID = 5699323936859571421L;
 
+  public static final String TURN_OFF_ABSTAINING = "turn-off-abstaining";
+
   /** whether to turn off abstaining. */
   protected boolean m_TurnOffAbstaining = false;
 
@@ -183,7 +185,7 @@ public class AbstainingClassifierWrapper
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, turnOffAbstainingTipText(), "false", "turn-off-abstaining");
+    WekaOptionUtils.addOption(result, turnOffAbstainingTipText(), "false", TURN_OFF_ABSTAINING);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -198,7 +200,7 @@ public class AbstainingClassifierWrapper
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setTurnOffAbstaining(Utils.getFlag("turn-off-abstaining", options));
+    setTurnOffAbstaining(Utils.getFlag(TURN_OFF_ABSTAINING, options));
     super.setOptions(options);
   }
 
@@ -210,7 +212,7 @@ public class AbstainingClassifierWrapper
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "turn-off-abstaining", getTurnOffAbstaining());
+    WekaOptionUtils.add(result, TURN_OFF_ABSTAINING, getTurnOffAbstaining());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
