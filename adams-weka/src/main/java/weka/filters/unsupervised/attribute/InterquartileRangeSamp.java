@@ -122,6 +122,12 @@ public class InterquartileRangeSamp
   /** for serialization */
   protected static final long serialVersionUID = 3811630774543798261L;
 
+  public static final String SAMPLE_SIZE = "sample-size";
+
+  public static final String MIN_SAMPLES = "min-samples";
+
+  public static final String IGNORED_ATTRIBUTES = "ignored-attributes";
+
   protected Hashtable<Integer,TDoubleArrayList> m_AttValues = new Hashtable<Integer,TDoubleArrayList>();
 
   protected Hashtable<Integer,List<IQRs>> m_IQRs = new Hashtable<Integer,List<IQRs>>();
@@ -304,9 +310,9 @@ public class InterquartileRangeSamp
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, sampleSizeTipText(), "" + getDefaultSampleSize(), "sample-size");
-    WekaOptionUtils.addOption(result, minSamplesTipText(), "" + getDefaultMinSamples(), "min-samples");
-    WekaOptionUtils.addOption(result, ignoredAttributesTipText(), "" + getDefaultIgnoredAttributes(), "ignored-attributes");
+    WekaOptionUtils.addOption(result, sampleSizeTipText(), "" + getDefaultSampleSize(), SAMPLE_SIZE);
+    WekaOptionUtils.addOption(result, minSamplesTipText(), "" + getDefaultMinSamples(), MIN_SAMPLES);
+    WekaOptionUtils.addOption(result, ignoredAttributesTipText(), "" + getDefaultIgnoredAttributes(), IGNORED_ATTRIBUTES);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -321,9 +327,9 @@ public class InterquartileRangeSamp
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setSampleSize(WekaOptionUtils.parse(options, "sample-size", getDefaultSampleSize()));
-    setMinSamples(WekaOptionUtils.parse(options, "min-samples", getDefaultMinSamples()));
-    setIgnoredAttributes(new BaseRegExp(WekaOptionUtils.parse(options, "ignored-attributes", getDefaultIgnoredAttributes().getValue())));
+    setSampleSize(WekaOptionUtils.parse(options, SAMPLE_SIZE, getDefaultSampleSize()));
+    setMinSamples(WekaOptionUtils.parse(options, MIN_SAMPLES, getDefaultMinSamples()));
+    setIgnoredAttributes(new BaseRegExp(WekaOptionUtils.parse(options, IGNORED_ATTRIBUTES, getDefaultIgnoredAttributes().getValue())));
     super.setOptions(options);
   }
 
@@ -335,9 +341,9 @@ public class InterquartileRangeSamp
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "sample-size", getSampleSize());
-    WekaOptionUtils.add(result, "min-samples", getMinSamples());
-    WekaOptionUtils.add(result, "ignored-attributes", getIgnoredAttributes().getValue());
+    WekaOptionUtils.add(result, SAMPLE_SIZE, getSampleSize());
+    WekaOptionUtils.add(result, MIN_SAMPLES, getMinSamples());
+    WekaOptionUtils.add(result, IGNORED_ATTRIBUTES, getIgnoredAttributes().getValue());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
