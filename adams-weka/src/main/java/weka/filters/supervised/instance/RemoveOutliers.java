@@ -96,6 +96,14 @@ public class RemoveOutliers
 
   private static final long serialVersionUID = -8292965351930853084L;
 
+  public static final String CLASSIFIER = "classifier";
+
+  public static final String NUM_FOLDS = "num-folds";
+
+  public static final String NUM_THREADS = "num-threads";
+
+  public static final String DETECTOR = "detector";
+
   /** the classifier to use for evaluation. */
   protected Classifier m_Classifier = getDefaultClassifier();
 
@@ -326,10 +334,10 @@ public class RemoveOutliers
   @Override
   public Enumeration listOptions() {
     Vector result = new Vector();
-    WekaOptionUtils.addOption(result, classifierTipText(), "" + getDefaultClassifier(), "classifier");
-    WekaOptionUtils.addOption(result, numFoldsTipText(), "" + getDefaultNumFolds(), "num-folds");
-    WekaOptionUtils.addOption(result, numThreadsTipText(), "" + getDefaultNumThreads(), "num-threads");
-    WekaOptionUtils.addFlag(result, detectorTipText(), "detector");
+    WekaOptionUtils.addOption(result, classifierTipText(), "" + getDefaultClassifier(), CLASSIFIER);
+    WekaOptionUtils.addOption(result, numFoldsTipText(), "" + getDefaultNumFolds(), NUM_FOLDS);
+    WekaOptionUtils.addOption(result, numThreadsTipText(), "" + getDefaultNumThreads(), NUM_THREADS);
+    WekaOptionUtils.addFlag(result, detectorTipText(), DETECTOR);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -344,10 +352,10 @@ public class RemoveOutliers
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    setClassifier((Classifier) WekaOptionUtils.parse(options, "classifier", (OptionHandler) getDefaultClassifier()));  // TODO we'll just assume that our classifiers will implement weka.core.OptionHandler
-    setNumFolds(WekaOptionUtils.parse(options, "num-folds", getDefaultNumFolds()));
-    setNumThreads(WekaOptionUtils.parse(options, "num-threads", getDefaultNumThreads()));
-    setDetector((AbstractOutlierDetector) WekaOptionUtils.parse(options, "detector", getDefaultDetector()));
+    setClassifier((Classifier) WekaOptionUtils.parse(options, CLASSIFIER, (OptionHandler) getDefaultClassifier()));  // TODO we'll just assume that our classifiers will implement weka.core.OptionHandler
+    setNumFolds(WekaOptionUtils.parse(options, NUM_FOLDS, getDefaultNumFolds()));
+    setNumThreads(WekaOptionUtils.parse(options, NUM_THREADS, getDefaultNumThreads()));
+    setDetector((AbstractOutlierDetector) WekaOptionUtils.parse(options, DETECTOR, getDefaultDetector()));
     super.setOptions(options);
   }
 
@@ -359,10 +367,10 @@ public class RemoveOutliers
   @Override
   public String[] getOptions() {
     List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, "classifier", (OptionHandler) getClassifier());  // TODO we'll just assume that all our classifiers implement weka.core.OptionHandler
-    WekaOptionUtils.add(result, "num-folds", getNumFolds());
-    WekaOptionUtils.add(result, "num-threads", getNumThreads());
-    WekaOptionUtils.add(result, "detector", getDetector());
+    WekaOptionUtils.add(result, CLASSIFIER, (OptionHandler) getClassifier());  // TODO we'll just assume that all our classifiers implement weka.core.OptionHandler
+    WekaOptionUtils.add(result, NUM_FOLDS, getNumFolds());
+    WekaOptionUtils.add(result, NUM_THREADS, getNumThreads());
+    WekaOptionUtils.add(result, DETECTOR, getDetector());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
