@@ -15,13 +15,14 @@
 
 /*
  * StorageForLoop.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
+import adams.core.VariableUpdater;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -111,7 +112,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  */
 public class StorageForLoop
   extends AbstractForLoop 
-  implements ProvenanceSupporter {
+  implements ProvenanceSupporter, VariableUpdater {
 
   /** for serialization. */
   private static final long serialVersionUID = 5940182514084428795L;
@@ -228,6 +229,16 @@ public class StorageForLoop
    */
   public String storageNameTipText() {
     return "The name of the storage value to forward in each iteration of the loop.";
+  }
+
+  /**
+   * Returns whether variables are being updated.
+   *
+   * @return		true if variables are updated
+   */
+  @Override
+  public boolean isUpdatingVariables() {
+    return true;
   }
 
   /**
