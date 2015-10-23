@@ -152,4 +152,18 @@ public class BaseRegExp
   public boolean isEmpty() {
     return (getValue().length() == 0);
   }
+
+  /**
+   * Escapes special characters in the string to be used in regular expressions.
+   * Characters escaped with backslash: \|.?()[]
+   *
+   * @param s		the string to escape
+   * @return		the escaped string
+   */
+  public static String escape(String s) {
+    return Utils.backQuoteChars(
+      s,
+      new char[]{'\\', '|', '.', '?', '(', ')', '[', ']'},
+      new String[]{"\\\\", "\\|", "\\.", "\\?", "\\(", "\\)", "\\[", "\\]"});
+  }
 }
