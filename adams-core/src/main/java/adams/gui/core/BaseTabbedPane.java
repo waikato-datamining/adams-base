@@ -63,6 +63,9 @@ public class BaseTabbedPane
   /** whether to show a "close tab" button. */
   protected boolean m_ShowCloseTabButton;
 
+  /** the maximum length in chars for titles before getting shortened. */
+  protected int m_MaxTitleLength;
+
   /**
    * Creates an empty <code>TabbedPane</code> with a default
    * tab placement of <code>JTabbedPane.TOP</code>.
@@ -112,6 +115,7 @@ public class BaseTabbedPane
   protected void initialize() {
     m_CloseTabsWithMiddleMouseButton = false;
     m_ShowCloseTabButton             = false;
+    m_MaxTitleLength                 = 30;
   }
 
   /**
@@ -298,5 +302,47 @@ public class BaseTabbedPane
       getTabComponentAt(index).validate();
       getTabComponentAt(index).repaint();
     }
+  }
+
+  /**
+   * Sets the title for the tab at the specified position.
+   *
+   * @param index	the position of the tab
+   * @param title	the new title
+   */
+  public void setShortenedTitleAt(int index, String title) {
+    String  	shortTitle;
+    int		len;
+
+    if (title.length() > m_MaxTitleLength) {
+      len        = m_MaxTitleLength / 2;
+      shortTitle = title.substring(0, len) + ".." + title.substring(title.length() - len);
+      setTitleAt(index, shortTitle);
+      setToolTipTextAt(index, title);
+    }
+    else {
+      setTitleAt(index, title);
+      setToolTipTextAt(index, null);
+    }
+  }
+
+  /**
+   * Sets the maximum title length to allow before shortening when using
+   * {@link #setShortenedTitleAt(int, String)}.
+   *
+   * @param value	the maximum length in chars
+   */
+  public void setMaxTitleLength(int value) {
+    m_MaxTitleLength = value;
+  }
+
+  /**
+   * Returns the maximum title length to allow before shortening when using
+   * {@link #setShortenedTitleAt(int, String)}.
+   *
+   * @return		the maximum length in chars
+   */
+  public int getMaxTitleLength() {
+    return m_MaxTitleLength;
   }
 }
