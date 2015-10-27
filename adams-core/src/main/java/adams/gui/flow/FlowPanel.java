@@ -728,7 +728,7 @@ public class FlowPanel
     if (getOwner() != null) {
       index = getOwner().indexOfComponent(this);
       if (index != -1)
-	getOwner().setTitleAt(index, (isModified() ? "*" : "") + getTitle());
+        getOwner().setShortenedTitleAt(index, (isModified() ? "*" : "") + getTitle());
     }
   }
 
