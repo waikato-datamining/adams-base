@@ -15,21 +15,21 @@
 
 /**
  * ActorParametersTab.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
-
-import java.awt.BorderLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
-import javax.swing.tree.TreePath;
 
 import adams.core.option.HtmlParametersProducer;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
 
 /**
  * Tab for displaying the parameters for the currently selected actor.
@@ -88,6 +88,7 @@ public class ActorParametersTab
    */
   public void actorSelectionChanged(TreePath[] paths, AbstractActor[] actors) {
     HtmlParametersProducer 	producer;
+    Runnable			run;
 
     if (actors.length != 1) {
       m_TextArea.setText(DEFAULT_TEXT);
@@ -97,7 +98,10 @@ public class ActorParametersTab
     producer = new HtmlParametersProducer();
     producer.produce(actors[0]);
 
-    m_TextArea.setText(producer.toString());
-    m_TextArea.setCaretPosition(0);
+    run = () -> {
+      m_TextArea.setText(producer.toString());
+      m_TextArea.setCaretPosition(0);
+    };
+    SwingUtilities.invokeLater(run);
   }
 }

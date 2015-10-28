@@ -1,24 +1,9 @@
 /*
  * Clipboard.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tab;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.Serializable;
-import java.util.Arrays;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.TreePath;
 
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
@@ -28,6 +13,21 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * A simple clipboard per flow editor window.
@@ -268,6 +268,7 @@ public class Clipboard
   protected void updatePreview() {
     ClipboardItem	item;
     AbstractActor	actor;
+    Runnable		run;
     
     if (m_ListItems.getSelectedIndex() == -1) {
       actor = null;
@@ -276,7 +277,10 @@ public class Clipboard
       item = (ClipboardItem) m_ListItems.getSelectedValue();
       actor = item.getActor();
     }
-    
-    m_PanelPreview.getTree().setActor(actor);
+
+    run = () -> {
+      m_PanelPreview.getTree().setActor(actor);
+    };
+    SwingUtilities.invokeLater(run);
   }
 }
