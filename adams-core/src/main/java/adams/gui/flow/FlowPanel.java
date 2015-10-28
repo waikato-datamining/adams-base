@@ -1657,7 +1657,12 @@ public class FlowPanel
    * Redraws the tree.
    */
   public void redraw() {
-    m_Tree.redraw();
+    Runnable	run;
+
+    run = () -> {
+      m_Tree.redraw();
+    };
+    SwingUtilities.invokeLater(run);
   }
   
   /**
@@ -1666,17 +1671,23 @@ public class FlowPanel
    * @param show	whether to show the tab or leave as is
    */
   protected void updateRegisteredDisplays(boolean show) {
-    RegisteredDisplaysTab	registered;
+    Runnable	run;
 
-    if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
-      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
-    registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
-    if (registered != null)
-      registered.update();
-    
+    run = () -> {
+      if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
+	getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
+      RegisteredDisplaysTab registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
+      if (registered != null)
+	registered.update();
+    };
+    SwingUtilities.invokeLater(run);
+
     // close displays?
-    if (!hasRegisteredDisplays())
-      getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, false, false);
+    run = () -> {
+      if (!hasRegisteredDisplays())
+	getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, false, false);
+    };
+    SwingUtilities.invokeLater(run);
   }
 
   /**

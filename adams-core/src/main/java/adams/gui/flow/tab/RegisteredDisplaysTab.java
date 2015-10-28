@@ -19,13 +19,14 @@
  */
 package adams.gui.flow.tab;
 
-import java.awt.BorderLayout;
-import java.util.HashMap;
-
 import adams.flow.core.AbstractDisplay;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.flow.FlowPanel;
+
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.util.HashMap;
 
 /**
  * Displays the registered displays for a particular class.
@@ -63,53 +64,50 @@ public class RegisteredDisplaysTab
    * @param panel	the new panel
    */
   @Override
-  public synchronized void flowPanelChanged(FlowPanel panel) {
-    HashMap<Class,HashMap<String,AbstractDisplay>>	registered;
-    HashMap<String,AbstractDisplay>			displays;
-    BaseTabbedPane					tabbedCls;
-    BaseTabbedPane					tabbedDisplays;
-    BasePanel						bpanel;
-    AbstractDisplay					display;
-    String						title;
-    
-    removeAll();
-    setLayout(new BorderLayout());
-    if (getParent() != null) {
-      getParent().invalidate();
-      getParent().doLayout();
-      getParent().repaint();
-    }
-    
-    if (panel == null)
-      return;
-    
-    registered = panel.getRegisteredDisplays();
-    if (registered.size() == 0)
-      return;
-    
-    tabbedCls = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
-    add(tabbedCls, BorderLayout.CENTER);
-    for (Class regCls: registered.keySet()) {
-      displays = registered.get(regCls);
-      if (displays.size() == 0)
-	continue;
-      tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
-      for (String name: displays.keySet()) {
-	display = displays.get(name);
-	title   = name;
-	if (display.getParentComponent() instanceof FlowPanel)
-	  title = ((FlowPanel) display.getParentComponent()).getTitle() + ":" + title;
-	tabbedDisplays.addTab(title, display.getPanel());
-      }
-      bpanel = new BasePanel(new BorderLayout());
-      bpanel.add(tabbedDisplays, BorderLayout.CENTER);
-      tabbedCls.addTab("Type:" + regCls.getSimpleName(), bpanel);
-    }
+  public void flowPanelChanged(FlowPanel panel) {
+    Runnable	run;
 
-    if (getParent() != null) {
-      getParent().invalidate();
-      getParent().doLayout();
-      getParent().repaint();
-    }
+    run = () -> {
+      removeAll();
+      setLayout(new BorderLayout());
+      if (getParent() != null) {
+	getParent().invalidate();
+	getParent().doLayout();
+	getParent().repaint();
+      }
+
+      if (panel == null)
+	return;
+
+      HashMap<Class,HashMap<String,AbstractDisplay>> registered = panel.getRegisteredDisplays();
+      if (registered.size() == 0)
+	return;
+
+      BaseTabbedPane tabbedCls = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
+      add(tabbedCls, BorderLayout.CENTER);
+      for (Class regCls: registered.keySet()) {
+	HashMap<String,AbstractDisplay> displays = registered.get(regCls);
+	if (displays.size() == 0)
+	  continue;
+	BaseTabbedPane tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
+	for (String name: displays.keySet()) {
+	  AbstractDisplay display = displays.get(name);
+	  String title   = name;
+	  if (display.getParentComponent() instanceof FlowPanel)
+	    title = ((FlowPanel) display.getParentComponent()).getTitle() + ":" + title;
+	  tabbedDisplays.addTab(title, display.getPanel());
+	}
+	BasePanel bpanel = new BasePanel(new BorderLayout());
+	bpanel.add(tabbedDisplays, BorderLayout.CENTER);
+	tabbedCls.addTab("Type:" + regCls.getSimpleName(), bpanel);
+      }
+
+      if (getParent() != null) {
+	getParent().invalidate();
+	getParent().doLayout();
+	getParent().repaint();
+      }
+    };
+    SwingUtilities.invokeLater(run);
   }
 }

@@ -35,6 +35,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -203,33 +204,35 @@ public class FlowPanelNotificationArea
    * Updates the notification area.
    */
   protected void update() {
-    String[]	lines;
-    String	msg;
-    
-    if (m_Notification == null) {
-      m_TextNotification.setContent("");
-    }
-    else {
-      msg = m_Notification;
-      if (m_CheckBoxConsole.isSelected()) {
-	msg += "\n\n--- Console output ---\n\n" 
-	    + ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
-      }
-      lines  = msg.split("\n");
-      setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
-      m_TextNotification.setContent(msg);
-    }
+    Runnable    run;
 
-    if (getOwner() != null) {
+    run = () -> {
       if (m_Notification == null) {
-	getOwner().setTabIcon(null);
-	getOwner().getSplitPane().setBottomComponentHidden(true);
+        m_TextNotification.setContent("");
       }
       else {
-	getOwner().setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
-	getOwner().getSplitPane().setBottomComponentHidden(false);
+        String msg = m_Notification;
+        if (m_CheckBoxConsole.isSelected()) {
+          msg += "\n\n--- Console output ---\n\n"
+            + ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
+        }
+        String[] lines = msg.split("\n");
+        setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
+        m_TextNotification.setContent(msg);
       }
-    }
+
+      if (getOwner() != null) {
+        if (m_Notification == null) {
+          getOwner().setTabIcon(null);
+          getOwner().getSplitPane().setBottomComponentHidden(true);
+        }
+        else {
+          getOwner().setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
+          getOwner().getSplitPane().setBottomComponentHidden(false);
+        }
+      }
+    };
+    SwingUtilities.invokeLater(run);
   }
   
   /**
