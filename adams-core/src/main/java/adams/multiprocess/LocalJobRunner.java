@@ -276,7 +276,6 @@ public class LocalJobRunner<T extends Job>
 
   /**
    * Before actual start up.
-   * Only gets executed if {@link #preStart()} was successful.
    *
    * @return		null if successful, otherwise error message
    */
