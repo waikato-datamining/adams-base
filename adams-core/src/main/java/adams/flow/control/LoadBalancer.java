@@ -37,12 +37,12 @@ import adams.flow.core.Unknown;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.Null;
 import adams.flow.transformer.CallableTransformer;
+import adams.multiprocess.CallableWithResult;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -946,12 +946,12 @@ public class LoadBalancer
    */
   @Override
   protected String doExecute() {
-    String		result;
-    Callable<String>	job;
-    final ThreadShell	shell;
-    final int 		count;
-    final Token		token;
-    Sequence		actor;
+    String			result;
+    CallableWithResult<String>	job;
+    final ThreadShell		shell;
+    final int 			count;
+    final Token			token;
+    Sequence			actor;
 
     result = null;
 
@@ -976,8 +976,8 @@ public class LoadBalancer
     shell.setLoggingLevel(getLoggingLevel());
     shell.setAnnotations(new BaseAnnotation("Thread #" + count));
     m_ToCleanUp.add(shell);
-    job = new Callable<String>() {
-      public String call() throws Exception {
+    job = new CallableWithResult<String>() {
+      protected String doCall() throws Exception {
 	String result = null;
 	try {
 	  if (isLoggingEnabled())

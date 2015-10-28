@@ -34,6 +34,7 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import adams.multiprocess.CallableWithResult;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -41,10 +42,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -564,7 +563,7 @@ public class Branch
     // gather all common classes
     all = new HashSet<Class>();
     for (i = 0; i < size(); i++) {
-      actor = (AbstractActor) get(i);
+      actor = get(i);
       if (actor instanceof InputConsumer) {
 	cls  = ((InputConsumer) actor).accepts();
 	curr = new HashSet<Class>();
@@ -724,12 +723,11 @@ public class Branch
    * @return		null if everything is fine, otherwise error message
    */
   protected String executeParallel() {
-    String			result;
-    int				i;
-    ArrayList<Callable<String>>	jobs;
-    Callable<String>		job;
-    List<Future<String>>	results;
-    String			jobResult;
+    String				result;
+    int					i;
+    List<CallableWithResult<String>>	jobs;
+    CallableWithResult<String>		job;
+    String				jobResult;
 
     result = null;
 
@@ -737,14 +735,14 @@ public class Branch
       getLogger().info("Starting parallel execution...");
 
     // create jobs
-    jobs = new ArrayList<Callable<String>>();
+    jobs = new ArrayList<CallableWithResult<String>>();
     for (i = 0; i < size(); i++) {
       final AbstractActor branch = get(i);
       final int index = i;
       if (branch.getSkip())
 	continue;
-      job = new Callable<String>() {
-	public String call() throws Exception {
+      job = new CallableWithResult<String>() {
+	protected String doCall() throws Exception {
 	  if (isLoggingEnabled())
 	    getLogger().info("Executing branch #" + (index+1) + "...");
 	  String result;
@@ -768,12 +766,9 @@ public class Branch
 
     // execute jobs
     m_Executor = Executors.newFixedThreadPool(m_ActualNumThreads);
-    results    = null;
     try {
-      results = m_Executor.invokeAll(jobs);
-    }
-    catch (InterruptedException e) {
-      // ignored
+      for (CallableWithResult<String> j: jobs)
+        m_Executor.submit(j);
     }
     catch (RejectedExecutionException e) {
       // ignored
@@ -797,27 +792,22 @@ public class Branch
     }
 
     // check for errors
-    if (results != null) {
-      for (i = 0; i < results.size(); i++) {
-	try {
-	  jobResult = results.get(i).get();
-	  if (jobResult != null) {
-	    if (result == null)
-	      result = "";
-	    else
-	      result += ", ";
-	    result += "Branch #" + (i+1) + ": " + jobResult;
-	  }
-	  // collect output?
-	  if (m_CollectOutput && ((OutputProducer) get(i)).hasPendingOutput())
-	    m_CollectedOutput.put(i, ((OutputProducer) get(i)).output());
+    for (i = 0; i < jobs.size(); i++) {
+      try {
+	jobResult = jobs.get(i).getResult();
+	if (jobResult != null) {
+	  if (result == null)
+	    result = "";
+	  else
+	    result += ", ";
+	  result += "Branch #" + (i+1) + ": " + jobResult;
 	}
-	catch (InterruptedException e) {
-	  // ignored
-	}
-	catch (Exception e) {
-	  handleException("Failed to get job results", e);
-	}
+	// collect output?
+	if (m_CollectOutput && ((OutputProducer) get(i)).hasPendingOutput())
+	  m_CollectedOutput.put(i, ((OutputProducer) get(i)).output());
+      }
+      catch (Exception e) {
+	handleException("Failed to get job results", e);
       }
     }
 
@@ -933,6 +923,7 @@ public class Branch
 	    wait(100);
 	  }
 	  catch (Exception e) {
+	    // ignored
 	  }
 	}
       }

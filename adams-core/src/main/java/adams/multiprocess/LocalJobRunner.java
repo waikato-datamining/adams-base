@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -233,7 +232,7 @@ public class LocalJobRunner<T extends Job>
    */
   protected boolean enqueue() {
     boolean			result;
-    Callable<String>		job;
+    CallableWithResult<String>	job;
     List<T> 			queue;
 
     result = false;
@@ -248,10 +247,10 @@ public class LocalJobRunner<T extends Job>
 	// queue jobs
 	for (final T j: m_Queue) {
 	  queue.add(j);
-	  job = new Callable<String>() {
-	    public String call() throws Exception {
+	  job = new CallableWithResult<String>() {
+	    protected String doCall() throws Exception {
 	      JobResult jr = j.execute();
-	      complete((T) j, jr);
+	      complete(j, jr);
 	      String result = null;
 	      if (!jr.getSuccess())
 		result = jr.toString();

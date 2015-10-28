@@ -15,22 +15,11 @@
 
 /**
  * SAXKMeans.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package weka.clusterers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
+import adams.multiprocess.CallableWithResult;
 import weka.classifiers.rules.DecisionTableHashKey;
 import weka.core.Attribute;
 import weka.core.Capabilities;
@@ -54,6 +43,17 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * {@link SimpleKMeans} adapted for SAX.
@@ -299,7 +299,7 @@ public class SAXKMeans
     return result;
   }
 
-  private class KMeansComputeCentroidTask implements Callable<double[]> {
+  private class KMeansComputeCentroidTask extends CallableWithResult<double[]> {
 
     protected Instances m_cluster;
     protected int m_centroidIndex;
@@ -310,7 +310,7 @@ public class SAXKMeans
     }
 
     @Override
-    public double[] call() {
+    protected double[] doCall() {
       return moveCentroid(m_centroidIndex, m_cluster, true, false);
     }
   }
@@ -346,7 +346,7 @@ public class SAXKMeans
     return emptyClusterCount;
   }
 
-  private class KMeansClusterTask implements Callable<Boolean> {
+  private class KMeansClusterTask extends CallableWithResult<Boolean> {
 
     protected int m_start;
     protected int m_end;
@@ -362,7 +362,7 @@ public class SAXKMeans
     }
 
     @Override
-    public Boolean call() {
+    protected Boolean doCall() {
       boolean converged = true;
       for (int i = m_start; i < m_end; i++) {
 	Instance toCluster = m_inst.instance(i);
