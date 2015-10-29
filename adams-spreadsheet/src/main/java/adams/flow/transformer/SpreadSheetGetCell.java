@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 
@@ -36,14 +37,13 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -54,7 +54,7 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetGetCell
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -68,6 +68,11 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -85,11 +90,11 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  * <pre>-col &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: column)
  * &nbsp;&nbsp;&nbsp;The column(s) of the cell(s) to retrieve; A range is a comma-separated list 
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; apart from column names (case-sensitive), the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the 
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp; last
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-empty &lt;java.lang.String&gt; (property: empty)
@@ -335,10 +340,10 @@ public class SpreadSheetGetCell
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class, adams.data.spreadsheet.Row.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
+    return new Class[]{SpreadSheet.class, Row.class};
   }
 
   /**
@@ -350,6 +355,7 @@ public class SpreadSheetGetCell
   protected String doExecute() {
     String	result;
     SpreadSheet	sheet;
+    Row		row;
     Object	value;
     Cell	cell;
     int[]	rows;
@@ -357,22 +363,46 @@ public class SpreadSheetGetCell
 
     result = null;
 
-    sheet = (SpreadSheet) m_InputToken.getPayload();
-    m_Row.setMax(sheet.getRowCount());
-    m_Column.setSpreadSheet(sheet);
+    if (m_InputToken.getPayload() instanceof SpreadSheet) {
+      sheet = (SpreadSheet) m_InputToken.getPayload();
+      m_Row.setMax(sheet.getRowCount());
+      m_Column.setSpreadSheet(sheet);
 
-    rows = m_Row.getIntIndices();
-    cols = m_Column.getIntIndices();
-    if (rows.length == 0) {
-      result = "No rows selected?";
+      rows = m_Row.getIntIndices();
+      cols = m_Column.getIntIndices();
+      if (rows.length == 0) {
+        result = "No rows selected?";
+      }
+      else if (cols.length == 0) {
+        result = "No columns selected?";
+      }
+      else {
+        for (int r: rows) {
+          for (int c: cols) {
+            cell = sheet.getCell(r, c);
+            if (cell == null)
+              value = m_Empty;
+            else if (cell.isMissing())
+              value = SpreadSheet.MISSING_VALUE;
+            else if (m_UseNative)
+              value = cell.getNative();
+            else
+              value = cell.getContent();
+            m_Queue.add(value);
+          }
+        }
+      }
     }
-    else if (cols.length == 0) {
-      result = "No columns selected?";
-    }
-    else {
-      for (int r: rows) {
+    else if (m_InputToken.getPayload() instanceof Row) {
+      row = (Row) m_InputToken.getPayload();
+      m_Column.setSpreadSheet(row.getOwner());
+      cols = m_Column.getIntIndices();
+      if (cols.length == 0) {
+        result = "No columns selected?";
+      }
+      else {
 	for (int c: cols) {
-	  cell = sheet.getCell(r, c);
+	  cell = row.getCell(c);
 	  if (cell == null)
 	    value = m_Empty;
 	  else if (cell.isMissing())

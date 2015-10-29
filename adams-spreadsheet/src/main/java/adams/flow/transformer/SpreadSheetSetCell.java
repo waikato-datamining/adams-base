@@ -38,14 +38,14 @@ import adams.flow.core.Token;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -56,7 +56,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetSetCell
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -70,6 +70,11 @@ import adams.flow.core.Token;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -87,7 +92,7 @@ import adams.flow.core.Token;
  * <pre>-col &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: column)
  * &nbsp;&nbsp;&nbsp;The column(s) of the cell(s) to set
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-value &lt;java.lang.String&gt; (property: value)
@@ -305,6 +310,26 @@ public class SpreadSheetSetCell
   }
 
   /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		adams.core.io.SpreadSheet.class
+   */
+  @Override
+  public Class[] accepts() {
+    return new Class[]{SpreadSheet.class, Row.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		adams.core.io.SpreadSheet.class
+   */
+  @Override
+  public Class[] generates() {
+    return new Class[]{SpreadSheet.class, Row.class};
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -320,24 +345,49 @@ public class SpreadSheetSetCell
 
     result = null;
 
-    sheet = ((SpreadSheet) m_InputToken.getPayload());
-    if (!m_NoCopy)
-      sheet = sheet.getClone();
-    m_Row.setMax(sheet.getRowCount());
-    m_Column.setSpreadSheet(sheet);
+    if (m_InputToken.getPayload() instanceof SpreadSheet) {
+      sheet = ((SpreadSheet) m_InputToken.getPayload());
+      if (!m_NoCopy)
+	sheet = sheet.getClone();
+      m_Row.setMax(sheet.getRowCount());
+      m_Column.setSpreadSheet(sheet);
 
-    rows = m_Row.getIntIndices();
-    cols = m_Column.getIntIndices();
-    if (rows.length == 0) {
-      result = "No row(s) selected?";
+      rows = m_Row.getIntIndices();
+      cols = m_Column.getIntIndices();
+      if (rows.length == 0) {
+	result = "No row(s) selected?";
+      }
+      else if (cols.length == 0) {
+	result = "No column(s) selected?";
+      }
+      else {
+	for (int r : rows) {
+	  for (int c : cols) {
+	    row = sheet.getRow(r);
+	    cell = row.getCell(c);
+	    if (cell == null)
+	      cell = row.addCell(c);
+	    if (m_ForceString)
+	      cell.setContentAsString(m_Value);
+	    else
+	      cell.setContent(m_Value);
+	  }
+	}
+	m_OutputToken = new Token(sheet);
+      }
     }
-    else if (cols.length == 0) {
-      result = "No column(s) selected?";
-    }
-    else {
-      for (int r: rows) {
-	for (int c: cols) {
-	  row  = sheet.getRow(r);
+    else if (m_InputToken.getPayload() instanceof Row) {
+      row = (Row) m_InputToken.getPayload();
+      if (!m_NoCopy)
+	row = row.getClone(row.getOwner());
+      m_Column.setSpreadSheet(row.getOwner());
+
+      cols = m_Column.getIntIndices();
+      if (cols.length == 0) {
+	result = "No column(s) selected?";
+      }
+      else {
+	for (int c : cols) {
 	  cell = row.getCell(c);
 	  if (cell == null)
 	    cell = row.addCell(c);
@@ -346,8 +396,8 @@ public class SpreadSheetSetCell
 	  else
 	    cell.setContent(m_Value);
 	}
+	m_OutputToken = new Token(row);
       }
-      m_OutputToken = new Token(sheet);
     }
 
     return result;
