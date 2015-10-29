@@ -493,7 +493,6 @@ public class Tree
 	name  = ((FixedNameActorHandler) parent.getActor()).getFixedName(i);
 	if (!actor.getName().equals(name)) {
 	  actor.setName(name);
-	  node.setActor(actor);
 	  result = true;
 	}
       }
@@ -506,8 +505,6 @@ public class Tree
 	  names.add(((Node) parent.getChildAt(i)).getActor().getName());
 	}
 	result = ActorUtils.uniqueName(actor, names);
-	if (result)
-	  node.setActor(actor);
       }
     }
 
