@@ -20,6 +20,7 @@
 package adams.flow.transformer;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
 import adams.data.conversion.Conversion;
@@ -57,7 +58,7 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetConvertHeaderCells
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -71,6 +72,11 @@ import java.util.Date;
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -89,7 +95,7 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-missing-replacement-type &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|TIME|OBJECT&gt; (property: missingReplacementType)
+ * <pre>-missing-replacement-type &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|DATETIMEMSEC|TIME|OBJECT&gt; (property: missingReplacementType)
  * &nbsp;&nbsp;&nbsp;The data type to use for the replacement value for missing values.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
@@ -333,6 +339,8 @@ public class SpreadSheetConvertHeaderCells
 	input = cell.toDate();
       else if (classIn == DateTime.class)
 	input = cell.toDateTime();
+      else if (classIn == DateTimeMsec.class)
+	input = cell.toDateTimeMsec();
       else if (classIn == Time.class)
 	input = cell.toTime();
       else if (classIn == String.class)
@@ -360,6 +368,8 @@ public class SpreadSheetConvertHeaderCells
 	cell.setContent((Date) output);
       else if (classOut == DateTime.class)
 	cell.setContent((DateTime) output);
+      else if (classOut == DateTimeMsec.class)
+	cell.setContent((DateTimeMsec) output);
       else if (classOut == Time.class)
 	cell.setContent((Time) output);
       else if (classOut == String.class)

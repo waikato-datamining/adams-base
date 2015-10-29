@@ -34,6 +34,8 @@ public enum DateTimeType {
   DATE,
   /** adams' DateTime. */
   DATETIME,
+  /** adams' DateTimeMsec. */
+  DATETIMEMSEC,
   /** adams' Time. */
   TIME,
   /** BaseDate. */

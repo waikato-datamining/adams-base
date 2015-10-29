@@ -22,6 +22,7 @@ package adams.data.conversion;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.DateUtils;
 import adams.core.Time;
@@ -49,7 +50,7 @@ import java.util.GregorianCalendar;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to extract the field from.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
@@ -156,7 +157,9 @@ public class ExtractDateTimeField
   protected Calendar m_Calendar;
   
   /**
-   * @return
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
    */
   @Override
   public String globalInfo() {
@@ -309,6 +312,8 @@ public class ExtractDateTimeField
 	return Date.class;
       case DATETIME:
 	return DateTime.class;
+      case DATETIMEMSEC:
+	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
       case BASEDATE:
@@ -381,6 +386,9 @@ public class ExtractDateTimeField
 	break;
       case DATETIME:
 	m_Calendar.setTime((DateTime) m_Input);
+	break;
+      case DATETIMEMSEC:
+	m_Calendar.setTime((DateTimeMsec) m_Input);
 	break;
       case TIME:
 	m_Calendar.setTime((Time) m_Input);

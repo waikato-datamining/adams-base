@@ -20,6 +20,7 @@
 package adams.data.conversion;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
@@ -44,12 +45,12 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: inputDateTimeType)
+ * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -187,6 +188,8 @@ public class ConvertDateTimeType
 	return Date.class;
       case DATETIME:
 	return DateTime.class;
+      case DATETIMEMSEC:
+	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
       case BASEDATE:
@@ -222,6 +225,8 @@ public class ConvertDateTimeType
 	return Date.class;
       case DATETIME:
 	return DateTime.class;
+      case DATETIMEMSEC:
+	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
       case BASEDATE:
@@ -268,6 +273,9 @@ public class ConvertDateTimeType
       case DATETIME:
 	msecs = ((DateTime) m_Input).getTime();
 	break;
+      case DATETIMEMSEC:
+	msecs = ((DateTimeMsec) m_Input).getTime();
+	break;
       case TIME:
 	msecs = ((Time) m_Input).getTime();
 	break;
@@ -302,6 +310,8 @@ public class ConvertDateTimeType
 	return new Date(msecs);
       case DATETIME:
 	return new DateTime(msecs);
+      case DATETIMEMSEC:
+	return new DateTimeMsec(msecs);
       case TIME:
 	return new Time(msecs);
       case BASEDATE:

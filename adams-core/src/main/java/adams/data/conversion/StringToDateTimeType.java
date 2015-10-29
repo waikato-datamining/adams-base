@@ -22,6 +22,7 @@ package adams.data.conversion;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.DateUtils;
 import adams.core.Time;
@@ -52,7 +53,7 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to generate from the string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
@@ -236,6 +237,8 @@ public class StringToDateTimeType
 	return Date.class;
       case DATETIME:
 	return DateTime.class;
+      case DATETIMEMSEC:
+	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
       case BASEDATE:
@@ -305,6 +308,8 @@ public class StringToDateTimeType
 	  return date;
 	case DATETIME:
 	  return new DateTime(date);
+	case DATETIMEMSEC:
+	  return new DateTimeMsec(date);
 	case TIME:
 	  return new Time(date);
 	case BASEDATE:

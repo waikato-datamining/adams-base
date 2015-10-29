@@ -15,11 +15,12 @@
 
 /**
  * DateTimeTypeDifference.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.DateTime;
+import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
@@ -76,12 +77,17 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: inputDateTimeType)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|TIME|BASEDATE|BASEDATETIME|BASETIME|JULIANDATE&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -239,6 +245,8 @@ public class DateTimeTypeDifference
 	return new Class[]{Date[].class};
       case DATETIME:
 	return new Class[]{DateTime[].class};
+      case DATETIMEMSEC:
+	return new Class[]{DateTimeMsec[].class};
       case TIME:
 	return new Class[]{Time[].class};
       case BASEDATE:
@@ -274,6 +282,8 @@ public class DateTimeTypeDifference
 	return new Class[]{Date.class};
       case DATETIME:
 	return new Class[]{DateTime.class};
+      case DATETIMEMSEC:
+	return new Class[]{DateTimeMsec.class};
       case TIME:
 	return new Class[]{Time.class};
       case BASEDATE:
