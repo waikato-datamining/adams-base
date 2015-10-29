@@ -29,7 +29,8 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Casts the incoming data to the specified classname. For arrays, use '[]' at the end (can be used multiple times).
+ * Casts the incoming data to the specified classname. For arrays, use '[]' at the end (can be used multiple times).<br>
+ * By using adams.flow.core.Unknown (default) you should be able to avoid specifying the actual classname
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -107,7 +108,8 @@ public class Cast
   public String globalInfo() {
     return
       "Casts the incoming data to the specified classname. For arrays, "
-    + "use '" + Utils.ARRAY_INDICATOR + "' at the end (can be used multiple times).";
+	+ "use '" + Utils.ARRAY_INDICATOR + "' at the end (can be used multiple times).\n"
+	+ "By using " + Unknown.class.getName() + " (default) you should be able to avoid specifying the actual classname";
   }
 
   /**
@@ -228,7 +230,11 @@ public class Cast
     result = null;
 
     try {
-      m_OutputToken = new Token(m_ActualClass.cast(m_InputToken.getPayload()));
+      if (m_ActualClass == Unknown.class)
+        m_OutputToken = new Token(m_InputToken.getPayload());
+      else
+        m_OutputToken = new Token(m_ActualClass.cast(m_InputToken.getPayload()));
+      m_OutputToken.setProvenance(m_InputToken.getProvenance());
     }
     catch (Exception e) {
       result = handleException("Failed to cast to '" + getClassname() + "': ", e);
