@@ -20,6 +20,8 @@
 package adams.gui.visualization.debug.inspectionhandler;
 
 import adams.core.ClassLocator;
+import adams.data.NotesHandler;
+import adams.data.report.ReportHandler;
 
 import java.util.Hashtable;
 
@@ -57,6 +59,10 @@ public class DataContainer
 
     result.put("data points", ((adams.data.container.DataContainer) obj).toArray());
     result.put("# data points", ((adams.data.container.DataContainer) obj).size());
+    if (obj instanceof ReportHandler)
+      result.put("report", ((ReportHandler) obj).getReport());
+    if (obj instanceof NotesHandler)
+      result.put("notes", ((NotesHandler) obj).getNotes());
 
     return result;
   }
