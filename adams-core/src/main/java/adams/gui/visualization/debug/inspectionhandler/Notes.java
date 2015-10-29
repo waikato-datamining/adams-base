@@ -60,7 +60,7 @@ public class Notes
 
     result = new Hashtable<String,Object>();
 
-    if (obj instanceof Notes)
+    if (obj instanceof adams.data.Notes)
       notes = (adams.data.Notes) obj;
     else
       notes = ((adams.data.NotesHandler) obj).getNotes();
