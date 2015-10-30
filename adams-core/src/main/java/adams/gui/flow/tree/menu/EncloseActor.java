@@ -39,6 +39,7 @@ import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -138,21 +139,25 @@ public class EncloseActor
 	if (i == 0)
 	  parent.insert(newNode, index);
       }
-      m_State.tree.updateActorName(newNode);
-      m_State.tree.setModified(true);
-      if (paths.length == 1) {
-	m_State.tree.nodeStructureChanged(newNode);
-	m_State.tree.expand(newNode);
-	m_State.tree.locateAndDisplay(newNode.getFullName());
-	m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, newNode, Type.MODIFY));
-      }
-      else {
-	m_State.tree.nodeStructureChanged(parent);
-	m_State.tree.expand(parent);
-	m_State.tree.locateAndDisplay(parent.getFullName());
-	m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, parent, Type.MODIFY));
-      }
-      m_State.tree.redraw();
+
+      final Node fParent = parent;
+      SwingUtilities.invokeLater(() -> {
+	m_State.tree.updateActorName(newNode);
+	m_State.tree.setModified(true);
+	if (paths.length == 1) {
+	  m_State.tree.nodeStructureChanged(newNode);
+	  m_State.tree.expand(newNode);
+	  m_State.tree.locateAndDisplay(newNode.getFullName());
+	  m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, newNode, Type.MODIFY));
+	}
+	else {
+	  m_State.tree.nodeStructureChanged(fParent);
+	  m_State.tree.expand(fParent);
+	  m_State.tree.locateAndDisplay(fParent.getFullName());
+	  m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, fParent, Type.MODIFY));
+	}
+	m_State.tree.redraw();
+      });
     }
     catch (Exception e) {
       if (paths.length == 1)
@@ -227,7 +232,6 @@ public class EncloseActor
     Node		currNode;
     DisplayPanelManager	manager;
     AbstractDisplay	display;
-    List<TreePath>	exp;
 
     currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
@@ -244,15 +248,17 @@ public class EncloseActor
 
     addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
 
-    exp = m_State.tree.getExpandedNodes();
-    currNode.setActor(manager);
-    m_State.tree.setModified(true);
-    m_State.tree.nodeStructureChanged((Node) currNode.getParent());
-    m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
-    m_State.tree.setExpandedNodes(exp);
-    m_State.tree.expand(currNode);
-    m_State.tree.locateAndDisplay(currNode.getFullName());
-    m_State.tree.redraw();
+    SwingUtilities.invokeLater(() -> {
+      List<TreePath> exp = m_State.tree.getExpandedNodes();
+      currNode.setActor(manager);
+      m_State.tree.setModified(true);
+      m_State.tree.nodeStructureChanged((Node) currNode.getParent());
+      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
+      m_State.tree.setExpandedNodes(exp);
+      m_State.tree.expand(currNode);
+      m_State.tree.locateAndDisplay(currNode.getFullName());
+      m_State.tree.redraw();
+    });
   }
 
   /**
