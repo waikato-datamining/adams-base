@@ -262,8 +262,8 @@ public class ZXing
       ResultPoint[] points = data.getResultPoints();
       report.setNumericValue(REPORT_PARAM_X, points[0].getX());
       report.setNumericValue(REPORT_PARAM_Y, points[0].getY());
-      report.setNumericValue(REPORT_PARAM_WIDTH, points[2].getX() - points[0].getX());
-      report.setNumericValue(REPORT_PARAM_HEIGHT, points[1].getY() - points[0].getY());
+      report.setNumericValue(REPORT_PARAM_WIDTH, Math.abs(points[2].getX() - points[0].getX()));
+      report.setNumericValue(REPORT_PARAM_HEIGHT, Math.abs(points[2].getY() - points[0].getY()));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to decode barcode!", e);
