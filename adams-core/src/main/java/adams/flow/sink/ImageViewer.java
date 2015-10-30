@@ -20,15 +20,6 @@
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import adams.core.ShallowCopySupporter;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
@@ -41,6 +32,14 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.selection.AbstractSelectionProcessor;
 import adams.gui.visualization.image.selection.NullProcessor;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -660,6 +659,8 @@ public class ImageViewer
       m_ImagePanel.setScale(m_Zoom);
     else
       m_ImagePanel.setScale(m_Zoom / 100.0);
+    m_ImagePanel.setShowProperties(m_ShowProperties);
+    m_ImagePanel.setShowLog(false);
     m_ImagePanel.setBackgroundColor(m_BackgroundColor);
     if (!(m_SelectionProcessor instanceof NullProcessor)) {
       m_ImagePanel.addSelectionListener(m_SelectionProcessor.shallowCopy(true));
