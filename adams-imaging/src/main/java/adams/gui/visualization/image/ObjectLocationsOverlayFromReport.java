@@ -34,7 +34,12 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the locations of objects in the image, using data from the attached report.
+ * Displays the locations of objects in the image, using data from the attached report.<br>
+ * Suffixes:<br>
+ * .x<br>
+ * .y<br>
+ * .width<br>
+ * .height<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -87,7 +92,15 @@ public class ObjectLocationsOverlayFromReport
    */
   @Override
   public String globalInfo() {
-    return "Displays the locations of objects in the image, using data from the attached report.";
+    return
+      "Displays the locations of objects in the image, using data from the "
+        + "attached report.\n"
+        + "Suffixes:\n"
+	+ LocatedObjects.KEY_X + "\n"
+	+ LocatedObjects.KEY_Y + "\n"
+	+ LocatedObjects.KEY_WIDTH + "\n"
+	+ LocatedObjects.KEY_HEIGHT + "\n"
+      ;
   }
 
   /**
