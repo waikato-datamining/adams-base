@@ -260,10 +260,22 @@ public class ZXing
           report.setStringValue(REPORT_PARAM_METADATA_PREFIX + d.getKey().name(), d.getValue().toString());
       }
       ResultPoint[] points = data.getResultPoints();
-      report.setNumericValue(REPORT_PARAM_X, points[0].getX());
-      report.setNumericValue(REPORT_PARAM_Y, points[0].getY());
-      report.setNumericValue(REPORT_PARAM_WIDTH, Math.abs(points[2].getX() - points[0].getX()));
-      report.setNumericValue(REPORT_PARAM_HEIGHT, Math.abs(points[2].getY() - points[0].getY()));
+      int minX = Integer.MAX_VALUE;
+      int maxX = Integer.MIN_VALUE;
+      int minY = Integer.MAX_VALUE;
+      int maxY = Integer.MIN_VALUE;
+      for (ResultPoint p: points) {
+	minX = Math.min(minX, (int) p.getX());
+	maxX = Math.max(maxX, (int) p.getX());
+	minY = Math.min(minY, (int) p.getY());
+	maxY = Math.max(maxY, (int) p.getY());
+      }
+      if (isLoggingEnabled())
+	getLogger().info("minX=" + minX + ", maxX=" + maxX + ", minY=" + minY + ", maxY=" + maxY);
+      report.setNumericValue(REPORT_PARAM_X, minX);
+      report.setNumericValue(REPORT_PARAM_Y, minY);
+      report.setNumericValue(REPORT_PARAM_WIDTH, maxX - minX + 1);
+      report.setNumericValue(REPORT_PARAM_HEIGHT, maxY - minY + 1);
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to decode barcode!", e);
