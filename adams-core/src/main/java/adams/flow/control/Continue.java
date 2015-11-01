@@ -373,10 +373,14 @@ public class Continue
   @Override
   protected String doExecute() {
     String	result;
+    boolean	eval;
 
     result = null;
 
-    if (!m_Condition.evaluate(this, m_InputToken))
+    eval = m_Condition.evaluate(this, m_InputToken);
+    if (isLoggingEnabled())
+      getLogger().info("Condition evaluated to: " + eval);
+    if (!eval)
       m_OutputToken = m_InputToken;
     else
       m_OutputToken = null;
