@@ -31,7 +31,7 @@ import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
- * Creates a hashset from a column in a spreadsheet. The hashset itself gets stored in the internal storage under the specified name.
+ * Creates a hashset from a column in a spreadsheet or an array. The hashset itself gets stored in the internal storage under the specified name.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -117,7 +117,7 @@ public class HashSetInit
   @Override
   public String globalInfo() {
     return 
-	"Creates a hashset from a column in a spreadsheet. The hashset itself "
+	"Creates a hashset from a column in a spreadsheet or an array. The hashset itself "
 	+ "gets stored in the internal storage under the specified name.";
   }
   
