@@ -15,12 +15,9 @@
 
 /**
  * HashSet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
@@ -28,6 +25,9 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import adams.flow.transformer.HashSetInit;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  <!-- globalinfo-start -->
@@ -89,7 +89,7 @@ public class HashSet
   /** the single column of the spreadsheet containing the hashset elements. */
   public final static String COLUMN_VALUE = "Value";
   
-  /** the name of the lookup table in the internal storage. */
+  /** the name of the hashset in the internal storage. */
   protected StorageName m_StorageName;
   
   /**
@@ -126,7 +126,7 @@ public class HashSet
   }
 
   /**
-   * Sets the name of the lookup table in the internal storage.
+   * Sets the name of the hashset in the internal storage.
    *
    * @param value	the name
    */
@@ -136,7 +136,7 @@ public class HashSet
   }
 
   /**
-   * Returns the name of the lookup table in the internal storage.
+   * Returns the name of the hashset in the internal storage.
    *
    * @return		the name
    */
@@ -172,7 +172,7 @@ public class HashSet
   @Override
   protected String doExecute() {
     String		result;
-    java.util.HashSet	lookup;
+    java.util.HashSet   hashset;
     SpreadSheet		sheet;
     ArrayList		values;
     Row			row;
@@ -183,11 +183,11 @@ public class HashSet
       result = "HashSet '" + m_StorageName + "' not available! Not initialized with " + HashSetInit.class.getName() + "?";
     }
     else {
-      lookup = (java.util.HashSet) getStorageHandler().getStorage().get(m_StorageName);
+      hashset = (java.util.HashSet) getStorageHandler().getStorage().get(m_StorageName);
       sheet  = new SpreadSheet();
       sheet.setName(m_StorageName.getValue());
       sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);
-      values = new ArrayList(lookup);
+      values = new ArrayList(hashset);
       Collections.sort(values);
       for (Object value: values) {
 	row = sheet.addRow();
