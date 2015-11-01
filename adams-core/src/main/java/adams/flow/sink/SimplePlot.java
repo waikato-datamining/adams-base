@@ -188,6 +188,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
  * 
+ * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store 
  * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if 
@@ -230,7 +235,10 @@ public class SimplePlot
 
   /** for keeping track of the tokens. */
   protected NamedCounter m_Counter;
-  
+
+  /** whether to show the side panel. */
+  protected boolean m_ShowSidePanel;
+
   /** the file to save the plot containers to. */
   protected PlaceholderFile m_OutputFile;
   
@@ -284,6 +292,10 @@ public class SimplePlot
     m_OptionManager.add(
       "axis-y", "axisY",
       getDefaultAxisY());
+
+    m_OptionManager.add(
+      "show-side-panel", "showSidePanel",
+      true);
 
     m_OptionManager.add(
       "output", "outputFile",
@@ -598,6 +610,35 @@ public class SimplePlot
   }
 
   /**
+   * Sets whether to show the side panel with the plot names.
+   *
+   * @param value	true if to show
+   */
+  public void setShowSidePanel(boolean value) {
+    m_ShowSidePanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the side panel with the plot names.
+   *
+   * @return	true if to show
+   */
+  public boolean getShowSidePanel() {
+    return m_ShowSidePanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showSidePanelTipText() {
+    return "If enabled, the side panel with the plot names is visible.";
+  }
+
+  /**
    * Returns the default output file.
    *
    * @return		the file
@@ -667,6 +708,7 @@ public class SimplePlot
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
+    result.setSidePanelVisible(m_ShowSidePanel);
 
     return result;
   }
@@ -898,6 +940,7 @@ public class SimplePlot
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
         m_Panel.setColorProvider(m_ColorProvider);
+	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	add(m_Panel, BorderLayout.CENTER);
       }
       @Override

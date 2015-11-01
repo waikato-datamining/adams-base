@@ -220,7 +220,12 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60
  * </pre>
  * 
- * <pre>-plot-updater &lt;adams.flow.sink.sequenceplotter.AbstractPlotUpdater&gt; (property: plotUpdater)
+ * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-plot-updater &lt;adams.flow.core.AbstractDataPlotUpdater&gt; (property: plotUpdater)
  * &nbsp;&nbsp;&nbsp;The updating strategy for the plot.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.SimplePlotUpdater
  * </pre>
@@ -284,6 +289,9 @@ public class SequencePlotter
 
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
+
+  /** whether to show the side panel. */
+  protected boolean m_ShowSidePanel;
 
   /** the plot updater to use. */
   protected AbstractPlotUpdater m_PlotUpdater;
@@ -364,6 +372,10 @@ public class SequencePlotter
     m_OptionManager.add(
       "axis-y", "axisY",
       getDefaultAxisY());
+
+    m_OptionManager.add(
+      "show-side-panel", "showSidePanel",
+      true);
 
     m_OptionManager.add(
       "plot-updater", "plotUpdater",
@@ -796,6 +808,35 @@ public class SequencePlotter
   }
 
   /**
+   * Sets whether to show the side panel with the plot names.
+   *
+   * @param value	true if to show
+   */
+  public void setShowSidePanel(boolean value) {
+    m_ShowSidePanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the side panel with the plot names.
+   *
+   * @return	true if to show
+   */
+  public boolean getShowSidePanel() {
+    return m_ShowSidePanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showSidePanelTipText() {
+    return "If enabled, the side panel with the plot names is visible.";
+  }
+
+  /**
    * Sets the title for border around the plot.
    *
    * @param value 	the title
@@ -953,6 +994,7 @@ public class SequencePlotter
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
     result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
+    result.setSidePanelVisible(m_ShowSidePanel);
 
     ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
@@ -1201,8 +1243,9 @@ public class SequencePlotter
         m_Panel.setMouseClickAction(m_MouseClickAction);
         m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
         m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
-        m_Panel.setColorProvider(m_ColorProvider);
+	m_Panel.setColorProvider(m_ColorProvider);
         m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
+	m_Panel.setSidePanelVisible(m_ShowSidePanel);
         add(m_Panel, BorderLayout.CENTER);
         ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SequencePlotter.this);
         ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SequencePlotter.this);
