@@ -15,14 +15,9 @@
 
 /**
  * CreateCallableActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.tree.TreePath;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
@@ -42,9 +37,14 @@ import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 import adams.gui.goe.FlowHelper;
 
+import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.util.List;
+
 /**
  * For turning an actor into a callable one.
- * 
+ *
  * @author fracpete
  * @version $Revision$
  */
@@ -53,10 +53,10 @@ public class CreateCallableActor
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
-  
+
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   @Override
@@ -85,7 +85,7 @@ public class CreateCallableActor
     List<Node>			callable;
     List<Node>			multiview;
     CallableActors		callableActors;
-    Node			moved;
+    final Node			moved;
     AbstractCallableActor	replacement;
     List<TreePath>		exp;
     int				index;
@@ -94,20 +94,20 @@ public class CreateCallableActor
     currActor = currNode.getFullActor().shallowCopy();
     if (ActorUtils.isStandalone(currActor)) {
       GUIHelper.showErrorMessage(
-	  m_State.tree,
-	  "Standalone actors cannot be turned into a callable actor!");
+        m_State.tree,
+        "Standalone actors cannot be turned into a callable actor!");
       return;
     }
     if (currActor instanceof AbstractCallableActor) {
       GUIHelper.showErrorMessage(
-	  m_State.tree,
-	  "Actor points already to a callable actor!");
+        m_State.tree,
+        "Actor points already to a callable actor!");
       return;
     }
     if ((currNode.getParent() != null) && (((Node) currNode.getParent()).getActor() instanceof CallableActors)) {
       GUIHelper.showErrorMessage(
-	  m_State.tree,
-	  "Actor is already a callable actor!");
+        m_State.tree,
+        "Actor is already a callable actor!");
       return;
     }
 
@@ -120,30 +120,33 @@ public class CreateCallableActor
     if (callable.size() == 0) {
       root = (Node) currNode.getRoot();
       if (!((ActorHandler) root.getActor()).getActorHandlerInfo().canContainStandalones()) {
-	GUIHelper.showErrorMessage(
-	    m_State.tree,
-	    "Root actor '" + root.getActor().getName() + "' cannot contain standalones!");
-	return;
+        GUIHelper.showErrorMessage(
+          m_State.tree,
+          "Root actor '" + root.getActor().getName() + "' cannot contain standalones!");
+        return;
       }
       callableActors = new CallableActors();
       callableNode   = new Node(m_State.tree, callableActors);
       index          = 0;
       // TODO: more generic approach?
       if (multiview.size() > 0) {
-	for (Node node: multiview) {
-	  if (node.getParent().getIndex(node) >= index)
-	    index = node.getParent().getIndex(node) + 1;
-	}
+        for (Node node: multiview) {
+          if (node.getParent().getIndex(node) >= index)
+            index = node.getParent().getIndex(node) + 1;
+        }
       }
-      root.insert(callableNode, index);
-      m_State.tree.updateActorName(callableNode);
+      final int fIndex = index;
+      SwingUtilities.invokeLater(() -> {
+	root.insert(callableNode, fIndex);
+	m_State.tree.updateActorName(callableNode);
+      });
     }
     else {
       callableNode = callable.get(callable.size() - 1);
     }
 
     exp = m_State.tree.getExpandedNodes();
-    
+
     // move actor
     moved = m_State.tree.buildTree(callableNode, currActor, true);
     m_State.tree.updateActorName(moved);
@@ -156,27 +159,32 @@ public class CreateCallableActor
       replacement = new CallableTransformer();
     else if (ActorUtils.isSink(currActor))
       replacement = new CallableSink();
-    replacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
-    currNode.setActor(replacement);
-    currNode.removeAllChildren();
-    m_State.tree.updateActorName(currNode);
+    final AbstractCallableActor fReplacement = replacement;
+    SwingUtilities.invokeLater(() -> {
+      fReplacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
+      currNode.setActor(fReplacement);
+      currNode.removeAllChildren();
+      m_State.tree.updateActorName(currNode);
+    });
 
     // update tree
-    m_State.tree.setModified(true);
-    m_State.tree.nodeStructureChanged(callableNode);
-    m_State.tree.setExpandedNodes(exp);
-    m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, callableNode, Type.MODIFY));
-    m_State.tree.nodeStructureChanged((Node) currNode.getParent());
-    m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
-    m_State.tree.expand(callableNode);
-    m_State.tree.locateAndDisplay(currNode.getFullName());
-    m_State.tree.redraw();
+    SwingUtilities.invokeLater(() -> {
+      m_State.tree.setModified(true);
+      m_State.tree.nodeStructureChanged(callableNode);
+      m_State.tree.setExpandedNodes(exp);
+      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, callableNode, Type.MODIFY));
+      m_State.tree.nodeStructureChanged((Node) currNode.getParent());
+      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
+      m_State.tree.expand(callableNode);
+      m_State.tree.locateAndDisplay(currNode.getFullName());
+      m_State.tree.redraw();
+    });
   }
 
   /**
    * The action to execute.
    *
-   * @param e		the event
+   * @param e                the event
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
