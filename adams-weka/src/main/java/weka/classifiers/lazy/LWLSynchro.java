@@ -15,21 +15,22 @@
 
 /*
  *    LWLSynchro.java
- *    Copyright (C) 1999-2010 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.classifiers.lazy;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
+import weka.classifiers.ThreadSafeClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
+
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -152,7 +153,8 @@ import weka.core.Utils;
  * @see LWL#distributionForInstance(Instance)
  */
 public class LWLSynchro
-  extends LWL {
+  extends LWL
+  implements ThreadSafeClassifier {
 
   /** for serialization. */
   static final long serialVersionUID = 1979797405383665815L;

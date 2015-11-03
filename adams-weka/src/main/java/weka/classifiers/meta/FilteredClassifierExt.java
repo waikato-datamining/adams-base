@@ -15,7 +15,7 @@
 
 /*
  *    FilteredClassifierExt.java
- *    Copyright (C) 1999-2010 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package weka.classifiers.meta;
 
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.IntervalEstimator;
+import weka.classifiers.ThreadSafeClassifier;
 import weka.core.BatchPredictor;
 import weka.core.Capabilities;
 import weka.core.Instance;
@@ -124,7 +125,7 @@ import java.util.Vector;
  */
 public class FilteredClassifierExt
   extends FilteredClassifier
-  implements WeightedInstancesHandler, IntervalEstimator, AbstainingClassifier {
+  implements WeightedInstancesHandler, IntervalEstimator, AbstainingClassifier, ThreadSafeClassifier {
 
   /** for serialization. */
   private static final long serialVersionUID = -696353491455375160L;
@@ -365,7 +366,7 @@ public class FilteredClassifierExt
    * @throws Exception if the classifier could not be built successfully
    */
   @Override
-  public void buildClassifier(Instances data) throws Exception {
+  public synchronized void buildClassifier(Instances data) throws Exception {
     super.buildClassifier(filter(data));
     m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
@@ -409,6 +410,18 @@ public class FilteredClassifierExt
   }
 
   /**
+   * Simply synchronized call of inherited method.
+   *
+   * @param instance	the instance to classify
+   * @return		the classification
+   * @throws Exception	if failed to make prediction
+   */
+  @Override
+  public synchronized double classifyInstance(Instance instance) throws Exception {
+    return super.classifyInstance(instance);
+  }
+
+  /**
    * Classifies a given instance after filtering.
    *
    * @param instance 	the instance to be classified
@@ -416,7 +429,7 @@ public class FilteredClassifierExt
    * @throws Exception 	if instance could not be classified successfully
    */
   @Override
-  public double[] distributionForInstance(Instance instance) throws Exception {
+  public synchronized double[] distributionForInstance(Instance instance) throws Exception {
     return super.distributionForInstance(filter(instance));
   }
 
@@ -429,7 +442,7 @@ public class FilteredClassifierExt
    * @return an array of probability distributions, one for each instance
    * @throws Exception if a problem occurs
    */
-  public double[][] distributionsForInstances(Instances insts) throws Exception {
+  public synchronized double[][] distributionsForInstances(Instances insts) throws Exception {
     if (getClassifier() instanceof BatchPredictor) {
       return super.distributionsForInstances(filter(insts));
     } else {
@@ -452,7 +465,7 @@ public class FilteredClassifierExt
    * @return 			an array of prediction intervals
    * @throws Exception 		if the intervals can't be computed
    */
-  public double[][] predictIntervals(Instance instance, double confidenceLevel) throws Exception {
+  public synchronized double[][] predictIntervals(Instance instance, double confidenceLevel) throws Exception {
     if (m_Classifier instanceof IntervalEstimator)
       return ((IntervalEstimator) m_Classifier).predictIntervals(filter(m_Filter, filter(instance)), confidenceLevel);
     else

@@ -14,25 +14,18 @@
  */
 
 /**
- * AbstainingClassifierWrapper.java
+ * ThreadSafeClassifierWrapper.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.meta;
 
 import weka.classifiers.AbstainingClassifier;
-import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.ThreadSafeClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
-import weka.core.WekaOptionUtils;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -42,26 +35,6 @@ import java.util.Vector;
  *
  <!-- options-start -->
  * Valid options are: <p/>
- * 
- * <pre> -turn-off-abstaining &lt;value&gt;
- *  If enabled, abstaining of the base classifier is turned off.
- *  (default: false)</pre>
- * 
- * <pre> -W
- *  Full name of base classifier.
- *  (default: weka.classifiers.meta.AbstainMinimumProbability)</pre>
- * 
- * <pre> -output-debug-info
- *  If set, classifier is run in debug mode and
- *  may output additional info to the console</pre>
- * 
- * <pre> -do-not-check-capabilities
- *  If set, classifier capabilities are not checked before classifier is built
- *  (use with caution).</pre>
- * 
- * <pre> 
- * Options specific to classifier weka.classifiers.meta.AbstainMinimumProbability:
- * </pre>
  * 
  * <pre> -W
  *  Full name of base classifier.
@@ -87,44 +60,19 @@ import java.util.Vector;
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
  * 
- * <pre> -min-probability &lt;value&gt;
- *  The minimum probability that the chosen label must meet.
- *  (default: 0.8)</pre>
- * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class AbstainingClassifierWrapper
+public class ThreadSafeClassifierWrapper
   extends SingleClassifierEnhancer
   implements AbstainingClassifier, ThreadSafeClassifier {
 
   private static final long serialVersionUID = 5699323936859571421L;
 
-  public static final String TURN_OFF_ABSTAINING = "turn-off-abstaining";
-
-  /** whether to turn off abstaining. */
-  protected boolean m_TurnOffAbstaining = false;
-
   /** whether the base classifier can abstain. */
   protected boolean m_CanAbstain = false;
-
-  /**
-   * Initializes the classifier.
-   */
-  public AbstainingClassifierWrapper() {
-    super();
-    m_Classifier = new AbstainMinimumProbability();
-  }
-
-  /**
-   * String describing default classifier.
-   */
-  @Override
-  protected String defaultClassifierString() {
-    return AbstainMinimumProbability.class.getName();
-  }
 
   /**
    * Returns a string describing classifier.
@@ -134,88 +82,6 @@ public class AbstainingClassifierWrapper
    */
   public String globalInfo() {
     return "Wraps an abstaining classifier and allows turning on/of abstaining.";
-  }
-
-  /**
-   * Set the base learner.
-   *
-   * @param value the classifier to use.
-   */
-  @Override
-  public void setClassifier(Classifier value) {
-    if (value instanceof AbstainingClassifier)
-      super.setClassifier(value);
-    else
-      System.err.println(
-        getClass().getName() + ": an abstaining classifier is required, provided: "
-          + value.getClass().getName());
-  }
-
-  /**
-   * Sets whether to turn off abstaining of the base classifier.
-   *
-   * @param value true if to turn off abstaining
-   */
-  public void setTurnOffAbstaining(boolean value) {
-    m_TurnOffAbstaining = value;
-  }
-
-  /**
-   * Returns whether abstaining of the base classifier is turned off.
-   *
-   * @return value true if abstaining is turned off
-   */
-  public boolean getTurnOffAbstaining() {
-    return m_TurnOffAbstaining;
-  }
-
-  /**
-   * Returns the tip text for this property
-   * @return tip text for this property suitable for
-   * displaying in the explorer/experimenter gui
-   */
-  public String turnOffAbstainingTipText() {
-    return "If enabled, abstaining of the base classifier is turned off.";
-  }
-
-  /**
-   * Returns an enumeration describing the available options.
-   *
-   * @return an enumeration of all the available options.
-   */
-  @Override
-  public Enumeration listOptions() {
-    Vector result = new Vector();
-    WekaOptionUtils.addOption(result, turnOffAbstainingTipText(), "false", TURN_OFF_ABSTAINING);
-    WekaOptionUtils.add(result, super.listOptions());
-    return WekaOptionUtils.toEnumeration(result);
-  }
-
-  /**
-   * Sets the OptionHandler's options using the given list. All options
-   * will be set (or reset) during this call (i.e. incremental setting
-   * of options is not possible).
-   *
-   * @param options the list of options as an array of strings
-   * @throws Exception if an option is not supported
-   */
-  @Override
-  public void setOptions(String[] options) throws Exception {
-    setTurnOffAbstaining(Utils.getFlag(TURN_OFF_ABSTAINING, options));
-    super.setOptions(options);
-  }
-
-  /**
-   * Gets the current option settings for the OptionHandler.
-   *
-   * @return the list of current option settings as an array of strings
-   */
-  @Override
-  public String[] getOptions() {
-    List<String> result = new ArrayList<>();
-    WekaOptionUtils.add(result, TURN_OFF_ABSTAINING, getTurnOffAbstaining());
-    WekaOptionUtils.add(result, super.getOptions());
-    return WekaOptionUtils.toArray(result);
   }
 
   /**
@@ -236,7 +102,7 @@ public class AbstainingClassifierWrapper
   }
 
   /**
-   * Synchronized call of super method for making classification.
+   * Synchronized method for classifying data.
    *
    * @param instance	the instance to classify
    * @return		the classification
@@ -256,10 +122,7 @@ public class AbstainingClassifierWrapper
    */
   @Override
   public synchronized double[] distributionForInstance(Instance instance) throws Exception {
-    if (m_TurnOffAbstaining)
-      return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(instance);
-    else
-      return m_Classifier.distributionForInstance(instance);
+    return m_Classifier.distributionForInstance(instance);
   }
 
   /**
@@ -268,7 +131,7 @@ public class AbstainingClassifierWrapper
    * @return		true if abstaining is possible
    */
   public boolean canAbstain() {
-    return m_CanAbstain && !m_TurnOffAbstaining;
+    return m_CanAbstain;
   }
 
   /**
@@ -312,8 +175,6 @@ public class AbstainingClassifierWrapper
     result.append(getClass().getSimpleName() + "\n");
     result.append(getClass().getSimpleName().replaceAll(".", "=") + "\n");
     result.append("\n");
-    result.append("Abstaining turned off: " + m_TurnOffAbstaining + "\n");
-    result.append("\n");
     result.append(m_Classifier.toString());
     return result.toString();
   }
@@ -324,6 +185,6 @@ public class AbstainingClassifierWrapper
    * @param args the options
    */
   public static void main(String[] args) {
-    runClassifier(new AbstainingClassifierWrapper(), args);
+    runClassifier(new ThreadSafeClassifierWrapper(), args);
   }
 }
