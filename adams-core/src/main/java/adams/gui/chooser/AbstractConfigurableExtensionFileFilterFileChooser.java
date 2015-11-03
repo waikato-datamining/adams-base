@@ -125,7 +125,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     m_CheckBoxOptions.setMnemonic('E');
     result = new JPanel(new BorderLayout());
     result.add(m_CheckBoxOptions, BorderLayout.NORTH);
-    result.add(m_PanelBookmarks, BorderLayout.CENTER);
+    result.add(m_PanelBookmarksAndFilter, BorderLayout.CENTER);
     dim = getDefaultAccessoryDimension();
     if (dim != null) {
       result.setSize(dim);

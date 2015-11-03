@@ -29,10 +29,17 @@ import adams.gui.core.GUIHelper;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.io.File;
 
@@ -60,7 +67,19 @@ public class BaseFileChooser
 
   /** the default extension. */
   protected String m_DefaultExtension;
-  
+
+  /** the panel with the bookmarks and filter. */
+  protected JPanel m_PanelBookmarksAndFilter;
+
+  /** the panel for the filter. */
+  protected JPanel m_PanelFilter;
+
+  /** the label for the filter. */
+  protected JLabel m_LabelFilter;
+
+  /** the edit field for the filter. */
+  protected JTextField m_TextFilter;
+
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
 
@@ -157,18 +176,48 @@ public class BaseFileChooser
    */
   protected JComponent createAccessoryPanel() {
     Dimension	dim;
-    
+
+    m_PanelBookmarksAndFilter = new JPanel(new BorderLayout());
+
     m_PanelBookmarks = new FileChooserBookmarksPanel();
     m_PanelBookmarks.setOwner(this);
     m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
     dim = getDefaultAccessoryDimension();
     if (dim != null) {
-      m_PanelBookmarks.setSize(dim);
-      m_PanelBookmarks.setMinimumSize(dim);
-      m_PanelBookmarks.setPreferredSize(dim);
+      m_PanelBookmarksAndFilter.setSize(dim);
+      m_PanelBookmarksAndFilter.setMinimumSize(dim);
+      m_PanelBookmarksAndFilter.setPreferredSize(dim);
     }
-    
-    return m_PanelBookmarks;
+    m_PanelBookmarksAndFilter.add(m_PanelBookmarks, BorderLayout.CENTER);
+
+    m_PanelFilter = new JPanel(new GridLayout(2, 1, 5, 5));
+    m_PanelFilter.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+    m_TextFilter = new JTextField();
+    m_TextFilter.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	filterFiles();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	filterFiles();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	filterFiles();
+      }
+      protected void filterFiles() {
+	firePropertyChange(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, null, null);
+      }
+    });
+    m_LabelFilter = new JLabel("Filter");
+    m_LabelFilter.setDisplayedMnemonic('F');
+    m_LabelFilter.setLabelFor(m_TextFilter);
+    m_PanelFilter.add(m_LabelFilter);
+    m_PanelFilter.add(m_TextFilter);
+    m_PanelBookmarksAndFilter.add(m_PanelFilter, BorderLayout.SOUTH);
+
+    return m_PanelBookmarksAndFilter;
   }
   
   /**
@@ -595,6 +644,27 @@ public class BaseFileChooser
       else
 	super.setCurrentDirectory(dir.getAbsoluteFile());
     }
+  }
+
+  /**
+   * Returns true if the file should be displayed. If a filter string
+   * is entered, then this must be present in the file name (case-insensitive).
+   *
+   * @param f the <code>File</code>
+   * @return true if the file should be displayed, otherwise false
+   */
+  @Override
+  public boolean accept(File f) {
+    String	filter;
+
+    if (m_TextFilter == null)
+      return super.accept(f);
+
+    filter = m_TextFilter.getText().toLowerCase();
+    if (!filter.isEmpty())
+      return f.getName().toLowerCase().contains(filter);
+    else
+      return super.accept(f);
   }
 
   /**

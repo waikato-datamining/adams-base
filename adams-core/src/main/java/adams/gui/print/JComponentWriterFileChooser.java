@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -155,7 +156,8 @@ public class JComponentWriterFileChooser
     result.add(panel, BorderLayout.CENTER);
 
     m_ImagePreview = new ImagePreview(this);
-    panel.add(m_PanelBookmarks, BorderLayout.CENTER);
+    m_ImagePreview.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
+    panel.add(m_PanelBookmarksAndFilter, BorderLayout.CENTER);
     panel.add(m_ImagePreview, BorderLayout.SOUTH);
     
     dim = getDefaultAccessoryDimension();

@@ -25,6 +25,7 @@ import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -131,6 +132,7 @@ public class ImageFileChooser
     result.add(panel, BorderLayout.CENTER);
     
     m_ImagePreview = new ImagePreview(this);
+    m_ImagePreview.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
     m_ImagePreview.setVisible(false);
     panel.add(config, BorderLayout.CENTER);
     panel.add(m_ImagePreview, BorderLayout.SOUTH);
