@@ -15,22 +15,11 @@
 
 /*
  * Twitter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-
-import twitter4j.HashtagEntity;
-import twitter4j.Status;
-import twitter4j.SymbolEntity;
-import twitter4j.TwitterFactory;
-import twitter4j.URLEntity;
-import twitter4j.UserMentionEntity;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -42,6 +31,17 @@ import adams.env.TwitterDefinition;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.TwitterConnection;
+import twitter4j.HashtagEntity;
+import twitter4j.Status;
+import twitter4j.SymbolEntity;
+import twitter4j.TwitterFactory;
+import twitter4j.URLEntity;
+import twitter4j.UserMentionEntity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * A helper class for the twitter setup.
@@ -84,6 +84,7 @@ public class TwitterHelper {
     if (m_Properties == null) {
       try {
 	m_Properties = Environment.getInstance().read(TwitterDefinition.KEY);
+        System.setProperty("twitter4j.debug", "" + m_Properties.getBoolean("Debug", false));
       }
       catch (Exception e) {
 	m_Properties = new Properties();
@@ -96,7 +97,6 @@ public class TwitterHelper {
   /**
    * Writes the specified properties to disk.
    *
-   * @param props	the properties to write to disk
    * @return		true if successfully stored
    */
   public synchronized static boolean writeProperties() {

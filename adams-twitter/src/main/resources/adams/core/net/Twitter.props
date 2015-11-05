@@ -14,3 +14,6 @@ AccessToken=
 
 # The access token secret of the twitter application to use for connecting.
 AccessTokenSecret=
+
+# whether to turn on debugging (true|false)
+Debug=false

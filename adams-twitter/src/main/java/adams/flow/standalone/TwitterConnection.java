@@ -281,6 +281,7 @@ public class TwitterConnection
     cb.setOAuthConsumerSecret(getConsumerSecret().getValue());
     cb.setOAuthAccessToken(getAccessToken());
     cb.setOAuthAccessTokenSecret(getAccessTokenSecret().getValue());
+    cb.setDebugEnabled(isLoggingEnabled());
     
     return cb.build();
   }
