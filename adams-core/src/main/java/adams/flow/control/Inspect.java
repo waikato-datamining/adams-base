@@ -199,7 +199,10 @@ public class Inspect
   
   /** whether the token was accepted. */
   protected boolean m_Accepted;
-  
+
+  /** whether the token was skipped. */
+  protected boolean m_Skipped;
+
   /** whether we're currenlty waiting on the user. */
   protected Boolean m_Waiting;
   
@@ -457,6 +460,7 @@ public class Inspect
 	super.windowClosing(e);
 	if (m_Waiting) {
 	  m_Accepted = false;
+          m_Skipped  = false;
 	  m_Waiting  = false;
 	}
       }
@@ -477,6 +481,7 @@ public class Inspect
 	  m_ButtonToggle.setText(TEXT_NONINTERACTIVE);
 	  m_Interactive = false;
 	  m_Accepted    = true;
+          m_Skipped     = false;
 	  m_Waiting     = false;
 	}
 	else {
@@ -498,6 +503,7 @@ public class Inspect
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_Accepted = false;
+        m_Skipped  = true;
 	m_Waiting  = false;
         if (m_CloseDialog)
 	  result.setVisible(false);
@@ -513,6 +519,7 @@ public class Inspect
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_Accepted = true;
+        m_Skipped  = false;
 	m_Waiting  = false;
         if (m_CloseDialog)
 	  result.setVisible(false);
@@ -578,6 +585,9 @@ public class Inspect
 	m_OutputToken = ((UpdateableDisplayPanel) m_Panel).getUpdatedToken();
       else
 	m_OutputToken = m_InputToken;
+    }
+    else if (m_Skipped) {
+      m_OutputToken = null;
     }
     else {
       result = false;
