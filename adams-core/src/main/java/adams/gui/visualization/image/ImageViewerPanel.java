@@ -41,7 +41,6 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TitleGenerator;
-import adams.gui.core.Undo.UndoPoint;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.plugin.ToolPluginSupporter;
@@ -66,7 +65,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Vector;
 
 /**
  * A simple image viewer.
@@ -1104,23 +1102,12 @@ public class ImageViewerPanel
    */
   public void undo() {
     ImagePanel	panel;
-    UndoPoint 	point;
 
     panel = getCurrentPanel();
     if (panel == null)
       return;
-    if (!panel.getUndo().canUndo())
-      return;
-
-    panel.showStatus("Performing Undo...");
-
-    // add redo point
-    panel.getUndo().addRedo(panel.getState(), panel.getUndo().peekUndoComment());
-
-    point = panel.getUndo().undo();
-    panel.setState((Vector) point.getData());
+    panel.undo();
     update();
-    panel.showStatus("");
   }
 
   /**
@@ -1128,24 +1115,12 @@ public class ImageViewerPanel
    */
   public void redo() {
     ImagePanel	panel;
-    UndoPoint 	point;
 
     panel = getCurrentPanel();
     if (panel == null)
       return;
-    if (!panel.getUndo().canRedo())
-      return;
-
-    panel.showStatus("Performing Redo...");
-
-    // add undo point
-    panel.getUndo().addUndo(panel.getState(), panel.getUndo().peekRedoComment(), true);
-
-    point = panel.getUndo().redo();
-    panel.setState((Vector) point.getData());
-
+    panel.redo();
     update();
-    panel.showStatus("");
   }
 
   /**

@@ -49,6 +49,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.Undo;
 import adams.gui.core.UndoPanel;
 import adams.gui.event.ImagePanelSelectionEvent;
 import adams.gui.event.ImagePanelSelectionListener;
@@ -427,6 +428,7 @@ public class ImagePanel
       JMenu		submenu;
       int[]		zooms;
       int		i;
+      Undo		undo;
 
       menu = null;
       if (m_CustomPopupMenuProvider != null)
@@ -434,6 +436,29 @@ public class ImagePanel
 	
       if (menu == null) {
 	menu = new BasePopupMenu();
+
+        if (getOwner().isUndoSupported() & getOwner().getUndo().isEnabled()) {
+	  undo = getOwner().getUndo();
+          menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), GUIHelper.getIcon("undo.gif"));
+          menuitem.setEnabled(undo.canUndo());
+	  menuitem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+	      getOwner().getUndo().undo();
+            }
+          });
+          menu.add(menuitem);
+
+          menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), GUIHelper.getIcon("redo.gif"));
+          menuitem.setEnabled(undo.canRedo());
+          menuitem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+	      getOwner().getUndo().redo();
+            }
+          });
+          menu.add(menuitem);
+
+	  menu.addSeparator();
+        }
 
 	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
@@ -1630,11 +1655,39 @@ public class ImagePanel
   public void undoOccurred(UndoEvent e) {
     switch (e.getType()) {
       case UNDO:
+	showStatus("Performing Undo...");
+	getUndo().addRedo(getState(), e.getUndoPoint().getComment());
+	setState((Vector) e.getUndoPoint().getData());
+	showStatus("");
+	log(e.getType().toString().toLowerCase() + ": " + e.getUndoPoint().getComment());
+	break;
       case REDO:
+	showStatus("Performing Redo...");
+	getUndo().addUndo(getState(), e.getUndoPoint().getComment(), true);
+	setState((Vector) e.getUndoPoint().getData());
+	showStatus("");
 	log(e.getType().toString().toLowerCase() + ": " + e.getUndoPoint().getComment());
       default:
 	break;
     }
+  }
+
+  /**
+   * peforms an undo if possible.
+   */
+  public void undo() {
+    if (!getUndo().canUndo())
+      return;
+    getUndo().undo();
+  }
+
+  /**
+   * peforms a redo if possible.
+   */
+  public void redo() {
+    if (!getUndo().canRedo())
+      return;
+    getUndo().redo();
   }
 
   /**
