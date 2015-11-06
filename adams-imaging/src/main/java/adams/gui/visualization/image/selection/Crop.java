@@ -15,24 +15,23 @@
 
 /**
  * Crop.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
+
+import adams.data.report.Report;
+import adams.gui.visualization.image.ImagePanel;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import adams.gui.visualization.image.ImagePanel;
-
 /**
  <!-- globalinfo-start -->
- * Crops the image to the current selection.
+ * Crops the image to the current selection and stores crop information in the report (prefix: Crop.). Offers undo&#47;redo.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -48,7 +47,22 @@ public class Crop
 
   /** for serialization. */
   private static final long serialVersionUID = -657789971297807743L;
-  
+
+  /** the prefix for the crop coordinates. */
+  public final static String PREFIX = "Crop.";
+
+  /** the x key. */
+  public final static String KEY_X = "x";
+
+  /** the y key. */
+  public final static String KEY_Y = "y";
+
+  /** the width key. */
+  public final static String KEY_WIDTH = "width";
+
+  /** the height key. */
+  public final static String KEY_HEIGHT = "height";
+
   /**
    * Returns a string describing the object.
    *
@@ -56,7 +70,9 @@ public class Crop
    */
   @Override
   public String globalInfo() {
-    return "Crops the image to the current selection.";
+    return
+      "Crops the image to the current selection and stores crop information "
+	+ "in the report (prefix: " + PREFIX + "). Offers undo/redo.";
   }
 
   /**
@@ -70,13 +86,27 @@ public class Crop
   @Override
   protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
     BufferedImage	cropped;
-    
-    cropped = panel.getCurrentImage().getSubimage(
-	panel.mouseToPixelLocation(topLeft).x,
-	panel.mouseToPixelLocation(topLeft).y, 
-	panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1,
-	panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1);
-    
+    Report 		additional;
+    int			x;
+    int			y;
+    int			width;
+    int			height;
+
+    x       = panel.mouseToPixelLocation(topLeft).x;
+    y       = panel.mouseToPixelLocation(topLeft).y;
+    width   = panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1;
+    height  = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
+
+    additional = new Report();
+    additional.setNumericValue(PREFIX + KEY_X, x);
+    additional.setNumericValue(PREFIX + KEY_Y, y);
+    additional.setNumericValue(PREFIX + KEY_WIDTH, width);
+    additional.setNumericValue(PREFIX + KEY_HEIGHT, height);
+
+    cropped = panel.getCurrentImage().getSubimage(x, y, width, height);
+
+    panel.addUndoPoint("Saving undo data...", "Crop");
     panel.setCurrentImage(cropped);
+    panel.setAdditionalProperties(additional);
   }
 }
