@@ -542,7 +542,11 @@ public class ImagePanel
      */
     public void setCurrentImage(BufferedImage value) {
       SwingUtilities.invokeLater(() -> {
-	m_CurrentImage = value;
+	m_CurrentImage         = value;
+	m_SelectionTopLeft     = null;
+	m_SelectionBottomRight = null;
+	m_Dragged              = false;
+	m_Selecting            = false;
 	setScale(1.0);
 	repaint();
       });
