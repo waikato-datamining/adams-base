@@ -245,7 +245,7 @@ public class BasePanel
    */
   public void printException(String msg, Exception e) {
     ConsolePanel.getSingleton().append(this, msg, e);
-    System.err.println(msg);
+    System.err.println(msg + "\nException: " + e);
   }
 
   /**
