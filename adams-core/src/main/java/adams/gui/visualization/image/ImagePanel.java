@@ -64,6 +64,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
@@ -540,9 +541,11 @@ public class ImagePanel
      * @param value	the image to use
      */
     public void setCurrentImage(BufferedImage value) {
-      m_CurrentImage = value;
-      setScale(1.0);
-      repaint();
+      SwingUtilities.invokeLater(() -> {
+	m_CurrentImage = value;
+	setScale(1.0);
+	repaint();
+      });
     }
 
     /**
@@ -1548,20 +1551,20 @@ public class ImagePanel
    * Displays the image and (optional) additional properties.
    */
   protected void displayProperties() {
-    Report	merged;
-    
-    if (m_TableProperties != null)
-      m_TableProperties.getModel().removeTableModelListener(this);
-    
-    merged = m_ImageProperties.getClone();
-    if (m_AdditionalProperties != null)
-      merged.mergeWith(m_AdditionalProperties);
-    m_ModelProperties = new ReportFactory.Model(merged);
-    m_TableProperties.setModel(m_ModelProperties);
-    m_TableProperties.setOptimalColumnWidth();
-    m_TableProperties.sort(0);
-    m_TableProperties.getModel().addTableModelListener(this);
-    m_PaintPanel.update();
+    SwingUtilities.invokeLater(() -> {
+      if (m_TableProperties != null)
+	m_TableProperties.getModel().removeTableModelListener(this);
+
+      Report merged = m_ImageProperties.getClone();
+      if (m_AdditionalProperties != null)
+	merged.mergeWith(m_AdditionalProperties);
+      m_ModelProperties = new ReportFactory.Model(merged);
+      m_TableProperties.setModel(m_ModelProperties);
+      m_TableProperties.setOptimalColumnWidth();
+      m_TableProperties.sort(0);
+      m_TableProperties.getModel().addTableModelListener(this);
+      m_PaintPanel.update();
+    });
   }
 
   /**
