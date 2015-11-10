@@ -228,4 +228,13 @@ public class ListAllVariables
 
     return result;
   }
+
+  /**
+   * Returns the variables.
+   *
+   * @return		the variables
+   */
+  public List<String> getVariables() {
+    return m_Variables;
+  }
 }

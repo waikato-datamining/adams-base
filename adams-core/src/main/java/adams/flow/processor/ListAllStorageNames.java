@@ -198,4 +198,13 @@ public class ListAllStorageNames
     
     return result;
   }
+
+  /**
+   * Returns the storage names.
+   *
+   * @return		the storage names
+   */
+  public List<String> getStorageNames() {
+    return m_StorageNames;
+  }
 }
