@@ -662,20 +662,22 @@ public class OptionUtils {
     Object			result;
     PropertyEditor		editor;
     AbstractCommandLineHandler	handler;
+    boolean isDouble;
 
-    result = null;
+    result   = null;
+    isDouble = Utils.isDouble(value);
 
     if ((cls == Byte.class) || (cls == Byte.TYPE))
-      result = Byte.valueOf(value);
+      result = isDouble ? new Double(value).byteValue() : Byte.valueOf(value);
     // short
     else if ((cls == Short.class) || (cls == Short.TYPE))
-      result = Short.valueOf(value);
+      result = isDouble ? new Double(value).shortValue() : Short.valueOf(value);
     // int
     else if ((cls == Integer.class) || (cls == Integer.TYPE))
-      result = Integer.valueOf(value);
+      result = isDouble ? new Double(value).intValue() : Integer.valueOf(value);
     // long
     else if ((cls == Long.class) || (cls == Long.TYPE))
-      result = Long.valueOf(value);
+      result = isDouble ? new Double(value).longValue() : Long.valueOf(value);
     // float
     else if ((cls == Float.class) || (cls == Float.TYPE))
       result = Float.valueOf(value);
