@@ -15,15 +15,11 @@
 
 /**
  * AbstractCopyrightProcessor.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import adams.core.io.FileUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -34,8 +30,11 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-
-import adams.core.io.FileUtils;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A processor that lists all classes/methods with mixed copyright.
@@ -60,7 +59,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    */
   @Override
   public SourceVersion getSupportedSourceVersion() {
-    return SourceVersion.RELEASE_7;
+    return SourceVersion.RELEASE_8;
   }
 
   /**
