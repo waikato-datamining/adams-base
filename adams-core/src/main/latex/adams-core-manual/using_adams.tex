@@ -1477,6 +1477,8 @@ The following actors are available to handle variables:
 	integer or double increment (transformer).
 	\item \textit{DeleteVariable} -- removes a variable and its associated value
 	from internal memory (transformer).
+	\item \textit{ReportToVariables} -- turns all report values into variables
+	that match the specified regular expression (transformer).
 \end{tight_itemize}
 
 \heading{Using callable actor as variables}
@@ -1666,6 +1668,8 @@ The following actors are available to handle variables:
 	double object by either an integer or double increment (transformer).
 	\item \textit{DeleteStorageValue} -- removes a storage value
 	from internal memory (transformer), freeing up memory.
+	\item \textit{ReportToStorage} -- places all the report values in storage
+	that match the regular expression (transformer).
 \end{tight_itemize}
 
 
