@@ -622,8 +622,10 @@ public class ControlPanel
     else if (getParentFrame() != null)
       getParentFrame().setVisible(false);
 
-    getFlow().stopExecution("User stopped flow!");
-    getOwner().unblockExecution();
+    // due to atomic execution
+    m_PanelBreakpoints.removeBreakpoints(null);
+    new Thread(() -> getFlow().stopExecution("User stopped flow!")).start();
+    new Thread(() -> getOwner().unblockExecution()).start();
   }
 
   /**
