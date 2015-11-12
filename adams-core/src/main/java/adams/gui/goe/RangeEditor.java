@@ -21,6 +21,22 @@
 
 package adams.gui.goe;
 
+import adams.core.Range;
+import adams.core.Utils;
+import adams.core.option.AbstractOption;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.TextDialog;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -34,23 +50,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import adams.core.Range;
-import adams.core.Utils;
-import adams.core.option.AbstractOption;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.TextDialog;
 
 /**
  * A PropertyEditor for Range objects.
@@ -235,7 +234,7 @@ public class RangeEditor
 
     m_ButtonHelp = new JButton();
     m_ButtonHelp.setVisible(false);
-    m_ButtonHelp.setToolTipText(getHelpDescription());
+    m_ButtonHelp.setToolTipText(createTipText(getHelpDescription()));
     m_ButtonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	TextDialog dlg = new TextDialog();
@@ -332,12 +331,12 @@ public class RangeEditor
     current = ((Range) getValue()).getRange();
     if (!m_TextValue.getText().equals(current))
       m_TextValue.setText(current);
-    m_TextValue.setToolTipText(((Range) getValue()).getExample());
+    m_TextValue.setToolTipText(createTipText(((Range) getValue()).getExample()));
     m_TextValue.grabFocus();
     // update help button
     if (m_ButtonHelp != null) {
       m_ButtonHelp.setVisible(getHelpDescription() != null);
-      m_ButtonHelp.setToolTipText(getHelpDescription());
+      m_ButtonHelp.setToolTipText(createTipText(getHelpDescription()));
       if (getHelpIcon() != null)
 	m_ButtonHelp.setIcon(GUIHelper.getIcon(getHelpIcon()));
       else
