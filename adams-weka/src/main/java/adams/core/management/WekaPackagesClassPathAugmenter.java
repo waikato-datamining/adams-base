@@ -19,14 +19,13 @@
  */
 package adams.core.management;
 
+import org.pentaho.packageManagement.Package;
+import weka.core.Environment;
+import weka.core.WekaPackageManager;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.pentaho.packageManagement.Package;
-
-import weka.core.Environment;
-import weka.core.WekaPackageManager;
 
 /**
  * Returns the classpath augmentations for all the installed WEKA packages.
@@ -112,7 +111,7 @@ public class WekaPackagesClassPathAugmenter
         } 
         catch (Exception ex) {
           ex.printStackTrace();
-          System.err.println("[Weka] Problem loading package " + contents[i].getName() + " skipping...");
+          System.err.println("[WEKA] Problem loading package " + contents[i].getName() + " skipping...");
         }          
       }
     }
