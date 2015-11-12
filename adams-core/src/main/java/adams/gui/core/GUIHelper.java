@@ -2076,13 +2076,16 @@ public class GUIHelper {
    * Parses the tool tip and breaks it up into multiple lines if longer
    * than width characters.
    *
-   * @param text	the tiptext to parse
+   * @param text	the tiptext to parse, can be null
    * @param width	the maximum width
    * @return		the processed tiptext
    */
   public static String processTipText(String text, int width) {
     String	result;
     String[]	lines;
+
+    if (text == null)
+      return null;
 
     result = HtmlUtils.toHTML(text);
     if (result.length() > width) {
