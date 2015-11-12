@@ -51,7 +51,10 @@ public abstract class AbstractPropertyEditorSupport
 
   /** the user approved the dialog. */
   public final static int APPROVE_OPTION = 1;
-  
+
+  /** the maximum characters per line for a tool tip. */
+  public final static int MAX_TOOLTIP_WIDTH = PropertySheetPanel.MAX_TOOLTIP_WIDTH;
+
   /** the custom editor. */
   protected JComponent m_CustomEditor;
 
@@ -246,7 +249,17 @@ public abstract class AbstractPropertyEditorSupport
   protected BasePopupMenu createPopup() {
     return VariableSupport.createPopup(VariableSupport.findParent(m_CustomEditor), this);
   }
-  
+
+  /**
+   * Creates a tip text from the given help string.
+   *
+   * @param help	the help string, can be null
+   * @return		the generated tip text string
+   */
+  public String createTipText(String help) {
+    return GUIHelper.processTipText(help, MAX_TOOLTIP_WIDTH);
+  }
+
   /**
    * Returns a URL with additional information.
    * <br><br>
