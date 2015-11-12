@@ -88,7 +88,7 @@ public class DatasetCompatibility
    */
   @Override
   public String getTitle() {
-    return "[Weka] Dataset compatibility";
+    return "WEKA Dataset compatibility";
   }
 
   /**

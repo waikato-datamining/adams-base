@@ -147,7 +147,7 @@ public class TreeVisualizer
    */
   @Override
   public String getTitle() {
-    return "[Weka] Tree visualizer";
+    return "WEKA Tree visualizer";
   }
 
   /**

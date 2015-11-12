@@ -82,7 +82,7 @@ public class BoundaryVisualizer
    * @return 		the title
    */
   public String getTitle() {
-    return "[Weka] Boundary visualizer";
+    return "WEKA Boundary visualizer";
   }
 
   /**

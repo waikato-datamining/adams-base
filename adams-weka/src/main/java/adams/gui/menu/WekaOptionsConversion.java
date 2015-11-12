@@ -69,7 +69,7 @@ public class WekaOptionsConversion
    */
   @Override
   public String getTitle() {
-    return "[Weka] Options conversion";
+    return "WEKA Options conversion";
   }
 
   /**

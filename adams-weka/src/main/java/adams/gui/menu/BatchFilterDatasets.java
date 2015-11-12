@@ -291,7 +291,7 @@ public class BatchFilterDatasets
    */
   @Override
   public String getTitle() {
-    return "[Weka] Batch-filter datasets";
+    return "WEKA Batch-filter datasets";
   }
 
   /**

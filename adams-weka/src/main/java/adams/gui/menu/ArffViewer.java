@@ -78,7 +78,7 @@ public class ArffViewer
    * @return 		the title
    */
   public String getTitle() {
-    return "[Weka] Arff Viewer";
+    return "WEKA Arff Viewer";
   }
 
   /**

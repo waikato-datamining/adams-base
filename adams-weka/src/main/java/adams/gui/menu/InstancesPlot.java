@@ -129,7 +129,7 @@ public class InstancesPlot
    */
   @Override
   public String getTitle() {
-    return "[Weka] Instances plot";
+    return "WEKA Instances plot";
   }
 
   /**

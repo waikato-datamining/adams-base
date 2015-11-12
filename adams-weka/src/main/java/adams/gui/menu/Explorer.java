@@ -87,7 +87,7 @@ public class Explorer
    */
   @Override
   public String getTitle() {
-    return "[Weka] Explorer";
+    return "WEKA Explorer";
   }
 
   /**

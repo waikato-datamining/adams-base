@@ -75,7 +75,7 @@ public class MultiExplorer
    */
   @Override
   public String getTitle() {
-    return "[Weka] Multi-Explorer";
+    return "WEKA Multi-Explorer";
   }
 
   /**

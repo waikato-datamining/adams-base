@@ -934,7 +934,7 @@ public class MakeCompatibleDatasets
    */
   @Override
   public String getTitle() {
-    return "[Weka] Make compatible datasets";
+    return "WEKA Make compatible datasets";
   }
 
   /**

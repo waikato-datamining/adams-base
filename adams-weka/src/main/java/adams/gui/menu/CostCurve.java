@@ -132,7 +132,7 @@ public class CostCurve
    */
   @Override
   public String getTitle() {
-    return "[Weka] Cost curve";
+    return "WEKA Cost curve";
   }
 
   /**

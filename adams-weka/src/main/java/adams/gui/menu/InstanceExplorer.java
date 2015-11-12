@@ -78,7 +78,7 @@ public class InstanceExplorer
    * @return 		the title
    */
   public String getTitle() {
-    return "[Weka] Instance Explorer";
+    return "WEKA Instance Explorer";
   }
 
   /**
