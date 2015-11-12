@@ -9,6 +9,9 @@ Name=adams-compress
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=Module offering various methods and actors for compression/decompression.
 

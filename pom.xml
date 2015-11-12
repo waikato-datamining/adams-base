@@ -66,6 +66,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     <heap.size>-Xmx512m</heap.size>
     <!-- tests -->
     <adams.test.multiprocess.enabled>false</adams.test.multiprocess.enabled>

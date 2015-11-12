@@ -9,6 +9,9 @@ Name=adams-event
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=Event support (e.g., cron/scheduled execution).
 

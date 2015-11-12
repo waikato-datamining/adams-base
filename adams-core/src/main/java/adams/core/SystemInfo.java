@@ -23,6 +23,8 @@ import adams.core.management.Java;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.env.Environment;
+import adams.env.Modules;
+import adams.env.Modules.Module;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +61,9 @@ public class SystemInfo {
 
   /** the environment prefix. */
   public final static String ENV_PREFIX = "env.";
+
+  /** the module prefix. */
+  public final static String MODULE_PREFIX = "module.";
 
   /** the key for the ADAMS startup time. */
   public final static String ADAMS_STARTUP = "adams.startup";
@@ -124,6 +129,12 @@ public class SystemInfo {
     // environment
     for (String key: System.getenv().keySet())
       m_Info.put(ENV_PREFIX + key, System.getenv(key));
+
+    // modules
+    for (Module module: Modules.getSingleton().getModules()) {
+      m_Info.put(MODULE_PREFIX + module.getName() + ".version", module.getVersion());
+      m_Info.put(MODULE_PREFIX + module.getName() + ".buildTimestamp", module.getBuildTimestamp().getValue());
+    }
 
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());

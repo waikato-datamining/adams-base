@@ -15,28 +15,28 @@
 
 /*
  * AboutBoxPanel.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.application;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 
 import adams.env.Modules;
 import adams.env.Modules.Module;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.List;
 
 /**
  * Represents an "About" box displayed from the main menu.
@@ -74,7 +74,8 @@ public class AboutBoxPanel
     JPanel		panelModule;
     List<Module>	modules;
     String		name;
-    JLabel		label;
+    JLabel 		labelLogo;
+    JLabel		labelName;
     String		tiptext;
 
     super.initGUI();
@@ -99,6 +100,7 @@ public class AboutBoxPanel
     for (Module module: modules) {
       panelModule = new JPanel(new BorderLayout());
       panelModule.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+      // assemble tiptext
       tiptext = "";
       if (!module.getDescription().isEmpty()) {
 	if (tiptext.length() > 0)
@@ -115,18 +117,26 @@ public class AboutBoxPanel
 	  tiptext += "<br>\n";
 	tiptext += module.getOrganization();
       }
-      label = new JLabel(module.getLogo());
+      // logo
+      labelLogo = new JLabel(module.getLogo());
       if (tiptext.length() > 0)
-	label.setToolTipText("<html>" + tiptext + "</html>");
-      panelModule.add(label, BorderLayout.CENTER);
+	labelLogo.setToolTipText("<html>" + tiptext + "</html>");
+      panelModule.add(labelLogo, BorderLayout.CENTER);
+      // module info
       name = "<html><center>";
       name += module.getName() + "<br>" + (module.getVersion().isEmpty() ? "?.?.?" : module.getVersion());
+      name += "<br>" + module.getBuildTimestamp();
       name += "</center></html>";
-      panelModule.add(new JLabel(name), BorderLayout.SOUTH);
+      labelName = new JLabel(name);
+      labelName.setFont(Font.decode("helvetica-PLAIN-10"));
+      if (tiptext.length() > 0)
+	labelName.setToolTipText("<html>" + tiptext + "</html>");
+      panelModule.add(labelName, BorderLayout.SOUTH);
+      // add panel
       m_PanelModules.add(panelModule);
     }
     m_ScrollPane = new BaseScrollPane(m_PanelModules);
-    m_ScrollPane.setPreferredSize(new Dimension(75, 115));
+    m_ScrollPane.setPreferredSize(new Dimension(85, 125));
     panel.add(m_ScrollPane, BorderLayout.SOUTH);
   }
 

@@ -9,6 +9,9 @@ Name=adams-moa
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=Adds MOA (online learning) functionality.
 

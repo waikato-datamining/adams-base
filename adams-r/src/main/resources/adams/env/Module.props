@@ -9,6 +9,9 @@ Name=adams-r
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=Adds support for the R Project using Rserve.
 

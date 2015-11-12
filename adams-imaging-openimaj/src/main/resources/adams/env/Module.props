@@ -9,6 +9,9 @@ Name=adams-imaging-openimaj
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=OpenIMAJ image processing support
 

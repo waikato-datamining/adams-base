@@ -9,6 +9,9 @@ Name=adams-imaging-imagej
 # The version of the module
 Version=${project.version}
 
+# The build timestamp
+BuildTimestamp=${timestamp}
+
 # A short description of the module
 Description=ImageJ image processing support
 

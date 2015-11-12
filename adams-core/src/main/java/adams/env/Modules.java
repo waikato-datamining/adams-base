@@ -15,21 +15,21 @@
 
 /**
  * Modules.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
+import adams.core.Properties;
+import adams.core.base.BaseDateTime;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.ImageIcon;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-
-import adams.core.Properties;
-import adams.gui.core.GUIHelper;
 
 /**
  * For managing module information.
@@ -47,6 +47,9 @@ public class Modules {
 
   /** the key for the Version of the module. */
   public final static String KEY_VERSION = "Version";
+
+  /** the key for the BuildTimestamp of the module. */
+  public final static String KEY_BUILDTIMESTAMP = "BuildTimestamp";
 
   /** the key for the Description of the module. */
   public final static String KEY_DESCRIPTION = "Description";
@@ -87,6 +90,9 @@ public class Modules {
     /** the version of the module. */
     protected String m_Version;
 
+    /** the build timestamp of the module. */
+    protected BaseDateTime m_BuildTimestamp;
+
     /** the description of the module. */
     protected String m_Description;
 
@@ -95,6 +101,9 @@ public class Modules {
 
     /** the organization. */
     protected String m_Organization;
+
+    /** the logo name. */
+    protected String m_LogoName;
 
     /** the logo. */
     protected ImageIcon m_Logo;
@@ -107,20 +116,21 @@ public class Modules {
     public Module(Properties props) {
       super();
 
-      m_Name         = props.getProperty(KEY_NAME,         "Unknown");
-      m_Version      = props.getProperty(KEY_VERSION,      "");
-      m_Description  = props.getProperty(KEY_DESCRIPTION,  "");
-      m_Author       = props.getProperty(KEY_AUTHOR,       "");
-      m_Organization = props.getProperty(KEY_ORGANIZATION, "");
-      String logo    = props.getProperty(KEY_LOGO,         "");
-      if (logo.length() > 0) {
+      m_Name           = props.getProperty(KEY_NAME,           "Unknown");
+      m_Version        = props.getProperty(KEY_VERSION,        "");
+      m_BuildTimestamp = new BaseDateTime(props.getProperty(KEY_BUILDTIMESTAMP, "NOW"));
+      m_Description    = props.getProperty(KEY_DESCRIPTION,    "");
+      m_Author         = props.getProperty(KEY_AUTHOR,         "");
+      m_Organization   = props.getProperty(KEY_ORGANIZATION,   "");
+      m_LogoName       = props.getProperty(KEY_LOGO,           "");
+      if (m_LogoName.length() > 0) {
 	try {
-	  m_Logo = GUIHelper.getIcon(logo);
+	  m_Logo = GUIHelper.getIcon(m_LogoName);
 	  if (m_Logo == null)
-	    m_Logo = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(logo));
+	    m_Logo = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(m_LogoName));
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to load image '" + logo + "' from classpath:");
+	  System.err.println("Failed to load image '" + m_LogoName + "' from classpath:");
 	  e.printStackTrace();
 	  m_Logo = GUIHelper.getIcon("unknown-module.png");
 	}
@@ -146,6 +156,15 @@ public class Modules {
      */
     public String getVersion() {
       return m_Version;
+    }
+
+    /**
+     * Returns the build timestamp of the module.
+     *
+     * @return		the timestamp
+     */
+    public BaseDateTime getBuildTimestamp() {
+      return m_BuildTimestamp;
     }
 
     /**
@@ -176,6 +195,15 @@ public class Modules {
     }
 
     /**
+     * Returns the logo name of the module.
+     *
+     * @return		the logo name
+     */
+    public String getLogoName() {
+      return m_LogoName;
+    }
+
+    /**
      * Returns the logo of the module.
      *
      * @return		the logo
@@ -183,6 +211,7 @@ public class Modules {
     public ImageIcon getLogo() {
       return m_Logo;
     }
+
     /**
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
