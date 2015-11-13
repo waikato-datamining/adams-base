@@ -487,6 +487,7 @@ public class Range
     }
     
     // replace strings with chars
+    // FIXME replace call matches substrings ("average" matches "averaged")!
     shortened = s.toLowerCase();
     for (i = 0; i < chars.size(); i++)
       shortened = shortened.replace(relation.get(chars.get(i)).toLowerCase(), chars.get(i).toString());
