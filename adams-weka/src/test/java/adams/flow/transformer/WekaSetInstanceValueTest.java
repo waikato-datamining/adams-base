@@ -15,14 +15,13 @@
 
 /*
  * WekaSetInstanceValueTest.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Index;
+import adams.data.weka.WekaAttributeIndex;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
@@ -33,6 +32,8 @@ import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the WekaSetInstanceValue actor.
@@ -96,7 +97,7 @@ public class WekaSetInstanceValueTest
     WekaClassSelector cs = new WekaClassSelector();
 
     WekaSetInstanceValue set1 = new WekaSetInstanceValue();
-    set1.setIndex(new Index("last"));
+    set1.setIndex(new WekaAttributeIndex("last"));
     set1.setValue("bad");
 
     WekaGetInstanceValue get1 = new WekaGetInstanceValue();
@@ -112,7 +113,7 @@ public class WekaSetInstanceValueTest
     });
 
     WekaSetInstanceValue set2 = new WekaSetInstanceValue();
-    set2.setIndex(new Index("first"));
+    set2.setIndex(new WekaAttributeIndex("first"));
     set2.setValue("42.0");
 
     WekaGetInstanceValue get2 = new WekaGetInstanceValue();

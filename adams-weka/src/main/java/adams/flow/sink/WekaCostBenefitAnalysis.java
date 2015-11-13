@@ -14,31 +14,31 @@
  */
 
 /*
- * WekaCostCurve.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * WekaCostBenefitAnalysis.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import adams.core.QuickInfoHelper;
-import adams.core.Range;
-import adams.data.weka.WekaLabelRange;
+import adams.data.weka.WekaLabelIndex;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.ThresholdCurve;
+import weka.core.Attribute;
 import weka.core.Instances;
+import weka.gui.beans.CostBenefitAnalysis;
 import weka.gui.visualize.PlotData2D;
-import weka.gui.visualize.ThresholdVisualizePanel;
-import weka.gui.visualize.VisualizePanel;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Actor for displaying a cost curve.
+ * Actor for displaying a cost benefit analysis dialog.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -49,7 +49,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -61,7 +61,7 @@ import java.util.logging.Level;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: WekaCostCurve
+ * &nbsp;&nbsp;&nbsp;default: WekaCostBenefitAnalysis
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -81,21 +81,32 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
- * &nbsp;&nbsp;&nbsp;default: 640
+ * &nbsp;&nbsp;&nbsp;default: 1200
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
- * &nbsp;&nbsp;&nbsp;default: 480
+ * &nbsp;&nbsp;&nbsp;default: 700
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
@@ -118,10 +129,10 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-index &lt;adams.core.Range&gt; (property: classLabelRange)
- * &nbsp;&nbsp;&nbsp;The indices of the class labels to use for the plot.
+ * <pre>-index &lt;adams.data.weka.WekaLabelIndex&gt; (property: classIndex)
+ * &nbsp;&nbsp;&nbsp;The range of class label indices (eg used for AUC).
  * &nbsp;&nbsp;&nbsp;default: first
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from label names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  <!-- options-end -->
@@ -129,18 +140,18 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class WekaCostCurve
+public class WekaCostBenefitAnalysis
   extends AbstractGraphicalDisplay
   implements DisplayPanelProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 3247255046513744115L;
 
-  /** the panel. */
-  protected ThresholdVisualizePanel m_VisualizePanel;
+  /** the index of the class label. */
+  protected WekaLabelIndex m_ClassIndex;
 
-  /** the class label range. */
-  protected WekaLabelRange m_ClassLabelRange;
+  /** the panel. */
+  protected CostBenefitAnalysis m_CostBenefitPanel;
 
   /**
    * Returns a string describing the object.
@@ -149,7 +160,7 @@ public class WekaCostCurve
    */
   @Override
   public String globalInfo() {
-    return "Actor for displaying a cost curve.";
+    return "Actor for displaying a cost benefit analysis dialog.";
   }
 
   /**
@@ -160,18 +171,8 @@ public class WekaCostCurve
     super.defineOptions();
 
     m_OptionManager.add(
-	    "index", "classLabelRange",
-	    new WekaLabelRange(Range.FIRST));
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_ClassLabelRange = new WekaLabelRange("first");
+	    "index", "classIndex",
+	    new WekaLabelIndex(WekaLabelIndex.FIRST));
   }
 
   /**
@@ -181,7 +182,7 @@ public class WekaCostCurve
    */
   @Override
   protected int getDefaultWidth() {
-    return 640;
+    return 1200;
   }
 
   /**
@@ -191,26 +192,26 @@ public class WekaCostCurve
    */
   @Override
   protected int getDefaultHeight() {
-    return 480;
+    return 700;
   }
 
   /**
-   * Sets the class label indices.
+   * Sets the index of class label (1-based).
    *
-   * @param value 	the range
+   * @param value	the label index
    */
-  public void setClassLabelRange(WekaLabelRange value) {
-    m_ClassLabelRange = value;
+  public void setClassIndex(WekaLabelIndex value) {
+    m_ClassIndex = value;
     reset();
   }
 
   /**
-   * Returns the class label indices.
+   * Returns the current index of class label (1-based).
    *
-   * @return 		the range
+   * @return		the label index
    */
-  public WekaLabelRange getClassLabelRange() {
-    return m_ClassLabelRange;
+  public WekaLabelIndex getClassIndex() {
+    return m_ClassIndex;
   }
 
   /**
@@ -219,23 +220,8 @@ public class WekaCostCurve
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String classLabelRangeTipText() {
-    return "The indices of the class labels to use for the plot.";
-  }
-
-  /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    String	result;
-
-    result  = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "classLabelRange", m_ClassLabelRange, ", class label: ");
-    
-    return result;
+  public String classIndexTipText() {
+    return "The range of class label indices (eg used for AUC).";
   }
 
   /**
@@ -243,8 +229,7 @@ public class WekaCostCurve
    */
   @Override
   public void clearPanel() {
-    if (m_VisualizePanel != null)
-      m_VisualizePanel.removeAllPlots();
+    // can't clear
   }
 
   /**
@@ -257,8 +242,8 @@ public class WekaCostCurve
     BasePanel	result;
 
     result = new BasePanel(new BorderLayout());
-    m_VisualizePanel = new ThresholdVisualizePanel();
-    result.add(m_VisualizePanel, BorderLayout.CENTER);
+    m_CostBenefitPanel = new CostBenefitAnalysis();
+    result.add(m_CostBenefitPanel, BorderLayout.CENTER);
 
     return result;
   }
@@ -280,13 +265,17 @@ public class WekaCostCurve
    */
   @Override
   protected void display(Token token) {
-    weka.classifiers.evaluation.CostCurve 	curve;
-    Evaluation					eval;
-    PlotData2D					plot;
-    boolean[] 					connectPoints;
-    int						cp;
-    Instances 					data;
-    int[]					indices;
+    Evaluation		eval;
+    Attribute 		classAtt;
+    Attribute 		classAttToUse;
+    int 		classValue;
+    ThresholdCurve 	tc;
+    Instances 		result;
+    ArrayList<String> 	newNames;
+    CostBenefitAnalysis	cbAnalysis;
+    PlotData2D 		tempd;
+    boolean[] 		cp;
+    int 		n;
 
     try {
       if (token.getPayload() instanceof WekaEvaluationContainer)
@@ -297,20 +286,35 @@ public class WekaCostCurve
 	getLogger().severe("No predictions available from Evaluation object!");
 	return;
       }
-      m_ClassLabelRange.setData(eval.getHeader().classAttribute());
-      indices = m_ClassLabelRange.getIntIndices();
-      for (int index: indices) {
-	curve = new weka.classifiers.evaluation.CostCurve();
-	data = curve.getCurve(eval.predictions(), index);
-	plot = new PlotData2D(data);
-	plot.setPlotName(eval.getHeader().classAttribute().value(index));
-	plot.m_displayAllPoints = true;
-	connectPoints = new boolean [data.numInstances()];
-	for (cp = 1; cp < connectPoints.length; cp++)
-	  connectPoints[cp] = true;
-	plot.setConnectPoints(connectPoints);
-	m_VisualizePanel.addPlot(plot);
+      classAtt   = eval.getHeader().classAttribute();
+      m_ClassIndex.setData(classAtt);
+      classValue = m_ClassIndex.getIntIndex();
+      tc         = new ThresholdCurve();
+      result     = tc.getCurve(eval.predictions(), classValue);
+
+      // Create a dummy class attribute with the chosen
+      // class value as index 0 (if necessary).
+      classAttToUse = eval.getHeader().classAttribute();
+      if (classValue != 0) {
+	newNames = new ArrayList<>();
+	newNames.add(classAtt.value(classValue));
+	for (int k = 0; k < classAtt.numValues(); k++) {
+	  if (k != classValue)
+	    newNames.add(classAtt.value(k));
+	}
+	classAttToUse = new Attribute(classAtt.name(), newNames);
       }
+      // assemble plot data
+      tempd = new PlotData2D(result);
+      tempd.setPlotName(result.relationName());
+      tempd.m_alwaysDisplayPointsOfThisSize = 10;
+      // specify which points are connected
+      cp = new boolean[result.numInstances()];
+      for (n = 1; n < cp.length; n++)
+	cp[n] = true;
+      tempd.setConnectPoints(cp);
+      // add plot
+      m_CostBenefitPanel.setCurveData(tempd, classAttToUse);
     }
     catch (Exception e) {
       handleException("Failed to display token: " + token, e);
@@ -324,15 +328,13 @@ public class WekaCostCurve
   protected void cleanUpGUI() {
     super.cleanUpGUI();
 
-    if (m_VisualizePanel != null) {
-      m_VisualizePanel.removeAllPlots();
-      m_VisualizePanel = null;
-    }
+    if (m_CostBenefitPanel != null)
+      m_CostBenefitPanel = null;
   }
 
   /**
    * Returns the {@link Evaluation} object from the token.
-   * 
+   *
    * @param token	the token to extract the {@link Evaluation} object from
    * @return		the {@link Evaluation} object
    */
@@ -342,7 +344,7 @@ public class WekaCostCurve
     else
       return (Evaluation) token.getPayload();
   }
-  
+
   /**
    * Creates a new panel for the token.
    *
@@ -360,32 +362,47 @@ public class WekaCostCurve
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -3513994354297811163L;
-      protected VisualizePanel m_VisualizePanel;
+      protected CostBenefitAnalysis m_VisualizePanel;
       @Override
       protected void initGUI() {
 	super.initGUI();
 	setLayout(new BorderLayout());
-	m_VisualizePanel = new VisualizePanel();
+	m_VisualizePanel = new CostBenefitAnalysis();
 	add(m_VisualizePanel, BorderLayout.CENTER);
       }
       @Override
       public void display(Token token) {
 	try {
 	  Evaluation eval = getEvaluation(token);
-	  m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
-	  int[] indices = m_ClassLabelRange.getIntIndices();
-	  for (int index: indices) {
-	    weka.classifiers.evaluation.CostCurve curve = new weka.classifiers.evaluation.CostCurve();
-	    Instances data = curve.getCurve(eval.predictions(), index);
-	    PlotData2D plot = new PlotData2D(data);
-	    plot.setPlotName(eval.getHeader().classAttribute().value(index));
-	    plot.m_displayAllPoints = true;
-	    boolean[] connectPoints = new boolean [data.numInstances()];
-	    for (int cp = 1; cp < connectPoints.length; cp++)
-	      connectPoints[cp] = true;
-	    plot.setConnectPoints(connectPoints);
-	    m_VisualizePanel.addPlot(plot);
+	  Attribute classAtt= eval.getHeader().classAttribute();
+	  m_ClassIndex.setData(classAtt);
+	  int classValue = m_ClassIndex.getIntIndex();
+	  ThresholdCurve tc = new ThresholdCurve();
+	  Instances result = tc.getCurve(eval.predictions(), classValue);
+
+	  // Create a dummy class attribute with the chosen
+	  // class value as index 0 (if necessary).
+	  Attribute classAttToUse = eval.getHeader().classAttribute();
+	  if (classValue != 0) {
+	    ArrayList<String> newNames = new ArrayList<>();
+	    newNames.add(classAtt.value(classValue));
+	    for (int k = 0; k < classAtt.numValues(); k++) {
+	      if (k != classValue)
+		newNames.add(classAtt.value(k));
+	    }
+	    classAttToUse = new Attribute(classAtt.name(), newNames);
 	  }
+	  // assemble plot data
+	  PlotData2D tempd = new PlotData2D(result);
+	  tempd.setPlotName(result.relationName());
+	  tempd.m_alwaysDisplayPointsOfThisSize = 10;
+	  // specify which points are connected
+	  boolean[] cp = new boolean[result.numInstances()];
+	  for (int n = 1; n < cp.length; n++)
+	    cp[n] = true;
+	  tempd.setConnectPoints(cp);
+	  // add plot
+	  m_VisualizePanel.setCurveData(tempd, classAttToUse);
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to display token: " + token, e);
@@ -397,13 +414,11 @@ public class WekaCostCurve
       }
       @Override
       public void clearPanel() {
-	m_VisualizePanel.removeAllPlots();
       }
       public void cleanUp() {
-	m_VisualizePanel.removeAllPlots();
       }
     };
-    
+
     if (token != null)
       result.display(token);
 

@@ -20,3 +20,4 @@ adams.core.base.AttributeTypeList=adams.gui.goe.BaseObjectEditor
 adams.data.weka.WekaAttributeIndex=adams.gui.goe.WekaAttributeIndexEditor
 adams.data.weka.WekaAttributeRange=adams.gui.goe.WekaAttributeRangeEditor
 adams.data.weka.WekaLabelIndex=adams.gui.goe.WekaLabelIndexEditor
+adams.data.weka.WekaLabelRange=adams.gui.goe.WekaLabelRangeEditor

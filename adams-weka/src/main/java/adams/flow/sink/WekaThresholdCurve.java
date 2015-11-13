@@ -24,6 +24,7 @@ import adams.core.EnumWithCustomDisplay;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.option.AbstractOption;
+import adams.data.weka.WekaLabelRange;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
@@ -274,7 +275,7 @@ public class WekaThresholdCurve
   protected ThresholdVisualizePanel m_VisualizePanel;
 
   /** the class label indices. */
-  protected Range m_ClassLabelRange;
+  protected WekaLabelRange m_ClassLabelRange;
   
   /** the attribute on the X axis. */
   protected AttributeName m_AttributeX;
@@ -301,7 +302,7 @@ public class WekaThresholdCurve
 
     m_OptionManager.add(
 	    "index", "classLabelRange",
-	    new Range(Range.FIRST));
+	    new WekaLabelRange(Range.FIRST));
 
     m_OptionManager.add(
 	    "attribute-x", "attributeX",
@@ -319,7 +320,7 @@ public class WekaThresholdCurve
   protected void initialize() {
     super.initialize();
 
-    m_ClassLabelRange = new Range(Range.FIRST);
+    m_ClassLabelRange = new WekaLabelRange(Range.FIRST);
   }
 
   /**
@@ -347,7 +348,7 @@ public class WekaThresholdCurve
    *
    * @param value 	the range
    */
-  public void setClassLabelRange(Range value) {
+  public void setClassLabelRange(WekaLabelRange value) {
     m_ClassLabelRange = value;
     reset();
   }
@@ -357,7 +358,7 @@ public class WekaThresholdCurve
    *
    * @return 		the range
    */
-  public Range getClassLabelRange() {
+  public WekaLabelRange getClassLabelRange() {
     return m_ClassLabelRange;
   }
 
@@ -505,7 +506,7 @@ public class WekaThresholdCurve
 	getLogger().severe("No predictions available from Evaluation object!");
 	return;
       }
-      m_ClassLabelRange.setMax(eval.getHeader().classAttribute().numValues());
+      m_ClassLabelRange.setData(eval.getHeader().classAttribute());
       indices = m_ClassLabelRange.getIntIndices();
       for (int index: indices) {
 	curve = new ThresholdCurve();
