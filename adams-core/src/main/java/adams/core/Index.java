@@ -25,6 +25,7 @@ import java.io.Serializable;
  * A simple class that translates human-readable 1-based index strings
  * (including "first", "second", "third", "last_2", "last_1" and "last")
  * into integer indices.
+ * Numeric indices can be forced by using a "#" at start (eg "#12").
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -53,6 +54,9 @@ public class Index
 
   /** the special index for "last". */
   public final static String LAST = "last";
+
+  /** the indicator for numeric indices. */
+  public final static String NUMERIC_START = "#";
 
   /** the uncleaned index. */
   protected String m_Raw;
@@ -212,21 +216,18 @@ public class Index
     String	tmp;
     
     tmp = s.toLowerCase();
-    
-    if (tmp.equals(FIRST))
-      return true;
-    else if (tmp.equals(SECOND))
-      return true;
-    else if (tmp.equals(THIRD))
-      return true;
-    else if (tmp.equals(LAST_2))
-      return true;
-    else if (tmp.equals(LAST_1))
-      return true;
-    else if (tmp.equals(LAST))
-      return true;
-    else
-      return false;
+
+    switch (tmp) {
+      case FIRST:
+      case SECOND:
+      case THIRD:
+      case LAST_2:
+      case LAST_1:
+      case LAST:
+      	return true;
+      default:
+	return false;
+    }
   }
   
   /**
@@ -267,20 +268,22 @@ public class Index
    * @return		the placeholder's integer equivalent, -1 if not a placeholder
    */
   protected int parsePlaceholder(String s, int max) {
-    if (s.equals(FIRST))
-      return 0;
-    else if (s.equals(SECOND))
-      return 1;
-    else if (s.equals(THIRD))
-      return 2;
-    else if (s.equals(LAST_2))
-      return max - 3;
-    else if (s.equals(LAST_1))
-      return max - 2;
-    else if (s.equals(LAST))
-      return max - 1;
-    else
-      return -1;
+    switch (s) {
+      case FIRST:
+	return 0;
+      case SECOND:
+	return 1;
+      case THIRD:
+	return 2;
+      case LAST_2:
+	return max - 3;
+      case LAST_1:
+	return max - 2;
+      case LAST:
+	return max - 1;
+      default:
+	return -1;
+    }
   }
   
   /**
@@ -301,7 +304,10 @@ public class Index
       }
       else {
 	try {
-	  result = Integer.parseInt(s) - 1;
+          if (s.startsWith(NUMERIC_START))
+            result = Integer.parseInt(s.substring(NUMERIC_START.length())) - 1;
+          else
+            result = Integer.parseInt(s) - 1;
 	}
 	catch (Exception e) {
 	  // ignored

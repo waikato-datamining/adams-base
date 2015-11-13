@@ -133,7 +133,15 @@ public class RangeTest
     range.setRange(str);
     assertEquals("Range strings differ", str, range.getRange());
 
+    str = "#1";
+    range.setRange(str);
+    assertEquals("Range strings differ", str, range.getRange());
+
     str = "1-10";
+    range.setRange(str);
+    assertEquals("Range strings differ", str, range.getRange());
+
+    str = "#1-#10";
     range.setRange(str);
     assertEquals("Range strings differ", str, range.getRange());
 
@@ -141,7 +149,15 @@ public class RangeTest
     range.setRange(str);
     assertEquals("Range strings differ", str, range.getRange());
 
+    str = "first-#10";
+    range.setRange(str);
+    assertEquals("Range strings differ", str, range.getRange());
+
     str = "1-last";
+    range.setRange(str);
+    assertEquals("Range strings differ", str, range.getRange());
+
+    str = "#1-last";
     range.setRange(str);
     assertEquals("Range strings differ", str, range.getRange());
 
@@ -194,6 +210,12 @@ public class RangeTest
 
     range = newRange();
     range.setRange("1");
+    range.setMax(10);
+    assertEquals(1, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+
+    range = newRange();
+    range.setRange("#1");
     range.setMax(10);
     assertEquals(1, range.getIntIndices().length);
     assertEquals(true, range.isInRange(0));
@@ -297,6 +319,21 @@ public class RangeTest
     assertEquals(true, range.isInRange(7));
     assertEquals(false, range.isInRange(8));
     assertEquals(false, range.isInRange(9));
+
+    range = newRange();
+    range.setRange("#1,#2,#6,#8");
+    range.setMax(10);
+    assertEquals(4, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(true, range.isInRange(1));
+    assertEquals(false, range.isInRange(2));
+    assertEquals(false, range.isInRange(3));
+    assertEquals(false, range.isInRange(4));
+    assertEquals(true, range.isInRange(5));
+    assertEquals(false, range.isInRange(6));
+    assertEquals(true, range.isInRange(7));
+    assertEquals(false, range.isInRange(8));
+    assertEquals(false, range.isInRange(9));
   }
 
   /**
@@ -307,6 +344,12 @@ public class RangeTest
 
     range = newRange();
     range.setRange("12");
+    range.setMax(10);
+    assertEquals(0, range.getIntIndices().length);
+    assertEquals(false, range.isInRange(11));
+
+    range = newRange();
+    range.setRange("#12");
     range.setMax(10);
     assertEquals(0, range.getIntIndices().length);
     assertEquals(false, range.isInRange(11));
@@ -324,6 +367,13 @@ public class RangeTest
     assertEquals(1, range.getIntIndices().length);
     assertEquals(true, range.isInRange(4));
     assertEquals(false, range.isInRange(11));
+
+    range = newRange();
+    range.setRange("#5,#12");
+    range.setMax(10);
+    assertEquals(1, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(4));
+    assertEquals(false, range.isInRange(11));
   }
 
   /**
@@ -336,6 +386,11 @@ public class RangeTest
     range.setRange("11-20");
     range.setMax(10);
     assertEquals(0, range.getIntIndices().length);
+
+    range = newRange();
+    range.setRange("#11-#20");
+    range.setMax(10);
+    assertEquals(0, range.getIntIndices().length);
   }
 
   /**
@@ -346,6 +401,13 @@ public class RangeTest
 
     range = newRange();
     range.setRange("5-9,11-20");
+    range.setMax(10);
+    assertEquals(5, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(4));
+    assertEquals(false, range.isInRange(11));
+
+    range = newRange();
+    range.setRange("#5-#9,#11-#20");
     range.setMax(10);
     assertEquals(5, range.getIntIndices().length);
     assertEquals(true, range.isInRange(4));
@@ -364,6 +426,13 @@ public class RangeTest
     assertEquals(6, range.getIntIndices().length);
     assertEquals(true, range.isInRange(4));
     assertEquals(false, range.isInRange(11));
+
+    range = newRange();
+    range.setRange("#5-#12,#15-#20");
+    range.setMax(10);
+    assertEquals(6, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(4));
+    assertEquals(false, range.isInRange(11));
   }
 
   /**
@@ -374,6 +443,21 @@ public class RangeTest
 
     range = newRange();
     range.setRange("1-4");
+    range.setMax(10);
+    assertEquals(4, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(true, range.isInRange(1));
+    assertEquals(true, range.isInRange(2));
+    assertEquals(true, range.isInRange(3));
+    assertEquals(false, range.isInRange(4));
+    assertEquals(false, range.isInRange(5));
+    assertEquals(false, range.isInRange(6));
+    assertEquals(false, range.isInRange(7));
+    assertEquals(false, range.isInRange(8));
+    assertEquals(false, range.isInRange(9));
+
+    range = newRange();
+    range.setRange("#1-#4");
     range.setMax(10);
     assertEquals(4, range.getIntIndices().length);
     assertEquals(true, range.isInRange(0));
@@ -408,6 +492,21 @@ public class RangeTest
     assertEquals(true, range.isInRange(7));
     assertEquals(false, range.isInRange(8));
     assertEquals(false, range.isInRange(9));
+
+    range = newRange();
+    range.setRange("#1-#4,#6-#8");
+    range.setMax(10);
+    assertEquals(7, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(true, range.isInRange(1));
+    assertEquals(true, range.isInRange(2));
+    assertEquals(true, range.isInRange(3));
+    assertEquals(false, range.isInRange(4));
+    assertEquals(true, range.isInRange(5));
+    assertEquals(true, range.isInRange(6));
+    assertEquals(true, range.isInRange(7));
+    assertEquals(false, range.isInRange(8));
+    assertEquals(false, range.isInRange(9));
   }
 
   /**
@@ -418,6 +517,21 @@ public class RangeTest
 
     range = newRange();
     range.setRange("1-3,4,6-7,8");
+    range.setMax(10);
+    assertEquals(7, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(true, range.isInRange(1));
+    assertEquals(true, range.isInRange(2));
+    assertEquals(true, range.isInRange(3));
+    assertEquals(false, range.isInRange(4));
+    assertEquals(true, range.isInRange(5));
+    assertEquals(true, range.isInRange(6));
+    assertEquals(true, range.isInRange(7));
+    assertEquals(false, range.isInRange(8));
+    assertEquals(false, range.isInRange(9));
+
+    range = newRange();
+    range.setRange("#1-#3,#4,#6-#7,#8");
     range.setMax(10);
     assertEquals(7, range.getIntIndices().length);
     assertEquals(true, range.isInRange(0));
@@ -453,6 +567,22 @@ public class RangeTest
     assertEquals(true, range.isInRange(7));
     assertEquals(true, range.isInRange(8));
     assertEquals(true, range.isInRange(9));
+
+    range = newRange();
+    range.setRange("#3");
+    range.setMax(10);
+    range.setInverted(true);
+    assertEquals(9, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(true, range.isInRange(1));
+    assertEquals(false, range.isInRange(2));
+    assertEquals(true, range.isInRange(3));
+    assertEquals(true, range.isInRange(4));
+    assertEquals(true, range.isInRange(5));
+    assertEquals(true, range.isInRange(6));
+    assertEquals(true, range.isInRange(7));
+    assertEquals(true, range.isInRange(8));
+    assertEquals(true, range.isInRange(9));
   }
 
   /**
@@ -463,6 +593,22 @@ public class RangeTest
 
     range = new Range();
     range.setRange("second-5");
+    range.setMax(10);
+    range.setInverted(true);
+    assertEquals(6, range.getIntIndices().length);
+    assertEquals(true, range.isInRange(0));
+    assertEquals(false, range.isInRange(1));
+    assertEquals(false, range.isInRange(2));
+    assertEquals(false, range.isInRange(3));
+    assertEquals(false, range.isInRange(4));
+    assertEquals(true, range.isInRange(5));
+    assertEquals(true, range.isInRange(6));
+    assertEquals(true, range.isInRange(7));
+    assertEquals(true, range.isInRange(8));
+    assertEquals(true, range.isInRange(9));
+
+    range = new Range();
+    range.setRange("second-#5");
     range.setMax(10);
     range.setInverted(true);
     assertEquals(6, range.getIntIndices().length);

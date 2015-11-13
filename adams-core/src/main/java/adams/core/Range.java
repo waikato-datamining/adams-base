@@ -23,13 +23,13 @@ import gnu.trove.list.array.TIntArrayList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * A class for managing a range of 1-based indices, e.g., 1-5, 3,7,9 or 1-7,9
  * (including "first", "second", "third", "last_2", "last_1" and "last").
  * A range can be inverted by surrounding it with "inv(...)".
+ * Numeric indices can be forced by using a "#" at start (eg "#12").
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -162,10 +162,7 @@ public class Range
      */
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof SubRange))
-	return false;
-      else
-	return (compareTo((SubRange) obj) == 0);
+      return (obj instanceof SubRange) && (compareTo((SubRange) obj) == 0);
     }
 
     /**
@@ -214,6 +211,9 @@ public class Range
 
   /** "first-last" constant. */
   public final static String ALL = FIRST + RANGE + LAST;
+
+  /** the indicator for numeric indices. */
+  public final static String NUMERIC_START = "#";
 
   /** the uncleaned range string. */
   protected String m_Raw;
@@ -455,26 +455,6 @@ public class Range
   }
 
   /**
-   * Returns the placeholders to allow in the ranges.
-   * 
-   * @return		the placeholders
-   */
-  protected List<String> getPlaceholders() {
-    return new ArrayList<String>(
-	Arrays.asList(
-	    new String[]{
-		FIRST, 
-		SECOND, 
-		THIRD, 
-		LAST_2, 
-		LAST_1, 
-		LAST, 
-		INV_START, 
-		INV_END,
-	    }));
-  }
-
-  /**
    * Returns whether invalid characters should get removed.
    * <br><br>
    * Default implementation always returns true.
@@ -593,21 +573,18 @@ public class Range
     String	tmp;
     
     tmp = s.toLowerCase();
-    
-    if (tmp.equals(FIRST))
-      return true;
-    else if (tmp.equals(SECOND))
-      return true;
-    else if (tmp.equals(THIRD))
-      return true;
-    else if (tmp.equals(LAST_2))
-      return true;
-    else if (tmp.equals(LAST_1))
-      return true;
-    else if (tmp.equals(LAST))
-      return true;
-    else
-      return false;
+
+    switch (tmp) {
+      case FIRST:
+      case SECOND:
+      case THIRD:
+      case LAST_2:
+      case LAST_1:
+      case LAST:
+      	return true;
+      default:
+	return false;
+    }
   }
 
   /**
@@ -618,20 +595,22 @@ public class Range
    * @return		the placeholder's integer equivalent, -1 if not a placeholder
    */
   protected int parsePlaceholder(String s, int max) {
-    if (s.equals(FIRST))
-      return 0;
-    else if (s.equals(SECOND))
-      return 1;
-    else if (s.equals(THIRD))
-      return 2;
-    else if (s.equals(LAST_2))
-      return max - 3;
-    else if (s.equals(LAST_1))
-      return max - 2;
-    else if (s.equals(LAST))
-      return max - 1;
-    else
-      return -1;
+    switch (s) {
+      case FIRST:
+	return 0;
+      case SECOND:
+	return 1;
+      case THIRD:
+	return 2;
+      case LAST_2:
+	return max - 3;
+      case LAST_1:
+	return max - 2;
+      case LAST:
+	return max - 1;
+      default:
+	return -1;
+    }
   }
 
   /**
@@ -649,7 +628,10 @@ public class Range
     }
     else {
       try {
-        result = Integer.parseInt(s) - 1;
+	if (s.startsWith(NUMERIC_START))
+	  result = Integer.parseInt(s.substring(NUMERIC_START.length())) - 1;
+	else
+	  result = Integer.parseInt(s) - 1;
       }
       catch (Exception e) {
 	result = -1;
@@ -849,11 +831,11 @@ public class Range
     indicesThis  = getIntIndices();
     indicesOther = o.getIntIndices();
 
-    result = new Integer(indicesThis.length).compareTo(new Integer(indicesOther.length));
+    result = new Integer(indicesThis.length).compareTo(indicesOther.length);
 
     if (result == 0) {
       for (i = 0; i < indicesThis.length; i++) {
-	result = new Integer(indicesThis[i]).compareTo(new Integer(indicesOther[i]));
+	result = new Integer(indicesThis[i]).compareTo(indicesOther[i]);
 	if (result != 0)
 	  break;
       }

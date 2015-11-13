@@ -78,9 +78,6 @@ public abstract class AbstractDataBackedRange<T>
   
   /** the indices of the names. */
   protected HashMap<String,Integer> m_Indices;
-  
-  /** the comparator to use. */
-  protected transient Comparator m_Comparator;
 
   /**
    * Initializes with no range.
@@ -116,10 +113,9 @@ public abstract class AbstractDataBackedRange<T>
   protected void initialize() {
     super.initialize();
 
-    m_Data       = null;
-    m_Names      = null;
-    m_Indices    = null;
-    m_Comparator = null;
+    m_Data    = null;
+    m_Names   = null;
+    m_Indices = null;
   }
   
   /**
@@ -188,31 +184,12 @@ public abstract class AbstractDataBackedRange<T>
   protected abstract String getName(T data, int colIndex);
 
   /**
-   * Returns a new comparator to use for sorting the names.
-   * 
-   * @return		the comparator
-   */
-  protected abstract Comparator newComparator();
-
-  /**
-   * Returns the comparator to use for sorting the names.
-   * 
-   * @return		the comparator
-   */
-  protected synchronized Comparator getComparator() {
-    if (m_Comparator == null)
-      m_Comparator = newComparator();
-    return m_Comparator;
-  }
-  
-  /**
    * Initializes the lookup tables.
-   * 
-   * @see		#getComparator()
    */
   protected synchronized void initLookUp() {
     int				i;
     String			name;
+    String			escaped;
     List<String>		names;
     HashMap<String,Integer>	indices;
     
@@ -222,11 +199,16 @@ public abstract class AbstractDataBackedRange<T>
       if (m_Data != null) {
 	for (i = 0; i < getNumNames(m_Data); i++) {
 	  name = getName(m_Data, i);
-	  name = escapeName(name);
 	  names.add(name);
 	  indices.put(name, i);
+	  if (!name.startsWith("\"") && !name.endsWith("\"")) {
+	    escaped = "\"" + name + "\"";
+	    names.add(escaped);
+	    indices.put(escaped, i);
+	  }
 	}
-	Collections.sort(names, getComparator());
+	Collections.sort(names);
+	Collections.reverse(names);
       }
       m_Names   = names;
       m_Indices = indices;
@@ -277,23 +259,6 @@ public abstract class AbstractDataBackedRange<T>
     return result;
   }
 
-  /**
-   * Returns the placeholders to allow in the ranges. This includes the
-   * names.
-   * 
-   * @return		the placeholders
-   * @see		#getNames()
-   */
-  @Override
-  protected List<String> getPlaceholders() {
-    List<String>	result;
-    
-    result = super.getPlaceholders();
-    result.addAll(getNames());
-    
-    return result;
-  }
-  
   /**
    * Returns whether invalid characters should get removed.
    * 
@@ -348,11 +313,11 @@ public abstract class AbstractDataBackedRange<T>
    * @return		the processed name
    */
   public static String escapeName(String col) {
-    if (col.indexOf(RANGE) > -1)
+    if (col.contains(RANGE))
       col = "\"" + col + "\"";
-    else if (col.indexOf(SEPARATOR) > -1)
+    else if (col.contains(SEPARATOR))
       col = "\"" + col + "\"";
-    else if (col.indexOf("_") > -1)
+    else if (col.contains("_"))
       col = "\"" + col + "\"";
     return col;
   }

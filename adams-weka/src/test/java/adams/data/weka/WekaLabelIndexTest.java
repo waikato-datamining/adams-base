@@ -142,7 +142,12 @@ public class WekaLabelIndexTest
     index.setIndex("none");
     assertEquals("should be valid", 0, index.getIntIndex());
     assertEquals("should be same", "none", index.getIndex());
-    
+
+    index.setData(m_Data.attribute("pension"));
+    index.setIndex("\"none\"");
+    assertEquals("should be valid", 0, index.getIntIndex());
+    assertEquals("should be same", "\"none\"", index.getIndex());
+
     index.setData(m_Data.attribute("pension"));
     index.setIndex("Empl_contr");
     assertEquals("should be invalid", -1, index.getIntIndex());
@@ -152,6 +157,11 @@ public class WekaLabelIndexTest
     index.setIndex("empl_contr");
     assertEquals("should be valid", 2, index.getIntIndex());
     assertEquals("should be same", "empl_contr", index.getIndex());
+
+    index.setData(m_Data.attribute("pension"));
+    index.setIndex("\"empl_contr\"");
+    assertEquals("should be valid", 2, index.getIntIndex());
+    assertEquals("should be same", "\"empl_contr\"", index.getIndex());
   }
 
   /**

@@ -175,7 +175,7 @@ public class WekaAttributeIndexTest
 
     index = new WekaAttributeIndex("\"sample_id\"");
     index.setData(data);
-    assertEquals("wrong index", -1, index.getIntIndex());
+    assertEquals("wrong index", 0, index.getIntIndex());
 
     index = new WekaAttributeIndex("att1");
     index.setData(data);
@@ -186,6 +186,10 @@ public class WekaAttributeIndexTest
     assertEquals("wrong index", 2, index.getIntIndex());
 
     index = new WekaAttributeIndex("att_3_4");
+    index.setData(data);
+    assertEquals("wrong index", 3, index.getIntIndex());
+
+    index = new WekaAttributeIndex("\"att_3_4\"");
     index.setData(data);
     assertEquals("wrong index", 3, index.getIntIndex());
 

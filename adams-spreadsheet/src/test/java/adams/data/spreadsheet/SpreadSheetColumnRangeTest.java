@@ -128,7 +128,13 @@ public class SpreadSheetColumnRangeTest
     assertEquals("should be valid", 1, range.getIntIndices().length);
     assertEquals("should be valid", 0, range.getIntIndices()[0]);
     assertEquals("should be same", "Field", range.getRange());
-    
+
+    range.setSpreadSheet(m_Sheet);
+    range.setRange("\"Field\"");
+    assertEquals("should be valid", 1, range.getIntIndices().length);
+    assertEquals("should be valid", 0, range.getIntIndices()[0]);
+    assertEquals("should be same", "\"Field\"", range.getRange());
+
     range.setSpreadSheet(m_Sheet);
     range.setRange("field");
     assertEquals("should not be valid", 0, range.getIntIndices().length);
@@ -143,11 +149,24 @@ public class SpreadSheetColumnRangeTest
     range.setRange("Field-Value");
     assertEquals("should be invalid", 0, range.getIntIndices().length);
     assertEquals("should be same", "Field-Value", range.getRange());
-    
+
+    range.setSpreadSheet(null);
+    range.setRange("\"Field\"-\"Value\"");
+    assertEquals("should be invalid", 0, range.getIntIndices().length);
+    assertEquals("should be same", "\"Field\"-\"Value\"", range.getRange());
+
     range.setSpreadSheet(m_Sheet);
     range.setRange("Field-Value");
     assertEquals("should be valid", 3, range.getIntIndices().length);
     assertEquals("should be same", "Field-Value", range.getRange());
+    assertEquals("should be valid", 0, range.getIntIndices()[0]);
+    assertEquals("should be valid", 1, range.getIntIndices()[1]);
+    assertEquals("should be valid", 2, range.getIntIndices()[2]);
+
+    range.setSpreadSheet(m_Sheet);
+    range.setRange("\"Field\"-\"Value\"");
+    assertEquals("should be valid", 3, range.getIntIndices().length);
+    assertEquals("should be same", "\"Field\"-\"Value\"", range.getRange());
     assertEquals("should be valid", 0, range.getIntIndices()[0]);
     assertEquals("should be valid", 1, range.getIntIndices()[1]);
     assertEquals("should be valid", 2, range.getIntIndices()[2]);

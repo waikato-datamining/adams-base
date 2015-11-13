@@ -15,7 +15,7 @@
 
 /*
  * IndexTest.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -226,6 +226,9 @@ public class IndexTest
     Index	index;
 
     index = newIndex("3", 10);
+    assertEquals(2, index.getIntIndex());
+
+    index = newIndex("#3", 10);
     assertEquals(2, index.getIntIndex());
   }
 

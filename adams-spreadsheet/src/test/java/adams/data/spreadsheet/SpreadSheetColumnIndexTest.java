@@ -19,10 +19,6 @@
  */
 package adams.data.spreadsheet;
 
-import java.io.FileNotFoundException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Index;
 import adams.core.IndexTest;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -30,6 +26,10 @@ import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.FileNotFoundException;
 
 /**
  * Tests the adams.core.SpreadSheetColumnIndex class. Run from commandline with: <br><br>
@@ -123,16 +123,31 @@ public class SpreadSheetColumnIndexTest
     index.setIndex("Field");
     assertEquals("should be valid", 0, index.getIntIndex());
     assertEquals("should be same", "Field", index.getIndex());
-    
+
+    index.setSpreadSheet(m_Sheet);
+    index.setIndex("\"Field\"");
+    assertEquals("should be valid", 0, index.getIntIndex());
+    assertEquals("should be same", "\"Field\"", index.getIndex());
+
     index.setSpreadSheet(m_Sheet);
     index.setIndex("field");
     assertEquals("should be invalid", -1, index.getIntIndex());
     assertEquals("should be same", "field", index.getIndex());
-    
+
+    index.setSpreadSheet(m_Sheet);
+    index.setIndex("\"field\"");
+    assertEquals("should be invalid", -1, index.getIntIndex());
+    assertEquals("should be same", "\"field\"", index.getIndex());
+
     index.setSpreadSheet(m_Sheet);
     index.setIndex("Value");
     assertEquals("should be valid", 2, index.getIntIndex());
     assertEquals("should be same", "Value", index.getIndex());
+
+    index.setSpreadSheet(m_Sheet);
+    index.setIndex("\"Value\"");
+    assertEquals("should be valid", 2, index.getIntIndex());
+    assertEquals("should be same", "\"Value\"", index.getIndex());
   }
   
   /**

@@ -145,6 +145,25 @@ public class WekaLabelRangeTest
     range.setRange("half");
     assertEquals("should be valid", 1, range.getIntIndices().length);
     assertEquals("should be same", "half", range.getRange());
+
+    range.setData(m_Data.attribute(m_Data.numAttributes() - 2));
+    range.setRange("\"half\"");
+    assertEquals("should be valid", 1, range.getIntIndices().length);
+    assertEquals("should be same", "\"half\"", range.getRange());
+
+    range.setData(m_Data.attribute(m_Data.numAttributes() - 2));
+    range.setRange("none-half");
+    assertEquals("should be valid", 2, range.getIntIndices().length);
+    assertEquals("should be valid", 0, range.getIntIndices()[0]);
+    assertEquals("should be valid", 1, range.getIntIndices()[1]);
+    assertEquals("should be same", "none-half", range.getRange());
+
+    range.setData(m_Data.attribute(m_Data.numAttributes() - 2));
+    range.setRange("\"none\"-\"half\"");
+    assertEquals("should be valid", 2, range.getIntIndices().length);
+    assertEquals("should be valid", 0, range.getIntIndices()[0]);
+    assertEquals("should be valid", 1, range.getIntIndices()[1]);
+    assertEquals("should be same", "\"none\"-\"half\"", range.getRange());
   }
   
   /**
@@ -175,7 +194,13 @@ public class WekaLabelRangeTest
     range.setData(m_Data.attribute("vacation"));
     assertEquals("# indices differs", 1, range.getIntIndices().length);
     assertEquals("index differs", 1, range.getIntIndices()[0]);
-    
+
+    range = new WekaLabelRange();
+    range.setRange("\"average\"");
+    range.setData(m_Data.attribute("vacation"));
+    assertEquals("# indices differs", 1, range.getIntIndices().length);
+    assertEquals("index differs", 1, range.getIntIndices()[0]);
+
     range = new WekaLabelRange();
     range.setRange("\"below_average\"");
     range.setData(m_Data.attribute("vacation"));

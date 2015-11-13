@@ -23,8 +23,6 @@ import adams.core.AbstractDataBackedRange;
 import adams.core.Range;
 import weka.core.Instances;
 
-import java.util.Comparator;
-
 /**
  * Extended {@link Range} class that also allows attribute names for specifying
  * attribute positions (names are case-insensitive, just like placeholders for 
@@ -65,16 +63,6 @@ public class WekaAttributeRange
    */
   public WekaAttributeRange(String range, int max) {
     super(range, max);
-  }
-
-  /**
-   * Returns a new comparator to use for sorting the names.
-   * 
-   * @return		the comparator
-   */
-  @Override
-  protected Comparator newComparator() {
-    return new InvertedStringLengthComparator();
   }
 
   /**
@@ -121,6 +109,8 @@ public class WekaAttributeRange
       + "sub-ranges of indices ('start-end'); "
       + "'inv(...)' inverts the range '...'; apart from attribute names "
       + "(case-sensitive), the following placeholders can be used as well: "
-      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST;
+      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST + "; "
+      + "numeric indices can be enforced by preceding them with '#' (eg '#12'); "
+      + "attribute names can be surrounded by double quotes.";
   }
 }

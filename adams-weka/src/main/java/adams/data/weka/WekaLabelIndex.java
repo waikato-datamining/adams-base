@@ -105,6 +105,8 @@ public class WekaLabelIndex
     return
         "An index is a number starting with 1; apart from label names "
       + "(case-sensitive), the following placeholders can be used as well: "
-      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST;
+      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST + "; "
+      + "numeric indices can be enforced by preceding them with '#' (eg '#12'); "
+      + "label names can be surrounded by double quotes.";
   }
 }

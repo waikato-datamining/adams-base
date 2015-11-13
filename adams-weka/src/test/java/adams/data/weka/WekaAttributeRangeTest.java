@@ -132,7 +132,13 @@ public class WekaAttributeRangeTest
     assertEquals("should be valid", 1, range.getIntIndices().length);
     assertEquals("should be valid", 0, range.getIntIndices()[0]);
     assertEquals("should be same", "duration", range.getRange());
-    
+
+    range.setData(m_Data);
+    range.setRange("\"duration\"");
+    assertEquals("should be valid", 1, range.getIntIndices().length);
+    assertEquals("should be valid", 0, range.getIntIndices()[0]);
+    assertEquals("should be same", "\"duration\"", range.getRange());
+
     range.setData(m_Data);
     range.setRange("Duration");
     assertEquals("should not be valid", 0, range.getIntIndices().length);
@@ -147,11 +153,23 @@ public class WekaAttributeRangeTest
     range.setRange("class-duration");
     assertEquals("should be invalid", 0, range.getIntIndices().length);
     assertEquals("should be same", "class-duration", range.getRange());
-    
+
+    range.setData(null);
+    range.setRange("\"class\"-\"duration\"");
+    assertEquals("should be invalid", 0, range.getIntIndices().length);
+    assertEquals("should be same", "\"class\"-\"duration\"", range.getRange());
+
     range.setData(m_Data);
     range.setRange("duration-class");
     assertEquals("should be valid", 17, range.getIntIndices().length);
     assertEquals("should be same", "duration-class", range.getRange());
+    for (int i = 0; i < m_Data.numAttributes(); i++)
+      assertEquals("should be valid", i, range.getIntIndices()[i]);
+
+    range.setData(m_Data);
+    range.setRange("\"duration\"-\"class\"");
+    assertEquals("should be valid", 17, range.getIntIndices().length);
+    assertEquals("should be same", "\"duration\"-\"class\"", range.getRange());
     for (int i = 0; i < m_Data.numAttributes(); i++)
       assertEquals("should be valid", i, range.getIntIndices()[i]);
   }

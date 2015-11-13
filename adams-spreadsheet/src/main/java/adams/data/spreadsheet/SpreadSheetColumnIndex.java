@@ -66,7 +66,6 @@ public class SpreadSheetColumnIndex
    * Sets the spreadsheet to use for interpreting the column name.
    * 
    * @param value	the spreadsheet to use, can be null
-   * @see		#setData(SpreadSheet)
    */
   public void setSpreadSheet(SpreadSheet value) {
     setData(value);
@@ -124,6 +123,8 @@ public class SpreadSheetColumnIndex
     return
         "An index is a number starting with 1; column names "
       + "(case-sensitive) as well as the following placeholders can be used: "
-      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST;
+      + FIRST + ", " + SECOND + ", " + THIRD + ", " + LAST_2 + ", " + LAST_1 + ", " + LAST + "; "
+      + "numeric indices can be enforced by preceding them with '#' (eg '#12'); "
+      + "column names can be surrounded by double quotes.";
   }
 }

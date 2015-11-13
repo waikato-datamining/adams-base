@@ -27,10 +27,13 @@ import java.util.List;
 /**
  * Ancestor for index classes that can use names as index as well as the
  * placeholders like 'first' and 'last'.
+ * Numeric indices can be forced by using a "#" at start (eg "#12").
+ * Names can be surrounded by double quotes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of the underlying data
+ *           #
  */
 public abstract class AbstractDataBackedIndex<T>
   extends Index {
@@ -148,6 +151,7 @@ public abstract class AbstractDataBackedIndex<T>
   protected synchronized List<String> getNames() {
     int		i;
     String	name;
+    String	escaped;
     
     if (m_Names == null) {
       m_Names   = new ArrayList<String>();
@@ -156,6 +160,11 @@ public abstract class AbstractDataBackedIndex<T>
 	name = getName(m_Data, i);
         m_Names.add(name);
         m_Indices.put(name, i);
+	if (!name.startsWith("\"") && !name.endsWith("\"")) {
+	  escaped = "\"" + name + "\"";
+	  m_Names.add(escaped);
+	  m_Indices.put(escaped, i);
+	}
       }
       Collections.sort(m_Names);
       Collections.reverse(m_Names);
