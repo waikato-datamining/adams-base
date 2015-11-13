@@ -15,7 +15,7 @@
 
 /**
  * AbstractDataBackedIndex.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Extended {@link Index} class that can use an column name to determine an
- * index of a column as well.
- * 
+ * Ancestor for index classes that can use names as index as well as the
+ * placeholders like 'first' and 'last'.
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of the underlying data
@@ -41,10 +41,10 @@ public abstract class AbstractDataBackedIndex<T>
   /** the underlying data. */
   protected T m_Data;
   
-  /** the column names to replace. */
+  /** the names to replace. */
   protected List<String> m_Names;
   
-  /** the indices of the column names. */
+  /** the indices of the names. */
   protected HashMap<String,Integer> m_Indices;
   
   /**
@@ -87,7 +87,7 @@ public abstract class AbstractDataBackedIndex<T>
   }
   
   /**
-   * Sets the dataset to use for interpreting the column name.
+   * Sets the dataset to use for interpreting the name.
    * 
    * @param value	the dataset to use, can be null
    */
@@ -97,7 +97,7 @@ public abstract class AbstractDataBackedIndex<T>
     if (m_Data == null)
       setMax(-1);
     else
-      setMax(getNumColumns(value));
+      setMax(getNumNames(value));
   }
   
   /**
@@ -125,25 +125,25 @@ public abstract class AbstractDataBackedIndex<T>
   }
 
   /**
-   * Returns the number of columns the dataset has.
+   * Returns the number of names the data has.
    * 
-   * @param data	the dataset to retrieve the number of columns
+   * @param data	the data to retrieve the number of names
    */
-  protected abstract int getNumColumns(T data);
+  protected abstract int getNumNames(T data);
   
   /**
-   * Returns the column name at the specified index.
+   * Returns the name at the specified index.
    * 
-   * @param data	the dataset to use
-   * @param colIndex	the column index
-   * @return		the column name
+   * @param data	the data to use
+   * @param colIndex	the name index
+   * @return		the name
    */
-  protected abstract String getColumnName(T data, int colIndex);
+  protected abstract String getName(T data, int colIndex);
   
   /**
-   * Returns the column names.
+   * Returns the names.
    * 
-   * @return		the column names
+   * @return		the names
    */
   protected synchronized List<String> getNames() {
     int		i;
@@ -152,8 +152,8 @@ public abstract class AbstractDataBackedIndex<T>
     if (m_Names == null) {
       m_Names   = new ArrayList<String>();
       m_Indices = new HashMap<String,Integer>();
-      for (i = 0; i < getNumColumns(m_Data); i++) {
-	name = getColumnName(m_Data, i);
+      for (i = 0; i < getNumNames(m_Data); i++) {
+	name = getName(m_Data, i);
         m_Names.add(name);
         m_Indices.put(name, i);
       }
@@ -176,12 +176,12 @@ public abstract class AbstractDataBackedIndex<T>
   }
   
   /**
-   * Replaces any column name in the string with the actual 1-based index.
+   * Replaces any name in the string with the actual 1-based index.
    * 
    * @param s		the string to process
    * @return		the (potentially) updated string
    */
-  protected String replaceColumnName(String s) {
+  protected String replaceName(String s) {
     String		result;
     int			i;
     List<String>	names;
@@ -200,12 +200,12 @@ public abstract class AbstractDataBackedIndex<T>
   }
   
   /**
-   * Checks whether the strings represents a column name.
+   * Checks whether the strings represents a name.
    * 
    * @param s		the string to process
-   * @return		true if string is a column name
+   * @return		true if string is a name
    */
-  protected boolean isColumnName(String s) {
+  protected boolean isName(String s) {
     boolean		result;
     int			i;
     List<String>	names;
@@ -239,7 +239,7 @@ public abstract class AbstractDataBackedIndex<T>
 	return s;
     }
     else {
-      if (isColumnName(s))
+      if (isName(s))
 	return s;
       else
 	return super.clean(s);
@@ -258,6 +258,6 @@ public abstract class AbstractDataBackedIndex<T>
     if (m_Data == null)
       return super.parse(s, max);
     else
-      return super.parse(replaceColumnName(s), max);
+      return super.parse(replaceName(s), max);
   }
 }

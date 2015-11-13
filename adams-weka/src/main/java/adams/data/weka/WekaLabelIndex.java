@@ -79,7 +79,7 @@ public class WekaLabelIndex
    * @param data	the attribute to retrieve the number of labels
    */
   @Override
-  protected int getNumColumns(Attribute data) {
+  protected int getNumNames(Attribute data) {
     return data.numValues();
   }
   
@@ -91,7 +91,7 @@ public class WekaLabelIndex
    * @return		the label name
    */
   @Override
-  protected String getColumnName(Attribute data, int colIndex) {
+  protected String getName(Attribute data, int colIndex) {
     return data.value(colIndex);
   }
 

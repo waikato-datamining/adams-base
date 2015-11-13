@@ -22,12 +22,12 @@ package adams.flow.transformer;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
 import adams.data.weka.WekaAttributeIndex;
+import adams.data.weka.WekaLabelIndex;
 import adams.flow.core.DataInfoActor;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
@@ -195,7 +195,7 @@ public class WekaInstancesInfo
   protected WekaAttributeIndex m_AttributeIndex;
 
   /** the index of the label. */
-  protected Index m_LabelIndex;
+  protected WekaLabelIndex m_LabelIndex;
 
   /** for formatting dates. */
   protected DateFormat m_DateFormat;
@@ -232,7 +232,7 @@ public class WekaInstancesInfo
 
     m_OptionManager.add(
 	    "label-index", "labelIndex",
-	    new Index(Index.FIRST));
+	    new WekaLabelIndex(WekaLabelIndex.FIRST));
   }
 
   /**
@@ -353,7 +353,7 @@ public class WekaInstancesInfo
    *
    * @param value	the 1-based index
    */
-  public void setLabelIndex(Index value) {
+  public void setLabelIndex(WekaLabelIndex value) {
     m_LabelIndex = value;
     reset();
   }
@@ -363,7 +363,7 @@ public class WekaInstancesInfo
    *
    * @return		the 1-based index
    */
-  public Index getLabelIndex() {
+  public WekaLabelIndex getLabelIndex() {
     return m_LabelIndex;
   }
 
@@ -604,7 +604,7 @@ public class WekaInstancesInfo
 
       case LABEL_COUNT:
 	if (index > -1) {
-	  m_LabelIndex.setMax(inst.attribute(index).numValues());
+	  m_LabelIndex.setData(inst.attribute(index));
 	  labelIndex = m_LabelIndex.getIntIndex();
 	  m_Queue.add(inst.attributeStats(index).nominalCounts[labelIndex]);
 	}
@@ -627,7 +627,7 @@ public class WekaInstancesInfo
 
       case CLASS_LABEL_COUNT:
 	if (inst.classIndex() > -1) {
-	  m_LabelIndex.setMax(inst.classAttribute().numValues());
+	  m_LabelIndex.setData(inst.classAttribute());
 	  labelIndex = m_LabelIndex.getIntIndex();
 	  m_Queue.add(inst.attributeStats(inst.classIndex()).nominalCounts[labelIndex]);
 	}

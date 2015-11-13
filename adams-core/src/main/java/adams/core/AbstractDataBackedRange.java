@@ -15,9 +15,11 @@
 
 /**
  * AbstractDataBackedRange.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,13 +28,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import adams.data.spreadsheet.SpreadSheetUtils;
-
 /**
- * Extended {@link Range} class that also allows column names for specifying
- * column positions (names are case-insensitive, just like placeholders for 
- * 'first', 'second', etc). If column names contain "-" or "," then they
- * need to be surrounded by double-quotes.
+ * Ancestor for range classes that allow additional names in the range string,
+ * just like placeholders for 'first', 'second', etc). If names contain
+ * "-" or "," then they need to be surrounded by double-quotes.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -74,10 +73,10 @@ public abstract class AbstractDataBackedRange<T>
   /** the underlying dataset. */
   protected T m_Data;
   
-  /** the column names to replace. */
+  /** the names to replace. */
   protected List<String> m_Names;
   
-  /** the indices of the column names. */
+  /** the indices of the names. */
   protected HashMap<String,Integer> m_Indices;
   
   /** the comparator to use. */
@@ -150,43 +149,43 @@ public abstract class AbstractDataBackedRange<T>
   }
 
   /**
-   * Sets the dataset to use for interpreting the column name.
+   * Sets the data to use for interpreting the names.
    * 
-   * @param value	the dataset to use, can be null
+   * @param value	the data to use, can be null
    */
   public void setData(T value) {
     m_Data = value;
     if (m_Data == null)
       setMax(-1);
     else
-      setMax(getNumColumns(value));
+      setMax(getNumNames(value));
     reset();
   }
   
   /**
-   * Returns the underlying dataset.
+   * Returns the underlying data.
    * 
-   * @return		the underlying dataset, null if none set
+   * @return		the underlying data, null if none set
    */
   public T getData() {
     return m_Data;
   }
 
   /**
-   * Returns the number of columns the dataset has.
+   * Returns the number of names the data has.
    * 
-   * @param data	the dataset to retrieve the number of columns
+   * @param data	the data to retrieve the number of names
    */
-  protected abstract int getNumColumns(T data);
+  protected abstract int getNumNames(T data);
   
   /**
-   * Returns the column name at the specified index.
+   * Returns the name at the specified index.
    * 
-   * @param data	the dataset to use
-   * @param colIndex	the column index
-   * @return		the column name
+   * @param data	the data to use
+   * @param colIndex	the name index
+   * @return		the name
    */
-  protected abstract String getColumnName(T data, int colIndex);
+  protected abstract String getName(T data, int colIndex);
 
   /**
    * Returns a new comparator to use for sorting the names.
@@ -221,9 +220,9 @@ public abstract class AbstractDataBackedRange<T>
       names   = new ArrayList<String>();
       indices = new HashMap<String,Integer>();
       if (m_Data != null) {
-	for (i = 0; i < getNumColumns(m_Data); i++) {
-	  name = getColumnName(m_Data, i);
-	  name = escapeColumnName(name);
+	for (i = 0; i < getNumNames(m_Data); i++) {
+	  name = getName(m_Data, i);
+	  name = escapeName(name);
 	  names.add(name);
 	  indices.put(name, i);
 	}
@@ -235,9 +234,9 @@ public abstract class AbstractDataBackedRange<T>
   }
   
   /**
-   * Returns the column names.
+   * Returns the names.
    * 
-   * @return		the column names
+   * @return		the names
    */
   protected List<String> getNames() {
     initLookUp();
@@ -255,12 +254,12 @@ public abstract class AbstractDataBackedRange<T>
   }
   
   /**
-   * Checks whether the strings represents a column name.
+   * Checks whether the strings represents a name.
    * 
    * @param s		the string to process
-   * @return		true if string is a column name
+   * @return		true if string is a name
    */
-  protected boolean isColumnName(String s) {
+  protected boolean isName(String s) {
     boolean		result;
     int			i;
     List<String>	names;
@@ -280,7 +279,7 @@ public abstract class AbstractDataBackedRange<T>
 
   /**
    * Returns the placeholders to allow in the ranges. This includes the
-   * column names.
+   * names.
    * 
    * @return		the placeholders
    * @see		#getNames()
@@ -358,19 +357,19 @@ public abstract class AbstractDataBackedRange<T>
    */
   @Override
   protected int parse(String s, int max) {
-    if (isColumnName(s))
+    if (isName(s))
       return getIndices().get(s);
     else
       return super.parse(s, max);
   }
   
   /**
-   * Escapes the column name, if necessary.
+   * Escapes the name, if necessary.
    * 
-   * @param col		the column name to (potentially) escape
+   * @param col		the name to (potentially) escape
    * @return		the processed name
    */
-  public static String escapeColumnName(String col) {
+  public static String escapeName(String col) {
     if (col.indexOf(RANGE) > -1)
       col = "\"" + col + "\"";
     else if (col.indexOf(SEPARATOR) > -1)
@@ -381,12 +380,12 @@ public abstract class AbstractDataBackedRange<T>
   }
   
   /**
-   * Unescapes the column name, if necessary.
+   * Unescapes the name, if necessary.
    * 
-   * @param col		the column name to (potentially) unescape
+   * @param col		the name to (potentially) unescape
    * @return		the processed name
    */
-  public static String unescapeColumnName(String col) {
+  public static String unescapeName(String col) {
     if (col.startsWith("\"") && (col.endsWith("\"")))
       return col.substring(1, col.length() - 1);
     else

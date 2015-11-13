@@ -20,12 +20,12 @@
 
 package adams.flow.transformer;
 
-import weka.core.Attribute;
-import weka.core.Instance;
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.weka.WekaAttributeIndex;
 import adams.flow.core.Token;
+import weka.core.Attribute;
+import weka.core.Instance;
 
 /**
  <!-- globalinfo-start -->
@@ -97,7 +97,7 @@ public class WekaSetInstanceValue
   private static final long serialVersionUID = -4710366291340930250L;
 
   /** the attribute index to set in the Instance. */
-  protected Index m_Index;
+  protected WekaAttributeIndex m_Index;
 
   /** the value to set. */
   protected String m_Value;
@@ -125,7 +125,7 @@ public class WekaSetInstanceValue
 
     m_OptionManager.add(
 	    "index", "index",
-	    new Index(Index.LAST));
+	    new WekaAttributeIndex(WekaAttributeIndex.LAST));
 
     m_OptionManager.add(
 	    "value", "value",
@@ -139,7 +139,7 @@ public class WekaSetInstanceValue
   protected void initialize() {
     super.initialize();
 
-    m_Index = new Index("last");
+    m_Index = new WekaAttributeIndex("last");
   }
 
   /**
@@ -147,7 +147,7 @@ public class WekaSetInstanceValue
    *
    * @param value	the 1-based index
    */
-  public void setIndex(Index value) {
+  public void setIndex(WekaAttributeIndex value) {
     m_Index = value;
     reset();
   }
@@ -157,7 +157,7 @@ public class WekaSetInstanceValue
    *
    * @return		the field
    */
-  public Index getIndex() {
+  public WekaAttributeIndex getIndex() {
     return m_Index;
   }
 
@@ -248,7 +248,7 @@ public class WekaSetInstanceValue
 
     inst = (Instance) m_InputToken.getPayload();
     inst = (Instance) inst.copy();
-    m_Index.setMax(inst.numAttributes());
+    m_Index.setData(inst.dataset());
     index = m_Index.getIntIndex();
 
     try {

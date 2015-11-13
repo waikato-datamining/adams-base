@@ -64,6 +64,6 @@ public class SpreadSheetUnescapeColumnName
    */
   @Override
   protected Object doConvert() throws Exception {
-    return AbstractDataBackedRange.unescapeColumnName((String) m_Input);
+    return AbstractDataBackedRange.unescapeName((String) m_Input);
   }
 }

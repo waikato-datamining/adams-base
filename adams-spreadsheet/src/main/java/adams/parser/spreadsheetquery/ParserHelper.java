@@ -212,7 +212,7 @@ public class ParserHelper
    * @param col the column name
    */
   public void addColumn(String col) {
-    m_Columns.add(SpreadSheetColumnRange.escapeColumnName(col));
+    m_Columns.add(SpreadSheetColumnRange.escapeName(col));
     if (isLoggingEnabled())
       getLogger().fine("column: " + col);
   }
@@ -270,7 +270,7 @@ public class ParserHelper
       m_Aggregates.put(agg, new ArrayList<String>());
     
     if (agg != Aggregate.COUNT) {
-      col  = SpreadSheetColumnRange.escapeColumnName(col);
+      col  = SpreadSheetColumnRange.escapeName(col);
       cols = m_Aggregates.get(agg);
       if (!cols.contains(col))
 	cols.add(col);
@@ -301,7 +301,7 @@ public class ParserHelper
    * @param col the column name
    */
   public void addGroupByColumn(String col) {
-    m_GroupByColumns.add(SpreadSheetColumnRange.escapeColumnName(col));
+    m_GroupByColumns.add(SpreadSheetColumnRange.escapeName(col));
     
     if (isLoggingEnabled())
       getLogger().fine("group by: " + col);

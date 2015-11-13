@@ -19,11 +19,11 @@
  */
 package adams.data.weka;
 
-import java.util.Comparator;
-
-import weka.core.Instances;
 import adams.core.AbstractDataBackedRange;
 import adams.core.Range;
+import weka.core.Instances;
+
+import java.util.Comparator;
 
 /**
  * Extended {@link Range} class that also allows attribute names for specifying
@@ -93,7 +93,7 @@ public class WekaAttributeRange
    * @param data	the dataset to retrieve the number of columns
    */
   @Override
-  protected int getNumColumns(Instances data) {
+  protected int getNumNames(Instances data) {
     return data.numAttributes();
   }
   
@@ -105,7 +105,7 @@ public class WekaAttributeRange
    * @return		the column name
    */
   @Override
-  protected String getColumnName(Instances data, int colIndex) {
+  protected String getName(Instances data, int colIndex) {
     return data.attribute(colIndex).name();
   }
 

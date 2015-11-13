@@ -79,7 +79,7 @@ public class WekaAttributeIndex
    * @param data	the dataset to retrieve the number of columns
    */
   @Override
-  protected int getNumColumns(Instances data) {
+  protected int getNumNames(Instances data) {
     return data.numAttributes();
   }
   
@@ -91,7 +91,7 @@ public class WekaAttributeIndex
    * @return		the column name
    */
   @Override
-  protected String getColumnName(Instances data, int colIndex) {
+  protected String getName(Instances data, int colIndex) {
     return data.attribute(colIndex).name();
   }
 

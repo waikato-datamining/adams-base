@@ -20,15 +20,15 @@
 
 package adams.flow.transformer;
 
-import weka.classifiers.Evaluation;
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.weka.WekaLabelRange;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.EvaluationHelper;
 import adams.flow.core.EvaluationStatistic;
 import adams.flow.core.Token;
+import weka.classifiers.Evaluation;
 
 /**
  <!-- globalinfo-start -->
@@ -107,7 +107,7 @@ public class WekaEvaluationValues
   protected EvaluationStatistic[] m_StatisticValues;
 
   /** the range of the class labels. */
-  protected Range m_ClassIndex;
+  protected WekaLabelRange m_ClassIndex;
 
   /**
    * Returns a string describing the object.
@@ -135,7 +135,7 @@ public class WekaEvaluationValues
 
     m_OptionManager.add(
 	    "index", "classIndex",
-	    new Range("first"));
+	    new WekaLabelRange(WekaLabelRange.FIRST));
   }
 
   /**
@@ -172,7 +172,7 @@ public class WekaEvaluationValues
    *
    * @param value	the label indices
    */
-  public void setClassIndex(Range value) {
+  public void setClassIndex(WekaLabelRange value) {
     m_ClassIndex = value;
     reset();
   }
@@ -182,7 +182,7 @@ public class WekaEvaluationValues
    *
    * @return		the label indices
    */
-  public Range getClassIndex() {
+  public WekaLabelRange getClassIndex() {
     return m_ClassIndex;
   }
 
@@ -193,7 +193,7 @@ public class WekaEvaluationValues
    * 			displaying in the GUI or for listing the options.
    */
   public String classIndexTipText() {
-    return "The range of class label indices (eg used for AUC); " + m_ClassIndex.getExample();
+    return "The range of class label indices (eg used for AUC).";
   }
 
   /**
@@ -275,7 +275,7 @@ public class WekaEvaluationValues
       eval = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
     else
       eval = (Evaluation) m_InputToken.getPayload();
-    m_ClassIndex.setMax(eval.getHeader().classAttribute().numValues());
+    m_ClassIndex.setData(eval.getHeader().classAttribute());
     indices = m_ClassIndex.getIntIndices();
     sheet = new SpreadSheet();
     sheet.getHeaderRow().addCell("0").setContent("Statistic");

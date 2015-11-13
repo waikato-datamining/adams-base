@@ -6,23 +6,16 @@
 
 package adams.parser.spreadsheetquery;
 
-import java_cup.runtime.*;
-import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import adams.core.*;
 import adams.core.base.*;
 import adams.core.logging.*;
-import adams.data.conversion.*;
 import adams.data.spreadsheet.*;
 import adams.data.spreadsheet.Cell.ContentType;
-import adams.data.spreadsheet.columnfinder.*;
 import adams.data.spreadsheet.rowfinder.*;
-import adams.flow.core.*;
 import adams.flow.control.*;
-import adams.flow.transformer.*;
 import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
-import adams.parser.spreadsheetquery.ParserHelper;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Mon May 18 09:24:28 NZST 2015
@@ -1034,7 +1027,7 @@ class CUP$Parser$actions {
                   }
                   else if (type.equals("missing")) {
                     MissingValue rf = new MissingValue();
-                    rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeColumnName(c)));
+                    rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeName(c)));
                     RESULT = parser.getHelper().applyRowFinder(rf, "celltype: " + type);
                   }
                   else {
@@ -1054,7 +1047,7 @@ class CUP$Parser$actions {
 		String c = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
 		 
                   MissingValue rf = new MissingValue();
-                  rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeColumnName(c)));
+                  rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeName(c)));
                   RESULT = parser.getHelper().applyRowFinder(rf, "is null");
                 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("cond",16, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);

@@ -15,17 +15,18 @@
 
 /*
  * WekaEvaluationValuePicker.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import weka.classifiers.Evaluation;
 import adams.core.QuickInfoHelper;
+import adams.data.weka.WekaLabelIndex;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.EvaluationHelper;
 import adams.flow.core.EvaluationStatistic;
 import adams.flow.core.Token;
+import weka.classifiers.Evaluation;
 
 
 /**
@@ -90,7 +91,7 @@ public class WekaEvaluationValuePicker
   protected EvaluationStatistic m_StatisticValue;
 
   /** the index of the class label. */
-  protected int m_ClassIndex;
+  protected WekaLabelIndex m_ClassIndex;
 
   /**
    * Returns a string describing the object.
@@ -115,7 +116,7 @@ public class WekaEvaluationValuePicker
 
     m_OptionManager.add(
 	    "index", "classIndex",
-	    1);
+	    new WekaLabelIndex(WekaLabelIndex.FIRST));
   }
 
   /**
@@ -152,7 +153,7 @@ public class WekaEvaluationValuePicker
    *
    * @param value	the label index
    */
-  public void setClassIndex(int value) {
+  public void setClassIndex(WekaLabelIndex value) {
     m_ClassIndex = value;
     reset();
   }
@@ -162,7 +163,7 @@ public class WekaEvaluationValuePicker
    *
    * @return		the label index
    */
-  public int getClassIndex() {
+  public WekaLabelIndex getClassIndex() {
     return m_ClassIndex;
   }
 
@@ -219,7 +220,8 @@ public class WekaEvaluationValuePicker
     else
       eval = (Evaluation) m_InputToken.getPayload();
     try {
-      value         = EvaluationHelper.getValue(eval, m_StatisticValue, m_ClassIndex);
+      m_ClassIndex.setData(eval.getHeader().classAttribute());
+      value         = EvaluationHelper.getValue(eval, m_StatisticValue, m_ClassIndex.getIntIndex());
       m_OutputToken = new Token(value);
     }
     catch (Exception e) {

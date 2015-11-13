@@ -112,7 +112,7 @@ public class SpreadSheetColumnRange
    * @param data	the dataset to retrieve the number of columns
    */
   @Override
-  protected int getNumColumns(SpreadSheet data) {
+  protected int getNumNames(SpreadSheet data) {
     return data.getColumnCount();
   }
   
@@ -124,7 +124,7 @@ public class SpreadSheetColumnRange
    * @return		the column name
    */
   @Override
-  protected String getColumnName(SpreadSheet data, int colIndex) {
+  protected String getName(SpreadSheet data, int colIndex) {
     return data.getHeaderRow().getCell(colIndex).getContent();
   }
 
