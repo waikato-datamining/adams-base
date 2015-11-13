@@ -168,8 +168,7 @@ public class WekaLabelRangeTest
     WekaLabelRange range = new WekaLabelRange();
     range.setRange("averaged");
     range.setData(m_Data.attribute("vacation"));
-    // FIXME currently fails
-    //assertEquals("shouldn't find any cols", 0, range.getIntIndices().length);
+    assertEquals("shouldn't find any cols", 0, range.getIntIndices().length);
     
     range = new WekaLabelRange();
     range.setRange("average");
@@ -178,7 +177,7 @@ public class WekaLabelRangeTest
     assertEquals("index differs", 1, range.getIntIndices()[0]);
     
     range = new WekaLabelRange();
-    range.setRange("below_average");
+    range.setRange("\"below_average\"");
     range.setData(m_Data.attribute("vacation"));
     assertEquals("# indices differs", 1, range.getIntIndices().length);
     assertEquals("index differs", 0, range.getIntIndices()[0]);
