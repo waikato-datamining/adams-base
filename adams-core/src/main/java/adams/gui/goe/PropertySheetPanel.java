@@ -22,6 +22,7 @@
 package adams.gui.goe;
 
 import adams.core.AdditionalInformationHandler;
+import adams.core.ExampleProvider;
 import adams.core.Utils;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
@@ -297,7 +298,7 @@ public class PropertySheetPanel extends BasePanel
     String 	tipName;
     String 	mname;
     String 	commandline;
-    String 	tipText;
+    String 	example;
 
     m_HelpText     = null;
     m_HelpTextHtml = null;
@@ -315,9 +316,9 @@ public class PropertySheetPanel extends BasePanel
     // Look for a globalInfo method that returns a string
     // describing the target
     try {
-      method = m_Target.getClass().getMethod("globalInfo", new Class[0]);
+      method = m_Target.getClass().getMethod("globalInfo");
       if (method != null) {
-	m_GlobalInfo = (String) method.invoke(m_Target, new Object[0]);
+	m_GlobalInfo = (String) method.invoke(m_Target);
 	className    = m_Target.getClass().getName();
 
 	m_HelpText.append("NAME\n");
@@ -350,8 +351,15 @@ public class PropertySheetPanel extends BasePanel
 	    if (m_Options != null)
 	      commandline = m_Options.get(i).getCommandline();
 	    try {
-	      tipText       = (String) (method.invoke(m_Target, new Object[0]));
-	      m_TipTexts[i] = extractFirstSentence(tipText, true);
+	      m_TipTexts[i] = ((String) (method.invoke(m_Target))).trim();
+              if (m_Options.get(i).getCurrentValue() instanceof ExampleProvider) {
+                example = ((ExampleProvider) m_Options.get(i).getCurrentValue()).getExample();
+                if (!m_TipTexts[i].contains(example)) {
+                  if (m_TipTexts[i].endsWith("."))
+                    m_TipTexts[i] = m_TipTexts[i].substring(0, m_TipTexts[i].length() - 1) + ";";
+                  m_TipTexts[i] += " " + example;
+                }
+              }
 	      if (m_HelpText != null) {
 		if (firstTip) {
 		  m_HelpText.append("OPTIONS\n");
@@ -361,7 +369,7 @@ public class PropertySheetPanel extends BasePanel
 		if (commandline != null)
 		  m_HelpText.append("/-" + commandline);
 		m_HelpText.append(":\n");
-		m_HelpText.append(tipText).append("\n\n");
+		m_HelpText.append(m_TipTexts[i]).append("\n\n");
 	      }
 	    }
 	    catch (Exception ex) {
