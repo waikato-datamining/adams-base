@@ -19,20 +19,20 @@
  */
 package adams.data.weka;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Range;
 import adams.core.RangeTest;
 import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * Tests the adams.core.WekaAttributeRange class. Run from commandline with: <br><br>
@@ -135,9 +135,8 @@ public class WekaAttributeRangeTest
     
     range.setData(m_Data);
     range.setRange("Duration");
-    assertEquals("should be valid", 1, range.getIntIndices().length);
-    assertEquals("should be valid", 0, range.getIntIndices()[0]);
-    assertEquals("should be same", "duration", range.getRange());
+    assertEquals("should not be valid", 0, range.getIntIndices().length);
+    assertEquals("should be same", "Duration", range.getRange());
     
     range.setData(m_Data);
     range.setRange("duratoin");

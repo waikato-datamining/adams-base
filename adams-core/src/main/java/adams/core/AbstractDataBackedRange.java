@@ -327,28 +327,6 @@ public abstract class AbstractDataBackedRange<T>
   }
 
   /**
-   * Removes invalid characters. Digits, {@link #RANGE} and {@link #SEPARATOR}
-   * get added automatically.
-   * 
-   * @param s		the string to process
-   * @param valid	the list of valid characters/placeholders (processing happens in this order!)
-   * @return		the processed string
-   */
-  @Override
-  protected String removeInvalidChars(String s, List<String> valid) {
-    String[]	list;
-    int		i;
-    
-    list = splitList(s);
-    for (i = 0; i < list.length; i++) {
-      if (!list[i].startsWith("\""))
-	list[i] = super.removeInvalidChars(s, valid);
-    }
-    
-    return Utils.flatten(list, ",");
-  }
-
-  /**
    * Parses the 1-based index, 'first' and 'last' are accepted as well.
    *
    * @param s		the string to parse

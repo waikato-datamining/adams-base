@@ -24,7 +24,6 @@ import gnu.trove.list.array.TIntArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -456,54 +455,6 @@ public class Range
   }
 
   /**
-   * Removes invalid characters. Digits, {@link #RANGE} and {@link #SEPARATOR}
-   * get added automatically.
-   * 
-   * @param s		the string to process
-   * @param valid	the list of valid characters/placeholders (processing happens in this order!)
-   * @return		the processed string
-   */
-  protected String removeInvalidChars(String s, List<String> valid) {
-    String			shortened;
-    StringBuilder		result;
-    int				i;
-    char			chr;
-    List<Character>		chars;
-    HashMap<Character,String>	relation;
-    
-    // add implicit chars
-    for (chr = '0'; chr <= '9'; chr++)
-      valid.add(Character.toString(chr));
-    valid.add(RANGE);
-    valid.add(SEPARATOR);
-
-    // build replacement relation
-    chars    = new ArrayList<Character>();
-    relation = new HashMap<Character,String>();
-    for (i = 0; i < valid.size(); i++) {
-      chr = (char) i;
-      chars.add(chr);
-      relation.put(chr, valid.get(i));
-    }
-    
-    // replace strings with chars
-    // FIXME replace call matches substrings ("average" matches "averaged")!
-    shortened = s.toLowerCase();
-    for (i = 0; i < chars.size(); i++)
-      shortened = shortened.replace(relation.get(chars.get(i)).toLowerCase(), chars.get(i).toString());
-    
-    // ignore invalid chars
-    result = new StringBuilder();
-    for (i = 0; i < shortened.length(); i++) {
-      chr = shortened.charAt(i);
-      if (relation.containsKey(chr))
-	result.append(relation.get(chr));
-    }
-    
-    return result.toString();
-  }
-
-  /**
    * Returns the placeholders to allow in the ranges.
    * 
    * @return		the placeholders
@@ -522,17 +473,7 @@ public class Range
 		INV_END,
 	    }));
   }
-  
-  /**
-   * Removes invalid characters.
-   * 
-   * @param s		the string to process
-   * @return		the processed string
-   */
-  protected String removeInvalidChars(String s) {
-    return removeInvalidChars(s, getPlaceholders());
-  }
-  
+
   /**
    * Returns whether invalid characters should get removed.
    * <br><br>
@@ -581,12 +522,7 @@ public class Range
     boolean		inverted;
 
     result = new StringBuilder();
-
-    // remove all invalid characters
-    if (canReplaceInvalidChars())
-      tmp = removeInvalidChars(s);
-    else
-      tmp = s;
+    tmp    = s;
 
     // test for inversion
     inverted = false;

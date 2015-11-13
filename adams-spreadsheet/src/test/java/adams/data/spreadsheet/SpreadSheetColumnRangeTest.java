@@ -19,10 +19,6 @@
  */
 package adams.data.spreadsheet;
 
-import java.io.FileNotFoundException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Range;
 import adams.core.RangeTest;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -30,6 +26,10 @@ import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.FileNotFoundException;
 
 /**
  * Tests the adams.core.SpreadSheetColumnRange class. Run from commandline with: <br><br>
@@ -112,7 +112,7 @@ public class SpreadSheetColumnRangeTest
    * Tests the index using column names.
    */
   public void testColumnNames() {
-    SpreadSheetColumnRange range = new SpreadSheetColumnRange();
+    SpreadSheetColumnRange range;
 
     range = new SpreadSheetColumnRange(Range.ALL);
     assertEquals("should contain no indices", 0, range.getIntIndices().length);
@@ -131,9 +131,8 @@ public class SpreadSheetColumnRangeTest
     
     range.setSpreadSheet(m_Sheet);
     range.setRange("field");
-    assertEquals("should be valid", 1, range.getIntIndices().length);
-    assertEquals("should be valid", 0, range.getIntIndices()[0]);
-    assertEquals("should be same", "Field", range.getRange());
+    assertEquals("should not be valid", 0, range.getIntIndices().length);
+    assertEquals("should not be same", "field", range.getRange());
     
     range.setSpreadSheet(m_Sheet);
     range.setRange("Feild");
