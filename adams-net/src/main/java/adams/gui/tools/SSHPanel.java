@@ -27,7 +27,7 @@ import adams.core.logging.LoggingSupporter;
 import adams.flow.standalone.SSHConnection.AuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import com.jcraft.jsch.Channel;
@@ -45,7 +45,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -119,7 +123,7 @@ public class SSHPanel
   protected JPasswordField m_TextPassword;
 
   /** text area for the output. */
-  protected BaseTextAreaWithButtons m_TextOutput;
+  protected BaseTextPaneWithButtons m_TextOutput;
   
   /** the button for clearing the output. */
   protected JButton m_ButtonClear;
@@ -147,7 +151,16 @@ public class SSHPanel
 
   /** the logger in use. */
   protected java.util.logging.Logger m_Logger;
-  
+
+  /** the attributeset for commands. */
+  protected SimpleAttributeSet m_AttributeSetCmd;
+
+  /** the attributeset for remote output. */
+  protected SimpleAttributeSet m_AttributeSetRemote;
+
+  /** the attributeset for errors. */
+  protected SimpleAttributeSet m_AttributeSetError;
+
   @Override
   protected void initialize() {
     super.initialize();
@@ -159,6 +172,21 @@ public class SSHPanel
     m_Session = null;
 
     m_AuthenticationPanels = new HashMap<>();
+
+    m_AttributeSetCmd = new SimpleAttributeSet();
+    StyleConstants.setForeground(m_AttributeSetCmd, Color.BLACK);
+    StyleConstants.setFontFamily(m_AttributeSetCmd, "monospaced");
+    StyleConstants.setBold(m_AttributeSetCmd, true);
+
+    m_AttributeSetRemote = new SimpleAttributeSet();
+    StyleConstants.setForeground(m_AttributeSetRemote, Color.BLACK);
+    StyleConstants.setFontFamily(m_AttributeSetRemote, "monospaced");
+    StyleConstants.setBold(m_AttributeSetRemote, false);
+
+    m_AttributeSetError = new SimpleAttributeSet();
+    StyleConstants.setForeground(m_AttributeSetError, Color.RED);
+    StyleConstants.setFontFamily(m_AttributeSetError, "monospaced");
+    StyleConstants.setBold(m_AttributeSetError, false);
   }
   
   /**
@@ -294,7 +322,7 @@ public class SSHPanel
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	m_TextOutput.setText("");
+	clear();
       }
     });
     m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
@@ -308,7 +336,7 @@ public class SSHPanel
 	  GUIHelper.copyToClipboard(m_TextOutput.getText());
       }
     });
-    m_TextOutput = new BaseTextAreaWithButtons(10, 40);
+    m_TextOutput = new BaseTextPaneWithButtons();
     m_TextOutput.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_TextOutput.setTextFont(GUIHelper.getMonospacedFont());
     m_TextOutput.addToButtonsPanel(m_ButtonClear);
@@ -399,17 +427,17 @@ public class SSHPanel
     if (m_CommandIndex < m_CommandHistory.size())
       m_TextCommand.setText(m_CommandHistory.get(m_CommandIndex));
   }
-  
+
   /**
    * Appends the msg to the output text area.
-   * 
+   *
    * @param msg		the text to append
    */
-  protected void append(String msg) {
-    m_TextOutput.getComponent().append(msg + (msg.endsWith("\n") ? "" : "\n"));
+  protected void append(String msg, AttributeSet a) {
+    m_TextOutput.getComponent().append(msg + (msg.endsWith("\n") ? "" : "\n"), a);
     m_TextOutput.setCaretPosition(m_TextOutput.getDocument().getLength());
   }
-  
+
   /**
    * Checks whether we can connect to a server.
    * 
@@ -507,7 +535,7 @@ public class SSHPanel
 	      do {
 		ret_read = instr.read(buff);
 		if (ret_read > 0) {
-		  append(new String(buff, 0, ret_read));
+		  append(new String(buff, 0, ret_read), m_AttributeSetRemote);
 		  updateButtons();
 		}
 	      }
@@ -523,7 +551,7 @@ public class SSHPanel
       }
     }
     catch (Exception e) {
-      append("Failed to " + msg + ": " + e);
+      append("Failed to " + msg + ": " + e, m_AttributeSetError);
       System.err.println("Failed to " + msg + ":");
       e.printStackTrace();
     }
@@ -543,10 +571,19 @@ public class SSHPanel
       return;
     if (!isConnected())
       return;
-    
+
+    // special command?
+    if (cmd.equals("clear")) {
+      m_TextCommand.setText("");
+      m_CommandHistory.add(cmd);
+      clear();
+      updateButtons();
+      return;
+    }
+
     try {
       m_TextCommand.setText("");
-      append(m_TextRemote.getText() + "> " + cmd);
+      append(m_TextRemote.getText() + "> " + cmd, m_AttributeSetCmd);
       m_CommandHistory.add(cmd);
       DataOutputStream dos = new DataOutputStream(m_Channel.getOutputStream());
       dos.writeBytes(cmd + "\n");
@@ -554,7 +591,7 @@ public class SSHPanel
       updateButtons();
     }
     catch (Exception e) {
-      append("Failed to execute command " + cmd + ": " + e);
+      append("Failed to execute command " + cmd + ": " + e, m_AttributeSetError);
       System.err.println("Failed to execute command: " + cmd);
       e.printStackTrace();
     }
@@ -638,5 +675,12 @@ public class SSHPanel
    */
   public boolean isLoggingEnabled() {
     return true;
+  }
+
+  /**
+   * Clears the output.
+   */
+  public void clear() {
+    m_TextOutput.setText("");
   }
 }
