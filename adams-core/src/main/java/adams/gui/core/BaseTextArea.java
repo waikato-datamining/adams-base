@@ -15,20 +15,20 @@
 
 /**
  * BaseTextArea.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.Frame;
+import adams.gui.chooser.FontChooser;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTextArea;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-
-import adams.gui.chooser.FontChooser;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.Font;
+import java.awt.Frame;
 
 /**
  * A customized JTextArea. Adds functionality for printing and selecting fonts.
@@ -37,7 +37,8 @@ import adams.gui.chooser.FontChooser;
  * @version $Revision$
  */
 public class BaseTextArea
-  extends JTextArea {
+  extends JTextArea
+  implements TextAreaComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 7970608693979989912L;
@@ -228,5 +229,25 @@ public class BaseTextArea
     }
     
     return result;
+  }
+
+  /**
+   * Sets the text font.
+   *
+   * @param value the font
+   */
+  @Override
+  public void setTextFont(Font value) {
+    setFont(value);
+  }
+
+  /**
+   * Returns the text font in use.
+   *
+   * @return the font
+   */
+  @Override
+  public Font getTextFont() {
+    return getFont();
   }
 }

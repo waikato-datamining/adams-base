@@ -14,24 +14,20 @@
  */
 
 /*
- * BaseAnnotationEditor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * BaseMarkdownEditor.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.Utils;
-import adams.core.base.BaseAnnotation;
+import adams.core.base.BaseMarkdown;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
-import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MarkdownTextAreaWithPreview;
-import adams.gui.core.TextAreaComponent;
-import adams.gui.dialog.TextDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -47,39 +43,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * A PropertyEditor for BaseAnnotation objects.
+ * A PropertyEditor for BaseMarkdown objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8805 $
- * @see adams.core.base.BaseAnnotation
+ * @version $Revision$
+ * @see BaseMarkdown
  */
-public class BaseAnnotationEditor
+public class BaseMarkdownEditor
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler, InlineEditorSupport {
 
   /** The text area with the value. */
-  protected TextAreaComponent m_TextValue;
+  protected MarkdownTextAreaWithPreview m_TextValue;
 
   /**
-   * Returns the BaseAnnotation as string.
+   * Returns the BaseMarkdown as string.
    *
    * @param option	the current option
-   * @param object	the BaseAnnotation object to convert
+   * @param object	the BaseMarkdown object to convert
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
-    return ((BaseAnnotation) object).stringValue();
+    return ((BaseMarkdown) object).stringValue();
   }
 
   /**
-   * Returns a BaseAnnotation generated from the string.
+   * Returns a BaseMarkdown generated from the string.
    *
    * @param option	the current option
-   * @param str		the string to convert to a BaseAnnotation
-   * @return		the generated BaseAnnotation
+   * @param str		the string to convert to a BaseMarkdown
+   * @return		the generated BaseMarkdown
    */
   public static Object valueOf(AbstractOption option, String str) {
-    return new BaseAnnotation(Utils.unbackQuoteChars(str));
+    return new BaseMarkdown(Utils.unbackQuoteChars(str));
   }
 
   /**
@@ -149,22 +145,14 @@ public class BaseAnnotationEditor
     JButton 		buttonClose;
     JButton 		buttonOK;
     JButton		buttonClear;
-    JButton		buttonHelp;
     JPanel		panel;
     final JCheckBox	checkLineWrap;
 
     panelAll    = new JPanel(new BorderLayout());
-    switch (GUIHelper.getString("AnnotationsRenderer", "plain")) {
-      case "markdown":
-        m_TextValue = new MarkdownTextAreaWithPreview();
-        break;
-      default:
-        m_TextValue = new BaseTextArea();
-        break;
-    }
+    m_TextValue = new MarkdownTextAreaWithPreview();
     m_TextValue.setRows(30);
     m_TextValue.setColumns(80);
-    panelAll.add(new BaseScrollPane((JComponent) m_TextValue), BorderLayout.CENTER);
+    panelAll.add(new BaseScrollPane(m_TextValue), BorderLayout.CENTER);
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     panelButtons = new JPanel(new BorderLayout());
@@ -193,31 +181,13 @@ public class BaseAnnotationEditor
     
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
-    
-    buttonHelp = new JButton("Help");
-    buttonHelp.setMnemonic('H');
-    buttonHelp.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	String help = getHelpDescription();
-	TextDialog dlg = new TextDialog();
-	dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	dlg.setSize(400, 300);
-	dlg.setDialogTitle("Help");
-	dlg.setContent(help);
-	dlg.setLineWrap(true);
-	dlg.setEditable(false);
-	dlg.setVisible(true);
-      }
-    });
-    panel.add(buttonHelp);
-    
     buttonOK = new JButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String s = m_TextValue.getText();
-	if (((BaseAnnotation) getValue()).isValid(s) && !s.equals(((BaseObject) getValue()).getValue()))
-	  setValue(new BaseAnnotation(s));
+	if (((BaseMarkdown) getValue()).isValid(s) && !s.equals(((BaseObject) getValue()).getValue()))
+	  setValue(new BaseMarkdown(s));
 	closeDialog(APPROVE_OPTION);
       }
     });
@@ -260,7 +230,7 @@ public class BaseAnnotationEditor
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
-    setValue(new BaseAnnotation(Utils.unbackQuoteChars(value)));
+    setValue(new BaseMarkdown(Utils.unbackQuoteChars(value)));
   }
 
   /**
@@ -269,7 +239,7 @@ public class BaseAnnotationEditor
    * @return		the current value
    */
   public String getInlineValue() {
-    return Utils.backQuoteChars(((BaseAnnotation) getValue()).getValue());
+    return Utils.backQuoteChars(((BaseMarkdown) getValue()).getValue());
   }
 
   /**
@@ -280,24 +250,5 @@ public class BaseAnnotationEditor
    */
   public boolean isInlineValueValid(String value) {
     return true;
-  }
-  
-  /**
-   * Returns a long help description, e.g., used in tiptexts.
-   * 
-   * @return		the help text, null if not available
-   */
-  @Override
-  public String getHelpDescription() {
-    return 
-	"How to write annotations:\n"
-	+ "1. Annotations can be spread over several lines.\n"
-	+ "2. You can use custom tags, using the following format:\n"
-	+ BaseAnnotation.TAG_START + "tagname[:key=value[,key=value...]]" + BaseAnnotation.TAG_END + "\n"
-	+ "3. The 'color' and 'size' keys are automatically interpreted, "
-	+ "with 'color' either being a hex string '#ff0000' or a word like 'red' "
-	+ "and 'size' being an HTML size ranging from 1 to 7.\n"
-	+ "4. You can use the " + ListAnnotationTags.class.getName() + " actor "
-	+ "processor to list tags in a flow.";
   }
 }

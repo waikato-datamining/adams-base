@@ -31,7 +31,8 @@ import java.awt.BorderLayout;
  * @version $Revision$
  */
 public class BaseTextPaneWithWordWrap
-  extends BasePanel {
+  extends BasePanel
+  implements TextPaneComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 1382187615423454310L;
@@ -82,6 +83,46 @@ public class BaseTextPaneWithWordWrap
    */
   public BaseTextPane getTextPane() {
     return m_TextPane;
+  }
+
+  /**
+   * Sets the text to display.
+   *
+   * @param value the text
+   */
+  @Override
+  public void setText(String value) {
+    m_TextPane.setText(value);
+  }
+
+  /**
+   * Returns the text to display.
+   *
+   * @return the text
+   */
+  @Override
+  public String getText() {
+    return m_TextPane.getText();
+  }
+
+  /**
+   * Sets whether the text pane is editable or not.
+   *
+   * @param value if true the text pane is editable
+   */
+  @Override
+  public void setEditable(boolean value) {
+    m_TextPane.setEditable(value);
+  }
+
+  /**
+   * Returns whether the text pane is editable or not.
+   *
+   * @return true if the text pane is editable
+   */
+  @Override
+  public boolean isEditable() {
+    return m_TextPane.isEditable();
   }
 
   /**

@@ -216,6 +216,11 @@ adams.core.base.BaseKeyValuePair=true
 adams.core.base.BaseKeyValuePair#toString=adams.gui.goe.BaseKeyValuePairEditor#toString
 adams.core.base.BaseKeyValuePair#valueOf=adams.gui.goe.BaseKeyValuePairEditor#valueOf
 
+# BaseAnnotation objects
+adams.core.base.BaseMarkdown=true
+adams.core.base.BaseMarkdown#toString=adams.gui.goe.BaseMarkdownEditor#toString
+adams.core.base.BaseMarkdown#valueOf=adams.gui.goe.BaseMarkdownEditor#valueOf
+
 # ArrayDimensions objects
 adams.core.base.ArrayDimensions=true
 adams.core.base.ArrayDimensions#toString=adams.gui.goe.BaseObjectEditor#toString

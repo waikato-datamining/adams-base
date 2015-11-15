@@ -31,7 +31,8 @@ import java.awt.Font;
  * @version $Revision$
  */
 public class BaseTextAreaWithButtons
-  extends AbstractComponentWithButtons<BaseTextArea> {
+  extends AbstractComponentWithButtons<BaseTextArea>
+  implements TextAreaComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 1935542795448084154L;

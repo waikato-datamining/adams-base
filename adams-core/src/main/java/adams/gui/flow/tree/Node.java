@@ -20,10 +20,6 @@
 
 package adams.gui.flow.tree;
 
-import java.awt.datatransfer.Transferable;
-import java.util.HashSet;
-import java.util.List;
-
 import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation.Tag;
@@ -41,6 +37,11 @@ import adams.flow.core.OutputProducer;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
 import adams.gui.core.TransferableString;
+import org.markdownj.MarkdownProcessor;
+
+import java.awt.datatransfer.Transferable;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A custom tree node for actors.
@@ -76,6 +77,9 @@ public class Node
   /** whether the node is currently bookmarked. */
   protected boolean m_Bookmarked;
 
+  /** the markdown processor. */
+  protected static MarkdownProcessor m_MarkdownProcessor;
+
   /**
    * Initializes the node.
    *
@@ -90,6 +94,8 @@ public class Node
     m_RenderString      = null;
     m_Editable          = true;
     m_Bookmarked        = false;
+    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
+      m_MarkdownProcessor = new MarkdownProcessor();
   }
 
   /**
@@ -469,38 +475,45 @@ public class Node
     result   = new StringBuilder();
     colorDef = m_Owner.getAnnotationsColor();
     sizeDef  = m_Owner.getAnnotationsSize();
-    
-    if (actor.getAnnotations().hasTag()) {
-      font  = false;
-      parts = actor.getAnnotations().getParts();
-      for (Object part: parts) {
-	if (part instanceof Tag) {
-	  tag   = (Tag) part;
-	  color = colorDef;
-	  size  = sizeDef;
-	  if (tag.getOptions().containsKey("color"))
-	    color = tag.getOptions().get("color");
-	  if (tag.getOptions().containsKey("size"))
-	    size = tag.getOptions().get("size");
-	  if (font)
-	    result.append("</font>");
-	  result.append("<font " + generateSizeAttribute(size) + " color='" + color + "'>");
-	  result.append(tag.getName());
-	  font = true;
-	}
-	else {
-	  if (!font)
-	    result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-	  result.append(insertLineBreaks(part.toString()));
-	  font = true;
-	}
-      }
+
+    if (m_MarkdownProcessor != null) {
+      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
+      result.append(m_MarkdownProcessor.markdown(actor.getAnnotations().getValue()));
       result.append("</font>");
     }
     else {
-      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-      result.append(insertLineBreaks(actor.getAnnotations().getValue()));
-      result.append("</font>");
+      if (actor.getAnnotations().hasTag()) {
+	font = false;
+	parts = actor.getAnnotations().getParts();
+	for (Object part : parts) {
+	  if (part instanceof Tag) {
+	    tag = (Tag) part;
+	    color = colorDef;
+	    size = sizeDef;
+	    if (tag.getOptions().containsKey("color"))
+	      color = tag.getOptions().get("color");
+	    if (tag.getOptions().containsKey("size"))
+	      size = tag.getOptions().get("size");
+	    if (font)
+	      result.append("</font>");
+	    result.append("<font " + generateSizeAttribute(size) + " color='" + color + "'>");
+	    result.append(tag.getName());
+	    font = true;
+	  }
+	  else {
+	    if (!font)
+	      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
+	    result.append(insertLineBreaks(part.toString()));
+	    font = true;
+	  }
+	}
+	result.append("</font>");
+      }
+      else {
+	result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
+	result.append(insertLineBreaks(actor.getAnnotations().getValue()));
+	result.append("</font>");
+      }
     }
     
     return result.toString();

@@ -26,7 +26,9 @@ import org.markdownj.MarkdownProcessor;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.ChangeEvent;
+import javax.swing.text.Document;
 import java.awt.BorderLayout;
+import java.awt.Font;
 
 /**
  * Text area for handling Markdown with code and preview tabs.
@@ -35,7 +37,8 @@ import java.awt.BorderLayout;
  * @version $Revision$
  */
 public class MarkdownTextAreaWithPreview
-  extends BasePanel {
+  extends BasePanel
+  implements TextAreaComponent {
 
   private static final long serialVersionUID = -1823780286250700366L;
 
@@ -104,6 +107,150 @@ public class MarkdownTextAreaWithPreview
    */
   public String getText() {
     return m_TextCode.getText();
+  }
+
+  /**
+   * Returns the underlying document.
+   *
+   * @return		the document
+   */
+  public Document getDocument() {
+    return m_TextCode.getDocument();
+  }
+
+  /**
+   * Returns the underlying text.
+   *
+   * @return		the underlying text
+   */
+  public String getSelectedText() {
+    return m_TextCode.getSelectedText();
+  }
+
+  /**
+   * Sets the rows.
+   *
+   * @param value	the rows
+   */
+  public void setRows(int value) {
+    m_TextCode.setRows(value);
+  }
+
+  /**
+   * Returns the rows.
+   *
+   * @return		the rows
+   */
+  public int getRows() {
+    return m_TextCode.getRows();
+  }
+
+  /**
+   * Sets the columns.
+   *
+   * @param value	the columns
+   */
+  public void setColumns(int value) {
+    m_TextCode.setColumns(value);
+  }
+
+  /**
+   * Returns the columns.
+   *
+   * @return		the columns
+   */
+  public int getColumns() {
+    return m_TextCode.getColumns();
+  }
+
+  /**
+   * Sets whether the text area is editable or not.
+   *
+   * @param value	if true the text area is editable
+   */
+  public void setEditable(boolean value) {
+    m_TextCode.setEditable(value);
+  }
+
+  /**
+   * Returns whether the text area is editable or not.
+   *
+   * @return		true if the text area is editable
+   */
+  public boolean isEditable() {
+    return m_TextCode.isEditable();
+  }
+
+  /**
+   * Sets whether to line wrap or not.
+   *
+   * @param value	if true line wrap is enabled
+   */
+  public void setLineWrap(boolean value) {
+    m_TextCode.setLineWrap(value);
+  }
+
+  /**
+   * Returns whether line wrap is enabled.
+   *
+   * @return		true if line wrap wrap is enabled
+   */
+  public boolean getLineWrap() {
+    return m_TextCode.getLineWrap();
+  }
+
+  /**
+   * Sets whether to word wrap or not.
+   *
+   * @param value	if true word wrap is enabled
+   */
+  public void setWrapStyleWord(boolean value) {
+    m_TextCode.setWrapStyleWord(value);
+  }
+
+  /**
+   * Returns whether word wrap is enabled.
+   *
+   * @return		true if word wrap wrap is enabled
+   */
+  public boolean getWrapStyleWord() {
+    return m_TextCode.getWrapStyleWord();
+  }
+
+  /**
+   * Sets the text font.
+   *
+   * @param value	the font
+   */
+  public void setTextFont(Font value) {
+    m_TextCode.setFont(value);
+  }
+
+  /**
+   * Returns the text font in use.
+   *
+   * @return		the font
+   */
+  public Font getTextFont() {
+    return m_TextCode.getFont();
+  }
+
+  /**
+   * Sets the caret position.
+   *
+   * @param pos 	the position (0-based)
+   */
+  public void setCaretPosition(int pos) {
+    m_TextCode.setCaretPosition(pos);
+  }
+
+  /**
+   * Returns the current caret position.
+   *
+   * @return		the position (0-based)
+   */
+  public int getCaretPosition() {
+    return m_TextCode.getCaretPosition();
   }
 
   /**

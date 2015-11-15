@@ -31,7 +31,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class BaseAnnotation
-  extends BaseText {
+  extends BaseMarkdown {
 
   /** for serialization. */
   private static final long serialVersionUID = -8038455603270458019L;

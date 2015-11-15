@@ -25,6 +25,7 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import org.markdownj.MarkdownProcessor;
 
 import javax.swing.JEditorPane;
+import javax.swing.text.Document;
 import java.awt.BorderLayout;
 
 /**
@@ -34,7 +35,8 @@ import java.awt.BorderLayout;
  * @version $Revision$
  */
 public class MarkdownTextPane
-  extends BasePanel {
+  extends BasePanel
+  implements TextPaneComponent {
 
   private static final long serialVersionUID = -3021897813785552183L;
 
@@ -102,6 +104,64 @@ public class MarkdownTextPane
    */
   public String getText() {
     return m_Markdown;
+  }
+
+  /**
+   * Sets whether the text pane is editable or not.
+   *
+   * @param value if true the text pane is editable
+   */
+  @Override
+  public void setEditable(boolean value) {
+    m_PaneView.setEditable(value);
+  }
+
+  /**
+   * Returns whether the text pane is editable or not.
+   *
+   * @return true if the text pane is editable
+   */
+  @Override
+  public boolean isEditable() {
+    return m_PaneView.isEditable();
+  }
+
+  /**
+   * Returns the underlying document.
+   *
+   * @return		the document
+   */
+  @Override
+  public Document getDocument() {
+    return m_PaneView.getDocument();
+  }
+
+  /**
+   * Sets the position of the cursor.
+   *
+   * @param value	the position
+   */
+  @Override
+  public void setCaretPosition(int value) {
+    m_PaneView.setCaretPosition(value);
+  }
+
+  /**
+   * Returns the current position of the cursor.
+   *
+   * @return		the cursor position
+   */
+  @Override
+  public int getCaretPosition() {
+    return m_PaneView.getCaretPosition();
+  }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  @Override
+  public void setCaretPositionLast() {
+    setCaretPosition(getDocument().getLength());
   }
 
   /**

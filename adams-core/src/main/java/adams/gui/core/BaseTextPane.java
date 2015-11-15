@@ -44,7 +44,8 @@ import java.awt.Frame;
  * @version $Revision$
  */
 public class BaseTextPane
-  extends JTextPane {
+  extends JTextPane
+  implements TextPaneComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 5053144101104728014L;

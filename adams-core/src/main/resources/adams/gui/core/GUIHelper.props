@@ -138,3 +138,6 @@ adams.gui.visualization.debug.DiffTextPane.Deleted.Color=#9999FF
 adams.gui.visualization.debug.DiffTextPane.Added.Color=#CCFFFF
 # The color for modified content
 adams.gui.visualization.debug.DiffTextPane.Modified.Color=#FFCCCC
+
+# Annotations renderer (plain|markdown)
+AnnotationsRenderer=plain
