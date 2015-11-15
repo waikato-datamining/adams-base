@@ -34,6 +34,7 @@ import adams.core.net.SSHSessionProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Logger;
 import com.jcraft.jsch.Session;
 
 import java.awt.Dialog;
@@ -885,6 +886,30 @@ public class SSHConnection
 
     try {
       jsch = new JSch();
+      jsch.setLogger(new Logger() {
+        @Override
+        public boolean isEnabled(int level) {
+          return true;
+        }
+        @Override
+        public void log(int level, String message) {
+          switch (level) {
+            case DEBUG:
+              getLogger().fine(message);
+              break;
+            case INFO:
+              getLogger().info(message);
+              break;
+            case WARN:
+              getLogger().warning(message);
+              break;
+            case ERROR:
+            case FATAL:
+              getLogger().severe(message);
+              break;
+          }
+        }
+      });
       // TODO choose RSA, DSA, ECDSA?
       jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
       switch (m_AuthenticationType) {

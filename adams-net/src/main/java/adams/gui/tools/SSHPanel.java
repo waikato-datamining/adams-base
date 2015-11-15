@@ -22,6 +22,8 @@ package adams.gui.tools;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingSupporter;
 import adams.flow.standalone.SSHConnection.AuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BasePanel;
@@ -31,8 +33,10 @@ import adams.gui.core.GUIHelper;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Logger;
 import com.jcraft.jsch.Session;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -54,6 +58,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A simple telnet interface. Mainly used for testing.
@@ -69,7 +74,8 @@ import java.util.List;
   note = "Code adapted from Shell"
 )
 public class SSHPanel
-  extends BasePanel {
+  extends BasePanel
+  implements LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 6647177121906710884L;
@@ -136,6 +142,9 @@ public class SSHPanel
   
   /** the current command index. */
   protected int m_CommandIndex;
+
+  /** the logger in use. */
+  protected java.util.logging.Logger m_Logger;
   
   @Override
   protected void initialize() {
@@ -290,6 +299,7 @@ public class SSHPanel
       }
     });
     m_TextOutput = new BaseTextAreaWithButtons(10, 40);
+    m_TextOutput.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_TextOutput.setTextFont(GUIHelper.getMonospacedFont());
     m_TextOutput.addToButtonsPanel(m_ButtonClear);
     m_TextOutput.addToButtonsPanel(m_ButtonCopy);
@@ -418,6 +428,30 @@ public class SSHPanel
       else if (canConnect()) {
 	msg = "connect";
 	jsch = new JSch();
+        jsch.setLogger(new Logger() {
+          @Override
+          public boolean isEnabled(int level) {
+            return true;
+          }
+          @Override
+          public void log(int level, String message) {
+            switch (level) {
+              case DEBUG:
+                getLogger().fine(message);
+                break;
+              case INFO:
+                getLogger().info(message);
+                break;
+              case WARN:
+                getLogger().warning(message);
+                break;
+              case ERROR:
+              case FATAL:
+                getLogger().severe(message);
+                break;
+            }
+          }
+        });
 	known = m_FileChooserPanelKnownHosts.getCurrent();
 	if (known.exists())
 	  jsch.setKnownHosts(known.getAbsolutePath());
@@ -426,7 +460,7 @@ public class SSHPanel
 	  case CREDENTIALS:
 	    m_Session = jsch.getSession(m_TextUser.getText(), m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());
 	    m_Session.setPassword(m_TextPassword.getText());
-	    //m_Session.setConfig("StrictHostKeyChecking", "no");
+	    m_Session.setConfig("StrictHostKeyChecking", "no");
 	    break;
 	  case PUBLIC_KEY:
 	    if (m_TextKeyPassphrase.getText().isEmpty())
@@ -434,12 +468,11 @@ public class SSHPanel
 	    else
 	      jsch.addIdentity(m_FileChooserPanelKey.getCurrent().getAbsolutePath(), m_TextKeyPassphrase.getText());
 	    m_Session = jsch.getSession(m_TextUser.getText(), m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());
-	    //m_Session.setConfig("StrictHostKeyChecking", "no");
+	    m_Session.setConfig("StrictHostKeyChecking", "no");
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled authentication type: " + type);
 	}
-	m_Session = jsch.getSession("fracpete", m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());
 	m_Session.connect();
 	updateButtons();
 	
@@ -570,5 +603,27 @@ public class SSHPanel
    */
   public boolean isConnected() {
     return (m_Session != null) && m_Session.isConnected();
+  }
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public synchronized java.util.logging.Logger getLogger() {
+    if (m_Logger == null) {
+      m_Logger = LoggingHelper.getLogger(getClass());
+      m_Logger.setLevel(Level.FINE);
+    }
+    return m_Logger;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    return true;
   }
 }
