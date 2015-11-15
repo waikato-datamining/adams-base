@@ -46,6 +46,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -231,27 +232,35 @@ public class SSHPanel
       authPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       switch (type) {
 	case CREDENTIALS:
-	  m_TextUser = new JTextField(10);
+	  m_TextUser = new JTextField(8);
+	  m_TextUser.setText(System.getProperty("user.name"));
 	  label = new JLabel("User");
 	  label.setLabelFor(m_TextUser);
 	  authPanel.add(label);
 	  authPanel.add(m_TextUser);
-	  m_TextPassword = new JPasswordField(10);
+	  m_TextPassword = new JPasswordField(8);
 	  label = new JLabel("Password");
 	  label.setLabelFor(m_TextPassword);
 	  authPanel.add(label);
 	  authPanel.add(m_TextPassword);
 	  break;
 	case PUBLIC_KEY:
+	  m_TextUser = new JTextField(8);
+	  m_TextUser.setText(System.getProperty("user.name"));
+	  label = new JLabel("User");
+	  label.setLabelFor(m_TextUser);
+	  authPanel.add(label);
+	  authPanel.add(m_TextUser);
 	  m_FileChooserPanelKey = new FileChooserPanel(
 	    System.getProperty("user.home")
 	      + File.separator
 	      + ".ssh"
 	      + File.separator
 	      + "id_rsa");
-	  m_FileChooserPanelKey.setPrefix("Private key file");
+	  m_FileChooserPanelKey.setPrefix("Private key");
+	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, 20));
 	  authPanel.add(m_FileChooserPanelKey);
-	  m_TextKeyPassphrase = new JPasswordField(10);
+	  m_TextKeyPassphrase = new JPasswordField(8);
 	  label = new JLabel("Passphrase");
 	  label.setLabelFor(m_TextKeyPassphrase);
 	  authPanel.add(label);
@@ -536,7 +545,7 @@ public class SSHPanel
     
     try {
       m_TextCommand.setText("");
-      append(">>> " + cmd);
+      append(m_TextRemote.getText() + "> " + cmd);
       m_CommandHistory.add(cmd);
       DataOutputStream dos = new DataOutputStream(m_Channel.getOutputStream());
       dos.writeBytes(cmd + "\n");
