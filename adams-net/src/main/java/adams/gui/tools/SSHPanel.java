@@ -489,7 +489,7 @@ public class SSHPanel
 	run = new Runnable() {
 	  public void run() {
 	    m_Channel = null;
-	    InputStream instr = null;
+	    InputStream instr;
 	    try {
 	      m_Channel = m_Session.openChannel("shell");
 	      ((ChannelShell) m_Channel).setAgentForwarding(true);
@@ -499,10 +499,11 @@ public class SSHPanel
 	    }
 	    catch (Exception e) {
 	      ConsolePanel.getSingleton().append(this, "Exception while opening channel: ", e);
+	      return;
 	    }
 	    try {
 	      byte[] buff = new byte[1024];
-	      int ret_read = 0;
+	      int ret_read;
 	      do {
 		ret_read = instr.read(buff);
 		if (ret_read > 0) {
