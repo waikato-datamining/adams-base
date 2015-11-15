@@ -250,4 +250,12 @@ public class BaseTextArea
   public Font getTextFont() {
     return getFont();
   }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  @Override
+  public void setCaretPositionLast() {
+    setCaretPosition(getDocument().getLength());
+  }
 }

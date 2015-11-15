@@ -269,4 +269,12 @@ public class BaseTextAreaWithButtons
   public int getCaretPosition() {
     return m_Component.getCaretPosition();
   }
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  @Override
+  public void setCaretPositionLast() {
+    m_Component.setCaretPositionLast();
+  }
 }

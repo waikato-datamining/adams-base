@@ -45,6 +45,13 @@ public interface TextPaneComponent {
   public String getText();
 
   /**
+   * Returns the selected text.
+   *
+   * @return		the selected text
+   */
+  public String getSelectedText();
+
+  /**
    * Sets whether the text pane is editable or not.
    *
    * @param value if true the text pane is editable

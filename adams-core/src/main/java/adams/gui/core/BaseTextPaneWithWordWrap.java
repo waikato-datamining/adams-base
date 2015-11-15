@@ -106,6 +106,15 @@ public class BaseTextPaneWithWordWrap
   }
 
   /**
+   * Returns the underlying text.
+   *
+   * @return		the underlying text
+   */
+  public String getSelectedText() {
+    return m_TextPane.getSelectedText();
+  }
+
+  /**
    * Sets whether the text pane is editable or not.
    *
    * @param value if true the text pane is editable

@@ -46,18 +46,18 @@ public interface TextAreaComponent {
   public String getText();
 
   /**
+   * Returns the selected text.
+   *
+   * @return the selected text
+   */
+  public String getSelectedText();
+
+  /**
    * Returns the underlying document.
    *
    * @return the document
    */
   public Document getDocument();
-
-  /**
-   * Returns the underlying text.
-   *
-   * @return the underlying text
-   */
-  public String getSelectedText();
 
   /**
    * Sets the rows.
@@ -156,4 +156,9 @@ public interface TextAreaComponent {
    * @return the position (0-based)
    */
   public int getCaretPosition();
+
+  /**
+   * Sets the position of the cursor at the end.
+   */
+  public void setCaretPositionLast();
 }

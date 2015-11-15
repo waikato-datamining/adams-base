@@ -254,6 +254,14 @@ public class MarkdownTextAreaWithPreview
   }
 
   /**
+   * Sets the position of the cursor at the end.
+   */
+  @Override
+  public void setCaretPositionLast() {
+    m_TextCode.setCaretPositionLast();
+  }
+
+  /**
    * Updates the markdown display.
    */
   protected void update() {

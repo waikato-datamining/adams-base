@@ -106,6 +106,11 @@ public class MarkdownTextPane
     return m_Markdown;
   }
 
+  @Override
+  public String getSelectedText() {
+    return m_PaneView.getSelectedText();
+  }
+
   /**
    * Sets whether the text pane is editable or not.
    *
