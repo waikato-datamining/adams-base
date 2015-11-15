@@ -52,6 +52,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -397,7 +398,7 @@ public class SSHPanel
    */
   protected void append(String msg) {
     m_TextOutput.getComponent().append(msg + (msg.endsWith("\n") ? "" : "\n"));
-      
+    m_TextOutput.setCaretPosition(m_TextOutput.getDocument().getLength());
   }
   
   /**
@@ -483,8 +484,9 @@ public class SSHPanel
 	    try {
 	      m_Channel = m_Session.openChannel("shell");
 	      ((ChannelShell) m_Channel).setAgentForwarding(true);
-	      instr = m_Channel.getInputStream();
+	      ((ChannelShell) m_Channel).setPty(false);
 	      m_Channel.connect();
+	      instr = m_Channel.getInputStream();
 	    }
 	    catch (Exception e) {
 	      ConsolePanel.getSingleton().append(this, "Exception while opening channel: ", e);
@@ -534,10 +536,11 @@ public class SSHPanel
     
     try {
       m_TextCommand.setText("");
-      append(cmd);
+      append(">>> " + cmd);
       m_CommandHistory.add(cmd);
-      m_Channel.getOutputStream().write(new String(cmd + "\n").getBytes());
-      m_Channel.getOutputStream().flush();
+      DataOutputStream dos = new DataOutputStream(m_Channel.getOutputStream());
+      dos.writeBytes(cmd + "\n");
+      dos.flush();
       updateButtons();
     }
     catch (Exception e) {
