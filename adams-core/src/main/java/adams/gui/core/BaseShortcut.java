@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import adams.core.ExampleProvider;
 import adams.core.base.AbstractBaseString;
 
 import javax.swing.KeyStroke;
@@ -31,7 +32,8 @@ import javax.swing.KeyStroke;
  * @version $Revision$
  */
 public class BaseShortcut
-  extends AbstractBaseString {
+  extends AbstractBaseString
+  implements ExampleProvider {
 
   private static final long serialVersionUID = 1589904769256830344L;
 
@@ -88,5 +90,17 @@ public class BaseShortcut
    */
   public KeyStroke keystrokeValue() {
     return KeyStroke.getKeyStroke(getValue());
+  }
+
+  /**
+   * Returns the example.
+   *
+   * @return		the example
+   */
+  public String getExample() {
+    return "keys: what follows the 'VK_' of the virtual key definition; "
+      + "modifier keys: 'shift', 'ctrl', 'alt', 'altGr', 'meta'; "
+      + "state: 'pressed' (assumed if missing), 'released'; "
+      + "examples: 'ctrl shift pressed T', 'shift INSERT', 'alt DELETE'";
   }
 }
