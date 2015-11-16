@@ -1,0 +1,38 @@
+--> out-0.txt
+@relation Testdata
+
+@attribute Nominal1 {att1val1,att1val2}
+@attribute Numeric1 numeric
+@attribute Date1 date yyyy-mm-dd
+@attribute Class {class1,class2,class3,class4}
+
+@data
+att1val1,7.90744,2054-01-01,class3
+att1val1,0.158867,2078-01-01,class1
+att1val1,8.463705,2063-01-01,class3
+att1val2,12.447195,2062-01-01,class4
+att1val2,11.897174,2032-01-01,class4
+att1val1,3.869003,2098-01-01,class2
+att1val2,12.270536,2054-01-01,class4
+att1val1,8.261675,2089-01-01,class3
+att1val2,8.194948,2060-01-01,class3
+att1val1,12.352254,2020-01-01,class4
+@relation Testdata
+
+@attribute Nominal1 {att1val1,att1val2}
+@attribute Numeric1 numeric
+@attribute Date1 date yyyy-mm-dd
+@attribute Class numeric
+
+@data
+att1val1,0.638318,2054-01-01,0.18272
+att1val1,0.503991,2048-01-01,0.009059
+att1val1,-0.334305,2062-01-01,0.001529
+att1val2,4.991154,2089-01-01,1.138518
+att1val2,4.056514,2074-01-01,1.099294
+att1val2,3.98497,2002-01-01,1.092251
+att1val2,4.312834,2063-01-01,1.192634
+att1val1,0.401437,2034-01-01,0.190419
+att1val1,0.1998,2077-01-01,0.173737
+att1val2,5.057263,2052-01-01,1.213063
+

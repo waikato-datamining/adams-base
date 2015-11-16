@@ -1,4 +1,4 @@
-% Copyright (c) 2012 by the University of Waikato, Hamilton, NZ. 
+% Copyright (c) 2012-2015 by the University of Waikato, Hamilton, NZ.
 % This work is made available under the terms of the 
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
@@ -27,6 +27,11 @@ This module offers additional schemes for the \textit{Convert} transformer:
 	into a WEKA instance.
 	\item \textit{SpreadSheetToWekaInstances} -- turns a spreadsheet object
 	into a WEKA dataset.
+	\item \textit{WekaCapabilitiesToInstances} -- generates a dataset with
+	random data that adheres to the capabilities retrieved from a
+	\texttt{CapabilitiesHandler}.
+	\item \textit{WekaCapabilitiesToSpreadSheet} -- generates a spreadsheet
+	with the  capabilities retrieved from a \texttt{CapabilitiesHandler}.
 	\item \textit{WekaInstancesToSpreadSheet} -- turns a WEKA dataset into
 	a spreadsheet object.
 	\item \textit{WekaInstanceToAdamsInstance} -- turns a WEKA instance into
@@ -112,6 +117,8 @@ These transformers:
 	\item \textit{WekaFileReader} -- reads any dataset that WEKA can handle, 
 	either outputs the header, the complete dataset or row-by-row.
 	\item \textit{WekaFilter} -- applies a WEKA filter to the data.
+	\item \textit{WekaGetCapabilities} -- retrieves the capabilities of a
+	\texttt{CapabilitiesHandler} (e.g., Filter or Classifier).
 	\item \textit{WekaGetInstanceValue} -- retrieves an attribute's value from
 	a dataset row.
 	\item \textit{WekaGetInstancesValue} -- retrieves an attribute's value from

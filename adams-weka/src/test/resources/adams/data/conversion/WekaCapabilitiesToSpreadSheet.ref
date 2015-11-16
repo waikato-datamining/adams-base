@@ -1,0 +1,94 @@
+--> out-0.txt
+Capability,Supported,Dependency
+"Nominal attributes",true,false
+"Binary attributes",true,false
+"Unary attributes",true,false
+"Empty nominal attributes",true,false
+"Numeric attributes",true,false
+"Date attributes",true,false
+"String attributes",true,false
+"Relational attributes",true,false
+"Missing values",true,false
+"No class",true,false
+"Nominal class",true,false
+"Binary class",true,false
+"Unary class",true,false
+"Empty nominal class",true,false
+"Numeric class",true,false
+"Date class",true,false
+"String class",true,false
+"Relational class",true,false
+"Missing class values",true,false
+"Only multi-Instance data",false,false
+"Minimum # Instances ",0,""
+
+Capability,Supported,Dependency
+"Nominal attributes",true,false
+"Binary attributes",true,false
+"Unary attributes",true,false
+"Empty nominal attributes",true,false
+"Numeric attributes",true,false
+"Date attributes",true,false
+"String attributes",false,false
+"Relational attributes",false,false
+"Missing values",true,false
+"No class",false,false
+"Nominal class",true,false
+"Binary class",true,false
+"Unary class",false,false
+"Empty nominal class",false,false
+"Numeric class",false,false
+"Date class",false,false
+"String class",false,false
+"Relational class",false,false
+"Missing class values",true,false
+"Only multi-Instance data",false,false
+"Minimum # Instances ",0,""
+
+Capability,Supported,Dependency
+"Nominal attributes",true,false
+"Binary attributes",true,false
+"Unary attributes",true,false
+"Empty nominal attributes",true,false
+"Numeric attributes",true,false
+"Date attributes",true,false
+"String attributes",false,false
+"Relational attributes",false,false
+"Missing values",true,false
+"No class",false,false
+"Nominal class",false,false
+"Binary class",false,false
+"Unary class",false,false
+"Empty nominal class",false,false
+"Numeric class",true,false
+"Date class",true,false
+"String class",false,false
+"Relational class",false,false
+"Missing class values",true,false
+"Only multi-Instance data",false,false
+"Minimum # Instances ",1,""
+
+Capability,Supported,Dependency
+"Nominal attributes",true,true
+"Binary attributes",true,true
+"Unary attributes",true,true
+"Empty nominal attributes",true,true
+"Numeric attributes",true,true
+"Date attributes",true,true
+"String attributes",true,true
+"Relational attributes",true,true
+"Missing values",true,true
+"No class",false,true
+"Nominal class",true,true
+"Binary class",true,true
+"Unary class",false,true
+"Empty nominal class",false,true
+"Numeric class",false,true
+"Date class",false,true
+"String class",false,true
+"Relational class",false,true
+"Missing class values",false,true
+"Only multi-Instance data",false,true
+"Minimum # Instances ",0,""
+
+
