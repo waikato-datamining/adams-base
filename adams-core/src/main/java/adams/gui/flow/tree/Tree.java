@@ -2489,7 +2489,6 @@ public class Tree
 
     for (i = 0; i < parent.getChildCount(); i++) {
       child = (Node) parent.getChildAt(i);
-      child.findVariable(nameRegExp);
       highlightVariables(child, nameRegExp);
     }
   }
