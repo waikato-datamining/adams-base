@@ -219,4 +219,13 @@ public abstract class AbstractListingProcessor
     
     return result;
   }
+
+  /**
+   * Returns the list.
+   *
+   * @return		the list
+   */
+  public List<String> getList() {
+    return m_List;
+  }
 }
