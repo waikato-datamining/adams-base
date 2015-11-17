@@ -10,9 +10,9 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.control.Branch
 			-branch
-				adams.flow.control.LocalScope
+				adams.flow.control.LocalScopeTrigger
 					-name
-					LocalScope (mean -2.0)
+					LocalScopeTrigger (mean -2.0)
 					-tee
 						adams.flow.standalone.SetVariable
 							-var-name
@@ -94,9 +94,9 @@ adams.flow.control.Flow
 							-post-processor
 								adams.flow.sink.sequenceplotter.PassThrough
 			-branch
-				adams.flow.control.LocalScope
+				adams.flow.control.LocalScopeTrigger
 					-name
-					LocalScope (mean 2.0)
+					LocalScopeTrigger (mean 2.0)
 					-tee
 						adams.flow.standalone.SetVariable
 							-var-name
