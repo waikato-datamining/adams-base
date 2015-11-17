@@ -104,6 +104,17 @@ Tree.IgnoreNameChanges=false
 # The scale factor for text/icons (1.0 is actual size)
 Tree.ScaleFactor=1.0
 
+# The keyboard actions
+# blank-separated list of class+option
+# superclass: adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction
+# Example:
+# Tree.KeyboardActions=\
+#   "adams.gui.flow.tree.keyboardaction.AddActorHere -actor adams.flow.control.Trigger -shortcut \\"F3\\"" \
+#   "adams.gui.flow.tree.keyboardaction.AddActorAfter -actor adams.flow.control.Trigger -shortcut \\"alt F3\\"" \
+#   "adams.gui.flow.tree.keyboardaction.AddActorBeneath -actor adams.flow.control.Trigger -shortcut \\"shift F3\\"" \
+#   "adams.gui.flow.tree.keyboardaction.EncloseActor -actor adams.flow.control.Sequence -shortcut \\"F4\\""
+Tree.KeyboardActions=
+
 # Whether to show the global info in the class tree as child node of the
 # actor class (true|false)
 ClassTree.ShowGlobalInfo=true

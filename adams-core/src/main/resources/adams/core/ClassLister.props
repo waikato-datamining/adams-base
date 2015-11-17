@@ -413,7 +413,11 @@ adams.genetic.stopping.AbstractStoppingCriterion=\
 adams.gui.flow.tab.AbstractEditorTab=\
   adams.gui.flow.tab
 
-# the post-processors for edits in the flow tree
+# the kebyboard actions in the flow editor tree
+adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction=\
+  adams.gui.flow.tree.keyboardaction
+
+# the post-processors for edits in the flow editor tree
 adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor=\
   adams.gui.flow.tree.postprocessor
 

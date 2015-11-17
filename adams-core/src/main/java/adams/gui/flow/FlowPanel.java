@@ -32,6 +32,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
+import adams.core.option.OptionUtils;
 import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
@@ -62,6 +63,7 @@ import adams.gui.event.UndoEvent;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.VariableManagementPanel;
@@ -488,7 +490,10 @@ public class FlowPanel
    */
   @Override
   protected void initGUI() {
-    Properties		props;
+    Properties				props;
+    String[]				keyboardShortcuts;
+    AbstractKeyboardAction		keyboardAction;
+    List<AbstractKeyboardAction>	keyboardActions;
 
     super.initGUI();
 
@@ -522,6 +527,27 @@ public class FlowPanel
     m_Tree.setShowAnnotations(props.getBoolean("ShowAnnotations", true));
     m_Tree.setShowInputOutput(props.getBoolean("ShowInputOutput", false));
     m_Tree.setInputOutputPrefixes(props.getProperty("Tree.InputOutput.Prefixes", "java.lang.,java.io.,adams.core.io.,adams.flow.core.,adams.flow.container.").replace(" ", "").split(","));
+
+    // keyboard actions
+    try {
+      keyboardShortcuts = OptionUtils.splitOptions(props.getProperty("Tree.KeyboardActions", ""));
+    }
+    catch (Exception e) {
+      keyboardShortcuts = new String[0];
+      ConsolePanel.getSingleton().append("Failed to parse 'Tree.KeyboardActions' property!", e);
+    }
+    keyboardActions = new ArrayList<>();
+    for (String keyboardShortcut: keyboardShortcuts) {
+      try {
+	keyboardAction = (AbstractKeyboardAction) OptionUtils.forCommandLine(AbstractKeyboardAction.class, keyboardShortcut);
+	keyboardActions.add(keyboardAction);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append("Failed to parse keyboard action: " + keyboardShortcut, e);
+      }
+    }
+    m_Tree.setKeyboardActions(keyboardActions);
+
     m_Tree.addActorChangeListener(new ActorChangeListener() {
       @Override
       public void actorChanged(ActorChangeEvent e) {
@@ -535,6 +561,7 @@ public class FlowPanel
 	  showStatus(m_Tree.getSelectedFullName());
       }
     });
+
     m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
 
     // the tabs

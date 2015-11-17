@@ -1098,6 +1098,38 @@ public class HelloWorldItem extends AbstractTreePopupMenuItem {
 \end{verbatim}
 }
 
+\subsection{Keyboard actions}
+\label{floweditor_keyboardactions}
+Despite the flow editor attempting to over a fast and efficient interface,
+certain actions, like adding a \textit{Trigger}, simply take time through
+a graphical user interface. Automating common tasks, such as adding common
+actors, and tying them to a keyboard shortcut can improve efficiency even more.
+The \textit{Tree.KeyboardActions} property of the \textit{FlowEditor.props}
+(also available through the preferences) allows you to specify a blank-separated
+list of actions that get tied to keyboard shortcuts.
+
+The following actions are current available (derived from \textit{AbstractKeyboardAction},
+located in package \textit{adams.gui.flow.tree.keyboardaction}):
+\begin{tight_itemize}
+  \item AddActorHere
+  \item AddActorAfter
+  \item AddActorBeneath
+  \item AddTemplateHere
+  \item AddTemplateAfter
+  \item AddTemplateBeneath
+  \item EncloseActor
+\end{tight_itemize}
+Below an example that defines shortcuts for adding and enclosing actors:
+{\scriptsize
+\begin{verbatim}
+Tree.KeyboardActions=\
+  "adams.gui.flow.tree.keyboardaction.AddActorHere -actor adams.flow.control.Trigger -shortcut \\"F3\\"" \
+  "adams.gui.flow.tree.keyboardaction.AddActorAfter -actor adams.flow.control.Trigger -shortcut \\"alt F3\\"" \
+  "adams.gui.flow.tree.keyboardaction.AddActorBeneath -actor adams.flow.control.Trigger -shortcut \\"shift F3\\"" \
+  "adams.gui.flow.tree.keyboardaction.EncloseActor -actor adams.flow.control.Sequence -shortcut \\"F4\\""
+\end{verbatim}
+}
+
 \section{Image viewer}
 The Image viewer allows you to add custom plugins to the menu. The superclass
 for all plugins is:

@@ -24,14 +24,10 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseMenu;
-import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -70,108 +66,6 @@ public class EncloseActor
   }
 
   /**
-   * Encloses the currently selected actors in the specified actor handler.
-   *
-   * @param paths	the (paths to the) actors to wrap in the control actor
-   * @param handler	the handler to use
-   */
-  protected void encloseActor(TreePath[] paths, ActorHandler handler) {
-    AbstractActor[]	currActor;
-    Node		parent;
-    Node 		currNode;
-    Node		newNode;
-    int			index;
-    String		msg;
-    MutableActorHandler	mutable;
-    int			i;
-    String		newName;
-
-    parent    = null;
-    currActor = new AbstractActor[paths.length];
-    for (i = 0; i < paths.length; i++) {
-      currNode     = TreeHelper.pathToNode(paths[i]);
-      currActor[i] = currNode.getFullActor().shallowCopy();
-      if (parent == null)
-	parent = (Node) currNode.getParent();
-
-      if (ActorUtils.isStandalone(currActor[i])) {
-	if (!handler.getActorHandlerInfo().canContainStandalones()) {
-	  GUIHelper.showErrorMessage(
-	      m_State.tree,
-	      "You cannot enclose a standalone actor in a "
-	      + handler.getClass().getSimpleName() + "!");
-	  return;
-	}
-      }
-    }
-
-    // enter new name
-    newName = handler.getName();
-    if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
-      newName = currActor[0].getName();
-    newName = GUIHelper.showInputDialog(GUIHelper.getParentComponent(m_State.tree), "Please enter name for enclosing actor (leave empty for default):", newName);
-    if (newName == null)
-      return;
-    if (newName.isEmpty())
-      newName = handler.getDefaultName();
-    handler.setName(newName);
-
-    if (paths.length == 1)
-      addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
-    else
-      addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
-
-    try {
-      if (handler instanceof MutableActorHandler) {
-	mutable = (MutableActorHandler) handler;
-	mutable.removeAll();
-	for (i = 0; i < currActor.length; i++)
-	  mutable.add(i, currActor[i]);
-      }
-      else {
-	handler.set(0, currActor[0]);
-      }
-      newNode = m_State.tree.buildTree(null, (AbstractActor) handler, false);
-      for (i = 0; i < paths.length; i++) {
-	currNode = TreeHelper.pathToNode(paths[i]);
-	index    = parent.getIndex(currNode);
-	parent.remove(index);
-	if (i == 0)
-	  parent.insert(newNode, index);
-      }
-
-      final Node fParent = parent;
-      SwingUtilities.invokeLater(() -> {
-	m_State.tree.updateActorName(newNode);
-	m_State.tree.setModified(true);
-	if (paths.length == 1) {
-	  m_State.tree.nodeStructureChanged(newNode);
-	  m_State.tree.expand(newNode);
-	  m_State.tree.locateAndDisplay(newNode.getFullName());
-	  m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, newNode, Type.MODIFY));
-	}
-	else {
-	  m_State.tree.nodeStructureChanged(fParent);
-	  m_State.tree.expand(fParent);
-	  m_State.tree.locateAndDisplay(fParent.getFullName());
-	  m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, fParent, Type.MODIFY));
-	}
-	m_State.tree.redraw();
-      });
-    }
-    catch (Exception e) {
-      if (paths.length == 1)
-	msg = "Failed to enclose actor '" + TreeHelper.pathToActor(paths[0]).getFullName() + "'";
-      else
-	msg = "Failed to enclose " + paths.length + " actors";
-      msg += " in a " + handler.getClass().getSimpleName() + ": ";
-      ConsolePanel.getSingleton().append(this, msg, e);
-      GUIHelper.showErrorMessage(
-	  m_State.tree, msg + "\n" + e.getMessage());
-    }
-  }
-
-  /**
    * Creates a new menuitem using itself.
    */
   @Override
@@ -197,7 +91,7 @@ public class EncloseActor
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	  encloseActor(m_State.selPaths, actor);
+	  m_State.tree.encloseActor(m_State.selPaths, actor);
 	}
       });
     }

@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
+import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.*;
@@ -43,6 +44,7 @@ import adams.gui.event.NodeDroppedEvent.NotificationTime;
 import adams.gui.event.NodeDroppedListener;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.FlowHelper;
@@ -184,6 +186,9 @@ public class Tree
   /** the actions with shortcuts. */
   protected List<TreePopupAction> m_Shortcuts;
 
+  /** the keyboard actions. */
+  protected List<AbstractKeyboardAction> m_KeyboardActions;
+
   /** the dialog for processing actors. */
   protected GenericObjectEditorDialog m_DialogProcessActors;
 
@@ -257,6 +262,7 @@ public class Tree
     m_RecordAdd                   = false;
     m_AllowNodePopup              = true;
     m_AllowKeyboardShortcuts      = true;
+    m_KeyboardActions             = new ArrayList<>();
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -288,7 +294,7 @@ public class Tree
       }
     });
 
-    m_Shortcuts = new ArrayList<TreePopupAction>();
+    m_Shortcuts = new ArrayList<>();
     classes     = ClassLister.getSingleton().getClassnames(TreePopupAction.class);
     for (String cls: classes) {
       try {
@@ -310,12 +316,29 @@ public class Tree
 	if (path != null) {
 	  StateContainer state = getTreeState(paths, TreeHelper.pathToNode(path));
 	  KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
+	  // tree popup actions
 	  for (TreePopupAction action: m_Shortcuts) {
 	    action.update(state);
 	    if (action.keyStrokeApplies(ks) && action.isEnabled()) {
 	      action.actionPerformed(null);
 	      e.consume();
 	      break;
+	    }
+	  }
+	  // keyboard actions
+	  if (!e.isConsumed()) {
+	    for (AbstractKeyboardAction action: m_KeyboardActions) {
+	      if (action.getShortcut().keystrokeValue().equals(ks)) {
+		e.consume();
+		String msg = action.execute(state);
+		if (msg != null)
+		  GUIHelper.showErrorMessage(
+		    Tree.this,
+		    "Action '" + action.getName() + "' failed:\n"
+		      + msg + "\n\n"
+		      + "Full action:\n"
+		      + OptionUtils.getCommandLine(action));
+	      }
 	    }
 	  }
 	}
@@ -852,6 +875,24 @@ public class Tree
    */
   public boolean getRecordAdd() {
     return m_RecordAdd;
+  }
+
+  /**
+   * Sets the keyboard actions to use.
+   *
+   * @param value	the actions
+   */
+  public void setKeyboardActions(List<AbstractKeyboardAction> value) {
+    m_KeyboardActions = value;
+  }
+
+  /**
+   * Returns the keyboard actions in use.
+   *
+   * @return		the actions
+   */
+  public List<AbstractKeyboardAction> getKeyboardActions() {
+    return m_KeyboardActions;
   }
 
   /**
@@ -1529,6 +1570,108 @@ public class Tree
 	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
 	}
       });
+    }
+  }
+
+  /**
+   * Encloses the selected actors in the specified actor handler.
+   *
+   * @param paths	the (paths to the) actors to wrap in the control actor
+   * @param handler	the handler to use
+   */
+  public void encloseActor(TreePath[] paths, ActorHandler handler) {
+    AbstractActor[]	currActor;
+    Node		parent;
+    Node 		currNode;
+    Node		newNode;
+    int			index;
+    String		msg;
+    MutableActorHandler	mutable;
+    int			i;
+    String		newName;
+
+    parent    = null;
+    currActor = new AbstractActor[paths.length];
+    for (i = 0; i < paths.length; i++) {
+      currNode     = TreeHelper.pathToNode(paths[i]);
+      currActor[i] = currNode.getFullActor().shallowCopy();
+      if (parent == null)
+	parent = (Node) currNode.getParent();
+
+      if (ActorUtils.isStandalone(currActor[i])) {
+	if (!handler.getActorHandlerInfo().canContainStandalones()) {
+	  GUIHelper.showErrorMessage(
+	      this,
+	      "You cannot enclose a standalone actor in a "
+	      + handler.getClass().getSimpleName() + "!");
+	  return;
+	}
+      }
+    }
+
+    // enter new name
+    newName = handler.getName();
+    if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
+      newName = currActor[0].getName();
+    newName = GUIHelper.showInputDialog(GUIHelper.getParentComponent(this), "Please enter name for enclosing actor (leave empty for default):", newName);
+    if (newName == null)
+      return;
+    if (newName.isEmpty())
+      newName = handler.getDefaultName();
+    handler.setName(newName);
+
+    if (paths.length == 1)
+      addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
+    else
+      addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
+
+    try {
+      if (handler instanceof MutableActorHandler) {
+	mutable = (MutableActorHandler) handler;
+	mutable.removeAll();
+	for (i = 0; i < currActor.length; i++)
+	  mutable.add(i, currActor[i]);
+      }
+      else {
+	handler.set(0, currActor[0]);
+      }
+      newNode = buildTree(null, (AbstractActor) handler, false);
+      for (i = 0; i < paths.length; i++) {
+	currNode = TreeHelper.pathToNode(paths[i]);
+	index    = parent.getIndex(currNode);
+	parent.remove(index);
+	if (i == 0)
+	  parent.insert(newNode, index);
+      }
+
+      final Node fParent = parent;
+      SwingUtilities.invokeLater(() -> {
+	updateActorName(newNode);
+	setModified(true);
+	if (paths.length == 1) {
+	  nodeStructureChanged(newNode);
+	  expand(newNode);
+	  locateAndDisplay(newNode.getFullName());
+	  notifyActorChangeListeners(new ActorChangeEvent(this, newNode, Type.MODIFY));
+	}
+	else {
+	  nodeStructureChanged(fParent);
+	  expand(fParent);
+	  locateAndDisplay(fParent.getFullName());
+	  notifyActorChangeListeners(new ActorChangeEvent(this, fParent, Type.MODIFY));
+	}
+	redraw();
+      });
+    }
+    catch (Exception e) {
+      if (paths.length == 1)
+	msg = "Failed to enclose actor '" + TreeHelper.pathToActor(paths[0]).getFullName() + "'";
+      else
+	msg = "Failed to enclose " + paths.length + " actors";
+      msg += " in a " + handler.getClass().getSimpleName() + ": ";
+      ConsolePanel.getSingleton().append(this, msg, e);
+      GUIHelper.showErrorMessage(
+	  this, msg + "\n" + e.getMessage());
     }
   }
 
