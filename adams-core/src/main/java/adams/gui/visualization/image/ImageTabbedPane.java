@@ -22,13 +22,9 @@ package adams.gui.visualization.image;
 import adams.core.Properties;
 import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -272,34 +268,29 @@ public class ImageTabbedPane
    * @return		true if successfully loaded
    */
   public boolean load(File file, AbstractImageReader reader) {
-    final ImagePanel	panel;
-    final double	zoom;
-    Properties		props;
-    Runnable		run;
+    ImagePanel	panel;
+    double	zoom;
+    Properties	props;
 
+    props = ImageViewerPanel.getProperties();
+    if (props.getDouble("ZoomLevel") == -1)
+      zoom = -1;
+    else
+      zoom = props.getDouble("ZoomLevel") / 100;
     panel = new ImagePanel();
     panel.setSelectionEnabled(true);
-    if (!panel.load(file, reader)) {
+    if (!panel.load(file, reader, zoom)) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to open image '" + file + "'!");
       return false;
     }
     else {
-      props = ImageViewerPanel.getProperties();
       panel.setShowProperties(props.getBoolean("ShowProperties", true));
       panel.setShowLog(props.getBoolean("ShowLog", true));
       panel.getSplitPane().setDividerLocation(props.getInteger("DividerLocation", 500));
       panel.getPropertiesScrollPane().setPreferredSize(new Dimension(props.getInteger("PropertiesWidth", 300), 100));
       addTab(file.getName(), panel);
       setSelectedComponent(panel);
-      zoom = props.getDouble("ZoomLevel") / 100;
-      run  = new Runnable() {
-	@Override
-	public void run() {
-	  panel.setScale(zoom);
-	}
-      };
-      SwingUtilities.invokeLater(run);
       return true;
     }
   }

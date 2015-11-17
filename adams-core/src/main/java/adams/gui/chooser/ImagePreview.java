@@ -32,21 +32,6 @@
 
 package adams.gui.chooser;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
@@ -57,6 +42,20 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.image.ImagePanel;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 
 /**
  * Preview component for a {@link JFileChooser}.
@@ -262,8 +261,7 @@ public class ImagePreview
     dialog.setApproveCaption("Close");
     panel = new ImagePanel();
     panel.getUndo().setEnabled(false);
-    panel.load(m_File);
-    panel.setScale(1.0);
+    panel.load(m_File, 1.0);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.setSize(800, 600);
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));

@@ -220,14 +220,21 @@ public class ImageViewer
      */
     @Override
     public void display(Token token) {
+      double  zoom;
+
+      if (m_Owner.getZoom() == -1)
+	zoom = m_Owner.getZoom();
+      else
+	zoom = m_Owner.getZoom() / 100.0;
+
       if (token.getPayload() instanceof String)
-	m_ImagePanel.load(new PlaceholderFile((String) token.getPayload()));
+	m_ImagePanel.load(new PlaceholderFile((String) token.getPayload()), zoom);
       else if (token.getPayload() instanceof File)
-	m_ImagePanel.load((File) token.getPayload());
+	m_ImagePanel.load((File) token.getPayload(), zoom);
       else if (token.getPayload() instanceof BufferedImage)
-	m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload());
+	m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload(), zoom);
       else if (token.getPayload() instanceof AbstractImageContainer)
-	m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload());
+	m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload(), zoom);
       m_ImagePanel.setShowProperties(m_Owner.getShowProperties());
       if (m_Owner.getShowProperties())
 	m_ImagePanel.getSplitPane().getRightComponent().setMinimumSize(new Dimension(m_Owner.getPropertiesWidth(), 0));
@@ -243,10 +250,6 @@ public class ImageViewer
 	else
 	  m_ImagePanel.addImageOverlay(m_Owner.getImageOverlay());
       }
-      if (m_Owner.getZoom() == -1)
-	m_ImagePanel.setScale(m_Owner.getZoom());
-      else
-	m_ImagePanel.setScale(m_Owner.getZoom() / 100.0);
     }
     
     /**
@@ -647,18 +650,21 @@ public class ImageViewer
    */
   @Override
   protected void display(Token token) {
-    if (token.getPayload() instanceof String)
-      m_ImagePanel.load(new PlaceholderFile((String) token.getPayload()));
-    else if (token.getPayload() instanceof File)
-      m_ImagePanel.load((File) token.getPayload());
-    else if (token.getPayload() instanceof BufferedImage)
-      m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload());
-    else if (token.getPayload() instanceof AbstractImageContainer)
-      m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload());
+    double  zoom;
+
     if (m_Zoom == -1)
-      m_ImagePanel.setScale(m_Zoom);
+      zoom = m_Zoom;
     else
-      m_ImagePanel.setScale(m_Zoom / 100.0);
+      zoom = m_Zoom / 100.0;
+
+    if (token.getPayload() instanceof String)
+      m_ImagePanel.load(new PlaceholderFile((String) token.getPayload()), zoom);
+    else if (token.getPayload() instanceof File)
+      m_ImagePanel.load((File) token.getPayload(), zoom);
+    else if (token.getPayload() instanceof BufferedImage)
+      m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload(), zoom);
+    else if (token.getPayload() instanceof AbstractImageContainer)
+      m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload(), zoom);
     m_ImagePanel.setShowProperties(m_ShowProperties);
     m_ImagePanel.setShowLog(false);
     m_ImagePanel.setBackgroundColor(m_BackgroundColor);

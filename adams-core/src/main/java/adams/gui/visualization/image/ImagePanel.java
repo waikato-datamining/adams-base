@@ -541,13 +541,23 @@ public class ImagePanel
      * @param value	the image to use
      */
     public void setCurrentImage(BufferedImage value) {
+      setCurrentImage(value, 1.0);
+    }
+
+    /**
+     * Sets the image to display.
+     *
+     * @param value	the image to use
+     * @param scale 	the scale to use
+     */
+    public void setCurrentImage(BufferedImage value, double scale) {
       SwingUtilities.invokeLater(() -> {
 	m_CurrentImage         = value;
 	m_SelectionTopLeft     = null;
 	m_SelectionBottomRight = null;
 	m_Dragged              = false;
 	m_Selecting            = false;
-	setScale(1.0);
+	setScale(scale);
 	repaint();
       });
     }
@@ -1075,8 +1085,18 @@ public class ImagePanel
    * @param value	the image to display
    */
   public void setCurrentImage(BufferedImage value) {
+    setCurrentImage(value, 1.0);
+  }
+
+  /**
+   * Sets the underlying image. Removes the filename.
+   *
+   * @param value	the image to display
+   * @param scale	the scale to use
+   */
+  public void setCurrentImage(BufferedImage value, double scale) {
     m_CurrentFile = null;
-    m_PaintPanel.setCurrentImage(value);
+    m_PaintPanel.setCurrentImage(value, scale);
     updateImageProperties();
   }
 
@@ -1086,8 +1106,18 @@ public class ImagePanel
    * @param value	the image to display
    */
   public void setCurrentImage(AbstractImageContainer value) {
+    setCurrentImage(value, 1.0);
+  }
+
+  /**
+   * Sets the underlying image. Removes the filename.
+   *
+   * @param value	the image to display
+   * @param scale	the scale to use
+   */
+  public void setCurrentImage(AbstractImageContainer value, double scale) {
     m_CurrentFile = null;
-    m_PaintPanel.setCurrentImage(value.toBufferedImage());
+    m_PaintPanel.setCurrentImage(value.toBufferedImage(), scale);
     updateImageProperties();
     setAdditionalProperties(value.getReport());
   }
@@ -1334,10 +1364,33 @@ public class ImagePanel
    * Opens the file with the specified image reader.
    *
    * @param file	the file to open
+   * @param scale	the scale to use
+   * @return		true if successfully read
+   */
+  public boolean load(File file, double scale) {
+    return load(file, null, scale);
+  }
+
+  /**
+   * Opens the file with the specified image reader.
+   *
+   * @param file	the file to open
    * @param reader	the reader to use, null for auto-detection
    * @return		true if successfully read
    */
   public boolean load(File file, AbstractImageReader reader) {
+    return load(file, reader, 1.0);
+  }
+
+  /**
+   * Opens the file with the specified image reader.
+   *
+   * @param file	the file to open
+   * @param reader	the reader to use, null for auto-detection
+   * @param scale	the scale to use
+   * @return		true if successfully read
+   */
+  public boolean load(File file, AbstractImageReader reader, double scale) {
     boolean			result;
     AbstractImageContainer	cont;
 
@@ -1350,7 +1403,7 @@ public class ImagePanel
       else
 	cont = BufferedImageHelper.read(file);
       if (cont != null) {
-	m_PaintPanel.setCurrentImage(cont.toBufferedImage());
+	m_PaintPanel.setCurrentImage(cont.toBufferedImage(), scale);
 	m_CurrentFile = new PlaceholderFile(file);
 	result        = true;
 	updateImageProperties(cont.getReport());
