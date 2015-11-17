@@ -36,7 +36,9 @@ public class BlobContainer
 
   /** for serialization. */
   private static final long serialVersionUID = 4567572281060847914L;
-  
+
+  public static final int MAX_BYTES = 100;
+
   /** the ID. */
   protected String m_ID;
   
@@ -99,11 +101,13 @@ public class BlobContainer
     result = new StringBuilder();
     result.append("id=" + m_ID);
     result.append(", content=");
-    for (i = 0; i < m_Content.length; i++) {
+    for (i = 0; (i < m_Content.length) && (i < MAX_BYTES); i++) {
       if (i > 0)
 	result.append(", ");
       result.append(Utils.toHex(m_Content[i]));
     }
+    if (m_Content.length > MAX_BYTES)
+      result.append(", ...");
     result.append(", report=" + m_Report);
     result.append(", notes=" + m_Notes);
 
