@@ -15,14 +15,16 @@
 
 /**
  * AbstractPropertyExtractor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.propertyextractor;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Ancestor for property extractors, used for populating the object tree.
@@ -34,7 +36,7 @@ public abstract class AbstractPropertyExtractor
   implements CleanUpHandler {
 
   /** the cache for object class / extractor relation. */
-  protected static Hashtable<Class,Class> m_Cache;
+  protected static Hashtable<Class,List<Class>> m_Cache;
 
   /** the extractors (classnames) currently available. */
   protected static String[] m_Extractors;
@@ -46,7 +48,7 @@ public abstract class AbstractPropertyExtractor
   protected Object m_Current;
 
   static {
-    m_Cache            = new Hashtable<Class,Class>();
+    m_Cache            = new Hashtable<>();
     m_Extractors       = null;
     m_ExtractorClasses = null;
   }
@@ -74,7 +76,7 @@ public abstract class AbstractPropertyExtractor
   }
 
   /**
-   * Returns a extractor for the specified object.
+   * Returns the first extractor for the specified object.
    *
    * @param obj		the object to get an extractor for
    * @return		the extractor
@@ -84,24 +86,45 @@ public abstract class AbstractPropertyExtractor
   }
 
   /**
-   * Returns a extractor for the specified class.
+   * Returns the first extractor for the specified class.
    *
    * @param cls		the class to get an extractor for
    * @return		the extractor
    */
   public static synchronized AbstractPropertyExtractor getExtractor(Class cls) {
-    AbstractPropertyExtractor	result;
-    AbstractPropertyExtractor	extractor;
-    int				i;
+    return getExtractors(cls).get(0);
+  }
 
-    result = null;
+  /**
+   * Returns all the extractors for the specified object.
+   *
+   * @param obj		the object to get the extractors for
+   * @return		the extractors
+   */
+  public static synchronized List<AbstractPropertyExtractor> getExtractors(Object obj) {
+    return getExtractors(obj.getClass());
+  }
+
+  /**
+   * Returns all the extractors for the specified class.
+   *
+   * @param cls		the class to get the extractors for
+   * @return		the extractors
+   */
+  public static synchronized List<AbstractPropertyExtractor> getExtractors(Class cls) {
+    List<AbstractPropertyExtractor>	result;
+    AbstractPropertyExtractor		extractor;
+    int					i;
+
+    result = new ArrayList<>();
 
     initExtractors();
 
     // already cached?
     if (m_Cache.containsKey(cls)) {
       try {
-	result = (AbstractPropertyExtractor) m_Cache.get(cls).newInstance();
+	for (Class extrCls: m_Cache.get(cls))
+	  result.add((AbstractPropertyExtractor) extrCls.newInstance());
 	return result;
       }
       catch (Exception e) {
@@ -116,25 +139,26 @@ public abstract class AbstractPropertyExtractor
 	continue;
       try {
 	extractor = (AbstractPropertyExtractor) m_ExtractorClasses[i].newInstance();
-	if (extractor.handles(cls)) {
-	  result = extractor;
-	  break;
-	}
+	if (extractor.handles(cls))
+	  result.add(extractor);
       }
       catch (Exception e) {
 	// ignored
       }
     }
 
-    if (result == null)
-      result = new DefaultPropertyExtractor();
+    extractor = new DefaultPropertyExtractor();
+    if (!result.contains(extractor))
+      result.add(extractor);
 
     // store in cache
-    m_Cache.put(cls, result.getClass());
+    m_Cache.put(cls, new ArrayList<>());
+    for (AbstractPropertyExtractor extr: result)
+      m_Cache.get(cls).add(extr.getClass());
 
     return result;
   }
-  
+
   /**
    * Checks whether this extractor actually handles this type of class.
    * 

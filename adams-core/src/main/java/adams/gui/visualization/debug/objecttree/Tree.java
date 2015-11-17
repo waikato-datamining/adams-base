@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyEditorManager;
 import java.io.File;
 import java.lang.reflect.Array;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -193,11 +194,10 @@ public class Tree
     result = true;
 
     if (m_SearchString != null) {
-      result = false;
       if (m_SearchPattern != null)
 	result = m_SearchPattern.matcher(label).matches();
       else
-	result = (label.indexOf(m_SearchString) > -1);
+	result = label.contains(m_SearchString);
     }
 
     return result;
@@ -214,11 +214,12 @@ public class Tree
    */
   protected Node buildTree(Node parent, String property, Object obj, NodeType type) {
     Node				result;
-    AbstractPropertyExtractor		extractor;
+    List<AbstractPropertyExtractor>	extractors;
     List<AbstractInspectionHandler>	handlers;
     Hashtable<String,Object>		additional;
     Object				current;
     String				label;
+    HashSet<String>			labels;
     int					i;
     boolean				add;
 
@@ -234,19 +235,26 @@ public class Tree
     if (obj.getClass().isArray())
       addArray(result, obj);
 
+    labels = new HashSet<>();
+
     // child properties
     try {
-      extractor = AbstractPropertyExtractor.getExtractor(obj);
-      extractor.setCurrent(obj);
-      for (i = 0; i < extractor.size(); i++) {
-	current = extractor.getValue(i);
-	if (current != null) {
-	  label = extractor.getLabel(i);
-	  add   =    matches(label)
-	          || (current instanceof OptionHandler)
-	          || (current.getClass().isArray());
-	  if (add)
-	    buildTree(result, label, current, NodeType.NORMAL);
+      extractors = AbstractPropertyExtractor.getExtractors(obj);
+      for (AbstractPropertyExtractor extractor: extractors) {
+	extractor.setCurrent(obj);
+	for (i = 0; i < extractor.size(); i++) {
+	  current = extractor.getValue(i);
+	  if (current != null) {
+	    label = extractor.getLabel(i);
+	    add = matches(label)
+	      || (current instanceof OptionHandler)
+	      || (current.getClass().isArray());
+	    add = add && !labels.contains(label);
+	    if (add) {
+	      labels.add(label);
+	      buildTree(result, label, current, NodeType.NORMAL);
+	    }
+	  }
 	}
       }
     }
@@ -260,8 +268,10 @@ public class Tree
     for (AbstractInspectionHandler handler: handlers) {
       additional = handler.inspect(obj);
       for (String key: additional.keySet()) {
-	if (matches(key))
+	if (matches(key) && !labels.contains(key)) {
+	  labels.add(key);
 	  buildTree(result, key, additional.get(key), NodeType.NORMAL);
+	}
       }
     }
 
@@ -300,10 +310,10 @@ public class Tree
     Node	child;
     int		i;
 
-    result = false;
-
     if (parent == null)
-      return result;
+      return false;
+
+    result = false;
 
     for (i = 0; i < parent.getChildCount(); i++) {
       child = (Node) parent.getChildAt(i);
