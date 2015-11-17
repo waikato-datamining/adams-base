@@ -64,6 +64,9 @@ public class Tree
   /** the label for the hashcode. */
   public final static String LABEL_HASHCODE = "hashCode";
 
+  /** the maximum number of array/list elements to show. */
+  public final static int MAX_ITEMS = 100;
+
   /** the current object. */
   protected transient Object m_Object;
 
@@ -142,7 +145,7 @@ public class Tree
     Node	child;
 
     len = Array.getLength(obj);
-    for (i = 0; i < len; i++) {
+    for (i = 0; (i < len) && (i < MAX_ITEMS); i++) {
       value = Array.get(obj, i);
       if (value != null) {
 	buildTree(parent, "[" + (i+1) + "]", value, NodeType.ARRAY_ELEMENT);
@@ -151,6 +154,10 @@ public class Tree
 	child = new Node("[" + (i+1) + "]", null, NodeType.ARRAY_ELEMENT);
 	parent.add(child);
       }
+    }
+    if (len > MAX_ITEMS) {
+      child = new Node("[" + MAX_ITEMS + "-" + len + "]", "skipped", NodeType.ARRAY_ELEMENT);
+      parent.add(child);
     }
   }
 
