@@ -76,6 +76,7 @@ public class DOMTreeWithPreview
     
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPane.setResizeWeight(1.0);
+    m_SplitPane.setOneTouchExpandable(true);
     add(m_SplitPane, BorderLayout.CENTER);
     
     m_Tree = new DOMTree();

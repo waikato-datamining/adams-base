@@ -15,27 +15,26 @@
 
 /**
  * JsonTreeWithPreview.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core.json;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.core.JsonSupporter;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.GUIHelper;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
-import adams.core.JsonSupporter;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel with a JSON tree and a text area for previewing the data.
@@ -49,6 +48,9 @@ public class JsonTreeWithPreview
 
   /** for serialization. */
   private static final long serialVersionUID = 7380711856972284896L;
+
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
 
   /** the JSON tree. */
   protected JsonTree m_Tree;
@@ -70,7 +72,11 @@ public class JsonTreeWithPreview
     super.initGUI();
     
     setLayout(new BorderLayout());
-    
+
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setOneTouchExpandable(true);
+    add(m_SplitPane, BorderLayout.CENTER);
+
     // tree
     m_Tree = new JsonTree();
     m_Tree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -82,19 +88,19 @@ public class JsonTreeWithPreview
 	  m_TextArea.setText("" + node.getValue());
 	else
 	  m_TextArea.setText("");
+	m_TextArea.setCaretPosition(0);
       }
     });
-    add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
-    
+    m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
+
     // preview
     panelPreview = new JPanel(new BorderLayout());
-    add(panelPreview, BorderLayout.SOUTH);
-    
+    m_SplitPane.setBottomComponent(panelPreview);
+
     m_TextArea = new BaseTextArea();
     m_TextArea.setEditable(false);
     m_TextArea.setLineWrap(true);
     m_TextArea.setWrapStyleWord(true);
-    m_TextArea.setPreferredSize(new Dimension(100, 100));
     m_TextArea.setFont(GUIHelper.getMonospacedFont());
     panelPreview.add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
     
