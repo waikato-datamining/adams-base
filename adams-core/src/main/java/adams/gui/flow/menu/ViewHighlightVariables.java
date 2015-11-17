@@ -15,16 +15,16 @@
 
 /**
  * ViewHighlightVariables.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.gui.core.GUIHelper;
 
+import java.awt.event.ActionEvent;
+
 /**
- * Highlights the variables.
+ * Highlights attached variables.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -54,7 +54,7 @@ public class ViewHighlightVariables
    */
   @Override
   protected String getTitle() {
-    return "Highlight variables...";
+    return "Highlight attached variables...";
   }
   
   /**
@@ -65,9 +65,10 @@ public class ViewHighlightVariables
     String	regexp;
     
     regexp = GUIHelper.showInputDialog(
-	  GUIHelper.getParentComponent(m_State),
-	  "Enter the regular expression for the variable name ('.*' matches all):",
-	  m_LastVariableSearch);
+      GUIHelper.getParentComponent(m_State),
+      "Enter the regular expression for the variable name ('.*' matches all):",
+      m_LastVariableSearch,
+      getTitle());
     if (regexp == null)
 	return;
 
