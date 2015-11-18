@@ -86,7 +86,7 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%REPO%\java-cup-0.11a.jar";"%RESOURCES%";"%REPO%\*"
+set CLASSPATH="%REPO%\java-cup-11b-2015.03.26.jar";"%RESOURCES%";"%REPO%\*"
 set AGENT=%REPO%\sizeofag-1.0.0.jar
 goto endInit
 
