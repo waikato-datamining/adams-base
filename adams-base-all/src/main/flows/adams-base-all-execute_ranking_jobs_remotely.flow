@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-24 17:00:04
+# Date: 2015-11-18 15:56:29
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -28,9 +28,11 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.standalone.SSHConnection
 			-host
-			storm.cms.waikato.ac.nz
+			somehost
 			-authentication-type
 			PUBLIC_KEY
+			-user
+			user
 	-actor
 		adams.flow.standalone.SetVariable
 			-name

@@ -7,7 +7,7 @@ adams.flow.control.Flow
 	-annotation
 	This flow demonstrates how to load an ARFF file from\nthe internet. It loads the UCI dataset hosted by TunedIT.
 	-actor
-		adams.flow.source.SingleURLSupplier
+		adams.flow.source.URLSupplier
 			-url
 			http://tunedit.org/download/UCI/iris.arff
 	-actor
