@@ -26,7 +26,6 @@ import adams.core.VariableNameNoUpdate;
 import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
@@ -53,6 +52,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -920,9 +920,7 @@ public class DisplayPanelManager
     
     if (m_TextFileChooser == null) {
       fileChooser = new TextFileChooser();
-      filter      = null;
-      if (this instanceof TextSupplier)
-	filter = ((TextSupplier) this).getCustomTextFileFilter();
+      filter      = getCustomTextFileFilter();
       if (filter != null) {
 	fileChooser.resetChoosableFileFilters();
 	fileChooser.addChoosableFileFilter(filter);
@@ -941,8 +939,8 @@ public class DisplayPanelManager
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    if ((m_PanelProvider != null) && (m_PanelProvider instanceof InputConsumer))
-      return ((InputConsumer) m_PanelProvider).accepts();
+    if (m_PanelProvider != null)
+      return m_PanelProvider.accepts();
     else
       return new Class[]{Object.class};
   }
@@ -970,8 +968,10 @@ public class DisplayPanelManager
       }
     }
     
-    if (m_CurrentPanel != null)
+    if (m_CurrentPanel != null) {
       m_CurrentPanel.display(token);
+      SwingUtilities.invokeLater(() -> ((JPanel) m_CurrentPanel).repaint());
+    }
 
     m_CurrentCount++;
   }
