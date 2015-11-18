@@ -67,16 +67,13 @@ HOWTO make a release
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
 +--
 
-  * update link on frontpage
+  * update adams webpage
 
 +--
   https://adams.cms.waikato.ac.nz/index.html
-+--
-
-  * add new section with updated links (dir + file)
-  
-+--
   https://adams.cms.waikato.ac.nz/release.html
+  https://adams.cms.waikato.ac.nz/rollyourown.html
+  https://adams.cms.waikato.ac.nz/resources/rollyourown/modules/*
 +--
 
   * publish release on Twitter
