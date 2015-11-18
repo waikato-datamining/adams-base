@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-02 11:38:00
+# Date: 2015-11-18 14:06:13
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -32,7 +32,7 @@ adams.flow.control.Flow
 							-type
 							DIRECTORY_ABSOLUTE
 							-default-value
-							${HOME}
+							${EXAMPLE_FLOWS}/data
 					-value
 						adams.flow.source.ValueDefinition
 							-name
