@@ -141,7 +141,7 @@ public abstract class AbstractActor
    */
   public String getAdditionalInformation() {
     StringBuilder	result;
-    boolean		singleton;
+    boolean standalone;
     Class[]		cls;
     int			i;
     List<Class>	containers;
@@ -153,11 +153,11 @@ public abstract class AbstractActor
     result = new StringBuilder();
 
     result.append("Flow input/output:");
-    singleton  = true;
+    standalone = true;
     containers = new ArrayList<Class>();
 
     if (this instanceof InputConsumer) {
-      singleton = false;
+      standalone = false;
       result.append("\n- input: ");
       cls       = ((InputConsumer) this).accepts();
       result.append(Utils.classesToString(cls));
@@ -168,7 +168,7 @@ public abstract class AbstractActor
     }
 
     if (this instanceof OutputProducer) {
-      singleton = false;
+      standalone = false;
       result.append("\n- output: ");
       cls       = ((OutputProducer) this).generates();
       for (i = 0; i < cls.length; i++) {
@@ -180,8 +180,8 @@ public abstract class AbstractActor
       }
     }
 
-    if (singleton)
-      result.append("\n-singleton-");
+    if (standalone)
+      result.append("\n-standalone-");
 
     if (containers.size() > 0) {
       result.append("\nContainer information:");
