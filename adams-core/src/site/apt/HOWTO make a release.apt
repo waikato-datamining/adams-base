@@ -66,7 +66,13 @@ HOWTO make a release
 +--
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
 +--
-    
+
+  * update link on frontpage
+
++--
+  https://adams.cms.waikato.ac.nz/index.html
++--
+
   * add new section with updated links (dir + file)
   
 +--
