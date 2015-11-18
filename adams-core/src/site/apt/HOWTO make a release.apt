@@ -55,7 +55,6 @@ HOWTO make a release
 
   * create a new directory on sf.net and upload the following files:
     * -bin.zip
-    * -app.zip
     * -doc.zip
     * -flows.jar
 
