@@ -1,1 +1,1 @@
-INTEGER: select auto_id from table
+INTEGER: select auto_id from table, one by one

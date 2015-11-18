@@ -15,15 +15,15 @@
 
 /*
  * FileSupplier.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.ArrayList;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -120,13 +120,10 @@ public class FileSupplier
   @Override
   public String getQuickInfo() {
     String	result;
-    String	value;
-    
-    result = QuickInfoHelper.toString(this, "files", (m_Files.length == 1 ? m_Files[0] : m_Files.length + " files"));
-    value  = QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "output as array", ", ");
-    if (value != null)
-      result += value;
-    
+
+    result  = QuickInfoHelper.toString(this, "files", (m_Files.length == 1 ? m_Files[0] : m_Files.length + " files"));
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+
     return result;
   }
 

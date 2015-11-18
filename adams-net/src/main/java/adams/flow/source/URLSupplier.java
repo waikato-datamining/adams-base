@@ -15,16 +15,16 @@
 
 /*
  * URLSupplier.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.net.URL;
-import java.util.ArrayList;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseURL;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -117,12 +117,9 @@ public class URLSupplier
   @Override
   public String getQuickInfo() {
     String	result;
-    String	value;
-    
+
     result = QuickInfoHelper.toString(this, "URLs", (m_URLs.length == 1 ? m_URLs[0] : m_URLs.length + " URLs"));
-    value  = QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "output as array", ", ");
-    if (value != null)
-      result += value;
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
     
     return result;
   }

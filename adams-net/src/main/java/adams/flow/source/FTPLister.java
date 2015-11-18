@@ -199,7 +199,12 @@ public class FTPLister
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "remoteDir", m_RemoteDir);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "remoteDir", m_RemoteDir);
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+
+    return result;
   }
 
   /**

@@ -15,15 +15,15 @@
 
 /**
  * FileSystemSearch.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet;
 import adams.flow.source.filesystemsearch.FileSearch;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -171,7 +171,12 @@ public class FileSystemSearch
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "search", m_Search);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "search", m_Search);
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+
+    return result;
   }
 
   /**

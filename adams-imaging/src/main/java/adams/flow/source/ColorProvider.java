@@ -15,15 +15,15 @@
 
 /**
  * ColorProvider.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.awt.Color;
 
 import adams.core.QuickInfoHelper;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+
+import java.awt.Color;
 
 /**
  <!-- globalinfo-start -->
@@ -211,7 +211,7 @@ public class ColorProvider
 
     result  = QuickInfoHelper.toString(this, "provider", m_Provider);
     result += QuickInfoHelper.toString(this, "numColors", m_NumColors, ", # colors: ");
-    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", ", ");
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
     
     return result;
   }

@@ -15,7 +15,7 @@
 
 /*
  * StringConstants.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -113,7 +113,12 @@ public class StringConstants
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "strings", (m_Strings.length == 1 ? m_Strings[0] : m_Strings.length + " values"));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "strings", (m_Strings.length == 1 ? m_Strings[0] : m_Strings.length + " values"));
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+
+    return result;
   }
 
   /**

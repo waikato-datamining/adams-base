@@ -15,18 +15,18 @@
 
 /**
  * SQLIdSupplier.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.sql.ResultSet;
-import java.util.ArrayList;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -155,6 +155,7 @@ public class SQLIdSupplier
 
     result  = QuickInfoHelper.toString(this, "type", m_Type);
     result += QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ": ");
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
 
     return result;
   }

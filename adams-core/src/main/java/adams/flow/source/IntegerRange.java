@@ -153,6 +153,7 @@ public class IntegerRange
     result  = QuickInfoHelper.toString(this, "range", m_Range, "range: ");
     result += QuickInfoHelper.toString(this, "max", m_Max, ", max: ");
     result += QuickInfoHelper.toString(this, "zeroBased", (m_ZeroBased ? "0-based" : "1-based"), ", ");
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
 
     return result;
   }
