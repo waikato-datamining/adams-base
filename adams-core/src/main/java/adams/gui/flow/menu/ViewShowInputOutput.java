@@ -15,13 +15,13 @@
 
 /**
  * ViewShowInputOutput.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.gui.flow.FlowEditorPanel;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Enables/disables input/output hints visibility.
@@ -69,5 +69,7 @@ public class ViewShowInputOutput
   @Override
   protected void doUpdate() {
     setEnabled(m_State.hasCurrentPanel());
+    if (m_State.hasCurrentPanel())
+      setSelected(m_State.getCurrentPanel().getTree().getShowInputOutput());
   }
 }
