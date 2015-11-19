@@ -21,3 +21,6 @@ adams.data.weka.WekaAttributeIndex=adams.gui.goe.WekaAttributeIndexEditor
 adams.data.weka.WekaAttributeRange=adams.gui.goe.WekaAttributeRangeEditor
 adams.data.weka.WekaLabelIndex=adams.gui.goe.WekaLabelIndexEditor
 adams.data.weka.WekaLabelRange=adams.gui.goe.WekaLabelRangeEditor
+
+# additional Weka stuff
+weka.core.tokenizers.Tokenizer[]=weka.gui.GenericArrayEditor
