@@ -128,7 +128,7 @@ public class MultiCleaner
    * 			displaying in the GUI or for listing the options.
    */
   public String cleanersTipText() {
-    return "The model file to load and use; no header; one emoticon per line; ignores anything after tab.";
+    return "The cleaners to apply sequentially.";
   }
 
   /**
