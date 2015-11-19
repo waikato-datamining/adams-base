@@ -47,6 +47,10 @@ weka.core.converters.AbstractFileLoader=\
 weka.core.converters.AbstractFileSaver=\
   weka.core.converters
 
+# for cleaning token sequences
+weka.core.tokenizers.cleaners.TokenCleaner=\
+  weka.core.tokenizers.cleaners
+
 # WEKA stream filters
 weka.filters.StreamableFilter=\
   weka.filters,\
