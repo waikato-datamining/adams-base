@@ -103,9 +103,9 @@ public class MultiCleaner
   }
 
   /**
-   * Sets the model file to load and use.
+   * Sets the cleaners to use.
    *
-   * @param value	the model
+   * @param value	the cleaners
    */
   public void setCleaners(TokenCleaner[] value) {
     m_Cleaners = value;
@@ -113,9 +113,9 @@ public class MultiCleaner
   }
 
   /**
-   * Returns the model file to load and use.
+   * Returns the cleaners to use.
    *
-   * @return		the model
+   * @return		the cleaners
    */
   public TokenCleaner[] getCleaners() {
     return m_Cleaners;
