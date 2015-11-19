@@ -251,6 +251,43 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Parses an OptionHandler array option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @param cls		  the class to use for the array
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Object parse(String[] options, char option, OptionHandler[] defValue, Class cls) throws Exception {
+    return parse(options, "" + option, defValue, cls);
+  }
+
+  /**
+   * Parses an OptionHandler array option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @param cls		  the class to use for the array
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Object parse(String[] options, String option, OptionHandler[] defValue, Class cls) throws Exception {
+    List<String> values = new ArrayList<>();
+    String value;
+    while (!(value = Utils.getOption(option, options)).isEmpty())
+      values.add(value);
+    if (values.size() == 0)
+      return defValue;
+    Object result = Array.newInstance(cls, values.size());
+    for (int i = 0; i < values.size(); i++)
+      Array.set(result, i, OptionUtils.forAnyCommandLine(OptionHandler.class, values.get(i)));
+    return result;
+  }
+
+  /**
    * Parses an adams.core.option.OptionHandler option, uses default if option is missing.
    *
    * @param options       the option array to use
