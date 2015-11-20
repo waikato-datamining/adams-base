@@ -22,6 +22,7 @@ package adams.gui.core;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -342,8 +343,10 @@ public class BaseTree
     int		i;
 
     for (i = 0; i < value.length; i++) {
-      if (value[i])
-	expandRow(i);
+      if (value[i]) {
+        final int row = i;
+        SwingUtilities.invokeLater(() -> expandRow(row));
+      }
     }
   }
 

@@ -74,11 +74,11 @@ public class StorageValueRenamed
     options = actor.getOptionManager().getOptionsList();
     for (i = 0; i < options.size(); i++) {
       if (options.get(i) instanceof AbstractArgumentOption) {
-        option = (AbstractArgumentOption) options.get(i);
-        if (!option.isMultiple() && option.getBaseClass().equals(StorageName.class)) {
-          result = (StorageName) option.getCurrentValue();
-          break;
-        }
+	option = (AbstractArgumentOption) options.get(i);
+	if (!option.isMultiple() && option.getBaseClass().equals(StorageName.class)) {
+	  result = (StorageName) option.getCurrentValue();
+	  break;
+	}
       }
     }
 
@@ -120,8 +120,9 @@ public class StorageValueRenamed
    */
   @Override
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean		result;
-    UpdateStorageName	updater;
+    boolean			result;
+    UpdateStorageName		updater;
+    final boolean[] 		expanded;
 
     result = false;
 
@@ -130,14 +131,16 @@ public class StorageValueRenamed
     updater.setNewName(getStorageName(newActor).getValue());
     updater.process(tree.getActor());
     if (updater.isModified()) {
-      result = true;
+      result   = true;
+      expanded = tree.getExpandedState();
       SwingUtilities.invokeLater(() -> {
-          tree.setModified(true);
-          tree.setActor(updater.getModifiedActor());
+	tree.setModified(true);
+	tree.setActor(updater.getModifiedActor());
       });
       SwingUtilities.invokeLater(() -> {
-        tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-        tree.refreshTabs();
+	tree.setExpandedState(expanded);
+	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
+	tree.refreshTabs();
       });
     }
 

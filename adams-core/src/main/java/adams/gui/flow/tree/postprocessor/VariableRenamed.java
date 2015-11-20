@@ -54,12 +54,12 @@ public class VariableRenamed
    */
   public String globalInfo() {
     return
-        "Updates all references of the variable that was renamed.";
+      "Updates all references of the variable that was renamed.";
   }
 
   /**
    * Extracts the variable name (the option) from the actor.
-   * 
+   *
    * @param actor	the actor to get the variable name from
    * @return		the variable name, null if none found
    */
@@ -68,7 +68,7 @@ public class VariableRenamed
     int				i;
     List<AbstractOption>	options;
     AbstractArgumentOption	option;
-    
+
     result = null;
 
     options = actor.getOptionManager().getOptionsList();
@@ -81,13 +81,13 @@ public class VariableRenamed
 	}
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Checks whether this post processor scheme applies to the current situation.
-   * 
+   *
    * @param oldActor	the old actor
    * @param newActor	the new, updated actor
    * @return		true if this post processor applies to the situation
@@ -97,21 +97,21 @@ public class VariableRenamed
     boolean		result;
     VariableName	oldName;
     VariableName	newName;
-    
+
     result = false;
-    
+
     oldName = getVariableName(oldActor);
     newName = getVariableName(newActor);
-    
+
     if (oldName != null)
       result = !oldName.equals(newName);
-    
+
     return result;
   }
-  
+
   /**
    * Post-processes the tree.
-   * 
+   *
    * @param tree	the tree to post-process
    * @param parent	the parent actor
    * @param oldActor	the old actor
@@ -120,22 +120,25 @@ public class VariableRenamed
    */
   @Override
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean		result;
-    UpdateVariableName	updater;
-    
+    boolean			result;
+    UpdateVariableName		updater;
+    final boolean[] 		expanded;
+
     result = false;
-    
+
     updater = new UpdateVariableName();
     updater.setOldName(getVariableName(oldActor).getValue());
     updater.setNewName(getVariableName(newActor).getValue());
     updater.process(tree.getActor());
     if (updater.isModified()) {
-      result = true;
+      result   = true;
+      expanded = tree.getExpandedState();
       SwingUtilities.invokeLater(() -> {
-	  tree.setModified(true);
-	  tree.setActor(updater.getModifiedActor());
+	tree.setModified(true);
+	tree.setActor(updater.getModifiedActor());
       });
       SwingUtilities.invokeLater(() -> {
+	tree.setExpandedState(expanded);
 	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
 	tree.refreshTabs();
       });

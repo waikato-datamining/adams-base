@@ -79,6 +79,7 @@ public class CallableActorRenamed
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
     boolean			result;
     UpdateCallableActorName	updater;
+    final boolean[] 		expanded;
 
     result = false;
 
@@ -87,12 +88,14 @@ public class CallableActorRenamed
     updater.setNewName(newActor.getName());
     updater.process(tree.getActor());
     if (updater.isModified()) {
-      result = true;
+      result   = true;
+      expanded = tree.getExpandedState();
       SwingUtilities.invokeLater(() -> {
-	  tree.setModified(true);
-	  tree.setActor(updater.getModifiedActor());
+	tree.setModified(true);
+	tree.setActor(updater.getModifiedActor());
       });
       SwingUtilities.invokeLater(() -> {
+	tree.setExpandedState(expanded);
 	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
 	tree.refreshTabs();
       });
