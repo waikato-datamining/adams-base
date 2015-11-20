@@ -15,7 +15,7 @@
 
 /**
  * CallableActorRenamed.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
@@ -26,6 +26,8 @@ import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.SwingUtilities;
 
 /**
  <!-- globalinfo-start -->
@@ -49,12 +51,12 @@ public class CallableActorRenamed
    */
   public String globalInfo() {
     return
-        "Updates all references of the callable actor that was renamed.";
+      "Updates all references of the callable actor that was renamed.";
   }
 
   /**
    * Checks whether this post processor scheme applies to the current situation.
-   * 
+   *
    * @param oldActor	the old actor
    * @param newActor	the new, updated actor
    * @return		true if this post processor applies to the situation
@@ -63,10 +65,10 @@ public class CallableActorRenamed
   public boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
     return (parent instanceof CallableActorHandler) && !oldActor.getName().equals(newActor.getName());
   }
-  
+
   /**
    * Post-processes the tree.
-   * 
+   *
    * @param tree	the tree to post-process
    * @param parent	the parent actor
    * @param oldActor	the old actor
@@ -77,19 +79,23 @@ public class CallableActorRenamed
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
     boolean			result;
     UpdateCallableActorName	updater;
-    
+
     result = false;
-    
+
     updater = new UpdateCallableActorName();
     updater.setOldName(oldActor.getName());
     updater.setNewName(newActor.getName());
     updater.process(tree.getActor());
     if (updater.isModified()) {
       result = true;
-      tree.setModified(true);
-      tree.setActor(updater.getModifiedActor());
-      tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-      tree.refreshTabs();
+      SwingUtilities.invokeLater(() -> {
+	  tree.setModified(true);
+	  tree.setActor(updater.getModifiedActor());
+      });
+      SwingUtilities.invokeLater(() -> {
+	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
+	tree.refreshTabs();
+      });
     }
 
     return result;

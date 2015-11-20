@@ -15,11 +15,9 @@
 
 /**
  * VariableRenamed.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
-
-import java.util.List;
 
 import adams.core.VariableName;
 import adams.core.option.AbstractArgumentOption;
@@ -30,6 +28,9 @@ import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.SwingUtilities;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -119,7 +120,7 @@ public class VariableRenamed
    */
   @Override
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean			result;
+    boolean		result;
     UpdateVariableName	updater;
     
     result = false;
@@ -130,10 +131,14 @@ public class VariableRenamed
     updater.process(tree.getActor());
     if (updater.isModified()) {
       result = true;
-      tree.setModified(true);
-      tree.setActor(updater.getModifiedActor());
-      tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-      tree.refreshTabs();
+      SwingUtilities.invokeLater(() -> {
+	  tree.setModified(true);
+	  tree.setActor(updater.getModifiedActor());
+      });
+      SwingUtilities.invokeLater(() -> {
+	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
+	tree.refreshTabs();
+      });
     }
 
     return result;
