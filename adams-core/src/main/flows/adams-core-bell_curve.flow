@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-02-18 12:14:55
+# Date: 2015-11-20 15:33:53
 # User: fracpete
 #
 adams.flow.control.Flow
@@ -34,7 +34,7 @@ adams.flow.control.Flow
 			-name
 			MathExpression-1
 			-expression
-			1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
+			1/(@{stdev}*sqrt(2*pi))*pow(e, (-pow((X-@{mean}), 2)/(2*pow(@{stdev},2))))
 			-output-value-pair
 			true
 	-actor
@@ -47,6 +47,8 @@ adams.flow.control.Flow
 				adams.gui.print.NullWriter
 			-paintlet
 				adams.gui.visualization.sequence.LinePaintlet
+			-overlay-paintlet
+				adams.gui.visualization.sequence.NullPaintlet
 			-mouse-click-action
 				adams.flow.sink.sequenceplotter.NullClickAction
 			-color-provider
