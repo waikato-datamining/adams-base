@@ -15,16 +15,20 @@
 
 /**
  * HtmlParametersProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-
+import adams.core.ClassLocator;
 import adams.core.Utils;
+import adams.core.base.AbstractBaseString;
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
+import adams.gui.core.AbstractAdvancedScript;
+import adams.gui.core.AbstractSimpleScript;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  * Generates HTML output of the parameters of an object (non-recursive).
@@ -225,6 +229,8 @@ public class HtmlParametersProducer
     String			text;
     int				n;
     Object			value;
+    boolean			script;
+    AbstractBaseString		bstring;
 
     result = new StringBuilder();
 
@@ -234,21 +240,45 @@ public class HtmlParametersProducer
       result.append("<b>" + toHTML(option.getProperty()) + "</b>\n");
       result.append("<br>\n");
 
-      if (value == null) {
-	text = "null";
-      }
-      else if (option.isMultiple()) {
-	text = "";
-	for (n = 0; n < Array.getLength(value); n++) {
-	  if (n > 0)
-	    text += ", ";
-	  text += option.toString(Array.get(value, n));
+      script = (ClassLocator.isSubclass(AbstractSimpleScript.class, option.getBaseClass()))
+	|| (ClassLocator.isSubclass(AbstractAdvancedScript.class, option.getBaseClass()));
+
+      if (script) {
+	if (value == null) {
+	  text = "null";
 	}
+	else if (option.isMultiple()) {
+	  text = "";
+	  for (n = 0; n < Array.getLength(value); n++) {
+	    if (n > 0)
+	      text += "\n";
+	    bstring = (AbstractBaseString) Array.get(value, n);
+	    text += bstring.getValue();
+	  }
+	}
+	else {
+	  bstring = (AbstractBaseString) value;
+	  text = bstring.getValue();
+	}
+	result.append(toHTML(text, true) + "\n");
       }
       else {
-	text = option.toString(value);
+	if (value == null) {
+	  text = "null";
+	}
+	else if (option.isMultiple()) {
+	  text = "";
+	  for (n = 0; n < Array.getLength(value); n++) {
+	    if (n > 0)
+	      text += ", ";
+	    text += option.toString(Array.get(value, n));
+	  }
+	}
+	else {
+	  text = option.toString(value);
+	}
+	result.append(toHTML(Utils.backQuoteChars(text), false) + "\n");
       }
-      result.append(toHTML(Utils.backQuoteChars(text)) + "\n");
       result.append("<br>\n");
       result.append("</li>\n");
 
