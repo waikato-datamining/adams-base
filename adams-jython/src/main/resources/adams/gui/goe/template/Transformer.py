@@ -7,7 +7,7 @@ import java.lang.Class as Class
 
 class TemplateTransformer(AbstractScript):
     """
-    Template of a Groovy transformer.
+    Template of a Jython transformer.
 
     @author FracPete (fracpete at waikato dot ac dot nz)
     @version $Revision$

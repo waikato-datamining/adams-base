@@ -7,7 +7,7 @@ import java.lang.Class as Class
 
 class TemplateSink(AbstractScript):
     """
-    Template of a Groovy sink.
+    Template of a Jython sink.
 
     @author FracPete (fracpete at waikato dot ac dot nz)
     @version $Revision$

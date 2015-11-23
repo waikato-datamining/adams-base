@@ -7,7 +7,7 @@ import java.lang.Class as Class
 
 class SimpleTransformer(AbstractScript):
     """
-    A simple Groovy transformer that just adds a user-supplied integer to the
+    A simple Jython transformer that just adds a user-supplied integer to the
     integers that pass through.
 
     Expects an additional option called "add" with the number to add.
