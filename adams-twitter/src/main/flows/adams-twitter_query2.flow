@@ -4,7 +4,7 @@
 #
 adams.flow.control.Flow
 	-annotation
-	Example flow for querying the Twitter API.\nGenerates a CSV file from the obtained tweets.\nFor query examples, see the following web page:\nhttp://search.twitter.com/operators
+	Example flow for querying the Twitter API.\nGenerates a CSV file from the obtained tweets.\nFor query examples, see the following web page:\nhttps://dev.twitter.com/rest/public/search
 	-actor
 		adams.flow.standalone.TwitterConnection
 	-actor

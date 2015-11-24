@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:44:17
+# Date: 2015-11-24 14:36:59
 # User: fracpete
 #
 adams.flow.control.Flow
 	-annotation
-	Example flow for querying the Twitter API.\nFor query examples, see the following web page:\nhttp://search.twitter.com/operators
+	Example flow for querying the Twitter API.\nFor query examples, see the following web page:\nhttps://dev.twitter.com/rest/public/search
 	-actor
 		adams.flow.standalone.TwitterConnection
 	-actor
@@ -47,6 +47,8 @@ adams.flow.control.Flow
 			@{count}
 	-actor
 		adams.flow.sink.Display
+			-writer
+				adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 
