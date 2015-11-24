@@ -6,9 +6,9 @@ adams.flow.control.Flow
 	-annotation
 	Flow for collecting any tweets that can be obtained when\nlistening to the public tweet \"garden hose\". The tweets\nget collected in gzipped CSV files, one per day (\"day\" as \ndefined by current locale) in the temp directory.\n\nWARNING: Collection continues, until the flow is stopped.
 	-actor
+		adams.flow.standalone.TwitterConnection
+	-actor
 		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.standalone.TwitterConnection
 			-actor
 				adams.flow.source.SequenceSource
 					-name
