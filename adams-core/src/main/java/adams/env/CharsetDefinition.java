@@ -15,7 +15,7 @@
 
 /**
  * CharsetDefinition.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
@@ -34,7 +34,7 @@ public class CharsetDefinition
   private static final long serialVersionUID = -7053196761707403759L;
   
   /** the key as constant. */
-  public final static String KEY = "locale";
+  public final static String KEY = "charset";
 
   /**
    * Returns the key this definition is for.
