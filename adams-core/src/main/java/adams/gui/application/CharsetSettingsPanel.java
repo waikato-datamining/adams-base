@@ -19,12 +19,11 @@
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComboBox;
-
 import adams.core.management.CharsetHelper;
 import adams.gui.core.ParameterPanel;
+
+import javax.swing.JComboBox;
+import java.awt.BorderLayout;
 
 /**
  * Panel for configuring the charset settings.
@@ -74,7 +73,7 @@ public class CharsetSettingsPanel
     helper.reload();
 
     // charset
-    m_ComboBoxCharsets.setSelectedItem(helper.getCharset());
+    m_ComboBoxCharsets.setSelectedItem(helper.getCharset().toString());
   }
 
   /**
