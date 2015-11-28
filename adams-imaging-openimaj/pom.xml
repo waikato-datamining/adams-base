@@ -87,6 +87,12 @@
       <groupId>org.openimaj</groupId>
       <artifactId>faces</artifactId>
       <version>${openimaj.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xuggle</groupId>
+          <artifactId>xuggle-xuggler-lgpl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

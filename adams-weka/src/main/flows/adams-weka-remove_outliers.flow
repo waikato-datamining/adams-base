@@ -1,6 +1,7 @@
 # Project: adams
 # Date: 2015-09-09 12:43:06
 # User: fracpete
+# Charset: UTF-8
 #
 adams.flow.control.Flow
 	-annotation
