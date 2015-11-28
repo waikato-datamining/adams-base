@@ -19,13 +19,13 @@
  */
 package adams.core.management;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import adams.core.Properties;
 import adams.env.CharsetDefinition;
 import adams.env.Environment;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Helper class for charset setup.
@@ -83,7 +83,7 @@ public class CharsetHelper {
    * @return		the charset
    */
   public Charset getCharset() {
-    return Charset.forName(m_Properties.getProperty(CHARSET, Charset.defaultCharset().name()));
+    return valueOf(m_Properties.getProperty(CHARSET, Charset.defaultCharset().name()));
   }
 
   /**
