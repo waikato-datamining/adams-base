@@ -19,15 +19,18 @@
  */
 package adams.core.option;
 
+import adams.core.DateFormat;
+import adams.core.Utils;
+import adams.core.management.CharsetHelper;
+import adams.core.management.Java;
+import adams.core.option.NestedFormatHelper.Line;
+import adams.env.Environment;
+import adams.env.Modules;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import adams.core.DateFormat;
-import adams.core.management.Java;
-import adams.core.option.NestedFormatHelper.Line;
-import adams.env.Environment;
 
 /**
  * Generates the nested format.
@@ -44,6 +47,24 @@ public class NestedProducer
 
   /** the line comment character in files storing nested option handlers. */
   public final static String COMMENT = "#";
+
+  /** the information about the project. */
+  public static final String PROJECT = "Project";
+
+  /** the information on the date. */
+  public static final String DATE = "Date";
+
+  /** the information on the user. */
+  public static final String USER = "User";
+
+  /** the information on the character set used. */
+  public static final String CHARSET = "Charset";
+
+  /** the information on the modules used. */
+  public static final String MODULES = "Modules";
+
+  /** the information on the class path. */
+  public static final String CLASS_PATH = "Class-Path";
 
   /** blacklisted classes. */
   protected Class[] m_Blacklisted;
@@ -359,11 +380,13 @@ public class NestedProducer
 
       // add meta-data
       if (m_OutputProlog) {
-	result.append(COMMENT + " Project: " + Environment.getInstance().getProject() + "\n");
-	result.append(COMMENT + " Date: " + m_DateFormat.format(new Date()) + "\n");
-	result.append(COMMENT + " User: " + System.getProperty("user.name") + "\n");
+	result.append(COMMENT + " " + PROJECT + ": " + Environment.getInstance().getProject() + "\n");
+	result.append(COMMENT + " " + DATE + ": " + m_DateFormat.format(new Date()) + "\n");
+	result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
+        result.append(COMMENT + " " + CHARSET + ": " + CharsetHelper.getSingleton().getCharset().name() + "\n");
+        result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");
         if (m_OutputClasspath)
-	  result.append(COMMENT + " Class-Path: " + Java.getClassPath(true) + "\n");
+          result.append(COMMENT + " " + CLASS_PATH + ": " + Java.getClassPath(true) + "\n");
 	result.append(COMMENT + "\n");
       }
 

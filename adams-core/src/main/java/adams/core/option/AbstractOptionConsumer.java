@@ -19,23 +19,25 @@
  */
 package adams.core.option;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
-
 import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
+import adams.core.management.CharsetHelper;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Sets the option values based on the input data.
@@ -319,7 +321,6 @@ public abstract class AbstractOptionConsumer<C,V>
    * returns it. This option handler will then be "visited".
    *
    * @return		the generated option handler, null in case of an error
-   * @see		#processOption(OptionHandler)
    */
   protected abstract OptionHandler initOutput();
 
@@ -507,6 +508,27 @@ public abstract class AbstractOptionConsumer<C,V>
    * @return		the option handler if successful, null otherwise
    */
   public OptionHandler read(String filename) {
+    return read(filename, null);
+  }
+
+  /**
+   * Tries to determine the character set in use by the file.
+   *
+   * @param filename	the file to analyze
+   * @return		the character set in use, null if failed to determine
+   */
+  protected Charset determineCharset(String filename) {
+    return null;
+  }
+
+  /**
+   * Reads the option handler from the specified file.
+   *
+   * @param filename	the file to read from
+   * @param charset	the character set to use, null to use default
+   * @return		the option handler if successful, null otherwise
+   */
+  public OptionHandler read(String filename, Charset charset) {
     OptionHandler	result;
     BufferedReader	reader;
     FileInputStream     fis;
@@ -516,15 +538,20 @@ public abstract class AbstractOptionConsumer<C,V>
 
     result = null;
 
+    if (charset == null)
+      charset = determineCharset(filename);
+    if (charset == null)
+      charset = CharsetHelper.getSingleton().getCharset();
+
     reader = null;
     fis    = null;
     try {
       content = new StringBuilder();
       fis = new FileInputStream(filename);
       if (filename.toLowerCase().endsWith(".gz"))
-	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis), charset));
       else
-	reader = new BufferedReader(new InputStreamReader(fis));
+	reader = new BufferedReader(new InputStreamReader(fis, charset));
       while ((line = reader.readLine()) != null) {
 	if (content.length() > 0)
 	  content.append("\n");

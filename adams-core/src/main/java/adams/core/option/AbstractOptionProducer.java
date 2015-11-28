@@ -15,23 +15,25 @@
 
 /**
  * AbstractOptionProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
+import adams.core.management.CharsetHelper;
 import adams.env.Environment;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Generates output from visiting the options.
@@ -228,7 +230,7 @@ public abstract class AbstractOptionProducer<O,I>
    * Returns the output generated from the visit.
    *
    * @return		the output
-   * @see		#initOutput()t
+   * @see		#initOutput()
    */
   public O getOutput() {
     if (m_Output == null)
@@ -437,18 +439,32 @@ public abstract class AbstractOptionProducer<O,I>
    * @return		true if successfully written
    */
   public boolean write(String filename) {
+    return write(filename, null);
+  }
+
+  /**
+   * Writes the generated content to the specified file.
+   *
+   * @param filename	the file to write to
+   * @param charset	the character set to use, null to use default
+   * @return		true if successfully written
+   */
+  public boolean write(String filename, Charset charset) {
     boolean		result;
     BufferedWriter	writer;
     FileOutputStream    fos;
+
+    if (charset == null)
+      charset = CharsetHelper.getSingleton().getCharset();
 
     writer = null;
     fos    = null;
     try {
       fos = new FileOutputStream(filename);
       if (filename.toLowerCase().endsWith(".gz"))
-	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(fos)));
+	writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(fos), charset));
       else
-	writer = new BufferedWriter(new OutputStreamWriter(fos));
+	writer = new BufferedWriter(new OutputStreamWriter(fos, charset));
       writer.write(toString());
       writer.newLine();
       writer.flush();
@@ -531,7 +547,6 @@ public abstract class AbstractOptionProducer<O,I>
   /**
    * Runs an option producer from commandline.
    *
-   * @param env		the environment class to use
    * @param producer	the producer class to execute
    * @param args	the commandline arguments, use -help to display all
    */
