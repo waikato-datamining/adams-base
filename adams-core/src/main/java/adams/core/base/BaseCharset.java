@@ -20,9 +20,9 @@
 
 package adams.core.base;
 
-import java.nio.charset.Charset;
-
 import adams.core.management.CharsetHelper;
+
+import java.nio.charset.Charset;
 
 /**
  * Wrapper for a {@link Charset} object to be editable in the GOE.
@@ -89,7 +89,11 @@ public class BaseCharset
       return false;
     }
   }
-  
+
+  public boolean isDefault() {
+    return getValue().equals(CharsetHelper.CHARSET_DEFAULT);
+  }
+
   /**
    * Returns the String value.
    *
