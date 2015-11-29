@@ -15,15 +15,9 @@
 
 /**
  * DiffUtils.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -33,6 +27,12 @@ import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.InsertDelta;
 import difflib.Patch;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A helper class for generating diffs between two files, lists of strings.
@@ -422,8 +422,8 @@ public class DiffUtils {
   /**
    * Returns whether the two lists differ.
    *
-   * @param file1	the first list
-   * @param file2	the second list
+   * @param list1	the first list
+   * @param list2	the second list
    * @return		true if different
    */
   public static boolean isDifferent(String[] list1, String[] list2) {
@@ -433,8 +433,8 @@ public class DiffUtils {
   /**
    * Returns whether the two lists differ.
    *
-   * @param file1	the first text file
-   * @param file2	the second text file
+   * @param list1	the first text file
+   * @param list2	the second text file
    * @return		the side-by-side diff (first file: index 0, second file: index 1, indicator: )
    */
   public static boolean isDifferent(List<String> list1, List<String> list2) {
@@ -492,8 +492,8 @@ public class DiffUtils {
   /**
    * Generates a unified diff for the two lists.
    *
-   * @param file1	the first list
-   * @param file2	the second list
+   * @param list1	the first list
+   * @param list2	the second list
    * @return		the unified diff
    */
   public static String unified(List<String> list1, List<String> list2) {
@@ -537,8 +537,8 @@ public class DiffUtils {
   /**
    * Generates a side-by-side diff for the two lists.
    *
-   * @param file1	the first list
-   * @param file2	the second list
+   * @param list1	the first list
+   * @param list2	the second list
    * @return		the side-by-side diff
    */
   public static SideBySideDiff sideBySide(String[] list1, String[] list2) {
@@ -573,8 +573,8 @@ public class DiffUtils {
   /**
    * Generates a side-by-side diff for the two lists.
    *
-   * @param file1	the first text file
-   * @param file2	the second text file
+   * @param list1	the first text file
+   * @param list2	the second text file
    * @return		the side-by-side diff
    */
   public static SideBySideDiff sideBySide(List<String> list1, List<String> list2) {
