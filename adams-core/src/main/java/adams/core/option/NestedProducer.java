@@ -113,6 +113,7 @@ public class NestedProducer
     m_OutputClasspath   = false;
     m_OutputModules     = false;
     m_OutputLineNumbers = false;
+    m_Encoding          = new BaseCharset();
   }
 
   /**
