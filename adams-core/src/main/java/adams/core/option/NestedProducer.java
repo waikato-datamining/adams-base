@@ -21,7 +21,8 @@ package adams.core.option;
 
 import adams.core.DateFormat;
 import adams.core.Utils;
-import adams.core.management.CharsetHelper;
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.management.Java;
 import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
@@ -40,7 +41,7 @@ import java.util.List;
  */
 public class NestedProducer
   extends AbstractRecursiveOptionProducer<List,List>
-  implements BlacklistedOptionProducer {
+  implements BlacklistedOptionProducer, FileEncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7096746086060792830L;
@@ -80,6 +81,9 @@ public class NestedProducer
 
   /** whether to print line numbers. */
   protected boolean m_OutputLineNumbers;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
 
   /** for formatting dates. */
   protected static DateFormat m_DateFormat;
@@ -243,6 +247,35 @@ public class NestedProducer
    */
   public String outputLineNumbersTipText() {
     return "Whether to prefix each line with the line number.";
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when writing the file, use empty string for default.";
   }
 
   /**
@@ -415,7 +448,7 @@ public class NestedProducer
 	result.append(COMMENT + " " + PROJECT + ": " + Environment.getInstance().getProject() + "\n");
 	result.append(COMMENT + " " + DATE + ": " + m_DateFormat.format(new Date()) + "\n");
 	result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
-        result.append(COMMENT + " " + CHARSET + ": " + CharsetHelper.getSingleton().getCharset().name() + "\n");
+        result.append(COMMENT + " " + CHARSET + ": " + m_Encoding.charsetValue().name() + "\n");
 	if (m_OutputModules)
 	  result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");
         if (m_OutputClasspath)

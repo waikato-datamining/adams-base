@@ -23,7 +23,6 @@ import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingLevel;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 
@@ -184,15 +183,6 @@ public interface OptionConsumer<C,V>
    * @return		the option handler if successful, null otherwise
    */
   public OptionHandler read(String filename);
-
-  /**
-   * Reads the option handler from the specified file.
-   *
-   * @param filename	the file to read from
-   * @param charset	the character set to use, null to use default
-   * @return		the option handler if successful, null otherwise
-   */
-  public OptionHandler read(String filename, Charset charset);
 
   /**
    * Cleans up data structures, frees up memory.

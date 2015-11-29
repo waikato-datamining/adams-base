@@ -22,6 +22,7 @@ package adams.core.option;
 import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -508,38 +509,19 @@ public abstract class AbstractOptionConsumer<C,V>
    * @return		the option handler if successful, null otherwise
    */
   public OptionHandler read(String filename) {
-    return read(filename, null);
-  }
-
-  /**
-   * Tries to determine the character set in use by the file.
-   *
-   * @param filename	the file to analyze
-   * @return		the character set in use, null if failed to determine
-   */
-  protected Charset determineCharset(String filename) {
-    return null;
-  }
-
-  /**
-   * Reads the option handler from the specified file.
-   *
-   * @param filename	the file to read from
-   * @param charset	the character set to use, null to use default
-   * @return		the option handler if successful, null otherwise
-   */
-  public OptionHandler read(String filename, Charset charset) {
     OptionHandler	result;
     BufferedReader	reader;
     FileInputStream     fis;
     StringBuilder	content;
     String		line;
     String		msg;
+    Charset		charset;
 
     result = null;
 
-    if (charset == null)
-      charset = determineCharset(filename);
+    charset = null;
+    if (this instanceof FileEncodingSupporter)
+      charset = ((FileEncodingSupporter) this).getEncoding().charsetValue();
     if (charset == null)
       charset = CharsetHelper.getSingleton().getCharset();
 

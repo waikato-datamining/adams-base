@@ -20,6 +20,7 @@
 package adams.core.option;
 
 import JSci.maths.wavelet.IllegalScalingException;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -439,21 +440,14 @@ public abstract class AbstractOptionProducer<O,I>
    * @return		true if successfully written
    */
   public boolean write(String filename) {
-    return write(filename, null);
-  }
-
-  /**
-   * Writes the generated content to the specified file.
-   *
-   * @param filename	the file to write to
-   * @param charset	the character set to use, null to use default
-   * @return		true if successfully written
-   */
-  public boolean write(String filename, Charset charset) {
     boolean		result;
     BufferedWriter	writer;
     FileOutputStream    fos;
+    Charset		charset;
 
+    charset = null;
+    if (this instanceof FileEncodingSupporter)
+      charset = ((FileEncodingSupporter) this).getEncoding().charsetValue();
     if (charset == null)
       charset = CharsetHelper.getSingleton().getCharset();
 

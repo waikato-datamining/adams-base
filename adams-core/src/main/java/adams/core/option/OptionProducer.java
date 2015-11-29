@@ -22,7 +22,6 @@ package adams.core.option;
 import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingLevel;
 
-import java.nio.charset.Charset;
 import java.util.HashSet;
 
 /**
@@ -179,15 +178,6 @@ public interface OptionProducer<O,I>
    * @return		true if successfully written
    */
   public boolean write(String filename);
-
-  /**
-   * Writes the generated content to the specified file.
-   *
-   * @param filename	the file to write to
-   * @param charset	the character set to use, null to use default
-   * @return		true if successfully written
-   */
-  public boolean write(String filename, Charset charset);
 
   /**
    * Cleans up data structures, frees up memory.

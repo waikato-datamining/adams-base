@@ -21,6 +21,8 @@ package adams.core.option;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.management.CharsetHelper;
 import adams.core.option.NestedFormatHelper.Line;
@@ -43,10 +45,14 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class NestedConsumer
-  extends AbstractRecursiveOptionConsumer<List,List> {
+  extends AbstractRecursiveOptionConsumer<List,List>
+  implements FileEncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3076988578982973033L;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
 
   /**
    * Returns a string describing the object.
@@ -56,6 +62,35 @@ public class NestedConsumer
   @Override
   public String globalInfo() {
     return "Processes the nested format (tab indentation in string representation, nested ArrayList objects in object representation).";
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when reading the file, use empty string for default.";
   }
 
   /**
@@ -472,6 +507,9 @@ public class NestedConsumer
     BufferedReader	breader;
     FileReader		freader;
     String		line;
+
+    if (!m_Encoding.isDefault())
+      return m_Encoding.charsetValue();
 
     result  = null;
     breader = null;
