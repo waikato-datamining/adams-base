@@ -19,11 +19,13 @@
  */
 package adams.data.io.output;
 
-import java.io.File;
-
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
 import adams.flow.core.Actor;
+
+import java.io.File;
 
 /**
  * Writes flows in the default format (nested).
@@ -32,10 +34,14 @@ import adams.flow.core.Actor;
  * @version $Revision$
  */
 public class DefaultFlowWriter
-  extends AbstractFlowWriter {
+  extends AbstractFlowWriter
+  implements FileEncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -2888696337173444983L;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
 
   /**
    * Returns a string describing the object.
@@ -79,6 +85,47 @@ public class DefaultFlowWriter
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "encoding", "encoding",
+      new BaseCharset());
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when writing the file, use empty string for default.";
+  }
+
+  /**
    * Writes the given content to the specified file.
    *
    * @param content	the content to write
@@ -92,6 +139,7 @@ public class DefaultFlowWriter
 
     producer = new NestedProducer();
     producer.setOutputClasspath(false);
+    producer.setEncoding(m_Encoding);
     producer.produce(content);
     result = producer.write(file.getAbsolutePath());
 

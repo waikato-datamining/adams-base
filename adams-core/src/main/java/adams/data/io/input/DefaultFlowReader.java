@@ -19,11 +19,13 @@
  */
 package adams.data.io.input;
 
-import java.io.File;
-
+import adams.core.base.BaseCharset;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.option.NestedConsumer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
+
+import java.io.File;
 
 /**
  * Reads flows in the default format (nested).
@@ -32,10 +34,14 @@ import adams.flow.core.Actor;
  * @version $Revision$
  */
 public class DefaultFlowReader
-  extends AbstractFlowReader {
+  extends AbstractFlowReader
+  implements FileEncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4618819455357416453L;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
 
   /**
    * Returns a string describing the object.
@@ -77,7 +83,48 @@ public class DefaultFlowReader
   protected InputType getInputType() {
     return InputType.FILE;
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "encoding", "encoding",
+      new BaseCharset());
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when reading the file, use empty string for default.";
+  }
+
   /**
    * Performs the actual reading.
    *
@@ -90,6 +137,7 @@ public class DefaultFlowReader
     NestedConsumer	consumer;
 
     consumer = new NestedConsumer();
+    consumer.setEncoding(m_Encoding);
     result   = (AbstractActor) consumer.read(file.getAbsolutePath());
 
     // transfer errors/warnings
