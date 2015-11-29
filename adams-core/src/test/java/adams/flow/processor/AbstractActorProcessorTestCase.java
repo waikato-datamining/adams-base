@@ -20,8 +20,6 @@
 
 package adams.flow.processor;
 
-import java.io.File;
-
 import adams.core.io.FileUtils;
 import adams.core.option.ArrayProducer;
 import adams.core.option.NestedProducer;
@@ -33,6 +31,8 @@ import adams.test.AbstractDatabaseTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.io.File;
 
 /**
  * Abstract Test class for actor processors.
@@ -149,7 +149,7 @@ public abstract class AbstractActorProcessorTestCase
    * @return		the setups
    */
   protected int[] getRegressionIgnoredLineIndices() {
-    return new int[]{0,1,2,3};
+    return new int[]{0,1,2,3,4};
   }
 
   /**
