@@ -142,8 +142,7 @@ public class Switch
 	super.setControlActor(value);
       else
 	System.err.println(
-	    "Group must be a Switch actor (provided: "
-	    + ((value != null) ? value.getClass().getName() : "-null-") + ")!");
+	    "Handler must be a Switch actor (provided: " + value.getClass().getName() + ")!");
     }
 
     /**
@@ -194,7 +193,7 @@ public class Switch
 	    }
 	  }
 	  catch (Throwable t) {
-	    handleException("Error evaluating boolean condition: " + switchActor.getConditions(), t);
+	    handleException("Error evaluating boolean condition: " + switchActor.getConditions()[i], t);
 	  }
 	}
       }
@@ -661,7 +660,7 @@ public class Switch
 	}
 	else {
 	  result =   "Only 1 default case can be defined: "
-	      + m_Conditions + " condition(s) but " + m_Cases.size() + " case(s)";
+	      + m_Conditions.length + " condition(s) but " + m_Cases.size() + " case(s)";
 	}
       }
       else if (m_Cases.size() < m_Conditions.length) {
