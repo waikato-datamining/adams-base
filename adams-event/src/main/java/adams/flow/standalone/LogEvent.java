@@ -108,7 +108,7 @@ import java.util.logging.LogRecord;
  * @version $Revision$
  */
 public class LogEvent
-  extends AbstractMutableActorDaemonEvent<LogRecord>
+  extends AbstractMutableActorDaemonEvent<LogRecord, Object>
   implements MutableActorHandler, DaemonEvent, LoggingListener {
 
   /** for serialization. */

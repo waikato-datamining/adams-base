@@ -90,7 +90,7 @@ import adams.flow.core.ActorUtils;
  * @version $Revision$
  */
 public class VariableChangedEvent
-  extends AbstractMutableActorDaemonEvent<VariableChangeEvent> {
+  extends AbstractMutableActorDaemonEvent<VariableChangeEvent, Object> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4670761846363281951L;

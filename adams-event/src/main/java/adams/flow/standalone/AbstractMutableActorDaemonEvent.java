@@ -35,9 +35,10 @@ import com.jidesoft.utils.SwingWorker;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <T> the type of event
+ * @param <E> the type of event
+ * @param <P> the type of the processed event
  */
-public abstract class AbstractMutableActorDaemonEvent<T>
+public abstract class AbstractMutableActorDaemonEvent<E, P>
   extends AbstractStandalone
   implements MutableActorHandler, DaemonEvent {
 
@@ -188,7 +189,7 @@ public abstract class AbstractMutableActorDaemonEvent<T>
    * @param e		the event to check
    * @return		true if being handled
    */
-  protected abstract boolean handlesEvent(T e);
+  protected abstract boolean handlesEvent(E e);
 
   /**
    * Preprocesses the event.
@@ -196,7 +197,7 @@ public abstract class AbstractMutableActorDaemonEvent<T>
    * @param e		the event to preprocess
    * @return		the output of the preprocessing
    */
-  protected abstract Object preProcessEvent(T e);
+  protected abstract P preProcessEvent(E e);
 
   /**
    * Returns whether the preprocessed event is used as input token.
@@ -210,15 +211,15 @@ public abstract class AbstractMutableActorDaemonEvent<T>
    *
    * @return		null if execution successful, otherwise error message
    */
-  protected String processEvent(T e) {
+  protected String processEvent(E e) {
     SwingWorker		worker;
-    final Object	processed;
+    final P 		preprocessed;
 
     if (!handlesEvent(e))
       return null;
 
-    processed = preProcessEvent(e);
-    if (processed == null)
+    preprocessed = preProcessEvent(e);
+    if (preprocessed == null)
       return NO_OUTPUT;
 
     if (m_ExecutingActors) {
@@ -247,7 +248,7 @@ public abstract class AbstractMutableActorDaemonEvent<T>
       @Override
       protected Object doInBackground() throws Exception {
 	if (usePreProcessedAsInput())
-	  m_Actors.input(new Token(processed));
+	  m_Actors.input(new Token(preprocessed));
 	String result = m_Actors.execute();
 	return result;
       }
