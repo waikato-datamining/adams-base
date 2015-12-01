@@ -1,0 +1,41 @@
+# Project: adams
+# Date: 2015-12-01 00:47:31
+# User: fracpete
+# Charset: UTF-8
+#
+adams.flow.control.Flow
+	-annotation
+	Watches the ${TMP} directory for new text files (.txt) appearing.
+	-actor
+		adams.flow.standalone.CallableActors
+			-actor
+				adams.flow.sink.Display
+					-writer
+						adams.data.io.output.NullWriter
+	-actor
+		adams.flow.standalone.Events
+			-actor
+				adams.flow.standalone.DirWatch
+					-actor
+						adams.flow.transformer.ArrayToSequence
+					-actor
+						adams.flow.sink.CallableSink
+							-callable
+							Display
+					-source
+					${TMP}
+					-reg-exp
+					.*\\.txt
+	-actor
+		adams.flow.source.Start
+	-actor
+		adams.flow.control.WhileLoop
+			-condition
+				adams.flow.condition.bool.True
+			-loop
+				adams.flow.source.Start
+			-loop
+				adams.flow.control.Sleep
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
