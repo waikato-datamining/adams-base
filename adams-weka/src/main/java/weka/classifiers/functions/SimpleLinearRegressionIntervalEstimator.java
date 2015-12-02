@@ -25,6 +25,7 @@ import org.apache.commons.math.distribution.TDistributionImpl;
 import weka.classifiers.IntervalEstimator;
 import weka.core.Instance;
 import weka.core.RevisionUtils;
+import weka.core.WekaException;
 
 /**
  <!-- globalinfo-start -->
@@ -92,6 +93,9 @@ public class SimpleLinearRegressionIntervalEstimator
     TDistribution 	td;
     double		critValue;
     double		marginError;
+
+    if (m_df < 1)
+      throw new WekaException("No degrees of freedom!");
 
     alpha       = 1 - confidenceLevel;
     critProb    = 1 - alpha/2;
