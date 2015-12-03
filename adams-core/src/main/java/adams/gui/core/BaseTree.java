@@ -295,15 +295,14 @@ public class BaseTree
    * @param node	the node (and its subtree) to redraw
    */
   public void redraw(DefaultMutableTreeNode node) {
-    List<TreePath>	nodes;
-    int[]		selected;
-    
     if (getModel() instanceof DefaultTreeModel) {
-      nodes    = getExpandedNodes(node);
-      selected = getSelectionRows();
-      ((DefaultTreeModel) getModel()).nodeStructureChanged(node);
-      setExpandedNodes(node, nodes);
-      setSelectionRows(selected);
+      SwingUtilities.invokeLater(() -> {
+        List<TreePath> nodes = getExpandedNodes(node);
+        int[] selected = getSelectionRows();
+        ((DefaultTreeModel) getModel()).nodeStructureChanged(node);
+        setExpandedNodes(node, nodes);
+        setSelectionRows(selected);
+      });
     }
   }
   
