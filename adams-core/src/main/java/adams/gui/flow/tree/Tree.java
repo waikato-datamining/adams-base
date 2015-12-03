@@ -2314,6 +2314,7 @@ public class Tree
     final boolean[]	expanded;
     final Boolean	modified;
     final File		file;
+    final int[]		rows;
     NestedConsumer	consumer;
 
     if (m_StateUsesNested) {
@@ -2333,16 +2334,13 @@ public class Tree
     expanded = (boolean[]) value.get(1);
     modified = (Boolean) value.get(2);
     file     = (File) value.get(3);
+    rows     = (int[]) value.get(4);
 
     setModified(modified);
     setFile(file);
     setActor(actor);
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-	setExpandedState(expanded);
-      }
-    });
+    setExpandedState(expanded);
+    SwingUtilities.invokeLater(() -> setSelectionRows(rows));
   }
 
   /**
@@ -2377,6 +2375,7 @@ public class Tree
     result.add(getExpandedState());
     result.add(isModified());
     result.add(getFile());
+    result.add(getSelectionRows());
 
     return result;
   }
