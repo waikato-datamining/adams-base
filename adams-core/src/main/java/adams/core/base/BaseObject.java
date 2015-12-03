@@ -165,6 +165,17 @@ public abstract class BaseObject
   public abstract boolean isValid(String value);
 
   /**
+   * Checks whether the string value (with escaped unicode sequences) is a
+   * valid presentation for this class.
+   *
+   * @param value	the string value to check
+   * @return		true if valid
+   */
+  public boolean isValidUnicode(String value) {
+    return isValid(Utils.unescapeUnicode(value));
+  }
+
+  /**
    * Sets the string value.
    *
    * @param value	the string value
