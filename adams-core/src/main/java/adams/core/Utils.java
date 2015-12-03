@@ -22,16 +22,6 @@
 
 package adams.core;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.lang.reflect.Array;
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseBoolean;
 import adams.core.base.BaseByte;
@@ -46,6 +36,16 @@ import adams.core.base.BaseString;
 import adams.core.logging.LoggingObject;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.array.TByteArrayList;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
 
 /**
  * Class implementing some simple utility methods.
@@ -2154,5 +2154,66 @@ public class Utils {
    */
   public static double log2(int n) {
     return (Math.log(n) / Math.log(2));
+  }
+
+  /**
+   * Escapes any non-ASCII characters as unicode sequences.
+   *
+   * @param s		the string to process
+   * @return		the string with the escaped sequences
+   */
+  public static String escapeUnicode(String s) {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+    for (char c: s.toCharArray()) {
+      if ((c >> 7) > 0) {
+	result.append("\\u");
+	result.append(HEX_DIGIT[(c >> 12) & 0xF]);
+	result.append(HEX_DIGIT[(c >>  8) & 0xF]);
+	result.append(HEX_DIGIT[(c >>  4) & 0xF]);
+	result.append(HEX_DIGIT[(c >>  0) & 0xF]);
+      }
+      else {
+	result.append(c);
+      }
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Unescapes unicode sequences and stores them as unicode characters instead.
+   *
+   * @param s  		the string to process
+   * @return		the unescaped string
+   */
+  public static String unescapeUnicode(String s) {
+    StringBuilder	result;
+    int			index;
+    String		unicode;
+    char[]		chars;
+
+    if (!s.contains("\\u"))
+      return s;
+
+    result = new StringBuilder();
+    while ((index = s.indexOf("\\u")) > -1) {
+      result.append(s.substring(0, index));
+      s = s.substring(index + 2);
+      if (s.length() >= 4) {
+	unicode = s.substring(0, 4).toUpperCase();
+	s = s.substring(4);
+	chars = Character.toChars(Integer.parseInt(unicode, 16));
+	for (char c: chars)
+	  result.append(c);
+      }
+      else {
+	result.append("\\u");
+      }
+    }
+    result.append(s);
+
+    return result.toString();
   }
 }

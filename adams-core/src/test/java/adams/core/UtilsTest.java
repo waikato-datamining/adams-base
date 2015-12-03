@@ -354,7 +354,25 @@ public class UtilsTest
     assertEquals(Byte.MIN_VALUE, Utils.fromHex("80"));
     assertEquals(Byte.MAX_VALUE, Utils.fromHex("7F"));
   }
-  
+
+  /**
+   * Tests the {@link Utils#escapeUnicode(String)} method.
+   */
+  public void testEscapeUnicode() {
+    assertEquals("", Utils.escapeUnicode(""));
+    assertEquals("abcdefgu31415!~", Utils.escapeUnicode("abcdefgu31415!~"));
+    assertEquals("abc\\u1234blah", Utils.escapeUnicode("abc\u1234blah"));
+  }
+
+  /**
+   * Tests the {@link Utils#unescapeUnicode(String)} method.
+   */
+  public void testUnescapeUnicode() {
+    assertEquals("", Utils.unescapeUnicode(""));
+    assertEquals("abcdefgu31415!~", Utils.unescapeUnicode("abcdefgu31415!~"));
+    assertEquals("abc\u1234blah", Utils.unescapeUnicode("abc\\u1234blah"));
+  }
+
   /**
    * Returns a test suite.
    *
