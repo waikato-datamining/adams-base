@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
@@ -108,12 +109,15 @@ public abstract class AbstractEditPostProcessor
     AbstractEditPostProcessor	proc;
     boolean			confirmed;
     boolean			modified;
-    List<TreePath>		exp;
-    
+    boolean[]			exp;
+    final int[]			rows;
+
     result = false;
     
-    confirmed = false;
+    confirmed  = false;
     processors = getPostProcessors();
+    exp        = tree.getExpandedState();
+    rows       = tree.getSelectionRows();
     for (String processor: processors) {
       try {
 	proc = (AbstractEditPostProcessor) Class.forName(processor).newInstance();
@@ -124,18 +128,18 @@ public abstract class AbstractEditPostProcessor
 	    else
 	      break;
 	  }
-	  exp      = proc.backupExpandedState(tree);
 	  modified = proc.postProcess(tree, parent, oldActor, newActor);
-	  if (modified)
-	    proc.restoreExpandedState(tree, exp);
-	  exp    = null;
-	  result = result | modified;
+	  result   = result || modified;
 	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Error applying edit post-processor '" + processor + "':", e);
       }
     }
+    SwingUtilities.invokeLater(() -> {
+      tree.setExpandedState(exp);
+      SwingUtilities.invokeLater(() -> tree.setSelectionRows(rows));
+    });
 
     return result;
   }
