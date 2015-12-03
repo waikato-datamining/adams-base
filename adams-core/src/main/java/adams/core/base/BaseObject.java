@@ -15,15 +15,16 @@
 
 /*
  * BaseObject.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
+import adams.core.CloneHandler;
+import adams.core.Utils;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
-
-import adams.core.CloneHandler;
 
 /**
  * Super class for wrappers around classes like String, Integer, etc.
@@ -67,7 +68,7 @@ public abstract class BaseObject
     BaseObject	result;
 
     try {
-      result = (BaseObject) getClass().newInstance();
+      result = getClass().newInstance();
       result.setValue(getValue());
     }
     catch (Exception e) {
@@ -97,7 +98,7 @@ public abstract class BaseObject
     
     if (o instanceof String) {
       try {
-	other = (BaseObject) getClass().newInstance();
+	other = getClass().newInstance();
 	other.setValue((String) o);
       }
       catch (Exception e) {
@@ -132,10 +133,7 @@ public abstract class BaseObject
    */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof BaseObject))
-      return false;
-    else
-      return (compareTo((BaseObject) o) == 0);
+    return (o instanceof BaseObject) && (compareTo(o) == 0);
   }
 
   /**
@@ -181,6 +179,26 @@ public abstract class BaseObject
   public abstract String getValue();
 
   /**
+   * Sets the string value with escaped unicode sequences.
+   *
+   * @param value	the string value
+   */
+  public void setUnicode(String value) {
+    setValue(Utils.unescapeUnicode(value));
+  }
+
+  /**
+   * Returns the underlying object as string with escaped unicode sequences.
+   *
+   * @return		the underlying object
+   * @see		#getValue()
+   * @see		Utils#escapeUnicode(String)
+   */
+  public String getUnicode() {
+    return Utils.escapeUnicode(getValue());
+  }
+
+  /**
    * Returns a tool tip for the GUI editor (ignored if null is returned).
    *
    * @return		the tool tip
@@ -197,14 +215,14 @@ public abstract class BaseObject
   public String toString() {
     return getValue();
   }
-  
+
   /**
    * Creates a new instance of the specified BaseObject-derived class and sets
    * the specified value.
    * 
    * @param cls		the class to instantiate
    * @param s		the value to set
-   * @returen		the instantiated object, null if class cannot be 
+   * @return		the instantiated object, null if class cannot be
    * 			instantiated or value is invalid
    */
   public static BaseObject newInstance(Class cls, String s) {
