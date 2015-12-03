@@ -24,6 +24,7 @@ import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class RemoveActor
     List<Boolean>	state;
     int			row;
     Node		selNode;
+    final Node		fSelNode;
     Node[]		nodes;
     int			i;
 
@@ -109,10 +111,12 @@ public class RemoveActor
       }
     }
 
-    m_State.tree.setExpandedStateList(state);
-
-    if (selNode != null)
-      m_State.tree.locateAndDisplay(selNode.getFullName());
+    fSelNode = selNode;
+    SwingUtilities.invokeLater(() -> {
+      m_State.tree.setExpandedStateList(state);
+      if (fSelNode != null)
+        m_State.tree.locateAndDisplay(fSelNode.getFullName());
+    });
 
     m_State.tree.setModified(true);
 
