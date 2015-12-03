@@ -19,10 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.tree.TreePath;
-
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 import adams.gui.core.GUIHelper;
@@ -32,6 +28,9 @@ import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
 
 /**
  * For editing/showing the options of an actor.
@@ -85,6 +84,7 @@ public class EditActor
     ActorHandler		handlerOld;
     int				i;
     boolean			editable;
+    final boolean[]		expanded;
 
     if (path == null)
       return;
@@ -141,6 +141,7 @@ public class EditActor
       }
 
       if (changed) {
+	expanded = null;
 	if (parent == null) {
 	  m_State.tree.buildTree(actor);
 	  currNode = (Node) m_State.tree.getModel().getRoot();
@@ -155,10 +156,16 @@ public class EditActor
       }
       else {
 	currNode.setActor(actor);
+	expanded = m_State.tree.getExpandedState();
       }
       m_State.tree.updateActorName(currNode);
+      currNode.invalidateRendering();
+      m_State.tree.redraw(currNode);
       m_State.tree.setModified(true);
-      m_State.tree.nodeStructureChanged(currNode);
+      if (expanded != null)
+	m_State.tree.setExpandedState(expanded);
+      else
+	m_State.tree.nodeStructureChanged(currNode);
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
       m_State.tree.locateAndDisplay(currNode.getFullName());
       m_State.tree.refreshTabs();
