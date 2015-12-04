@@ -128,9 +128,6 @@ adams.gui.visualization.instance.InstanceLinePaintlet.markersExtent=7
 adams.gui.visualization.instance.InstanceLinePaintlet.markersEnabled=true
 adams.gui.visualization.instance.InstanceLinePaintlet.overlayDashLength=3.0
 
-# The default monospaced font
-Font.Monospaced=monospaced-PLAIN-12
-
 # DiffTextPane
 # The color for deleted content
 adams.gui.visualization.debug.DiffTextPane.Deleted.Color=#9999FF

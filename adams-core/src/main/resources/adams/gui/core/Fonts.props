@@ -1,0 +1,37 @@
+# Font settings.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The default monospaced font
+Monospaced=monospaced-PLAIN-12
+
+# the default fonts for widgets (leave empty to use UI defaults)
+Button=
+CheckBox=
+CheckBoxMenuItem=
+ComboBox=
+Dialog=
+EditorPane=
+FileChooser=
+FormattedTextField=
+Frame=
+InternalFrame=
+Label=
+List=
+Menu=
+MenuBar=
+MenuItem=
+Optionpane=
+PasswordField=
+PopupMenu=
+RadioButton=
+RadioButtonMenuItem=
+Spinner=
+TabbedPane=
+TextArea=
+TextField=
+TextPane=
+ToggleButton=
+ToolBar=
+Tree=

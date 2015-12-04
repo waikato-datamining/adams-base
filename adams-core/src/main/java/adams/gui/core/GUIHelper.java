@@ -115,6 +115,38 @@ public class GUIHelper {
   /** the properties. */
   protected static Properties m_Properties;
 
+  /** the supported font settings. */
+  public static String[] FONTS = new String[]{
+    "Font.Button",
+    "Font.CheckBox",
+    "Font.CheckBoxMenuItem",
+    "Font.ComboBox",
+    "Font.Dialog",
+    "Font.EditorPane",
+    "Font.FileChooser",
+    "Font.FormattedTextField",
+    "Font.Frame",
+    "Font.InternalFrame",
+    "Font.Label",
+    "Font.List",
+    "Font.Menu",
+    "Font.MenuBar",
+    "Font.MenuItem",
+    "Font.Optionpane",
+    "Font.PasswordField",
+    "Font.PopupMenu",
+    "Font.RadioButton",
+    "Font.RadioButtonMenuItem",
+    "Font.Spinner",
+    "Font.TabbedPane",
+    "Font.TextArea",
+    "Font.TextField",
+    "Font.TextPane",
+    "Font.ToggleButton",
+    "Font.ToolBar",
+    "Font.Tree",
+  };
+
   /**
    * Helper class that allows external callers to communicate with input
    * dialogs, enabling them to schedule closing of the dialog.
@@ -2168,16 +2200,16 @@ public class GUIHelper {
     
     return result;
   }
-  
+
   /**
    * Returns the system wide Monospaced font.
-   * 
+   *
    * @return		the font
    */
   public static Font getMonospacedFont() {
-    return getFont("Font.Monospaced", new Font("monospaced", Font.PLAIN, 12));
+    return Fonts.getMonospacedFont();
   }
-  
+
   /**
    * Retrieves all components of the specified type starting with
    * the given parent container.
@@ -2389,5 +2421,27 @@ public class GUIHelper {
       return null;
     else
     return gc.getDevice();
+  }
+
+  /**
+   * Initializes all the fonts.
+   *
+   * @see 		#FONTS
+   */
+  public static void initFonts() {
+    String	value;
+    Font	fontObj;
+    String	property;
+
+    initializeProperties();
+
+    for (String font: FONTS) {
+      value = getString(font, "");
+      if (value.trim().isEmpty())
+	continue;
+      fontObj = getFont(font, null);
+      property = font.substring("Font.".length()) + ".font";
+      UIManager.put(property, fontObj);
+    }
   }
 }
