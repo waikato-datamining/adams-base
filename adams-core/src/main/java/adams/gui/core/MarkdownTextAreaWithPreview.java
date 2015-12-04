@@ -77,7 +77,7 @@ public class MarkdownTextAreaWithPreview
     add(m_TabbedPane, BorderLayout.CENTER);
 
     m_TextCode = new BaseTextArea();
-    m_TextCode.setFont(GUIHelper.getMonospacedFont());
+    m_TextCode.setFont(Fonts.getMonospacedFont());
     m_TabbedPane.addTab("Write", new BaseScrollPane(m_TextCode));
 
     m_PanePreview = new JEditorPane();

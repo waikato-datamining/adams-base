@@ -19,10 +19,19 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.core.Utils;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
+import adams.gui.sendto.SendToActionSupporter;
+import adams.gui.sendto.SendToActionUtils;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.ConverterUtils;
+import weka.gui.ConverterFileChooser;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,19 +39,10 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.JTextComponent;
-
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
-import weka.gui.ConverterFileChooser;
-import adams.core.Utils;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
-import adams.gui.sendto.SendToActionSupporter;
-import adams.gui.sendto.SendToActionUtils;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Compares the headers of a number of datasets and outputs the results.
@@ -101,7 +101,7 @@ public class DatasetCompatibilityPanel
     
     m_TextArea = new BaseTextArea();
     m_TextArea.setEditable(false);
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
   }
 

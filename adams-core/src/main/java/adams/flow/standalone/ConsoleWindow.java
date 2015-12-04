@@ -33,6 +33,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.event.ConsolePanelEvent;
@@ -327,7 +328,7 @@ public class ConsoleWindow
    * @return		the default font
    */
   protected Font getDefaultFont() {
-    return new Font("Monospaced", Font.PLAIN, 12);
+    return Fonts.getMonospacedFont();
   }
 
   /**

@@ -6,6 +6,9 @@
 # The default monospaced font
 Monospaced=monospaced-PLAIN-12
 
+# The default sans font
+Sans=helvetica-PLAIN-12
+
 # the default fonts for widgets (leave empty to use UI defaults)
 Button=
 CheckBox=

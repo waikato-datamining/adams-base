@@ -19,17 +19,17 @@
  */
 package weka.gui.experiment.ext;
 
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
 
 /**
  * The log panel.
@@ -59,7 +59,7 @@ public class LogPanel
     super.initGUI();
     
     m_TextArea = new BaseTextArea();
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     add(new BaseScrollPane(m_TextArea));
     
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

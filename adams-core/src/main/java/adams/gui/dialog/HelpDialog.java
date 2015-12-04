@@ -19,6 +19,13 @@
  */
 package adams.gui.dialog;
 
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
+import adams.gui.core.Fonts;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -29,14 +36,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
-import adams.gui.core.GUIHelper;
 
 /**
  * Dialog for displaying help text (HTML or plain text).
@@ -86,7 +85,7 @@ public class HelpDialog
     m_TextArea = new JEditorPane();
     m_TextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_TextArea.setEditable(false);
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     m_TextArea.setAutoscrolls(true);
     m_TextArea.addHyperlinkListener(new DefaultHyperlinkListener());
     m_TextArea.addKeyListener(getKeyListener());

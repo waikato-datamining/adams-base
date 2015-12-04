@@ -22,6 +22,7 @@ package adams.data.conversion.mapobject;
 import java.awt.Color;
 import java.awt.Font;
 
+import adams.gui.core.Fonts;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.Layer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
@@ -164,7 +165,7 @@ public class SimpleReportDotMarkerGenerator
 
     m_OptionManager.add(
 	    "font", "font",
-	    new Font("helvetica", Font.PLAIN, 12));
+	    Fonts.getSansFont());
   }
 
   /**

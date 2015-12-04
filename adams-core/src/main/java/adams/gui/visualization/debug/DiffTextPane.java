@@ -19,19 +19,19 @@
  */
 package adams.gui.visualization.debug;
 
-import java.awt.Color;
-import java.util.List;
-
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
 import adams.core.Utils;
 import adams.gui.core.BaseTextPaneWithWordWrap;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.Color;
+import java.util.List;
 
 /**
  * Displays one side of a side-by-side diff.
@@ -82,7 +82,7 @@ public class DiffTextPane
   protected void initGUI() {
     super.initGUI();
     
-    getTextPane().setFont(GUIHelper.getMonospacedFont());
+    getTextPane().setFont(Fonts.getMonospacedFont());
     getTextPane().setEditable(false);
     setWordWrap(false);
   }

@@ -83,7 +83,7 @@ public class BufferHistoryPanel
       getContentPane().setLayout(new BorderLayout());
 
       m_TextArea = new JTextArea();
-      m_TextArea.setFont(GUIHelper.getMonospacedFont());
+      m_TextArea.setFont(Fonts.getMonospacedFont());
       getContentPane().add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
     }
 

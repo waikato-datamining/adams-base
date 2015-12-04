@@ -19,15 +19,6 @@
  */
 package adams.data.conversion.mapobject;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.Layer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-
 import adams.core.QuickInfoHelper;
 import adams.data.gps.AbstractGPS;
 import adams.data.mapobject.SimpleMapMarkerDot;
@@ -35,6 +26,15 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.gui.core.Fonts;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.Layer;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -170,7 +170,7 @@ public class SimpleDotMarkerGenerator
 
     m_OptionManager.add(
 	    "font", "font",
-	    new Font("helvetica", Font.PLAIN, 12));
+	    Fonts.getSansFont());
   }
 
   /**

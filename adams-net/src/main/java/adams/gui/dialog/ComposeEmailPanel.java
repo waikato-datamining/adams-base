@@ -19,18 +19,6 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashSet;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.AbstractSendEmail;
@@ -41,9 +29,21 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
 
 /**
  * A panel for composing an email.
@@ -164,11 +164,11 @@ public class ComposeEmailPanel
     panel.add(panelBodyFooter, BorderLayout.CENTER);
 
     m_TextBody = new BaseTextArea();
-    m_TextBody.setFont(GUIHelper.getMonospacedFont());
+    m_TextBody.setFont(Fonts.getMonospacedFont());
     panelBodyFooter.add(new BaseScrollPane(m_TextBody), BorderLayout.CENTER);
 
     m_TextSignature = new BaseTextArea(4, 80);
-    m_TextSignature.setFont(GUIHelper.getMonospacedFont());
+    m_TextSignature.setFont(Fonts.getMonospacedFont());
     panelBodyFooter.add(new BaseScrollPane(m_TextSignature), BorderLayout.SOUTH);
 
     // send button

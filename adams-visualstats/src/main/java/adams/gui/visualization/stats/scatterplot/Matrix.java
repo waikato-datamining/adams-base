@@ -20,6 +20,28 @@
 
 package adams.gui.visualization.stats.scatterplot;
 
+import adams.core.option.OptionUtils;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.ParameterPanel;
+import adams.gui.goe.GenericArrayEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.visualization.stats.core.SubSample;
+import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
+import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
+import weka.core.Instances;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,29 +55,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Instances;
-import adams.core.option.OptionUtils;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.ParameterPanel;
-import adams.gui.goe.GenericArrayEditorPanel;
-import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.visualization.stats.core.SubSample;
-import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
-import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 
 /**
  * Displays a grid of scatter plots with each attribute plotted against
@@ -445,7 +444,7 @@ extends BasePanel{
 	    label.setForeground(Color.WHITE);
 	    //set maximum possible size for font for label
 	    int siz = 22;
-	    Font f = new Font("DIALOG", Font.PLAIN, siz);
+	    Font f = new Font("Dialog", Font.PLAIN, siz);
 	    label.setFont(f);
 	    temp.add(label, BorderLayout.CENTER);
 	    temp.setPreferredSize(size);
@@ -509,18 +508,18 @@ extends BasePanel{
       JPanel panel = m_Panels.get(i);
       //set maximum possible size for font for label
       int siz = 32;
-      Font f = new Font("DIALOG", Font.PLAIN, siz);
+      Font f = new Font("Dialog", Font.PLAIN, siz);
       temp.setFont(f);
       while(temp.getPreferredSize().width > panel.getPreferredSize().width) {
 	siz-=2;
-	f = new Font("DIALOG", Font.PLAIN, siz);
+	f = new Font("Dialog", Font.PLAIN, siz);
 	temp.setFont(f);
 	if(siz < minSize)
 	  minSize = siz;
       }
     }
     //use the font size of the longest attribute name
-    Font f = new Font("DIALOG", Font.PLAIN, minSize);
+    Font f = new Font("Dialog", Font.PLAIN, minSize);
     for(int i = 0; i< m_Panels.size(); i++) {
       JPanel panel = m_Panels.get(i);
       JLabel temp = (JLabel)m_Panels.get(i).getComponent(0);

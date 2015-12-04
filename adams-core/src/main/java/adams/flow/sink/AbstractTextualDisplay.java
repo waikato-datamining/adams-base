@@ -29,6 +29,7 @@ import adams.flow.core.Token;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.FontEditor;
@@ -182,7 +183,7 @@ public abstract class AbstractTextualDisplay
    * @return		the default font
    */
   protected Font getDefaultFont() {
-    return new Font("Monospaced", Font.PLAIN, 12);
+    return Fonts.getMonospacedFont();
   }
 
   /**

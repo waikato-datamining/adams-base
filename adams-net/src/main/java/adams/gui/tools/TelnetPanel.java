@@ -25,6 +25,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import org.apache.commons.net.telnet.EchoOptionHandler;
 import org.apache.commons.net.telnet.SuppressGAOptionHandler;
@@ -200,7 +201,7 @@ public class TelnetPanel
       }
     });
     m_TextOutput = new BaseTextAreaWithButtons(10, 40);
-    m_TextOutput.setTextFont(GUIHelper.getMonospacedFont());
+    m_TextOutput.setTextFont(Fonts.getMonospacedFont());
     m_TextOutput.addToButtonsPanel(m_ButtonClear);
     m_TextOutput.addToButtonsPanel(m_ButtonCopy);
     add(m_TextOutput, BorderLayout.CENTER);
@@ -210,7 +211,7 @@ public class TelnetPanel
     add(bottomPanel, BorderLayout.SOUTH);
     
     m_TextCommand = new JTextField(40);
-    m_TextCommand.setFont(GUIHelper.getMonospacedFont());
+    m_TextCommand.setFont(Fonts.getMonospacedFont());
     m_TextCommand.addKeyListener(new KeyListener() {
       @Override
       public void keyTyped(KeyEvent e) {

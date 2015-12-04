@@ -23,7 +23,7 @@ import adams.core.option.HtmlParametersProducer;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.Fonts;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -61,7 +61,7 @@ public class ActorParametersTab
     m_TextArea = new JEditorPane();
     m_TextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_TextArea.setEditable(false);
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     m_TextArea.setAutoscrolls(true);
     m_TextArea.setContentType("text/html");
     m_TextArea.setText(DEFAULT_TEXT);

@@ -32,6 +32,7 @@ import adams.flow.execution.Debug;
 import adams.flow.execution.ExecutionStage;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.flow.FlowPanel;
@@ -739,7 +740,7 @@ public class ControlPanel
 
     if (m_PanelSource == null) {
       m_PanelSource = new TextEditorPanel();
-      m_PanelSource.setTextFont(GUIHelper.getMonospacedFont());
+      m_PanelSource.setTextFont(Fonts.getMonospacedFont());
       m_PanelSource.setEditable(false);
       m_PanelSource.setTabSize(2);
     }

@@ -29,6 +29,7 @@ import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
 
@@ -103,7 +104,7 @@ public class StringConversion
     textLeft = new BaseTextAreaWithButtons(4, 20);
     textLeft.setLineWrap(true);
     textLeft.setWrapStyleWord(true);
-    textLeft.setTextFont(GUIHelper.getMonospacedFont());
+    textLeft.setTextFont(Fonts.getMonospacedFont());
     button = new JButton(GUIHelper.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override
@@ -135,7 +136,7 @@ public class StringConversion
     textRight.setEditable(false);
     textRight.setLineWrap(true);
     textRight.setWrapStyleWord(true);
-    textRight.setTextFont(GUIHelper.getMonospacedFont());
+    textRight.setTextFont(Fonts.getMonospacedFont());
     button = new JButton(GUIHelper.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override

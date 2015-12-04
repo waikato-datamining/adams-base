@@ -2202,15 +2202,6 @@ public class GUIHelper {
   }
 
   /**
-   * Returns the system wide Monospaced font.
-   *
-   * @return		the font
-   */
-  public static Font getMonospacedFont() {
-    return Fonts.getMonospacedFont();
-  }
-
-  /**
    * Retrieves all components of the specified type starting with
    * the given parent container.
    * 

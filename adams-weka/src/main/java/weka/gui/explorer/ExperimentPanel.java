@@ -23,6 +23,7 @@ package weka.gui.explorer;
 
 import adams.core.io.TempUtils;
 import adams.core.option.OptionUtils;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
@@ -77,7 +78,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -179,7 +179,7 @@ public class ExperimentPanel
    */
   public ExperimentPanel() {
     m_OutText.setEditable(false);
-    m_OutText.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    m_OutText.setFont(Fonts.getMonospacedFont());
     m_OutText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_OutText.addMouseListener(new MouseAdapter() {
       @Override

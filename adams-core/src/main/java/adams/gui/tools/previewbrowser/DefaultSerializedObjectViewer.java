@@ -23,7 +23,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.Fonts;
 
 import java.awt.BorderLayout;
 
@@ -76,7 +76,7 @@ public class DefaultSerializedObjectViewer
     textOptions.setEditable(false);
     textOptions.setLineWrap(true);
     textOptions.setWrapStyleWord(true);
-    textOptions.setFont(GUIHelper.getMonospacedFont());
+    textOptions.setFont(Fonts.getMonospacedFont());
     if (obj == null)
       textOptions.setText("");
     else if (obj.getClass().isArray())
@@ -85,7 +85,7 @@ public class DefaultSerializedObjectViewer
       textOptions.setText(OptionUtils.getCommandLine(obj));
     textObject = new BaseTextArea();
     textObject.setEditable(false);
-    textObject.setFont(GUIHelper.getMonospacedFont());
+    textObject.setFont(Fonts.getMonospacedFont());
     if (obj == null)
       textObject.setText("");
     else if (obj.getClass().isArray())

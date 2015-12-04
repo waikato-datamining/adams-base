@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.statistics.StatUtils;
 import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
@@ -155,7 +156,7 @@ public class LinearRegressionOverlayPaintlet
 
     m_OptionManager.add(
       "font", "font",
-      GUIHelper.getMonospacedFont());
+      Fonts.getMonospacedFont());
   }
 
   /**

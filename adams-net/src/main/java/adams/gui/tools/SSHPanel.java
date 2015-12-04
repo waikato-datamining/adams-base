@@ -29,6 +29,7 @@ import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
@@ -338,7 +339,7 @@ public class SSHPanel
     });
     m_TextOutput = new BaseTextPaneWithButtons();
     m_TextOutput.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    m_TextOutput.setTextFont(GUIHelper.getMonospacedFont());
+    m_TextOutput.setTextFont(Fonts.getMonospacedFont());
     m_TextOutput.addToButtonsPanel(m_ButtonClear);
     m_TextOutput.addToButtonsPanel(m_ButtonCopy);
     add(m_TextOutput, BorderLayout.CENTER);
@@ -348,7 +349,7 @@ public class SSHPanel
     add(bottomPanel, BorderLayout.SOUTH);
     
     m_TextCommand = new JTextField(40);
-    m_TextCommand.setFont(GUIHelper.getMonospacedFont());
+    m_TextCommand.setFont(Fonts.getMonospacedFont());
     m_TextCommand.addKeyListener(new KeyListener() {
       @Override
       public void keyTyped(KeyEvent e) {

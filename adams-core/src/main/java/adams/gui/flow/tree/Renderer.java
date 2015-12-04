@@ -35,7 +35,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -526,7 +525,7 @@ public class Renderer
     super.getTreeCellRendererComponent(
         tree, value, sel, expanded, leaf, row, hasFocus);
 
-    setFont(new Font("helvetica", Font.PLAIN, (int) (12 * m_ScaleFactor)));
+    setFont(getFont().deriveFont((int) (12 * m_ScaleFactor)));
 
     // icon available?
     ActorIcon icon = null;

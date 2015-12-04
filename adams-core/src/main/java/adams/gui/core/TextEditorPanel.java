@@ -259,7 +259,7 @@ public class TextEditorPanel
 	  super.mouseClicked(e);
       }
     });
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
 
     // Listen for undo and redo events

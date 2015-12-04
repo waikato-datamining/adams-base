@@ -78,7 +78,7 @@ public class BaseLogPanel
     m_TextLog = new BaseTextArea();
     m_TextLog.setLineWrap(false);
     m_TextLog.setEditable(false);
-    m_TextLog.setFont(GUIHelper.getMonospacedFont());
+    m_TextLog.setFont(Fonts.getMonospacedFont());
     m_TextLog.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent e) {

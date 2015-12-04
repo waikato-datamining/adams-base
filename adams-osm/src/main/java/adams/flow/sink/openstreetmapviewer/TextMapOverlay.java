@@ -20,13 +20,14 @@
 
 package adams.flow.sink.openstreetmapviewer;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-
 import adams.core.VariableName;
 import adams.flow.control.StorageName;
 import adams.flow.sink.OpenStreetMapViewer;
+import adams.gui.core.Fonts;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -184,7 +185,7 @@ public class TextMapOverlay
 
     m_OptionManager.add(
 	    "font", "font",
-	    new Font("helvetica", Font.PLAIN, 12));
+	    Fonts.getSansFont());
   }
 
   /**

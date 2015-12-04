@@ -20,15 +20,19 @@
 
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Vector;
+import adams.core.Performance;
+import adams.event.JobCompleteManagerChangeEvent;
+import adams.event.JobCompleteManagerChangeEvent.Type;
+import adams.event.JobCompleteManagerChangeListener;
+import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTable;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.multiprocess.JobCompleteManager;
+import adams.multiprocess.JobCompleteManager.JobCompleteInformation;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,19 +43,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-
-import adams.core.Performance;
-import adams.event.JobCompleteManagerChangeEvent;
-import adams.event.JobCompleteManagerChangeListener;
-import adams.event.JobCompleteManagerChangeEvent.Type;
-import adams.gui.core.AbstractBaseTableModel;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTable;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.multiprocess.JobCompleteManager;
-import adams.multiprocess.JobCompleteManager.JobCompleteInformation;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
 
 /**
  * A panel for displaying the JobComplete events.
@@ -344,7 +343,7 @@ public class JobCompleteManagerPanel
     panel2.add(new BaseScrollPane(m_TableInformations));
 
     m_TextDetails = new JTextArea();
-    m_TextDetails.setFont(new Font("monospace", Font.PLAIN, 12));
+    m_TextDetails.setFont(Fonts.getMonospacedFont());
     m_TextDetails.setEditable(false);
     panel2.add(new BaseScrollPane(m_TextDetails));
 

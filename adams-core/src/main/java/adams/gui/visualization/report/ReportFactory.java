@@ -43,6 +43,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.CustomSearchTableModel;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
@@ -1800,7 +1801,7 @@ public class ReportFactory {
     // preview
     if (preview) {
       textArea = new BaseTextAreaWithButtons(5, 40);
-      textArea.setFont(GUIHelper.getMonospacedFont());
+      textArea.setFont(Fonts.getMonospacedFont());
       panelBottom.add(new BaseScrollPane(textArea), BorderLayout.CENTER);
       table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 	@Override

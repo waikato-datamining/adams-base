@@ -21,6 +21,7 @@ package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoHelper;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
 import java.awt.*;
@@ -127,7 +128,7 @@ public class Text
 
     m_OptionManager.add(
 	    "font", "font",
-	    GUIHelper.getMonospacedFont());
+	    Fonts.getMonospacedFont());
 
     m_OptionManager.add(
 	    "text", "text",

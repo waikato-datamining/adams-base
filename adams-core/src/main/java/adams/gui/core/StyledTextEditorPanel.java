@@ -109,7 +109,7 @@ public class StyledTextEditorPanel
 
     // text
     m_TextPane = newBaseTextPane();
-    m_TextPane.setFont(GUIHelper.getMonospacedFont());
+    m_TextPane.setFont(Fonts.getMonospacedFont());
     add(m_TextPane, BorderLayout.CENTER);
 
     // listen for text changes

@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.debug.objectrenderer;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.Fonts;
 import adams.gui.dialog.TextPanel;
 import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
 
@@ -62,7 +62,7 @@ public class PlainTextRenderer
     AbstractObjectPlainTextRenderer 	renderer;
 
     textPanel = new TextPanel();
-    textPanel.setTextFont(GUIHelper.getMonospacedFont());
+    textPanel.setTextFont(Fonts.getMonospacedFont());
     textPanel.setCanOpenFiles(false);
     textPanel.setUpdateParentTitle(false);
     panel.add(textPanel, BorderLayout.CENTER);

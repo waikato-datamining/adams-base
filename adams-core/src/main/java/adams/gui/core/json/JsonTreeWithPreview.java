@@ -24,6 +24,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
@@ -101,7 +102,7 @@ public class JsonTreeWithPreview
     m_TextArea.setEditable(false);
     m_TextArea.setLineWrap(true);
     m_TextArea.setWrapStyleWord(true);
-    m_TextArea.setFont(GUIHelper.getMonospacedFont());
+    m_TextArea.setFont(Fonts.getMonospacedFont());
     panelPreview.add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
     
     panelButtons = new JPanel(new BorderLayout());

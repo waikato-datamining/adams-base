@@ -20,17 +20,28 @@
 
 package adams.gui.scripting;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.List;
+import adams.core.CleanUpHandler;
+import adams.core.Properties;
+import adams.core.StatusMessageHandler;
+import adams.core.Utils;
+import adams.core.io.FilenameProposer;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnectionHandler;
+import adams.env.Environment;
+import adams.env.ScriptingDialogDefinition;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseStatusBar;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.TitleGenerator;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
+import adams.gui.event.ScriptingInfoEvent;
+import adams.gui.event.ScriptingInfoListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -48,28 +59,16 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
-
-import adams.core.CleanUpHandler;
-import adams.core.Properties;
-import adams.core.StatusMessageHandler;
-import adams.core.Utils;
-import adams.core.io.FilenameProposer;
-import adams.db.AbstractDatabaseConnection;
-import adams.db.DatabaseConnectionHandler;
-import adams.env.Environment;
-import adams.env.ScriptingDialogDefinition;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseStatusBar;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.RecentFilesHandler;
-import adams.gui.core.TitleGenerator;
-import adams.gui.event.RecentItemEvent;
-import adams.gui.event.RecentItemListener;
-import adams.gui.event.ScriptingInfoEvent;
-import adams.gui.event.ScriptingInfoListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
 
 /**
  * A dialog for loading/saving and executing scripts.
@@ -771,7 +770,7 @@ public abstract class AbstractScriptingDialog
 
     textHelp = new JTextArea(30, 80);
     textHelp.setText(getScriptingEngine().getProcessor().globalInfo());
-    textHelp.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    textHelp.setFont(Fonts.getMonospacedFont());
     textHelp.setCaretPosition(0);
     textHelp.setEditable(false);
     dialog.getContentPane().add(new BaseScrollPane(textHelp), BorderLayout.CENTER);

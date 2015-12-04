@@ -151,6 +151,35 @@ public class Fonts {
   }
 
   /**
+   * Returns the system wide Monospaced font with a custom size.
+   *
+   * @param size	the custom size
+   * @return		the font
+   */
+  public static Font getMonospacedFont(int size) {
+    return getMonospacedFont().deriveFont(size);
+  }
+
+  /**
+   * Returns the system wide Sans font.
+   *
+   * @return		the font
+   */
+  public static Font getSansFont() {
+    return getFont("Sans", new Font("helvetiva", Font.PLAIN, 12));
+  }
+
+  /**
+   * Returns the system wide Sans font with a custom size.
+   *
+   * @param size	the custom size
+   * @return		the font
+   */
+  public static Font getSansFont(int size) {
+    return getSansFont().deriveFont(size);
+  }
+
+  /**
    * Initializes all the fonts.
    *
    * @see 		#FONTS
