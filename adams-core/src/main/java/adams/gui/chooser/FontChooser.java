@@ -19,6 +19,13 @@
 
 package adams.gui.chooser;
 
+import adams.env.Environment;
+import adams.gui.core.BaseFrame;
+import adams.gui.dialog.DialogWithButtons;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Font;
@@ -26,14 +33,6 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
-import adams.env.Environment;
-import adams.gui.core.BaseFrame;
-import adams.gui.dialog.DialogWithButtons;
 
 /**
  * A font selection dialog.
@@ -48,7 +47,7 @@ public class FontChooser
   private static final long serialVersionUID = 4228582248866956387L;
 
   /** the panel for selecting the font. */
-  protected FontChooserPanel m_FontPanel;
+  protected FontChooserPanelWithPreview m_FontPanel;
 
   /** the OK button. */
   protected JButton m_ButtonOK;
@@ -84,7 +83,7 @@ public class FontChooser
   protected void initGUI() {
     super.initGUI();
 
-    m_FontPanel = new FontChooserPanel();
+    m_FontPanel = new FontChooserPanelWithPreview();
     getContentPane().add(m_FontPanel, BorderLayout.CENTER);
 
     m_ButtonOK = new JButton("OK");

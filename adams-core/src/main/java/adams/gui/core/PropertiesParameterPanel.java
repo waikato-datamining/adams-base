@@ -38,7 +38,7 @@ import adams.gui.chooser.DateChooserPanel;
 import adams.gui.chooser.DateTimeChooserPanel;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
-import adams.gui.chooser.FontChooserPanel;
+import adams.gui.chooser.FontChooserPanelWithPreview;
 import adams.gui.chooser.TimeChooserPanel;
 import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
@@ -618,7 +618,7 @@ public class PropertiesParameterPanel
     JCheckBox			checkbox;
     JSpinner			spinner;
     PropertyType		type;
-    FontChooserPanel		fontPanel;
+    FontChooserPanelWithPreview fontPanel;
     DirectoryChooserPanel	dirPanel;
     FileChooserPanel		filePanel;
     ColorChooserPanel		colorPanel;
@@ -752,7 +752,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, spinner);
             break;
           case FONT:
-            fontPanel = new FontChooserPanel();
+            fontPanel = new FontChooserPanelWithPreview();
             fontPanel.setCurrent((Font) FontEditor.valueOf(null, value.getProperty(key)));
             fontPanel.setToolTipText(help);
             addProperty(key, label, fontPanel);
@@ -878,7 +878,7 @@ public class PropertiesParameterPanel
     SQLSyntaxEditorPanel	query;
     JCheckBox			checkbox;
     JSpinner			spinner;
-    FontChooserPanel		fontPanel;
+    FontChooserPanelWithPreview fontPanel;
     DirectoryChooserPanel	dirPanel;
     FileChooserPanel		filePanel;
     ColorChooserPanel		colorPanel;
@@ -939,7 +939,7 @@ public class PropertiesParameterPanel
           result.setInteger(key, ((Number) spinner.getValue()).intValue());
           break;
         case FONT:
-          fontPanel = (FontChooserPanel) comp;
+          fontPanel = (FontChooserPanelWithPreview) comp;
           result.setProperty(key, FontEditor.toString(null, fontPanel.getCurrent()));
           break;
         case DIRECTORY:

@@ -37,13 +37,12 @@
 
 package adams.gui.chooser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.env.Environment;
+import adams.gui.core.BaseFrame;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -57,13 +56,13 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.env.Environment;
-import adams.gui.core.BaseFrame;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A font selection panel.
@@ -81,7 +80,7 @@ import adams.gui.core.BaseScrollPane;
     license = License.BSD2,
     url = "http://www.java2s.com/Code/Java/Tiny-Application/Afontselectiondialog.htm"
 )
-public class FontChooserPanel
+public class FontChooserPanelWithPreview
   extends BasePanel {
 
   /** for serialization. */

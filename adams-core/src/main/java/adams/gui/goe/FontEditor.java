@@ -33,7 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import adams.core.option.AbstractOption;
-import adams.gui.chooser.FontChooserPanel;
+import adams.gui.chooser.FontChooserPanelWithPreview;
 
 /**
  * A PropertyEditor for Font objects that lets the user select a font from
@@ -59,7 +59,7 @@ public class FontEditor
   public final static char SEPARATOR = '-';
 
   /** The Font chooser used for selecting colors. */
-  protected FontChooserPanel m_FontChooserPanel;
+  protected FontChooserPanelWithPreview m_fontChooserPanelWithPreview;
 
   /** the OK button. */
   protected JButton m_ButtonOK;
@@ -161,11 +161,11 @@ public class FontEditor
     Font 	currentFont;
 
     currentFont  = (Font) getValue();
-    m_FontChooserPanel = new FontChooserPanel();
-    m_FontChooserPanel.setCurrent(currentFont);
+    m_fontChooserPanelWithPreview = new FontChooserPanelWithPreview();
+    m_fontChooserPanelWithPreview.setCurrent(currentFont);
 
     panel = new JPanel(new BorderLayout());
-    panel.add(m_FontChooserPanel, BorderLayout.CENTER);
+    panel.add(m_fontChooserPanelWithPreview, BorderLayout.CENTER);
 
     JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
@@ -174,7 +174,7 @@ public class FontEditor
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	setValue(m_FontChooserPanel.getCurrent());
+	setValue(m_fontChooserPanelWithPreview.getCurrent());
 	closeDialog(APPROVE_OPTION);
       }
     });
@@ -187,7 +187,7 @@ public class FontEditor
 	// select current one value again, to make sure that it is displayed
 	// when the dialog is popped up again. otherwise the last selection
 	// (but not ok-ed!) will be displayed.
-	m_FontChooserPanel.setCurrent((Font) getValue());
+	m_fontChooserPanelWithPreview.setCurrent((Font) getValue());
 	closeDialog(CANCEL_OPTION);
       }
     });
@@ -206,7 +206,7 @@ public class FontEditor
 
     currentFont = (Font) getValue();
     if (currentFont != null)
-      m_FontChooserPanel.setCurrent(currentFont);
+      m_fontChooserPanelWithPreview.setCurrent(currentFont);
   }
 
   /**
