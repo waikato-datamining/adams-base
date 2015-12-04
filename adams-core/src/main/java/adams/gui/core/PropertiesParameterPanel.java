@@ -38,6 +38,7 @@ import adams.gui.chooser.DateChooserPanel;
 import adams.gui.chooser.DateTimeChooserPanel;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.chooser.FontChooserPanel;
 import adams.gui.chooser.FontChooserPanelWithPreview;
 import adams.gui.chooser.TimeChooserPanel;
 import adams.gui.goe.FontEditor;
@@ -618,7 +619,7 @@ public class PropertiesParameterPanel
     JCheckBox			checkbox;
     JSpinner			spinner;
     PropertyType		type;
-    FontChooserPanelWithPreview fontPanel;
+    FontChooserPanel 		fontPanel;
     DirectoryChooserPanel	dirPanel;
     FileChooserPanel		filePanel;
     ColorChooserPanel		colorPanel;
@@ -752,7 +753,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, spinner);
             break;
           case FONT:
-            fontPanel = new FontChooserPanelWithPreview();
+            fontPanel = new FontChooserPanel();
             fontPanel.setCurrent((Font) FontEditor.valueOf(null, value.getProperty(key)));
             fontPanel.setToolTipText(help);
             addProperty(key, label, fontPanel);
