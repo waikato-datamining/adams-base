@@ -15,7 +15,7 @@
 
 /**
  * CharsetHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -83,7 +83,13 @@ public class CharsetHelper {
    * @return		the charset
    */
   public Charset getCharset() {
-    return valueOf(m_Properties.getProperty(CHARSET, Charset.defaultCharset().name()));
+    String	charset;
+
+    charset = m_Properties.getProperty(CHARSET, Charset.defaultCharset().name());
+    if (charset.equals(CHARSET_DEFAULT))
+      charset = Charset.defaultCharset().name();
+
+    return valueOf(charset);
   }
 
   /**
@@ -164,13 +170,14 @@ public class CharsetHelper {
 
   /**
    * Returns a charset generated from the string (eg en, en_US).
+   * In case of {@link #CHARSET_DEFAULT}, {@link #getCharset()} is used.
    *
    * @param str		the string to convert to a charset
    * @return		the generated charset
    */
   public static Charset valueOf(String str) {
     if (str.equals(CHARSET_DEFAULT)) {
-      return Charset.defaultCharset();
+      return getSingleton().getCharset();
     }
     else {
       try {
@@ -178,7 +185,7 @@ public class CharsetHelper {
       }
       catch (Exception e) {
 	System.err.println("Failed to parse charset: " + str);
-	return Charset.defaultCharset();
+	return getSingleton().getCharset();
       }
     }
   }
