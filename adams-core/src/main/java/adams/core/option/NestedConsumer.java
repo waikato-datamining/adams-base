@@ -23,16 +23,11 @@ import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
-import adams.core.io.FileUtils;
-import adams.core.management.CharsetHelper;
 import adams.core.option.NestedFormatHelper.Line;
 import gnu.trove.list.array.TIntArrayList;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -494,51 +489,5 @@ public class NestedConsumer
 	}
       }
     }
-  }
-
-  /**
-   * Tries to determine the character set in use by the file.
-   *
-   * @param filename	the file to analyze
-   * @return		the character set in use, null if failed to determine
-   */
-  protected Charset determineCharset(String filename) {
-    Charset		result;
-    BufferedReader	breader;
-    FileReader		freader;
-    String		line;
-
-    if (!m_Encoding.isDefault())
-      return m_Encoding.charsetValue();
-
-    result  = null;
-    breader = null;
-    freader = null;
-    try {
-      freader = new FileReader(filename);
-      breader = new BufferedReader(freader);
-      while ((line = breader.readLine()) != null) {
-	if (line.startsWith(NestedProducer.COMMENT)) {
-	  line = line.substring(NestedProducer.COMMENT.length()).trim();
-	  if (line.startsWith(NestedProducer.CHARSET + ":")) {
-	    line = line.substring(NestedProducer.CHARSET.length() + 1).trim();
-	    result = CharsetHelper.valueOf(line);
-	    break;
-	  }
-	}
-	else {
-	  break;
-	}
-      }
-    }
-    catch (Exception e) {
-      // igored
-    }
-    finally {
-      FileUtils.closeQuietly(breader);
-      FileUtils.closeQuietly(freader);
-    }
-
-    return result;
   }
 }
