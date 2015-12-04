@@ -461,6 +461,25 @@ public abstract class AbstractOptionConsumer<C,V>
   }
 
   /**
+   * Returns the charset to use. Checks whether consumer implements
+   * {@link FileEncodingSupporter}.
+   *
+   * @return		the character set
+   */
+  protected Charset determineCharset() {
+    Charset 	result;
+
+    result = null;
+
+    if (this instanceof FileEncodingSupporter)
+      result = ((FileEncodingSupporter) this).getEncoding().charsetValue();
+    if (result == null)
+      result = CharsetHelper.getSingleton().getCharset();
+
+    return result;
+  }
+
+  /**
    * Processes the specified string.
    *
    * @param s		the string to process
@@ -493,7 +512,7 @@ public abstract class AbstractOptionConsumer<C,V>
 
     result = null;
 
-    lines = FileUtils.loadFromFile(file);
+    lines = FileUtils.loadFromFile(file, determineCharset().name());
     if (lines != null) {
       content = Utils.flatten(lines, "\n");
       result  = fromString(content);
@@ -519,14 +538,9 @@ public abstract class AbstractOptionConsumer<C,V>
 
     result = null;
 
-    charset = null;
-    if (this instanceof FileEncodingSupporter)
-      charset = ((FileEncodingSupporter) this).getEncoding().charsetValue();
-    if (charset == null)
-      charset = CharsetHelper.getSingleton().getCharset();
-
-    reader = null;
-    fis    = null;
+    charset = determineCharset();
+    reader  = null;
+    fis     = null;
     try {
       content = new StringBuilder();
       fis = new FileInputStream(filename);
