@@ -34,7 +34,7 @@ import java.awt.Font;
 public class Fonts {
 
   /** the name of the props file. */
-  public final static String FILENAME = "Fonts.props";
+  public final static String FILENAME = "adams/gui/core/Fonts.props";
 
   /** the properties. */
   protected static Properties m_Properties;
@@ -78,7 +78,7 @@ public class Fonts {
 	m_Properties = new Properties();
       }
       for (String font: FONTS) {
-        if (!m_Properties.hasKey(font)) {
+        if (m_Properties.getProperty(font, "").isEmpty()) {
 	  try {
 	    m_Properties.setFont(font, getDefaultFont(font));
 	  }

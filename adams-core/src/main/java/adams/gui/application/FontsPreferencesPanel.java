@@ -34,33 +34,19 @@ public class FontsPreferencesPanel
   /** for serialization. */
   private static final long serialVersionUID = 3895159356677639564L;
 
+  /**
+   * For initializing the GUI.
+   */
   @Override
   protected void initGUI() {
     super.initGUI();
 
-    addPropertyType("Button", PropertyType.FONT);
-    addPropertyType("CheckBox", PropertyType.FONT);
-    addPropertyType("CheckBoxMenuItem", PropertyType.FONT);
-    addPropertyType("ComboBox", PropertyType.FONT);
-    addPropertyType("EditorPane", PropertyType.FONT);
-    addPropertyType("FormattedTextField", PropertyType.FONT);
-    addPropertyType("Label", PropertyType.FONT);
-    addPropertyType("List", PropertyType.FONT);
-    addPropertyType("Menu", PropertyType.FONT);
-    addPropertyType("MenuBar", PropertyType.FONT);
-    addPropertyType("MenuItem", PropertyType.FONT);
-    addPropertyType("PasswordField", PropertyType.FONT);
-    addPropertyType("PopupMenu", PropertyType.FONT);
-    addPropertyType("RadioButton", PropertyType.FONT);
-    addPropertyType("RadioButtonMenuItem", PropertyType.FONT);
-    addPropertyType("Spinner", PropertyType.FONT);
-    addPropertyType("TabbedPane", PropertyType.FONT);
-    addPropertyType("TextArea", PropertyType.FONT);
-    addPropertyType("TextField", PropertyType.FONT);
-    addPropertyType("TextPane", PropertyType.FONT);
-    addPropertyType("ToggleButton", PropertyType.FONT);
-    addPropertyType("ToolBar", PropertyType.FONT);
-    addPropertyType("Tree", PropertyType.FONT);
+    addPropertyType("Monospaced", PropertyType.FONT);
+    addPropertyType("Sans", PropertyType.FONT);
+
+    for (String font: adams.gui.core.Fonts.FONTS)
+      addPropertyType(font, PropertyType.FONT);
+
     setPreferences(adams.gui.core.Fonts.getProperties());
   }
 
