@@ -25,6 +25,7 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
@@ -525,7 +526,8 @@ public class Renderer
     super.getTreeCellRendererComponent(
         tree, value, sel, expanded, leaf, row, hasFocus);
 
-    setFont(getFont().deriveFont((int) (12 * m_ScaleFactor)));
+    int defSize = Fonts.getFont("Label", getFont()).getSize();
+    setFont(getFont().deriveFont((float) (defSize * m_ScaleFactor)));
 
     // icon available?
     ActorIcon icon = null;
