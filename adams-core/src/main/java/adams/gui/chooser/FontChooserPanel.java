@@ -81,10 +81,10 @@ public class FontChooserPanel
         m_FontChooser = new FontChooser(getParentFrame());
     }
 
-    m_FontChooser.setFont(getCurrent());
+    m_FontChooser.setCurrent(getCurrent());
     m_FontChooser.setVisible(true);
 
-    return m_FontChooser.getFont();
+    return m_FontChooser.getCurrent();
   }
 
   /**
