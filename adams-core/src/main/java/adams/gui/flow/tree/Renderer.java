@@ -36,6 +36,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -527,7 +528,7 @@ public class Renderer
         tree, value, sel, expanded, leaf, row, hasFocus);
 
     int defSize = Fonts.getFont("Label", getFont()).getSize();
-    setFont(getFont().deriveFont((float) (defSize * m_ScaleFactor)));
+    setFont(getFont().deriveFont(Font.PLAIN, (float) (defSize * m_ScaleFactor)));
 
     // icon available?
     ActorIcon icon = null;
