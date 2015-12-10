@@ -4,32 +4,32 @@
 # Version: $Revision$
 
 # The default monospaced font
-Monospaced=monospaced-PLAIN-12
+Monospaced=Monospaced-PLAIN-12
 
 # The default sans font
-Sans=helvetica-PLAIN-12
+Sans=Display-PLAIN-12
 
 # the default fonts for widgets (leave empty to use UI defaults)
-Button=
-CheckBox=
-CheckBoxMenuItem=
-ComboBox=
-EditorPane=
-FormattedTextField=
-Label=
-List=
-Menu=
-MenuBar=
-MenuItem=
-PasswordField=
-PopupMenu=
-RadioButton=
-RadioButtonMenuItem=
-Spinner=
-TabbedPane=
-TextArea=
-TextField=
-TextPane=
-ToggleButton=
-ToolBar=
-Tree=
+Button=Display-PLAIN-12
+CheckBox=Display-PLAIN-12
+CheckBoxMenuItem=Display-PLAIN-12
+ComboBox=Display-PLAIN-12
+EditorPane=Display-PLAIN-12
+FormattedTextField=Display-PLAIN-12
+Label=Display-PLAIN-12
+List=Display-PLAIN-12
+Menu=Display-PLAIN-12
+MenuBar=Display-PLAIN-12
+MenuItem=Display-PLAIN-12
+PasswordField=Display-PLAIN-12
+PopupMenu=Display-PLAIN-12
+RadioButton=Display-PLAIN-12
+RadioButtonMenuItem=Display-PLAIN-12
+Spinner=Display-PLAIN-12
+TabbedPane=Display-PLAIN-12
+TextArea=Display-PLAIN-12
+TextField=Display-PLAIN-12
+TextPane=Display-PLAIN-12
+ToggleButton=Display-PLAIN-12
+ToolBar=Display-PLAIN-12
+Tree=Display-PLAIN-12
