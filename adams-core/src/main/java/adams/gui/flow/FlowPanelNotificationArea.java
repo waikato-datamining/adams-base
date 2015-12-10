@@ -68,7 +68,10 @@ public class FlowPanelNotificationArea
   
   /** the copy button. */
   protected JButton m_ButtonCopy;
-  
+
+  /** the close/cleanup button. */
+  protected JButton m_ButtonCloseAndCleanUp;
+
   /** the checkbox for including the console output. */
   protected JCheckBox m_CheckBoxConsole;
 
@@ -117,7 +120,7 @@ public class FlowPanelNotificationArea
     panelRight.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(panelRight, BorderLayout.EAST);
     
-    panelButtons = new JPanel(new GridLayout(3, 1, 5, 5));
+    panelButtons = new JPanel(new GridLayout(4, 1, 5, 5));
     panelRight.add(panelButtons, BorderLayout.NORTH);
     
     m_ButtonClose = new JButton("Close");
@@ -130,7 +133,20 @@ public class FlowPanelNotificationArea
       }
     });
     panelButtons.add(m_ButtonClose);
-    
+
+    m_ButtonCloseAndCleanUp = new JButton("Close/Clean up");
+    m_ButtonCloseAndCleanUp.setIcon(GUIHelper.getIcon("close_window.png"));
+    m_ButtonCloseAndCleanUp.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	if (getOwner() != null)
+	  getOwner().cleanUp();
+        clearNotification();
+        notifyCloseListeners();
+      }
+    });
+    panelButtons.add(m_ButtonCloseAndCleanUp);
+
     m_ButtonCopy = new JButton("Copy");
     m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {      
@@ -140,7 +156,7 @@ public class FlowPanelNotificationArea
       }
     });
     panelButtons.add(m_ButtonCopy);
-    
+
     m_CheckBoxConsole = new JCheckBox("Console output");
     m_CheckBoxConsole.setSelected(false);
     m_CheckBoxConsole.addActionListener(new ActionListener() {
@@ -222,6 +238,7 @@ public class FlowPanelNotificationArea
       }
 
       if (getOwner() != null) {
+	m_ButtonCloseAndCleanUp.setEnabled(getOwner().getLastFlow() != null);
         if (m_Notification == null) {
           getOwner().setTabIcon(null);
           getOwner().getSplitPane().setBottomComponentHidden(true);
