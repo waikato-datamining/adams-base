@@ -15,45 +15,66 @@
 
 /**
  * BaseDateTimeToString.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.base.BaseDateTime;
+import adams.parser.GrammarSupplier;
 
 /**
  <!-- globalinfo-start -->
- * Turns a BaseDateTime format string into a String, evaluted using user-supplied start and end dates (ignored if future INF dates).
+ * Turns a BaseDateTime format string into a String, evaluted using user-supplied start and end dates (ignored if future INF dates).<br>
+ * <br>
+ * Example: 2015-12-01 07:13:12 +3 MINUTE<br>
+ * <br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|YEAR)]*<br>
+ * <br>
+ * expr ::=   ( expr )<br>
+ *          | - expr<br>
+ *          | + expr<br>
+ *          | expr + expr<br>
+ *          | expr - expr<br>
+ *          | expr * expr<br>
+ *          | expr &#47; expr<br>
+ *          | expr % expr<br>
+ *          | expr ^ expr<br>
+ *          | abs ( expr )<br>
+ *          | sqrt ( expr )<br>
+ *          | log ( expr )<br>
+ *          | exp ( expr )<br>
+ *          | rint ( expr )<br>
+ *          | floor ( expr )<br>
+ *          | pow[er] ( expr , expr )<br>
+ *          | ceil ( expr )<br>
+ *          | NUMBER<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-start &lt;adams.core.base.BaseDateTime&gt; (property: start)
  * &nbsp;&nbsp;&nbsp;The start date to use in the evaluation.
  * &nbsp;&nbsp;&nbsp;default: -INF
  * </pre>
- *
+ * 
  * <pre>-end &lt;adams.core.base.BaseDateTime&gt; (property: end)
  * &nbsp;&nbsp;&nbsp;The end date to use in the evaluation.
  * &nbsp;&nbsp;&nbsp;default: +INF
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class BaseDateTimeToString
-  extends AbstractConversionToString {
+  extends AbstractConversionToString
+  implements GrammarSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = 6744245717394758406L;
@@ -72,7 +93,18 @@ public class BaseDateTimeToString
   public String globalInfo() {
     return
         "Turns a BaseDateTime format string into a String, evaluted using "
-      + "user-supplied start and end dates (ignored if future INF dates).";
+      + "user-supplied start and end dates (ignored if future INF dates).\n\n"
+      + "Example: 2015-12-01 07:13:12 +3 MINUTE\n\n"
+      + getGrammar();
+  }
+
+  /**
+   * Returns a string representation of the grammar.
+   *
+   * @return		the grammar, null if not available
+   */
+  public String getGrammar() {
+    return new BaseDateTime().getGrammar();
   }
 
   /**
