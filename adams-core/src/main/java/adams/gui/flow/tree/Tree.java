@@ -535,6 +535,45 @@ public class Tree
   }
 
   /**
+   * Returns the full names list of nodes that are selected.
+   *
+   * @return		the full names
+   */
+  public List<String> getSelectionFullNames() {
+    List<String>	result;
+    TreePath[]		paths;
+
+    result = new ArrayList<>();
+    paths = getSelectionPaths();
+    for (TreePath path: paths)
+      result.add(((Node) path.getLastPathComponent()).getFullName());
+
+    return result;
+  }
+
+  /**
+   * Sets the selected nodes based on their full names.
+   *
+   * @param names	the full names
+   */
+  public void setSelectionFullNames(List<String> names) {
+    Node		node;
+    TreePath		path;
+    List<TreePath>	paths;
+
+    paths = new ArrayList<>();
+    for (String name: names) {
+      node = locate(name);
+      if (node != null) {
+	path = getPath(node);
+	if (path != null)
+	  paths.add(path);
+      }
+    }
+    setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+  }
+
+  /**
    * Ensures that the name of the actor stored in the node is unique among
    * its siblings. For {@link FixedNameActorHandler} parents, the desired name
    * is determined.
@@ -1466,7 +1505,7 @@ public class Tree
     Node[]			children;
     AbstractActor[]		actors;
     String			txt;
-    final List<TreePath> 	exp;
+    final List<String> 		exp;
 
     if (actor == null) {
       node = TreeHelper.pathToNode(path);
@@ -1517,14 +1556,17 @@ public class Tree
 	addUndoPoint("Adding " + txt + " to '" + node.getFullName() + "'");
 
 	// add
-	exp      = getExpandedTreePaths();
+	exp      = getExpandedFullNames();
 	children = buildTree(node, actors, true);
 	for (Node child: children)
 	  updateActorName(child);
 	SwingUtilities.invokeLater(() -> {
 	  nodeStructureChanged(node);
-	  setExpandedTreePaths(exp);
+	  setExpandedFullNames(exp);
 	  expand(node);
+	});
+	SwingUtilities.invokeLater(() -> {
+	  setSelectedFullName(node.getFullName());
 	});
 
 	// record
@@ -1562,7 +1604,7 @@ public class Tree
 	  addUndoPoint("Adding " + txt + " before " + ((Node) parent.getChildAt(index)).getFullName() + "'");
 
 	// insert
-	exp      = getExpandedTreePaths();
+	exp      = getExpandedFullNames();
 	children = buildTree(node, actors, false);
 	for (Node child: children) {
 	  final int fIndex = index;
@@ -1574,7 +1616,10 @@ public class Tree
 	}
 	SwingUtilities.invokeLater(() -> {
 	  nodeStructureChanged(parent);
-	  setExpandedTreePaths(exp);
+	  setExpandedFullNames(exp);
+	});
+	SwingUtilities.invokeLater(() -> {
+	  setSelectedFullName(node.getFullName());
 	});
 
 	// record
@@ -1961,6 +2006,24 @@ public class Tree
       result = node.getFullName();
 
     return result;
+  }
+
+  /**
+   * Sets the selected node using its full name.
+   *
+   * @param name	the full name
+   * @return		true if located and selected
+   */
+  public boolean setSelectedFullName(String name) {
+    Node	node;
+
+    node = locate(name);
+    if (node != null) {
+      setSelectionPath(getPath(node));
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -2550,37 +2613,6 @@ public class Tree
     enableBreakpoints(getRootNode(), enable);
     treeDidChange();
   }
-  
-  /**
-   * Restores the expanded state of the tree. Use this method instead of
-   * {@link #setExpandedTreePaths(List)} if the tree has been rebuilt in the
-   * meantime. This method uses the actor names to locate them in the tree.
-   * This means, that this method is more expensive.
-   * 
-   * @param expanded	the list of expanded nodes
-   * @return		true if successfully restored
-   * @see		#setExpandedTreePaths(List)
-   */
-  public boolean restoreExpandedTreePaths(List<TreePath> expanded) {
-    List<TreePath>	exp;
-    String		full;
-    Node		node;
-    
-    if (expanded == null)
-      return false;
-    
-    exp = new ArrayList<TreePath>();
-    for (TreePath path: expanded) {
-      full = TreeHelper.pathToNode(path).getFullName();
-      node = locate(full);
-      if (node != null)
-	exp.add(new TreePath(node.getPath()));
-    }
-
-    SwingUtilities.invokeLater(() -> setExpandedTreePaths(exp));
-
-    return true;
-  }
 
   /**
    * Processes the specified actor with a user-specified actor processor
@@ -2617,7 +2649,7 @@ public class Tree
     ErrorMessagePanel			errorPanel;
     final ErrorMessagePanel		fErrorPanel;
     final BaseTabbedPane		tabbedPane;
-    List<TreePath>			exp;
+    List<String>			exp;
 
     // selected actor or full flow?
     flow = getActor();
@@ -2666,7 +2698,7 @@ public class Tree
       modifying = (ModifyingProcessor) processor;
       if (modifying.isModified()) {
 	addUndoPoint("Processing actors with " + processor.toString());
-	exp = getExpandedTreePaths();
+	exp = getExpandedFullNames();
 	if (path == null) {
 	  buildTree(modifying.getModifiedActor());
 	  newNode = node;
@@ -2683,7 +2715,7 @@ public class Tree
 	SwingUtilities.invokeLater(() -> {
 	  setModified(true);
 	  nodeStructureChanged(newNode);
-	  restoreExpandedTreePaths(exp);
+	  setExpandedFullNames(exp);
 	  notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
 	});
       }
