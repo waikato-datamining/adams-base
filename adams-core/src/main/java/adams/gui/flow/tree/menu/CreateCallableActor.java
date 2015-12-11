@@ -176,8 +176,9 @@ public class CreateCallableActor
       m_State.tree.nodeStructureChanged((Node) currNode.getParent());
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
       m_State.tree.expand(callableNode);
+    });
+    SwingUtilities.invokeLater(() -> {
       m_State.tree.locateAndDisplay(currNode.getFullName());
-      m_State.tree.redraw();
     });
   }
 
