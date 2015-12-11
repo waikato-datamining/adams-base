@@ -22,7 +22,6 @@ package adams.gui.core;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -295,14 +294,15 @@ public class BaseTree
    * @param node	the node (and its subtree) to redraw
    */
   public void redraw(DefaultMutableTreeNode node) {
+    List<TreePath> 	nodes;
+    int[] 		selected;
+
     if (getModel() instanceof DefaultTreeModel) {
-      SwingUtilities.invokeLater(() -> {
-        List<TreePath> nodes = getExpandedTreePaths(node);
-        int[] selected = getSelectionRows();
-        ((DefaultTreeModel) getModel()).nodeStructureChanged(node);
-        setExpandedTreePaths(node, nodes);
-        setSelectionRows(selected);
-      });
+      nodes    = getExpandedTreePaths(node);
+      selected = getSelectionRows();
+      ((DefaultTreeModel) getModel()).nodeStructureChanged(node);
+      setExpandedTreePaths(node, nodes);
+      setSelectionRows(selected);
     }
   }
   
