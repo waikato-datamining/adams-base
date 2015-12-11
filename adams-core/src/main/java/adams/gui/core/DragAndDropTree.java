@@ -405,14 +405,12 @@ public class DragAndDropTree
 
     if (!isExpanded(path)) {
       if (m_ExpansionDelay > 0) {
-	m_ExpansionExecutor.schedule(new Runnable() {
-	  public void run() {
+	m_ExpansionExecutor.schedule(() -> {
 	    // see if the node that the mouse is over now is the same node it was over 2 seconds ago
 	    Point newPos = getMousePosition();
 	    TreePath newPath = getClosestPathForLocation(newPos.x, newPos.y);
 	    if (newPath.getLastPathComponent() == path.getLastPathComponent())
 	      expandPath(path);
-	  }
 	}, m_ExpansionDelay, TimeUnit.MILLISECONDS);
       }
       else {
@@ -427,10 +425,12 @@ public class DragAndDropTree
 
       // new cue
       rect = getPathBounds(path);
-      g2   = (Graphics2D) getGraphics();
-      g2.setColor(m_ColorCueLine);
-      m_RectCueLine.setRect(rect);
-      g2.draw(m_RectCueLine);
+      if (rect != null) {
+        g2 = (Graphics2D) getGraphics();
+        g2.setColor(m_ColorCueLine);
+        m_RectCueLine.setRect(rect);
+        g2.draw(m_RectCueLine);
+      }
     }
   }
 
@@ -746,7 +746,6 @@ public class DragAndDropTree
    */
   protected void doDrop(Transferable source, BaseTreeNode target, DropPosition position) {
     BaseTreeNode		top;
-    final BaseTreeNode		fTop;
     BaseTreeNode 		parent;
     final BaseTreeNode 		fParent;
     int 			targetIndex;
@@ -778,12 +777,9 @@ public class DragAndDropTree
 	    top = getCommonAncestor((BaseTreeNode) m_SourceNode[0].getParent(), parent);
 	  else
 	    top = parent;
-	  SwingUtilities.invokeLater(new Runnable() {
-	    @Override
-	    public void run() {
-	      for (BaseTreeNode node: fNewNodes)
-		fParent.add(node);
-	    }
+	  SwingUtilities.invokeLater(() -> {
+            for (BaseTreeNode node: fNewNodes)
+              fParent.add(node);
 	  });
 	  break;
 
@@ -833,32 +829,20 @@ public class DragAndDropTree
     // update tree
     if (top != null) {
       final BaseTreeNode finTop = top;
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  ((DefaultTreeModel) getModel()).nodeStructureChanged(finTop);
-	}
-      });
+      SwingUtilities.invokeLater(() -> ((DefaultTreeModel) getModel()).nodeStructureChanged(finTop));
     }
     
     // restore expansion state
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-	setExpandedTreePaths(exp);
-      }
-    });
+    SwingUtilities.invokeLater(() -> setExpandedTreePaths(exp));
 
     if (parent != null) {
       final BaseTreeNode finParent = parent;
-      SwingUtilities.invokeLater(new Runnable() {
-	public void run() {
-	  // expand the parent
-	  expand(finParent);
-	  // notify listeners
-	  if (newNodes != null)
-	    notifyNodeDroppedListeners(new NodeDroppedEvent(DragAndDropTree.this, fNewNodes, NotificationTime.FINISHED));
-	}
+      SwingUtilities.invokeLater(() -> {
+        // expand the parent
+        expand(finParent);
+        // notify listeners
+        if (newNodes != null)
+          notifyNodeDroppedListeners(new NodeDroppedEvent(DragAndDropTree.this, fNewNodes, NotificationTime.FINISHED));
       });
     }
   }
@@ -949,8 +933,7 @@ public class DragAndDropTree
 	m_SourceNode[i] = (BaseTreeNode) getSelectionPaths()[i].getLastPathComponent();
     }
 
-    if (    (m_SourceNode == null)
-	 || (m_SourceNode[0] == null)
+    if (    (m_SourceNode[0] == null)
 	 || (m_SourceNode[0] == getModel().getRoot())
 	 || !canStartDrag(m_SourceNode) )
       return;
