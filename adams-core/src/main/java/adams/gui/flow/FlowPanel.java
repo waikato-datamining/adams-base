@@ -63,6 +63,7 @@ import adams.gui.event.UndoEvent;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+import adams.gui.flow.tree.Tree.TreeState;
 import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
@@ -82,7 +83,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -1333,7 +1333,7 @@ public class FlowPanel
 	getUndo().addRedo(getTree().getState(), getUndo().peekUndoComment());
 
 	UndoPoint point = getUndo().undo();
-	getTree().setState((Vector) point.getData());
+	getTree().setState((TreeState) point.getData());
 	m_CurrentFile = getTree().getFile();
 
 	return "Done!";
@@ -1365,7 +1365,7 @@ public class FlowPanel
 	getUndo().addUndo(getTree().getState(), getUndo().peekRedoComment(), true);
 
 	UndoPoint point = getUndo().redo();
-	getTree().setState((Vector) point.getData());
+	getTree().setState((TreeState) point.getData());
 	m_CurrentFile = getTree().getFile();
 
 	return "Done!";

@@ -94,7 +94,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A custom tree for displaying the structure of a flow.
@@ -122,7 +121,21 @@ public class Tree
     /** after this position. */
     AFTER
   }
-  
+
+  /**
+   * Container object for the tree state.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class TreeState {
+    public Object actor;
+    public boolean[] expanded;
+    public boolean modified;
+    public File file;
+    public List<String> selection;
+  }
+
   /** the tree itself. */
   protected Tree m_Self;
 
@@ -2393,18 +2406,14 @@ public class Tree
    *
    * @param value	the state to use
    */
-  public void setState(Vector value) {
+  public void setState(TreeState value) {
     final AbstractActor	actor;
-    final boolean[]	expanded;
-    final Boolean	modified;
-    final File		file;
-    final List<String> 	sel;
     NestedConsumer	consumer;
 
     if (m_StateUsesNested) {
-      if (value.get(0) != null) {
+      if (value.actor != null) {
 	consumer = new NestedConsumer();
-	consumer.setInput((ArrayList) value.get(0));
+	consumer.setInput((ArrayList) value.actor);
 	actor = (AbstractActor) consumer.consume();
 	consumer.cleanUp();
       }
@@ -2413,18 +2422,14 @@ public class Tree
       }
     }
     else {
-      actor = (AbstractActor) value.get(0);
+      actor = (AbstractActor) value.actor;
     }
-    expanded = (boolean[]) value.get(1);
-    modified = (Boolean) value.get(2);
-    file     = (File) value.get(3);
-    sel      = (List<String>) value.get(4);
 
-    setModified(modified);
-    setFile(file);
+    setModified(value.modified);
+    setFile(value.file);
     setActor(actor);
-    SwingUtilities.invokeLater(() -> setExpandedState(expanded));
-    SwingUtilities.invokeLater(() -> setSelectionFullNames(sel));
+    SwingUtilities.invokeLater(() -> setExpandedState(value.expanded));
+    SwingUtilities.invokeLater(() -> setSelectionFullNames(value.selection));
   }
 
   /**
@@ -2433,33 +2438,30 @@ public class Tree
    *
    * @return		the current state
    */
-  public Vector getState() {
-    Vector		result;
+  public TreeState getState() {
+    TreeState		result;
     AbstractActor	actor;
     NestedProducer	producer;
 
-    result = new Vector();
+    result = new TreeState();
 
     actor = getActor();
     if (m_StateUsesNested) {
-      if (actor == null) {
-	result.add(null);
-      }
-      else {
+      if (actor != null) {
 	producer = new NestedProducer();
 	producer.produce(actor);
-	result.add(producer.getOutput());
+	result.actor = producer.getOutput();
 	actor.destroy();
 	producer.cleanUp();
       }
     }
     else {
-      result.add(actor);
+      result.actor = actor;
     }
-    result.add(getExpandedState());
-    result.add(isModified());
-    result.add(getFile());
-    result.add(getSelectionFullNames());
+    result.expanded  = getExpandedState();
+    result.modified  = isModified();
+    result.file      = getFile();
+    result.selection = getSelectionFullNames();
 
     return result;
   }
