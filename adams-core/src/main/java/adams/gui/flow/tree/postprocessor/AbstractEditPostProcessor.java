@@ -29,8 +29,6 @@ import adams.gui.flow.tree.Tree;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
-import java.util.List;
 
 /**
  * Ancestor for post-processors for edits in the tree.
@@ -54,26 +52,6 @@ public abstract class AbstractEditPostProcessor
    */
   public abstract boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
 
-  /**
-   * Backs up the expanded state of the tree.
-   * 
-   * @param tree	the tree to back up
-   */
-  protected List<TreePath> backupExpandedState(Tree tree) {
-    return tree.getExpandedTreePaths();
-  }
-  
-  /**
-   * Restores the expanded state of the tree.
-   * 
-   * @param tree	the tree to restore
-   * @param expanded	the list of expanded nodes
-   * @return		true if successfully restored
-   */
-  protected boolean restoreExpandedState(Tree tree, List<TreePath> expanded) {
-    return tree.restoreExpandedTreePaths(expanded);
-  }
-  
   /**
    * Post-processes the tree.
    * 
