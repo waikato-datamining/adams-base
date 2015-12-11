@@ -503,6 +503,38 @@ public class Tree
   }
 
   /**
+   * Returns the full actor names of expanded nodes.
+   *
+   * @return		the full names
+   */
+  public List<String> getExpandedFullNames() {
+    List<String>	result;
+    List<TreePath>	paths;
+
+    result = new ArrayList<>();
+    paths  = getExpandedTreePaths();
+    for (TreePath path: paths)
+      result.add(((Node) path.getLastPathComponent()).getFullName());
+
+    return result;
+  }
+
+  /**
+   * Sets the expanded state of the nodes located via their full names.
+   *
+   * @param names	the full names
+   */
+  public void setExpandedFullNames(List<String> names) {
+    Node	node;
+
+    for (String name: names) {
+      node = locate(name);
+      if (node != null)
+	expand(node);
+    }
+  }
+
+  /**
    * Ensures that the name of the actor stored in the node is unique among
    * its siblings. For {@link FixedNameActorHandler} parents, the desired name
    * is determined.
