@@ -1484,7 +1484,7 @@ public class Tree
 	addUndoPoint("Adding " + txt + " to '" + node.getFullName() + "'");
 
 	// add
-	exp      = getExpandedNodes();
+	exp      = getExpandedTreePaths();
 	children = buildTree(node, actors, true);
 	for (Node child: children)
 	  updateActorName(child);
@@ -1492,7 +1492,7 @@ public class Tree
 	  @Override
 	  public void run() {
 	    nodeStructureChanged(node);
-	    setExpandedNodes(exp);
+	    setExpandedTreePaths(exp);
 	    expand(node);
 	  }
 	});
@@ -1532,7 +1532,7 @@ public class Tree
 	  addUndoPoint("Adding " + txt + " before " + ((Node) parent.getChildAt(index)).getFullName() + "'");
 
 	// insert
-	exp      = getExpandedNodes();
+	exp      = getExpandedTreePaths();
 	children = buildTree(node, actors, false);
 	for (Node child: children) {
 	  final int fIndex = index;
@@ -1549,7 +1549,7 @@ public class Tree
 	  @Override
 	  public void run() {
 	    nodeStructureChanged(parent);
-	    setExpandedNodes(exp);
+	    setExpandedTreePaths(exp);
 	  }
 	});
 
@@ -2532,15 +2532,15 @@ public class Tree
   
   /**
    * Restores the expanded state of the tree. Use this method instead of
-   * {@link #setExpandedNodes(List)} if the tree has been rebuilt in the
+   * {@link #setExpandedTreePaths(List)} if the tree has been rebuilt in the
    * meantime. This method uses the actor names to locate them in the tree.
    * This means, that this method is more expensive.
    * 
    * @param expanded	the list of expanded nodes
    * @return		true if successfully restored
-   * @see		#setExpandedNodes(List)
+   * @see		#setExpandedTreePaths(List)
    */
-  public boolean restoreExpandedNodes(List<TreePath> expanded) {
+  public boolean restoreExpandedTreePaths(List<TreePath> expanded) {
     List<TreePath>	exp;
     String		full;
     Node		node;
@@ -2556,12 +2556,7 @@ public class Tree
 	exp.add(new TreePath(node.getPath()));
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-	setExpandedNodes(exp);
-      }
-    });
+    SwingUtilities.invokeLater(() -> setExpandedTreePaths(exp));
 
     return true;
   }
@@ -2650,7 +2645,7 @@ public class Tree
       modifying = (ModifyingProcessor) processor;
       if (modifying.isModified()) {
 	addUndoPoint("Processing actors with " + processor.toString());
-	exp = getExpandedNodes();
+	exp = getExpandedTreePaths();
 	if (path == null) {
 	  buildTree(modifying.getModifiedActor());
 	  newNode = node;
@@ -2672,7 +2667,7 @@ public class Tree
 	  public void run() {
 	    setModified(true);
 	    nodeStructureChanged(newNode);
-	    restoreExpandedNodes(exp);
+	    restoreExpandedTreePaths(exp);
 	    notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
 	  }
 	});

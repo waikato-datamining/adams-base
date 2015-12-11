@@ -143,12 +143,12 @@ public class EncloseActor
     addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
 
     SwingUtilities.invokeLater(() -> {
-      List<TreePath> exp = m_State.tree.getExpandedNodes();
+      List<TreePath> exp = m_State.tree.getExpandedTreePaths();
       currNode.setActor(manager);
       m_State.tree.setModified(true);
       m_State.tree.nodeStructureChanged((Node) currNode.getParent());
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
-      m_State.tree.setExpandedNodes(exp);
+      m_State.tree.setExpandedTreePaths(exp);
       m_State.tree.expand(currNode);
       m_State.tree.locateAndDisplay(currNode.getFullName());
       m_State.tree.redraw();

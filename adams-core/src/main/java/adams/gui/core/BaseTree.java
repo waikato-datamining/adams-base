@@ -185,7 +185,7 @@ public class BaseTree
 
     node = (TreeNode) parent.getLastPathComponent();
     for (i = 0; i < node.getChildCount(); i++) {
-      child = (TreeNode) node.getChildAt(i);
+      child = node.getChildAt(i);
       toggleAll(parent.pathByAddingChild(child), expand);
     }
 
@@ -200,8 +200,8 @@ public class BaseTree
    * 
    * @return		the expanded nodes
    */
-  public List<TreePath> getExpandedNodes() {
-    return getExpandedNodes(null);
+  public List<TreePath> getExpandedTreePaths() {
+    return getExpandedTreePaths(null);
   }
   
   /**
@@ -210,7 +210,7 @@ public class BaseTree
    * @param node	the node to start from, use null for root
    * @return		the expanded nodes
    */
-  public List<TreePath> getExpandedNodes(DefaultMutableTreeNode node) {
+  public List<TreePath> getExpandedTreePaths(DefaultMutableTreeNode node) {
     ArrayList<TreePath>		result;
     Enumeration<TreePath>	enm;
     
@@ -234,8 +234,8 @@ public class BaseTree
    * 
    * @param nodes	the nodes to have expanded
    */
-  public void setExpandedNodes(List<TreePath> nodes) {
-    setExpandedNodes(null, nodes);
+  public void setExpandedTreePaths(List<TreePath> nodes) {
+    setExpandedTreePaths(null, nodes);
   }
   
   /**
@@ -244,11 +244,11 @@ public class BaseTree
    * @param node	the starting node, use null for root
    * @param nodes	the nodes to have expanded
    */
-  public void setExpandedNodes(DefaultMutableTreeNode node, List<TreePath> nodes) {
+  public void setExpandedTreePaths(DefaultMutableTreeNode node, List<TreePath> nodes) {
     List<TreePath>	current;
 
     // same?
-    current = getExpandedNodes(node);
+    current = getExpandedTreePaths(node);
     if (current.equals(nodes))
       return;
     
@@ -297,10 +297,10 @@ public class BaseTree
   public void redraw(DefaultMutableTreeNode node) {
     if (getModel() instanceof DefaultTreeModel) {
       SwingUtilities.invokeLater(() -> {
-        List<TreePath> nodes = getExpandedNodes(node);
+        List<TreePath> nodes = getExpandedTreePaths(node);
         int[] selected = getSelectionRows();
         ((DefaultTreeModel) getModel()).nodeStructureChanged(node);
-        setExpandedNodes(node, nodes);
+        setExpandedTreePaths(node, nodes);
         setSelectionRows(selected);
       });
     }
@@ -342,10 +342,8 @@ public class BaseTree
     int		i;
 
     for (i = 0; i < value.length; i++) {
-      if (value[i]) {
-        final int row = i;
-        SwingUtilities.invokeLater(() -> expandRow(row));
-      }
+      if (value[i])
+        expandRow(i);
     }
   }
 

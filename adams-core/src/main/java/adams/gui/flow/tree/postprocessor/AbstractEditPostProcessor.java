@@ -60,7 +60,7 @@ public abstract class AbstractEditPostProcessor
    * @param tree	the tree to back up
    */
   protected List<TreePath> backupExpandedState(Tree tree) {
-    return tree.getExpandedNodes();
+    return tree.getExpandedTreePaths();
   }
   
   /**
@@ -71,7 +71,7 @@ public abstract class AbstractEditPostProcessor
    * @return		true if successfully restored
    */
   protected boolean restoreExpandedState(Tree tree, List<TreePath> expanded) {
-    return tree.restoreExpandedNodes(expanded);
+    return tree.restoreExpandedTreePaths(expanded);
   }
   
   /**

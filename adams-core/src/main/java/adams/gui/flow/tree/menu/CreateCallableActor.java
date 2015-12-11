@@ -145,7 +145,7 @@ public class CreateCallableActor
       callableNode = callable.get(callable.size() - 1);
     }
 
-    exp = m_State.tree.getExpandedNodes();
+    exp = m_State.tree.getExpandedTreePaths();
 
     // move actor
     moved = m_State.tree.buildTree(callableNode, currActor, true);
@@ -171,7 +171,7 @@ public class CreateCallableActor
     SwingUtilities.invokeLater(() -> {
       m_State.tree.setModified(true);
       m_State.tree.nodeStructureChanged(callableNode);
-      m_State.tree.setExpandedNodes(exp);
+      m_State.tree.setExpandedTreePaths(exp);
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, callableNode, Type.MODIFY));
       m_State.tree.nodeStructureChanged((Node) currNode.getParent());
       m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));

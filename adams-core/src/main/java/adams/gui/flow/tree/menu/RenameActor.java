@@ -89,7 +89,7 @@ public class RenameActor
       if (newName.length() == 0)
 	newName = actorOld.getDefaultName();
       addUndoPoint("Renaming actor " + actorOld.getName() + " to " + newName);
-      exp = m_State.tree.getExpandedNodes();
+      exp = m_State.tree.getExpandedTreePaths();
       actorNew = actorOld.shallowCopy();
       actorNew.setName(newName);
       node.setActor(actorNew);
@@ -100,7 +100,7 @@ public class RenameActor
       SwingUtilities.invokeLater(new Runnable() {
 	@Override
 	public void run() {
-	  m_State.tree.setExpandedNodes(exp);
+	  m_State.tree.setExpandedTreePaths(exp);
 	}
       });
       // update all occurrences, if necessary

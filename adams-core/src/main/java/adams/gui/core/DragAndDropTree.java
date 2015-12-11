@@ -756,7 +756,7 @@ public class DragAndDropTree
     final BaseTreeNode[]	fNewNodes;
     final List<TreePath>	exp;
 
-    exp = getExpandedNodes();
+    exp = getExpandedTreePaths();
 
     if (m_SourceNode != null)
       newNodes = m_SourceNode;
@@ -845,7 +845,7 @@ public class DragAndDropTree
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-	setExpandedNodes(exp);
+	setExpandedTreePaths(exp);
       }
     });
 
