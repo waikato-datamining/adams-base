@@ -28,20 +28,39 @@ import adams.core.option.NestedProducer;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
-import adams.flow.core.*;
+import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorExecution;
+import adams.flow.core.ActorHandler;
+import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorPath;
+import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorHandler;
+import adams.flow.core.FixedNameActorHandler;
+import adams.flow.core.InputConsumer;
+import adams.flow.core.MutableActorHandler;
+import adams.flow.core.OutputProducer;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.template.AbstractActorTemplate;
-import adams.gui.core.*;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.DragAndDropTree;
+import adams.gui.core.DragAndDropTreeNodeCollection;
+import adams.gui.core.ErrorMessagePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.event.ActorChangeListener;
 import adams.gui.event.NodeDroppedEvent;
 import adams.gui.event.NodeDroppedEvent.NotificationTime;
-import adams.gui.event.NodeDroppedListener;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
@@ -51,11 +70,17 @@ import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.*;
-import java.awt.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyAdapter;
@@ -63,8 +88,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * A custom tree for displaying the structure of a flow.
@@ -345,35 +375,32 @@ public class Tree
       }
     });
 
-    addNodeDroppedListener(new NodeDroppedListener() {
-      @Override
-      public void nodeDropped(NodeDroppedEvent e) {
-	BaseTreeNode[] tnodes = e.getNodes();
-	ArrayList<Node> nodes = new ArrayList<Node>();
+    addNodeDroppedListener((NodeDroppedEvent e) -> {
+      BaseTreeNode[] tnodes = e.getNodes();
+      ArrayList<Node> nodes = new ArrayList<Node>();
 
-	// TODO queue
+      // TODO queue
 
-	// update actor name, if necessary
-	if (e.getNotificationTime() == NotificationTime.FINISHED) {
-	  for (BaseTreeNode node: tnodes) {
-	    if (node instanceof Node) {
-	      if (updateActorName((Node) node))
-		nodeStructureChanged((Node) node);
-	    }
+      // update actor name, if necessary
+      if (e.getNotificationTime() == NotificationTime.FINISHED) {
+	for (BaseTreeNode node: tnodes) {
+	  if (node instanceof Node) {
+	    if (updateActorName((Node) node))
+	      nodeStructureChanged((Node) node);
 	  }
 	}
+      }
 
-	// undo + modified
-	if (e.getNotificationTime() == NotificationTime.BEFORE) {
-	  if (nodes.size() == 1)
-	    addUndoPoint("Drag'n'Drop of actor '" + nodes.get(0).getActor().getName() + "'");
-	  else
-	    addUndoPoint("Drag'n'Drop of " + nodes.size() + " actors");
-	}
-	else {
-	  setModified(true);
-	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[nodes.size()]), Type.MODIFY));
-	}
+      // undo + modified
+      if (e.getNotificationTime() == NotificationTime.BEFORE) {
+	if (nodes.size() == 1)
+	  addUndoPoint("Drag'n'Drop of actor '" + nodes.get(0).getActor().getName() + "'");
+	else
+	  addUndoPoint("Drag'n'Drop of " + nodes.size() + " actors");
+      }
+      else {
+	setModified(true);
+	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[nodes.size()]), Type.MODIFY));
       }
     });
   }
@@ -418,21 +445,10 @@ public class Tree
       model    = new DefaultTreeModel(rootNode);
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-	setModel(model);
-      }
-    });
+    SwingUtilities.invokeLater(() -> setModel(model));
 
-    if (model.getRoot() != null) {
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  expandPath(new TreePath(model.getRoot()));
-	}
-      });
-    }
+    if (model.getRoot() != null)
+      SwingUtilities.invokeLater(() -> expandPath(new TreePath(model.getRoot())));
 
     // clean up old model
     if (modelOld != null)
@@ -477,12 +493,9 @@ public class Tree
     }
 
     if ((parent != null) && append) {
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  for (Node node : result)
-	      parent.add(node);
-	}
+      SwingUtilities.invokeLater(() -> {
+	for (Node node : result)
+	  parent.add(node);
       });
     }
 
@@ -533,12 +546,7 @@ public class Tree
 
     if (result && (actor != null)) {
       final AbstractActor fActor = actor;
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  node.setActor(fActor);
-	}
-      });
+      SwingUtilities.invokeLater(() -> node.setActor(fActor));
     }
 
     return result;
@@ -973,11 +981,14 @@ public class Tree
    * @return		the state, null if no popup possible
    */
   protected StateContainer getTreeState(MouseEvent e) {
+    TreePath	path;
+
     // no path, no state
-    if (getPathForLocation(e.getX(), e.getY()) == null)
+    path = getPathForLocation(e.getX(), e.getY());
+    if (path == null)
       return null;
 
-    return getTreeState(getSelectionPaths(), (Node) getPathForLocation(e.getX(), e.getY()).getLastPathComponent());
+    return getTreeState(getSelectionPaths(), (Node) path.getLastPathComponent());
   }
 
   /**
@@ -1119,25 +1130,19 @@ public class Tree
     for (i = 0; i < nodes.length; i++) {
       final Node fNode = nodes[i];
       final AbstractActor actor = nodes[i].getActor();
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  actor.setSkip(!actor.getSkip());
-	  fNode.setActor(actor);
-	  ((DefaultTreeModel) getModel()).nodeChanged(fNode);
-	}
+      SwingUtilities.invokeLater(() -> {
+	actor.setSkip(!actor.getSkip());
+	fNode.setActor(actor);
+	((DefaultTreeModel) getModel()).nodeChanged(fNode);
       });
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-	setModified(true);
-	if (nodes.length == 1)
-	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.MODIFY));
-	else
-	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.MODIFY_RANGE));
-      }
+    SwingUtilities.invokeLater(() -> {
+      setModified(true);
+      if (nodes.length == 1)
+	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes[0], Type.MODIFY));
+      else
+	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes, Type.MODIFY_RANGE));
     });
   }
 
@@ -1160,28 +1165,26 @@ public class Tree
 
     result = null;
 
-    if (result == null) {
-      if (position == InsertPosition.BENEATH) {
-	parentNode = TreeHelper.pathToNode(path);
-	pos        = parentNode.getChildCount();
-      }
-      else {
-	node       = TreeHelper.pathToNode(path);
-	parentNode = (Node) node.getParent();
-	pos        = parentNode.getIndex(node);
-	if (position == InsertPosition.AFTER)
-	  pos++;
-      }
-
-      parent  = parentNode.getActor();
-      actors  = new AbstractActor[parentNode.getChildCount()];
-      for (i = 0; i < actors.length; i++)
-	actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
-
-      suggestions = ActorSuggestion.getSingleton().suggest(parent, pos, actors);
-      if (suggestions.length > 0)
-	result = suggestions;
+    if (position == InsertPosition.BENEATH) {
+      parentNode = TreeHelper.pathToNode(path);
+      pos        = parentNode.getChildCount();
     }
+    else {
+      node       = TreeHelper.pathToNode(path);
+      parentNode = (Node) node.getParent();
+      pos        = parentNode.getIndex(node);
+      if (position == InsertPosition.AFTER)
+	pos++;
+    }
+
+    parent  = parentNode.getActor();
+    actors  = new AbstractActor[parentNode.getChildCount()];
+    for (i = 0; i < actors.length; i++)
+      actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
+
+    suggestions = ActorSuggestion.getSingleton().suggest(parent, pos, actors);
+    if (suggestions.length > 0)
+      result = suggestions;
 
     // default is "Filter"
     // TODO
@@ -1258,7 +1261,6 @@ public class Tree
 	  actor = child.getActor();
 	  if (actor.getSkip()) {
 	    index++;
-	    continue;
 	  }
 	  else {
 	    result = actor;
@@ -1273,7 +1275,6 @@ public class Tree
 	  actor = child.getActor();
 	  if (actor.getSkip()) {
 	    index--;
-	    continue;
 	  }
 	  else {
 	    result = actor;
@@ -1383,7 +1384,7 @@ public class Tree
     result.setStandalonesAllowed(false);
     if ((handlerInfo != null) && handlerInfo.canContainStandalones()) {
       // standalones can only be added at the start
-      if ((before == null) || ((before != null) && ActorUtils.isStandalone(before)))
+      if ((before == null) || ActorUtils.isStandalone(before))
 	result.setStandalonesAllowed(true);
     }
 
@@ -1391,7 +1392,7 @@ public class Tree
     result.setSourcesAllowed(false);
     if ((handlerInfo != null) && handlerInfo.canContainSource()) {
       // source can only be added at the start
-      if ((before == null) || ((before != null) && ActorUtils.isStandalone(before)))
+      if ((before == null) || ActorUtils.isStandalone(before))
 	result.setSourcesAllowed(true);
     }
 
@@ -1488,13 +1489,10 @@ public class Tree
 	children = buildTree(node, actors, true);
 	for (Node child: children)
 	  updateActorName(child);
-	SwingUtilities.invokeLater(new Runnable() {
-	  @Override
-	  public void run() {
-	    nodeStructureChanged(node);
-	    setExpandedTreePaths(exp);
-	    expand(node);
-	  }
+	SwingUtilities.invokeLater(() -> {
+	  nodeStructureChanged(node);
+	  setExpandedTreePaths(exp);
+	  expand(node);
 	});
 
 	// record
@@ -1536,21 +1534,15 @@ public class Tree
 	children = buildTree(node, actors, false);
 	for (Node child: children) {
 	  final int fIndex = index;
-	  SwingUtilities.invokeLater(new Runnable() {
-	    @Override
-	    public void run() {
-	      parent.insert(child, fIndex);
-	      updateActorName(child);
-	    }
+	  SwingUtilities.invokeLater(() -> {
+	    parent.insert(child, fIndex);
+	    updateActorName(child);
 	  });
 	  index++;
 	}
-	SwingUtilities.invokeLater(new Runnable() {
-	  @Override
-	  public void run() {
-	    nodeStructureChanged(parent);
-	    setExpandedTreePaths(exp);
-	  }
+	SwingUtilities.invokeLater(() -> {
+	  nodeStructureChanged(parent);
+	  setExpandedTreePaths(exp);
 	});
 
 	// record
@@ -1562,13 +1554,10 @@ public class Tree
 	}
       }
 
-      SwingUtilities.invokeLater(new Runnable() {
-	@Override
-	public void run() {
-	  setModified(true);
-	  // notify listeners
-	  notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-	}
+      SwingUtilities.invokeLater(() -> {
+	setModified(true);
+	// notify listeners
+	notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
       });
     }
   }
@@ -2097,7 +2086,7 @@ public class Tree
 	}
       }
       else {
-	if (current.getActor().getName().toLowerCase().indexOf(search) > -1) {
+	if (current.getActor().getName().toLowerCase().contains(search)) {
 	  result = current;
 	  break;
 	}
@@ -2654,22 +2643,16 @@ public class Tree
 	  newNode = buildTree((Node) node.getParent(), modifying.getModifiedActor(), false);
 	  parent  = (Node) node.getParent();
 	  index   = parent.getIndex(node);
-	  SwingUtilities.invokeLater(new Runnable() {
-	    @Override
-	    public void run() {
-	      parent.remove(index);
-	      parent.insert(newNode, index);
-	    }
+	  SwingUtilities.invokeLater(() -> {
+	    parent.remove(index);
+	    parent.insert(newNode, index);
 	  });
 	}
-	SwingUtilities.invokeLater(new Runnable() {
-	  @Override
-	  public void run() {
-	    setModified(true);
-	    nodeStructureChanged(newNode);
-	    restoreExpandedTreePaths(exp);
-	    notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
-	  }
+	SwingUtilities.invokeLater(() -> {
+	  setModified(true);
+	  nodeStructureChanged(newNode);
+	  restoreExpandedTreePaths(exp);
+	  notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
 	});
       }
     }
@@ -2703,18 +2686,15 @@ public class Tree
 	  fDialog     = dialog;
 	  fErrorPanel = errorPanel;
 	  tabbedPane  = new BaseTabbedPane();
-	  tabbedPane.addChangeListener(new ChangeListener() {
-	    @Override
-	    public void stateChanged(ChangeEvent e) {
-	      if (tabbedPane.getSelectedIndex() == 0) {
-		if (comp instanceof MenuBarProvider)
-		  fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-		else
-		  fDialog.setJMenuBar(null);
-	      }
-	      else {
-		fDialog.setJMenuBar(fErrorPanel.getMenuBar());
-	      }
+	  tabbedPane.addChangeListener((ChangeEvent e) -> {
+	    if (tabbedPane.getSelectedIndex() == 0) {
+	      if (comp instanceof MenuBarProvider)
+		fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
+	      else
+		fDialog.setJMenuBar(null);
+	    }
+	    else {
+	      fDialog.setJMenuBar(fErrorPanel.getMenuBar());
 	    }
 	  });
 	  dialog.getContentPane().add(tabbedPane, BorderLayout.CENTER);
