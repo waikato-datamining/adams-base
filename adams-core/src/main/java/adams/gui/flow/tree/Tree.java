@@ -2430,6 +2430,17 @@ public class Tree
     setActor(actor);
     SwingUtilities.invokeLater(() -> setExpandedState(value.expanded));
     SwingUtilities.invokeLater(() -> setSelectionFullNames(value.selection));
+    if (value.selection.size() > 0) {
+      SwingUtilities.invokeLater(() -> {
+	for (String sel: value.selection) {
+	  Node node = locate(sel);
+	  if (node != null) {
+	    scrollPathToVisible(getPath(node));
+	    break;
+	  }
+	}
+      });
+    }
   }
 
   /**
