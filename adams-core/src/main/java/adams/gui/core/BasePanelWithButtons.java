@@ -15,15 +15,15 @@
 
 /**
  * BasePanelWithButtons.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
-
-import javax.swing.JPanel;
 
 /**
  * Panel that offers associated buttons on the right-hand side.
@@ -52,10 +52,12 @@ public class BasePanelWithButtons
     super.initGUI();
 
     setLayout(new BorderLayout(1, 0));
+    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     // the buttons
     m_LayoutButtons = new GridLayout(0, 1, 0, 1);
     m_PanelButtons  = new JPanel(m_LayoutButtons);
+    m_PanelButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
     panel           = new JPanel(new BorderLayout());
     panel.add(m_PanelButtons, BorderLayout.NORTH);
     add(panel, BorderLayout.EAST);
