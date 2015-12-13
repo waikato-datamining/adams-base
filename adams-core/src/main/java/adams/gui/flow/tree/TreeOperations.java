@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -36,6 +37,8 @@ import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
+import adams.flow.sink.DisplayPanelManager;
+import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
@@ -45,6 +48,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
+import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 
@@ -431,6 +435,115 @@ public class TreeOperations
   }
 
   /**
+   * Brings up the GOE dialog for editing the selected actor.
+   *
+   * @param path	the path to the actor
+   */
+  public void editActor(TreePath path) {
+    GenericObjectEditorDialog	dialog;
+    Node 			currNode;
+    Node			newNode;
+    Node			parent;
+    AbstractActor		actor;
+    AbstractActor		actorOld;
+    int				index;
+    boolean			changed;
+    ActorHandler		handler;
+    ActorHandler		handlerOld;
+    int				i;
+    boolean			editable;
+    final boolean[]		expanded;
+
+    if (path == null)
+      return;
+
+    currNode = TreeHelper.pathToNode(path);
+    getOwner().updateCurrentEditing((Node) currNode.getParent(), currNode);
+    actorOld = currNode.getActor().shallowCopy();
+    dialog   = GenericObjectEditorDialog.createDialog(getOwner());
+    editable = getOwner().isEditable() && currNode.isEditable();
+    if (editable)
+      dialog.setTitle("Edit...");
+    else
+      dialog.setTitle("Show...");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(AbstractActor.class);
+    dialog.setProposedClasses(null);
+    dialog.setCurrent(currNode.getActor().shallowCopy());
+    dialog.getGOEEditor().setReadOnly(!editable);
+    dialog.getGOEEditor().setFilter(getOwner().getOperations().configureFilter(path, null));
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+    dialog.setVisible(true);
+    getOwner().updateCurrentEditing(null, null);
+    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION) {
+      actor = (AbstractActor) dialog.getEditor().getValue();
+      // make sure name is not empty
+      if (actor.getName().length() == 0)
+	actor.setName(actor.getDefaultName());
+      if (actor.equals(actorOld)) {
+	actorOld.destroy();
+	return;
+      }
+      parent = (Node) currNode.getParent();
+
+      // does parent allow singletons?
+      if (!getOwner().getOperations().checkForStandalones(actor, parent))
+	return;
+
+      getOwner().addUndoPoint("Updating node '" + currNode.getFullName() + "'");
+
+      // check whether actor class or actor structure (for ActorHandlers) has changed
+      changed = (actor.getClass() != actorOld.getClass());
+      if (!changed && (actor instanceof ActorHandler)) {
+	handler    = (ActorHandler) actor;
+	handlerOld = (ActorHandler) actorOld;
+	changed    = (handler.size() != handlerOld.size());
+	if (!changed) {
+	  for (i = 0; i < handler.size(); i++) {
+	    if (handler.get(i).getClass() != handlerOld.get(i).getClass()) {
+	      changed = true;
+	      break;
+	    }
+	  }
+	}
+      }
+
+      if (changed) {
+	expanded = null;
+	if (parent == null) {
+	  getOwner().buildTree(actor);
+	  currNode = (Node) getOwner().getModel().getRoot();
+	}
+	else {
+	  newNode = getOwner().buildTree(null, actor, false);
+	  index   = parent.getIndex(currNode);
+	  parent.remove(index);
+	  parent.insert(newNode, index);
+	  currNode = newNode;
+	}
+      }
+      else {
+	currNode.setActor(actor);
+	expanded = getOwner().getExpandedState();
+      }
+      getOwner().updateActorName(currNode);
+      currNode.invalidateRendering();
+      getOwner().redraw(currNode);
+      getOwner().setModified(true);
+      if (expanded != null)
+	getOwner().setExpandedState(expanded);
+      else
+	getOwner().nodeStructureChanged(currNode);
+      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
+      getOwner().locateAndDisplay(currNode.getFullName());
+      getOwner().refreshTabs();
+      // update all occurrences, if necessary
+      if (!getOwner().getIgnoreNameChanges())
+	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
+    }
+  }
+
+  /**
    * Encloses the selected actors in the specified actor handler.
    *
    * @param paths	the (paths to the) actors to wrap in the control actor
@@ -531,13 +644,52 @@ public class TreeOperations
   }
 
   /**
+   * Encloses the specified actor in a DisplayPanelManager actor.
+   *
+   * @param path	the path of the actor to enclose
+   */
+  public void encloseInDisplayPanelManager(TreePath path) {
+    AbstractActor	currActor;
+    Node		currNode;
+    DisplayPanelManager manager;
+    AbstractDisplay display;
+
+    currNode  = TreeHelper.pathToNode(path);
+    currActor = currNode.getFullActor().shallowCopy();
+    manager   = new DisplayPanelManager();
+    manager.setName(currActor.getName());
+    manager.setPanelProvider((DisplayPanelProvider) currActor);
+    if (currActor instanceof AbstractDisplay) {
+      display = (AbstractDisplay) currActor;
+      manager.setWidth(display.getWidth() + 100);
+      manager.setHeight(display.getHeight());
+      manager.setX(display.getX());
+      manager.setY(display.getY());
+    }
+
+    getOwner().addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
+
+    SwingUtilities.invokeLater(() -> {
+      List<TreePath> exp = getOwner().getExpandedTreePaths();
+      currNode.setActor(manager);
+      getOwner().setModified(true);
+      getOwner().nodeStructureChanged((Node) currNode.getParent());
+      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
+      getOwner().setExpandedTreePaths(exp);
+      getOwner().expand(currNode);
+      getOwner().locateAndDisplay(currNode.getFullName());
+      getOwner().redraw();
+    });
+  }
+
+  /**
    * Tries to figure what actors fit best in the tree at the given position.
    *
    * @param path	the path where to insert the actors
    * @param position	how the actors are to be inserted
    * @return		the actors
    */
-  protected AbstractActor[] suggestActors(TreePath path, InsertPosition position) {
+  public AbstractActor[] suggestActors(TreePath path, InsertPosition position) {
     AbstractActor[]	result;
     AbstractActor	parent;
     Node		parentNode;

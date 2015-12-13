@@ -22,23 +22,15 @@ package adams.gui.flow.tree.menu;
 import adams.core.ClassLister;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.MenuItemComparator;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
 
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,12 +80,7 @@ public class EncloseActor
 	continue;
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
       menuitems.add(menuitem);
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_State.tree.getOperations().encloseActor(m_State.selPaths, actor);
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
     }
     Collections.sort(menuitems, new MenuItemComparator());
     result = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
@@ -105,54 +92,10 @@ public class EncloseActor
       result.addSeparator();
       menuitem = new JMenuItem(DisplayPanelManager.class.getSimpleName());
       result.add(menuitem);
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  encloseInDisplayPanelManager(m_State.selPaths[0]);
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseInDisplayPanelManager(m_State.selPaths[0]));
     }
     
     return result;
-  }
-
-  /**
-   * Encloses the specified actor in a DisplayPanelManager actor.
-   *
-   * @param path	the path of the actor to enclose
-   */
-  protected void encloseInDisplayPanelManager(TreePath path) {
-    AbstractActor	currActor;
-    Node		currNode;
-    DisplayPanelManager	manager;
-    AbstractDisplay	display;
-
-    currNode  = TreeHelper.pathToNode(path);
-    currActor = currNode.getFullActor().shallowCopy();
-    manager   = new DisplayPanelManager();
-    manager.setName(currActor.getName());
-    manager.setPanelProvider((DisplayPanelProvider) currActor);
-    if (currActor instanceof AbstractDisplay) {
-      display = (AbstractDisplay) currActor;
-      manager.setWidth(display.getWidth() + 100);
-      manager.setHeight(display.getHeight());
-      manager.setX(display.getX());
-      manager.setY(display.getY());
-    }
-
-    addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
-
-    SwingUtilities.invokeLater(() -> {
-      List<TreePath> exp = m_State.tree.getExpandedTreePaths();
-      currNode.setActor(manager);
-      m_State.tree.setModified(true);
-      m_State.tree.nodeStructureChanged((Node) currNode.getParent());
-      m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
-      m_State.tree.setExpandedTreePaths(exp);
-      m_State.tree.expand(currNode);
-      m_State.tree.locateAndDisplay(currNode.getFullName());
-      m_State.tree.redraw();
-    });
   }
 
   /**
