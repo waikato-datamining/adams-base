@@ -1299,6 +1299,7 @@ public class FlowPanel
    */
   public void close() {
     cleanUp();
+    m_Tree.cleanUp();
     if (m_Owner != null)
       m_Owner.remove(this);
   }

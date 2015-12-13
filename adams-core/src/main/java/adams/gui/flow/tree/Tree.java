@@ -21,6 +21,7 @@
 package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -82,7 +83,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class Tree
-  extends DragAndDropTree {
+  extends DragAndDropTree
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -6052602093735801950L;
@@ -2227,5 +2229,15 @@ public class Tree
   public void updateLastTemplate(AbstractActorTemplate template, TreeOperations.InsertPosition position) {
     m_LastTemplate               = template;
     m_LastTemplateInsertPosition = position;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    if (m_Operations != null) {
+      m_Operations.cleanUp();
+      m_Operations = null;
+    }
   }
 }
