@@ -23,6 +23,9 @@ package adams.gui.flow.tree;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+import adams.flow.condition.bool.BooleanCondition;
+import adams.flow.condition.bool.BooleanConditionSupporter;
+import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
@@ -32,6 +35,8 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.ActorWithConditionalEquivalent;
+import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorHandler;
@@ -56,6 +61,7 @@ import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
@@ -1187,6 +1193,199 @@ public class TreeOperations
     currNode.removeAllChildren();
     getOwner().nodeStructureChanged(currNode);
     getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
+  }
+
+  /**
+   * Turns the selected actor into its conditional equivalent.
+   *
+   * @param path	the (path to the) actor to turn into its conditional equivalent
+   */
+  public void makeConditional(TreePath path) {
+    AbstractActor		currActor;
+    Node 			currNode;
+    Node			parentNode;
+    Class			condEquiv;
+    Node			newNode;
+    AbstractActor		newActor;
+    boolean			noEquiv;
+    int				index;
+    boolean			defaultName;
+    boolean			expanded;
+    GenericObjectEditorDialog	dialog;
+    
+    currNode   = TreeHelper.pathToNode(path);
+    parentNode = (Node) currNode.getParent();
+    expanded   = getOwner().isExpanded(path);
+    currActor  = currNode.getFullActor().shallowCopy();
+    noEquiv    = false;
+    condEquiv  = null;
+    
+    if (!(currActor instanceof ActorWithConditionalEquivalent))
+      noEquiv = true;
+
+    if (!noEquiv) {
+      condEquiv = ((ActorWithConditionalEquivalent) currActor).getConditionalEquivalent();
+      if (condEquiv == null)
+	noEquiv = true;
+    }
+    
+    if (noEquiv) {
+      GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Actor '" + currActor.getClass().getName() + "' does not have a conditional equivalent!");
+      return;
+    }
+
+    // instantiate equivalent
+    newNode  = null;
+    newActor = null;
+    try {
+      newActor = (AbstractActor) condEquiv.newInstance();
+      // transfer some basic options
+      newActor.setAnnotations(currActor.getAnnotations());
+      newActor.setSkip(currActor.getSkip());
+      newActor.setLoggingLevel(currActor.getLoggingLevel());
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Failed to instantiate conditional equivalent: " + condEquiv.getName());
+      return;
+    }
+    
+    // choose condition
+    if (getOwner().getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
+    else
+      dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
+    dialog.setTitle("Conditions");
+    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(BooleanCondition.class);
+    dialog.setCurrent(new Expression());
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    // create node
+    ((BooleanConditionSupporter) newActor).setCondition((BooleanCondition) dialog.getCurrent());
+    newNode = new Node(getOwner(), newActor);
+    
+    getOwner().addUndoPoint("Making conditional actor from '" + currNode.getActor().getFullName());
+
+    // move children
+    for (BaseTreeNode child: currNode.getChildren())
+      newNode.add(child);
+    
+    // replace node
+    defaultName = currActor.getName().equals(currActor.getDefaultName());
+    index       = parentNode.getIndex(currNode);
+    parentNode.insert(newNode, index);
+    parentNode.remove(currNode);
+    if (!defaultName) {
+      newActor.setName(currActor.getName());
+      newNode.setActor(newActor);
+      getOwner().updateActorName(newNode);
+    }
+    if (expanded)
+      getOwner().expand(newNode);
+
+    // update tree
+    getOwner().setModified(true);
+    getOwner().nodeStructureChanged(parentNode);
+    getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
+    getOwner().nodeStructureChanged(parentNode);
+    getOwner().locateAndDisplay(newNode.getFullName());
+    getOwner().redraw();
+  }
+
+  /**
+   * Turns the selected actor into its timed equivalent.
+   *
+   * @param path	the (path to the) actor to turn into its timed equivalent
+   */
+  public void makeTimed(TreePath path) {
+    AbstractActor		currActor;
+    Node 			currNode;
+    Node			parentNode;
+    Class			timedEquiv;
+    Node			newNode;
+    AbstractActor		newActor;
+    boolean			noEquiv;
+    int				index;
+    boolean			defaultName;
+    boolean			expanded;
+    
+    currNode   = TreeHelper.pathToNode(path);
+    parentNode = (Node) currNode.getParent();
+    expanded   = getOwner().isExpanded(path);
+    currActor  = currNode.getFullActor().shallowCopy();
+    noEquiv    = false;
+    timedEquiv = null;
+    
+    if (!(currActor instanceof ActorWithTimedEquivalent))
+      noEquiv = true;
+
+    if (!noEquiv) {
+      timedEquiv = ((ActorWithTimedEquivalent) currActor).getTimedEquivalent();
+      if (timedEquiv == null)
+	noEquiv = true;
+    }
+    
+    if (noEquiv) {
+      GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Actor '" + currActor.getClass().getName() + "' does not have a timed equivalent!");
+      return;
+    }
+
+    // instantiate equivalent
+    newNode  = null;
+    newActor = null;
+    try {
+      newActor = (AbstractActor) timedEquiv.newInstance();
+      // transfer some basic options
+      newActor.setAnnotations(currActor.getAnnotations());
+      newActor.setSkip(currActor.getSkip());
+      newActor.setLoggingLevel(currActor.getLoggingLevel());
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Failed to instantiate timed equivalent: " + timedEquiv.getName());
+      return;
+    }
+
+    // create node
+    newNode = new Node(getOwner(), newActor);
+    
+    getOwner().addUndoPoint("Making timed actor from '" + currNode.getActor().getFullName());
+
+    // move children
+    for (BaseTreeNode child: currNode.getChildren())
+      newNode.add(child);
+    
+    // replace node
+    defaultName = currActor.getName().equals(currActor.getDefaultName());
+    index       = parentNode.getIndex(currNode);
+    parentNode.insert(newNode, index);
+    parentNode.remove(currNode);
+    if (!defaultName) {
+      newActor.setName(currActor.getName());
+      newNode.setActor(newActor);
+      getOwner().updateActorName(newNode);
+    }
+    if (expanded)
+      getOwner().expand(newNode);
+
+    // update tree
+    getOwner().setModified(true);
+    getOwner().nodeStructureChanged(parentNode);
+    getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
+    getOwner().nodeStructureChanged(parentNode);
+    getOwner().locateAndDisplay(newNode.getFullName());
+    getOwner().redraw();
   }
 
   /**

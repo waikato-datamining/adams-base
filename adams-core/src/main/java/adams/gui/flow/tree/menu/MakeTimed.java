@@ -19,16 +19,8 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorWithTimedEquivalent;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.GUIHelper;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
 
-import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 
 /**
@@ -66,100 +58,12 @@ public class MakeTimed
   }
 
   /**
-   * Turns the selected actor into its timed equivalent.
-   *
-   * @param path	the (path to the) actor to turn into its timed equivalent
-   */
-  protected void makeTimed(TreePath path) {
-    AbstractActor		currActor;
-    Node 			currNode;
-    Node			parentNode;
-    Class			timedEquiv;
-    Node			newNode;
-    AbstractActor		newActor;
-    boolean			noEquiv;
-    int				index;
-    boolean			defaultName;
-    boolean			expanded;
-    
-    currNode   = TreeHelper.pathToNode(path);
-    parentNode = (Node) currNode.getParent();
-    expanded   = m_State.tree.isExpanded(path);
-    currActor  = currNode.getFullActor().shallowCopy();
-    noEquiv    = false;
-    timedEquiv = null;
-    
-    if (!(currActor instanceof ActorWithTimedEquivalent))
-      noEquiv = true;
-
-    if (!noEquiv) {
-      timedEquiv = ((ActorWithTimedEquivalent) currActor).getTimedEquivalent();
-      if (timedEquiv == null)
-	noEquiv = true;
-    }
-    
-    if (noEquiv) {
-      GUIHelper.showErrorMessage(
-	  m_State.tree,
-	  "Actor '" + currActor.getClass().getName() + "' does not have a timed equivalent!");
-      return;
-    }
-
-    // instantiate equivalent
-    newNode  = null;
-    newActor = null;
-    try {
-      newActor = (AbstractActor) timedEquiv.newInstance();
-      // transfer some basic options
-      newActor.setAnnotations(currActor.getAnnotations());
-      newActor.setSkip(currActor.getSkip());
-      newActor.setLoggingLevel(currActor.getLoggingLevel());
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(
-	  m_State.tree,
-	  "Failed to instantiate timed equivalent: " + timedEquiv.getName());
-      return;
-    }
-
-    // create node
-    newNode = new Node(m_State.tree, newActor);
-    
-    addUndoPoint("Making timed actor from '" + currNode.getActor().getFullName());
-
-    // move children
-    for (BaseTreeNode child: currNode.getChildren())
-      newNode.add(child);
-    
-    // replace node
-    defaultName = currActor.getName().equals(currActor.getDefaultName());
-    index       = parentNode.getIndex(currNode);
-    parentNode.insert(newNode, index);
-    parentNode.remove(currNode);
-    if (!defaultName) {
-      newActor.setName(currActor.getName());
-      newNode.setActor(newActor);
-      m_State.tree.updateActorName(newNode);
-    }
-    if (expanded)
-      m_State.tree.expand(newNode);
-
-    // update tree
-    m_State.tree.setModified(true);
-    m_State.tree.nodeStructureChanged(parentNode);
-    m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, parentNode, Type.MODIFY));
-    m_State.tree.nodeStructureChanged(parentNode);
-    m_State.tree.locateAndDisplay(newNode.getFullName());
-    m_State.tree.redraw();
-  }
-
-  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    makeTimed(m_State.selPath);
+    m_State.tree.getOperations().makeTimed(m_State.selPath);
   }
 }
