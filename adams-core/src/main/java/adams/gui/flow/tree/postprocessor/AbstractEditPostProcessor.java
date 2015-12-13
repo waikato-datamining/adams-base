@@ -25,10 +25,14 @@ import adams.core.logging.LoggingObject;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.ActorChangeEvent;
+import adams.gui.event.ActorChangeEvent.Type;
+import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.util.List;
 
 /**
  * Ancestor for post-processors for edits in the tree.
@@ -54,6 +58,17 @@ public abstract class AbstractEditPostProcessor
 
   /**
    * Post-processes the tree.
+   *
+   * @param tree	the tree to post-process
+   * @param parent	the parent actor
+   * @param oldActor	the old actor
+   * @param newActor	the new, updated actor
+   * @return		true if tree got modified
+   */
+  protected abstract boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
+
+  /**
+   * Post-processes the tree.
    * 
    * @param tree	the tree to post-process
    * @param parent	the parent actor
@@ -61,7 +76,28 @@ public abstract class AbstractEditPostProcessor
    * @param newActor	the new, updated actor
    * @return		true if tree got modified
    */
-  public abstract boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
+  public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+    boolean		result;
+    final List<String> 	exp;
+    final List<String>	sel;
+
+    exp = tree.getExpandedFullNames();
+    sel = tree.getSelectionFullNames();
+
+    result = doPostProcess(tree, parent, oldActor, newActor);
+
+    if (result) {
+      SwingUtilities.invokeLater(() -> {
+	tree.setModified(true);
+	tree.setExpandedFullNames(exp);
+	tree.setSelectionFullNames(sel);
+	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
+	tree.refreshTabs();
+      });
+    }
+
+    return result;
+  }
 
   /**
    * Returns a list with classnames of post-processors.

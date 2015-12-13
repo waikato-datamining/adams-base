@@ -15,16 +15,13 @@
 
 /**
  * EventRenamed.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.processor.UpdateEventName;
 import adams.flow.standalone.Events;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 
 /**
@@ -72,8 +69,8 @@ public class EventRenamed
    * @param newActor	the new, updated actor
    * @return		true if tree got modified
    */
-  public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean			result;
+  protected boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+    boolean		result;
     UpdateEventName	updater;
     
     result = false;
@@ -84,10 +81,7 @@ public class EventRenamed
     updater.process(tree.getActor());
     if (updater.isModified()) {
       result = true;
-      tree.setModified(true);
       tree.setActor(updater.getModifiedActor());
-      tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-      tree.refreshTabs();
     }
 
     return result;

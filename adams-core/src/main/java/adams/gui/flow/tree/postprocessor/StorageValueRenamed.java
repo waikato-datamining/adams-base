@@ -24,12 +24,8 @@ import adams.core.option.AbstractOption;
 import adams.flow.control.StorageName;
 import adams.flow.core.AbstractActor;
 import adams.flow.processor.UpdateStorageName;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 
-import javax.swing.SwingUtilities;
 import java.util.List;
 
 /**
@@ -119,10 +115,9 @@ public class StorageValueRenamed
    * @return		true if tree got modified
    */
   @Override
-  public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  protected boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
     boolean			result;
     UpdateStorageName		updater;
-    final boolean[] 		expanded;
 
     result = false;
 
@@ -131,17 +126,8 @@ public class StorageValueRenamed
     updater.setNewName(getStorageName(newActor).getValue());
     updater.process(tree.getActor());
     if (updater.isModified()) {
-      result   = true;
-      expanded = tree.getExpandedState();
-      SwingUtilities.invokeLater(() -> {
-	tree.setModified(true);
-	tree.setActor(updater.getModifiedActor());
-      });
-      SwingUtilities.invokeLater(() -> {
-	tree.setExpandedState(expanded);
-	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-	tree.refreshTabs();
-      });
+      result = true;
+      tree.setActor(updater.getModifiedActor());
     }
 
     return result;

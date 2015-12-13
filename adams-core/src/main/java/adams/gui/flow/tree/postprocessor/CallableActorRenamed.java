@@ -22,12 +22,7 @@ package adams.gui.flow.tree.postprocessor;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.processor.UpdateCallableActorName;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
-
-import javax.swing.SwingUtilities;
 
 /**
  <!-- globalinfo-start -->
@@ -76,10 +71,9 @@ public class CallableActorRenamed
    * @return		true if tree got modified
    */
   @Override
-  public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  protected boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
     boolean			result;
     UpdateCallableActorName	updater;
-    final boolean[] 		expanded;
 
     result = false;
 
@@ -88,17 +82,8 @@ public class CallableActorRenamed
     updater.setNewName(newActor.getName());
     updater.process(tree.getActor());
     if (updater.isModified()) {
-      result   = true;
-      expanded = tree.getExpandedState();
-      SwingUtilities.invokeLater(() -> {
-	tree.setModified(true);
-	tree.setActor(updater.getModifiedActor());
-      });
-      SwingUtilities.invokeLater(() -> {
-	tree.setExpandedState(expanded);
-	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, new Node[0], Type.MODIFY_BULK));
-	tree.refreshTabs();
-      });
+      result = true;
+      tree.setActor(updater.getModifiedActor());
     }
 
     return result;
