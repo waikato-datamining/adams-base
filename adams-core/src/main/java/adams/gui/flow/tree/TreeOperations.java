@@ -361,7 +361,7 @@ public class TreeOperations
 	  getOwner().expand(node);
 	});
 	SwingUtilities.invokeLater(() -> {
-	  getOwner().setSelectedFullName(node.getFullName());
+	  getOwner().setSelectedFullName(children[children.length - 1].getFullName());
 	});
 
 	// record
@@ -414,7 +414,7 @@ public class TreeOperations
 	  getOwner().setExpandedFullNames(exp);
 	});
 	SwingUtilities.invokeLater(() -> {
-	  getOwner().setSelectedFullName(node.getFullName());
+	  getOwner().setSelectedFullName(children[children.length - 1].getFullName());
 	});
 
 	// record
@@ -511,7 +511,7 @@ public class TreeOperations
       if (changed) {
 	expanded = null;
 	if (parent == null) {
-	  getOwner().buildTree(actor);
+          getOwner().buildTree(actor);
 	  currNode = (Node) getOwner().getModel().getRoot();
 	}
 	else {
