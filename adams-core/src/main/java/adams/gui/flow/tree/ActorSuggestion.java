@@ -15,16 +15,9 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import adams.core.ClassLocator;
 import adams.core.Properties;
@@ -37,7 +30,13 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
-import adams.gui.flow.tree.Tree.InsertPosition;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class for suggesting actors when editing a flow, depending on the context.
@@ -249,7 +248,7 @@ public class ActorSuggestion {
    * @param after	the immediate actor after the added actor, can be null
    * @param position	how the actor was added
    */
-  protected void record(Actor added, Actor parent, Actor before, Actor after, InsertPosition position) {
+  protected void record(Actor added, Actor parent, Actor before, Actor after, TreeOperations.InsertPosition position) {
     StringBuilder	line;
     String		filename;
     
@@ -311,7 +310,7 @@ public class ActorSuggestion {
    * @param parent	the parent of the added actor
    * @param position	how the actor was added
    */
-  public void record(Node added, Node parent, InsertPosition position) {
+  public void record(Node added, Node parent, TreeOperations.InsertPosition position) {
     Actor	addedActor;
     Actor	parentActor;
     Actor	beforeActor;

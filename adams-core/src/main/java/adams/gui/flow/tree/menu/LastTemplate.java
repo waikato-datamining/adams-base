@@ -15,13 +15,13 @@
 
 /**
  * LastTemplate.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
+import adams.gui.flow.tree.TreeOperations;
 
-import adams.gui.flow.tree.Tree.InsertPosition;
+import java.awt.event.ActionEvent;
 
 /**
  * For adding a subflow generated from a template, using the most recently used
@@ -51,7 +51,7 @@ public class LastTemplate
    */
   @Override
   protected void doUpdate() {
-    setEnabled((m_State.lastTemplate != null) && m_State.editable && ((m_State.lastTemplateInsertPosition == InsertPosition.BENEATH) && m_State.isMutable) || m_State.isParentMutable);
+    setEnabled((m_State.lastTemplate != null) && m_State.editable && ((m_State.lastTemplateInsertPosition == TreeOperations.InsertPosition.BENEATH) && m_State.isMutable) || m_State.isParentMutable);
   }
 
   /**

@@ -15,20 +15,20 @@
 
 /**
  * AbstractFromTemplateAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.menu;
-
-import javax.swing.tree.TreePath;
 
 import adams.flow.core.AbstractActor;
 import adams.flow.template.AbstractActorTemplate;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.ActorTemplateSuggestion;
 import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.Tree.InsertPosition;
 import adams.gui.flow.tree.TreeHelper;
+import adams.gui.flow.tree.TreeOperations;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.tree.TreePath;
 
 /**
  * Ancestor for template actions.
@@ -49,7 +49,7 @@ public abstract class AbstractFromTemplateAction
    * @param position	how the actor templates are to be inserted
    * @return		the actor templates
    */
-  protected AbstractActorTemplate[] suggestActorTemplates(TreePath path, InsertPosition position) {
+  protected AbstractActorTemplate[] suggestActorTemplates(TreePath path, TreeOperations.InsertPosition position) {
     AbstractActorTemplate[]	result;
     AbstractActor		parent;
     Node			parentNode;
@@ -62,7 +62,7 @@ public abstract class AbstractFromTemplateAction
     result = null;
 
     if (result == null) {
-      if (position == InsertPosition.BENEATH) {
+      if (position == TreeOperations.InsertPosition.BENEATH) {
 	parentNode = TreeHelper.pathToNode(path);
 	pos        = parentNode.getChildCount();
       }
@@ -70,7 +70,7 @@ public abstract class AbstractFromTemplateAction
 	node       = TreeHelper.pathToNode(path);
 	parentNode = (Node) node.getParent();
 	pos        = parentNode.getIndex(node);
-	if (position == InsertPosition.AFTER)
+	if (position == TreeOperations.InsertPosition.AFTER)
 	  pos++;
       }
 
@@ -98,7 +98,7 @@ public abstract class AbstractFromTemplateAction
    * @param template	the template to use as default in dialog, use null to use suggestion
    * @param position	where to insert the template
    */
-  protected void addFromTemplate(TreePath path, AbstractActorTemplate template, InsertPosition position) {
+  protected void addFromTemplate(TreePath path, AbstractActorTemplate template, TreeOperations.InsertPosition position) {
     AbstractActor		actor;
     AbstractActorTemplate[] 	templates;
     GenericObjectEditorDialog	m_TemplateDialog;
@@ -116,11 +116,11 @@ public abstract class AbstractFromTemplateAction
     }
     m_TemplateDialog.setProposedClasses(templates);
     m_TemplateDialog.setCurrent(template);
-    if (position == InsertPosition.HERE)
+    if (position == TreeOperations.InsertPosition.HERE)
       m_TemplateDialog.setTitle("Add from template here...");
-    else if (position == InsertPosition.AFTER)
+    else if (position == TreeOperations.InsertPosition.AFTER)
       m_TemplateDialog.setTitle("Add from template after...");
-    else if (position == InsertPosition.BENEATH)
+    else if (position == TreeOperations.InsertPosition.BENEATH)
       m_TemplateDialog.setTitle("Add from template beneath...");
     m_TemplateDialog.setLocationRelativeTo(GUIHelper.getParentComponent(m_State.tree));
     m_TemplateDialog.setVisible(true);
@@ -138,6 +138,6 @@ public abstract class AbstractFromTemplateAction
       GUIHelper.showErrorMessage(m_State.tree, "Failed to create actor from template: " + e);
     }
     if (actor != null)
-      m_State.tree.addActor(path, actor, position);
+      m_State.tree.getOperations().addActor(path, actor, position);
   }
 }

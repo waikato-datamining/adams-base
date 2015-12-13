@@ -24,7 +24,7 @@ import adams.flow.template.AbstractActorTemplate;
 import adams.flow.template.EndlessLoop;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
-import adams.gui.flow.tree.Tree.InsertPosition;
+import adams.gui.flow.tree.TreeOperations;
 
 /**
  * Adds an actor generated from a template at the current location.
@@ -95,7 +95,7 @@ public class AddTemplateBeneath
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.addActor(state.selPath, m_Template.generate(), InsertPosition.BENEATH, true);
+    state.tree.getOperations().addActor(state.selPath, m_Template.generate(), TreeOperations.InsertPosition.BENEATH, true);
     return null;
   }
 }

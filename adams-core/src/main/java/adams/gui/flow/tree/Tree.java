@@ -21,7 +21,6 @@
 package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
-import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -29,33 +28,19 @@ import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.FixedNameActorHandler;
-import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
-import adams.flow.core.OutputProducer;
-import adams.flow.processor.AbstractActorProcessor;
-import adams.flow.processor.GraphicalOutputProducingProcessor;
-import adams.flow.processor.ModifyingProcessor;
-import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.template.AbstractActorTemplate;
-import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.DragAndDropTree;
 import adams.gui.core.DragAndDropTreeNodeCollection;
-import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.event.ActorChangeListener;
@@ -68,20 +53,15 @@ import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.goe.classtree.ActorClassTreeFilter;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -106,21 +86,6 @@ public class Tree
 
   /** for serialization. */
   private static final long serialVersionUID = -6052602093735801950L;
-
-  /**
-   * Enumeration for how to insert a node.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum InsertPosition {
-    /** beneath the current path. */
-    BENEATH,
-    /** here at this position. */
-    HERE,
-    /** after this position. */
-    AFTER
-  }
 
   /**
    * Container object for the tree state.
@@ -221,7 +186,7 @@ public class Tree
   protected AbstractActorTemplate m_LastTemplate;
 
   /** the position of the last template that was added via 'Add from template'. */
-  protected InsertPosition m_LastTemplateInsertPosition;
+  protected TreeOperations.InsertPosition m_LastTemplateInsertPosition;
 
   /** whether to ignore name changes of actors (suppressing application of post-processors). */
   protected boolean m_IgnoreNameChanges;
@@ -232,9 +197,6 @@ public class Tree
   /** the keyboard actions. */
   protected List<AbstractKeyboardAction> m_KeyboardActions;
 
-  /** the dialog for processing actors. */
-  protected GenericObjectEditorDialog m_DialogProcessActors;
-
   /** whether to record the adding of actors to improve suggestions. */
   protected boolean m_RecordAdd;
 
@@ -243,6 +205,9 @@ public class Tree
 
   /** whether to allow keyboard shortcuts. */
   protected boolean m_AllowKeyboardShortcuts;
+
+  /** for complex operations. */
+  protected TreeOperations m_Operations;
 
   /**
    * Initializes the tree.
@@ -276,6 +241,7 @@ public class Tree
     super.initialize();
 
     m_Self                        = this;
+    m_Operations                  = new TreeOperations(this);
     m_Modified                    = false;
     m_ActorChangeListeners        = new HashSet<ActorChangeListener>();
     m_LastSearchString            = "";
@@ -416,6 +382,15 @@ public class Tree
 	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[nodes.size()]), Type.MODIFY));
       }
     });
+  }
+
+  /**
+   * Returns the object for handling complex operations.
+   *
+   * @return		the tree operations
+   */
+  public TreeOperations getOperations() {
+    return m_Operations;
   }
 
   /**
@@ -1231,94 +1206,6 @@ public class Tree
   }
 
   /**
-   * Tries to figure what actors fit best in the tree at the given position.
-   *
-   * @param path	the path where to insert the actors
-   * @param position	how the actors are to be inserted
-   * @return		the actors
-   */
-  protected AbstractActor[] suggestActors(TreePath path, InsertPosition position) {
-    AbstractActor[]	result;
-    AbstractActor	parent;
-    Node		parentNode;
-    Node		node;
-    int			pos;
-    AbstractActor[]	actors;
-    int			i;
-    AbstractActor[]	suggestions;
-
-    result = null;
-
-    if (position == InsertPosition.BENEATH) {
-      parentNode = TreeHelper.pathToNode(path);
-      pos        = parentNode.getChildCount();
-    }
-    else {
-      node       = TreeHelper.pathToNode(path);
-      parentNode = (Node) node.getParent();
-      pos        = parentNode.getIndex(node);
-      if (position == InsertPosition.AFTER)
-	pos++;
-    }
-
-    parent  = parentNode.getActor();
-    actors  = new AbstractActor[parentNode.getChildCount()];
-    for (i = 0; i < actors.length; i++)
-      actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
-
-    suggestions = ActorSuggestion.getSingleton().suggest(parent, pos, actors);
-    if (suggestions.length > 0)
-      result = suggestions;
-
-    // default is "Filter"
-    // TODO
-    //if (result == null)
-    //  result = ActorSuggestion.getSingleton().getDefaults();
-
-    return result;
-  }
-
-  /**
-   * Checks whether standalones can be placed beneath the parent actor.
-   * If the actor isn't a standalone, this method returns true, of course.
-   * In case the actor is a standalone and the parent doesn't allow standalones
-   * to be placed, an error message pops up and informs the user.
-   *
-   * @param actor	the actor to place beneath the parent
-   * @param parent	the parent to place the actor beneath
-   * @return		true if actor can be placed, false if not
-   */
-  public boolean checkForStandalones(AbstractActor actor, Node parent) {
-    return checkForStandalones(new AbstractActor[]{actor}, parent);
-  }
-
-  /**
-   * Checks whether standalones can be placed beneath the parent actor.
-   * If the actors contain no standalones, this method returns true, of course.
-   * In case the actors contain a standalone and the parent doesn't allow standalones
-   * to be placed, an error message pops up and informs the user.
-   *
-   * @param actors	the actors to place beneath the parent
-   * @param parent	the parent to place the actor beneath
-   * @return		true if actor can be placed, false if not
-   */
-  public boolean checkForStandalones(AbstractActor[] actors, Node parent) {
-    for (AbstractActor actor: actors) {
-      if (    ActorUtils.isStandalone(actor)
-	  && (parent != null)
-	  && (parent.getActor() instanceof ActorHandler)
-	  && !((ActorHandler) parent.getActor()).getActorHandlerInfo().canContainStandalones()) {
-
-	GUIHelper.showErrorMessage(
-	    m_Self, "Actor '" + parent.getFullName() + "' cannot contain standalones!");
-	return false;
-      }
-    }
-
-    return true;
-  }
-
-  /**
    * Returns the nearest actor in the children of the provided parent node
    * that is not disabled.
    *
@@ -1369,387 +1256,6 @@ public class Tree
     }
 
     return result;
-  }
-
-  /**
-   * Configures a filter for the ClassTree.
-   *
-   * @param path	the path where to insert the actor
-   * @param position	where to add the actor, if null "editing" an existing actor is assumed
-   * @return		the configured filter
-   */
-  public AbstractItemFilter configureFilter(TreePath path, InsertPosition position) {
-    ActorClassTreeFilter	result;
-    AbstractActor		before;
-    AbstractActor		after;
-    AbstractActor		parent;
-    Node			parentNode;
-    Node			node;
-    int				index;
-    ActorHandlerInfo		handlerInfo;
-
-    result      = new ActorClassTreeFilter();
-    after       = null;
-    before      = null;
-    parentNode  = null;
-    handlerInfo = null;
-
-    // edit/update current actor
-    if (position == null) {
-      node       = TreeHelper.pathToNode(path);
-      parentNode = (Node) node.getParent();
-      if (parentNode != null) {
-	parent = parentNode.getActor();
-	if (parent instanceof MutableActorHandler) {
-	  handlerInfo = ((MutableActorHandler) parent).getActorHandlerInfo();
-	  if (handlerInfo.getActorExecution() == ActorExecution.SEQUENTIAL) {
-	    index  = parentNode.getIndex(node);
-	    before = getNearestActor(parentNode, index, false);
-	    after  = getNearestActor(parentNode, index, true);
-	  }
-	}
-      }
-    }
-    // add beneath
-    else if (position == InsertPosition.BENEATH) {
-      parentNode = TreeHelper.pathToNode(path);
-      before     = getNearestActor(parentNode, parentNode.getChildCount(), false);
-    }
-    // add here
-    else if (position == InsertPosition.HERE) {
-      node       = TreeHelper.pathToNode(path);
-      parentNode = (Node) node.getParent();
-      index      = parentNode.getIndex(node);
-      before     = getNearestActor(parentNode, index, false);
-      after      = node.getActor();
-      if (after.getSkip())
-	after = getNearestActor(parentNode, index, true);
-    }
-    // add after
-    else if (position == InsertPosition.AFTER) {
-      node       = TreeHelper.pathToNode(path);
-      parentNode = (Node) node.getParent();
-      index      = parentNode.getIndex(node);
-      after      = getNearestActor(parentNode, index, true);
-      before     = node.getActor();
-      if (before.getSkip())
-	before = getNearestActor(parentNode, index, false);
-    }
-
-    if ((handlerInfo == null) && (parentNode != null)) {
-      parent = parentNode.getActor();
-      if (parent instanceof ActorHandler)
-	handlerInfo = ((ActorHandler) parent).getActorHandlerInfo();
-    }
-
-    // check types
-    if ((before != null) && !(before instanceof OutputProducer))
-      before = null;
-    if ((after != null) && !(after instanceof InputConsumer))
-      after = null;
-
-    // before/after only important for sequential execution
-    if ((handlerInfo != null) && (handlerInfo.getActorExecution() != ActorExecution.SEQUENTIAL)) {
-      before = null;
-      after  = null;
-    }
-
-    // set constraints
-    if (before != null)
-      result.setAccepts(((OutputProducer) before).generates());
-    else
-      result.setAccepts(null);
-    if (after != null)
-      result.setGenerates(((InputConsumer) after).accepts());
-    else
-      result.setGenerates(null);
-
-    // standalones?
-    result.setStandalonesAllowed(false);
-    if ((handlerInfo != null) && handlerInfo.canContainStandalones()) {
-      // standalones can only be added at the start
-      if ((before == null) || ActorUtils.isStandalone(before))
-	result.setStandalonesAllowed(true);
-    }
-
-    // sources?
-    result.setSourcesAllowed(false);
-    if ((handlerInfo != null) && handlerInfo.canContainSource()) {
-      // source can only be added at the start
-      if ((before == null) || ActorUtils.isStandalone(before))
-	result.setSourcesAllowed(true);
-    }
-
-    // restrictions?
-    if ((handlerInfo != null) && handlerInfo.hasRestrictions())
-      result.setRestrictions(handlerInfo.getRestrictions());
-
-    return result;
-  }
-  
-  /**
-   * Brings up the GOE dialog for adding an actor if no actor supplied,
-   * otherwise just adds the given actor at the position specified
-   * by the path.
-   *
-   * @param path	the path to the actor to add the new actor sibling
-   * @param actor	the actor to add, if null a GOE dialog is presented
-   * @param position	where to insert the actor
-   */
-  public void addActor(TreePath path, AbstractActor actor, InsertPosition position) {
-    addActor(path, actor, position, false);
-  }
-
-  /**
-   * Brings up the GOE dialog for adding an actor if no actor supplied,
-   * otherwise just adds the given actor at the position specified
-   * by the path.
-   *
-   * @param path	the path to the actor to add the new actor sibling
-   * @param actor	the actor to add, if null a GOE dialog is presented
-   * @param position	where to insert the actor
-   * @param record	whether to record the addition
-   */
-  public void addActor(TreePath path, AbstractActor actor, InsertPosition position, boolean record) {
-    GenericObjectEditorDialog	dialog;
-    final Node			node;
-    final Node			parent;
-    int				index;
-    Node[]			children;
-    AbstractActor[]		actors;
-    String			txt;
-    final List<String> 		exp;
-
-    if (actor == null) {
-      node = TreeHelper.pathToNode(path);
-      if (position == InsertPosition.BENEATH)
-	m_CurrentEditingParent = node;
-      else
-	m_CurrentEditingParent = (Node) node.getParent();
-      dialog = GenericObjectEditorDialog.createDialog(this);
-      if (position == InsertPosition.HERE)
-	dialog.setTitle("Add here...");
-      else if (position == InsertPosition.AFTER)
-	dialog.setTitle("Add after...");
-      else if (position == InsertPosition.BENEATH)
-	dialog.setTitle("Add beneath...");
-      actors = suggestActors(path, position);
-      dialog.getGOEEditor().setCanChangeClassInDialog(true);
-      dialog.getGOEEditor().setClassType(AbstractActor.class);
-      dialog.getGOEEditor().setFilter(configureFilter(path, position));
-      dialog.setProposedClasses(actors);
-      if (actors != null)
-	dialog.setCurrent(actors[0]);
-      else
-	dialog.setCurrent(null);
-      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-      dialog.setVisible(true);
-      m_CurrentEditingParent = null;
-      if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-        addActor(path, (AbstractActor) dialog.getEditor().getValue(), position, record);
-    }
-    else {
-      if (position == InsertPosition.BENEATH) {
-	node = TreeHelper.pathToNode(path);
-
-	// does actor handler allow standalones?
-	if (actor instanceof ClipboardActorContainer)
-	  actors = ((ClipboardActorContainer) actor).getActors();
-	else
-	  actors = new AbstractActor[]{actor};
-	if (actors.length < 1)
-	  return;
-	if (!checkForStandalones(actors, node))
-	  return;
-
-	if (actors.length == 1)
-	  txt = "'" + actors[0].getName() + "'";
-	else
-	  txt = actors.length + " actors";
-	addUndoPoint("Adding " + txt + " to '" + node.getFullName() + "'");
-
-	// add
-	exp      = getExpandedFullNames();
-	children = buildTree(node, actors, true);
-	for (Node child: children)
-	  updateActorName(child);
-	SwingUtilities.invokeLater(() -> {
-	  nodeStructureChanged(node);
-	  setExpandedFullNames(exp);
-	  expand(node);
-	});
-	SwingUtilities.invokeLater(() -> {
-	  setSelectedFullName(node.getFullName());
-	});
-
-	// record
-	if (m_RecordAdd && (actors.length == 1)) {
-	  ActorSuggestion.getSingleton().record(
-	      children[0], 
-	      node, 
-	      position);
-	}
-      }
-      else {
-	node   = TreeHelper.pathToNode(path);
-	parent = (Node) node.getParent();
-	index  = node.getParent().getIndex(node);
-	if (position == InsertPosition.AFTER)
-	  index++;
-
-	// does actor handler allow standalones?
-	if (actor instanceof ClipboardActorContainer)
-	  actors = ((ClipboardActorContainer) actor).getActors();
-	else
-	  actors = new AbstractActor[]{actor};
-	if (actors.length < 1)
-	  return;
-	if (!checkForStandalones(actors, parent))
-	  return;
-
-	if (actors.length == 1)
-	  txt = "'" + actors[0].getName() + "'";
-	else
-	  txt = actors.length + " actors";
-	if (position == InsertPosition.AFTER)
-	  addUndoPoint("Adding " + txt + " after " + ((Node) parent.getChildAt(index - 1)).getFullName() + "'");
-	else
-	  addUndoPoint("Adding " + txt + " before " + ((Node) parent.getChildAt(index)).getFullName() + "'");
-
-	// insert
-	exp      = getExpandedFullNames();
-	children = buildTree(node, actors, false);
-	for (Node child: children) {
-	  final int fIndex = index;
-	  SwingUtilities.invokeLater(() -> {
-	    parent.insert(child, fIndex);
-	    updateActorName(child);
-	  });
-	  index++;
-	}
-	SwingUtilities.invokeLater(() -> {
-	  nodeStructureChanged(parent);
-	  setExpandedFullNames(exp);
-	});
-	SwingUtilities.invokeLater(() -> {
-	  setSelectedFullName(node.getFullName());
-	});
-
-	// record
-	if (m_RecordAdd && (actors.length == 1)) {
-	  ActorSuggestion.getSingleton().record(
-	      children[0], 
-	      parent, 
-	      position);
-	}
-      }
-
-      SwingUtilities.invokeLater(() -> {
-	setModified(true);
-	// notify listeners
-	notifyActorChangeListeners(new ActorChangeEvent(m_Self, node, Type.MODIFY));
-      });
-    }
-  }
-
-  /**
-   * Encloses the selected actors in the specified actor handler.
-   *
-   * @param paths	the (paths to the) actors to wrap in the control actor
-   * @param handler	the handler to use
-   */
-  public void encloseActor(TreePath[] paths, ActorHandler handler) {
-    AbstractActor[]	currActor;
-    Node		parent;
-    Node 		currNode;
-    Node		newNode;
-    int			index;
-    String		msg;
-    MutableActorHandler	mutable;
-    int			i;
-    String		newName;
-
-    parent    = null;
-    currActor = new AbstractActor[paths.length];
-    for (i = 0; i < paths.length; i++) {
-      currNode     = TreeHelper.pathToNode(paths[i]);
-      currActor[i] = currNode.getFullActor().shallowCopy();
-      if (parent == null)
-	parent = (Node) currNode.getParent();
-
-      if (ActorUtils.isStandalone(currActor[i])) {
-	if (!handler.getActorHandlerInfo().canContainStandalones()) {
-	  GUIHelper.showErrorMessage(
-	      this,
-	      "You cannot enclose a standalone actor in a "
-	      + handler.getClass().getSimpleName() + "!");
-	  return;
-	}
-      }
-    }
-
-    // enter new name
-    newName = handler.getName();
-    if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
-      newName = currActor[0].getName();
-    newName = GUIHelper.showInputDialog(GUIHelper.getParentComponent(this), "Please enter name for enclosing actor (leave empty for default):", newName);
-    if (newName == null)
-      return;
-    if (newName.isEmpty())
-      newName = handler.getDefaultName();
-    handler.setName(newName);
-
-    if (paths.length == 1)
-      addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(paths[0]).getFullName() + "' in " + handler.getClass().getName());
-    else
-      addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
-
-    try {
-      if (handler instanceof MutableActorHandler) {
-	mutable = (MutableActorHandler) handler;
-	mutable.removeAll();
-	for (i = 0; i < currActor.length; i++)
-	  mutable.add(i, currActor[i]);
-      }
-      else {
-	handler.set(0, currActor[0]);
-      }
-      newNode = buildTree(null, (AbstractActor) handler, false);
-      for (i = 0; i < paths.length; i++) {
-	currNode = TreeHelper.pathToNode(paths[i]);
-	index    = parent.getIndex(currNode);
-	parent.remove(index);
-	if (i == 0)
-	  parent.insert(newNode, index);
-      }
-
-      final Node current;
-      if (paths.length == 1)
-	current = newNode;
-      else
-	current = parent;
-      SwingUtilities.invokeLater(() -> {
-	updateActorName(newNode);
-	setModified(true);
-	nodeStructureChanged(current);
-	expand(newNode);
-      });
-      SwingUtilities.invokeLater(() -> {
-	locateAndDisplay(newNode.getFullName());
-	notifyActorChangeListeners(new ActorChangeEvent(this, current, Type.MODIFY));
-	redraw();
-      });
-    }
-    catch (Exception e) {
-      if (paths.length == 1)
-	msg = "Failed to enclose actor '" + TreeHelper.pathToActor(paths[0]).getFullName() + "'";
-      else
-	msg = "Failed to enclose " + paths.length + " actors";
-      msg += " in a " + handler.getClass().getSimpleName() + ": ";
-      ConsolePanel.getSingleton().append(this, msg, e);
-      GUIHelper.showErrorMessage(
-	  this, msg + "\n" + e.getMessage());
-    }
   }
 
   /**
@@ -2626,186 +2132,6 @@ public class Tree
   }
 
   /**
-   * Processes the specified actor with a user-specified actor processor
-   * (prompts user with GOE dialog).
-   * NB: The options of the specified actor will get processed.
-   *
-   * @param path	the path of the actor, if null the root actor is used
-   * @return		true if actors processed
-   */
-  public boolean processActor(TreePath path) {
-    return processActor(path, null);
-  }
-
-  /**
-   * Processes the specified actor with the specified actor processor.
-   * NB: The options of the specified actor will get processed.
-   *
-   * @param path	the path of the actor, if null the root actor is used
-   * @param processor	the processor to use, null if to prompt user
-   * @return		true if actors processed
-   */
-  public boolean processActor(TreePath path, AbstractActorProcessor processor) {
-    ModifyingProcessor			modifying;
-    GraphicalOutputProducingProcessor	graphical;
-    BaseDialog				dialog;
-    final BaseDialog			fDialog;
-    Node				node;
-    AbstractActor			flow;
-    AbstractActor			selected;
-    final Node				newNode;
-    final Node				parent;
-    final int				index;
-    final Component			comp;
-    ErrorMessagePanel			errorPanel;
-    final ErrorMessagePanel		fErrorPanel;
-    final BaseTabbedPane		tabbedPane;
-    List<String>			exp;
-
-    // selected actor or full flow?
-    flow = getActor();
-    if (flow instanceof Flow)
-      ((Flow) flow).setParentComponent(getOwner());
-    if ((path != null) && (path.getPathCount() == 1))
-      path = null;
-    if (path == null) {
-      selected = flow;
-      node     = getRootNode();
-    }
-    else {
-      selected = ActorUtils.locate(TreeHelper.treePathToActorPath(path).getChildPath(), flow);
-      node     = TreeHelper.pathToNode(path);
-    }
-
-    // prompt for processor?
-    if (processor == null) {
-      if (m_DialogProcessActors == null) {
-	if (getParentDialog() != null)
-	  m_DialogProcessActors = new GenericObjectEditorDialog(getParentDialog());
-	else
-	  m_DialogProcessActors = new GenericObjectEditorDialog(getParentFrame());
-	m_DialogProcessActors.setTitle("Process actors");
-	m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
-	m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
-	m_DialogProcessActors.getGOEEditor().setClassType(AbstractActorProcessor.class);
-	m_DialogProcessActors.setCurrent(new RemoveDisabledActors());
-      }
-      m_DialogProcessActors.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-      m_DialogProcessActors.setVisible(true);
-
-      if (m_DialogProcessActors.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-	return false;
-
-      processor = (AbstractActorProcessor) m_DialogProcessActors.getCurrent();
-    }
-
-    // process
-    if (processor instanceof ModifyingProcessor)
-      ((ModifyingProcessor) processor).setNoCopy(true);
-    processor.process(selected);
-
-    // modified?
-    if (processor instanceof ModifyingProcessor) {
-      modifying = (ModifyingProcessor) processor;
-      if (modifying.isModified()) {
-	addUndoPoint("Processing actors with " + processor.toString());
-	exp = getExpandedFullNames();
-	if (path == null) {
-	  buildTree(modifying.getModifiedActor());
-	  newNode = node;
-	}
-	else {
-	  newNode = buildTree((Node) node.getParent(), modifying.getModifiedActor(), false);
-	  parent  = (Node) node.getParent();
-	  index   = parent.getIndex(node);
-	  SwingUtilities.invokeLater(() -> {
-	    parent.remove(index);
-	    parent.insert(newNode, index);
-	  });
-	}
-	SwingUtilities.invokeLater(() -> {
-	  setModified(true);
-	  nodeStructureChanged(newNode);
-	  setExpandedFullNames(exp);
-	  notifyActorChangeListeners(new ActorChangeEvent(Tree.this, newNode, Type.MODIFY));
-	});
-      }
-    }
-
-    // any errors?
-    if (processor.hasErrors()) {
-      errorPanel = new ErrorMessagePanel();
-      errorPanel.setErrorMessage(Utils.flatten(processor.getErrors(), "\n"));
-    }
-    else {
-      errorPanel = null;
-    }
-
-    // graphical output?
-    if (processor instanceof GraphicalOutputProducingProcessor) {
-      graphical = (GraphicalOutputProducingProcessor) processor;
-      if (graphical.hasGraphicalOutput()) {
-	if (getParentDialog() != null)
-	  dialog = new BaseDialog(getParentDialog());
-	else
-	  dialog = new BaseDialog(getParentFrame());
-	dialog.setTitle(graphical.getTitle());
-	dialog.getContentPane().setLayout(new BorderLayout());
-	comp = graphical.getGraphicalOutput();
-	if (errorPanel == null) {
-	  dialog.getContentPane().add(comp, BorderLayout.CENTER);
-	  if (comp instanceof MenuBarProvider)
-	    dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	}
-	else {
-	  fDialog     = dialog;
-	  fErrorPanel = errorPanel;
-	  tabbedPane  = new BaseTabbedPane();
-	  tabbedPane.addChangeListener((ChangeEvent e) -> {
-	    if (tabbedPane.getSelectedIndex() == 0) {
-	      if (comp instanceof MenuBarProvider)
-		fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	      else
-		fDialog.setJMenuBar(null);
-	    }
-	    else {
-	      fDialog.setJMenuBar(fErrorPanel.getMenuBar());
-	    }
-	  });
-	  dialog.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-	  tabbedPane.addTab("Output", comp);
-	  tabbedPane.addTab("Errors", errorPanel);
-	}
-	if (comp instanceof MenuBarProvider)
-	  dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	dialog.pack();
-        dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-	dialog.setVisible(true);
-	errorPanel = null;
-      }
-    }
-
-    // errors still to display?
-    if (errorPanel != null) {
-      if (getParentDialog() != null)
-	dialog = new BaseDialog(getParentDialog());
-      else
-	dialog = new BaseDialog(getParentFrame());
-      dialog.setTitle(processor.getClass().getSimpleName());
-      dialog.getContentPane().setLayout(new BorderLayout());
-      dialog.getContentPane().add(errorPanel, BorderLayout.CENTER);
-      dialog.setJMenuBar(errorPanel.getMenuBar());
-      dialog.pack();
-      dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
-      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
-      dialog.setVisible(true);
-    }
-
-    return true;
-  }
-
-  /**
    * Sets the tree editable or read-only. Also, forces the tree to redraw.
    *
    * @param value	if false the tree will be read-only
@@ -2898,7 +2224,7 @@ public class Tree
    * @param template	the template
    * @param position	how the template was inserted
    */
-  public void updateLastTemplate(AbstractActorTemplate template, InsertPosition position) {
+  public void updateLastTemplate(AbstractActorTemplate template, TreeOperations.InsertPosition position) {
     m_LastTemplate               = template;
     m_LastTemplateInsertPosition = position;
   }

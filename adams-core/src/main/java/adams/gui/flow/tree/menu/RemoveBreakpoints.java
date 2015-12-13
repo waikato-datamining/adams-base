@@ -15,13 +15,12 @@
 
 /**
  * RemoveBreakpoints.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
 import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
 
 /**
  * For removing breakpoints either below currently selected node or everywhere
@@ -62,6 +61,6 @@ public class RemoveBreakpoints
   @Override
   protected void doActionPerformed(ActionEvent e) {
     TreePath path = m_State.selPath;
-    m_State.tree.processActor(path, new adams.flow.processor.RemoveBreakpoints());
+    m_State.tree.getOperations().processActor(path, new adams.flow.processor.RemoveBreakpoints());
   }
 }

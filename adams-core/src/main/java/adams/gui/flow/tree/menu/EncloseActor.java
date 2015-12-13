@@ -91,7 +91,7 @@ public class EncloseActor
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	  m_State.tree.encloseActor(m_State.selPaths, actor);
+	  m_State.tree.getOperations().encloseActor(m_State.selPaths, actor);
 	}
       });
     }

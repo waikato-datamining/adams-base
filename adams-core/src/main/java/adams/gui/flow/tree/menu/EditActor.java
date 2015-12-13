@@ -15,7 +15,7 @@
 
 /**
  * EditActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -103,7 +103,7 @@ public class EditActor
     dialog.setProposedClasses(null);
     dialog.setCurrent(currNode.getActor().shallowCopy());
     dialog.getGOEEditor().setReadOnly(!editable);
-    dialog.getGOEEditor().setFilter(m_State.tree.configureFilter(path, null));
+    dialog.getGOEEditor().setFilter(m_State.tree.getOperations().configureFilter(path, null));
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(m_State.tree));
     dialog.setVisible(true);
     m_State.tree.updateCurrentEditing(null, null);
@@ -119,7 +119,7 @@ public class EditActor
       parent = (Node) currNode.getParent();
 
       // does parent allow singletons?
-      if (!m_State.tree.checkForStandalones(actor, parent))
+      if (!m_State.tree.getOperations().checkForStandalones(actor, parent))
 	return;
 
       addUndoPoint("Updating node '" + currNode.getFullName() + "'");

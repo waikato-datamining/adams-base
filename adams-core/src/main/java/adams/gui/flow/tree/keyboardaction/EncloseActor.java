@@ -123,7 +123,7 @@ public class EncloseActor
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.encloseActor(state.selPaths, (ActorHandler) getActor());
+    state.tree.getOperations().encloseActor(state.selPaths, (ActorHandler) getActor());
     return null;
   }
 }

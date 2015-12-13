@@ -24,7 +24,7 @@ import adams.flow.control.Trigger;
 import adams.flow.core.AbstractActor;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
-import adams.gui.flow.tree.Tree.InsertPosition;
+import adams.gui.flow.tree.TreeOperations;
 
 /**
  * Adds an actor beneath the current location.
@@ -95,7 +95,7 @@ public class AddActorBeneath
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.addActor(state.selPath, getActor(), InsertPosition.BENEATH, true);
+    state.tree.getOperations().addActor(state.selPath, getActor(), TreeOperations.InsertPosition.BENEATH, true);
     return null;
   }
 }

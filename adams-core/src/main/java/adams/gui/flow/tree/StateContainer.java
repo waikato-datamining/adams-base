@@ -15,15 +15,14 @@
 
 /**
  * StateContainer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
-import javax.swing.tree.TreePath;
-
 import adams.flow.execution.FlowExecutionListeningSupporter;
 import adams.flow.template.AbstractActorTemplate;
-import adams.gui.flow.tree.Tree.InsertPosition;
+
+import javax.swing.tree.TreePath;
 
 /**
  * Simple container that just captures the current state of things of the
@@ -77,7 +76,7 @@ public class StateContainer {
   public AbstractActorTemplate lastTemplate;
 
   /** the position of the last template that was added via 'Add from template'. */
-  public InsertPosition lastTemplateInsertPosition;
+  public TreeOperations.InsertPosition lastTemplateInsertPosition;
   
   /** the currently running flow. */
   public FlowExecutionListeningSupporter runningFlow;

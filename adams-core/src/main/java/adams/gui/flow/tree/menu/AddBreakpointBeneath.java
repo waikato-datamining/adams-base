@@ -15,14 +15,14 @@
 
 /**
  * AddBreakpointBeneath.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.flow.control.Breakpoint;
-import adams.gui.flow.tree.Tree.InsertPosition;
+import adams.gui.flow.tree.TreeOperations;
+
+import java.awt.event.ActionEvent;
 
 /**
  * For adding a breakpoint beneath the current actor.
@@ -61,6 +61,6 @@ public class AddBreakpointBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.addActor(m_State.selPath, new Breakpoint(), InsertPosition.BENEATH);
+    m_State.tree.getOperations().addActor(m_State.selPath, new Breakpoint(), TreeOperations.InsertPosition.BENEATH);
   }
 }

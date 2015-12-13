@@ -15,13 +15,13 @@
 
 /**
  * PasteActorHere.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
+import adams.gui.flow.tree.TreeOperations;
 
-import adams.gui.flow.tree.Tree.InsertPosition;
+import java.awt.event.ActionEvent;
 
 /**
  * For pasting the actor(s) from the clipboard at the current position.
@@ -60,6 +60,6 @@ public class PasteActorHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.addActor(m_State.selPath, m_State.tree.getActorFromClipboard(), InsertPosition.HERE);
+    m_State.tree.getOperations().addActor(m_State.selPath, m_State.tree.getActorFromClipboard(), TreeOperations.InsertPosition.HERE);
   }
 }

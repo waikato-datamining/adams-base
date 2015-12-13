@@ -15,13 +15,13 @@
 
 /**
  * AddFromTemplateBeneath.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
+import adams.gui.flow.tree.TreeOperations;
 
-import adams.gui.flow.tree.Tree.InsertPosition;
+import java.awt.event.ActionEvent;
 
 /**
  * For adding a subflow generated from a template beneath the current actor.
@@ -60,6 +60,6 @@ public class AddFromTemplateBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    addFromTemplate(m_State.selPath, null, InsertPosition.BENEATH);
+    addFromTemplate(m_State.selPath, null, TreeOperations.InsertPosition.BENEATH);
   }
 }

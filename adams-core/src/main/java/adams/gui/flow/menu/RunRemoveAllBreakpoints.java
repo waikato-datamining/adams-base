@@ -50,7 +50,7 @@ public class RunRemoveAllBreakpoints
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().getTree().processActor(null, new RemoveBreakpoints());
+    m_State.getCurrentPanel().getTree().getOperations().processActor(null, new RemoveBreakpoints());
   }
 
   /**
