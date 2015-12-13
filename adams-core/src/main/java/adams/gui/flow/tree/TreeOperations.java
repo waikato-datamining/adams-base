@@ -77,6 +77,7 @@ import adams.gui.goe.classtree.ActorClassTreeFilter;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -563,6 +564,51 @@ public class TreeOperations
       // update all occurrences, if necessary
       if (!getOwner().getIgnoreNameChanges())
 	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
+    }
+  }
+
+  /**
+   * Renames an actor.
+   *
+   * @param path	the path to the actor
+   */
+  public void renameActor(TreePath path) {
+    String		oldName;
+    String 		newName;
+    Node		node;
+    Node		parent;
+    AbstractActor	actorOld;
+    AbstractActor	actorNew;
+    List<TreePath> 	exp;
+
+    node    = TreeHelper.pathToNode(path);
+    oldName = node.getActor().getName();
+    newName = GUIHelper.showInputDialog(
+	GUIHelper.getParentComponent(getOwner()), 
+	"Please enter new name:", oldName);
+
+    if (newName != null) {
+      actorOld = node.getActor();
+
+      // make sure name is not empty
+      if (newName.length() == 0)
+	newName = actorOld.getDefaultName();
+      getOwner().addUndoPoint("Renaming actor " + actorOld.getName() + " to " + newName);
+      exp = getOwner().getExpandedTreePaths();
+      actorNew = actorOld.shallowCopy();
+      actorNew.setName(newName);
+      node.setActor(actorNew);
+      getOwner().updateActorName(node);
+      ((DefaultTreeModel) getOwner().getModel()).nodeChanged(node);
+      getOwner().setModified(getOwner().isModified() || !oldName.equals(node.getActor().getName()));
+      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
+      SwingUtilities.invokeLater(() -> getOwner().setExpandedTreePaths(exp));
+
+      // update all occurrences, if necessary
+      parent = (Node) node.getParent();
+      if (!getOwner().getIgnoreNameChanges())
+	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, actorNew);
+      SwingUtilities.invokeLater(() -> getOwner().locateAndDisplay(node.getFullName()));
     }
   }
 
