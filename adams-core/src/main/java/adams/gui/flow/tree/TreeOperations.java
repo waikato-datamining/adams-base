@@ -192,7 +192,7 @@ public class TreeOperations
     Node			parentNode;
     Node			node;
     int				index;
-    ActorHandlerInfo handlerInfo;
+    ActorHandlerInfo 		handlerInfo;
 
     result      = new ActorClassTreeFilter();
     after       = null;
@@ -317,7 +317,7 @@ public class TreeOperations
    * @param record	whether to record the addition
    */
   public void addActor(TreePath path, AbstractActor actor, InsertPosition position, boolean record) {
-    GenericObjectEditorDialog dialog;
+    GenericObjectEditorDialog 	dialog;
     final Node			node;
     final Node			parent;
     int				index;
@@ -559,11 +559,14 @@ public class TreeOperations
       else
 	getOwner().nodeStructureChanged(currNode);
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
-      getOwner().locateAndDisplay(currNode.getFullName());
-      getOwner().refreshTabs();
       // update all occurrences, if necessary
       if (!getOwner().getIgnoreNameChanges())
 	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
+      final Node fCurrNode = currNode;
+      SwingUtilities.invokeLater(() -> {
+	getOwner().locateAndDisplay(fCurrNode.getFullName());
+	getOwner().refreshTabs();
+      });
     }
   }
 
@@ -608,7 +611,10 @@ public class TreeOperations
       parent = (Node) node.getParent();
       if (!getOwner().getIgnoreNameChanges())
 	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, actorNew);
-      SwingUtilities.invokeLater(() -> getOwner().locateAndDisplay(node.getFullName()));
+      SwingUtilities.invokeLater(() -> {
+	getOwner().locateAndDisplay(node.getFullName());
+	getOwner().refreshTabs();
+      });
     }
   }
 
@@ -721,7 +727,7 @@ public class TreeOperations
     AbstractActor	currActor;
     Node		currNode;
     DisplayPanelManager manager;
-    AbstractDisplay display;
+    AbstractDisplay 	display;
 
     currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
@@ -739,15 +745,14 @@ public class TreeOperations
     getOwner().addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
 
     SwingUtilities.invokeLater(() -> {
-      List<TreePath> exp = getOwner().getExpandedTreePaths();
+      List<String> exp = getOwner().getExpandedFullNames();
       currNode.setActor(manager);
       getOwner().setModified(true);
       getOwner().nodeStructureChanged((Node) currNode.getParent());
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
-      getOwner().setExpandedTreePaths(exp);
+      getOwner().setExpandedFullNames(exp);
       getOwner().expand(currNode);
       getOwner().locateAndDisplay(currNode.getFullName());
-      getOwner().redraw();
     });
   }
 
@@ -820,9 +825,9 @@ public class TreeOperations
    * @return		true if actors processed
    */
   public boolean processActor(TreePath path, AbstractActorProcessor processor) {
-    ModifyingProcessor modifying;
-    GraphicalOutputProducingProcessor graphical;
-    BaseDialog dialog;
+    ModifyingProcessor 			modifying;
+    GraphicalOutputProducingProcessor 	graphical;
+    BaseDialog 				dialog;
     final BaseDialog			fDialog;
     Node				node;
     AbstractActor			flow;
@@ -830,10 +835,10 @@ public class TreeOperations
     final Node				newNode;
     final Node				parent;
     final int				index;
-    final Component comp;
-    ErrorMessagePanel errorPanel;
+    final Component 			comp;
+    ErrorMessagePanel 			errorPanel;
     final ErrorMessagePanel		fErrorPanel;
-    final BaseTabbedPane tabbedPane;
+    final BaseTabbedPane 		tabbedPane;
     List<String>			exp;
 
     // selected actor or full flow?
@@ -991,9 +996,9 @@ public class TreeOperations
     Node			root;
     List<Node>			callable;
     List<Node>			multiview;
-    CallableActors callableActors;
+    CallableActors 		callableActors;
     final Node			moved;
-    AbstractCallableActor replacement;
+    AbstractCallableActor 	replacement;
     List<TreePath>		exp;
     int				index;
 
@@ -1205,7 +1210,7 @@ public class TreeOperations
   public void externalizeActor(TreePath path) {
     AbstractActor		currActor;
     Node 			currNode;
-    AbstractExternalActor extActor;
+    AbstractExternalActor 	extActor;
     FlowEditorDialog		dialog;
 
     currNode  = TreeHelper.pathToNode(path);
