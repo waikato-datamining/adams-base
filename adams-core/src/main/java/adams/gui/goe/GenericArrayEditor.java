@@ -21,6 +21,31 @@
 
 package adams.gui.goe;
 
+import adams.core.ClassLocator;
+import adams.core.CustomDisplayStringProvider;
+import adams.core.Utils;
+import adams.core.option.AbstractCommandLineHandler;
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.ArrayProducer;
+import adams.core.option.OptionHandler;
+import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.event.RemoveItemsEvent;
+import adams.gui.event.RemoveItemsListener;
+import gnu.trove.set.hash.TIntHashSet;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -43,32 +68,6 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import adams.core.ClassLocator;
-import adams.core.CustomDisplayStringProvider;
-import adams.core.Utils;
-import adams.core.option.AbstractCommandLineHandler;
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.ArrayProducer;
-import adams.core.option.OptionHandler;
-import adams.gui.core.BaseListWithButtons;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.event.RemoveItemsEvent;
-import adams.gui.event.RemoveItemsListener;
-import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
-import gnu.trove.set.hash.TIntHashSet;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
@@ -606,6 +605,7 @@ public class GenericArrayEditor
       else {
 	panel = new JPanel();
 	panel.setLayout(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 	panel.add(view, BorderLayout.CENTER);
 	add(panel, BorderLayout.NORTH);
 
