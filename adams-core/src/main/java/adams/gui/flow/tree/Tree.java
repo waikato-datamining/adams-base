@@ -1723,22 +1723,20 @@ public class Tree
 	  parent.insert(newNode, index);
       }
 
-      final Node fParent = parent;
+      final Node current;
+      if (paths.length == 1)
+	current = newNode;
+      else
+	current = parent;
       SwingUtilities.invokeLater(() -> {
 	updateActorName(newNode);
 	setModified(true);
-	if (paths.length == 1) {
-	  nodeStructureChanged(newNode);
-	  expand(newNode);
-	  locateAndDisplay(newNode.getFullName());
-	  notifyActorChangeListeners(new ActorChangeEvent(this, newNode, Type.MODIFY));
-	}
-	else {
-	  nodeStructureChanged(fParent);
-	  expand(fParent);
-	  locateAndDisplay(fParent.getFullName());
-	  notifyActorChangeListeners(new ActorChangeEvent(this, fParent, Type.MODIFY));
-	}
+	nodeStructureChanged(current);
+	expand(newNode);
+      });
+      SwingUtilities.invokeLater(() -> {
+	locateAndDisplay(newNode.getFullName());
+	notifyActorChangeListeners(new ActorChangeEvent(this, current, Type.MODIFY));
 	redraw();
       });
     }
