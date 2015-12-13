@@ -15,21 +15,14 @@
 
 /**
  * EditExternalFlow.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.tree.TreePath;
-
 import adams.core.io.FlowFile;
 import adams.flow.core.ExternalActorHandler;
-import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeEvent.Type;
-import adams.gui.flow.FlowEditorDialog;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
+
+import java.awt.event.ActionEvent;
 
 /**
  * For editing an external flow.
@@ -67,49 +60,12 @@ public class EditExternalFlow
   }
 
   /**
-   * Brings up a flow window for editing the selected external actor's flow.
-   *
-   * @param path	the path to the node
-   */
-  protected void editFlow(TreePath path) {
-    Node			node;
-    FlowEditorDialog 		dialog;
-    ExternalActorHandler	actor;
-
-    node = TreeHelper.pathToNode(path);
-    if (node == null)
-      return;
-    actor = (ExternalActorHandler) node.getActor();
-    if (actor == null)
-      return;
-
-    if (getParentDialog() != null)
-      dialog = new FlowEditorDialog(getParentDialog());
-    else
-      dialog = new FlowEditorDialog(getParentFrame());
-    dialog.getFlowEditorPanel().loadUnsafe(actor.getActorFile());
-    dialog.setVisible(true);
-    if (dialog.getFlowEditorPanel().getCurrentFile() != null) {
-      if ((actor.getActorFile() == null) || (!actor.getActorFile().equals(dialog.getFlowEditorPanel().getCurrentFile()))) {
-	actor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
-	m_State.tree.setModified(true);
-      }
-    }
-
-    // external flow might have changed, discard any inlined actors
-    node.collapse();
-
-    // notify listeners
-    m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, node, Type.MODIFY));
-  }
-
-  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    editFlow(m_State.selPath);
+    m_State.tree.getOperations().editFlow(m_State.selPath);
   }
 }

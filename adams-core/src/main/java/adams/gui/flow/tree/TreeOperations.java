@@ -22,16 +22,19 @@ package adams.gui.flow.tree;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
+import adams.core.io.FlowFile;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
@@ -42,11 +45,15 @@ import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
+import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
+import adams.flow.source.ExternalSource;
 import adams.flow.standalone.CallableActors;
+import adams.flow.standalone.ExternalStandalone;
 import adams.flow.standalone.GridView;
 import adams.flow.standalone.TabView;
 import adams.flow.transformer.CallableTransformer;
+import adams.flow.transformer.ExternalTransformer;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
@@ -56,6 +63,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
+import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -1027,6 +1035,158 @@ public class TreeOperations
     SwingUtilities.invokeLater(() -> {
       getOwner().locateAndDisplay(currNode.getFullName());
     });
+  }
+
+  /**
+   * Brings up a flow window for editing the selected external actor's flow.
+   *
+   * @param path	the path to the node
+   */
+  public void editFlow(TreePath path) {
+    Node			node;
+    FlowEditorDialog dialog;
+    ExternalActorHandler actor;
+
+    node = TreeHelper.pathToNode(path);
+    if (node == null)
+      return;
+    actor = (ExternalActorHandler) node.getActor();
+    if (actor == null)
+      return;
+
+    if (getOwner().getParentDialog() != null)
+      dialog = new FlowEditorDialog(getOwner().getParentDialog());
+    else
+      dialog = new FlowEditorDialog(getOwner().getParentFrame());
+    dialog.getFlowEditorPanel().loadUnsafe(actor.getActorFile());
+    dialog.setVisible(true);
+    if (dialog.getFlowEditorPanel().getCurrentFile() != null) {
+      if ((actor.getActorFile() == null) || (!actor.getActorFile().equals(dialog.getFlowEditorPanel().getCurrentFile()))) {
+	actor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
+	getOwner().setModified(true);
+      }
+    }
+
+    // external flow might have changed, discard any inlined actors
+    node.collapse();
+
+    // notify listeners
+    getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
+  }
+
+  /**
+   * Opens a new FlowEditor window with the currently selected sub-flow.
+   *
+   * @param paths	the (paths to the) actors to externalize
+   */
+  public void externalizeActor(TreePath[] paths) {
+    AbstractActor	handler;
+    AbstractActor[]	actors;
+    Node		newNode;
+    Node		currNode;
+    Node		parent;
+    int			index;
+    int			i;
+
+    if (paths.length == 0)
+      return;
+    if (paths.length == 1) {
+      externalizeActor(paths[0]);
+      return;
+    }
+
+    // externalize actors
+    actors = new AbstractActor[paths.length];
+    parent = null;
+    for (i = 0; i < paths.length; i++) {
+      currNode  = TreeHelper.pathToNode(paths[i]);
+      actors[i] = currNode.getFullActor().shallowCopy();
+      if (parent == null)
+	parent = (Node) currNode.getParent();
+    }
+    try {
+      handler = (AbstractActor) ActorUtils.createExternalActor(actors);
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	  getOwner(), "Failed to externalize actor(s):\n" + Utils.throwableToString(e));
+      return;
+    }
+
+    getOwner().addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
+
+    // update tree
+    newNode = getOwner().buildTree(null, handler, false);
+    for (i = 0; i < paths.length; i++) {
+      currNode = TreeHelper.pathToNode(paths[i]);
+      index    = parent.getIndex(currNode);
+      parent.remove(index);
+      if (i == 0)
+	parent.insert(newNode, index);
+    }
+    getOwner().updateActorName(newNode);
+    getOwner().setModified(true);
+    if (paths.length == 1) {
+      SwingUtilities.invokeLater(() -> {
+        getOwner().nodeStructureChanged(newNode);
+        getOwner().locateAndDisplay(newNode.getFullName());
+        getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), newNode, Type.MODIFY));
+      });
+    }
+    else {
+      final Node fParent = parent;
+      SwingUtilities.invokeLater(() -> {
+        getOwner().nodeStructureChanged(fParent);
+        getOwner().locateAndDisplay(fParent.getFullName());
+        getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), fParent, Type.MODIFY));
+      });
+    }
+
+    externalizeActor(new TreePath(newNode.getPath()));
+  }
+
+  /**
+   * Opens a new FlowEditor window with the currently selected sub-flow.
+   *
+   * @param path	the (path to the) actor to externalize
+   */
+  public void externalizeActor(TreePath path) {
+    AbstractActor		currActor;
+    Node 			currNode;
+    AbstractExternalActor extActor;
+    FlowEditorDialog		dialog;
+
+    currNode  = TreeHelper.pathToNode(path);
+    currActor = currNode.getFullActor().shallowCopy();
+    if (getOwner().getParentDialog() != null)
+      dialog = new FlowEditorDialog(getOwner().getParentDialog());
+    else
+      dialog = new FlowEditorDialog(getOwner().getParentFrame());
+    dialog.getFlowEditorPanel().newTab();
+    dialog.getFlowEditorPanel().setCurrentFlow(currActor);
+    dialog.getFlowEditorPanel().setModified(true);
+    dialog.setVisible(true);
+    if (dialog.getFlowEditorPanel().getCurrentFile() == null)
+      return;
+
+    getOwner().addUndoPoint("Externalizing node '" + currNode.getFullName() + "'");
+
+    extActor = null;
+    if (ActorUtils.isStandalone(currActor))
+      extActor = new ExternalStandalone();
+    else if (ActorUtils.isSource(currActor))
+      extActor = new ExternalSource();
+    else if (ActorUtils.isTransformer(currActor))
+      extActor = new ExternalTransformer();
+    else if (ActorUtils.isSink(currActor))
+      extActor = new ExternalSink();
+    extActor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
+
+    getOwner().setModified(true);
+    currNode.setActor(extActor);
+    currNode.removeAllChildren();
+    getOwner().nodeStructureChanged(currNode);
+    getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
   }
 
   /**
