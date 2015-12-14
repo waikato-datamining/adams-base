@@ -34,6 +34,7 @@ import adams.gui.event.SearchListener;
 
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -415,6 +416,16 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
   }
 
   /**
+   * Gets called when the table data changes. Re-calculates the column
+   * widths of the table.
+   *
+   * @see #tableChanged(TableModelEvent)
+   */
+  protected void updateTableColumnWidths() {
+    SwingUtilities.invokeLater(() -> m_Table.setOptimalColumnWidth());
+  }
+
+  /**
    * Gets called when the underlying data model changes.
    * <br><br>
    * Default implementation notifies all the TableModelListener with the
@@ -485,6 +496,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
    */
   public void dataChanged(DataChangeEvent e) {
     updateTitle();
+    updateTableColumnWidths();
   }
   
   /**
