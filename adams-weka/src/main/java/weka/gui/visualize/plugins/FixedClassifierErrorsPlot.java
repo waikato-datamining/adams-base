@@ -40,6 +40,7 @@ import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.LinearRegressionOverlayPaintlet;
 import adams.gui.visualization.sequence.MultiPaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.TextOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -119,10 +120,18 @@ public class FixedClassifierErrorsPlot
 	overlay.setColor(Color.RED.darker());
 	LinearRegressionOverlayPaintlet lrPaintlet = new LinearRegressionOverlayPaintlet();
 	lrPaintlet.setOutputSlopeIntercept(true);
+	TextOverlayPaintlet text = new TextOverlayPaintlet();
+	if (trend) {
+	  text.setText("Red = diagonal, Black = LR fit");
+	  text.setY(30);
+	}
+	else {
+	  text.setText("Red = diagonal");
+	}
 	if (trend)
-	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, lrPaintlet});
+	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, lrPaintlet, text});
 	else
-	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay});
+	  overlays.setSubPaintlets(new XYSequencePaintlet[]{overlay, text});
 	plot.setOverlayPaintlet(overlays);
 	FancyTickGenerator tick = new FancyTickGenerator();
 	tick.setNumTicks(10);
