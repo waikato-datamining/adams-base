@@ -1334,7 +1334,7 @@ public class FlowPanel
 	getUndo().addRedo(getTree().getState(), getUndo().peekUndoComment());
 
 	UndoPoint point = getUndo().undo();
-	getTree().setState((TreeState) point.getData());
+	SwingUtilities.invokeLater(() -> getTree().setState((TreeState) point.getData()));
 	m_CurrentFile = getTree().getFile();
 
 	return "Done!";
@@ -1366,7 +1366,7 @@ public class FlowPanel
 	getUndo().addUndo(getTree().getState(), getUndo().peekRedoComment(), true);
 
 	UndoPoint point = getUndo().redo();
-	getTree().setState((TreeState) point.getData());
+	SwingUtilities.invokeLater(() -> getTree().setState((TreeState) point.getData()));
 	m_CurrentFile = getTree().getFile();
 
 	return "Done!";

@@ -36,8 +36,8 @@ import java.util.List;
 
 /**
  * Ancestor for post-processors for edits in the tree.
- * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ *
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public abstract class AbstractEditPostProcessor
@@ -48,38 +48,38 @@ public abstract class AbstractEditPostProcessor
 
   /**
    * Checks whether this post processor scheme applies to the current situation.
-   * 
-   * @param parent	the parent actor
-   * @param oldActor	the old actor
-   * @param newActor	the new, updated actor
-   * @return		true if this post processor applies to the situation
+   *
+   * @param parent   the parent actor
+   * @param oldActor the old actor
+   * @param newActor the new, updated actor
+   * @return true if this post processor applies to the situation
    */
   public abstract boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
 
   /**
    * Post-processes the tree.
    *
-   * @param tree	the tree to post-process
-   * @param parent	the parent actor
-   * @param oldActor	the old actor
-   * @param newActor	the new, updated actor
-   * @return		true if tree got modified
+   * @param tree     the tree to post-process
+   * @param parent   the parent actor
+   * @param oldActor the old actor
+   * @param newActor the new, updated actor
+   * @return true if tree got modified
    */
   protected abstract boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
 
   /**
    * Post-processes the tree.
-   * 
-   * @param tree	the tree to post-process
-   * @param parent	the parent actor
-   * @param oldActor	the old actor
-   * @param newActor	the new, updated actor
-   * @return		true if tree got modified
+   *
+   * @param tree     the tree to post-process
+   * @param parent   the parent actor
+   * @param oldActor the old actor
+   * @param newActor the new, updated actor
+   * @return true if tree got modified
    */
   public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean		result;
-    final List<String> 	exp;
-    final List<String>	sel;
+    boolean result;
+    final List<String> exp;
+    final List<String> sel;
 
     exp = tree.getExpandedFullNames();
     sel = tree.getSelectionFullNames();
@@ -102,37 +102,37 @@ public abstract class AbstractEditPostProcessor
   /**
    * Returns a list with classnames of post-processors.
    *
-   * @return		the post-processor classnames
+   * @return the post-processor classnames
    */
   public static String[] getPostProcessors() {
     return ClassLister.getSingleton().getClassnames(AbstractEditPostProcessor.class);
   }
-  
+
   /**
    * Applies all the post-processors, if applicable.
-   * 
-   * @param tree	the tree that was modified
-   * @param parent	the parent actor of the modified actor
-   * @param oldActor	the old actor
-   * @param newActor	the new, updated actor
-   * @return		true if tree got modified
+   *
+   * @param tree     the tree that was modified
+   * @param parent   the parent actor of the modified actor
+   * @param oldActor the old actor
+   * @param newActor the new, updated actor
+   * @return true if tree got modified
    */
   public static boolean apply(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
-    boolean			result;
-    String[]			processors;
-    AbstractEditPostProcessor	proc;
-    boolean			confirmed;
-    boolean			modified;
-    boolean[]			exp;
-    final int[]			rows;
+    boolean 			result;
+    String[] 			processors;
+    AbstractEditPostProcessor 	proc;
+    boolean 			confirmed;
+    boolean 			modified;
+    final List<String> 		exp;
+    final List<String> 		sel;
 
     result = false;
-    
+
     confirmed  = false;
     processors = getPostProcessors();
-    exp        = tree.getExpandedState();
-    rows       = tree.getSelectionRows();
-    for (String processor: processors) {
+    exp        = tree.getExpandedFullNames();
+    sel        = tree.getSelectionFullNames();
+    for (String processor : processors) {
       try {
 	proc = (AbstractEditPostProcessor) Class.forName(processor).newInstance();
 	if (proc.applies(parent, oldActor, newActor)) {
@@ -143,17 +143,15 @@ public abstract class AbstractEditPostProcessor
 	      break;
 	  }
 	  modified = proc.postProcess(tree, parent, oldActor, newActor);
-	  result   = result || modified;
+	  result = result || modified;
 	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Error applying edit post-processor '" + processor + "':", e);
       }
     }
-    SwingUtilities.invokeLater(() -> {
-      tree.setExpandedState(exp);
-      SwingUtilities.invokeLater(() -> tree.setSelectionRows(rows));
-    });
+    SwingUtilities.invokeLater(() -> tree.setExpandedFullNames(exp));
+    SwingUtilities.invokeLater(() -> tree.setSelectionFullNames(sel));
 
     return result;
   }

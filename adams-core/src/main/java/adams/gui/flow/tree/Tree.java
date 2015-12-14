@@ -97,7 +97,7 @@ public class Tree
    */
   public static class TreeState {
     public Object actor;
-    public boolean[] expanded;
+    public List<String> expanded;
     public boolean modified;
     public File file;
     public List<String> selection;
@@ -503,8 +503,10 @@ public class Tree
 
     result = new ArrayList<>();
     paths  = getExpandedTreePaths();
-    for (TreePath path: paths)
-      result.add(((Node) path.getLastPathComponent()).getFullName());
+    for (TreePath path: paths) {
+      if (path.getLastPathComponent() instanceof Node)
+	result.add(((Node) path.getLastPathComponent()).getFullName());
+    }
 
     return result;
   }
@@ -1934,7 +1936,7 @@ public class Tree
     setModified(value.modified);
     setFile(value.file);
     setActor(actor);
-    SwingUtilities.invokeLater(() -> setExpandedState(value.expanded));
+    SwingUtilities.invokeLater(() -> setExpandedFullNames(value.expanded));
     SwingUtilities.invokeLater(() -> setSelectionFullNames(value.selection));
     if (value.selection.size() > 0) {
       SwingUtilities.invokeLater(() -> {
@@ -1975,7 +1977,7 @@ public class Tree
     else {
       result.actor = actor;
     }
-    result.expanded  = getExpandedState();
+    result.expanded  = getExpandedFullNames();
     result.modified  = isModified();
     result.file      = getFile();
     result.selection = getSelectionFullNames();
