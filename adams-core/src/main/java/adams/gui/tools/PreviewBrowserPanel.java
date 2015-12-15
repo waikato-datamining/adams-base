@@ -37,6 +37,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -45,7 +46,6 @@ import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
@@ -66,17 +66,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -277,32 +277,37 @@ public class PreviewBrowserPanel
     m_PanelLocalFiles.setBorder(BorderFactory.createTitledBorder("Files"));
 
     m_PanelDir = new DirectoryChooserPanel(props.getPath("InitialDir", "%h"));
-    m_PanelDir.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	refreshLocalFiles();
-	if (m_RecentFilesHandler != null)
-	  m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
-      }
+    m_PanelDir.addChangeListener((ChangeEvent e) -> {
+      refreshLocalFiles();
+      if (m_RecentFilesHandler != null)
+        m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
 
     m_ModelLocalFiles = new DefaultListModel();
     m_ListLocalFiles  = new SearchableBaseList(m_ModelLocalFiles);
-    m_ListLocalFiles.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	if (e.getValueIsAdjusting())
-	  return;
-	displayLocalFile();
+    m_ListLocalFiles.addListSelectionListener((ListSelectionEvent e) -> {
+      if (e.getValueIsAdjusting())
+        return;
+      displayLocalFile();
+    });
+    m_ListLocalFiles.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+	  e.consume();
+	  JPopupMenu menu = getLocalFilesPopupMenu(e);
+	  menu.show(m_ListLocalFiles, e.getX(), e.getY());
+        }
+        else {
+          super.mouseClicked(e);
+        }
       }
     });
     m_PanelLocalFiles.add(new BaseScrollPane(m_ListLocalFiles), BorderLayout.CENTER);
 
     m_SearchLocalFiles = new SearchPanel(LayoutType.VERTICAL, false);
-    m_SearchLocalFiles.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_ListLocalFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_SearchLocalFiles.addSearchListener((SearchEvent e) -> m_ListLocalFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_SearchLocalFiles);
     m_PanelLocalFiles.add(panel, BorderLayout.SOUTH);
@@ -314,21 +319,15 @@ public class PreviewBrowserPanel
 
     m_ModelArchiveFiles = new DefaultListModel();
     m_ListArchiveFiles  = new SearchableBaseList(m_ModelArchiveFiles);
-    m_ListArchiveFiles.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	if (e.getValueIsAdjusting())
-	  return;
-	displayArchiveContent();
-      }
+    m_ListArchiveFiles.addListSelectionListener((ListSelectionEvent e) -> {
+      if (e.getValueIsAdjusting())
+        return;
+      displayArchiveContent();
     });
     m_PanelArchiveFiles.add(new BaseScrollPane(m_ListArchiveFiles), BorderLayout.CENTER);
 
     m_SearchArchiveFiles = new SearchPanel(LayoutType.VERTICAL, false);
-    m_SearchArchiveFiles.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_ListArchiveFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_SearchArchiveFiles.addSearchListener((SearchEvent e) -> m_ListArchiveFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_SearchArchiveFiles);
     m_PanelArchiveFiles.add(panel, BorderLayout.SOUTH);
@@ -339,13 +338,11 @@ public class PreviewBrowserPanel
 
     m_ModelArchiveHandlers    = new DefaultComboBoxModel();
     m_ComboBoxArchiveHandlers = new JComboBox(m_ModelArchiveHandlers);
-    m_ComboBoxArchiveHandlers.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_IgnoreArchiveHandlerChanges)
-	  return;
-        updatePreferredArchiveHandler();
-        displayArchiveContent();
-      }
+    m_ComboBoxArchiveHandlers.addActionListener((ActionEvent e) -> {
+      if (m_IgnoreArchiveHandlerChanges)
+        return;
+      updatePreferredArchiveHandler();
+      displayArchiveContent();
     });
     m_PanelArchiveHandlers.add(new JLabel("Preferred handler"));
     m_PanelArchiveHandlers.add(m_ComboBoxArchiveHandlers);
@@ -363,14 +360,12 @@ public class PreviewBrowserPanel
 
     m_ModelContentHandlers    = new DefaultComboBoxModel();
     m_ComboBoxContentHandlers = new JComboBox(m_ModelContentHandlers);
-    m_ComboBoxContentHandlers.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_IgnoreContentHandlerChanges)
-	  return;
-        updatePreferredContentHandler();
-        if (m_CurrentFiles != null)
-          displayLocalContent(m_CurrentFiles, false);
-      }
+    m_ComboBoxContentHandlers.addActionListener((ActionEvent e) -> {
+      if (m_IgnoreContentHandlerChanges)
+        return;
+      updatePreferredContentHandler();
+      if (m_CurrentFiles != null)
+        displayLocalContent(m_CurrentFiles, false);
     });
     m_PanelContentHandlers.add(new JLabel("Preferred handler"));
     m_PanelContentHandlers.add(m_ComboBoxContentHandlers);
@@ -880,11 +875,7 @@ public class PreviewBrowserPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Open...
       menuitem = new JMenuItem("Open...");
@@ -892,11 +883,7 @@ public class PreviewBrowserPanel
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_PanelDir.choose();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_PanelDir.choose());
 
       // File/Recent files
       submenu = new JMenu("Open recent");
@@ -919,11 +906,7 @@ public class PreviewBrowserPanel
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
       menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  reload();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> reload());
 
       // File/Send to
       menu.addSeparator();
@@ -936,32 +919,20 @@ public class PreviewBrowserPanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  closeParent();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> closeParent());
 
       // View
       menu = new JMenu("View");
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // View/Show hidden files
       menuitem = new JCheckBoxMenuItem("Show hidden files");
       menuitem.setSelected(getProperties().getBoolean("ShowHiddenFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('h');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  refreshLocalFiles();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
       m_MenuItemShowHiddenFiles = menuitem;
 
       // View/Show temp files
@@ -969,32 +940,20 @@ public class PreviewBrowserPanel
       menuitem.setSelected(getProperties().getBoolean("ShowTempFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  refreshLocalFiles();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
       m_MenuItemShowTempFiles = menuitem;
 
       // Window
       menu = new JMenu("Window");
       result.add(menu);
       menu.setMnemonic('W');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Window/New window
       menuitem = new JMenuItem("New window");
       menu.add(menuitem);
       menuitem.setMnemonic('N');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  newWindow();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> newWindow());
 
       // update menu
       m_MenuBar = result;
@@ -1008,21 +967,48 @@ public class PreviewBrowserPanel
   }
 
   /**
+   * Returns a popup menu for the local files.
+   *
+   * @param e		the event that triggered the popup menu
+   * @return		the menu
+   */
+  protected JPopupMenu getLocalFilesPopupMenu(MouseEvent e) {
+    JPopupMenu	result;
+    JMenuItem	menuitem;
+
+    result = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy name");
+    menuitem.addActionListener((ActionEvent ae) -> {
+      Object obj = m_ListLocalFiles.getSelectedValue();
+      if (obj == null)
+	return;
+      GUIHelper.copyToClipboard(obj.toString());
+    });
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Copy path");
+    menuitem.addActionListener((ActionEvent ae) -> {
+      Object obj = m_ListLocalFiles.getSelectedValue();
+      if (obj == null)
+	return;
+      GUIHelper.copyToClipboard(m_PanelDir.getCurrent() + File.separator + obj.toString());
+    });
+    result.add(menuitem);
+
+    return result;
+  }
+
+  /**
    * Opens the specified directory.
    * 
    * @param dir		the directory to display
    */
   public void open(final PlaceholderDirectory dir) {
-    Runnable	run;
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	m_PanelDir.setCurrent(dir);
-	m_PanelDir.fireCurrentValueChanged();
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      m_PanelDir.setCurrent(dir);
+      m_PanelDir.fireCurrentValueChanged();
+    });
   }
 
   /**
@@ -1031,32 +1017,12 @@ public class PreviewBrowserPanel
    * @param file	the file to display
    */
   public void open(final PlaceholderFile file) {
-    Runnable	run;
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	m_PanelDir.setCurrent(file.getParentFile());
-	m_PanelDir.fireCurrentValueChanged();
-      }
-    };
-    SwingUtilities.invokeLater(run);
-
-    run = new Runnable() {
-      @Override
-      public void run() {
-	m_ListLocalFiles.setSelectedValue(file.getName(), true);
-      }
-    };
-    SwingUtilities.invokeLater(run);
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	displayLocalContent(new File[]{file}, true);
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      m_PanelDir.setCurrent(file.getParentFile());
+      m_PanelDir.fireCurrentValueChanged();
+    });
+    SwingUtilities.invokeLater(() -> m_ListLocalFiles.setSelectedValue(file.getName(), true));
+    SwingUtilities.invokeLater(() -> displayLocalContent(new File[]{file}, true));
   }
   
   /**
