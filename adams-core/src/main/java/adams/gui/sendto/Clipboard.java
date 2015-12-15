@@ -21,13 +21,9 @@ package adams.gui.sendto;
 
 import adams.gui.core.GUIHelper;
 
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 
 /**
  * Action for copying text/image to clipboard.
@@ -86,41 +82,19 @@ public class Clipboard
   @Override
   public String send(Object o) {
     String		result;
-    JTextComponent	text;
-    JTable		table;
-    Action 		copy;
-    ActionEvent 	event;
-    JComponent		comp;
-    BufferedImage 	img;
-    Graphics 		g;
 
     result = null;
 
-    if (o instanceof String) {
+    if (o instanceof String)
       GUIHelper.copyToClipboard((String) o);
-    }
-    else if (o instanceof JTextComponent) {
-      text = (JTextComponent) o;
-      GUIHelper.copyToClipboard(text.getText());
-    }
-    else if (o instanceof JTable) {
-      table = (JTable) o;
-      copy  = table.getActionMap().get("copy");
-      event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "");
-      copy.actionPerformed(event);
-    }
-    else if (o instanceof JComponent) {
-      comp = (JComponent) o;
-      img  = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
-      g    = img.getGraphics();
-      g.setPaintMode();
-      g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
-      comp.printAll(g);
-      GUIHelper.copyToClipboard(img);
-    }
-    else {
+    else if (o instanceof JTextComponent)
+      GUIHelper.copyToClipboard(((JTextComponent) o).getText());
+    else if (o instanceof JTable)
+      GUIHelper.copyToClipboard((JTable) o);
+    else if (o instanceof JComponent)
+      GUIHelper.copyToClipboard((JComponent) o);
+    else
       result = "Cannot copy object: " + o.getClass();
-    }
 
     return result;
   }

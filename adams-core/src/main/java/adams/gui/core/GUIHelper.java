@@ -35,10 +35,12 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -46,6 +48,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -1143,6 +1146,37 @@ public class GUIHelper {
    */
   public static void copyToClipboard(BufferedImage img) {
     copyToClipboard(new TransferableImage(img));
+  }
+
+  /**
+   * Copies the given JComponent as image to the system's clipboard.
+   *
+   * @param comp		the component to copy
+   */
+  public static void copyToClipboard(JComponent comp) {
+    BufferedImage img;
+    Graphics 		g;
+
+    img  = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
+    g    = img.getGraphics();
+    g.setPaintMode();
+    g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
+    comp.printAll(g);
+    GUIHelper.copyToClipboard(img);
+  }
+
+  /**
+   * Copies the given JTable as text to the system's clipboard.
+   *
+   * @param table		the table to copy
+   */
+  public static void copyToClipboard(JTable table) {
+    Action 	copy;
+    ActionEvent event;
+
+    copy  = table.getActionMap().get("copy");
+    event = new ActionEvent(table, ActionEvent.ACTION_PERFORMED, "");
+    copy.actionPerformed(event);
   }
 
   /**
