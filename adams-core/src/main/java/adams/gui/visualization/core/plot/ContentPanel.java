@@ -23,6 +23,7 @@ package adams.gui.visualization.core.plot;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.event.PlotPanelPanningEvent;
@@ -642,6 +643,14 @@ public class ContentPanel
     if (result == null)
       result = new BasePopupMenu();
 
+    item = new JMenuItem("Copy plot");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+	copyPlot();
+      }
+    });
+    result.add(item);
+
     item = new JMenuItem("Save plot...");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -997,6 +1006,13 @@ public class ContentPanel
    */
   public void stateChanged(ChangeEvent e) {
     repaint();
+  }
+
+  /**
+   * Copies the plot to the clipboard.
+   */
+  public void copyPlot() {
+    GUIHelper.copyToClipboard(m_Owner);
   }
 
   /**
