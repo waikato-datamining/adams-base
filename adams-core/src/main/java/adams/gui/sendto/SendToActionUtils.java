@@ -15,10 +15,20 @@
 
 /**
  * SendToActionUtils.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
+import adams.core.ClassLister;
+import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,17 +36,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.ClassLister;
-import adams.core.io.PlaceholderFile;
-import adams.core.io.TempUtils;
-import adams.gui.core.GUIHelper;
 
 /**
  * Helper class for SendTo actions.
@@ -94,7 +93,7 @@ public class SendToActionUtils {
   /**
    * Returns all the actions that can handle the specified class.
    *
-   * @param cls		the type that the sendto actions must accept
+   * @param owner	the owner
    * @return		the available actions
    */
   public static AbstractSendToAction[] getActions(final SendToActionSupporter owner) {
@@ -136,8 +135,7 @@ public class SendToActionUtils {
    * submenu.
    *
    * @param owner	the owner to get the item to send from
-   * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
+   * @param submenu	the menu to add the "Send to" submenu to if available
    * @return		true if submenu was added
    */
   protected static boolean createSubmenu(final SendToActionSupporter owner, final JMenu submenu) {
@@ -175,8 +173,7 @@ public class SendToActionUtils {
    * of the send-to submenu.
    *
    * @param owner	the owner to get the item to send from
-   * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
+   * @param submenu	the menu to add the "Send to" submenu to if available
    * @return		true if submenu was added
    */
   protected static boolean addSubmenu(final SendToActionSupporter owner, final JMenu submenu) {
@@ -204,7 +201,6 @@ public class SendToActionUtils {
    *
    * @param owner	the owner to get the item to send from
    * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
    * @return		true if submenu was added
    */
   public static boolean addSendToSubmenu(final SendToActionSupporter owner, JPopupMenu menu) {
@@ -226,7 +222,6 @@ public class SendToActionUtils {
    *
    * @param owner	the owner to get the item to send from
    * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
    * @return		true if submenu was added
    */
   public static boolean addSendToSubmenu(final SendToActionSupporter owner, JMenu menu) {
