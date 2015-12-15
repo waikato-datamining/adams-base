@@ -454,17 +454,15 @@ public class XYSequencePanel
     if (m_XYSequencePaintlet instanceof LinePaintlet) {
       final LinePaintlet paintlet = (LinePaintlet) m_XYSequencePaintlet;
       item = new JMenuItem();
+      item.setIcon(GUIHelper.getEmptyIcon());
       if (!paintlet.isMarkersDisabled())
 	item.setText("Disable markers");
       else
 	item.setText("Enable markers");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  paintlet.setMarkersDisabled(
-	      !paintlet.isMarkersDisabled());
-	  repaint();
-	}
+      item.addActionListener((ActionEvent ae)-> {
+        paintlet.setMarkersDisabled(
+          !paintlet.isMarkersDisabled());
+        repaint();
       });
       menu.add(item);
     }
@@ -472,69 +470,49 @@ public class XYSequencePanel
     if (m_XYSequencePaintlet instanceof AntiAliasingSupporter) {
       final AntiAliasingSupporter paintlet = (AntiAliasingSupporter) m_XYSequencePaintlet;
       item = new JMenuItem();
+      item.setIcon(GUIHelper.getEmptyIcon());
       if (paintlet.isAntiAliasingEnabled())
 	item.setText("Disable anti-aliasing");
       else
 	item.setText("Enable anti-aliasing");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  setAntiAliasingEnabled(!isAntiAliasingEnabled());
-	}
-      });
+      item.addActionListener((ActionEvent ae) -> setAntiAliasingEnabled(!isAntiAliasingEnabled()));
       menu.add(item);
     }
 
     if (getAllowResize()) {
-      item = new JMenuItem("Resize...");
-      item.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          showResizeDialog();
-        }
-      });
+      item = new JMenuItem("Resize...", GUIHelper.getEmptyIcon());
+      item.addActionListener((ActionEvent ae) -> showResizeDialog());
       menu.add(item);
     }
 
     menu.addSeparator();
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (isSidePanelVisible())
       item.setText("Hide side panel");
     else
       item.setText("Show side panel");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setSidePanelVisible(!isSidePanelVisible());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
     menu.add(item);
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (m_AdjustToVisibleData)
       item.setText("Adjust to loaded data");
     else
       item.setText("Adjust to visible data");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_AdjustToVisibleData = !m_AdjustToVisibleData;
-	update();
-      }
+    item.addActionListener((ActionEvent ae) -> {
+      m_AdjustToVisibleData = !m_AdjustToVisibleData;
+      update();
     });
     if (!(m_XYSequencePaintlet instanceof PaintletWithFixedYRange))
       menu.add(item);
 
     menu.addSeparator();
 
-    item = new JMenuItem("Save visible sequences...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveVisibleSequences();
-      }
-    });
+    item = new JMenuItem("Save visible sequences...", GUIHelper.getIcon("save.gif"));
+    item.addActionListener((ActionEvent ae) -> saveVisibleSequences());
     menu.add(item);
   }
 

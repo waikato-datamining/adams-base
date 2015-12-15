@@ -48,7 +48,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -604,23 +603,19 @@ public class ContentPanel
       if (result == null)
 	result = new BasePopupMenu();
 
-      item = new JMenuItem("Zoom out");
+      item = new JMenuItem("Zoom out", GUIHelper.getIcon("zoom_out.png"));
       item.setEnabled(getOwner().isZoomed());
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  popZoom();
-	  repaint();
-	}
+      item.addActionListener((ActionEvent ae) -> {
+	popZoom();
+	repaint();
       });
       result.add(item);
 
-      item = new JMenuItem("Clear zoom");
+      item = new JMenuItem("Clear zoom", GUIHelper.getIcon("zoom_clear.png"));
       item.setEnabled(getOwner().isZoomed());
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clearZoom();
-	  repaint();
-	}
+      item.addActionListener((ActionEvent ae) -> {
+	clearZoom();
+	repaint();
       });
       result.add(item);
     }
@@ -629,13 +624,11 @@ public class ContentPanel
       if (result == null)
 	result = new BasePopupMenu();
 
-      item = new JMenuItem("Undo panning");
+      item = new JMenuItem("Undo panning", GUIHelper.getEmptyIcon());
       item.setEnabled(getOwner().isPanned());
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clearPanning();
-	  repaint();
-	}
+      item.addActionListener((ActionEvent ae) -> {
+	clearPanning();
+	repaint();
       });
       result.add(item);
     }
@@ -643,20 +636,12 @@ public class ContentPanel
     if (result == null)
       result = new BasePopupMenu();
 
-    item = new JMenuItem("Copy plot");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	copyPlot();
-      }
-    });
+    item = new JMenuItem("Copy plot", GUIHelper.getIcon("copy.gif"));
+    item.addActionListener((ActionEvent ae) -> copyPlot());
     result.add(item);
 
-    item = new JMenuItem("Save plot...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	savePlot();
-      }
-    });
+    item = new JMenuItem("Save plot...", GUIHelper.getIcon("save.gif"));
+    item.addActionListener((ActionEvent ae) -> savePlot());
     result.add(item);
 
     // customize it?

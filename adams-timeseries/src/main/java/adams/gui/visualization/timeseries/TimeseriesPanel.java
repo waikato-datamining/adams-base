@@ -638,72 +638,54 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     if (m_TimeseriesPaintlet instanceof TimeseriesPaintlet) {
       item = new JMenuItem();
+      item.setIcon(GUIHelper.getEmptyIcon());
       if (!((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled())
 	item.setText("Disable markers");
       else
 	item.setText("Enable markers");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  ((TimeseriesPaintlet) getTimeseriesPaintlet()).setMarkersDisabled(
-	    !((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled());
-	  repaint();
-	}
+      item.addActionListener((ActionEvent ae) -> {
+        ((TimeseriesPaintlet) getTimeseriesPaintlet()).setMarkersDisabled(
+          !((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled());
+        repaint();
       });
       menu.add(item);
     }
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (isSidePanelVisible())
       item.setText("Hide side panel");
     else
       item.setText("Show side panel");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setSidePanelVisible(!isSidePanelVisible());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
     menu.add(item);
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (getAdjustToVisibleData())
       item.setText("Adjust to loaded data");
     else
       item.setText("Adjust to visible data");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setAdjustToVisibleData(!getAdjustToVisibleData());
+    item.addActionListener((ActionEvent ae) -> setAdjustToVisibleData(!getAdjustToVisibleData()));
+    menu.add(item);
+
+    menu.addSeparator();
+
+    item = new JMenuItem("Series statistics", GUIHelper.getIcon("statistics.png"));
+    item.addActionListener((ActionEvent ae) -> {
+      List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
+      for (int i = 0; i < getContainerManager().count(); i++) {
+        if (getContainerManager().isVisible(i))
+          stats.add(getContainerManager().get(i).getData().toStatistic());
       }
+      showStatistics(stats);
     });
     menu.add(item);
 
     menu.addSeparator();
 
-    item = new JMenuItem("Series statistics");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (getContainerManager().isVisible(i))
-	    stats.add(getContainerManager().get(i).getData().toStatistic());
-	}
-	showStatistics(stats);
-      }
-    });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible series...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveVisibleSeries();
-      }
-    });
+    item = new JMenuItem("Save visible series...", GUIHelper.getIcon("save.gif"));
+    item.addActionListener((ActionEvent ae) -> saveVisibleSeries());
     menu.add(item);
 
     SendToActionUtils.addSendToSubmenu(this, menu);

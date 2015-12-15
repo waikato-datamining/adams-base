@@ -15,11 +15,46 @@
 
 /*
  * ZScore.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
 
+import adams.core.Index;
+import adams.core.base.BaseRegExp;
+import adams.data.instance.Instance;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
+import adams.gui.goe.GenericArrayEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.visualization.core.PaintablePanel;
+import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
+import adams.gui.visualization.core.plot.TipTextCustomizer;
+import adams.gui.visualization.instance.InstanceContainer;
+import adams.gui.visualization.instance.InstanceExplorer;
+import adams.gui.visualization.stats.core.IndexSet;
+import adams.gui.visualization.stats.paintlet.AbstractZScorePaintlet;
+import adams.gui.visualization.stats.paintlet.ZScoreCircle;
+import weka.core.Attribute;
+import weka.core.Instances;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -36,41 +71,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import adams.core.Index;
-import adams.core.base.BaseRegExp;
-import adams.data.instance.Instance;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.ParameterPanel;
-import adams.gui.goe.GenericArrayEditorPanel;
-import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.visualization.core.PaintablePanel;
-import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.PopupMenuCustomizer;
-import adams.gui.visualization.core.plot.TipTextCustomizer;
-import adams.gui.visualization.instance.InstanceContainer;
-import adams.gui.visualization.instance.InstanceExplorer;
-import adams.gui.visualization.stats.core.IndexSet;
-import adams.gui.visualization.stats.paintlet.AbstractZScorePaintlet;
-import adams.gui.visualization.stats.paintlet.ZScoreCircle;
 
 /**
  * Create a paintable panel displaying a z score plot panel as well
@@ -567,45 +567,44 @@ public class ZScore
       String text = info.substring(info.indexOf(":") +1,info.indexOf(","));
       int pos = Integer.parseInt(text);
       final Instance inst = new Instance();
-      inst.setID((pos+1) + ". " + m_Instances.relationName());
+      inst.setID((pos + 1) + ". " + m_Instances.relationName());
       inst.set(m_Instances.instance(pos));
 
       //new item in the popup menu
       if(dialogs.size() == 0) {
-	view = new JMenuItem();
-	view.setText("View instance...");
-	view.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent arg0) {
-	    //show all the data for the instance
-	    //number to call this instances explorer, keeps incrementing
-	    m_NumDialogs ++;
-	    final DisplayExplorer temp = new DisplayExplorer();
-	    temp.setName("Explorer (" + m_NumDialogs + ")");
-	    temp.setTitle("Explorer (" + m_NumDialogs + ")");
-	    InstanceExplorer explore = new InstanceExplorer();
-	    //custom close operation
-	    temp.addWindowListener(new WindowAdapter() {
-	      @Override
-	      public void windowClosing(WindowEvent we) {
-		dialogs.remove(temp);
-		temp.dispose();
-	      }
-	    });
-	    temp.setDefaultCloseOperation(BaseDialog.DO_NOTHING_ON_CLOSE);
-	    explore = new adams.gui.visualization.instance.InstanceExplorer();
-	    List<InstanceContainer> data = new ArrayList<InstanceContainer>();
-	    data.add(explore.getContainerManager().newContainer(inst));
-	    //add the instance to the container manager
-	    explore.getContainerManager().addAll(data);
-	    //add instance explorer to the displayexplorer object
-	    temp.add(explore);
-	    temp.setPreferredSize(new Dimension(900,500));
-	    temp.pack();
-	    temp.setVisible(true);
-	    //add to listt of display explorers
-	    dialogs.add(temp);
-	    temp.setExplore(explore);
-	  }
+        view = new JMenuItem();
+        view.setIcon(GUIHelper.getEmptyIcon());
+        view.setText("View instance...");
+        view.addActionListener((ActionEvent arg0) -> {
+          //show all the data for the instance
+          //number to call this instances explorer, keeps incrementing
+          m_NumDialogs ++;
+          final DisplayExplorer temp = new DisplayExplorer();
+          temp.setName("Explorer (" + m_NumDialogs + ")");
+          temp.setTitle("Explorer (" + m_NumDialogs + ")");
+          InstanceExplorer explore = new InstanceExplorer();
+          //custom close operation
+          temp.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+              dialogs.remove(temp);
+              temp.dispose();
+            }
+          });
+          temp.setDefaultCloseOperation(BaseDialog.DO_NOTHING_ON_CLOSE);
+          explore = new adams.gui.visualization.instance.InstanceExplorer();
+          List<InstanceContainer> data = new ArrayList<InstanceContainer>();
+          data.add(explore.getContainerManager().newContainer(inst));
+          //add the instance to the container manager
+          explore.getContainerManager().addAll(data);
+          //add instance explorer to the displayexplorer object
+          temp.add(explore);
+          temp.setPreferredSize(new Dimension(900,500));
+          temp.pack();
+          temp.setVisible(true);
+          //add to listt of display explorers
+          dialogs.add(temp);
+          temp.setExplore(explore);
 	});
 	menu.addSeparator();
 	menu.add(view);
@@ -617,6 +616,7 @@ public class ZScore
 	if(dialogs.size()>1) {
 	  //create a menuitem with a submenu
 	  JMenu samePanel = new JMenu();
+          samePanel.setIcon(GUIHelper.getEmptyIcon());
 	  samePanel.setToolTipText("Display this instance on an existing instance explorer");
 	  samePanel.setText("Display on existing panel");
 	  menu.add(samePanel);
@@ -625,16 +625,14 @@ public class ZScore
 	    JMenuItem sub = new JMenuItem();
 	    sub.setText(dialogs.get(i).getName());
 	    final int y = i;
-	    sub.addActionListener(new ActionListener() {
-	      public void actionPerformed(ActionEvent e) {
-		final DisplayExplorer temp = dialogs.get(y);
-		InstanceExplorer explore = temp.getExplore();
-		List<InstanceContainer> data = new ArrayList<InstanceContainer>();
-		data.add(explore.getContainerManager().newContainer(inst));
-		//add the instance to the container manager
-		explore.getContainerManager().addAll(data);
-		temp.repaint();
-	      }
+	    sub.addActionListener((ActionEvent ae) -> {
+              final DisplayExplorer temp = dialogs.get(y);
+              InstanceExplorer explore = temp.getExplore();
+              List<InstanceContainer> data = new ArrayList<InstanceContainer>();
+              data.add(explore.getContainerManager().newContainer(inst));
+              //add the instance to the container manager
+              explore.getContainerManager().addAll(data);
+              temp.repaint();
 	    });
 	    samePanel.add(sub);
 	  }
@@ -642,53 +640,51 @@ public class ZScore
 	//only one existing panel
 	else {
 	  JMenuItem samePanel = new JMenuItem();
+          samePanel.setIcon(GUIHelper.getEmptyIcon());
 	  samePanel.setToolTipText("Display this instance on the existing instance explorer");
 	  samePanel.setText("Display on existing panel");
 	  menu.add(samePanel);
-	  samePanel.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent arg0) {
-	      final DisplayExplorer temp = dialogs.get(0);
-	      //existing instance explorer
-	      InstanceExplorer explore = temp.getExplore();
-	      List<InstanceContainer> data = new ArrayList<InstanceContainer>();
-	      data.add(explore.getContainerManager().newContainer(inst));
-	      //add the instance to the container manager
-	      explore.getContainerManager().addAll(data);
-	      temp.repaint();
-	    }
-	  });
+	  samePanel.addActionListener((ActionEvent arg0) -> {
+            final DisplayExplorer temp = dialogs.get(0);
+            //existing instance explorer
+            InstanceExplorer explore = temp.getExplore();
+            List<InstanceContainer> data = new ArrayList<InstanceContainer>();
+            data.add(explore.getContainerManager().newContainer(inst));
+            //add the instance to the container manager
+            explore.getContainerManager().addAll(data);
+            temp.repaint();
+          });
 	}
 	diffPanel = new JMenuItem();
+        diffPanel.setIcon(GUIHelper.getEmptyIcon());
 	diffPanel.setText("Display on a new panel");
 	menu.add(diffPanel);
-	diffPanel.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent arg0) {
-	    m_NumDialogs ++;
-	    final DisplayExplorer temp = new DisplayExplorer();
-	    temp.setName("Explorer (" + m_NumDialogs + ")");
-	    temp.setTitle("Explorer (" + m_NumDialogs + ")");
-	    InstanceExplorer explore = new InstanceExplorer();
-	    //custom closing event
-	    temp.addWindowListener(new WindowAdapter() {
-	      @Override
-	      public void windowClosing(WindowEvent we) {
-		dialogs.remove(temp);
-		temp.dispose();
-	      }
-	    });
-	    temp.setDefaultCloseOperation(BaseDialog.DO_NOTHING_ON_CLOSE);
-	    explore = new adams.gui.visualization.instance.InstanceExplorer();
-	    List<InstanceContainer> data = new ArrayList<InstanceContainer>();
-	    data.add(explore.getContainerManager().newContainer(inst));
-	    //add the instance to the container manager
-	    explore.getContainerManager().addAll(data);
-	    temp.add(explore);
-	    temp.setPreferredSize(new Dimension(900,500));
-	    temp.pack();
-	    temp.setVisible(true);
-	    dialogs.add(temp);
-	    temp.setExplore(explore);
-	  }
+        diffPanel.addActionListener((ActionEvent arg0) -> {
+          m_NumDialogs ++;
+          final DisplayExplorer temp = new DisplayExplorer();
+          temp.setName("Explorer (" + m_NumDialogs + ")");
+          temp.setTitle("Explorer (" + m_NumDialogs + ")");
+          InstanceExplorer explore = new InstanceExplorer();
+          //custom closing event
+          temp.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+              dialogs.remove(temp);
+              temp.dispose();
+            }
+          });
+          temp.setDefaultCloseOperation(BaseDialog.DO_NOTHING_ON_CLOSE);
+          explore = new adams.gui.visualization.instance.InstanceExplorer();
+          List<InstanceContainer> data = new ArrayList<InstanceContainer>();
+          data.add(explore.getContainerManager().newContainer(inst));
+          //add the instance to the container manager
+          explore.getContainerManager().addAll(data);
+          temp.add(explore);
+          temp.setPreferredSize(new Dimension(900,500));
+          temp.pack();
+          temp.setVisible(true);
+          dialogs.add(temp);
+          temp.setExplore(explore);
 	});
       }
     }
@@ -706,7 +702,7 @@ public class ZScore
   /**
    * Returns whether to hide/show the options panel.
    *
-   * @param value	true if the options are visible
+   * @return	true if the options are visible
    */
   public boolean getOptionsVisible() {
     return !m_SplitPane.isRightComponentHidden();

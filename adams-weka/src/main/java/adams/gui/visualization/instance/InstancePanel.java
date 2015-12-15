@@ -360,46 +360,38 @@ public class InstancePanel
     JMenuItem	item;
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (!m_InstancePaintlet.isMarkersDisabled())
       item.setText("Disable markers");
     else
       item.setText("Enable markers");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_InstancePaintlet.setMarkersDisabled(
-	    !m_InstancePaintlet.isMarkersDisabled());
-	repaint();
-      }
+    item.addActionListener((ActionEvent ae) -> {
+      m_InstancePaintlet.setMarkersDisabled(
+        !m_InstancePaintlet.isMarkersDisabled());
+      repaint();
     });
     menu.add(item);
 
     menu.addSeparator();
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (isSidePanelVisible())
       item.setText("Hide side panel");
     else
       item.setText("Show side panel");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setSidePanelVisible(!isSidePanelVisible());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
     menu.add(item);
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (m_AdjustToVisibleData)
       item.setText("Adjust to loaded data");
     else
       item.setText("Adjust to visible data");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_AdjustToVisibleData = !m_AdjustToVisibleData;
-	update();
-      }
+    item.addActionListener((ActionEvent ae) -> {
+      m_AdjustToVisibleData = !m_AdjustToVisibleData;
+      update();
     });
     menu.add(item);
   }

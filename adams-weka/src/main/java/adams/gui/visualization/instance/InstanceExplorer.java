@@ -724,91 +724,74 @@ public class InstanceExplorer
     menu.addSeparator();
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (!getInstancePanel().getInstancePaintlet().isMarkersDisabled())
       item.setText("Disable markers");
     else
       item.setText("Enable markers");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getInstancePanel().getInstancePaintlet().setMarkersDisabled(
-	    !getInstancePanel().getInstancePaintlet().isMarkersDisabled());
-	repaint();
-      }
+    item.addActionListener((ActionEvent ae) -> {
+      getInstancePanel().getInstancePaintlet().setMarkersDisabled(
+        !getInstancePanel().getInstancePaintlet().isMarkersDisabled());
+      repaint();
     });
     menu.add(item);
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (isSidePanelVisible())
       item.setText("Hide side panel");
     else
       item.setText("Show side panel");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	setSidePanelVisible(!isSidePanelVisible());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
     menu.add(item);
 
     item = new JMenuItem();
+    item.setIcon(GUIHelper.getEmptyIcon());
     if (getInstancePanel().getAdjustToVisibleData())
       item.setText("Adjust to loaded data");
     else
       item.setText("Adjust to visible data");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	getInstancePanel().setAdjustToVisibleData(!getInstancePanel().getAdjustToVisibleData());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> getInstancePanel().setAdjustToVisibleData(!getInstancePanel().getAdjustToVisibleData()));
     menu.add(item);
 
     menu.addSeparator();
 
-    item = new JMenuItem("Instance histogram");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	showHistogram(getContainerManager().getAllVisible());
-      }
-    });
+    item = new JMenuItem("Instance histogram", GUIHelper.getIcon("histogram.png"));
+    item.addActionListener((ActionEvent ae) -> showHistogram(getContainerManager().getAllVisible()));
     menu.add(item);
 
-    item = new JMenuItem("Instance notes");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	showNotes(getContainerManager().getAllVisible());
-      }
-    });
+    item = new JMenuItem("Instance notes", GUIHelper.getEmptyIcon());
+    item.addActionListener((ActionEvent ae) -> showNotes(getContainerManager().getAllVisible()));
     menu.add(item);
 
     menu.addSeparator();
 
-    item = new JMenuItem("Save visible instances...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	ConverterFileChooser fc = new ConverterFileChooser();
-        AdamsHelper.updateFileChooserAccessory(fc);
-	int retval = fc.showSaveDialog(InstanceExplorer.this);
-	if (retval != ConverterFileChooser.APPROVE_OPTION)
-	  return;
-	weka.core.Instances dataset = null;
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  InstanceContainer cont = getContainerManager().get(i);
-	  if (i == 0)
-	    dataset = new weka.core.Instances(cont.getData().getDatasetHeader(), 0);
-	  if (cont.isVisible())
-	    dataset.add((weka.core.Instance) cont.getData().toInstance().copy());
-	}
-	if (dataset == null)
-	  return;
-	AbstractFileSaver saver = fc.getSaver();
-	saver.setInstances(dataset);
-	try {
-	  saver.writeBatch();
-	}
-	catch (Exception ex) {
-	  ex.printStackTrace();
-	  GUIHelper.showErrorMessage(
-	      InstanceExplorer.this, "Error saving instances:\n" + ex);
-	}
+    item = new JMenuItem("Save visible instances...", GUIHelper.getIcon("save.gif"));
+    item.addActionListener((ActionEvent ae) -> {
+      ConverterFileChooser fc = new ConverterFileChooser();
+      AdamsHelper.updateFileChooserAccessory(fc);
+      int retval = fc.showSaveDialog(InstanceExplorer.this);
+      if (retval != ConverterFileChooser.APPROVE_OPTION)
+        return;
+      weka.core.Instances dataset = null;
+      for (int i = 0; i < getContainerManager().count(); i++) {
+        InstanceContainer cont = getContainerManager().get(i);
+        if (i == 0)
+          dataset = new weka.core.Instances(cont.getData().getDatasetHeader(), 0);
+        if (cont.isVisible())
+          dataset.add((weka.core.Instance) cont.getData().toInstance().copy());
+      }
+      if (dataset == null)
+        return;
+      AbstractFileSaver saver = fc.getSaver();
+      saver.setInstances(dataset);
+      try {
+        saver.writeBatch();
+      }
+      catch (Exception ex) {
+        ex.printStackTrace();
+        GUIHelper.showErrorMessage(
+          InstanceExplorer.this, "Error saving instances:\n" + ex);
       }
     });
     menu.add(item);
