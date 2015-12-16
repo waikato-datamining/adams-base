@@ -15,7 +15,7 @@
 
 /*
  * SetReportFromSource.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,11 +24,12 @@ import adams.core.QuickInfoHelper;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -41,7 +42,7 @@ import adams.flow.core.Token;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * &nbsp;&nbsp;&nbsp;Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -183,7 +184,7 @@ public class SetReportFromSource
    * @return		the generated output
    */
   public Class[] generates() {
-    return new Class[]{MutableReportHandler.class};
+    return new Class[]{Unknown.class};
   }
 
   /**

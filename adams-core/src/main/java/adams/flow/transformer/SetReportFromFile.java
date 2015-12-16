@@ -15,12 +15,10 @@
 
 /*
  * SetReportFromFile.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -29,6 +27,9 @@ import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -41,7 +42,7 @@ import adams.flow.core.Token;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
+ * &nbsp;&nbsp;&nbsp;Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -227,7 +228,7 @@ public class SetReportFromFile
    * @return		the generated output
    */
   public Class[] generates() {
-    return new Class[]{MutableReportHandler.class};
+    return new Class[]{Unknown.class};
   }
 
   /**

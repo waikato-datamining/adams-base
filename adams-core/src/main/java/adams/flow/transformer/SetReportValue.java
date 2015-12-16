@@ -15,19 +15,20 @@
 
 /*
  * SetReportValue.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
+import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -41,8 +42,7 @@ import adams.data.report.ReportHandler;
  * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
- * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -180,14 +180,7 @@ public class SetReportValue
    */
   @Override
   public Class[] generates() {
-    List<Class>	result;
-
-    result = new ArrayList<Class>();
-
-    result.add(ReportHandler.class);
-    result.add(Report.class);
-
-    return result.toArray(new Class[result.size()]);
+    return new Class[]{Unknown.class};
   }
 
   /**

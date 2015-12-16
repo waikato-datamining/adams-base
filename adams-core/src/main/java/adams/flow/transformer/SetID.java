@@ -15,7 +15,7 @@
 
 /*
  * SetID.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.data.id.MutableIDHandler;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -35,7 +36,7 @@ import adams.flow.core.Token;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.id.MutableIDHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.id.MutableIDHandler<br>
+ * &nbsp;&nbsp;&nbsp;Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -164,10 +165,10 @@ public class SetID
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.data.id.MutableIDHandler.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->Unknown.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{MutableIDHandler.class};
+    return new Class[]{Unknown.class};
   }
 
   /**
