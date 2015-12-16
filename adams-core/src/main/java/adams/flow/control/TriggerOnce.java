@@ -24,6 +24,7 @@ import adams.core.VariableName;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.Token;
+import adams.flow.core.VariableMonitor;
 
 import java.util.Hashtable;
 
@@ -103,7 +104,8 @@ import java.util.Hashtable;
  * @version $Revision$
  */
 public class TriggerOnce
-  extends Trigger {
+  extends Trigger
+  implements VariableMonitor {
 
   /** for serialization. */
   private static final long serialVersionUID = 2591889670602718340L;

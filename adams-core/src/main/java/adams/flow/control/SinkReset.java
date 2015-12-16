@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.core.VariableMonitor;
 
 /**
  <!-- globalinfo-start -->
@@ -79,7 +80,8 @@ import adams.event.VariableChangeEvent.Type;
  * @version $Revision: 7842 $
  */
 public class SinkReset
-  extends Sequence {
+  extends Sequence
+  implements VariableMonitor {
 
   /** for serialization. */
   private static final long serialVersionUID = 5975989766824652946L;

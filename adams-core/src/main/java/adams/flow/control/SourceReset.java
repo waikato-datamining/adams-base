@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.core.VariableMonitor;
 import adams.flow.source.SequenceSource;
 
 /**
@@ -80,7 +81,8 @@ import adams.flow.source.SequenceSource;
  * @version $Revision: 7842 $
  */
 public class SourceReset
-  extends SequenceSource {
+  extends SequenceSource
+  implements VariableMonitor {
 
   /** for serialization. */
   private static final long serialVersionUID = 5975989766824652946L;
