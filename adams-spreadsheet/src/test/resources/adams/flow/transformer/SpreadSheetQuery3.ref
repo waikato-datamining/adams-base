@@ -3,7 +3,7 @@ original
 anyvalue,numericvalue
 2013-11-01,1
 "2013-11-02 07:31:01",2
-07:31:10,3
+19:31:10,3
 true,4
 false,5
 "",5.5
@@ -44,7 +44,7 @@ anyvalue,numericvalue
 
 time
 anyvalue,numericvalue
-07:31:10,3
+19:31:10,3
 
 date
 anyvalue,numericvalue
@@ -58,13 +58,13 @@ anydate
 anyvalue,numericvalue
 2013-11-01,1
 "2013-11-02 07:31:01",2
-07:31:10,3
+19:31:10,3
 
 !object
 anyvalue,numericvalue
 2013-11-01,1
 "2013-11-02 07:31:01",2
-07:31:10,3
+19:31:10,3
 true,4
 false,5
 "",5.5
