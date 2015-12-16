@@ -22,6 +22,8 @@ package adams.data.spreadsheet;
 import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.Stoppable;
+import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -137,6 +139,7 @@ public class SqlUtils {
 	    type = ContentType.STRING;
 	  switch (type) {
 	    case TIME:
+	    case TIMEMSEC:
 	    case DATE:
 	    case DATETIME:
 	    case DATETIMEMSEC:
@@ -289,6 +292,7 @@ public class SqlUtils {
 	    result.append(m_ColumnNames[i] + " TIMESTAMP");
 	    break;
 	  case TIME:
+	  case TIMEMSEC:
 	    result.append(m_ColumnNames[i] + " TIME");
 	    break;
 	  case BOOLEAN:
@@ -439,6 +443,7 @@ public class SqlUtils {
 		    stmt.setTimestamp(i + 1, new java.sql.Timestamp(cell.toAnyDateType().getTime()));
 		    break;
 		  case TIME:
+		  case TIMEMSEC:
 		    stmt.setTime(i + 1, new java.sql.Time(cell.toAnyDateType().getTime()));
 		    break;
 		  case DOUBLE:
@@ -623,7 +628,10 @@ public class SqlUtils {
 	  type = SqlUtils.sqlTypeToContentType(m_Type[i - 1]);
 	  switch (type) {
 	    case TIME:
-	      row.addCell(i - 1).setContent(rs.getTime(i));
+	      row.addCell(i - 1).setContent(new Time(rs.getTime(i)));
+	      break;
+	    case TIMEMSEC:
+	      row.addCell(i - 1).setContent(new TimeMsec(rs.getTime(i)));
 	      break;
 	    case DATE:
 	      row.addCell(i - 1).setContent(rs.getDate(i));
@@ -734,6 +742,8 @@ public class SqlUtils {
       case DATETIMEMSEC:
 	return Types.TIMESTAMP;
       case TIME:
+	return Types.TIME;
+      case TIMEMSEC:
 	return Types.TIME;
       case DOUBLE:
 	return Types.DOUBLE;

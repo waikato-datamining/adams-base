@@ -23,6 +23,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.ObjectToObject;
 import adams.data.spreadsheet.Cell;
@@ -465,6 +466,8 @@ public class SpreadSheetConvertCells
 	input = cell.toDateTimeMsec();
       else if (classIn == Time.class)
 	input = cell.toTime();
+      else if (classIn == TimeMsec.class)
+	input = cell.toTimeMsec();
       else if (classIn == String.class)
 	input = cell.getContent();
       else
@@ -494,6 +497,8 @@ public class SpreadSheetConvertCells
 	cell.setContent((DateTimeMsec) output);
       else if (classOut == Time.class)
 	cell.setContent((Time) output);
+      else if (classOut == TimeMsec.class)
+	cell.setContent((TimeMsec) output);
       else if (classOut == String.class)
 	cell.setContentAsString((String) output);
       else if (classOut == SpreadSheet.class)

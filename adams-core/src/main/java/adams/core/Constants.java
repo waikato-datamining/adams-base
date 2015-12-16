@@ -62,7 +62,7 @@ public class Constants
   public final static String TIME_FORMAT = "HH:mm:ss";
 
   /** the format for times (incl msecs). */
-  public final static String TIME_FORMAT_MSECS = "HH:mm:ss.S";
+  public final static String TIME_FORMAT_MSECS = "HH:mm:ss.SSS";
 
   /** the format for dates. */
   public final static String DATE_FORMAT = "yyyy-MM-dd";

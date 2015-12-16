@@ -23,6 +23,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -598,6 +599,9 @@ public class SpreadSheetTransformHeaderCells
 	case TIME:
 	  classIn = new Class[]{Time.class};
 	  break;
+	case TIMEMSEC:
+	  classIn = new Class[]{TimeMsec.class};
+	  break;
 	case DATE:
 	  classIn = new Class[]{Date.class};
 	  break;
@@ -631,6 +635,8 @@ public class SpreadSheetTransformHeaderCells
 	input = cell.toDateTime();
       else if (m_Compatibility.isCompatible(new Class[]{Time.class}, classIn))
 	input = cell.toTime();
+      else if (m_Compatibility.isCompatible(new Class[]{TimeMsec.class}, classIn))
+	input = cell.toTimeMsec();
       else if (m_Compatibility.isCompatible(new Class[]{String.class}, classIn))
 	input = cell.getContent();
       else
@@ -662,6 +668,8 @@ public class SpreadSheetTransformHeaderCells
 	cell.setContent((DateTime) output);
       else if (output instanceof Time)
 	cell.setContent((Time) output);
+      else if (output instanceof TimeMsec)
+	cell.setContent((TimeMsec) output);
       else if (output instanceof Date)
 	cell.setContent((Date) output);
       else if (output instanceof String)

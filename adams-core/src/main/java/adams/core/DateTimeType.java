@@ -38,6 +38,8 @@ public enum DateTimeType {
   DATETIMEMSEC,
   /** adams' Time. */
   TIME,
+  /** adams' DateTimeMsec. */
+  TIMEMSEC,
   /** BaseDate. */
   BASEDATE,
   /** BaseDateTime. */
@@ -46,6 +48,8 @@ public enum DateTimeType {
   BASEDATETIMEMSEC,
   /** BaseTime. */
   BASETIME,
+  /** BaseTime. */
+  BASETIMEMSEC,
   /** Julian date. */
   JULIANDATE,
   /** days since 0-jan-1900 date (Excel). */

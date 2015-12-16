@@ -26,10 +26,12 @@ import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.DateUtils;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
+import adams.core.base.BaseTimeMsec;
 import adams.data.DateFormatString;
 import jodd.datetime.JDateTime;
 
@@ -316,6 +318,8 @@ public class ExtractDateTimeField
 	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
+      case TIMEMSEC:
+	return TimeMsec.class;
       case BASEDATE:
 	return BaseDate.class;
       case BASEDATETIME:
@@ -324,6 +328,8 @@ public class ExtractDateTimeField
 	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
+      case BASETIMEMSEC:
+	return BaseTimeMsec.class;
       case JULIANDATE:
 	return Double.class;
       case SERIAL_DATETIME:
@@ -393,6 +399,9 @@ public class ExtractDateTimeField
       case TIME:
 	m_Calendar.setTime((Time) m_Input);
 	break;
+      case TIMEMSEC:
+	m_Calendar.setTime((TimeMsec) m_Input);
+	break;
       case BASEDATE:
 	m_Calendar.setTime(((BaseDate) m_Input).dateValue());
 	break;
@@ -404,6 +413,9 @@ public class ExtractDateTimeField
 	break;
       case BASETIME:
 	m_Calendar.setTime(((BaseTime) m_Input).dateValue());
+	break;
+      case BASETIMEMSEC:
+	m_Calendar.setTime(((BaseTimeMsec) m_Input).dateValue());
 	break;
       case JULIANDATE:
 	m_Calendar.setTime(new JDateTime((Double) m_Input).convertToDate());

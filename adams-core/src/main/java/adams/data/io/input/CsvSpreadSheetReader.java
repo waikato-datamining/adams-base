@@ -25,6 +25,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.Range;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.management.LocaleHelper;
@@ -65,157 +66,157 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
- * 
+ *
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
  * </pre>
- * 
+ *
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
  * &nbsp;&nbsp;&nbsp;default: ?
  * </pre>
- * 
+ *
  * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
  * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading using a reader, leave empty for 
  * &nbsp;&nbsp;&nbsp;default.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- * 
+ *
  * <pre>-comment &lt;java.lang.String&gt; (property: comment)
  * &nbsp;&nbsp;&nbsp;The string denoting the start of a line comment (comments can only precede 
  * &nbsp;&nbsp;&nbsp;header row).
  * &nbsp;&nbsp;&nbsp;default: #
  * </pre>
- * 
+ *
  * <pre>-quote-char &lt;java.lang.String&gt; (property: quoteCharacter)
  * &nbsp;&nbsp;&nbsp;The character to use for surrounding text cells.
  * &nbsp;&nbsp;&nbsp;default: \"
  * </pre>
- * 
+ *
  * <pre>-separator &lt;java.lang.String&gt; (property: separator)
  * &nbsp;&nbsp;&nbsp;The separator to use for the columns; use '\t' for tab.
  * &nbsp;&nbsp;&nbsp;default: ,
  * </pre>
- * 
+ *
  * <pre>-trim &lt;boolean&gt; (property: trim)
  * &nbsp;&nbsp;&nbsp;If enabled, the content of the cells gets trimmed before added.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-date-columns &lt;adams.core.Range&gt; (property: dateColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-date-format &lt;adams.data.DateFormatString&gt; (property: dateFormat)
  * &nbsp;&nbsp;&nbsp;The format for dates.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  * <pre>-date-lenient &lt;boolean&gt; (property: dateLenient)
  * &nbsp;&nbsp;&nbsp;Whether date parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-datetime-columns &lt;adams.core.Range&gt; (property: dateTimeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-datetime-format &lt;adams.data.DateFormatString&gt; (property: dateTimeFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;times.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  * <pre>-datetime-lenient &lt;boolean&gt; (property: dateTimeLenient)
  * &nbsp;&nbsp;&nbsp;Whether date&#47;time parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-datetimemsec-columns &lt;adams.core.Range&gt; (property: dateTimeMsecColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time msec.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-datetimemsec-format &lt;adams.data.DateFormatString&gt; (property: dateTimeMsecFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss.SSS
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  * <pre>-datetimemsec-lenient &lt;boolean&gt; (property: dateTimeMsecLenient)
  * &nbsp;&nbsp;&nbsp;Whether date&#47;time msec parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-time-columns &lt;adams.core.Range&gt; (property: timeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as time.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-time-format &lt;adams.data.DateFormatString&gt; (property: timeFormat)
  * &nbsp;&nbsp;&nbsp;The format for times.
  * &nbsp;&nbsp;&nbsp;default: HH:mm:ss
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  * <pre>-time-lenient &lt;boolean&gt; (property: timeLenient)
  * &nbsp;&nbsp;&nbsp;Whether time parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-time-zone &lt;java.util.TimeZone&gt; (property: timeZone)
  * &nbsp;&nbsp;&nbsp;The time zone to use for interpreting dates&#47;times; default is the system-wide 
  * &nbsp;&nbsp;&nbsp;defined one.
  * </pre>
- * 
+ *
  * <pre>-locale &lt;java.util.Locale&gt; (property: locale)
  * &nbsp;&nbsp;&nbsp;The locale to use for parsing the numbers.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- * 
+ *
  * <pre>-no-header &lt;boolean&gt; (property: noHeader)
  * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
  * &nbsp;&nbsp;&nbsp;inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
  * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
  * &nbsp;&nbsp;&nbsp; ignored if empty.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-first-row &lt;int&gt; (property: firstRow)
  * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-num-rows &lt;int&gt; (property: numRows)
  * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-num-rows-col-type-discovery &lt;int&gt; (property: numRowsColumnTypeDiscovery)
  * &nbsp;&nbsp;&nbsp;The number of data rows to use for automatically determining the column 
  * &nbsp;&nbsp;&nbsp;(= speed up for large files with consistent cell types); use 0 to turn off 
@@ -223,14 +224,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
  * &nbsp;&nbsp;&nbsp;The maximum number of rows per chunk; using -1 will read put all data into 
  * &nbsp;&nbsp;&nbsp;a single spreadsheet object.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -239,7 +240,7 @@ import java.util.logging.Level;
 public class CsvSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
   implements ChunkedSpreadSheetReader, OptionHandlingLocaleSupporter,
-             WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
+  WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4461796269354230002L;
@@ -273,22 +274,22 @@ public class CsvSpreadSheetReader
 
     /** the missing value. */
     protected String m_MissingValue;
-    
+
     /** whether any text columns are defined. */
     protected boolean m_HasTextCols;
-    
+
     /** the text column indices. */
     protected TIntHashSet m_TextCols;
 
     /** whether any date columns are defined. */
     protected boolean m_HasDateCols;
-    
+
     /** the date column indices. */
     protected TIntHashSet m_DateCols;
 
     /** whether any date/time columns are defined. */
     protected boolean m_HasDateTimeCols;
-    
+
     /** the date/time column indices. */
     protected TIntHashSet m_DateTimeCols;
 
@@ -300,9 +301,15 @@ public class CsvSpreadSheetReader
 
     /** whether any time columns are defined. */
     protected boolean m_HasTimeCols;
-    
+
+    /** whether any time/msec columns are defined. */
+    protected boolean m_HasTimeMsecCols;
+
     /** the time column indices. */
     protected TIntHashSet m_TimeCols;
+
+    /** the time/msec column indices. */
+    protected TIntHashSet m_TimeMsecCols;
 
     /** the date format. */
     protected DateFormat m_DateFormat;
@@ -313,8 +320,11 @@ public class CsvSpreadSheetReader
     /** the date/time msec format. */
     protected DateFormat m_DateTimeMsecFormat;
 
-    /** the date format. */
+    /** the time format. */
     protected DateFormat m_TimeFormat;
+
+    /** the time/smec format. */
+    protected DateFormat m_TimeMsecFormat;
 
     /** the number format. */
     protected NumberFormat m_NumberFormat;
@@ -339,13 +349,13 @@ public class CsvSpreadSheetReader
 
     /** the last character that was read too far. */
     protected char m_LastChar;
-    
+
     /** the rows read so far. */
     protected int m_RowCount;
-    
+
     /** the first row to retrieve (1-based). */
     protected int m_FirstRow;
-    
+
     /** the number of rows to retrieve (less than 1 = unlimited). */
     protected int m_NumRows;
 
@@ -375,9 +385,9 @@ public class CsvSpreadSheetReader
 
       result = Utils.unquote(s, "" + m_QuoteChar);
       result = Utils.unbackQuoteChars(
-		result,
-		DOUBLED_UP_QUOTES,
-		COLLAPSED_QUOTES);
+        result,
+        DOUBLED_UP_QUOTES,
+        COLLAPSED_QUOTES);
 
       return result;
     }
@@ -403,11 +413,11 @@ public class CsvSpreadSheetReader
     protected void addCell(StringBuilder current, List<String> cells) {
       removeTrailingCR(current);
       if (m_Trim)
-	cells.add(unquote(current.toString().trim()));
+        cells.add(unquote(current.toString().trim()));
       else
-	cells.add(unquote(current.toString()));
+        cells.add(unquote(current.toString()));
       if (current.length() > 0)
-	current.delete(0, current.length());
+        current.delete(0, current.length());
     }
 
     /**
@@ -438,75 +448,75 @@ public class CsvSpreadSheetReader
       maybeNewLine = false;
 
       do {
-	if (m_LastChar != '\0') {
-	  chr        = m_LastChar;
-	  m_LastChar = '\0';
-	}
-	else {
-	  in = reader.read();
-	  if (in == -1)
-	    break;
-	  firstChr = false;
-	  chr      = (char) in;
-	}
+        if (m_LastChar != '\0') {
+          chr        = m_LastChar;
+          m_LastChar = '\0';
+        }
+        else {
+          in = reader.read();
+          if (in == -1)
+            break;
+          firstChr = false;
+          chr      = (char) in;
+        }
 
-	if (chr == m_Separator) {
-	  if (escaped) {
-	    current.append(chr);
-	  }
-	  else {
-	    addCell(current, result);
-	    escapeChr = '\0';
-	  }
-	}
-	else if (chr == m_QuoteChar) {
-	  if (chr == escapeChr) {
-	    escaped = !escaped;
-	  }
-	  else if (escapeChr == '\0') {
-	    inside = (current.length() > 0) && (current.charAt(current.length() - 1) != m_Separator);
-	    if (!inside) {
-	      escaped   = true;
-	      escapeChr = chr;
-	    }
-	  }
-	  current.append(chr);
-	}
-	else if (chr == '\r') {
-	  if (escaped)
-	    current.append(chr);
-	  else
-	    maybeNewLine = true;
-	}
-	else if (chr == '\n') {
-	  if (escaped) {
-	    removeTrailingCR(current);
-	    current.append(chr);
-	  }
-	  else {
-	    lineFinished = true;
-	    maybeNewLine = false;
-	  }
-	}
-	else {
-	  if (maybeNewLine) {
-	    m_LastChar   = chr;  // keep char for next read
-	    lineFinished = true;
-	    escapeChr    = '\0';
-	  }
-	  else {
-	    current.append(chr);
-	  }
-	}
+        if (chr == m_Separator) {
+          if (escaped) {
+            current.append(chr);
+          }
+          else {
+            addCell(current, result);
+            escapeChr = '\0';
+          }
+        }
+        else if (chr == m_QuoteChar) {
+          if (chr == escapeChr) {
+            escaped = !escaped;
+          }
+          else if (escapeChr == '\0') {
+            inside = (current.length() > 0) && (current.charAt(current.length() - 1) != m_Separator);
+            if (!inside) {
+              escaped   = true;
+              escapeChr = chr;
+            }
+          }
+          current.append(chr);
+        }
+        else if (chr == '\r') {
+          if (escaped)
+            current.append(chr);
+          else
+            maybeNewLine = true;
+        }
+        else if (chr == '\n') {
+          if (escaped) {
+            removeTrailingCR(current);
+            current.append(chr);
+          }
+          else {
+            lineFinished = true;
+            maybeNewLine = false;
+          }
+        }
+        else {
+          if (maybeNewLine) {
+            m_LastChar   = chr;  // keep char for next read
+            lineFinished = true;
+            escapeChr    = '\0';
+          }
+          else {
+            current.append(chr);
+          }
+        }
       }
       while (!lineFinished);
 
       // add last cell
       if (!firstChr)
-	addCell(current, result);
+        addCell(current, result);
       else
         result = null;
-      
+
       return result;
     }
 
@@ -529,178 +539,184 @@ public class CsvSpreadSheetReader
       boolean			autoSuccess;
 
       if (m_Header == null) {
-	result = m_Owner.getSpreadSheetType().newInstance();
-	result.setDateLenient(m_Owner.isDateLenient());
-	result.setDateTimeLenient(m_Owner.isDateTimeLenient());
-	result.setDateTimeMsecLenient(m_Owner.isDateTimeMsecLenient());
-	result.setTimeLenient(m_Owner.isTimeLenient());
-	result.setTimeZone(m_Owner.getTimeZone());
-	result.setLocale(m_Owner.getLocale());
-	result.setDataRowClass(m_Owner.getDataRowType().getClass());
+        result = m_Owner.getSpreadSheetType().newInstance();
+        result.setDateLenient(m_Owner.isDateLenient());
+        result.setDateTimeLenient(m_Owner.isDateTimeLenient());
+        result.setDateTimeMsecLenient(m_Owner.isDateTimeMsecLenient());
+        result.setTimeLenient(m_Owner.isTimeLenient());
+        result.setTimeMsecLenient(m_Owner.isTimeMsecLenient());
+        result.setTimeZone(m_Owner.getTimeZone());
+        result.setLocale(m_Owner.getLocale());
+        result.setDataRowClass(m_Owner.getDataRowType().getClass());
       }
       else {
-	result = m_Header.getHeader();
+        result = m_Header.getHeader();
       }
 
       try {
-	comments = (m_Header == null);
-	
-	while (!m_Owner.isStopped()) {
-	  row   = null;
-	  cells = readCells(m_Reader);
-	  if (cells == null) {
-	    close();
-	    break;
-	  }
+        comments = (m_Header == null);
 
-	  // still in comments section?
-	  if (comments) {
-	    // we don't count comments
-	    if (cells.get(0).trim().startsWith(m_Comment)) {
-	      result.addComment(Utils.flatten(cells, "" + m_Separator).trim().substring(m_Comment.length()).trim());
-	      continue;
-	    }
-	  }
+        while (!m_Owner.isStopped()) {
+          row   = null;
+          cells = readCells(m_Reader);
+          if (cells == null) {
+            close();
+            break;
+          }
 
-	  // actual data
-	  isHeader = false;
-	  comments = false;
-	  if ((cells.size() == 1) && (cells.get(0).trim().length() == 0))
-	    continue;
-	  if (m_HeaderCells == null) {
-	    isHeader = true;
-	    // create header?
-	    if (m_Owner.getNoHeader()) {
+          // still in comments section?
+          if (comments) {
+            // we don't count comments
+            if (cells.get(0).trim().startsWith(m_Comment)) {
+              result.addComment(Utils.flatten(cells, "" + m_Separator).trim().substring(m_Comment.length()).trim());
+              continue;
+            }
+          }
+
+          // actual data
+          isHeader = false;
+          comments = false;
+          if ((cells.size() == 1) && (cells.get(0).trim().length() == 0))
+            continue;
+          if (m_HeaderCells == null) {
+            isHeader = true;
+            // create header?
+            if (m_Owner.getNoHeader()) {
               m_HeaderCells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
-	      row           = result.getHeaderRow();
-	      for (i = 0; i < m_HeaderCells.size(); i++)
-		row.addCell("" + i).setContentAsString(m_HeaderCells.get(i));
-	      row      = null;
-	      isHeader = false;
-	    }
-	    else {
-	      // custom header?
-	      if (m_Owner.getCustomColumnHeaders().trim().length() > 0)
+              row           = result.getHeaderRow();
+              for (i = 0; i < m_HeaderCells.size(); i++)
+                row.addCell("" + i).setContentAsString(m_HeaderCells.get(i));
+              row      = null;
+              isHeader = false;
+            }
+            else {
+              // custom header?
+              if (m_Owner.getCustomColumnHeaders().trim().length() > 0)
                 m_HeaderCells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
-	      else
-		m_HeaderCells = cells;
-	      row = result.getHeaderRow();
-	    }
+              else
+                m_HeaderCells = cells;
+              row = result.getHeaderRow();
+            }
 
-	    m_Owner.getTextColumns().setMax(m_HeaderCells.size());
-	    m_Owner.getDateTimeColumns().setMax(m_HeaderCells.size());
-	    m_Owner.getDateTimeMsecColumns().setMax(m_HeaderCells.size());
-	    m_Owner.getDateColumns().setMax(m_HeaderCells.size());
-	    m_Owner.getTimeColumns().setMax(m_HeaderCells.size());
+            m_Owner.getTextColumns().setMax(m_HeaderCells.size());
+            m_Owner.getDateTimeColumns().setMax(m_HeaderCells.size());
+            m_Owner.getDateTimeMsecColumns().setMax(m_HeaderCells.size());
+            m_Owner.getDateColumns().setMax(m_HeaderCells.size());
+            m_Owner.getTimeColumns().setMax(m_HeaderCells.size());
+            m_Owner.getTimeMsecColumns().setMax(m_HeaderCells.size());
 
-	    m_TextCols.addAll(m_Owner.getTextColumns().getIntIndices());
-	    m_DateTimeCols.addAll(m_Owner.getDateTimeColumns().getIntIndices());
-	    m_DateTimeMsecCols.addAll(m_Owner.getDateTimeMsecColumns().getIntIndices());
-	    m_DateCols.addAll(m_Owner.getDateColumns().getIntIndices());
-	    m_TimeCols.addAll(m_Owner.getTimeColumns().getIntIndices());
+            m_TextCols.addAll(m_Owner.getTextColumns().getIntIndices());
+            m_DateTimeCols.addAll(m_Owner.getDateTimeColumns().getIntIndices());
+            m_DateTimeMsecCols.addAll(m_Owner.getDateTimeMsecColumns().getIntIndices());
+            m_DateCols.addAll(m_Owner.getDateColumns().getIntIndices());
+            m_TimeCols.addAll(m_Owner.getTimeColumns().getIntIndices());
+            m_TimeMsecCols.addAll(m_Owner.getTimeMsecColumns().getIntIndices());
 
-	    m_HasTextCols         = (m_TextCols.size()     > 0);
-	    m_HasDateTimeCols     = (m_DateTimeCols.size() > 0);
-	    m_HasDateTimeMsecCols = (m_DateTimeMsecCols.size() > 0);
-	    m_HasDateCols         = (m_DateCols.size()     > 0);
-	    m_HasTimeCols         = (m_TimeCols.size()     > 0);
-	  }
+            m_HasTextCols         = (m_TextCols.size()     > 0);
+            m_HasDateTimeCols     = (m_DateTimeCols.size() > 0);
+            m_HasDateTimeMsecCols = (m_DateTimeMsecCols.size() > 0);
+            m_HasDateCols         = (m_DateCols.size()     > 0);
+            m_HasTimeCols         = (m_TimeCols.size()     > 0);
+            m_HasTimeMsecCols     = (m_TimeMsecCols.size() > 0);
+          }
 
-	  // window not yet reached?
-	  canAdd = true;
-	  if (!isHeader) {
-	    m_RowCount++;
-	    if (m_RowCount < m_FirstRow)
-	      canAdd = false;
-	  }
+          // window not yet reached?
+          canAdd = true;
+          if (!isHeader) {
+            m_RowCount++;
+            if (m_RowCount < m_FirstRow)
+              canAdd = false;
+          }
 
-	  if (canAdd) {
-	    if (row == null)
-	      row = result.addRow();
-	    for (i = 0; (i < m_HeaderCells.size()) && (i < cells.size()); i++) {
-	      if (!cells.get(i).equals(m_MissingValue)) {
-		if (isHeader) {
-		  row.addCell("" + i).setContentAsString(cells.get(i));
-		}
-		else {
-		  cell = row.addCell("" + i);
-		  if (cell != null) {
-		    autoSuccess = false;
-		    if ((m_AutoTypes != null) && (m_AutoTypes[i] != null)) {
-		      autoObj = cell.parseContent(cells.get(i), m_AutoTypes[i]);
-		      if (!autoObj.equals(SpreadSheet.MISSING_VALUE)) {
-			cell.setNative(autoObj);
-			autoSuccess = true;
-		      }
-		    }
-		    if (!autoSuccess) {
-		      if (m_HasTextCols && m_TextCols.contains(i))
-			cell.setContentAsString(cells.get(i));
-		      else if (m_HasDateTimeMsecCols && m_DateTimeMsecCols.contains(i) && m_DateTimeMsecFormat.check(cells.get(i)))
-			cell.setContent(new DateTimeMsec(m_DateTimeMsecFormat.parse(cells.get(i))));
-		      else if (m_HasDateTimeCols && m_DateTimeCols.contains(i) && m_DateTimeFormat.check(cells.get(i)))
-			cell.setContent(new DateTime(m_DateTimeFormat.parse(cells.get(i))));
-		      else if (m_HasDateCols && m_DateCols.contains(i) && m_DateFormat.check(cells.get(i)))
-			cell.setContent(m_DateFormat.parse(cells.get(i)));
-		      else if (m_HasTimeCols && m_TimeCols.contains(i) && m_TimeFormat.check(cells.get(i)))
-			cell.setContent(new Time(m_TimeFormat.parse(cells.get(i))));
-		      else
-			cell.setContent(cells.get(i));
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
+          if (canAdd) {
+            if (row == null)
+              row = result.addRow();
+            for (i = 0; (i < m_HeaderCells.size()) && (i < cells.size()); i++) {
+              if (!cells.get(i).equals(m_MissingValue)) {
+                if (isHeader) {
+                  row.addCell("" + i).setContentAsString(cells.get(i));
+                }
+                else {
+                  cell = row.addCell("" + i);
+                  if (cell != null) {
+                    autoSuccess = false;
+                    if ((m_AutoTypes != null) && (m_AutoTypes[i] != null)) {
+                      autoObj = cell.parseContent(cells.get(i), m_AutoTypes[i]);
+                      if (!autoObj.equals(SpreadSheet.MISSING_VALUE)) {
+                        cell.setNative(autoObj);
+                        autoSuccess = true;
+                      }
+                    }
+                    if (!autoSuccess) {
+                      if (m_HasTextCols && m_TextCols.contains(i))
+                        cell.setContentAsString(cells.get(i));
+                      else if (m_HasDateTimeMsecCols && m_DateTimeMsecCols.contains(i) && m_DateTimeMsecFormat.check(cells.get(i)))
+                        cell.setContent(new DateTimeMsec(m_DateTimeMsecFormat.parse(cells.get(i))));
+                      else if (m_HasDateTimeCols && m_DateTimeCols.contains(i) && m_DateTimeFormat.check(cells.get(i)))
+                        cell.setContent(new DateTime(m_DateTimeFormat.parse(cells.get(i))));
+                      else if (m_HasDateCols && m_DateCols.contains(i) && m_DateFormat.check(cells.get(i)))
+                        cell.setContent(m_DateFormat.parse(cells.get(i)));
+                      else if (m_HasTimeCols && m_TimeCols.contains(i) && m_TimeFormat.check(cells.get(i)))
+                        cell.setContent(new Time(m_TimeFormat.parse(cells.get(i))));
+                      else if (m_HasTimeMsecCols && m_TimeMsecCols.contains(i) && m_TimeMsecFormat.check(cells.get(i)))
+                        cell.setContent(new TimeMsec(m_TimeMsecFormat.parse(cells.get(i))));
+                      else
+                        cell.setContent(cells.get(i));
+                    }
+                  }
+                }
+              }
+            }
+          }
 
-	  // keep as reference
-	  if (m_Header == null)
-	    m_Header = result.getHeader();
+          // keep as reference
+          if (m_Header == null)
+            m_Header = result.getHeader();
 
-	  // automatically determining column type?
-	  if ((m_NumRowsAuto > 0) && (m_RowCount >= m_NumRowsAuto) && (m_AutoTypes == null)) {
-	    m_AutoTypes = new ContentType[result.getColumnCount()];
-	    for (i = 0; i < m_AutoTypes.length; i++) {
-	      types = new HashSet<>(result.getContentTypes(i));
-	      types.remove(ContentType.MISSING);
-	      if (types.size() == 1)
-		m_AutoTypes[i] = types.iterator().next();
-	    }
-	  }
+          // automatically determining column type?
+          if ((m_NumRowsAuto > 0) && (m_RowCount >= m_NumRowsAuto) && (m_AutoTypes == null)) {
+            m_AutoTypes = new ContentType[result.getColumnCount()];
+            for (i = 0; i < m_AutoTypes.length; i++) {
+              types = new HashSet<>(result.getContentTypes(i));
+              types.remove(ContentType.MISSING);
+              if (types.size() == 1)
+                m_AutoTypes[i] = types.iterator().next();
+            }
+          }
 
-	  // end of window reached?
-	  if (m_NumRows > -1) {
-	    if (m_RowCount >= m_FirstRow + m_NumRows - 1) {
-	      close();
-	      break;
-	    }
-	  }
+          // end of window reached?
+          if (m_NumRows > -1) {
+            if (m_RowCount >= m_FirstRow + m_NumRows - 1) {
+              close();
+              break;
+            }
+          }
 
-	  // chunk limit reached?
-	  if ((m_ChunkSize > 0) && (result.getRowCount() == m_ChunkSize))
-	    break;
-	}
+          // chunk limit reached?
+          if ((m_ChunkSize > 0) && (result.getRowCount() == m_ChunkSize))
+            break;
+        }
       }
       catch (Exception e) {
         result = null;
-	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-	m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+        m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
+        m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
       }
 
       return result;
     }
-    
+
     /**
      * Closes the reader.
      */
     protected void close() {
       try {
-	m_Reader.close();
-	m_Reader = null;
+        m_Reader.close();
+        m_Reader = null;
       }
       catch (Exception e) {
-	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-	m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+        m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
+        m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
       }
     }
 
@@ -742,6 +758,8 @@ public class CsvSpreadSheetReader
       m_DateCols            = new TIntHashSet();
       m_HasTimeCols         = false;
       m_TimeCols            = new TIntHashSet();
+      m_HasTimeMsecCols     = false;
+      m_TimeMsecCols        = new TIntHashSet();
       m_Trim                = m_Owner.getTrim();
       m_LastChar            = '\0';
       m_FirstRow            = m_Owner.getFirstRow();
@@ -762,6 +780,9 @@ public class CsvSpreadSheetReader
       m_TimeFormat = m_Owner.getTimeFormat().toDateFormat();
       m_TimeFormat.setLenient(m_Owner.isTimeLenient());
       m_TimeFormat.setTimeZone(m_Owner.getTimeZone());
+      m_TimeMsecFormat = m_Owner.getTimeMsecFormat().toDateFormat();
+      m_TimeMsecFormat.setLenient(m_Owner.isTimeMsecLenient());
+      m_TimeMsecFormat.setTimeZone(m_Owner.getTimeZone());
       m_NumberFormat = LocaleHelper.getSingleton().getNumberFormat(m_Owner.getLocale());
 
       return next();
@@ -807,7 +828,7 @@ public class CsvSpreadSheetReader
   /** whether date/time msec parsing is lenient. */
   protected boolean m_DateTimeMsecLenient;
 
-  /** the columns to treat as text. */
+  /** the columns to treat as time. */
   protected Range m_TimeColumns;
 
   /** the format string for the times. */
@@ -815,6 +836,15 @@ public class CsvSpreadSheetReader
 
   /** whether time parsing is lenient. */
   protected boolean m_TimeLenient;
+
+  /** the columns to treat as time/msec. */
+  protected Range m_TimeMsecColumns;
+
+  /** the format string for the times/msec. */
+  protected DateFormatString m_TimeMsecFormat;
+
+  /** whether time/msec parsing is lenient. */
+  protected boolean m_TimeMsecLenient;
 
   /** the timezone to use. */
   protected TimeZone m_TimeZone;
@@ -833,10 +863,10 @@ public class CsvSpreadSheetReader
 
   /** whether to trim the cells. */
   protected boolean m_Trim;
-  
+
   /** the first row to retrieve (1-based). */
   protected int m_FirstRow;
-  
+
   /** the number of rows to retrieve (less than 1 = unlimited). */
   protected int m_NumRows;
 
@@ -854,12 +884,12 @@ public class CsvSpreadSheetReader
   @Override
   public String globalInfo() {
     return
-	"Reads CSV files.\n"
-	+ "It is possible to force columns to be text. In that case no "
-	+ "intelligent parsing is attempted to determine the type of data a "
-	+ "cell has.\n"
-	+ "For very large files, one can turn on chunking, which returns "
-	+ "spreadsheet objects till all the data has been read.";
+      "Reads CSV files.\n"
+        + "It is possible to force columns to be text. In that case no "
+        + "intelligent parsing is attempted to determine the type of data a "
+        + "cell has.\n"
+        + "For very large files, one can turn on chunking, which returns "
+        + "spreadsheet objects till all the data has been read.";
   }
 
   /**
@@ -870,108 +900,120 @@ public class CsvSpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "encoding", "encoding",
-	    new BaseCharset());
+      "encoding", "encoding",
+      new BaseCharset());
 
     m_OptionManager.add(
-	    "comment", "comment",
-	    SpreadSheet.COMMENT);
+      "comment", "comment",
+      SpreadSheet.COMMENT);
 
     m_OptionManager.add(
       "quote-char", "quoteCharacter",
       "\"");
 
     m_OptionManager.add(
-	    "separator", "separator",
-	    ",");
+      "separator", "separator",
+      ",");
 
     m_OptionManager.add(
-	    "trim", "trim",
-	    false);
+      "trim", "trim",
+      false);
 
     m_OptionManager.add(
-	    "text-columns", "textColumns",
-	    new Range());
+      "text-columns", "textColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "date-columns", "dateColumns",
-	    new Range());
+      "date-columns", "dateColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "date-format", "dateFormat",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "date-format", "dateFormat",
+      new DateFormatString(Constants.DATE_FORMAT));
 
     m_OptionManager.add(
-	    "date-lenient", "dateLenient",
-	    false);
+      "date-lenient", "dateLenient",
+      false);
 
     m_OptionManager.add(
-	    "datetime-columns", "dateTimeColumns",
-	    new Range());
+      "datetime-columns", "dateTimeColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "datetime-format", "dateTimeFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+      "datetime-format", "dateTimeFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT));
 
     m_OptionManager.add(
-	    "datetime-lenient", "dateTimeLenient",
-	    false);
+      "datetime-lenient", "dateTimeLenient",
+      false);
 
     m_OptionManager.add(
-	    "datetimemsec-columns", "dateTimeMsecColumns",
-	    new Range());
+      "datetimemsec-columns", "dateTimeMsecColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "datetimemsec-format", "dateTimeMsecFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+      "datetimemsec-format", "dateTimeMsecFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
 
     m_OptionManager.add(
-	    "datetimemsec-lenient", "dateTimeMsecLenient",
-	    false);
+      "datetimemsec-lenient", "dateTimeMsecLenient",
+      false);
 
     m_OptionManager.add(
-	    "time-columns", "timeColumns",
-	    new Range());
+      "time-columns", "timeColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "time-format", "timeFormat",
-	    new DateFormatString(Constants.TIME_FORMAT));
+      "time-format", "timeFormat",
+      new DateFormatString(Constants.TIME_FORMAT));
 
     m_OptionManager.add(
-	    "time-lenient", "timeLenient",
-	    false);
+      "time-lenient", "timeLenient",
+      false);
 
     m_OptionManager.add(
-	    "time-zone", "timeZone",
-	    TimeZone.getDefault(), false);
+      "time-msec-columns", "timeMsecColumns",
+      new Range());
 
     m_OptionManager.add(
-	    "locale", "locale",
-	    LocaleHelper.getSingleton().getDefault());
+      "time-msec-format", "timeMsecFormat",
+      new DateFormatString(Constants.TIME_FORMAT_MSECS));
 
     m_OptionManager.add(
-	    "no-header", "noHeader",
-	    false);
+      "time-msec-lenient", "timeMsecLenient",
+      false);
 
     m_OptionManager.add(
-	    "custom-column-headers", "customColumnHeaders",
-	    "");
+      "time-zone", "timeZone",
+      TimeZone.getDefault(), false);
 
     m_OptionManager.add(
-	    "first-row", "firstRow",
-	    1, 1, null);
+      "locale", "locale",
+      LocaleHelper.getSingleton().getDefault());
 
     m_OptionManager.add(
-	    "num-rows", "numRows",
-	    -1, -1, null);
+      "no-header", "noHeader",
+      false);
 
     m_OptionManager.add(
-	    "num-rows-col-type-discovery", "numRowsColumnTypeDiscovery",
-	    0, 0, null);
+      "custom-column-headers", "customColumnHeaders",
+      "");
 
     m_OptionManager.add(
-	    "chunk-size", "chunkSize",
-	    -1, -1, null);
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
+
+    m_OptionManager.add(
+      "num-rows-col-type-discovery", "numRowsColumnTypeDiscovery",
+      0, 0, null);
+
+    m_OptionManager.add(
+      "chunk-size", "chunkSize",
+      -1, -1, null);
   }
 
   /**
@@ -1457,6 +1499,95 @@ public class CsvSpreadSheetReader
   }
 
   /**
+   * Sets the range of columns to treat as time.
+   *
+   * @param value	the range
+   */
+  public void setTimeMsecColumns(Range value) {
+    m_TimeMsecColumns = value;
+    reset();
+  }
+
+  /**
+   * Returns the range of columns to treat as time/msec.
+   *
+   * @return		the range
+   */
+  public Range getTimeMsecColumns() {
+    return m_TimeMsecColumns;
+  }
+
+  /**
+   * Returns the tip time for this property.
+   *
+   * @return 		tip time for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeMsecColumnsTipText() {
+    return "The range of columns to treat as time/msec.";
+  }
+
+  /**
+   * Sets the format for time/msec columns.
+   *
+   * @param value	the format
+   */
+  public void setTimeMsecFormat(DateFormatString value) {
+    m_TimeMsecFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for time/msec columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getTimeMsecFormat() {
+    return m_TimeMsecFormat;
+  }
+
+  /**
+   * Returns the tip time for this property.
+   *
+   * @return 		tip time for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeMsecFormatTipText() {
+    return "The format for times/msec.";
+  }
+
+  /**
+   * Sets whether parsing of times/msec is to be lenient or not.
+   *
+   * @param value	if true lenient parsing is used, otherwise not
+   * @see		SimpleDateFormat#setLenient(boolean)
+   */
+  public void setTimeMsecLenient(boolean value) {
+    m_TimeMsecLenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the parsing of times/msec is lenient or not.
+   *
+   * @return		true if parsing is lenient
+   * @see		SimpleDateFormat#isLenient()
+   */
+  public boolean isTimeMsecLenient() {
+    return m_TimeMsecLenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeMsecLenientTipText() {
+    return "Whether time/msec parsing is lenient or not.";
+  }
+
+  /**
    * Sets the time zone to use.
    *
    * @param value	the time zone
@@ -1736,8 +1867,8 @@ public class CsvSpreadSheetReader
   public String numRowsColumnTypeDiscoveryTipText() {
     return
       "The number of data rows to use for automatically determining the "
-	+ "column (= speed up for large files with consistent cell types); "
-	+ "use 0 to turn off feature.";
+        + "column (= speed up for large files with consistent cell types); "
+        + "use 0 to turn off feature.";
   }
 
   /**
@@ -1763,7 +1894,7 @@ public class CsvSpreadSheetReader
 
   /**
    * Returns, if available, the corresponding writer.
-   * 
+   *
    * @return		the writer, null if none available
    */
   public SpreadSheetWriter getCorrespondingWriter() {

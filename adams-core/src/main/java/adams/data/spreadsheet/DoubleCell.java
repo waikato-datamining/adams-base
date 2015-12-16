@@ -24,6 +24,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.DateUtils;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.parser.SpreadSheetFormula;
 
@@ -344,6 +345,23 @@ public class DoubleCell
   }
 
   /**
+   * Sets the content of the cell.
+   *
+   * @param value	the content; null is intepreted as missing value
+   * @return		the cell itself
+   */
+  public Cell setContent(TimeMsec value) {
+    if (value == null) {
+      setMissing();
+    }
+    else {
+      m_Content     = value.getTime();
+      m_ContentType = ContentType.TIMEMSEC;
+    }
+    return this;
+  }
+
+  /**
    * Checks whether the string represents a valid formula.
    *
    * @param s		the string to check
@@ -379,6 +397,17 @@ public class DoubleCell
    */
   protected boolean checkTime(String s) {
     return DateUtils.checkTime(s, getSpreadSheet().getTimeFormat());
+  }
+
+  /**
+   * Checks whether the string represents a time.
+   *
+   * @param s		the string to check
+   * @return		true if time
+   * @see		SpreadSheet#getTimeMsecFormat()
+   */
+  protected boolean checkTimeMsec(String s) {
+    return DateUtils.checkTimeMsec(s, getSpreadSheet().getTimeMsecFormat());
   }
 
   /**
@@ -446,8 +475,14 @@ public class DoubleCell
     if (checkBoolean(value)) {
       setContent(Boolean.parseBoolean(value));
     }
+    else if (checkDateTimeMsec(value)) {
+      setContent(new DateTimeMsec(getSpreadSheet().getDateTimeMsecFormat().parse(value)));
+    }
     else if (checkDateTime(value)) {
       setContent(new DateTime(getSpreadSheet().getDateTimeFormat().parse(value)));
+    }
+    else if (checkTimeMsec(value)) {
+      setContent(new TimeMsec(getSpreadSheet().getTimeMsecFormat().parse(value).getTime()));
     }
     else if (checkTime(value)) {
       setContent(new Time(getSpreadSheet().getTimeFormat().parse(value).getTime()));
@@ -544,6 +579,11 @@ public class DoubleCell
 	  return new Time(getSpreadSheet().getTimeFormat().parse(value));
 	else
 	  return SpreadSheet.MISSING_VALUE;
+      case TIMEMSEC:
+	if (checkTimeMsec(value))
+	  return new TimeMsec(getSpreadSheet().getTimeMsecFormat().parse(value));
+	else
+	  return SpreadSheet.MISSING_VALUE;
       case DATE:
 	if (checkDate(value))
 	  return getSpreadSheet().getDateFormat().parse(value);
@@ -551,7 +591,12 @@ public class DoubleCell
 	  return SpreadSheet.MISSING_VALUE;
       case DATETIME:
 	if (checkDateTime(value))
-	  return new DateTime(getSpreadSheet().getDateFormat().parse(value));
+	  return new DateTime(getSpreadSheet().getDateTimeFormat().parse(value));
+	else
+	  return SpreadSheet.MISSING_VALUE;
+      case DATETIMEMSEC:
+	if (checkDateTimeMsec(value))
+	  return new DateTimeMsec(getSpreadSheet().getDateTimeMsecFormat().parse(value));
 	else
 	  return SpreadSheet.MISSING_VALUE;
       default:
@@ -651,7 +696,9 @@ public class DoubleCell
       case MISSING:
 	return SpreadSheet.MISSING_VALUE;
       case TIME:
-	return getSpreadSheet().getTimeFormat().format(new Time((long) m_Content));
+	return getSpreadSheet().getTimeFormat().format(new Date((long) m_Content));
+      case TIMEMSEC:
+	return getSpreadSheet().getTimeMsecFormat().format(new Date((long) m_Content));
       case DATE:
 	return getSpreadSheet().getDateFormat().format(new Date((long) m_Content));
       case DATETIME:
@@ -711,6 +758,8 @@ public class DoubleCell
       setContent((DateTimeMsec) value);
     else if (value instanceof Time)
       setContent((Time) value);
+    else if (value instanceof TimeMsec)
+      setContent((TimeMsec) value);
     else if (value instanceof Date)
       setContent((Date) value);
     else if (value instanceof Boolean)
@@ -742,10 +791,14 @@ public class DoubleCell
 	return toBoolean();
       case TIME:
 	return toTime();
+      case TIMEMSEC:
+	return toTimeMsec();
       case DATE:
 	return toDate();
       case DATETIME:
 	return toDateTime();
+      case DATETIMEMSEC:
+	return toDateTimeMsec();
       case LONG:
 	return toLong();
       case DOUBLE:
@@ -821,6 +874,7 @@ public class DoubleCell
   public boolean isAnyDateType() {
     calculateIfRequired();
     return (m_ContentType == ContentType.TIME)
+      || (m_ContentType == ContentType.TIMEMSEC)
       || (m_ContentType == ContentType.DATE)
       || (m_ContentType == ContentType.DATETIME)
       || (m_ContentType == ContentType.DATETIMEMSEC);
@@ -834,6 +888,8 @@ public class DoubleCell
   public Date toAnyDateType() {
     if (isTime())
       return toTime();
+    else if (isTimeMsec())
+      return toTimeMsec();
     else if (isDate())
       return toDate();
     else if (isDateTime())
@@ -932,6 +988,29 @@ public class DoubleCell
     calculateIfRequired();
     if (m_ContentType == ContentType.TIME)
       return new Time((long) m_Content);
+    else
+      return null;
+  }
+
+  /**
+   * Checks whether the cell represents a time/msec value.
+   *
+   * @return		true if time/msec value
+   */
+  public boolean isTimeMsec() {
+    calculateIfRequired();
+    return (m_ContentType == ContentType.TIMEMSEC);
+  }
+
+  /**
+   * Returns the time/msec content, null if not a time/msec.
+   *
+   * @return		the time/msec, null if not time/msec
+   */
+  public TimeMsec toTimeMsec() {
+    calculateIfRequired();
+    if (m_ContentType == ContentType.TIMEMSEC)
+      return new TimeMsec((long) m_Content);
     else
       return null;
   }

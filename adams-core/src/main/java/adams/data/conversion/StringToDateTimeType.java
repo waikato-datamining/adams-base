@@ -26,10 +26,12 @@ import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.DateUtils;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
+import adams.core.base.BaseTimeMsec;
 import adams.data.DateFormatString;
 import jodd.datetime.JDateTime;
 
@@ -241,6 +243,8 @@ public class StringToDateTimeType
 	return DateTimeMsec.class;
       case TIME:
 	return Time.class;
+      case TIMEMSEC:
+	return TimeMsec.class;
       case BASEDATE:
 	return BaseDate.class;
       case BASEDATETIME:
@@ -249,6 +253,8 @@ public class StringToDateTimeType
 	return BaseDateTimeMsec.class;
       case BASETIME:
 	return BaseTime.class;
+      case BASETIMEMSEC:
+	return BaseTimeMsec.class;
       case JULIANDATE:
 	return Double.class;
       case SERIAL_DATETIME:
@@ -288,6 +294,9 @@ public class StringToDateTimeType
 	  case BASETIME:
 	    date = new BaseTime(input).dateValue();
 	    break;
+	  case BASETIMEMSEC:
+	    date = new BaseTimeMsec(input).dateValue();
+	    break;
 	  default:
 	    date = null;
 	}
@@ -312,6 +321,8 @@ public class StringToDateTimeType
 	  return new DateTimeMsec(date);
 	case TIME:
 	  return new Time(date);
+	case TIMEMSEC:
+	  return new TimeMsec(date);
 	case BASEDATE:
 	  return new BaseDate(date);
 	case BASEDATETIME:
@@ -320,6 +331,8 @@ public class StringToDateTimeType
 	  return new BaseDateTimeMsec(date);
 	case BASETIME:
 	  return new BaseTime(date);
+	case BASETIMEMSEC:
+	  return new BaseTimeMsec(date);
 	case JULIANDATE:
 	  return new JDateTime(date).getJulianDateDouble();
         case SERIAL_DATETIME:

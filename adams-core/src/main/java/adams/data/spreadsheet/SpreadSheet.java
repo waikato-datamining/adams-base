@@ -15,10 +15,24 @@
 
 /*
  * SpreadSheet.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
+
+import adams.core.ClassLocator;
+import adams.core.CloneHandler;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
+import adams.core.Mergeable;
+import adams.core.Utils;
+import adams.core.management.LocaleHelper;
+import adams.core.management.LocaleSupporter;
+import adams.data.SharedStringsTable;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.Cell.ContentType;
+import adams.env.Environment;
+import adams.event.SpreadSheetColumnInsertionEvent;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -35,20 +49,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import adams.core.ClassLocator;
-import adams.core.CloneHandler;
-import adams.core.DateFormat;
-import adams.core.DateUtils;
-import adams.core.Mergeable;
-import adams.core.Utils;
-import adams.core.management.LocaleHelper;
-import adams.core.management.LocaleSupporter;
-import adams.data.SharedStringsTable;
-import adams.data.io.output.CsvSpreadSheetWriter;
-import adams.data.spreadsheet.Cell.ContentType;
-import adams.env.Environment;
-import adams.event.SpreadSheetColumnInsertionEvent;
 
 /**
  * Represents a generic spreadsheet object.
@@ -96,6 +96,9 @@ public class SpreadSheet
   /** for formatting times. */
   protected DateFormat m_TimeFormat;
 
+  /** for formatting times with msec. */
+  protected DateFormat m_TimeMsecFormat;
+
   /** for number format. */
   protected NumberFormat m_NumberFormat;
   
@@ -129,6 +132,7 @@ public class SpreadSheet
     m_DateTimeFormat     = DateUtils.getTimestampFormatter();
     m_DateTimeMsecFormat = DateUtils.getTimestampFormatterMsecs();
     m_TimeFormat         = DateUtils.getTimeFormatter();
+    m_TimeMsecFormat     = DateUtils.getTimeFormatterMsecs();
     m_StringsTable       = new SharedStringsTable();
     m_DataRowClass       = DenseDataRow.class;
     m_Locale             = LocaleHelper.getSingleton().getDefault();
@@ -155,6 +159,8 @@ public class SpreadSheet
     setDateTimeMsecLenient(sheet.isDateTimeMsecLenient());
     m_TimeFormat.applyPattern(sheet.getTimeFormat().toPattern());
     setTimeLenient(sheet.isTimeLenient());
+    m_TimeMsecFormat.applyPattern(sheet.getTimeMsecFormat().toPattern());
+    setTimeMsecLenient(sheet.isTimeMsecLenient());
 
     addComment(sheet.getComments());
     getHeaderRow().assign(sheet.getHeaderRow());
@@ -230,6 +236,7 @@ public class SpreadSheet
     result.m_DateFormat.applyPattern(m_DateFormat.toPattern());
     result.m_DateTimeFormat.applyPattern(m_DateTimeFormat.toPattern());
     result.m_TimeFormat.applyPattern(m_TimeFormat.toPattern());
+    result.m_TimeMsecFormat.applyPattern(m_TimeMsecFormat.toPattern());
     result.m_RowKeys.addAll(m_RowKeys);
     for (i = 0; i < m_RowKeys.size(); i++) {
       row = m_Rows.get(m_RowKeys.get(i)).getClone(result);
@@ -258,6 +265,7 @@ public class SpreadSheet
     result.m_DateFormat.applyPattern(m_DateFormat.toPattern());
     result.m_DateTimeFormat.applyPattern(m_DateTimeFormat.toPattern());
     result.m_TimeFormat.applyPattern(m_TimeFormat.toPattern());
+    result.m_TimeMsecFormat.applyPattern(m_TimeMsecFormat.toPattern());
 
     return result;
   }
@@ -301,7 +309,17 @@ public class SpreadSheet
   public DateFormat getTimeFormat() {
     return m_TimeFormat;
   }
-  
+
+  /**
+   * Returns the time/msec formatter.
+   *
+   * @return		the formatter
+   * @see		DateUtils#getTimeFormatterMsecs()
+   */
+  public DateFormat getTimeMsecFormat() {
+    return m_TimeMsecFormat;
+  }
+
   /**
    * Returns the number formatter.
    * 
@@ -1420,7 +1438,6 @@ public class SpreadSheet
    * Sets whether parsing of times is to be lenient or not.
    *
    * @param value	if true lenient parsing is used, otherwise not
-   * @see		SimpleTimeFormat#setLenient(boolean)
    */
   public void setTimeLenient(boolean value) {
     m_TimeFormat.setLenient(value);
@@ -1430,10 +1447,27 @@ public class SpreadSheet
    * Returns whether the parsing of times is lenient or not.
    *
    * @return		true if parsing is lenient
-   * @see		SimpleTimeFormat#isLenient()
    */
   public boolean isTimeLenient() {
     return m_TimeFormat.isLenient();
+  }
+
+  /**
+   * Sets whether parsing of times/msec is to be lenient or not.
+   *
+   * @param value	if true lenient parsing is used, otherwise not
+   */
+  public void setTimeMsecLenient(boolean value) {
+    m_TimeMsecFormat.setLenient(value);
+  }
+
+  /**
+   * Returns whether the parsing of times/msec is lenient or not.
+   *
+   * @return		true if parsing is lenient
+   */
+  public boolean isTimeMsecLenient() {
+    return m_TimeMsecFormat.isLenient();
   }
 
   /**
@@ -1444,7 +1478,11 @@ public class SpreadSheet
    */
   public void setTimeZone(TimeZone value) {
     m_DateFormat.setTimeZone(value);
-    m_TimeFormat.setTimeZone(value);
+    m_DateTimeFormat.setTimeZone(value);
+    m_DateTimeMsecFormat.setTimeZone(value);
+    // the following must always be GMT!
+    m_TimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    m_TimeMsecFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
   }
 
   /**

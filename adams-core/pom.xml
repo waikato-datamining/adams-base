@@ -285,6 +285,7 @@
             <argument>${project.basedir}/src/main/resources/adams/parser/basedatetime</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/basedatetimemsec</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/basetime</argument>
+            <argument>${project.basedir}/src/main/resources/adams/parser/basetimemsec</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/booleanexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/mathematicalexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetformula</argument>

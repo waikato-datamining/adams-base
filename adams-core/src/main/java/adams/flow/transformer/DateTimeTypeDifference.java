@@ -24,10 +24,12 @@ import adams.core.DateTimeMsec;
 import adams.core.DateTimeType;
 import adams.core.QuickInfoHelper;
 import adams.core.Time;
+import adams.core.TimeMsec;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
+import adams.core.base.BaseTimeMsec;
 import adams.data.conversion.ConvertDateTimeType;
 import adams.flow.core.Token;
 
@@ -249,6 +251,8 @@ public class DateTimeTypeDifference
 	return new Class[]{DateTimeMsec[].class};
       case TIME:
 	return new Class[]{Time[].class};
+      case TIMEMSEC:
+	return new Class[]{TimeMsec[].class};
       case BASEDATE:
 	return new Class[]{BaseDate[].class};
       case BASEDATETIME:
@@ -257,6 +261,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDateTimeMsec[].class};
       case BASETIME:
 	return new Class[]{BaseTime[].class};
+      case BASETIMEMSEC:
+	return new Class[]{BaseTimeMsec[].class};
       case JULIANDATE:
 	return new Class[]{Double[].class};
       case SERIAL_DATETIME:
@@ -286,6 +292,8 @@ public class DateTimeTypeDifference
 	return new Class[]{DateTimeMsec.class};
       case TIME:
 	return new Class[]{Time.class};
+      case TIMEMSEC:
+	return new Class[]{TimeMsec.class};
       case BASEDATE:
 	return new Class[]{BaseDate.class};
       case BASEDATETIME:
@@ -294,6 +302,8 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseDateTimeMsec.class};
       case BASETIME:
 	return new Class[]{BaseTime.class};
+      case BASETIMEMSEC:
+	return new Class[]{BaseTimeMsec.class};
       case JULIANDATE:
 	return new Class[]{Double.class};
       case SERIAL_DATETIME:

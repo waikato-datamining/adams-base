@@ -19,8 +19,8 @@
  */
 package adams.parser;
 
-import adams.core.CleanUpHandler;
-import adams.core.Destroyable;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
@@ -28,6 +28,8 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.util.Date;
 
 /**
  * Ancestor for expression evaluator test cases.
@@ -113,11 +115,15 @@ public abstract class AbstractExpressionEvaluatorTestCase<D extends Object, E ex
     String[]	content;
     int		i;
     String	dataStr;
+    DateFormat	formatter;
 
     content = new String[data.length];
+    formatter = DateUtils.getTimestampFormatterMsecs();
     for (i = 0; i < data.length; i++) {
       if (data[i] instanceof Number)
 	dataStr = Utils.doubleToStringFixed(((Number) data[i]).doubleValue(), 8);
+      else if (data[i] instanceof Date)
+	dataStr = formatter.format((Date) data[i]);
       else
 	dataStr = "" + data[i];
       content[i] = expressions[i] + ": " + dataStr;
@@ -176,10 +182,7 @@ public abstract class AbstractExpressionEvaluatorTestCase<D extends Object, E ex
 
     // remove output, clean up scheme
     for (i = 0; i < output.length; i++) {
-      if (setups[i] instanceof Destroyable)
-	((Destroyable) setups[i]).destroy();
-      else if (setups[i] instanceof CleanUpHandler)
-	((CleanUpHandler) setups[i]).cleanUp();
+      setups[i].destroy();
       m_TestHelper.deleteFileFromTmp(output[i]);
     }
     cleanUpAfterRegression();

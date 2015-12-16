@@ -15,7 +15,7 @@
 
 /*
  * Cell.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -23,6 +23,7 @@ package adams.data.spreadsheet;
 import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.Time;
+import adams.core.TimeMsec;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -56,6 +57,8 @@ public interface Cell
     DATETIMEMSEC,
     /** time. */
     TIME,
+    /** time with msec. */
+    TIMEMSEC,
     /** object (needs custom handler, must implement Comparable). */
     OBJECT
   }
@@ -186,6 +189,14 @@ public interface Cell
    * @return		the cell itself
    */
   public Cell setContent(Time value);
+
+  /**
+   * Sets the content of the cell.
+   *
+   * @param value	the content; null is intepreted as missing value
+   * @return		the cell itself
+   */
+  public Cell setContent(TimeMsec value);
 
   /**
    * Attempts to determine the data type of the string.
@@ -388,6 +399,20 @@ public interface Cell
    * @return		the time, null if not time
    */
   public Time toTime();
+
+  /**
+   * Checks whether the cell represents a time/msec value.
+   *
+   * @return		true if time/msec value
+   */
+  public boolean isTimeMsec();
+
+  /**
+   * Returns the time/msec content, null if not a time/msec.
+   *
+   * @return		the time/msec, null if not time/msec
+   */
+  public TimeMsec toTimeMsec();
 
   /**
    * Returns the content of the cell.

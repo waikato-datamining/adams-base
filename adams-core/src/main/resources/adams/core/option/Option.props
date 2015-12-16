@@ -166,6 +166,11 @@ adams.core.base.BaseTime=true
 adams.core.base.BaseTime#toString=adams.gui.goe.BaseTimeEditor#toString
 adams.core.base.BaseTime#valueOf=adams.gui.goe.BaseTimeEditor#valueOf
 
+# BaseTimeMsec objects
+adams.core.base.BaseTimeMsec=true
+adams.core.base.BaseTimeMsec#toString=adams.gui.goe.BaseTimeMsecEditor#toString
+adams.core.base.BaseTimeMsec#valueOf=adams.gui.goe.BaseTimeMsecEditor#valueOf
+
 # BaseList objects
 adams.core.base.BaseList=true
 adams.core.base.BaseList#toString=adams.gui.goe.BaseObjectEditor#toString
