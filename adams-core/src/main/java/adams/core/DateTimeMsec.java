@@ -22,7 +22,7 @@ package adams.core;
 import java.util.Date;
 
 /**
- * A thin wrapper to distibguish between date/teim and date/time msec.
+ * A thin wrapper to distinguish between date/teim and date/time msec.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

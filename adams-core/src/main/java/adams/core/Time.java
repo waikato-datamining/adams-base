@@ -22,7 +22,7 @@ package adams.core;
 import java.util.Date;
 
 /**
- * A thin wrapper to distibguish between date and time.
+ * A thin wrapper to distinguish between date and time.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
