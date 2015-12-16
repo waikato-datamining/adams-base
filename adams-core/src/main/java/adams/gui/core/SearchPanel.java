@@ -15,23 +15,14 @@
 
 /*
  * SearchPanel.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.regex.Pattern;
+import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,9 +31,19 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A panel that displays a search box. With optional display of
@@ -98,15 +99,15 @@ public class SearchPanel
   /** the panel with the buttons and search box. */
   protected JPanel m_PanelWidgets;
 
-  /** the layout for the Widgets. */
-  protected GridLayout m_LayoutWidgets;
+  /** the widgets. */
+  protected List<Component> m_Widgets;
 
   /** the listeners for a search being initiated. */
   protected HashSet<SearchListener> m_SearchListeners;
 
   /** the minimum number of characters before triggering search events. */
   protected int m_MinimumChars;
-  
+
   /** the last search term. */
   protected String m_LastSearch;
 
@@ -168,6 +169,7 @@ public class SearchPanel
     m_SearchListeners = new HashSet<SearchListener>();
     m_MinimumChars    = 1;
     m_LastSearch      = "";
+    m_Widgets         = new ArrayList<>();
   }
 
   /**
@@ -183,6 +185,8 @@ public class SearchPanel
 
     super.initGUI();
 
+    setLayout(new BorderLayout());
+
     if (m_LayoutType == LayoutType.VERTICAL)
       size = 10;
     else
@@ -191,35 +195,35 @@ public class SearchPanel
     m_TextSearch = new JTextField(size);
     m_TextSearch.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-	if (m_ButtonSearch != null)
-	  m_ButtonSearch.setEnabled(isValidSearch());
-	if (!m_Incremental) {
-	  if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	    e.consume();
-	    performSearch();
-	  }
-	}
-	if (!e.isConsumed())
-	  super.keyPressed(e);
+        if (m_ButtonSearch != null)
+          m_ButtonSearch.setEnabled(isValidSearch());
+        if (!m_Incremental) {
+          if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            e.consume();
+            performSearch();
+          }
+        }
+        if (!e.isConsumed())
+          super.keyPressed(e);
       }
     });
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       public void removeUpdate(DocumentEvent e) {
-	search();
+        search();
       }
       public void insertUpdate(DocumentEvent e) {
-	search();
+        search();
       }
       public void changedUpdate(DocumentEvent e) {
-	search();
+        search();
       }
       protected void search() {
-	if (m_Incremental) {
-	  if (m_TextSearch.getText().length() >= m_MinimumChars)
-	    performSearch();
-	  else
-	    clearSearch();
-	}
+        if (m_Incremental) {
+          if (m_TextSearch.getText().length() >= m_MinimumChars)
+            performSearch();
+          else
+            clearSearch();
+        }
       }
     });
 
@@ -229,9 +233,9 @@ public class SearchPanel
       m_LabelPrefix = new JLabel(caption);
       m_LabelPrefix.setLabelFor(m_TextSearch);
       if (mnemonic != '\0')
-	m_LabelPrefix.setDisplayedMnemonic(mnemonic);
+        m_LabelPrefix.setDisplayedMnemonic(mnemonic);
       else
-	m_LabelPrefix.setDisplayedMnemonicIndex(-1);
+        m_LabelPrefix.setDisplayedMnemonicIndex(-1);
     }
 
     m_CheckboxRegExp = new JCheckBox("Use reg. Exp");
@@ -239,33 +243,17 @@ public class SearchPanel
     if (m_ButtonCaption != null) {
       m_ButtonSearch = new JButton();
       setButtonCaption(m_ButtonCaption);
-      m_ButtonSearch.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  performSearch();
-	}
-      });
+      m_ButtonSearch.addActionListener((ActionEvent e) -> performSearch());
     }
 
     m_PanelWidgets = new JPanel();
-    add(m_PanelWidgets, BorderLayout.NORTH);
-
-    if (m_LayoutType == LayoutType.HORIZONTAL) {
-      m_LayoutWidgets = null;
-      m_PanelWidgets.setLayout(new FlowLayout(FlowLayout.LEFT));
-    }
-    else if (m_LayoutType == LayoutType.VERTICAL) {
-      m_LayoutWidgets = new GridLayout(0, 1, 0, 2);
-      m_PanelWidgets.setLayout(m_LayoutWidgets);
-    }
-    else {
-      throw new IllegalStateException("Unhandled layout type '" + m_LayoutType + "'!");
-    }
+    add(m_PanelWidgets, BorderLayout.CENTER);
 
     if (hasPrefix())
-	addToWidgetsPanel(m_LabelPrefix);
+      addToWidgetsPanel(m_LabelPrefix);
     addToWidgetsPanel(m_TextSearch);
     if (isRegularExpressionEnabled())
-	addToWidgetsPanel(m_CheckboxRegExp);
+      addToWidgetsPanel(m_CheckboxRegExp);
     if (m_ButtonSearch != null)
       addToWidgetsPanel(m_ButtonSearch);
   }
@@ -439,7 +427,8 @@ public class SearchPanel
    * Removes all components from the panel holding the Widgets.
    */
   public void clearWidgetsPanel() {
-    m_PanelWidgets.removeAll();
+    m_Widgets.clear();
+    updateWidgets();
   }
 
   /**
@@ -451,12 +440,11 @@ public class SearchPanel
    */
   public void addToWidgetsPanel(Component comp, int index) {
     removeFromWidgetsPanel(comp);
-    if (m_LayoutWidgets != null)
-      m_LayoutWidgets.setRows(m_LayoutWidgets.getRows() + 1);
-    if (index != -1)
-      m_PanelWidgets.add(comp, index);
+    if (index == -1)
+      m_Widgets.add(comp);
     else
-      m_PanelWidgets.add(comp);
+      m_Widgets.add(index, comp);
+    updateWidgets();
   }
 
   /**
@@ -474,9 +462,50 @@ public class SearchPanel
    * @param comp	the component to remove
    */
   public void removeFromWidgetsPanel(Component comp) {
-    if (m_LayoutWidgets != null)
-      m_LayoutWidgets.setRows(m_LayoutWidgets.getRows() - 1);
-    m_PanelWidgets.remove(comp);
+    m_Widgets.remove(comp);
+    updateWidgets();
+  }
+
+  /**
+   * Lays out the widgets according to the layout.
+   */
+  protected void updateWidgets() {
+    GridBagLayout	layout;
+    GridBagConstraints	c;
+    int			i;
+
+    m_PanelWidgets.removeAll();
+    layout = new GridBagLayout();
+    m_PanelWidgets.setLayout(layout);
+
+    for (i = 0; i < m_Widgets.size(); i++) {
+      c = new GridBagConstraints();
+      switch (m_LayoutType) {
+	case HORIZONTAL:
+	  c.gridx = i;
+	  c.gridy = 0;
+	  if (m_Widgets.get(i) == m_TextSearch) {
+	    c.fill = GridBagConstraints.BOTH;
+	    c.weightx = 1.0;
+	    c.weighty = 1.0;
+	  }
+	  if (i > 0)
+	    c.insets = new Insets(0, 5, 0, 0);
+	  break;
+	case VERTICAL:
+	  c.gridx = 0;
+	  c.gridy = i;
+	  c.fill  = GridBagConstraints.HORIZONTAL;
+	  c.weightx = 1.0;
+	  if (i > 0)
+	    c.insets = new Insets(5, 0, 0, 0);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled layout type: " + m_LayoutType);
+      }
+      layout.setConstraints(m_Widgets.get(i), c);
+      m_PanelWidgets.add(m_Widgets.get(i));
+    }
   }
 
   /**
@@ -518,8 +547,8 @@ public class SearchPanel
       return;
     m_LastSearch = getSearchText();
     notifySearchListeners(
-	new SearchEvent(
-	    SearchPanel.this, getSearchText(), isRegularExpression()));
+      new SearchEvent(
+        SearchPanel.this, getSearchText(), isRegularExpression()));
   }
 
   /**
@@ -529,8 +558,8 @@ public class SearchPanel
     if (m_LastSearch.length() > 0) {
       m_LastSearch = "";
       notifySearchListeners(
-	  new SearchEvent(
-	      SearchPanel.this, "", isRegularExpression()));
+        new SearchEvent(
+          SearchPanel.this, "", isRegularExpression()));
     }
   }
 
@@ -548,11 +577,11 @@ public class SearchPanel
     }
     else {
       try {
-	Pattern.compile(getSearchText());
-	return true;
+        Pattern.compile(getSearchText());
+        return true;
       }
       catch (Exception e) {
-	return false;
+        return false;
       }
     }
   }
