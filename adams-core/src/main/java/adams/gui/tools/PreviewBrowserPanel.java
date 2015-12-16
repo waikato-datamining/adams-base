@@ -255,7 +255,6 @@ public class PreviewBrowserPanel
   @Override
   protected void initGUI() {
     Properties		props;
-    JPanel		panel;
 
     super.initGUI();
 
@@ -294,6 +293,12 @@ public class PreviewBrowserPanel
     m_ListLocalFiles.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
+	displayLocalFile();
+      }
+    });
+    m_ListLocalFiles.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
         if (MouseUtils.isRightClick(e)) {
 	  e.consume();
 	  JPopupMenu menu = getLocalFilesPopupMenu(e);
@@ -308,9 +313,7 @@ public class PreviewBrowserPanel
 
     m_SearchLocalFiles = new SearchPanel(LayoutType.VERTICAL, false);
     m_SearchLocalFiles.addSearchListener((SearchEvent e) -> m_ListLocalFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(m_SearchLocalFiles);
-    m_PanelLocalFiles.add(panel, BorderLayout.SOUTH);
+    m_PanelLocalFiles.add(m_SearchLocalFiles, BorderLayout.SOUTH);
 
     m_PanelArchiveFiles = new BasePanel(new BorderLayout());
     m_PanelBrowsing.add(m_PanelArchiveFiles);
@@ -324,13 +327,17 @@ public class PreviewBrowserPanel
         return;
       displayArchiveContent();
     });
+    m_ListArchiveFiles.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	displayArchiveContent();
+      }
+    });
     m_PanelArchiveFiles.add(new BaseScrollPane(m_ListArchiveFiles), BorderLayout.CENTER);
 
     m_SearchArchiveFiles = new SearchPanel(LayoutType.VERTICAL, false);
     m_SearchArchiveFiles.addSearchListener((SearchEvent e) -> m_ListArchiveFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(m_SearchArchiveFiles);
-    m_PanelArchiveFiles.add(panel, BorderLayout.SOUTH);
+    m_PanelArchiveFiles.add(m_SearchArchiveFiles, BorderLayout.SOUTH);
 
     m_PanelArchiveHandlers = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelArchiveHandlers.setVisible(false);
