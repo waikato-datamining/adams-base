@@ -221,6 +221,8 @@ public class GUIHelper {
 
   /**
    * Adds the path of the images directory to the name of the image.
+   * Automatically tests for .gif and .png if the name does not have an
+   * extension.
    *
    * @param name	the name of the image to add the path to
    * @return		the full path of the image
@@ -232,6 +234,15 @@ public class GUIHelper {
     URL		url;
 
     result = null;
+
+    // no extension?
+    if (!(name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".png"))) {
+      result = getImageFilename(name + ".gif");
+      if (result == null)
+	result = getImageFilename(name + ".png");
+      if (result != null)
+	return result;
+    }
 
     dirs = getString("ImagesDirectory", "adams/gui/images/").split(",");
     for (i = 0; i < dirs.length; i++) {
