@@ -31,6 +31,7 @@ import adams.env.Environment;
 import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -234,6 +235,9 @@ public class PreviewBrowserPanel
   /** for generating the title of the dialog/frame. */
   protected TitleGenerator m_TitleGenerator;
 
+  /** the file chooser for opening files. */
+  protected BaseFileChooser m_FileChooser;
+
   /**
    * Initializes the members.
    */
@@ -247,6 +251,7 @@ public class PreviewBrowserPanel
     m_CurrentFiles                = null;
     m_RecentFilesHandler          = null;
     m_TitleGenerator              = new TitleGenerator("Preview browser", false);
+    m_FileChooser                 = new BaseFileChooser(getProperties().getPath("InitialDir", "%h"));
   }
 
   /**
@@ -889,7 +894,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(GUIHelper.getIcon("open_dir.gif"));
       menuitem.addActionListener((ActionEvent e) -> m_PanelDir.choose());
 
       // File/Recent files
@@ -906,6 +911,14 @@ public class PreviewBrowserPanel
 	}
       });
       m_MenuFileLoadRecent = submenu;
+
+      // File/Open file...
+      menuitem = new JMenuItem("Open file...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('f');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
+      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.addActionListener((ActionEvent e) -> openFile());
 
       // File/Reload
       menuitem = new JMenuItem("Reload");
@@ -1016,6 +1029,19 @@ public class PreviewBrowserPanel
       m_PanelDir.setCurrent(dir);
       m_PanelDir.fireCurrentValueChanged();
     });
+  }
+
+  /**
+   * Lets the user select a file to preview.
+   */
+  public void openFile() {
+    int		retVal;
+
+    retVal = m_FileChooser.showOpenDialog(this);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    open(m_FileChooser.getSelectedPlaceholderFile());
   }
 
   /**
