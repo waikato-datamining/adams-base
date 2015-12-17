@@ -14,142 +14,195 @@
 Default=adams.flow.transformer.PassThrough
 
 adams-core.CallableActors=\
-  IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.CallableActors
+  IF PARENT IS adams.flow.control.Flow AND ISFIRST \
+  THEN adams.flow.standalone.CallableActors
 
 adams-core.SequenceSource=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.SequenceSource
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.source.SequenceSource
 
 adams-core.DisplayCallable=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.sink.Display
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.sink.Display
 
 adams-core.SequencePlotterCallable=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.sink.SequencePlotter
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-core.SimplePlotCallable=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.sink.SimplePlot
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.sink.SimplePlot
 
 adams-core.Standalones=\
-  IF PARENT IS adams.flow.standalone.Standalones THEN adams.flow.standalone.CallableActors
+  IF PARENT IS adams.flow.standalone.Standalones \
+  THEN adams.flow.standalone.CallableActors
 
 adams-core.TabViewSequencePlotter=\
-  IF PARENT IS adams.flow.standalone.TabView THEN adams.flow.sink.SequencePlotter
+  IF PARENT IS adams.flow.standalone.TabView \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-core.TabViewSimplePlot=\
-  IF PARENT IS adams.flow.standalone.TabView THEN adams.flow.sink.SimplePlot
+  IF PARENT IS adams.flow.standalone.TabView \
+  THEN adams.flow.sink.SimplePlot
 
 adams-core.GridViewSequencePlotter=\
-  IF PARENT IS adams.flow.standalone.GridView THEN adams.flow.sink.SequencePlotter
+  IF PARENT IS adams.flow.standalone.GridView \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-core.GridViewSimplePlot=\
-  IF PARENT IS adams.flow.standalone.GridView THEN adams.flow.sink.SimplePlot
+  IF PARENT IS adams.flow.standalone.GridView \
+  THEN adams.flow.sink.SimplePlot
 
 adams-core.Start1=\
-  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.Start
+  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.Start
 
 adams-core.Start2=\
-  IF PARENT ALLOWS SOURCE AND ISFIRST THEN adams.flow.source.Start
+  IF PARENT ALLOWS SOURCE AND ISFIRST \
+  THEN adams.flow.source.Start
 
 adams-core.FileSupplier1=\
-  IF PARENT ALLOWS SOURCE AND ISFIRST THEN adams.flow.source.FileSupplier
+  IF PARENT ALLOWS SOURCE AND ISFIRST \
+  THEN adams.flow.source.FileSupplier
 
 adams-core.FileSupplier2=\
-  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.FileSupplier
+  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.FileSupplier
 
 adams-core.SelectFile1=\
-  IF PARENT ALLOWS SOURCE AND ISFIRST THEN adams.flow.source.SelectFile
+  IF PARENT ALLOWS SOURCE AND ISFIRST \
+  THEN adams.flow.source.SelectFile
 
 adams-core.SelectFile2=\
-  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.SelectFile
+  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.SelectFile
 
 adams-core.FileSystemSearch1=\
-  IF PARENT ALLOWS SOURCE AND ISFIRST THEN adams.flow.source.FileSystemSearch
+  IF PARENT ALLOWS SOURCE AND ISFIRST \
+  THEN adams.flow.source.FileSystemSearch
 
 adams-core.FileSystemSearch2=\
-  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.FileSystemSearch
+  IF PARENT ALLOWS SOURCE AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.FileSystemSearch
 
 adams-core.StorageValue1=\
-  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND ISFIRST THEN adams.flow.source.StorageValue
+  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND ISFIRST \
+  THEN adams.flow.source.StorageValue
 
 adams-core.StorageValue2=\
-  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.StorageValue
+  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) \
+  AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.StorageValue
 
 adams-core.Variable1=\
-  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND ISFIRST THEN adams.flow.source.Variable
+  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND ISFIRST \
+  THEN adams.flow.source.Variable
 
 adams-core.Variable2=\
-  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) AND AFTER STANDALONE AND NOT BEFORE STANDALONE THEN adams.flow.source.Variable
+  IF PARENT ALLOWS SOURCE AND NOT (PARENT IS adams.flow.control.Flow) \
+  AND AFTER STANDALONE AND NOT BEFORE STANDALONE \
+  THEN adams.flow.source.Variable
 
 adams-core.Sequence=\
-  IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Sequence
+  IF PARENT IS adams.flow.control.Branch \
+  THEN adams.flow.control.Sequence
 
 adams-core.Trigger3=\
-  IF PARENT IS adams.flow.control.Branch THEN adams.flow.control.Trigger
+  IF PARENT IS adams.flow.control.Branch \
+  THEN adams.flow.control.Trigger
 
 adams-core.Tee1=\
-  IF AFTER SOURCE THEN adams.flow.control.Tee
+  IF AFTER SOURCE \
+  THEN adams.flow.control.Tee
 
 adams-core.Tee2=\
-  IF AFTER TRANSFORMER THEN adams.flow.control.Tee
+  IF AFTER TRANSFORMER \
+  THEN adams.flow.control.Tee
 
 adams-core.Trigger1=\
-  IF AFTER SOURCE THEN adams.flow.control.Trigger
+  IF AFTER SOURCE \
+  THEN adams.flow.control.Trigger
 
 adams-core.Trigger2=\
-  IF AFTER TRANSFORMER THEN adams.flow.control.Trigger
+  IF AFTER TRANSFORMER \
+  THEN adams.flow.control.Trigger
 
 adams-core.Branch=\
-  IF AFTER TRANSFORMER AND ISLAST THEN adams.flow.control.Branch
+  IF AFTER TRANSFORMER AND ISLAST \
+  THEN adams.flow.control.Branch
 
 adams-core.SequencePlotter1=\
-  IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SequencePlotter
+  IF PRECEDING GENERATES adams.flow.container.SequencePlotterContainer \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-core.SimplePlot1=\
-  IF AFTER adams.flow.transformer.MakePlotContainer THEN adams.flow.sink.SimplePlot
+  IF PRECEDING GENERATES adams.flow.container.SequencePlotterContainer \
+  THEN adams.flow.sink.SimplePlot
 
 adams-core.Display1=\
-  IF AFTER adams.flow.source.Exec THEN adams.flow.sink.Display
+  IF AFTER adams.flow.source.Exec \
+  THEN adams.flow.sink.Display
 
 adams-core.Display2=\
-  IF PARENT IS adams.flow.control.Tee THEN adams.flow.sink.Display
+  IF PARENT IS adams.flow.control.Tee \
+  THEN adams.flow.sink.Display
 
 adams-core.Display3=\
-  IF PARENT IS adams.flow.control.Count THEN adams.flow.sink.Display
+  IF PARENT IS adams.flow.control.Count \
+  THEN adams.flow.sink.Display
+
+adams-core.Display4=\
+  IF PRECEDING GENERATES java.lang.String \
+  THEN adams.flow.sink.Display
 
 adams-core.Console1=\
-  IF PARENT IS adams.flow.control.Tee THEN adams.flow.sink.Console
+  IF PARENT IS adams.flow.control.Tee \
+  THEN adams.flow.sink.Console
 
 adams-core.Console2=\
-  IF PARENT IS adams.flow.control.Count THEN adams.flow.sink.Console
+  IF PARENT IS adams.flow.control.Count \
+  THEN adams.flow.sink.Console
 
 adams-core.IfThenElse=\
-  IF AFTER adams.flow.source.EnterValue THEN adams.flow.control.IfThenElse
+  IF AFTER adams.flow.source.EnterValue \
+  THEN adams.flow.control.IfThenElse
 
 adams-core.Switch=\
-  IF AFTER adams.flow.source.EnterValue THEN adams.flow.control.Switch
+  IF AFTER adams.flow.source.EnterValue \
+  THEN adams.flow.control.Switch
 
 adams-core.SetVariable1=\
-  IF AFTER adams.flow.core.DataInfoActor THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.core.DataInfoActor \
+  THEN adams.flow.transformer.SetVariable
 
 adams-core.SetVariable2=\
-  IF AFTER adams.flow.source.ForLoop THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.source.ForLoop \
+  THEN adams.flow.transformer.SetVariable
 
 adams-core.SetVariable3=\
-  IF AFTER adams.flow.source.SelectDirectory THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.source.SelectDirectory \
+  THEN adams.flow.transformer.SetVariable
 
 adams-core.SetVariable4=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.SetVariable
 
 adams-core.SetVariable5=\
-  IF AFTER adams.flow.transformer.ArrayLength THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.transformer.ArrayLength \
+  THEN adams.flow.transformer.SetVariable
 
 adams-core.SetVariable6=\
-  IF PARENT ALLOWS STANDALONE AND ISFIRST THEN adams.flow.standalone.SetVariable
+  IF PARENT ALLOWS STANDALONE AND ISFIRST \
+  THEN adams.flow.standalone.SetVariable
 
 adams-core.SetVariable7=\
-  IF PARENT ALLOWS STANDALONE AND BEFORE STANDALONE THEN adams.flow.standalone.SetVariable
+  IF PARENT ALLOWS STANDALONE AND BEFORE STANDALONE \
+  THEN adams.flow.standalone.SetVariable
 
 adams-core.SetVariable8=\
-  IF PARENT ALLOWS STANDALONE AND AFTER STANDALONE THEN adams.flow.standalone.SetVariable
+  IF PARENT ALLOWS STANDALONE AND AFTER STANDALONE \
+  THEN adams.flow.standalone.SetVariable
 
 adams-core.SetVariable9=\
-  IF PARENT ALLOWS STANDALONE AND BEFORE SOURCE THEN adams.flow.standalone.SetVariable
+  IF PARENT ALLOWS STANDALONE AND BEFORE SOURCE \
+  THEN adams.flow.standalone.SetVariable

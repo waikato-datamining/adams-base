@@ -12,32 +12,42 @@
 # Version: $Revision$
 
 adams-net.SendEmail1=\
-  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.SendEmail
+  IF AFTER adams.flow.transformer.CreateEmail \
+  THEN adams.flow.sink.SendEmail
 
 adams-net.SendEmail2=\
-  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.SendEmail
+  IF AFTER adams.flow.transformer.EmailFileReader \
+  THEN adams.flow.sink.SendEmail
 
 adams-net.EmailViewer1=\
-  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.EmailViewer
+  IF AFTER adams.flow.transformer.CreateEmail \
+  THEN adams.flow.sink.EmailViewer
 
 adams-net.EmailViewer2=\
-  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.EmailViewer
+  IF AFTER adams.flow.transformer.EmailFileReader \
+  THEN adams.flow.sink.EmailViewer
 
 adams-net.EmailFileWriter1=\
-  IF AFTER adams.flow.transformer.CreateEmail THEN adams.flow.sink.EmailFileWriter
+  IF AFTER adams.flow.transformer.CreateEmail \
+  THEN adams.flow.sink.EmailFileWriter
 
 adams-net.EmailFileWriter2=\
-  IF AFTER adams.flow.transformer.EmailFileReader THEN adams.flow.sink.EmailFileWriter
+  IF AFTER adams.flow.transformer.EmailFileReader \
+  THEN adams.flow.sink.EmailFileWriter
 
 adams-net.EmailFileReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.EmailFileReader
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.EmailFileReader
 
 adams-net.EmailFileReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.EmailFileReader
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.EmailFileReader
 
 adams-net.CreateEmail1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.CreateEmail
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.CreateEmail
 
 adams-net.CreateEmail2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.CreateEmail
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.CreateEmail
   

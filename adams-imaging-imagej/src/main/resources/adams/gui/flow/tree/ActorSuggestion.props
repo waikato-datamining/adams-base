@@ -14,34 +14,45 @@
 # read file
 
 adams-imaging-imagej.ImageJReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageJReader
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.ImageJReader
 
 adams-imaging-imagej.ImageJReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageJReader
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.ImageJReader
 
 adams-imaging-imagej.ImageJReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageJReader
+  IF AFTER adams.flow.source.DirectoryLister \
+  THEN adams.flow.transformer.ImageJReader
 
 adams-imaging-imagej.ImageJReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageJReader
+  IF AFTER adams.flow.source.FileSystemSearch \
+  THEN adams.flow.transformer.ImageJReader
 
 adams-imaging-imagej.ImageJTransformer1=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJTransformer
+  IF AFTER adams.flow.transformer.ImageJReader \
+  THEN adams.flow.transformer.ImageJTransformer
 
 adams-imaging-imagej.ImageJTransformer2=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJTransformer
+  IF AFTER adams.flow.transformer.ImageJTransformer \
+  THEN adams.flow.transformer.ImageJTransformer
 
 adams-imaging-imagej.ImageJFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.transformer.ImageJFeatureGenerator
+  IF AFTER adams.flow.transformer.ImageJReader \
+  THEN adams.flow.transformer.ImageJFeatureGenerator
   
 adams-imaging-imagej.ImageJFeatureGenerator2=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.transformer.ImageJFeatureGenerator
+  IF AFTER adams.flow.transformer.ImageJTransformer \
+  THEN adams.flow.transformer.ImageJFeatureGenerator
 
 adams-imaging-imagej.Convert=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
+  IF AFTER adams.flow.transformer.ImageJTransformer \
+  THEN "adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage"
 
 adams-imaging-imagej.ImageViewer3=\
-  IF AFTER adams.flow.transformer.ImageJTransformer THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.ImageJTransformer \
+  THEN adams.flow.sink.ImageViewer
   
 adams-imaging-imagej.ImageViewer4=\
-  IF AFTER adams.flow.transformer.ImageJReader THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.ImageJReader \
+  THEN adams.flow.sink.ImageViewer

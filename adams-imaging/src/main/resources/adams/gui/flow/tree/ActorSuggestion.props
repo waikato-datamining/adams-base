@@ -13,53 +13,69 @@
 
 # read file
 adams-imaging.ImageReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageReader
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.ImageReader
 
 adams-imaging.ImageReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageReader
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.ImageReader
 
 adams-imaging.ImageReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageReader
+  IF AFTER adams.flow.source.DirectoryLister \
+  THEN adams.flow.transformer.ImageReader
 
 adams-imaging.ImageReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageReader
+  IF AFTER adams.flow.source.FileSystemSearch \
+  THEN adams.flow.transformer.ImageReader
 
 adams-imaging.ImageMagickOperation1=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.ImageMagickOperation
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.ImageMagickOperation
 
 adams-imaging.ImageMagickOperation2=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.ImageMagickOperation
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.ImageMagickOperation
 
 adams-imaging.ImageMagickOperation3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.ImageMagickOperation
+  IF AFTER adams.flow.source.DirectoryLister \
+  THEN adams.flow.transformer.ImageMagickOperation
 
 adams-imaging.ImageMagickOperation4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.ImageMagickOperation
+  IF AFTER adams.flow.source.FileSystemSearch \
+  THEN adams.flow.transformer.ImageMagickOperation
 
 # transformers
 adams-imaging.BufferedImageTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageTransformer
+  IF AFTER adams.flow.transformer.ImageReader \
+  THEN adams.flow.transformer.BufferedImageTransformer
 
 adams-imaging.BufferedImageTransformer2=\
-  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageTransformer
+  IF AFTER adams.flow.transformer.BufferedImageTransformer \
+  THEN adams.flow.transformer.BufferedImageTransformer
 
 adams-imaging.ImageMagickTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.ImageMagickTransformer
+  IF AFTER adams.flow.transformer.ImageReader \
+  THEN adams.flow.transformer.ImageMagickTransformer
 
 adams-imaging.ImageMagickTransformer2=\
-  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.transformer.ImageMagickTransformer
+  IF AFTER adams.flow.transformer.ImageMagickTransformer \
+  THEN adams.flow.transformer.ImageMagickTransformer
 
 # features
 adams-imaging.BufferedImageFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BufferedImageFeatureGenerator
+  IF AFTER adams.flow.transformer.ImageReader \
+  THEN adams.flow.transformer.BufferedImageFeatureGenerator
   
 adams-imaging.BufferedImageFeatureGenerator2=\
-  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.transformer.BufferedImageFeatureGenerator
+  IF AFTER adams.flow.transformer.BufferedImageTransformer \
+  THEN adams.flow.transformer.BufferedImageFeatureGenerator
 
 # viewer
 adams-imaging.ImageViewer1=\
-  IF AFTER adams.flow.transformer.BufferedImageTransformer THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.BufferedImageTransformer \
+  THEN adams.flow.sink.ImageViewer
 
 adams-imaging.ImageViewer5=\
-  IF AFTER adams.flow.transformer.ImageMagickTransformer THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.ImageMagickTransformer \
+  THEN adams.flow.sink.ImageViewer
   

@@ -50,6 +50,8 @@ import java.util.ArrayList;
  *                | PARENT IS &lt;classname|interface&gt;<br>
  *                | PARENT ALLOWS STANDALONE<br>
  *                | PARENT ALLOWS SOURCE<br>
+ *                | PRECEDING GENERATES &lt;classname|interface&gt;<br>
+ *                | FOLLOWING ACCEPTS &lt;classname|interface&gt;<br>
  *                | BEFORE STANDALONE<br>
  *                | AFTER STANDALONE<br>
  *                | BEFORE SOURCE<br>
@@ -157,6 +159,8 @@ public class ActorSuggestion
       + "               | PARENT IS <classname|interface>\n"
       + "               | PARENT ALLOWS STANDALONE\n"
       + "               | PARENT ALLOWS SOURCE\n"
+      + "               | PRECEDING GENERATES <classname|interface>\n"
+      + "               | FOLLOWING ACCEPTS <classname|interface>\n"
       + "               | BEFORE STANDALONE\n"
       + "               | AFTER STANDALONE\n"
       + "               | BEFORE SOURCE\n"

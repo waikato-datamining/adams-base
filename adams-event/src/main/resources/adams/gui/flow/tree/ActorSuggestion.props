@@ -12,14 +12,18 @@
 # Version: $Revision$
 
 adams-event.Cron=\
-  IF PARENT IS adams.flow.standalone.Events THEN adams.flow.standalone.Cron
+  IF PARENT IS adams.flow.standalone.Events \
+  THEN adams.flow.standalone.Cron
 
 adams-event.Events=\
-  IF PARENT IS adams.flow.control.Flow AND ISFIRST THEN adams.flow.standalone.Events
+  IF PARENT IS adams.flow.control.Flow AND ISFIRST \
+  THEN adams.flow.standalone.Events
   
 adams-event.ExternalStandalone1=\
-  IF PARENT IS adams.flow.standalone.Events THEN adams.flow.standalone.ExternalStandalone
+  IF PARENT IS adams.flow.standalone.Events \
+  THEN adams.flow.standalone.ExternalStandalone
   
 adams-event.ExternalStandalone2=\
-  IF PARENT IS adams.flow.standalone.Events THEN adams.flow.control.Flow
+  IF PARENT IS adams.flow.standalone.Events \
+  THEN adams.flow.control.Flow
   

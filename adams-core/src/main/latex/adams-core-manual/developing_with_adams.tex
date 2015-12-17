@@ -901,6 +901,70 @@ that you have to perform is to set the correct module name, specified under the
 information about your module, which gets displayed automatically in the
 \textit{About} dialog in the GUI.
 
+\section{Extending Actor suggestions}
+The flow editor comes with some predefined rules for suggesting actors based
+on the context that you are trying to add an actor using the context sensitive
+popup menu. These rules cover common sequences in actors, but are by no means
+exhaustive. Therefore, you can always amend these, whether it be due to adding
+a new actor or simply by using certain sequences of actors that are not yet
+covered by the rules. The properties file that houses these rules is
+\textit{ActorSuggestion.props} (package \textit{adams.gui.flow.tree}).
+Below is the grammar for the rules:
+{\small \begin{verbatim}
+expr_list ::= expr_list expr_part | expr_part ;
+expr_part ::= boolexpr : <classname | classname+options>;
+boolexpr ::=    ( boolean )
+              | boolean
+              | boolexpr AND boolexpr
+              | boolexpr OR boolexpr
+              | TRUE
+              | FALSE
+              | NOT boolexpr
+              | ISFIRST
+              | ISLAST
+              | PARENT IS <classname|interface>
+              | PARENT ALLOWS STANDALONE
+              | PARENT ALLOWS SOURCE
+              | PRECEDING GENERATES <classname|interface>
+              | FOLLOWING ACCEPTS <classname|interface>
+              | BEFORE STANDALONE
+              | AFTER STANDALONE
+              | BEFORE SOURCE
+              | AFTER SOURCE
+              | BEFORE TRANSFORMER
+              | AFTER TRANSFORMER
+              | BEFORE SINK
+              | AFTER SINK
+              | BEFORE <classname|interface>
+              | AFTER <classname|interface>
+\end{verbatim}}
+
+\noindent And here are some examples:
+\begin{tight_itemize}
+  \item Adding \textit{CallableActors} below the \textit{Flow} actor if it would
+  be the first actor:
+  {\small \begin{verbatim}
+adams-core.CallableActors=\
+  IF PARENT IS adams.flow.control.Flow AND ISFIRST \
+  THEN adams.flow.standalone.CallableActors
+  \end{verbatim}}
+
+  \item Suggesting \textit{Switch} after the \textit{EnterValue} actor:
+  {\small \begin{verbatim}
+adams-core.Switch=\
+  IF AFTER adams.flow.source.EnterValue \
+  THEN adams.flow.control.Switch
+  \end{verbatim}}
+
+  \item The \textit{SimplePlot} after any actor that generates plot containers:
+  {\small \begin{verbatim}
+adams-core.SimplePlot1=\
+  IF PRECEDING GENERATES adams.flow.container.SequencePlotterContainer \
+  THEN adams.flow.sink.SimplePlot
+  \end{verbatim}}
+
+\end{tight_itemize}
+
 \section{Main menu}
 \label{mainmenu}
 The main menu of ADAMS can use a pre-defined menu structure, as defined in the

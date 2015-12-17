@@ -12,25 +12,33 @@
 # Version: $Revision$
 
 adams-moa.MOAClassifierSetup=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.MOAClassifierSetup
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.source.MOAClassifierSetup
 
 adams-moa.MOAStream1=\
-  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST THEN adams.flow.source.MOAStream
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND ISFIRST \
+  THEN adams.flow.source.MOAStream
 
 adams-moa.MOAStream2=\
-  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND AFTER STANDALONE THEN adams.flow.source.MOAStream
+  IF (PARENT IS adams.flow.control.Flow OR PARENT IS adams.flow.control.Trigger) AND AFTER STANDALONE \
+  THEN adams.flow.source.MOAStream
 
 adams-moa.MOAClassifierEvaluation=\
-  IF AFTER adams.flow.source.MOAStream THEN adams.flow.transformer.MOAClassifierEvaluation
+  IF AFTER adams.flow.source.MOAStream \
+  THEN adams.flow.transformer.MOAClassifierEvaluation
 
 adams-moa.MOAMeasurementsFilter1=\
-  IF AFTER adams.flow.transformer.MOAClassifierEvaluation THEN adams.flow.transformer.MOAMeasurementsFilter
+  IF AFTER adams.flow.transformer.MOAClassifierEvaluation \
+  THEN adams.flow.transformer.MOAMeasurementsFilter
 
 adams-moa.MOAMeasurementsFilter2=\
-  IF AFTER adams.flow.transformer.MOAClustererEvaluation THEN adams.flow.transformer.MOAMeasurementsFilter
+  IF AFTER adams.flow.transformer.MOAClustererEvaluation \
+  THEN adams.flow.transformer.MOAMeasurementsFilter
 
 adams-moa.MOALearningEvaluation=\
-  IF AFTER adams.flow.transformer.MOAMeasurementsFilter THEN adams.flow.transformer.MOALearningEvaluation
+  IF AFTER adams.flow.transformer.MOAMeasurementsFilter \
+  THEN adams.flow.transformer.MOALearningEvaluation
 
 adams-moa.Display1=\
-  IF AFTER adams.flow.transformer.MOALearningEvaluation THEN adams.flow.sink.Display
+  IF AFTER adams.flow.transformer.MOALearningEvaluation \
+  THEN adams.flow.sink.Display

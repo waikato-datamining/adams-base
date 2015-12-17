@@ -12,16 +12,21 @@
 # Version: $Revision$
 
 adams-imaging-boofcv.BoofCVTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVTransformer
+  IF AFTER adams.flow.transformer.ImageReader \
+  THEN adams.flow.transformer.BoofCVTransformer
 
 adams-imaging-boofcv.BoofCVTransformer2=\
-  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVTransformer
+  IF AFTER adams.flow.transformer.BoofCVTransformer \
+  THEN adams.flow.transformer.BoofCVTransformer
 
 adams-imaging-boofcv.BoofCVFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageReader THEN adams.flow.transformer.BoofCVFeatureGenerator
+  IF AFTER adams.flow.transformer.ImageReader \
+  THEN adams.flow.transformer.BoofCVFeatureGenerator
 
 adams-imaging.BoofCVFeatureGenerator2=\
-  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.transformer.BoofCVFeatureGenerator
+  IF AFTER adams.flow.transformer.BoofCVTransformer \
+  THEN adams.flow.transformer.BoofCVFeatureGenerator
 
 adams-imaging-boofcv.ImageViewer=\
-  IF AFTER adams.flow.transformer.BoofCVTransformer THEN adams.flow.sink.ImageViewer
+  IF AFTER adams.flow.transformer.BoofCVTransformer \
+  THEN adams.flow.sink.ImageViewer

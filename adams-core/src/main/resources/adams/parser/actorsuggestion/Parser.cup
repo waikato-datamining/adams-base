@@ -36,6 +36,9 @@ import adams.core.ClassLocator;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorHandler;
+import adams.flow.core.Compatibility;
+import adams.flow.core.InputConsumer;
+import adams.flow.core.OutputProducer;
 
 import java_cup.runtime.*;
 
@@ -284,11 +287,69 @@ parser code {:
 
     return result;
   }
+
+  /**
+   * Checks whether the preceding actor generates the specified class.
+   *
+   * @param classname the class that the preceding actor must generate
+   * @return true if the preceding actor generates the specified class
+   */
+  public Boolean precedingGenerates(String classname) {
+    Class           cls;
+    Compatibility   comp;
+
+    if (m_Position == 0)
+      return false;
+
+    try {
+      cls = Class.forName(classname);
+    }
+    catch (Exception e) {
+      System.err.println("ActorSuggestion (preceding generates): Failed to instantiate class '" + classname + "'!");
+      e.printStackTrace();
+      return false;
+    }
+
+    if (!(m_Actors[m_Position - 1] instanceof OutputProducer))
+      return false;
+
+    comp = new Compatibility();
+    return (comp.isCompatible(((OutputProducer) m_Actors[m_Position - 1]).generates(), new Class[]{cls}));
+  }
+
+  /**
+   * Checks whether the following actor accepts the specified class.
+   *
+   * @param classname the class that the following actor must accept
+   * @return true if the following actor accepts the specified class
+   */
+  public Boolean followingAccepts(String classname) {
+    Class           cls;
+    Compatibility   comp;
+
+    if (m_Position >= m_Actors.length - 1)
+      return false;
+
+    try {
+      cls = Class.forName(classname);
+    }
+    catch (Exception e) {
+      System.err.println("ActorSuggestion (following accepts): Failed to instantiate class '" + classname + "'!");
+      e.printStackTrace();
+      return false;
+    }
+
+    if (!(m_Actors[m_Position + 1] instanceof InputConsumer))
+      return false;
+
+    comp = new Compatibility();
+    return (comp.isCompatible(new Class[]{cls}, ((InputConsumer) m_Actors[m_Position + 1]).accepts()));
+  }
 :}
 
 terminal String CLASSNAME;
-terminal String PARENT;
-terminal Boolean ISFIRST, ISLAST, ALLOWS;
+terminal String PARENT, PRECEDING, FOLLOWING;
+terminal Boolean ISFIRST, ISLAST, ALLOWS, GENERATES, ACCEPTS;
 terminal Boolean STANDALONE, SOURCE, TRANSFORMER, SINK;
 terminal Boolean BOOLEAN, TRUE, FALSE;
 
@@ -341,6 +402,10 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainStandalones(); :}
               | PARENT ALLOWS SOURCE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainSource(); :}
+              | PRECEDING GENERATES CLASSNAME:c
+                {: RESULT = parser.precedingGenerates(c); :}
+              | FOLLOWING ACCEPTS CLASSNAME:c
+                {: RESULT = parser.followingAccepts(c); :}
               | BEFORE STANDALONE
                 {: RESULT = parser.isStandalone(true); :}
               | AFTER STANDALONE

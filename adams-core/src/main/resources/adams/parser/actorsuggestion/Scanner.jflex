@@ -64,6 +64,8 @@ import java.util.*;
   "BEFORE"      { return sf.newSymbol("Before",      sym.BEFORE); }
   "AFTER"       { return sf.newSymbol("After",       sym.AFTER); }
   "PARENT"      { return sf.newSymbol("Parent" ,     sym.PARENT); }
+  "PRECEDING"   { return sf.newSymbol("Preceding" ,  sym.PRECEDING); }
+  "FOLLOWING"   { return sf.newSymbol("Following" ,  sym.FOLLOWING); }
   "ISFIRST"     { return sf.newSymbol("First",       sym.ISFIRST); }
   "ISLAST"      { return sf.newSymbol("First",       sym.ISLAST); }
   "ALLOWS"      { return sf.newSymbol("Allows",      sym.ALLOWS); }
@@ -72,6 +74,8 @@ import java.util.*;
   "TRANSFORMER" { return sf.newSymbol("Transformer", sym.TRANSFORMER); }
   "SINK"        { return sf.newSymbol("Sink",        sym.SINK); }
   "IS"          { return sf.newSymbol("Is",          sym.IS); }
+  "GENERATES"   { return sf.newSymbol("Generates",   sym.GENERATES); }
+  "ACCEPTS"     { return sf.newSymbol("Accepts",     sym.ACCEPTS); }
   "NOT"         { return sf.newSymbol("Not",         sym.NOT); }
   "IF"          { return sf.newSymbol("If",          sym.IF); }
   "THEN"        { return sf.newSymbol("Then",        sym.THEN); }

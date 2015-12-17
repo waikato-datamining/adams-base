@@ -12,22 +12,41 @@
 # Version: $Revision$
 
 adams-spreadsheet.SpreadSheetFileReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.SpreadSheetFileReader
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.SpreadSheetFileReader
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.SpreadSheetFileReader
+  IF AFTER adams.flow.source.DirectoryLister \
+  THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.SpreadSheetFileReader
+  IF AFTER adams.flow.source.FileSystemSearch \
+  THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SequencePlotter1=\
-  IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator THEN adams.flow.sink.SequencePlotter
+  IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-spreadsheet.SimplePlot1=\
-  IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator THEN adams.flow.sink.SimplePlot
+  IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator \
+  THEN adams.flow.sink.SimplePlot
 
 adams-spreadsheet.SetVariable1=\
-  IF AFTER adams.flow.transformer.SpreadSheetGetCell THEN adams.flow.transformer.SetVariable
+  IF AFTER adams.flow.transformer.SpreadSheetGetCell \
+  THEN adams.flow.transformer.SetVariable
+
+adams-spreadsheet.SpreadSheetQuery1=\
+  IF PRECEDING GENERATES adams.data.spreadsheet.SpreadSheet \
+  THEN adams.flow.transformer.SpreadSheetQuery
+
+adams-spreadsheet.SpreadSheetRowFilter1=\
+  IF PRECEDING GENERATES adams.data.spreadsheet.SpreadSheet \
+  THEN adams.flow.transformer.SpreadSheetRowFilter
+
+adams-spreadsheet.SpreadSheetColumnFilter1=\
+  IF PRECEDING GENERATES adams.data.spreadsheet.SpreadSheet \
+  THEN adams.flow.transformer.SpreadSheetColumnFilter

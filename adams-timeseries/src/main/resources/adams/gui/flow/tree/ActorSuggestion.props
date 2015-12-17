@@ -12,59 +12,78 @@
 # Version: $Revision$
 
 adams-timeseries.WekaForecasterSetup=\
-  IF PARENT IS adams.flow.standalone.CallableActors THEN adams.flow.source.WekaForecasterSetup
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.source.WekaForecasterSetup
 
 adams-timeseries.WekaTrainForecaster=\
-  IF AFTER adams.flow.transformer.WekaFileReader THEN adams.flow.transformer.WekaTrainForecaster
+  IF AFTER adams.flow.transformer.WekaFileReader \
+  THEN adams.flow.transformer.WekaTrainForecaster
 
 adams-timeseries.WekaPrimeForecaster=\
-  IF AFTER adams.flow.transformer.WekaFileReader THEN adams.flow.transformer.WekaPrimeForecaster
+  IF AFTER adams.flow.transformer.WekaFileReader \
+  THEN adams.flow.transformer.WekaPrimeForecaster
 
 adams-timeseries.WekaModelWriter1=\
-  IF AFTER adams.flow.transformer.WekaTrainForecaster THEN adams.flow.sink.WekaModelWriter
+  IF AFTER adams.flow.transformer.WekaTrainForecaster \
+  THEN adams.flow.sink.WekaModelWriter
 
 adams-timeseries.WekaModelWriter2=\
-  IF AFTER adams.flow.transformer.WekaPrimeForecaster THEN adams.flow.sink.WekaModelWriter
+  IF AFTER adams.flow.transformer.WekaPrimeForecaster \
+  THEN adams.flow.sink.WekaModelWriter
 
 adams-timeseries.MakeForecastPlotContainer=\
-  IF AFTER adams.flow.transformer.WekaForecasting THEN adams.flow.transformer.MakeForecastPlotContainer
+  IF AFTER adams.flow.transformer.WekaForecasting \
+  THEN adams.flow.transformer.MakeForecastPlotContainer
 
 adams-timeseries.SequencePlotter=\
-  IF AFTER adams.flow.transformer.MakeForecastPlotContainer THEN adams.flow.sink.SequencePlotter
+  IF AFTER adams.flow.transformer.MakeForecastPlotContainer \
+  THEN adams.flow.sink.SequencePlotter
 
 adams-timeseries.SimplePlot=\
-  IF AFTER adams.flow.transformer.MakeForecastPlotContainer THEN adams.flow.sink.SimplePlot
+  IF AFTER adams.flow.transformer.MakeForecastPlotContainer \
+  THEN adams.flow.sink.SimplePlot
 
 adams-timeseries.TimeseriesDbReader1=\
-  IF AFTER adams.flow.source.SQLIdSupplier THEN adams.flow.transformer.TimeseriesDbReader
+  IF AFTER adams.flow.source.SQLIdSupplier \
+  THEN adams.flow.transformer.TimeseriesDbReader
 
 adams-timeseries.TimeseriesReportDbUpdater1=\
-  IF AFTER adams.flow.transformer.TimeseriesDbReader THEN adams.flow.transformer.TimeseriesReportDbUpdater
+  IF AFTER adams.flow.transformer.TimeseriesDbReader \
+  THEN adams.flow.transformer.TimeseriesReportDbUpdater
 
 adams-timeseries.TimeseriesReportDbUpdater2=\
-  IF AFTER adams.flow.source.TimeseriesDbReader THEN adams.flow.transformer.TimeseriesReportDbUpdater
+  IF AFTER adams.flow.source.TimeseriesDbReader \
+  THEN adams.flow.transformer.TimeseriesReportDbUpdater
 
 adams-timeseries.TimeseriesFileReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.TimeseriesFileReader
+  IF AFTER adams.flow.source.FileSupplier \
+  THEN adams.flow.transformer.TimeseriesFileReader
 
 adams-timeseries.TimeseriesFileReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.TimeseriesFileReader
+  IF AFTER adams.flow.source.SelectFile \
+  THEN adams.flow.transformer.TimeseriesFileReader
 
 adams-timeseries.TimeseriesDisplay1=\
-  IF AFTER adams.flow.transformer.SpreadSheetToTimeseries THEN adams.flow.sink.TimeseriesDisplay
+  IF AFTER adams.flow.transformer.SpreadSheetToTimeseries \
+  THEN adams.flow.sink.TimeseriesDisplay
 
 adams-timeseries.TimeseriesDisplay2=\
-  IF AFTER adams.flow.transformer.TimeseriesFileReader THEN adams.flow.sink.TimeseriesDisplay
+  IF AFTER adams.flow.transformer.TimeseriesFileReader \
+  THEN adams.flow.sink.TimeseriesDisplay
 
 adams-timeseries.TimeseriesDisplay3=\
-  IF AFTER adams.flow.transformer.TimeseriesFilter THEN adams.flow.sink.TimeseriesDisplay
+  IF AFTER adams.flow.transformer.TimeseriesFilter \
+  THEN adams.flow.sink.TimeseriesDisplay
 
 adams-timeseries.TimeseriesDisplay4=\
-  IF AFTER adams.flow.source.TimeseriesDbReader THEN adams.flow.sink.TimeseriesDisplay
+  IF AFTER adams.flow.source.TimeseriesDbReader \
+  THEN adams.flow.sink.TimeseriesDisplay
 
 adams-timeseries.TimeseriesFilter1=\
-  IF AFTER adams.flow.transformer.TimeseriesFileReader THEN adams.flow.transformer.TimeseriesFilter
+  IF AFTER adams.flow.transformer.TimeseriesFileReader \
+  THEN adams.flow.transformer.TimeseriesFilter
 
 adams-timeseries.TimeseriesFilter2=\
-  IF AFTER adams.flow.source.TimeseriesDbReader THEN adams.flow.transformer.TimeseriesFilter
+  IF AFTER adams.flow.source.TimeseriesDbReader \
+  THEN adams.flow.transformer.TimeseriesFilter
   
