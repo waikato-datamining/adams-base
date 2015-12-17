@@ -15,27 +15,36 @@
 
 /**
  * CreateCallableActor.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
+import adams.core.ClassLister;
+import adams.flow.core.CallableActorHandler;
+import adams.gui.action.AbstractPropertiesAction;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * For turning an actor into a callable one.
- *
+ * Menu for turning actors into callable actors, using the specified
+ * callable actor handler.
+ * 
  * @author fracpete
  * @version $Revision$
  */
 public class CreateCallableActor
-  extends AbstractTreePopupMenuItemAction {
+  extends AbstractTreePopupSubMenuAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
-
+  
   /**
    * Returns the caption of this action.
-   *
+   * 
    * @return		the caption, null if not applicable
    */
   @Override
@@ -44,20 +53,48 @@ public class CreateCallableActor
   }
 
   /**
-   * Updates the action using the current state information.
+   * Returns the sub menu actions.
+   * 
+   * @return		the submenu items
    */
   @Override
-  protected void doUpdate() {
-    setEnabled(m_State.editable && m_State.isSingleSel && (m_State.tree.getOwner() != null));
-  }
+  protected AbstractPropertiesAction[] getSubMenuActions() {
+    List<AbstractPropertiesAction> 	result;
+    String[]				clsnames;
+    AbstractPropertiesAction		action;
+    ImageIcon				icon;
 
-  /**
-   * The action to execute.
-   *
-   * @param e                the event
-   */
-  @Override
-  protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().createCallableActor(m_State.selPath);
+    result   = new ArrayList<>();
+    clsnames = ClassLister.getSingleton().getClassnames(CallableActorHandler.class);
+    for (String clsname: clsnames) {
+      try {
+	final Class cls = Class.forName(clsname);
+	action = new AbstractTreePopupMenuItemAction() {
+	  private static final long serialVersionUID = -8553715825229272758L;
+	  @Override
+	  protected String getTitle() {
+	    return cls.getSimpleName();
+	  }
+	  @Override
+	  protected void doUpdate() {
+	    setEnabled(m_State.editable && m_State.isSingleSel && (m_State.tree.getOwner() != null));
+	  }
+	  @Override
+	  protected void doActionPerformed(ActionEvent e) {
+	    m_State.tree.getOperations().createCallableActor(m_State.selPath, cls);
+	  }
+	};
+	icon = GUIHelper.getIcon(clsname);
+	if (icon != null)
+	  action.setIcon(icon);
+	result.add(action);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to instantiate callable actor handler: " + clsname);
+	e.printStackTrace();
+      }
+    }
+
+    return result.toArray(new AbstractPropertiesAction[result.size()]);
   }
 }

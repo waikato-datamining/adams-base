@@ -19,6 +19,7 @@
  */
 package adams.gui.goe;
 
+import adams.core.ClassLocator;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
@@ -272,48 +273,70 @@ public class FlowHelper {
     else
       parent = getEditedParent(cont);
 
-    return findCallableActorsHandler(current, parent);
+    return findCallableActorsHandler(parent);
   }
 
   /**
    * Locates all nodes representing {@link CallableActorHandler} actors.
    *
-   * @param current	the node to start the search from
    * @param parent	the parent node
    * @return		the nodes with {@link CallableActorHandler} found
    */
-  public static List<Node> findCallableActorsHandler(Node current, Node parent) {
-    return findCallableActorsHandler(current, parent, true, null);
+  public static List<Node> findCallableActorsHandler(Node parent) {
+    return findCallableActorsHandler(parent, true, null);
   }
 
   /**
    * Locates all nodes representing {@link CallableActorHandler} actors.
    *
-   * @param current	the node to start the search from
    * @param parent	the parent node
    * @param restrict	the classes to restrict the results to
    * @return		the nodes with {@link CallableActorHandler} found
    */
-  public static List<Node> findCallableActorsHandler(Node current, Node parent, Class[] restrict) {
-    return findCallableActorsHandler(current, parent, true, new HashSet<Class>(Arrays.asList(restrict)));
+  public static List<Node> findCallableActorsHandler(Node parent, Class[] restrict) {
+    return findCallableActorsHandler(parent, true, new HashSet<Class>(Arrays.asList(restrict)));
+  }
+
+  /**
+   * Checks whether the actor is listed in the restricted classes (specific
+   * class or superclass/interface).
+   *
+   * @param actor	the class to check
+   * @param restrict	the restrictions if any
+   * @return		true if restricted
+   */
+  protected static boolean isRestricted(Class actor, HashSet<Class> restrict) {
+    boolean	result;
+
+    result = restrict.contains(actor);
+
+    if (!result) {
+      for (Class cls: restrict) {
+	result = ClassLocator.isSubclass(cls, actor) || ClassLocator.hasInterface(cls, actor);
+	if (result)
+	  break;
+      }
+    }
+
+    return result;
   }
 
   /**
    * Locates all nodes representing {@link CallableActorHandler} actors.
    *
-   * @param current	the node to start the search from
    * @param parent	the parent node
    * @param up		whether to go up in the actor tree
    * @param restrict	the classes to restrict the results to, null if no restrictions
    * @return		the nodes with {@link CallableActorHandler} found
    */
-  protected static List<Node> findCallableActorsHandler(Node current, Node parent, boolean up, HashSet<Class> restrict) {
+  protected static List<Node> findCallableActorsHandler(Node parent, boolean up, HashSet<Class> restrict) {
     List<Node>	result;
     ActorHandler	handler;
     AbstractActor	actor;
     AbstractActor	subactor;
     int			i;
     int			n;
+    Node		current;
 
     result = new ArrayList<Node>();
 
@@ -331,14 +354,14 @@ public class FlowHelper {
 
 	    if (ActorUtils.isStandalone(actor)) {
 	      if (!actor.getSkip() && (actor instanceof CallableActorHandler)) {
-		if ((restrict == null) || ((restrict != null) && (restrict.contains(actor.getClass()))))
+		if ((restrict == null) || isRestricted(actor.getClass(), restrict))
 		  result.add(current);
 	      }
 	      else if (actor instanceof Standalones) {
 		for (n = 0; n < current.getChildCount(); n++) {
 		  subactor = ((Node) current.getChildAt(n)).getActor();
 		  if (!subactor.getSkip() && (subactor instanceof CallableActorHandler)) {
-		    if ((restrict == null) || ((restrict != null) && (restrict.contains(subactor.getClass()))))
+		    if ((restrict == null) || isRestricted(subactor.getClass(), restrict))
 		      result.add((Node) current.getChildAt(n));
 		  }
 		}
@@ -347,7 +370,7 @@ public class FlowHelper {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++)
-		  result.addAll(findCallableActorsHandler(current, (Node) current.getChildAt(n), false, restrict));
+		  result.addAll(findCallableActorsHandler((Node) current.getChildAt(n), false, restrict));
 	      }
 	    }
 	    else {

@@ -269,6 +269,14 @@ adams.flow.core.ControlActor=\
   adams.flow.transformer,\
   adams.flow.sink
 
+# the callable actor handlers
+adams.flow.core.CallableActorHandler=\
+  adams.flow.control,\
+  adams.flow.standalone,\
+  adams.flow.source,\
+  adams.flow.transformer,\
+  adams.flow.sink
+
 # the plot processor algorithms
 adams.flow.control.plotprocessor.AbstractPlotProcessor=\
   adams.flow.control.plotprocessor

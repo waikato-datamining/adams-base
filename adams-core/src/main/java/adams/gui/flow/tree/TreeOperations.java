@@ -53,10 +53,9 @@ import adams.flow.sink.DisplayPanelProvider;
 import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
 import adams.flow.source.ExternalSource;
+import adams.flow.standalone.AbstractMultiView;
 import adams.flow.standalone.CallableActors;
 import adams.flow.standalone.ExternalStandalone;
-import adams.flow.standalone.GridView;
-import adams.flow.standalone.TabView;
 import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
 import adams.gui.core.BaseDialog;
@@ -985,18 +984,20 @@ public class TreeOperations
   }
 
   /**
-   * Turns the selected actor into a callable actor.
+   * Turns the selected actor into a callable actor using the specified
+   * enclosing handler type.
    *
    * @param path	the (path to the) actor to turn into callable actor
+   * @param handler	the callable actors handler
    */
-  public void createCallableActor(TreePath path) {
+  public void createCallableActor(TreePath path, Class handler) {
     AbstractActor		currActor;
     Node 			currNode;
     Node			callableNode;
     Node			root;
     List<Node>			callable;
     List<Node>			multiview;
-    CallableActors 		callableActors;
+    CallableActorHandler 	callableActors;
     final Node			moved;
     AbstractCallableActor 	replacement;
     List<TreePath>		exp;
@@ -1025,27 +1026,38 @@ public class TreeOperations
 
     getOwner().addUndoPoint("Creating callable actor from '" + currNode.getActor().getFullName());
 
-    callable  = FlowHelper.findCallableActorsHandler(currNode, (Node) currNode.getParent(), new Class[]{CallableActors.class});
-    multiview = FlowHelper.findCallableActorsHandler(currNode, (Node) currNode.getParent(), new Class[]{GridView.class, TabView.class});  // TODO: superclass?
+    callable  = FlowHelper.findCallableActorsHandler((Node) currNode.getParent(), new Class[]{handler});
+    multiview = FlowHelper.findCallableActorsHandler((Node) currNode.getParent(), new Class[]{AbstractMultiView.class});
 
-    // no CallableActors available?
+    // no handler instance available?
     if (callable.size() == 0) {
       root = (Node) currNode.getRoot();
       if (!((ActorHandler) root.getActor()).getActorHandlerInfo().canContainStandalones()) {
-        GUIHelper.showErrorMessage(
-          getOwner(),
-          "Root actor '" + root.getActor().getName() + "' cannot contain standalones!");
-        return;
+	GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Root actor '" + root.getActor().getName() + "' cannot contain standalones!");
+	return;
       }
-      callableActors = new CallableActors();
-      callableNode   = new Node(getOwner(), callableActors);
-      index          = 0;
-      // TODO: more generic approach?
-      if (multiview.size() > 0) {
-        for (Node node: multiview) {
-          if (node.getParent().getIndex(node) >= index)
-            index = node.getParent().getIndex(node) + 1;
-        }
+      try {
+	callableActors = (CallableActorHandler) handler.newInstance();
+      }
+      catch (Exception e) {
+	GUIHelper.showErrorMessage(
+	  getOwner(),
+	  "Failed to instantiate callable actor handler: " + handler.getName() + "\n"
+	    + Utils.throwableToString(e));
+	return;
+      }
+      callableNode = new Node(getOwner(), (AbstractActor) callableActors);
+      index = 0;
+      // CallableActors has to come after multiview actors
+      if (handler == CallableActors.class) {
+	if (multiview.size() > 0) {
+	  for (Node node : multiview) {
+	    if (node.getParent().getIndex(node) >= index)
+	      index = node.getParent().getIndex(node) + 1;
+	  }
+	}
       }
       final int fIndex = index;
       SwingUtilities.invokeLater(() -> {
@@ -1071,13 +1083,15 @@ public class TreeOperations
       replacement = new CallableTransformer();
     else if (ActorUtils.isSink(currActor))
       replacement = new CallableSink();
-    final AbstractCallableActor fReplacement = replacement;
-    SwingUtilities.invokeLater(() -> {
-      fReplacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
-      currNode.setActor(fReplacement);
-      currNode.removeAllChildren();
-      getOwner().updateActorName(currNode);
-    });
+    if (replacement != null) {
+      final AbstractCallableActor fReplacement = replacement;
+      SwingUtilities.invokeLater(() -> {
+	fReplacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
+	currNode.setActor(fReplacement);
+	currNode.removeAllChildren();
+	getOwner().updateActorName(currNode);
+      });
+    }
 
     // update tree
     SwingUtilities.invokeLater(() -> {

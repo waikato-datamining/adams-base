@@ -1582,7 +1582,7 @@ public class Tree
     }
     else {
       // check for callable actors
-      callables = FlowHelper.findCallableActorsHandler(parent, parent);
+      callables = FlowHelper.findCallableActorsHandler(parent);
       child     = null;
       for (i = 0; i < callables.size(); i++) {
 	callable = callables.get(i);
