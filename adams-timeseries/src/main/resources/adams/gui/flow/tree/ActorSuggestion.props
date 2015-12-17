@@ -32,6 +32,9 @@ adams-timeseries.MakeForecastPlotContainer=\
 adams-timeseries.SequencePlotter=\
   IF AFTER adams.flow.transformer.MakeForecastPlotContainer THEN adams.flow.sink.SequencePlotter
 
+adams-timeseries.SimplePlot=\
+  IF AFTER adams.flow.transformer.MakeForecastPlotContainer THEN adams.flow.sink.SimplePlot
+
 adams-timeseries.TimeseriesDbReader1=\
   IF AFTER adams.flow.source.SQLIdSupplier THEN adams.flow.transformer.TimeseriesDbReader
 

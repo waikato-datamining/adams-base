@@ -15,19 +15,19 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.parser.actorsuggestion.Parser;
 import adams.parser.actorsuggestion.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -48,6 +48,8 @@ import adams.parser.actorsuggestion.Scanner;
  *                | ISFIRST<br>
  *                | ISLAST<br>
  *                | PARENT IS &lt;classname|interface&gt;<br>
+ *                | PARENT ALLOWS STANDALONE<br>
+ *                | PARENT ALLOWS SOURCE<br>
  *                | BEFORE STANDALONE<br>
  *                | AFTER STANDALONE<br>
  *                | BEFORE SOURCE<br>
@@ -153,6 +155,8 @@ public class ActorSuggestion
       + "               | ISFIRST\n"
       + "               | ISLAST\n"
       + "               | PARENT IS <classname|interface>\n"
+      + "               | PARENT ALLOWS STANDALONE\n"
+      + "               | PARENT ALLOWS SOURCE\n"
       + "               | BEFORE STANDALONE\n"
       + "               | AFTER STANDALONE\n"
       + "               | BEFORE SOURCE\n"

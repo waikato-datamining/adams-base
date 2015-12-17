@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.actorsuggestion;
@@ -66,6 +66,7 @@ import java.util.*;
   "PARENT"      { return sf.newSymbol("Parent" ,     sym.PARENT); }
   "ISFIRST"     { return sf.newSymbol("First",       sym.ISFIRST); }
   "ISLAST"      { return sf.newSymbol("First",       sym.ISLAST); }
+  "ALLOWS"      { return sf.newSymbol("Allows",      sym.ALLOWS); }
   "STANDALONE"  { return sf.newSymbol("Standalone",  sym.STANDALONE); }
   "SOURCE"      { return sf.newSymbol("Source",      sym.SOURCE); }
   "TRANSFORMER" { return sf.newSymbol("Transformer", sym.TRANSFORMER); }

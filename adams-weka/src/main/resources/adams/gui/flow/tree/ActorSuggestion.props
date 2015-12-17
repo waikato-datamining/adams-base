@@ -113,6 +113,12 @@ adams-weka.SequencePlotter1=\
 adams-weka.SequencePlotter2=\
   IF AFTER adams.flow.transformer.WekaInstanceStreamPlotGenerator THEN adams.flow.sink.SequencePlotter
 
+adams-weka.SimplePlot1=\
+  IF AFTER adams.flow.transformer.WekaAccumulatedError THEN adams.flow.sink.SimplePlot
+
+adams-weka.SimplePlot2=\
+  IF AFTER adams.flow.transformer.WekaInstanceStreamPlotGenerator THEN adams.flow.sink.SimplePlot
+
 adams-weka.WekaExperimentGenerator1=\
   IF AFTER adams.flow.transformer.WekaClassifierRanker THEN adams.flow.sink.WekaExperimentGenerator
 
