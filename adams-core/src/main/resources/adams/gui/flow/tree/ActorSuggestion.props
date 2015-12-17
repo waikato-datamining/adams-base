@@ -141,3 +141,15 @@ adams-core.SetVariable4=\
 
 adams-core.SetVariable5=\
   IF AFTER adams.flow.transformer.ArrayLength THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable6=\
+  IF PARENT ALLOWS STANDALONE AND ISFIRST THEN adams.flow.standalone.SetVariable
+
+adams-core.SetVariable7=\
+  IF PARENT ALLOWS STANDALONE AND BEFORE STANDALONE THEN adams.flow.standalone.SetVariable
+
+adams-core.SetVariable8=\
+  IF PARENT ALLOWS STANDALONE AND AFTER STANDALONE THEN adams.flow.standalone.SetVariable
+
+adams-core.SetVariable9=\
+  IF PARENT ALLOWS STANDALONE AND BEFORE SOURCE THEN adams.flow.standalone.SetVariable
