@@ -12,19 +12,22 @@
 # Version: $Revision$
 
 adams-spreadsheet.SpreadSheetFileReader1=\
-  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.SpreadSheetReader
+  IF AFTER adams.flow.source.FileSupplier THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader2=\
-  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.SpreadSheetReader
+  IF AFTER adams.flow.source.SelectFile THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader3=\
-  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.SpreadSheetReader
+  IF AFTER adams.flow.source.DirectoryLister THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SpreadSheetFileReader4=\
-  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.SpreadSheetReader
+  IF AFTER adams.flow.source.FileSystemSearch THEN adams.flow.transformer.SpreadSheetFileReader
 
 adams-spreadsheet.SequencePlotter1=\
   IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator THEN adams.flow.sink.SequencePlotter
+
+adams-spreadsheet.SimplePlot1=\
+  IF AFTER adams.flow.transformer.SpreadSheetPlotGenerator THEN adams.flow.sink.SimplePlot
 
 adams-spreadsheet.SetVariable1=\
   IF AFTER adams.flow.transformer.SpreadSheetGetCell THEN adams.flow.transformer.SetVariable
