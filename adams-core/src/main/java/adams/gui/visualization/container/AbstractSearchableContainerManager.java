@@ -21,9 +21,7 @@ package adams.gui.visualization.container;
 
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
-
-import java.util.ArrayList;
-import java.util.List;
+import gnu.trove.list.array.TIntArrayList;
 
 /**
  * Ancestor for container managers that can be searched.
@@ -46,7 +44,7 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
   protected boolean m_SearchRegexp;
 
   /** the filtered containers. */
-  protected List<T> m_FilteredList;
+  protected TIntArrayList m_FilteredList;
   
   /**
    * Initializes the manager.
@@ -115,7 +113,7 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
     result = false;
 
     for (i = 0; i < m_FilteredList.size(); i++) {
-      if (m_FilteredList.get(i).equals(o)) {
+      if (m_List.get(m_FilteredList.get(i)).equals(o)) {
         result = true;
         break;
       }
@@ -164,7 +162,7 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
   @Override
   public T get(int index) {
     if (isFiltered())
-      return m_FilteredList.get(index);
+      return m_List.get(m_FilteredList.get(index));
     else
       return m_List.get(index);
   }
@@ -185,9 +183,11 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
     if (!isFiltered())
       return super.remove(index);
     
-    result = m_FilteredList.remove(index);
-    if (result != null)
+    result = m_List.get(m_FilteredList.get(index));
+    if (result != null) {
       m_List.remove(result);
+      m_FilteredList.remove(index);
+    }
 
     notifyDataChangeListeners(new DataChangeEvent(this, Type.REMOVAL, index, result));
 
@@ -215,10 +215,18 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    */
   @Override
   public int indexOf(T c) {
-    if (isFiltered())
-      return m_FilteredList.indexOf(c);
-    else
-      return m_List.indexOf(c);
+    int		result;
+
+    result = super.indexOf(c);
+
+    if (isFiltered()) {
+      if (m_FilteredList.contains(result))
+	result = m_FilteredList.indexOf(result);
+      else
+	result = -1;
+    }
+
+    return result;
   }
 
   /**
@@ -254,7 +262,8 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    * Updates the search.
    */
   protected void updateSearch() {
-    List<T>	filtered;
+    TIntArrayList	filtered;
+    int			i;
     
     if (m_SearchString == null) {
       m_FilteredList = null;
@@ -262,10 +271,10 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
       return;
     }
     
-    filtered = new ArrayList<T>();
-    for (T cont: m_List) {
-      if (isMatch(cont, m_SearchString, m_SearchRegexp))
-	filtered.add(cont);
+    filtered = new TIntArrayList();
+    for (i = 0; i < m_List.size(); i++) {
+      if (isMatch(m_List.get(i), m_SearchString, m_SearchRegexp))
+	filtered.add(i);
     }
     
     m_FilteredList = filtered;
