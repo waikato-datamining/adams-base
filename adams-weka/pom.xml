@@ -130,7 +130,7 @@
     <dependency>
       <groupId>nz.ac.waikato.cms.weka</groupId>
       <artifactId>partialLeastSquares</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
