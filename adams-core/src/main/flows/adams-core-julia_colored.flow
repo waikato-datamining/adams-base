@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2014-01-23 15:23:15
+# Date: 2015-12-21 15:20:39
 # User: fracpete
 # Charset: UTF-8
 #
@@ -117,7 +117,7 @@ adams.flow.control.Flow
 					-short-title
 					true
 					-width
-					368
+					428
 					-height
 					221
 					-writer
@@ -142,6 +142,8 @@ adams.flow.control.Flow
 						adams.flow.sink.sequenceplotter.NoMarkers
 					-error-paintlet
 						adams.flow.sink.sequenceplotter.NoErrorPaintlet
+					-mouse-click-action
+						adams.flow.sink.sequenceplotter.NullClickAction
 					-color-provider
 						adams.gui.visualization.core.DefaultColorProvider
 					-overlay-color-provider
