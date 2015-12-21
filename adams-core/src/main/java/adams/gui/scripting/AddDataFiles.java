@@ -24,7 +24,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
-import adams.gui.visualization.container.AbstractContainer;
+import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.visualization.container.AbstractContainerManager;
 
 import java.util.ArrayList;
@@ -100,12 +100,12 @@ public class AddDataFiles
     String			result;
     List<DataContainer> 	data;
     AbstractDataContainerReader	reader;
-    List<AbstractContainer> 	cont;
     int				n;
     int				i;
     AbstractContainerManager	manager;
     String[]			opts;
     String			msg;
+    AntiAliasingSupporter	supporter;
 
     result = null;
 
@@ -149,6 +149,15 @@ public class AddDataFiles
 	  result = msg;
 	else
 	  result += "\n" + msg;
+      }
+
+      if (getDataContainerPanel() instanceof AntiAliasingSupporter) {
+        supporter = (AntiAliasingSupporter) getDataContainerPanel();
+        // turn off anti-aliasing to speed up display
+        if (manager.count() + data.size() > getOwner().getOwner().getProperties().getInteger("MaxNumContainersWithAntiAliasing", 50)) {
+          if (supporter.isAntiAliasingEnabled())
+            supporter.setAntiAliasingEnabled(false);
+        }
       }
     }
 

@@ -513,6 +513,7 @@ public class TimeseriesExplorer
 
     m_MenuItemStartRecording.setEnabled(!getScriptingEngine().isRecording());
     m_MenuItemStopRecording.setEnabled(getScriptingEngine().isRecording());
+    m_MenuItemViewAntiAliasing.setEnabled(getTimeseriesPanel().isAntiAliasingEnabled());
   }
 
   /**

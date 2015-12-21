@@ -81,7 +81,7 @@ import java.util.List;
 public class InstancePanel
   extends DataContainerPanelWithSidePanel<Instance, InstanceContainerManager>
   implements PaintListener, ContainerListPopupMenuSupplier<InstanceContainerManager,InstanceContainer>, PopupMenuCustomizer,
-             TipTextCustomizer {
+             TipTextCustomizer, AntiAliasingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;

@@ -6,3 +6,6 @@
 # The concrete class to use as command processor
 # (must be set in each concrete project)
 AlternativeCommandProcessorClass=adams.gui.scripting.TimeseriesCommandProcessor
+
+# Maximum number of containers before switching off anti-aliasing
+MaxNumContainersWithAntiAliasing=50

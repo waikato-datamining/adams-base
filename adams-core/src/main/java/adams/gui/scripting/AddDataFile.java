@@ -15,7 +15,7 @@
 
 /**
  * AddDataFile.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
+import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 
@@ -99,9 +100,10 @@ public class AddDataFile
     String			result;
     List<DataContainer> 	data;
     AbstractDataContainerReader	reader;
-    List<AbstractContainer> 		cont;
+    List<AbstractContainer> 	cont;
     int				i;
-    AbstractContainerManager		manager;
+    AbstractContainerManager	manager;
+    AntiAliasingSupporter	supporter;
 
     result = null;
 
@@ -126,6 +128,16 @@ public class AddDataFile
       cont = new ArrayList<AbstractContainer>();
       for (i = 0; i < data.size(); i++)
         cont.add(manager.newContainer(data.get(i)));
+
+      if (getDataContainerPanel() instanceof AntiAliasingSupporter) {
+        supporter = (AntiAliasingSupporter) getDataContainerPanel();
+        // turn off anti-aliasing to speed up display
+        if (manager.count() + data.size() > getOwner().getOwner().getProperties().getInteger("MaxNumContainersWithAntiAliasing", 50)) {
+          if (supporter.isAntiAliasingEnabled())
+            supporter.setAntiAliasingEnabled(false);
+        }
+      }
+
       manager.addAll(cont);
     }
     showStatus("");

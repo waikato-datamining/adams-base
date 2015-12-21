@@ -41,3 +41,6 @@ IncludeStringAttributes=false
 
 # The default for including relational attributes
 IncludeRelationalAttributes=false
+
+# Maximum number of containers before switching off anti-aliasing
+MaxNumContainersWithAntiAliasing=50

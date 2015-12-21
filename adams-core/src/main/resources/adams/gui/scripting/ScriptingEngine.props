@@ -15,3 +15,6 @@ ScriptDirectory=%p/scripts
 # The concrete class to use as command processor
 # (must be set in each concrete project)
 CommandProcessorClass=adams.gui.scripting.CommandProcessor
+
+# Maximum number of containers before switching off anti-aliasing
+MaxNumContainersWithAntiAliasing=50

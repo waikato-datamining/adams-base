@@ -330,6 +330,7 @@ public class InstanceExplorer
 
     m_MenuItemClearData.setEnabled(dataLoaded);
     m_MenuItemLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
+    m_MenuItemViewAntiAliasing.setSelected(getInstancePanel().isAntiAliasingEnabled());
   }
 
   /**
@@ -642,6 +643,12 @@ public class InstanceExplorer
     boolean			hasDBID;
     InstanceContainerList	listInst;
     ReportContainerList		listReport;
+
+    // turn off anti-aliasing to speed up display
+    if (getContainerManager().count() + data.size() > getProperties().getInteger("MaxNumContainersWithAntiAliasing", 50)) {
+      if (getInstancePanel().isAntiAliasingEnabled())
+	getInstancePanel().setAntiAliasingEnabled(false);
+    }
 
     listInst   = m_PanelInstance.getInstanceContainerList();
     listReport = m_Reports.getReportContainerList();
