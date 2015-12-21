@@ -192,6 +192,7 @@ public class InstancePanel
     m_InstanceContainerList = new InstanceContainerList();
     m_InstanceContainerList.setTitle("Instances");
     m_InstanceContainerList.setManager(getContainerManager());
+    m_InstanceContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
     m_InstanceContainerList.setPopupMenuSupplier(this);
     m_InstanceContainerList.addTableModelListener(new TableModelListener() {
       @Override

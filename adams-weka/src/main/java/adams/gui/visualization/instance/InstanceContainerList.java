@@ -15,12 +15,12 @@
 
 /*
  * InstanceListPanel.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
 
-import adams.gui.visualization.container.AbstractContainerList;
+import adams.gui.visualization.container.AbstractSearchableContainerList;
 
 /**
  * A panel that lists Instances in a JTable.
@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractContainerList;
  * @version $Revision$
  */
 public class InstanceContainerList
-  extends AbstractContainerList<InstanceContainerManager,InstanceContainer> {
+  extends AbstractSearchableContainerList<InstanceContainerManager,InstanceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3265940348362833587L;

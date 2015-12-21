@@ -92,3 +92,9 @@ Plot.ToolTip.MaxColumns=80
 ZoomOverview.Visible=false
 ZoomOverview.Height=100
 ZoomOverview.HighlightColor=#FFDDFF
+
+##################
+# Container list #
+##################
+
+ContainerList.AllowSearch=true

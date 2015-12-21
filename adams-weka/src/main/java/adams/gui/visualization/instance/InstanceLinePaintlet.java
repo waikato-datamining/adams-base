@@ -15,14 +15,10 @@
 
 /*
  * InstanceLinePaintlet.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.List;
 
 import adams.data.instance.Instance;
 import adams.data.instance.InstancePoint;
@@ -31,13 +27,18 @@ import adams.data.sequence.XYSequencePoint;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.container.AbstractDataContainerPaintlet;
-import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
+import adams.gui.visualization.container.AbstractDataContainerPaintlet;
+import adams.gui.visualization.container.ColorContainer;
+import adams.gui.visualization.container.SearchableContainerManager;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -408,6 +409,10 @@ public class InstanceLinePaintlet
 	  if (!((VisibilityContainer) cont).isVisible())
 	    continue;
 	}
+        if (manager instanceof SearchableContainerManager) {
+          if (((SearchableContainerManager) manager).isFiltered() && !((SearchableContainerManager) manager).isFiltered(i))
+            continue;
+        }
 	data = (Instance) cont.getPayload();
 	synchronized(data) {
 	  drawData(g, data, getColor(i), getMarkerShape(i));

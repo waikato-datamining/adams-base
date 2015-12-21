@@ -15,16 +15,10 @@
 
 /*
  * InstanceContainerManager.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.instance.Instance;
 import adams.gui.event.DataChangeEvent;
@@ -34,9 +28,15 @@ import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.NamedContainerManager;
+import adams.gui.visualization.container.SearchableContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A handler for the Instance containers.
@@ -47,7 +47,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
 public class InstanceContainerManager
   extends AbstractContainerManager<InstanceContainer>
   implements VisibilityContainerManager<InstanceContainer>, NamedContainerManager,
-             ColorContainerManager {
+             ColorContainerManager, SearchableContainerManager<InstanceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4325235760470150191L;
@@ -57,6 +57,15 @@ public class InstanceContainerManager
 
   /** the color provider for managing the colors. */
   protected AbstractColorProvider m_ColorProvider;
+
+  /** the current search term. */
+  protected String m_SearchString;
+
+  /** whether the current search is using regular expressions. */
+  protected boolean m_SearchRegexp;
+
+  /** the filtered containers. */
+  protected TIntArrayList m_FilteredList;
 
   /**
    * Initializes the manager.
@@ -68,6 +77,7 @@ public class InstanceContainerManager
 
     m_Owner         = owner;
     m_ColorProvider = new DefaultColorProvider();
+    m_FilteredList  = null;
 
     if (owner instanceof DataChangeListener)
       addDataChangeListener((DataChangeListener) owner);
@@ -118,6 +128,8 @@ public class InstanceContainerManager
    */
   @Override
   public void clear() {
+    m_FilteredList = null;
+
     super.clear();
 
     m_ColorProvider.resetColors();
@@ -135,6 +147,38 @@ public class InstanceContainerManager
   }
 
   /**
+   * Returns whether a search filter has been appplied.
+   *
+   * @return		true if search filter applied
+   */
+  @Override
+  public boolean isFiltered() {
+    return (m_FilteredList != null);
+  }
+
+  /**
+   * Whether to update the search whenever the content changes.
+   *
+   * @return		true if to update whenever data changes
+   */
+  protected boolean updateSearchOnUpdate() {
+    return true;
+  }
+
+  /**
+   * Finishes the update.
+   *
+   * @param notify	whether to notify the listeners about the update
+   * @see		#isUpdating()
+   */
+  @Override
+  public void finishUpdate(boolean notify) {
+    super.finishUpdate(notify);
+    if (updateSearchOnUpdate() && notify)
+      updateSearch();
+  }
+
+  /**
    * Adds the given container to the list. Duplicates are ignored.
    *
    * @param c		the container to add
@@ -144,6 +188,28 @@ public class InstanceContainerManager
     c.setColor(getNextColor());
 
     super.add(c);
+
+    if (!m_Updating && updateSearchOnUpdate())
+      updateSearch();
+  }
+
+  /**
+   * Replaces the container at the given position.
+   *
+   * @param index	the position to replace
+   * @param c		the replacement
+   * @return		the old container
+   */
+  @Override
+  public InstanceContainer set(int index, InstanceContainer c) {
+    InstanceContainer	result;
+
+    result = super.set(index, c);
+
+    if (!m_Updating && updateSearchOnUpdate())
+      updateSearch();
+
+    return result;
   }
 
   /**
@@ -162,6 +228,9 @@ public class InstanceContainerManager
     result = super.remove(index);
 
     m_ColorProvider.recycle(result.getColor());
+
+    if (!m_Updating && updateSearchOnUpdate())
+      updateSearch();
 
     return result;
   }
@@ -298,5 +367,133 @@ public class InstanceContainerManager
     }
 
     return result;
+  }
+
+  /**
+   * Triggers the search.
+   *
+   * @param search	the search string
+   * @param regExp	whether to perform regexp matching
+   */
+  public void search(String search, boolean regExp) {
+    m_SearchString = search;
+    m_SearchRegexp = regExp;
+
+    updateSearch();
+  }
+
+  /**
+   * Clears any previous search settings.
+   */
+  public void clearSearch() {
+    search(null, false);
+  }
+
+  /**
+   * Returns whether the container matches the current search.
+   *
+   * @param cont	the container to check
+   * @param search	the search string
+   * @param regExp	whether to perform regular expression matching
+   */
+  protected boolean isMatch(InstanceContainer cont, String search, boolean regExp) {
+    if (regExp)
+      return cont.getID().matches(search);
+    else
+      return cont.getID().contains(search);
+  }
+
+  /**
+   * Updates the search.
+   */
+  protected void updateSearch() {
+    TIntArrayList	filtered;
+    int			i;
+
+    if (m_SearchString == null) {
+      m_FilteredList = null;
+      notifyDataChangeListeners(new DataChangeEvent(this, Type.SEARCH));
+      return;
+    }
+
+    filtered = new TIntArrayList();
+    for (i = 0; i < m_List.size(); i++) {
+      if (isMatch(m_List.get(i), m_SearchString, m_SearchRegexp))
+	filtered.add(i);
+    }
+
+    m_FilteredList = filtered;
+    notifyDataChangeListeners(new DataChangeEvent(this, Type.SEARCH));
+  }
+
+  /**
+   * Returns the indices of all filtered containers.
+   *
+   * @return		all containers
+   */
+  public int[] getFilteredIndices() {
+    if (m_FilteredList != null)
+      return m_FilteredList.toArray();
+    else
+      return new int[0];
+  }
+
+  /**
+   * Returns whether the container at the specified position is filtered (= visibile).
+   *
+   * @param index	the container's position
+   * @return		true if the container is filtered
+   */
+  public boolean isFiltered(int index) {
+    return (m_FilteredList != null) && (m_FilteredList.contains(index));
+  }
+
+  /**
+   * Returns the nth filtered container.
+   *
+   * @param index	the index (relates only to the filtered containers!)
+   * @return		the container, null if index out of range
+   */
+  public InstanceContainer getFiltered(int index) {
+    if (m_FilteredList == null)
+      return null;
+    else
+      return m_List.get(m_FilteredList.get(index));
+  }
+
+  /**
+   * Determines the index of the filtered container.
+   *
+   * @param c		the container to look for
+   * @return		the index of the container or -1 if not found
+   */
+  public int indexOfFiltered(InstanceContainer c) {
+    int		result;
+    int		i;
+
+    result = -1;
+
+    if (m_FilteredList != null) {
+      for (i = 0; i < m_FilteredList.size(); i++) {
+	if (m_List.get(m_FilteredList.get(i)).equals(c)) {
+	  result = i;
+	  break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the number of filtered containers.
+   *
+   * @return		the number of filtered containers
+   */
+  public int countFiltered() {
+    if (m_FilteredList == null)
+      return 0;
+    else
+      return m_FilteredList.size();
   }
 }
