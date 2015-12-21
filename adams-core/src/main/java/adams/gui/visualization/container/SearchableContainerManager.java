@@ -41,4 +41,49 @@ public interface SearchableContainerManager<T extends AbstractContainer> {
    * Clears any previous search settings.
    */
   public void clearSearch();
+
+  /**
+   * Returns whether a search filter has been appplied.
+   *
+   * @return		true if search filter applied
+   */
+  public boolean isFiltered();
+
+  /**
+   * Returns the indices of all filtered containers.
+   *
+   * @return		all containers
+   */
+  public int[] getFilteredIndices();
+
+  /**
+   * Returns whether the container at the specified position is filtered (= visibile).
+   *
+   * @param index	the container's position
+   * @return		true if the container is filtered
+   */
+  public boolean isFiltered(int index);
+
+  /**
+   * Returns the nth filtered container.
+   *
+   * @param index	the index (relates only to the filtered containers!)
+   * @return		the container, null if index out of range
+   */
+  public T getFiltered(int index);
+
+  /**
+   * Determines the index of the container.
+   *
+   * @param c		the container to look for
+   * @return		the index of the container or -1 if not found
+   */
+  public int indexOfFiltered(T c);
+
+  /**
+   * Returns the number of filtered containers.
+   *
+   * @return		the number of filtered containers
+   */
+  public int countFiltered();
 }

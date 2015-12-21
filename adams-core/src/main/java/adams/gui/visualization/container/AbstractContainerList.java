@@ -490,9 +490,9 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
   }
 
   /**
-   * Gets called if the data of the spectrum panel has changed.
+   * Gets called if the data of the container list has changed.
    * 
-   * @param e		the event that the spectrum panel sent
+   * @param e		the event that the container list sent
    */
   public void dataChanged(DataChangeEvent e) {
     updateTitle();

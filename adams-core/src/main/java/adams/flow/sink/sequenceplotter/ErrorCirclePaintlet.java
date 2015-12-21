@@ -15,14 +15,10 @@
 
 /*
  * ErrorCirclePaintlet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.List;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -32,6 +28,10 @@ import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.CirclePaintlet;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -228,6 +228,8 @@ public class ErrorCirclePaintlet
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
+        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+          continue;
 	data = getActualContainerManager().get(i).getData();
 	if (data.size() == 0)
 	  continue;

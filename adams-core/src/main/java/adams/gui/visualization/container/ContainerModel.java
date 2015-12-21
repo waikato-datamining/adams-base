@@ -15,18 +15,18 @@
 
 /*
  * ContainerModel.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
-
-import javax.swing.SwingUtilities;
 
 import adams.core.CleanUpHandler;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
 import adams.gui.event.DataChangeListener;
+
+import javax.swing.SwingUtilities;
 
 /**
  * A model for displaying the currently loaded containers.
@@ -313,10 +313,15 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return		the number of rows
    */
   public int getRowCount() {
-    if (m_Manager != null)
-      return m_Manager.count();
-    else
+    if (m_Manager != null) {
+      if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered())
+	return ((SearchableContainerManager) m_Manager).countFiltered();
+      else
+	return m_Manager.count();
+    }
+    else {
       return 0;
+    }
   }
 
   /**
@@ -363,21 +368,41 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return			the value
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
+    SearchableContainerManager	smanager;
+
     if (m_Manager.isUpdating())
       return null;
 
-    if (rowIndex < m_Manager.count()) {
-      if (columnIndex == getVisibilityColumn())
-        return new Boolean(((VisibilityContainerManager) getManager()).isVisible(rowIndex));
-      else if (columnIndex == getDatabaseIDColumn())
-        return new Integer(((DatabaseContainer) getManager().get(rowIndex)).getDatabaseID());
-      else if (columnIndex == getDataColumn())
-	return m_Generator.getDisplay(getManager().get(rowIndex));
+    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
+      smanager = (SearchableContainerManager) m_Manager;
+      if (rowIndex < smanager.countFiltered()) {
+	if (columnIndex == getVisibilityColumn())
+	  return ((VisibilityContainer) smanager.getFiltered(rowIndex)).isVisible();
+	else if (columnIndex == getDatabaseIDColumn())
+	  return ((DatabaseContainer) smanager.getFiltered(rowIndex)).getDatabaseID();
+	else if (columnIndex == getDataColumn())
+	  return m_Generator.getDisplay(smanager.getFiltered(rowIndex));
 
-      throw new IllegalStateException("Invalid column index: " + columnIndex);
+	throw new IllegalStateException("Invalid column index: " + columnIndex);
+      }
+      else {
+	return null;
+      }
     }
     else {
-      return null;
+      if (rowIndex < m_Manager.count()) {
+	if (columnIndex == getVisibilityColumn())
+	  return ((VisibilityContainerManager) getManager()).isVisible(rowIndex);
+	else if (columnIndex == getDatabaseIDColumn())
+	  return ((DatabaseContainer) getManager().get(rowIndex)).getDatabaseID();
+	else if (columnIndex == getDataColumn())
+	  return m_Generator.getDisplay(getManager().get(rowIndex));
+
+	throw new IllegalStateException("Invalid column index: " + columnIndex);
+      }
+      else {
+	return null;
+      }
     }
   }
 
@@ -390,10 +415,25 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   @Override
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    if (rowIndex < m_Manager.count()) {
-      if (showVisibilityColumn()) {
-        if (columnIndex == 0)
-          ((VisibilityContainerManager) getManager()).setVisible(rowIndex, (Boolean) aValue);
+    SearchableContainerManager	smanager;
+
+    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
+      smanager = (SearchableContainerManager) m_Manager;
+      if (rowIndex < smanager.countFiltered()) {
+	if (showVisibilityColumn()) {
+	  if (columnIndex == 0) {
+	    ((VisibilityContainer) smanager.getFiltered(rowIndex)).setVisible((Boolean) aValue);
+	    // TODO update?
+	  }
+	}
+      }
+    }
+    else {
+      if (rowIndex < m_Manager.count()) {
+	if (showVisibilityColumn()) {
+	  if (columnIndex == 0)
+	    ((VisibilityContainerManager) getManager()).setVisible(rowIndex, (Boolean) aValue);
+	}
       }
     }
   }
@@ -490,7 +530,15 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return		the container
    */
   public C getContainerAt(int row) {
-    return (C) getManager().get(row);
+    SearchableContainerManager	smanager;
+
+    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
+      smanager = (SearchableContainerManager) m_Manager;
+      return (C) smanager.getFiltered(row);
+    }
+    else {
+      return (C) getManager().get(row);
+    }
   }
 
   /**

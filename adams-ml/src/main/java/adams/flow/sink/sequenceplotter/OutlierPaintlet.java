@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OutlierPaintlet.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
@@ -295,6 +295,8 @@ public class OutlierPaintlet
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
+        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+          continue;
 	data = getActualContainerManager().get(i).getData();
 	if (data.size() == 0)
 	  continue;

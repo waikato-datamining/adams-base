@@ -233,6 +233,8 @@ public class CirclePaintlet
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
+        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+          continue;
 	data = getActualContainerManager().get(i).getData();
 	if (data.size() == 0)
 	  continue;

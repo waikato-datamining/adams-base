@@ -60,6 +60,7 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    * 
    * @return		true if search filter applied
    */
+  @Override
   public boolean isFiltered() {
     return (m_FilteredList != null);
   }
@@ -96,33 +97,6 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
   }
 
   /**
-   * Checks whether the container is already in the list. Filling in the
-   * preAdd-hook, one can avoid clashes.
-   *
-   * @param o		the container to look for
-   * @return		true if the container is already stored
-   */
-  @Override
-  public boolean contains(T o) {
-    boolean	result;
-    int		i;
-
-    if (!isFiltered())
-      return super.contains(o);
-    
-    result = false;
-
-    for (i = 0; i < m_FilteredList.size(); i++) {
-      if (m_List.get(m_FilteredList.get(i)).equals(o)) {
-        result = true;
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Adds the given container to the list.
    *
    * @param c		the container to add
@@ -154,20 +128,6 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
   }
 
   /**
-   * Returns the container at the specified location.
-   *
-   * @param index	the index of the container
-   * @return		the container
-   */
-  @Override
-  public T get(int index) {
-    if (isFiltered())
-      return m_List.get(m_FilteredList.get(index));
-    else
-      return m_List.get(index);
-  }
-
-  /**
    * Removes the container at the specified position.
    *
    * @param index	the index of the container to remove
@@ -175,56 +135,16 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    */
   @Override
   public T remove(int index) {
+    int		i;
     T		result;
     
     if (!m_AllowRemoval)
       return null;
 
-    if (!isFiltered())
-      return super.remove(index);
-    
-    result = m_List.get(m_FilteredList.get(index));
-    if (result != null) {
-      m_List.remove(result);
-      m_FilteredList.remove(index);
-    }
+    result = super.remove(index);
 
-    notifyDataChangeListeners(new DataChangeEvent(this, Type.REMOVAL, index, result));
-
-    return result;
-  }
-
-  /**
-   * Returns the number of containers currently stored.
-   *
-   * @return		the number of containers
-   */
-  @Override
-  public int count() {
-    if (isFiltered())
-      return m_FilteredList.size();
-    else
-      return m_List.size();
-  }
-
-  /**
-   * Determines the index of the container.
-   *
-   * @param c		the container to look for
-   * @return		the index of the container or -1 if not found
-   */
-  @Override
-  public int indexOf(T c) {
-    int		result;
-
-    result = super.indexOf(c);
-
-    if (isFiltered()) {
-      if (m_FilteredList.contains(result))
-	result = m_FilteredList.indexOf(result);
-      else
-	result = -1;
-    }
+    if (!m_Updating && updateSearchOnUpdate())
+      updateSearch();
 
     return result;
   }
@@ -279,5 +199,76 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
     
     m_FilteredList = filtered;
     notifyDataChangeListeners(new DataChangeEvent(this, Type.SEARCH));
+  }
+
+  /**
+   * Returns the indices of all filtered containers.
+   *
+   * @return		all containers
+   */
+  public int[] getFilteredIndices() {
+    if (m_FilteredList != null)
+      return m_FilteredList.toArray();
+    else
+      return new int[0];
+  }
+
+  /**
+   * Returns whether the container at the specified position is filtered (= visibile).
+   *
+   * @param index	the container's position
+   * @return		true if the container is filtered
+   */
+  public boolean isFiltered(int index) {
+    return (m_FilteredList != null) && (m_FilteredList.contains(index));
+  }
+
+  /**
+   * Returns the nth filtered container.
+   *
+   * @param index	the index (relates only to the filtered containers!)
+   * @return		the container, null if index out of range
+   */
+  public T getFiltered(int index) {
+    if (m_FilteredList == null)
+      return null;
+    else
+      return m_List.get(m_FilteredList.get(index));
+  }
+
+  /**
+   * Determines the index of the filtered container.
+   *
+   * @param c		the container to look for
+   * @return		the index of the container or -1 if not found
+   */
+  public int indexOfFiltered(T c) {
+    int		result;
+    int		i;
+
+    result = -1;
+
+    if (m_FilteredList != null) {
+      for (i = 0; i < m_FilteredList.size(); i++) {
+	if (m_List.get(m_FilteredList.get(i)).equals(c)) {
+	  result = i;
+	  break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the number of filtered containers.
+   *
+   * @return		the number of filtered containers
+   */
+  public int countFiltered() {
+    if (m_FilteredList == null)
+      return 0;
+    else
+      return m_FilteredList.size();
   }
 }
