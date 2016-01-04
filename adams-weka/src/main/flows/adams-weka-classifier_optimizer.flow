@@ -39,7 +39,7 @@ adams.flow.control.Flow
 					-E
 					ACC
 					-y-property
-					classifier.minNumObj
+					minNumObj
 					-y-min
 					2.0
 					-y-max
@@ -50,10 +50,8 @@ adams.flow.control.Flow
 					10.0
 					-y-expression
 					I
-					-filter
-					weka.filters.AllFilter
 					-x-property
-					classifier.confidenceFactor
+					confidenceFactor
 					-x-min
 					0.1
 					-x-max

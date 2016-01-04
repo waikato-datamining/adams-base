@@ -15,11 +15,24 @@
 
 /*
  *    RandomModelTrees.java
- *    Copyright (C) 2009 University of Waikato
+ *    Copyright (C) 2009,2016 University of Waikato
  *
  */
 
 package weka.classifiers.trees;
+
+import weka.classifiers.RandomizableClassifier;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.meta.Corr;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.Option;
+import weka.core.OptionHandler;
+import weka.core.SelectedTag;
+import weka.core.Utils;
+import weka.core.WeightedInstancesHandler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,18 +42,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-
-import weka.classifiers.RandomizableClassifier;
-import weka.classifiers.functions.LinearRegression;
-import weka.classifiers.meta.Corr;
-import weka.core.Capabilities;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.OptionHandler;
-import weka.core.Utils;
-import weka.core.WeightedInstancesHandler;
-import weka.core.Capabilities.Capability;
 
 // this version: ONLY do MAX-DEPTH, no -M anymore (for simplicity ...)
 /**
@@ -474,7 +475,10 @@ class Node implements Serializable {
     splitIndex = -1;
     computeMinMax(data);
     LinearRegression l = new LinearRegression();
-    l.setOptions(new String[]{"-C","-S","1","-R", ""+ridge});
+    l.setOptions(new String[]{});
+    l.setEliminateColinearAttributes(false);
+    l.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    l.setRidge(ridge);
     l.turnChecksOff();
     Instances trainData = new Instances(data.get(0).dataset(),data.size());
     for (Instance instance: data) {
@@ -503,7 +507,9 @@ class Node implements Serializable {
     splitIndex = -1;
     computeMinMax(data);
     LinearRegression l = new LinearRegression();
-    l.setOptions(new String[]{"-C","-S","1","-R", ""+ridge});
+    l.setEliminateColinearAttributes(false);
+    l.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    l.setRidge(ridge);
     l.turnChecksOff();
     Corr corr = new Corr();
     //corr.setDebug(true);

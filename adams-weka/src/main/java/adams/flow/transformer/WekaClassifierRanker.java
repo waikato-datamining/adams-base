@@ -15,7 +15,7 @@
 
 /*
  * WekaClassifierRanker.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -48,7 +48,6 @@ import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.Evaluation;
-import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
 import weka.classifiers.meta.multisearch.DefaultEvaluationMetrics;
@@ -365,21 +364,17 @@ public class WekaClassifierRanker
       result = template;
 
       if (m_OutputBestSetup && (m_Folds < 2)) {
-	if (trained instanceof GridSearch) {
-	  result = new FilteredClassifier();
-	  ((FilteredClassifier) result).setClassifier(((GridSearch) trained).getBestClassifier());
-	  ((FilteredClassifier) result).setFilter(((GridSearch) trained).getBestFilter());
-	}
-	else if (trained instanceof MultiSearch) {
-	  try {
-	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
-	  }
-	  catch (Exception e) {
-	    getLogger().log(Level.SEVERE, "Failed to copy best MultiSearch classifier:", e);
-	    result = template;
-	  }
-	}
-	// TODO: further optimizers
+        try {
+          if (trained instanceof GridSearch)
+            result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((GridSearch) trained).getBestClassifier());
+          else if (trained instanceof MultiSearch)
+            result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
+          // TODO: further optimizers
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to copy best '" + trained.getClass().getName() + "' classifier:", e);
+          result = template;
+        }
       }
 
       return result;

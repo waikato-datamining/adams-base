@@ -1,5 +1,5 @@
 --> dumpfile.txt
 weka.classifiers.rules.ZeroR
 weka.classifiers.trees.J48 -C 0.25 -M 2
-weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8
+weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4
 

@@ -15,12 +15,11 @@
 
 /*
  * LeastMedianSq.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
 
-import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.core.Capabilities;
@@ -369,7 +368,7 @@ public class LeastMedianSq
    * @throws Exception if an error occurs
    */
   protected void genRegression(Random r) throws Exception {
-    m_currentClassifier = (Classifier) OptionUtils.shallowCopy(m_Classifier);
+    m_currentClassifier = (Classifier) adams.core.Utils.deepCopy(m_Classifier);
     selectSubSample(m_Data,r);
     m_currentClassifier.buildClassifier(m_SubSample);
   }

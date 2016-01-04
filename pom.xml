@@ -83,7 +83,7 @@
     <jetty.version>9.2.10.v20150310</jetty.version>
     <xjc.version>2.6.1</xjc.version>
     <moa.version>2014.04</moa.version>
-    <weka.version>3.7.12</weka.version>
+    <weka.version>3.7.13</weka.version>
     <postgresql.version>9.4-1201-jdbc41</postgresql.version>
     <postgis.version>1.5.3</postgis.version>
     <jodd.version>3.5.2</jodd.version>

@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
@@ -25,6 +25,7 @@ import junit.textui.TestRunner;
 import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
 import weka.classifiers.functions.LinearRegression;
+import weka.core.SelectedTag;
 
 /**
  * Tests Corr. Run from the command line with:<br><br>
@@ -58,7 +59,8 @@ public class CorrTest
     try {
       result = new Corr();
       lr     = new LinearRegression();
-      lr.setOptions(new String[]{"-C","-S","1"});
+      lr.setEliminateColinearAttributes(false);
+      lr.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
       result.setClassifier(lr);
     }
     catch (Exception e) {

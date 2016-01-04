@@ -98,7 +98,7 @@ public class WekaClassifierOptimizerTest
     WekaClassifierOptimizer co = new WekaClassifierOptimizer();
     weka.classifiers.meta.GridSearch gs = new weka.classifiers.meta.GridSearch();
     try {
-      gs.setOptions(weka.core.Utils.splitOptions("-E ACC -y-property classifier.minNumObj -y-min 2.0 -y-max 5.0 -y-step 1.0 -y-base 10.0 -y-expression I -filter weka.filters.AllFilter -x-property classifier.confidenceFactor -x-min 0.1 -x-max 0.5 -x-step 0.05 -x-base 10.0 -x-expression I -sample-size 100.0 -traversal COLUMN-WISE -log-file /home/fracpete/development/projects/adams -num-slots 1 -S 1 -W weka.classifiers.trees.J48 -- -C 0.25 -M 2"));
+      gs.setOptions(weka.core.Utils.splitOptions("-E ACC -y-property minNumObj -y-min 2.0 -y-max 5.0 -y-step 1.0 -y-base 10.0 -y-expression I -x-property confidenceFactor -x-min 0.1 -x-max 0.5 -x-step 0.05 -x-base 10.0 -x-expression I -sample-size 100.0 -traversal COLUMN-WISE -log-file /home/fracpete/development/projects/adams -num-slots 1 -S 1 -W weka.classifiers.trees.J48 -- -C 0.25 -M 2"));
     }
     catch (Exception e) {
       e.printStackTrace();
