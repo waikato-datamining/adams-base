@@ -15,7 +15,7 @@
 
 /**
  * AbstractListNameUsage.java
- * Copyright (C) 2015 University of Waikato, Hamilton,  Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton,  Zealand
  */
 package adams.flow.processor;
 
@@ -27,14 +27,13 @@ import adams.flow.core.Actor;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.tree.Tree;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Ancestor for processors that locate usages of a certain name.
@@ -241,34 +240,32 @@ public abstract class AbstractListNameUsage<T>
 
     buttonCopy = new JButton("Copy");
     buttonCopy.setEnabled(false);
-    buttonCopy.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	Object[] values = result.getSelectedValues();
-	StringBuilder content = new StringBuilder();
-	for (Object value: values) {
-	  if (content.length() > 0)
-	    content.append("\n");
-	  content.append("" + value);
-	}
-	GUIHelper.copyToClipboard(content.toString());
+    buttonCopy.addActionListener((ActionEvent e) -> {
+      Object[] values = result.getSelectedValues();
+      StringBuilder content = new StringBuilder();
+      for (Object value: values) {
+        if (content.length() > 0)
+          content.append("\n");
+        content.append("" + value);
       }
+      GUIHelper.copyToClipboard(content.toString());
     });
     result.addToButtonsPanel(buttonCopy);
 
     if ((flow != null) && (flow.getParentComponent() != null)) {
       buttonJumpTo = new JButton("Jump to");
       buttonJumpTo.setEnabled(false);
-      buttonJumpTo.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  if (result.getSelectedIndex() > -1) {
-	    if (flow.getParentComponent() instanceof FlowPanel) {
-	      ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
-		"" + result.getSelectedValue());
-	    }
-	  }
-	}
+      buttonJumpTo.addActionListener((ActionEvent e) -> {
+        if (result.getSelectedIndex() > -1) {
+          if (flow.getParentComponent() instanceof FlowPanel) {
+            ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
+              "" + result.getSelectedValue());
+          }
+          else if (flow.getParentComponent() instanceof Tree) {
+            ((Tree) flow.getParentComponent()).locateAndDisplay(
+              "" + result.getSelectedValue());
+          }
+        }
       });
       result.addToButtonsPanel(buttonJumpTo);
     }
@@ -276,13 +273,10 @@ public abstract class AbstractListNameUsage<T>
       buttonJumpTo = null;
     }
 
-    result.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-	buttonCopy.setEnabled(result.getSelectedIndices().length > 0);
-	if (buttonJumpTo != null)
-	  buttonJumpTo.setEnabled(result.getSelectedIndices().length == 1);
-      }
+    result.addListSelectionListener((ListSelectionEvent e) -> {
+      buttonCopy.setEnabled(result.getSelectedIndices().length > 0);
+      if (buttonJumpTo != null)
+        buttonJumpTo.setEnabled(result.getSelectedIndices().length == 1);
     });
 
     return result;
