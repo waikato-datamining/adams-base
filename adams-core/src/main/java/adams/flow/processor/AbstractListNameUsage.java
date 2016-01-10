@@ -269,6 +269,7 @@ public abstract class AbstractListNameUsage<T>
         }
       });
       result.addToButtonsPanel(buttonJumpTo);
+      result.setDoubleClickButton(buttonJumpTo);
     }
     else {
       buttonJumpTo = null;
