@@ -14,20 +14,23 @@
  */
 
 /**
- * ViewRemoveVariableHighlights.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * EditLocateStorageName.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
+
+import adams.flow.processor.ListStorageUsage;
+import adams.gui.core.GUIHelper;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Removes any variable highlights.
+ * Opens dialog for locating a storage item.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ViewRemoveVariableHighlights
+public class EditLocateStorageName
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,15 +43,23 @@ public class ViewRemoveVariableHighlights
    */
   @Override
   protected String getTitle() {
-    return "Remove variable highlights";
+    return "Locate storage name";
   }
-  
+
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().getTree().highlightVariables(null);
+    String name;
+
+    name = GUIHelper.showInputDialog(m_State, "Please enter the name of the storage item to locate:");
+    if (name == null)
+      return;
+
+    ListStorageUsage processor = new ListStorageUsage();
+    processor.setName(name);
+    m_State.getCurrentPanel().processActors(processor);
   }
 
   /**
@@ -57,7 +68,7 @@ public class ViewRemoveVariableHighlights
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel()
+	   m_State.hasCurrentPanel() 
 	&& !m_State.isSwingWorkerRunning());
   }
 }

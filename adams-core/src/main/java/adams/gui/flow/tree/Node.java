@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -62,12 +62,6 @@ public class Node
   /** the variables. */
   protected HashSet<String> m_Variables;
 
-  /** the regular expression of the variable to highlight. */
-  protected String m_VariableSearch;
-
-  /** whether the searched for variable has been found in this actor. */
-  protected Boolean m_VariableFound;
-
   /** the render string. */
   protected String m_RenderString;
   
@@ -90,7 +84,6 @@ public class Node
     super(strip(actor));
 
     m_Owner             = owner;
-    m_VariableSearch    = null;
     m_RenderString      = null;
     m_Editable          = true;
     m_Bookmarked        = false;
@@ -107,7 +100,6 @@ public class Node
   @Override
   public void setUserObject(Object userObject) {
     m_Variables     = null;
-    m_VariableFound = null;
     m_RenderString  = null;
     super.setUserObject(userObject);
   }
@@ -281,47 +273,6 @@ public class Node
     }
 
     return result;
-  }
-
-  /**
-   * Sets the search string for variables.
-   *
-   * @param nameRegExp	the regular expression for the name
-   */
-  public void findVariable(String nameRegExp) {
-    m_VariableSearch = nameRegExp;
-    m_VariableFound  = null;
-  }
-
-  /**
-   * Checks whether the actor has any variables that match the regular
-   * expression on the name.
-   *
-   * @see		#m_VariableSearch
-   * @see		#m_VariableFound
-   */
-  protected void updateVariableSearch() {
-    // already searched?
-    if (m_VariableFound != null)
-      return;
-
-    // no search string?
-    if (m_VariableSearch == null) {
-      m_VariableFound = false;
-      return;
-    }
-
-    if (m_Variables == null)
-      m_Variables = getActor().findVariables();
-
-    m_VariableFound = false;
-
-    for (String var: m_Variables) {
-      if (var.matches(m_VariableSearch)) {
-	m_VariableFound = true;
-	break;
-      }
-    }
   }
 
   /**
@@ -602,13 +553,8 @@ public class Node
 	      + HtmlUtils.toHTML(classArrayToString(((OutputProducer) actor).generates())) + "</font>");
 	}
 
-	// variable/bookmark highlighting
-	updateVariableSearch();
-	if (m_VariableFound) {
-	  html.insert(0, "<font style='background-color: " + m_Owner.getVariableHighlightBackground() + "'>");
-	  html.append("</font>");
-	}
-	else if (m_Bookmarked) {
+	// bookmark highlighting
+	 if (m_Bookmarked) {
 	  html.insert(0, "<font style='background-color: " + m_Owner.getBookmarkHighlightBackground() + "'>");
 	  html.append("</font>");
 	}
@@ -694,9 +640,6 @@ public class Node
 	  plain.append("\n");
 	  plain.append(classArrayToString(((OutputProducer) actor).generates()));
 	}
-
-	// variable highlighting
-	updateVariableSearch();
       }
 
       m_RenderString = plain.toString();

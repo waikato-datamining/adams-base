@@ -2079,37 +2079,6 @@ public class Tree
   }
 
   /**
-   * Highlights all the nodes that have a variable that match the regular
-   * expression on the variable name.
-   *
-   * @param parent	the parent to start the search in
-   * @param nameRegExp	the regular expression to match variable names against
-   */
-  protected void highlightVariables(Node parent, String nameRegExp) {
-    Node	child;
-    int		i;
-
-    parent.findVariable(nameRegExp);
-
-    for (i = 0; i < parent.getChildCount(); i++) {
-      child = (Node) parent.getChildAt(i);
-      highlightVariables(child, nameRegExp);
-    }
-  }
-
-  /**
-   * Highlights all the nodes that have a variable that match the regular
-   * expression on the variable name.
-   *
-   * @param nameRegExp	the regular expression to match variable names against
-   */
-  public void highlightVariables(String nameRegExp) {
-    highlightVariables(getRootNode(), nameRegExp);
-    getRootNode().invalidateRendering();
-    treeDidChange();
-  }
-
-  /**
    * Enables/diables all breakpoint actors.
    *
    * @param parent	the parent node to start recursion from

@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -58,6 +58,8 @@ import adams.gui.flow.menu.EditFindNext;
 import adams.gui.flow.menu.EditIgnoreNameChanges;
 import adams.gui.flow.menu.EditInteractiveActors;
 import adams.gui.flow.menu.EditLocateActor;
+import adams.gui.flow.menu.EditLocateStorageName;
+import adams.gui.flow.menu.EditLocateVariable;
 import adams.gui.flow.menu.EditProcessActors;
 import adams.gui.flow.menu.EditRedo;
 import adams.gui.flow.menu.EditTimedActors;
@@ -91,9 +93,7 @@ import adams.gui.flow.menu.RunStop;
 import adams.gui.flow.menu.RunStorage;
 import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.RunVariables;
-import adams.gui.flow.menu.ViewHighlightVariables;
 import adams.gui.flow.menu.ViewRedraw;
-import adams.gui.flow.menu.ViewRemoveVariableHighlights;
 import adams.gui.flow.menu.ViewShowAnnotations;
 import adams.gui.flow.menu.ViewShowInputOutput;
 import adams.gui.flow.menu.ViewShowQuickInfo;
@@ -256,6 +256,12 @@ public class FlowEditorPanel
   /** the locate actor action. */
   protected FlowEditorAction m_ActionEditLocateActor;
 
+  /** the locate variable action. */
+  protected FlowEditorAction m_ActionEditLocateVariable;
+
+  /** the locate storage name action. */
+  protected FlowEditorAction m_ActionEditLocateStorageName;
+
   /** the remove disabled actors action. */
   protected FlowEditorAction m_ActionEditCleanUpFlow;
 
@@ -333,12 +339,6 @@ public class FlowEditorPanel
 
   /** the "show input/output" action. */
   protected FlowEditorAction m_ActionViewShowInputOutput;
-
-  /** the highlight variables action. */
-  protected FlowEditorAction m_ActionViewHighlightVariables;
-
-  /** the remove variable highlights action. */
-  protected FlowEditorAction m_ActionViewRemoveVariableHighlights;
 
   /** the "show source" action. */
   protected FlowEditorAction m_ActionViewShowSource;
@@ -589,6 +589,16 @@ public class FlowEditorPanel
     m_ActionEditLocateActor = action;
     m_MenuItems.add(action);
 
+    // Edit/Locate variable
+    action = new EditLocateVariable();
+    m_ActionEditLocateVariable = action;
+    m_MenuItems.add(action);
+
+    // Edit/Locate storage name
+    action = new EditLocateStorageName();
+    m_ActionEditLocateStorageName = action;
+    m_MenuItems.add(action);
+
     // Edit/Clean up flow
     action = new EditCleanUpFlow();
     m_ActionEditCleanUpFlow = action;
@@ -712,16 +722,6 @@ public class FlowEditorPanel
     // View/Show input/output info
     action = new ViewShowInputOutput();
     m_ActionViewShowInputOutput = action;
-    m_MenuItems.add(action);
-
-    // View/Highlight variables
-    action = new ViewHighlightVariables();
-    m_ActionViewHighlightVariables = action;
-    m_MenuItems.add(action);
-
-    // View/Remove variable highlights
-    action = new ViewRemoveVariableHighlights();
-    m_ActionViewRemoveVariableHighlights = action;
     m_MenuItems.add(action);
 
     // View/Show source
@@ -995,6 +995,8 @@ public class FlowEditorPanel
       menu.add(m_ActionEditFind);
       menu.add(m_ActionEditFindNext);
       menu.add(m_ActionEditLocateActor);
+      menu.add(m_ActionEditLocateVariable);
+      menu.add(m_ActionEditLocateStorageName);
       menu.addSeparator();
       menu.add(m_ActionEditCleanUpFlow);
       menu.add(m_ActionEditCheckVariables);
@@ -1051,8 +1053,6 @@ public class FlowEditorPanel
       menu.add(m_ActionViewShowInputOutput);
       m_Tabs.addTabsSubmenu(menu);
       menu.addSeparator();
-      menu.add(m_ActionViewHighlightVariables);
-      menu.add(m_ActionViewRemoveVariableHighlights);
       menu.add(m_ActionViewRedraw);
       menu.add(m_ActionViewZoom);
       menu.addSeparator();

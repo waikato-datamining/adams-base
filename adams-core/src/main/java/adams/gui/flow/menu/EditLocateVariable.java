@@ -14,39 +14,29 @@
  */
 
 /**
- * ViewHighlightVariables.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * EditLocateVariable.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.core.Variables;
+import adams.flow.processor.ListVariableUsage;
 import adams.gui.core.GUIHelper;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Highlights attached variables.
+ * Opens dialog for locating a variable.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ViewHighlightVariables
+public class EditLocateVariable
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
 
-  /** the last variable search performed. */
-  protected String m_LastVariableSearch;
-
-  /**
-   * Initializes the action.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    m_LastVariableSearch = "";    
-  }
-  
   /**
    * Returns the caption of this action.
    * 
@@ -54,26 +44,24 @@ public class ViewHighlightVariables
    */
   @Override
   protected String getTitle() {
-    return "Highlight attached variables...";
+    return "Locate variable";
   }
-  
+
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    String	regexp;
-    
-    regexp = GUIHelper.showInputDialog(
-      GUIHelper.getParentComponent(m_State),
-      "Enter the regular expression for the variable name ('.*' matches all):",
-      m_LastVariableSearch,
-      getTitle());
-    if (regexp == null)
-	return;
+    String name;
 
-    m_LastVariableSearch = regexp;
-    m_State.getCurrentPanel().getTree().highlightVariables(m_LastVariableSearch);
+    name = GUIHelper.showInputDialog(m_State, "Please enter the name of the variable to locate:");
+    if (name == null)
+      return;
+
+    name = Variables.extractName(name);
+    ListVariableUsage processor = new ListVariableUsage();
+    processor.setName(name);
+    m_State.getCurrentPanel().processActors(processor);
   }
 
   /**
@@ -82,7 +70,7 @@ public class ViewHighlightVariables
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel()
+	   m_State.hasCurrentPanel() 
 	&& !m_State.isSwingWorkerRunning());
   }
 }
