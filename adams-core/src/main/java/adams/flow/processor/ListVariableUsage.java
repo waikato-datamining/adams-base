@@ -15,7 +15,7 @@
 
 /**
  * ListVariableUsage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.processor;
@@ -23,6 +23,9 @@ package adams.flow.processor;
 import adams.core.VariableName;
 import adams.core.Variables;
 import adams.core.base.BaseObject;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
+import adams.core.option.OptionTraversalPath;
 
 /**
  <!-- globalinfo-start -->
@@ -101,6 +104,28 @@ public class ListVariableUsage
     else {
       return false;
     }
+  }
+
+  /**
+   * Checks whether the object is valid and should be added to the list.
+   *
+   * @param option	the current option
+   * @param obj		the object to check
+   * @param path	the traversal path of properties
+   * @return		true if valid
+   */
+  protected boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path) {
+    boolean			result;
+    AbstractArgumentOption	arg;
+
+    result = super.isValid(option, obj, path);
+
+    if (!result && (option instanceof AbstractArgumentOption)) {
+      arg    = (AbstractArgumentOption) option;
+      result = (arg.isVariableAttached() && isNameMatch(arg.getVariable()));
+    }
+
+    return result;
   }
 
   @Override

@@ -15,12 +15,12 @@
 
 /**
  * ListDatabaseConnections.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
 
-import adams.core.option.OptionHandler;
+import adams.core.option.AbstractOption;
 import adams.core.option.OptionTraversalPath;
 
 /**
@@ -57,13 +57,12 @@ public class ListDatabaseConnections
   /**
    * Checks whether the object is valid and should be added to the list.
    * 
-   * @param handler	the option handler this object belongs to
+   * @param option	the current option
    * @param obj		the object to check
    * @param path	the traversal path of properties
    * @return		true if valid
    */
-  @Override
-  protected boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path) {
+  protected boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path) {
     return 
 	   (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) 
 	|| (obj instanceof adams.db.AbstractDatabaseConnection);
@@ -72,13 +71,13 @@ public class ListDatabaseConnections
   /**
    * Returns the string representation of the object that is added to the list.
    * 
-   * @param handler	the option handler this object belongs to
+   * @param option	the current option
    * @param obj		the object to turn into a string
    * @param path	the traversal path of properties
    * @return		the string representation, null if to ignore the item
    */
   @Override
-  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
+  protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
     if (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) {
       adams.flow.standalone.AbstractDatabaseConnection conn = (adams.flow.standalone.AbstractDatabaseConnection) obj;
       return conn.getURL();

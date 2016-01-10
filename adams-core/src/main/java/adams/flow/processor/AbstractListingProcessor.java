@@ -15,7 +15,7 @@
 
 /**
  * AbstractListingProcessor.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -24,7 +24,6 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
-import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActor;
@@ -56,39 +55,39 @@ public abstract class AbstractListingProcessor
   /**
    * Checks whether the object is valid and should be added to the list.
    * 
-   * @param handler	the option handler this object belongs to
+   * @param option	the current option
    * @param obj		the object to check
    * @param path	the traversal path of properties
    * @return		true if valid
    */
-  protected abstract boolean isValid(OptionHandler handler, Object obj, OptionTraversalPath path);
+  protected abstract boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path);
 
   /**
    * Returns the string representation of the object that is added to the list.
    * <br><br>
    * Default implementation only calls the <code>toString()</code> method.
    * 
-   * @param handler	the option handler this object belongs to
+   * @param option	the current option
    * @param obj		the object to turn into a string
    * @param path	the traversal path of properties
    * @return		the string representation, null if to ignore the item
    */
-  protected String objectToString(OptionHandler handler, Object obj, OptionTraversalPath path) {
+  protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
     return obj.toString();
   }
   
   /**
    * Processes the object.
    *
-   * @param handler	the option handler this object belongs to
+   * @param option	the current option
    * @param obj		the object 
    * @param path	the traversal path of properties
    */
-  protected void process(OptionHandler handler, Object obj, OptionTraversalPath path) {
+  protected void process(AbstractOption option, Object obj, OptionTraversalPath path) {
     String	item;
 
-    if (isValid(handler, obj, path)) {
-      item = objectToString(handler, obj, path);
+    if (isValid(option, obj, path)) {
+      item = objectToString(option, obj, path);
       if (item == null)
 	return;
       if (isUniqueList() && m_List.contains(item))
@@ -142,10 +141,10 @@ public abstract class AbstractListingProcessor
 	Object current = option.getCurrentValue();
 	if (option.isMultiple()) {
 	  for (int i = 0; i < Array.getLength(current); i++)
-	    process(option.getOptionHandler(), Array.get(current, i), path);
+	    process(option, Array.get(current, i), path);
 	}
 	else {
-	  process(option.getOptionHandler(), current, path);
+	  process(option, current, path);
 	}
       }
       public boolean canHandle(AbstractOption option) {
