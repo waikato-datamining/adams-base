@@ -15,22 +15,23 @@
 
 /*
  * WekaPredictionsToSpreadSheet.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-
-import weka.classifiers.Evaluation;
-import weka.classifiers.evaluation.NominalPrediction;
-import weka.classifiers.evaluation.Prediction;
-import weka.core.Instances;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
+import weka.classifiers.CrossValidationHelper;
+import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.NominalPrediction;
+import weka.classifiers.evaluation.Prediction;
+import weka.core.Instances;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -47,13 +48,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -64,41 +63,60 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: WekaPredictionsToSpreadSheet
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-add-index (property: addLabelIndex)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-add-index &lt;boolean&gt; (property: addLabelIndex)
  * &nbsp;&nbsp;&nbsp;If set to true, then the label is prefixed with the index.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-error (property: showError)
+ * <pre>-error &lt;boolean&gt; (property: showError)
  * &nbsp;&nbsp;&nbsp;If set to true, then the error will be displayed as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-probability (property: showProbability)
+ * <pre>-probability &lt;boolean&gt; (property: showProbability)
  * &nbsp;&nbsp;&nbsp;If set to true, then the probability of the prediction will be displayed 
  * &nbsp;&nbsp;&nbsp;as well (only for nominal class attributes).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-distribution (property: showDistribution)
+ * <pre>-distribution &lt;boolean&gt; (property: showDistribution)
  * &nbsp;&nbsp;&nbsp;If set to true, then the class distribution will be displayed as well (only 
  * &nbsp;&nbsp;&nbsp;for nominal class attributes).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-weight (property: showWeight)
+ * <pre>-weight &lt;boolean&gt; (property: showWeight)
  * &nbsp;&nbsp;&nbsp;If set to true, then the instance weight will be displayed as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-use-original-indices &lt;boolean&gt; (property: useOriginalIndices)
+ * &nbsp;&nbsp;&nbsp;If set to true, the input token is a adams.flow.container.WekaEvaluationContainer 
+ * &nbsp;&nbsp;&nbsp;and it contains the original indices ('Original indices') then the output 
+ * &nbsp;&nbsp;&nbsp;will get aligned with the original data.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -143,13 +161,18 @@ public class WekaPredictionsToSpreadSheet
     Prediction			pred;
     SpreadSheet			data;
     Row				row;
+    int[]			indices;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof WekaEvaluationContainer)
-      eval = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
-    else
-      eval = (Evaluation) m_InputToken.getPayload();
+    if (m_InputToken.getPayload() instanceof WekaEvaluationContainer) {
+      eval    = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
+      indices = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+    }
+    else {
+      eval    = (Evaluation) m_InputToken.getPayload();
+      indices = null;
+    }
     header      = eval.getHeader();
     nominal     = header.classAttribute().isNominal();
     predictions = eval.predictions();
@@ -188,8 +211,10 @@ public class WekaPredictionsToSpreadSheet
       }
 
       // add data
+      if (indices != null)
+        predictions = CrossValidationHelper.alignPredictions(predictions, indices);
       for (i = 0; i < predictions.size(); i++) {
-	pred = (Prediction) predictions.get(i);
+        pred = predictions.get(i);
 	row  = data.addRow();
 	// actual
 	row.addCell(0).setContent(pred.actual());

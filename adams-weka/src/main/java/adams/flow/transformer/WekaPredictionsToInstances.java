@@ -15,22 +15,23 @@
 
 /*
  * WekaPredictionsToInstances.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-
+import adams.data.statistics.StatUtils;
+import adams.flow.container.WekaEvaluationContainer;
+import adams.flow.core.Token;
+import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
-import adams.data.statistics.StatUtils;
-import adams.flow.container.WekaEvaluationContainer;
-import adams.flow.core.Token;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -39,61 +40,85 @@ import adams.flow.core.Token;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: PredictionsToInstances
+ * &nbsp;&nbsp;&nbsp;default: WekaPredictionsToInstances
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-add-index (property: addLabelIndex)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-add-index &lt;boolean&gt; (property: addLabelIndex)
  * &nbsp;&nbsp;&nbsp;If set to true, then the label is prefixed with the index.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-error (property: showError)
+ * 
+ * <pre>-error &lt;boolean&gt; (property: showError)
  * &nbsp;&nbsp;&nbsp;If set to true, then the error will be displayed as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-probability (property: showProbability)
- * &nbsp;&nbsp;&nbsp;If set to true, then the probability of the prediction will be displayed
+ * 
+ * <pre>-probability &lt;boolean&gt; (property: showProbability)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the probability of the prediction will be displayed 
  * &nbsp;&nbsp;&nbsp;as well (only for nominal class attributes).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-distribution (property: showDistribution)
- * &nbsp;&nbsp;&nbsp;If set to true, then the class distribution will be displayed as well (only
+ * 
+ * <pre>-distribution &lt;boolean&gt; (property: showDistribution)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the class distribution will be displayed as well (only 
  * &nbsp;&nbsp;&nbsp;for nominal class attributes).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-weight (property: showWeight)
+ * 
+ * <pre>-weight &lt;boolean&gt; (property: showWeight)
  * &nbsp;&nbsp;&nbsp;If set to true, then the instance weight will be displayed as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-use-original-indices &lt;boolean&gt; (property: useOriginalIndices)
+ * &nbsp;&nbsp;&nbsp;If set to true, the input token is a adams.flow.container.WekaEvaluationContainer 
+ * &nbsp;&nbsp;&nbsp;and it contains the original indices ('Original indices') then the output 
+ * &nbsp;&nbsp;&nbsp;will get aligned with the original data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -138,13 +163,18 @@ public class WekaPredictionsToInstances
     Prediction			pred;
     double[]			vals;
     Instances			data;
+    int[]			indices;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof WekaEvaluationContainer)
-      eval = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
-    else
-      eval = (Evaluation) m_InputToken.getPayload();
+    if (m_InputToken.getPayload() instanceof WekaEvaluationContainer) {
+      eval    = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
+      indices = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+    }
+    else {
+      eval    = (Evaluation) m_InputToken.getPayload();
+      indices = null;
+    }
     header      = eval.getHeader();
     nominal     = header.classAttribute().isNominal();
     predictions = eval.predictions();
@@ -210,8 +240,10 @@ public class WekaPredictionsToInstances
       data.setClassIndex(1);  // predicted
 
       // add data
+      if (indices != null)
+        predictions = CrossValidationHelper.alignPredictions(predictions, indices);
       for (i = 0; i < predictions.size(); i++) {
-	pred = (Prediction) predictions.get(i);
+	pred = predictions.get(i);
 	vals = new double[data.numAttributes()];
 	// actual
 	vals[0] = pred.actual();

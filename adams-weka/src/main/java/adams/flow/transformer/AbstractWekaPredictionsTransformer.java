@@ -15,13 +15,17 @@
 
 /*
  * AbstractWekaPredictionsTransformer.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import weka.classifiers.Evaluation;
 import adams.flow.container.WekaEvaluationContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for transformers that convert the predictions stored in an
@@ -51,6 +55,9 @@ public abstract class AbstractWekaPredictionsTransformer
   /** whether to output the weight as well. */
   protected boolean m_ShowWeight;
 
+  /** whether to align output with original dataset (if possible). */
+  protected boolean m_UseOriginalIndices;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -77,6 +84,32 @@ public abstract class AbstractWekaPredictionsTransformer
     m_OptionManager.add(
 	    "weight", "showWeight",
 	    false);
+
+    m_OptionManager.add(
+	    "use-original-indices", "useOriginalIndices",
+	    false);
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String		result;
+    List<String> 	options;
+
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "addLabelIndex", m_AddLabelIndex, "label-index"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showError", m_ShowError, "error"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showProbability", m_ShowProbability, "probability"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showDistribution", m_ShowDistribution, "distribution"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showWeight", m_ShowWeight, "weight"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useOriginalWeights", m_UseOriginalIndices, "original indices"));
+    result = QuickInfoHelper.flatten(options);
+
+    return result;
   }
 
   /**
@@ -227,6 +260,40 @@ public abstract class AbstractWekaPredictionsTransformer
   public String showWeightTipText() {
     return
         "If set to true, then the instance weight will be displayed as well.";
+  }
+
+  /**
+   * Sets whether to align with original data
+   * (requires: WekaEvaluationContainer as input and original indices in container).
+   *
+   * @param value	true if to align with original data
+   */
+  public void setUseOriginalIndices(boolean value) {
+    m_UseOriginalIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to align with original data
+   * (requires: WekaEvaluationContainer as input and original indices in container).
+   *
+   * @return		true if to align with original data
+   */
+  public boolean getUseOriginalIndices() {
+    return m_UseOriginalIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useOriginalIndicesTipText() {
+    return
+        "If set to true, the input token is a " + WekaEvaluationContainer.class.getName()
+          + " and it contains the original indices ('" + WekaEvaluationContainer.VALUE_ORIGINALINDICES + "')"
+          + " then the output will get aligned with the original data.";
   }
 
   /**

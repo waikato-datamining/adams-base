@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2015-09-09 12:43:06
+# Date: 2016-01-12 12:40:42
 # User: fracpete
 # Charset: UTF-8
 #
@@ -16,6 +16,8 @@ adams.flow.control.Flow
 							0
 							-R
 							1.0E-8
+							-num-decimal-places
+							4
 	-actor
 		adams.flow.source.FileSupplier
 			-file
@@ -30,8 +32,12 @@ adams.flow.control.Flow
 		adams.flow.transformer.WekaCrossValidationEvaluator
 			-output
 				weka.classifiers.evaluation.output.prediction.Null
+			-always-use-container
+			true
 	-actor
 		adams.flow.transformer.WekaPredictionsToSpreadSheet
+			-use-original-indices
+			true
 	-actor
 		adams.flow.control.RemoveOutliers
 			-short-title

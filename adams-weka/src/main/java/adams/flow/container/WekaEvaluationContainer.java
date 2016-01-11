@@ -15,7 +15,7 @@
 
 /*
  * WekaEvaluationContainer.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -46,6 +46,9 @@ public class WekaEvaluationContainer
 
   /** the identifier for the prediction output. */
   public final static String VALUE_PREDICTIONOUTPUT = "Prediction output";
+
+  /** the identifier for the original indices. */
+  public final static String VALUE_ORIGINALINDICES = "Original indices";
 
   /**
    * Initializes the container.
@@ -83,11 +86,24 @@ public class WekaEvaluationContainer
    * @param predOutput  the prediction output string, can be null
    */
   public WekaEvaluationContainer(Evaluation eval, Object model, String predOutput) {
+    this(eval, model, predOutput, null);
+  }
+
+  /**
+   * Initializes the container with no header.
+   *
+   * @param eval	the evaluation to use
+   * @param model	the model to use, can be null
+   * @param predOutput  the prediction output string, can be null
+   * @param originalIndices	the original indices (for tracing the predictions), can be null
+   */
+  public WekaEvaluationContainer(Evaluation eval, Object model, String predOutput, int[] originalIndices) {
     super();
 
     store(VALUE_EVALUATION,       eval);
     store(VALUE_MODEL,            model);
     store(VALUE_PREDICTIONOUTPUT, predOutput);
+    store(VALUE_ORIGINALINDICES,  originalIndices);
   }
 
   /**
@@ -104,6 +120,7 @@ public class WekaEvaluationContainer
     result.add(VALUE_EVALUATION);
     result.add(VALUE_MODEL);
     result.add(VALUE_PREDICTIONOUTPUT);
+    result.add(VALUE_ORIGINALINDICES);
 
     return result.iterator();
   }

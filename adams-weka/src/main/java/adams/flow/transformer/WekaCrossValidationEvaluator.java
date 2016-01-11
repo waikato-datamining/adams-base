@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationEvaluator.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -41,6 +41,7 @@ import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 import weka.classifiers.AggregateableEvaluation;
 import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.Null;
 import weka.core.Instances;
@@ -391,8 +392,10 @@ public class WekaCrossValidationEvaluator
     WekaCrossValidationJob 		job;
     WekaTrainTestSetContainer		cont;
     int					i;
+    int[]				indices;
 
-    result = null;
+    result  = null;
+    indices = null;
 
     try {
       // evaluate classifier
@@ -413,6 +416,9 @@ public class WekaCrossValidationEvaluator
 	m_ActualNumThreads = Math.min(m_NumThreads, folds);
       else
 	m_ActualNumThreads = 0;
+
+      if (!m_DiscardPredictions)
+	indices = CrossValidationHelper.crossValidationIndices(data, folds, new Random(m_Seed));
 
       if (m_ActualNumThreads == 0) {
         initOutputBuffer();
@@ -484,8 +490,11 @@ public class WekaCrossValidationEvaluator
       result = handleException("Failed to cross-validate classifier: ", e);
     }
 
-    if (m_OutputToken != null)
+    if (m_OutputToken != null) {
+      if ((indices != null) && (m_OutputToken.getPayload() instanceof WekaEvaluationContainer))
+	((WekaEvaluationContainer) m_OutputToken.getPayload()).setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, indices);
       updateProvenance(m_OutputToken);
+    }
 
     return result;
   }
