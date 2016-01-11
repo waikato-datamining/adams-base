@@ -173,7 +173,7 @@ public abstract class AbstractSplitGeneratorTestCase
 	((CleanUpHandler) setups[i]).cleanUp();
     }
     for (i = 0; i < outputFiles.size(); i++) {
-      m_TestHelper.deleteFileFromTmp(outputFiles.get(i).getAbsolutePath());
+      outputFiles.get(i).delete();
     }
   }
 }
