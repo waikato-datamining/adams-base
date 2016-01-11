@@ -18,10 +18,12 @@
  * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
+
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.core.Instances;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 /**
  * Helper class for generating cross-validation folds.
@@ -106,7 +108,6 @@ public class CrossValidationFoldGenerator
     m_Randomize    = randomize;
     m_RelationName = relName;
     m_CurrentFold  = 1;
-    m_Random       = null;
     m_Stratify     = stratify;
   }
   
@@ -206,7 +207,9 @@ public class CrossValidationFoldGenerator
   @Override
   protected void initialize() {
     super.initialize();
-    
+
+    if (m_Random == null)
+      m_Random = new Random(m_Seed);
     if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
       m_Data.stratify(m_NumFolds);
   }

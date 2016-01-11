@@ -20,10 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.classifiers.CrossValidationFoldGenerator;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -33,6 +29,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.core.Instances;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -347,7 +347,7 @@ public class WekaCrossValidationSplit
 
     result = null;
     try {
-      m_Generator = new CrossValidationFoldGenerator((Instances) m_InputToken.getPayload(), m_Folds, m_Seed, true, m_RelationName);
+      m_Generator = new CrossValidationFoldGenerator((Instances) m_InputToken.getPayload(), m_Folds, m_Seed, true, true, m_RelationName);
     }
     catch (Exception e) {
       result = handleException("Failed to initalize fold generator!", e);
