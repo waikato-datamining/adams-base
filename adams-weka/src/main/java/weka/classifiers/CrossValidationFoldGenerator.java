@@ -15,13 +15,13 @@
 
 /**
  * CrossValidationFoldGenerator.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
-import java.util.NoSuchElementException;
-
-import weka.core.Instances;
 import adams.flow.container.WekaTrainTestSetContainer;
+import weka.core.Instances;
+
+import java.util.NoSuchElementException;
 
 /**
  * Helper class for generating cross-validation folds.
@@ -59,6 +59,9 @@ public class CrossValidationFoldGenerator
   /** the template for the relation name. */
   protected String m_RelationName;
 
+  /** whether to randomize the data. */
+  protected boolean m_Randomize;
+
   /**
    * Initializes the generator.
    * 
@@ -68,19 +71,20 @@ public class CrossValidationFoldGenerator
    * @param stratify	whether to perform stratified CV
    */
   public CrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify) {
-    this(data, numFolds, seed, stratify, null);
+    this(data, numFolds, seed, true, stratify, null);
   }
 
   /**
    * Initializes the generator.
    * 
    * @param data	the full dataset
-   * @param numFolds	the number of folds
    * @param numFolds	the number of folds, leave-one-out if less than 2
+   * @param seed	the seed value
+   * @param randomize 	whether to randomize the data
    * @param stratify	whether to perform stratified CV
    * @param relName	the relation name template, use null to ignore
    */
-  public CrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify, String relName) {
+  public CrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
     super(data, seed);
 
     if (data.classIndex() == -1)
@@ -98,7 +102,8 @@ public class CrossValidationFoldGenerator
     
     if ((relName == null) || (relName.length() == 0))
       relName = PLACEHOLDER_ORIGINAL;
-    
+
+    m_Randomize    = randomize;
     m_RelationName = relName;
     m_CurrentFold  = 1;
     m_Random       = null;
@@ -139,7 +144,7 @@ public class CrossValidationFoldGenerator
    */
   @Override
   protected boolean canRandomize() {
-    return true;
+    return m_Randomize;
   }
 
   /**
