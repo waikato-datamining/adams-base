@@ -15,7 +15,7 @@
 
 /**
  * BaselineAdjustedForecaster.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers.timeseries;
 
@@ -544,5 +544,25 @@ public class BaselineAdjustedForecaster
     }
     
     return result.toString();
+  }
+
+  /**
+   * Perform any setup stuff that might need to happen before execution.
+   *
+   * @throws Exception if a problem occurs during setup
+   */
+  @Override
+  public void preExecution() throws Exception {
+
+  }
+
+  /**
+   * Perform any teardown stuff that might need to happen after execution.
+   *
+   * @throws Exception if a problem occurs during teardown
+   */
+  @Override
+  public void postExecution() throws Exception {
+
   }
 }

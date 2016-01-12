@@ -5,7 +5,7 @@
 [
    <!ELEMENT dataset (header,body)>
    <!ATTLIST dataset name CDATA #REQUIRED>
-   <!ATTLIST dataset version CDATA "3.7.13">
+   <!ATTLIST dataset version CDATA "3.7.14-SNAPSHOT">
 
    <!ELEMENT header (notes?,attributes)>
    <!ELEMENT body (instances)>
@@ -33,7 +33,7 @@
 ]
 >
 
-<dataset name="vote" version="3.7.13">
+<dataset name="vote" version="3.7.14-SNAPSHOT">
    <header>
       <attributes>
          <attribute name="handicapped-infants" type="nominal">
