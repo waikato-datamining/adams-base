@@ -34,6 +34,7 @@ import adams.multiprocess.WekaCrossValidationJob;
 import weka.classifiers.AggregateableEvaluation;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Capabilities;
@@ -409,25 +410,21 @@ public class RemoveOutliers
    * Cross-validates the classifier on the given data.
    *
    * @param data	the data to use for cross-validation
+   * @param folds	the number of folds
    * @return		the evaluation
    * @throws Exception	if cross-validation fails
    */
-  protected Evaluation crossValidate(Instances data) throws Exception {
+  protected Evaluation crossValidate(Instances data, int folds) throws Exception {
     String 				msg;
     int 				numThreads;
     Evaluation				eval;
     AggregateableEvaluation 		evalAgg;
-    int					folds;
     CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob> 	list;
     WekaCrossValidationJob 		job;
     WekaTrainTestSetContainer 		cont;
     int					i;
     LocalJobRunner 			jobRunner;
-
-    folds = m_NumFolds;
-    if (folds == -1)
-      folds = data.numInstances();
 
     if (m_NumThreads == -1)
       numThreads = ProcessUtils.getAvailableProcessors();
@@ -492,7 +489,7 @@ public class RemoveOutliers
    */
   protected SpreadSheet evaluationToSpreadSheet(Evaluation eval) throws Exception {
     SpreadSheet				result;
-    WekaPredictionsToSpreadSheet conv;
+    WekaPredictionsToSpreadSheet 	conv;
     String				msg;
     Token token;
 
@@ -528,13 +525,18 @@ public class RemoveOutliers
     Instances		result;
     Evaluation		eval;
     SpreadSheet		sheet;
-    Set<Integer> outliers;
-    List<Integer> sorted;
+    Set<Integer> 	outliers;
+    List<Integer> 	sorted;
     int			i;
+    int			folds;
+    int[]		indices;
 
     // cross-validate
+    folds = m_NumFolds;
+    if (folds == -1)
+      folds = data.numInstances();
     try {
-      eval = crossValidate(data);
+      eval = crossValidate(data, folds);
     }
     catch (Exception e) {
       throw new Exception("Failed to cross-validate!", e);
@@ -557,11 +559,12 @@ public class RemoveOutliers
     }
 
     // clean dataset
-    result = new Instances(data, data.numInstances() - outliers.size());
-    for (i = 0; i < data.numInstances(); i++) {
+    indices = CrossValidationHelper.crossValidationIndices(data, folds, new Random(m_Seed));
+    result  = new Instances(data, data.numInstances() - outliers.size());
+    for (i = 0; i < indices.length; i++) {
       if (outliers.contains(i))
 	continue;
-      result.add((Instance) data.instance(i).copy());
+      result.add((Instance) data.instance(indices[i]).copy());
     }
 
     return result;
