@@ -15,7 +15,7 @@
 
 /**
  * RemoveOutliers.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package weka.filters.supervised.instance;
