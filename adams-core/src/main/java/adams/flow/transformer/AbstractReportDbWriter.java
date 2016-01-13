@@ -24,7 +24,7 @@ import adams.core.Constants;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
-import adams.db.ReportProvider;
+import adams.db.ReportProviderByDBID;
 import adams.flow.core.Token;
 import adams.flow.transformer.report.AbstractReportPreProcessor;
 import adams.flow.transformer.report.NoPreProcessing;
@@ -265,7 +265,7 @@ public abstract class AbstractReportDbWriter<T extends Report>
    *
    * @return		the provider to use
    */
-  protected abstract ReportProvider<T> getReportProvider();
+  protected abstract ReportProviderByDBID<T> getReportProvider();
 
   /**
    * Executes the flow item.
@@ -275,7 +275,7 @@ public abstract class AbstractReportDbWriter<T extends Report>
   @Override
   protected String queryDatabase() {
     String		result;
-    ReportProvider<T>	provider;
+    ReportProviderByDBID<T> provider;
     boolean		stored;
     T 			report;
     int			parentID;

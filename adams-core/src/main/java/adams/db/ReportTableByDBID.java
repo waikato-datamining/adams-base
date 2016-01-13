@@ -19,15 +19,15 @@
  */
 package adams.db;
 
-import java.util.Vector;
-import java.util.logging.Level;
-
 import adams.core.Constants;
 import adams.core.Utils;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+
+import java.util.Vector;
+import java.util.logging.Level;
 
 /**
  * Abstract ancestor for classes that provide access to reports stored in
@@ -38,9 +38,9 @@ import adams.data.report.Report;
  * @param <R> the type of reports to handle
  * @param <F> the type of fields to handle
  */
-public abstract class ReportTable<R extends Report, F extends AbstractField>
+public abstract class ReportTableByDBID<R extends Report, F extends AbstractField>
   extends AbstractIndexedTable
-  implements FieldProvider<F>, ReportProvider<R> {
+  implements FieldProvider<F>, ReportProviderByDBID<R> {
 
   /** for serialization. */
   private static final long serialVersionUID = -1143611181126566480L;
@@ -51,7 +51,7 @@ public abstract class ReportTable<R extends Report, F extends AbstractField>
    * @param dbcon	the database context this table is used in
    * @param tableName	the name of the table
    */
-  public ReportTable(AbstractDatabaseConnection dbcon, String tableName) {
+  public ReportTableByDBID(AbstractDatabaseConnection dbcon, String tableName) {
     super(dbcon, tableName);
   }
 
@@ -119,7 +119,7 @@ public abstract class ReportTable<R extends Report, F extends AbstractField>
    * @param id		ID of chromatogram
    * @return		true if successfully removed
    */
-  public boolean remove(int id) {
+  public boolean remove(Integer id) {
     boolean	result;
     String	sql;
 
@@ -149,7 +149,7 @@ public abstract class ReportTable<R extends Report, F extends AbstractField>
    * @param report	the report
    * @return		true if successfully inserted
    */
-  public boolean store(int parent_id, R report) {
+  public boolean store(Integer parent_id, R report) {
     return store(parent_id, report, true, false, new Field[]{});
   }
 
@@ -166,7 +166,7 @@ public abstract class ReportTable<R extends Report, F extends AbstractField>
    * @param overwrite		fields to overwrite if in "merge" mode
    * @return			true if successfully inserted/updated
    */
-  public boolean store(int parent_id, R report, boolean removeExisting, boolean merge, Field[] overwrite) {
+  public boolean store(Integer parent_id, R report, boolean removeExisting, boolean merge, Field[] overwrite) {
     boolean	result;
     boolean	exists;
     R		reportOld;
@@ -225,5 +225,5 @@ public abstract class ReportTable<R extends Report, F extends AbstractField>
    * @param report	the report
    * @return		true if successfully inserted
    */
-  protected abstract boolean doStore(int parent_id, R report);
+  protected abstract boolean doStore(Integer parent_id, R report);
 }

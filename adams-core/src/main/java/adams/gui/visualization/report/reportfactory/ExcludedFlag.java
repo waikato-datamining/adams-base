@@ -19,12 +19,12 @@
  */
 package adams.gui.visualization.report.reportfactory;
 
-import java.awt.event.ActionEvent;
-
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Sets the 'Excluded' flag and updates the database.

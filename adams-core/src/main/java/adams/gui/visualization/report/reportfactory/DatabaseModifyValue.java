@@ -19,14 +19,14 @@
  */
 package adams.gui.visualization.report.reportfactory;
 
-import java.awt.event.ActionEvent;
-
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Allows the user to modify values. The underlying report gets updated in the
@@ -101,7 +101,7 @@ public class DatabaseModifyValue
   @Override
   protected void doActionPerformed(ActionEvent e) {
     String		value;
-    ReportProvider 	provider;
+    ReportProvider	provider;
     Report 		report;
     boolean		modified;
     int			i;

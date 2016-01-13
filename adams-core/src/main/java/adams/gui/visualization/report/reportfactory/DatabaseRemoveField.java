@@ -19,12 +19,12 @@
  */
 package adams.gui.visualization.report.reportfactory;
 
-import java.awt.event.ActionEvent;
-
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.gui.visualization.report.ReportFactory;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Removes the field from the report and updates the report in the database.

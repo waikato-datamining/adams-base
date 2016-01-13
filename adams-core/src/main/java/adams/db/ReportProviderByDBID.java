@@ -28,13 +28,12 @@ import java.util.Vector;
  * Interface for table classes that handle the reports of a project.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4584 $
+ * @version $Revision$
  * @param <T> the type of report to handle
- * @param <I> the type of ID to handle
  * @see AbstractIndexedTable
  */
-public interface ReportProvider<T extends Report, I>
-  extends DatabaseConnectionProvider {
+public interface ReportProviderByDBID<T extends Report>
+  extends ReportProvider<T, Integer> {
 
   /**
    * Stores the report. Removes a previously existing report.
@@ -43,7 +42,7 @@ public interface ReportProvider<T extends Report, I>
    * @param report	the report
    * @return		true if successfully inserted/updated
    */
-  public boolean store(I parent_id, T report);
+  public boolean store(Integer parent_id, T report);
 
   /**
    * Stores the report. Either updates or inserts the fields.
@@ -57,7 +56,7 @@ public interface ReportProvider<T extends Report, I>
    * @param overwrite		fields to overwrite if in "merge" mode
    * @return			true if successfully inserted/updated
    */
-  public boolean store(I parent_id, T report, boolean removeExisting, boolean merge, Field[] overwrite);
+  public boolean store(Integer parent_id, T report, boolean removeExisting, boolean merge, Field[] overwrite);
 
   /**
    * Loads the report from the database.
@@ -65,7 +64,7 @@ public interface ReportProvider<T extends Report, I>
    * @param parent_id	the ID of parent data container
    * @return		the report
    */
-  public T load(I parent_id);
+  public T load(Integer parent_id);
 
   /**
    * Checks whether the report exists in the database.
@@ -73,7 +72,7 @@ public interface ReportProvider<T extends Report, I>
    * @param parent_id	the ID of parent data container
    * @return		true if the report exists
    */
-  public boolean exists(I parent_id);
+  public boolean exists(Integer parent_id);
 
   /**
    * Removes the report from the database.
@@ -81,7 +80,7 @@ public interface ReportProvider<T extends Report, I>
    * @param parent_id	the ID of the parent data container
    * @return		true if successfully removed
    */
-  public boolean remove(I parent_id);
+  public boolean remove(Integer parent_id);
 
   /**
    * Return a list (Vector) of IDs of data containers that match the defined

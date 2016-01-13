@@ -19,14 +19,14 @@
  */
 package adams.gui.visualization.report.reportfactory;
 
-import java.awt.event.ActionEvent;
-
 import adams.core.option.AbstractOption;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.gui.core.GUIHelper;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Allows the user to add a new field to the report. The updated report gets 

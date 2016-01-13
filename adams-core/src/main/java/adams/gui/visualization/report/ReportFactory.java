@@ -293,7 +293,7 @@ public class ReportFactory {
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
-  public static class Table
+  public static class Table<R extends ReportProvider<?,?>>
     extends SortableAndSearchableTable {
 
     /** for serialization. */
@@ -502,7 +502,7 @@ public class ReportFactory {
      *
      * @return		the provider
      */
-    public ReportProvider getReportProvider() {
+    public ReportProvider<?,?> getReportProvider() {
       return null;
     }
 

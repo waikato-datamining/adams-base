@@ -14,8 +14,8 @@
  */
 
 /**
- * ReportProvider.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * ReportProviderByID.java
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -33,7 +33,7 @@ import java.util.Vector;
  * @see AbstractIndexedTable
  */
 public interface ReportProviderByID<T extends Report>
-  extends DatabaseConnectionProvider {
+  extends ReportProvider<T, String> {
 
   /**
    * Stores the report. Removes a previously existing report.

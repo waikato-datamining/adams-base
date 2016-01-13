@@ -176,7 +176,7 @@ public abstract class AbstractTableAction
    * 
    * @return		the report provider, null if not available
    */
-  protected ReportProvider getReportProvider() {
+  protected ReportProvider<?,?> getReportProvider() {
     if (getTable() != null)
       return getTable().getReportProvider();
     else

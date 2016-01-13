@@ -31,7 +31,7 @@ import adams.data.io.input.AbstractReportReader;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.db.DatabaseConnectionHandler;
-import adams.db.ReportProvider;
+import adams.db.ReportProviderByDBID;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -381,7 +381,7 @@ public abstract class AbstractReportFileImport<T extends Report>
    *
    * @return		the provider to use
    */
-  protected abstract ReportProvider<T> getReportProvider();
+  protected abstract ReportProviderByDBID<T> getReportProvider();
 
   /**
    * Configures the database connection if necessary.
@@ -417,7 +417,7 @@ public abstract class AbstractReportFileImport<T extends Report>
   @Override
   protected boolean processData(File file) {
     boolean		result;
-    ReportProvider<T>	provider;
+    ReportProviderByDBID<T> provider;
     List<T>		reports;
 
     result = false;

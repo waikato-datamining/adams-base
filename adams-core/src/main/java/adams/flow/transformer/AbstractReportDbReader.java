@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.data.report.Report;
-import adams.db.ReportProvider;
+import adams.db.ReportProviderByDBID;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -113,7 +113,7 @@ public abstract class AbstractReportDbReader<T extends Report>
    *
    * @return		the report provider
    */
-  protected abstract ReportProvider<T> getReportProvider();
+  protected abstract ReportProviderByDBID<T> getReportProvider();
 
   /**
    * Executes the flow item.
@@ -123,7 +123,7 @@ public abstract class AbstractReportDbReader<T extends Report>
   @Override
   protected String queryDatabase() {
     String		result;
-    ReportProvider<T>	provider;
+    ReportProviderByDBID<T> provider;
     Report		report;
     int			id;
 
