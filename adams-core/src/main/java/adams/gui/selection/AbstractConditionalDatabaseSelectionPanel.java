@@ -15,19 +15,18 @@
 
 /**
  * AbstractConditionalDatabaseSelectionPanel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.selection;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
 
 import adams.core.ClassLocator;
 import adams.db.AbstractConditions;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Abstract ancestor for selection panels that allow a conditional display
@@ -161,5 +160,28 @@ public abstract class AbstractConditionalDatabaseSelectionPanel<T, C extends Abs
 	m_Conditions = cond;
       }
     }
+  }
+
+  /**
+   * Performs actions before the refresh, like disabling buttons and
+   * changing mouse cursor to waiting one.
+   */
+  protected void preRefresh() {
+    super.preRefresh();
+    m_ButtonOptions.setEnabled(false);
+  }
+
+  /**
+   * Performs the actual refresh.
+   */
+  protected abstract void doRefresh();
+
+  /**
+   * Performs actions after the refresh, like enabling buttons, updating
+   * counts and changing mouse cursor back to normal one.
+   */
+  protected void postRefresh(final T[] items) {
+    super.postRefresh(items);
+    m_ButtonOptions.setEnabled(true);
   }
 }

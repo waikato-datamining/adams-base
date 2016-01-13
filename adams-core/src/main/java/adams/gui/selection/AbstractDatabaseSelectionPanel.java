@@ -15,22 +15,22 @@
 
 /**
  * AbstractDatabaseSelectionPanel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.selection;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
+
+import javax.swing.JButton;
+import javax.swing.SwingWorker;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 
 /**
  * Abstract ancestor for table-based selection panels that use the database
@@ -109,9 +109,32 @@ public abstract class AbstractDatabaseSelectionPanel<T>
   public abstract void refreshIfNecessary();
 
   /**
+   * Performs actions before the refresh, like disabling buttons and
+   * changing mouse cursor to waiting one.
+   */
+  protected void preRefresh() {
+    m_ButtonRefresh.setEnabled(false);
+    m_SearchPanel.setEnabled(false);
+    setCursor(new Cursor(Cursor.WAIT_CURSOR));
+  }
+
+  /**
    * Performs the actual refresh.
    */
   protected abstract void doRefresh();
+
+  /**
+   * Performs actions after the refresh, like enabling buttons, updating
+   * counts and changing mouse cursor back to normal one.
+   */
+  protected void postRefresh(final T[] items) {
+    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    m_Current = (T[]) select(items).toArray();
+    updateCounts();
+    m_ButtonRefresh.setEnabled(true);
+    m_SearchPanel.setEnabled(true);
+    m_DataDisplayed = true;
+  }
 
   /**
    * Refreshes the items.
@@ -124,19 +147,22 @@ public abstract class AbstractDatabaseSelectionPanel<T>
    * Refreshes the items.
    */
   protected void refresh(final T[] items) {
-    Runnable	run;
+    SwingWorker	worker;
 
-    run = new Runnable() {
-      public void run() {
-	m_ButtonRefresh.setEnabled(false);
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	preRefresh();
 	doRefresh();
-	m_Current = (T[]) select(items).toArray();
-	updateCounts();
-	m_ButtonRefresh.setEnabled(true);
-	m_DataDisplayed = true;
+	return null;
+      }
+      @Override
+      protected void done() {
+	super.done();
+	postRefresh(items);
       }
     };
-    SwingUtilities.invokeLater(run);
+    worker.execute();
   }
 
   /**
