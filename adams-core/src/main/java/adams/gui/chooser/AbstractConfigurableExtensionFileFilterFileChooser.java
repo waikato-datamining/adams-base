@@ -15,12 +15,13 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ClassLocator;
+import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -293,7 +294,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
  	 && !ClassLocator.hasInterface(getReaderClass(), m_CurrentHandler.getClass()) ) 
       return null;
     else
-      return (R) m_CurrentHandler;
+      return (R) OptionUtils.shallowCopy(m_CurrentHandler);
   }
 
   /**
@@ -309,7 +310,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
 	 && !ClassLocator.hasInterface(getWriterClass(), m_CurrentHandler.getClass()) )
       return null;
     else
-      return (W) m_CurrentHandler;
+      return (W) OptionUtils.shallowCopy(m_CurrentHandler);
   }
 
   /**
