@@ -60,19 +60,26 @@ public class XOr
   }
 
   /**
-   * Returns the number of images that are required for the operation.
+   * Returns the minimum number of images that are required for the operation.
    *
-   * @return		the number of images that are required, <= 0 means any number accepted
+   * @return		the number of images that are required, <= 0 means no lower limit
    */
   @Override
-  public int numImagesRequired() {
+  public int minNumImagesRequired() {
+    return 2;
+  }
+
+  /**
+   * Returns the maximum number of images that are required for the operation.
+   *
+   * @return		the number of images that are required, <= 0 means no upper limit
+   */
+  public int maxNumImagesRequired() {
     return 2;
   }
 
   /**
    * Checks the images.
-   * <br><br>
-   * Default implementation only ensures that images are present.
    *
    * @param images	the images to check
    */

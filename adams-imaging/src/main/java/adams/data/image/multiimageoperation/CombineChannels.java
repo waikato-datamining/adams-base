@@ -15,7 +15,7 @@
 
 /*
  * CombineChannels.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.multiimageoperation;
@@ -109,12 +109,21 @@ public class CombineChannels
   }
 
   /**
-   * Returns the number of images that are required for the operation.
+   * Returns the minimum number of images that are required for the operation.
    *
-   * @return		the number of images that are required, <= 0 means any number accepted
+   * @return		the number of images that are required, <= 0 means no lower limit
    */
   @Override
-  public int numImagesRequired() {
+  public int minNumImagesRequired() {
+    return Math.max(m_Channels.length, 2);
+  }
+
+  /**
+   * Returns the maximum number of images that are required for the operation.
+   *
+   * @return		the number of images that are required, <= 0 means no upper limit
+   */
+  public int maxNumImagesRequired() {
     return Math.max(m_Channels.length, 2);
   }
 

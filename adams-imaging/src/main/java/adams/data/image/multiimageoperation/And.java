@@ -15,7 +15,7 @@
 
 /*
  * And.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.multiimageoperation;
@@ -47,6 +47,8 @@ import java.awt.image.BufferedImage;
 public class And
   extends AbstractBufferedImageMultiImageOperation {
 
+  private static final long serialVersionUID = 7381673951864996785L;
+
   /**
    * Returns a string describing the object.
    *
@@ -60,19 +62,26 @@ public class And
   }
 
   /**
-   * Returns the number of images that are required for the operation.
+   * Returns the minimum number of images that are required for the operation.
    *
-   * @return		the number of images that are required, <= 0 means any number accepted
+   * @return		the number of images that are required, <= 0 means no lower limit
    */
   @Override
-  public int numImagesRequired() {
+  public int minNumImagesRequired() {
+    return 2;
+  }
+
+  /**
+   * Returns the maximum number of images that are required for the operation.
+   *
+   * @return		the number of images that are required, <= 0 means no upper limit
+   */
+  public int maxNumImagesRequired() {
     return 2;
   }
 
   /**
    * Checks the images.
-   * <br><br>
-   * Default implementation only ensures that images are present.
    *
    * @param images	the images to check
    */

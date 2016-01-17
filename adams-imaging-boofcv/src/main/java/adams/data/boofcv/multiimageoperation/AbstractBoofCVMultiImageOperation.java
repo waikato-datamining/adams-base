@@ -15,7 +15,7 @@
 
 /*
  * AbstractBoofCVMultiImageOperation.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.multiimageoperation;
@@ -24,7 +24,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.image.AbstractMultiImageOperation;
 
 /**
- * Abstract base class for operations that require multiple images of type BufferedImage.
+ * Abstract base class for operations that require multiple images of type BoofCVImageContainer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -32,4 +32,5 @@ import adams.data.image.AbstractMultiImageOperation;
 public abstract class AbstractBoofCVMultiImageOperation
   extends AbstractMultiImageOperation<BoofCVImageContainer> {
 
+  private static final long serialVersionUID = 5861891266938039031L;
 }

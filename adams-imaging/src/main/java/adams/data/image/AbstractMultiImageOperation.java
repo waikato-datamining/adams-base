@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiImageOperation.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image;
@@ -32,12 +32,21 @@ import adams.core.option.AbstractOptionHandler;
 public abstract class AbstractMultiImageOperation<T extends AbstractImageContainer>
   extends AbstractOptionHandler {
 
+  private static final long serialVersionUID = 1185449853784824033L;
+
   /**
-   * Returns the number of images that are required for the operation.
+   * Returns the minimum number of images that are required for the operation.
    *
-   * @return		the number of images that are required, <= 0 means any number accepted
+   * @return		the number of images that are required, <= 0 means no lower limit
    */
-  public abstract int numImagesRequired();
+  public abstract int minNumImagesRequired();
+
+  /**
+   * Returns the maximum number of images that are required for the operation.
+   *
+   * @return		the number of images that are required, <= 0 means no upper limit
+   */
+  public abstract int maxNumImagesRequired();
 
   /**
    * Checks whether the two images have the same dimensions.
@@ -63,10 +72,16 @@ public abstract class AbstractMultiImageOperation<T extends AbstractImageContain
     if ((images == null) || (images.length == 0))
       throw new IllegalStateException("No images provided!");
 
-    if (numImagesRequired() > 0) {
-      if (images.length != numImagesRequired())
+    if (minNumImagesRequired() > 0) {
+      if (images.length < minNumImagesRequired())
 	throw new IllegalStateException(
-	  "Required number of images differs from supplied number: " + numImagesRequired() + " != " + images.length);
+	  "Not enough images supplied (min > supplied): " + minNumImagesRequired() + " > " + images.length);
+    }
+
+    if (maxNumImagesRequired() > 0) {
+      if (images.length > maxNumImagesRequired())
+	throw new IllegalStateException(
+	  "Too many images supplied (max < supplied): " + maxNumImagesRequired() + " < " + images.length);
     }
   }
 

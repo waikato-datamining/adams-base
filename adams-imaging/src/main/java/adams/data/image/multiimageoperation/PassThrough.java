@@ -15,7 +15,7 @@
 
 /*
  * PassThrough.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.multiimageoperation;
@@ -42,6 +42,8 @@ import adams.data.image.BufferedImageContainer;
 public class PassThrough
   extends AbstractBufferedImageMultiImageOperation {
 
+  private static final long serialVersionUID = -1150506476203258531L;
+
   /**
    * Returns a string describing the object.
    *
@@ -53,12 +55,21 @@ public class PassThrough
   }
 
   /**
-   * Returns the number of images that are required for the operation.
+   * Returns the minimum number of images that are required for the operation.
    *
-   * @return		the number of images that are required, <= 0 means any number accepted
+   * @return		the number of images that are required, <= 0 means no lower limit
    */
   @Override
-  public int numImagesRequired() {
+  public int minNumImagesRequired() {
+    return -1;
+  }
+
+  /**
+   * Returns the maximum number of images that are required for the operation.
+   *
+   * @return		the number of images that are required, <= 0 means no upper limit
+   */
+  public int maxNumImagesRequired() {
     return -1;
   }
 
