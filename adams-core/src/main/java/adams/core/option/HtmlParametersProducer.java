@@ -15,7 +15,7 @@
 
 /**
  * HtmlParametersProducer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -248,36 +248,34 @@ public class HtmlParametersProducer
 	  text = "null";
 	}
 	else if (option.isMultiple()) {
-	  text = "";
+	  text = "<ol>";
 	  for (n = 0; n < Array.getLength(value); n++) {
-	    if (n > 0)
-	      text += "\n";
 	    bstring = (AbstractBaseString) Array.get(value, n);
-	    text += bstring.getValue();
-	  }
-	}
+	    text += "<li>" + toHTML(Utils.backQuoteChars(bstring.getValue()), false) + "</li>\n";
+          }
+          text += "</ol>";
+        }
 	else {
 	  bstring = (AbstractBaseString) value;
-	  text = bstring.getValue();
+	  text = toHTML(bstring.getValue());
 	}
-	result.append(toHTML(text, true) + "\n");
+	result.append(text + "\n");
       }
       else {
 	if (value == null) {
 	  text = "null";
 	}
 	else if (option.isMultiple()) {
-	  text = "";
+	  text = "<ol>";
 	  for (n = 0; n < Array.getLength(value); n++) {
-	    if (n > 0)
-	      text += ", ";
-	    text += option.toString(Array.get(value, n));
+	    text += "<li>" + toHTML(Utils.backQuoteChars(option.toString(Array.get(value, n))), false) + "</li>\n";
 	  }
+          text += "</ol>";
 	}
 	else {
-	  text = option.toString(value);
+	  text = toHTML(option.toString(value), false);
 	}
-	result.append(toHTML(Utils.backQuoteChars(text), false) + "\n");
+	result.append(text + "\n");
       }
       result.append("<br>\n");
       result.append("</li>\n");
