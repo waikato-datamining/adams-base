@@ -76,7 +76,7 @@ public class And
    * @return		the number of images that are required, <= 0 means no upper limit
    */
   public int maxNumImagesRequired() {
-    return 2;
+    return -1;
   }
 
   /**
@@ -86,14 +86,18 @@ public class And
    */
   @Override
   protected void check(BoofCVImageContainer[] images) {
+    int		i;
+
     super.check(images);
 
-    if (!checkSameDimensions(images[0], images[1]))
-      throw new IllegalStateException(
-	"Both images need to have the same dimensions: "
-	  + images[0].getWidth() + "x" + images[0].getHeight()
-	  + " != "
-	  + images[1].getWidth() + "x" + images[1].getHeight());
+    for (i = 1; i < images.length; i++) {
+      if (!checkSameDimensions(images[0], images[i]))
+	throw new IllegalStateException(
+	  "All images need to have the same dimensions: "
+	    + images[0].getWidth() + "x" + images[0].getHeight() + " (#1)"
+	    + " != "
+	    + images[i].getWidth() + "x" + images[i].getHeight() + "(#" + (i+1) +")");
+    }
   }
 
   /**
@@ -105,21 +109,28 @@ public class And
   @Override
   protected BoofCVImageContainer[] doProcess(BoofCVImageContainer[] images) {
     BoofCVImageContainer[]	result;
+    ImageUInt8[]		img;
     int				x;
     int				y;
-    int				and;
-    ImageUInt8			img0;
-    ImageUInt8			img1;
     ImageUInt8			output;
+    int				i;
+    int				val;
+    boolean			same;
 
     result    = new BoofCVImageContainer[1];
-    img0      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.UNSIGNED_INT_8);
-    img1      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.UNSIGNED_INT_8);
-    output    = (ImageUInt8) BoofCVHelper.clone(img0);
+    img       = new ImageUInt8[images.length];
+    for (i = 0; i < images.length; i++)
+      img[i] = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[i], BoofCVImageType.UNSIGNED_INT_8);
+    output    = (ImageUInt8) BoofCVHelper.clone(img[0]);
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
-	and = (img0.get(x, y) == img1.get(x, y)) ? 0 : 1;
-	output.set(x, y, and);
+	val  = img[0].get(x, y);
+	same = true;
+	for (i = 1; i < img.length; i++) {
+	  if (val != img[i].get(x, y))
+	    same = false;
+	}
+	output.set(x, y, same ? 0 : 1);
       }
     }
     result[0] = new BoofCVImageContainer();

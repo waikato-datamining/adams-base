@@ -77,7 +77,7 @@ public class And
    * @return		the number of images that are required, <= 0 means no upper limit
    */
   public int maxNumImagesRequired() {
-    return 2;
+    return -1;
   }
 
   /**
@@ -87,14 +87,18 @@ public class And
    */
   @Override
   protected void check(BufferedImageContainer[] images) {
+    int		i;
+
     super.check(images);
 
-    if (!checkSameDimensions(images[0], images[1]))
-      throw new IllegalStateException(
-	"Both images need to have the same dimensions: "
-	  + images[0].getWidth() + "x" + images[0].getHeight()
-	  + " != "
-	  + images[1].getWidth() + "x" + images[1].getHeight());
+    for (i = 1; i < images.length; i++) {
+      if (!checkSameDimensions(images[0], images[i]))
+	throw new IllegalStateException(
+	  "All images need to have the same dimensions: "
+	    + images[0].getWidth() + "x" + images[0].getHeight() + " (#1)"
+	    + " != "
+	    + images[i].getWidth() + "x" + images[i].getHeight() + "(#" + (i+1) +")");
+    }
   }
 
   /**
@@ -106,25 +110,32 @@ public class And
   @Override
   protected BufferedImageContainer[] doProcess(BufferedImageContainer[] images) {
     BufferedImageContainer[]	result;
-    BufferedImage 		img0;
-    BufferedImage		img1;
+    BufferedImage[] 		img;
     BufferedImage		output;
     int				x;
     int				y;
-    int				and;
     int				match;
     int				mismatch;
+    int				i;
+    int				val;
+    boolean 			same;
 
     result   = new BufferedImageContainer[1];
-    img0     = BufferedImageHelper.convert(images[0].getImage(), BufferedImage.TYPE_BYTE_BINARY);
-    img1     = BufferedImageHelper.convert(images[1].getImage(), BufferedImage.TYPE_BYTE_BINARY);
-    output   = BufferedImageHelper.deepCopy(img0);
+    img      = new BufferedImage[images.length];
+    for (i = 0; i < images.length; i++)
+      img[i] = BufferedImageHelper.convert(images[i].getImage(), BufferedImage.TYPE_BYTE_BINARY);
+    output   = BufferedImageHelper.deepCopy(img[0]);
     match    = Color.BLACK.getRGB();
     mismatch = Color.WHITE.getRGB();
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
-	and = (img0.getRGB(x, y) == img1.getRGB(x, y)) ? match : mismatch;
-	output.setRGB(x, y, and);
+	val  = img[0].getRGB(x, y);
+	same = true;
+	for (i = 1; i < img.length; i++) {
+	  if (val != img[i].getRGB(x, y))
+	    same = false;
+	}
+	output.setRGB(x, y, same ? match : mismatch);
       }
     }
     result[0] = new BufferedImageContainer();
