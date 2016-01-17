@@ -62,6 +62,27 @@ public abstract class AbstractMultiImageOperation<T extends AbstractImageContain
   }
 
   /**
+   * Checks whether the images have the same dimensions.
+   *
+   * @param images	the images
+   * @return		null if the same dimensions, other error message
+   */
+  protected String checkSameDimensions(T[] images) {
+    int		i;
+
+    for (i = 1; i < images.length; i++) {
+      if (!checkSameDimensions(images[0], images[i]))
+	return
+	  "All images need to have the same dimensions: "
+	    + images[0].getWidth() + "x" + images[0].getHeight() + " (#1)"
+	    + " != "
+	    + images[i].getWidth() + "x" + images[i].getHeight() + "(#" + (i+1) +")";
+    }
+
+    return null;
+  }
+
+  /**
    * Checks the images.
    * <br><br>
    * Default implementation only ensures that images are present.

@@ -134,18 +134,13 @@ public class CombineChannels
    */
   @Override
   protected void check(BufferedImageContainer[] images) {
-    int       i;
+    String	msg;
 
     super.check(images);
 
-    for (i = 1; i < m_Channels.length; i++) {
-      if (!checkSameDimensions(images[0], images[i]))
-        throw new IllegalStateException(
-          "Images need to have the same dimensions (#1 vs #" + (i+1) + "): "
-            + images[0].getWidth() + "x" + images[0].getHeight()
-            + " != "
-            + images[i].getWidth() + "x" + images[i].getHeight());
-    }
+    msg = checkSameDimensions(images);
+    if (msg != null)
+      throw new IllegalStateException(msg);
   }
 
   /**

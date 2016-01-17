@@ -86,18 +86,13 @@ public class And
    */
   @Override
   protected void check(BoofCVImageContainer[] images) {
-    int		i;
+    String	msg;
 
     super.check(images);
 
-    for (i = 1; i < images.length; i++) {
-      if (!checkSameDimensions(images[0], images[i]))
-	throw new IllegalStateException(
-	  "All images need to have the same dimensions: "
-	    + images[0].getWidth() + "x" + images[0].getHeight() + " (#1)"
-	    + " != "
-	    + images[i].getWidth() + "x" + images[i].getHeight() + "(#" + (i+1) +")");
-    }
+    msg = checkSameDimensions(images);
+    if (msg != null)
+      throw new IllegalStateException(msg);
   }
 
   /**
