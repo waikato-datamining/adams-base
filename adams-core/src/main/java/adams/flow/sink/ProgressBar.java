@@ -15,7 +15,7 @@
 
 /**
  * ProgressBar.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -35,7 +35,7 @@ import java.text.DecimalFormat;
 
 /**
  <!-- globalinfo-start -->
- * Displays a progress bar. The incoming token is used as 'current' value to be displayed.
+ * Displays a progress bar. The incoming token is used as 'current' value to be displayed. For convenience, the incoming token representing a number can also be in string format.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -43,6 +43,7 @@ import java.text.DecimalFormat;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Number<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -301,7 +302,10 @@ public class ProgressBar
    */
   @Override
   public String globalInfo() {
-    return "Displays a progress bar. The incoming token is used as 'current' value to be displayed.";
+    return
+      "Displays a progress bar. The incoming token is used as 'current' value "
+        + "to be displayed. For convenience, the incoming token representing a "
+        + "number can also be in string format.";
   }
 
   /**
@@ -662,7 +666,7 @@ public class ProgressBar
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Number.class};
+    return new Class[]{Number.class, String.class};
   }
 
   /**
@@ -691,6 +695,9 @@ public class ProgressBar
    */
   @Override
   protected void display(Token token) {
-    ((ProgressBarPanel) m_Panel).update(((Number) token.getPayload()).doubleValue());
+    if (token.getPayload() instanceof String)
+      ((ProgressBarPanel) m_Panel).update(Double.parseDouble((String) token.getPayload()));
+    else
+      ((ProgressBarPanel) m_Panel).update(((Number) token.getPayload()).doubleValue());
   }
 }
