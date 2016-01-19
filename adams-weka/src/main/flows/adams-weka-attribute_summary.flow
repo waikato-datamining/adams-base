@@ -1,0 +1,25 @@
+# Project: adams
+# Date: 2016-01-19 14:12:11
+# User: fracpete
+# Charset: UTF-8
+#
+adams.flow.control.Flow
+	-annotation
+	Displays a summary of the attributes in the dataset.
+	-actor
+		adams.flow.source.FileSupplier
+			-file
+			${EXAMPLE_FLOWS}/data/iris.arff
+	-actor
+		adams.flow.transformer.WekaFileReader
+			-loader
+				weka.core.converters.AArffLoader
+	-actor
+		adams.flow.transformer.WekaClassSelector
+	-actor
+		adams.flow.sink.WekaAttributeSummary
+			-writer
+				adams.gui.print.NullWriter
+	-flow-execution-listener
+		adams.flow.execution.NullListener
+
