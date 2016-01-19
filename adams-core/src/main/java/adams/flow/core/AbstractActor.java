@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -141,14 +141,15 @@ public abstract class AbstractActor
    */
   public String getAdditionalInformation() {
     StringBuilder	result;
-    boolean standalone;
+    boolean 		standalone;
     Class[]		cls;
     int			i;
-    List<Class>	containers;
+    List<Class>		containers;
     AbstractContainer	cont;
-    boolean		first;
     Iterator<String>	enm;
     ActorHandlerInfo	info;
+    String		name;
+    String		help;
 
     result = new StringBuilder();
 
@@ -184,18 +185,16 @@ public abstract class AbstractActor
       result.append("\n-standalone-");
 
     if (containers.size() > 0) {
-      result.append("\nContainer information:");
+      result.append("\n\nContainer information:");
       for (i = 0; i < containers.size(); i++) {
 	result.append("\n- " + containers.get(i).getName() + ": ");
 	try {
 	  cont  = (AbstractContainer) containers.get(i).newInstance();
-	  first = true;
 	  enm   = cont.names();
 	  while (enm.hasNext()) {
-	    if (!first)
-	      result.append(", ");
-	    result.append(enm.next());
-	    first = false;
+	    name = enm.next();
+	    help = cont.getHelp(name);
+	    result.append("\n   - " + name + ((help == null) ? "" : ": " + help));
 	  }
 	}
 	catch (Exception e) {

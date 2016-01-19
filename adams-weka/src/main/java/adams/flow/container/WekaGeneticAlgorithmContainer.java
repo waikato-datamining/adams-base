@@ -15,7 +15,7 @@
 
 /*
  * WekaGeneticAlgorithmContainer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -89,6 +89,19 @@ public class WekaGeneticAlgorithmContainer
     store(VALUE_FITNESS, fitness);
     store(VALUE_WEIGHTSSTR, weightsStr);
     store(VALUE_WEIGHTS, (weights != null ? weights.clone() : weights));
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_SETUP, "classifier object; " + Classifier.class.getName());
+    addHelp(VALUE_MEASURE, "measure used for fitness; " + Measure.class.getName());
+    addHelp(VALUE_FITNESS, "fitness score; " + Double.class.getName());
+    addHelp(VALUE_WEIGHTSSTR, "all the weights; " + String.class.getName());
+    addHelp(VALUE_WEIGHTS, "weights; array of " + Integer.TYPE.getName());
   }
 
   /**

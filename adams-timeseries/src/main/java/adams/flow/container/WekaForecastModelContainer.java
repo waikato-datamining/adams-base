@@ -15,16 +15,16 @@
 
 /**
  * WekaForecastModelContainer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.container;
+
+import weka.classifiers.timeseries.AbstractForecaster;
+import weka.core.Instances;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.classifiers.timeseries.AbstractForecaster;
-import weka.core.Instances;
 
 /**
  * Specialized container for {@link AbstractForecaster} models.
@@ -78,6 +78,15 @@ public class WekaForecastModelContainer
    */
   public WekaForecastModelContainer(Object model, Instances header, Instances data) {
     super(model, header, data);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_TRANSFORMED, "transformed data; " + Instances.class.getName());
   }
 
   /**

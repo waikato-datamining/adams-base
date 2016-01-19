@@ -107,6 +107,18 @@ public class WekaEvaluationContainer
   }
 
   /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_EVALUATION, "evaluation object " + Evaluation.class.getName());
+    addHelp(VALUE_MODEL, "model object; " + Object.class.getName());
+    addHelp(VALUE_PREDICTIONOUTPUT, "prediction output text; " + String.class.getName());
+    addHelp(VALUE_ORIGINALINDICES, "original indices (0-based); array of " + Integer.TYPE.getName());
+  }
+
+  /**
    * Returns all value names that can be used (theoretically).
    *
    * @return		enumeration over all possible value names

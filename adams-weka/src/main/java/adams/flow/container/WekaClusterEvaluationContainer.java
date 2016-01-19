@@ -15,16 +15,16 @@
 
 /*
  * WekaClusterEvaluationContainer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.clusterers.ClusterEvaluation;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.clusterers.ClusterEvaluation;
 
 /**
  * A container for {@link ClusterEvaluation} objects, with optional trained model.
@@ -87,6 +87,17 @@ public class WekaClusterEvaluationContainer
     super();
 
     store(VALUE_LOGLIKELIHOOD, logLikelihood);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_EVALUATION, "cluster evaluation object; " + ClusterEvaluation.class.getName());
+    addHelp(VALUE_MODEL, "cluster model; " + Object.class.getName());
+    addHelp(VALUE_LOGLIKELIHOOD, "log likelihood of cross-validation; " + Double.class.getName());
   }
 
   /**

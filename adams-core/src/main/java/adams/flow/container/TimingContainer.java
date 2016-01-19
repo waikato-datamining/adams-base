@@ -15,7 +15,7 @@
 
 /**
  * TimingContainer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -82,6 +82,17 @@ public class TimingContainer
     store(VALUE_MSEC, msec);
     store(VALUE_PREFIX, prefix);
     store(VALUE_ORIGIN, origin);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_MSEC, "timing in milli-second; " + Integer.class.getName());
+    addHelp(VALUE_PREFIX, "optional prefix to use; " + String.class.getName());
+    addHelp(VALUE_ORIGIN, "optional origin of timing; " + String.class.getName());
   }
 
   /**

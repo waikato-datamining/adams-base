@@ -15,17 +15,17 @@
 
 /*
  * WekaPredictionContainer.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.core.Instance;
+import weka.core.Utils;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.core.Instance;
-import weka.core.Utils;
 
 /**
  * A container for predictions made by a classifier.
@@ -95,13 +95,29 @@ public class WekaPredictionContainer
     super();
 
     if (inst != null)
-      store(VALUE_INSTANCE, (Instance) inst.copy());
+      store(VALUE_INSTANCE, inst.copy());
     store(VALUE_CLASSIFICATION, cls);
     store(VALUE_DISTRIBUTION, dist.clone());
     if ((inst != null) && inst.classAttribute().isNominal())
       store(VALUE_CLASSIFICATION_LABEL, inst.classAttribute().value((int) cls));
     if (rangeCheck != null)
       store(VALUE_RANGECHECK, rangeCheck);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_INSTANCE, "data row used for prediction; " + Instance.class.getName());
+    addHelp(VALUE_CLASSIFICATION, "predicted value; " + Double.class.getName());
+    addHelp(VALUE_CLASSIFICATION_LABEL, "predicted label; " + String.class.getName());
+    addHelp(VALUE_DISTRIBUTION, "class distribution; array of " + Double.TYPE.getName());
+    addHelp(VALUE_RANGECHECK, "range check; " + String.class.getName());
+    addHelp(VALUE_ABSTENTION_CLASSIFICATION, "predicted value that made classifier abstain; " + Double.class.getName());
+    addHelp(VALUE_ABSTENTION_CLASSIFICATION_LABEL, "predicted label that made classifier abstain; " + String.class.getName());
+    addHelp(VALUE_ABSTENTION_DISTRIBUTION, "class distribution that made classifier abstain; array of " + Double.TYPE.getName());
   }
 
   /**

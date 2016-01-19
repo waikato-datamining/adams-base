@@ -15,16 +15,16 @@
 
 /*
  * WekaClusteringContainer.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.core.Instance;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.core.Instance;
 
 /**
  * A container for clusterings made by a clusterer.
@@ -98,6 +98,20 @@ public class WekaClusteringContainer
       store(VALUE_LOGDENSITYPERCLUSTER, logDensityPerCluster.clone());
       store(VALUE_LOGJOINTDENSITIES, logJointDensities.clone());
     }
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_INSTANCE, "data row; " + Instance.class.getName());
+    addHelp(VALUE_CLUSTER, "cluster index (0-based); " + Integer.class.getName());
+    addHelp(VALUE_DISTRIBUTION, "cluster distribution; array of " + Double.TYPE.getName());
+    addHelp(VALUE_LOGDENSITY, "log density; " + Double.class.getName());
+    addHelp(VALUE_LOGDENSITYPERCLUSTER, "log density per cluster; array of " + Double.TYPE.getName());
+    addHelp(VALUE_LOGJOINTDENSITIES, "log joint densities; array of " + Double.TYPE.getName());
   }
 
   /**

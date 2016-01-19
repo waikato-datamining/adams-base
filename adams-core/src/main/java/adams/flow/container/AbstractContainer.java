@@ -15,24 +15,24 @@
 
 /*
  * AbstractContainer.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 
 import adams.core.CloneHandler;
 import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Ancestor of all containers. A container allows the access to the stored
@@ -51,19 +51,25 @@ public abstract class AbstractContainer
   private static final long serialVersionUID = -6949950627956848217L;
 
   /** for storing the values. */
-  protected Hashtable<String,Object> m_Values;
+  protected HashMap<String,Object> m_Values;
 
   /** additional names for values. */
   protected HashSet<String> m_AdditionalNames;
-  
+
+  /** for storing the help per item. */
+  protected HashMap<String,String> m_Help;
+
   /**
    * Initializes the container.
    */
   protected AbstractContainer() {
     checkDefaultConstructor();
     
-    m_Values          = new Hashtable<String,Object>();
-    m_AdditionalNames = new HashSet<String>();
+    m_Values          = new HashMap<>();
+    m_AdditionalNames = new HashSet<>();
+    m_Help            = new HashMap<>();
+
+    initHelp();
   }
 
   /**
@@ -72,7 +78,7 @@ public abstract class AbstractContainer
    */
   protected void checkDefaultConstructor() {
     try {
-      getClass().getConstructor(new Class[0]);
+      getClass().getConstructor();
     }
     catch (Exception e) {
       throw new IllegalStateException(getClass().getName() + " does not have default constructor!");
@@ -96,21 +102,48 @@ public abstract class AbstractContainer
   public String globalInfo() {
     StringBuilder	result;
     Iterator<String>	iter;
-    
+    String		name;
+
     result = new StringBuilder();
     
     result.append(getClass().getName() + "\n");
     result.append("Value names:\n");
     iter = names();
     while (iter.hasNext()) {
+      name = iter.next();
       result.append(" - ");
-      result.append(iter.next());
+      result.append(name);
       result.append("\n");
+      if (hasHelp(name)) {
+	result.append("   ");
+	result.append(getHelp(name));
+	result.append("\n");
+      }
     }
     
     return result.toString();
   }
-  
+
+  /**
+   * Stores the help for the given name if valid name.
+   *
+   * @param name	the name to store the help under
+   * @param desc	the help description
+   * @see		#isValidName(String)
+   */
+  public void addHelp(String name, String desc) {
+    if (isValidName(name))
+      m_Help.put(name, desc);
+  }
+
+  /**
+   * Initializes the help strings.
+   * <br><br>
+   * Default implementation does nothing.
+   */
+  protected void initHelp() {
+  }
+
   /**
    * Returns all value names that can be used (theoretically).
    *
@@ -151,7 +184,27 @@ public abstract class AbstractContainer
   public Object getValue(String name) {
     return m_Values.get(name);
   }
-  
+
+  /**
+   * Checks whether a given help is non-null.
+   *
+   * @param name	the name of the help item to check
+   * @return		true if the help is non-null
+   */
+  public boolean hasHelp(String name) {
+    return (getHelp(name) != null);
+  }
+
+  /**
+   * Returns the help associated with the given name.
+   *
+   * @param name	the name of the help item
+   * @return		the associated help or null if not available
+   */
+  public String getHelp(String name) {
+    return m_Help.get(name);
+  }
+
   /**
    * Checks whether the name of the object is valid.
    *

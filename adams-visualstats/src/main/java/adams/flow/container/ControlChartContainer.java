@@ -15,7 +15,7 @@
 
 /**
  * ControlChartContainer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -85,6 +85,19 @@ public class ControlChartContainer
     store(VALUE_DATA,      data);
     store(VALUE_PREPARED,  prepared);
     store(VALUE_LIMITS,    limits);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_ALGORITHM, "control chart algorithm; " + ControlChart.class.getName());
+    addHelp(VALUE_CHART, "name of the chart; " + String.class.getName());
+    addHelp(VALUE_DATA, "original data; " + Object.class.getName());
+    addHelp(VALUE_PREPARED, "prepared/processed data; " + Object.class.getName());
+    addHelp(VALUE_LIMITS, "limits; array of " + Limits.class.getName());
   }
 
   /**

@@ -15,16 +15,16 @@
 
 /*
  * WekaTrainTestSetContainer.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.core.Instances;
 
 /**
  * A container for storing train and test set.
@@ -102,6 +102,19 @@ public class WekaTrainTestSetContainer
     store(VALUE_SEED, seed);
     store(VALUE_FOLD_NUMBER, foldNumber);
     store(VALUE_FOLD_COUNT, foldCount);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_TRAIN, "training set; " + Instances.class.getName());
+    addHelp(VALUE_TEST, "test set; " + Instances.class.getName());
+    addHelp(VALUE_SEED, "seed value; " + Long.class.getName());
+    addHelp(VALUE_FOLD_NUMBER, "current fold (1-based); " + Integer.class.getName());
+    addHelp(VALUE_FOLD_COUNT, "total number of folds; " + Integer.class.getName());
   }
 
   /**

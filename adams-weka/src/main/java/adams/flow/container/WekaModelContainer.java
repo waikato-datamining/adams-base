@@ -15,16 +15,16 @@
 
 /*
  * WekaModelContainer.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.core.Instances;
 
 /**
  * A container for models (e.g., classifier or clusterer) and an optional
@@ -89,6 +89,17 @@ public class WekaModelContainer
     store(VALUE_MODEL, model);
     store(VALUE_HEADER, header);
     store(VALUE_DATASET, data);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_MODEL, "model object; " + Object.class.getName());
+    addHelp(VALUE_HEADER, "dataset header; " + Instances.class.getName());
+    addHelp(VALUE_DATASET, "full dataset; " + Instances.class.getName());
   }
 
   /**

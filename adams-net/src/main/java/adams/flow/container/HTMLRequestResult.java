@@ -15,7 +15,7 @@
 
 /**
  * HTMLRequestResult.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -76,6 +76,17 @@ public class HTMLRequestResult
     store(VALUE_STATUSCODE, statusCode);
     store(VALUE_BODY, body);
     store(VALUE_COOKIES, cookies);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_STATUSCODE, "HTTP status code; " + Integer.class.getName());
+    addHelp(VALUE_BODY, "HTML of the request; " + String.class.getName());
+    addHelp(VALUE_COOKIES, "cookie mappings (String/String); " + Map.class.getName());
   }
 
   /**

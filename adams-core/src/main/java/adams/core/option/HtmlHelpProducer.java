@@ -15,7 +15,7 @@
 
 /**
  * GUIHelpProducer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -412,7 +412,7 @@ public class HtmlHelpProducer
       addInfo = ((AdditionalInformationHandler) getInput()).getAdditionalInformation();
       if ((addInfo != null) && (addInfo.length() > 0)) {
 	m_OutputBuffer.append("<h2>Additional information</h2>\n");
-	m_OutputBuffer.append("<p>" + toHTML(addInfo) + "</p>\n");
+	m_OutputBuffer.append("<p>" + toHTML(addInfo, true) + "</p>\n");
 	m_OutputBuffer.append("<br>\n");
 	m_OutputBuffer.append("\n");
       }

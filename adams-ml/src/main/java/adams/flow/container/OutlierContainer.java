@@ -15,7 +15,7 @@
 
 /*
  * OutlierContainer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -69,6 +69,17 @@ public class OutlierContainer
     store(VALUE_ORIGINAL, original);
     store(VALUE_CLEAN,    clean);
     store(VALUE_OUTLIERS, outliers);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_ORIGINAL, "original data; " + SpreadSheet.class.getName());
+    addHelp(VALUE_CLEAN, "clean data; " + SpreadSheet.class.getName());
+    addHelp(VALUE_OUTLIERS, "outliers; " + SpreadSheet.class.getName());
   }
 
   /**

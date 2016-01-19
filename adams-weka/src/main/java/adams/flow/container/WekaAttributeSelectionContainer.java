@@ -20,13 +20,14 @@
 
 package adams.flow.container;
 
+import adams.data.spreadsheet.SpreadSheet;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.AttributeTransformer;
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import weka.attributeSelection.AttributeSelection;
-import weka.core.Instances;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * A container for storing results from attribute selection.
@@ -130,6 +131,22 @@ public class WekaAttributeSelectionContainer
       store(VALUE_SELECTEDATTRIBUTES, range);
     store(VALUE_SEED, seed);
     store(VALUE_FOLD_COUNT, foldCount);
+  }
+
+  /**
+   * Initializes the help strings.
+   */
+  protected void initHelp() {
+    super.initHelp();
+
+    addHelp(VALUE_TRAIN, "training set; " + Instances.class.getName());
+    addHelp(VALUE_REDUCED, "reduced dataset; " + Instances.class.getName());
+    addHelp(VALUE_TRANSFORMED, "transformed dataset (if " + AttributeTransformer.class.getName() + "); " + Instances.class.getName());
+    addHelp(VALUE_EVALUATION, "attribute selection evaluation object; " + AttributeSelection.class.getName());
+    addHelp(VALUE_STATISTICS, "spreadsheet with the statistics; " + SpreadSheet.class.getName());
+    addHelp(VALUE_SELECTEDATTRIBUTES, "range string of selected attributes (1-based indices); " + String.class.getName());
+    addHelp(VALUE_SEED, "seed value (cross-validation); " + Long.class.getName());
+    addHelp(VALUE_FOLD_COUNT, "fold (cross-validation); " + Integer.class.getName());
   }
 
   /**
