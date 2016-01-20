@@ -15,7 +15,7 @@
 
 /**
  * SelectObjects.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -26,13 +26,16 @@ import adams.gui.goe.GenericArrayEditorDialog;
 import javax.swing.SwingUtilities;
 import java.awt.Dialog.ModalityType;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to select an arbitrary number of objects from the specified class hierarchy using the GenericObjectArray.
+ * Allows the user to select an arbitrary number of objects from the specified class hierarchy using the GenericObjectArray.<br>
+ * It is possible to use this dialog for other objects as well that don't belong to a class hierarchy, e.g., adams.core.base.BaseString.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -134,9 +137,11 @@ public class SelectObjects
    */
   @Override
   public String globalInfo() {
-    return 
-	"Allows the user to select an arbitrary number of objects from the "
-	+ "specified class hierarchy using the GenericObjectArray.";
+    return
+      "Allows the user to select an arbitrary number of objects from the "
+	+ "specified class hierarchy using the GenericObjectArray.\n"
+	+ "It is possible to use this dialog for other objects as well that "
+	+ "don't belong to a class hierarchy, e.g., " + BaseString.class.getName() + ".";
   }
 
   /**
@@ -166,13 +171,28 @@ public class SelectObjects
   }
 
   /**
-   * Turns a commandline into an object.
+   * Turns a commandline into an object. Tries String constructor of defined
+   * class first before {@link OptionUtils#forAnyCommandLine(Class, String)}.
+   * Of course, the defined superclass has to be non-abstract.
    * 
    * @param cmdline	the commandline to convert
    * @return		the generated object, null if failed to convert
    */
   @Override
   protected Object commandlineToObject(String cmdline) {
+    Constructor constr;
+
+    if (!Modifier.isAbstract(getItemClass().getModifiers())) {
+      try {
+	constr = getItemClass().getConstructor(String.class);
+	if (constr != null)
+	  return constr.newInstance(cmdline);
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+
     try {
       return OptionUtils.forAnyCommandLine(getItemClass(), cmdline);
     }
@@ -206,7 +226,7 @@ public class SelectObjects
     for (BaseString initial: m_InitialObjects) {
       obj = commandlineToObject(initial.getValue());
       if (obj == null)
-	getLogger().warning("Failed to convert commandline: " + initial);
+	getLogger().warning("Failed to convert: " + initial);
       current.add(obj);
     }
     array = Array.newInstance(getItemClass(), current.size());
