@@ -35,7 +35,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Allows the user to select an arbitrary number of objects from the specified class hierarchy using the GenericObjectArray.<br>
- * It is possible to use this dialog for other objects as well that don't belong to a class hierarchy, e.g., adams.core.base.BaseString.
+ * It is possible to use this dialog for other objects as well that don't belong to a class hierarchy, e.g., adams.core.base.BaseString. This works as long as the class has a constructor which takes a String object.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -141,7 +141,8 @@ public class SelectObjects
       "Allows the user to select an arbitrary number of objects from the "
 	+ "specified class hierarchy using the GenericObjectArray.\n"
 	+ "It is possible to use this dialog for other objects as well that "
-	+ "don't belong to a class hierarchy, e.g., " + BaseString.class.getName() + ".";
+	+ "don't belong to a class hierarchy, e.g., " + BaseString.class.getName() + ". "
+	+ "This works as long as the class has a constructor which takes a String object.";
   }
 
   /**
