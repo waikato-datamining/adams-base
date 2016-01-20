@@ -15,7 +15,7 @@
 
 /*
  * ContainerValuePicker.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,10 +25,15 @@ import adams.core.Utils;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
 /**
  <!-- globalinfo-start -->
  * Picks a named value from any container object and tees it off.<br>
- * With the 'switch-outputs' option it is possible to forward the named value and teeing off the container instead.
+ * With the 'switch-outputs' option it is possible to forward the named value and teeing off the container instead.<br>
+ * If 'ignore missing' is turned off, any value that cannot be found will generate an error logging message and, in case of switched outputs, an actual error.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -39,53 +44,77 @@ import adams.flow.core.Token;
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
+ * Conditional equivalent:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTee
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ContainerValuePicker
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
+ * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow 
+ * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-value &lt;java.lang.String&gt; (property: valueName)
  * &nbsp;&nbsp;&nbsp;The name of the value to tee off.
  * &nbsp;&nbsp;&nbsp;default: Classification
  * </pre>
- *
- * <pre>-switch-outputs (property: switchOutputs)
- * &nbsp;&nbsp;&nbsp;Whether to switch the output for the tee actors with the one normally being
+ * 
+ * <pre>-switch-outputs &lt;boolean&gt; (property: switchOutputs)
+ * &nbsp;&nbsp;&nbsp;Whether to switch the output for the tee actors with the one normally being 
  * &nbsp;&nbsp;&nbsp;forwarded.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-ignore-missing &lt;boolean&gt; (property: ignoreMissing)
+ * &nbsp;&nbsp;&nbsp;If enabled, quietly ignores missing values; otherwise a logging message 
+ * &nbsp;&nbsp;&nbsp;is generated or, in case of switched outputs, an error message.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -103,6 +132,9 @@ public class ContainerValuePicker
   /** whether to switch outputs. */
   protected boolean m_SwitchOutputs;
 
+  /** whether to quietly ignored missing values. */
+  protected boolean m_IgnoreMissing;
+
   /**
    * Returns a string describing the object.
    *
@@ -111,9 +143,12 @@ public class ContainerValuePicker
   @Override
   public String globalInfo() {
     return
-        "Picks a named value from any container object and tees it off.\n"
-      + "With the 'switch-outputs' option it is possible to forward the named "
-      + "value and teeing off the container instead.";
+      "Picks a named value from any container object and tees it off.\n"
+	+ "With the 'switch-outputs' option it is possible to forward the named "
+	+ "value and teeing off the container instead.\n"
+	+ "If 'ignore missing' is turned off, any value that cannot be found will "
+	+ "generate an error logging message and, in case of switched outputs, an "
+	+ "actual error.";
   }
 
   /**
@@ -130,6 +165,10 @@ public class ContainerValuePicker
     m_OptionManager.add(
 	    "switch-outputs", "switchOutputs",
 	    false);
+
+    m_OptionManager.add(
+	    "ignore-missing", "ignoreMissing",
+	    true);
   }
 
   /**
@@ -152,11 +191,15 @@ public class ContainerValuePicker
    */
   @Override
   public String getQuickInfo() {
-    String	result;
+    String		result;
+    List<String> 	options;
 
     result  = QuickInfoHelper.toString(this, "valueName", m_ValueName);
-    result += QuickInfoHelper.toString(this, "switchOutputs", m_SwitchOutputs, "[outputs switched]", " ");
-    
+    options = new ArrayList<String>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "switchOutputs", m_SwitchOutputs, "outputs switched"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "ignoreMissing", m_IgnoreMissing, "ignore missing"));
+    result += QuickInfoHelper.flatten(options);
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
 
@@ -222,6 +265,38 @@ public class ContainerValuePicker
   }
 
   /**
+   * Sets whether to quietly ignore missing values.
+   *
+   * @param value	if true then missing values will get ignored
+   */
+  public void setIgnoreMissing(boolean value) {
+    m_IgnoreMissing = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to quietly ignore missing values.
+   *
+   * @return		true if to quietly ignore missing values
+   */
+  public boolean getIgnoreMissing() {
+    return m_IgnoreMissing;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String ignoreMissingTipText() {
+    return
+      "If enabled, quietly ignores missing values; otherwise a logging "
+	+ "message is generated or, in case of switched outputs, an error "
+	+ "message.";
+  }
+
+  /**
    * Extracts the container value, if possible.
    *
    * @param token	the token to get the container value from
@@ -238,6 +313,10 @@ public class ContainerValuePicker
       value  = cont.getValue(m_ValueName);
       if (value != null)
 	result = new Token(value);
+      else
+	getLogger().log(
+	  (m_IgnoreMissing ? Level.INFO : Level.SEVERE),
+	  "Container value missing: " + m_ValueName);
     }
     else {
       getLogger().warning(
@@ -257,8 +336,6 @@ public class ContainerValuePicker
   @Override
   protected Token createTeeToken(Token token) {
     Token		result;
-
-    result = null;
 
     if (m_SwitchOutputs)
       result = token;
@@ -302,6 +379,8 @@ public class ContainerValuePicker
 
     if (m_SwitchOutputs && (result == null)) {
       m_OutputToken = extract(m_OutputToken);
+      if ((m_OutputToken == null) && !m_IgnoreMissing)
+	result = "Container value missing: " + m_ValueName;
     }
 
     return result;
