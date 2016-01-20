@@ -15,17 +15,11 @@
 
 /*
  * WekaAttributeSelection.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.Random;
-
-import weka.attributeSelection.AttributeSelection;
-import weka.attributeSelection.AttributeTransformer;
-import weka.attributeSelection.RankedOutputSearch;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.Range;
@@ -34,12 +28,19 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaAttributeSelectionContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.AttributeTransformer;
+import weka.attributeSelection.RankedOutputSearch;
+import weka.core.Instances;
+
+import java.util.Random;
 
 
 /**
  <!-- globalinfo-start -->
  * Performs attribute selection on the incoming data.<br>
- * In case of input in form of a class adams.flow.container.WekaTrainTestSetContainer object, the training set stored in the container is being used.
+ * In case of input in form of a class adams.flow.container.WekaTrainTestSetContainer object, the training set stored in the container is being used.<br>
+ * NB: In case of cross-validation no reduced or transformed data can get generated!
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -58,13 +59,9 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -72,24 +69,31 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: WekaAttributeSelection
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-evaluator &lt;weka.attributeSelection.ASEvaluation&gt; (property: evaluator)
  * &nbsp;&nbsp;&nbsp;The evaluation method to use.
- * &nbsp;&nbsp;&nbsp;default: weka.attributeSelection.CfsSubsetEval
+ * &nbsp;&nbsp;&nbsp;default: weka.attributeSelection.CfsSubsetEval -P 1 -E 1
  * </pre>
  * 
  * <pre>-search &lt;weka.attributeSelection.ASSearch&gt; (property: search)
@@ -141,9 +145,10 @@ public class WekaAttributeSelection
   @Override
   public String globalInfo() {
     return
-        "Performs attribute selection on the incoming data.\n"
-	+ "In case of input in form of a " + WekaTrainTestSetContainer.class + " object, "
-	+ "the training set stored in the container is being used.";
+      "Performs attribute selection on the incoming data.\n"
+        + "In case of input in form of a " + WekaTrainTestSetContainer.class + " object, "
+        + "the training set stored in the container is being used.\n"
+        + "NB: In case of cross-validation no reduced or transformed data can get generated!";
   }
 
   /**
