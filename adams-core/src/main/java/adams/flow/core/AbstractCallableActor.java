@@ -15,15 +15,15 @@
 
 /*
  * AbstractCallableActor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
+import adams.core.QuickInfoHelper;
+
 import java.util.HashSet;
 import java.util.Hashtable;
-
-import adams.core.QuickInfoHelper;
 
 /**
  * Abstract ancestor for all actors that access callable actors.
@@ -59,6 +59,9 @@ public abstract class AbstractCallableActor
   /** whether the callable actor is optional. */
   protected boolean m_Optional;
 
+  /** for storing any errors during {@link #findCallableActor()}. */
+  protected String m_FindCallableActorError;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -82,8 +85,9 @@ public abstract class AbstractCallableActor
   protected void reset() {
     super.reset();
 
-    m_CallableActor = null;
-    m_Configured    = false;
+    m_CallableActor          = null;
+    m_Configured             = false;
+    m_FindCallableActorError = null;
   }
 
   /**
@@ -177,6 +181,7 @@ public abstract class AbstractCallableActor
    * @return		the callable actor or null if not found
    */
   protected AbstractActor findCallableActor() {
+    m_FindCallableActorError = null;
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
 
@@ -257,16 +262,21 @@ public abstract class AbstractCallableActor
   protected String setUpCallableActor() {
     String		result;
     HashSet<String>	variables;
+    String		msg;
 
     result = null;
 
     m_CallableActor = findCallableActor();
     m_Configured    = true;
     if (m_CallableActor == null) {
-      if (!m_Optional)
-	result = "Couldn't find callable actor '" + getCallableName() + "'!";
+      if (m_FindCallableActorError != null)
+	msg = " " + m_FindCallableActorError;
       else
-	getLogger().info("Callable actor '" + getCallableName() + "' not found, ignoring.");
+        msg = "";
+      if (!m_Optional)
+	result = "Couldn't find/initialize callable actor '" + getCallableName() + "'!" + msg;
+      else
+	getLogger().info("Callable actor '" + getCallableName() + "' not found/failed to initialize, ignoring." + msg);
     }
     else {
       variables = findVariables(m_CallableActor);

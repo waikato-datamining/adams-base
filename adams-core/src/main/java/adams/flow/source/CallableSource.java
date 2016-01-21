@@ -15,7 +15,7 @@
 
 /*
  * CallableSource.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -108,7 +108,8 @@ public class CallableSource
 
     if (result != null) {
       if (!(ActorUtils.isSource(result))) {
-	getLogger().severe("Callable actor '" + result.getFullName() + "' is not a source" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName()));
+        m_FindCallableActorError = "Callable actor '" + result.getFullName() + "' is not a source" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName());
+	getLogger().severe(m_FindCallableActorError);
 	result = null;
       }
     }

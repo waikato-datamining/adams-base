@@ -15,7 +15,7 @@
 
 /*
  * CallableSink.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -116,7 +116,8 @@ public class CallableSink
 
     if (result != null) {
       if (!(ActorUtils.isSink(result))) {
-	getLogger().severe("Callable actor '" + result.getFullName() + "' is not a sink" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName()));
+        m_FindCallableActorError = "Callable actor '" + result.getFullName() + "' is not a sink" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName());
+	getLogger().severe(m_FindCallableActorError);
 	result = null;
       }
     }
