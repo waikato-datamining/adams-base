@@ -15,7 +15,7 @@
 
 /*
  * AbstractRecentItemsHandler.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -31,7 +31,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,6 +62,9 @@ public abstract class AbstractRecentItemsHandler<M, T>
 
   /** the maximum number of items to keep. */
   protected int m_MaxCount;
+
+  /** whether to add keyboard shortcuts. */
+  protected boolean m_AddShortcuts;
 
   /** the menu to add the items as sub-items to. */
   protected M m_Menu;
@@ -121,6 +123,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
     m_RecentItems    = new ArrayList<T>();
     m_IgnoreChanges  = false;
     m_Listeners      = new HashSet<RecentItemListener<M,T>>();
+    m_AddShortcuts   = true;
 
     readProps();
     updateMenu();
@@ -151,6 +154,25 @@ public abstract class AbstractRecentItemsHandler<M, T>
    */
   public int getMaxCount() {
     return m_MaxCount;
+  }
+
+  /**
+   * Sets whether to add shortcuts to the menu.
+   *
+   * @param value	true if to add shortcuts
+   */
+  public void setAddShortcuts(boolean value) {
+    m_AddShortcuts = value;
+    updateMenu();
+  }
+
+  /**
+   * Returns whether to add shortcuts to the menu.
+   *
+   * @return		true if to add shortcuts
+   */
+  public boolean getAddShortcuts() {
+    return m_AddShortcuts;
   }
 
   /**
@@ -329,17 +351,15 @@ public abstract class AbstractRecentItemsHandler<M, T>
 	menuitem.setMnemonic(Integer.toString(i+1).charAt(0));
       if (i == 9)
 	menuitem.setMnemonic('0');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  notifyRecentItemListenersOfSelect(item);
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> notifyRecentItemListenersOfSelect(item));
 
       if (m_Menu instanceof JMenu) {
-	if (i < 9)
-	  menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed " + (i+1)));
-	if (i == 9)
-	  menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed 0"));
+	if (m_AddShortcuts) {
+	  if (i < 9)
+	    menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed " + (i + 1)));
+	  if (i == 9)
+	    menuitem.setAccelerator(KeyStroke.getKeyStroke("ctrl pressed 0"));
+	}
 	((JMenu) m_Menu).add(menuitem);
       }
       else if (m_Menu instanceof JPopupMenu)
@@ -353,12 +373,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
       else if (m_Menu instanceof JPopupMenu)
 	((JPopupMenu) m_Menu).addSeparator();
       menuitem = new JMenuItem("Clear");
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          removeAll();
-        }
-      });
+      menuitem.addActionListener((ActionEvent e) -> removeAll());
       if (m_Menu instanceof JMenu)
 	((JMenu) m_Menu).add(menuitem);
       else if (m_Menu instanceof JPopupMenu)
@@ -447,7 +462,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
    * @return		the items
    */
   public List<T> getRecentItems() {
-    return new ArrayList(m_RecentItems);
+    return new ArrayList<>(m_RecentItems);
   }
 
   /**
@@ -464,7 +479,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
    *
    * @param l		the listener to add
    */
-  public void addRecentItemListener(RecentItemListener l) {
+  public void addRecentItemListener(RecentItemListener<M,T> l) {
     m_Listeners.add(l);
   }
 
@@ -473,7 +488,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
    *
    * @param l		the listener to remove
    */
-  public void removeRecentItemListener(RecentItemListener l) {
+  public void removeRecentItemListener(RecentItemListener<M,T> l) {
     m_Listeners.remove(l);
   }
 
@@ -499,7 +514,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
    */
   protected void notifyRecentItemListenersOfSelect(T item) {
     Iterator<RecentItemListener<M,T>>	iter;
-    RecentItemEvent			e;
+    RecentItemEvent<M,T>		e;
 
     e    = new RecentItemEvent<M,T>(this, item);
     iter = m_Listeners.iterator();
