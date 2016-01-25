@@ -275,7 +275,7 @@ public class FileEditor
 
     file     = (PlaceholderFile) getValue();
     menuitem = new JMenuItem("Open in preview browser...");
-    menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+    menuitem.setIcon(GUIHelper.getIcon("previewbrowser.png"));
     menuitem.setEnabled(FileUtils.directoryExists(file));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

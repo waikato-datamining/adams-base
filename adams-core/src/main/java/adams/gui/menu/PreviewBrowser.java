@@ -60,7 +60,7 @@ public class PreviewBrowser
    * @return		the filename or null if no icon available
    */
   public String getIconName() {
-    return "filebrowser.png";
+    return "previewbrowser.png";
   }
 
   /**
