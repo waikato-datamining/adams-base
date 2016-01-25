@@ -15,7 +15,7 @@
 
 /**
  * ActorTreePanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -214,6 +214,7 @@ public class ActorTreePanel
       dialog = new HelpDialog(getParentDialog());
     else
       dialog = new HelpDialog(getParentFrame());
+    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     producer = new HtmlHelpProducer();
     producer.produce((OptionHandler) actor);
     dialog.setHelp(producer.getOutput(), true);

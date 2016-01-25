@@ -15,12 +15,29 @@
 
 /*
  * TwitterFilterExpressionEditor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.TwitterFilterExpression;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.HelpDialog;
+import adams.parser.TwitterFilter;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -34,24 +51,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.text.JTextComponent;
-
-import adams.core.Utils;
-import adams.core.base.BaseObject;
-import adams.core.base.TwitterFilterExpression;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.HelpDialog;
-import adams.parser.TwitterFilter;
 
 /**
  * A PropertyEditor for TwitterFilterExpression objects.
@@ -202,6 +201,7 @@ public class TwitterFilterExpressionEditor
     m_ButtonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	HelpDialog dialog = new HelpDialog((Dialog) null);
+        dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
 	dialog.setHelp(new TwitterFilter().getGrammar(), false);
 	dialog.setSize(800, 600);
 	dialog.setLocationRelativeTo(null);

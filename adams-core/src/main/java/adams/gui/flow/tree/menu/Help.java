@@ -19,14 +19,13 @@
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.tree.TreePath;
-
 import adams.core.option.HtmlHelpProducer;
 import adams.flow.core.AbstractActor;
 import adams.gui.dialog.HelpDialog;
 import adams.gui.flow.tree.TreeHelper;
+
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
 
 /**
  * For showing the help dialog for an actor.
@@ -73,6 +72,7 @@ public class Help
       dialog = new HelpDialog(getParentDialog());
     else
       dialog = new HelpDialog(getParentFrame());
+    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     producer = new HtmlHelpProducer();
     producer.produce(actor);
     dialog.setHelp(producer.getOutput(), true);
