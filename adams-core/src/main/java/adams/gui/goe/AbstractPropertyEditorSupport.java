@@ -15,7 +15,7 @@
 
 /*
  * AbstractEditor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -170,11 +171,27 @@ public abstract class AbstractPropertyEditorSupport
     
     cleanUp();
 
-    if (m_CustomEditor instanceof Container) {
-      dlg = GUIHelper.getParentDialog((Container) m_CustomEditor);
-      if (dlg != null)
-	dlg.setVisible(false);
-    }
+    dlg = GUIHelper.getParentDialog(m_CustomEditor);
+    if (dlg != null)
+      dlg.setVisible(false);
+  }
+
+  /**
+   * Returns the parent dialog if possible.
+   *
+   * @return		the parent dialog, null if not available
+   */
+  protected Dialog getParentDialog() {
+    return GUIHelper.getParentDialog(m_CustomEditor);
+  }
+
+  /**
+   * Returns the parent frame if possible.
+   *
+   * @return		the parent frame, null if not available
+   */
+  protected Frame getParentFrame() {
+    return GUIHelper.getParentFrame(m_CustomEditor);
   }
 
   /**
