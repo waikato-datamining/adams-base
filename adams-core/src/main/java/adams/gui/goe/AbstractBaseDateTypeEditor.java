@@ -82,7 +82,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
   protected JTextField m_TextCustom;
 
   /** The NOW button. */
-  protected JButton m_ButtonToday;
+  protected JButton m_ButtonNow;
 
   /** The OK button. */
   protected JButton m_ButtonOK;
@@ -236,16 +236,16 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 	m_Calendar.setDate(date.dateValue());
       }
       m_TextCustom.setEnabled(index == 0);
-      m_ButtonToday.setEnabled(index == 1);
+      m_ButtonNow.setEnabled(index == 1);
       ((JPanel) m_Calendar).setEnabled(index == 1);
     });
-    m_ButtonToday = new JButton(getNowButtonText());
-    m_ButtonToday.addActionListener((ActionEvent e) -> m_Calendar.setDate(newDateType(getPlaceholder(Placeholder.NOW)).dateValue()));
+    m_ButtonNow = new JButton(getNowButtonText());
+    m_ButtonNow.addActionListener((ActionEvent e) -> m_Calendar.setDate(newDateType(getPlaceholder(Placeholder.NOW)).dateValue()));
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     panel.add(new JLabel("Type"));
     panel.add(m_ComboBoxPlaceholders);
-    panel.add(m_ButtonToday);
+    panel.add(m_ButtonNow);
     panelCustom.add(panel, BorderLayout.NORTH);
 
     m_TextCustom = new JTextField(12);
