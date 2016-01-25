@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -1233,6 +1233,6 @@ public class FileUtils {
     else if (file.isFile())
       return file.getParentFile().exists();
     else
-      return false;
+      return (!file.exists() && file.getParentFile().exists() && file.getParentFile().isDirectory());
   }
 }
