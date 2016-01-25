@@ -25,7 +25,10 @@ import adams.core.DateValueSupporter;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.HelpDialog;
+import adams.parser.GrammarSupplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -56,7 +59,7 @@ import java.util.Vector;
  * @param <B> the base object type in use
  * @param <P> the panel in use for selecting the date type
  */
-public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValueSupporter,P extends DateProvider>
+public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValueSupporter & GrammarSupplier,P extends DateProvider>
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler, MultiSelectionEditor, InlineEditorSupport {
 
@@ -80,6 +83,9 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /** For entering a custom date string. */
   protected JTextField m_TextCustom;
+
+  /** the button for the bringing up the help for the custom format. */
+  protected JButton m_ButtonCustomHelp;
 
   /** The NOW button. */
   protected JButton m_ButtonNow;
@@ -263,10 +269,13 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 	updateButtons();
       }
     });
+    m_ButtonCustomHelp = new JButton(GUIHelper.getIcon("help2.png"));
+    m_ButtonCustomHelp.addActionListener(e1 -> showHelp());
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     panel.add(new JLabel("Custom date"));
     panel.add(m_TextCustom);
+    panel.add(m_ButtonCustomHelp);
     panelCustom.add(panel, BorderLayout.CENTER);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -306,6 +315,23 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
       m_ButtonOK.setEnabled(m_Date.isValid(m_TextCustom.getText()));
     else
       m_ButtonOK.setEnabled(true);
+  }
+
+  /**
+   * Displays the help for the
+   */
+  protected void showHelp() {
+    HelpDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new HelpDialog(getParentDialog());
+    else
+      dialog = new HelpDialog(getParentFrame());
+    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
+    dialog.setHelp(m_Date.getGrammar(), false);
+    dialog.setSize(600, 400);
+    dialog.setLocationRelativeTo(null);
+    dialog.setVisible(true);
   }
 
   /**
