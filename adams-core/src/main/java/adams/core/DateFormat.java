@@ -34,7 +34,7 @@ import adams.core.TechnicalInformation.Type;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see SimpelDateFormat
+ * @see SimpleDateFormat
  */
 public class DateFormat
   implements Serializable, TechnicalInformationHandler {
