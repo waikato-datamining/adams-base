@@ -82,13 +82,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -439,12 +437,7 @@ public class SpreadSheetViewerPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener(e -> updateMenu());
 
       menu.add(m_ActionFileOpen);
       
@@ -481,12 +474,7 @@ public class SpreadSheetViewerPanel
       menu = new JMenu("Data");
       result.add(menu);
       menu.setMnemonic('D');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener(e -> updateMenu());
 
       menu.add(m_ActionDataFilterColumns);
       menu.add(m_ActionDataFilterRows);
@@ -510,12 +498,7 @@ public class SpreadSheetViewerPanel
 	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getEmptyIcon());
 	    else
 	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getIcon(data.getMenuIcon()));
-	    menuitem.addActionListener(new ActionListener() {
-	      @Override
-	      public void actionPerformed(ActionEvent e) {
-		process(data);
-	      }
-	    });
+	    menuitem.addActionListener(e -> process(data));
 	    m_MenuItemDataPlugins.add(menuitem);
 	    menu.add(menuitem);
 	  }
@@ -530,12 +513,7 @@ public class SpreadSheetViewerPanel
       menu = new JMenu("View");
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          updateMenu();
-        }
-      });
+      menu.addChangeListener(e -> updateMenu());
 
       menu.add(m_ActionViewApplyToAll.getMenuItem());
       menu.add(m_ActionViewDisplayedDecimals);
@@ -561,12 +539,7 @@ public class SpreadSheetViewerPanel
 	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getEmptyIcon());
 	    else
 	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getIcon(view.getMenuIcon()));
-	    menuitem.addActionListener(new ActionListener() {
-	      @Override
-	      public void actionPerformed(ActionEvent e) {
-		view(view);
-	      }
-	    });
+	    menuitem.addActionListener(e -> view(view));
 	    m_MenuItemViewPlugins.add(menuitem);
 	    menu.add(menuitem);
 	  }
@@ -581,12 +554,7 @@ public class SpreadSheetViewerPanel
       menu = new JMenu("Help");
       result.add(menu);
       menu.setMnemonic('H');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener(e -> updateMenu());
 
       menu.add(m_ActionHelpFormulas);
       menu.add(m_MenuItemHelpQuery);
@@ -799,45 +767,60 @@ public class SpreadSheetViewerPanel
    * @param reader	the reader to use for reading the file
    * @param file	the file to load
    */
-  public void load(SpreadSheetReader reader, File file) {
-    SpreadSheet		sheet;
-    List<SpreadSheet>	sheets;
-    String		msg;
-    SpreadSheetPanel	panel;
+  public void load(final SpreadSheetReader reader, File file) {
+    SwingWorker 	worker;
 
-    // default reader
-    if (reader == null)
-      reader = new CsvSpreadSheetReader();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	// default reader
+	SpreadSheetReader sreader = reader;
+	if (reader == null)
+	  sreader = new CsvSpreadSheetReader();
 
-    sheet  = null;
-    sheets = null;
-    if (reader instanceof MultiSheetSpreadSheetReader)
-      sheets = ((MultiSheetSpreadSheetReader) reader).readRange(file.getAbsolutePath());
-    else
-      sheet = reader.read(file.getAbsolutePath());
-    
-    if ((sheet == null) && (sheets == null)) {
-      if (reader.hasLastError())
-	msg = "Error loading spreadsheet file:\n" + file + "\n" + reader.getLastError();
-      else
-	msg = "Error loading spreadsheet file:\n" + file;
-      GUIHelper.showErrorMessage(this, msg);
-    }
-    else {
-      if (sheet != null) {
-	panel = m_TabbedPane.addTab(file, sheet);
-	panel.setReader(reader);
-      }
-      else {
-	for (SpreadSheet sh: sheets) {
-	  panel = m_TabbedPane.addTab(file, sh);
-	  panel.setReader(reader);
+	SpreadSheet sheet = null;
+	List<SpreadSheet> sheets = null;
+	if (sreader instanceof MultiSheetSpreadSheetReader)
+	  sheets = ((MultiSheetSpreadSheetReader) sreader).readRange(file.getAbsolutePath());
+	else
+	  sheet = sreader.read(file.getAbsolutePath());
+
+	String msg;
+	if ((sheet == null) && (sheets == null)) {
+	  if (sreader.hasLastError())
+	    msg = "Error loading spreadsheet file:\n" + file + "\n" + sreader.getLastError();
+	  else
+	    msg = "Error loading spreadsheet file:\n" + file;
+	  GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, msg);
 	}
+	else {
+	  SpreadSheetPanel panel;
+	  if (sheet != null) {
+	    panel = m_TabbedPane.addTab(file, sheet);
+	    panel.setReader(sreader);
+	  }
+	  else {
+	    for (SpreadSheet sh: sheets) {
+	      panel = m_TabbedPane.addTab(file, sh);
+	      panel.setReader(sreader);
+	    }
+	  }
+	  m_FileChooser.setCurrentDirectory(file.getParentFile());
+	  if (m_RecentFilesHandler != null)
+	    m_RecentFilesHandler.addRecentItem(new Setup(file, sreader));
+	}
+	return null;
       }
-      m_FileChooser.setCurrentDirectory(file.getParentFile());
-      if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
-    }
+
+      @Override
+      protected void done() {
+	super.done();
+	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	updateMenu();
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -877,7 +860,9 @@ public class SpreadSheetViewerPanel
   }
 
   /**
-   * Saves the current sheet.
+   * Saves the current sheet (uses SwingWorker).
+   *
+   * @see #save(SpreadSheetWriter, File, boolean)
    */
   public void save() {
     SpreadSheetPanel	panel;
@@ -899,28 +884,55 @@ public class SpreadSheetViewerPanel
 	saveAs();
 	return;
       }
-      write(panel.getReader().getCorrespondingWriter(), panel.getFilename());
+      save(panel.getReader().getCorrespondingWriter(), panel.getFilename(), false);
     }
     else {
-      write(panel.getWriter(), getCurrentPanel().getFilename());
+      save(panel.getWriter(), getCurrentPanel().getFilename(), false);
     }
   }
 
   /**
-   * Saves the current sheet under a new name.
+   * Saves the current sheet under a new name (uses SwingWorker).
+   *
+   * @see #save(SpreadSheetWriter, File, boolean)
    */
   public void saveAs() {
     int			retVal;
-    PlaceholderFile	file;
 
     retVal = m_FileChooser.showSaveDialog(this);
     if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
       return;
 
-    file = m_FileChooser.getSelectedPlaceholderFile();
-    write(m_FileChooser.getWriter(), file);
-    if ((m_RecentFilesHandler != null) && (m_FileChooser.getWriter().getCorrespondingReader() != null))
-      m_RecentFilesHandler.addRecentItem(new Setup(file, m_FileChooser.getWriter().getCorrespondingReader()));
+    save(m_FileChooser.getWriter(), m_FileChooser.getSelectedPlaceholderFile(), true);
+  }
+
+  /**
+   * Writes the file to disk (uses SwingWorker).
+   *
+   * @param writer	the writer to use for writing the spreadsheet
+   * @param file	the file to write to
+   * @param recent	whether to add the file to the recent files list
+   */
+  protected void save(final SpreadSheetWriter writer, final File file, final boolean recent) {
+    SwingWorker		worker;
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	write(writer, file);
+	return null;
+      }
+
+      @Override
+      protected void done() {
+	super.done();
+	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	if (recent && (m_RecentFilesHandler != null) && (m_FileChooser.getWriter().getCorrespondingReader() != null))
+	  m_RecentFilesHandler.addRecentItem(new Setup(file, m_FileChooser.getWriter().getCorrespondingReader()));
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -946,6 +958,10 @@ public class SpreadSheetViewerPanel
       setVisibleAgain();
       return;
     }
+
+    if (getParentFrame() != null)
+      ((JFrame) getParentFrame()).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
     closeParent();
   }
 
@@ -1031,21 +1047,36 @@ public class SpreadSheetViewerPanel
    * @param filter	the transformer
    */
   public void filterData(String oldTitle, Object input, AbstractActor filter) {
-    List	processed;
+    SwingWorker		worker;
 
-    try {
-      processed = ActorUtils.transform(filter, input);
-      for (Object obj: processed) {
-	if (!(obj instanceof SpreadSheet)) {
-	  GUIHelper.showErrorMessage(this, "Generated non-spreadsheet object??\n" + obj.getClass().getName());
-	  return;
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	try {
+	  List processed = ActorUtils.transform(filter, input);
+	  for (Object obj: processed) {
+	    if (!(obj instanceof SpreadSheet)) {
+	      GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, "Generated non-spreadsheet object??\n" + obj.getClass().getName());
+	      return null;
+	    }
+	    m_TabbedPane.addTab(oldTitle + "'", (SpreadSheet) obj);
+	  }
 	}
-	m_TabbedPane.addTab(oldTitle + "'", (SpreadSheet) obj);
+	catch (Exception e) {
+	  GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, "Failed to filter data:\n" + Utils.throwableToString(e));
+	}
+	return null;
       }
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(this, "Failed to filter data:\n" + Utils.throwableToString(e));
-    }
+
+      @Override
+      protected void done() {
+	super.done();
+	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	updateMenu();
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -1054,25 +1085,38 @@ public class SpreadSheetViewerPanel
    * @param plugin	the plugin to use
    */
   protected void process(AbstractDataPlugin plugin) {
-    SpreadSheetPanel	panel;
-    SpreadSheet		input;
-    SpreadSheet		output;
+    SwingWorker		worker;
 
-    panel = m_TabbedPane.getCurrentPanel();
-    if (panel == null)
-      return;
-    input = panel.getSheet();
-    if (input == null)
-      return;
-    plugin.setCurrentPanel(panel);
-    output = plugin.process(input);
-    if (plugin.getCanceledByUser() || (output == null))
-      return;
-    if (plugin.isInPlace())
-      m_TabbedPane.getCurrentTable().setModel(new SpreadSheetTableModel(output));
-    else
-      m_TabbedPane.addTab(m_TabbedPane.newTitle(), output);
-    plugin.setCurrentPanel(null);
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	SpreadSheetPanel panel = m_TabbedPane.getCurrentPanel();
+	if (panel == null)
+	  return null;
+	SpreadSheet input = panel.getSheet();
+	if (input == null)
+	  return null;
+	plugin.setCurrentPanel(panel);
+	SpreadSheet output = plugin.process(input);
+	if (plugin.getCanceledByUser() || (output == null))
+	  return null;
+	if (plugin.isInPlace())
+	  m_TabbedPane.getCurrentTable().setModel(new SpreadSheetTableModel(output));
+	else
+	  m_TabbedPane.addTab(m_TabbedPane.newTitle(), output);
+	plugin.setCurrentPanel(null);
+	return null;
+      }
+
+      @Override
+      protected void done() {
+	super.done();
+	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	updateMenu();
+      }
+    };
+    worker.execute();
   }
 
   /**
