@@ -181,13 +181,6 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   }
 
   /**
-   * Returns the data provider to use for storing the container in the database.
-   *
-   * @return		the data provider
-   */
-  public abstract DataProvider<T> getDataProvider();
-
-  /**
    * Updates the provenance information in the provided container.
    *
    * @param cont	the provenance container to update
