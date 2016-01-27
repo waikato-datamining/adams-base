@@ -100,4 +100,13 @@ public interface ReportProviderByDBID<T extends Report>
    * @return		list of columns (tab-separated)
    */
   public List<String> getIDsOfReference(String[] columns, AbstractConditions conditions);
+
+  /**
+   * Return a list of database IDs of data containers that match the defined
+   * conditions.
+   *
+   * @param conditions	the conditions that the conatiners must meet
+   * @return		list of database IDs
+   */
+  public List<Integer> getDBIDsOfReference(AbstractConditions conditions);
 }

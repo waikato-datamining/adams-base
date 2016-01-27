@@ -84,7 +84,7 @@ public interface ReportProvider<T extends Report, I>
   public boolean remove(I parent_id);
 
   /**
-   * Return a list (Vector) of IDs of data containers that match the defined
+   * Return a list of IDs of data containers that match the defined
    * conditions.
    *
    * @param conditions	the conditions that the conatiners must meet
@@ -93,7 +93,7 @@ public interface ReportProvider<T extends Report, I>
   public List<String> getIDsOfReference(AbstractConditions conditions);
 
   /**
-   * Return a list (Vector) of columns of data containers that match the defined
+   * Return a list of columns of data containers that match the defined
    * conditions.
    *
    * @param columns	the columns to retrieve.
@@ -101,4 +101,13 @@ public interface ReportProvider<T extends Report, I>
    * @return		list of columns (tab-separated)
    */
   public List<String> getIDsOfReference(String[] columns, AbstractConditions conditions);
+
+  /**
+   * Return a list of database IDs of data containers that match the defined
+   * conditions.
+   *
+   * @param conditions	the conditions that the conatiners must meet
+   * @return		list of database IDs
+   */
+  public List<Integer> getDBIDsOfReference(AbstractConditions conditions);
 }
