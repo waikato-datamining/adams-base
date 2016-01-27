@@ -21,6 +21,13 @@
 
 package adams.db;
 
+import adams.core.ClassLister;
+import adams.core.logging.LoggingHelper;
+import adams.db.indices.Index;
+import adams.db.indices.IndexColumn;
+import adams.db.indices.Indices;
+import adams.db.types.SQL_type;
+
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -29,12 +36,7 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.logging.Level;
-
-import adams.core.ClassLister;
-import adams.db.indices.Index;
-import adams.db.indices.IndexColumn;
-import adams.db.indices.Indices;
-import adams.db.types.SQL_type;
+import java.util.logging.Logger;
 
 /**
  * Class to implement the features of a database table.
@@ -48,6 +50,9 @@ public abstract class AbstractIndexedTable
 
   /** for serialization. */
   private static final long serialVersionUID = 2013793322024355971L;
+
+  /** the debugging level. */
+  private final static Logger LOGGER = LoggingHelper.getConsoleLogger(AbstractIndexedTable.class);
 
   /** the name of the props file. */
   public final static String FILENAME = "Table.props";
@@ -394,29 +399,24 @@ public abstract class AbstractIndexedTable
 	  System.out.println("Initializing table: " + tables[i]);
 	cls = Class.forName(tables[i]);
 	try {
-	  method = cls.getMethod("isEnabled", new Class[]{Class.class});
-	  enabled = (Boolean) method.invoke(null, new Object[]{cls});
+	  method  = cls.getMethod("isEnabled", Class.class);
+	  enabled = (Boolean) method.invoke(null, cls);
 	  if (!enabled)
 	    continue;
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to check whether table '" + tables[i] + "' is enabled!");
-	  if (debug)
-	    e.printStackTrace();
+          LOGGER.log(Level.SEVERE, "Failed to check whether table '" + tables[i] + "' is enabled: ", e);
 	}
 	try {
-	  method = cls.getMethod("initTable", new Class[]{AbstractDatabaseConnection.class});
-	  method.invoke(null, new Object[]{dbcon});
+	  method = cls.getMethod("initTable", AbstractDatabaseConnection.class);
+	  method.invoke(null, dbcon);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to initialize table '" + tables[i] + "'!");
-	  if (debug)
-	    e.printStackTrace();
+          LOGGER.log(Level.SEVERE, "Failed to initialize table '" + tables[i] + "': ", e);
 	}
       }
       catch (Exception e) {
-	System.err.println("Error initializing table '" + tables[i] + "':");
-	e.printStackTrace();
+        LOGGER.log(Level.SEVERE, "Error initializing table '" + tables[i] + "':", e);
       }
     }
   }
