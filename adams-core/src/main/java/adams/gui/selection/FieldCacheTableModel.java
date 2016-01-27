@@ -15,13 +15,10 @@
 
 /*
  * FieldCacheTableModel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.selection;
-
-import java.util.Hashtable;
-import java.util.Vector;
 
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -29,6 +26,10 @@ import adams.data.report.FieldType;
 import adams.gui.core.ComparableTableModel;
 import adams.gui.core.SearchParameters;
 import adams.gui.selection.AbstractTableBasedSelectionPanel.AbstractSelectionTableModel;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Table model for displaying the fields from a cache item.
@@ -47,7 +48,7 @@ public class FieldCacheTableModel
   protected String m_DatabaseURL;
 
   /** the fields to display. */
-  protected Hashtable<FieldType,Vector<AbstractField>> m_Fields;
+  protected Hashtable<FieldType,List<AbstractField>> m_Fields;
 
   /** the field type to use. */
   protected FieldType m_FieldType;
@@ -58,29 +59,29 @@ public class FieldCacheTableModel
   /**
    * the constructor.
    *
-   * @param fields	the fields to display
+   * @param cache	the cache
    * @param fieldType	the fieldtype
    * @param dataType	the data type to display, use null for all
    */
   public FieldCacheTableModel(AbstractFieldCacheItem cache, FieldType fieldType, DataType dataType) {
     super();
 
-    m_Fields = new Hashtable<FieldType,Vector<AbstractField>>();
+    m_Fields = new Hashtable<FieldType,List<AbstractField>>();
     if (cache != null) {
       m_DatabaseURL = cache.getDatabaseConnection().getURL();
       if (dataType == null) {
 	for (FieldType type: FieldType.values())
-	  m_Fields.put(type, (Vector<AbstractField>) cache.getValues(type).clone());
+	  m_Fields.put(type, new ArrayList<>(cache.getValues(type)));
       }
       else {
 	for (FieldType type: FieldType.values())
-	  m_Fields.put(type, (Vector<AbstractField>) cache.getValues(type, dataType).clone());
+	  m_Fields.put(type, new ArrayList<>(cache.getValues(type, dataType)));
       }
     }
     else {
       m_DatabaseURL = "-none-";
       for (FieldType type: FieldType.values())
-        m_Fields.put(type, new Vector<AbstractField>());
+        m_Fields.put(type, new ArrayList<>());
     }
 
     m_FieldType = fieldType;
@@ -203,7 +204,7 @@ public class FieldCacheTableModel
   public int indexOf(AbstractField t) {
     int				result;
     int				i;
-    Vector<AbstractField>	fields;
+    List<AbstractField>		fields;
 
     result = -1;
 

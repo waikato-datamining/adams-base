@@ -15,11 +15,11 @@
 
 /**
  * InstrumentProvider.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Interface for table classes that return instrument names.
@@ -36,5 +36,5 @@ public interface InstrumentProvider
    *
    * @return		the instruments
    */
-  public Vector<String> getInstruments();
+  public List<String> getInstruments();
 }

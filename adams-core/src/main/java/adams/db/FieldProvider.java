@@ -15,14 +15,14 @@
 
 /**
  * FieldProvider.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
-import java.util.Vector;
-
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
+
+import java.util.List;
 
 /**
  * Interface for table classes that return Field objects.
@@ -39,7 +39,7 @@ public interface FieldProvider<T extends AbstractField>
    *
    * @return		the list of fields
    */
-  public Vector<T> getFields();
+  public List<T> getFields();
 
   /**
    * Returns all available fields.
@@ -47,5 +47,5 @@ public interface FieldProvider<T extends AbstractField>
    * @param dtype	the type to limit the search to, use "null" for all
    * @return		the list of fields
    */
-  public Vector<T> getFields(DataType dtype);
+  public List<T> getFields(DataType dtype);
 }

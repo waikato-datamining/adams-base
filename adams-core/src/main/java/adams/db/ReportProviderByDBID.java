@@ -22,7 +22,7 @@ package adams.db;
 import adams.data.report.Field;
 import adams.data.report.Report;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Interface for table classes that handle the reports of a project.
@@ -89,7 +89,7 @@ public interface ReportProviderByDBID<T extends Report>
    * @param conditions	the conditions that the conatiners must meet
    * @return		list of container IDs
    */
-  public Vector<String> getIDsOfReference(AbstractConditions conditions);
+  public List<String> getIDsOfReference(AbstractConditions conditions);
 
   /**
    * Return a list (Vector) of columns of data containers that match the defined
@@ -99,5 +99,5 @@ public interface ReportProviderByDBID<T extends Report>
    * @param conditions	the conditions that the containers must meet
    * @return		list of columns (tab-separated)
    */
-  public Vector<String> getIDsOfReference(String[] columns, AbstractConditions conditions);
+  public List<String> getIDsOfReference(String[] columns, AbstractConditions conditions);
 }

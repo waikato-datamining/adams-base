@@ -26,7 +26,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -99,7 +99,7 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
    *
    * @return		the list of fields
    */
-  public Vector<F> getFields() {
+  public List<F> getFields() {
     return getFields(null);
   }
 

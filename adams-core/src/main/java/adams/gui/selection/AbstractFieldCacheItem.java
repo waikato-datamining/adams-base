@@ -15,17 +15,10 @@
 
 /*
  * AbstractFieldCacheItem.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.selection;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
 
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -35,6 +28,14 @@ import adams.db.DatabaseConnectionProvider;
 import adams.db.FieldProvider;
 import adams.gui.event.FieldCacheUpdateEvent;
 import adams.gui.event.FieldCacheUpdateListener;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * For caching fields per database connection.
@@ -52,7 +53,7 @@ public abstract class AbstractFieldCacheItem
   protected FieldProvider m_Provider;
 
   /** the actual cache. */
-  protected Hashtable<FieldType,Vector<AbstractField>> m_Values;
+  protected Hashtable<FieldType,List<AbstractField>> m_Values;
 
   /** the listeners. */
   protected Hashtable<FieldType,HashSet<FieldCacheUpdateListener>> m_CacheListeners;
@@ -113,7 +114,7 @@ public abstract class AbstractFieldCacheItem
    *
    * @return		the cached values
    */
-  public Hashtable<FieldType,Vector<AbstractField>> getValues() {
+  public Hashtable<FieldType,List<AbstractField>> getValues() {
     try {
       initCache();
     }
@@ -132,7 +133,7 @@ public abstract class AbstractFieldCacheItem
    * @param fieldType	the field type to get the values for
    * @return		the cached values
    */
-  public Vector<AbstractField> getValues(FieldType fieldType) {
+  public List<AbstractField> getValues(FieldType fieldType) {
     return getValues().get(fieldType);
   }
 
@@ -143,11 +144,11 @@ public abstract class AbstractFieldCacheItem
    * @param dataType	the data type to get the values for
    * @return		the cached values
    */
-  public Vector<AbstractField> getValues(FieldType fieldType, DataType dataType) {
-    Vector<AbstractField>	result;
-    Vector<AbstractField>	values;
+  public List<AbstractField> getValues(FieldType fieldType, DataType dataType) {
+    List<AbstractField>	result;
+    List<AbstractField>	values;
 
-    result = new Vector<AbstractField>();
+    result = new ArrayList<>();
     values = getValues(fieldType);
 
     for (AbstractField field: values) {
@@ -163,12 +164,12 @@ public abstract class AbstractFieldCacheItem
    *
    * @return		the empty cache
    */
-  protected Hashtable<FieldType,Vector<AbstractField>> newCache() {
-    Hashtable<FieldType,Vector<AbstractField>>	result;
+  protected Hashtable<FieldType,List<AbstractField>> newCache() {
+    Hashtable<FieldType,List<AbstractField>>	result;
 
-    result = new Hashtable<FieldType,Vector<AbstractField>>();
+    result = new Hashtable<FieldType,List<AbstractField>>();
     for (FieldType type: FieldType.values())
-      result.put(type, new Vector<AbstractField>());
+      result.put(type, new ArrayList<AbstractField>());
 
     return result;
   }
@@ -203,14 +204,14 @@ public abstract class AbstractFieldCacheItem
    */
   protected void initCache() {
     Iterator<FieldCacheUpdateListener>	iter;
-    Vector<AbstractField>		fields;
+    List<AbstractField> 		fields;
     int					i;
     AbstractField			field;
     FieldCacheUpdateEvent		event;
 
     if (m_Values == null) {
       if ((getFieldProvider() == null) || !getFieldProvider().getDatabaseConnection().isConnected())
-	fields = new Vector<AbstractField>();
+	fields = new ArrayList<>();
       else
 	fields = getFieldProvider().getFields();
       m_Values = newCache();
