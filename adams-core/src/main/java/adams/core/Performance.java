@@ -15,7 +15,7 @@
 
 /*
  * Performance.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -54,6 +54,8 @@ public class Performance {
    * @param defValue	the default value
    */
   public static boolean getBoolean(String key, boolean defValue) {
+    initialize();
+
     return m_Properties.getBoolean(key, defValue);
   }
 
@@ -64,6 +66,8 @@ public class Performance {
    * @param defValue	the default value
    */
   public static int getInteger(String key, int defValue) {
+    initialize();
+
     return m_Properties.getInteger(key, defValue);
   }
 
@@ -74,6 +78,8 @@ public class Performance {
    * @param defValue	the default value
    */
   public static double getDouble(String key, double defValue) {
+    initialize();
+
     return m_Properties.getDouble(key, defValue);
   }
 
