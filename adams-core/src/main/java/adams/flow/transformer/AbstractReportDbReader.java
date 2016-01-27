@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.data.report.Report;
-import adams.db.ReportProviderByDBID;
+import adams.db.ReportProvider;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -37,8 +37,9 @@ import adams.flow.transformer.report.NoPostProcessing;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of report to handle
+ * @param <I> the type of ID to handle
  */
-public abstract class AbstractReportDbReader<T extends Report>
+public abstract class AbstractReportDbReader<T extends Report, I>
   extends AbstractDbTransformer
   implements ProvenanceSupporter {
 
@@ -113,7 +114,7 @@ public abstract class AbstractReportDbReader<T extends Report>
    *
    * @return		the report provider
    */
-  protected abstract ReportProviderByDBID<T> getReportProvider();
+  protected abstract ReportProvider<T,I> getReportProvider();
 
   /**
    * Executes the flow item.
@@ -123,13 +124,13 @@ public abstract class AbstractReportDbReader<T extends Report>
   @Override
   protected String queryDatabase() {
     String		result;
-    ReportProviderByDBID<T> provider;
+    ReportProvider<T,I> provider;
     Report		report;
-    int			id;
+    I			id;
 
     result = null;
 
-    id       = (Integer) m_InputToken.getPayload();
+    id       = (I) m_InputToken.getPayload();
     provider = getReportProvider();
     report   = provider.load(id);
     if (report == null)

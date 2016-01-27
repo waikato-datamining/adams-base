@@ -20,11 +20,10 @@
 
 package adams.flow.transformer;
 
-import adams.core.Constants;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
-import adams.db.ReportProviderByDBID;
+import adams.db.ReportProvider;
 import adams.flow.core.Token;
 import adams.flow.transformer.report.AbstractReportPreProcessor;
 import adams.flow.transformer.report.NoPreProcessing;
@@ -35,8 +34,9 @@ import adams.flow.transformer.report.NoPreProcessing;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of report to handle
+ * @param <I> the type of ID used
  */
-public abstract class AbstractReportDbWriter<T extends Report>
+public abstract class AbstractReportDbWriter<T extends Report, I>
   extends AbstractDbTransformer {
 
   /** for serialization. */
@@ -265,7 +265,23 @@ public abstract class AbstractReportDbWriter<T extends Report>
    *
    * @return		the provider to use
    */
-  protected abstract ReportProviderByDBID<T> getReportProvider();
+  protected abstract ReportProvider<T,I> getReportProvider();
+
+  /**
+   * Extracts the ID from the report.
+   *
+   * @param report	the report to extract the ID from
+   * @return		the ID
+   */
+  protected abstract I extractID(T report);
+
+  /**
+   * Checks whether the ID is valid.
+   *
+   * @param id		the ID to check
+   * @return		true if valid
+   */
+  protected abstract boolean checkID(I id);
 
   /**
    * Executes the flow item.
@@ -274,11 +290,11 @@ public abstract class AbstractReportDbWriter<T extends Report>
    */
   @Override
   protected String queryDatabase() {
-    String		result;
-    ReportProviderByDBID<T> provider;
-    boolean		stored;
-    T 			report;
-    int			parentID;
+    String			result;
+    ReportProvider<T,I> 	provider;
+    boolean			stored;
+    T 				report;
+    I 				id;
 
     result = null;
 
@@ -291,20 +307,20 @@ public abstract class AbstractReportDbWriter<T extends Report>
       result = "No report attached: " + m_InputToken.getPayload();
     }
     else {
-      report   = (T) m_PreProcessor.preProcess(report);
-      parentID = report.getDatabaseID();
-      stored   = false;
+      report = (T) m_PreProcessor.preProcess(report);
+      id     = extractID(report);
+      stored = false;
 
-      if (m_StandaloneReports || (parentID != Constants.NO_ID)) {
+      if (m_StandaloneReports || checkID(id)) {
 	provider = getReportProvider();
-	stored   = provider.store(parentID, report, m_RemoveExisting, m_Merge, m_OverwriteFields);
+	stored   = provider.store(id, report, m_RemoveExisting, m_Merge, m_OverwriteFields);
       }
       else {
-	result = "No container with ID: " + parentID;
+	result = "No container with ID: " + id;
       }
 
-      if ((parentID != Constants.NO_ID) && stored)
-	m_OutputToken = new Token(parentID);
+      if (checkID(id) && stored)
+	m_OutputToken = new Token(id);
     }
 
     return result;
