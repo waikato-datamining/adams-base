@@ -15,7 +15,7 @@
 
 /*
  * ReportFactory.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.report;
@@ -52,8 +52,6 @@ import adams.gui.core.SearchParameters;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
-import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ContainerModel;
@@ -86,18 +84,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -656,16 +648,10 @@ public class ReportFactory {
       m_ReportContainerList = new ReportContainerList();
       m_ReportContainerList.setManager(getContainerManager());
       m_ReportContainerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      m_ReportContainerList.addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-          showTable(m_ReportContainerList.getTable().getSelectedRow());
-        }
-      });
-      m_ReportContainerList.addTableModelListener(new TableModelListener() {
-        public void tableChanged(TableModelEvent e) {
-          if (m_ReportContainerList.getTable().getRowCount() == 0)
-            showTable(-1);
-        }
+      m_ReportContainerList.addListSelectionListener(e -> showTable(m_ReportContainerList.getTable().getSelectedRow()));
+      m_ReportContainerList.addTableModelListener(e ->  {
+        if (m_ReportContainerList.getTable().getRowCount() == 0)
+          showTable(-1);
       });
       m_SplitPane.setRightComponent(m_ReportContainerList);
     }
@@ -1204,12 +1190,10 @@ public class ReportFactory {
 
       // search
       m_SearchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
-      m_SearchPanel.addSearchListener(new SearchListener() {
-	public void searchInitiated(SearchEvent e) {
-	  m_Panel.search(
-	      m_SearchPanel.getSearchText(), m_SearchPanel.isRegularExpression());
-	  m_SearchPanel.grabFocus();
-	}
+      m_SearchPanel.addSearchListener(e -> {
+        m_Panel.search(
+          m_SearchPanel.getSearchText(), m_SearchPanel.isRegularExpression());
+        m_SearchPanel.grabFocus();
       });
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       panel.add(m_SearchPanel);
@@ -1482,18 +1466,16 @@ public class ReportFactory {
       // the add button
       m_ButtonAdd = new JButton("Add");
       m_ButtonAdd.setMnemonic('A');
-      m_ButtonAdd.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (m_ComboBoxCompounds.getSelectedIndex() == -1)
-	    return;
-	  double min = -1;
-	  double max = -1;
-	  if (m_TextMinValue.getText().length() > 0)
-	    min = Utils.toDouble(m_TextMinValue.getText());
-	  if (m_TextMaxValue.getText().length() > 0)
-	    max = Utils.toDouble(m_TextMaxValue.getText());
-	  m_ModelCompounds.addElement(m_ComboBoxCompounds.getSelectedItem() + " " + min + " " + max);
-	}
+      m_ButtonAdd.addActionListener(e -> {
+        if (m_ComboBoxCompounds.getSelectedIndex() == -1)
+          return;
+        double min = -1;
+        double max = -1;
+        if (m_TextMinValue.getText().length() > 0)
+          min = Utils.toDouble(m_TextMinValue.getText());
+        if (m_TextMaxValue.getText().length() > 0)
+          max = Utils.toDouble(m_TextMaxValue.getText());
+        m_ModelCompounds.addElement(m_ComboBoxCompounds.getSelectedItem() + " " + min + " " + max);
       });
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       panel.add(m_ButtonAdd);
@@ -1516,11 +1498,7 @@ public class ReportFactory {
 	}
       });
       m_ListCompounds = new JList(m_ModelCompounds);
-      m_ListCompounds.addListSelectionListener(new ListSelectionListener() {
-	public void valueChanged(ListSelectionEvent e) {
-	  m_ButtonRemove.setEnabled(m_ListCompounds.getSelectedIndices().length > 0);
-	}
-      });
+      m_ListCompounds.addListSelectionListener(e -> m_ButtonRemove.setEnabled(m_ListCompounds.getSelectedIndices().length > 0));
       panel = new JPanel(new BorderLayout());
       panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       panel.add(new BaseScrollPane(m_ListCompounds), BorderLayout.CENTER);
@@ -1530,12 +1508,10 @@ public class ReportFactory {
       m_ButtonRemove = new JButton("Remove");
       m_ButtonRemove.setMnemonic('R');
       m_ButtonRemove.setEnabled(false);
-      m_ButtonRemove.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  int[] indices = m_ListCompounds.getSelectedIndices();
-	  for (int i = indices.length - 1; i >= 0; i--)
-	    m_ModelCompounds.remove(indices[i]);
-	}
+      m_ButtonRemove.addActionListener(e -> {
+        int[] indices = m_ListCompounds.getSelectedIndices();
+        for (int i = indices.length - 1; i >= 0; i--)
+          m_ModelCompounds.remove(indices[i]);
       });
       panel = new JPanel(new BorderLayout());
       panel.add(m_ButtonRemove, BorderLayout.NORTH);
@@ -1549,23 +1525,17 @@ public class ReportFactory {
       m_ButtonOK = new JButton("OK");
       m_ButtonOK.setMnemonic('O');
       m_ButtonOK.setEnabled(false);
-      m_ButtonOK.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_Canceled = false;
-          if (m_ComboBoxCompounds.getSelectedIndex() > 0)
-            m_SelectedCompound = (Field) m_ComboBoxCompounds.getSelectedItem();
-          m_Self.setVisible(false);
-        }
+      m_ButtonOK.addActionListener(e -> {
+        m_Canceled = false;
+        if (m_ComboBoxCompounds.getSelectedIndex() > 0)
+          m_SelectedCompound = (Field) m_ComboBoxCompounds.getSelectedItem();
+        m_Self.setVisible(false);
       });
       panel.add(m_ButtonOK);
 
       m_ButtonCancel = new JButton("Cancel", GUIHelper.getIcon("exit.png"));
       m_ButtonCancel.setMnemonic('a');
-      m_ButtonCancel.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_Self.setVisible(false);
-        }
-      });
+      m_ButtonCancel.addActionListener(e -> m_Self.setVisible(false));
       panel.add(m_ButtonCancel);
 
       pack();
@@ -1790,11 +1760,9 @@ public class ReportFactory {
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelTop.add(panel, BorderLayout.SOUTH);
     final SearchPanel searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
-    searchPanel.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	table.search(searchPanel.getSearchText(), searchPanel.isRegularExpression());
-	searchPanel.grabFocus();
-      }
+    searchPanel.addSearchListener(e -> {
+      table.search(searchPanel.getSearchText(), searchPanel.isRegularExpression());
+      searchPanel.grabFocus();
     });
     panel.add(searchPanel);
 
@@ -1803,37 +1771,26 @@ public class ReportFactory {
       textArea = new BaseTextAreaWithButtons(5, 40);
       textArea.setFont(Fonts.getMonospacedFont());
       panelBottom.add(new BaseScrollPane(textArea), BorderLayout.CENTER);
-      table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-	  if (table.getSelectedRows().length == 1) {
-	    Object value = table.getValueAt(table.getSelectedRow(), 2);
-	    textArea.setText((value == null ? "" : value.toString()));
-	    textArea.setCaretPosition(0);
-	  }
+      table.getSelectionModel().addListSelectionListener(e -> {
+        if (table.getSelectedRows().length == 1) {
+          Object value = table.getValueAt(table.getSelectedRow(), 2);
+          textArea.setText((value == null ? "" : value.toString()));
+          textArea.setCaretPosition(0);
 	}
       });
       button = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
-      button.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  GUIHelper.copyToClipboard(textArea.getText());
-	}
-      });
+      button.addActionListener(e -> GUIHelper.copyToClipboard(textArea.getText()));
       textArea.addToButtonsPanel(button);
       button = new JButton("Save as...", GUIHelper.getIcon("save.gif"));
-      button.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  TextFileChooser fileChooser = new TextFileChooser();
-	  int retVal = fileChooser.showSaveDialog(result);
-	  if (retVal != TextFileChooser.APPROVE_OPTION)
-	    return;
-	  String encoding = fileChooser.getEncoding();
-	  String filename = fileChooser.getSelectedFile().getAbsolutePath();
-	  if (!FileUtils.writeToFile(filename, textArea.getText(), false, encoding))
-	    GUIHelper.showErrorMessage(result, "Failed to save text to file: " + filename);
-	}
+      button.addActionListener(e -> {
+        TextFileChooser fileChooser = new TextFileChooser();
+        int retVal = fileChooser.showSaveDialog(result);
+        if (retVal != TextFileChooser.APPROVE_OPTION)
+          return;
+        String encoding = fileChooser.getEncoding();
+        String filename = fileChooser.getSelectedFile().getAbsolutePath();
+        if (!FileUtils.writeToFile(filename, textArea.getText(), false, encoding))
+          GUIHelper.showErrorMessage(result, "Failed to save text to file: " + filename);
       });
       textArea.addToButtonsPanel(button);
     }
