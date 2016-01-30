@@ -34,6 +34,9 @@ public class JDBC {
   /** the expression to match a PostgreSQL JDBC URL. */
   public final static String URL_POSTGRESQL = "jdbc:postgresql:.*";
 
+  /** the expression to match a SQLite JDBC URL. */
+  public final static String URL_SQLITE = "jdbc:sqlite:.*";
+
   /**
    * Checks whether this JDBC url represents a MySQL URL.
    *
@@ -76,5 +79,27 @@ public class JDBC {
    */
   public static boolean isPostgreSQL(AbstractDatabaseConnection conn) {
     return isPostgreSQL(conn.getURL());
+  }
+
+  /**
+   * Checks whether this JDBC url represents a SQLite URL.
+   *
+   * @param url		the URL to check
+   * @return		true if SQLite URL
+   * @see		#URL_SQLITE
+   */
+  public static boolean isSQLite(String url) {
+    return url.matches(URL_SQLITE);
+  }
+
+  /**
+   * Checks whether this connection represents a SQLite one.
+   *
+   * @param conn	the connection to check
+   * @return		true if SQLite URL
+   * @see		#isSQLite(String)
+   */
+  public static boolean isSQLite(AbstractDatabaseConnection conn) {
+    return isSQLite(conn.getURL());
   }
 }

@@ -32,7 +32,8 @@ import java.sql.Types;
  * @author dale
  * @version $Revision$
  */
-public class Auto_increment_type extends SQL_type {
+public class Auto_increment_type
+  extends SQL_type {
 
   /**
    * Constructor: it's a BIGINT
@@ -46,11 +47,13 @@ public class Auto_increment_type extends SQL_type {
    * Return creation String
    */
   public String getCreateType(AbstractDatabaseConnection conn) {
-    String create=super.getCreateType(conn);
+    String create = super.getCreateType(conn);
     if (JDBC.isMySQL(conn))
-      return(create+" AUTO_INCREMENT");
-    if (JDBC.isPostgreSQL(conn))
-      return("BIGSERIAL");
+      return create + " AUTO_INCREMENT";
+    else if (JDBC.isPostgreSQL(conn))
+      return "BIGSERIAL";
+    else if (JDBC.isSQLite(conn))
+      return create;
     else
       return create;
   }

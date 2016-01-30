@@ -191,29 +191,26 @@ public class SQL_type {
     }
     else if (JDBC.isPostgreSQL(conn)) {
       switch (m_type) {
-        case Types.BIGINT:
-          return "BIGINT";
-
-        case Types.BLOB:
-          return "BYTEA";
-
         case Types.BIT:
         case Types.BOOLEAN:
         case Types.TINYINT:
           return "BOOLEAN";
 
-        case Types.DOUBLE:
-          return "DOUBLE PRECISION";
-
-        case Types.FLOAT:
-        case Types.REAL:
-          return "REAL";
+        case Types.BIGINT:
+          return "BIGINT";
 
         case Types.SMALLINT:
           return "SMALLINT";
 
         case Types.INTEGER:
           return "INTEGER";
+
+        case Types.FLOAT:
+        case Types.REAL:
+          return "REAL";
+
+        case Types.DOUBLE:
+          return "DOUBLE PRECISION";
 
         case Types.LONGVARCHAR:
         case Types.VARCHAR:
@@ -234,8 +231,41 @@ public class SQL_type {
         case Types.TIME:
           return "TIME";
 
+        case Types.BLOB:
         case Types.LONGVARBINARY:
           return "BYTEA";
+
+        default:
+          throw new IllegalStateException("No TYPE for " + m_type);
+      }
+    }
+    else if (JDBC.isSQLite(conn)) {
+      switch (m_type) {
+        case Types.BIT:
+        case Types.TINYINT:
+        case Types.SMALLINT:
+        case Types.INTEGER:
+        case Types.BIGINT:
+          return "INTEGER";
+
+        case Types.BOOLEAN:
+        case Types.TIMESTAMP:
+        case Types.DATE:
+        case Types.TIME:
+	  return "NUMERIC";
+
+        case Types.DOUBLE:
+        case Types.FLOAT:
+        case Types.REAL:
+          return "REAL";
+
+        case Types.LONGVARCHAR:
+        case Types.VARCHAR:
+	  return "TEXT";
+
+        case Types.LONGVARBINARY:
+        case Types.BLOB:
+          return "BLOB";
 
         default:
           throw new IllegalStateException("No TYPE for " + m_type);

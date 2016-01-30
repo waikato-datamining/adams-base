@@ -21,6 +21,11 @@
 
 package adams.db;
 
+import adams.core.Utils;
+import adams.core.base.BaseRegExp;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingObject;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -31,11 +36,6 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import adams.core.Utils;
-import adams.core.base.BaseRegExp;
-import adams.core.logging.LoggingHelper;
-import adams.core.logging.LoggingObject;
 
 /**
  * Basic SQL support.
@@ -592,8 +592,8 @@ public class SQL
    *
    * @param distinct	whether values in columns has to be distinct
    * @param columns	columns to select
-   * @param tables	the tables to select from
-   * @param where	condition
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
@@ -607,7 +607,8 @@ public class SQL
     query += columns;
 
     // from
-    query += " FROM " + tables;
+    if (tables != null)
+      query += " FROM " + tables;
 
     // where
     if ((where != null) && (where.length() > 0)) {
