@@ -14,7 +14,7 @@
  */
 
 /*
- * SQL_type.java
+ * ColumnType.java
  * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
@@ -27,12 +27,12 @@ import adams.db.JDBC;
 import java.sql.Types;
 
 /**
- * SQL type.
+ * SQL column type.
  *
  * @author dale
  * @version $Revision$
  */
-public class SQL_type {
+public class ColumnType {
 
   /** max size of varchar. */
   static public final int MAX_VARCHAR = 255;
@@ -54,7 +54,7 @@ public class SQL_type {
    *
    * @param sqlt	java sql type
    */
-  public SQL_type(int sqlt) {
+  public ColumnType(int sqlt) {
     m_type = sqlt;
   }
 
@@ -64,7 +64,7 @@ public class SQL_type {
    * @param sqlt	java sql type
    * @param size	size  e.g for varchar
    */
-  public SQL_type(int sqlt, int size) {
+  public ColumnType(int sqlt, int size) {
     m_type = sqlt;
 
     if (sqlt == Types.VARCHAR || sqlt == Types.LONGVARCHAR)
@@ -282,7 +282,7 @@ public class SQL_type {
    * @param sqt		sql type
    * @return		equivalent?
    */
-  public boolean equivalentTo(AbstractDatabaseConnection conn, SQL_type sqt) {
+  public boolean equivalentTo(AbstractDatabaseConnection conn, ColumnType sqt) {
     return getCompareType(conn).equals(sqt.getCompareType(conn));
   }
 

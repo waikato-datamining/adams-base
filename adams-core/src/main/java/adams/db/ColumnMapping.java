@@ -25,8 +25,8 @@ package adams.db;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import adams.db.types.Auto_increment_type;
-import adams.db.types.SQL_type;
+import adams.db.types.AutoIncrementType;
+import adams.db.types.ColumnType;
 
 /**
  * Implements a set of table columns, mapping names to sql types
@@ -38,7 +38,7 @@ public class ColumnMapping {
   //primary key
   protected String primary_key=null;
   // name -> type mapping
-  private Hashtable<String,SQL_type> m_cm=new Hashtable<String,SQL_type>();
+  private Hashtable<String,ColumnType> m_cm=new Hashtable<String,ColumnType>();
 
   /**
    * Constructor
@@ -54,9 +54,9 @@ public class ColumnMapping {
    * @param cname	column name
    * @param typ		sql type
    */
-  public void addMapping(String cname,SQL_type typ) {
+  public void addMapping(String cname,ColumnType typ) {
     m_cm.put(cname,typ);
-    if (typ instanceof Auto_increment_type) {
+    if (typ instanceof AutoIncrementType) {
       setPrimaryKey(cname);
     }
   }
@@ -66,7 +66,7 @@ public class ColumnMapping {
    * @param cname	column name
    * @return	sql type
    */
-  public  SQL_type getMapping(String cname) {
+  public ColumnType getMapping(String cname) {
     return(m_cm.get(cname));
   }
 

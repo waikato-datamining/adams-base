@@ -14,7 +14,7 @@
  */
 
 /*
- * Auto_increment_type.java
+ * AutoIncrementType.java
  * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
@@ -32,14 +32,14 @@ import java.sql.Types;
  * @author dale
  * @version $Revision$
  */
-public class Auto_increment_type
-  extends SQL_type {
+public class AutoIncrementType
+  extends ColumnType {
 
   /**
    * Constructor: it's a BIGINT
    *
    */
-  public Auto_increment_type() {
+  public AutoIncrementType() {
     super(Types.BIGINT);
   }
 

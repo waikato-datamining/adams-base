@@ -26,7 +26,7 @@ import adams.core.logging.LoggingHelper;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
-import adams.db.types.SQL_type;
+import adams.db.types.ColumnType;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -108,8 +108,8 @@ public abstract class AbstractIndexedTable
 	columns.add(cname);
 	int type = rs.getInt("DATA_TYPE");
 	int size = rs.getInt("COLUMN_SIZE");
-	SQL_type columnType = new SQL_type(type,size);
-	SQL_type expectedColumn = cm.getMapping(cname);
+	ColumnType columnType = new ColumnType(type,size);
+	ColumnType expectedColumn = cm.getMapping(cname);
 	if (expectedColumn == null) {
 	  if (print)
 	    getLogger().severe(
@@ -138,7 +138,7 @@ public abstract class AbstractIndexedTable
 	    ok = false;
 	    break;
 	  }
-	  SQL_type type = cm.getMapping(cname);
+	  ColumnType type = cm.getMapping(cname);
 	  String sql = "ALTER TABLE " + getTableName() + " ADD COLUMN ";
 	  sql += cname + " " + type.getCreateType(getDatabaseConnection());
 	  try {
@@ -225,7 +225,7 @@ public abstract class AbstractIndexedTable
     String sql="CREATE TABLE "+m_TableName+" (";
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
       String cname=(String)enum1.nextElement();
-      SQL_type type=cm.getMapping(cname);
+      ColumnType type=cm.getMapping(cname);
       sql+=" "+cname+" "+type.getCreateType(getDatabaseConnection());
       if (enum1.hasMoreElements()) {
 	sql+=",";

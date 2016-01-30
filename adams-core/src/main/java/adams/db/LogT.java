@@ -21,6 +21,13 @@
 
 package adams.db;
 
+import adams.core.base.BaseDateTime;
+import adams.db.indices.Index;
+import adams.db.indices.IndexColumn;
+import adams.db.indices.Indices;
+import adams.db.types.AutoIncrementType;
+import adams.db.types.ColumnType;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -29,13 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.base.BaseDateTime;
-import adams.db.indices.Index;
-import adams.db.indices.IndexColumn;
-import adams.db.indices.Indices;
-import adams.db.types.Auto_increment_type;
-import adams.db.types.SQL_type;
 
 /**
  * Table for storing log messages.
@@ -74,14 +74,14 @@ public class LogT
     ColumnMapping 	result;
 
     result = new ColumnMapping();
-    result.addMapping("AUTO_ID",    new Auto_increment_type());         // automatic generated id
-    result.addMapping("HOST",       new SQL_type(Types.VARCHAR,255));   // the host name
-    result.addMapping("IP",         new SQL_type(Types.VARCHAR,50));    // the IP address
-    result.addMapping("TYPE",       new SQL_type(Types.VARCHAR,255));   // type of the log message
-    result.addMapping("MESSAGE",    new SQL_type(Types.LONGVARCHAR));   // the message itself (props format)
-    result.addMapping("GENERATION", new SQL_type(Types.TIMESTAMP));     // the timestamp of the message
-    result.addMapping("SOURCE",     new SQL_type(Types.LONGVARCHAR));   // the origin of the message
-    result.addMapping("STATUS",     new SQL_type(Types.VARCHAR,255));   // the status of the message
+    result.addMapping("AUTO_ID",    new AutoIncrementType());         // automatic generated id
+    result.addMapping("HOST",       new ColumnType(Types.VARCHAR,255));   // the host name
+    result.addMapping("IP",         new ColumnType(Types.VARCHAR,50));    // the IP address
+    result.addMapping("TYPE",       new ColumnType(Types.VARCHAR,255));   // type of the log message
+    result.addMapping("MESSAGE",    new ColumnType(Types.LONGVARCHAR));   // the message itself (props format)
+    result.addMapping("GENERATION", new ColumnType(Types.TIMESTAMP));     // the timestamp of the message
+    result.addMapping("SOURCE",     new ColumnType(Types.LONGVARCHAR));   // the origin of the message
+    result.addMapping("STATUS",     new ColumnType(Types.VARCHAR,255));   // the status of the message
 
     return result;
   }
