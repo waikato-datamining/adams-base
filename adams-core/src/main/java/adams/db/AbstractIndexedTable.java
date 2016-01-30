@@ -222,18 +222,18 @@ public abstract class AbstractIndexedTable
    */
   protected boolean create() {
     ColumnMapping cm = getColumnMapping();
-    String sql="CREATE TABLE "+m_TableName+" (";
+    String sql = "CREATE TABLE " + m_TableName + " (";
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
-      String cname=(String)enum1.nextElement();
-      ColumnType type=cm.getMapping(cname);
-      sql+=" "+cname+" "+type.getCreateType(getDatabaseConnection());
+      String cname = (String) enum1.nextElement();
+      ColumnType type = cm.getMapping(cname);
+      sql += " " + cname + " " + type.getCreateType(getDatabaseConnection());
       if (enum1.hasMoreElements()) {
-	sql+=",";
+	sql += ",";
       }
       else {
 	if (cm.hasPrimaryKey())
-	  sql+=", PRIMARY KEY("+cm.getPrimaryKey()+")";
-	sql+=")";
+	  sql += ", PRIMARY KEY(" + cm.getPrimaryKey() + ")";
+	sql += ")";
       }
     }
 
@@ -249,14 +249,14 @@ public abstract class AbstractIndexedTable
 
     Indices ind=this.getIndices();
     if (ind != null) {
-      for (int i=0;i<ind.size();i++) {
+      for (int i = 0; i < ind.size(); i++) {
 	sql= "CREATE INDEX " + m_TableName + "_IND_" + i + " ON " + m_TableName + " (";
-	Index index=ind.get(i);
-	for (int j=0;j<index.size()-1;j++) {
+	Index index = ind.get(i);
+	for (int j = 0; j < index.size() - 1; j++) {
 	  IndexColumn ic = index.get(j);
-	  sql=sql+" "+ic.toString()+",";
+	  sql = sql + " " + ic.toString(getDatabaseConnection()) + ",";
 	}
-	sql=sql+" "+index.get(index.size()-1).toString()+")";
+	sql = sql + " " + index.get(index.size() - 1).toString(getDatabaseConnection()) + ")";
 	try {
 	  getLogger().info("Creating indices: " + sql);
 	  Boolean rs = execute(sql);

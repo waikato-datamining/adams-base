@@ -15,11 +15,14 @@
 
 /*
  * IndexColumn.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db.indices;
+
+import adams.db.AbstractDatabaseConnection;
+import adams.db.JDBC;
 
 /**
  * An IndexColumn holds the column name and whether ascending or descending
@@ -136,13 +139,15 @@ public class IndexColumn {
    *
    * @return string representation
    */
-  public String toString() {
+  public String toString(AbstractDatabaseConnection conn) {
     String	result;
 
     result = m_columnName;
 
-    if (m_Length != -1)
-      result += "(" + m_Length + ")";
+    if (m_Length != -1) {
+      if (JDBC.isMySQL(conn))
+        result += "(" + m_Length + ")";
+    }
 
     if (m_asc_or_desc.equals("D"))
       result += " DESC";

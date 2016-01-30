@@ -21,6 +21,7 @@
 
 package adams.db;
 
+import adams.core.Constants;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -201,7 +202,10 @@ public abstract class LogT
    * @return		true if a log entry already exists
    */
   public boolean exists(LogEntry log) {
-    return (load(log.getDatabaseID()) != null);
+    if (log.getDatabaseID() == Constants.NO_ID)
+      return false;
+    else
+      return (load(log.getDatabaseID()) != null);
   }
 
   /**
@@ -219,6 +223,9 @@ public abstract class LogT
 
     result = false;
     stmt   = null;
+
+    if (!tableExists())
+      create();
 
     if (update) {
       sql  = "UPDATE " + getTableName() + " ";
