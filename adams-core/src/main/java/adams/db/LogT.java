@@ -269,8 +269,8 @@ public abstract class LogT
     if (stmt != null) {
       try {
 	getLogger().info("Executing prepared statement: " + sql);
-	result = stmt.execute();
-	getLogger().info("  --> result: " + result);
+	stmt.execute();
+	result = true;
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Storing failed using prepared statement: " + sql, e);
