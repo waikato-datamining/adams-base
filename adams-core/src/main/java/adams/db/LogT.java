@@ -21,7 +21,6 @@
 
 package adams.db;
 
-import adams.core.base.BaseDateTime;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -32,8 +31,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -43,7 +40,7 @@ import java.util.logging.Level;
  * @author Fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class LogT
+public abstract class LogT
   extends AbstractIndexedTable {
 
   /** for serialization. */
@@ -60,7 +57,7 @@ public class LogT
 
    * @param dbcon	the database context this table is used in
    */
-  private LogT(AbstractDatabaseConnection dbcon) {
+  protected LogT(AbstractDatabaseConnection dbcon) {
     super(dbcon, TABLE_NAME);
   }
 
@@ -163,67 +160,7 @@ public class LogT
    * @param cond	the conditions for the entries to match
    * @return		the log entries
    */
-  public List<LogEntry> load(LogEntryConditions cond) {
-    List<LogEntry>	result;
-    LogEntry		log;
-    ResultSet		rs;
-    StringBuilder	sqlWhere;
-    List<String>	where;
-    int			i;
-
-    result = new ArrayList<LogEntry>();
-
-    cond.update();
-
-    // translate conditions
-    where = new ArrayList<String>();
-    if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
-      where.add("HOST RLIKE " + backquote(cond.getHost()));
-    if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
-      where.add("IP RLIKE " + backquote(cond.getIP()));
-    if (!cond.getType().isEmpty() && !cond.getType().isMatchAll())
-      where.add("TYPE RLIKE " + backquote(cond.getType()));
-    if (!cond.getStatus().isEmpty() && !cond.getStatus().isMatchAll())
-      where.add("STATUS RLIKE " + backquote(cond.getStatus()));
-    if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
-      where.add("SOURCE RLIKE " + backquote(cond.getSource()));
-    if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
-      where.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
-    if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
-      where.add("GENERATION <= '" + cond.getGenerationEndDate().stringValue() + "'");
-
-    // generate sql
-    sqlWhere = new StringBuilder();
-    for (i = 0; i < where.size(); i++) {
-      if (i > 0)
-	sqlWhere.append(" AND ");
-      sqlWhere.append(where.get(i));
-    }
-    if (cond.getLatest())
-      sqlWhere.append(" ORDER BY GENERATION DESC");
-    else
-      sqlWhere.append(" ORDER BY GENERATION ASC");
-    if (cond.getLimit() > -1)
-      sqlWhere.append(" LIMIT " + cond.getLimit());
-
-    // retrieve data
-    rs = null;
-    try {
-      rs = select("*", sqlWhere.toString());
-      while ((log = resultsetToObject(rs)) != null)
-	result.add(log);
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to load: " + sqlWhere, e);
-    }
-    finally {
-      closeAll(rs);
-    }
-
-    Collections.sort(result);
-
-    return result;
-  }
+  public abstract List<LogEntry> load(LogEntryConditions cond);
 
   /**
    * Turns the values at the next position into a substance object
@@ -407,8 +344,16 @@ public class LogT
   public static synchronized LogT getSingleton(AbstractDatabaseConnection dbcon) {
     if (m_TableManager == null)
       m_TableManager = new TableManager<LogT>(TABLE_NAME, dbcon.getOwner());
-    if (!m_TableManager.has(dbcon))
-      m_TableManager.add(dbcon, new LogT(dbcon));
+    if (!m_TableManager.has(dbcon)) {
+      if (JDBC.isMySQL(dbcon))
+        m_TableManager.add(dbcon, new LogTMySQL(dbcon));
+      else if (JDBC.isPostgreSQL(dbcon))
+        m_TableManager.add(dbcon, new LogTPostgreSQL(dbcon));
+      else if (JDBC.isSQLite(dbcon))
+        m_TableManager.add(dbcon, new LogTSQLite(dbcon));
+      else
+	throw new IllegalArgumentException("Unrecognized JDBC URL: " + dbcon.getURL());
+    }
 
     return m_TableManager.get(dbcon);
   }
