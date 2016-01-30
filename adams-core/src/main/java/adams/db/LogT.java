@@ -22,6 +22,7 @@
 package adams.db;
 
 import adams.core.Constants;
+import adams.core.base.BaseDateTime;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -32,6 +33,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -161,7 +164,69 @@ public abstract class LogT
    * @param cond	the conditions for the entries to match
    * @return		the log entries
    */
-  public abstract List<LogEntry> load(LogEntryConditions cond);
+  public List<LogEntry> load(LogEntryConditions cond) {
+    List<LogEntry>	result;
+    LogEntry		log;
+    ResultSet rs;
+    StringBuilder	sqlWhere;
+    List<String>	where;
+    int			i;
+    String		regexp;
+
+    result = new ArrayList<LogEntry>();
+    regexp = JDBC.regexpKeyword(getDatabaseConnection());
+
+    cond.update();
+
+    // translate conditions
+    where = new ArrayList<String>();
+    if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
+      where.add("HOST " + regexp + " " + backquote(cond.getHost()));
+    if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
+      where.add("IP " + regexp + " " + backquote(cond.getIP()));
+    if (!cond.getType().isEmpty() && !cond.getType().isMatchAll())
+      where.add("TYPE " + regexp + " " + backquote(cond.getType()));
+    if (!cond.getStatus().isEmpty() && !cond.getStatus().isMatchAll())
+      where.add("STATUS " + regexp + " " + backquote(cond.getStatus()));
+    if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
+      where.add("SOURCE " + regexp + " " + backquote(cond.getSource()));
+    if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
+      where.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
+    if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
+      where.add("GENERATION <= '" + cond.getGenerationEndDate().stringValue() + "'");
+
+    // generate sql
+    sqlWhere = new StringBuilder();
+    for (i = 0; i < where.size(); i++) {
+      if (i > 0)
+	sqlWhere.append(" AND ");
+      sqlWhere.append(where.get(i));
+    }
+    if (cond.getLatest())
+      sqlWhere.append(" ORDER BY GENERATION DESC");
+    else
+      sqlWhere.append(" ORDER BY GENERATION ASC");
+    if (cond.getLimit() > -1)
+      sqlWhere.append(" LIMIT " + cond.getLimit());
+
+    // retrieve data
+    rs = null;
+    try {
+      rs = select("*", sqlWhere.toString());
+      while ((log = resultsetToObject(rs)) != null)
+	result.add(log);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to load: " + sqlWhere, e);
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    Collections.sort(result);
+
+    return result;
+  }
 
   /**
    * Turns the values at the next position into a substance object
