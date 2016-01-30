@@ -15,16 +15,19 @@
 
 /*
  * Auto_increment_type.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db.types;
 
+import adams.db.AbstractDatabaseConnection;
+import adams.db.JDBC;
+
 import java.sql.Types;
 
 /**
- * MySQL Autoincrement SQL type
+ * Autoincrement SQL type
  * 
  * @author dale
  * @version $Revision$
@@ -37,15 +40,19 @@ public class Auto_increment_type extends SQL_type {
    */
   public Auto_increment_type() {
     super(Types.BIGINT);
-    // TODO Auto-generated constructor stub
   }
 
   /**
    * Return creation String
    */
-  public String getCreateType() {
-    String create=super.getCreateType();
-    return(create+" AUTO_INCREMENT");
+  public String getCreateType(AbstractDatabaseConnection conn) {
+    String create=super.getCreateType(conn);
+    if (JDBC.isMySQL(conn))
+      return(create+" AUTO_INCREMENT");
+    if (JDBC.isPostgreSQL(conn))
+      return("BIGSERIAL");
+    else
+      return create;
   }
 
 }

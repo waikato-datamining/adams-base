@@ -15,16 +15,19 @@
 
 /*
  * SQL_type.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db.types;
 
+import adams.db.AbstractDatabaseConnection;
+import adams.db.JDBC;
+
 import java.sql.Types;
 
 /**
- * A MySQL SQL type.
+ * SQL type.
  *
  * @author dale
  * @version $Revision$
@@ -81,44 +84,44 @@ public class SQL_type {
 
     switch (m_type) {
       case Types.BIGINT :
-	return 20;
+        return 20;
 
       case Types.SMALLINT:
-	return 6;
+        return 6;
 
       case Types.TIMESTAMP:
-	return 14;
+        return 14;
 
       case Types.VARCHAR:
-	if (m_size== -1) {
-	  return 255;
-	}
-	if (m_size <= MAX_VARCHAR) {
-	  return m_size; //VARCHAR(m_size)
-	} else if (m_size <= MAX_TEXT) {
-	  return MAX_TEXT;
-	} else if (m_size <= MAX_MEDIUMTEXT) {
-	  return MAX_MEDIUMTEXT;//MEDIUMTEXT
-	} else {
-	  return MAX_MEDIUMTEXT+1;
-	}
+        if (m_size== -1) {
+          return 255;
+        }
+        if (m_size <= MAX_VARCHAR) {
+          return m_size; //VARCHAR(m_size)
+        } else if (m_size <= MAX_TEXT) {
+          return MAX_TEXT;
+        } else if (m_size <= MAX_MEDIUMTEXT) {
+          return MAX_MEDIUMTEXT;//MEDIUMTEXT
+        } else {
+          return MAX_MEDIUMTEXT+1;
+        }
 
       case Types.LONGVARCHAR:
-	if (m_size == -1) {
-	  return(MAX_MEDIUMTEXT); // MEDIUM
-	}
-	if (m_size <= MAX_VARCHAR) {
-	  return m_size; //VARCHAR(m_size)
-	} else if (m_size <= MAX_TEXT) {
-	  return MAX_TEXT;
-	} else if (m_size <= MAX_MEDIUMTEXT) {
-	  return MAX_MEDIUMTEXT; //MEDIUMTEXT
-	} else {
-	  return MAX_MEDIUMTEXT+1;
-	}
+        if (m_size == -1) {
+          return(MAX_MEDIUMTEXT); // MEDIUM
+        }
+        if (m_size <= MAX_VARCHAR) {
+          return m_size; //VARCHAR(m_size)
+        } else if (m_size <= MAX_TEXT) {
+          return MAX_TEXT;
+        } else if (m_size <= MAX_MEDIUMTEXT) {
+          return MAX_MEDIUMTEXT; //MEDIUMTEXT
+        } else {
+          return MAX_MEDIUMTEXT+1;
+        }
 
       default:
-	return -1;
+        return -1;
     }
   }
 
@@ -127,59 +130,119 @@ public class SQL_type {
    *
    * @return 		string representation of this type
    */
-  public String getCompareType() {
-    switch (m_type) {
-      case Types.BIGINT :
-	return "BIGINT";
+  public String getCompareType(AbstractDatabaseConnection conn) {
+    if (JDBC.isMySQL(conn)) {
+      switch (m_type) {
+        case Types.BIGINT:
+          return "BIGINT";
 
-      case Types.BLOB :
-	return "BLOB";
+        case Types.BLOB:
+          return "BLOB";
 
-      case Types.BIT:
-      case Types.BOOLEAN :
-      case Types.TINYINT:
-	return "TINYINT";
+        case Types.BIT:
+        case Types.BOOLEAN:
+        case Types.TINYINT:
+          return "TINYINT";
 
-      case Types.DOUBLE:
-	return "DOUBLE";
+        case Types.DOUBLE:
+          return "DOUBLE";
 
-      case Types.FLOAT:
-      case Types.REAL:
-	return "FLOAT";
+        case Types.FLOAT:
+        case Types.REAL:
+          return "FLOAT";
 
-      case Types.SMALLINT:
-	return "SMALLINT("+getSize()+")";
+        case Types.SMALLINT:
+          return "SMALLINT(" + getSize() + ")";
 
-      case Types.INTEGER:
-	return "INTEGER";
+        case Types.INTEGER:
+          return "INTEGER";
 
-      case Types.LONGVARCHAR:
-      case Types.VARCHAR:
-	int s = getSize();
-	if (s <= MAX_VARCHAR) {
-	  return "VARCHAR("+s+")";
-	} else if (s <= MAX_TEXT) {
-	  return "TEXT";
-	} else if (s <= MAX_MEDIUMTEXT) {
-	  return "MEDIUMTEXT";
-	} else {
-	  return "LONGTEXT";
-	}
+        case Types.LONGVARCHAR:
+        case Types.VARCHAR:
+          int s = getSize();
+          if (s <= MAX_VARCHAR) {
+            return "VARCHAR(" + s + ")";
+          }
+          else if (s <= MAX_TEXT) {
+            return "TEXT";
+          }
+          else if (s <= MAX_MEDIUMTEXT) {
+            return "MEDIUMTEXT";
+          }
+          else {
+            return "LONGTEXT";
+          }
 
-      case Types.TIMESTAMP:
-	return "TIMESTAMP";
+        case Types.TIMESTAMP:
+          return "TIMESTAMP";
 
-      case Types.DATE:
-	return "DATE";
+        case Types.DATE:
+          return "DATE";
 
-      case Types.TIME:
-	return "TIME";
+        case Types.TIME:
+          return "TIME";
 
-      case Types.LONGVARBINARY:
-	return "LONG VARBINARY";
+        case Types.LONGVARBINARY:
+          return "LONG VARBINARY";
 
-      default:
-	throw new IllegalStateException("No TYPE for " + m_type);
+        default:
+          throw new IllegalStateException("No TYPE for " + m_type);
+      }
+    }
+    else if (JDBC.isPostgreSQL(conn)) {
+      switch (m_type) {
+        case Types.BIGINT:
+          return "BIGINT";
+
+        case Types.BLOB:
+          return "BYTEA";
+
+        case Types.BIT:
+        case Types.BOOLEAN:
+        case Types.TINYINT:
+          return "BOOLEAN";
+
+        case Types.DOUBLE:
+          return "DOUBLE PRECISION";
+
+        case Types.FLOAT:
+        case Types.REAL:
+          return "REAL";
+
+        case Types.SMALLINT:
+          return "SMALLINT";
+
+        case Types.INTEGER:
+          return "INTEGER";
+
+        case Types.LONGVARCHAR:
+        case Types.VARCHAR:
+          int s = getSize();
+          if (s <= MAX_VARCHAR) {
+            return "VARCHAR(" + s + ")";
+          }
+          else{
+            return "TEXT";
+          }
+
+        case Types.TIMESTAMP:
+          return "TIMESTAMP";
+
+        case Types.DATE:
+          return "DATE";
+
+        case Types.TIME:
+          return "TIME";
+
+        case Types.LONGVARBINARY:
+          return "BYTEA";
+
+        default:
+          throw new IllegalStateException("No TYPE for " + m_type);
+      }
+    }
+    else {
+      throw new IllegalArgumentException("Unrecognized JDBC URL: " + conn.getURL());
     }
   }
 
@@ -189,8 +252,8 @@ public class SQL_type {
    * @param sqt		sql type
    * @return		equivalent?
    */
-  public boolean equivalentTo(SQL_type sqt) {
-    return getCompareType().equals(sqt.getCompareType());
+  public boolean equivalentTo(AbstractDatabaseConnection conn, SQL_type sqt) {
+    return getCompareType(conn).equals(sqt.getCompareType(conn));
   }
 
   /**
@@ -198,10 +261,10 @@ public class SQL_type {
    *
    * @return		creation string
    */
-  public String getCreateType() {
+  public String getCreateType(AbstractDatabaseConnection conn) {
     String	result;
 
-    result = getCompareType();
+    result = getCompareType(conn);
 
     if (m_type == java.sql.Types.TIMESTAMP)
       result += " NOT NULL DEFAULT '0000-00-00 00:00:00'";
@@ -215,6 +278,6 @@ public class SQL_type {
    * @return 		string representation
    */
   public String toString() {
-    return m_type + ": " + getCreateType();
+    return m_type + ": " + getCreateType(null);
   }
 }

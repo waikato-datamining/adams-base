@@ -104,7 +104,7 @@ public abstract class AbstractIndexedTable
       rs = new SimpleResultSet(dbmd.getColumns (null, null, m_TableName, null));
       HashSet<String> columns = new HashSet<String>();
       while(rs.next()) {
-	String cname = rs.getString("COLUMN_NAME");
+	String cname = rs.getString("COLUMN_NAME").toUpperCase();
 	columns.add(cname);
 	int type = rs.getInt("DATA_TYPE");
 	int size = rs.getInt("COLUMN_SIZE");
@@ -116,10 +116,13 @@ public abstract class AbstractIndexedTable
 		"false because expectedColumn null for '" + cname + "' (" + getTableName() + ")");
 	  ok = false;
 	}
-	else if (!expectedColumn.equivalentTo(columnType)) {
+	else if (!expectedColumn.equivalentTo(getDatabaseConnection(), columnType)) {
 	  if (print)
 	    getLogger().severe(
-		"false because column type different for '" + cname + "': " + expectedColumn.getCompareType() + " != " + columnType.getCompareType() + " " + getTableName() + ")");
+		"false because column type different for '" + cname + "': "
+                  + expectedColumn.getCompareType(getDatabaseConnection())
+                  + " != "
+                  + columnType.getCompareType(getDatabaseConnection()) + " " + getTableName() + ")");
 	  ok = false;
 	}
       }
@@ -137,7 +140,7 @@ public abstract class AbstractIndexedTable
 	  }
 	  SQL_type type = cm.getMapping(cname);
 	  String sql = "ALTER TABLE " + getTableName() + " ADD COLUMN ";
-	  sql += cname + " " + type.getCreateType();
+	  sql += cname + " " + type.getCreateType(getDatabaseConnection());
 	  try {
 	    execute(sql);
 	  }
@@ -223,7 +226,7 @@ public abstract class AbstractIndexedTable
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
       String cname=(String)enum1.nextElement();
       SQL_type type=cm.getMapping(cname);
-      sql+=" "+cname+" "+type.getCreateType();
+      sql+=" "+cname+" "+type.getCreateType(getDatabaseConnection());
       if (enum1.hasMoreElements()) {
 	sql+=",";
       }
@@ -247,7 +250,7 @@ public abstract class AbstractIndexedTable
     Indices ind=this.getIndices();
     if (ind != null) {
       for (int i=0;i<ind.size();i++) {
-	sql= "CREATE INDEX IND_"+i+" ON "+m_TableName+" (";
+	sql= "CREATE INDEX " + m_TableName + "_IND_" + i + " ON " + m_TableName + " (";
 	Index index=ind.get(i);
 	for (int j=0;j<index.size()-1;j++) {
 	  IndexColumn ic = index.get(j);
