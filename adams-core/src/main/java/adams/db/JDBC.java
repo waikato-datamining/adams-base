@@ -102,4 +102,33 @@ public class JDBC {
   public static boolean isSQLite(AbstractDatabaseConnection conn) {
     return isSQLite(conn.getURL());
   }
+
+  /**
+   * Returns the keyword for regular expression matching in queries.
+   *
+   * @param conn	the connection to retrieve the keyword for
+   * @return		the keyword
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static String regexpKeyword(AbstractDatabaseConnection conn) {
+    return regexpKeyword(conn.getURL());
+  }
+
+  /**
+   * Returns the keyword for regular expression matching in queries.
+   *
+   * @param url		the connection to retrieve the keyword for
+   * @return		the keyword
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static String regexpKeyword(String url) {
+    if (isMySQL(url))
+      return "REGEXP";
+    else if (isPostgreSQL(url))
+      return "~";
+    else if (isSQLite(url))
+      return "REGEXP";
+    else
+      throw new IllegalArgumentException("Unsupported connection type: " + url);
+  }
 }
