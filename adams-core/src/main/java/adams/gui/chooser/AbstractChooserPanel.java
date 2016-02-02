@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -93,7 +93,7 @@ public abstract class AbstractChooserPanel<T>
   /** a spacer for the prefix label. */
   protected JLabel m_LabelPrefixSpacer;
 
-  /** the button for bringing up the JFileChooser. */
+  /** the button for bringing up the chooser dialog. */
   protected JButton m_ButtonSelection;
 
   /** listeners that listen to changes of the selected value. */
