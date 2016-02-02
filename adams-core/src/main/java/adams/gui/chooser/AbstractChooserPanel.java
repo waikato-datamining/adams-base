@@ -37,8 +37,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -69,7 +68,7 @@ public abstract class AbstractChooserPanel<T>
    * @author FracPete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
-  public static interface PopupMenuCustomizer
+  public interface PopupMenuCustomizer
     extends adams.gui.core.PopupMenuCustomizer<AbstractChooserPanel> {
 
     /**
@@ -92,6 +91,9 @@ public abstract class AbstractChooserPanel<T>
 
   /** a spacer for the prefix label. */
   protected JLabel m_LabelPrefixSpacer;
+
+  /** the panel for the button(s). */
+  protected JPanel m_PanelButtons;
 
   /** the button for bringing up the chooser dialog. */
   protected JButton m_ButtonSelection;
@@ -195,17 +197,16 @@ public abstract class AbstractChooserPanel<T>
     });
     add(m_TextSelection, BorderLayout.CENTER);
 
+    m_PanelButtons = new JPanel(new GridLayout(1, 0));
+    add(m_PanelButtons, BorderLayout.EAST);
+
     m_ButtonSelection = new JButton("...");
     m_ButtonSelection.setPreferredSize(
 	new Dimension(
 	    m_ButtonSelection.getPreferredSize().width,
 	    m_TextSelection.getPreferredSize().height));
-    m_ButtonSelection.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	choose();
-      }
-    });
-    add(m_ButtonSelection, BorderLayout.EAST);
+    m_ButtonSelection.addActionListener(e -> choose());
+    m_PanelButtons.add(m_ButtonSelection);
 
     updatePreferredSize();
   }
@@ -556,21 +557,13 @@ public abstract class AbstractChooserPanel<T>
 
     menuitem = new JMenuItem("Copy");
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed C"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	copyToClipboard();
-      }
-    });
+    menuitem.addActionListener(e -> copyToClipboard());
     result.add(menuitem);
 
     menuitem = new JMenuItem("Paste");
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
     menuitem.setEnabled(isEditable() && GUIHelper.canPasteStringFromClipboard());
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	pasteFromClipboard();
-      }
-    });
+    menuitem.addActionListener(e -> pasteFromClipboard());
     result.add(menuitem);
 
     if (m_PopupMenuCustomizer != null) {
