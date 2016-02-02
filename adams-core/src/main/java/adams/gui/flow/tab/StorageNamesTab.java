@@ -20,18 +20,20 @@
 
 package adams.gui.flow.tab;
 
-import adams.core.Utils;
+import adams.flow.control.Flow;
+import adams.flow.core.AbstractActor;
 import adams.flow.processor.ListAllStorageNames;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.Fonts;
+import adams.flow.processor.ListStorageUsage;
+import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 /**
  * Allows user to list storage names in flow.
@@ -44,11 +46,23 @@ public class StorageNamesTab
 
   private static final long serialVersionUID = 1745841596971673114L;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
   /** the button for refreshing the variable list. */
   protected JButton m_ButtonRefresh;
 
-  /** for listing all the variables. */
-  protected BaseTextArea m_TextAreaStorageNames;
+  /** the button for locating the usages. */
+  protected JButton m_ButtonUsages;
+
+  /** for listing all the names. */
+  protected BaseListWithButtons m_ListStorageNames;
+
+  /** the model for the names. */
+  protected DefaultListModel<String> m_ModelStorageNames;
+
+  /** the panel for the usages. */
+  protected JPanel m_PanelUsages;
 
   /**
    * Returns the title of the tab.
@@ -61,37 +75,108 @@ public class StorageNamesTab
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_ModelStorageNames = new DefaultListModel<>();
+  }
+
+  /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
+    JPanel 	panel;
 
     super.initGUI();
 
     setLayout(new BorderLayout());
 
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    add(panel, BorderLayout.SOUTH);
-    m_ButtonRefresh = new JButton("Refresh", GUIHelper.getIcon("refresh.gif"));
-    m_ButtonRefresh.addActionListener(e -> refreshVariables());
-    panel.add(m_ButtonRefresh);
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setResizeWeight(0.5);
+    add(m_SplitPane, BorderLayout.CENTER);
 
-    m_TextAreaStorageNames = new BaseTextArea();
-    m_TextAreaStorageNames.setTextFont(Fonts.getMonospacedFont());
-    m_TextAreaStorageNames.setEditable(false);
-    add(new BaseScrollPane(m_TextAreaStorageNames), BorderLayout.CENTER);
+    panel = new JPanel(new BorderLayout());
+    m_SplitPane.setTopComponent(panel);
+
+    // list
+    m_ButtonRefresh = new JButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh.addActionListener(e -> refreshStorageNames());
+    m_ButtonUsages = new JButton("Usages", GUIHelper.getIcon("glasses.gif"));
+    m_ButtonUsages.addActionListener(e -> findUsages());
+
+    m_ListStorageNames = new BaseListWithButtons(m_ModelStorageNames);
+    m_ListStorageNames.addToButtonsPanel(m_ButtonRefresh);
+    m_ListStorageNames.addToButtonsPanel(m_ButtonUsages);
+    m_ListStorageNames.addListSelectionListener(e -> updateButtons());
+    m_ListStorageNames.setDoubleClickButton(m_ButtonUsages);
+
+    panel.add(new BaseScrollPane(m_ListStorageNames), BorderLayout.CENTER);
+
+    // usages
+    m_PanelUsages = new JPanel(new BorderLayout());
+    m_SplitPane.setBottomComponent(m_PanelUsages);
+    m_SplitPane.setBottomComponentHidden(true);
   }
 
   /**
-   * Refreshes the variables.
+   * Finishes the initialization.
    */
-  protected void refreshVariables() {
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
+  }
+
+  /**
+   * Refreshes the storage names.
+   */
+  protected void refreshStorageNames() {
     ListAllStorageNames list;
 
     list = new ListAllStorageNames();
     list.process(getCurrentPanel().getCurrentFlow());
-    m_TextAreaStorageNames.setText(Utils.flatten(list.getStorageNames(), "\n"));
+    m_ModelStorageNames.clear();
+    for (String item: list.getStorageNames())
+      m_ModelStorageNames.addElement(item);
+  }
+
+  /**
+   * Updates the usage of the currently selected item.
+   */
+  protected void findUsages() {
+    ListStorageUsage 	list;
+    AbstractActor 	actor;
+
+    actor = getCurrentPanel().getCurrentFlow();
+    if (actor instanceof Flow)
+      ((Flow) actor).setParentComponent(getCurrentPanel());
+    list = new ListStorageUsage();
+    list.setName("" + m_ListStorageNames.getSelectedValue());
+    list.process(actor);
+
+    m_PanelUsages.removeAll();
+    if (list.hasGraphicalOutput()) {
+      m_PanelUsages.add(list.getGraphicalOutput());
+      m_SplitPane.setBottomComponentHidden(false);
+    }
+    else {
+      m_SplitPane.setBottomComponentHidden(true);
+    }
+    invalidate();
+    revalidate();
+    doLayout();
+  }
+
+  /**
+   * Updates the state of the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonRefresh.setEnabled(true);
+    m_ButtonUsages.setEnabled(m_ListStorageNames.getSelectedIndices().length == 1);
   }
 
   /**
@@ -101,6 +186,6 @@ public class StorageNamesTab
    */
   @Override
   public void flowPanelChanged(FlowPanel panel) {
-    m_TextAreaStorageNames.setText("");
+    m_ModelStorageNames.clear();
   }
 }
