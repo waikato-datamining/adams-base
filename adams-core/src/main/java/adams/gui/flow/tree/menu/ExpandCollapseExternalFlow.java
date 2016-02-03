@@ -15,15 +15,16 @@
 
 /**
  * ExpandCollapseExternalFlow.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import java.awt.event.ActionEvent;
 
 import adams.core.io.FlowFile;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
 
 /**
  * For expanding/collapsing of an external flow.
@@ -79,5 +80,6 @@ public class ExpandCollapseExternalFlow
       m_State.selNode.collapse();
     else
       m_State.selNode.expand();
+    SwingUtilities.invokeLater(() -> m_State.tree.nodeStructureChanged(m_State.selNode));
   }
 }
