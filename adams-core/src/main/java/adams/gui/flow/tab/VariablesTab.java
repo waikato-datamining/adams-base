@@ -132,14 +132,23 @@ public class VariablesTab
   }
 
   /**
+   * Clears all the content.
+   */
+  protected void clear() {
+    m_ModelVariables.clear();
+    m_SplitPane.setBottomComponentHidden(true);
+    m_PanelUsages.removeAll();
+  }
+
+  /**
    * Refreshes the variables.
    */
   protected void refreshVariables() {
     ListAllVariables	list;
 
+    clear();
     list = new ListAllVariables();
     list.process(getCurrentPanel().getCurrentFlow());
-    m_ModelVariables.clear();
     for (String item: list.getVariables())
       m_ModelVariables.addElement(item);
   }
@@ -186,6 +195,6 @@ public class VariablesTab
    */
   @Override
   public void flowPanelChanged(FlowPanel panel) {
-    m_ModelVariables.clear();
+    clear();
   }
 }

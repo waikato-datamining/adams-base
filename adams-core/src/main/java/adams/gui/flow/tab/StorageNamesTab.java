@@ -132,14 +132,23 @@ public class StorageNamesTab
   }
 
   /**
+   * Clears all the content.
+   */
+  protected void clear() {
+    m_ModelStorageNames.clear();
+    m_SplitPane.setBottomComponentHidden(true);
+    m_PanelUsages.removeAll();
+  }
+
+  /**
    * Refreshes the storage names.
    */
   protected void refreshStorageNames() {
     ListAllStorageNames list;
 
+    clear();
     list = new ListAllStorageNames();
     list.process(getCurrentPanel().getCurrentFlow());
-    m_ModelStorageNames.clear();
     for (String item: list.getStorageNames())
       m_ModelStorageNames.addElement(item);
   }
@@ -186,6 +195,6 @@ public class StorageNamesTab
    */
   @Override
   public void flowPanelChanged(FlowPanel panel) {
-    m_ModelStorageNames.clear();
+    clear();
   }
 }
