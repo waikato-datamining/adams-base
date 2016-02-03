@@ -151,7 +151,7 @@ import java.awt.event.WindowEvent;
  * </pre>
  * 
  * <pre>-close-dialog &lt;boolean&gt; (property: closeDialog)
- * &nbsp;&nbsp;&nbsp;If enabled, the dialog gets closed after the skip or accept butotn has been 
+ * &nbsp;&nbsp;&nbsp;If enabled, the dialog gets closed after the skip or accept button has been
  * &nbsp;&nbsp;&nbsp;clicked.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -368,7 +368,7 @@ public class Inspect
    * 			displaying in the GUI or for listing the options.
    */
   public String closeDialogTipText() {
-    return "If enabled, the dialog gets closed after the skip or accept butotn has been clicked.";
+    return "If enabled, the dialog gets closed after the skip or accept button has been clicked.";
   }
 
   /**
