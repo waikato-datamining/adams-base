@@ -106,6 +106,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.10</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.jidesoft</groupId>
       <artifactId>jide-oss</artifactId>
       <version>3.6.11</version>
