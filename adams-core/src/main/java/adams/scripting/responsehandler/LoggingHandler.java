@@ -21,6 +21,7 @@
 package adams.scripting.responsehandler;
 
 import adams.core.logging.LoggingLevel;
+import adams.core.option.OptionUtils;
 import adams.scripting.command.RemoteCommand;
 
 /**
@@ -61,7 +62,7 @@ public class LoggingHandler
    */
   @Override
   public void responseSuccessful(RemoteCommand cmd) {
-    getLogger().info("Successful response\n" + cmd);
+    getLogger().info("Successful response: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
   }
 
   /**
@@ -71,6 +72,6 @@ public class LoggingHandler
    */
   @Override
   public void responseFailed(RemoteCommand cmd) {
-    getLogger().info("Failed response\n" + cmd);
+    getLogger().info("Failed response: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
   }
 }
