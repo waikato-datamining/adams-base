@@ -15,10 +15,11 @@
 
 /**
  * SetData.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
+import adams.core.Constants;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.gui.visualization.container.AbstractContainer;
@@ -101,6 +102,9 @@ public class SetData
     list  = OptionUtils.splitOptions(options);
     index = Integer.parseInt(list[0]) - 1;
     id    = new Integer(list[1]);
+
+    if (id == Constants.NO_ID)
+      return "No database ID provided, ignored!";
 
     // undo
     addUndoPoint("Saving undo data...", "Set data at " + (index+1) + ": " + id);
