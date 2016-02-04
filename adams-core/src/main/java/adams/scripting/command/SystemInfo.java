@@ -21,6 +21,7 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.core.io.GzipUtils;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -71,15 +72,22 @@ public class SystemInfo
   public void setPayload(byte[] value) {
     Properties		props;
     StringReader	reader;
+    byte[]		decomp;
 
+    decomp = GzipUtils.decompress(value, 1024);
     props  = new Properties();
-    reader = new StringReader(new String(value));
-    try {
-      props.load(reader);
+    if (decomp != null) {
+      reader = new StringReader(new String(decomp));
+      try {
+	props.load(reader);
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to parse payload!", e);
+	props = new Properties();
+      }
     }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to parse payload!", e);
-      props = new Properties();
+    else {
+      getLogger().severe("Failed to decompress payload!");
     }
 
     m_Info = props;
@@ -92,7 +100,7 @@ public class SystemInfo
    */
   @Override
   public byte[] getPayload() {
-    return m_Info.toString().getBytes();
+    return GzipUtils.compress(m_Info.toString().getBytes());
   }
 
   /**
