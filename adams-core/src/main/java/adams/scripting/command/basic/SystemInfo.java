@@ -18,10 +18,11 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.scripting.command;
+package adams.scripting.command.basic;
 
 import adams.core.Properties;
 import adams.core.io.GzipUtils;
+import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 

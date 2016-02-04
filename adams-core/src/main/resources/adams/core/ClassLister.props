@@ -626,7 +626,10 @@ adams.scripting.engine.RemoteScriptingEngine=\
 
 # the remote scripting commands
 adams.scripting.command.RemoteCommand=\
-  adams.scripting.command
+  adams.scripting.command,\
+  adams.scripting.command.basic,\
+  adams.scripting.command.flow,\
+  adams.scripting.command.gui
 
 # for handling permissions of commands
 adams.scripting.permissionhandler.PermissionHandler=\
