@@ -620,6 +620,26 @@ adams.parser.plugin.ParserFunction=\
 adams.parser.plugin.ParserProcedure=\
   adams.parser.plugin
 
+# the scripting engines for remote commands
+adams.scripting.engine.RemoteScriptingEngine=\
+  adams.scripting.engine
+
+# the remote scripting commands
+adams.scripting.command.RemoteCommand=\
+  adams.scripting.command
+
+# for handling permissions of commands
+adams.scripting.permissionhandler.PermissionHandler=\
+  adams.scripting.permissionhandler
+
+# for handling remote scripting requests
+adams.scripting.requesthandler.RequestHandler=\
+  adams.scripting.requesthandler
+
+# for handling remote scripting responses
+adams.scripting.responsehandler.ResponseHandler=\
+  adams.scripting.responsehandler
+
 # the tools
 adams.tools.AbstractTool=\
   adams.tools
