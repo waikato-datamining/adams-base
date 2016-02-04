@@ -15,7 +15,7 @@
 
 /*
  * Actor.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -134,6 +134,7 @@ public interface Actor
 
   /**
    * Sets whether to suppress output in the console.
+   * Note: the enclosing actor handler needs to have this enabled as well.
    *
    * @param value 	true if to suppress output in the console
    */
@@ -141,6 +142,7 @@ public interface Actor
 
   /**
    * Returns whether to suppress output in the console.
+   * Note: the enclosing actor handler needs to have this enabled as well.
    *
    * @return 		true if to suppress output in the console
    */

@@ -440,6 +440,7 @@ public abstract class AbstractActor
 
   /**
    * Sets whether to suppress output in the console.
+   * Note: the enclosing actor handler needs to have this enabled as well.
    *
    * @param value 	true if to suppress output in the console
    */
@@ -450,6 +451,7 @@ public abstract class AbstractActor
 
   /**
    * Returns whether to suppress output in the console.
+   * Note: the enclosing actor handler needs to have this enabled as well.
    *
    * @return 		true if to suppress output in the console
    */
@@ -464,7 +466,7 @@ public abstract class AbstractActor
    * 			displaying in the GUI or for listing the options.
    */
   public String silentTipText() {
-    return "If enabled, then no errors are output in the console.";
+    return "If enabled, then no errors are output in the console; Note: the enclosing actor handler must have this enabled as well.";
   }
 
   /**
