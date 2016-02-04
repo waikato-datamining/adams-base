@@ -29,9 +29,47 @@ package adams.scripting.command;
 public interface RemoteCommandWithResponse
   extends RemoteCommand {
 
-  /** the key for the response host. */
-  String KEY_RESPONSEHOST = "ResponseHost";
+  /**
+   * Sets the host to send the response to.
+   *
+   * @param value	the host
+   */
+  public void setResponseHost(String value);
 
-  /** the key for the response port. */
-  String KEY_RESPONSEPORT = "ResponsePort";
+  /**
+   * Returns the host to send the response to.
+   *
+   * @return		the host
+   */
+  public String getResponseHost();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String responseHostTipText();
+
+  /**
+   * Sets the port to send the response to.
+   *
+   * @param value	the port
+   */
+  public void setResponsePort(int value);
+
+  /**
+   * Returns the port to send the response to.
+   *
+   * @return		the port
+   */
+  public int getResponsePort();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String responsePortTipText();
 }
