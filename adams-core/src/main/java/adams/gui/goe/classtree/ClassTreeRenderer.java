@@ -15,17 +15,18 @@
 
 /*
  * ClassTreeRenderer.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.classtree;
 
-import java.util.Hashtable;
-
-import javax.swing.Icon;
-
+import adams.core.ClassLocator;
+import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
+
+import javax.swing.Icon;
+import java.util.Hashtable;
 
 /**
  * A specialized renderer for the class tree elements.
@@ -42,13 +43,17 @@ public class ClassTreeRenderer
   /** stores the classname/icon relationship. */
   protected Hashtable<String,Icon> m_Icons;
 
+  /** the missing actor icon. */
+  protected Icon m_MissingActorIcon;
+
   /**
    * Initializes the members.
    */
   protected void initialize() {
     super.initialize();
 
-    m_Icons = new Hashtable<String,Icon>();
+    m_Icons            = new Hashtable<String,Icon>();
+    m_MissingActorIcon = GUIHelper.getIcon("missing_actor_icon.gif");
   }
 
   /**
@@ -60,6 +65,7 @@ public class ClassTreeRenderer
   protected Icon getIcon(ClassNode node) {
     Icon	result;
     String	classname;
+    Class	cls;
 
     result    = null;
     classname = node.getItem();
@@ -70,11 +76,16 @@ public class ClassTreeRenderer
       }
       else {
         try {
-          result = GUIHelper.getIcon(Class.forName(classname));
-          m_Icons.put(classname, result);
+	  cls    = Class.forName(classname);
+          result = GUIHelper.getIcon(cls);
+	  if (result != null)
+	    m_Icons.put(classname, result);
+	  else if (ClassLocator.hasInterface(Actor.class, cls))
+	    result = m_MissingActorIcon;
         }
         catch (Exception e) {
           result = null;
+
         }
       }
     }

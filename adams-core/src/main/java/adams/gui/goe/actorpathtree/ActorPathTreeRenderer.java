@@ -15,17 +15,16 @@
 
 /*
  * ActorPathTreeRenderer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.actorpathtree;
 
-import java.util.Hashtable;
-
-import javax.swing.Icon;
-
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
+
+import javax.swing.Icon;
+import java.util.Hashtable;
 
 /**
  * A specialized renderer for actor path trees.
@@ -42,13 +41,17 @@ public class ActorPathTreeRenderer
   /** stores the classname/icon relationship. */
   protected Hashtable<String,Icon> m_Icons;
 
+  /** the missing actor icon. */
+  protected Icon m_MissingActorIcon;
+
   /**
    * Initializes the members.
    */
   protected void initialize() {
     super.initialize();
 
-    m_Icons = new Hashtable<String,Icon>();
+    m_Icons            = new Hashtable<String,Icon>();
+    m_MissingActorIcon = GUIHelper.getIcon("missing_actor_icon.gif");
   }
 
   /**
@@ -75,7 +78,10 @@ public class ActorPathTreeRenderer
       else {
 	try {
 	  result = GUIHelper.getIcon(Class.forName(classname));
-	  m_Icons.put(classname, result);
+          if (result != null)
+            m_Icons.put(classname, result);
+	  else
+	    result = m_MissingActorIcon;
 	}
 	catch (Exception e) {
 	  result = null;
