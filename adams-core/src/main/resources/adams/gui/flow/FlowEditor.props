@@ -171,6 +171,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.AddBreakpoint,\
   adams.gui.flow.tree.menu.AddFromTemplate,\
   adams.gui.flow.tree.menu.EncloseActor,\
+  adams.gui.flow.tree.menu.SwapActor,\
   adams.gui.flow.tree.menu.CreateCallableActor,\
   adams.gui.flow.tree.menu.MakeConditional,\
   adams.gui.flow.tree.menu.MakeTimed,\

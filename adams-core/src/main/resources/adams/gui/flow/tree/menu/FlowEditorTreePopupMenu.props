@@ -96,5 +96,7 @@ adams.gui.flow.tree.menu.RemoveListeners-Icon=
 adams.gui.flow.tree.menu.RemoveListeners-Shortcut=
 adams.gui.flow.tree.menu.RenameActor-Icon=
 adams.gui.flow.tree.menu.RenameActor-Shortcut=F2
+adams.gui.flow.tree.menu.SwapActor-Icon=
+adams.gui.flow.tree.menu.SwapActor-Shortcut=
 adams.gui.flow.tree.menu.ToggleState-Icon=
 adams.gui.flow.tree.menu.ToggleState-Shortcut=SPACE

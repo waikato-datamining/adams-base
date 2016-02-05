@@ -718,6 +718,37 @@ public class TreeOperations
   }
 
   /**
+   * Swaps the actor handler of the node with the new node, keeping the children
+   * intact, as well as some basic options.
+   *
+   * @param path	the path to the actor to swap out
+   * @param handler	the new handler to use
+   */
+  public void swapActor(TreePath path, ActorHandler handler) {
+    final Node		node;
+    ActorHandler	current;
+
+    node    = TreeHelper.pathToNode(path);
+    current = (ActorHandler) TreeHelper.pathToActor(path);
+
+    getOwner().addUndoPoint("Swapping node '" + current.getFullName() + "' with " + handler.getClass().getName());
+
+    if (!current.getName().equals(current.getDefaultName()))
+      handler.setName(current.getName());
+    handler.setLoggingLevel(current.getLoggingLevel());
+    handler.setSkip(current.getSkip());
+    handler.setAnnotations(current.getAnnotations());
+    handler.setSilent(current.getSilent());
+    handler.setStopFlowOnError(current.getStopFlowOnError());
+    node.setActor((AbstractActor) handler);
+    node.invalidateRendering();
+    SwingUtilities.invokeLater(() -> {
+      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
+      getOwner().redraw();
+    });
+  }
+
+  /**
    * Encloses the specified actor in a DisplayPanelManager actor.
    *
    * @param path	the path of the actor to enclose
