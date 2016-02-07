@@ -93,10 +93,6 @@ Tree.VariableHighlight.Background=#FFDD88
 # The background color for highlighting bookmarks in the tree
 Tree.BookmarkHighlight.Background=#FFDD00
 
-# Whether to use the nested format in the "state" information or 
-# serialized objects (true|false)
-Tree.StateUsesNested=false
-
 # Whether to ignore name changes of actors and don't prompt user whether to 
 # propagate the changes throughout the tree (true|false)
 Tree.IgnoreNameChanges=false

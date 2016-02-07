@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -24,7 +24,6 @@ import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
-import adams.core.option.NestedProducer;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
@@ -175,9 +174,6 @@ public class Tree
   /** the dialog for selecting a template for generating a flow fragment. */
   protected GenericObjectEditorDialog m_TemplateDialog;
 
-  /** whether to store the flow as an object in the "state" or in nested format. */
-  protected boolean m_StateUsesNested;
-
   /** the node that is currently being edited. */
   protected Node m_CurrentEditingNode;
 
@@ -263,7 +259,6 @@ public class Tree
     m_InputOutputSize             = "-2";
     m_VariableHighlightBackground = "#FFDD88";
     m_BookmarkHighlightBackground = "#FFDD00";
-    m_StateUsesNested             = true;
     m_InputOutputPrefixes         = new String[0];
     m_CurrentEditingNode          = null;
     m_CurrentEditingParent        = null;
@@ -411,6 +406,79 @@ public class Tree
 	  "Only " + SelectionModel.class.getName() + " models are allowed");
 
     super.setSelectionModel(selectionModel);
+  }
+
+  /**
+   * Builds the tree from the actor commandlines.
+   *
+   * @param actors	the commandlines with indentation
+   * @param index	the index in the list of commandlines to use
+   * @param previous	the previous node
+   */
+  protected void buildTree(List<String> actors, int index, Node previous) {
+    int			level;
+    String		cmdline;
+    AbstractActor	actor;
+    Node		node;
+    Node		parent;
+
+    cmdline = actors.get(index);
+
+    // determine level
+    level = 0;
+    while (level < cmdline.length() && cmdline.charAt(level) == ' ')
+      level++;
+
+    try {
+      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
+      node  = new Node(this, actor);
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
+      return;
+    }
+
+    // sibling
+    if (level == previous.getLevel()) {
+      ((Node) previous.getParent()).add(node);
+    }
+    // child of some parent node
+    else if (level < previous.getLevel()) {
+      parent = previous;
+      while (level < parent.getLevel())
+	parent = (Node) parent.getParent();
+      parent.add(node);
+    }
+    // child
+    else {
+      previous.add(node);
+    }
+  }
+
+  /**
+   * Builds the tree from the nested commandlines.
+   *
+   * @param actors	the commandlines
+   * @see		#getCommandLines()
+   */
+  public void buildTree(List<String> actors) {
+    AbstractActor	actor;
+    Node		root;
+
+    if (actors.size() == 0) {
+      buildTree((AbstractActor) null);
+      return;
+    }
+
+    try {
+      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
+      root  = new Node(this, actor);
+      buildTree(actors, 1, root);
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
+      buildTree((AbstractActor) null);
+    }
   }
   
   /**
@@ -889,26 +957,6 @@ public class Tree
   }
 
   /**
-   * Sets whether to use nested format or objects when generating the "state".
-   *
-   * @param value	if true then the nested format is used
-   * @see		#getState()
-   */
-  public void setStateUsesNested(boolean value) {
-    m_StateUsesNested = value;
-  }
-
-  /**
-   * Returns whether the nested format or the objects are used when generating
-   * the "state" of the tree.
-   *
-   * @return		true if the nested format is used instead of objects
-   */
-  public boolean getStateUsesNested() {
-    return m_StateUsesNested;
-  }
-
-  /**
    * Sets whether to ignore name changes of actors and don't prompt a dialog
    * with the user having the option to update the name throughout the glow.
    *
@@ -1373,6 +1421,19 @@ public class Tree
     }
 
     return result;
+  }
+
+  /**
+   * Returns the nested commandlines of the actors. Node level equals
+   * the number of leading blanks.
+   *
+   * @return		the nested commandlines
+   */
+  public List<String> getCommandLines() {
+    if (getRootNode() != null)
+      return getRootNode().getCommandLines();
+    else
+      return new ArrayList<>();
   }
 
   /**
@@ -1915,27 +1976,11 @@ public class Tree
    * @param value	the state to use
    */
   public void setState(TreeState value) {
-    final AbstractActor	actor;
-    NestedConsumer	consumer;
-
-    if (m_StateUsesNested) {
-      if (value.actor != null) {
-	consumer = new NestedConsumer();
-	consumer.setInput((ArrayList) value.actor);
-	actor = (AbstractActor) consumer.consume();
-	consumer.cleanUp();
-      }
-      else {
-	actor = null;
-      }
-    }
-    else {
-      actor = (AbstractActor) value.actor;
-    }
+    if (value.actor != null)
+      buildTree((List<String>) value.actor);
 
     setModified(value.modified);
     setFile(value.file);
-    setActor(actor);
     SwingUtilities.invokeLater(() -> setExpandedFullNames(value.expanded));
     SwingUtilities.invokeLater(() -> setSelectionFullNames(value.selection));
     if (value.selection.size() > 0) {
@@ -1959,24 +2004,11 @@ public class Tree
    */
   public TreeState getState() {
     TreeState		result;
-    AbstractActor	actor;
-    NestedProducer	producer;
 
     result = new TreeState();
 
-    actor = getActor();
-    if (m_StateUsesNested) {
-      if (actor != null) {
-	producer = new NestedProducer();
-	producer.produce(actor);
-	result.actor = producer.getOutput();
-	actor.destroy();
-	producer.cleanUp();
-      }
-    }
-    else {
-      result.actor = actor;
-    }
+    if (getRootNode() != null)
+      result.actor = getRootNode().getCommandLines();
     result.expanded  = getExpandedFullNames();
     result.modified  = isModified();
     result.file      = getFile();
