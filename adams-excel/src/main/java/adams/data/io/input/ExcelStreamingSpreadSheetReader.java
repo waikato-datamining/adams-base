@@ -29,6 +29,7 @@ import adams.core.Time;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseString;
+import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.output.ExcelStreamingSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
@@ -773,7 +774,7 @@ public class ExcelStreamingSpreadSheetReader
     pkg       = OPCPackage.open(file.getAbsolutePath());
     reader    = new XSSFReader(pkg);
     sheets    = reader.getSheetsData();
-    result     = 0;
+    result    = 0;
     while (sheets.hasNext()) {
       if (m_Stopped)
 	break;
@@ -822,49 +823,57 @@ public class ExcelStreamingSpreadSheetReader
       while (sheets.hasNext()) {
 	if (m_Stopped)
 	  break;
-	sheet = sheets.next();
-	if (indices.contains(count)) {
-	  spsheet = m_SpreadSheetType.newInstance();
-	  spsheet.setDataRowClass(m_DataRowType.getClass());
-	  spsheet.setName(sheets.getSheetName());
-	  parser    = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-	  m_Handler = new SheetHandler(this, spsheet, sst);
-	  parser.setContentHandler(m_Handler);
-	  sheetSource = new InputSource(sheet);
-	  parser.parse(sheetSource);
-          // fix header?
-          if (getNoHeader()) {
-            header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
-            rowOld = spsheet.getHeaderRow();
-            row    = spsheet.insertRow(0);
-            for (i = 0; i < spsheet.getColumnCount(); i++)
-              row.getCell(i).assign(rowOld.getCell(i));
-            row    = spsheet.getHeaderRow();
-            for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
-              row.getCell(i).setContent(header.get(i));
-          }
-          else {
-            if (!getCustomColumnHeaders().trim().isEmpty()) {
-              header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
-              row    = spsheet.getHeaderRow();
-              for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
-                row.getCell(i).setContent(header.get(i));
-            }
-          }
-	  result.add(spsheet);
-	  // missing types?
-	  if (m_Handler.getUnknownCellTypes().size() > 0) {
-	    getLogger().severe("Unknown cell types: " + m_Handler.getUnknownCellTypes());
-	    for (String type: m_Handler.getUnknownCellTypes())
-	      getLogger().severe("- cell type '" + type + "': " + m_Handler.getUnknownCellTypesExamples().get(type));
-	  }
-	  if (m_Handler.getUnknownCellStrings().size() > 0) {
-	    getLogger().severe("Unknown cell strings: " + m_Handler.getUnknownCellStrings());
-	    for (String str: m_Handler.getUnknownCellStrings())
-	      getLogger().severe("- cell string '" + str + "': " + m_Handler.getUnknownCellStringsExamples().get(str));
+	sheet = null;
+	try {
+	  sheet = sheets.next();
+	  if (indices.contains(count)) {
+	    spsheet = m_SpreadSheetType.newInstance();
+	    spsheet.setDataRowClass(m_DataRowType.getClass());
+	    spsheet.setName(sheets.getSheetName());
+	    parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+	    m_Handler = new SheetHandler(this, spsheet, sst);
+	    parser.setContentHandler(m_Handler);
+	    sheetSource = new InputSource(sheet);
+	    parser.parse(sheetSource);
+	    // fix header?
+	    if (getNoHeader()) {
+	      header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
+	      rowOld = spsheet.getHeaderRow();
+	      row = spsheet.insertRow(0);
+	      for (i = 0; i < spsheet.getColumnCount(); i++)
+		row.getCell(i).assign(rowOld.getCell(i));
+	      row = spsheet.getHeaderRow();
+	      for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
+		row.getCell(i).setContent(header.get(i));
+	    }
+	    else {
+	      if (!getCustomColumnHeaders().trim().isEmpty()) {
+		header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
+		row = spsheet.getHeaderRow();
+		for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
+		  row.getCell(i).setContent(header.get(i));
+	      }
+	    }
+	    result.add(spsheet);
+	    // missing types?
+	    if (m_Handler.getUnknownCellTypes().size() > 0) {
+	      getLogger().severe("Unknown cell types: " + m_Handler.getUnknownCellTypes());
+	      for (String type : m_Handler.getUnknownCellTypes())
+		getLogger().severe("- cell type '" + type + "': " + m_Handler.getUnknownCellTypesExamples().get(type));
+	    }
+	    if (m_Handler.getUnknownCellStrings().size() > 0) {
+	      getLogger().severe("Unknown cell strings: " + m_Handler.getUnknownCellStrings());
+	      for (String str : m_Handler.getUnknownCellStrings())
+		getLogger().severe("- cell string '" + str + "': " + m_Handler.getUnknownCellStringsExamples().get(str));
+	    }
 	  }
 	}
-	sheet.close();
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to process sheet:", e);
+	}
+
+	FileUtils.closeQuietly(sheet);
+
 	count++;
       }
     }
@@ -876,7 +885,7 @@ public class ExcelStreamingSpreadSheetReader
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read spreadsheet:", e);
     }
-    
+
     m_Handler = null;
     
     return result;
