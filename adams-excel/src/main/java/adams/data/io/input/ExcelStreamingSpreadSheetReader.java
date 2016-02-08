@@ -15,7 +15,7 @@
 
 /**
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -360,9 +360,40 @@ public class ExcelStreamingSpreadSheetReader
 	m_LastContents = new StringBuilder(new XSSFRichTextString(m_SST.getEntryAt(idx)).toString());
       }
 
+      // expand spreadsheet if necessary
+      loc  = null;
+      cell = null;
+      if (!m_Reference.isEmpty()) {
+	try {
+	  loc = ExcelHelper.getCellLocation(m_Reference);
+	  // fill in rows, if necessary
+	  while (m_Sheet.getRowCount() < loc[0])
+	    m_Sheet.addRow();
+	  // fill in columns, if necessary
+	  while (m_Sheet.getColumnCount() <= loc[1])
+	    m_Sheet.insertColumn(m_Sheet.getColumnCount(), "col" + (m_Sheet.getColumnCount() + 1));
+	  if (loc[0] == 0)
+	    row = m_Sheet.getHeaderRow();
+	  else
+	    row = m_Sheet.getRow(loc[0] - 1);
+	  if ((m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount()) || (m_TextColumns == null)) {
+	    m_Owner.getTextColumns().setMax(m_Sheet.getColumnCount());
+	    m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
+	  }
+	  cell = row.addCell(loc[1]);
+	}
+	catch (Exception e) {
+	  loc = null;
+	  cell = null;
+	  m_Owner.getLogger().log(Level.SEVERE,
+	    "Failed to set cell content at " + m_Reference
+	      + " (rows=" + m_Sheet.getRowCount() + ", cols=" + m_Sheet.getColumnCount() + "):", e);
+	}
+      }
+
       // v => contents of a cell
       // Output after we've seen the string contents
-      if (name.equals("v")) {
+      if (name.equals("v") && (cell != null)) {
 	try {
 	  content = m_LastContents.toString();
 	  if (m_UnknownCellType != null) {
@@ -377,22 +408,6 @@ public class ExcelStreamingSpreadSheetReader
 	  }
 	  if (m_Owner.isLoggingEnabled())
 	    m_Owner.getLogger().info("  content: " + content);
-	  loc = ExcelHelper.getCellLocation(m_Reference);
-	  // fill in rows, if necessary
-	  while (m_Sheet.getRowCount() < loc[0])
-	    m_Sheet.addRow();
-	  // fill in columns, if necessary
-	  while (m_Sheet.getColumnCount() <= loc[1])
-	    m_Sheet.insertColumn(m_Sheet.getColumnCount(), "col" + (m_Sheet.getColumnCount()+1));
-	  if (loc[0] == 0)
-	    row = m_Sheet.getHeaderRow();
-	  else
-	    row  = m_Sheet.getRow(loc[0] - 1);
-	  if ((m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount()) || (m_TextColumns == null)) {
-	    m_Owner.getTextColumns().setMax(m_Sheet.getColumnCount());
-	    m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
-	  }
-	  cell = row.addCell(loc[1]);
 	  if (content.equals(m_Owner.getMissingValue())) {
 	    cell.setMissing();
 	  }
@@ -408,7 +423,7 @@ public class ExcelStreamingSpreadSheetReader
 	    else {
 	      switch (m_ContentType) {
 		case BOOLEAN:
-		  cell.setContent(new Boolean(!content.equals("0")));
+		  cell.setContent(!content.equals("0"));
 		  break;
 		case DATE:
 		  cell.setContent(DateUtil.getJavaDate(Double.parseDouble(content)));
