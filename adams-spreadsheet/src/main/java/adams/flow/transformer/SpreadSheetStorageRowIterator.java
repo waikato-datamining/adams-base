@@ -15,12 +15,9 @@
 
 /**
  * SpreadSheetStorageRowIterator.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
@@ -31,6 +28,9 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -670,7 +670,7 @@ public class SpreadSheetStorageRowIterator
     for (i = 0; i < m_ColumnIndices.length; i++) {
       col  = m_ColumnIndices[i];
       name = new StorageName(Storage.toValidName(m_StoragePrefix + header.getCell(col).getContent()));
-      if (!row.hasCell(col))
+      if (!row.hasCell(col) || row.getCell(col).isMissing())
 	getStorageHandler().getStorage().put(name, m_MissingValue);
       else if (m_UseNative)
 	getStorageHandler().getStorage().put(name, row.getCell(col).getNative());
