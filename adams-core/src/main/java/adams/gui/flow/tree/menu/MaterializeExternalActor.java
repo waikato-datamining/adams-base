@@ -15,14 +15,9 @@
 
 /**
  * MaterializeExternalActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.Utils;
 import adams.flow.core.AbstractActor;
@@ -32,6 +27,12 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
+
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Materializes (= includes) an external actor.
@@ -103,7 +104,8 @@ public class MaterializeExternalActor
     addUndoPoint("Materializing external actor '" + file + "'");
 
     // integrate actor
-    newNode = m_State.tree.buildTree(null, actor, false);
+    newNode = TreeHelper.buildTree(null, actor, false);
+    newNode.setOwner(currNode.getOwner());
     index   = parent.getIndex(currNode);
     parent.remove(index);
     parent.insert(newNode, index);

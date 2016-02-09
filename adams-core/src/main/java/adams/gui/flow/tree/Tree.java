@@ -57,7 +57,6 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -409,76 +408,13 @@ public class Tree
   }
 
   /**
-   * Builds the tree from the actor commandlines.
-   *
-   * @param actors	the commandlines with indentation
-   * @param index	the index in the list of commandlines to use
-   * @param previous	the previous node
-   */
-  protected void buildTree(List<String> actors, int index, Node previous) {
-    int			level;
-    String		cmdline;
-    AbstractActor	actor;
-    Node		node;
-    Node		parent;
-
-    cmdline = actors.get(index);
-
-    // determine level
-    level = 0;
-    while (level < cmdline.length() && cmdline.charAt(level) == ' ')
-      level++;
-
-    try {
-      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
-      node  = new Node(this, actor);
-    }
-    catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
-      return;
-    }
-
-    // sibling
-    if (level == previous.getLevel()) {
-      ((Node) previous.getParent()).add(node);
-    }
-    // child of some parent node
-    else if (level < previous.getLevel()) {
-      parent = previous;
-      while (level < parent.getLevel())
-	parent = (Node) parent.getParent();
-      parent.add(node);
-    }
-    // child
-    else {
-      previous.add(node);
-    }
-  }
-
-  /**
    * Builds the tree from the nested commandlines.
    *
    * @param actors	the commandlines
    * @see		#getCommandLines()
    */
   public void buildTree(List<String> actors) {
-    AbstractActor	actor;
-    Node		root;
-
-    if (actors.size() == 0) {
-      buildTree((AbstractActor) null);
-      return;
-    }
-
-    try {
-      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
-      root  = new Node(this, actor);
-      buildTree(actors, 1, root);
-    }
-    catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
-      buildTree((AbstractActor) null);
-    }
+    buildTree(TreeHelper.buildTree(actors));
   }
   
   /**
@@ -487,9 +423,20 @@ public class Tree
    * @param root	the root actor, can be null
    */
   public void buildTree(AbstractActor root) {
+    if (root == null)
+      buildTree((Node) null);
+    else
+      buildTree(TreeHelper.buildTree(null, root, true));
+  }
+
+  /**
+   * Builds the tree with the given root node.
+   *
+   * @param root	the root node, can be null
+   */
+  public void buildTree(Node root) {
     final DefaultTreeModel	model;
     TreeModel			modelOld;
-    DefaultMutableTreeNode	rootNode;
 
     modelOld = null;
     if (getModel() instanceof TreeModel)
@@ -499,8 +446,8 @@ public class Tree
       model = new DefaultTreeModel(null);
     }
     else {
-      rootNode = buildTree(null, root, true);
-      model    = new DefaultTreeModel(rootNode);
+      root.setOwner(this);
+      model = new DefaultTreeModel(root);
     }
 
     SwingUtilities.invokeLater(() -> setModel(model));
@@ -511,53 +458,6 @@ public class Tree
     // clean up old model
     if (modelOld != null)
       modelOld.destroy();
-  }
-
-  /**
-   * Builds the tree recursively.
-   *
-   * @param parent	the parent to add the actor to
-   * @param actor	the actor to add
-   * @param append	whether to append the sub-tree to the parent or just
-   * 			return it (recursive calls always append the sub-tree!)
-   * @return		the generated node
-   */
-  public Node buildTree(Node parent, AbstractActor actor, boolean append) {
-    return buildTree(parent, new AbstractActor[]{actor}, append)[0];
-  }
-
-  /**
-   * Builds the tree recursively.
-   *
-   * @param parent	the parent to add the actor to
-   * @param actors	the actors to add
-   * @param append	whether to append the sub-tree to the parent or just
-   * 			return it (recursive calls always append the sub-tree!)
-   * @return		the generated nodes
-   */
-  protected Node[] buildTree(final Node parent, AbstractActor[] actors, boolean append) {
-    final Node[]	result;
-    int			n;
-    int			i;
-
-    result = new Node[actors.length];
-    for (n = 0; n < actors.length; n++) {
-      result[n] = new Node(this, actors[n]);
-
-      if (actors[n] instanceof ActorHandler) {
-	for (i = 0; i < ((ActorHandler) actors[n]).size(); i++)
-	  buildTree(result[n], ((ActorHandler) actors[n]).get(i), true);
-      }
-    }
-
-    if ((parent != null) && append) {
-      SwingUtilities.invokeLater(() -> {
-	for (Node node : result)
-	  parent.add(node);
-      });
-    }
-
-    return result;
   }
 
   /**

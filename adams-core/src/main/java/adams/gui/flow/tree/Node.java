@@ -115,13 +115,30 @@ public class Node
   }
 
   /**
-   * Sets the owning tree.
+   * Sets the owning tree recursively.
    *
    * @param value	the tree this node belongs to
    */
   public void setOwner(Tree value) {
-    m_Owner = value;
+    setOwner(value, false);
     invalidateRendering();
+  }
+
+  /**
+   * Sets the owning tree recursively.
+   *
+   * @param value	the tree this node belongs to
+   */
+  protected void setOwner(Tree value, boolean invalidate) {
+    int		i;
+
+    m_Owner = value;
+
+    for (i = 0; i < getChildCount(); i++)
+      ((Node) getChildAt(i)).setOwner(value);
+
+    if (invalidate)
+      invalidateRendering();
   }
 
   /**
@@ -815,7 +832,7 @@ public class Node
 	actor = (ExternalActorHandler) getActor();
 	msg = actor.setUpExternalActor();
 	if (msg == null) {
-	  node = getOwner().buildTree(this, actor.getExternalActor(), true);
+	  node = TreeHelper.buildTree(this, actor.getExternalActor(), true);
 	  node.setEditable(false, true);
 	  result = (getChildCount() > 0);
 	}

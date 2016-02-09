@@ -15,14 +15,19 @@
 
 /**
  * TreeHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
-import javax.swing.tree.TreePath;
-
+import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
+import adams.gui.core.ConsolePanel;
+
+import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
+import java.util.List;
 
 /**
  * Helper class for flow tree related stuff.
@@ -158,4 +163,132 @@ public class TreeHelper {
     return new ActorPath(names);
   }
 
+  /**
+   * Builds the tree from the actor commandlines.
+   *
+   * @param actors	the commandlines with indentation
+   * @param index	the index in the list of commandlines to use
+   * @param previous	the previous node
+   */
+  protected static void buildTree(List<String> actors, int index, Node previous) {
+    int			level;
+    String		cmdline;
+    AbstractActor	actor;
+    Node		node;
+    Node		parent;
+
+    cmdline = actors.get(index);
+
+    // determine level
+    level = 0;
+    while (level < cmdline.length() && cmdline.charAt(level) == ' ')
+      level++;
+
+    try {
+      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
+      node  = new Node(previous.getOwner(), actor);
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
+      return;
+    }
+
+    // sibling
+    if (level == previous.getLevel()) {
+      ((Node) previous.getParent()).add(node);
+    }
+    // child of some parent node
+    else if (level < previous.getLevel()) {
+      parent = previous;
+      while (level < parent.getLevel())
+	parent = (Node) parent.getParent();
+      parent.add(node);
+    }
+    // child
+    else {
+      previous.add(node);
+    }
+  }
+
+  /**
+   * Builds the tree from the nested commandlines.
+   *
+   * @param actors	the nested commandlines
+   * @return		the root node, null if failed to build
+   */
+  public static Node buildTree(List<String> actors) {
+    AbstractActor	actor;
+    Node		root;
+
+    if (actors.size() == 0)
+      return null;
+
+    try {
+      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
+      root  = new Node(null, actor);
+      buildTree(actors, 1, root);
+      return root;
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
+      return null;
+    }
+  }
+
+  /**
+   * Builds the tree with the given root.
+   *
+   * @param root	the root actor, can be null
+   * @return		the root node
+   */
+  public static Node buildTree(AbstractActor root) {
+    return buildTree(null, root, true);
+  }
+
+  /**
+   * Builds the tree recursively.
+   *
+   * @param parent	the parent to add the actor to
+   * @param actor	the actor to add
+   * @param append	whether to append the sub-tree to the parent or just
+   * 			return it (recursive calls always append the sub-tree!)
+   * @return		the generated node
+   */
+  public static Node buildTree(Node parent, AbstractActor actor, boolean append) {
+    return buildTree(parent, new AbstractActor[]{actor}, append)[0];
+  }
+
+  /**
+   * Builds the tree recursively.
+   *
+   * @param parent	the parent to add the actor to
+   * @param actors	the actors to add
+   * @param append	whether to append the sub-tree to the parent or just
+   * 			return it (recursive calls always append the sub-tree!)
+   * @return		the generated nodes
+   */
+  protected static Node[] buildTree(final Node parent, AbstractActor[] actors, boolean append) {
+    final Node[]	result;
+    int			n;
+    int			i;
+
+    result = new Node[actors.length];
+    for (n = 0; n < actors.length; n++) {
+      result[n] = new Node((parent != null) ? parent.getOwner() : null, actors[n]);
+
+      if (actors[n] instanceof ActorHandler) {
+	for (i = 0; i < ((ActorHandler) actors[n]).size(); i++)
+	  buildTree(result[n], ((ActorHandler) actors[n]).get(i), true);
+      }
+    }
+
+    if ((parent != null) && append) {
+      SwingUtilities.invokeLater(() -> {
+	for (Node node : result)
+	  parent.add(node);
+      });
+    }
+
+    return result;
+  }
 }
