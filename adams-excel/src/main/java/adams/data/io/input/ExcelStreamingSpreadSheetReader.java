@@ -40,6 +40,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import gnu.trove.set.hash.TIntHashSet;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -771,7 +772,7 @@ public class ExcelStreamingSpreadSheetReader
     Iterator<InputStream> 	sheets;
     InputStream 		sheet;
 
-    pkg       = OPCPackage.open(file.getAbsolutePath());
+    pkg       = OPCPackage.open(file.getAbsolutePath(), PackageAccess.READ);
     reader    = new XSSFReader(pkg);
     sheets    = reader.getSheetsData();
     result    = 0;
@@ -782,6 +783,7 @@ public class ExcelStreamingSpreadSheetReader
       sheet.close();
       result++;
     }
+    pkg.close();
 
     return result;
   }
@@ -815,7 +817,7 @@ public class ExcelStreamingSpreadSheetReader
     try {
       m_SheetRange.setMax(getSheetCount(file));
       indices = new HashSet<Integer>(Utils.toList(m_SheetRange.getIntIndices()));
-      pkg       = OPCPackage.open(file.getAbsolutePath());
+      pkg       = OPCPackage.open(file.getAbsolutePath(), PackageAccess.READ);
       reader    = new XSSFReader(pkg);
       sst       = reader.getSharedStringsTable();
       sheets    = (XSSFReader.SheetIterator) reader.getSheetsData();
@@ -876,6 +878,7 @@ public class ExcelStreamingSpreadSheetReader
 
 	count++;
       }
+      pkg.close();
     }
     catch (ParseStopException e) {
       getLogger().severe("Parsing stopped!");
