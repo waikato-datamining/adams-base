@@ -39,6 +39,7 @@ import adams.gui.core.LazyExpansionTreeNode;
 import adams.gui.core.TransferableString;
 import org.markdownj.MarkdownProcessor;
 
+import java.awt.Cursor;
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -829,8 +830,10 @@ public class Node
 
     if (hasOwner()) {
       if (getActor() instanceof ExternalActorHandler) {
+	getOwner().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 	actor = (ExternalActorHandler) getActor();
 	msg = actor.setUpExternalActor();
+	getOwner().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	if (msg == null) {
 	  node = TreeHelper.buildTree(this, actor.getExternalActor(), true);
 	  node.setEditable(false, true);
