@@ -78,7 +78,7 @@ public class Node
   /**
    * Initializes the node.
    *
-   * @param owner	the owning tree
+   * @param owner	the owning tree, can be null
    * @param actor	the underlying actor
    */
   public Node(Tree owner, AbstractActor actor) {
@@ -103,6 +103,25 @@ public class Node
     m_Variables     = null;
     m_RenderString  = null;
     super.setUserObject(userObject);
+  }
+
+  /**
+   * Returns whether an owner is set.
+   *
+   * @return		true if owner is set
+   */
+  public boolean hasOwner() {
+    return (m_Owner != null);
+  }
+
+  /**
+   * Sets the owning tree.
+   *
+   * @param value	the tree this node belongs to
+   */
+  public void setOwner(Tree value) {
+    m_Owner = value;
+    invalidateRendering();
   }
 
   /**
@@ -348,10 +367,12 @@ public class Node
       name = cls.getName();
 
       // remove common prefixes
-      for (n = 0; n < m_Owner.getInputOutputPrefixes().length; n++) {
-	prefix = m_Owner.getInputOutputPrefixes()[n];
-	if (name.startsWith(prefix))
-	  name = name.replace(prefix, "");
+      if (hasOwner()) {
+	for (n = 0; n < getOwner().getInputOutputPrefixes().length; n++) {
+	  prefix = getOwner().getInputOutputPrefixes()[n];
+	  if (name.startsWith(prefix))
+	    name = name.replace(prefix, "");
+	}
       }
 
       result.append(name);
@@ -382,7 +403,7 @@ public class Node
 	newSize = 3 - Integer.parseInt(size.substring(1));
       else
 	newSize = Integer.parseInt(size);
-      newSize = (int) (newSize * m_Owner.getScaleFactor());
+      newSize = (int) (newSize * (hasOwner() ? getOwner().getScaleFactor() : 1.0));
       if (newSize < 1)
 	newSize = 1;
       if (newSize > 7)
@@ -454,8 +475,8 @@ public class Node
     Tag			tag;
     
     result   = new StringBuilder();
-    colorDef = m_Owner.getAnnotationsColor();
-    sizeDef  = m_Owner.getAnnotationsSize();
+    colorDef = hasOwner() ? getOwner().getAnnotationsColor() : "blue";
+    sizeDef  = hasOwner() ? getOwner().getAnnotationsSize() : "-2";
 
     if (m_MarkdownProcessor != null) {
       result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
@@ -510,7 +531,7 @@ public class Node
    * @see		#scaleFontSize(String)
    */
   protected String generateSizeAttribute(String size) {
-    if (m_Owner.getScaleFactor() != 1.0)
+    if (hasOwner() && getOwner().getScaleFactor() != 1.0)
       return "";
     else
       return "size='" + scaleFontSize(size) + "'";
@@ -535,9 +556,12 @@ public class Node
 	html.append("<b>[none]</b>");
       }
       else {
-	html.append(
-	    "<font " + generateSizeAttribute(m_Owner.getActorNameSize()) + " color='" + m_Owner.getActorNameColor() + "'>"
-	    + HtmlUtils.toHTML(actor.getName()) + "</font>");
+	if (hasOwner())
+	  html.append(
+	    "<font " + generateSizeAttribute(getOwner().getActorNameSize()) + " color='" + getOwner().getActorNameColor() + "'>"
+	      + HtmlUtils.toHTML(actor.getName()) + "</font>");
+	else
+	  html.append(HtmlUtils.toHTML(actor.getName()));
 
 	// skip this actor?
 	if (actor.getSkip()) {
@@ -550,42 +574,42 @@ public class Node
 	}
 
 	// show input?
-	if (m_Owner.getShowInputOutput() && (actor instanceof InputConsumer)) {
+	if (hasOwner() && getOwner().getShowInputOutput() && (actor instanceof InputConsumer)) {
 	  html.insert(
 	      0,
-	      "<font " + generateSizeAttribute(m_Owner.getInputOutputSize()) + " color='" + m_Owner.getInputOutputColor() + "'>"
+	      "<font " + generateSizeAttribute(getOwner().getInputOutputSize()) + " color='" + getOwner().getInputOutputColor() + "'>"
 	      + HtmlUtils.toHTML(classArrayToString(((InputConsumer) actor).accepts())) + "</font>"
 	      + "<br>");
 	}
 
 	// quick info available?
-	if (m_Owner.getShowQuickInfo()) {
+	if (hasOwner() && getOwner().getShowQuickInfo()) {
 	  quickInfo = actor.getQuickInfo();
 	  if ((quickInfo != null) && (quickInfo.trim().length() > 0)) {
 	    html.append("&nbsp;&nbsp;"
-		+ "<font " + generateSizeAttribute(m_Owner.getQuickInfoSize()) + " color='" + m_Owner.getQuickInfoColor() + "'>"
+		+ "<font " + generateSizeAttribute(getOwner().getQuickInfoSize()) + " color='" + getOwner().getQuickInfoColor() + "'>"
 		+ HtmlUtils.toHTML(quickInfo)
 		+ "</font>");
 	  }
 	}
 
 	// annotations?
-	if (m_Owner.getShowAnnotations()) {
+	if (hasOwner() && getOwner().getShowAnnotations()) {
 	  if (actor.getAnnotations().getValue().length() > 0)
 	    html.append("<br>" + assembleAnnotation(actor));
 	}
 
 	// show output?
-	if (m_Owner.getShowInputOutput() && (actor instanceof OutputProducer)) {
+	if (hasOwner() && getOwner().getShowInputOutput() && (actor instanceof OutputProducer)) {
 	  html.append("<br>");
 	  html.append(
-	      "<font " + generateSizeAttribute(m_Owner.getInputOutputSize()) + " color='" + m_Owner.getInputOutputColor() + "'>"
+	      "<font " + generateSizeAttribute(getOwner().getInputOutputSize()) + " color='" + getOwner().getInputOutputColor() + "'>"
 	      + HtmlUtils.toHTML(classArrayToString(((OutputProducer) actor).generates())) + "</font>");
 	}
 
 	// bookmark highlighting
-	 if (m_Bookmarked) {
-	  html.insert(0, "<font style='background-color: " + m_Owner.getBookmarkHighlightBackground() + "'>");
+	 if (m_Bookmarked && hasOwner()) {
+	  html.insert(0, "<font style='background-color: " + getOwner().getBookmarkHighlightBackground() + "'>");
 	  html.append("</font>");
 	}
       }
@@ -632,7 +656,7 @@ public class Node
 	}
 
 	// show input?
-	if (m_Owner.getShowInputOutput() && (actor instanceof InputConsumer)) {
+	if (hasOwner() && getOwner().getShowInputOutput() && (actor instanceof InputConsumer)) {
 	  plain.insert(
 	      0,
 	      classArrayToString(((InputConsumer) actor).accepts())
@@ -640,7 +664,7 @@ public class Node
 	}
 
 	// quick info available?
-	if (m_Owner.getShowQuickInfo()) {
+	if (hasOwner() && getOwner().getShowQuickInfo()) {
 	  quickInfo = actor.getQuickInfo();
 	  if (quickInfo != null) {
 	    plain.append("  " + quickInfo);
@@ -648,7 +672,7 @@ public class Node
 	}
 
 	// annotations?
-	if (m_Owner.getShowAnnotations()) {
+	if (hasOwner() && getOwner().getShowAnnotations()) {
 	  if (actor.getAnnotations().getValue().length() > 0) {
 	    lines = actor.getAnnotations().getValue().split("\n");
 	    for (i = 0; i < lines.length; i++) {
@@ -666,7 +690,7 @@ public class Node
 	}
 
 	// show output?
-	if (m_Owner.getShowInputOutput() && (actor instanceof OutputProducer)) {
+	if (hasOwner() && getOwner().getShowInputOutput() && (actor instanceof OutputProducer)) {
 	  plain.append("\n");
 	  plain.append(classArrayToString(((OutputProducer) actor).generates()));
 	}
@@ -785,17 +809,19 @@ public class Node
     Node			node;
     
     result = false;
-    
-    if (getActor() instanceof ExternalActorHandler) {
-      actor = (ExternalActorHandler) getActor();
-      msg   = actor.setUpExternalActor();
-      if (msg == null) {
-	node = m_Owner.buildTree(this, actor.getExternalActor(), true);
-	node.setEditable(false, true);
-	result = (getChildCount() > 0);
-      }
-      else {
-	GUIHelper.showErrorMessage(null, "Failed to expand node '" + getFullName() + "': " + msg);
+
+    if (hasOwner()) {
+      if (getActor() instanceof ExternalActorHandler) {
+	actor = (ExternalActorHandler) getActor();
+	msg = actor.setUpExternalActor();
+	if (msg == null) {
+	  node = getOwner().buildTree(this, actor.getExternalActor(), true);
+	  node.setEditable(false, true);
+	  result = (getChildCount() > 0);
+	}
+	else {
+	  GUIHelper.showErrorMessage(null, "Failed to expand node '" + getFullName() + "': " + msg);
+	}
       }
     }
     
@@ -876,7 +902,7 @@ public class Node
     
     result = super.expand();
 
-    if (result)
+    if (result && hasOwner())
       getOwner().nodeStructureChanged(this);
     
     return result;
@@ -893,7 +919,7 @@ public class Node
     
     result = super.collapse();
     
-    if (result)
+    if (result && hasOwner())
       getOwner().nodeStructureChanged(this);
     
     return result;
