@@ -94,7 +94,7 @@ public class Tree
    * @version $Revision$
    */
   public static class TreeState {
-    public Object actor;
+    public List<String> actors;
     public List<String> expanded;
     public boolean modified;
     public File file;
@@ -407,16 +407,6 @@ public class Tree
     super.setSelectionModel(selectionModel);
   }
 
-  /**
-   * Builds the tree from the nested commandlines.
-   *
-   * @param actors	the commandlines
-   * @see		#getCommandLines()
-   */
-  public void buildTree(List<String> actors) {
-    buildTree(TreeHelper.buildTree(actors));
-  }
-  
   /**
    * Builds the tree with the given root.
    *
@@ -1331,7 +1321,7 @@ public class Tree
    */
   public List<String> getCommandLines() {
     if (getRootNode() != null)
-      return getRootNode().getCommandLines();
+      return TreeHelper.getCommandLines(getRootNode());
     else
       return new ArrayList<>();
   }
@@ -1876,9 +1866,8 @@ public class Tree
    * @param value	the state to use
    */
   public void setState(TreeState value) {
-    if (value.actor != null)
-      buildTree((List<String>) value.actor);
-
+    if (value.actors != null)
+      buildTree(TreeHelper.buildTree(value.actors));
     setModified(value.modified);
     setFile(value.file);
     SwingUtilities.invokeLater(() -> setExpandedFullNames(value.expanded));
@@ -1908,7 +1897,7 @@ public class Tree
     result = new TreeState();
 
     if (getRootNode() != null)
-      result.actor = getRootNode().getCommandLines();
+      result.actors = TreeHelper.getCommandLines(getRootNode());
     result.expanded  = getExpandedFullNames();
     result.modified  = isModified();
     result.file      = getFile();

@@ -19,6 +19,7 @@
  */
 package adams.gui.flow.tree;
 
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
@@ -27,6 +28,7 @@ import adams.gui.core.ConsolePanel;
 
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -288,6 +290,36 @@ public class TreeHelper {
 	  parent.add(node);
       });
     }
+
+    return result;
+  }
+
+  /**
+   * Adds the node and its children to the list of commandlines.
+   *
+   * @param node      	the node to add
+   * @param cmdlines	the command lines to add to
+   */
+  protected static void getCommandLines(Node node, List<String> cmdlines) {
+    int		i;
+
+    cmdlines.add(Utils.indent(node.getActor().toCommandLine(), node.getLevel()));
+    for (i = 0; i < node.getChildCount(); i++)
+      getCommandLines((Node) node.getChildAt(i), cmdlines);
+  }
+
+  /**
+   * Returns the nested commandlines. Indentation in blanks represents
+   * nesting level.
+   *
+   * @param root	the root node
+   * @return		the tree as nested commandlines
+   */
+  public static List<String> getCommandLines(Node root) {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    getCommandLines(root, result);
 
     return result;
   }

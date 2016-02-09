@@ -41,7 +41,6 @@ import org.markdownj.MarkdownProcessor;
 
 import java.awt.Cursor;
 import java.awt.datatransfer.Transferable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -263,35 +262,6 @@ public class Node
 	}
       }
     }
-
-    return result;
-  }
-
-  /**
-   * Adds the node and its children to the list of commandlines.
-   *
-   * @param node      	the node to add
-   * @param cmdlines	the command lines to add to
-   */
-  protected void getCommandLines(Node node, List<String> cmdlines) {
-    int		i;
-
-    cmdlines.add(Utils.indent(node.getActor().toCommandLine(), node.getLevel()));
-    for (i = 0; i < node.getChildCount(); i++)
-      getCommandLines((Node) node.getChildAt(i), cmdlines);
-  }
-
-  /**
-   * Returns the nested commandlines. Indentation in blanks represents
-   * nesting level.
-   *
-   * @return		the tree as nested commandlines
-   */
-  public List<String> getCommandLines() {
-    List<String>	result;
-
-    result = new ArrayList<>();
-    getCommandLines((Node) getRoot(), result);
 
     return result;
   }
