@@ -19,9 +19,9 @@
  */
 package adams.gui.flow.tree;
 
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
 import adams.gui.core.ConsolePanel;
@@ -168,46 +168,53 @@ public class TreeHelper {
    * Builds the tree from the actor commandlines.
    *
    * @param actors	the commandlines with indentation
-   * @param index	the index in the list of commandlines to use
-   * @param previous	the previous node
+   * @param root	the root node
    */
-  protected static void buildTree(List<String> actors, int index, Node previous) {
+  protected static void buildTree(List<String> actors, Node root) {
     int			level;
+    int			index;
     String		cmdline;
     AbstractActor	actor;
+    Node 		previous;
     Node		node;
     Node		parent;
 
-    cmdline = actors.get(index);
+    previous = root;
 
-    // determine level
-    level = 0;
-    while (level < cmdline.length() && cmdline.charAt(level) == ' ')
-      level++;
+    for (index = 1; index < actors.size(); index++) {
+      cmdline = actors.get(index);
 
-    try {
-      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
-      node  = new Node(previous.getOwner(), actor);
-    }
-    catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
-      return;
-    }
+      // determine level
+      level = 0;
+      while (level < cmdline.length() && cmdline.charAt(level) == ' ')
+	level++;
 
-    // sibling
-    if (level == previous.getLevel()) {
-      ((Node) previous.getParent()).add(node);
-    }
-    // child of some parent node
-    else if (level < previous.getLevel()) {
-      parent = previous;
-      while (level < parent.getLevel())
-	parent = (Node) parent.getParent();
-      parent.add(node);
-    }
-    // child
-    else {
-      previous.add(node);
+      try {
+	actor = (AbstractActor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim());
+	node = new Node(previous.getOwner(), actor);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(index), e);
+	return;
+      }
+
+      // sibling
+      if (level == previous.getLevel()) {
+	((Node) previous.getParent()).add(node);
+      }
+      // child of some parent node
+      else if (level < previous.getLevel()) {
+	parent = previous;
+	while (level < parent.getLevel())
+	  parent = (Node) parent.getParent();
+	((Node) parent.getParent()).add(node);
+      }
+      // child
+      else {
+	previous.add(node);
+      }
+
+      previous = node;
     }
   }
 
@@ -225,9 +232,9 @@ public class TreeHelper {
       return null;
 
     try {
-      actor = (AbstractActor) OptionUtils.forCommandLine(AbstractActor.class, actors.get(0).trim());
+      actor = (AbstractActor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim());
       root  = new Node(null, actor);
-      buildTree(actors, 1, root);
+      buildTree(actors, root);
       return root;
     }
     catch (Exception e) {
@@ -292,6 +299,26 @@ public class TreeHelper {
   }
 
   /**
+   * Inserts blanks at the start of the string.
+   *
+   * @param s		the string to process
+   * @param numBlanks	the number of blanks to insert
+   * @return		the processed string
+   */
+  protected static String indent(String s, int numBlanks) {
+    StringBuilder 	result;
+    int			i;
+
+    result = new StringBuilder();
+    for (i = 0; i < numBlanks; i++)
+      result.append(" ");
+
+    result.append(s);
+
+    return result.toString();
+  }
+
+  /**
    * Adds the node and its children to the list of commandlines.
    *
    * @param node      	the node to add
@@ -300,7 +327,7 @@ public class TreeHelper {
   protected static void getCommandLines(Node node, List<String> cmdlines) {
     int		i;
 
-    cmdlines.add(Utils.indent(node.getActor().toCommandLine(), node.getLevel()));
+    cmdlines.add(indent(node.getActor().toCommandLine(), node.getLevel()));
     for (i = 0; i < node.getChildCount(); i++)
       getCommandLines((Node) node.getChildAt(i), cmdlines);
   }

@@ -15,18 +15,26 @@
 
 /**
  * DefaultFlowWriter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
+import adams.core.DateFormat;
+import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileUtils;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
+import adams.env.Environment;
+import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Writes flows in the default format (nested).
@@ -43,6 +51,15 @@ public class DefaultFlowWriter
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** whether to use compact format. */
+  protected boolean m_UseCompact;
+
+  /** for formatting dates. */
+  protected static DateFormat m_DateFormat;
+  static {
+    m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
+  }
 
   /**
    * Returns a string describing the object.
@@ -95,6 +112,10 @@ public class DefaultFlowWriter
     m_OptionManager.add(
       "encoding", "encoding",
       new BaseCharset());
+
+    m_OptionManager.add(
+      "use-compact", "useCompact",
+      getDefaultUseCompact());
   }
 
   /**
@@ -127,6 +148,44 @@ public class DefaultFlowWriter
   }
 
   /**
+   * Returns the default missing value.
+   *
+   * @return		the default for missing values
+   */
+  protected boolean getDefaultUseCompact() {
+    return false;
+  }
+
+  /**
+   * Sets whether to use compact format.
+   *
+   * @param value	true if to use compact format
+   */
+  public void setUseCompact(boolean value) {
+    m_UseCompact = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use compact format.
+   *
+   * @return		true if compact format used
+   */
+  public boolean getUseCompact() {
+    return m_UseCompact;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String useCompactTipText() {
+    return "If enabled, the compact format is used.";
+  }
+
+  /**
    * Writes the given content to the specified file.
    *
    * @param content	the content to write
@@ -135,7 +194,19 @@ public class DefaultFlowWriter
    */
   @Override
   protected boolean doWrite(Node content, File file) {
-    return write(content.getFullActor(), file);
+    List<String>	lines;
+
+    if (getUseCompact()) {
+      lines = TreeHelper.getCommandLines(content);
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
+      return FileUtils.writeToFile(file.getAbsolutePath(), Utils.flatten(lines, "\n"), false, m_Encoding.getValue());
+    }
+    else {
+      return write(content.getFullActor(), file);
+    }
   }
 
   /**
@@ -147,15 +218,17 @@ public class DefaultFlowWriter
    */
   @Override
   protected boolean doWrite(Actor content, File file) {
-    boolean		result;
     NestedProducer	producer;
 
-    producer = new NestedProducer();
-    producer.setOutputClasspath(false);
-    producer.setEncoding(m_Encoding);
-    producer.produce(content);
-    result = producer.write(file.getAbsolutePath());
-
-    return result;
+    if (getUseCompact()) {
+      return write(TreeHelper.buildTree((AbstractActor) content), file);
+    }
+    else {
+      producer = new NestedProducer();
+      producer.setOutputClasspath(false);
+      producer.setEncoding(m_Encoding);
+      producer.produce(content);
+      return producer.write(file.getAbsolutePath());
+    }
   }
 }

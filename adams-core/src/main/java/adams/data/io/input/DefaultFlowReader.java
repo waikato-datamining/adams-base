@@ -19,15 +19,20 @@
  */
 package adams.data.io.input;
 
+import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
+import adams.core.io.FileUtils;
 import adams.core.option.NestedConsumer;
+import adams.core.option.NestedProducer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reads flows in the default format (nested).
@@ -128,6 +133,39 @@ public class DefaultFlowReader
   }
 
   /**
+   * Determines whether the file is in compact format or not.
+   *
+   * @param file	the file to check
+   * @param data	for transferring the data
+   * @return		true if in compact format
+   */
+  protected boolean isCompact(File file, List<String> data) {
+    boolean		result;
+    List<String>	lines;
+    int			i;
+
+    result = false;
+    lines  = FileUtils.loadFromFile(file);
+    if (lines != null) {
+      for (i = 0; i < lines.size(); i++) {
+	if (lines.get(i).startsWith(NestedProducer.COMMENT))
+	  continue;
+	if (lines.get(i).startsWith(" ")) {
+	  result = true;
+	  break;
+	}
+      }
+    }
+
+    // transfer data?
+    data.clear();
+    if (lines != null)
+      data.addAll(lines);
+
+    return result;
+  }
+
+  /**
    * Performs the actual reading.
    *
    * @param file	the file to read from
@@ -135,7 +173,19 @@ public class DefaultFlowReader
    */
   @Override
   protected Node doReadNode(File file) {
-    return TreeHelper.buildTree((AbstractActor) readActor(file));
+    Node		result;
+    List<String>	lines;
+
+    lines = new ArrayList<>();
+    if (isCompact(file, lines)) {
+      Utils.removeComments(lines, NestedProducer.COMMENT);
+      result = TreeHelper.buildTree(lines);
+    }
+    else {
+      result = TreeHelper.buildTree((AbstractActor) readActor(file));
+    }
+
+    return result;
   }
 
   /**
@@ -148,14 +198,26 @@ public class DefaultFlowReader
   protected Actor doReadActor(File file) {
     AbstractActor	result;
     NestedConsumer	consumer;
+    List<String>	lines;
+    Node		node;
 
-    consumer = new NestedConsumer();
-    consumer.setEncoding(m_Encoding);
-    result   = (AbstractActor) consumer.read(file.getAbsolutePath());
+    result = null;
+    lines  = new ArrayList<>();
+    if (isCompact(file, lines)) {
+      Utils.removeComments(lines, NestedProducer.COMMENT);
+      node = TreeHelper.buildTree(lines);
+      if (node != null)
+	result = node.getFullActor();
+    }
+    else {
+      consumer = new NestedConsumer();
+      consumer.setEncoding(m_Encoding);
+      result = (AbstractActor) consumer.fromString(Utils.flatten(lines, "\n"));
 
-    // transfer errors/warnings
-    m_Errors.addAll(consumer.getErrors());
-    m_Warnings.addAll(consumer.getWarnings());
+      // transfer errors/warnings
+      m_Errors.addAll(consumer.getErrors());
+      m_Warnings.addAll(consumer.getWarnings());
+    }
 
     return result;
   }

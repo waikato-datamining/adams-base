@@ -567,7 +567,7 @@ public abstract class AbstractOptionProducer<O,I>
 	  throw new IllegalArgumentException("No input file specified!");
 	output = OptionUtils.removeOption(args, "-output");
 	producerInst = (OptionProducer) OptionUtils.forName(OptionProducer.class, producer.getName(), args);
-	handler      = AbstractOptionConsumer.fromString(NestedConsumer.class, new File(input));
+	handler      = AbstractOptionConsumer.fromFile(NestedConsumer.class, new File(input));
 	if (handler == null)
 	  throw new IllegalStateException("Failed to read input file: " + input);
 	producerInst.produce(handler);

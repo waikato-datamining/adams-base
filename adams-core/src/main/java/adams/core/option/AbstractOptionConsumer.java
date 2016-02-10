@@ -613,7 +613,7 @@ public abstract class AbstractOptionConsumer<C,V>
    * @param file	the file to load and parse
    * @return		the option handler, null in case of an error
    */
-  public static OptionHandler fromString(Class<? extends OptionConsumer> cls, File file) {
+  public static OptionHandler fromFile(Class<? extends OptionConsumer> cls, File file) {
     OptionHandler	result;
     OptionConsumer	consumer;
 
