@@ -166,6 +166,48 @@ public class DefaultFlowReader
   }
 
   /**
+   * Reads the actor from the non-compact format.
+   *
+   * @param lines	the lines to read the actor from
+   * @return		the actor, null if failed to read
+   */
+  protected AbstractActor readNonCompact(List<String> lines) {
+    AbstractActor	result;
+    NestedConsumer	consumer;
+
+    consumer = new NestedConsumer();
+    consumer.setEncoding(m_Encoding);
+    result = (AbstractActor) consumer.fromString(Utils.flatten(lines, "\n"));
+
+    // transfer errors/warnings
+    m_Errors.addAll(consumer.getErrors());
+    m_Warnings.addAll(consumer.getWarnings());
+
+    return result;
+  }
+
+  /**
+   * Reads the actor from the non-compact format.
+   *
+   * @param file	the file to read from
+   * @return		the actor, null if failed to read
+   */
+  protected AbstractActor readNonCompact(File file) {
+    AbstractActor	result;
+    NestedConsumer	consumer;
+
+    consumer = new NestedConsumer();
+    consumer.setEncoding(m_Encoding);
+    result = (AbstractActor) consumer.fromFile(file);
+
+    // transfer errors/warnings
+    m_Errors.addAll(consumer.getErrors());
+    m_Warnings.addAll(consumer.getWarnings());
+
+    return result;
+  }
+
+  /**
    * Performs the actual reading.
    *
    * @param file	the file to read from
@@ -182,7 +224,7 @@ public class DefaultFlowReader
       result = TreeHelper.buildTree(lines);
     }
     else {
-      result = TreeHelper.buildTree((AbstractActor) readActor(file));
+      result = TreeHelper.buildTree(readNonCompact(lines));
     }
 
     return result;
@@ -197,7 +239,6 @@ public class DefaultFlowReader
   @Override
   protected Actor doReadActor(File file) {
     AbstractActor	result;
-    NestedConsumer	consumer;
     List<String>	lines;
     Node		node;
 
@@ -210,13 +251,7 @@ public class DefaultFlowReader
 	result = node.getFullActor();
     }
     else {
-      consumer = new NestedConsumer();
-      consumer.setEncoding(m_Encoding);
-      result = (AbstractActor) consumer.fromString(Utils.flatten(lines, "\n"));
-
-      // transfer errors/warnings
-      m_Errors.addAll(consumer.getErrors());
-      m_Warnings.addAll(consumer.getWarnings());
+      result = readNonCompact(lines);
     }
 
     return result;

@@ -85,16 +85,17 @@ public class Node
    * @param actor	the underlying actor
    */
   public Node(Tree owner, AbstractActor actor) {
-    super(strip(actor));
+    super();
 
-    m_Owner             = owner;
-    m_RenderString      = null;
-    m_Editable          = true;
-    m_Bookmarked        = false;
-    m_CommandLine = actor.toCommandLine();
-    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown")) {
+    m_Owner        = owner;
+    m_RenderString = null;
+    m_Editable     = true;
+    m_Bookmarked   = false;
+    m_CommandLine  = null;
+    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
       m_MarkdownProcessor = new MarkdownProcessor();
-    }
+
+    setActor(actor);
   }
 
   /**
@@ -107,6 +108,7 @@ public class Node
   public void setUserObject(Object userObject) {
     m_Variables     = null;
     m_RenderString  = null;
+    m_CommandLine   = null;
     super.setUserObject(userObject);
   }
 
@@ -170,9 +172,6 @@ public class Node
     if (oldActor != null) {
       parent = oldActor.getParent();
       stripped.setParent(parent);
-    }
-    else {
-      System.err.println("No old actor stored?");
     }
 
     setUserObject(stripped);
