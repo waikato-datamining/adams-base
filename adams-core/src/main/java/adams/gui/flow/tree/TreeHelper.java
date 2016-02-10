@@ -327,7 +327,7 @@ public class TreeHelper {
   protected static void getCommandLines(Node node, List<String> cmdlines) {
     int		i;
 
-    cmdlines.add(indent(node.getActor().toCommandLine(), node.getLevel()));
+    cmdlines.add(indent(node.getCommandLine(), node.getLevel()));
     for (i = 0; i < node.getChildCount(); i++)
       getCommandLines((Node) node.getChildAt(i), cmdlines);
   }

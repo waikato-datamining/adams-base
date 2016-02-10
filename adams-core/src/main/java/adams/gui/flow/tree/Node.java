@@ -75,6 +75,9 @@ public class Node
   /** the markdown processor. */
   protected static MarkdownProcessor m_MarkdownProcessor;
 
+  /** the commandline. */
+  protected String m_CommandLine;
+
   /**
    * Initializes the node.
    *
@@ -88,8 +91,10 @@ public class Node
     m_RenderString      = null;
     m_Editable          = true;
     m_Bookmarked        = false;
-    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
+    m_CommandLine = actor.toCommandLine();
+    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown")) {
       m_MarkdownProcessor = new MarkdownProcessor();
+    }
   }
 
   /**
@@ -174,6 +179,8 @@ public class Node
 
     if (oldActor != null)
       oldActor.destroy();
+
+    m_CommandLine = stripped.toCommandLine();
   }
 
   /**
@@ -913,5 +920,14 @@ public class Node
       getOwner().nodeStructureChanged(this);
     
     return result;
+  }
+
+  /**
+   * Returns the (cached) commandline of the actor.
+   *
+   * @return		the commandline
+   */
+  public String getCommandLine() {
+    return m_CommandLine;
   }
 }
