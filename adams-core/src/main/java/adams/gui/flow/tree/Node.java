@@ -75,7 +75,7 @@ public class Node
   /** the markdown processor. */
   protected static MarkdownProcessor m_MarkdownProcessor;
 
-  /** the commandline. */
+  /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
 
   /**
@@ -179,6 +179,7 @@ public class Node
     if (oldActor != null)
       oldActor.destroy();
 
+    // cache commandline for undo/redo
     m_CommandLine = stripped.toCommandLine();
   }
 
