@@ -19,12 +19,12 @@
  */
 package adams.gui.flow.tree;
 
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
-import adams.gui.core.ConsolePanel;
 
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
@@ -169,8 +169,9 @@ public class TreeHelper {
    *
    * @param actors	the commandlines with indentation
    * @param root	the root node
+   * @param errors	for storing any errors
    */
-  protected static void buildTree(List<String> actors, Node root) {
+  protected static void buildTree(List<String> actors, Node root, StringBuilder errors) {
     int			level;
     int			index;
     String		cmdline;
@@ -194,7 +195,7 @@ public class TreeHelper {
 	node = new Node(previous.getOwner(), actor);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(index), e);
+	errors.append("Failed to parse actor: " + actors.get(index) + "\n" + Utils.throwableToString(e));
 	return;
       }
 
@@ -225,6 +226,17 @@ public class TreeHelper {
    * @return		the root node, null if failed to build
    */
   public static Node buildTree(List<String> actors) {
+    return buildTree(actors, new StringBuilder());
+  }
+
+  /**
+   * Builds the tree from the nested commandlines.
+   *
+   * @param actors	the nested commandlines
+   * @param errors	for storing any errors
+   * @return		the root node, null if failed to build
+   */
+  public static Node buildTree(List<String> actors, StringBuilder errors) {
     AbstractActor	actor;
     Node		root;
 
@@ -234,11 +246,11 @@ public class TreeHelper {
     try {
       actor = (AbstractActor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim());
       root  = new Node(null, actor);
-      buildTree(actors, root);
+      buildTree(actors, root, errors);
       return root;
     }
     catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to parse actor: " + actors.get(0), e);
+      errors.append("Failed to parse actor: " + actors.get(0) + "\n" + Utils.throwableToString(e));
       return null;
     }
   }

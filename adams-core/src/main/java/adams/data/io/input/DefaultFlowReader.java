@@ -217,11 +217,15 @@ public class DefaultFlowReader
   protected Node doReadNode(File file) {
     Node		result;
     List<String>	lines;
+    StringBuilder	errors;
 
     lines = new ArrayList<>();
     if (isCompact(file, lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      result = TreeHelper.buildTree(lines);
+      errors = new StringBuilder();
+      result = TreeHelper.buildTree(lines, errors);
+      if (errors.length() > 0)
+	m_Errors.add(errors.toString());
     }
     else {
       result = TreeHelper.buildTree(readNonCompact(lines));
@@ -241,12 +245,16 @@ public class DefaultFlowReader
     AbstractActor	result;
     List<String>	lines;
     Node		node;
+    StringBuilder	errors;
 
     result = null;
     lines  = new ArrayList<>();
     if (isCompact(file, lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      node = TreeHelper.buildTree(lines);
+      errors = new StringBuilder();
+      node   = TreeHelper.buildTree(lines, errors);
+      if (errors.length() > 0)
+	m_Errors.add(errors.toString());
       if (node != null)
 	result = node.getFullActor();
     }
