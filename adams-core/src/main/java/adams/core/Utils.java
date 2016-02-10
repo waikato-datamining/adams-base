@@ -393,12 +393,12 @@ public class Utils {
     int			i;
 
     if (string == null)
-      return string;
+      return null;
     
     for (i = 0; i < find.length; i++) {
-      if (string.indexOf(find[i]) != -1 ) {
+      if (string.indexOf(find[i]) > -1 ) {
 	newStr = new StringBuilder();
-	while ((index = string.indexOf(find[i])) != -1) {
+	while ((index = string.indexOf(find[i])) > -1) {
 	  if (index > 0)
 	    newStr.append(string.substring(0, index));
 	  newStr.append(replace[i]);
