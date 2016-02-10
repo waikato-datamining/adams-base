@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -846,7 +846,7 @@ public class FlowPanel
 
     m_RunningSwingWorker = true;
     worker = new SwingWorker() {
-      protected AbstractActor m_Flow = null;
+      protected Node m_Flow = null;
       protected List<String> m_Errors;
       protected List<String> m_Warnings;
 
@@ -864,16 +864,11 @@ public class FlowPanel
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	updateTitle();
 
-	m_Flow = (AbstractActor) reader.read(file);
+	m_Flow = reader.readNode(file);
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
-	SwingUtilities.invokeLater(new Runnable() {
-	  @Override
-	  public void run() {
-	    m_Tree.redraw();
-	  }
-	});
+	redraw();
 
 	showStatus("");
 
@@ -929,6 +924,27 @@ public class FlowPanel
 
     if (flow != null) {
       getTree().setActor(flow);
+      getTree().setModified(false);
+    }
+
+    setCurrentFile(null);
+    setTitle(PREFIX_FLOW + next());
+  }
+
+  /**
+   * Sets the flow to work on.
+   *
+   * @param flow	the flow to use
+   */
+  public void setCurrentFlow(Node flow) {
+    if (flow != null) {
+      m_CurrentFlow = flow.getFullActor();
+      getTree().buildTree(flow);
+      getTree().setModified(false);
+    }
+    else {
+      m_CurrentFlow = null;
+      getTree().setActor(null);
       getTree().setModified(false);
     }
 
@@ -1049,12 +1065,12 @@ public class FlowPanel
   public void save(final FlowWriter writer, final File file) {
     SwingWorker		worker;
     String		check;
-    final AbstractActor	flow;
+    final Node 		flow;
     int			retVal;
     
-    flow = getCurrentFlow();
+    flow = getTree().getRootNode();
     if (getCheckOnSave()) {
-      check = ActorUtils.checkFlow(flow, false, false);
+      check = ActorUtils.checkFlow(flow.getFullActor(), false, false);
       if (check != null) {
 	retVal = GUIHelper.showConfirmMessage(
 	    m_Owner, "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check);
@@ -1657,7 +1673,7 @@ public class FlowPanel
   @Override
   public Object getSendToItem(Class[] cls) {
     Object		result;
-    AbstractActor	actor;
+    Node 		root;
     DefaultFlowWriter	writer;
 
     result = null;
@@ -1665,9 +1681,9 @@ public class FlowPanel
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (getTree().isModified()) {
 	result = SendToActionUtils.nextTmpFile("floweditor", "flow");
-	actor  = getCurrentFlow();
+	root   = getTree().getRootNode();
 	writer = new DefaultFlowWriter();
-	writer.write(actor, (PlaceholderFile) result);
+	writer.write(root, (PlaceholderFile) result);
       }
       else if (getCurrentFile() != null) {
 	result = new PlaceholderFile(getCurrentFile());
@@ -1684,12 +1700,7 @@ public class FlowPanel
    * Redraws the tree.
    */
   public void redraw() {
-    Runnable	run;
-
-    run = () -> {
-      m_Tree.redraw();
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> m_Tree.redraw());
   }
   
   /**

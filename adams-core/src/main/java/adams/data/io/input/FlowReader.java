@@ -15,18 +15,19 @@
 
 /**
  * FlowReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.io.FileFormatHandler;
+import adams.core.option.OptionHandler;
+import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
-
-import adams.core.io.FileFormatHandler;
-import adams.core.option.OptionHandler;
-import adams.flow.core.Actor;
 
 /**
  * Interface for flow readers.
@@ -43,7 +44,7 @@ public interface FlowReader
    * @param file	the file to read from
    * @return		null in case of an error, otherwise the flow
    */
-  public Actor read(File file);
+  public Node readNode(File file);
 
   /**
    * Reads the flow from the given file.
@@ -51,7 +52,7 @@ public interface FlowReader
    * @param filename	the file to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(String filename);
+  public Node readNode(String filename);
 
   /**
    * Reads the flow from the stream. The caller must ensure to
@@ -60,7 +61,7 @@ public interface FlowReader
    * @param stream	the stream to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(InputStream stream);
+  public Node readNode(InputStream stream);
 
   /**
    * Reads the flow from the given reader. The caller must ensure to
@@ -69,7 +70,41 @@ public interface FlowReader
    * @param r		the reader to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(Reader r);
+  public Node readNode(Reader r);
+  
+  /**
+   * Reads the flow from the specified file.
+   *
+   * @param file	the file to read from
+   * @return		null in case of an error, otherwise the flow
+   */
+  public Actor readActor(File file);
+
+  /**
+   * Reads the flow from the given file.
+   *
+   * @param filename	the file to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(String filename);
+
+  /**
+   * Reads the flow from the stream. The caller must ensure to
+   * close the stream.
+   *
+   * @param stream	the stream to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(InputStream stream);
+
+  /**
+   * Reads the flow from the given reader. The caller must ensure to
+   * close the reader.
+   *
+   * @param r		the reader to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(Reader r);
   
   /**
    * Returns any warnings that were encountered while reading.

@@ -15,7 +15,7 @@
 
 /**
  * DefaultFlowReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -24,6 +24,8 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.option.NestedConsumer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
 
@@ -132,7 +134,18 @@ public class DefaultFlowReader
    * @return		the flow or null in case of an error
    */
   @Override
-  protected Actor doRead(File file) {
+  protected Node doReadNode(File file) {
+    return TreeHelper.buildTree((AbstractActor) readActor(file));
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param file	the file to read from
+   * @return		the flow or null in case of an error
+   */
+  @Override
+  protected Actor doReadActor(File file) {
     AbstractActor	result;
     NestedConsumer	consumer;
 

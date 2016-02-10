@@ -15,7 +15,7 @@
 
 /**
  * AbstractFlowReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -24,6 +24,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.BufferedReader;
@@ -128,8 +129,8 @@ public abstract class AbstractFlowReader
    * @param file	the file to read from
    * @return		null in case of an error, otherwise the flow
    */
-  public Actor read(File file) {
-    return read(file.getAbsolutePath());
+  public Node readNode(File file) {
+    return readNode(file.getAbsolutePath());
   }
 
   /**
@@ -138,8 +139,8 @@ public abstract class AbstractFlowReader
    * @param filename	the file to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(String filename) {
-    Actor		result;
+  public Node readNode(String filename) {
+    Node		result;
     BufferedReader	reader;
     InputStream		input;
 
@@ -150,15 +151,15 @@ public abstract class AbstractFlowReader
     try {
       switch (getInputType()) {
 	case FILE:
-	  result = doRead(new PlaceholderFile(filename));
+	  result = doReadNode(new PlaceholderFile(filename));
 	  break;
 	case STREAM:
 	  input = new FileInputStream(filename);
-	  result = doRead(input);
+	  result = doReadNode(input);
 	  break;
 	case READER:
 	  reader = new BufferedReader(new FileReader(filename));
-	  result = doRead(reader);
+	  result = doReadNode(reader);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled input type: " + getInputType());
@@ -185,8 +186,8 @@ public abstract class AbstractFlowReader
    * @param stream	the stream to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(InputStream stream) {
-    Actor		result;
+  public Node readNode(InputStream stream) {
+    Node	result;
 
     check();
 
@@ -195,10 +196,10 @@ public abstract class AbstractFlowReader
 	case FILE:
 	  throw new IllegalStateException("Only supports reading from files, not input streams!");
 	case STREAM:
-	  result = doRead(stream);
+	  result = doReadNode(stream);
 	  break;
 	case READER:
-	  result = doRead(new BufferedReader(new InputStreamReader(stream)));
+	  result = doReadNode(new BufferedReader(new InputStreamReader(stream)));
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled input type: " + getInputType());
@@ -219,8 +220,8 @@ public abstract class AbstractFlowReader
    * @param r		the reader to read from
    * @return		the flow or null in case of an error
    */
-  public Actor read(Reader r) {
-    Actor		result;
+  public Node readNode(Reader r) {
+    Node	result;
 
     check();
 
@@ -229,10 +230,10 @@ public abstract class AbstractFlowReader
 	case FILE:
 	  throw new IllegalStateException("Only supports reading from files, not input streams!");
 	case STREAM:
-	  result = doRead(new ReaderInputStream(r));
+	  result = doReadNode(new ReaderInputStream(r));
 	  break;
 	case READER:
-	  result = doRead(r);
+	  result = doReadNode(r);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled input type: " + getInputType());
@@ -255,7 +256,7 @@ public abstract class AbstractFlowReader
    * @return		the flow or null in case of an error
    * @see		#getInputType()
    */
-  protected Actor doRead(File file) {
+  protected Node doReadNode(File file) {
     return null;
   }
 
@@ -268,7 +269,7 @@ public abstract class AbstractFlowReader
    * @return		the flow or null in case of an error
    * @see		#getInputType()
    */
-  protected Actor doRead(Reader r) {
+  protected Node doReadNode(Reader r) {
     return null;
   }
 
@@ -281,7 +282,170 @@ public abstract class AbstractFlowReader
    * @return		the flow or null in case of an error
    * @see		#getInputType()
    */
-  protected Actor doRead(InputStream in) {
+  protected Node doReadNode(InputStream in) {
+    return null;
+  }
+  
+  /**
+   * Reads the flow from the specified file.
+   *
+   * @param file	the file to read from
+   * @return		null in case of an error, otherwise the flow
+   */
+  public Actor readActor(File file) {
+    return readActor(file.getAbsolutePath());
+  }
+
+  /**
+   * Reads the flow from the given file.
+   *
+   * @param filename	the file to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(String filename) {
+    Actor		result;
+    BufferedReader	reader;
+    InputStream		input;
+
+    check();
+    
+    reader = null;
+    input  = null;
+    try {
+      switch (getInputType()) {
+	case FILE:
+	  result = doReadActor(new PlaceholderFile(filename));
+	  break;
+	case STREAM:
+	  input = new FileInputStream(filename);
+	  result = doReadActor(input);
+	  break;
+	case READER:
+	  reader = new BufferedReader(new FileReader(filename));
+	  result = doReadActor(reader);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+      }
+    }
+    catch (Exception e) {
+      result = null;
+      e.printStackTrace();
+    }
+    finally {
+      if (!(this instanceof ChunkedSpreadSheetReader)) {
+        FileUtils.closeQuietly(reader);
+        FileUtils.closeQuietly(input);
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Reads the flow from the stream. The caller must ensure to
+   * close the stream.
+   *
+   * @param stream	the stream to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(InputStream stream) {
+    Actor	result;
+
+    check();
+
+    try {
+      switch (getInputType()) {
+	case FILE:
+	  throw new IllegalStateException("Only supports reading from files, not input streams!");
+	case STREAM:
+	  result = doReadActor(stream);
+	  break;
+	case READER:
+	  result = doReadActor(new BufferedReader(new InputStreamReader(stream)));
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+      }
+    }
+    catch (Exception e) {
+      result = null;
+      e.printStackTrace();
+    }
+
+    return result;
+  }
+
+  /**
+   * Reads the flow from the given reader. The caller must ensure to
+   * close the reader.
+   *
+   * @param r		the reader to read from
+   * @return		the flow or null in case of an error
+   */
+  public Actor readActor(Reader r) {
+    Actor	result;
+
+    check();
+
+    try {
+      switch (getInputType()) {
+	case FILE:
+	  throw new IllegalStateException("Only supports reading from files, not input streams!");
+	case STREAM:
+	  result = doReadActor(new ReaderInputStream(r));
+	  break;
+	case READER:
+	  result = doReadActor(r);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+      }
+    }
+    catch (Exception e) {
+      result = null;
+      e.printStackTrace();
+    }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading.
+   * <br><br>
+   * Default implementation returns null.
+   *
+   * @param file	the file to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Actor doReadActor(File file) {
+    return null;
+  }
+
+  /**
+   * Performs the actual reading.
+   * <br><br>
+   * Default implementation returns null.
+   *
+   * @param r		the reader to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Actor doReadActor(Reader r) {
+    return null;
+  }
+
+  /**
+   * Performs the actual reading.
+   * <br><br>
+   * Default implementation returns null.
+   *
+   * @param in		the input stream to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Actor doReadActor(InputStream in) {
     return null;
   }
   

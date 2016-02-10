@@ -15,7 +15,7 @@
 
 /**
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -55,6 +55,7 @@ import adams.gui.core.TitleGenerator;
 import adams.gui.core.ToolBarPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.flow.tree.Node;
 import adams.gui.tools.LogEntryViewerPanel;
 
 import javax.swing.BorderFactory;
@@ -758,7 +759,7 @@ public class FlowRunnerPanel
 
     m_RunningSwingWorker = true;
     worker = new SwingWorker() {
-      AbstractActor 	m_Flow;
+      Node 		m_Flow;
       List<String> 	m_Errors;
       List<String> 	m_Warnings;
 
@@ -771,7 +772,7 @@ public class FlowRunnerPanel
 
 	m_Errors   = new ArrayList<String>();
 	m_Warnings = new ArrayList<String>();
-	m_Flow     = (AbstractActor) reader.read(file);
+	m_Flow     = reader.readNode(file);
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	if (!m_Errors.isEmpty())
@@ -846,6 +847,19 @@ public class FlowRunnerPanel
   public void setCurrentFlow(AbstractActor flow) {
     m_CurrentFile = null;
     m_CurrentFlow = flow;
+  }
+
+  /**
+   * Sets the flow to work on.
+   *
+   * @param flow	the flow to use
+   */
+  public void setCurrentFlow(Node flow) {
+    m_CurrentFile = null;
+    if (flow != null)
+      m_CurrentFlow = flow.getFullActor();
+    else
+      m_CurrentFlow = null;
   }
 
   /**

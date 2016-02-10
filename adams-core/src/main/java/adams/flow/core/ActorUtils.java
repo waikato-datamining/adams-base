@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -49,6 +49,7 @@ import adams.flow.standalone.Standalones;
 import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.tree.TreeHelper;
 import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.Paintlet;
@@ -575,7 +576,7 @@ public class ActorUtils {
     DefaultFlowWriter	writer;
 
     writer = new DefaultFlowWriter();
-    result = writer.write(actor, filename);
+    result = writer.write(TreeHelper.buildTree(actor), filename);
 
     return result;
   }
@@ -614,7 +615,7 @@ public class ActorUtils {
     DefaultFlowReader	reader;
 
     reader = new DefaultFlowReader();
-    result = (AbstractActor) reader.read(filename);
+    result = (AbstractActor) reader.readActor(filename);
 
     // transfer errors/warnings
     if (errors != null)

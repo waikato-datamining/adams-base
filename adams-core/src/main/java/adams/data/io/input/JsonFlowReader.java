@@ -15,15 +15,17 @@
 
 /**
  * JsonFlowReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.File;
 
 import adams.core.option.JsonConsumer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
+
+import java.io.File;
 
 /**
  * Reads flows in JSON format.
@@ -85,7 +87,18 @@ public class JsonFlowReader
    * @return		the flow or null in case of an error
    */
   @Override
-  protected Actor doRead(File file) {
+  protected Node doReadNode(File file) {
+    return TreeHelper.buildTree((AbstractActor) readActor(file));
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param file	the file to read from
+   * @return		the flow or null in case of an error
+   */
+  @Override
+  protected Actor doReadActor(File file) {
     AbstractActor	result;
     JsonConsumer	consumer;
 

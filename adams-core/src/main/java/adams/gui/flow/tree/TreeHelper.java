@@ -26,7 +26,6 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
 import adams.gui.core.ConsolePanel;
 
-import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
@@ -285,10 +284,8 @@ public class TreeHelper {
     }
 
     if ((parent != null) && append) {
-      SwingUtilities.invokeLater(() -> {
-	for (Node node : result)
-	  parent.add(node);
-      });
+      for (Node node : result)
+	parent.add(node);
     }
 
     return result;

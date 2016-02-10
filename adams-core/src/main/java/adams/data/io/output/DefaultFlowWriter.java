@@ -24,6 +24,7 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
 import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
 
 import java.io.File;
 
@@ -123,6 +124,18 @@ public class DefaultFlowWriter
    */
   public String encodingTipText() {
     return "The type of encoding to use when writing the file, use empty string for default.";
+  }
+
+  /**
+   * Writes the given content to the specified file.
+   *
+   * @param content	the content to write
+   * @param file	the file to write to
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean doWrite(Node content, File file) {
+    return write(content.getFullActor(), file);
   }
 
   /**
