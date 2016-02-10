@@ -33,7 +33,9 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.data.io.input.DefaultFlowReader;
+import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
+import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
@@ -48,6 +50,7 @@ import adams.flow.source.SequenceSource;
 import adams.flow.standalone.Standalones;
 import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.TreeHelper;
 import adams.gui.visualization.core.FlowAwarePaintlet;
@@ -112,6 +115,9 @@ public class ActorUtils {
   
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(ActorUtils.class);
+
+  /** the chooser for determining the file formats. */
+  protected static FlowFileChooser m_Chooser;
 
   /**
    * Enumerates all children of the given actor (depth-first search).
@@ -565,6 +571,17 @@ public class ActorUtils {
   }
 
   /**
+   * Returns the filechooser instance to use.
+   *
+   * @return		the chooser
+   */
+  protected synchronized static FlowFileChooser getFileChooser() {
+    if (m_Chooser == null)
+      m_Chooser = new FlowFileChooser();
+    return m_Chooser;
+  }
+
+  /**
    * Writes the actor to a file.
    *
    * @param filename	the file to write to
@@ -573,9 +590,11 @@ public class ActorUtils {
    */
   public static boolean write(String filename, AbstractActor actor) {
     boolean		result;
-    DefaultFlowWriter	writer;
+    FlowWriter 		writer;
 
-    writer = new DefaultFlowWriter();
+    writer = getFileChooser().getWriterForFile(new File(filename));
+    if (writer == null)
+      writer = new DefaultFlowWriter();
     result = writer.write(TreeHelper.buildTree(actor), filename);
 
     return result;
@@ -612,9 +631,11 @@ public class ActorUtils {
    */
   public static AbstractActor read(String filename, List<String> errors, List<String> warnings) {
     AbstractActor	result;
-    DefaultFlowReader	reader;
+    FlowReader 		reader;
 
-    reader = new DefaultFlowReader();
+    reader = getFileChooser().getReaderForFile(new File(filename));
+    if (reader == null)
+      reader = new DefaultFlowReader();
     result = (AbstractActor) reader.readActor(filename);
 
     // transfer errors/warnings
