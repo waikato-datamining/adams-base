@@ -76,10 +76,12 @@ public class ExpandCollapseExternalFlow
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (m_State.selNode.getExpansionOccurred())
-      m_State.selNode.collapse();
-    else
-      m_State.selNode.expand();
-    SwingUtilities.invokeLater(() -> m_State.tree.nodeStructureChanged(m_State.selNode));
+    new Thread(() -> {
+      if (m_State.selNode.getExpansionOccurred())
+        m_State.selNode.collapse();
+      else
+        m_State.selNode.expand();
+      SwingUtilities.invokeLater(() -> m_State.tree.nodeStructureChanged(m_State.selNode));
+    }).start();
   }
 }
