@@ -712,7 +712,6 @@ public class Node
 
     // create actor with only default sub-actors
     if (actor instanceof ActorHandler) {
-      result   = (AbstractActor) Utils.newInstance(actor);
       producer = new NestedProducer();
       producer.setBlacklisted(new Class[]{AbstractActor[].class, AbstractActor.class, Actor[].class, Actor.class});
       producer.produce(actor);
