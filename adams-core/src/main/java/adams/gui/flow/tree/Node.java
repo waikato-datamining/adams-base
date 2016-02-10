@@ -886,40 +886,6 @@ public class Node
   public boolean isEditable() {
     return m_Editable;
   }
-  
-  /**
-   * Expands the node, if not yet occurred.
-   * 
-   * @return		true if structure below node was changed
-   */
-  @Override
-  public synchronized boolean expand() {
-    boolean	result;
-    
-    result = super.expand();
-
-    if (result && hasOwner())
-      getOwner().nodeStructureChanged(this);
-    
-    return result;
-  }
-  
-  /**
-   * Collapses the node and removes all children, resetting the node.
-   * 
-   * @return		true if sub-tree was changed
-   */
-  @Override
-  public synchronized boolean collapse() {
-    boolean	result;
-    
-    result = super.collapse();
-    
-    if (result && hasOwner())
-      getOwner().nodeStructureChanged(this);
-    
-    return result;
-  }
 
   /**
    * Returns the (cached) commandline of the actor.
