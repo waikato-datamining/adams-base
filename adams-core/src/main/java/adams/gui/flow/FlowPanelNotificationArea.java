@@ -15,7 +15,7 @@
 
 /**
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -125,45 +125,30 @@ public class FlowPanelNotificationArea
     
     m_ButtonClose = new JButton("Close");
     m_ButtonClose.setIcon(GUIHelper.getIcon("delete.gif"));
-    m_ButtonClose.addActionListener(new ActionListener() {      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        clearNotification();
-        notifyCloseListeners();
-      }
+    m_ButtonClose.addActionListener((ActionEvent e) -> {
+      clearNotification();
+      notifyCloseListeners();
     });
     panelButtons.add(m_ButtonClose);
 
     m_ButtonCloseAndCleanUp = new JButton("Close/Clean up");
     m_ButtonCloseAndCleanUp.setIcon(GUIHelper.getIcon("close_window.png"));
-    m_ButtonCloseAndCleanUp.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (getOwner() != null)
-	  getOwner().cleanUp();
-        clearNotification();
-        notifyCloseListeners();
-      }
+    m_ButtonCloseAndCleanUp.addActionListener((ActionEvent e) -> {
+      if (getOwner() != null)
+        getOwner().cleanUp();
+      clearNotification();
+      notifyCloseListeners();
     });
     panelButtons.add(m_ButtonCloseAndCleanUp);
 
     m_ButtonCopy = new JButton("Copy");
     m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
-    m_ButtonCopy.addActionListener(new ActionListener() {      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(m_TextNotification.getContent());
-      }
-    });
+    m_ButtonCopy.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(m_TextNotification.getContent()));
     panelButtons.add(m_ButtonCopy);
 
     m_CheckBoxConsole = new JCheckBox("Console output");
     m_CheckBoxConsole.setSelected(false);
-    m_CheckBoxConsole.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	update();
-      }
-    });
+    m_CheckBoxConsole.addActionListener((ActionEvent e) -> update());
     panelButtons.add(m_CheckBoxConsole);
   }
   
@@ -291,12 +276,7 @@ public class FlowPanelNotificationArea
       menu.add(submenu);
       for (final String path: paths) {
 	menuitem = new JMenuItem(path);
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    getOwner().getTree().locateAndDisplay(path);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> getOwner().getTree().locateAndDisplay(path));
 	submenu.add(menuitem);
       }
 
@@ -304,12 +284,7 @@ public class FlowPanelNotificationArea
       menu.add(submenu);
       for (final String path: paths) {
 	menuitem = new JMenuItem(path);
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    GUIHelper.copyToClipboard(path);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(path));
 	submenu.add(menuitem);
       }
     }

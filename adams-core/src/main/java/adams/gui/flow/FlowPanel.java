@@ -58,7 +58,6 @@ import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
-import adams.gui.event.ActorChangeListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
@@ -74,11 +73,9 @@ import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -359,7 +356,7 @@ public class FlowPanel
     /**
      * Displays a message.
      * 
-     * @param msg		the message to display
+     * @param msg	the message to display
      */
     @Override
     public void showStatus(String msg) {
@@ -369,11 +366,20 @@ public class FlowPanel
     /**
      * Displays the given message in a separate dialog.
      *
-     * @param msg		the message to display
+     * @param msg	the message to display
      * @param isError	whether it is an error message
      */
     public void showNotification(String msg, boolean isError) {
       m_Owner.showNotification(msg, isError);
+    }
+
+    /**
+     * Returns the flow.
+     *
+     * @return		the flow
+     */
+    public AbstractActor getFlow() {
+      return m_Flow;
     }
   }
   
@@ -382,9 +388,6 @@ public class FlowPanel
 
   /** the owner. */
   protected FlowTabbedPane m_Owner;
-
-  /** the current flow. */
-  protected AbstractActor m_CurrentFlow;
 
   /** the last flow that was run. */
   protected AbstractActor m_LastFlow;
@@ -472,7 +475,6 @@ public class FlowPanel
   protected void initialize() {
     super.initialize();
 
-    m_CurrentFlow           = null;
     m_LastFlow              = null;
     m_CurrentFile           = null;
     m_RecentFilesHandler    = null;
@@ -547,39 +549,23 @@ public class FlowPanel
     }
     m_Tree.setKeyboardActions(keyboardActions);
 
-    m_Tree.addActorChangeListener(new ActorChangeListener() {
-      @Override
-      public void actorChanged(ActorChangeEvent e) {
-	update();
-      }
-    });
-    m_Tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-	if (m_Tree.getSelectionPath() != null)
-	  showStatus(m_Tree.getSelectedFullName());
-      }
+    m_Tree.addActorChangeListener((ActorChangeEvent e) -> update());
+    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
+      if (m_Tree.getSelectionPath() != null)
+	showStatus(m_Tree.getSelectedFullName());
     });
 
     m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
 
     // the tabs
-    m_Tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-	if (getEditor() != null)
-	  getEditor().getTabs().notifyTabs(m_Tree.getSelectionPaths(), m_Tree.getSelectedActors());
-      }
+    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
+      if (getEditor() != null)
+	getEditor().getTabs().notifyTabs(m_Tree.getSelectionPaths(), m_Tree.getSelectedActors());
     });
     
     m_PanelNotification = new FlowPanelNotificationArea();
     m_PanelNotification.setOwner(this);
-    m_PanelNotification.addCloseListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	clearNotification();
-      }
-    });
+    m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
     m_SplitPane.setBottomComponent(m_PanelNotification);
     m_SplitPane.setBottomComponentHidden(true);
   }
@@ -768,7 +754,6 @@ public class FlowPanel
 
     cleanUp();
 
-    m_CurrentFlow = null;
     getTree().setActor(null);
     getTree().setActor(actor);
     getTree().setModified(false);
@@ -920,12 +905,11 @@ public class FlowPanel
    * @param flow	the flow to use
    */
   public void setCurrentFlow(AbstractActor flow) {
-    m_CurrentFlow = flow;
-
-    if (flow != null) {
+    if (flow != null)
       getTree().setActor(flow);
-      getTree().setModified(false);
-    }
+    else
+      getTree().setActor(null);
+    getTree().setModified(false);
 
     setCurrentFile(null);
     setTitle(PREFIX_FLOW + next());
@@ -937,16 +921,11 @@ public class FlowPanel
    * @param flow	the flow to use
    */
   public void setCurrentFlow(Node flow) {
-    if (flow != null) {
-      m_CurrentFlow = flow.getFullActor();
+    if (flow != null)
       getTree().buildTree(flow);
-      getTree().setModified(false);
-    }
-    else {
-      m_CurrentFlow = null;
+    else
       getTree().setActor(null);
-      getTree().setModified(false);
-    }
+    getTree().setModified(false);
 
     setCurrentFile(null);
     setTitle(PREFIX_FLOW + next());
@@ -960,6 +939,7 @@ public class FlowPanel
    * instead.
    *
    * @return		the current flow
+   * @see		#getCurrentRoot()
    */
   public AbstractActor getCurrentFlow() {
     return getCurrentFlow(null);
@@ -974,6 +954,7 @@ public class FlowPanel
    *
    * @param errors	for storing potential errors, use null to ignore
    * @return		the current flow
+   * @see		#getCurrentRoot()
    */
   public AbstractActor getCurrentFlow(StringBuilder errors) {
     return getTree().getActor(errors);
@@ -997,7 +978,7 @@ public class FlowPanel
    */
   public AbstractActor getRunningFlow() {
     if (isRunning())
-      return m_CurrentFlow;
+      return m_CurrentWorker.getFlow();
     else
       return null;
   }
@@ -1512,7 +1493,7 @@ public class FlowPanel
       dialog.setLocationRelativeTo(null);
     }
 
-    m_PanelVariables.setVariables(m_CurrentFlow.getVariables());
+    m_PanelVariables.setVariables(getRunningFlow().getVariables());
     m_PanelVariables.getParentDialog().setVisible(true);
   }
 
@@ -1535,7 +1516,7 @@ public class FlowPanel
       dialog.setLocationRelativeTo(null);
     }
 
-    m_PanelStorage.setHandler(m_CurrentFlow.getStorageHandler());
+    m_PanelStorage.setHandler(getRunningFlow().getStorageHandler());
     m_PanelStorage.getParentDialog().setVisible(true);
   }
 
