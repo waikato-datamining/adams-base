@@ -153,7 +153,7 @@ public class DefaultFlowWriter
    * @return		the default for missing values
    */
   protected boolean getDefaultUseCompact() {
-    return false;
+    return true;
   }
 
   /**
