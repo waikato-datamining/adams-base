@@ -1,3 +1,7 @@
+# whether to show the large tooltip with the global info and capabilities
+# in the class tree
+ShowGlobalInfoToolTip=false
+
 # Extensions for weka.classifiers.meta.MultiSearch
 weka.core.setupgenerator.AbstractParameter=weka.gui.GenericObjectEditor
 weka.core.setupgenerator.AbstractParameter[]=weka.gui.GenericArrayEditor
