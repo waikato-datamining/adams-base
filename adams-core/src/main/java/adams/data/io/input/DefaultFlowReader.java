@@ -19,6 +19,7 @@
  */
 package adams.data.io.input;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
@@ -217,15 +218,15 @@ public class DefaultFlowReader
   protected Node doReadNode(File file) {
     Node		result;
     List<String>	lines;
-    StringBuilder	errors;
+    MessageCollection errors;
 
     lines = new ArrayList<>();
     if (isCompact(file, lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      errors = new StringBuilder();
+      errors = new MessageCollection();
       result = TreeHelper.buildTree(lines, errors);
-      if (errors.length() > 0)
-	m_Errors.add(errors.toString());
+      if (!errors.isEmpty())
+	m_Errors.addAll(errors.toList());
     }
     else {
       result = TreeHelper.buildTree(readNonCompact(lines));
@@ -245,16 +246,16 @@ public class DefaultFlowReader
     AbstractActor	result;
     List<String>	lines;
     Node		node;
-    StringBuilder	errors;
+    MessageCollection	errors;
 
     result = null;
     lines  = new ArrayList<>();
     if (isCompact(file, lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      errors = new StringBuilder();
+      errors = new MessageCollection();
       node   = TreeHelper.buildTree(lines, errors);
-      if (errors.length() > 0)
-	m_Errors.add(errors.toString());
+      if (!errors.isEmpty())
+	m_Errors.addAll(errors.toList());
       if (node != null)
 	result = node.getFullActor();
     }
