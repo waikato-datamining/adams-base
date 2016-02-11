@@ -16,12 +16,13 @@
 /**
  * MOAClusterVisualization.java
  * Copyright (C) 2010 Jansen moa@cs.rwth-aachen.de
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
 
 import adams.core.License;
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseMeasureCollection;
@@ -662,7 +663,17 @@ public class MOAClusterVisualization
    * @return		the clusterer
    */
   protected AbstractClusterer getClustererInstance() {
-    return (AbstractClusterer) CallableActorHelper.getSetup(AbstractClusterer.class, m_Clusterer, this);
+    AbstractClusterer 	result;
+    MessageCollection	errors;
+
+    errors = new MessageCollection();
+    result = (AbstractClusterer) CallableActorHelper.getSetup(AbstractClusterer.class, m_Clusterer, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**

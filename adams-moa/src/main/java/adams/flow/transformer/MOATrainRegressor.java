@@ -15,11 +15,12 @@
 
 /*
  * MOATrainRegressor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
@@ -224,7 +225,17 @@ public class MOATrainRegressor
    * @return		the regressor
    */
   protected moa.classifiers.Classifier getRegressorInstance() {
-    return (moa.classifiers.Classifier) CallableActorHelper.getSetup(moa.classifiers.Regressor.class, m_Regressor, this);
+    moa.classifiers.Classifier	result;
+    MessageCollection		errors;
+
+    errors = new MessageCollection();
+    result = (moa.classifiers.Classifier) CallableActorHelper.getSetup(moa.classifiers.Regressor.class, m_Regressor, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**

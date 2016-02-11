@@ -15,13 +15,15 @@
 
 /**
  * MOAClassification.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
+import adams.flow.container.WekaModelContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
@@ -244,13 +246,26 @@ public class MOAClassification
   protected String setUpModel(Actor owner) {
     String		result;
     String		msg;
+    Object		obj;
+    MessageCollection	errors;
 
     result = null;
 
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	m_Model = (AbstractClassifier) CallableActorHelper.getSetup(AbstractClassifier.class, m_ModelActor, (AbstractActor) owner);
+	errors = new MessageCollection();
+	obj    = CallableActorHelper.getSetup(AbstractClassifier.class, m_ModelActor, (AbstractActor) owner, errors);
+	if (obj == null) {
+	  if (!errors.isEmpty())
+	    result = errors.toString();
+	}
+	else {
+	  if (obj instanceof WekaModelContainer)
+	    m_Model = (AbstractClassifier) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
+	  else
+	    m_Model = (AbstractClassifier) obj;
+	}
       }
       catch (Exception e) {
 	m_Model = null;

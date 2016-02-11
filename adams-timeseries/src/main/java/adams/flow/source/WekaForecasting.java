@@ -15,11 +15,12 @@
 
 /*
  * WekaForecasting.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
@@ -334,19 +335,27 @@ public class WekaForecasting
    * @return		null if everything worked, otherwise an error message
    */
   protected String setUpModel() {
-    String	result;
-    Object	obj;
+    String		result;
+    Object		obj;
+    MessageCollection	errors;
 
     result = null;
 
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	obj = CallableActorHelper.getSetup(null, m_ModelActor, this);
-	if (obj instanceof WekaModelContainer)
-	  m_Model = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
-	else if (obj instanceof AbstractForecaster)
-	  m_Model = (AbstractForecaster) obj;
+	errors = new MessageCollection();
+	obj    = CallableActorHelper.getSetup(null, m_ModelActor, this, errors);
+	if (obj == null) {
+	  if (!errors.isEmpty())
+	    result = errors.toString();
+	}
+	else {
+	  if (obj instanceof WekaModelContainer)
+	    m_Model = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
+	  else if (obj instanceof AbstractForecaster)
+	    m_Model = (AbstractForecaster) obj;
+	}
       }
       catch (Exception e) {
 	m_Model = null;

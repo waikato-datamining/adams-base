@@ -15,20 +15,16 @@
 
 /*
  * WekaTrainClusterer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.clusterers.UpdateableClusterer;
-import weka.core.Instance;
-import weka.core.Instances;
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -38,6 +34,11 @@ import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.source.WekaClustererSetup;
 import adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor;
 import adams.flow.transformer.wekaclusterer.PassThrough;
+import weka.clusterers.UpdateableClusterer;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -308,10 +309,16 @@ public class WekaTrainClusterer
    */
   protected weka.clusterers.Clusterer getClustererInstance() throws Exception {
     weka.clusterers.Clusterer   result;
+    MessageCollection		errors;
 
-    result = (weka.clusterers.Clusterer) CallableActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this);
-    if (result == null)
-      throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "'!");
+    errors = new MessageCollection();
+    result = (weka.clusterers.Clusterer) CallableActorHelper.getSetup(weka.clusterers.Clusterer.class, m_Clusterer, this, errors);
+    if (result == null) {
+      if (errors.isEmpty())
+	throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "'!");
+      else
+	throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "':\n" + errors);
+    }
 
     return result;
   }

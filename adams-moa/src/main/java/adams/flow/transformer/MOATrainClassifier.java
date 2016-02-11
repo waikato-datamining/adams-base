@@ -15,25 +15,26 @@
 
 /*
  * MOATrainClassifier.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
+import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
+import adams.flow.container.WekaModelContainer;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.Token;
+import adams.flow.source.MOAClassifierSetup;
 import moa.classifiers.trees.DecisionStump;
 import moa.options.ClassOption;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.QuickInfoHelper;
-import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallableActorHelper;
-import adams.flow.core.Token;
-import adams.flow.source.MOAClassifierSetup;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -219,7 +220,17 @@ public class MOATrainClassifier
    * @return		the classifier
    */
   protected moa.classifiers.Classifier getClassifierInstance() {
-    return (moa.classifiers.Classifier) CallableActorHelper.getSetup(moa.classifiers.Classifier.class, m_Classifier, this);
+    moa.classifiers.Classifier	result;
+    MessageCollection		errors;
+
+    errors = new MessageCollection();
+    result = (moa.classifiers.Classifier) CallableActorHelper.getSetup(moa.classifiers.Classifier.class, m_Classifier, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**

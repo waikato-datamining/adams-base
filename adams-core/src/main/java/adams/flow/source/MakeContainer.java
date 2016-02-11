@@ -15,26 +15,27 @@
 
 /*
  * MakeContainer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.Iterator;
-
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.flow.container.AbstractContainer;
 import adams.flow.container.SequencePlotterContainer;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -313,7 +314,18 @@ public class MakeContainer
    * @return		the obtained value
    */
   protected Object getValue(CallableActorReference name) {
-    return CallableActorHelper.getSetupFromSource(null, name, this);
+    Object		result;
+    MessageCollection errors;
+
+    errors = new MessageCollection();
+
+    result = CallableActorHelper.getSetupFromSource(null, name, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**

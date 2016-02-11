@@ -15,10 +15,11 @@
 
 /**
  * Image.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.core.CallableActorHelper;
@@ -251,17 +252,25 @@ public class Image
     Graphics		g;
     Object		obj;
     BufferedImage	todraw;
+    MessageCollection	errors;
 
     result = null;
 
-    obj    = CallableActorHelper.getSetupFromSource(Object.class, m_ImageActor, m_Owner);
+    errors = new MessageCollection();
+    obj    = CallableActorHelper.getSetupFromSource(Object.class, m_ImageActor, m_Owner, errors);
     todraw = null;
-    if (obj instanceof BufferedImage)
-      todraw = (BufferedImage) obj;
-    else if (obj instanceof AbstractImageContainer)
-      todraw = ((AbstractImageContainer) obj).toBufferedImage();
-    else
-      result = "Unknown image class: " + obj.getClass().getName();
+    if (obj == null) {
+      if (!errors.isEmpty())
+	result = errors.toString();
+    }
+    else {
+      if (obj instanceof BufferedImage)
+	todraw = (BufferedImage) obj;
+      else if (obj instanceof AbstractImageContainer)
+	todraw = ((AbstractImageContainer) obj).toBufferedImage();
+      else
+	result = "Unknown image class: " + obj.getClass().getName();
+    }
     
     if ((result == null) && (todraw != null)) {
       g = image.getGraphics();

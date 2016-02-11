@@ -15,13 +15,15 @@
 
 /**
  * WekaClassification.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
+import adams.flow.container.WekaModelContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
@@ -178,8 +180,9 @@ public class WekaClassification
    */
   public String modelActorTipText() {
     return
-        "The callable actor to use for obtaining the model in case serialized "
-      + "model file points to a directory.";
+      "The callable actor to use for obtaining the model in case serialized "
+	+ "model file points to a directory; can be a "
+	+ WekaModelContainer.class.getName() + " as well.";
   }
 
   /**
@@ -247,13 +250,26 @@ public class WekaClassification
     String		result;
     String		msg;
     Capabilities	caps;
+    Object		obj;
+    MessageCollection errors;
 
     result = null;
 
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	m_Model = (Classifier) CallableActorHelper.getSetup(Classifier.class, m_ModelActor, (AbstractActor) owner);
+	errors  = new MessageCollection();
+	obj     = CallableActorHelper.getSetup(Classifier.class, m_ModelActor, (AbstractActor) owner, errors);
+	if (obj == null) {
+	  if (!errors.isEmpty())
+	    result = errors.toString();
+	}
+	else {
+	  if (obj instanceof WekaModelContainer)
+	    m_Model = (Classifier) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
+	  else
+	    m_Model = (Classifier) obj;
+	}
       }
       catch (Exception e) {
 	m_Model = null;

@@ -15,11 +15,12 @@
 
 /*
  * WekaPrimeForecaster.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import weka.classifiers.timeseries.AbstractForecaster;
 import weka.classifiers.timeseries.core.IncrementallyPrimeable;
 import weka.core.Instance;
@@ -195,14 +196,22 @@ public class WekaPrimeForecaster
   protected AbstractForecaster getForecasterInstance() {
     AbstractForecaster	result;
     Object		obj;
+    MessageCollection	errors;
     
     result = null;
-    
-    obj = CallableActorHelper.getSetup(Object.class, m_Forecaster, this);
-    if (obj instanceof WekaModelContainer)
-      result = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
-    else if (obj instanceof AbstractForecaster)
-      result = (AbstractForecaster) obj;
+
+    errors = new MessageCollection();
+    obj    = CallableActorHelper.getSetup(Object.class, m_Forecaster, this, errors);
+    if (obj == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+    else {
+      if (obj instanceof WekaModelContainer)
+	result = (AbstractForecaster) ((WekaModelContainer) obj).getValue(WekaModelContainer.VALUE_MODEL);
+      else if (obj instanceof AbstractForecaster)
+	result = (AbstractForecaster) obj;
+    }
     
     return result;
   }

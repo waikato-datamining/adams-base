@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.VariableName;
@@ -388,19 +389,27 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    * @return		null if everything worked, otherwise an error message
    */
   protected String setUpModel() {
-    String	result;
-    Object	obj;
+    String		result;
+    Object		obj;
+    MessageCollection errors;
 
     result = null;
 
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	obj = CallableActorHelper.getSetup(null, m_ModelActor, this);
-	if (obj instanceof AbstractContainer)
-	  m_Model = getModelFromContainer((AbstractContainer) obj);
-	else
-	  m_Model = (T) obj;
+	errors = new MessageCollection();
+	obj    = CallableActorHelper.getSetup(null, m_ModelActor, this, errors);
+	if (obj == null) {
+	  if (!errors.isEmpty())
+	    result = errors.toString();
+	}
+	else {
+	  if (obj instanceof AbstractContainer)
+	    m_Model = getModelFromContainer((AbstractContainer) obj);
+	  else
+	    m_Model = (T) obj;
+	}
       }
       catch (Exception e) {
 	m_Model = null;

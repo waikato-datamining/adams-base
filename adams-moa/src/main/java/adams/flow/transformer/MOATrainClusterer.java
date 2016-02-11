@@ -15,23 +15,24 @@
 
 /*
  * MOATrainClusterer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
+import adams.flow.container.WekaModelContainer;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.Token;
+import adams.flow.source.MOAClustererSetup;
+import weka.core.Instance;
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
-import weka.core.Instance;
-import weka.core.Instances;
-import adams.core.QuickInfoHelper;
-import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallableActorHelper;
-import adams.flow.core.Token;
-import adams.flow.source.MOAClustererSetup;
 
 /**
  <!-- globalinfo-start -->
@@ -297,7 +298,17 @@ public class MOATrainClusterer
    * @return		the clusterer
    */
   protected moa.clusterers.Clusterer getClustererInstance() {
-    return (moa.clusterers.Clusterer) CallableActorHelper.getSetup(moa.clusterers.Clusterer.class, m_Clusterer, this);
+    moa.clusterers.Clusterer	result;
+    MessageCollection		errors;
+
+    errors = new MessageCollection();
+    result = (moa.clusterers.Clusterer) CallableActorHelper.getSetup(moa.clusterers.Clusterer.class, m_Clusterer, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**

@@ -15,14 +15,16 @@
 
 /**
  * WekaReorderAttributesToReference.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
+import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.Token;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -34,11 +36,10 @@ import weka.filters.Filter;
 import weka.filters.MultiFilter;
 import weka.filters.unsupervised.attribute.Add;
 import weka.filters.unsupervised.attribute.Reorder;
-import adams.core.QuickInfoHelper;
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallableActorHelper;
-import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -593,13 +594,19 @@ public class WekaReorderAttributesToReference
     String		result;
     AbstractFileLoader	loader;
     DataSource		source;
+    MessageCollection	errors;
 
     result = null;
 
     if (m_ReferenceFile.isDirectory()) {
       // obtain reference from callable actor
       try {
-	m_Reference = (Instances) CallableActorHelper.getSetupFromSource(null, m_ReferenceActor, this);
+	errors      = new MessageCollection();
+	m_Reference = (Instances) CallableActorHelper.getSetupFromSource(null, m_ReferenceActor, this, errors);
+	if (m_Reference == null) {
+	  if (!errors.isEmpty())
+	    result = errors.toString();
+	}
       }
       catch (Exception e) {
 	m_Reference = null;

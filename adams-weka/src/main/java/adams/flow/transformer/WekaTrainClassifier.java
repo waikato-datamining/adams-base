@@ -15,22 +15,16 @@
 
 /*
  * WekaTrainClassifier.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Hashtable;
-
-import weka.classifiers.UpdateableClassifier;
-import weka.core.Instance;
-import weka.core.Instances;
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -38,6 +32,13 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.source.WekaClassifierSetup;
+import weka.classifiers.UpdateableClassifier;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -302,11 +303,17 @@ public class WekaTrainClassifier
    * @throws Exception  if fails to obtain classifier
    */
   protected weka.classifiers.Classifier getClassifierInstance() throws Exception {
-    weka.classifiers.Classifier   result;
+    weka.classifiers.Classifier	result;
+    MessageCollection		errors;
 
-    result = (weka.classifiers.Classifier) CallableActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this);
-    if (result == null)
-      throw new IllegalStateException("Failed to obtain classifier from '" + m_Classifier + "'!");
+    errors = new MessageCollection();
+    result = (weka.classifiers.Classifier) CallableActorHelper.getSetup(weka.classifiers.Classifier.class, m_Classifier, this, errors);
+    if (result == null) {
+      if (errors.isEmpty())
+	throw new IllegalStateException("Failed to obtain classifier from '" + m_Classifier + "'!");
+      else
+	throw new IllegalStateException("Failed to obtain classifier from '" + m_Classifier + "':\n" + errors);
+    }
 
     return result;
   }

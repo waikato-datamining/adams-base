@@ -15,19 +15,20 @@
 
 /*
  * CallableActorHelper.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.util.List;
-
+import adams.core.MessageCollection;
 import adams.core.logging.LoggingObject;
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.sink.CallableSink;
 import adams.flow.source.CallableSource;
 import adams.flow.standalone.CallableActors;
 import adams.flow.transformer.CallableTransformer;
+
+import java.util.List;
 
 /**
  * Helper class for callable actors.
@@ -140,28 +141,34 @@ public class CallableActorHelper
    * token is provided.
    *
    * @param cls		the class that the output must match, null to ignore
-   * @param callableName	the callable actor referenced
+   * @param name	the callable actor referenced
    * @param start	where the search starts from
    * @param callable	the callable actor (source or transformer) to use
+   * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  protected static Object getSetup(Class cls, CallableActorReference callableName, AbstractActor start, AbstractCallableActor callable) {
+  protected static Object getSetup(Class cls, CallableActorReference name, AbstractActor start, AbstractCallableActor callable, MessageCollection errors) {
     Object		result;
     AbstractActor	actor;
     Token		token;
+    String		msg;
 
     result = null;
 
-    callable.setCallableName(callableName);
+    callable.setCallableName(name);
     callable.setParent(start.getParent());
-    if (callable.setUp() == null) {
-      callable.execute();
+    msg = callable.setUp();
+    if (msg == null) {
+      msg   = callable.execute();
       token = ((OutputProducer) callable).output();
       if (token != null) {
 	result = token.getPayload();
 	if (cls != null) {
 	  if (!cls.isInstance(result))
 	    result = null;
+	}
+	else {
+	  errors.add("No payload in token obtained from " + name);
 	}
 	actor = callable.getCallableActor();
 	callable.wrapUp();
@@ -170,6 +177,13 @@ public class CallableActorHelper
 	if (actor != null)
 	  actor.setUp();
       }
+      else {
+	if (msg != null)
+	  errors.add(msg);
+      }
+    }
+    else {
+      errors.add(msg);
     }
 
     return result;
@@ -181,19 +195,28 @@ public class CallableActorHelper
    * token is provided.
    *
    * @param cls		the class that the output must match, null to ignore
-   * @param callableName	the callable actor referenced
+   * @param name	the callable actor referenced
    * @param start	where the search starts from
+   * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetup(Class cls, CallableActorReference callableName, AbstractActor start) {
+  public static Object getSetup(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
     Object	result;
     
     // source?
-    result = getSetupFromSource(cls, callableName, start);
+    result = getSetupFromSource(cls, name, start, errors);
+    if (result == null)
+      errors.add("Failed to obtain setup from '" + name + "' (treated as source)");
     
     // transformer?
-    if (result == null)
-      result = getSetupFromTransformer(cls, callableName, start);
+    if (result == null) {
+      result = getSetupFromTransformer(cls, name, start, errors);
+      if (result == null)
+	errors.add("\nFailed to obtain setup from '" + name + "' (treated as transformer)");
+    }
+
+    if (result != null)
+      errors.clear();
     
     return result;
   }
@@ -202,12 +225,13 @@ public class CallableActorHelper
    * Returns the setup obtained from the callable source.
    *
    * @param cls		the class that the output must match, null to ignore
-   * @param callableName	the callable actor referenced
+   * @param name	the callable actor referenced
    * @param start	where the search starts from
+   * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetupFromSource(Class cls, CallableActorReference callableName, AbstractActor start) {
-    return getSetup(cls, callableName, start, new CallableSource());
+  public static Object getSetupFromSource(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
+    return getSetup(cls, name, start, new CallableSource(), errors);
   }
 
   /**
@@ -215,12 +239,12 @@ public class CallableActorHelper
    * The transformer must output a setup if no input token is provided.
    *
    * @param cls		the class that the output must match, null to ignore
-   * @param callableName	the callable actor referenced
+   * @param name	the callable actor referenced
    * @param start	where the search starts from
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetupFromTransformer(Class cls, CallableActorReference callableName, AbstractActor start) {
-    return getSetup(cls, callableName, start, new CallableTransformer());
+  public static Object getSetupFromTransformer(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
+    return getSetup(cls, name, start, new CallableTransformer(), errors);
   }
   
   /**

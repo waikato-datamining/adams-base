@@ -15,11 +15,12 @@
 
 /*
  * WekaTrainForecaster.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import weka.classifiers.timeseries.AbstractForecaster;
 import weka.classifiers.timeseries.core.TSLagUser;
 import weka.core.Instances;
@@ -240,7 +241,17 @@ public class WekaTrainForecaster
    * @return		the forecaster
    */
   protected AbstractForecaster getForecasterInstance() {
-    return (AbstractForecaster) CallableActorHelper.getSetup(AbstractForecaster.class, m_Forecaster, this);
+    AbstractForecaster	result;
+    MessageCollection	errors;
+
+    errors = new MessageCollection();
+    result = (AbstractForecaster) CallableActorHelper.getSetup(AbstractForecaster.class, m_Forecaster, this, errors);
+    if (result == null) {
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
+    }
+
+    return result;
   }
 
   /**
