@@ -47,6 +47,13 @@ public class MessageCollection
   }
 
   /**
+   * Clears all messages.
+   */
+  public void clear() {
+    m_Messages.clear();
+  }
+
+  /**
    * Checks whether any messages were collected.
    *
    * @return		true if at least one message collected
