@@ -15,7 +15,7 @@
 
 /**
  * AbstractProcessWekaInstanceWithModel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -24,6 +24,8 @@ import adams.core.SerializationHelper;
 import adams.core.VariableName;
 import adams.core.io.PlaceholderFile;
 import adams.event.VariableChangeEvent;
+import adams.flow.container.AbstractContainer;
+import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
@@ -165,8 +167,9 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   public String modelActorTipText() {
     return
-        "The callable actor to use for obtaining the model in case serialized "
-      + "model file points to a directory.";
+      "The callable actor to use for obtaining the model in case serialized "
+	+ "model file points to a directory (can be a "
+	+ getModelContainerClass().getName() + " as well).";
   }
 
   /**
@@ -361,19 +364,43 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
+   * Returns the model container class that is supported.
+   *
+   * @return		the class
+   */
+  protected Class getModelContainerClass() {
+    return WekaModelContainer.class;
+  }
+
+  /**
+   * Retrieves the model from the container.
+   *
+   * @param cont	the container to get the model from
+   * @return		the model, null if not in container
+   */
+  protected T getModelFromContainer(AbstractContainer cont) {
+    return (T) cont.getValue(WekaModelContainer.VALUE_MODEL);
+  }
+
+  /**
    * Loads the model from the model file.
    *
    * @return		null if everything worked, otherwise an error message
    */
   protected String setUpModel() {
     String	result;
+    Object	obj;
 
     result = null;
 
     if (m_ModelFile.isDirectory()) {
       // obtain model from callable actor
       try {
-	m_Model = (T) CallableActorHelper.getSetup(null, m_ModelActor, this);
+	obj = CallableActorHelper.getSetup(null, m_ModelActor, this);
+	if (obj instanceof AbstractContainer)
+	  m_Model = getModelFromContainer((AbstractContainer) obj);
+	else
+	  m_Model = (T) obj;
       }
       catch (Exception e) {
 	m_Model = null;
