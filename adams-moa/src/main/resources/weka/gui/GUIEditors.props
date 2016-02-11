@@ -1,2 +1,6 @@
+# whether to show the large tooltip with the global info and capabilities
+# in the class tree
+ShowGlobalInfoToolTip=false
+
 # Extensions for MOA
 moa.options.ClassOption=weka.gui.MOAClassOptionEditor
