@@ -15,9 +15,11 @@
 
 /**
  * MultiScriptlet.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.gnuplot;
+
+import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -95,14 +97,24 @@ public class MultiScriptlet
   }
 
   /**
+   * Sets the owning actor.
+   *
+   * @param value	the owner
+   */
+  public void setOwner(Actor value) {
+    super.setOwner(value);
+    for (AbstractScriptlet scriptlet: m_Scriptlets)
+      scriptlet.setOwner(getOwner());
+  }
+
+  /**
    * Sets the scriptlets to use.
    *
    * @param value	the scriptlets
    */
   public void setScriptlets(AbstractScriptlet[] value) {
     m_Scriptlets = value;
-    for (AbstractScriptlet scriptlet: m_Scriptlets)
-      scriptlet.setOwner(getOwner());
+    setOwner(getOwner());
     reset();
   }
 
